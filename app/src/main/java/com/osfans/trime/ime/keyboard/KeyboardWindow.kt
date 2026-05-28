@@ -146,13 +146,16 @@ class KeyboardWindow :
 
     private fun smartMatchKeyboard(): String {
         // 主题的布局中包含方案id，直接采用
-        val currentSchema = rime.run { statusCached }.schemaId
-        if (presetKeyboardIds.contains(currentSchema)) {
-            return currentSchema
+        val statusSchema = rime.run { statusCached }.schemaId
+        val schema = rime.run { schemaCached }
+        val schemaId = statusSchema.ifEmpty { schema.schemaId }
+        if (presetKeyboardIds.contains(schemaId)) {
+            return schemaId
         }
-        val alphabet = rime.run { schemaCached }.alphabet
+        val alphabet = schema.alphabet
         val layout =
             when {
+                alphabet.isNotEmpty() && alphabet.all { it.isDigit() } && presetKeyboardIds.contains("luna_pinyin_t9") -> "luna_pinyin_t9"
                 alphabet.all { it.isLetter() } -> "qwerty" // 包含 26 个字母
                 alphabet.all { it.isLetter() || ",./;".any(it::equals) } -> "qwerty_" // 包含 26 个字母和,./;
                 alphabet.all { it.isLetterOrDigit() } -> "qwerty0" // 包含 26 个字母和数字键

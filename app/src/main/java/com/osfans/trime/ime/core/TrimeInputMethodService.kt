@@ -42,6 +42,7 @@ import com.osfans.trime.core.RimeKeyMapping
 import com.osfans.trime.core.RimeMessage
 import com.osfans.trime.daemon.RimeDaemon
 import com.osfans.trime.daemon.RimeSession
+import com.osfans.trime.data.base.DataManager
 import com.osfans.trime.data.prefs.AppPrefs
 import com.osfans.trime.data.prefs.PreferenceDelegate
 import com.osfans.trime.data.prefs.PreferenceDelegateProvider
@@ -164,6 +165,7 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
 
     override fun onCreate() {
         rime = RimeDaemon.createSession(javaClass.name)
+        DataManager.sync()
         lifecycleScope.launch {
             jobs.consumeEach { it.join() }
         }

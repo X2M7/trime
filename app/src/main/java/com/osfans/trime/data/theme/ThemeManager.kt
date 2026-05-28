@@ -62,8 +62,13 @@ object ThemeManager {
         if (!Rime.deployRimeConfigFile(id, "config_version")) {
             Timber.w("Failed to deploy theme config file '$id.yaml'")
         }
-        val file = File(DataManager.resolveDeployedResourcePath(id))
-        if (!file.exists()) {
+        val file =
+            listOf(
+                File(DataManager.resolveDeployedResourcePath(id)),
+                File(DataManager.userDataDir, "$id.yaml"),
+                File(DataManager.sharedDataDir, "$id.yaml"),
+            ).firstOrNull { it.exists() }
+        if (file == null) {
             Timber.w("Theme file not found for '$id'")
             return null
         }
