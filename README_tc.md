@@ -6,11 +6,11 @@ SPDX-License-Identifier: GPL-3.0-or-later
 
 # 同文 Android 輸入法平臺
 
-![build](https://github.com/osfans/trime/actions/workflows/commit-ci.yml/badge.svg?branch=develop)
+![build](https://github.com/X2M7/trime/actions/workflows/commit-ci.yml/badge.svg?branch=feature/t9-pinyin)
 [![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
-[![GitHub release](https://img.shields.io/github/release/osfans/trime.svg)](https://github.com/osfans/trime/releases)
+[![GitHub release](https://img.shields.io/github/release/X2M7/trime.svg)](https://github.com/X2M7/trime/releases)
 [![F-Droid release](https://img.shields.io/f-droid/v/com.osfans.trime.svg)](https://f-droid.org/packages/com.osfans.trime)
-[![Latest build](https://img.shields.io/github/last-commit/osfans/trime.svg)](http://osfans.github.io/trime/)
+[![Project page](https://img.shields.io/badge/GitHub%20Pages-Trime%20T9-2f6f5e)](https://x2m7.github.io/trime/)
 
 [English](README.md) | [简体中文](README_sc.md) | 繁體中文
 
@@ -20,7 +20,20 @@ SPDX-License-Identifier: GPL-3.0-or-later
 
 [查看文檔](https://github.com/osfans/trime/wiki)
 
+## 九鍵拼音預覽版
+
+這個 fork 在 Trime 的基礎上加入了 `朙月拼音九鍵` / `luna_pinyin_t9`：
+
+- 新增基於朙月拼音詞典的九鍵拼音方案，使用 `2-9` 輸入拼音。
+- 新增九宮格鍵盤佈局，鍵位映射為 `ABC=2`、`DEF=3`、`GHI=4`、`JKL=5`、`MNO=6`、`PQRS=7`、`TUV=8`、`WXYZ=9`。
+- 切換到 `luna_pinyin_t9` 方案時，Trime 會自動切換到九鍵佈局。
+- 改進輸入法服務啟動階段的主題載入，避免首次部署時找不到主題導致崩潰。
+
+[專案頁面](https://x2m7.github.io/trime/) | [下載九鍵預覽 APK](https://github.com/X2M7/trime/releases/latest)
+
 ## 下載
+
+- 九鍵預覽版 [點選下載](https://github.com/X2M7/trime/releases/latest)
 
 - 穩定版 <br>
   [<img alt='Get it on F-Droid' src='https://fdroid.gitlab.io/artwork/badge/get-it-on.png' height='80px'/>](https://f-droid.org/packages/com.osfans.trime)

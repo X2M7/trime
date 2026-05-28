@@ -8,11 +8,11 @@ SPDX-License-Identifier: GPL-3.0-or-later
 
 Rime IME for Android
 
-![build](https://github.com/osfans/trime/actions/workflows/commit-ci.yml/badge.svg?branch=develop)
+![build](https://github.com/X2M7/trime/actions/workflows/commit-ci.yml/badge.svg?branch=feature/t9-pinyin)
 [![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
-[![GitHub release](https://img.shields.io/github/release/osfans/trime.svg)](https://github.com/osfans/trime/releases)
+[![GitHub release](https://img.shields.io/github/release/X2M7/trime.svg)](https://github.com/X2M7/trime/releases)
 [![F-Droid release](https://img.shields.io/f-droid/v/com.osfans.trime.svg)](https://f-droid.org/packages/com.osfans.trime)
-[![Latest build](https://img.shields.io/github/last-commit/osfans/trime.svg)](http://osfans.github.io/trime/)
+[![Project page](https://img.shields.io/badge/GitHub%20Pages-Trime%20T9-2f6f5e)](https://x2m7.github.io/trime/)
 
 English | [简体中文](README_sc.md) | [繁體中文](README_tc.md)
 
@@ -22,7 +22,20 @@ Trime is originally a frontend of open-source [Android Traditional Chinese IME],
 
 [Documentation](https://github.com/osfans/trime/wiki)
 
+## T9 Pinyin Preview
+
+This fork adds `Luna Pinyin T9` / `luna_pinyin_t9` on top of Trime:
+
+- Adds a T9 pinyin schema based on the Luna Pinyin dictionary, using digits `2-9` for pinyin input.
+- Adds bundled 3-column T9 keyboard layouts with `ABC=2`, `DEF=3`, `GHI=4`, `JKL=5`, `MNO=6`, `PQRS=7`, `TUV=8`, and `WXYZ=9`.
+- Automatically switches to the T9 keyboard when the `luna_pinyin_t9` schema is selected.
+- Improves early theme loading during IME startup to avoid first-run theme deployment crashes.
+
+[Project page](https://x2m7.github.io/trime/) | [Download the T9 preview APK](https://github.com/X2M7/trime/releases/latest)
+
 ## Download
+
+- T9 Preview [Download](https://github.com/X2M7/trime/releases/latest)
 
 - Stable Channel <br>
   [<img alt='Get it on F-Droid' src='https://fdroid.gitlab.io/artwork/badge/get-it-on.png' height='80px'/>](https://f-droid.org/packages/com.osfans.trime)
