@@ -67,7 +67,7 @@ android {
         debug {
             applicationIdSuffix = ".debug"
 
-            resValue("string", "trime_app_name", "@string/app_name_debug")
+            resValue("string", "trime_app_name", "@string/app_name_release")
         }
         all {
             // remove META-INF/version-control-info.textproto
