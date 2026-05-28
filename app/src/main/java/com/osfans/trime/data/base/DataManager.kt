@@ -6,7 +6,6 @@ package com.osfans.trime.data.base
 
 import android.content.res.AssetManager
 import android.os.Build
-import android.os.Environment
 import com.osfans.trime.data.prefs.AppPrefs
 import com.osfans.trime.util.FileUtils
 import com.osfans.trime.util.ResourceUtils
@@ -53,12 +52,21 @@ object DataManager {
 
     private val prefs by lazy { AppPrefs.defaultInstance() }
 
-    val defaultDataDir = File(Environment.getExternalStorageDirectory(), "rime")
+    private val appSpecificDataDir = File(appContext.getExternalFilesDir(null), "rime")
+
+    val defaultDataDir = appSpecificDataDir
 
     val sharedDataDir = File(appContext.getExternalFilesDir(null), "shared").also { it.mkdirs() }
 
     val userDataDir
-        get() = File(prefs.profile.userDataDir.getValue()).also { it.mkdirs() }
+        get() =
+            File(prefs.profile.userDataDir.getValue()).let {
+                if ((it.exists() || it.mkdirs()) && it.canWrite()) {
+                    it
+                } else {
+                    defaultDataDir.also { dir -> dir.mkdirs() }
+                }
+            }
 
     val prebuiltDataDir = File(sharedDataDir, "build")
     val stagingDir get() = File(userDataDir, "build")

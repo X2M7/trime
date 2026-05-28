@@ -13,8 +13,12 @@ import com.hjq.permissions.XXPermissions
 import com.osfans.trime.R
 
 @Suppress("NOTHING_TO_INLINE")
-inline fun Context.isStorageAvailable(): Boolean = XXPermissions.isGranted(this, Permission.MANAGE_EXTERNAL_STORAGE) &&
-    Environment.getExternalStorageDirectory().absolutePath.isNotEmpty()
+inline fun Context.isStorageAvailable(): Boolean {
+    val appSpecificDir = getExternalFilesDir(null)
+    return appSpecificDir != null && (appSpecificDir.exists() || appSpecificDir.mkdirs()) && appSpecificDir.canWrite() ||
+        XXPermissions.isGranted(this, Permission.MANAGE_EXTERNAL_STORAGE) &&
+        Environment.getExternalStorageDirectory().absolutePath.isNotEmpty()
+}
 
 fun Context.requestExternalStoragePermission() {
     XXPermissions
