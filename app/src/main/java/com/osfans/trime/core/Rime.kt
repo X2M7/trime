@@ -56,7 +56,7 @@ class Rime :
         RimeDispatcher(
             object : RimeDispatcher.RimeController {
                 override fun nativeStartup() {
-                    startRime(false)
+                    startRime(BuildConfig.DEBUG)
                     lifecycleRegistry.emitState(RimeLifecycle.State.READY)
                 }
 

@@ -50,14 +50,30 @@ engine:
     - uniquifier
 
 speller:
-  alphabet: "23456789"
-  initials: "23456789"
+  alphabet: zyxwvutsrqponmlkjihgfedcbaZYXWVUTSRQPONMLKJIHGFEDCBA987654321
+  initials: zyxwvutsrqponmlkjihgfedcbaZYXWVUTSRQPONMLKJIHGFEDCBA987654321
   delimiter: " '"
   algebra:
-    - xlit/abcdefghijklmnopqrstuvwxyz/22233344455566677778889999/
+    - derive/^([nl])ve$/$1ue/
+    - derive/^([jqxy])u/$1v/
+    - derive/^(.*)$/\U$1/
+    - xlit/ABCDEFGHIJKLMNOPQRSTUVWXYZ/22233344455566677778889999/
 
 translator:
   dictionary: luna_pinyin
+  prism: luna_pinyin_t9
+  enable_completion: true
+  enable_sentence: true
+  spelling_hints: 30
+  always_show_comments: true
+  preedit_format:
+    - xform/([nl])v/$1ü/
+    - xform/([nl])ue/$1üe/
+    - xform/([jqxy])v/$1u/
+  comment_format:
+    - xform/([nl])v/$1ü/
+    - xform/([nl])ue/$1üe/
+    - xform/([jqxy])v/$1u/
 
 custom_phrase:
   dictionary: ""
