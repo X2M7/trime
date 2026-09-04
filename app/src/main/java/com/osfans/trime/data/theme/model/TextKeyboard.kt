@@ -63,7 +63,6 @@ data class TextKeyboard(
         val label: String,
         val labelSymbol: String,
         val hint: String,
-        val click: String,
         val sendBindings: Boolean,
         val keyTextSize: Float,
         val symbolTextSize: Float,
@@ -77,12 +76,15 @@ data class TextKeyboard(
         val keyPressOffsetY: Float,
         val keyTextColor: String,
         val keyBackColor: String,
+        val keyBorderColor: String,
         val keySymbolColor: String,
         val hlKeyTextColor: String,
         val hlKeyBackColor: String,
+        val hlKeyBorderColor: String,
         val hlKeySymbolColor: String,
         val popup: List<String> = emptyList(),
-        val behaviors: Map<KeyBehavior, String>,
+        val behaviors: Map<KeyBehavior, KeyActionToken?>,
+        val hasClickAction: Boolean = behaviors[KeyBehavior.CLICK] != null,
     ) : Parcelable {
         companion object {
             fun decode(node: Node.Mapping): TextKey = TextKey(
@@ -93,7 +95,6 @@ data class TextKeyboard(
                 label = node["label"]?.string ?: "",
                 labelSymbol = node["label_symbol"]?.string ?: "",
                 hint = node["hint"]?.string ?: "",
-                click = node["click"]?.string ?: "",
                 sendBindings = node["send_bindings"]?.boolean ?: true,
                 keyTextSize = node["key_text_size"]?.float ?: 0f,
                 symbolTextSize = node["symbol_text_size"]?.float ?: 0f,
@@ -107,20 +108,23 @@ data class TextKeyboard(
                 keyPressOffsetY = node["key_press_offset_y"]?.float ?: 0f,
                 keyTextColor = node["key_text_color"]?.string ?: "",
                 keyBackColor = node["key_back_color"]?.string ?: "",
+                keyBorderColor = node["key_border_color"]?.string ?: "",
                 keySymbolColor = node["key_symbol_color"]?.string ?: "",
                 hlKeyTextColor = node["hilited_key_text_color"]?.string ?: "",
                 hlKeyBackColor = node["hilited_key_back_color"]?.string ?: "",
+                hlKeyBorderColor = node["hilited_key_border_color"]?.string ?: "",
                 hlKeySymbolColor = node["hilited_key_symbol_color"]?.string ?: "",
                 popup = node["popup"]?.sequence?.mapNotNull(Node::string) ?: emptyList(),
-                behaviors =
-                buildMap {
-                    KeyBehavior.entries.forEach { entry ->
-                        val action = node[entry.name.lowercase()]?.string ?: ""
-                        if (action.isNotEmpty() || entry == KeyBehavior.CLICK) {
-                            put(entry, action)
-                        }
-                    }
-                },
+                behaviors = KeyBehavior.entries
+                    .associateWith { KeyActionToken.decode(node[it.name.lowercase()]) }
+                    .filter { (behavior, token) ->
+                        token?.let {
+                            when (it) {
+                                is KeyActionToken.Plain -> it.token.isNotEmpty()
+                                is KeyActionToken.Inline -> listOfNotNull(it.token.commit, it.token.text, it.token.label).isNotEmpty()
+                            }
+                        } ?: (behavior == KeyBehavior.CLICK)
+                    },
             )
         }
     }

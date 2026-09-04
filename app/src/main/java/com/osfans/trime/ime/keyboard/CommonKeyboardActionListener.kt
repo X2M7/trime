@@ -6,17 +6,15 @@
 package com.osfans.trime.ime.keyboard
 
 import android.app.Dialog
-import android.content.Context
 import android.content.Intent
+import android.view.ContextThemeWrapper
 import android.view.KeyEvent
 import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import com.osfans.trime.R
-import com.osfans.trime.core.KeyModifier
 import com.osfans.trime.core.KeyModifiers
 import com.osfans.trime.core.RimeApi
 import com.osfans.trime.core.RimeKeyEvent
-import com.osfans.trime.core.RimeKeyMapping
 import com.osfans.trime.daemon.RimeSession
 import com.osfans.trime.daemon.launchOnReady
 import com.osfans.trime.data.prefs.AppPrefs
@@ -25,9 +23,7 @@ import com.osfans.trime.data.theme.KeyActionManager
 import com.osfans.trime.data.theme.ThemeManager
 import com.osfans.trime.ime.clipboard.ClipboardWindow
 import com.osfans.trime.ime.core.TrimeInputMethodService
-import com.osfans.trime.ime.dependency.InputDependencyManager
 import com.osfans.trime.ime.dialog.EnabledSchemaPickerDialog
-import com.osfans.trime.ime.enums.Keycode
 import com.osfans.trime.ime.switches.SwitchOptionWindow
 import com.osfans.trime.ime.symbol.LiquidData
 import com.osfans.trime.ime.symbol.LiquidWindow
@@ -43,24 +39,23 @@ import com.osfans.trime.util.customFormatDateTime
 import com.osfans.trime.util.isAsciiPrintable
 import com.osfans.trime.util.toast
 import kotlinx.coroutines.launch
+import org.kodein.di.DI
+import org.kodein.di.DIAware
 import org.kodein.di.instance
 import splitties.systemservices.clipboardManager
 import splitties.systemservices.inputMethodManager
 import timber.log.Timber
 
-class CommonKeyboardActionListener {
-    private val di = InputDependencyManager.getInstance().di
+class CommonKeyboardActionListener(override val di: DI) : DIAware {
 
-    private val context: Context by di.instance()
-    private val service: TrimeInputMethodService by di.instance()
-    private val rime: RimeSession by di.instance()
-    private val windowManager: BoardWindowManager by di.instance()
-    private val keyboardWindow: KeyboardWindow by di.instance()
-    private val liquidWindow: LiquidWindow by di.instance()
+    private val context: ContextThemeWrapper by instance()
+    private val service: TrimeInputMethodService by instance()
+    private val rime: RimeSession by instance()
+    private val windowManager: BoardWindowManager by instance()
+    private val keyboardWindow: KeyboardWindow by instance()
+    private val liquidWindow: LiquidWindow by instance()
 
     private val prefs = AppPrefs.defaultInstance()
-
-    private var shouldReleaseKey: Boolean = false
 
     private fun showDialog(dialog: suspend (RimeApi) -> Dialog) {
         rime.launchOnReady { api ->
@@ -122,28 +117,15 @@ class CommonKeyboardActionListener {
                 }
             }
 
-            override fun onRelease(keyEventCode: Int) {
-                if (shouldReleaseKey) {
-                    // FIXME: 释放按键可能不对
-                    val value = RimeKeyMapping.keyCodeToVal(keyEventCode)
-                    if (value != RimeKeyMapping.RimeKey_VoidSymbol) {
-                        service.postRimeJob {
-                            processKey(value, KeyModifier.Release.modifier)
-                        }
-                    }
-                }
-            }
-
             override fun onAction(action: KeyAction) {
+                val text = action.getText(KeyboardWindow.currentKeyboard)
                 val shouldHandle = when {
                     action.commit.isNotEmpty() -> {
                         service.commitText(action.commit)
                         false
                     }
-                    KeyboardSwitcher.currentKeyboard.let { keyboard ->
-                        action.getText(keyboard).isNotEmpty()
-                    } -> {
-                        onText(action.getText(KeyboardSwitcher.currentKeyboard))
+                    text.isNotEmpty() -> {
+                        onText(text)
                         false
                     }
                     else -> true
@@ -169,8 +151,15 @@ class CommonKeyboardActionListener {
 
                 rime.launchOnReady { api ->
                     service.lifecycleScope.launch {
-                        val status = api.getRuntimeOption(option)
-                        api.setRuntimeOption(option, !status)
+                        val isEnabled = api.getRuntimeOption(option)
+                        val isComposing = api.statusCached.isComposing
+                        api.setRuntimeOption(option, !isEnabled)
+                        if (option == "ascii_mode" && isComposing) {
+                            api.getRawInput().takeIf { it.isNotEmpty() }?.let {
+                                service.commitText(it)
+                                api.clearComposition()
+                            }
+                        }
                     }
                 }
             }
@@ -188,7 +177,7 @@ class CommonKeyboardActionListener {
 
                 when (action.command) {
                     "liquid_keyboard" -> handleLiquidKeyboard(arg)
-                    "menu_keyboard" -> windowManager.attachWindow(SwitchOptionWindow())
+                    "menu_keyboard" -> windowManager.attachWindow(SwitchOptionWindow(di))
                     "clipboard_window" -> handleClipboardWindow(arg)
                     "set_color_scheme" -> handleColorScheme(arg)
                     "set_theme" -> handleTheme(arg)
@@ -200,6 +189,8 @@ class CommonKeyboardActionListener {
                     "apply" -> handleApplyCommand(arg)
                     "share_text" -> service.shareText()
                     "select_candidate" -> handleSelectCandidate(arg)
+                    "switch_hide_key_symbol" -> switchHideKeySymbol()
+                    "switch_hide_key_hint" -> switchHideKeyHint()
                     else -> handleIntentAction(action.command, arg)
                 }
             }
@@ -207,7 +198,7 @@ class CommonKeyboardActionListener {
             private fun handleLiquidKeyboard(arg: String) {
                 // for compatibility
                 if (arg == "剪贴" || arg == "clipboard") {
-                    windowManager.attachWindow(ClipboardWindow())
+                    windowManager.attachWindow(ClipboardWindow(di))
                     return
                 }
                 val liquidTagList = LiquidData.getTagList()
@@ -227,7 +218,7 @@ class CommonKeyboardActionListener {
 
             private fun handleClipboardWindow(arg: String) {
                 val tabIndex = arg.toIntOrNull()?.coerceIn(0, 1) ?: 0
-                windowManager.attachWindow(ClipboardWindow(tabIndex))
+                windowManager.attachWindow(ClipboardWindow(di, tabIndex))
             }
 
             private fun handleColorScheme(arg: String) {
@@ -239,12 +230,13 @@ class CommonKeyboardActionListener {
             private fun handleTheme(arg: String) {
                 if (arg.isEmpty()) {
                     // 参数为空时，刷新当前主题
-                    ThemeManager.selectTheme(ThemeManager.prefs.selectedTheme.getValue())
+                    val themeId = ThemeManager.prefs.selectedTheme.getValue()
+                    service.lifecycleScope.launch { ThemeManager.selectTheme(themeId) }
                 } else {
                     // 通过主题名称查找对应的配置ID并切换主题
                     ThemeManager.getAllThemes()
-                        .find { it.name.equals(arg, ignoreCase = true) }?.let {
-                            ThemeManager.selectTheme(it.configId)
+                        .find { it.name.equals(arg, ignoreCase = true) }?.let { item ->
+                            service.lifecycleScope.launch { ThemeManager.selectTheme(item.configId) }
                         }
                 }
             }
@@ -302,6 +294,16 @@ class CommonKeyboardActionListener {
                 }
             }
 
+            private fun switchHideKeySymbol() {
+                val preference = prefs.keyboard.hideKeySymbol
+                preference.setValue(!preference.getValue())
+            }
+
+            private fun switchHideKeyHint() {
+                val preference = prefs.keyboard.hideKeyHint
+                preference.setValue(!preference.getValue())
+            }
+
             private fun handleSettings(action: KeyAction) {
                 when (action.option) {
                     "theme" -> showThemePicker()
@@ -340,15 +342,15 @@ class CommonKeyboardActionListener {
                     else -> false
                 }
 
-                if (action.modifier == 0 && KeyboardSwitcher.currentKeyboard.isOnlyShiftOn && shouldHookShiftKey) {
+                if (action.modifier == 0 && KeyboardWindow.currentKeyboard.isOnlyShiftOn && shouldHookShiftKey) {
                     onKey(action.code, 0)
                     return
                 }
 
                 val modifier = when {
-                    action.modifier == 0 -> KeyboardSwitcher.currentKeyboard.modifier
+                    action.modifier == 0 -> KeyboardWindow.currentKeyboard.modifier
                     (action.modifier and KeyEvent.META_CTRL_ON) != 0 && isNavigationKey(action.code) ->
-                        action.modifier or KeyboardSwitcher.currentKeyboard.modifier
+                        action.modifier or KeyboardWindow.currentKeyboard.modifier
                     else -> action.modifier
                 }
 
@@ -363,12 +365,21 @@ class CommonKeyboardActionListener {
                 keyEventCode: Int,
                 metaState: Int,
             ) {
-                shouldReleaseKey = false
+                // An uppercase letter key (e.g. from `{x: A}`) is passed to
+                // rime as the uppercase keysym with Shift, matching what a
+                // physical keyboard reports via the unicode char, so that
+                // rime commits the uppercase letter in ascii mode as well.
+                // The generated reverse mapping would otherwise resolve e.g.
+                // KEYCODE_A to the lowercase name "a" (XK_a).
                 val value =
-                    RimeKeyMapping
-                        .keyCodeToVal(keyEventCode)
-                        .takeIf { it != RimeKeyMapping.RimeKey_VoidSymbol }
-                        ?: RimeKeyEvent.getKeycodeByName(Keycode.keyNameOf(keyEventCode))
+                    if (metaState and KeyEvent.META_SHIFT_ON != 0 &&
+                        keyEventCode in KeyEvent.KEYCODE_A..KeyEvent.KEYCODE_Z
+                    ) {
+                        'A'.code + (keyEventCode - KeyEvent.KEYCODE_A) // XK_A..XK_Z
+                    } else {
+                        val name = KeyCode.codeToKeyName(keyEventCode) ?: "VoidSymbol"
+                        RimeKeyEvent.getKeycodeByName(name)
+                    }
                 val m = if (keyEventCode in KeyEvent.KEYCODE_NUMPAD_0..KeyEvent.KEYCODE_NUMPAD_EQUALS) {
                     metaState or KeyEvent.META_NUM_LOCK_ON
                 } else {
@@ -381,7 +392,6 @@ class CommonKeyboardActionListener {
                         return@postRimeJob
                     }
                     if (processKey(value, modifiers)) {
-                        shouldReleaseKey = true
                         Timber.d("handleKey: processKey")
                         return@postRimeJob
                     }
@@ -393,50 +403,51 @@ class CommonKeyboardActionListener {
                     if (keyEventCode == KeyEvent.KEYCODE_BACK) {
                         service.requestHideSelf(0)
                     }
-                    shouldReleaseKey = false
                 }
             }
 
-            override fun onText(text: String) {
-                if (text.isEmpty()) return
+            override fun onText(input: String) {
+                if (input.isEmpty()) return
+                Timber.d("onText: $input")
                 val status = rime.run { statusCached }
-                if (!text[0].isAsciiPrintable() && status.isComposing) {
+                if (!input[0].isAsciiPrintable() && status.isComposing) {
                     service.postRimeJob { commitComposition() }
                 }
 
-                var sequence = text
-                while (sequence.isNotEmpty()) {
-                    val slice =
-                        when {
-                            UNBRACED_CHAR.matches(sequence) -> UNBRACED_CHAR.matchEntire(sequence)?.groupValues?.get(1) ?: ""
-                            BRACED_KEY_EVENT.matches(sequence) -> BRACED_KEY_EVENT.matchEntire(sequence)?.groupValues?.get(1) ?: ""
-                            else -> sequence[0].toString()
-                        }
+                val escaped = input.replace("{}", "{braceleft}{braceright}")
+                var i = 0
+                while (i < escaped.length) {
+                    val value = when (val match = TEXT_INPUT_PATTERN.matchEntire(escaped.substring(i))) {
+                        match if (match != null) -> match.groupValues[1]
+                        else -> escaped[i].toString()
+                    }
 
                     service.postRimeJob {
-                        if (slice.run { startsWith('{') && endsWith('}') }) {
-                            onAction(KeyActionManager.getAction(slice))
-                        } else if (!slice[0].isAsciiPrintable()) {
-                            service.commitText(slice)
+                        if (value.run { startsWith('{') && endsWith('}') }) {
+                            val token = value.removeSurrounding("{", "}")
+                            onAction(KeyActionManager.getAction(token))
+                        } else if (!value[0].isAsciiPrintable()) {
+                            service.commitText(value)
                         } else {
-                            val escapedSlice = slice.replace("{}", "{braceleft}{braceright}")
-                            simulateKeySequence(escapedSlice)
+                            simulateKeySequence(value)
                         }
                     }
 
-                    sequence = sequence.substring(slice.length)
+                    i += value.length
                 }
-                shouldReleaseKey = false
             }
         }
     }
 
     companion object {
-        /** Pattern for braced key event like `{Left}`, `{Right}`, etc. */
-        private val BRACED_KEY_EVENT = """^(\{[^{}]+\}).*$""".toRegex()
-
-        /** Pattern for unbraced characters (including {Escape}) like `abc`, `{Escape}jk` etc. */
-        private val UNBRACED_CHAR = """^((\{Escape\})?[^{}]+).*$""".toRegex()
+        /**
+         * Regex for combined key events.
+         * group(1) captures either:
+         *   - a plain prefix (optionally preceded by {Escape}) from the left branch,
+         *   - or a standalone {xxx} block from the right branch.
+         * The trailing .* consumes the rest of the input without affecting group(1).
+         */
+        private val TEXT_INPUT_PATTERN = """^((?:\{Escape\})?[^{}]+|\{[^{}]+\}).*$""".toRegex()
 
         private val PLACEHOLDER_PATTERN = Regex(".*(%([1-4]\\$)?s).*")
     }

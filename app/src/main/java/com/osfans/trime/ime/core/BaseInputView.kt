@@ -19,6 +19,7 @@ import androidx.lifecycle.lifecycleScope
 import com.osfans.trime.R
 import com.osfans.trime.core.RimeMessage
 import com.osfans.trime.daemon.RimeSession
+import com.osfans.trime.data.prefs.AppPrefs
 import com.osfans.trime.data.theme.ColorManager
 import com.osfans.trime.data.theme.Theme
 import com.osfans.trime.data.theme.ThemeManager
@@ -27,6 +28,7 @@ import com.osfans.trime.ime.keyboard.InputFeedbackManager
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import splitties.dimensions.dp
+import splitties.views.dsl.core.withTheme
 import kotlin.math.max
 
 abstract class BaseInputView(
@@ -60,6 +62,8 @@ abstract class BaseInputView(
             }
         }
 
+    val themedContext = context.withTheme(android.R.style.Theme_DeviceDefault_Settings)
+
     private var candidateActionMenu: PopupMenu? = null
 
     fun showCandidateActionMenu(idx: Int, text: String, view: View, global: Boolean) {
@@ -74,7 +78,7 @@ abstract class BaseInputView(
         service.lifecycleScope.launch {
             InputFeedbackManager.keyPressVibrate(view, longPress = true)
             candidateActionMenu =
-                PopupMenu(context, view).apply {
+                PopupMenu(themedContext, view).apply {
                     menu.add(title).apply {
                         isEnabled = false
                     }
@@ -98,40 +102,51 @@ abstract class BaseInputView(
             val resId = resources.getIdentifier("navigation_bar_frame_height", "dimen", "android")
             return try {
                 resources.getDimensionPixelSize(resId)
-            } catch (e: Resources.NotFoundException) {
+            } catch (_: Resources.NotFoundException) {
                 dp(FALLBACK_NAVBAR_HEIGHT)
             }
         }
+
+    private val ignoreSystemGestureInsets by AppPrefs.defaultInstance().advanced.ignoreSystemGestureInsets
 
     protected fun getNavBarBottomInset(windowInsets: WindowInsets): Int {
         if (navBarBackground != ThemePrefs.NavbarBackground.FULL) {
             return 0
         }
-
         val insets = WindowInsetsCompat.toWindowInsetsCompat(windowInsets)
-
-        val nav = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom
-        val tappable = insets.getInsets(WindowInsetsCompat.Type.tappableElement()).bottom
-        val mandatory = insets.getInsets(WindowInsetsCompat.Type.mandatorySystemGestures()).bottom
-        val systemGestures = insets.getInsets(WindowInsetsCompat.Type.systemGestures()).bottom
-        val threshold = (resources.displayMetrics.density * 40).toInt()
-
-        return when {
-            nav > 0 -> nav
-            tappable > 0 -> tappable
-            mandatory > threshold -> mandatory
-            systemGestures > threshold -> systemGestures
-            else -> 0
+        val navBars = WindowInsetsCompat.Type.navigationBars()
+        val gestures = WindowInsetsCompat.Type.systemGestures() or
+            WindowInsetsCompat.Type.mandatorySystemGestures()
+        return if (ignoreSystemGestureInsets) {
+            // check gestures insets and ignore them when it greater than zero
+            val gesturesBottom = insets.getInsets(gestures).bottom
+            val navBarsBottom = insets.getInsets(navBars).bottom
+            if (gesturesBottom > 0) 0 else navBarsBottom
+        } else {
+            val insetsBottom = insets.getInsets(navBars or gestures).bottom
+            if (insetsBottom > 0) max(insetsBottom, navBarFrameHeight) else insetsBottom
         }
     }
-    override fun onDetachedFromWindow() {
-        handleMessages = false
+
+    fun dismissCandidateActionMenu() {
         candidateActionMenu?.dismiss()
         candidateActionMenu = null
+    }
+
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        // on API 35+, we must call requestApplyInsets() manually after replacing views,
+        // otherwise View#onApplyWindowInsets won't be called. ¯\_(ツ)_/¯
+        requestApplyInsets()
+    }
+
+    override fun onDetachedFromWindow() {
+        handleMessages = false
+        dismissCandidateActionMenu()
         super.onDetachedFromWindow()
     }
 
     companion object {
-        private const val FALLBACK_NAVBAR_HEIGHT = 48
+        private const val FALLBACK_NAVBAR_HEIGHT = 16
     }
 }

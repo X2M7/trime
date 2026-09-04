@@ -8,6 +8,8 @@ package com.osfans.trime.ime.candidates.popup
 import android.content.Context
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewGroup.LayoutParams.MATCH_PARENT
+import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import androidx.core.view.updateLayoutParams
 import androidx.recyclerview.widget.RecyclerView
 import com.chad.library.adapter4.BaseQuickAdapter
@@ -16,7 +18,7 @@ import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexWrap
 import com.google.android.flexbox.FlexboxLayoutManager
 import com.osfans.trime.core.CandidateProto
-import com.osfans.trime.core.MenuProto
+import com.osfans.trime.core.Candidates
 import com.osfans.trime.data.theme.Theme
 import splitties.views.dsl.core.Ui
 import splitties.views.dsl.recyclerview.recyclerView
@@ -29,7 +31,7 @@ class PagedCandidatesUi(
     private val onPrevPage: () -> Unit,
     private val onNextPage: () -> Unit,
 ) : Ui {
-    private var menu = MenuProto()
+    private var candidates = Candidates.Paged()
 
     private var isHorizontal = true
 
@@ -55,7 +57,7 @@ class PagedCandidatesUi(
 
             override fun getItemId(position: Int): Long = items.getOrNull(position).hashCode().toLong()
 
-            override fun getItemCount(items: List<CandidateProto>) = items.size + (if (menu.pageNumber != 0 || !menu.isLastPage) 1 else 0)
+            override fun getItemCount(items: List<CandidateProto>) = items.size + (if (candidates.hasPrevPage || candidates.hasNextPage) 1 else 0)
 
             override fun getItemViewType(
                 position: Int,
@@ -68,14 +70,17 @@ class PagedCandidatesUi(
                 viewType: Int,
             ): UiHolder = when (viewType) {
                 0 -> UiHolder.Candidate(LabeledCandidateItemUi(ctx, theme))
-                else ->
-                    UiHolder.Pagination(PaginationUi(ctx, theme)).apply {
-                        val wrap = ViewGroup.LayoutParams.WRAP_CONTENT
-                        ui.root.layoutParams =
-                            FlexboxLayoutManager.LayoutParams(wrap, wrap).apply {
-                                flexGrow = 1f
-                            }
+                else -> UiHolder.Pagination(PaginationUi(ctx, theme)).apply {
+                    ui.prevIcon.setOnClickListener {
+                        onPrevPage.invoke()
                     }
+                    ui.nextIcon.setOnClickListener {
+                        onNextPage.invoke()
+                    }
+                }
+            }.apply {
+                // assign default LayoutParams, otherwise updateLayoutParams won't work
+                ui.root.layoutParams = FlexboxLayoutManager.LayoutParams(WRAP_CONTENT, WRAP_CONTENT)
             }
 
             override fun onBindViewHolder(
@@ -86,7 +91,7 @@ class PagedCandidatesUi(
                 when (holder) {
                     is UiHolder.Candidate -> {
                         val candidate = item ?: return
-                        holder.ui.update(candidate, position == menu.highlightedCandidateIndex)
+                        holder.ui.update(candidate, position == candidates.highlighted)
                         holder.ui.root.setOnClickListener {
                             onCandidateClick.invoke(position)
                         }
@@ -94,18 +99,16 @@ class PagedCandidatesUi(
                             onCandidateAction.invoke(position, candidate.text, v)
                             true
                         }
+                        holder.ui.root.updateLayoutParams<FlexboxLayoutManager.LayoutParams> {
+                            width = if (isHorizontal) WRAP_CONTENT else MATCH_PARENT
+                        }
                     }
                     is UiHolder.Pagination -> {
-                        holder.ui.update(menu)
+                        holder.ui.update(candidates)
                         holder.ui.root.updateLayoutParams<FlexboxLayoutManager.LayoutParams> {
-                            width = if (isHorizontal) ViewGroup.LayoutParams.WRAP_CONTENT else ViewGroup.LayoutParams.MATCH_PARENT
+                            flexGrow = 1f
+                            width = if (isHorizontal) WRAP_CONTENT else MATCH_PARENT
                             alignSelf = if (isHorizontal) AlignItems.CENTER else AlignItems.STRETCH
-                        }
-                        holder.ui.prevIcon.setOnClickListener {
-                            onPrevPage.invoke()
-                        }
-                        holder.ui.nextIcon.setOnClickListener {
-                            onNextPage.invoke()
                         }
                     }
                 }
@@ -127,24 +130,24 @@ class PagedCandidatesUi(
         }
 
     fun update(
-        menu: MenuProto,
-        horizontal: Boolean,
+        candidates: Candidates.Paged,
         layout: PopupCandidatesLayout,
     ) {
-        this.menu = menu
+        this.candidates = candidates
         this.isHorizontal = when (layout) {
-            PopupCandidatesLayout.AUTOMATIC -> horizontal
+            PopupCandidatesLayout.AUTOMATIC -> candidates.isHorizontalLayout
             else -> layout == PopupCandidatesLayout.HORIZONTAL
         }
         candidatesLayoutManager.apply {
-            if (isHorizontal) {
-                flexDirection = FlexDirection.ROW
-                alignItems = AlignItems.BASELINE
-            } else {
-                flexDirection = FlexDirection.COLUMN
-                alignItems = AlignItems.STRETCH
+            flexDirection = when (layout) {
+                PopupCandidatesLayout.HORIZONTAL -> FlexDirection.ROW
+                PopupCandidatesLayout.VERTICAL_REVERSE -> FlexDirection.COLUMN_REVERSE
+                PopupCandidatesLayout.AUTOMATIC ->
+                    if (isHorizontal) FlexDirection.ROW else FlexDirection.COLUMN
+                else -> FlexDirection.COLUMN
             }
+            alignItems = if (isHorizontal) AlignItems.BASELINE else AlignItems.STRETCH
         }
-        candidatesAdapter.submitList(menu.candidates.toList())
+        candidatesAdapter.submitList(candidates.candidates.toList())
     }
 }

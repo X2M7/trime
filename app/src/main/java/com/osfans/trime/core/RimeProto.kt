@@ -11,7 +11,7 @@ data class CommitProto(
 
 data class CandidateProto(
     val text: String,
-    val comment: String?,
+    val comment: String,
     val label: String,
 )
 
@@ -36,47 +36,8 @@ data class CompositionProto(
     )
 }
 
-data class MenuProto(
-    val pageSize: Int = 0,
-    val pageNumber: Int = 0,
-    val isLastPage: Boolean = false,
-    val highlightedCandidateIndex: Int = 0,
-    val candidates: Array<CandidateProto> = arrayOf(),
-    val selectKeys: String? = null,
-    val selectLabels: Array<String> = arrayOf(),
-) {
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as MenuProto
-
-        if (pageSize != other.pageSize) return false
-        if (pageNumber != other.pageNumber) return false
-        if (isLastPage != other.isLastPage) return false
-        if (highlightedCandidateIndex != other.highlightedCandidateIndex) return false
-        if (!candidates.contentEquals(other.candidates)) return false
-        if (selectKeys != other.selectKeys) return false
-        if (!selectLabels.contentEquals(other.selectLabels)) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result = pageSize
-        result = 31 * result + pageNumber
-        result = 31 * result + isLastPage.hashCode()
-        result = 31 * result + highlightedCandidateIndex
-        result = 31 * result + candidates.contentHashCode()
-        result = 31 * result + (selectKeys?.hashCode() ?: 0)
-        result = 31 * result + selectLabels.contentHashCode()
-        return result
-    }
-}
-
 data class ContextProto(
     val composition: CompositionProto = CompositionProto(),
-    val menu: MenuProto = MenuProto(),
     val input: String = "",
     val caretPos: Int = 0,
 )
@@ -91,4 +52,94 @@ data class StatusProto(
     val isSimplified: Boolean = false,
     val isTraditional: Boolean = false,
     val isAsciiPunct: Boolean = true,
+)
+
+/**
+ * The candidate set carried by a [RimeResponse]: a full paged menu when paging
+ * mode is on, or a bulk candidate list otherwise.
+ */
+sealed interface Candidates {
+    /** Candidates of the current page */
+    val candidates: Array<CandidateProto>
+
+    /** Index of the highlighted candidate */
+    val highlighted: Int
+
+    /** Paging mode: the full page menu */
+    data class Paged(
+        /** Whether there is a previous page to turn to */
+        val hasPrevPage: Boolean = false,
+        /** Whether there is a next page to turn to */
+        val hasNextPage: Boolean = false,
+        /** Whether the candidates are laid out horizontally (queried natively) */
+        val isHorizontalLayout: Boolean = false,
+        override val highlighted: Int = 0,
+        override val candidates: Array<CandidateProto> = arrayOf(),
+    ) : Candidates {
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (javaClass != other?.javaClass) return false
+
+            other as Paged
+
+            if (hasPrevPage != other.hasPrevPage) return false
+            if (hasNextPage != other.hasNextPage) return false
+            if (isHorizontalLayout != other.isHorizontalLayout) return false
+            if (highlighted != other.highlighted) return false
+            if (!candidates.contentEquals(other.candidates)) return false
+
+            return true
+        }
+
+        override fun hashCode(): Int {
+            var result = hasPrevPage.hashCode()
+            result = 31 * result + hasNextPage.hashCode()
+            result = 31 * result + isHorizontalLayout.hashCode()
+            result = 31 * result + highlighted
+            result = 31 * result + candidates.contentHashCode()
+            return result
+        }
+
+        override fun toString(): String = "Paged(hasPrevPage=$hasPrevPage, hasNextPage=$hasNextPage, isHorizontalLayout=$isHorizontalLayout, highlighted=$highlighted, candidatesCount=${candidates.size})"
+    }
+
+    /** Bulk list: [total] is the candidate count, or -1 if unknown */
+    data class Bulk(
+        val total: Int = -1,
+        override val highlighted: Int = 0,
+        override val candidates: Array<CandidateProto> = arrayOf(),
+    ) : Candidates {
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (javaClass != other?.javaClass) return false
+
+            other as Bulk
+
+            if (total != other.total) return false
+            if (highlighted != other.highlighted) return false
+            if (!candidates.contentEquals(other.candidates)) return false
+
+            return true
+        }
+
+        override fun hashCode(): Int {
+            var result = total
+            result = 31 * result + highlighted
+            result = 31 * result + candidates.contentHashCode()
+            return result
+        }
+
+        override fun toString(): String = "Bulk(total=$total, highlighted=$highlighted, candidatesCount=${candidates.size})"
+    }
+}
+
+/**
+ * A combined snapshot of commit, composition, candidates and status,
+ * fetched in a single JNI crossing to avoid repeated JVM/C++ boundary switches.
+ */
+data class RimeResponse(
+    val commit: CommitProto,
+    val composition: CompositionProto,
+    val candidates: Candidates,
+    val status: StatusProto,
 )

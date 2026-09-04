@@ -18,7 +18,6 @@ import com.mikepenz.iconics.IconicsDrawable
 import com.mikepenz.iconics.utils.sizeDp
 import com.osfans.trime.daemon.RimeDaemon
 import com.osfans.trime.data.prefs.AppPrefs
-import com.osfans.trime.data.theme.ColorManager
 import com.osfans.trime.data.theme.FontManager
 import com.osfans.trime.ime.core.TrimeInputMethodService
 import com.osfans.trime.ime.popup.PopupAction
@@ -43,10 +42,6 @@ class KeyView(
         get() = keyboardView.popup
 
     private val rime get() = RimeDaemon.getFirstSessionOrNull()!!
-
-    private val hookShiftArrow: Boolean by lazy {
-        AppPrefs.defaultInstance().keyboard.hookShiftArrow.getValue()
-    }
 
     private val deletedTextBuffer = ArrayDeque<String>()
 
@@ -137,8 +132,8 @@ class KeyView(
         onSlide = { delta, _, _ ->
             if (isSlideCursor) {
                 when {
-                    delta > 0 -> keyboardActionListener?.onAction(KeyAction("Right"))
-                    delta < 0 -> keyboardActionListener?.onAction(KeyAction("Left"))
+                    delta > 0 -> keyboardActionListener.onAction(KeyAction("Right"))
+                    delta < 0 -> keyboardActionListener.onAction(KeyAction("Left"))
                 }
             } else if (isSlideDelete) {
                 val ic = service.currentInputConnection
@@ -212,7 +207,7 @@ class KeyView(
 
         keyboardActionListener.onAction(action)
 
-        val hookArrow = if (hookShiftArrow) {
+        val hookArrow = if (keyboardView.hookShiftArrow) {
             when (action.code) {
                 in KeyEvent.KEYCODE_DPAD_UP..KeyEvent.KEYCODE_DPAD_RIGHT -> true
                 KeyEvent.KEYCODE_MOVE_HOME, KeyEvent.KEYCODE_MOVE_END -> true
@@ -301,7 +296,7 @@ class KeyView(
 
         if (bg is GradientDrawable) {
             (k.roundCorner ?: keyboard.roundCorner).takeIf { it > 0f }?.let { bg.cornerRadius = dp(it) }
-            (k.keyBorder ?: keyboard.keyBorder).takeIf { it > 0 }?.let { bg.setStroke(dp(it), ColorManager.getColor("key_border_color")) }
+            (k.keyBorder ?: keyboard.keyBorder).takeIf { it > 0 }?.let { bg.setStroke(dp(it), k.getBorderColor()) }
         }
 
         bg.setBounds(
@@ -315,7 +310,7 @@ class KeyView(
 
     private fun drawLabel(canvas: Canvas, label: String) {
         val textColor = key.getTextColor()
-        val textSize = sp(key.keyTextSize.takeIf { it > 0 } ?: if (label.length > 1) keyboardView.keyLongTextSize else keyboardView.keyTextSize)
+        val textSize = sp(key.keyTextSize.takeIf { it > 0 } ?: if (label.length > 1 && !label.isIconFont) keyboardView.keyLongTextSize else keyboardView.keyTextSize)
 
         if (label.isIconFont) {
             drawIcon(canvas, label, textSize.toInt(), textColor, key.keyTextOffsetX, key.keyTextOffsetY)
@@ -379,11 +374,8 @@ class KeyView(
     }
 
     private fun drawSymbol(canvas: Canvas, text: String, isTop: Boolean = true) {
-        val showSymbol = rime.run { !getRuntimeOption("_hide_key_symbol") }
-        val showHint = rime.run { !getRuntimeOption("_hide_key_hint") }
-
-        if (isTop && !showSymbol) return
-        if (!isTop && !showHint) return
+        if (isTop && keyboardView.hideKeySymbol) return
+        if (!isTop && keyboardView.hideKeyHint) return
 
         val textColor = key.getSymbolColor()
         val textSize = sp(key.symbolTextSize.takeIf { it > 0f } ?: keyboardView.symbolTextSize)

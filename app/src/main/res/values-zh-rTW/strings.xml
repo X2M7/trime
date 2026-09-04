@@ -53,6 +53,8 @@
     <string name="effects">效果</string>
     <string name="only_available_on_some_roms">此選項僅對部分 ROM 有效</string>
     <string name="show_app_icon">在啟動器中顯示圖示</string>
+    <string name="browse_app_data_dir">瀏覽應用資料夾</string>
+    <string name="browse_app_data_dir_failed">沒有可用的檔案管理器瀏覽應用資料</string>
     <string name="default_">預設</string>
     <string name="clipboard_limit">剪貼簿歷史記錄上限</string>
     <string name="clipboard_compare_rules">剪貼簿去重規則</string>
@@ -64,9 +66,6 @@
     <string name="system_default">系統預設</string>
     <string name="key_swipe_travel">觸發滑動手勢的最短距離</string>
     <string name="trime_app_slogan">擊響中文之韻</string>
-    <string name="external_storage_permission_not_available">儲存許可權不可用</string>
-    <string name="external_storage_permission_granted">已授予儲存許可權</string>
-    <string name="external_storage_permission_denied">已拒絕授權儲存許可權，部署或讀取方案和配置功能或不可用</string>
     <string name="custom_sound_effect_name">自訂按鍵音效</string>
     <string name="setup__next">下一步</string>
     <string name="done">完成</string>
@@ -93,6 +92,13 @@
     <string name="quick_bar">快捷欄</string>
     <string name="copy_done">已複製</string>
     <string name="hook_shift_space">點擊空格時，忽略Shift的鎖定狀態</string>
+    <string name="test_input">測試輸入</string>
+    <string name="text">文字</string>
+    <string name="number">數字</string>
+    <string name="password">密碼</string>
+    <string name="type_text">輸入文字</string>
+    <string name="type_number">輸入數字</string>
+    <string name="type_password">輸入密碼</string>
     <string name="hook_shift_num">點擊0-9時，忽略Shift的鎖定狀態</string>
     <string name="hook_shift_symbol">點擊符號鍵時，忽略Shift的鎖定狀態</string>
     <string name="hook_shift_arrow">點選方向鍵時，保持Shift的鎖定狀態</string>
@@ -112,6 +118,12 @@
     <string name="profile">配置</string>
     <string name="virtual_keyboard">虛擬鍵盤</string>
     <string name="storage">儲存</string>
+    <string name="data_storage_mode">資料儲存模式</string>
+    <string name="sync_from_external_desc">每次部署或同步使用者資料前，從指定目錄匯入資料到內部儲存空間，並在同步使用者資料後匯出到該目錄。需要較多儲存空間。建議有經驗的使用者使用。</string>
+    <string name="use_app_specific_storage_desc">直接使用應用程式內部私有儲存空間，使用者需要使用支援的檔案管理器管理資料。解除安裝應用程式時，系統可能會詢問是否保留資料，請隨時做好備份。</string>
+    <string name="external_sync_select_folder_message">外部同步需要選擇資料資料夾。請選擇存放 Trime 設定檔的位置。</string>
+    <string name="external_sync_fallback_app_storage">資料夾選擇失敗或已取消。儲存模式將還原為使用應用程式專屬儲存空間。</string>
+    <string name="external_sync_missing_tree_fallback">外部資料資料夾缺失或無法存取，已切換為應用程式專屬儲存空間。如需繼續外部同步，請在設定中重新選擇資料夾。</string>
     <string name="maintenance">維護</string>
     <string name="loading">正在載入</string>
     <string name="success">成功</string>
@@ -135,8 +147,21 @@
     <string name="enable_landscape_mode">啟用橫屏模式</string>
     <string name="split_space_percent">自動分割鍵盤比例</string>
     <string name="setup__step_three">第 3 步</string>
-    <string name="setup__request_permission_hint">當前同文須要存儲權限以訪問配置檔案、使得使用者容易修改。</string>
-    <string name="setup__request_permission">请求存储权限</string>
+    <string name="setup__select_data_path_hint">選擇<b>同文輸入法</b>如何儲存 Rime 資料</string>
+    <string name="setup__select_data_path">選擇外部資料夾…</string>
+    <string name="setup__data_path_imported">資料夾匯入成功</string>
+    <string name="setup__data_path_import_failed">資料夾匯入失敗</string>
+    <string name="select_another_directory_to_sync">要選擇另一個資料夾進行同步嗎？</string>
+    <string name="select_another_directory">選擇</string>
+    <string name="reset_data_path_cancelled_message">未選擇資料夾。外部同步需要選擇資料夾。請重新選擇，或切換為使用應用程式專屬儲存空間。</string>
+    <string name="reset_data_path_pick_again">重新選擇資料夾</string>
+    <string name="data_path_not_selected">未選擇資料夾</string>
+    <string name="sync_user_data_success">使用者資料同步成功</string>
+    <string name="sync_user_data_success_external">使用者資料已同步到外部資料夾</string>
+    <string name="sync_user_data_failure">使用者資料同步失敗</string>
+    <string name="sync_partial_copy_failure">部分檔案複製失敗</string>
+    <string name="sync_partial_copy_failure_detail">%2$s 時有 %1$d 個檔案複製失敗。其餘檔案已複製，部署將繼續進行。</string>
+    <string name="data_path_permission_revoked">資料夾存取權限已被撤銷，請重新選擇資料夾。</string>
     <string name="grant_permission">授予權限</string>
     <string name="notification_permission_title">沒有通知權限</string>
     <string name="notification_permission_message">尚未賦予通知權限，因此無法在耗時較長的操作完成後給您發送通知。</string>
@@ -149,6 +174,7 @@
     <string name="schemata">方案</string>
     <string name="navbar_background">導航欄背景</string>
     <string name="no_theme_to_select">當前沒有主題可選擇。</string>
+    <string name="theme_unavailable_fallback">主題“%1$s”不可用，已切換為“%2$s”。</string>
     <string name="no_color_to_select">當前沒有配色方案可選擇。</string>
     <string name="no_effect_to_select">當前沒有按鍵音效可選擇。</string>
     <string name="setup_channel">設定精靈</string>
@@ -173,6 +199,8 @@
     <string name="deploy_failure">部署失敗</string>
     <string name="view_deploy_failure_log">部署失敗。點此檢視錯誤日誌。</string>
     <string name="hide_input_bar">隱藏輸入工具欄</string>
+    <string name="hide_key_symbol">隱藏按鍵符號</string>
+    <string name="hide_key_hint">隱藏按鍵註解</string>
     <string name="navbar_bkg_none">無背景</string>
     <string name="navbar_bkg_color_only">跟隨鍵盤背景色</string>
     <string name="navbar_bkg_full">鍵盤背景圖片</string>
@@ -184,7 +212,8 @@
     <string name="candidates_layout">候選詞列表佈局</string>
     <string name="automatic">自動</string>
     <string name="horizontal">橫向</string>
-    <string name="vertical">"縱向 "</string>
+    <string name="vertical">縱向</string>
+    <string name="vertical_reverse">縱向倒序</string>
     <string name="ascii_switch_tips">切換中英文模式時顯示提示</string>
     <string name="key_double_tap_timeout">按鍵連擊逾時</string>
     <string name="key_slide_step_size">按鍵滑動步長</string>
@@ -220,4 +249,5 @@
     <string name="share">分享</string>
     <string name="word_segment">分词</string>
     <string name="star_success">收藏成功</string>
+    <string name="ignore_system_gesture_insets">忽略系統手勢插邊</string>
 </resources>

@@ -21,7 +21,7 @@ jobs:
       fail-fast: false
       matrix:
         os:
-          - ubuntu-24.04
+          - ubuntu-26.04
           - macos-26
           - macos-26-intel
           - windows-2025
@@ -29,7 +29,7 @@ jobs:
       BUILD_ABI: armeabi-v7a,arm64-v8a,x86,x86_64
     steps:
       - name: Fetch source code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           submodules: recursive
           fetch-depth: 0
@@ -42,10 +42,10 @@ jobs:
           echo CI_BRANCH=${GITHUB_REF#refs/*/} >> $GITHUB_ENV
 
       - name: Setup Java
-        uses: actions/setup-java@v5
+        uses: actions/setup-java@v6
         with:
           distribution: "temurin"
-          java-version: 17
+          java-version: 25
           # will restore cache of dependencies and wrappers
           cache: 'gradle'
 
@@ -56,13 +56,18 @@ jobs:
         run: |
           sdkmanager --install "cmake;3.31.6"
 
+      - name: Check code style
+        if: ${{ startsWith(matrix.os, 'ubuntu') }}
+        run: |
+          make style-lint
+
       - name: Calculate JNI cache hash
         id: cache-hash
         run: |
             ./gradlew :app:calculateNativeCacheHash
 
       - name: Fetch JNI cache
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         id: jni-cache
         with:
           path: "app/prebuilt"
@@ -72,11 +77,6 @@ jobs:
         if: ${{ !steps.jni-cache.outputs.cache-hit }}
         run: |
           git submodule update --init --recursive
-
-      - name: Check code style
-        if: ${{ startsWith(matrix.os, 'ubuntu') }}
-        run: |
-          make style-lint
 
       - name: Build debug Trime
         run: |
@@ -88,7 +88,7 @@ jobs:
         run: cp -R app/build/intermediates/merged_native_libs/debug/mergeDebugNativeLibs/out/lib app/prebuilt
 
       - name: Upload APK artifact
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: trime-${{ matrix.os }}
           path: app/build/outputs/apk/debug/

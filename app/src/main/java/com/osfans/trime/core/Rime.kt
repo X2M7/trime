@@ -9,9 +9,12 @@ import com.osfans.trime.BuildConfig
 import com.osfans.trime.data.base.DataManager
 import com.osfans.trime.data.opencc.OpenCCDictManager
 import com.osfans.trime.data.prefs.AppPrefs
+import com.osfans.trime.data.sync.ExternalSyncFallback
+import com.osfans.trime.data.sync.RimeDataSync
 import com.osfans.trime.ime.core.InlinePreeditMode
 import com.osfans.trime.util.appContext
-import com.osfans.trime.util.isStorageAvailable
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.delay
@@ -19,7 +22,10 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeout
 import timber.log.Timber
+import java.util.concurrent.CopyOnWriteArrayList
+import kotlin.time.Duration.Companion.minutes
 
 /**
  * Rime JNI and instance methods
@@ -57,7 +63,7 @@ class Rime :
             object : RimeDispatcher.RimeController {
                 override fun nativeStartup() {
                     startRime(BuildConfig.DEBUG)
-                    lifecycleRegistry.emitState(RimeLifecycle.State.READY)
+                    lifecycleRegistry.emitEvent(RimeLifecycle.Event.ON_READY)
                 }
 
                 override fun nativeFinalize() {
@@ -68,8 +74,11 @@ class Rime :
 
     private val inlinePreeditMode by AppPrefs.defaultInstance().general.inlinePreeditMode
     private val showAsciiSwitchTips by AppPrefs.defaultInstance().general.asciiSwitchTips
-    private var lastAsciiTipsText = ""
+
     private var asciiSwitchTipsJob: Job? = null
+    private var isNullInputType = true
+    private var lastAsciiTipsText = ""
+    private var pagingMode = false
 
     init {
         if (lifecycle.currentState != RimeLifecycle.State.STOPPED) {
@@ -85,9 +94,51 @@ class Rime :
         getCurrentRimeSchema() == ".default" // 無方案
     }
 
-    override suspend fun deploy() = withRimeContext {
-        exitRime()
-        startRime(true)
+    override suspend fun deploy(skipImport: Boolean) = RimeMaintenanceMutex.withLock {
+        if (RimeDataSync.usesExternalSync()) {
+            if (!RimeDataSync.hasExternalAccess(appContext)) {
+                ExternalSyncFallback.fallbackToAppStorage(appContext)
+            }
+        }
+        if (RimeDataSync.usesExternalSync() && !skipImport) {
+            val importResult =
+                RimeDataSync.importToLocal(appContext, keepNotificationUntilDeploySuccess = true)
+            if (importResult.isFailure) {
+                ExternalSyncFallback.fallbackToAppStorage(appContext, importResult.exceptionOrNull())
+            } else {
+                Timber.i("Import finished: ${importResult.getOrNull()}")
+            }
+        }
+        val deployFinished = CompletableDeferred<Boolean>()
+        val deployHandler: (RimeMessage<*>) -> Unit = { message ->
+            if (message is RimeMessage.DeployMessage) {
+                when (message.data) {
+                    RimeMessage.DeployMessage.State.Start -> Unit
+                    RimeMessage.DeployMessage.State.Success -> {
+                        deployFinished.complete(true)
+                    }
+                    RimeMessage.DeployMessage.State.Failure -> {
+                        deployFinished.complete(false)
+                    }
+                }
+            }
+        }
+        registerRimeMessageHandler(deployHandler)
+        try {
+            withRimeContext {
+                exitRime()
+                startRime(true)
+            }
+            val success =
+                withContext(Dispatchers.IO) {
+                    withTimeout(5.minutes) {
+                        deployFinished.await()
+                    }
+                }
+            check(success) { "Rime deploy failed" }
+        } finally {
+            unregisterRimeMessageHandler(deployHandler)
+        }
     }
 
     override suspend fun updateConfig() = withRimeContext {
@@ -95,8 +146,53 @@ class Rime :
         startRime(false)
     }
 
-    override suspend fun syncUserData(): Boolean = withRimeContext {
-        syncRimeUserData()
+    override suspend fun syncUserData(): Boolean = RimeMaintenanceMutex.withLock {
+        // Keep the local user data dir a fresh copy of the external tree before
+        // syncing. The first sync also migrates the user databases (imported
+        // once, never synced afterwards, see UserDbMigration); every subsequent
+        // sync imports incrementally (SyncIndex) before the rime maintenance
+        // runs. The import progress notification is suppressed so syncing does
+        // not show a deploy notification.
+        if (RimeDataSync.usesExternalSync() && RimeDataSync.hasExternalAccess(appContext)) {
+            RimeDataSync.importToLocal(appContext, showProgress = false)
+                .onFailure { Timber.e(it, "Failed to import before user-data sync") }
+        }
+        // RimeSyncUserData schedules maintenance asynchronously and returns once the
+        // worker is started. Wait for DeployMessage so callers (e.g. export) only
+        // proceed after sync/<installation_id>/ has been written.
+        val syncFinished = CompletableDeferred<Boolean>()
+        val syncHandler: (RimeMessage<*>) -> Unit = { message ->
+            if (message is RimeMessage.DeployMessage) {
+                when (message.data) {
+                    RimeMessage.DeployMessage.State.Success -> syncFinished.complete(true)
+                    RimeMessage.DeployMessage.State.Failure -> syncFinished.complete(false)
+                    else -> {}
+                }
+            }
+        }
+        registerRimeMessageHandler(syncHandler)
+        val syncOk =
+            try {
+                val started = withRimeContext { syncRimeUserData() }
+                if (!started) {
+                    false
+                } else {
+                    withContext(Dispatchers.IO) {
+                        withTimeout(5.minutes) {
+                            syncFinished.await()
+                        }
+                    }
+                }
+            } finally {
+                unregisterRimeMessageHandler(syncHandler)
+            }
+        if (!syncOk) return@withLock false
+        if (!RimeDataSync.usesExternalSync()) return@withLock true
+        if (!RimeDataSync.hasExternalAccess(appContext)) {
+            Timber.w("Export skipped: no data path selected")
+            return@withLock false
+        }
+        RimeDataSync.exportToExternal(appContext).isSuccess
     }
 
     override suspend fun processKey(
@@ -121,10 +217,10 @@ class Rime :
             val commit = getRimeCommit()
             val input = getRimeRawInput()
             if (!commit.text.isNullOrEmpty() || input.isNotEmpty()) {
-                emitResponse { commit }
+                emitResponse(commit)
                 true
             } else {
-                emitResponse { CommitProto(sequence) }
+                emitResponse(CommitProto(sequence))
                 false
             }
         } else {
@@ -172,6 +268,10 @@ class Rime :
         emitResponse()
     }
 
+    override suspend fun getRawInput(): String = withRimeContext {
+        getRimeRawInput()
+    }
+
     override suspend fun setRuntimeOption(
         option: String,
         value: Boolean,
@@ -183,11 +283,20 @@ class Rime :
         getRimeOption(option)
     }
 
+    override suspend fun setNullInputType(value: Boolean) = withRimeContext {
+        isNullInputType = value
+    }
+
     override suspend fun getCandidates(
         startIndex: Int,
         limit: Int,
-    ): Array<CandidateItem> = withRimeContext {
+    ): Array<CandidateProto> = withRimeContext {
         getRimeCandidates(startIndex, limit)
+    }
+
+    override suspend fun setCandidatePagingMode(enabled: Boolean) = withRimeContext {
+        pagingMode = enabled
+        emitResponse()
     }
 
     private fun startRime(fullCheck: Boolean) {
@@ -206,7 +315,7 @@ class Rime :
     }
 
     private fun processKeyInner(value: Int, modifiers: Int, isVirtual: Boolean): Boolean {
-        lastAsciiTipsText = asciiTipsText
+        lastAsciiTipsText = asciiTipsText(getRimeStatus())
         val handled = processRimeKey(value, modifiers)
         emitResponse()
         if (!handled) {
@@ -218,40 +327,29 @@ class Rime :
         return handled
     }
 
-    private val asciiTipsText: String
-        get() {
-            val status = getRimeStatus()
-            return if (status.isAsciiMode) {
-                "En"
-            } else if (status.schemaName.isNotEmpty() &&
-                !status.schemaName.startsWith('.')
-            ) {
-                status.schemaName.take(2)
-            } else {
-                ""
-            }
-        }
+    private fun asciiTipsText(status: StatusProto): String = when {
+        status.isAsciiMode -> "En"
+        status.schemaName.isNotEmpty() && !status.schemaName.startsWith('.') ->
+            status.schemaName.take(2)
+        else -> ""
+    }
 
-    private fun emitResponse(
-        commit: (() -> CommitProto) = { getRimeCommit() },
-    ) {
-        handleRimeMessage(4, arrayOf(commit.invoke()))
-        val context = getRimeContext()
-        handlePreedit(context.composition)
-        if (context.composition.length <= 0 && lastAsciiTipsText != asciiTipsText) {
-            showAsciiSwitchTips()
+    private fun emitResponse(commit: CommitProto? = null) {
+        val response = getRimeResponse(pagingMode)
+        handleRimeMessage(4, arrayOf(commit ?: response.commit))
+        handlePreedit(response.composition)
+        if (response.composition.length <= 0 && lastAsciiTipsText != asciiTipsText(response.status)) {
+            showAsciiSwitchTips(response.status)
         }
-        if (getRimeOption("paging_mode")) {
-            handleRimeMessage(7, arrayOf(context.menu))
-        } else {
-            val bulk = getRimeBulkCandidates()
-            handleRimeMessage(9, bulk)
+        when (val candidates = response.candidates) {
+            is Candidates.Paged -> handleRimeMessage(7, arrayOf(candidates))
+            is Candidates.Bulk -> handleRimeMessage(9, arrayOf(candidates))
         }
-        handleRimeMessage(8, arrayOf(getRimeStatus()))
+        handleRimeMessage(8, arrayOf(response.status))
     }
 
     private fun handlePreedit(composition: CompositionProto) {
-        val mode = if (getRimeOption("no_inline_preedit")) {
+        val mode = if (isNullInputType) {
             InlinePreeditMode.DISABLE
         } else {
             inlinePreeditMode
@@ -282,13 +380,7 @@ class Rime :
                 statusCached = status
                 updateSchemaCached(status)
                 if (it.data.option == "ascii_mode") {
-                    if (it.data.value && status.isComposing) {
-                        getRimeRawInput().takeIf { it.isNotEmpty() }?.let {
-                            handleRimeMessage(4, arrayOf(CommitProto(it)))
-                        }
-                        lifecycleScope.launch { clearComposition() }
-                    }
-                    showAsciiSwitchTips()
+                    showAsciiSwitchTips(status)
                 }
             }
             is RimeMessage.DeployMessage -> {
@@ -300,12 +392,12 @@ class Rime :
                 val composition = it.data
                 compositionCached = composition
             }
-            is RimeMessage.CandidateMenuMessage -> {
-                val menu = it.data
-                paging = menu.pageNumber != 0
-                hasMenu = menu.candidates.isNotEmpty()
+            is RimeMessage.PagedCandidatesMessage -> {
+                val paged = it.data
+                paging = paged.hasPrevPage
+                hasMenu = paged.candidates.isNotEmpty()
             }
-            is RimeMessage.CandidateListMessage -> {
+            is RimeMessage.BulkCandidatesMessage -> {
                 hasMenu = it.data.candidates.isNotEmpty()
             }
             is RimeMessage.StatusMessage -> {
@@ -330,9 +422,9 @@ class Rime :
         }
     }
 
-    private fun showAsciiSwitchTips() {
+    private fun showAsciiSwitchTips(status: StatusProto) {
         if (!showAsciiSwitchTips) return
-        val tipsText = asciiTipsText
+        val tipsText = asciiTipsText(status)
         if (tipsText.isEmpty()) return
 
         lastAsciiTipsText = tipsText
@@ -349,7 +441,7 @@ class Rime :
     }
 
     fun startup() {
-        if (!appContext.isStorageAvailable()) {
+        if (!RimeDataSync.isStorageAvailable(appContext)) {
             Timber.w("Skip starting rime: storage not available!")
             return
         }
@@ -358,7 +450,7 @@ class Rime :
             return
         }
         registerRimeMessageHandler(::handleRimeMessage)
-        lifecycleRegistry.emitState(RimeLifecycle.State.STARTING)
+        lifecycleRegistry.emitEvent(RimeLifecycle.Event.ON_START)
         dispatcher.start()
     }
 
@@ -367,14 +459,14 @@ class Rime :
             Timber.w("Skip stopping rime: not at ready state!")
             return
         }
-        lifecycleRegistry.emitState(RimeLifecycle.State.STOPPING)
+        lifecycleRegistry.emitEvent(RimeLifecycle.Event.ON_STOP)
         Timber.i("Rime finalize()")
         dispatcher.stop().let {
             if (it.isNotEmpty()) {
                 Timber.w("${it.size} job(s) didn't get a chance to run!")
             }
         }
-        lifecycleRegistry.emitState(RimeLifecycle.State.STOPPED)
+        lifecycleRegistry.emitEvent(RimeLifecycle.Event.ON_STOPPED)
         unregisterRimeMessageHandler(::handleRimeMessage)
     }
 
@@ -385,7 +477,7 @@ class Rime :
                 onBufferOverflow = BufferOverflow.DROP_OLDEST,
             )
 
-        private val rimeMessageHandlers = ArrayList<(RimeMessage<*>) -> Unit>()
+        private val rimeMessageHandlers = CopyOnWriteArrayList<(RimeMessage<*>) -> Unit>()
 
         init {
             System.loadLibrary("rime_jni")
@@ -492,10 +584,10 @@ class Rime :
         external fun getRimeCandidates(
             startIndex: Int,
             limit: Int,
-        ): Array<CandidateItem>
+        ): Array<CandidateProto>
 
         @JvmStatic
-        external fun getRimeBulkCandidates(): Array<Any>
+        external fun getRimeResponse(pagingMode: Boolean): RimeResponse
 
         @JvmStatic
         fun handleRimeMessage(

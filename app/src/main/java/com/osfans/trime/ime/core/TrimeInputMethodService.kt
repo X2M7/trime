@@ -32,7 +32,6 @@ import android.widget.FrameLayout
 import androidx.annotation.Keep
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updateLayoutParams
 import androidx.lifecycle.lifecycleScope
 import com.osfans.trime.core.KeyModifiers
@@ -81,11 +80,15 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
     private var inputView: InputView? = null
     private var candidatesView: CandidatesView? = null
     private val navBarManager = NavigationBarManager()
-    private val inputDeviceManager =
-        InputDeviceManager onChange@{
-            val w = window.window ?: return@onChange
-            navBarManager.evaluate(w, useVirtualKeyboard = it)
+    private val inputDeviceManager = InputDeviceManager { useVirtualKeyboard, useCandidatesView ->
+        postRimeJob {
+            setCandidatePagingMode(useCandidatesView)
         }
+        currentInputConnection?.monitorCursorAnchor(useCandidatesView)
+        window.window?.let {
+            navBarManager.evaluate(it, useVirtualKeyboard)
+        }
+    }
     private val rimeIntentReceiver = RimeIntentReceiver()
 
     private var lastCommittedText: String = ""
@@ -94,8 +97,13 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
 
     private var cursorUpdateIndex = 0
 
-    private val recreateInputViewPrefs: Array<PreferenceDelegate<*>> =
-        arrayOf(prefs.keyboard.hideInputBar)
+    private val recreateInputViewPrefs: Array<PreferenceDelegate<*>> = arrayOf(
+        prefs.keyboard.expandKeypressArea,
+        prefs.keyboard.hideKeySymbol,
+        prefs.keyboard.hideKeyHint,
+        prefs.keyboard.hideInputBar,
+        prefs.advanced.ignoreSystemGestureInsets,
+    )
 
     @Keep
     private val recreateInputViewListener =
@@ -178,9 +186,14 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
             it.registerOnChangeListener(recreateInputViewListener)
         }
         prefs.candidates.registerOnChangeListener(recreateCandidatesViewListener)
-        ThemeManager.init(resources.configuration)
-        ThemeManager.addOnChangedListener(onThemeChangeListener)
-        ColorManager.addOnChangedListener(onColorChangeListener)
+        // ensure theme and color managers are initialized after rime is ready
+        lifecycleScope.launch {
+            rime.runOnReady {
+                ThemeManager.init(resources.configuration)
+                ThemeManager.addOnChangedListener(onThemeChangeListener)
+                ColorManager.addOnChangedListener(onColorChangeListener)
+            }
+        }
         InputFeedbackManager.init(this)
         registerReceiver()
         super.onCreate()
@@ -253,7 +266,9 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
                 }
             is RimeMessage.DeployMessage -> {
                 if (it.data == RimeMessage.DeployMessage.State.Success) {
-                    ThemeManager.selectTheme(ThemeManager.prefs.selectedTheme.getValue())
+                    // The deployment may have refreshed the current theme's artifact.
+                    val themeId = ThemeManager.prefs.selectedTheme.getValue()
+                    lifecycleScope.launch { ThemeManager.selectTheme(themeId) }
                 }
             }
             else -> {}
@@ -264,7 +279,6 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
         val newInputView = InputView(this, rime, theme)
         setInputView(newInputView)
         inputDeviceManager.setInputView(newInputView)
-        navBarManager.setupInputView(newInputView)
         inputView = newInputView
         return newInputView
     }
@@ -274,13 +288,17 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
         contentView.removeView(candidatesView)
         contentView.addView(newCandidatesView)
         inputDeviceManager.setCandidatesView(newCandidatesView)
-        navBarManager.setupInputView(newCandidatesView)
         candidatesView = newCandidatesView
+        if (decorLocationUpdated) {
+            candidatesView?.updateCursorAnchor(anchorPosition, contentSize)
+        } else {
+            candidatesView?.updateCursorAnchor(contentSize)
+        }
         return newCandidatesView
     }
 
     private fun replaceInputViews(theme: Theme) {
-        navBarManager.evaluate(window.window!!)
+        navBarManager.evaluate(window.window!!, inputDeviceManager.useVirtualKeyboard)
         replaceInputView(theme)
         replaceCandidateView(theme)
         inputView?.updateEnterKeyLabel(currentInputEditorInfo)
@@ -338,12 +356,6 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
         lastKnownConfig.setTo(newConfig)
     }
 
-    override fun onWindowShown() {
-        super.onWindowShown()
-        // navbar foreground/background color would reset every time window shows
-        navBarManager.update(window.window!!)
-    }
-
     private val contentSize = floatArrayOf(0f, 0f)
     private val decorLocation = floatArrayOf(0f, 0f)
     private val decorLocationInt = intArrayOf(0, 0)
@@ -352,7 +364,7 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
     private fun updateDecorLocation() {
         contentSize[0] = contentView.width.toFloat()
         contentSize[1] =
-            if (inputDeviceManager.isVirtualKeyboard) {
+            if (inputDeviceManager.useVirtualKeyboard) {
                 inputViewLocation[1].toFloat()
             } else {
                 contentView.height.toFloat()
@@ -368,11 +380,6 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
     }
 
     private val anchorPosition = RectF()
-
-    private fun workaroundNullCursorAnchorInfo() {
-        anchorPosition.set(0f, contentSize[1], 0f, contentSize[1])
-        candidatesView?.updateCursorAnchor(anchorPosition, contentSize)
-    }
 
     override fun onUpdateCursorAnchorInfo(info: CursorAnchorInfo) {
         val bounds = info.getCharacterBounds(0)
@@ -397,7 +404,7 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
             updateDecorLocation()
         }
         if (anchorPosition.any(Float::isNaN)) {
-            workaroundNullCursorAnchorInfo()
+            candidatesView?.updateCursorAnchor(contentSize)
             return
         }
         info.matrix.mapRect(anchorPosition)
@@ -456,7 +463,7 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
     private val inputViewLocation = intArrayOf(0, 0)
 
     override fun onComputeInsets(outInsets: Insets) {
-        if (inputDeviceManager.isVirtualKeyboard) {
+        if (inputDeviceManager.useVirtualKeyboard) {
             inputView?.keyboardView?.getLocationInWindow(inputViewLocation)
             outInsets.apply {
                 contentTopInsets = inputViewLocation[1]
@@ -518,7 +525,7 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
                 // when input restarts in the same editor, clear previous composition
                 clearComposition()
             }
-            setRuntimeOption("no_inline_preedit", isNullType)
+            setNullInputType(isNullType)
         }
     }
 
@@ -526,13 +533,13 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
 
     @RequiresApi(Build.VERSION_CODES.R)
     override fun onCreateInlineSuggestionsRequest(uiExtras: Bundle): InlineSuggestionsRequest? {
-        if (!inlineSuggestions || !inputDeviceManager.isVirtualKeyboard) return null
+        if (!inlineSuggestions || !inputDeviceManager.useVirtualKeyboard) return null
         return InlineSuggestions.createRequest(this)
     }
 
     @SuppressLint("NewApi")
     override fun onInlineSuggestionsResponse(response: InlineSuggestionsResponse): Boolean {
-        if (!inputDeviceManager.isVirtualKeyboard) return false
+        if (!inputDeviceManager.useVirtualKeyboard) return false
         return inputView?.handleInlineSuggestions(response) == true
     }
 
@@ -555,7 +562,9 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
                 if (!decorLocationUpdated) {
                     updateDecorLocation()
                 }
-                workaroundNullCursorAnchorInfo()
+                // anchor CandidatesView to bottom-left corner in case InputConnection does not
+                // support monitoring CursorAnchorInfo
+                candidatesView?.updateCursorAnchor(contentSize)
             }
         }
     }
@@ -563,6 +572,8 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
     override fun onFinishInputView(finishingInput: Boolean) {
         Timber.d("onFinishInputView: finishingInput=$finishingInput")
         decorLocationUpdated = false
+        inputView?.dismissCandidateActionMenu()
+        candidatesView?.dismissCandidateActionMenu()
         inputDeviceManager.onFinishInputView()
         currentInputConnection?.apply {
             finishComposingText()

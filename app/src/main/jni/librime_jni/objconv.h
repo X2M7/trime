@@ -41,24 +41,6 @@ inline std::vector<std::string> stringArrayToStringVector(JNIEnv* env,
   return std::move(result);
 }
 
-inline jobject rimeCandidateItemToJObject(JNIEnv* env,
-                                          const CandidateItem& item) {
-  return env->NewObject(GlobalRef->CandidateItem, GlobalRef->CandidateItemInit,
-                        *JString(env, item.text), *JString(env, item.comment));
-}
-
-inline jobjectArray rimeCandidateListToJObjectArray(
-    JNIEnv* env, const std::vector<CandidateItem>& list) {
-  jobjectArray array = env->NewObjectArray(static_cast<int>(list.size()),
-                                           GlobalRef->CandidateItem, nullptr);
-  int i = 0;
-  for (const auto& item : list) {
-    auto jItem = JRef(env, rimeCandidateItemToJObject(env, item));
-    env->SetObjectArrayElement(array, i++, jItem);
-  }
-  return array;
-}
-
 inline jobjectArray stringVectorToJStringArray(
     JNIEnv* env, const std::vector<std::string>& strings) {
   jobjectArray array = env->NewObjectArray(static_cast<int>(strings.size()),
@@ -79,9 +61,20 @@ inline jobject rimeCandidateToJObject(JNIEnv* env,
                                       const CandidateProto& candidate) {
   return env->NewObject(
       GlobalRef->CandidateProto, GlobalRef->CandidateProtoInit,
-      *JString(env, candidate.text),
-      candidate.comment ? *JString(env, *candidate.comment) : nullptr,
+      *JString(env, candidate.text), *JString(env, candidate.comment),
       *JString(env, candidate.label));
+}
+
+inline jobjectArray rimeCandidateListToJObjectArray(
+    JNIEnv* env, const std::vector<CandidateProto>& list) {
+  jobjectArray array = env->NewObjectArray(static_cast<int>(list.size()),
+                                           GlobalRef->CandidateProto, nullptr);
+  int i = 0;
+  for (const auto& candidate : list) {
+    auto obj = JRef(env, rimeCandidateToJObject(env, candidate));
+    env->SetObjectArrayElement(array, i++, obj);
+  }
+  return array;
 }
 
 inline jobject rimeCompositionToJObject(JNIEnv* env,
@@ -96,7 +89,8 @@ inline jobject rimeCompositionToJObject(JNIEnv* env,
           : nullptr);
 }
 
-inline jobject rimeMenuToJObject(JNIEnv* env, const MenuProto& menu) {
+inline jobject rimeCandidatesPagedToJObject(JNIEnv* env, const MenuProto& menu,
+                                            bool is_horizontal_layout) {
   int numCandidates = static_cast<int>(menu.candidates.size());
   auto jCandidates = JRef<jobjectArray>(
       env,
@@ -106,17 +100,15 @@ inline jobject rimeMenuToJObject(JNIEnv* env, const MenuProto& menu) {
         JRef(env, rimeCandidateToJObject(env, menu.candidates[i]));
     env->SetObjectArrayElement(jCandidates, i, jCandidate);
   }
-  return env->NewObject(GlobalRef->MenuProto, GlobalRef->MenuProtoInit,
-                        menu.pageSize, menu.pageNumber, menu.isLastPage,
-                        menu.highlightedCandidateIndex, *jCandidates,
-                        *JString(env, menu.selectKeys),
-                        stringVectorToJStringArray(env, menu.selectLabels));
+  return env->NewObject(GlobalRef->CandidatesPaged,
+                        GlobalRef->CandidatesPagedInit, menu.pageNumber != 0,
+                        !menu.isLastPage, is_horizontal_layout,
+                        menu.highlightedCandidateIndex, *jCandidates);
 }
 
 inline jobject rimeContextToJObject(JNIEnv* env, const ContextProto& context) {
   return env->NewObject(GlobalRef->ContextProto, GlobalRef->ContextProtoInit,
                         rimeCompositionToJObject(env, context.composition),
-                        rimeMenuToJObject(env, context.menu),
                         *JString(env, context.input), context.caretPos);
 }
 
@@ -127,4 +119,11 @@ inline jobject rimeStatusToJObject(JNIEnv* env, const StatusProto& status) {
                         status.isComposing, status.isAsciiMode,
                         status.isFullShape, status.isSimplified,
                         status.isTraditional, status.isAsciiPunct);
+}
+
+inline jobject rimeResponseToJObject(JNIEnv* env, jobject commit,
+                                     jobject composition, jobject candidates,
+                                     jobject status) {
+  return env->NewObject(GlobalRef->RimeResponse, GlobalRef->RimeResponseInit,
+                        commit, composition, candidates, status);
 }

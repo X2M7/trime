@@ -9,7 +9,7 @@
 
 #include <string>
 
-static inline void throwJavaException(JNIEnv *env, const char *msg) {
+static inline void throwJavaException(JNIEnv* env, const char* msg) {
   jclass c = env->FindClass("java/lang/Exception");
   env->ThrowNew(c, msg);
   env->DeleteLocalRef(c);
@@ -17,31 +17,31 @@ static inline void throwJavaException(JNIEnv *env, const char *msg) {
 
 class CString {
  private:
-  JNIEnv *env_;
+  JNIEnv* env_;
   jstring str_;
-  const char *chr_;
+  const char* chr_;
 
  public:
-  CString(JNIEnv *env, jstring str)
+  CString(JNIEnv* env, jstring str)
       : env_(env), str_(str), chr_(env->GetStringUTFChars(str, nullptr)) {}
 
   ~CString() { env_->ReleaseStringUTFChars(str_, chr_); }
 
   operator std::string() { return chr_; }
 
-  operator const char *() { return chr_; }
+  operator const char*() { return chr_; }
 
-  const char *operator*() { return chr_; }
+  const char* operator*() { return chr_; }
 };
 
 template <typename T = jobject>
 class JRef {
  private:
-  JNIEnv *env_;
+  JNIEnv* env_;
   T ref_;
 
  public:
-  JRef(JNIEnv *env, jobject ref) : env_(env), ref_(reinterpret_cast<T>(ref)) {}
+  JRef(JNIEnv* env, jobject ref) : env_(env), ref_(reinterpret_cast<T>(ref)) {}
 
   ~JRef() { env_->DeleteLocalRef(ref_); }
 
@@ -52,14 +52,14 @@ class JRef {
 
 class JString {
  private:
-  JNIEnv *env_;
+  JNIEnv* env_;
   jstring jstring_;
 
  public:
-  JString(JNIEnv *env, const char *chars)
+  JString(JNIEnv* env, const char* chars)
       : env_(env), jstring_(env->NewStringUTF(chars)) {}
 
-  JString(JNIEnv *env, const std::string &string)
+  JString(JNIEnv* env, const std::string& string)
       : JString(env, string.c_str()) {}
 
   ~JString() { env_->DeleteLocalRef(jstring_); }
@@ -71,24 +71,24 @@ class JString {
 
 class JEnv {
  private:
-  JNIEnv *env = nullptr;
+  JNIEnv* env = nullptr;
 
  public:
-  explicit JEnv(JavaVM *jvm) {
-    if (jvm->GetEnv(reinterpret_cast<void **>(&env), JNI_VERSION_1_6) ==
+  explicit JEnv(JavaVM* jvm) {
+    if (jvm->GetEnv(reinterpret_cast<void**>(&env), JNI_VERSION_1_6) ==
         JNI_EDETACHED) {
       jvm->AttachCurrentThread(&env, nullptr);
     }
   }
 
-  operator JNIEnv *() { return env; }
+  operator JNIEnv*() { return env; }
 
-  JNIEnv *operator->() { return env; }
+  JNIEnv* operator->() { return env; }
 };
 
 class GlobalRefSingleton {
  public:
-  JavaVM *jvm;
+  JavaVM* jvm;
 
   jclass Object;
 
@@ -103,9 +103,6 @@ class GlobalRefSingleton {
   jclass Rime;
   jmethodID HandleRimeMessage;
 
-  jclass CandidateItem;
-  jmethodID CandidateItemInit;
-
   jclass CandidateProto;
   jmethodID CandidateProtoInit;
 
@@ -118,11 +115,17 @@ class GlobalRefSingleton {
   jclass CompositionProto;
   jmethodID CompositionProtoInit;
 
-  jclass MenuProto;
-  jmethodID MenuProtoInit;
-
   jclass StatusProto;
   jmethodID StatusProtoInit;
+
+  jclass RimeResponse;
+  jmethodID RimeResponseInit;
+
+  jclass CandidatesPaged;
+  jmethodID CandidatesPagedInit;
+
+  jclass CandidatesBulk;
+  jmethodID CandidatesBulkInit;
 
   jclass SchemaListItem;
   jmethodID SchemaListItemInit;
@@ -130,8 +133,8 @@ class GlobalRefSingleton {
   jclass KeyEvent;
   jmethodID KeyEventInit;
 
-  explicit GlobalRefSingleton(JavaVM *jvm_) : jvm(jvm_) {
-    JNIEnv *env;
+  explicit GlobalRefSingleton(JavaVM* jvm_) : jvm(jvm_) {
+    JNIEnv* env;
     jvm->AttachCurrentThread(&env, nullptr);
 
     Object = reinterpret_cast<jclass>(
@@ -153,11 +156,6 @@ class GlobalRefSingleton {
     HandleRimeMessage = env->GetStaticMethodID(Rime, "handleRimeMessage",
                                                "(I[Ljava/lang/Object;)V");
 
-    CandidateItem = reinterpret_cast<jclass>(env->NewGlobalRef(
-        env->FindClass("com/osfans/trime/core/CandidateItem")));
-    CandidateItemInit = env->GetMethodID(
-        CandidateItem, "<init>", "(Ljava/lang/String;Ljava/lang/String;)V");
-
     CandidateProto = reinterpret_cast<jclass>(env->NewGlobalRef(
         env->FindClass("com/osfans/trime/core/CandidateProto")));
     CandidateProtoInit = env->GetMethodID(
@@ -173,9 +171,8 @@ class GlobalRefSingleton {
         env->FindClass("com/osfans/trime/core/ContextProto")));
     ContextProtoInit =
         env->GetMethodID(ContextProto, "<init>",
-                         "(Lcom/osfans/trime/core/CompositionProto;Lcom/osfans/"
-                         "trime/core/"
-                         "MenuProto;Ljava/lang/String;I)V");
+                         "(Lcom/osfans/trime/core/CompositionProto;Ljava/lang/"
+                         "String;I)V");
 
     CompositionProto = reinterpret_cast<jclass>(env->NewGlobalRef(
         env->FindClass("com/osfans/trime/core/CompositionProto")));
@@ -183,18 +180,31 @@ class GlobalRefSingleton {
         env->GetMethodID(CompositionProto, "<init>",
                          "(IIIILjava/lang/String;Ljava/lang/String;)V");
 
-    MenuProto = reinterpret_cast<jclass>(
-        env->NewGlobalRef(env->FindClass("com/osfans/trime/core/MenuProto")));
-    MenuProtoInit = env->GetMethodID(
-        MenuProto, "<init>",
-        "(IIZI[Lcom/osfans/trime/core/CandidateProto;Ljava/lang/"
-        "String;[Ljava/lang/String;)V");
-
     StatusProto = reinterpret_cast<jclass>(
         env->NewGlobalRef(env->FindClass("com/osfans/trime/core/StatusProto")));
     StatusProtoInit =
         env->GetMethodID(StatusProto, "<init>",
                          "(Ljava/lang/String;Ljava/lang/String;ZZZZZZZ)V");
+
+    RimeResponse = reinterpret_cast<jclass>(env->NewGlobalRef(
+        env->FindClass("com/osfans/trime/core/RimeResponse")));
+    RimeResponseInit = env->GetMethodID(
+        RimeResponse, "<init>",
+        "(Lcom/osfans/trime/core/CommitProto;Lcom/osfans/trime/core/"
+        "CompositionProto;Lcom/osfans/trime/core/Candidates;"
+        "Lcom/osfans/trime/core/StatusProto;)V");
+
+    CandidatesPaged = reinterpret_cast<jclass>(env->NewGlobalRef(
+        env->FindClass("com/osfans/trime/core/Candidates$Paged")));
+    CandidatesPagedInit =
+        env->GetMethodID(CandidatesPaged, "<init>",
+                         "(ZZZI[Lcom/osfans/trime/core/CandidateProto;)V");
+
+    CandidatesBulk = reinterpret_cast<jclass>(env->NewGlobalRef(
+        env->FindClass("com/osfans/trime/core/Candidates$Bulk")));
+    CandidatesBulkInit =
+        env->GetMethodID(CandidatesBulk, "<init>",
+                         "(II[Lcom/osfans/trime/core/CandidateProto;)V");
 
     SchemaListItem = reinterpret_cast<jclass>(
         env->NewGlobalRef(env->FindClass("com/osfans/trime/core/SchemaItem")));
@@ -210,4 +220,4 @@ class GlobalRefSingleton {
   [[nodiscard]] JEnv AttachEnv() const { return JEnv(jvm); }
 };
 
-extern GlobalRefSingleton *GlobalRef;
+extern GlobalRefSingleton* GlobalRef;

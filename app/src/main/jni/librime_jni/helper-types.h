@@ -28,18 +28,6 @@ class SchemaItem {
   }
 };
 
-class CandidateItem {
- public:
-  std::string text;
-  std::string comment;
-
-  explicit CandidateItem(const RimeCandidate& candidate)
-      : text(candidate.text),
-        comment(candidate.comment ? candidate.comment : "") {}
-};
-
-using CandidateList = std::vector<CandidateItem>;
-
 class CommitProto {
  public:
   std::optional<std::string> text;
@@ -52,8 +40,12 @@ class CommitProto {
 class CandidateProto {
  public:
   std::string text;
-  std::optional<std::string> comment;
+  std::string comment;
   std::string label;
+
+  CandidateProto() = default;
+  explicit CandidateProto(const RimeCandidate& c)
+      : text(c.text), comment(c.comment ? c.comment : "") {}
 };
 
 class CompositionProto {
@@ -90,8 +82,8 @@ class ContextProto {
 
   ContextProto() = default;
 
-  ContextProto(const RimeContext* context, std::string_view input,
-               int caretPos) {
+  ContextProto(const RimeContext* context, std::string_view input, int caretPos,
+               bool includeMenu = true) {
     this->input = input;
     this->caretPos = caretPos;
     if (context->composition.length > 0) {
@@ -106,7 +98,7 @@ class ContextProto {
         composition.commitTextPreview = context->commit_text_preview;
       }
     }
-    if (context->menu.num_candidates > 0) {
+    if (includeMenu && context->menu.num_candidates > 0) {
       auto& m = context->menu;
       menu.pageSize = m.page_size;
       menu.pageNumber = m.page_no;

@@ -23,11 +23,13 @@ class Key(
     var index: Int = -1
 
     val keyActions: Map<KeyBehavior, KeyAction> =
-        buildMap {
-            selfConfig?.behaviors?.forEach {
-                put(it.key, KeyActionManager.getAction(it.value))
+        selfConfig?.behaviors?.mapNotNull { (key, value) ->
+            if (value != null) {
+                key to KeyActionManager.getAction(value)
+            } else {
+                null
             }
-        }
+        }?.toMap() ?: mapOf()
     var edgeFlags = 0
     private val sendBindings: Boolean
 
@@ -94,21 +96,28 @@ class Key(
     } ?: ColorManager.getDrawable(fallback)
 
     private val keyBackground by lazy { getDrawable({ keyBackColor }, "key_back_color") }
-    private val offKeyBackground by lazy { ColorManager.getDrawable("off_key_back_color") }
-    private val onKeyBackground by lazy { ColorManager.getDrawable("on_key_back_color") }
+    private val offKeyBackground by lazy { ColorManager.getDrawable("off_key_back_color") ?: keyBackground }
+    private val onKeyBackground by lazy { ColorManager.getDrawable("on_key_back_color") ?: keyBackground }
+    private val hlKeyBackground by lazy { getDrawable({ hlKeyBackColor }, "hilited_key_back_color") }
+    private val hlOffKeyBackground by lazy { ColorManager.getDrawable("hilited_off_key_back_color") ?: hlKeyBackground }
+    private val hlOnKeyBackground by lazy { ColorManager.getDrawable("hilited_on_key_back_color") ?: hlKeyBackground }
+
+    private val keyBorderColor by lazy { getColor({ keyBorderColor }, "key_border_color") }
+    private val offKeyBorderColor by lazy { getColor("off_key_border_color", keyBorderColor) }
+    private val onKeyBorderColor by lazy { getColor("on_key_border_color", keyBorderColor) }
+    private val hlKeyBorderColor by lazy { getColor({ hlKeyBorderColor }, "hilited_key_border_color") }
+    private val hlOffKeyBorderColor by lazy { getColor("hilited_off_key_border_color", hlKeyBorderColor) }
+    private val hlOnKeyBorderColor by lazy { getColor("hilited_on_key_border_color", hlKeyBorderColor) }
 
     private val keyTextColor by lazy { getColor({ keyTextColor }, "key_text_color") }
     private val offKeyTextColor by lazy { getColor("off_key_text_color", keyTextColor) }
     private val onKeyTextColor by lazy { getColor("on_key_text_color", keyTextColor) }
-    private val keySymbolColor by lazy { getColor({ keySymbolColor }, "key_symbol_color") }
-    private val offKeySymbolColor by lazy { getColor("off_key_symbol_color", keySymbolColor) }
-    private val onKeySymbolColor by lazy { getColor("on_key_symbol_color", keySymbolColor) }
-    private val hlKeyBackground by lazy { getDrawable({ hlKeyBackColor }, "hilited_key_back_color") }
-    private val hlOffKeyBackground by lazy { ColorManager.getDrawable("hilited_off_key_back_color") }
-    private val hlOnKeyBackground by lazy { ColorManager.getDrawable("hilited_on_key_back_color") }
     private val hlKeyTextColor by lazy { getColor({ hlKeyTextColor }, "hilited_key_text_color") }
     private val hlOffKeyTextColor by lazy { getColor("hilited_off_key_text_color", hlKeyTextColor) }
     private val hlOnKeyTextColor by lazy { getColor("hilited_on_key_text_color", hlKeyTextColor) }
+    private val keySymbolColor by lazy { getColor({ keySymbolColor }, "key_symbol_color") }
+    private val offKeySymbolColor by lazy { getColor("off_key_symbol_color", keySymbolColor) }
+    private val onKeySymbolColor by lazy { getColor("on_key_symbol_color", keySymbolColor) }
     private val hlKeySymbolColor by lazy { getColor({ hlKeySymbolColor }, "hilited_key_symbol_color") }
     private val hlOffKeySymbolColor by lazy { getColor("hilited_off_key_symbol_color", hlKeySymbolColor) }
     private val hlOnKeySymbolColor by lazy { getColor("hilited_on_key_symbol_color", hlKeySymbolColor) }
@@ -264,13 +273,19 @@ class Key(
         2 -> if (isPressed) hlOnKeyBackground else onKeyBackground
         1 -> {
             if (isPressed) {
-                hlOffKeyBackground ?: hlKeyBackground
+                hlOffKeyBackground
             } else {
                 selfConfig?.keyBackColor.takeIf { !it.isNullOrEmpty() }?.let { keyBackground }
-                    ?: (offKeyBackground ?: keyBackground)
+                    ?: offKeyBackground
             }
         }
         else -> if (isPressed) hlKeyBackground else keyBackground
+    }
+
+    fun getBorderColor(): Int = when (appearanceType) {
+        2 -> if (isPressed) hlOnKeyBorderColor else onKeyBorderColor
+        1 -> if (isPressed) hlOffKeyBorderColor else getColor(selfConfig?.keyBorderColor ?: "", offKeyBorderColor)
+        else -> if (isPressed) hlKeyBorderColor else keyBorderColor
     }
 
     fun getTextColor(): Int = when (appearanceType) {
@@ -281,7 +296,7 @@ class Key(
 
     fun getSymbolColor(): Int = when (appearanceType) {
         2 -> if (isPressed) hlOnKeySymbolColor else onKeySymbolColor
-        1 -> if (isPressed) hlOffKeySymbolColor else offKeySymbolColor
+        1 -> if (isPressed) hlOffKeySymbolColor else getColor(selfConfig?.keySymbolColor ?: "", offKeySymbolColor)
         else -> if (isPressed) hlKeySymbolColor else keySymbolColor
     }
 }
