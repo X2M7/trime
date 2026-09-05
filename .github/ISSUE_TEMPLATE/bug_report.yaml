@@ -12,7 +12,7 @@ body:
     id: summary
     attributes:
       label: 摘要 / Summary
-      description: 简要描述遇到的问题。请先测试[每夜版](https://github.com/osfans/trime/releases/tag/nightly)有无此问题。 / Briefly describe the bug. Test [Nightly](https://github.com/osfans/trime/releases/tag/nightly) for the bug first.
+      description: 简要描述遇到的问题，注明测试的是本 fork 的哪个构建。 / Briefly describe the bug and identify the tested fork build.
     validations:
       required: true
 
@@ -48,7 +48,7 @@ body:
     id: screenshot
     attributes:
       label: 截图 / Screenshot
-      description: 附上截图以帮助解释问题。 / Attach screenshots to help explain the bug.
+      description: 附上截图；使用 T00 工具采集时，同时附上相邻的 .identity.json。 / Attach screenshots and their .identity.json files when captured with the T00 tool.
     validations:
       required: false
 
@@ -87,3 +87,18 @@ body:
       description: “关于”页面中的“构建信息”条目，长按复制。 / It could be found below "Build information" in the "About" page, loog press to copy it.
     validations:
       required: true
+
+  - type: textarea
+    id: baseline_identity
+    attributes:
+      label: 测试基线 / Test Baseline
+      description: 可附上 script/baseline 工具生成的 report.json 或 inventory.json；不要上传个人词库。 / Attach a report.json or inventory.json from script/baseline when available; do not upload personal dictionaries.
+      placeholder: |
+        Run ID / APK SHA-256:
+        Package / Signer SHA-256:
+        versionName / versionCode / Git SHA:
+        ABI / Android version:
+        Active schema / deployed resource checksums:
+        Dictionary state: cold / learned (script hash) / existing-uncontrolled
+    validations:
+      required: false
