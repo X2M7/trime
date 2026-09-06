@@ -6,12 +6,13 @@ fixtures. It does not reset the Rime user dictionary or run orphan cleanup
 against the application's live Rime data directory.
 
 ```sh
-adb -s emulator-5560 shell am instrument -w -e saf true \
+adb -s emulator-5560 shell am instrument -w -r -e saf true \
   com.osfans.trime.debug.test/com.osfans.trime.StartupResponsivenessInstrumentation
 ```
 
 Require both `passed=true` and `INSTRUMENTATION_CODE: -1` in the output. The
 command's shell exit status alone does not prove an instrumentation test passed.
+Use `-r` to retain the result bundle and final code, not only the pretty stream.
 
 `SafCompatibilityProbe` exercises Android `DocumentsContract`, cursors, reliable
 pipes, opaque/changing IDs, read-back verification, replacement and rollback
@@ -24,7 +25,7 @@ For the real system provider, select a newly created `trime-saf-UUID` directory
 in the system document picker on the disposable emulator. Pass its granted URI:
 
 ```sh
-adb -s emulator-5560 shell am instrument -w -e saf true \
+adb -s emulator-5560 shell am instrument -w -r -e saf true \
   -e safTree 'content://com.android.externalstorage.documents/tree/primary%3ADocuments%2Ftrime-saf-UUID' \
   com.osfans.trime.debug.test/com.osfans.trime.StartupResponsivenessInstrumentation
 ```
@@ -39,6 +40,12 @@ After closing the picker and force-stopping the test app, repeat with
 persisted grant and requires an actual system `SecurityException` on the next
 query. Remaining transient picker grants cause failure, not a false pass.
 Re-select the directory before any subsequent round-trip test.
+
+For clipboard-editor visibility, select this build as the default IME and use
+`am instrument -w -r -e clip true` with the same runner. This requires editor
+window focus, an actual visible `keyboard_view` in the IME accessibility window,
+stable bounds for one second, and a nonblank screenshot. The system's IME-insets
+visibility flag alone does not prove the asynchronous keyboard has rendered.
 
 ## Provider Limits
 
