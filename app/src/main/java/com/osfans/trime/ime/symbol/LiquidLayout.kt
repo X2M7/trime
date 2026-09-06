@@ -218,6 +218,6 @@ class LiquidLayout(
     fun refreshColors() {
         fixedKeyItems.forEach { it.refreshColors() }
         tabsUi.refreshColors()
-        recyclerView.adapter?.notifyDataSetChanged()
+        recyclerView.adapter?.let { it.notifyItemRangeChanged(0, it.itemCount) }
     }
 }

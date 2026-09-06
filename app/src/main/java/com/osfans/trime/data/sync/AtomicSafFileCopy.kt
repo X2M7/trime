@@ -6,19 +6,19 @@ package com.osfans.trime.data.sync
 
 import android.content.ContentResolver
 import android.net.Uri
+import android.os.ParcelFileDescriptor
 import android.provider.DocumentsContract
+import android.provider.DocumentsContract.Document
 import java.io.File
-import java.io.FileInputStream
-import java.io.FileOutputStream
+import java.io.InputStream
+import java.security.MessageDigest
 import java.util.UUID
 
 object AtomicSafFileCopy {
     /**
-     * Atomically replaces [fileName] under [parentDir] with [sourceFile].
-     *
-     * Uses operation-scoped `.trime-replace-<uuid>.tmp` / `.bak` artifacts so user
-     * files such as `user.yaml.bak` are never deleted. If replacement fails after
-     * the backup rename, restore the backup to [fileName] before rethrowing.
+     * Stage and read back before replacing an existing document. Providers without
+     * rename support may receive new files, but cannot safely replace existing ones.
+     * A failed rollback retains the operation-scoped backup for manual recovery.
      */
     fun copyFromFile(
         contentResolver: ContentResolver,
@@ -29,110 +29,106 @@ object AtomicSafFileCopy {
         parentDir: String,
         fileName: String,
     ) {
-        val operationId = UUID.randomUUID().toString()
-        val tempName = ".trime-replace-$operationId.tmp"
-        val backupName = ".trime-replace-$operationId.bak"
-        val expectedBytes = sourceFile.length()
+        SafTreeWalker.requireName(fileName)
+        check(relativePath == if (parentDir.isEmpty()) fileName else "$parentDir/$fileName")
         val parentId = cache.ensureDirectory(contentResolver, treeUri, parentDir)
         val parentUri = DocumentsContract.buildDocumentUriUsingTree(treeUri, parentId)
-
-        deleteChildIfExists(contentResolver, treeUri, parentId, tempName)
-        deleteChildIfExists(contentResolver, treeUri, parentId, backupName)
-        val tempUri =
-            DocumentsContract.createDocument(
-                contentResolver,
-                parentUri,
-                "application/octet-stream",
-                tempName,
-            ) ?: error("Failed to create temp document $tempName")
-
-        contentResolver.openFileDescriptor(tempUri, "wt")?.use { pfd ->
-            FileInputStream(sourceFile).use { input ->
-                FileOutputStream(pfd.fileDescriptor).use { output ->
-                    input.copyTo(output)
-                }
+        val existing = SafTreeWalker.findFileEntry(contentResolver, treeUri, parentId, fileName)
+        check(existing?.mimeType != Document.MIME_TYPE_DIR) { "Destination is a directory: $fileName" }
+        val existingUri = existing?.let { DocumentsContract.buildDocumentUriUsingTree(treeUri, it.documentId) }
+        if (existingUri != null) {
+            check(supports(contentResolver, existingUri, Document.FLAG_SUPPORTS_RENAME)) {
+                "Provider cannot safely replace $fileName: rename is unsupported; original retained"
             }
-        } ?: error("Cannot open $tempUri for writing")
-
-        val tempLength = documentLength(contentResolver, tempUri)
-        if (tempLength != expectedBytes) {
-            DocumentsContract.deleteDocument(contentResolver, tempUri)
-            error("Temp document size mismatch: expected $expectedBytes, got $tempLength")
         }
-
-        var backupUri: Uri? = null
+        val operationId = UUID.randomUUID().toString()
+        val expected = sourceFile.inputStream().use(::digest)
+        var staged: Uri? = null
+        var backup: Uri? = null
+        var published: Uri? = null
+        var committed = false
         try {
-            val existingTargetId =
-                SafTreeWalker.findChildDocumentId(contentResolver, treeUri, parentId, fileName)
-            if (existingTargetId != null) {
-                val targetUri = DocumentsContract.buildDocumentUriUsingTree(treeUri, existingTargetId)
-                backupUri =
-                    DocumentsContract.renameDocument(contentResolver, targetUri, backupName)
-                        ?: error("Failed to rename existing document to backup")
+            staged = create(contentResolver, parentUri, ".trime-replace-$operationId.tmp")
+            writeAndVerify(contentResolver, sourceFile, staged, expected)
+            val canRename = supports(contentResolver, staged, Document.FLAG_SUPPORTS_RENAME)
+            check(existingUri == null || canRename) { "Provider cannot rename staged documents; original retained" }
+            if (existingUri != null) {
+                backup = rename(contentResolver, existingUri, ".trime-replace-$operationId.bak")
             }
-
-            val finalUri = replaceTempWithFinalName(contentResolver, parentUri, tempUri, fileName)
-            backupUri?.let { DocumentsContract.deleteDocument(contentResolver, it) }
-            cache.rememberFile(relativePath, DocumentsContract.getDocumentId(finalUri), expectedBytes)
-        } catch (e: Exception) {
-            backupUri?.let { backup ->
-                DocumentsContract.renameDocument(contentResolver, backup, fileName)
+            published = if (canRename) {
+                rename(contentResolver, staged, fileName).also { staged = null }
+            } else {
+                create(contentResolver, parentUri, fileName)
             }
-            runCatching { DocumentsContract.deleteDocument(contentResolver, tempUri) }
-            throw e
-        }
-    }
-
-    private fun replaceTempWithFinalName(
-        contentResolver: ContentResolver,
-        parentUri: Uri,
-        tempUri: Uri,
-        fileName: String,
-    ): Uri = DocumentsContract.renameDocument(contentResolver, tempUri, fileName)
-        ?: run {
-            val created =
-                DocumentsContract.createDocument(
-                    contentResolver,
-                    parentUri,
-                    "application/octet-stream",
-                    fileName,
-                ) ?: error("Failed to create document $fileName")
-            copyDocument(contentResolver, tempUri, created)
-            DocumentsContract.deleteDocument(contentResolver, tempUri)
-            created
-        }
-
-    private fun documentLength(
-        contentResolver: ContentResolver,
-        uri: Uri,
-    ): Long = contentResolver.openFileDescriptor(uri, "r")?.use { pfd ->
-        pfd.statSize
-    } ?: error("Cannot stat $uri")
-
-    private fun deleteChildIfExists(
-        contentResolver: ContentResolver,
-        treeUri: Uri,
-        parentId: String,
-        fileName: String,
-    ) {
-        val existingId = SafTreeWalker.findChildDocumentId(contentResolver, treeUri, parentId, fileName) ?: return
-        val docUri = DocumentsContract.buildDocumentUriUsingTree(treeUri, existingId)
-        DocumentsContract.deleteDocument(contentResolver, docUri)
-    }
-
-    private fun copyDocument(
-        contentResolver: ContentResolver,
-        sourceUri: Uri,
-        destUri: Uri,
-    ) {
-        contentResolver.openFileDescriptor(sourceUri, "r")?.use { sourcePfd ->
-            contentResolver.openFileDescriptor(destUri, "wt")?.use { destPfd ->
-                FileInputStream(sourcePfd.fileDescriptor).use { input ->
-                    FileOutputStream(destPfd.fileDescriptor).use { output ->
-                        input.copyTo(output)
+            requireDisplayName(contentResolver, published, fileName)
+            if (!canRename) writeAndVerify(contentResolver, sourceFile, published, expected)
+            committed = true
+            cache.rememberFile(relativePath, DocumentsContract.getDocumentId(published), sourceFile.length())
+        } catch (failure: Exception) {
+            if (!committed) {
+                var removed = true
+                published?.let {
+                    runCatching { check(DocumentsContract.deleteDocument(contentResolver, it)) }
+                        .onFailure { error ->
+                            removed = false
+                            failure.addSuppressed(error)
+                        }
+                }
+                backup?.let {
+                    if (removed) {
+                        runCatching {
+                            val restored = rename(contentResolver, it, fileName)
+                            requireDisplayName(contentResolver, restored, fileName)
+                            cache.rememberFile(relativePath, DocumentsContract.getDocumentId(restored), existing?.size)
+                            backup = null
+                        }.exceptionOrNull()?.let(failure::addSuppressed)
                     }
                 }
-            } ?: error("Cannot open $destUri for writing")
-        } ?: error("Cannot open $sourceUri for reading")
+            }
+            throw failure
+        } finally {
+            staged?.let { runCatching { DocumentsContract.deleteDocument(contentResolver, it) } }
+            // Never discard recovery data after an unsuccessful replacement/rollback.
+            if (committed) backup?.let { runCatching { DocumentsContract.deleteDocument(contentResolver, it) } }
+        }
+    }
+
+    private fun create(cr: ContentResolver, parent: Uri, name: String): Uri = DocumentsContract.createDocument(cr, parent, "application/octet-stream", name)
+        ?: error("Cannot create document: $name")
+
+    private fun rename(cr: ContentResolver, uri: Uri, name: String): Uri = DocumentsContract.renameDocument(cr, uri, name) ?: error("Cannot rename $uri to $name")
+
+    private fun supports(cr: ContentResolver, uri: Uri, flag: Int): Boolean = cr.query(uri, arrayOf(Document.COLUMN_FLAGS), null, null, null)?.use {
+        check(it.moveToFirst()) { "Missing document: $uri" }
+        it.getInt(0) and flag != 0
+    } ?: error("Cannot query document: $uri")
+
+    private fun requireDisplayName(cr: ContentResolver, uri: Uri, name: String) {
+        cr.query(uri, arrayOf(Document.COLUMN_DISPLAY_NAME), null, null, null)?.use {
+            check(it.moveToFirst() && it.getString(0) == name) { "Provider changed requested name: $name" }
+        } ?: error("Cannot query document: $uri")
+    }
+
+    private fun writeAndVerify(cr: ContentResolver, file: File, uri: Uri, expected: ByteArray) {
+        val outputPfd = cr.openFileDescriptor(uri, "wt") ?: error("Cannot write $uri")
+        ParcelFileDescriptor.AutoCloseOutputStream(outputPfd).use { output ->
+            file.inputStream().use { it.copyTo(output) }
+        }
+        val inputPfd = cr.openFileDescriptor(uri, "r") ?: error("Cannot read $uri")
+        val actual = ParcelFileDescriptor.AutoCloseInputStream(inputPfd).use { input ->
+            digest(input).also { inputPfd.checkError() }
+        }
+        check(actual.contentEquals(expected)) { "Document read-back mismatch: $uri" }
+    }
+
+    private fun digest(input: InputStream): ByteArray {
+        val digest = MessageDigest.getInstance("SHA-256")
+        val buffer = ByteArray(DEFAULT_BUFFER_SIZE)
+        while (true) {
+            val count = input.read(buffer)
+            if (count < 0) break
+            digest.update(buffer, 0, count)
+        }
+        return digest.digest()
     }
 }

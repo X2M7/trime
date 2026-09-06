@@ -25,7 +25,12 @@ object OrphanCleaner {
         var failed = 0
         root
             .walkBottomUp()
+            .onEnter {
+                SyncRelativePath.isDirectPath(root, it) &&
+                    !SafTreeWalker.shouldSkip(it.relativeTo(root).path, isDirectory = true)
+            }
             .filter { it != root }
+            .filter { SyncRelativePath.isDirectPath(root, it) }
             .filter {
                 val relative = it.relativeTo(root).path.replace('\\', '/')
                 !SafTreeWalker.shouldSkip(relative, it.isDirectory)

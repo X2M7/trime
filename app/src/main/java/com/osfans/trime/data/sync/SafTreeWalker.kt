@@ -7,6 +7,7 @@ package com.osfans.trime.data.sync
 import android.content.ContentResolver
 import android.net.Uri
 import android.provider.DocumentsContract
+import java.io.IOException
 import java.util.ArrayDeque
 
 data class SafFileEntry(
@@ -26,6 +27,7 @@ data class SafTreeListing(
 object SafTreeWalker {
     private const val SKIP_DIR = "build"
     private const val SKIP_DIR_SUBSTRING = ".userdb"
+    private val operationArtifact = Regex("\\.trime-(?:replace|new|bak)-[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}\\.(?:tmp|bak)")
 
     private val documentProjection =
         arrayOf(
@@ -41,9 +43,10 @@ object SafTreeWalker {
         isDirectory: Boolean = false,
         skipUserDb: Boolean = true,
     ): Boolean {
-        val normalized = relativePath.trimStart('/').trim().removePrefix("./")
+        val normalized = relativePath.trimStart('/').removePrefix("./")
         if (normalized.isEmpty()) return false
         val segments = normalized.split('/')
+        if (operationArtifact.matches(segments.last())) return true
         if (segments.any { it == SKIP_DIR }) return true
         if (!skipUserDb) return false
         val dirSegments = if (isDirectory) segments else segments.dropLast(1)
@@ -101,6 +104,8 @@ object SafTreeWalker {
     ): SafTreeListing {
         val result = mutableListOf<SafFileEntry>()
         val directoryIds = mutableMapOf("" to rootDocumentId)
+        val visitedIds = mutableSetOf(rootDocumentId)
+        val visitedPaths = mutableSetOf<String>()
         val queue = ArrayDeque<Pair<String, String>>()
         queue.add("" to rootDocumentId)
 
@@ -111,6 +116,7 @@ object SafTreeWalker {
                 contentResolver.query(childrenUri, documentProjection, null, null, null)
                     ?: throw SafQueryException(childrenUri, relativePath.ifEmpty { "." })
             cursor.use {
+                requireComplete(cursor.extras.getBoolean(DocumentsContract.EXTRA_LOADING), childrenUri)
                 val idCol = cursor.getColumnIndexOrThrow(DocumentsContract.Document.COLUMN_DOCUMENT_ID)
                 val nameCol = cursor.getColumnIndexOrThrow(DocumentsContract.Document.COLUMN_DISPLAY_NAME)
                 val mimeCol = cursor.getColumnIndexOrThrow(DocumentsContract.Document.COLUMN_MIME_TYPE)
@@ -120,6 +126,9 @@ object SafTreeWalker {
                     val documentId = cursor.getString(idCol)
                     val name = cursor.getString(nameCol)
                     val mimeType = cursor.getString(mimeCol)
+                    requireName(name)
+                    check(!documentId.isNullOrEmpty() && !mimeType.isNullOrEmpty()) { "Invalid document metadata" }
+                    check(visitedIds.add(documentId)) { "Repeated document ID: $documentId" }
                     val childPath =
                         if (relativePath.isEmpty()) {
                             name
@@ -129,6 +138,7 @@ object SafTreeWalker {
                     val isDirectory = DocumentsContract.Document.MIME_TYPE_DIR == mimeType
                     if (shouldSkip(childPath, isDirectory, skipUserDb)) continue
                     if (!shouldVisit(childPath, skipPrefix, limitToPrefix)) continue
+                    check(visitedPaths.add(childPath)) { "Duplicate document path: $childPath" }
                     if (isDirectory) {
                         directoryIds[childPath] = documentId
                         queue.add(childPath to documentId)
@@ -138,8 +148,8 @@ object SafTreeWalker {
                                 documentId = documentId,
                                 displayName = name,
                                 mimeType = mimeType,
-                                size = cursor.getLong(sizeCol),
-                                lastModified = cursor.getLong(modCol),
+                                size = if (cursor.isNull(sizeCol)) -1 else cursor.getLong(sizeCol),
+                                lastModified = if (cursor.isNull(modCol)) 0 else cursor.getLong(modCol),
                                 relativePath = childPath,
                             ),
                         )
@@ -161,26 +171,41 @@ object SafTreeWalker {
             contentResolver.query(childrenUri, documentProjection, null, null, null)
                 ?: throw SafQueryException(childrenUri, displayName)
         cursor.use {
+            requireComplete(it.extras.getBoolean(DocumentsContract.EXTRA_LOADING), childrenUri)
             val idCol = it.getColumnIndexOrThrow(DocumentsContract.Document.COLUMN_DOCUMENT_ID)
             val nameCol = it.getColumnIndexOrThrow(DocumentsContract.Document.COLUMN_DISPLAY_NAME)
             val mimeCol = it.getColumnIndexOrThrow(DocumentsContract.Document.COLUMN_MIME_TYPE)
             val sizeCol = it.getColumnIndexOrThrow(DocumentsContract.Document.COLUMN_SIZE)
             val modCol = it.getColumnIndexOrThrow(DocumentsContract.Document.COLUMN_LAST_MODIFIED)
+            var found: SafFileEntry? = null
             while (it.moveToNext()) {
                 val name = it.getString(nameCol)
                 if (name == displayName) {
-                    return SafFileEntry(
+                    requireName(name)
+                    check(found == null) { "Duplicate document name: $name" }
+                    found = SafFileEntry(
                         documentId = it.getString(idCol),
                         displayName = name,
                         mimeType = it.getString(mimeCol),
-                        size = it.getLong(sizeCol),
-                        lastModified = it.getLong(modCol),
+                        size = if (it.isNull(sizeCol)) -1 else it.getLong(sizeCol),
+                        lastModified = if (it.isNull(modCol)) 0 else it.getLong(modCol),
                         relativePath = name,
                     )
                 }
             }
+            return found
         }
-        return null
+    }
+
+    internal fun requireName(name: String?) {
+        require(
+            !name.isNullOrBlank() && name != "." && name != ".." &&
+                name.none { it == '/' || it == '\\' || it == '\u0000' },
+        ) { "Unsafe document name: $name" }
+    }
+
+    private fun requireComplete(loading: Boolean, uri: Uri) {
+        if (loading) throw IOException("Document listing is still loading: $uri; retry after provider finishes")
     }
 
     fun findChildDocumentId(

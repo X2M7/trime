@@ -68,6 +68,7 @@ object SyncIndex {
         lastModified: Long,
         index: SyncIndexData,
     ): Boolean {
+        if (size < 0 || lastModified <= 0) return true
         val cached = index.entries[relativePath] ?: return true
         return cached.size != size || cached.lastModified != lastModified
     }

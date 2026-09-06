@@ -1,6 +1,7 @@
 /* SPDX-License-Identifier: GPL-3.0-or-later */
 package com.osfans.trime.ime.composition
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.ColorStateList
 import android.content.res.Configuration
@@ -15,6 +16,7 @@ import android.widget.TextView
 import androidx.appcompat.widget.TooltipCompat
 import androidx.core.view.isVisible
 import androidx.core.widget.TextViewCompat
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.mikepenz.iconics.IconicsDrawable
@@ -27,6 +29,8 @@ import com.osfans.trime.data.theme.ThemeScope
 import splitties.dimensions.dp
 
 /** Independent syllable controls. Hanzi remain in the existing candidate bar. */
+// Requires an input-window theme and engine callback; not an XML widget.
+@SuppressLint("ViewConstructor")
 class T9DisambiguationView(
     context: Context,
     private val scope: ThemeScope,
@@ -86,7 +90,7 @@ class T9DisambiguationView(
         undo.imageTintList = tint
         unlock.imageTintList = tint
         update(state)
-        adapter.notifyDataSetChanged()
+        adapter.notifyItemRangeChanged(0, adapter.itemCount)
     }
 
     private fun icon(name: String, label: Int, click: () -> Unit) = ImageButton(context).apply {
@@ -163,8 +167,15 @@ class T9DisambiguationView(
 
         fun update(value: Array<T9SpanProto>) {
             if (items.contentEquals(value)) return
-            items = value
-            notifyDataSetChanged()
+            val previous = items
+            val difference = DiffUtil.calculateDiff(object : DiffUtil.Callback() {
+                override fun getOldListSize() = previous.size
+                override fun getNewListSize() = value.size
+                override fun areItemsTheSame(old: Int, new: Int) = previous[old] == value[new]
+                override fun areContentsTheSame(old: Int, new: Int) = previous[old] == value[new]
+            })
+            items = value.copyOf()
+            difference.dispatchUpdatesTo(this)
         }
 
         override fun getItemCount() = items.size

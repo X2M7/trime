@@ -59,35 +59,40 @@ class TrimeApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         if (!BuildConfig.DEBUG) {
-            Thread.setDefaultUncaughtExceptionHandler { _, e ->
-                val crashTime = System.currentTimeMillis()
-                val sharedPrefs = PreferenceManager.getDefaultSharedPreferences(applicationContext)
-                val lastCrashTimePrefKey = "last_crash_time"
-                val lastCrashTime = sharedPrefs.getLong(lastCrashTimePrefKey, -1L)
-                sharedPrefs.edit(commit = true) {
-                    putLong(lastCrashTimePrefKey, crashTime)
-                }
-                if (crashTime - lastCrashTime <= 10_000L) {
-                    // continuous crashes within 10 seconds, maybe in a crash loop. just bail
+            val previousHandler = Thread.getDefaultUncaughtExceptionHandler()
+            Thread.setDefaultUncaughtExceptionHandler { thread, e ->
+                try {
+                    val crashTime = System.currentTimeMillis()
+                    val sharedPrefs = PreferenceManager.getDefaultSharedPreferences(applicationContext)
+                    val lastCrashTimePrefKey = "last_crash_time"
+                    val lastCrashTime = sharedPrefs.getLong(lastCrashTimePrefKey, -1L)
+                    sharedPrefs.edit(commit = true) {
+                        putLong(lastCrashTimePrefKey, crashTime)
+                    }
+                    if (crashTime - lastCrashTime <= 10_000L) {
+                        // continuous crashes within 10 seconds, maybe in a crash loop. just bail
+                        return@setDefaultUncaughtExceptionHandler
+                    }
+                    startActivity(
+                        Intent(applicationContext, LogActivity::class.java).apply {
+                            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                            putExtra(LogActivity.FROM_CRASH, true)
+                            // avoid transaction overflow
+                            val truncated =
+                                e.stackTraceToString().let {
+                                    if (it.length > MAX_STACKTRACE_SIZE) {
+                                        it.take(MAX_STACKTRACE_SIZE) + "<truncated>"
+                                    } else {
+                                        it
+                                    }
+                                }
+                            putExtra(LogActivity.CRASH_STACK_TRACE, truncated)
+                        },
+                    )
+                } finally {
+                    previousHandler?.uncaughtException(thread, e)
                     exitProcess(10)
                 }
-                startActivity(
-                    Intent(applicationContext, LogActivity::class.java).apply {
-                        flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                        putExtra(LogActivity.FROM_CRASH, true)
-                        // avoid transaction overflow
-                        val truncated =
-                            e.stackTraceToString().let {
-                                if (it.length > MAX_STACKTRACE_SIZE) {
-                                    it.take(MAX_STACKTRACE_SIZE) + "<truncated>"
-                                } else {
-                                    it
-                                }
-                            }
-                        putExtra(LogActivity.CRASH_STACK_TRACE, truncated)
-                    },
-                )
-                exitProcess(10)
             }
         }
         instance = this

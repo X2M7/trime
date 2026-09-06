@@ -153,6 +153,6 @@ class PagedCandidatesUi(
 
     /** Re-binds visible rows so they re-render with the current scheme's colors. */
     fun refreshColors() {
-        candidatesAdapter.notifyDataSetChanged()
+        candidatesAdapter.notifyItemRangeChanged(0, candidatesAdapter.itemCount)
     }
 }

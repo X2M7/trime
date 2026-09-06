@@ -15,6 +15,8 @@ import android.provider.DocumentsContract.Root
 import android.provider.DocumentsProvider
 import android.webkit.MimeTypeMap
 import com.osfans.trime.R
+import com.osfans.trime.data.sync.SafTreeWalker
+import com.osfans.trime.data.sync.SyncRelativePath
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.IOException
@@ -69,7 +71,13 @@ class RimeDataProvider : DocumentsProvider() {
     private val File.docId
         get() = absolutePath.removePrefix(docIdPrefix)
 
-    private fun fileFromDocId(docId: String) = File(docIdPrefix, docId)
+    private fun fileFromDocId(docId: String): File {
+        val file = File(docIdPrefix, docId).canonicalFile
+        if (!SyncRelativePath.isContained(baseDir, file)) {
+            throw FileNotFoundException("Document escapes provider root")
+        }
+        return file
+    }
 
     override fun onCreate(): Boolean {
         baseDir = context!!.getExternalFilesDir(null) ?: return false
@@ -104,7 +112,9 @@ class RimeDataProvider : DocumentsProvider() {
         projection: Array<String>?,
         sortOrder: String?,
     ) = MatrixCursor(projection ?: DEFAULT_DOCUMENT_PROJECTION).apply {
-        fileFromDocId(parentDocumentId).listFiles()?.forEach {
+        val children = fileFromDocId(parentDocumentId).listFiles()
+            ?: throw FileNotFoundException("Cannot list $parentDocumentId")
+        children.filter { SyncRelativePath.isContained(baseDir, it) }.forEach {
             newRowFromFile(it)
         }
     }
@@ -155,6 +165,8 @@ class RimeDataProvider : DocumentsProvider() {
     @Throws(FileNotFoundException::class)
     override fun deleteDocument(documentId: String) {
         fileFromDocId(documentId).apply {
+            check(canonicalFile != baseDir.canonicalFile) { "Cannot delete provider root" }
+            requireContainedTree(this)
             val ok =
                 if (isDirectory) {
                     deleteRecursively()
@@ -172,7 +184,11 @@ class RimeDataProvider : DocumentsProvider() {
     override fun isChildDocument(
         parentDocumentId: String,
         documentId: String,
-    ): Boolean = documentId.startsWith(parentDocumentId)
+    ): Boolean = runCatching {
+        val parent = fileFromDocId(parentDocumentId)
+        val child = fileFromDocId(documentId)
+        parent != child && SyncRelativePath.isContained(parent, child)
+    }.getOrDefault(false)
 
     @Throws(FileNotFoundException::class)
     override fun copyDocument(
@@ -180,7 +196,9 @@ class RimeDataProvider : DocumentsProvider() {
         targetParentDocumentId: String,
     ): String {
         val oldFile = fileFromDocId(sourceDocumentId)
+        requireContainedTree(oldFile)
         val newFile = createAbstractFile(targetParentDocumentId, oldFile.name)
+        check(!SyncRelativePath.isContained(oldFile, newFile)) { "Cannot copy into the source tree" }
         oldFile.apply {
             try {
                 val ok =
@@ -205,11 +223,13 @@ class RimeDataProvider : DocumentsProvider() {
         displayName: String,
     ): String {
         val oldFile = fileFromDocId(documentId)
+        check(oldFile != baseDir.canonicalFile) { "Cannot rename provider root" }
+        SafTreeWalker.requireName(displayName)
         val newFile = oldFile.resolveSibling(displayName)
         if (newFile.exists()) {
             throw FileNotFoundException("renameDocument id=$documentId to $displayName failed: target exists")
         }
-        oldFile.renameTo(newFile)
+        if (!oldFile.renameTo(newFile)) throw FileNotFoundException("Cannot rename $documentId")
         return newFile.docId
     }
 
@@ -220,8 +240,10 @@ class RimeDataProvider : DocumentsProvider() {
         targetParentDocumentId: String,
     ): String {
         val oldFile = fileFromDocId(sourceDocumentId)
+        check(oldFile != baseDir.canonicalFile) { "Cannot move provider root" }
+        check(oldFile.parentFile == fileFromDocId(sourceParentDocumentId)) { "Incorrect source parent" }
         val newFile = createAbstractFile(targetParentDocumentId, oldFile.name)
-        oldFile.renameTo(newFile)
+        if (!oldFile.renameTo(newFile)) throw FileNotFoundException("Cannot move $sourceDocumentId")
         return newFile.docId
     }
 
@@ -232,8 +254,11 @@ class RimeDataProvider : DocumentsProvider() {
         projection: Array<String>?,
     ) = MatrixCursor(projection ?: DEFAULT_DOCUMENT_PROJECTION).apply {
         val q = query.lowercase()
+        val visited = mutableSetOf<String>()
         fileFromDocId(rootId)
             .walk()
+            .onEnter { SyncRelativePath.isContained(baseDir, it) && visited.add(it.canonicalPath) }
+            .filter { SyncRelativePath.isContained(baseDir, it) }
             .filter { it.name.lowercase().contains(q) }
             .take(SEARCH_RESULTS_LIMIT)
             .forEach { newRowFromFile(it) }
@@ -248,11 +273,25 @@ class RimeDataProvider : DocumentsProvider() {
                 else -> MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension) ?: MIME_TYPE_BIN
             }
 
+    private fun requireContainedTree(root: File) {
+        val visited = mutableSetOf<String>()
+        root.walkTopDown().onEnter {
+            check(SyncRelativePath.isContained(baseDir, it) && visited.add(it.canonicalPath)) {
+                "Unsafe or recursive document tree"
+            }
+            true
+        }.forEach {
+            check(SyncRelativePath.isContained(baseDir, it)) { "Document escapes provider root" }
+        }
+    }
+
     private fun createAbstractFile(
         parentDocumentId: String,
         displayName: String,
     ): File {
+        SafTreeWalker.requireName(displayName)
         val parent = fileFromDocId(parentDocumentId)
+        check(parent.isDirectory) { "Not a directory: $parentDocumentId" }
         var newFile = parent.resolve(displayName)
         var noConflictId = 2
         while (newFile.exists()) {
@@ -279,7 +318,7 @@ class RimeDataProvider : DocumentsProvider() {
                     Document.FLAG_SUPPORTS_WRITE
                 }
         }
-        if (file.parentFile?.canWrite() == true) {
+        if (file.canonicalFile != baseDir.canonicalFile && file.parentFile?.canWrite() == true) {
             flags = flags or
                 Document.FLAG_SUPPORTS_DELETE or
                 Document.FLAG_SUPPORTS_RENAME

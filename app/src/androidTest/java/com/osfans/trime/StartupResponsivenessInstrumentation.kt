@@ -27,12 +27,28 @@ import java.util.concurrent.atomic.AtomicLong
 
 /** Emulator-only integration probe; no user dictionary is cleared or imported. */
 class StartupResponsivenessInstrumentation : Instrumentation() {
+    private var safOnly = false
+    private var safTree: String? = null
+    private var safRevoke = false
+    private var clipOnly = false
     override fun onCreate(arguments: Bundle?) {
         super.onCreate(arguments)
+        safOnly = arguments?.getString("saf") == "true"
+        safTree = arguments?.getString("safTree")
+        safRevoke = arguments?.getString("safRevoke") == "true"
+        clipOnly = arguments?.getString("clip") == "true"
         start()
     }
 
     override fun onStart() {
+        if (clipOnly) {
+            ClipEditorProbe.run(this)
+            return
+        }
+        if (safOnly) {
+            SafCompatibilityProbe.run(this, safTree, safRevoke)
+            return
+        }
         val result = Bundle()
         val handler = Handler(Looper.getMainLooper())
         val ticks = AtomicInteger()

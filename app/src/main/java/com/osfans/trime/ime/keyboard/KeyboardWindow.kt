@@ -73,9 +73,10 @@ class KeyboardWindow(di: DI) :
 
     private lateinit var keyboardView: FrameLayout
 
-    companion object : ResidentWindow.Key {
-        lateinit var currentKeyboard: Keyboard
-    }
+    companion object : ResidentWindow.Key
+
+    lateinit var currentKeyboard: Keyboard
+        private set
 
     override val key: ResidentWindow.Key
         get() = KeyboardWindow

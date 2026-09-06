@@ -15,6 +15,7 @@ SPDX-License-Identifier: GPL-3.0-or-later
     <application
         android:name="com.osfans.trime.TrimeApplication"
         android:allowBackup="true"
+        android:supportsRtl="false"
         android:icon="@mipmap/ic_app_icon"
         android:label="@string/trime_app_name"
         android:roundIcon="@mipmap/ic_app_icon_round"
@@ -88,7 +89,6 @@ SPDX-License-Identifier: GPL-3.0-or-later
             android:name="com.osfans.trime.MainLauncherAlias"
             android:exported="true"
             android:label="@string/trime_app_name"
-            android:launchMode="singleTask"
             android:targetActivity=".ui.main.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

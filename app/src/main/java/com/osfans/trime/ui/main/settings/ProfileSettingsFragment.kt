@@ -9,6 +9,7 @@ import android.net.Uri
 import android.os.Bundle
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
+import androidx.core.net.toUri
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.preference.ListPreference
@@ -92,7 +93,7 @@ class ProfileSettingsFragment : PaddingPreferenceFragment() {
     private fun dataPathSummary(): String {
         val uri = prefs.externalRimeTreeUri.getValue()
         if (uri.isEmpty()) return getString(R.string.data_path_not_selected)
-        return SafDisplayPath.fromTreeUri(Uri.parse(uri))
+        return SafDisplayPath.fromTreeUri(uri.toUri())
             ?: prefs.externalRimeDisplayName.getValue().takeIf { it.isNotEmpty() }
             ?: uri
     }

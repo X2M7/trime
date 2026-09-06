@@ -9,8 +9,9 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.Gravity
-import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
 import com.osfans.trime.data.db.ClipboardHelper
 import com.osfans.trime.data.db.CollectionHelper
 import com.osfans.trime.data.db.DatabaseBean
@@ -19,7 +20,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
-import splitties.systemservices.inputMethodManager
 import timber.log.Timber
 
 class ClipEditActivity : Activity() {
@@ -38,7 +38,10 @@ class ClipEditActivity : Activity() {
                 clipEditOk.setOnClickListener { finishEditing() }
             }
         setContentView(binding.root)
-        inputMethodManager.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT)
+        editText.requestFocus()
+        editText.post {
+            WindowCompat.getInsetsController(window, editText).show(WindowInsetsCompat.Type.ime())
+        }
         processIntent(intent)
     }
 

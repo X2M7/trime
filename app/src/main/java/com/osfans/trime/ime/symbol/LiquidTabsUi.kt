@@ -145,6 +145,6 @@ class LiquidTabsUi(
 
     /** Restyles the tabs after a scheme switch; rows re-apply colors on rebind. */
     fun refreshColors() {
-        adapter.notifyDataSetChanged()
+        adapter.notifyItemRangeChanged(0, adapter.itemCount)
     }
 }

@@ -72,7 +72,7 @@ abstract class BaseUnrolledCandidateWindow(di: DI) :
         separatorDrawable.paint.color = scope.colors.candidateSeparatorColor
         candidateLayout.refreshColors()
         // visible rows re-apply their colors on rebind
-        adapter.notifyDataSetChanged()
+        adapter.notifyItemRangeChanged(0, adapter.itemCount)
     }
 
     abstract fun onCreateCandidateLayout(): UnrolledCandidateLayout

@@ -19,11 +19,12 @@ class LocalDirectoryGate {
         if (relativeDir.isEmpty()) return
         val lock = locks[relativeDir] ?: locks.putIfAbsent(relativeDir, Any()) ?: locks[relativeDir]!!
         synchronized(lock) {
-            if (!createdDirs.add(relativeDir)) {
+            if (relativeDir in createdDirs) {
                 return
             }
             val dir = SyncRelativePath.resolveContained(root, relativeDir)
             check(dir.mkdirs() || dir.isDirectory) { "Failed to create directory $relativeDir" }
+            createdDirs.add(relativeDir)
         }
     }
 }

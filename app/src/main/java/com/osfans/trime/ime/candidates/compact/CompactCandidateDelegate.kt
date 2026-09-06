@@ -90,7 +90,7 @@ class CompactCandidateDelegate(override val di: DI) :
     /** Restyles the compact list after a scheme switch; visible rows re-bind. */
     fun refreshColors() {
         separatorDrawable.paint.color = scope.colors.candidateSeparatorColor
-        adapter.notifyDataSetChanged()
+        adapter.notifyItemRangeChanged(0, adapter.itemCount)
     }
 
     val adapter by lazy {

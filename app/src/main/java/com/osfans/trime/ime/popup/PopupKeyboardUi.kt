@@ -19,7 +19,7 @@ import com.osfans.trime.data.theme.KeyActionManager
 import com.osfans.trime.data.theme.Theme
 import com.osfans.trime.data.theme.ThemeScope
 import com.osfans.trime.ime.core.AutoScaleTextView
-import com.osfans.trime.ime.keyboard.KeyboardWindow
+import com.osfans.trime.ime.keyboard.Keyboard
 import com.osfans.trime.ime.keyboard.isIconFont
 import com.osfans.trime.ime.keyboard.toIconName
 import splitties.dimensions.dp
@@ -65,6 +65,7 @@ class PopupKeyboardUi(
     private val popupHeight: Int,
     private val keys: List<String>,
     private val labels: List<String>,
+    private val keyboard: Keyboard,
 ) : PopupContainerUi(ctx, scope, outerBounds, triggerBounds, onDismissSelf) {
 
     class PopupKeyUi(override val ctx: Context, private val scope: ThemeScope, val text: String) : Ui {
@@ -196,7 +197,7 @@ class PopupKeyboardUi(
             if (label.length == 1 && label[0].code < 128) {
                 label
             } else {
-                KeyActionManager.getAction(label).getLabel(KeyboardWindow.currentKeyboard).let {
+                KeyActionManager.getAction(label).getLabel(keyboard).let {
                     when {
                         it.isIconFont -> it
                         it.isNotEmpty() -> String(Character.toChars(it.codePointAt(0)))

@@ -119,7 +119,7 @@ class UserDictionaryFragment : Fragment() {
                             fileName,
                         ).getOrThrow()
                     }
-                    ui.showSnackBar(ctx.getString(R.string.exported_n_entries, count))
+                    ui.showSnackBar(ctx.resources.getQuantityString(R.plurals.exported_n_entries, count, count))
                 } catch (e: Exception) {
                     ctx.toast(e)
                 }
@@ -155,7 +155,7 @@ class UserDictionaryFragment : Fragment() {
                             ).getOrThrow()
                         }
                     }
-                    ui.showSnackBar(ctx.getString(R.string.import_n_entries, count))
+                    ui.showSnackBar(ctx.resources.getQuantityString(R.plurals.import_n_entries, count, count))
                 }
             } catch (e: Exception) {
                 ctx.importErrorDialog(e)

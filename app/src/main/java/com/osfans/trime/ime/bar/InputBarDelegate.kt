@@ -71,6 +71,7 @@ class InputBarDelegate(override val di: DI) :
     private val commonKeyboardActionListener: CommonKeyboardActionListener by instance()
     private val candidate: CompactCandidateDelegate by instance()
     private val rime: RimeSession by instance()
+    private val keyboardWindow: KeyboardWindow by instance()
 
     val themedHeight = theme.generalStyle.run { candidateViewHeight + commentHeight }
 
@@ -132,7 +133,7 @@ class InputBarDelegate(override val di: DI) :
     }
 
     private val alwaysUi: AlwaysUi by lazy {
-        AlwaysUi(context, scope) { action ->
+        AlwaysUi(context, scope, { keyboardWindow.currentKeyboard }) { action ->
             if (action.isNotEmpty()) {
                 commonKeyboardActionListener.listener.onAction(KeyActionManager.getAction(action))
             } else {
@@ -178,7 +179,7 @@ class InputBarDelegate(override val di: DI) :
     }
 
     private val tabUi by lazy {
-        TabUi(context, scope)
+        TabUi(context, scope) { keyboardWindow.currentKeyboard }
     }
 
     private val barStateMachine =

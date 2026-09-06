@@ -18,15 +18,17 @@ plugins {
 
 android {
     namespace = "com.osfans.trime"
-    compileSdk = 36
+    compileSdk {
+        version = release(37) { minorApiLevel = 0 }
+    }
     buildToolsVersion = "36.0.0"
 
     defaultConfig {
         applicationId = "com.osfans.trime"
         minSdk = 21
-        targetSdk = 36
-        versionCode = 20261104
-        versionName = "3.3.13-t9.3"
+        targetSdk = 37
+        versionCode = 20261105
+        versionName = "3.3.13-t9.4"
         testInstrumentationRunner = "com.osfans.trime.StartupResponsivenessInstrumentation"
 
         multiDexEnabled = true
@@ -65,13 +67,9 @@ android {
                         keyPassword = project.signKeyPwd
                     }
                 }
-
-            resValue("string", "trime_app_name", "@string/app_name_release")
         }
         debug {
             applicationIdSuffix = ".debug"
-
-            resValue("string", "trime_app_name", "@string/app_name_release")
         }
         all {
             // remove META-INF/version-control-info.textproto
@@ -85,9 +83,8 @@ android {
         targetCompatibility = JavaVersion.VERSION_11
     }
 
-    // hack workaround lint gradle 8.0.2
     lint {
-        checkReleaseBuilds = false
+        warningsAsErrors = true
     }
 
     testOptions {

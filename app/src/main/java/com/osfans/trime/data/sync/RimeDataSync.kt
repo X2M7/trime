@@ -8,7 +8,9 @@ import android.content.ContentResolver
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.ParcelFileDescriptor
 import android.provider.DocumentsContract
+import androidx.core.net.toUri
 import com.osfans.trime.data.base.DataManager
 import com.osfans.trime.data.prefs.AppPrefs
 import com.osfans.trime.util.DeployNotification
@@ -17,7 +19,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.io.File
-import java.io.FileInputStream
 
 data class SyncStats(
     val copied: Int = 0,
@@ -35,7 +36,7 @@ object RimeDataSync {
 
     private val prefs get() = AppPrefs.defaultInstance().profile
 
-    fun treeUri(): Uri? = prefs.externalRimeTreeUri.getValue().takeIf { it.isNotEmpty() }?.let { Uri.parse(it) }
+    fun treeUri(): Uri? = prefs.externalRimeTreeUri.getValue().takeIf { it.isNotEmpty() }?.toUri()
 
     fun hasExternalAccess(context: Context = appContext): Boolean {
         val uri = treeUri() ?: return false
@@ -159,7 +160,12 @@ object RimeDataSync {
                             createdDirs,
                         )
                     }
-                val removeResult = OrphanCleaner.removeLocalOrphans(destRoot, externalPaths, ownId, syncDir)
+                val removeResult =
+                    if (copyResults.none { it.result.failed > 0 }) {
+                        OrphanCleaner.removeLocalOrphans(destRoot, externalPaths, ownId, syncDir)
+                    } else {
+                        OrphanCleaner.Result()
+                    }
                 SyncIndex.save(SyncIndex.withCurrentTree(mergeIndexEntries(index.entries, copyResults)))
                 val importStats = mergeStats(copyResults.map { it.result })
                 if (UserDbMigration.shouldImportUserDb() && importStats.failed == 0) {
@@ -418,11 +424,15 @@ object RimeDataSync {
             val docUri = DocumentsContract.buildDocumentUriUsingTree(treeUri, entry.documentId)
             val bytes =
                 context.contentResolver.openFileDescriptor(docUri, "r")?.use { pfd ->
-                    FileInputStream(pfd.fileDescriptor).use { input ->
-                        AtomicLocalFileCopy.copyFromInput(input, destFile)
+                    ParcelFileDescriptor.AutoCloseInputStream(pfd).use { input ->
+                        AtomicLocalFileCopy.writeFromStream(destFile) { output ->
+                            val copied = input.copyTo(output)
+                            pfd.checkError()
+                            check(entry.size < 0 || copied == entry.size) { "Incomplete document: ${entry.relativePath}" }
+                        }
                     }
                 } ?: error("Cannot open $docUri")
-            destFile.setLastModified(entry.lastModified)
+            if (entry.lastModified > 0) destFile.setLastModified(entry.lastModified)
             IndexedCopyResult(
                 CopyResult(1, 0, deleted = 0, failed = 0, bytesCopied = bytes),
                 entry.relativePath to SyncEntry(entry.size, entry.lastModified),
@@ -496,6 +506,8 @@ object RimeDataSync {
         if (!root.exists()) return emptyList()
         return root
             .walkTopDown()
+            .onEnter { SyncRelativePath.isDirectPath(root, it) }
+            .filter { SyncRelativePath.isDirectPath(root, it) }
             .filter { it.isFile }
             .filter {
                 val relative = it.relativeTo(root).path.replace('\\', '/')

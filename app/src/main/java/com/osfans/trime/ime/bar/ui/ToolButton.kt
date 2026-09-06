@@ -5,6 +5,7 @@
 
 package com.osfans.trime.ime.bar.ui
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.drawable.Drawable
@@ -24,7 +25,7 @@ import com.osfans.trime.data.theme.ThemeScope
 import com.osfans.trime.data.theme.model.ToolBar
 import com.osfans.trime.ime.core.AutoScaleTextView
 import com.osfans.trime.ime.keyboard.GestureFrame
-import com.osfans.trime.ime.keyboard.KeyboardWindow
+import com.osfans.trime.ime.keyboard.Keyboard
 import splitties.dimensions.dp
 import splitties.views.dsl.core.add
 import splitties.views.dsl.core.imageView
@@ -35,6 +36,8 @@ import splitties.views.imageDrawable
 import splitties.views.imageResource
 import splitties.views.padding
 
+// Created programmatically with an input-window theme, never inflated from XML.
+@SuppressLint("ViewConstructor")
 class ToolButton(context: Context, private val scope: ThemeScope) : GestureFrame(context) {
 
     private val image = imageView {
@@ -85,6 +88,7 @@ class ToolButton(context: Context, private val scope: ThemeScope) : GestureFrame
         context: Context,
         config: ToolBar.Button,
         scope: ThemeScope,
+        keyboard: Keyboard,
     ) : this(context, scope) {
         this.config = config
         val keyAction = KeyActionManager.getAction(config.action)
@@ -98,7 +102,7 @@ class ToolButton(context: Context, private val scope: ThemeScope) : GestureFrame
         } else {
             singleStyle = fg.style
         }
-        actionLabel = keyAction.getLabel(KeyboardWindow.currentKeyboard)
+        actionLabel = keyAction.getLabel(keyboard)
 
         val padding = dp(fg.padding)
         image.padding = padding

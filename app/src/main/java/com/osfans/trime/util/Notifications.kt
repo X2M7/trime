@@ -129,8 +129,9 @@ object DeployNotification {
                 NotificationCompat
                     .BigTextStyle()
                     .bigText(
-                        appContext.getString(
-                            R.string.sync_partial_copy_failure_detail,
+                        appContext.resources.getQuantityString(
+                            R.plurals.sync_partial_copy_failure_detail,
+                            stats.failed,
                             stats.failed,
                             operation,
                         ),

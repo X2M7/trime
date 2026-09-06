@@ -16,17 +16,17 @@ object AtomicLocalFileCopy {
         copy: (OutputStream) -> Unit,
     ): Long {
         val parent = destFile.parentFile ?: error("No parent for ${destFile.path}")
+        check(!destFile.exists() || destFile.isFile) { "Destination is not a file: ${destFile.path}" }
         val operationId = UUID.randomUUID().toString()
         val incoming = File(parent, ".trime-new-$operationId.tmp")
         val backup = File(parent, ".trime-bak-$operationId.tmp")
         parent.mkdirs()
-        var expectedBytes = -1L
         var backedUp = false
         try {
             FileOutputStream(incoming).use { output ->
                 copy(output)
             }
-            expectedBytes = incoming.length()
+            val expectedBytes = incoming.length()
 
             if (destFile.exists()) {
                 if (!destFile.renameTo(backup)) {
@@ -35,14 +35,7 @@ object AtomicLocalFileCopy {
                 backedUp = true
             }
 
-            if (!incoming.renameTo(destFile)) {
-                incoming.inputStream().use { input ->
-                    FileOutputStream(destFile).use { output ->
-                        input.copyTo(output)
-                    }
-                }
-                incoming.delete()
-            }
+            check(incoming.renameTo(destFile)) { "Failed to publish ${destFile.path}" }
 
             if (backup.exists()) {
                 backup.delete()
@@ -51,26 +44,13 @@ object AtomicLocalFileCopy {
             return expectedBytes
         } catch (e: Exception) {
             if (backedUp && backup.exists()) {
-                if (!destFile.exists() || destFile.length() != expectedBytes) {
-                    if (destFile.exists()) {
-                        destFile.delete()
-                    }
-                    backup.renameTo(destFile)
-                }
-            }
-            if (!backedUp && incoming.exists()) {
-                incoming.delete()
+                runCatching {
+                    check(backup.renameTo(destFile)) { "Recovery retained at ${backup.path}" }
+                }.exceptionOrNull()?.let(e::addSuppressed)
             }
             throw e
         } finally {
-            if (expectedBytes >= 0 && destFile.exists() && destFile.length() == expectedBytes) {
-                if (incoming.exists()) {
-                    incoming.delete()
-                }
-                if (backup.exists()) {
-                    backup.delete()
-                }
-            }
+            incoming.delete()
         }
     }
 

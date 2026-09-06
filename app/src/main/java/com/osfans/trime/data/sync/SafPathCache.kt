@@ -22,19 +22,24 @@ class SafPathCache(
         expectedSize: Long,
     ): Boolean = fileIds.containsKey(relativePath) && fileSizes[relativePath] == expectedSize
 
+    @Synchronized
     fun ensureDirectory(
         contentResolver: ContentResolver,
         treeUri: Uri,
         relativeDir: String,
     ): String {
         if (relativeDir.isEmpty()) return rootDocumentId
+        check(SyncRelativePath.normalize(relativeDir) == relativeDir)
         directoryIds[relativeDir]?.let { return it }
 
         val parentDir = relativeDir.substringBeforeLast('/', "")
         val segment = relativeDir.substringAfterLast('/')
         val parentId = ensureDirectory(contentResolver, treeUri, parentDir)
         val documentId =
-            SafTreeWalker.findChildDocumentId(contentResolver, treeUri, parentId, segment)
+            SafTreeWalker.findFileEntry(contentResolver, treeUri, parentId, segment)?.let {
+                check(it.mimeType == DocumentsContract.Document.MIME_TYPE_DIR) { "Not a directory: $relativeDir" }
+                it.documentId
+            }
                 ?: run {
                     val parentUri = DocumentsContract.buildDocumentUriUsingTree(treeUri, parentId)
                     val created =

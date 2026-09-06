@@ -7,10 +7,10 @@ package com.osfans.trime.util
 
 import android.content.ComponentName
 import android.content.Intent
-import android.net.Uri
 import android.os.Build
 import android.os.Parcelable
 import android.provider.DocumentsContract
+import androidx.core.net.toUri
 import com.osfans.trime.BuildConfig
 
 inline fun <reified T : Parcelable> Intent.parcelable(key: String): T? {
@@ -49,7 +49,7 @@ fun buildIntentFromAction(
             putExtra(Intent.EXTRA_TEXT, argument)
         }
     }
-    else -> Intent(fullAction, Uri.parse(argument))
+    else -> Intent(fullAction, argument.toUri())
 }
 
 fun buildDocumentsProviderIntent(): Intent {

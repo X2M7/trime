@@ -14,6 +14,7 @@ import com.osfans.trime.R
 import com.osfans.trime.data.theme.Theme
 import com.osfans.trime.data.theme.ThemeScope
 import com.osfans.trime.data.theme.model.ToolBar
+import com.osfans.trime.ime.keyboard.Keyboard
 import splitties.views.dsl.constraintlayout.after
 import splitties.views.dsl.constraintlayout.before
 import splitties.views.dsl.constraintlayout.centerVertically
@@ -31,6 +32,7 @@ import timber.log.Timber
 class AlwaysUi(
     override val ctx: Context,
     private val scope: ThemeScope,
+    private val keyboard: () -> Keyboard,
     private val onButtonClick: ((String) -> Unit)? = null,
 ) : Ui {
     private val theme: Theme get() = scope.theme
@@ -48,7 +50,7 @@ class AlwaysUi(
         buttonConfig: ToolBar.Button?,
         @DrawableRes icon: Int = 0,
     ): ToolButton = if (buttonConfig != null) {
-        ToolButton(ctx, buttonConfig, scope).apply {
+        ToolButton(ctx, buttonConfig, scope, keyboard()).apply {
             setOnClickListener { onButtonClick?.invoke(buttonConfig.action) }
             val longPressAction = buttonConfig.longPressAction
             if (longPressAction.isNotEmpty()) {
@@ -64,7 +66,7 @@ class AlwaysUi(
         }
     }
 
-    val buttonsUi = ButtonsBarUi(ctx, scope, onButtonClick)
+    val buttonsUi = ButtonsBarUi(ctx, scope, keyboard, onButtonClick)
 
     val clipboardUi = ClipboardSuggestionUi(ctx, scope)
 
