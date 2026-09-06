@@ -59,3 +59,34 @@ adb shell am instrument -w -r \
 - 模拟器启动时存在 System UI、Google 服务和 Digital Wellbeing 的独立 ANR；在只读测试实例中停用 `com.google.android.gms` 与 `com.google.android.apps.wellbeing` 后复测。没有修改原 AVD，不把系统进程事件当作 Trime 事件。
 
 原始日志和截图在本地 `build/anr/`；测试包身份在 `build/baseline/0076f44145d0-f570a6d94085/`。仅此预检查还不能代表真机、release 签名构建或长期稳定性。
+
+## 固定提交构建
+
+最终运行时代码提交为 `07717d0d31c8c05da6413a9f1282194b00f0f5bc`，从干净工作区重新构建，62 项 Android 单元测试再次通过。后续验证文档提交不改变运行时代码。
+
+| 项目 | 值 |
+| --- | --- |
+| APK | `com.osfans.trime-3.3.13-t9.2-dev-arm64-v8a-debug.apk` |
+| 包名 / 名称 | `com.osfans.trime.debug` / `Trime`，debug 签名测试包 |
+| versionName / versionCode | `3.3.13-t9.2` / `20261103` |
+| 内嵌 Git SHA | `07717d0d31c8c05da6413a9f1282194b00f0f5bc` |
+| APK SHA-256 | `8398cf96f2db9f0b4abff4739501b0d051357cf8b3a5b2444e47d837d7090286` |
+| 签名证书 SHA-256 | `c6fb875b1959f56fc6b3992d603b86e2dcd793677d32aba83687b34ef6937dd2` |
+| ABI | `arm64-v8a` |
+| 九键 schema SHA-256 | `9f04415df4bc0342dfa9a11212ef34d57445c60c6b234c9e73835c685308c41f` |
+| 资源集合摘要 | `05df6f1e0cd576a4955b23452ef18b0bda60095341c3cd149f840dd0a39cc413` |
+| 测试 APK SHA-256 | `a562b9324862e95cf50b2f73f13f7fba387560c9c24a8e3e462468339027770c` |
+
+冻结目录：`build/baseline/8398cf96f2db-ceeb3eaf5bcd/`。APK 内的 native 库与上述 185+3 项检查所用库逐字节相同，不沿用旧 `t9.1` 的测试结论。
+
+第一次最终包探针在 `emulator-5554` 上执行时，整个模拟器退出、ADB 返回 255；该轮没有测试结论，不计为通过。主机内核日志未记录 OOM，模拟器日志为关闭流程，未据此推断 Trime 的故障原因。随后另起 `emulator-5560` 只读实例复测，不复用已退出实例的瞬时状态。
+
+新实例刚开机时，PID `2634` 的 instrumentation 启动被 Android 判为 ANR。堆栈停在 `ActivityThread.initInstrumentation -> DexFile.openDexFileNative -> DexFileVerifier`，尚未执行应用初始化或 Rime；`schedstat` 记录主线程 CPU 时间约 2.1 秒、排队约 28.8 秒。证据保存在 `build/anr/instrumentation-bootstrap-anr.txt`，这轮不计通过，也不能声称所有启动尝试均无 ANR。只读实例中另停用 Google Search、Android System Intelligence 和 Restore 后，保留相同 APK 重试；不修改 Android 超时阈值或应用运行时代码。
+
+最终包重试通过：`emulator-5560`，PID `3042`，`passed=true`，主线程回调 3152 次，最长间隔 316 ms。引擎启动、主题重载及默认主题回退、方案与运行时选项缓存、连续后台查询与按键绘制均完成；原始输出为 `build/anr/instrumentation-final-5560-retry.txt`，冻结副本为 `startup-passed.txt`。
+
+随后正常启动应用，PID `3132`，通过实际界面从全拼切到九键，输入 `64426` 后同时显示 `mi/ni` 拼音选项及汉字候选。点选 `mi` 后锁定首音节、保留 `426`，候选缩小到“米高”等；UI XML 中编辑器仍为 `Type text` 提示，没有提交拼音或汉字。此次打开界面还显示了开机时 PID `818` 的旧 System UI ANR 弹窗，时间为 08:41:21；选择等待后继续测试，不能将该弹窗记为新的 Trime ANR。
+
+随后点击汉字候选“米高”，编辑器内容变为 `米高`，组合和拼音区清空，九键仍可继续使用。最终包冻结目录中保存了 `capture-3c37ad1194b0/screenshot.png`（拼音锁定）、`ui-mi-lock.xml`、`ui-mi-commit.xml`、`ui-mi-commit.png` 及运行时方案/词典摘要。截图采集前已校验安装包与冻结 APK 完全相同；14 项证据有身份 sidecar，文件摘要复核通过。`android-failure-events.txt` 保留上述两次启动 ANR，最终探针 PID `3042` 与界面测试 PID `3132` 在截至 08:54 的记录中没有新增 ANR 或崩溃。
+
+本轮仅验证受测阻塞路径和功能回归。模拟器使用软件 GPU 和 ARM 原生桥，界面日志仍有掉帧；没有测量手机按键延迟，也没有完成最终 APK 的全新/固定学习词库两组性能比较。冻结报告中的 `cold` / `learned` 保持 `not_run`，不能用启动探针或界面截图替代这两组结果。未清空个人词库、未修改原 AVD，未发布 release 签名包或更新 GitHub latest。
