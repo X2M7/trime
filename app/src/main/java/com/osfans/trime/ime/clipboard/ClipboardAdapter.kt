@@ -13,14 +13,14 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.osfans.trime.R
 import com.osfans.trime.data.db.DatabaseBean
-import com.osfans.trime.data.theme.Theme
+import com.osfans.trime.data.theme.ThemeScope
 import com.osfans.trime.util.DeviceUtils
 import com.osfans.trime.util.item
 import splitties.resources.styledColor
 import kotlin.math.min
 
 abstract class ClipboardAdapter(
-    private val theme: Theme,
+    private val scope: ThemeScope,
 ) : PagingDataAdapter<DatabaseBean, ClipboardAdapter.ViewHolder>(diffCallback) {
     companion object {
         private val diffCallback =
@@ -69,7 +69,7 @@ abstract class ClipboardAdapter(
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int,
-    ): ViewHolder = ViewHolder(ClipboardBeanUi(parent.context, theme))
+    ): ViewHolder = ViewHolder(ClipboardBeanUi(parent.context, scope))
 
     override fun onBindViewHolder(
         holder: ViewHolder,
@@ -77,6 +77,7 @@ abstract class ClipboardAdapter(
     ) {
         val bean = getItem(position) ?: return
         with(holder.ui) {
+            refreshColors()
             setBean(excerptText(bean.text ?: ""), bean.pinned)
             root.setOnClickListener {
                 onPaste(bean)
@@ -147,5 +148,10 @@ abstract class ClipboardAdapter(
     fun dismissPopupMenu() {
         popupMenu?.dismiss()
         popupMenu = null
+    }
+
+    /** Re-colors the visible rows after a scheme switch; rows re-apply colors on bind. */
+    fun refreshColors() {
+        notifyDataSetChanged()
     }
 }

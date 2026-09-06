@@ -17,9 +17,10 @@ import com.osfans.trime.data.db.ClipboardHelper
 import com.osfans.trime.data.db.CollectionHelper
 import com.osfans.trime.data.db.DatabaseBean
 import com.osfans.trime.data.prefs.AppPrefs
-import com.osfans.trime.data.theme.ColorManager
 import com.osfans.trime.data.theme.FontManager
 import com.osfans.trime.data.theme.Theme
+import com.osfans.trime.data.theme.ThemeScope
+import com.osfans.trime.ime.core.InputTabLayout
 import com.osfans.trime.ime.core.TrimeInputMethodService
 import com.osfans.trime.ime.keyboard.KeyboardWindow
 import com.osfans.trime.ime.segments.SegmentsWindow
@@ -37,10 +38,12 @@ class ClipboardWindow(di: DI, private val initialTab: Int = 0) : BoardWindow.Bar
 
     private val service: TrimeInputMethodService by instance()
     private val windowManager: BoardWindowManager by instance()
-    private val theme: Theme by instance()
+    private val scope: ThemeScope by instance()
+    private val theme: Theme get() = scope.theme
 
     private lateinit var clipboardLayout: ClipboardLayout
     private lateinit var clipboardPagesAdapter: ClipboardPagesAdapter
+    private var wasAttached = false
 
     private val prefs = AppPrefs.defaultInstance().clipboard
     private val clipboardReturnAfterPaste by prefs.clipboardReturnAfterPaste
@@ -55,7 +58,7 @@ class ClipboardWindow(di: DI, private val initialTab: Int = 0) : BoardWindow.Bar
     private var collectionBeansSubmitJob: Job? = null
 
     private val clipboardBeansAdapter by lazy {
-        object : ClipboardAdapter(theme) {
+        object : ClipboardAdapter(scope) {
             override fun onPaste(bean: DatabaseBean) {
                 val text = bean.text ?: return
                 service.commitText(text)
@@ -101,7 +104,7 @@ class ClipboardWindow(di: DI, private val initialTab: Int = 0) : BoardWindow.Bar
     }
 
     private val collectionBeansAdapter by lazy {
-        object : ClipboardAdapter(theme) {
+        object : ClipboardAdapter(scope) {
             override fun onPaste(bean: DatabaseBean) {
                 val text = bean.text ?: return
                 service.commitText(text)
@@ -150,7 +153,7 @@ class ClipboardWindow(di: DI, private val initialTab: Int = 0) : BoardWindow.Bar
         }
     }
 
-    override fun onCreateView() = ClipboardLayout(context, theme).apply {
+    override fun onCreateView() = ClipboardLayout(context, scope).apply {
         clipboardLayout = this
         clipboardPagesAdapter = object : ClipboardPagesAdapter() {
             override fun getItemCount(): Int = 2
@@ -164,16 +167,7 @@ class ClipboardWindow(di: DI, private val initialTab: Int = 0) : BoardWindow.Bar
         }
         titleUi.apply {
             tabLayout.onConfigureTab(viewPager) { tabUi, position ->
-                val label = when (position) {
-                    0 -> R.string.clipboard
-                    else -> R.string.collection
-                }
-                tabUi.label.apply {
-                    setText(label)
-                    textSize = theme.generalStyle.candidateTextSize
-                    setTypeface(FontManager.getTypeface("candidate_font"), Typeface.BOLD)
-                    setTextColor(ColorManager.getColor("key_text_color"))
-                }
+                configureTab(tabUi, position)
             }
             deleteAllButton.setOnClickListener {
                 val currentItem = viewPager.currentItem
@@ -213,7 +207,25 @@ class ClipboardWindow(di: DI, private val initialTab: Int = 0) : BoardWindow.Bar
         service.showDialog(dialog)
     }
 
+    private fun configureTab(
+        tabUi: InputTabLayout.TabUi,
+        position: Int,
+    ) {
+        val label =
+            when (position) {
+                0 -> R.string.clipboard
+                else -> R.string.collection
+            }
+        tabUi.label.apply {
+            setText(label)
+            textSize = theme.generalStyle.candidateTextSize
+            setTypeface(FontManager.getTypeface("candidate_font"), Typeface.BOLD)
+            setTextColor(scope.colors.keyTextColor)
+        }
+    }
+
     override fun onAttached() {
+        wasAttached = true
         clipboardLayout.viewPager.setCurrentItem(initialTab, false)
         clipboardBeansSubmitJob = service.lifecycleScope.launch {
             clipboardBeansPager.flow.collect {
@@ -232,6 +244,16 @@ class ClipboardWindow(di: DI, private val initialTab: Int = 0) : BoardWindow.Bar
         collectionBeansAdapter.dismissPopupMenu()
         clipboardBeansSubmitJob?.cancel()
         collectionBeansSubmitJob?.cancel()
+    }
+
+    override fun refreshColors() {
+        if (!wasAttached) return
+        clipboardLayout.titleUi.deleteAllButton.refreshColors()
+        clipboardLayout.titleUi.tabLayout.reconfigureTabs { tabUi, position ->
+            configureTab(tabUi, position)
+        }
+        clipboardBeansAdapter.refreshColors()
+        collectionBeansAdapter.refreshColors()
     }
 
     override fun onCreateBarView(): View = clipboardLayout.titleUi.root

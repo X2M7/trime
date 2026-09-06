@@ -14,9 +14,9 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.text.buildSpannedString
 import com.osfans.trime.core.CompositionProto
-import com.osfans.trime.data.theme.ColorManager
 import com.osfans.trime.data.theme.FontManager
 import com.osfans.trime.data.theme.Theme
+import com.osfans.trime.data.theme.ThemeScope
 import splitties.views.dsl.core.Ui
 import splitties.views.dsl.core.add
 import splitties.views.dsl.core.lParams
@@ -24,12 +24,16 @@ import splitties.views.dsl.core.view
 
 open class PreeditUi(
     final override val ctx: Context,
-    private val theme: Theme,
+    private val scope: ThemeScope,
     private val setupPreeditView: (TextView.() -> Unit)? = null,
     private val onMoveCursor: ((Int) -> Unit)? = null,
 ) : Ui {
-    private val textColor = ColorManager.getColor("text_color")
-    private val highlightTextColor = ColorManager.getColor("hilited_text_color")
+    private val theme: Theme
+        get() = scope.theme
+
+    // Read at use time so a scheme switch re-renders with the new colors.
+    private val textColor: Int get() = scope.colors.textColor
+    private val highlightTextColor: Int get() = scope.colors.hilitedTextColor
 
     val preedit =
         view(::PreeditTextView) {
@@ -59,6 +63,11 @@ open class PreeditUi(
 
     var visible = false
         private set
+
+    /** Re-applies the text color after a scheme switch. */
+    fun refreshColors() {
+        preedit.setTextColor(textColor)
+    }
 
     private fun updateTextView(
         str: CharSequence,

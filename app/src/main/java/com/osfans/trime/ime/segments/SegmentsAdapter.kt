@@ -10,10 +10,10 @@ import android.content.Context
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.chad.library.adapter4.BaseQuickAdapter
-import com.osfans.trime.data.theme.Theme
+import com.osfans.trime.data.theme.ThemeScope
 
 class SegmentsAdapter(
-    private val theme: Theme,
+    private val scope: ThemeScope,
     private val onItemClick: () -> Unit,
     private val rawText: String = "",
 ) : BaseQuickAdapter<String, SegmentsAdapter.ViewHolder>() {
@@ -51,7 +51,7 @@ class SegmentsAdapter(
         context: Context,
         parent: ViewGroup,
         viewType: Int,
-    ): ViewHolder = ViewHolder(SegmentUi(context, theme))
+    ): ViewHolder = ViewHolder(SegmentUi(context, scope))
 
     override fun onBindViewHolder(
         holder: ViewHolder,
@@ -59,6 +59,7 @@ class SegmentsAdapter(
         item: String?,
     ) {
         val text = item ?: return
+        holder.ui.refreshColors()
         holder.ui.textView.text = text
         val isSelected = selection.contains(position)
         holder.ui.update(isSelected)

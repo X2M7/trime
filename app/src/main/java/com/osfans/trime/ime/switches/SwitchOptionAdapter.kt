@@ -10,7 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.chad.library.adapter4.BaseQuickAdapter
-import com.osfans.trime.data.theme.Theme
+import com.osfans.trime.data.theme.ThemeScope
 
 abstract class SwitchOptionAdapter : BaseQuickAdapter<SwitchOptionEntry, SwitchOptionAdapter.ViewHolder>() {
     inner class ViewHolder(
@@ -21,7 +21,7 @@ abstract class SwitchOptionAdapter : BaseQuickAdapter<SwitchOptionEntry, SwitchO
         context: Context,
         parent: ViewGroup,
         viewType: Int,
-    ): ViewHolder = ViewHolder(SwitchOptionEntryUi(context, theme))
+    ): ViewHolder = ViewHolder(SwitchOptionEntryUi(context, scope))
 
     override fun onBindViewHolder(
         holder: ViewHolder,
@@ -29,13 +29,19 @@ abstract class SwitchOptionAdapter : BaseQuickAdapter<SwitchOptionEntry, SwitchO
         item: SwitchOptionEntry?,
     ) {
         item ?: return
+        holder.ui.refreshColors()
         holder.ui.setEntry(item)
         holder.ui.root.setOnClickListener {
             onItemClick(it, item)
         }
     }
 
-    abstract val theme: Theme
+    /** Re-colors the visible rows after a scheme switch; rows re-apply colors on bind. */
+    fun refreshColors() {
+        notifyDataSetChanged()
+    }
+
+    abstract val scope: ThemeScope
 
     abstract fun onItemClick(
         view: View,

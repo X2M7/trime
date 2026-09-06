@@ -8,9 +8,12 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.os.SystemClock
+import com.osfans.trime.core.T9Action
 import com.osfans.trime.daemon.RimeDaemon
 import com.osfans.trime.daemon.RimeSession
+import com.osfans.trime.data.theme.ColorManager
 import com.osfans.trime.data.theme.ThemeManager
+import com.osfans.trime.ime.core.TrimeInputMethodService
 import com.osfans.trime.ime.keyboard.KeyAction
 import com.osfans.trime.ime.keyboard.Keyboard
 import kotlinx.coroutines.Dispatchers
@@ -52,6 +55,11 @@ class StartupResponsivenessInstrumentation : Instrumentation() {
         try {
             check(Build.HARDWARE in setOf("ranchu", "goldfish")) { "This probe only runs on an emulator" }
             handler.post(heartbeat)
+            runOnMainSync {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                    check(TrimeInputMethodService().onCreateInlineSuggestionsRequest(Bundle()) == null)
+                }
+            }
             runOnMainSync { session = RimeDaemon.createSession(javaClass.name) }
             val rime = checkNotNull(session)
             runBlocking {
@@ -60,7 +68,11 @@ class StartupResponsivenessInstrumentation : Instrumentation() {
                     phase("Engine ready")
                     withContext(Dispatchers.Main) { ThemeManager.init(targetContext.resources.configuration) }
                     val selected = ThemeManager.prefs.selectedTheme.getValue()
-                    repeat(3) { ThemeManager.selectTheme(selected) }
+                    val originalScope = ColorManager.currentScope()
+                    repeat(3) {
+                        ThemeManager.selectTheme(selected)
+                        check(ColorManager.currentScope() === originalScope) { "Equal-theme reload detached the view scope" }
+                    }
                     try {
                         check(ThemeManager.selectTheme("__missing_anr_test__") == "trime")
                     } finally {
@@ -76,14 +88,25 @@ class StartupResponsivenessInstrumentation : Instrumentation() {
                                 setRuntimeOption("ascii_mode", enabled)
                                 check(getRuntimeOptionCached("ascii_mode") == enabled)
                             }
+                            clearComposition()
+                            "64426".forEach { check(processKey(it.code)) }
+                            check(t9Cached.choices.any { it.spelling == "mi" })
+                            val ni = t9Cached.choices.first { it.spelling == "ni" && !it.completion }
+                            check(t9Action(t9Cached.revision, T9Action.Lock, ni.start, ni.end, ni.spelling))
+                            val locked = t9Cached
+                            check(locked.input == "64426" && locked.segments.any { it.locked && it.spelling == "ni" })
+                            withContext(Dispatchers.Main) { ThemeMergeRegression.verify(targetContext, locked) }
+                            check(t9Cached.revision == locked.revision && t9Cached.input == "64426")
+                            clearComposition()
                             check(selectSchema("luna_pinyin"))
                             check(getRuntimeOptionCached("ascii_mode") == getRuntimeOption("ascii_mode"))
                         } finally {
+                            clearComposition()
                             selectSchema(originalSchema)
                             setRuntimeOption("ascii_mode", originalAscii)
                         }
                     }
-                    phase("Schema and option cache verified")
+                    phase("Schema, option cache and portrait/landscape T9 recolor verified")
                     val queries = async(Dispatchers.Default) {
                         repeat(20) { rime.runOnReady { selectedSchemata() } }
                     }

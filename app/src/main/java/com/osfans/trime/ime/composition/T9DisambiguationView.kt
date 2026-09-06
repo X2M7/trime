@@ -23,18 +23,19 @@ import com.osfans.trime.R
 import com.osfans.trime.core.T9Action
 import com.osfans.trime.core.T9SpanProto
 import com.osfans.trime.core.T9StateProto
-import com.osfans.trime.data.theme.ColorManager
+import com.osfans.trime.data.theme.ThemeScope
 import splitties.dimensions.dp
 
 /** Independent syllable controls. Hanzi remain in the existing candidate bar. */
 class T9DisambiguationView(
     context: Context,
+    private val scope: ThemeScope,
     private val action: (Int, T9Action, Int, Int, String) -> Unit,
 ) : LinearLayout(context) {
     private var state = T9StateProto()
-    private val normalTextColor = ColorManager.getColor("candidate_text_color")
-    private val selectedForeground = ColorManager.getColor("hilited_candidate_text_color")
-    private val selectedBackground = ColorManager.getColor("hilited_candidate_back_color")
+    private val normalTextColor get() = scope.colors.candidateTextColor
+    private val selectedForeground get() = scope.colors.hilitedCandidateTextColor
+    private val selectedBackground get() = scope.colors.hilitedCandidateBackColor
     private val segments = LinearLayout(context)
     private val segmentScroller = HorizontalScrollView(context).apply {
         isHorizontalScrollBarEnabled = false
@@ -55,7 +56,7 @@ class T9DisambiguationView(
     init {
         id = View.generateViewId()
         isVisible = false
-        background = ColorManager.getDrawable("candidate_background")
+        background = scope.drawable("candidate_background")
         if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
             orientation = HORIZONTAL
             addView(segmentScroller, LayoutParams(0, dp(48), 0.35f))
@@ -77,6 +78,15 @@ class T9DisambiguationView(
 
     private fun send(kind: T9Action, start: Int = 0, end: Int = 0, spelling: String = "") {
         action(state.revision, kind, start, end, spelling)
+    }
+
+    fun refreshColors() {
+        background = scope.drawable("candidate_background")
+        val tint = ColorStateList.valueOf(normalTextColor)
+        undo.imageTintList = tint
+        unlock.imageTintList = tint
+        update(state)
+        adapter.notifyDataSetChanged()
     }
 
     private fun icon(name: String, label: Int, click: () -> Unit) = ImageButton(context).apply {
@@ -167,6 +177,7 @@ class T9DisambiguationView(
 
         override fun onBindViewHolder(holder: ChoiceHolder, position: Int) {
             val span = items[position]
+            holder.text.setTextColor(normalTextColor)
             holder.text.text = if (span.completion) context.getString(R.string.t9_completion, span.spelling) else span.spelling
             holder.text.setOnClickListener { send(T9Action.Lock, span.start, span.end, span.spelling) }
         }

@@ -11,8 +11,7 @@ import android.widget.ImageView
 import androidx.annotation.DrawableRes
 import com.osfans.trime.R
 import com.osfans.trime.core.Candidates
-import com.osfans.trime.data.theme.ColorManager
-import com.osfans.trime.data.theme.Theme
+import com.osfans.trime.data.theme.ThemeScope
 import com.osfans.trime.util.styledFloat
 import splitties.dimensions.dp
 import splitties.resources.drawable
@@ -28,12 +27,12 @@ import splitties.views.imageDrawable
 
 class PaginationUi(
     override val ctx: Context,
-    val theme: Theme,
+    private val scope: ThemeScope,
 ) : Ui {
     private fun createIcon(
         @DrawableRes icon: Int,
     ) = imageView {
-        imageTintList = ColorStateList.valueOf(ColorManager.getColor("key_text_color"))
+        imageTintList = ColorStateList.valueOf(scope.colors.keyTextColor)
         imageDrawable = drawable(icon)
         scaleType = ImageView.ScaleType.CENTER_CROP
     }
@@ -64,6 +63,11 @@ class PaginationUi(
         }
 
     fun update(paged: Candidates.Paged) {
+        // Re-apply the tint as well: a scheme switch rebinds the pagination holder
+        // (see PagedCandidatesUi.refreshColors), which only calls update().
+        val tint = ColorStateList.valueOf(scope.colors.keyTextColor)
+        prevIcon.imageTintList = tint
+        nextIcon.imageTintList = tint
         prevIcon.alpha = if (paged.hasPrevPage) 1f else disabledAlpha
         nextIcon.alpha = if (paged.hasNextPage) 1f else disabledAlpha
     }

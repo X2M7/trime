@@ -18,9 +18,9 @@ import androidx.annotation.DrawableRes
 import androidx.core.view.isVisible
 import com.mikepenz.iconics.IconicsDrawable
 import com.mikepenz.iconics.utils.sizeDp
-import com.osfans.trime.data.theme.ColorManager
 import com.osfans.trime.data.theme.FontManager
 import com.osfans.trime.data.theme.KeyActionManager
+import com.osfans.trime.data.theme.ThemeScope
 import com.osfans.trime.data.theme.model.ToolBar
 import com.osfans.trime.ime.core.AutoScaleTextView
 import com.osfans.trime.ime.keyboard.GestureFrame
@@ -35,7 +35,7 @@ import splitties.views.imageDrawable
 import splitties.views.imageResource
 import splitties.views.padding
 
-class ToolButton(context: Context) : GestureFrame(context) {
+class ToolButton(context: Context, private val scope: ThemeScope) : GestureFrame(context) {
 
     private val image = imageView {
         isClickable = false
@@ -66,20 +66,27 @@ class ToolButton(context: Context) : GestureFrame(context) {
     private var singleStyle = ""
 
     private var actionLabel = ""
+    private var config: ToolBar.Button? = null
 
     private var fontSize = 0f
     private var colorStateList: ColorStateList? = null
 
-    constructor(context: Context, @DrawableRes icon: Int) : this(context) {
-        val tintList = ColorStateList.valueOf(
-            ColorManager.getColor("candidate_text_color"),
-        )
-        image.imageTintList = tintList
+    constructor(
+        context: Context,
+        @DrawableRes icon: Int,
+        scope: ThemeScope,
+    ) : this(context, scope) {
+        applyIconTint()
         image.padding = dp(4)
         setIcon(icon)
     }
 
-    constructor(context: Context, config: ToolBar.Button) : this(context) {
+    constructor(
+        context: Context,
+        config: ToolBar.Button,
+        scope: ThemeScope,
+    ) : this(context, scope) {
+        this.config = config
         val keyAction = KeyActionManager.getAction(config.action)
         isRepeatable = keyAction.isRepeatable
 
@@ -102,11 +109,23 @@ class ToolButton(context: Context) : GestureFrame(context) {
 
         label.typeface = FontManager.getTypeface("toolbar_font")
 
+        applyConfigColors(config)
+    }
+
+    /** Applies the tint of icon-only buttons; re-run on scheme switches. */
+    private fun applyIconTint() {
+        image.imageTintList =
+            ColorStateList.valueOf(scope.colors.candidateTextColor)
+    }
+
+    /** Applies scheme-dependent colors; re-run on scheme switches. */
+    private fun applyConfigColors(config: ToolBar.Button) {
+        val fg = config.foreground
         colorStateList = ColorStateList(
             arrayOf(intArrayOf(android.R.attr.state_pressed), intArrayOf()),
             intArrayOf(
-                ColorManager.getColor(fg.highlight.ifEmpty { "hilited_candidate_text_color" }),
-                ColorManager.getColor(fg.normal.ifEmpty { "candidate_text_color" }),
+                scope.color(fg.highlight.ifEmpty { "hilited_candidate_text_color" }),
+                scope.color(fg.normal.ifEmpty { "candidate_text_color" }),
             ),
         )
         label.setTextColor(colorStateList)
@@ -122,6 +141,16 @@ class ToolButton(context: Context) : GestureFrame(context) {
                 intArrayOf(),
                 backgroundStateDrawable(bg, highlight = false),
             )
+        }
+    }
+
+    /** Restyles this button after a scheme switch. */
+    fun refreshColors() {
+        val cfg = config
+        if (cfg == null) {
+            applyIconTint()
+        } else {
+            applyConfigColors(cfg)
         }
     }
 
@@ -154,9 +183,9 @@ class ToolButton(context: Context) : GestureFrame(context) {
 
     private fun backgroundStateDrawable(bg: ToolBar.Button.Background, highlight: Boolean): Drawable {
         val color = if (highlight) {
-            ColorManager.getColor(bg.highlight.ifEmpty { "hilited_candidate_button_color" })
+            scope.color(bg.highlight.ifEmpty { "hilited_candidate_button_color" })
         } else {
-            bg.normal.takeIf { it.isNotEmpty() }?.let(ColorManager::getColor) ?: 0
+            bg.normal.takeIf { it.isNotEmpty() }?.let(scope::color) ?: 0
         }
         return when (bg.type) {
             ToolBar.Button.Background.Type.RECTANGLE -> GradientDrawable().apply {
@@ -184,7 +213,7 @@ class ToolButton(context: Context) : GestureFrame(context) {
         var useLocalImage = false
         val drawable = if (IMAGE_PATTERN.matches(style)) {
             useLocalImage = true
-            ColorManager.getDrawable(style)
+            scope.drawable(style)
         } else if (style.startsWith("ic@")) {
             val icon = "cmd_${style.substring(3)}"
             IconicsDrawable(context, icon).apply {

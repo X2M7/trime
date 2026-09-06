@@ -13,7 +13,8 @@ import com.google.android.flexbox.FlexboxLayoutManager
 import com.osfans.trime.daemon.RimeSession
 import com.osfans.trime.daemon.launchOnReady
 import com.osfans.trime.data.SymbolHistory
-import com.osfans.trime.data.theme.Theme
+import com.osfans.trime.data.theme.LiquidData
+import com.osfans.trime.data.theme.ThemeScope
 import com.osfans.trime.data.theme.model.LiquidKeyboard
 import com.osfans.trime.ime.core.TrimeInputMethodService
 import com.osfans.trime.ime.keyboard.CommonKeyboardActionListener
@@ -31,7 +32,7 @@ class LiquidWindow(di: DI) :
 
     private val service: TrimeInputMethodService by instance()
     private val rime: RimeSession by instance()
-    private val theme: Theme by instance()
+    private val scope: ThemeScope by instance()
     private val windowManager: BoardWindowManager by instance()
     private val commonKeyboardActionListener: CommonKeyboardActionListener by instance()
 
@@ -41,7 +42,7 @@ class LiquidWindow(di: DI) :
         private set
 
     private val adapter by lazy {
-        LiquidAdapter(theme) {
+        LiquidAdapter(scope) {
             when (currentDataType) {
                 LiquidData.Type.SYMBOL -> triggerSymbolInput(this.altText)
                 LiquidData.Type.TABS -> {
@@ -72,7 +73,7 @@ class LiquidWindow(di: DI) :
     override val key: ResidentWindow.Key
         get() = LiquidWindow
 
-    override fun onCreateView(): View = LiquidLayout(context, theme, commonKeyboardActionListener).apply {
+    override fun onCreateView(): View = LiquidLayout(context, scope, commonKeyboardActionListener).apply {
         liquidLayout = this
         tabsUi.apply {
             setTags(LiquidData.getTagList())
@@ -91,6 +92,10 @@ class LiquidWindow(di: DI) :
     override fun onAttached() {}
 
     override fun onDetached() {}
+
+    override fun refreshColors() {
+        if (::liquidLayout.isInitialized) liquidLayout.refreshColors()
+    }
 
     fun setDataByIndex(i: Int) {
         val tag = LiquidData.getTagList()[i]

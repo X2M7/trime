@@ -31,4 +31,40 @@ class OrphanCleanerTest :
                 root.deleteRecursively()
             }
         }
+        "preserves own sync dumps even when missing from external listing" {
+            val root = createTempDirectory().toFile()
+            try {
+                val ownDump = File(root, "sync/phone-a/luna.userdb.txt")
+                ownDump.parentFile?.mkdirs()
+                ownDump.writeText("dump")
+                File(root, "orphan.yaml").writeText("orphan")
+
+                val result =
+                    OrphanCleaner.removeLocalOrphans(
+                        root,
+                        externalPaths = emptySet(),
+                        ownId = "phone-a",
+                    )
+
+                ownDump.exists() shouldBe true
+                File(root, "orphan.yaml").exists() shouldBe false
+                result.deleted shouldBe 1
+            } finally {
+                root.deleteRecursively()
+            }
+        }
+        "preserves sync backups when installation identity is missing" {
+            val root = createTempDirectory().toFile()
+            try {
+                val dump = File(root, "backups/phone-a/luna.userdb.txt")
+                checkNotNull(dump.parentFile).mkdirs()
+                dump.writeText("retained backup")
+                File(root, "orphan.yaml").writeText("orphan")
+                val result = OrphanCleaner.removeLocalOrphans(root, emptySet(), syncDir = "backups")
+                dump.readText() shouldBe "retained backup"
+                result.deleted shouldBe 1
+            } finally {
+                root.deleteRecursively()
+            }
+        }
     })

@@ -24,85 +24,36 @@ import com.osfans.trime.util.ColorUtils
 import com.osfans.trime.util.NinePatchBitmapFactory
 import com.osfans.trime.util.WeakHashSet
 import com.osfans.trime.util.isNightMode
-import timber.log.Timber
 
+/**
+ * Global entry point for the colors and drawables of the active theme.
+ *
+ * The activation state itself lives in the current [ThemeScope], which
+ * [attachTheme] replaces on every theme switch; scheme switches update the
+ * same scope in place. String-keyed lookups below ([getColor], [getDrawable])
+ * resolve through that scope so that keys only a theme can define (per-key
+ * keyboard colors, image-valued entries) keep working, while [activeColorScheme]
+ * and the scope's [ThemeScope.colors] expose the typed view for UI code.
+ */
 object ColorManager {
-    private lateinit var theme: Theme
+    private var scope: ThemeScope? = null
     private val prefs = ThemeManager.prefs
-    private var normalModeColor by prefs.normalModeColor
-    private val followSystemDayNight by prefs.followSystemDayNight
-    private val backgroundFolder get() = theme.generalStyle.backgroundFolder
 
     private var isNightMode = false
 
-    private lateinit var _activeColorScheme: ColorScheme
-
-    var activeColorScheme: ColorScheme
-        get() = _activeColorScheme
-        private set(value) {
-            if (this::_activeColorScheme.isInitialized && _activeColorScheme == value) return
-            _activeColorScheme = value
-            fireChange()
-        }
-
-    private var lightModeColorScheme: ColorScheme? = null
-
-    private var darkModeColorScheme: ColorScheme? = null
-
-    private val BuiltinFallbackColors =
-        mapOf(
-            "candidate_text_color" to "text_color",
-            "comment_text_color" to "candidate_text_color",
-            "border_color" to "back_color",
-            "candidate_separator_color" to "border_color",
-            "hilited_text_color" to "text_color",
-            "hilited_back_color" to "back_color",
-            "hilited_candidate_text_color" to "hilited_text_color",
-            "hilited_candidate_back_color" to "hilited_back_color",
-            "hilited_candidate_button_color" to "hilited_candidate_back_color",
-            "hilited_label_color" to "hilited_candidate_text_color",
-            "hilited_comment_text_color" to "comment_text_color",
-            "hilited_key_back_color" to "hilited_candidate_back_color",
-            "hilited_key_border_color" to "key_border_color",
-            "hilited_key_text_color" to "hilited_candidate_text_color",
-            "hilited_key_symbol_color" to "hilited_comment_text_color",
-            "hilited_off_key_back_color" to "hilited_key_back_color",
-            "hilited_on_key_back_color" to "hilited_key_back_color",
-            "hilited_off_key_border_color" to "hilited_key_border_color",
-            "hilited_on_key_border_color" to "hilited_key_border_color",
-            "hilited_off_key_text_color" to "hilited_key_text_color",
-            "hilited_on_key_text_color" to "hilited_key_text_color",
-            "hilited_off_key_symbol_color" to "hilited_key_symbol_color",
-            "hilited_on_key_symbol_color" to "hilited_key_symbol_color",
-            "key_back_color" to "back_color",
-            "key_border_color" to "border_color",
-            "key_text_color" to "candidate_text_color",
-            "key_symbol_color" to "comment_text_color",
-            "label_color" to "candidate_text_color",
-            "off_key_back_color" to "key_back_color",
-            "off_key_border_color" to "key_border_color",
-            "off_key_text_color" to "key_text_color",
-            "off_key_symbol_color" to "key_symbol_color",
-            "on_key_back_color" to "hilited_key_back_color",
-            "on_key_border_color" to "hilited_key_border_color",
-            "on_key_text_color" to "hilited_key_text_color",
-            "on_key_symbol_color" to "hilited_key_symbol_color",
-            "popup_back_color" to "key_back_color",
-            "popup_text_color" to "key_text_color",
-            "hilited_popup_back_color" to "hilited_key_back_color",
-            "hilited_popup_text_color" to "hilited_key_text_color",
-            "shadow_color" to "border_color",
-            "root_background" to "back_color",
-            "candidate_background" to "back_color",
-            "keyboard_back_color" to "border_color",
-            "keyboard_background" to "keyboard_back_color",
-            "liquid_keyboard_background" to "keyboard_back_color",
-            "text_back_color" to "back_color",
-            "long_text_color" to "key_text_color",
-            "long_text_back_color" to "key_back_color",
-        )
+    val activeColorScheme: ColorScheme
+        get() = requireNotNull(requireScope().activeColorScheme) { "ColorManager is not initialized" }
 
     private var bitmapCache: LruCache<String, Bitmap>? = null
+
+    private var generation = 0L
+
+    /**
+     * Bumped whenever the active scheme changes. Scheme-dependent caches
+     * (e.g. per-key colors in Key) re-resolve when it moves.
+     */
+    val colorGeneration: Long
+        get() = generation
 
     fun interface OnColorChangeListener {
         fun onColorChange(theme: Theme)
@@ -119,14 +70,12 @@ object ColorManager {
     }
 
     private fun fireChange() {
-        onChangeListeners.forEach { it.onColorChange(theme) }
+        onChangeListeners.forEach { it.onColorChange(requireScope().theme) }
     }
-
-    private fun colorScheme(id: String) = theme.colorSchemes.find { it.id == id }
 
     fun init(configuration: Configuration) {
         isNightMode = configuration.isNightMode()
-        activeColorScheme = evaluateActiveColorScheme()
+        activateScheme(notify = false)
 
         val maxMemory = Runtime.getRuntime().maxMemory() / 1024
         val cacheSize = maxMemory / 8
@@ -141,135 +90,134 @@ object ColorManager {
 
     fun onSystemNightModeChange(isNight: Boolean) {
         isNightMode = isNight
-        activeColorScheme = evaluateActiveColorScheme()
+        activateScheme(notify = true)
     }
 
-    private fun evaluateActiveColorScheme(): ColorScheme = when {
-        followSystemDayNight -> {
-            val defaultModeScheme = if (isNightMode) darkModeColorScheme else lightModeColorScheme
+    /** The current theme scope, or null before the first theme is attached. */
+    fun currentScope(): ThemeScope? = scope
 
-            fun resolveScheme(id: String?) = id?.let { colorScheme(it) } ?: defaultModeScheme
-
-            colorScheme(normalModeColor)?.let { userScheme ->
-                val lightSchemeId = userScheme.colors["light_scheme"]
-                val darkSchemeId = userScheme.colors["dark_scheme"]
-
-                when {
-                    lightSchemeId != null && darkSchemeId != null ->
-                        // 如果两者都指定了，根据当前模式选择对应的配色
-                        resolveScheme(if (isNightMode) darkSchemeId else lightSchemeId)
-                    lightSchemeId != null ->
-                        // 如果只指定了light_scheme，说明是暗色方案
-                        if (isNightMode) userScheme else resolveScheme(lightSchemeId)
-                    darkSchemeId != null ->
-                        // 如果只指定了dark_scheme，说明是亮色方案
-                        if (isNightMode) resolveScheme(darkSchemeId) else userScheme
-                    else -> defaultModeScheme
-                }
-            } ?: defaultModeScheme
-        }
-        else -> colorScheme(normalModeColor)
-    } ?: colorScheme("default") ?: theme.colorSchemes.first()
-
-    /** 每次切换主题后，都要调用此函数，初始化配色 */
-    fun switchTheme(theme: Theme) {
+    /**
+     * Attaches a theme, replacing the current scope. Theme switches notify
+     * through ThemeManager, so no color listener fires here.
+     */
+    fun attachTheme(theme: Theme) {
         bitmapCache?.evictAll()
-        this.theme = theme
-        val defaultScheme = colorScheme("default") ?: theme.colorSchemes.first()
-        lightModeColorScheme = defaultScheme.colors["light_scheme"]?.let { colorScheme(it) }
-        darkModeColorScheme = defaultScheme.colors["dark_scheme"]?.let { colorScheme(it) }
-        activeColorScheme = evaluateActiveColorScheme()
+        scope = ThemeScope(theme)
+        activateScheme(notify = false)
     }
 
     fun setColorScheme(scheme: ColorScheme) {
-        activeColorScheme = scheme
-        normalModeColor = scheme.id
+        activateScheme(scheme, notify = true)
+        prefs.normalModeColor.setValue(scheme.id)
     }
 
+    private fun requireScope(): ThemeScope = requireNotNull(scope) { "ColorManager is not initialized" }
+
+    private fun resolveActiveScheme(theme: Theme): ColorScheme = ColorSchemeResolver.resolve(
+        schemes = theme.colorSchemes,
+        selectedSchemeId = prefs.normalModeColor.getValue(),
+        followSystemDayNight = prefs.followSystemDayNight.getValue(),
+        isNightMode = isNightMode,
+    )
+
+    /**
+     * Re-resolves the active scheme from the prefs and current theme, or
+     * activates the given one. Listener notification fires only when the
+     * scheme actually changed.
+     */
+    private fun activateScheme(
+        scheme: ColorScheme? = null,
+        notify: Boolean,
+    ) {
+        val activeScope = scope ?: return
+        val target = scheme ?: resolveActiveScheme(activeScope.theme)
+        if (activeScope.activeColorScheme == target) return
+        activeScope.updateScheme(target)
+        generation++
+        if (notify) fireChange()
+    }
+
+    private fun backgroundFolder(scope: ThemeScope) = scope.theme.generalStyle.backgroundFolder
+
+    /**
+     * Resolves a color key against the given scope. Exposed so UI code can
+     * look up keys only a theme can define through an injected scope.
+     */
     @ColorInt
-    private fun resolveColor(key: String): Int {
-        val color =
-            try {
-                resolveValue(key) { value ->
-                    ColorUtils.parseColor(value)
-                }
-            } catch (_: IllegalArgumentException) {
-                ColorUtils.parseColor(key)
-            }
-        return color
-    }
-
-    private fun resolveDrawable(key: String): Drawable? {
-        val drawable =
-            try {
-                resolveValue(key) { value ->
-                    parseDrawable(value)
-                }
-            } catch (_: IllegalArgumentException) {
-                parseDrawable(key)
-            }
-        return drawable
-    }
-
-    private inline fun <T> resolveValue(
+    internal fun resolveColor(
+        scope: ThemeScope,
         key: String,
-        parser: (String) -> T,
-    ): T {
-        var currentKey = key
-
-        while (true) {
-            val target = activeColorScheme.colors[currentKey]
-            if (!target.isNullOrEmpty()) {
-                Timber.d("current: $currentKey, origin: $key, target: $target")
-                return parser(target)
-            }
-            val fallback = theme.fallbackColors[currentKey]
-            if (!fallback.isNullOrEmpty()) {
-                currentKey = fallback
-                continue
-            }
-            val altFallback = BuiltinFallbackColors[currentKey]
-            if (!altFallback.isNullOrEmpty()) {
-                currentKey = altFallback
-            } else {
-                throw IllegalArgumentException("$key not found")
-            }
+    ): Int {
+        val tableEntry = ColorKey.from(key)?.let { scope.colorTable?.get(it) }
+        if (tableEntry is ColorTable.Value.Color) return tableEntry.argb
+        // Keys defined only by a theme resolve through the same chain rules.
+        val scheme = requireNotNull(scope.activeColorScheme)
+        val raw = ColorTable.resolveRaw(key, scheme.colors, scope.theme.fallbackColors)
+        return try {
+            if (raw == null) throw IllegalArgumentException("$key not found")
+            ColorUtils.parseColor(raw)
+        } catch (_: IllegalArgumentException) {
+            ColorUtils.parseColor(key)
         }
     }
 
-    private fun parseDrawable(value: String): Drawable? {
+    /** Resolves a drawable key (color or image asset) against the given scope. */
+    internal fun resolveDrawable(
+        scope: ThemeScope,
+        key: String,
+    ): Drawable? {
+        val tableEntry = ColorKey.from(key)?.let { scope.colorTable?.get(it) }
+        if (tableEntry != null) {
+            return when (tableEntry) {
+                is ColorTable.Value.Color -> GradientDrawable().apply { setColor(tableEntry.argb) }
+                is ColorTable.Value.Image -> imageDrawable(scope, tableEntry.path)
+                ColorTable.Value.None -> parseDrawable(scope, key)
+            }
+        }
+        // Keys defined only by a theme resolve through the same chain rules.
+        val scheme = requireNotNull(scope.activeColorScheme)
+        val raw = ColorTable.resolveRaw(key, scheme.colors, scope.theme.fallbackColors)
+        return parseDrawable(scope, raw ?: key)
+    }
+
+    private fun parseDrawable(
+        scope: ThemeScope,
+        value: String,
+    ): Drawable? {
         if (value.isEmpty()) return null
-        if (SUPPORTED_IMG_FORMATS.any { value.endsWith(it) }) {
-            val path = resolveImageFilePath(value)
-            val bitmap =
-                bitmapCache?.get(path)
-                    ?: BitmapFactory.decodeFile(path)?.also {
-                        bitmapCache?.put(path, it)
-                    } ?: return null
-            if (path.endsWith(".9.png")) {
-                val chunk = bitmap.ninePatchChunk
-                return if (NinePatch.isNinePatchChunk(chunk)) {
-                    // for compiled nine patch image
-                    NinePatchDrawable(Resources.getSystem(), bitmap, chunk, Rect(), null)
-                } else {
-                    // for source nine patch image
-                    NinePatchBitmapFactory.createNinePatchDrawable(Resources.getSystem(), bitmap)
-                }
-            }
-            return bitmap.toDrawable(Resources.getSystem())
-        } else {
-            val color =
-                try {
-                    ColorUtils.parseColor(value)
-                } catch (_: Exception) {
-                    Color.TRANSPARENT
-                }
-            return GradientDrawable().apply { setColor(color) }
-        }
+        if (ColorTable.isImageValue(value)) return imageDrawable(scope, value)
+        val color = runCatching { ColorUtils.parseColor(value) }.getOrDefault(Color.TRANSPARENT)
+        return GradientDrawable().apply { setColor(color) }
     }
 
-    private fun resolveImageFilePath(value: String): String {
-        val default = DataManager.userDataDir.resolve("backgrounds/$backgroundFolder/$value")
+    private fun imageDrawable(
+        scope: ThemeScope,
+        value: String,
+    ): Drawable? {
+        val path = resolveImageFilePath(scope, value)
+        val bitmap =
+            bitmapCache?.get(path)
+                ?: BitmapFactory.decodeFile(path)?.also {
+                    bitmapCache?.put(path, it)
+                } ?: return null
+        if (path.endsWith(".9.png")) {
+            val chunk = bitmap.ninePatchChunk
+            return if (NinePatch.isNinePatchChunk(chunk)) {
+                // for compiled nine patch image
+                NinePatchDrawable(Resources.getSystem(), bitmap, chunk, Rect(), null)
+            } else {
+                // for source nine patch image
+                NinePatchBitmapFactory.createNinePatchDrawable(Resources.getSystem(), bitmap)
+            }
+        }
+        return bitmap.toDrawable(Resources.getSystem())
+    }
+
+    private fun resolveImageFilePath(
+        scope: ThemeScope,
+        value: String,
+    ): String {
+        val default = DataManager.userDataDir.resolve("backgrounds/${backgroundFolder(scope)}/$value")
         if (!default.exists()) {
             val fallback = DataManager.userDataDir.resolve("backgrounds/$value")
             if (fallback.exists()) return fallback.absolutePath
@@ -278,24 +226,25 @@ object ColorManager {
     }
 
     @ColorInt
-    fun getColor(key: String): Int = resolveColor(key)
+    fun getColor(key: String): Int = resolveColor(requireScope(), key)
 
-    fun getDrawable(key: String): Drawable? = resolveDrawable(key)
+    fun getDrawable(key: String): Drawable? = resolveDrawable(requireScope(), key)
 
-    fun getDecorDrawable(
+    internal fun resolveDecorDrawable(
+        scope: ThemeScope,
         colorKey: String,
-        borderColorKey: String? = null,
-        borderPx: Int = 0,
-        cornerRadius: Float = 0f,
-        alpha: Int = 255,
-    ): Drawable? = when (val drawable = getDrawable(colorKey)) {
+        borderColorKey: String?,
+        borderPx: Int,
+        cornerRadius: Float,
+        alpha: Int,
+    ): Drawable? = when (val drawable = resolveDrawable(scope, colorKey)) {
         is GradientDrawable ->
             drawable.also {
                 it.cornerRadius = cornerRadius
                 it.alpha = MathUtils.clamp(alpha, 0, 255)
                 if (!borderColorKey.isNullOrEmpty()) {
                     try {
-                        val borderColor = getColor(borderColorKey)
+                        val borderColor = resolveColor(scope, borderColorKey)
                         it.setStroke(borderPx, borderColor)
                     } catch (_: Exception) {
                     }
@@ -304,5 +253,11 @@ object ColorManager {
         else -> drawable?.also { it.alpha = MathUtils.clamp(alpha, 0, 255) }
     }
 
-    private val SUPPORTED_IMG_FORMATS = arrayOf(".png", ".webp", ".jpg", ".gif")
+    fun getDecorDrawable(
+        colorKey: String,
+        borderColorKey: String? = null,
+        borderPx: Int = 0,
+        cornerRadius: Float = 0f,
+        alpha: Int = 255,
+    ): Drawable? = resolveDecorDrawable(requireScope(), colorKey, borderColorKey, borderPx, cornerRadius, alpha)
 }

@@ -8,7 +8,6 @@ package com.osfans.trime.data.theme
 import android.content.res.Configuration
 import com.osfans.trime.data.base.DataManager
 import com.osfans.trime.data.prefs.AppPrefs
-import com.osfans.trime.ime.symbol.LiquidData
 import com.osfans.trime.util.WeakHashSet
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.sync.Mutex
@@ -88,13 +87,17 @@ object ThemeManager {
 
     private fun applyTheme(resolvedTheme: ResolvedTheme) {
         val theme = resolvedTheme.theme
-        val changed = _activeTheme != theme
-        _activeTheme = theme
+        // A structurally equal theme suppresses the change notification below, so the
+        // UI tree keeps its views and their injected scope. Replace neither the
+        // caches nor the scope in that case, or later scheme changes would update
+        // the new global scope while existing views still read the old one.
+        if (_activeTheme == theme) return
         KeyActionManager.resetCache()
         FontManager.resetCache(theme)
         LiquidData.init(theme)
-        ColorManager.switchTheme(theme)
-        if (changed) fireChange()
+        ColorManager.attachTheme(theme)
+        _activeTheme = theme
+        fireChange()
     }
 
     suspend fun init(configuration: Configuration) = withContext(Dispatchers.Main.immediate) {
