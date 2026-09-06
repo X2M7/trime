@@ -47,6 +47,17 @@ window focus, an actual visible `keyboard_view` in the IME accessibility window,
 stable bounds for one second, and a nonblank screenshot. The system's IME-insets
 visibility flag alone does not prove the asynchronous keyboard has rendered.
 
+Before visibility tests, wait for emulator boot services and dismiss any recorded
+system ANR dialog. Recheck the selected default IME after a force-stop; the system
+can switch away from a stopped IME. Keep failed attempts as separate evidence.
+
+Prefer letting the app create its runtime directories. When using a verified
+same-build system-dictionary cache on a disposable rooted emulator, preserve the
+app UID, group and SELinux labels. A directory created by `adb push` as root may
+be unreadable or unwritable by the app. Do not disable SELinux or relax application
+permissions to work around a test-fixture error. Never seed personal userdb files;
+record cached system data as a warm UI check, not a cold performance baseline.
+
 ## Provider Limits
 
 - Existing files require rename support for safe replacement. Providers lacking

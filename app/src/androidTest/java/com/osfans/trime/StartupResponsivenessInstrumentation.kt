@@ -123,6 +123,8 @@ class StartupResponsivenessInstrumentation : Instrumentation() {
                         }
                     }
                     phase("Schema, option cache and portrait/landscape T9 recolor verified")
+                    rime.runOnReady { SchemaPickerRegression.verify(targetContext, this) }
+                    phase("F4 schema picker and empty list verified")
                     val queries = async(Dispatchers.Default) {
                         repeat(20) { rime.runOnReady { selectedSchemata() } }
                     }

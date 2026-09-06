@@ -28,7 +28,7 @@ object EnabledSchemaPickerDialog {
             .Builder(context)
             .apply {
                 setTitle(R.string.select_current_schema)
-                if (rime.isEmpty()) {
+                if (selecteds.isEmpty()) {
                     setMessage(R.string.no_schema_to_select)
                 } else {
                     setSingleChoiceItems(
