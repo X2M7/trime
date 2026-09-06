@@ -9,6 +9,32 @@ data class CommitProto(
     val text: String?,
 )
 
+/** Offsets refer to the original input, not the private engine spelling. */
+data class T9SpanProto(
+    val start: Int,
+    val end: Int,
+    val spelling: String,
+    val completion: Boolean,
+    val locked: Boolean,
+)
+
+class T9StateProto(
+    val enabled: Boolean = false,
+    val revision: Int = 0,
+    val input: String = "",
+    val focus: Int = 0,
+    val canUndo: Boolean = false,
+    val segments: Array<T9SpanProto> = emptyArray(),
+    val choices: Array<T9SpanProto> = emptyArray(),
+)
+
+enum class T9Action {
+    Focus,
+    Lock,
+    Unlock,
+    Undo,
+}
+
 data class CandidateProto(
     val text: String,
     val comment: String,

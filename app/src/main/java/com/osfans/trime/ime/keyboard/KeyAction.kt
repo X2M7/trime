@@ -93,7 +93,7 @@ class KeyAction(
 
     fun getLabel(keyboard: Keyboard): String {
         if (states.isNotEmpty() && toggle.isNotEmpty()) {
-            return states[if (rime.run { getRuntimeOption(toggle) }) 1 else 0]
+            return states.getOrElse(if (rime.run { getRuntimeOptionCached(toggle) }) 1 else 0) { states.first() }
         }
         if (keyboard.isOnlyShiftOn) {
             val asciiMode = rime.run { statusCached }.isAsciiMode

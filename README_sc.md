@@ -31,6 +31,10 @@ SPDX-License-Identifier: GPL-3.0-or-later
 
 [项目页面](https://x2m7.github.io/trime/) | [下载九键预览 APK](https://github.com/X2M7/trime/releases/latest)
 
+`develop` 源码版本 `3.3.13-t9.2` 增加了基于当前方案词典的独立拼音选择区，支持逐段锁定、修改中间音节、解锁和撤销；选拼音不提交汉字。同时将主题初始化改为异步，按键开关标签读取引擎缓存，不再同步等待部署或查询。
+
+开发源码的更新不会自动更新 Release 下载。构建与验证方法见[九键设计与测试](script/t9/README.md)、[启动 ANR 回归检查](script/t9/STARTUP-ANR.md)。用户目录若有同名九键方案，需要合并新增规则并重新部署，不要清空个人词库。
+
 ## 下载
 
 - 九键预览版 [点击下载](https://github.com/X2M7/trime/releases/latest)

@@ -16,6 +16,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.SystemClock
 import android.text.InputType
+import android.view.Gravity
 import android.view.InputDevice
 import android.view.KeyCharacterMap
 import android.view.KeyEvent
@@ -29,11 +30,16 @@ import android.view.inputmethod.ExtractedTextRequest
 import android.view.inputmethod.InlineSuggestionsRequest
 import android.view.inputmethod.InlineSuggestionsResponse
 import android.widget.FrameLayout
+import android.widget.ImageButton
+import android.widget.ProgressBar
 import androidx.annotation.Keep
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updateLayoutParams
 import androidx.lifecycle.lifecycleScope
+import com.osfans.trime.R
 import com.osfans.trime.core.KeyModifiers
 import com.osfans.trime.core.KeyValue
 import com.osfans.trime.core.RimeApi
@@ -41,7 +47,6 @@ import com.osfans.trime.core.RimeKeyMapping
 import com.osfans.trime.core.RimeMessage
 import com.osfans.trime.daemon.RimeDaemon
 import com.osfans.trime.daemon.RimeSession
-import com.osfans.trime.data.base.DataManager
 import com.osfans.trime.data.prefs.AppPrefs
 import com.osfans.trime.data.prefs.PreferenceDelegate
 import com.osfans.trime.data.prefs.PreferenceDelegateProvider
@@ -56,6 +61,7 @@ import com.osfans.trime.util.findSectionFrom
 import com.osfans.trime.util.forceShowSelf
 import com.osfans.trime.util.monitorCursorAnchor
 import com.osfans.trime.util.styledFloat
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Job
@@ -63,6 +69,7 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.launch
 import splitties.bitflags.hasFlag
+import splitties.dimensions.dp
 import splitties.systemservices.clipboardManager
 import splitties.systemservices.inputMethodManager
 import timber.log.Timber
@@ -79,6 +86,10 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
     private lateinit var lastKnownConfig: Configuration
     private var inputView: InputView? = null
     private var candidatesView: CandidatesView? = null
+    private var themeReady = false
+    private var inputViewRequested = false
+    private var themeInitialization: Job? = null
+    private var loadingPanel: FrameLayout? = null
     private val navBarManager = NavigationBarManager()
     private val inputDeviceManager = InputDeviceManager { useVirtualKeyboard, useCandidatesView ->
         postRimeJob {
@@ -108,26 +119,26 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
     @Keep
     private val recreateInputViewListener =
         PreferenceDelegate.OnChangeListener<Any> { _, _ ->
-            replaceInputView(ThemeManager.activeTheme)
+            if (themeReady && inputViewRequested) replaceInputView(ThemeManager.activeTheme)
         }
 
     @Keep
     private val recreateCandidatesViewListener =
         PreferenceDelegateProvider.OnChangeListener {
-            replaceCandidateView(ThemeManager.activeTheme)
+            if (themeReady && inputViewRequested) replaceCandidateView(ThemeManager.activeTheme)
         }
 
     @Keep
     private val onThemeChangeListener =
         ThemeManager.OnThemeChangeListener {
-            replaceInputViews(it)
+            if (themeReady && inputViewRequested) replaceInputViews(it)
         }
 
     @Keep
     private val onColorChangeListener =
         ColorManager.OnColorChangeListener {
             ContextCompat.getMainExecutor(this).execute {
-                replaceInputViews(it)
+                if (themeReady && inputViewRequested) replaceInputViews(it)
             }
         }
 
@@ -173,7 +184,6 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
 
     override fun onCreate() {
         rime = RimeDaemon.createSession(javaClass.name)
-        DataManager.sync()
         lifecycleScope.launch {
             jobs.consumeEach { it.join() }
         }
@@ -187,13 +197,7 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
         }
         prefs.candidates.registerOnChangeListener(recreateCandidatesViewListener)
         // ensure theme and color managers are initialized after rime is ready
-        lifecycleScope.launch {
-            rime.runOnReady {
-                ThemeManager.init(resources.configuration)
-                ThemeManager.addOnChangedListener(onThemeChangeListener)
-                ColorManager.addOnChangedListener(onColorChangeListener)
-            }
-        }
+        prepareTheme()
         InputFeedbackManager.init(this)
         registerReceiver()
         super.onCreate()
@@ -201,6 +205,52 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
         decorView = window.window!!.decorView
         contentView = decorView.findViewById(android.R.id.content)
         lastKnownConfig = Configuration(resources.configuration)
+    }
+
+    private fun prepareTheme() {
+        if (themeInitialization?.isActive == true) return
+        themeInitialization = lifecycleScope.launch {
+            try {
+                rime.runOnReady { ThemeManager.init(resources.configuration) }
+                themeReady = true
+                ThemeManager.addOnChangedListener(onThemeChangeListener)
+                ColorManager.addOnChangedListener(onColorChangeListener)
+                if (inputViewRequested) {
+                    replaceInputViews(ThemeManager.activeTheme)
+                    if (isInputViewShown) inputView?.startInput(currentInputEditorInfo, false)
+                }
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                Timber.e(e, "Failed to initialize keyboard theme")
+                loadingPanel?.apply {
+                    removeAllViews()
+                    addView(
+                        ImageButton(context).apply {
+                            setImageResource(R.drawable.ic_baseline_refresh_reversed_24)
+                            contentDescription = getString(R.string.deploy)
+                            setOnClickListener {
+                                showThemeLoading()
+                                prepareTheme()
+                            }
+                        },
+                        FrameLayout.LayoutParams(dp(48), dp(48), Gravity.CENTER),
+                    )
+                }
+            }
+        }
+    }
+
+    private fun showThemeLoading() {
+        loadingPanel?.apply {
+            removeAllViews()
+            addView(
+                ProgressBar(context).apply {
+                    contentDescription = getString(R.string.loading)
+                },
+                FrameLayout.LayoutParams(dp(48), dp(48), Gravity.CENTER),
+            )
+        }
     }
 
     private fun handleRimeMessage(it: RimeMessage<*>) {
@@ -298,6 +348,7 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
     }
 
     private fun replaceInputViews(theme: Theme) {
+        loadingPanel = null
         navBarManager.evaluate(window.window!!, inputDeviceManager.useVirtualKeyboard)
         replaceInputView(theme)
         replaceCandidateView(theme)
@@ -305,6 +356,10 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
     }
 
     override fun onDestroy() {
+        themeReady = false
+        inputViewRequested = false
+        themeInitialization?.cancel()
+        loadingPanel = null
         InputFeedbackManager.destroy()
         inputView = null
         recreateInputViewPrefs.forEach {
@@ -464,7 +519,12 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
 
     override fun onComputeInsets(outInsets: Insets) {
         if (inputDeviceManager.useVirtualKeyboard) {
-            inputView?.keyboardView?.getLocationInWindow(inputViewLocation)
+            val visibleView = inputView?.keyboardView ?: loadingPanel
+            if (visibleView == null) {
+                inputViewLocation[1] = decorView.height
+            } else {
+                visibleView.getLocationInWindow(inputViewLocation)
+            }
             outInsets.apply {
                 contentTopInsets = inputViewLocation[1]
                 visibleTopInsets = inputViewLocation[1]
@@ -489,6 +549,24 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
 
     override fun onCreateInputView(): View? {
         Timber.d("onCreateInputView")
+        inputViewRequested = true
+        if (!themeReady) {
+            prepareTheme()
+            return FrameLayout(this).apply {
+                val panel = FrameLayout(context).apply {
+                    setBackgroundColor(ContextCompat.getColor(context, R.color.colorPrimary))
+                }
+                loadingPanel = panel
+                addView(panel, FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dp(64), Gravity.BOTTOM))
+                ViewCompat.setOnApplyWindowInsetsListener(panel) { view, insets ->
+                    val bottom = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom
+                    view.setPadding(0, 0, 0, bottom)
+                    view.updateLayoutParams { height = dp(64) + bottom }
+                    insets
+                }
+                showThemeLoading()
+            }
+        }
         replaceInputViews(ThemeManager.activeTheme)
         // We will call `setInputView` by ourselves. This is fine.
         return null

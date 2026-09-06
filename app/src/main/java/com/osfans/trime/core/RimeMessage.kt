@@ -115,6 +115,10 @@ sealed class RimeMessage<T>(
         )
     }
 
+    data class T9Message(override val data: T9StateProto) : RimeMessage<T9StateProto>(data) {
+        override val messageType = MessageType.T9
+    }
+
     enum class MessageType {
         Unknown,
         Schema,
@@ -127,6 +131,7 @@ sealed class RimeMessage<T>(
         Status,
         Candidate,
         Key,
+        T9,
     }
 
     companion object {
@@ -166,6 +171,7 @@ sealed class RimeMessage<T>(
                 StatusMessage(params[0] as StatusProto)
             MessageType.Candidate ->
                 BulkCandidatesMessage(params[0] as Candidates.Bulk)
+            MessageType.T9 -> T9Message(params[0] as T9StateProto)
             MessageType.Key ->
                 KeyMessage(
                     KeyMessage.Data(

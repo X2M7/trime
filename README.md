@@ -33,6 +33,10 @@ This fork adds `Luna Pinyin T9` / `luna_pinyin_t9` on top of Trime:
 
 [Project page](https://x2m7.github.io/trime/) | [Download the T9 preview APK](https://github.com/X2M7/trime/releases/latest)
 
+The `develop` source version `3.3.13-t9.2` adds a separate, dictionary-backed pinyin selection area with syllable locking, middle-segment editing, unlocking and undo. Selecting pinyin does not commit Hanzi. Theme initialization is asynchronous, and keyboard toggle labels use cached engine state.
+
+These development changes do not update the Release download automatically. See the [T9 design and tests](script/t9/README.md) and [startup ANR regression checks](script/t9/STARTUP-ANR.md) for build and verification details. Custom copies of the T9 schema need the updated rules and redeployment; do not reset personal dictionaries.
+
 ## Download
 
 - T9 Preview [Download](https://github.com/X2M7/trime/releases/latest)

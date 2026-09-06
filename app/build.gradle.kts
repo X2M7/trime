@@ -25,8 +25,9 @@ android {
         applicationId = "com.osfans.trime"
         minSdk = 21
         targetSdk = 36
-        versionCode = 20261101
-        versionName = "3.3.13"
+        versionCode = 20261103
+        versionName = "3.3.13-t9.2"
+        testInstrumentationRunner = "com.osfans.trime.StartupResponsivenessInstrumentation"
 
         multiDexEnabled = true
         buildConfigField("String", "BUILDER", "\"${project.builder}\"")

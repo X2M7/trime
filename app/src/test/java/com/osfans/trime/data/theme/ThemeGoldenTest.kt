@@ -56,8 +56,8 @@ class ThemeGoldenTest :
                     enterLabel.default shouldBe "Enter"
                 }
 
-                Then("all 50 preset keyboards are decoded") {
-                    theme.presetKeyboards.size shouldBe 50
+                Then("all 51 preset keyboards are decoded") {
+                    theme.presetKeyboards.size shouldBe 51
                     theme.presetKeyboards shouldContainKey "default"
                     theme.presetKeyboards shouldContainKey "letter"
                     theme.presetKeyboards shouldContainKey "number"
@@ -118,8 +118,8 @@ class ThemeGoldenTest :
                     brightnessDown.send shouldBe "BRIGHTNESS_DOWN"
                 }
 
-                Then("all 18 plain keyboards are decoded with their keys") {
-                    theme.presetKeyboards.size shouldBe 18
+                Then("all 19 keyboards are decoded with their keys") {
+                    theme.presetKeyboards.size shouldBe 19
                     theme.presetKeyboards shouldContainKey "default"
                     theme.presetKeyboards shouldContainKey "qwerty0"
                     theme.presetKeyboards shouldContainKey "cangjie5"
@@ -166,6 +166,19 @@ class ThemeGoldenTest :
                         .forEach { (id, keyboard) ->
                             keyboard.keys shouldNotBe emptyList<TextKeyboard.TextKey>()
                         }
+                }
+            }
+        }
+        Given("the T9 layouts in both built-in themes") {
+            listOf("tongwenfeng.trime.yaml", "trime.yaml").forEach { name ->
+                Then("$name preserves numeric T9 input and its alphabetic fallback") {
+                    val keyboard = ThemeTestSupport.decodeBuiltinTheme(name).presetKeyboards.getValue("luna_pinyin_t9")
+                    keyboard.asciiMode shouldBe false
+                    keyboard.asciiKeyboard shouldBe "letter"
+                    keyboard.keyboardHeightLand shouldBe 200
+                    keyboard.keys.size shouldBe 15
+                    keyboard.keys.take(9).map { it.behaviors[KeyBehavior.CLICK] } shouldBe
+                        (1..9).map { KeyActionToken.Plain(it.toString()) }
                 }
             }
         }

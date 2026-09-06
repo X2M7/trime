@@ -43,7 +43,7 @@ class Rime :
     override val isReady: Boolean
         get() = lifecycle.currentState == RimeLifecycle.State.READY
 
-    override var schemaCached = RimeSchema(".default")
+    override var schemaCached = RimeSchema.empty()
         private set
 
     override var statusCached = StatusProto()
@@ -57,6 +57,23 @@ class Rime :
 
     override var paging: Boolean = false
         private set
+
+    override var t9Cached = T9StateProto()
+        private set
+
+    private val optionCache = RuntimeOptionCache()
+
+    override fun getRuntimeOptionCached(option: String): Boolean = optionCache[option]
+
+    override suspend fun t9Action(
+        revision: Int,
+        action: T9Action,
+        start: Int,
+        end: Int,
+        spelling: String,
+    ): Boolean = withRimeContext {
+        performRimeT9Action(revision, action.ordinal, start, end, spelling).also { emitResponse() }
+    }
 
     private val dispatcher =
         RimeDispatcher(
@@ -144,6 +161,10 @@ class Rime :
     override suspend fun updateConfig() = withRimeContext {
         exitRime()
         startRime(false)
+    }
+
+    override suspend fun deployConfigFile(fileName: String, versionKey: String): Boolean = RimeMaintenanceMutex.withLock {
+        withRimeContext { deployRimeConfigFile(fileName, versionKey) }
     }
 
     override suspend fun syncUserData(): Boolean = RimeMaintenanceMutex.withLock {
@@ -255,7 +276,9 @@ class Rime :
 
     override suspend fun selectedSchemaId(): String = withRimeContext { getCurrentRimeSchema() }
 
-    override suspend fun selectSchema(schemaId: String) = withRimeContext { selectRimeSchema(schemaId) }
+    override suspend fun selectSchema(schemaId: String) = withRimeContext {
+        selectRimeSchema(schemaId).also { if (it) emitResponse() }
+    }
 
     override suspend fun currentSchema(): RimeSchema = withRimeContext {
         RimeSchema(getCurrentRimeSchema())
@@ -300,6 +323,7 @@ class Rime :
     }
 
     private fun startRime(fullCheck: Boolean) {
+        optionCache.clear()
         DataManager.sync()
         val sharedDataDir = DataManager.sharedDataDir.absolutePath
         val userDataDir = DataManager.userDataDir.absolutePath
@@ -312,6 +336,9 @@ class Rime :
             """.trimIndent(),
         )
         startupRime(sharedDataDir, userDataDir, BuildConfig.BUILD_VERSION_NAME, fullCheck)
+        // Create the engine session and publish restored options before any view
+        // uses the schema or toggle labels for the first time.
+        emitResponse()
     }
 
     private fun processKeyInner(value: Int, modifiers: Int, isVirtual: Boolean): Boolean {
@@ -336,6 +363,7 @@ class Rime :
 
     private fun emitResponse(commit: CommitProto? = null) {
         val response = getRimeResponse(pagingMode)
+        val t9 = getRimeT9State()
         handleRimeMessage(4, arrayOf(commit ?: response.commit))
         handlePreedit(response.composition)
         if (response.composition.length <= 0 && lastAsciiTipsText != asciiTipsText(response.status)) {
@@ -346,6 +374,7 @@ class Rime :
             is Candidates.Bulk -> handleRimeMessage(9, arrayOf(candidates))
         }
         handleRimeMessage(8, arrayOf(response.status))
+        handleRimeMessage(11, arrayOf(t9))
     }
 
     private fun handlePreedit(composition: CompositionProto) {
@@ -371,10 +400,13 @@ class Rime :
     private fun handleRimeMessage(it: RimeMessage<*>) {
         when (it) {
             is RimeMessage.SchemaMessage -> {
+                t9Cached = T9StateProto()
+                optionCache.clear()
                 statusCached = getRimeStatus()
                 schemaCached = RimeSchema(it.data.id)
             }
             is RimeMessage.OptionMessage -> {
+                optionCache.update(it.data.option, it.data.value)
                 // Option change won't trigger response update
                 val status = getRimeStatus()
                 statusCached = status
@@ -403,7 +435,9 @@ class Rime :
             is RimeMessage.StatusMessage -> {
                 statusCached = it.data
                 updateSchemaCached(it.data)
+                refreshOptionCache()
             }
+            is RimeMessage.T9Message -> t9Cached = it.data
             else -> {}
         }
     }
@@ -412,6 +446,7 @@ class Rime :
         val (schemaId, schemaName) = status
         // Engine response update won't send SchemaMessage, but usually update RimeStatus
         if (schemaId != schemaCached.schemaId) {
+            optionCache.clear()
             schemaCached = RimeSchema(schemaId)
             // notify downstream consumers that schema has changed
             messageFlow_.tryEmit(
@@ -420,6 +455,13 @@ class Rime :
                 ),
             )
         }
+    }
+
+    private fun refreshOptionCache() {
+        val options = schemaCached.switches.flatMap {
+            if (it.name.isEmpty()) it.options else listOf(it.name)
+        }
+        (options + "ascii_mode").distinct().forEach { optionCache.update(it, getRimeOption(it)) }
     }
 
     private fun showAsciiSwitchTips(status: StatusProto) {
@@ -435,8 +477,10 @@ class Rime :
         asciiSwitchTipsJob?.cancel()
         asciiSwitchTipsJob = lifecycleScope.launch {
             delay(1000L)
-            val ctx = getRimeContext()
-            handleRimeMessage(6, arrayOf(ctx.composition))
+            withRimeContext {
+                val ctx = getRimeContext()
+                handleRimeMessage(6, arrayOf(ctx.composition))
+            }
         }
     }
 
@@ -508,6 +552,18 @@ class Rime :
         external fun syncRimeUserData(): Boolean
 
         // input
+        @JvmStatic
+        external fun getRimeT9State(): T9StateProto
+
+        @JvmStatic
+        external fun performRimeT9Action(
+            revision: Int,
+            action: Int,
+            start: Int,
+            end: Int,
+            spelling: String,
+        ): Boolean
+
         @JvmStatic
         external fun processRimeKey(
             keycode: Int,

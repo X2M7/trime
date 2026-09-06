@@ -4,7 +4,7 @@
 schema:
   schema_id: luna_pinyin_t9
   name: 朙月拼音九键
-  version: '0.1'
+  version: '0.2'
   author:
     - Rime community
   description: |
@@ -12,6 +12,9 @@ schema:
     使用 2-9 输入拼音，键位映射为 ABC=2、DEF=3、GHI=4、JKL=5、MNO=6、PQRS=7、TUV=8、WXYZ=9。
   dependencies:
     - stroke
+
+trime:
+  t9: true
 
 switches:
   - name: ascii_mode
@@ -50,14 +53,16 @@ engine:
     - uniquifier
 
 speller:
-  alphabet: zyxwvutsrqponmlkjihgfedcbaZYXWVUTSRQPONMLKJIHGFEDCBA987654321
-  initials: zyxwvutsrqponmlkjihgfedcbaZYXWVUTSRQPONMLKJIHGFEDCBA987654321
+  alphabet: zyxwvutsrqponmlkjihgfedcbaZYXWVUTSRQPONMLKJIHGFEDCBA987654321~
+  initials: zyxwvutsrqponmlkjihgfedcbaZYXWVUTSRQPONMLKJIHGFEDCBA987654321~
   delimiter: " '"
   algebra:
     - derive/^([nl])ve$/$1ue/
     - derive/^([jqxy])u/$1v/
     - derive/^(.*)$/\U$1/
     - xlit/ABCDEFGHIJKLMNOPQRSTUVWXYZ/22233344455566677778889999/
+    # Atomic exact syllables for the disambiguation UI; not a candidate protocol.
+    - derive/^([a-z]+)$/~$1~/
 
 translator:
   dictionary: luna_pinyin
@@ -67,6 +72,7 @@ translator:
   spelling_hints: 30
   always_show_comments: true
   preedit_format:
+    - xform/~//
     - xform/([nl])v/$1ü/
     - xform/([nl])ue/$1üe/
     - xform/([jqxy])v/$1u/

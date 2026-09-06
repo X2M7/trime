@@ -5,7 +5,7 @@
 
 package com.osfans.trime.data.theme
 
-import com.osfans.trime.core.Rime
+import com.osfans.trime.daemon.RimeDaemon
 import com.osfans.trime.data.base.DataManager
 import com.osfans.trime.util.yaml.Yaml
 import com.osfans.trime.util.yaml.mapping
@@ -64,12 +64,13 @@ object ThemeLoader {
     }
 
     /**
-     * Never throws and never falls back: returns [ThemeLoadResult.Success] or
-     * [ThemeLoadResult.Failure] with a structured [ThemeLoadError].
+     * Does not fall back: file/decoding failures return a structured [ThemeLoadError].
+     * Requires an established session; lifecycle errors and cancellation propagate.
      */
-    fun loadTheme(themeId: String): ThemeLoadResult {
+    suspend fun loadTheme(themeId: String): ThemeLoadResult {
         // Returns false when the artifact is already up to date (mtime cache), which is fine.
-        if (!Rime.deployRimeConfigFile(themeId, CONFIG_VERSION_KEY)) {
+        val session = checkNotNull(RimeDaemon.getFirstSessionOrNull()) { "Theme loading requires a Rime session" }
+        if (!session.runOnReady { deployConfigFile(themeId, CONFIG_VERSION_KEY) }) {
             Timber.w("Failed to deploy theme config file '$themeId.yaml'")
         }
 

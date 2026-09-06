@@ -11,6 +11,8 @@ import com.osfans.trime.data.prefs.AppPrefs
 import com.osfans.trime.ime.symbol.LiquidData
 import com.osfans.trime.util.WeakHashSet
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 
@@ -25,24 +27,12 @@ object ThemeManager {
         return sharedThemes + userThemes
     }
 
-    private lateinit var _activeTheme: Theme
+    private var _activeTheme: Theme? = null
+    private val loadMutex = Mutex()
 
-    private fun ensureActiveTheme() {
-        if (!::_activeTheme.isInitialized) {
-            _activeTheme = evaluateActiveTheme()
-        }
-    }
-
-    var activeTheme: Theme
-        get() {
-            ensureActiveTheme()
-            return _activeTheme
-        }
-        private set(value) {
-            if (::_activeTheme.isInitialized && _activeTheme == value) return
-            _activeTheme = value
-            fireChange()
-        }
+    // Reading a theme must never start deployment from a view/layout callback.
+    val activeTheme: Theme
+        get() = checkNotNull(_activeTheme) { "ThemeManager.init must complete before creating themed views" }
 
     private val onChangeListeners = WeakHashSet<OnThemeChangeListener>()
 
@@ -55,7 +45,7 @@ object ThemeManager {
     }
 
     private fun fireChange() {
-        onChangeListeners.forEach { it.onThemeChange(_activeTheme) }
+        onChangeListeners.forEach { it.onThemeChange(activeTheme) }
     }
 
     val prefs = AppPrefs.defaultInstance().registerProvider(::ThemePrefs)
@@ -65,7 +55,7 @@ object ThemeManager {
         val theme: Theme,
     )
 
-    private fun getThemeById(id: String): ResolvedTheme {
+    private suspend fun getThemeById(id: String): ResolvedTheme {
         when (val result = ThemeLoader.loadTheme(id)) {
             is ThemeLoader.ThemeLoadResult.Success -> return ResolvedTheme(id, result.theme)
             is ThemeLoader.ThemeLoadResult.Failure -> Timber.w(result.error)
@@ -96,39 +86,42 @@ object ThemeManager {
         error("No valid theme available")
     }
 
-    private fun evaluateActiveTheme(): Theme {
-        val selectedThemeId = prefs.selectedTheme.getValue()
-        val resolvedTheme = getThemeById(selectedThemeId)
-        val newTheme = resolvedTheme.theme
-        if (resolvedTheme.configId != selectedThemeId) {
-            prefs.selectedTheme.setValue(resolvedTheme.configId)
-        }
-        applyTheme(resolvedTheme)
-        return newTheme
-    }
-
     private fun applyTheme(resolvedTheme: ResolvedTheme) {
         val theme = resolvedTheme.theme
+        val changed = _activeTheme != theme
+        _activeTheme = theme
         KeyActionManager.resetCache()
         FontManager.resetCache(theme)
-        ColorManager.switchTheme(theme)
         LiquidData.init(theme)
-        activeTheme = theme
+        ColorManager.switchTheme(theme)
+        if (changed) fireChange()
     }
 
-    fun init(configuration: Configuration) {
-        ensureActiveTheme()
-        ColorManager.init(configuration)
+    suspend fun init(configuration: Configuration) = withContext(Dispatchers.Main.immediate) {
+        loadMutex.withLock {
+            if (_activeTheme == null) {
+                val resolved = withContext(Dispatchers.IO) { getThemeById(prefs.selectedTheme.getValue()) }
+                try {
+                    applyTheme(resolved)
+                } catch (e: Exception) {
+                    _activeTheme = null
+                    throw e
+                }
+                prefs.selectedTheme.setValue(resolved.configId)
+            }
+            ColorManager.init(configuration)
+        }
     }
 
     /**
      * Switches to theme [configId], falling back when it is unavailable.
-     * Loading runs on [Dispatchers.IO]; state changes and listener callbacks run on the main thread.
+     * Native deployment runs on RimeDispatcher, file parsing on [Dispatchers.IO],
+     * and state changes and listener callbacks on the main thread.
      * @return the config id actually in effect; differs from [configId] when a fallback was used.
      */
-    suspend fun selectTheme(configId: String): String {
-        val resolvedTheme = withContext(Dispatchers.IO) { getThemeById(configId) }
-        return withContext(Dispatchers.Main.immediate) {
+    suspend fun selectTheme(configId: String): String = withContext(Dispatchers.Main.immediate) {
+        loadMutex.withLock {
+            val resolvedTheme = withContext(Dispatchers.IO) { getThemeById(configId) }
             applyTheme(resolvedTheme)
             prefs.selectedTheme.setValue(resolvedTheme.configId)
             resolvedTheme.configId

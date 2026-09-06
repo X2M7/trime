@@ -22,11 +22,23 @@ interface RimeApi {
 
     val paging: Boolean
 
+    val t9Cached: T9StateProto
+
+    suspend fun t9Action(
+        revision: Int,
+        action: T9Action,
+        start: Int = 0,
+        end: Int = 0,
+        spelling: String = "",
+    ): Boolean
+
     suspend fun isEmpty(): Boolean
 
     suspend fun deploy(skipImport: Boolean = false)
 
     suspend fun updateConfig()
+
+    suspend fun deployConfigFile(fileName: String, versionKey: String): Boolean
 
     suspend fun syncUserData(): Boolean
 
@@ -80,6 +92,9 @@ interface RimeApi {
     )
 
     suspend fun getRuntimeOption(option: String): Boolean
+
+    /** Non-blocking snapshot for drawing labels; unknown options are false. */
+    fun getRuntimeOptionCached(option: String): Boolean
 
     suspend fun setNullInputType(value: Boolean)
 

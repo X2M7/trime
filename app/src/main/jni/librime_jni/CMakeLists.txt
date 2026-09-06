@@ -4,7 +4,7 @@
 
 find_package(Opencc REQUIRED)
 
-aux_source_directory(. RIME_JNI_SOURCES)
+set(RIME_JNI_SOURCES config.cc frontend.cc key.cc levers.cc opencc.cc rime_jni.cc t9.cc)
 add_library(rime_jni SHARED ${RIME_JNI_SOURCES})
 target_link_libraries(rime_jni rime-static ${Opencc_LIBRARY})
 target_include_directories(rime_jni PRIVATE

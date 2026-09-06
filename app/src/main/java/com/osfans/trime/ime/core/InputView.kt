@@ -20,7 +20,9 @@ import androidx.core.view.updateLayoutParams
 import androidx.lifecycle.lifecycleScope
 import com.osfans.trime.core.CompositionProto
 import com.osfans.trime.core.RimeMessage
+import com.osfans.trime.core.T9StateProto
 import com.osfans.trime.daemon.RimeSession
+import com.osfans.trime.daemon.launchOnReady
 import com.osfans.trime.data.prefs.AppPrefs
 import com.osfans.trime.data.theme.ColorManager
 import com.osfans.trime.data.theme.Theme
@@ -31,6 +33,7 @@ import com.osfans.trime.ime.broadcast.InputBroadcaster
 import com.osfans.trime.ime.candidates.compact.CompactCandidateDelegate
 import com.osfans.trime.ime.candidates.popup.PopupCandidatesMode
 import com.osfans.trime.ime.composition.PreeditDelegate
+import com.osfans.trime.ime.composition.T9DisambiguationView
 import com.osfans.trime.ime.keyboard.CommonKeyboardActionListener
 import com.osfans.trime.ime.keyboard.KeyboardPrefs.isLandscapeMode
 import com.osfans.trime.ime.keyboard.KeyboardWindow
@@ -123,6 +126,9 @@ class InputView(
     private val popup: PopupDelegate by instance()
     private val enterKeyDisplay: EnterKeyDisplayDelegate by instance()
     private val preedit: PreeditDelegate by instance()
+    private val t9 = T9DisambiguationView(themedContext) { revision, action, start, end, spelling ->
+        rime.launchOnReady { it.t9Action(revision, action, start, end, spelling) }
+    }
     private val windowManager: BoardWindowManager by instance()
     private val inputBar: InputBarDelegate by instance()
     private val keyboardWindow: KeyboardWindow by instance()
@@ -193,9 +199,16 @@ class InputView(
                     },
                 )
                 add(
+                    t9,
+                    lParams(matchParent, wrapContent) {
+                        below(inputBar.view)
+                        centerHorizontally()
+                    },
+                )
+                add(
                     leftPaddingSpace,
                     lParams {
-                        below(inputBar.view)
+                        below(t9)
                         startOfParent()
                         bottomOfParent()
                     },
@@ -203,7 +216,7 @@ class InputView(
                 add(
                     rightPaddingSpace,
                     lParams {
-                        below(inputBar.view)
+                        below(t9)
                         endOfParent()
                         bottomOfParent()
                     },
@@ -211,7 +224,7 @@ class InputView(
                 add(
                     windowManager.view,
                     lParams {
-                        below(inputBar.view)
+                        below(t9)
                         above(bottomPaddingSpace)
                     },
                 )
@@ -235,6 +248,7 @@ class InputView(
             }
 
         updateKeyboardSize()
+        t9.update(rime.run { t9Cached })
 
         add(
             preedit.ui.root,
@@ -294,6 +308,7 @@ class InputView(
         }
         preedit.ui.root.setPadding(sidePadding, 0, sidePadding, 0)
         inputBar.view.setPadding(sidePadding, 0, sidePadding, 0)
+        t9.setPadding(sidePadding, 0, sidePadding, 0)
     }
 
     override fun onApplyWindowInsets(insets: WindowInsets): WindowInsets {
@@ -321,12 +336,14 @@ class InputView(
     override fun handleRimeMessage(it: RimeMessage<*>) {
         when (it) {
             is RimeMessage.SchemaMessage -> {
+                t9.update(T9StateProto())
                 broadcaster.onRimeSchemaUpdated(it.data)
 
                 windowManager.attachWindow(KeyboardWindow)
             }
 
             is RimeMessage.OptionMessage -> {
+                if (it.data.option == "ascii_mode" && it.data.value) t9.update(T9StateProto())
                 broadcaster.onRimeOptionUpdated(it.data)
 
                 if (it.data.option == "_liquid_keyboard") {
@@ -347,6 +364,7 @@ class InputView(
             is RimeMessage.BulkCandidatesMessage -> {
                 broadcaster.onCandidateListUpdate(it.data)
             }
+            is RimeMessage.T9Message -> t9.update(it.data)
             else -> {}
         }
         broadcastKeyAppearanceUpdate()

@@ -27,6 +27,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import splitties.systemservices.notificationManager
+import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
 
@@ -49,12 +50,12 @@ object RimeDaemon {
 
     private val rimeImpl by lazy { object : RimeApi by realRime {} }
 
-    private val sessions = mutableMapOf<String, RimeSession>()
+    private val sessions = ConcurrentHashMap<String, RimeSession>()
 
     private val lock = ReentrantLock()
 
     private fun establish(name: String) = object : RimeSession {
-        private inline fun <T> ensureEstablished(block: () -> T) = if (name in sessions) {
+        private inline fun <T> ensureEstablished(block: () -> T) = if (sessions.containsKey(name)) {
             block()
         } else {
             throw IllegalStateException("Session $name is not established")
@@ -83,7 +84,7 @@ object RimeDaemon {
     }
 
     fun createSession(name: String): RimeSession = lock.withLock {
-        if (name in sessions) {
+        if (sessions.containsKey(name)) {
             return@withLock sessions.getValue(name)
         }
         if (realRime.lifecycle.currentState == RimeLifecycle.State.STOPPED) {
@@ -95,7 +96,7 @@ object RimeDaemon {
     }
 
     fun destroySession(name: String): Unit = lock.withLock {
-        if (name !in sessions) {
+        if (!sessions.containsKey(name)) {
             return
         }
         sessions -= name
