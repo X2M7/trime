@@ -27,17 +27,17 @@ Trime is originally a frontend of open-source [Android Traditional Chinese IME],
 This fork adds `Luna Pinyin T9` / `luna_pinyin_t9` on top of Trime:
 
 - Adds a T9 pinyin schema based on the Luna Pinyin dictionary, using digits `2-9` for pinyin input.
-- Adds bundled 3-column T9 keyboard layouts with `ABC=2`, `DEF=3`, `GHI=4`, `JKL=5`, `MNO=6`, `PQRS=7`, `TUV=8`, and `WXYZ=9`.
+- Adds a 3x3 main key area with side controls in both bundled themes, with `ABC=2`, `DEF=3`, `GHI=4`, `JKL=5`, `MNO=6`, `PQRS=7`, `TUV=8`, and `WXYZ=9`.
 - Automatically switches to the T9 keyboard when the `luna_pinyin_t9` schema is selected.
 - Improves early theme loading during IME startup to avoid first-run theme deployment crashes.
 
 [Project page](https://x2m7.github.io/trime/) | [Download the T9 preview APK](https://github.com/X2M7/trime/releases/latest)
 
-The `develop` source version `3.3.13-t9.3` includes a separate, dictionary-backed pinyin selection area with syllable locking, middle-segment editing, unlocking and undo. Selecting pinyin does not commit Hanzi. Theme initialization is asynchronous, and keyboard toggle labels use cached engine state.
+Preview `3.3.13-t9.6` (versionCode `20261108`) includes dictionary-backed pinyin selection, syllable locking, middle-segment editing, unlocking and undo. Selecting pinyin does not commit Hanzi. T03 adds an adaptive sidebar/horizontal pinyin list, left/right one-handed modes, adjustable key height, literal digits on long press and Space cursor sliding. See the [key contracts](script/quality/T03.md) and [development validation](script/quality/VALIDATION-t9.6-T03.md).
 
 This version integrates upstream through `d9a1f424`, including scoped theme colors, in-place color refresh and installation-aware data sync. T9 colors now refresh with the keyboard, and sync backups are protected when the installation identity is unavailable. See the [merge validation record](script/t9/UPSTREAM-t9.3.zh-CN.md) for scope and test results.
 
-These development changes do not update the Release download automatically. See the [T9 design and tests](script/t9/README.md) and [startup ANR regression checks](script/t9/STARTUP-ANR.md) for build and verification details. Custom copies of the T9 schema need the updated rules and redeployment; do not reset personal dictionaries.
+The ARM64 preview retains Android 5.0+ support and the previous preview's package (`com.osfans.trime.debug`) and debug signing certificate for in-place upgrades. Its displayed name has no Debug suffix. This is a preview, not a production-signed/R8 build. Back up configuration and dictionaries before upgrading. Custom copies of the T9 schema or themes need the updated rules/layout and redeployment; do not reset personal dictionaries. See [release notes](doc/releases/v3.3.13-t9.6.md), [T9 design and tests](script/t9/README.md) and [startup ANR checks](script/t9/STARTUP-ANR.md).
 
 ## Download
 

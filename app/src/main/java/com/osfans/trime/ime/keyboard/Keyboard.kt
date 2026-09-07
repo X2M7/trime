@@ -6,6 +6,7 @@
 package com.osfans.trime.ime.keyboard
 
 import android.content.Context
+import android.content.res.Configuration
 import android.view.KeyEvent
 import com.osfans.trime.data.prefs.AppPrefs
 import com.osfans.trime.data.theme.Theme
@@ -89,6 +90,7 @@ class Keyboard(
 
     /** Keyboard default ascii mode  */
     val asciiMode = selfConfig?.asciiMode ?: false
+    val isT9Layout = selfConfig?.t9Layout == true
     val resetAsciiMode = selfConfig?.resetAsciiMode ?: true
     var lastAsciiMode: Boolean = asciiMode
 
@@ -115,7 +117,15 @@ class Keyboard(
         intArrayOf(
             selfConfig?.let { getKeyboardHeightFromKeyboardConfig(it) } ?: 0,
             getKeyboardHeightFromTheme(theme),
-        ).firstOrNull { it > 0 } ?: 0
+        ).firstOrNull { it > 0 }?.let { themedHeight ->
+            if (isT9Layout) {
+                val preferred = AppPrefs.defaultInstance().keyboard.t9KeyHeight.getValue()
+                val display = context.resources.displayMetrics
+                context.dp(T9LayoutPolicy.height((display.heightPixels / display.density).toInt(), (themedHeight / display.density).toInt(), preferred))
+            } else {
+                themedHeight
+            }
+        } ?: 0
 
     private val expandKeypressArea: Boolean by AppPrefs.defaultInstance().keyboard.expandKeypressArea
 
@@ -136,7 +146,7 @@ class Keyboard(
 
             val maxColumns = if (selfConfig.columns == -1) Int.MAX_VALUE else selfConfig.columns
 
-            val isSplit = context.isLandscapeMode() && landscapePercent > 0
+            val isSplit = !isT9Layout && context.isLandscapeMode() && landscapePercent > 0
             val splitRatio = if (isSplit) landscapePercent / 100f else 0f
 
             val oneWeightWidthPx =
@@ -339,7 +349,7 @@ class Keyboard(
 
     private fun getKeyboardHeightFromKeyboardConfig(textKeyboard: TextKeyboard): Int {
         var keyboardHeight = textKeyboard.keyboardHeight
-        if (context.isLandscapeMode()) {
+        if (context.isLandscapeMode() || (isT9Layout && context.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE)) {
             val keyboardHeightLand = textKeyboard.keyboardHeightLand
             if (keyboardHeightLand > 0) keyboardHeight = keyboardHeightLand
         }

@@ -48,7 +48,7 @@ object T9EditingProbe {
         if (view is ViewGroup) view.children.forEach { yieldAll(descendants(it)) }
     }
 
-    fun run(instrumentation: Instrumentation) {
+    fun run(instrumentation: Instrumentation, layoutOnly: Boolean = false, geometryOnly: Boolean = false) {
         val result = Bundle()
         // Instrumentation can start before Application.onCreate has initialized preferences.
         instrumentation.waitForIdleSync()
@@ -150,7 +150,11 @@ object T9EditingProbe {
                         setRuntimeOption("ascii_mode", false)
                     }
                     try {
-                        withTimeout(180_000) {
+                        withTimeout(if (layoutOnly) 480_000 else 180_000) editing@{
+                            if (layoutOnly) {
+                                T9LayoutProbe(instrumentation, service, field).run(geometryOnly)
+                                return@editing
+                            }
                             phase("Editor and T9 ready; starting the editing deadline")
                             delay(200)
                             type("64")
@@ -337,7 +341,14 @@ object T9EditingProbe {
                 }
             }
             passed = true
-            result.putString("stream", "PASS: T02 real editor, selection, locks, undo, cancel, commit, symbol pages and repeat cancellation\n")
+            result.putString(
+                "stream",
+                when {
+                    layoutOnly && geometryOnly -> "PASS: T03 real keyboard geometry\n"
+                    layoutOnly -> "PASS: T03 real keyboard layout and gestures\n"
+                    else -> "PASS: T02 real editor, selection, locks, undo, cancel, commit, symbol pages and repeat cancellation\n"
+                },
+            )
         } catch (failure: Throwable) {
             result.putString("stream", "FAIL: ${failure.stackTraceToString()}\n")
         } finally {

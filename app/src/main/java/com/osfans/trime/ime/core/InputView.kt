@@ -16,6 +16,7 @@ import android.widget.ImageView
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
+import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.lifecycle.lifecycleScope
 import com.osfans.trime.core.CompositionProto
@@ -37,8 +38,10 @@ import com.osfans.trime.ime.composition.T9DisambiguationView
 import com.osfans.trime.ime.keyboard.CommonKeyboardActionListener
 import com.osfans.trime.ime.keyboard.KeyboardPrefs.isLandscapeMode
 import com.osfans.trime.ime.keyboard.KeyboardWindow
+import com.osfans.trime.ime.keyboard.T9LayoutPolicy
 import com.osfans.trime.ime.popup.PopupDelegate
 import com.osfans.trime.ime.symbol.LiquidWindow
+import com.osfans.trime.ime.window.BoardWindow
 import com.osfans.trime.ime.window.BoardWindowManager
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -233,6 +236,14 @@ class InputView(
                     },
                 )
                 add(
+                    t9.sidebar,
+                    lParams(0, 0) {
+                        below(t9)
+                        above(bottomPaddingSpace)
+                        startToEndOf(leftPaddingSpace)
+                    },
+                )
+                add(
                     windowManager.view,
                     lParams {
                         below(t9)
@@ -255,10 +266,23 @@ class InputView(
                     windowManager.view.updateLayoutParams {
                         height = it
                     }
+                    updateKeyboardSize()
                 }
             }
 
         updateKeyboardSize()
+        broadcaster.addReceiver(object : InputBroadcastReceiver {
+            override fun onWindowAttached(window: BoardWindow) {
+                updateKeyboardSize()
+            }
+        })
+        keyboardView.addOnLayoutChangeListener { _, left, _, right, _, oldLeft, _, oldRight, _ ->
+            if (right - left != oldRight - oldLeft) {
+                keyboardView.post {
+                    if (keyboardView.isAttachedToWindow) updateKeyboardSize()
+                }
+            }
+        }
         t9.update(rime.run { t9Cached })
 
         add(
@@ -289,37 +313,44 @@ class InputView(
         bottomPaddingSpace.updateLayoutParams {
             height = keyboardBottomPaddingPx
         }
+        val active = windowManager.isAttached(keyboardWindow) && keyboardWindow.currentKeyboard.isT9Layout
         val sidePadding = keyboardSidePaddingPx
-        val unset = LayoutParams.UNSET
-        if (sidePadding == 0) {
-            // hide side padding space views when unnecessary
-            leftPaddingSpace.visibility = View.GONE
-            rightPaddingSpace.visibility = View.GONE
-            windowManager.view.updateLayoutParams<LayoutParams> {
-                startToEnd = unset
-                endToStart = unset
-                startOfParent()
-                endOfParent()
-            }
+        val density = resources.displayMetrics.density
+        val width = keyboardView.width.takeIf { it > 0 } ?: resources.displayMetrics.widthPixels
+        val hand = AppPrefs.defaultInstance().keyboard.t9OneHand.getValue()
+        val sizes = if (active) {
+            T9LayoutPolicy.widths(
+                (width / density).toInt(),
+                (sidePadding / density).toInt(),
+                resources.configuration.fontScale,
+                hand.ordinal,
+                (resources.displayMetrics.heightPixels / density).toInt(),
+            )
         } else {
-            leftPaddingSpace.visibility = View.VISIBLE
-            rightPaddingSpace.visibility = View.VISIBLE
-            leftPaddingSpace.updateLayoutParams {
-                width = sidePadding
-            }
-            rightPaddingSpace.updateLayoutParams {
-                width = sidePadding
-            }
-            windowManager.view.updateLayoutParams<LayoutParams> {
-                startToStart = unset
-                endToEnd = unset
-                startToEndOf(leftPaddingSpace)
-                endToStartOf(rightPaddingSpace)
-            }
+            T9LayoutPolicy.Widths((sidePadding / density).toInt(), (sidePadding / density).toInt(), 0)
         }
-        preedit.ui.root.setPadding(sidePadding, 0, sidePadding, 0)
-        inputBar.view.setPadding(sidePadding, 0, sidePadding, 0)
-        t9.setPadding(sidePadding, 0, sidePadding, 0)
+        val left = if (active) dp(sizes.left) else sidePadding
+        val right = if (active) dp(sizes.right) else sidePadding
+        val choiceWidth = dp(sizes.choices)
+        t9.setKeyboardLayout(active, choiceWidth > 0)
+        val unset = LayoutParams.UNSET
+        leftPaddingSpace.updateLayoutParams { this.width = left }
+        rightPaddingSpace.updateLayoutParams { this.width = right }
+        val choicesOnRight = active && hand == AppPrefs.Keyboard.OneHandMode.LEFT && choiceWidth > 0
+        t9.sidebar.updateLayoutParams<LayoutParams> {
+            this.width = choiceWidth
+            startToEndOf(if (choicesOnRight) windowManager.view else leftPaddingSpace)
+            if (choicesOnRight) endToStartOf(rightPaddingSpace) else endToStart = unset
+        }
+        windowManager.view.updateLayoutParams<LayoutParams> {
+            startToStart = unset
+            endToEnd = unset
+            startToEndOf(if (choicesOnRight) leftPaddingSpace else t9.sidebar)
+            endToStartOf(if (choicesOnRight) t9.sidebar else rightPaddingSpace)
+        }
+        preedit.ui.root.setPadding(left, 0, right, 0)
+        inputBar.view.setPadding(left, 0, right, 0)
+        t9.setPadding(left, 0, right, 0)
     }
 
     override fun onApplyWindowInsets(insets: WindowInsets): WindowInsets {
@@ -365,7 +396,7 @@ class InputView(
                 }
             }
             is RimeMessage.CompositionMessage -> {
-                val data = if (candidatesMode == PopupCandidatesMode.ALWAYS_SHOW) {
+                val data = if (candidatesMode == PopupCandidatesMode.ALWAYS_SHOW || t9.isVisible) {
                     CompositionProto()
                 } else {
                     it.data
@@ -375,7 +406,10 @@ class InputView(
             is RimeMessage.BulkCandidatesMessage -> {
                 broadcaster.onCandidateListUpdate(it.data)
             }
-            is RimeMessage.T9Message -> t9.update(it.data)
+            is RimeMessage.T9Message -> {
+                t9.update(it.data)
+                if (it.data.enabled) preedit.onCompositionUpdate(CompositionProto())
+            }
             else -> {}
         }
         broadcastKeyAppearanceUpdate()

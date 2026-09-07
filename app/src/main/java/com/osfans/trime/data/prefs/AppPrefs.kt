@@ -146,6 +146,8 @@ class AppPrefs(
             const val REPEAT_INTERVAL = "key_repeat_interval"
             const val DOUBLE_TAP_TIMEOUT = "key_double_tap_timeout"
             const val SLIDE_STEP_SIZE = "key_slide_step_size"
+            const val T9_KEY_HEIGHT = "t9_key_height"
+            const val T9_ONE_HAND = "t9_one_hand"
 
             const val HOOK_CTRL_A = "hook_ctrl_a"
             const val HOOK_CTRL_CV = "hook_ctrl_cv"
@@ -169,6 +171,14 @@ class AppPrefs(
         }
 
         val landscapeMode = enum(R.string.enable_landscape_mode, LANDSCAPE_MODE, LandscapeMode.NEVER)
+        enum class OneHandMode(override val stringRes: Int) : PreferenceDelegateEnum {
+            OFF(R.string.t9_one_hand_off),
+            LEFT(R.string.t9_one_hand_left),
+            RIGHT(R.string.t9_one_hand_right),
+        }
+
+        val t9OneHand = enum(R.string.t9_one_hand, T9_ONE_HAND, OneHandMode.OFF)
+        val t9KeyHeight = int(R.string.t9_key_height, T9_KEY_HEIGHT, 0, 0, 80, "dp", defaultLabel = R.string.system_default)
         val splitSpacePercent = int(
             R.string.split_space_percent,
             SPLIT_SPACE_PERCENT,

@@ -16,6 +16,7 @@ import android.graphics.drawable.GradientDrawable
 import android.view.KeyEvent
 import com.mikepenz.iconics.IconicsDrawable
 import com.mikepenz.iconics.utils.sizeDp
+import com.osfans.trime.R
 import com.osfans.trime.core.T9Action
 import com.osfans.trime.daemon.RimeDaemon
 import com.osfans.trime.data.prefs.AppPrefs
@@ -85,6 +86,15 @@ class KeyView(
         hasDouble = key.hasAction(KeyBehavior.DOUBLE_CLICK)
         hasLazyDouble = key.hasAction(KeyBehavior.LAZY_DOUBLE_CLICK)
         hasPopup = key.popup.isNotEmpty()
+        if (keyboard.isT9Layout) {
+            contentDescription = when (key.click?.code) {
+                KeyEvent.KEYCODE_DEL -> context.getString(R.string.delete)
+                KeyEvent.KEYCODE_ENTER -> keyboardView.labelEnter
+                KeyEvent.KEYCODE_SPACE -> context.getString(R.string.t9_space)
+                KeyEvent.KEYCODE_APOSTROPHE -> context.getString(R.string.t9_separator)
+                else -> listOf(key.hint, key.getLabel()).filter { it.isNotEmpty() }.joinToString(" ")
+            }
+        }
 
         onPress = {
             if (keyboard.firstPressedKeyIndex == -1) keyboard.firstPressedKeyIndex = id
@@ -118,8 +128,9 @@ class KeyView(
                     }
                     KeyBehavior.DOUBLE_CLICK, KeyBehavior.LAZY_DOUBLE_CLICK,
                     KeyBehavior.SWIPE_UP, KeyBehavior.SWIPE_DOWN, KeyBehavior.SWIPE_LEFT, KeyBehavior.SWIPE_RIGHT,
-                    ->
+                    -> if (key.hasAction(behavior)) {
                         key.getAction(behavior)?.let { processKeyAction(it, behavior) }
+                    }
                     else -> {}
                 }
 
@@ -131,14 +142,13 @@ class KeyView(
 
         onSwipe = { direction ->
             setPressedState(true)
-            showPopupPreview(direction)
+            if (key.hasAction(direction)) showPopupPreview(direction) else dismissPopupPreview()
         }
 
         onSlide = slide@{ delta, _, _ ->
             if (isSlideCursor) {
-                when {
-                    delta > 0 -> keyboardActionListener.onAction(KeyAction("Right"))
-                    delta < 0 -> keyboardActionListener.onAction(KeyAction("Left"))
+                repeat(kotlin.math.abs(delta).coerceAtMost(64)) {
+                    keyboardActionListener.onAction(KeyAction(if (delta > 0) "Right" else "Left"))
                 }
             } else if (isSlideDelete) {
                 if (rime.run { statusCached.isComposing }) {
@@ -189,6 +199,7 @@ class KeyView(
         }
 
         onCancel = {
+            if (keyboard.firstPressedKeyIndex == id) keyboard.firstPressedKeyIndex = -1
             deletedTextBuffer.clear()
             setPressedState(false)
             dismissPopupPreview()
@@ -303,7 +314,7 @@ class KeyView(
         }
 
         val symbol = key.symbolLabel
-        if (symbol.isNotEmpty()) {
+        if (symbol.isNotEmpty() && (!keyboard.isT9Layout || symbol != key.hint)) {
             drawSymbol(canvas, symbol)
         }
 
@@ -333,9 +344,12 @@ class KeyView(
     private fun drawLabel(canvas: Canvas, label: String) {
         val textColor = key.getTextColor()
         val textSize = sp(key.keyTextSize.takeIf { it > 0 } ?: if (label.length > 1 && !label.isIconFont) keyboardView.keyLongTextSize else keyboardView.keyTextSize)
+        val topHint = keyboard.isT9Layout && !keyboardView.hideKeySymbol && key.symbolLabel.let { it.isNotEmpty() && it != key.hint }
+        val bottomHint = keyboard.isT9Layout && !keyboardView.hideKeyHint && key.hint.isNotEmpty()
 
         if (label.isIconFont) {
-            drawIcon(canvas, label, textSize.toInt(), textColor, key.keyTextOffsetX, key.keyTextOffsetY)
+            val size = if (keyboard.isT9Layout) minOf(textSize.toInt(), dp(26)) else textSize.toInt()
+            drawIcon(canvas, label, size, textColor, key.keyTextOffsetX, key.keyTextOffsetY)
         } else {
             textPaint.apply {
                 color = textColor
@@ -344,8 +358,18 @@ class KeyView(
                 clearShadowLayer()
             }
 
+            if (keyboard.isT9Layout) {
+                val availableWidth = (width - paddingLeft - paddingRight - dp(8)).coerceAtLeast(1)
+                val reserved = 8 + (if (topHint) 14 else 0) + (if (bottomHint) 14 else 0)
+                val availableHeight = (height - paddingTop - paddingBottom - dp(reserved)).coerceAtLeast(1)
+                val metrics = textPaint.fontMetrics
+                val scale = minOf(1f, availableWidth / textPaint.measureText(label).coerceAtLeast(1f), availableHeight / (metrics.descent - metrics.ascent))
+                textPaint.textSize *= scale
+            }
+
             val centerX = (width - paddingLeft - paddingRight) / 2f + paddingLeft
-            val centerY = (height - paddingTop - paddingBottom) / 2f + paddingTop
+            val centerY = (height - paddingTop - paddingBottom) / 2f + paddingTop +
+                (if (topHint) dp(6) else 0) - (if (bottomHint) dp(6) else 0)
             val fontMetrics = textPaint.fontMetrics
             val adjustmentY = -(fontMetrics.ascent + fontMetrics.descent) / 2f
 
@@ -400,7 +424,8 @@ class KeyView(
         if (!isTop && keyboardView.hideKeyHint) return
 
         val textColor = key.getSymbolColor()
-        val textSize = sp(key.symbolTextSize.takeIf { it > 0f } ?: keyboardView.symbolTextSize)
+        val preferredSize = sp(key.symbolTextSize.takeIf { it > 0f } ?: keyboardView.symbolTextSize)
+        val textSize = if (keyboard.isT9Layout) minOf(preferredSize, dp(12).toFloat()) else preferredSize
         val offsetX = if (isTop) key.keySymbolOffsetX else key.keyHintOffsetX
         val offsetY = if (isTop) key.keySymbolOffsetY else key.keyHintOffsetY
 

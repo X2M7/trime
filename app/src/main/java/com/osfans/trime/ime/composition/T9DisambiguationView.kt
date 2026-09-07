@@ -4,15 +4,17 @@ package com.osfans.trime.ime.composition
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.ColorStateList
-import android.content.res.Configuration
 import android.graphics.Rect
+import android.view.ContextThemeWrapper
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import android.widget.HorizontalScrollView
 import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.appcompat.widget.AppCompatTextView
 import androidx.appcompat.widget.TooltipCompat
 import androidx.core.view.isVisible
 import androidx.core.widget.TextViewCompat
@@ -46,6 +48,10 @@ class T9DisambiguationView(
         addView(segments, LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT))
     }
     private val adapter = ChoiceAdapter()
+    private val labelContext = ContextThemeWrapper(context, R.style.Theme_TrimeAppTheme)
+    private var layoutActive = false
+    private var sideMode = false
+    val sidebar = FrameLayout(context).apply { id = View.generateViewId() }
     private val undo = icon("cmd_undo", R.string.undo) { send(T9Action.Undo) }
     private val cancel = icon("cmd_close", R.string.t9_cancel) { send(T9Action.Cancel) }
     private val unlock = icon("cmd_lock_open_variant_outline", R.string.t9_unlock) {
@@ -62,25 +68,35 @@ class T9DisambiguationView(
         id = View.generateViewId()
         isVisible = false
         background = scope.drawable("candidate_background")
-        if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+        sidebar.background = scope.drawable("candidate_background")
+        orientation = VERTICAL
+        val row = LinearLayout(context).apply {
             orientation = HORIZONTAL
-            addView(segmentScroller, LayoutParams(0, dp(48), 0.35f))
-            addView(choices, LayoutParams(0, dp(48), 0.65f))
+            addView(segmentScroller, LayoutParams(0, dp(48), 1f))
             addView(unlock, LayoutParams(dp(48), dp(48)))
             addView(undo, LayoutParams(dp(48), dp(48)))
             addView(cancel, LayoutParams(dp(48), dp(48)))
+        }
+        addView(row, LayoutParams(LayoutParams.MATCH_PARENT, dp(48)))
+        addView(choices, LayoutParams(LayoutParams.MATCH_PARENT, dp(48)))
+    }
+
+    fun setKeyboardLayout(active: Boolean, side: Boolean) {
+        layoutActive = active
+        isVisible = active || state.enabled
+        if (sideMode == side) return
+        sideMode = side
+        (choices.parent as ViewGroup).removeView(choices)
+        (choices.layoutManager as LinearLayoutManager).orientation = if (side) RecyclerView.VERTICAL else RecyclerView.HORIZONTAL
+        if (side) {
+            sidebar.addView(choices, FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT))
         } else {
-            orientation = VERTICAL
-            val row = LinearLayout(context).apply {
-                orientation = HORIZONTAL
-                addView(segmentScroller, LayoutParams(0, dp(48), 1f))
-                addView(unlock, LayoutParams(dp(48), dp(48)))
-                addView(undo, LayoutParams(dp(48), dp(48)))
-                addView(cancel, LayoutParams(dp(48), dp(48)))
-            }
-            addView(row, LayoutParams(LayoutParams.MATCH_PARENT, dp(48)))
             addView(choices, LayoutParams(LayoutParams.MATCH_PARENT, dp(48)))
         }
+        // Recreate holders because their fixed axis changes with the list orientation.
+        choices.adapter = null
+        choices.recycledViewPool.clear()
+        choices.adapter = adapter
     }
 
     private fun send(kind: T9Action, start: Int = 0, end: Int = 0, spelling: String = "") {
@@ -89,6 +105,7 @@ class T9DisambiguationView(
 
     fun refreshColors() {
         background = scope.drawable("candidate_background")
+        sidebar.background = scope.drawable("candidate_background")
         val tint = ColorStateList.valueOf(normalTextColor)
         undo.imageTintList = tint
         cancel.imageTintList = tint
@@ -106,7 +123,7 @@ class T9DisambiguationView(
         setOnClickListener { click() }
     }
 
-    private fun label() = TextView(context).apply {
+    private fun label() = AppCompatTextView(labelContext).apply {
         gravity = Gravity.CENTER
         textSize = 17f
         setSingleLine()
@@ -118,8 +135,7 @@ class T9DisambiguationView(
     fun update(data: T9StateProto) {
         val focusChanged = data.focus != state.focus || data.input != state.input
         state = data
-        isVisible = data.enabled
-        if (!data.enabled) return
+        isVisible = layoutActive || data.enabled
         segments.removeAllViews()
         data.segments.forEach { span ->
             segments.addView(
@@ -154,8 +170,10 @@ class T9DisambiguationView(
         }
         unlock.isEnabled = data.segments.any { it.start == data.focus && it.locked }
         undo.isEnabled = data.canUndo
+        cancel.isEnabled = data.input.isNotEmpty()
         unlock.alpha = if (unlock.isEnabled) 1f else 0.35f
         undo.alpha = if (undo.isEnabled) 1f else 0.35f
+        cancel.alpha = if (cancel.isEnabled) 1f else 0.35f
         adapter.update(data.choices, data.revision)
         if (focusChanged) {
             choices.scrollToPosition(0)
@@ -192,6 +210,11 @@ class T9DisambiguationView(
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = ChoiceHolder(
             label().apply {
                 layoutParams = RecyclerView.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT)
+                if (sideMode) {
+                    layoutParams = RecyclerView.LayoutParams(LayoutParams.MATCH_PARENT, dp(48))
+                    setPadding(dp(4), 0, dp(4), 0)
+                    TextViewCompat.setAutoSizeTextTypeUniformWithConfiguration(this, 10, 20, 1, android.util.TypedValue.COMPLEX_UNIT_SP)
+                }
             },
         )
 
@@ -199,7 +222,10 @@ class T9DisambiguationView(
             val span = items[position]
             val boundRevision = revision
             holder.text.setTextColor(normalTextColor)
-            holder.text.text = if (span.completion) context.getString(R.string.t9_completion, span.spelling) else span.spelling
+            val description = if (span.completion) context.getString(R.string.t9_completion, span.spelling) else span.spelling
+            holder.text.text = if (sideMode && span.completion) "${span.spelling}+" else description
+            holder.text.contentDescription = description
+            TooltipCompat.setTooltipText(holder.text, description)
             holder.text.setOnClickListener { action(boundRevision, T9Action.Lock, span.start, span.end, span.spelling) }
         }
     }

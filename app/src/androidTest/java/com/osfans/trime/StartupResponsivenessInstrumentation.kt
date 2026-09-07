@@ -32,6 +32,8 @@ class StartupResponsivenessInstrumentation : Instrumentation() {
     private var safRevoke = false
     private var clipOnly = false
     private var t02Only = false
+    private var t03Only = false
+    private var t03GeometryOnly = false
     override fun onCreate(arguments: Bundle?) {
         super.onCreate(arguments)
         safOnly = arguments?.getString("saf") == "true"
@@ -39,12 +41,14 @@ class StartupResponsivenessInstrumentation : Instrumentation() {
         safRevoke = arguments?.getString("safRevoke") == "true"
         clipOnly = arguments?.getString("clip") == "true"
         t02Only = arguments?.getString("t02") == "true"
+        t03Only = arguments?.getString("t03") == "true"
+        t03GeometryOnly = arguments?.getString("t03GeometryOnly") == "true"
         start()
     }
 
     override fun onStart() {
-        if (t02Only) {
-            T9EditingProbe.run(this)
+        if (t02Only || t03Only) {
+            T9EditingProbe.run(this, t03Only, t03GeometryOnly)
             return
         }
         if (clipOnly) {

@@ -12,6 +12,8 @@ env:
   CI_NAME: Release CI
 jobs:
   build:
+    # X2M7 publishes verified preview APKs with the existing preview identity.
+    if: github.repository != 'X2M7/trime'
     runs-on: ubuntu-26.04
     steps:
       - name: Checkout

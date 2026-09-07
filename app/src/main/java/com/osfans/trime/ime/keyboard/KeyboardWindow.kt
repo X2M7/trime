@@ -107,7 +107,7 @@ class KeyboardWindow(di: DI) :
                 lastIsPortrait = isPortrait
                 containerWidth = width
                 allowedWidth = width
-                v.post { refreshKeyboards() }
+                v.post { refreshKeyboards(isAll = true) }
             }
         }
 
@@ -186,6 +186,7 @@ class KeyboardWindow(di: DI) :
         }
 
         keyboard.also {
+            currentKeyboard = it
             runBlocking { _currentKeyboardHeight.emit(it.keyboardHeight) }
             if (it.isLock) lastLockKeyboardId = target
             dispatchCapsState(it::setShifted)
@@ -210,8 +211,6 @@ class KeyboardWindow(di: DI) :
                     setRuntimeOption("ascii_mode", targetMode)
                 }
             }
-
-            currentKeyboard = it
         }
 
         view.let {

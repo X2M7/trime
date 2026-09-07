@@ -287,6 +287,24 @@ class Rime :
 
     override suspend fun commitComposition(): Boolean = withRimeContext { commitRimeComposition().also { if (it) emitResponse() } }
 
+    override suspend fun commitT9Digit(digit: Char): Boolean = withRimeContext {
+        require(digit in '0'..'9')
+        var pending = ""
+        if (getRimeRawInput().isNotEmpty()) {
+            // Use the same full-input Return path as T02, including a caret inside a locked syllable.
+            processRimeKey(RimeKeyMapping.RimeKey_Return, 0)
+            // Read the commit before any snapshot can discard its private-to-raw T9 mapping.
+            pending = getRimeCommit().text.orEmpty()
+            if (getRimeRawInput().isNotEmpty()) {
+                emitResponse(CommitProto(pending))
+                return@withRimeContext false
+            }
+        }
+        clearRimeComposition()
+        emitResponse(CommitProto(pending + digit))
+        true
+    }
+
     override suspend fun clearComposition() = withRimeContext {
         clearRimeComposition()
         emitResponse()

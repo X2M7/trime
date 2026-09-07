@@ -112,7 +112,7 @@ class ThemeGoldenTest :
 
                 Then("color schemes and preset keys are decoded") {
                     theme.colorSchemes.size shouldBe 37
-                    theme.presetKeys.size shouldBe 106
+                    theme.presetKeys.size shouldBe 120
                     val brightnessDown = theme.presetKeys.getValue("BRIGHTNESS_DOWN")
                     brightnessDown.label shouldBe "亮度-"
                     brightnessDown.send shouldBe "BRIGHTNESS_DOWN"
@@ -172,13 +172,27 @@ class ThemeGoldenTest :
         Given("the T9 layouts in both built-in themes") {
             listOf("tongwenfeng.trime.yaml", "trime.yaml").forEach { name ->
                 Then("$name preserves numeric T9 input and its alphabetic fallback") {
-                    val keyboard = ThemeTestSupport.decodeBuiltinTheme(name).presetKeyboards.getValue("luna_pinyin_t9")
+                    val theme = ThemeTestSupport.decodeBuiltinTheme(name)
+                    val keyboard = theme.presetKeyboards.getValue("luna_pinyin_t9")
                     keyboard.asciiMode shouldBe false
                     keyboard.asciiKeyboard shouldBe "letter"
                     keyboard.keyboardHeightLand shouldBe 200
-                    keyboard.keys.size shouldBe 15
-                    keyboard.keys.take(9).map { it.behaviors[KeyBehavior.CLICK] } shouldBe
-                        (1..9).map { KeyActionToken.Plain(it.toString()) }
+                    keyboard.t9Layout shouldBe true
+                    keyboard.keys.size shouldBe 17
+                    val grid = keyboard.keys.take(12).filterIndexed { index, _ -> index % 4 != 3 }
+                    grid.map { it.behaviors[KeyBehavior.CLICK] } shouldBe
+                        listOf(KeyActionToken.Plain("T9_separator")) + (2..9).map { KeyActionToken.Plain(it.toString()) }
+                    grid.map { it.behaviors[KeyBehavior.LONG_CLICK] } shouldBe
+                        (1..9).map { KeyActionToken.Plain("T9_digit_$it") }
+                    theme.presetKeys.getValue("T9_separator").send shouldBe "apostrophe"
+                    (0..9).forEach {
+                        theme.presetKeys.getValue("T9_digit_$it").command shouldBe "t9_digit"
+                        theme.presetKeys.getValue("T9_digit_$it").option shouldBe it.toString()
+                    }
+                    theme.presetKeys.getValue("T9_space").slideCursor shouldBe true
+                    theme.presetKeys.getValue("T9_backspace").repeatable shouldBe true
+                    val rows = keyboard.keys.take(12).chunked(4) + listOf(keyboard.keys.drop(12))
+                    rows.forEach { row -> row.sumOf { it.width.toDouble() } shouldBe 100.0 }
                 }
             }
         }

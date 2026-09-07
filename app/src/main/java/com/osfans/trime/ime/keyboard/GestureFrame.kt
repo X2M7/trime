@@ -16,6 +16,7 @@ import com.osfans.trime.data.prefs.AppPrefs
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import splitties.dimensions.dp
 import kotlin.math.abs
 import kotlin.math.floor
 
@@ -121,28 +122,27 @@ open class GestureFrame(context: Context) : FrameLayout(context) {
 
                 if ((isSlideCursor || isSlideDelete) && onSlide != null && !isLongPressed && swipeTravel > 0) {
                     if (!slideActivated) {
-                        if (abs(dx) >= swipeTravel) {
+                        if (abs(dx) >= dp(swipeTravel) && abs(dx) > abs(dy)) {
                             slideActivated = true
                             lastX = startX
                         }
                     }
 
                     if (slideActivated) {
-                        val step = getNStep(lastX, x, slideStepSize.toFloat())
+                        val stepSize = dp(slideStepSize).coerceAtLeast(1).toFloat()
+                        val step = getNStep(lastX, x, stepSize)
                         if (step != 0) {
                             onSlide?.invoke(step, x, y)
-                            lastX = x
+                            lastX += step * stepSize
                         }
                     }
                 }
 
-                if (!isLongPressed) {
+                if (!isLongPressed && !slideActivated) {
                     val behavior = detectSwipe(dx, dy)
-                    if (behavior != lastSwipeBehavior) {
+                    if (behavior != KeyBehavior.CLICK && behavior != lastSwipeBehavior) {
                         lastSwipeBehavior = behavior
-                        if (behavior != KeyBehavior.CLICK) {
-                            onSwipe?.invoke(behavior)
-                        }
+                        onSwipe?.invoke(behavior)
                     }
                 }
 
@@ -150,6 +150,7 @@ open class GestureFrame(context: Context) : FrameLayout(context) {
             }
 
             MotionEvent.ACTION_UP -> {
+                if (!isEnabled) return false
                 val dx = x - startX
                 val dy = y - startY
 
@@ -167,6 +168,8 @@ open class GestureFrame(context: Context) : FrameLayout(context) {
                     if (isRepeatable) onCancel?.invoke() else dispatchBehavior(KeyBehavior.LONG_CLICK, true)
                     return true
                 }
+
+                detectSwipe(dx, dy).takeIf { it != KeyBehavior.CLICK }?.let { lastSwipeBehavior = it }
 
                 if (swipeTriggered) {
                     dispatchBehavior(lastSwipeBehavior, false)
@@ -262,9 +265,9 @@ open class GestureFrame(context: Context) : FrameLayout(context) {
         }
 
         val isSwipe =
-            (swipeTravel > 0 && distance >= swipeTravel) ||
-                (swipeVelocity > 0 && velocity >= swipeVelocity)
-        swipeTriggered = isSwipe
+            (swipeTravel > 0 && distance >= dp(swipeTravel)) ||
+                (swipeVelocity > 0 && velocity >= dp(swipeVelocity))
+        swipeTriggered = swipeTriggered || isSwipe
 
         if (!isSwipe) return KeyBehavior.CLICK
         return if (absDx > absDy) {

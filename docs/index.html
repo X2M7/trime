@@ -173,6 +173,24 @@
       box-shadow: 0 24px 70px rgba(26, 59, 48, 0.22);
     }
 
+    .preview {
+      width: min(100%, 330px);
+      margin: 0;
+      justify-self: center;
+    }
+
+    .preview img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    .preview figcaption {
+      font-size: 13px;
+      color: var(--muted);
+      margin-top: 8px;
+    }
+
     .screen {
       overflow: hidden;
       border-radius: 24px;
@@ -343,7 +361,7 @@
       </div>
       <nav class="links" aria-label="Primary">
         <a href="https://github.com/X2M7/trime/releases/latest">下载</a>
-        <a href="https://github.com/X2M7/trime/tree/feature/t9-pinyin">源码</a>
+        <a href="https://github.com/X2M7/trime/tree/develop">源码</a>
         <a href="https://github.com/osfans/trime">上游 Trime</a>
       </nav>
     </div>
@@ -363,40 +381,18 @@
           <a class="button secondary" href="https://github.com/X2M7/trime">查看源码</a>
         </div>
         <div class="meta">
-          <span class="pill">当前预览版：v3.3.11-t9.4</span>
+          <span class="pill">当前预览版：v3.3.13-t9.6</span>
           <span class="pill">ABI：arm64-v8a</span>
+          <span class="pill">Android 5.0+ · versionCode 20261108</span>
           <span class="pill">License：GPL-3.0-or-later</span>
         </div>
       </div>
 
-      <div class="phone" aria-label="九键键盘预览">
-        <div class="screen">
-          <div class="appbar">朙月拼音九键 <span>中文</span></div>
-          <div class="searchbox">输入：94264<br>候选会根据数字拼音编码生成。</div>
-          <div class="candidate">
-            <span>想</span>
-            <span>象</span>
-            <span>向</span>
-          </div>
-          <div class="keyboard">
-            <div class="key">1<small>符号</small></div>
-            <div class="key">ABC<small>2</small></div>
-            <div class="key">DEF<small>3</small></div>
-            <div class="key">GHI<small>4</small></div>
-            <div class="key">JKL<small>5</small></div>
-            <div class="key">MNO<small>6</small></div>
-            <div class="key">PQRS<small>7</small></div>
-            <div class="key">TUV<small>8</small></div>
-            <div class="key">WXYZ<small>9</small></div>
-            <div class="key action">符号</div>
-            <div class="key">0<small>空格</small></div>
-            <div class="key action">退格</div>
-            <div class="key action">中/英</div>
-            <div class="key action">空格</div>
-            <div class="key action">回车</div>
-          </div>
-        </div>
-      </div>
+      <figure class="preview">
+        <img src="assets/t03-pinyin.png" width="824" height="1800"
+             alt="T03 九键实测：ni 已锁定，426 仍可编辑，汉字候选为你好，左侧显示拼音列表">
+        <figcaption>T03 开发版实测 · 412dp · Android 15 模拟器</figcaption>
+      </figure>
     </div>
 
     <section>
@@ -404,16 +400,16 @@
         <h2>这次改了什么</h2>
         <div class="grid">
           <div class="card">
-            <h3>九键方案</h3>
-            <p>新增 `luna_pinyin_t9.schema.yaml`，把 a-z 映射到 2-9，复用朙月拼音词典。</p>
+            <h3>拼音消歧与纠错</h3>
+            <p>按方案词典列出拼音，可锁定、修改中间音节、解锁和撤销；选择拼音不提交汉字。</p>
           </div>
           <div class="card">
-            <h3>九宫格键盘</h3>
-            <p>在内置 Trime 主题中加入 `luna_pinyin_t9` 键盘，显示 ABC、DEF、GHI 等九键分组。</p>
+            <h3>自适应九键布局</h3>
+            <p>两个内置主题同步 3x3 主键区和侧边功能键，支持拼音侧栏、窄屏横排、左右单手模式及键高设置。</p>
           </div>
           <div class="card">
-            <h3>自动切换布局</h3>
-            <p>切到数字拼音方案时，键盘窗口会优先匹配九键布局，不再停留在 26 键。</p>
+            <h3>数字与滑动</h3>
+            <p>长按 2-9 直接输入数字，空格滑动移动光标；长按和滑动不会额外触发普通点击。</p>
           </div>
         </div>
       </div>
@@ -423,10 +419,12 @@
       <div class="wrap">
         <h2>测试方式</h2>
         <ol class="steps">
-          <li>安装 release 中的 APK，并在 Android 设置里启用 `Trime` 输入法。</li>
+          <li>先备份配置与词库，再覆盖安装 ARM64 APK。包名及签名延续旧预览版，显示名称不带“调试版”。</li>
           <li>打开任意输入框，切换方案到 `朙月拼音九键` / `luna_pinyin_t9`。</li>
-          <li>输入 `64`、`426`、`94264`，观察候选词和九键布局是否正常。</li>
+          <li>输入 <code>64426</code>，选择拼音 <code>ni</code> 后保留 <code>426</code>，再选择汉字候选提交。</li>
         </ol>
+        <p>此下载仍是调试签名的预览包，并非生产签名或 R8 构建。Android 5.x 真机与手机性能尚未验证。
+          <a href="https://github.com/X2M7/trime/blob/develop/doc/releases/v3.3.13-t9.6.md">发布说明与验证范围</a>。</p>
       </div>
     </section>
   </main>

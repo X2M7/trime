@@ -48,6 +48,7 @@ data class TextKeyboard(
     val keyPressOffsetY: Float,
     val importPreset: String,
     val keys: List<TextKey>,
+    val t9Layout: Boolean = false,
 ) : Parcelable {
     enum class LabelTransform {
         NONE,
@@ -162,6 +163,7 @@ data class TextKeyboard(
             keys = node["keys"]?.sequence?.mapNotNull {
                 TextKey.decode(it.mapping!!)
             } ?: emptyList(),
+            t9Layout = node["t9_layout"]?.boolean ?: false,
         )
     }
 }

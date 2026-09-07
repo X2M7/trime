@@ -83,6 +83,9 @@ interface RimeApi {
 
     suspend fun commitComposition(): Boolean
 
+    /** Finish pending input verbatim and append a literal digit, never select a numbered candidate. */
+    suspend fun commitT9Digit(digit: Char): Boolean
+
     suspend fun clearComposition()
 
     suspend fun getRawInput(): String
