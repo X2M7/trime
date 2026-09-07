@@ -54,6 +54,12 @@ jobs:
         run: |
           make style-lint
 
+      - name: Test third-party CMake adaptations
+        if: ${{ startsWith(matrix.os, 'ubuntu') }}
+        run: |
+          CMAKE_EXECUTABLE="$ANDROID_HOME/cmake/3.31.6/bin/cmake" \
+            python3 -B -m unittest discover -s script/quality -p test_third_party_cmake.py -v
+
       - name: Calculate JNI cache hash
         id: cache-hash
         run: |

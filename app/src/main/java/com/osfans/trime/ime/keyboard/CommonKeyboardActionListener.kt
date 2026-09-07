@@ -361,10 +361,24 @@ class CommonKeyboardActionListener(override val di: DI) : DIAware {
                 keyCode == KeyEvent.KEYCODE_MOVE_HOME ||
                 keyCode == KeyEvent.KEYCODE_MOVE_END
 
-            override fun onKey(
+            override fun onRepeat(action: KeyAction) = if (
+                (action.code == KeyEvent.KEYCODE_DEL || action.code == KeyEvent.KEYCODE_FORWARD_DEL) &&
+                action.commit.isEmpty() && action.getText(keyboardWindow.currentKeyboard).isEmpty()
+            ) {
+                enqueueKey(action.code, action.modifier or keyboardWindow.currentKeyboard.modifier)
+            } else {
+                onAction(action)
+                null
+            }
+
+            override fun onKey(keyEventCode: Int, metaState: Int) {
+                enqueueKey(keyEventCode, metaState)
+            }
+
+            private fun enqueueKey(
                 keyEventCode: Int,
                 metaState: Int,
-            ) {
+            ): kotlinx.coroutines.Job {
                 // An uppercase letter key (e.g. from `{x: A}`) is passed to
                 // rime as the uppercase keysym with Shift, matching what a
                 // physical keyboard reports via the unicode char, so that
@@ -386,7 +400,13 @@ class CommonKeyboardActionListener(override val di: DI) : DIAware {
                     metaState
                 }
                 val modifiers = KeyModifiers.fromMetaState(m).modifiers
-                service.postRimeJob {
+                return service.postRimeJob {
+                    if (t9Cached.enabled && m == KeyEvent.META_CTRL_ON &&
+                        (keyEventCode == KeyEvent.KEYCODE_Z || keyEventCode == KeyEvent.KEYCODE_Y)
+                    ) {
+                        processKey(value, modifiers)
+                        return@postRimeJob
+                    }
                     if (service.hookKeyboard(keyEventCode, m)) {
                         Timber.d("handleKey: hook")
                         return@postRimeJob

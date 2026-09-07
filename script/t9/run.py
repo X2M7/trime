@@ -77,6 +77,7 @@ def main():
         'files': {str(x.relative_to(ROOT)): hashlib.sha256(x.read_bytes()).hexdigest()
                   for x in [source, ROOT / 'app/src/main/jni/librime_jni/t9.cc',
                             ROOT / 'app/src/main/jni/librime_jni/t9.h',
+                            ROOT / 'app/src/main/jni/librime_jni/helper-types.h',
                             ROOT / 'app/src/main/jni/librime_jni/rime_jni.cc',
                             *shared.iterdir()] if x.is_file()},
         'state': 'running',

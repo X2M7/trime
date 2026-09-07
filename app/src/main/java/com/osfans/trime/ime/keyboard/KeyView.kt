@@ -16,6 +16,7 @@ import android.graphics.drawable.GradientDrawable
 import android.view.KeyEvent
 import com.mikepenz.iconics.IconicsDrawable
 import com.mikepenz.iconics.utils.sizeDp
+import com.osfans.trime.core.T9Action
 import com.osfans.trime.daemon.RimeDaemon
 import com.osfans.trime.data.prefs.AppPrefs
 import com.osfans.trime.data.theme.FontManager
@@ -23,6 +24,7 @@ import com.osfans.trime.ime.core.TrimeInputMethodService
 import com.osfans.trime.ime.popup.PopupAction
 import com.osfans.trime.ime.popup.PopupDelegate
 import com.osfans.trime.util.sp
+import kotlinx.coroutines.Job
 import splitties.dimensions.dp
 import timber.log.Timber
 
@@ -44,6 +46,7 @@ class KeyView(
     private val rime get() = RimeDaemon.getFirstSessionOrNull()!!
 
     private val deletedTextBuffer = ArrayDeque<String>()
+    private var pendingRepeat: Job? = null
 
     private var keyPressed = false
     override fun isPressed(): Boolean = keyPressed
@@ -102,7 +105,9 @@ class KeyView(
                     }
                     setPressedState(false)
                 } else if (isRepeatable) {
-                    key.getAction(KeyBehavior.CLICK)?.let { processKeyAction(it, KeyBehavior.CLICK) }
+                    if (pendingRepeat?.isCompleted != false) {
+                        key.getAction(KeyBehavior.CLICK)?.let { processKeyAction(it, KeyBehavior.CLICK, repeated = true) }
+                    }
                 }
             } else {
                 when (behavior) {
@@ -129,13 +134,22 @@ class KeyView(
             showPopupPreview(direction)
         }
 
-        onSlide = { delta, _, _ ->
+        onSlide = slide@{ delta, _, _ ->
             if (isSlideCursor) {
                 when {
                     delta > 0 -> keyboardActionListener.onAction(KeyAction("Right"))
                     delta < 0 -> keyboardActionListener.onAction(KeyAction("Left"))
                 }
             } else if (isSlideDelete) {
+                if (rime.run { statusCached.isComposing }) {
+                    when {
+                        delta < 0 -> keyboardActionListener.onKey(KeyEvent.KEYCODE_DEL, 0)
+                        delta > 0 -> service.postRimeJob {
+                            if (t9Cached.canUndo) t9Action(t9Cached.revision, T9Action.Undo)
+                        }
+                    }
+                    return@slide
+                }
                 val ic = service.currentInputConnection
                 when {
                     delta < 0 -> {
@@ -179,6 +193,10 @@ class KeyView(
             setPressedState(false)
             dismissPopupPreview()
         }
+        onRepeatEnd = {
+            pendingRepeat?.cancel()
+            pendingRepeat = null
+        }
     }
 
     fun setPressedState(pressed: Boolean) {
@@ -193,7 +211,7 @@ class KeyView(
         }
     }
 
-    private fun processKeyAction(action: KeyAction, behavior: KeyBehavior) {
+    private fun processKeyAction(action: KeyAction, behavior: KeyBehavior, repeated: Boolean = false) {
         Timber.d("processKeyAction: label=${key.getLabel()}, code=${action.code}, type=$behavior")
 
         if (action.isModifierKey) {
@@ -205,7 +223,11 @@ class KeyView(
             return
         }
 
-        keyboardActionListener.onAction(action)
+        if (repeated) {
+            pendingRepeat = keyboardActionListener.onRepeat(action)
+        } else {
+            keyboardActionListener.onAction(action)
+        }
 
         val hookArrow = if (keyboardView.hookShiftArrow) {
             when (action.code) {

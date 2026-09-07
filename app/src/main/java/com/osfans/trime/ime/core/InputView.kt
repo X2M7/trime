@@ -128,7 +128,7 @@ class InputView(
     private val enterKeyDisplay: EnterKeyDisplayDelegate by instance()
     private val preedit: PreeditDelegate by instance()
     private val t9 = T9DisambiguationView(themedContext, scope) { revision, action, start, end, spelling ->
-        rime.launchOnReady { it.t9Action(revision, action, start, end, spelling) }
+        service.postRimeJob { t9Action(revision, action, start, end, spelling) }
     }
     private val windowManager: BoardWindowManager by instance()
     private val inputBar: InputBarDelegate by instance()

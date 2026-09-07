@@ -33,7 +33,11 @@ enum class T9Action {
     Lock,
     Unlock,
     Undo,
+    Cancel,
 }
+
+/** Cursor is a UTF-16 offset; null means the preview has no encoding mapping. */
+data class InlinePreeditProto(val text: String, val cursor: Int? = null)
 
 data class CandidateProto(
     val text: String,

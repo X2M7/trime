@@ -64,7 +64,8 @@ interface RimeApi {
 
     suspend fun changeCandidatePage(backward: Boolean): Boolean
 
-    suspend fun moveCursorPos(position: Int)
+    /** Byte offset in the displayed UTF-8 preedit, not the private engine input. */
+    suspend fun moveCursorPos(position: Int, expectedPreedit: String? = null)
 
     suspend fun availableSchemata(): Array<SchemaItem>
 

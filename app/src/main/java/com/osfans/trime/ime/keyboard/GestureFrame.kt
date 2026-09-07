@@ -57,6 +57,7 @@ open class GestureFrame(context: Context) : FrameLayout(context) {
     var onPress: (() -> Unit)? = null
     var onRelease: ((behavior: KeyBehavior, longPress: Boolean) -> Unit)? = null
     var onCancel: (() -> Unit)? = null
+    var onRepeatEnd: (() -> Unit)? = null
     var onMove: ((x: Float, y: Float, longPress: Boolean) -> Unit)? = null
     var onSwipe: ((behavior: KeyBehavior) -> Unit)? = null
 
@@ -163,7 +164,7 @@ open class GestureFrame(context: Context) : FrameLayout(context) {
                 }
 
                 if (isLongPressed) {
-                    dispatchBehavior(KeyBehavior.LONG_CLICK, true)
+                    if (isRepeatable) onCancel?.invoke() else dispatchBehavior(KeyBehavior.LONG_CLICK, true)
                     return true
                 }
 
@@ -239,14 +240,10 @@ open class GestureFrame(context: Context) : FrameLayout(context) {
 
     private fun startRepeatJob() {
         repeatJob = lifecycleScope.launch {
-            try {
-                while (true) {
-                    if (vibrateOnKeyRepeat) InputFeedbackManager.keyPressVibrate(this@GestureFrame)
-                    dispatchBehavior(KeyBehavior.CLICK, true)
-                    delay(repeatInterval.toLong())
-                }
-            } finally {
-                onCancel?.invoke()
+            while (true) {
+                if (vibrateOnKeyRepeat) InputFeedbackManager.keyPressVibrate(this@GestureFrame)
+                dispatchBehavior(KeyBehavior.CLICK, true)
+                delay(repeatInterval.toLong())
             }
         }
     }
@@ -295,9 +292,24 @@ open class GestureFrame(context: Context) : FrameLayout(context) {
     }
 
     private fun cancelJobs() {
+        onRepeatEnd?.invoke()
         longPressJob?.cancel()
         repeatJob?.cancel()
         doubleTapJob?.cancel()
+    }
+
+    override fun onDetachedFromWindow() {
+        cancelJobs()
+        onCancel?.invoke()
+        super.onDetachedFromWindow()
+    }
+
+    override fun setEnabled(enabled: Boolean) {
+        if (!enabled) {
+            cancelJobs()
+            onCancel?.invoke()
+        }
+        super.setEnabled(enabled)
     }
 
     fun getNStep(start: Float, end: Float, step: Float): Int = (if (start < end) 1 else -1) *

@@ -47,6 +47,7 @@ class T9DisambiguationView(
     }
     private val adapter = ChoiceAdapter()
     private val undo = icon("cmd_undo", R.string.undo) { send(T9Action.Undo) }
+    private val cancel = icon("cmd_close", R.string.t9_cancel) { send(T9Action.Cancel) }
     private val unlock = icon("cmd_lock_open_variant_outline", R.string.t9_unlock) {
         send(T9Action.Unlock, state.focus)
     }
@@ -67,6 +68,7 @@ class T9DisambiguationView(
             addView(choices, LayoutParams(0, dp(48), 0.65f))
             addView(unlock, LayoutParams(dp(48), dp(48)))
             addView(undo, LayoutParams(dp(48), dp(48)))
+            addView(cancel, LayoutParams(dp(48), dp(48)))
         } else {
             orientation = VERTICAL
             val row = LinearLayout(context).apply {
@@ -74,6 +76,7 @@ class T9DisambiguationView(
                 addView(segmentScroller, LayoutParams(0, dp(48), 1f))
                 addView(unlock, LayoutParams(dp(48), dp(48)))
                 addView(undo, LayoutParams(dp(48), dp(48)))
+                addView(cancel, LayoutParams(dp(48), dp(48)))
             }
             addView(row, LayoutParams(LayoutParams.MATCH_PARENT, dp(48)))
             addView(choices, LayoutParams(LayoutParams.MATCH_PARENT, dp(48)))
@@ -88,6 +91,7 @@ class T9DisambiguationView(
         background = scope.drawable("candidate_background")
         val tint = ColorStateList.valueOf(normalTextColor)
         undo.imageTintList = tint
+        cancel.imageTintList = tint
         unlock.imageTintList = tint
         update(state)
         adapter.notifyItemRangeChanged(0, adapter.itemCount)
@@ -122,6 +126,7 @@ class T9DisambiguationView(
                 label().apply {
                     text = span.spelling
                     val selected = span.start == data.focus
+                    isSelected = selected
                     setTextColor(if (selected) selectedForeground else normalTextColor)
                     setBackgroundColor(if (selected) selectedBackground else android.graphics.Color.TRANSPARENT)
                     if (span.locked) {
@@ -141,7 +146,8 @@ class T9DisambiguationView(
                         if (span.locked) R.string.t9_locked_syllable else R.string.t9_input_segment,
                         span.spelling,
                     )
-                    setOnClickListener { send(T9Action.Focus, span.start) }
+                    if (selected) contentDescription = context.getString(R.string.t9_current_segment, contentDescription)
+                    setOnClickListener { action(data.revision, T9Action.Focus, span.start, 0, "") }
                 },
                 LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT),
             )
@@ -150,7 +156,7 @@ class T9DisambiguationView(
         undo.isEnabled = data.canUndo
         unlock.alpha = if (unlock.isEnabled) 1f else 0.35f
         undo.alpha = if (undo.isEnabled) 1f else 0.35f
-        adapter.update(data.choices)
+        adapter.update(data.choices, data.revision)
         if (focusChanged) {
             choices.scrollToPosition(0)
             val selectedIndex = data.segments.indexOfFirst { it.start == data.focus }
@@ -164,17 +170,20 @@ class T9DisambiguationView(
 
     private inner class ChoiceAdapter : RecyclerView.Adapter<ChoiceHolder>() {
         private var items = emptyArray<T9SpanProto>()
+        private var revision = -1
 
-        fun update(value: Array<T9SpanProto>) {
-            if (items.contentEquals(value)) return
+        fun update(value: Array<T9SpanProto>, newRevision: Int) {
+            if (items.contentEquals(value) && revision == newRevision) return
             val previous = items
+            val previousRevision = revision
             val difference = DiffUtil.calculateDiff(object : DiffUtil.Callback() {
                 override fun getOldListSize() = previous.size
                 override fun getNewListSize() = value.size
                 override fun areItemsTheSame(old: Int, new: Int) = previous[old] == value[new]
-                override fun areContentsTheSame(old: Int, new: Int) = previous[old] == value[new]
+                override fun areContentsTheSame(old: Int, new: Int) = previousRevision == newRevision && previous[old] == value[new]
             })
             items = value.copyOf()
+            revision = newRevision
             difference.dispatchUpdatesTo(this)
         }
 
@@ -188,9 +197,10 @@ class T9DisambiguationView(
 
         override fun onBindViewHolder(holder: ChoiceHolder, position: Int) {
             val span = items[position]
+            val boundRevision = revision
             holder.text.setTextColor(normalTextColor)
             holder.text.text = if (span.completion) context.getString(R.string.t9_completion, span.spelling) else span.spelling
-            holder.text.setOnClickListener { send(T9Action.Lock, span.start, span.end, span.spelling) }
+            holder.text.setOnClickListener { action(boundRevision, T9Action.Lock, span.start, span.end, span.spelling) }
         }
     }
 

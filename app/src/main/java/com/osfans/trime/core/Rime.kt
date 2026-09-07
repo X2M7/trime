@@ -261,7 +261,8 @@ class Rime :
         changeRimeCandidatePage(backward).also { emitResponse() }
     }
 
-    override suspend fun moveCursorPos(position: Int) = withRimeContext {
+    override suspend fun moveCursorPos(position: Int, expectedPreedit: String?) = withRimeContext {
+        if (expectedPreedit != null && getRimeContext().composition.preedit != expectedPreedit) return@withRimeContext
         setRimeCaretPos(position)
         emitResponse()
     }
@@ -365,7 +366,7 @@ class Rime :
         val response = getRimeResponse(pagingMode)
         val t9 = getRimeT9State()
         handleRimeMessage(4, arrayOf(commit ?: response.commit))
-        handlePreedit(response.composition)
+        handlePreedit(response.composition, t9.enabled)
         if (response.composition.length <= 0 && lastAsciiTipsText != asciiTipsText(response.status)) {
             showAsciiSwitchTips(response.status)
         }
@@ -377,16 +378,17 @@ class Rime :
         handleRimeMessage(11, arrayOf(t9))
     }
 
-    private fun handlePreedit(composition: CompositionProto) {
+    private fun handlePreedit(composition: CompositionProto, t9: Boolean = false) {
         val mode = if (isNullInputType) {
             InlinePreeditMode.DISABLE
         } else {
             inlinePreeditMode
         }
-        val inlinePreedit = when (mode) {
-            InlinePreeditMode.DISABLE -> ""
-            InlinePreeditMode.COMPOSING_TEXT -> composition.preedit ?: ""
-            InlinePreeditMode.COMMIT_TEXT_PREVIEW -> composition.commitTextPreview ?: ""
+        val inlinePreedit = when {
+            mode == InlinePreeditMode.DISABLE -> InlinePreeditProto("")
+            mode == InlinePreeditMode.COMPOSING_TEXT || t9 ->
+                InlinePreeditProto(composition.preedit ?: "", composition.cursorPos)
+            else -> InlinePreeditProto(composition.commitTextPreview ?: "")
         }
         val composition = if (mode == InlinePreeditMode.COMPOSING_TEXT) {
             CompositionProto()

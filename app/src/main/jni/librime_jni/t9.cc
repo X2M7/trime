@@ -22,6 +22,9 @@ void T9::Reset() {
   rendered_.clear();
   engine_to_raw_ = {0};
   raw_to_engine_ = {0};
+  display_to_raw_ = {0};
+  completion_ = true;
+  delimiters_ = " '";
   history_.clear();
   confirmed_ = 0;
   ++revision_;
@@ -243,7 +246,12 @@ std::vector<T9Span> T9::Edges() const {
 
 T9Snapshot T9::Snapshot(Session* session) {
   T9Snapshot result;
-  if (!Sync(session) || edit_.input.empty()) return result;
+  if (!Sync(session)) return result;
+  result.enabled = !edit_.input.empty() || !history_.empty();
+  result.revision = revision_;
+  result.input = edit_.input;
+  result.can_undo = !history_.empty();
+  if (edit_.input.empty()) return result;
   auto edges = Edges();
   int confirmed =
       RawPosition(session->context()->composition().GetConfirmedPosition());
@@ -262,6 +270,9 @@ T9Snapshot T9::Snapshot(Session* session) {
     int end = pos + 1;
     for (const auto& edge : edges)
       if (edge.start == pos) end = std::max(end, edge.end);
+    // A tentative parse must never swallow an independently locked syllable.
+    for (const auto& lock : edit_.locks)
+      if (lock.start > pos) end = std::min(end, lock.start);
     result.segments.push_back(
         {pos, end, edit_.input.substr(pos, end - pos), false, false});
     pos = end;
@@ -317,6 +328,8 @@ bool T9::Act(Session* session, int revision, int action, int start, int end,
                      [&](const auto& s) { return s.start == start; });
     if (segment == state.segments.end()) return false;
     edit_.focus = start;
+    edit_.caret = segment->end;
+    session->context()->set_caret_pos(raw_to_engine_[edit_.caret]);
     ++revision_;
     return true;
   }
@@ -327,11 +340,17 @@ bool T9::Act(Session* session, int revision, int action, int start, int end,
     Render(session->context());
     return true;
   }
+  if (action == 4) {
+    session->context()->AbortComposition();
+    Reset();
+    return true;
+  }
   if (action == 2) {
     auto lock = std::find_if(edit_.locks.begin(), edit_.locks.end(),
                              [&](const auto& l) { return l.start == start; });
     if (lock == edit_.locks.end()) return false;
     Save();
+    edit_.caret = lock->end;
     edit_.locks.erase(lock);
     edit_.focus = start;
   } else if (action == 1) {
@@ -350,6 +369,7 @@ bool T9::Act(Session* session, int revision, int action, int start, int end,
     edit_.locks.push_back(lock);
     std::sort(edit_.locks.begin(), edit_.locks.end(),
               [](const auto& a, const auto& b) { return a.start < b.start; });
+    if (start <= edit_.caret && edit_.caret <= end) edit_.caret = end;
     edit_.focus = end;
   } else {
     return false;
@@ -361,13 +381,38 @@ bool T9::Act(Session* session, int revision, int action, int start, int end,
 bool T9::ProcessKey(Session* session, int keycode, int mask) {
   if (!Sync(session)) return false;
   KeyEvent key(keycode, mask);
-  if (key.ctrl() && !key.release() && keycode == 'z' && !history_.empty())
-    return Act(session, revision_, 3, 0, 0, "");
-  if (mask != 0 || edit_.locks.empty()) return false;
+  if (key.ctrl() && !key.release() && keycode == 'z') {
+    if (!history_.empty()) return Act(session, revision_, 3, 0, 0, "");
+    return !edit_.input.empty();
+  }
+  if (key.ctrl() && !key.release() && keycode == 'y')
+    return !edit_.input.empty() || !history_.empty();
+  if (mask != 0) return false;
+  auto passthrough = [&] {
+    if (edit_.input.empty() && !history_.empty()) {
+      history_.clear();
+      ++revision_;
+    }
+    return false;
+  };
   auto ctx = session->context();
   int caret = edit_.caret;
+  if (keycode == XK_Return && !edit_.input.empty()) {
+    // The schema's raw-code commit stops at the caret unless it is at the end.
+    edit_.caret = edit_.input.size();
+    edit_.focus = edit_.caret;
+    ctx->set_caret_pos(raw_to_engine_.back());
+    ++revision_;
+    return false;
+  }
+  if (keycode == XK_Escape && (!edit_.input.empty() || !history_.empty())) {
+    ctx->AbortComposition();
+    Reset();
+    return true;
+  }
   if (keycode == XK_Left || keycode == XK_Right || keycode == XK_Home ||
       keycode == XK_End) {
+    if (edit_.input.empty()) return passthrough();
     int next = keycode == XK_Home ? 0
                : keycode == XK_End
                    ? edit_.input.size()
@@ -379,13 +424,18 @@ bool T9::ProcessKey(Session* session, int keycode, int mask) {
     }
     ctx->set_caret_pos(raw_to_engine_[next]);
     edit_.caret = next;
+    edit_.focus = next;
     ++revision_;
     return true;
   }
   if (keycode == XK_BackSpace || keycode == XK_Delete) {
+    if (edit_.input.empty()) {
+      return passthrough();
+    }
     int target = keycode == XK_BackSpace ? caret - 1 : caret;
     if (target < 0 || target >= static_cast<int>(edit_.input.size()))
-      return false;
+      // At the composition edge, never delete already committed editor text.
+      return !edit_.input.empty();
     Save();
     auto lock = std::find_if(
         edit_.locks.begin(), edit_.locks.end(),
@@ -399,18 +449,25 @@ bool T9::ProcessKey(Session* session, int keycode, int mask) {
     }
   } else if ((keycode >= '2' && keycode <= '9') ||
              (keycode >= 'a' && keycode <= 'z') || keycode == '\'') {
+    if (keycode == '\'' && edit_.input.empty()) return passthrough();
+    const int focus = edit_.focus;
+    const bool append = caret == static_cast<int>(edit_.input.size());
+    const bool focused_lock =
+        std::any_of(edit_.locks.begin(), edit_.locks.end(),
+                    [&](const auto& lock) { return lock.start == focus; });
     Save();
     Replace(caret, caret, std::string(1, static_cast<char>(keycode)));
+    if (append && !focused_lock) edit_.focus = focus;
     edit_.caret = caret + 1;
   } else {
-    return false;
+    return passthrough();
   }
   Render(ctx);
   return true;
 }
 
 bool T9::GetPreedit(Session* session, Preedit* preedit) {
-  if (!Sync(session) || edit_.locks.empty()) return false;
+  if (!Sync(session) || edit_.input.empty()) return false;
   std::vector<T9Span> chunks;
   auto ctx = session->context();
   int confirmed = 0;
@@ -450,8 +507,8 @@ bool T9::GetPreedit(Session* session, Preedit* preedit) {
     raw_to_display[pos] = preedit->text.size();
   }
   preedit->caret_pos = raw_to_display[edit_.caret];
-  preedit->sel_start = raw_to_display[confirmed];
-  preedit->sel_end = preedit->text.size();
+  preedit->sel_start = raw_to_display[std::min(edit_.focus, edit_.caret)];
+  preedit->sel_end = preedit->caret_pos;
   return true;
 }
 
@@ -462,6 +519,7 @@ bool T9::MoveCaret(Session* session, size_t display_position) {
       display_to_raw_[std::min(display_position, display_to_raw_.size() - 1)];
   session->context()->set_caret_pos(raw_to_engine_[raw]);
   edit_.caret = raw;
+  edit_.focus = raw;
   ++revision_;
   return true;
 }

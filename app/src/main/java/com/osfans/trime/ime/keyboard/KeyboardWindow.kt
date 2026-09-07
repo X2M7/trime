@@ -28,10 +28,12 @@ import com.osfans.trime.ime.popup.PopupDelegate
 import com.osfans.trime.ime.window.BoardWindow
 import com.osfans.trime.ime.window.ResidentWindow
 import com.osfans.trime.util.isLandscape
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import org.kodein.di.DI
 import org.kodein.di.instance
 import splitties.dimensions.dp
@@ -86,6 +88,7 @@ class KeyboardWindow(di: DI) :
     private var lastKeyboardId = ""
     private var lastLockKeyboardId = ""
     private var tempAsciiMode: Boolean? = null
+    private var preservedSymbolMode: Pair<Keyboard, Boolean>? = null
     private val cachedKeyboards = mutableMapOf<String, Pair<Keyboard, KeyboardView>>()
     private val activeKeyboard: Keyboard? get() = cachedKeyboards[currentKeyboardId]?.first
     private val currentKeyboardView: KeyboardView? get() = cachedKeyboards[currentKeyboardId]?.second
@@ -120,7 +123,11 @@ class KeyboardWindow(di: DI) :
             it.onDetach()
             keyboardView.removeView(it)
         }
-        activeKeyboard?.lastAsciiMode = rime.run { statusCached }.isAsciiMode
+        activeKeyboard?.let { keyboard ->
+            keyboard.lastAsciiMode = preservedSymbolMode?.takeIf { it.first === keyboard }?.second
+                ?: rime.run { statusCached }.isAsciiMode
+        }
+        preservedSymbolMode = null
     }
 
     /** 计算键盘可用宽度：优先使用已测量的容器宽度，否则回退到系统窗口测量。 */
@@ -188,6 +195,17 @@ class KeyboardWindow(di: DI) :
 
             if (currentMode != targetMode) {
                 service.postRimeJob {
+                    // Opening the symbol page is navigation, not a T9 commit command.
+                    if (target == "symbols" && t9Cached.enabled && statusCached.isComposing) {
+                        withContext(Dispatchers.Main) {
+                            if (activeKeyboard === keyboard) {
+                                preservedSymbolMode = keyboard to targetMode
+                            } else {
+                                keyboard.lastAsciiMode = targetMode
+                            }
+                        }
+                        return@postRimeJob
+                    }
                     commitComposition()
                     setRuntimeOption("ascii_mode", targetMode)
                 }

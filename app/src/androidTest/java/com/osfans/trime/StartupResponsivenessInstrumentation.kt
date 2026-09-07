@@ -31,16 +31,22 @@ class StartupResponsivenessInstrumentation : Instrumentation() {
     private var safTree: String? = null
     private var safRevoke = false
     private var clipOnly = false
+    private var t02Only = false
     override fun onCreate(arguments: Bundle?) {
         super.onCreate(arguments)
         safOnly = arguments?.getString("saf") == "true"
         safTree = arguments?.getString("safTree")
         safRevoke = arguments?.getString("safRevoke") == "true"
         clipOnly = arguments?.getString("clip") == "true"
+        t02Only = arguments?.getString("t02") == "true"
         start()
     }
 
     override fun onStart() {
+        if (t02Only) {
+            T9EditingProbe.run(this)
+            return
+        }
         if (clipOnly) {
             ClipEditorProbe.run(this)
             return

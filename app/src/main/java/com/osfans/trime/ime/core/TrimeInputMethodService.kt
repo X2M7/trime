@@ -107,8 +107,12 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
     private var lastCommittedText: String = ""
 
     private var composingText: String = ""
+    private var composingCursor: Int? = null
+    private var composingStart: Int? = null
+    private var composingSelectionMatches = true
+    private var selectionAfterCancel: Pair<Int, Int>? = null
 
-    private var cursorUpdateIndex = 0
+    @Volatile private var cursorUpdateIndex = 0
 
     private val recreateInputViewPrefs: Array<PreferenceDelegate<*>> = arrayOf(
         prefs.keyboard.expandKeypressArea,
@@ -273,7 +277,7 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
                 }
             }
             is RimeMessage.InlinePreeditMessage -> {
-                updateComposingText(it.data)
+                updateComposingText(it.data.text, it.data.cursor)
             }
             is RimeMessage.KeyMessage ->
                 it.data.let msg@{
@@ -516,20 +520,38 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
         candidatesEnd: Int,
         updateIndex: Int,
     ) {
-        if (newSelStart != newSelEnd) return
-        if (candidatesStart == candidatesEnd) return
-        if (newSelStart in candidatesStart..candidatesEnd) {
-            val position = newSelStart - candidatesStart
-            if (position != composingText.length) {
+        if (composingText.isEmpty()) return
+        if (newSelStart < 0 || newSelEnd < 0) return
+        if (candidatesStart < 0 || candidatesEnd - candidatesStart != composingText.length) return
+        composingStart = candidatesStart
+        if (newSelStart in candidatesStart..candidatesEnd && newSelEnd in candidatesStart..candidatesEnd) {
+            selectionAfterCancel = null
+            if (composingCursor == null) return
+            val position = newSelEnd - candidatesStart
+            composingSelectionMatches = newSelStart == newSelEnd && position == composingCursor
+            if (newSelStart != newSelEnd) {
+                // Rime has one editing caret, not a range. Keep the active end.
+                currentInputConnection?.setSelection(newSelEnd, newSelEnd)
+            }
+            if (position != composingCursor) {
+                val expectedPreedit = composingText
+                val bytes = expectedPreedit.substring(0, position).toByteArray(Charsets.UTF_8).size
                 postRimeJob {
                     if (updateIndex != cursorUpdateIndex) return@postRimeJob
                     Timber.d("handleCursorUpdate: move rime cursor to $position")
-                    moveCursorPos(position)
+                    moveCursorPos(bytes, expectedPreedit)
                 }
             }
         } else {
+            fun afterRemoval(position: Int) = when {
+                position <= candidatesStart -> position
+                position >= candidatesEnd -> position - composingText.length
+                else -> candidatesStart
+            }
+            selectionAfterCancel = afterRemoval(newSelStart) to afterRemoval(newSelEnd)
             Timber.d("handleCursorUpdate: clear composition")
             postRimeJob {
+                if (updateIndex != cursorUpdateIndex) return@postRimeJob
                 clearComposition()
             }
         }
@@ -616,6 +638,10 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
         restarting: Boolean,
     ) {
         composingText = ""
+        composingCursor = null
+        composingStart = null
+        selectionAfterCancel = null
+        cursorUpdateIndex += 1
         Timber.d("onStartInput: restarting=$restarting")
         val isNullType = attribute.inputType and InputType.TYPE_MASK_CLASS == InputType.TYPE_NULL
         postRimeJob {
@@ -678,6 +704,9 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
             monitorCursorAnchor(false)
         }
         composingText = ""
+        composingCursor = null
+        composingStart = null
+        selectionAfterCancel = null
         postRimeJob {
             clearComposition()
         }
@@ -687,14 +716,19 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
     fun commitText(text: String) {
         val ic = currentInputConnection ?: return
 
-        // when composing text equals commit content, finish composing text as-is
-        if (composingText.isNotEmpty() && composingText == text) {
+        // Finishing in place preserves the caret, so it is only safe at the end.
+        if (composingText.isNotEmpty() && composingText == text &&
+            composingCursor == text.length && composingSelectionMatches
+        ) {
             ic.finishComposingText()
         } else {
             ic.commitText(text, 1)
         }
         lastCommittedText = text
         composingText = ""
+        composingCursor = null
+        composingStart = null
+        selectionAfterCancel = null
         InputFeedbackManager.textCommitSpeak(text)
     }
 
@@ -1022,16 +1056,29 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
         }
     }
 
-    internal fun updateComposingText(text: String) {
+    internal fun updateComposingText(text: String, cursor: Int? = null) {
         val ic = currentInputConnection ?: return
+        val position = cursor?.coerceIn(0, text.length)
+        if (text == composingText && position == composingCursor && (position == null || composingSelectionMatches)) return
+        cursorUpdateIndex += 1
+        if (composingText.isEmpty()) {
+            composingStart = ic.getExtractedText(ExtractedTextRequest(), 0)?.let {
+                it.startOffset + minOf(it.selectionStart, it.selectionEnd)
+            }
+        }
+        composingCursor = position
+        composingSelectionMatches = true
+        if (text.isNotEmpty()) selectionAfterCancel = null
         ic.beginBatchEdit()
         if (composingText.isNotEmpty() || text.isNotEmpty()) {
-            if (!ic.getSelectedText(0).isNullOrEmpty()) {
-                ic.deleteSurroundingText(1, 0)
-            }
             ic.setComposingText(text, 1)
             if (text.isEmpty()) {
                 ic.finishComposingText()
+                composingStart = null
+                selectionAfterCancel?.let { ic.setSelection(it.first, it.second) }
+                selectionAfterCancel = null
+            } else if (position != null) {
+                composingStart?.let { start -> ic.setSelection(start + position, start + position) }
             }
         }
         composingText = text

@@ -11,6 +11,7 @@
 #include <sstream>
 #include <stdexcept>
 
+#include "../../app/src/main/jni/librime_jni/helper-types.h"
 #include "../../app/src/main/jni/librime_jni/t9.h"
 
 using namespace rime;
@@ -22,6 +23,12 @@ static void check(bool ok, const std::string& message) {
 
 int main(int argc, char** argv) {
   if (argc != 3 && argc != 4) return 2;
+  const std::string supplementary = u8"𠮷你 426";
+  check(::distance(supplementary.data(),
+                   supplementary.data() + supplementary.size()) == 7,
+        "JNI preedit length counts UTF-16 including surrogate pairs");
+  check(::distance(supplementary.data(), supplementary.data() + 4) == 2,
+        "JNI caret after supplementary Hanzi uses two UTF-16 units");
   auto api = rime_get_api();
   RIME_STRUCT(RimeTraits, traits);
   traits.shared_data_dir = argv[1];
@@ -118,6 +125,13 @@ int main(int argc, char** argv) {
     return std::find(list.begin(), list.end(), text) != list.end();
   };
   fresh("64");
+  check(t9.ProcessKey(session.get(), 'z', kControlMask) &&
+            t9.RawInput(session.get()) == "6",
+        "Ctrl-Z uses raw editing history without locks");
+  check(t9.ProcessKey(session.get(), 'y', kControlMask) &&
+            t9.RawInput(session.get()) == "6",
+        "editor redo cannot mutate an active Rime composition");
+  fresh("64");
   auto initial = t9.Snapshot(session.get());
   check(initial.enabled, "T9 enabled");
   lock("ni", 2);
@@ -139,6 +153,10 @@ int main(int argc, char** argv) {
   Preedit preedit;
   check(t9.GetPreedit(session.get(), &preedit) && preedit.text == "ni 426",
         "preedit hides private envelope");
+  focus(0);
+  check(t9.GetPreedit(session.get(), &preedit) &&
+            preedit.sel_end < preedit.text.size(),
+        "current syllable highlight excludes unresolved tail");
   check(t9.MoveCaret(session.get(), 4) && ctx->caret_pos() == 5,
         "display caret maps after digit 4");
   type("2");
@@ -161,9 +179,13 @@ int main(int argc, char** argv) {
   lock("gao", 5);
   check(ctx->input() == "~ni~~gao~~ma~",
         "replace middle syllable preserves neighbors");
+  check(ctx->caret_pos() == 9, "middle focus moves engine caret");
+  check(t9.ProcessKey(session.get(), XK_End, 0), "return to sentence end");
   check(contains(u8"你高吗") && !contains(u8"你好吗"),
         "middle constraint affects Hanzi");
   action(3);
+  check(t9.ProcessKey(session.get(), XK_End, 0),
+        "undo restores editable middle; navigate to end");
   check(contains(u8"你好吗"), "undo middle replacement");
   check(t9.ProcessKey(session.get(), XK_BackSpace, 0), "backspace handled");
   check(ctx->input() == "~ni~~hao~62", "backspace unlocks last syllable first");
@@ -210,6 +232,23 @@ int main(int argc, char** argv) {
   check(t9.CommitText(raw_commit.text) == "646",
         "raw commit hides exact envelope");
   api->free_commit(&raw_commit);
+  for (bool locked : {false, true}) {
+    const std::string original = locked ? "64426" : "64";
+    fresh(original);
+    if (locked) lock("ni", 2);
+    check(t9.MoveCaret(session.get(), locked ? 3 : 1),
+          "position caret inside raw-code commit input");
+    check(!t9.ProcessKey(session.get(), XK_Return, 0),
+          "Return delegates to the schema editor");
+    check(api->process_key(id, XK_Return, 0), "schema handles raw Return");
+    RIME_STRUCT(RimeCommit, middle_raw_commit);
+    check(api->get_commit(id, &middle_raw_commit), "middle Return commits");
+    check(t9.CommitText(middle_raw_commit.text) == original,
+          "middle Return preserves the entire original input");
+    api->free_commit(&middle_raw_commit);
+    check(ctx->input().empty(), "middle Return leaves no pending tail");
+    no_commit();
+  }
   fresh("64426");
   lock("ni", 2);
   lock("hao", 5);
@@ -259,6 +298,81 @@ int main(int argc, char** argv) {
   api->free_commit(&partial_commit);
   fresh("64426");
   lock("ni", 2);
+  list = texts();
+  chosen = std::find(list.begin(), list.end(), u8"你");
+  check(chosen != list.end() &&
+            api->select_candidate(id, chosen - list.begin()),
+        "select Hanzi prefix before raw Return");
+  no_commit();
+  check(t9.MoveCaret(session.get(), std::string(u8"你 ").size()),
+        "position raw Return after confirmed Hanzi");
+  check(!t9.ProcessKey(session.get(), XK_Return, 0) &&
+            api->process_key(id, XK_Return, 0),
+        "raw Return handles a confirmed prefix");
+  RIME_STRUCT(RimeCommit, confirmed_raw_commit);
+  check(api->get_commit(id, &confirmed_raw_commit),
+        "raw Return commits the confirmed prefix and tail");
+  check(t9.CommitText(confirmed_raw_commit.text) == u8"你426",
+        "raw Return preserves confirmed Hanzi without repeating its code");
+  api->free_commit(&confirmed_raw_commit);
+  check(ctx->input().empty(), "confirmed raw Return clears the composition");
+  no_commit();
+  fresh("64426");
+  lock("ni", 2);
+  list = texts();
+  chosen = std::find(list.begin(), list.end(), u8"你");
+  check(
+      chosen != list.end() && api->select_candidate(id, chosen - list.begin()),
+      "partial selection before middle correction");
+  check(t9.GetPreedit(session.get(), &preedit) && preedit.text == u8"你 426",
+        "selected prefix retains original digit tail");
+  check(t9.MoveCaret(session.get(), 5),
+        "byte caret after selected Hanzi and first tail digit");
+  type("2");
+  check(t9.RawInput(session.get()) == "644226",
+        "middle correction after selected Hanzi preserves codes");
+  check(t9.ProcessKey(session.get(), XK_BackSpace, 0),
+        "remove middle correction");
+  check(t9.ProcessKey(session.get(), XK_End, 0),
+        "finish corrected partial sentence");
+  list = texts();
+  chosen = std::find(list.begin(), list.end(), u8"好");
+  check(
+      chosen != list.end() && api->select_candidate(id, chosen - list.begin()),
+      "choose corrected suffix without resubmitting prefix");
+  RIME_STRUCT(RimeCommit, corrected_commit);
+  check(api->get_commit(id, &corrected_commit) &&
+            std::string(corrected_commit.text) == u8"你好",
+        "middle correction commits the sentence exactly once");
+  api->free_commit(&corrected_commit);
+  no_commit();
+  fresh("64426");
+  lock("ni", 2);
+  list = texts();
+  chosen = std::find(list.begin(), list.end(), u8"你");
+  check(
+      chosen != list.end() && api->select_candidate(id, chosen - list.begin()),
+      "select prefix before changing its reading");
+  check(t9.MoveCaret(session.get(), 0), "move back into selected prefix");
+  check(t9.ProcessKey(session.get(), XK_Delete, 0),
+        "reopen selected prefix constraint");
+  focus(0);
+  lock("mi", 2);
+  check(t9.ProcessKey(session.get(), XK_End, 0),
+        "return to end after prefix correction");
+  list = texts();
+  chosen = std::find(list.begin(), list.end(), u8"米高");
+  check(
+      chosen != list.end() && api->select_candidate(id, chosen - list.begin()),
+      "choose sentence with corrected prefix");
+  RIME_STRUCT(RimeCommit, prefix_commit);
+  check(api->get_commit(id, &prefix_commit) &&
+            std::string(prefix_commit.text) == u8"米高",
+        "old selected prefix is not duplicated in corrected commit");
+  api->free_commit(&prefix_commit);
+  no_commit();
+  fresh("64426");
+  lock("ni", 2);
   lock("hao", 5);
   check(t9.ProcessKey(session.get(), XK_Home, 0), "move before first lock");
   check(t9.ProcessKey(session.get(), XK_Delete, 0), "forward delete unlocks");
@@ -292,6 +406,80 @@ int main(int argc, char** argv) {
   check(contains(u8"虐"), "nue alias maps through prism to nve");
   fresh("nihao");
   check(contains(u8"你好"), "alphabetic input remains usable");
+  fresh("644267");
+  check(t9.GetPreedit(session.get(), &preedit) && preedit.text == "644267",
+        "ambiguous digits and incomplete tail never masquerade as pinyin");
+  lock("ni", 2);
+  check(t9.GetPreedit(session.get(), &preedit) && preedit.text == "ni 4267",
+        "only confirmed constraints become pinyin");
+  focus(2);
+  check(t9.ProcessKey(session.get(), XK_End, 0),
+        "move from middle syllable to unfinished tail");
+  check(t9.ProcessKey(session.get(), XK_BackSpace, 0),
+        "delete unfinished tail");
+  check(t9.RawInput(session.get()) == "64426", "one code unit removed");
+  action(3);
+  check(t9.RawInput(session.get()) == "644267",
+        "undo restores incomplete tail");
+  action(4);
+  check(ctx->input().empty() && !t9.Snapshot(session.get()).enabled,
+        "cancel discards composition and its undo, without committing");
+  fresh("64");
+  check(t9.ProcessKey(session.get(), XK_Home, 0), "unlocked home");
+  check(t9.ProcessKey(session.get(), XK_BackSpace, 0) &&
+            t9.RawInput(session.get()) == "64",
+        "backspace at composition start cannot reach editor");
+  check(t9.MoveCaret(session.get(), 2) && ctx->caret_pos() == 2,
+        "unlocked display supports moving to the end");
+  check(t9.ProcessKey(session.get(), XK_BackSpace, 0), "unlocked delete");
+  check(t9.ProcessKey(session.get(), XK_BackSpace, 0), "delete last code unit");
+  check(t9.Snapshot(session.get()).can_undo,
+        "empty composition retains editing undo");
+  action(3);
+  check(t9.RawInput(session.get()) == "6", "undo last code deletion");
+  action(3);
+  check(t9.RawInput(session.get()) == "64", "undo unlocked deletion");
+  action(4);
+  check(!t9.ProcessKey(session.get(), XK_BackSpace, 0),
+        "empty backspace reaches editor");
+  check(!t9.ProcessKey(session.get(), '\'', 0),
+        "apostrophe outside composition keeps punctuation behavior");
+  fresh("6");
+  check(t9.ProcessKey(session.get(), XK_BackSpace, 0),
+        "delete last digit before space");
+  check(!t9.ProcessKey(session.get(), ' ', 0) &&
+            !t9.Snapshot(session.get()).can_undo,
+        "editor space closes the empty-composition undo boundary");
+  fresh("64426");
+  check(t9.MoveCaret(session.get(), 1), "caret inside ambiguous syllable");
+  lock("ni", 2);
+  check(ctx->caret_pos() == 4,
+        "locking snaps an interior caret to the syllable end");
+  check(t9.ProcessKey(session.get(), XK_BackSpace, 0) &&
+            t9.RawInput(session.get()) == "64426",
+        "backspace after interior lock only unlocks");
+  for (const auto& input : {"xi'an", "xian", "nv", "nue", "lv", "lue"}) {
+    fresh(input);
+    check(t9.GetPreedit(session.get(), &preedit) && preedit.text == input,
+          std::string("preserve original spelling: ") + input);
+    const std::string expected = std::string(input) == "xi'an"  ? u8"西安"
+                                 : std::string(input) == "xian" ? u8"先"
+                                 : std::string(input) == "nv"   ? u8"女"
+                                 : std::string(input) == "nue"  ? u8"虐"
+                                 : std::string(input) == "lv"   ? u8"绿"
+                                                                : u8"略";
+    check(contains(expected), std::string("dictionary accepts ") + input);
+    check(t9.MoveCaret(session.get(), 1), "position inside original spelling");
+    type("2");
+    check(t9.ProcessKey(session.get(), XK_BackSpace, 0),
+          "delete middle insertion");
+    check(t9.RawInput(session.get()) == input,
+          "middle edit loses no original input");
+    action(3);
+    action(3);
+    check(t9.RawInput(session.get()) == input, "undo round trip");
+    no_commit();
+  }
   ctx->Clear();
   auto schema = new Schema("luna_pinyin_t9");
   schema->config()->SetBool("trime/t9", false);

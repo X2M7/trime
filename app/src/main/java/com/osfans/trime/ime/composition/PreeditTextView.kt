@@ -19,8 +19,8 @@ constructor(
     context: Context,
     attributeSet: AttributeSet? = null,
 ) : TextView(context, attributeSet) {
-    var onMoveCursor: ((Int) -> Unit)? = null
-    private var lastTapOffset = -1
+    var onMoveCursor: ((Int, String) -> Unit)? = null
+    private var touchedText: String? = null
     private var newCursorPos = -1
 
     @SuppressLint("ClickableViewAccessibility")
@@ -30,7 +30,8 @@ constructor(
         when (event.actionMasked) {
             MotionEvent.ACTION_DOWN -> {
                 val textString = text.toString()
-                lastTapOffset = MathUtils.clamp(
+                touchedText = textString
+                val lastTapOffset = MathUtils.clamp(
                     getOffsetForPosition(x, y),
                     0,
                     textString.length,
@@ -40,13 +41,15 @@ constructor(
                 return true
             }
             MotionEvent.ACTION_UP -> {
-                onMoveCursor?.invoke(newCursorPos)
-                lastTapOffset = -1
+                touchedText?.let {
+                    if (newCursorPos >= 0 && it == text.toString()) onMoveCursor?.invoke(newCursorPos, it)
+                }
+                touchedText = null
                 newCursorPos = -1
                 return true
             }
             MotionEvent.ACTION_CANCEL -> {
-                lastTapOffset = -1
+                touchedText = null
                 newCursorPos = -1
                 return true
             }
