@@ -24,6 +24,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.forEach
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.fragment.NavHostFragment
@@ -31,7 +32,8 @@ import com.hjq.permissions.Permission
 import com.hjq.permissions.XXPermissions
 import com.osfans.trime.BuildConfig
 import com.osfans.trime.R
-import com.osfans.trime.daemon.launchOnReady
+import com.osfans.trime.TrimeApplication
+import com.osfans.trime.daemon.RimeDaemon
 import com.osfans.trime.data.prefs.AppPrefs
 import com.osfans.trime.data.soundeffect.SoundEffectManager
 import com.osfans.trime.databinding.ActivityMainBinding
@@ -41,6 +43,8 @@ import com.osfans.trime.util.item
 import com.osfans.trime.util.parcelable
 import com.osfans.trime.util.startActivity
 import com.osfans.trime.worker.BackgroundSyncWork
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import splitties.views.topPadding
 
 class MainActivity : AppCompatActivity() {
@@ -60,11 +64,17 @@ class MainActivity : AppCompatActivity() {
             }
         AppCompatDelegate.setDefaultNightMode(uiMode)
         super.onCreate(savedInstanceState)
-        if (SetupActivity.shouldShowUp()) {
-            startActivity<SetupActivity>()
-            finish()
-            return
+        lifecycleScope.launch {
+            if (SetupActivity.shouldShowUp()) {
+                startActivity<SetupActivity>()
+                finish()
+            } else {
+                createContent()
+            }
         }
+    }
+
+    private fun createContent() {
         enableEdgeToEdge()
         val binding = ActivityMainBinding.inflate(layoutInflater)
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { _, windowInsets ->
@@ -120,14 +130,10 @@ class MainActivity : AppCompatActivity() {
             // "minimize" the activity if we can't go back
             navController.navigateUp() || onSupportNavigateUp() || moveTaskToBack(false)
         }
-        onBackPressedDispatcher.addCallback {
-            if (binding.testInputPanel.isVisible) {
-                binding.testInputPanel.dismiss()
-            } else {
-                isEnabled = false
-                onBackPressedDispatcher.onBackPressed()
-            }
+        val panelBackCallback = onBackPressedDispatcher.addCallback(this, enabled = binding.testInputPanel.isVisible) {
+            binding.testInputPanel.dismiss()
         }
+        binding.testInputPanel.onVisibilityChange = { panelBackCallback.isEnabled = it }
         testInputPanel = binding.testInputPanel
         viewModel.toolbarTitle.observe(this) {
             binding.mainToolbar.toolbar.title = it
@@ -149,14 +155,15 @@ class MainActivity : AppCompatActivity() {
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-        processIntent(intent)
+        setIntent(intent)
+        if (::navController.isInitialized) processIntent(intent)
     }
 
     private fun processIntent(intent: Intent?) {
         val action = intent?.action ?: return
         when (action) {
-            Intent.ACTION_MAIN -> if (SetupActivity.shouldShowUp()) {
-                startActivity<SetupActivity>()
+            Intent.ACTION_MAIN -> lifecycleScope.launch {
+                if (SetupActivity.shouldShowUp()) startActivity<SetupActivity>()
             }
             Intent.ACTION_RUN -> {
                 val route = intent.parcelable<NavigationRoute>(EXTRA_SETTINGS_ROUTE) ?: return
@@ -168,16 +175,20 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupToolbarMenu(menu: Menu) {
         val optionMenuItems = listOf(
-            menu.item(R.string.deploy, R.drawable.ic_baseline_refresh_reversed_24, showAsAction = true) {
-                viewModel.rime.launchOnReady { it.deploy() }
+            menu.item(R.string.deploy, R.drawable.ic_baseline_refresh_reversed_24, showAsAction = true, id = R.id.action_deploy) {
+                lifecycleScope.launch {
+                    val session = viewModel.rime
+                    RimeDaemon.retryFailedStartup()
+                    session.runOnReady { deploy() }
+                }
             },
-            menu.item(R.string.test_input, R.drawable.ic_baseline_keyboard_24, showAsAction = true) {
+            menu.item(R.string.test_input, R.drawable.ic_baseline_keyboard_24, showAsAction = true, id = R.id.action_test_input) {
                 testInputPanel?.show(window)
             },
-            menu.item(R.string.developer) {
+            menu.item(R.string.developer, id = R.id.action_developer) {
                 navController.navigate(NavigationRoute.Developer)
             },
-            menu.item(R.string.about) {
+            menu.item(R.string.about, id = R.id.action_about) {
                 navController.navigate(NavigationRoute.About)
             },
         )
@@ -186,14 +197,14 @@ class MainActivity : AppCompatActivity() {
                 item.isVisible = enabled
             }
         }
-        menu.item(R.string.edit, R.drawable.ic_baseline_edit_24, showAsAction = true) {
+        menu.item(R.string.edit, R.drawable.ic_baseline_edit_24, showAsAction = true, id = R.id.action_edit) {
             viewModel.toolbarEditButtonOnClickListener.value?.invoke()
         }.apply {
             viewModel.toolbarEditButtonVisible.observe(this@MainActivity) {
                 isVisible = it
             }
         }
-        menu.item(R.string.delete, R.drawable.ic_baseline_delete_24, showAsAction = true) {
+        menu.item(R.string.delete, R.drawable.ic_baseline_delete_24, showAsAction = true, id = R.id.action_delete) {
             viewModel.toolbarDeleteButtonOnClickListener.value?.invoke()
         }.apply {
             viewModel.toolbarDeleteButtonOnClickListener.observe(this@MainActivity) {
@@ -208,16 +219,18 @@ class MainActivity : AppCompatActivity() {
 
     override fun onPause() {
         super.onPause()
-        if (viewModel.restartBackgroundSyncWork.value == true) {
+        if (::navController.isInitialized && viewModel.restartBackgroundSyncWork.value == true) {
             viewModel.restartBackgroundSyncWork.value = false
-            BackgroundSyncWork.forceStart(this)
+            TrimeApplication.getInstance().coroutineScope.launch(Dispatchers.IO) {
+                BackgroundSyncWork.forceStart(applicationContext)
+            }
         }
     }
 
     override fun onResume() {
         super.onResume()
-        if (isStorageAvailable()) {
-            SoundEffectManager.init()
+        lifecycleScope.launch(Dispatchers.IO) {
+            if (isStorageAvailable()) SoundEffectManager.init()
         }
     }
 

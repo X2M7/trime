@@ -33,11 +33,18 @@ This fork adds `Luna Pinyin T9` / `luna_pinyin_t9` on top of Trime:
 
 [Project page](https://x2m7.github.io/trime/) | [Download the T9 preview APK](https://github.com/X2M7/trime/releases/latest)
 
+New prerelease: [t9.7-dev.2](https://github.com/X2M7/trime/releases/tag/v3.3.13-t9.7-dev.2), versionCode `20261111`, adds T04/T05 and runtime safety fixes. Known ARM-translation startup/slow-frame warnings remain; see [release notes](doc/releases/v3.3.13-t9.7-dev.2.md). The previous t9.6 remains Latest.
+
 Preview `3.3.13-t9.6` (versionCode `20261108`) includes dictionary-backed pinyin selection, syllable locking, middle-segment editing, unlocking and undo. Selecting pinyin does not commit Hanzi. T03 adds an adaptive sidebar/horizontal pinyin list, left/right one-handed modes, adjustable key height, literal digits on long press and Space cursor sliding. See the [key contracts](script/quality/T03.md) and [development validation](script/quality/VALIDATION-t9.6-T03.md).
 
 This version integrates upstream through `d9a1f424`, including scoped theme colors, in-place color refresh and installation-aware data sync. T9 colors now refresh with the keyboard, and sync backups are protected when the installation identity is unavailable. See the [merge validation record](script/t9/UPSTREAM-t9.3.zh-CN.md) for scope and test results.
 
 The ARM64 preview retains Android 5.0+ support and the previous preview's package (`com.osfans.trime.debug`) and debug signing certificate for in-place upgrades. Its displayed name has no Debug suffix. This is a preview, not a production-signed/R8 build. Back up configuration and dictionaries before upgrading. Custom copies of the T9 schema or themes need the updated rules/layout and redeployment; do not reset personal dictionaries. See [release notes](doc/releases/v3.3.13-t9.6.md), [T9 design and tests](script/t9/README.md) and [startup ANR checks](script/t9/STARTUP-ANR.md).
+
+T04 in the new prerelease adds a [fixed Chinese ranking benchmark](script/quality/t04/README.md), pinned dictionary-layer experiments, user-learning checks and APK resource checksum verification. Experiments use isolated data directories and do not overwrite personal dictionaries. No large dictionary or grammar model is enabled by default.
+The [first evaluation](script/quality/VALIDATION-T04.md) found improvements and regressions, but no net holdout Top-1 gain, so Luna remains the default.
+
+Prerelease [T05](script/quality/t05/README.md) separates six optional fuzzy-pinyin rules from three bounded numeric-key repair rules. All are off by default. Source-labeled pinyin suggestions preserve the original Hanzi ranking until explicitly selected; raw digits, unlocking and undo remain available. This does not replace the previous Latest release.
 
 ## Download
 

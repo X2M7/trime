@@ -16,6 +16,8 @@ data class T9SpanProto(
     val spelling: String,
     val completion: Boolean,
     val locked: Boolean,
+    /** Independent source bits, zero for the original exact/completion choices. */
+    val sources: Int = 0,
 )
 
 class T9StateProto(

@@ -24,6 +24,8 @@ interface RimeApi {
 
     val t9Cached: T9StateProto
 
+    suspend fun refreshT9Options()
+
     suspend fun t9Action(
         revision: Int,
         action: T9Action,

@@ -988,13 +988,13 @@ preset_keys:
 
 preset_keyboards:
   default:
-    name: 預設40鍵
-    author: "osfans <waxaca@163.com>"
+    name: &default_keyboard_name 預設40鍵
+    author: &default_keyboard_author "osfans <waxaca@163.com>"
     ascii_mode: 0
-    width: 10
-    height: 44
+    width: &default_keyboard_width 10
+    height: &default_keyboard_height 44
     lock: true #切換程序時記憶鍵盤
-    keys:
+    keys: &default_keyboard_keys
       - {click: '1', long_click: '!'}
       - {click: '2', long_click: '@'}
       - {click: '3', long_click: '#'}
@@ -1072,7 +1072,11 @@ preset_keyboards:
       - {click: Mode_switch, long_click: Menu}
       - {click: Return, composing: Return1, long_click: CommitComment}
   letter:
-    __include: /preset_keyboards/default
+    name: *default_keyboard_name
+    author: *default_keyboard_author
+    width: *default_keyboard_width
+    height: *default_keyboard_height
+    keys: *default_keyboard_keys
     ascii_mode: 1
     reset_ascii_mode: true  #显示键盘时重置为ascii_mode指定的状态
     lock: false
@@ -1457,7 +1461,7 @@ preset_keyboards:
     - {long_click: '。', click: '，'}
     - {click: BackSpace, long_click: Escape, width: 10}
     - {click: Return, composing: Return1, long_click: CommitComment, width: 10}
-  cangjie5:
+  cangjie5: &cangjie5_keyboard
     name: 倉頡五代鍵盤
     author: "皛筱晓小笨鱼"
     ascii_mode: 0
@@ -1559,8 +1563,7 @@ preset_keyboards:
     - {click: space, width: 25}
     - {click: "'", long_click: "?"}
     - {click: Return, composing: Return1, long_click: CommitComment, width: 25.5}
-  scj6:
-    __include: /preset_keyboards/cangjie5
+  scj6: *cangjie5_keyboard
   stroke:
     name: 五筆畫鍵盤
     author: 皛筱晓小笨鱼

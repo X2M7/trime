@@ -11,9 +11,8 @@ import java.io.File
 
 /**
  * Decodes a theme from its source file (YAML parse + [Theme.decode]), skipping the librime
- * deploy step, which needs rime_jni and is unavailable in JVM unit tests. trime.yaml's
- * `__include` entries are librime DSL: at source level they decode as default keyboards
- * with no keys (see [ThemeGoldenTest]). Paths are relative to the app module directory
+ * deploy step, which needs rime_jni and is unavailable in JVM unit tests. Built-in keyboard
+ * aliases use YAML anchors and are resolved here (see [ThemeGoldenTest]). Paths are relative to the app module directory
  * (the unit-test working directory).
  */
 object ThemeTestSupport {

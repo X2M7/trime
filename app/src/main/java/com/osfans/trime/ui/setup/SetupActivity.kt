@@ -25,19 +25,24 @@ import androidx.lifecycle.lifecycleScope
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.osfans.trime.R
+import com.osfans.trime.core.RimeMaintenanceMutex
+import com.osfans.trime.data.prefs.AppPrefs
+import com.osfans.trime.data.sync.DataStorageMode
 import com.osfans.trime.data.sync.RimeDataSync
 import com.osfans.trime.databinding.ActivitySetupBinding
 import com.osfans.trime.ui.main.MainActivity
-import com.osfans.trime.ui.setup.SetupPage.Companion.firstUndonePage
 import com.osfans.trime.ui.setup.SetupPage.Companion.isLastPage
 import com.osfans.trime.util.appContext
 import com.osfans.trime.util.createNotificationChannel
 import com.osfans.trime.util.startActivity
 import com.osfans.trime.util.toast
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import splitties.systemservices.notificationManager
+import timber.log.Timber
 
 class SetupActivity : FragmentActivity() {
     private lateinit var viewPager: ViewPager2
@@ -46,35 +51,126 @@ class SetupActivity : FragmentActivity() {
     private lateinit var prevButton: Button
     private lateinit var nextButton: Button
 
+    private var completedPages = emptySet<SetupPage>()
+    private var refreshJob: Job? = null
+    private var refreshPending = false
+    private var storageRevision = 0
+    private var selectInitialPage = false
+    var changingStorageMode = false
+        private set
+
+    fun isPageDone(page: SetupPage) = page in completedPages
+
     private val dataPathPicker =
         registerForActivityResult(ActivityResultContracts.OpenDocumentTree()) { uri ->
-            if (uri == null) return@registerForActivityResult
+            if (uri == null || changingStorageMode) return@registerForActivityResult
+            changingStorageMode = true
+            storageRevision++
+            renderStatus()
             lifecycleScope.launch {
-                runCatching {
-                    withContext(Dispatchers.IO) {
-                        RimeDataSync.persistTreeUri(this@SetupActivity, uri)
-                        RimeDataSync.importToLocal(this@SetupActivity).getOrThrow()
+                try {
+                    runCatching {
+                        withContext(Dispatchers.IO) {
+                            RimeMaintenanceMutex.withLock {
+                                try {
+                                    RimeDataSync.persistTreeUri(this@SetupActivity, uri)
+                                    RimeDataSync.importToLocal(this@SetupActivity).getOrThrow()
+                                } catch (failure: Exception) {
+                                    if (failure !is CancellationException && RimeDataSync.treeUri() == uri) {
+                                        RimeDataSync.clearExternalTree(this@SetupActivity)
+                                    }
+                                    throw failure
+                                }
+                            }
+                        }
+                        storageRevision++
+                        refreshCurrentFragment()
+                        toast(R.string.setup__data_path_imported)
+                    }.onFailure {
+                        if (it is CancellationException) throw it
+                        storageRevision++
+                        refreshCurrentFragment()
+                        toast(R.string.setup__data_path_import_failed)
                     }
+                } finally {
+                    changingStorageMode = false
+                    storageRevision++
                     refreshCurrentFragment()
-                    toast(R.string.setup__data_path_imported)
-                    skipButton.visibility = View.VISIBLE
-                }.onFailure {
-                    withContext(Dispatchers.IO) {
-                        RimeDataSync.clearExternalTree(this@SetupActivity)
-                    }
-                    refreshCurrentFragment()
-                    toast(R.string.setup__data_path_import_failed)
                 }
             }
         }
 
     fun launchDataPathPicker() {
-        dataPathPicker.launch(null as Uri?)
+        if (!changingStorageMode) dataPathPicker.launch(null as Uri?)
     }
 
     fun refreshCurrentFragment() {
-        val fragment = supportFragmentManager.findFragmentByTag("f${viewPager.currentItem}")
-        (fragment as? SetupFragment)?.sync()
+        refreshPending = true
+        if (refreshJob?.isActive == true) return
+        refreshJob = lifecycleScope.launch {
+            while (refreshPending) {
+                refreshPending = false
+                val revision = storageRevision
+                val pages = withContext(Dispatchers.IO) {
+                    SetupPage.entries.filter {
+                        runCatching { it.isDone() }
+                            .onFailure { error -> Timber.w(error, "Unable to read setup status") }
+                            .getOrDefault(false)
+                    }.toSet()
+                }
+                // Repeated refresh requests must not starve the UI; only changed storage invalidates a result.
+                if (revision != storageRevision) {
+                    refreshPending = true
+                    continue
+                }
+                completedPages = pages
+                if (selectInitialPage) {
+                    selectInitialPage = false
+                    SetupPage.entries.firstOrNull { it !in pages }?.let {
+                        viewPager.setCurrentItem(it.ordinal, false)
+                    }
+                }
+                renderStatus()
+            }
+        }
+    }
+
+    private fun renderStatus() {
+        supportFragmentManager.fragments.forEach { (it as? SetupFragment)?.sync() }
+        updateButtons()
+    }
+
+    fun changeStorageMode(mode: DataStorageMode) {
+        val prefs = AppPrefs.defaultInstance().profile
+        if (changingStorageMode || prefs.dataStorageMode.getValue() == mode) return
+        changingStorageMode = true
+        storageRevision++
+        completedPages = completedPages - SetupPage.Mode
+        renderStatus()
+        lifecycleScope.launch {
+            try {
+                withContext(Dispatchers.IO) {
+                    RimeMaintenanceMutex.withLock {
+                        if (prefs.dataStorageMode.getValue() == DataStorageMode.EXTERNAL_SYNC &&
+                            mode == DataStorageMode.APP_STORAGE
+                        ) {
+                            prefs.userDbMigrated.setValue(false)
+                            RimeDataSync.clearExternalTree(this@SetupActivity)
+                        }
+                        prefs.dataStorageMode.setValue(mode)
+                    }
+                }
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                Timber.w(e, "Unable to change storage mode")
+                toast(R.string.setup__data_path_import_failed)
+            } finally {
+                storageRevision++
+                changingStorageMode = false
+                refreshCurrentFragment()
+            }
+        }
     }
 
     private fun completeSetup() {
@@ -87,7 +183,15 @@ class SetupActivity : FragmentActivity() {
         private const val CHANNEL_ID = "setup"
         private const val NOTIFY_ID = 87463
 
-        fun shouldShowUp() = !shown && SetupPage.hasUndonePage()
+        suspend fun shouldShowUp(): Boolean {
+            if (shown) return false
+            val incomplete = withContext(Dispatchers.IO) {
+                runCatching { SetupPage.hasUndonePage() }
+                    .onFailure { Timber.w(it, "Unable to read initial setup status") }
+                    .getOrDefault(true)
+            }
+            return !shown && incomplete
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -139,9 +243,9 @@ class SetupActivity : FragmentActivity() {
                 override fun onPageSelected(position: Int) = updateButtons()
             },
         )
-        // Skip to undone page
-        firstUndonePage()?.let { viewPager.currentItem = it.ordinal }
+        selectInitialPage = savedInstanceState == null
         updateButtons()
+        refreshCurrentFragment()
         shown = true
         createNotificationChannel(
             CHANNEL_ID,
@@ -150,8 +254,8 @@ class SetupActivity : FragmentActivity() {
     }
 
     fun updateButtons() {
-        val allDone = !SetupPage.hasUndonePage()
-        val modeSetupDone = SetupPage.Mode.isDone()
+        val allDone = completedPages.size == SetupPage.entries.size
+        val modeSetupDone = !changingStorageMode && isPageDone(SetupPage.Mode)
         val isFirstPage = viewPager.currentItem == 0
         val isLastPage = viewPager.currentItem.isLastPage()
 
@@ -167,14 +271,11 @@ class SetupActivity : FragmentActivity() {
     override fun onWindowFocusChanged(hasFocus: Boolean) {
         super.onWindowFocusChanged(hasFocus)
         if (!hasFocus) return
-        for (fragment in supportFragmentManager.fragments) {
-            if (fragment.isVisible) (fragment as? SetupFragment)?.sync()
-        }
-        updateButtons()
+        refreshCurrentFragment()
     }
 
     override fun onPause() {
-        if (SetupPage.hasUndonePage()) {
+        if (completedPages.size != SetupPage.entries.size) {
             NotificationCompat
                 .Builder(this, CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_trime_status)

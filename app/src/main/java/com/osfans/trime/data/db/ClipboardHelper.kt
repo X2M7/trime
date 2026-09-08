@@ -126,10 +126,12 @@ object ClipboardHelper :
         id: Int,
         text: String,
     ) {
-        lastBean?.let {
-            if (id == it.id) updateLastBean(it.copy(text = text))
+        mutex.withLock {
+            check(clbDao.updateText(id, text) == 1) { "Clipboard entry no longer exists" }
+            lastBean?.let {
+                if (id == it.id) updateLastBean(it.copy(text = text))
+            }
         }
-        clbDao.updateText(id, text)
     }
 
     suspend fun delete(id: Int) {

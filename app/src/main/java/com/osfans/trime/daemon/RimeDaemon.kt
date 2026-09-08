@@ -12,21 +12,28 @@ import com.osfans.trime.TrimeApplication
 import com.osfans.trime.core.Rime
 import com.osfans.trime.core.RimeApi
 import com.osfans.trime.core.RimeLifecycle
+import com.osfans.trime.core.RimeMaintenanceMutex
 import com.osfans.trime.core.RimeMessage
+import com.osfans.trime.core.RimeUnavailableException
 import com.osfans.trime.core.lifecycleScope
 import com.osfans.trime.core.whenReady
 import com.osfans.trime.ui.main.LogActivity
 import com.osfans.trime.util.DeployNotification
 import com.osfans.trime.util.appContext
-import com.osfans.trime.util.readText
 import com.osfans.trime.util.subprocess
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import splitties.systemservices.notificationManager
+import java.io.IOException
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
@@ -39,7 +46,7 @@ import kotlin.concurrent.withLock
  * and must use [RimeSession] to access rime functionalities.
  *
  * The instance of [Rime] always exists,but whether the dispatcher runs and callback works depend on clients, i.e.
- * if no clients are connected, [Rime.finalize] will be called.
+ * if no clients are connected, the engine will be shut down on the lifecycle worker.
  *
  * Functions are thread-safe in this class.
  *
@@ -50,12 +57,22 @@ object RimeDaemon {
 
     private val rimeImpl by lazy { object : RimeApi by realRime {} }
 
-    private val sessions = ConcurrentHashMap<String, RimeSession>()
+    private val sessions = ConcurrentHashMap<String, Session>()
 
     private val lock = ReentrantLock()
+    private val lifecycleChanges = Channel<Unit>(Channel.CONFLATED)
+    private var restartRequested = false
+    private var fullCheckRequested = false
+    private val restartNotifications = mutableSetOf<Int>()
 
-    private fun establish(name: String) = object : RimeSession {
-        private inline fun <T> ensureEstablished(block: () -> T) = if (sessions.containsKey(name)) {
+    internal val engineState: StateFlow<RimeLifecycle.State>
+        get() = realRime.lifecycle.stateFlow
+
+    private class Session(private val name: String) : RimeSession {
+        private var clientScope: CoroutineScope? = null
+        private fun isEstablished() = sessions[name] === this
+
+        private inline fun <T> ensureEstablished(block: () -> T) = if (isEstablished()) {
             block()
         } else {
             throw IllegalStateException("Session $name is not established")
@@ -66,58 +83,110 @@ object RimeDaemon {
         }
 
         override suspend fun <T> runOnReady(block: suspend RimeApi.() -> T): T = ensureEstablished {
-            realRime.lifecycle.whenReady { block(rimeImpl) }
+            realRime.lifecycle.whenReady { ensureEstablished { block(rimeImpl) } }
         }
 
         override fun runIfReady(block: suspend RimeApi.() -> Unit) {
             ensureEstablished {
                 if (realRime.isReady) {
-                    realRime.lifecycleScope.launch {
-                        block(rimeImpl)
+                    lifecycleScope.launch {
+                        if (isEstablished() && realRime.isReady) block(rimeImpl)
                     }
                 }
             }
         }
 
         override val lifecycleScope: CoroutineScope
-            get() = realRime.lifecycle.lifecycleScope
+            get() = lock.withLock {
+                ensureEstablished {
+                    clientScope?.takeIf { it.isActive } ?: CoroutineScope(
+                        realRime.lifecycleScope.coroutineContext + SupervisorJob(realRime.lifecycleScope.coroutineContext[Job]),
+                    ).also { clientScope = it }
+                }
+            }
+
+        fun close() {
+            clientScope?.cancel()
+        }
     }
 
     fun createSession(name: String): RimeSession = lock.withLock {
         if (sessions.containsKey(name)) {
             return@withLock sessions.getValue(name)
         }
-        if (realRime.lifecycle.currentState == RimeLifecycle.State.STOPPED) {
-            realRime.startup()
-        }
-        val session = establish(name)
+        val session = Session(name)
         sessions[name] = session
+        lifecycleChanges.trySend(Unit)
         return@withLock session
     }
 
     fun destroySession(name: String): Unit = lock.withLock {
-        if (!sessions.containsKey(name)) {
-            return
-        }
-        sessions -= name
-        if (sessions.isEmpty()) {
-            realRime.finalize()
-        }
+        val session = sessions.remove(name) ?: return
+        session.close()
+        lifecycleChanges.trySend(Unit)
     }
 
     /**
      * Reuse a session for remote service
      */
-    fun getFirstSessionOrNull() = sessions.firstNotNullOfOrNull { it.value }
+    fun getFirstSessionOrNull(): RimeSession? = sessions.firstNotNullOfOrNull { it.value }
 
     private var restartId = 0
 
     init {
         DeployNotification.ensureChannel()
+        // Only this worker changes the native lifecycle. Never hold the session
+        // lock while waiting for deployment, shutdown, or restarting the engine.
+        TrimeApplication.getInstance().coroutineScope.launch(Dispatchers.IO) {
+            for (change in lifecycleChanges) {
+                var activeNotifications = emptyList<Int>()
+                try {
+                    RimeMaintenanceMutex.withLock {
+                        val (restart, fullCheck, notifications) = lock.withLock {
+                            Triple(restartRequested, fullCheckRequested, restartNotifications.toList()).also {
+                                restartRequested = false
+                                fullCheckRequested = false
+                                restartNotifications.clear()
+                            }
+                        }
+                        activeNotifications = notifications
+                        if (realRime.lifecycle.currentState == RimeLifecycle.State.STARTING) {
+                            realRime.lifecycle.whenReady {}
+                        }
+                        val stopping = lock.withLock {
+                            (realRime.isReady && (sessions.isEmpty() || restart)).also {
+                                if (it) realRime.beginShutdown()
+                            }
+                        }
+                        if (stopping) realRime.finishShutdown()
+                        if (lock.withLock { sessions.isNotEmpty() } &&
+                            realRime.lifecycle.currentState in setOf(RimeLifecycle.State.STOPPED, RimeLifecycle.State.FAILED)
+                        ) {
+                            realRime.startup(fullCheck)
+                            realRime.lifecycle.whenReady {}
+                        }
+                    }
+                } catch (_: RimeUnavailableException) {
+                    // The engine published the cause and failure notification. Keep
+                    // this worker alive for an explicit retry or a new session.
+                } finally {
+                    activeNotifications.forEach(notificationManager::cancel)
+                }
+            }
+        }
         TrimeApplication.getInstance().coroutineScope.launch {
             realRime.messageFlow.collect {
                 handleRimeMessage(it)
             }
+        }
+    }
+
+    suspend fun retryFailedStartup() = withContext(Dispatchers.IO) {
+        RimeMaintenanceMutex.withLock {
+            if (realRime.lifecycle.currentState == RimeLifecycle.State.FAILED && sessions.isNotEmpty()) {
+                realRime.startup()
+            }
+            if (realRime.lifecycle.currentState == RimeLifecycle.State.STARTING) realRime.lifecycle.whenReady {}
         }
     }
 
@@ -148,13 +217,10 @@ object RimeDaemon {
                 setPriority(NotificationCompat.PRIORITY_HIGH)
             }
         }
-        realRime.finalize()
-        realRime.startup()
-        TrimeApplication.getInstance().coroutineScope.launch {
-            realRime.lifecycle.whenReady {
-                notificationManager.cancel(id)
-            }
-        }
+        restartRequested = true
+        fullCheckRequested = fullCheckRequested || fullCheck
+        restartNotifications.add(id)
+        lifecycleChanges.trySend(Unit)
     }
 
     private suspend fun handleRimeMessage(it: RimeMessage<*>) {
@@ -162,18 +228,28 @@ object RimeDaemon {
             when (it.data) {
                 RimeMessage.DeployMessage.State.Start -> {
                     DeployNotification.showProgress()
-                    withContext(Dispatchers.IO) { subprocess("logcat", "--clear") }
                 }
                 RimeMessage.DeployMessage.State.Success -> {
                     DeployNotification.showSuccess()
                 }
                 RimeMessage.DeployMessage.State.Failure -> {
+                    val log = withContext(Dispatchers.IO) {
+                        try {
+                            val process = subprocess("logcat", "-v", "brief", "-d", "-t", "2000", "*:W")
+                            try {
+                                process.inputStream.bufferedReader().use { it.readText() }
+                            } finally {
+                                process.errorStream.close()
+                                process.outputStream.close()
+                                process.destroy()
+                            }
+                        } catch (e: IOException) {
+                            "Unable to collect deployment log: ${e.stackTraceToString()}"
+                        }
+                    }.takeLast(128_000)
                     val intent =
                         Intent(appContext, LogActivity::class.java).apply {
                             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                            val log =
-                                subprocess("logcat", "-v", "brief", "-s", "rime.trime:W", "-d")
-                                    .readText()
                             putExtra(LogActivity.FROM_DEPLOY, true)
                             putExtra(LogActivity.DEPLOY_FAILURE_TRACE, log)
                         }

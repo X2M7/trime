@@ -6,6 +6,13 @@ cmake_minimum_required(VERSION 3.18.0)
 
 project(trime VERSION 3.0.0)
 
+# Keep symbols and assertions while avoiding unoptimized IME/deployment latency.
+# Native single-step debugging can opt out without changing release builds.
+option(TRIME_OPTIMIZE_DEBUG_NATIVE "Optimize debug native engine" ON)
+if(TRIME_OPTIMIZE_DEBUG_NATIVE)
+  add_compile_options("$<$<CONFIG:Debug>:-O2>")
+endif()
+
 # AGP invokes Ninja directly, bypassing cmake --build's parallelism setting.
 if("$ENV{CMAKE_BUILD_PARALLEL_LEVEL}" MATCHES "^[1-9][0-9]*$")
   set(CMAKE_JOB_POOLS

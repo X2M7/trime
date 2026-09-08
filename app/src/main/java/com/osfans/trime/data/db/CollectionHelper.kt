@@ -59,10 +59,12 @@ object CollectionHelper : CoroutineScope by CoroutineScope(SupervisorJob() + Dis
         id: Int,
         text: String,
     ) {
-        lastBean?.let {
-            if (id == it.id) lastBean = it.copy(text = text)
+        mutex.withLock {
+            check(cltDao.updateText(id, text) == 1) { "Collection entry no longer exists" }
+            lastBean?.let {
+                if (id == it.id) lastBean = it.copy(text = text)
+            }
         }
-        cltDao.updateText(id, text)
     }
 
     fun addNewBean(text: String) {

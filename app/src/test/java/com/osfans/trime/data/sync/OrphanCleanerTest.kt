@@ -22,6 +22,7 @@ class OrphanCleanerTest :
                     OrphanCleaner.removeLocalOrphans(
                         root,
                         externalPaths = emptySet(),
+                        knownEntries = trackedOrphan(root),
                     )
 
                 installation.exists() shouldBe true
@@ -44,6 +45,7 @@ class OrphanCleanerTest :
                         root,
                         externalPaths = emptySet(),
                         ownId = "phone-a",
+                        knownEntries = trackedOrphan(root),
                     )
 
                 ownDump.exists() shouldBe true
@@ -60,7 +62,7 @@ class OrphanCleanerTest :
                 checkNotNull(dump.parentFile).mkdirs()
                 dump.writeText("retained backup")
                 File(root, "orphan.yaml").writeText("orphan")
-                val result = OrphanCleaner.removeLocalOrphans(root, emptySet(), syncDir = "backups")
+                val result = OrphanCleaner.removeLocalOrphans(root, emptySet(), syncDir = "backups", knownEntries = trackedOrphan(root))
                 dump.readText() shouldBe "retained backup"
                 result.deleted shouldBe 1
             } finally {
@@ -68,3 +70,7 @@ class OrphanCleanerTest :
             }
         }
     })
+
+private fun trackedOrphan(root: File): Map<String, SyncEntry> = File(root, "orphan.yaml").let {
+    mapOf(it.name to SyncEntry(it.length(), it.lastModified(), SyncFingerprint.of(it)))
+}

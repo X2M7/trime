@@ -6,7 +6,6 @@ package com.osfans.trime.data.base
 
 import android.content.res.AssetManager
 import android.os.Build
-import com.osfans.trime.util.FileUtils
 import com.osfans.trime.util.ResourceUtils
 import com.osfans.trime.util.appContext
 import kotlinx.serialization.json.Json
@@ -57,15 +56,22 @@ object DataManager {
         .use { it.readText() }
         .let { deserializeDataChecksums(it) }
 
-    val sharedDataDir = File(appContext.getExternalFilesDir(null), "shared").also { it.mkdirs() }
+    // A failed lazy initialization can retry after storage is mounted. Never
+    // turn a null external directory into a relative path cached for this process.
+    private val runtimeDataDir by lazy {
+        checkNotNull(appContext.getExternalFilesDir(null)) { "App-scoped storage is not available" }
+    }
 
-    private val runtimeUserDataDir =
-        File(appContext.getExternalFilesDir(null), "rime").also { it.mkdirs() }
+    val sharedDataDir by lazy { File(runtimeDataDir, "shared").also { it.mkdirs() } }
+
+    private val runtimeUserDataDir by lazy {
+        File(runtimeDataDir, "rime").also { it.mkdirs() }
+    }
 
     /** App-scoped path used by Rime at runtime. */
     val userDataDir get() = runtimeUserDataDir
 
-    val prebuiltDataDir = File(sharedDataDir, "build")
+    val prebuiltDataDir get() = File(sharedDataDir, "build")
     val stagingDir get() = File(userDataDir, "build")
 
     /**
@@ -94,22 +100,14 @@ object DataManager {
 
         val newChecksums = appContext.assets.dataChecksums()
 
-        DataDiff.diff(oldChecksums, newChecksums).sortedByDescending { it.ordinal }.forEach {
-            Timber.d("Diff: $it")
-            when (it) {
-                is DataDiff.CreateFile,
-                is DataDiff.UpdateFile,
-                -> {
-                    val destPath = sharedDataDir.resolveSibling(it.path).absolutePath
-                    ResourceUtils.copyFile(it.path, destPath)
-                }
-                is DataDiff.DeleteDir,
-                is DataDiff.DeleteFile,
-                -> FileUtils.delete(sharedDataDir.resolve(it.path.substringAfterLast('/'))).getOrThrow()
-            }
-        }
-
-        ResourceUtils.copyFile(DATA_CHECKSUMS_NAME, dataDir.resolve(DATA_CHECKSUMS_NAME).absolutePath)
+        DataResourceInstaller.install(
+            sharedDataDir,
+            DataDiff.diff(oldChecksums, newChecksums),
+            copyAsset = { path, destination -> ResourceUtils.copyFile(path, destination.absolutePath).getOrThrow() },
+            publishChecksums = {
+                ResourceUtils.copyFile(DATA_CHECKSUMS_NAME, dataDir.resolve(DATA_CHECKSUMS_NAME).absolutePath).getOrThrow()
+            },
+        )
 
         val custom = userDataDir.resolve(DEFAULT_CUSTOM_FILE_NAME)
         if (!custom.exists()) {

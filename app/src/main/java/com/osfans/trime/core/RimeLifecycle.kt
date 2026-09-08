@@ -6,6 +6,7 @@
 // Adapted from [fcitx5-android@FcitxLifecycle.kt](https://github.com/fcitx5-android/fcitx5-android/blob/1c66257ad4c4cdc2852793940aec498e51f5e46f/app/src/main/java/org/fcitx/fcitx5/android/core/FcitxLifecycle.kt)
 package com.osfans.trime.core
 
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -18,6 +19,15 @@ import kotlinx.coroutines.flow.updateAndGet
 import kotlinx.coroutines.launch
 
 class RimeLifecycleRegistry : RimeLifecycle {
+
+    @Volatile override var failureCause: Throwable? = null
+        private set
+
+    fun fail(error: Throwable) {
+        failureCause = error
+        internalStateFlow.value = RimeLifecycle.State.FAILED
+        job.cancelChildren(RimeUnavailableException(error))
+    }
 
     private val internalStateFlow = MutableStateFlow(RimeLifecycle.State.STOPPED)
 
@@ -34,7 +44,8 @@ class RimeLifecycleRegistry : RimeLifecycle {
         val newState = internalStateFlow.updateAndGet {
             when (event) {
                 RimeLifecycle.Event.ON_START -> {
-                    checkAtState(it, RimeLifecycle.State.STOPPED)
+                    check(it == RimeLifecycle.State.STOPPED || it == RimeLifecycle.State.FAILED)
+                    failureCause = null
                     RimeLifecycle.State.STARTING
                 }
                 RimeLifecycle.Event.ON_READY -> {
@@ -51,12 +62,15 @@ class RimeLifecycleRegistry : RimeLifecycle {
                 }
             }
         }
-        if (newState >= RimeLifecycle.State.STOPPING) {
+        // Cancel the stopped generation once. Clients joining during STOPPING
+        // must survive ON_STOPPED so their work can await the next READY.
+        if (newState == RimeLifecycle.State.STOPPING) {
             job.cancelChildren()
         }
     }
 
     private fun checkAtState(currentState: RimeLifecycle.State, state: RimeLifecycle.State) {
+        if (currentState == RimeLifecycle.State.FAILED) throw RimeUnavailableException(failureCause)
         if (currentState != state) {
             throw IllegalStateException("Currently not at $state! Actual state is $currentState")
         }
@@ -64,6 +78,8 @@ class RimeLifecycleRegistry : RimeLifecycle {
 }
 
 interface RimeLifecycle {
+    val failureCause: Throwable?
+        get() = null
     val stateFlow: StateFlow<State>
     val currentState: State
     val lifecycleScope: CoroutineScope
@@ -73,6 +89,7 @@ interface RimeLifecycle {
         READY,
         STOPPING,
         STOPPED,
+        FAILED,
     }
 
     enum class Event {
@@ -80,6 +97,12 @@ interface RimeLifecycle {
         ON_READY,
         ON_STOP,
         ON_STOPPED,
+    }
+}
+
+class RimeUnavailableException(cause: Throwable?) : CancellationException("Rime engine is unavailable") {
+    init {
+        initCause(cause)
     }
 }
 
@@ -93,7 +116,8 @@ suspend fun <T> RimeLifecycle.whenAtState(
     state: RimeLifecycle.State,
     block: suspend CoroutineScope.() -> T,
 ): T {
-    stateFlow.first { it == state }
+    val reached = stateFlow.first { it == state || it == RimeLifecycle.State.FAILED }
+    if (reached == RimeLifecycle.State.FAILED) throw RimeUnavailableException(failureCause)
     return block(lifecycleScope)
 }
 

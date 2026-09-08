@@ -21,6 +21,7 @@ import com.osfans.trime.core.T9Action
 import com.osfans.trime.daemon.RimeDaemon
 import com.osfans.trime.daemon.RimeSession
 import com.osfans.trime.data.prefs.AppPrefs
+import com.osfans.trime.data.sync.RimeDataSync
 import com.osfans.trime.ime.composition.T9DisambiguationView
 import com.osfans.trime.ime.core.InlinePreeditMode
 import com.osfans.trime.ime.core.InputView
@@ -48,7 +49,7 @@ object T9EditingProbe {
         if (view is ViewGroup) view.children.forEach { yieldAll(descendants(it)) }
     }
 
-    fun run(instrumentation: Instrumentation, layoutOnly: Boolean = false, geometryOnly: Boolean = false) {
+    fun run(instrumentation: Instrumentation, layoutOnly: Boolean = false, geometryOnly: Boolean = false, assistOnly: Boolean = false) {
         val result = Bundle()
         // Instrumentation can start before Application.onCreate has initialized preferences.
         instrumentation.waitForIdleSync()
@@ -67,6 +68,7 @@ object T9EditingProbe {
         fun phase(text: String) = instrumentation.sendStatus(0, Bundle().apply { putString("stream", "$text\n") })
         try {
             check(Build.HARDWARE in setOf("ranchu", "goldfish") && Build.VERSION.SDK_INT >= 29) { "API 29+ emulator only" }
+            if (assistOnly) check(RimeDataSync.isStorageAvailable()) { "Complete Trime storage setup before the T05 probe" }
             preference.setValue(InlinePreeditMode.COMMIT_TEXT_PREVIEW)
             undoPreference.setValue(true)
             session = main { RimeDaemon.createSession(javaClass.name) }
@@ -86,7 +88,7 @@ object T9EditingProbe {
                 }
             }
             runBlocking {
-                withTimeout(480_000) {
+                withTimeout(if (assistOnly) 1_200_000 else 480_000) {
                     var input: InputView? = null
                     while (input == null) {
                         input = main {
@@ -150,7 +152,19 @@ object T9EditingProbe {
                         setRuntimeOption("ascii_mode", false)
                     }
                     try {
-                        withTimeout(if (layoutOnly) 480_000 else 180_000) editing@{
+                        withTimeout(
+                            if (assistOnly) {
+                                900_000
+                            } else if (layoutOnly) {
+                                480_000
+                            } else {
+                                180_000
+                            },
+                        ) editing@{
+                            if (assistOnly) {
+                                T9AssistProbe(instrumentation, service, field).run(!geometryOnly)
+                                return@editing
+                            }
                             if (layoutOnly) {
                                 T9LayoutProbe(instrumentation, service, field).run(geometryOnly)
                                 return@editing
@@ -344,6 +358,7 @@ object T9EditingProbe {
             result.putString(
                 "stream",
                 when {
+                    assistOnly -> "PASS: T05 settings, source labels, exact priority, repair locking and editor commit\n"
                     layoutOnly && geometryOnly -> "PASS: T03 real keyboard geometry\n"
                     layoutOnly -> "PASS: T03 real keyboard layout and gestures\n"
                     else -> "PASS: T02 real editor, selection, locks, undo, cancel, commit, symbol pages and repeat cancellation\n"

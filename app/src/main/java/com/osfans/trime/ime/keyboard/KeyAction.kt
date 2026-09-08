@@ -159,9 +159,14 @@ class KeyAction(
                     } else if (preset.command.isNotEmpty()) {
                         code = KeyEvent.KEYCODE_FUNCTION
                     }
+                } else if (BRACED_PATTERN.containsMatchIn(token.token)) {
+                    // A mixed text/key sequence belongs to the sequence interpreter.
+                    text = token.token
+                    label = token.token.replace(BRACED_PATTERN, "")
                 } else {
                     // match like: { x: "{Control+a}" }
-                    val (keycode, modifiers) = KeyCode.parse(token.token)
+                    // Plain actions may be literal text; only explicit send bindings require a key.
+                    val (keycode, modifiers) = KeyCode.parse(token.token, reportInvalid = false)
                     if (keycode != 0 || modifiers != 0) {
                         code = keycode
                         modifier = modifiers

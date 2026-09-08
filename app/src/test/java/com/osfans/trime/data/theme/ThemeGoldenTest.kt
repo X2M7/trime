@@ -98,7 +98,7 @@ class ThemeGoldenTest :
             }
         }
 
-        Given("the built-in trime.yaml (source level: two __include entries are not expanded)") {
+        Given("the built-in trime.yaml with local YAML aliases") {
             val theme = ThemeTestSupport.decodeBuiltinTheme("trime.yaml")
 
             When("the whole file is decoded") {
@@ -141,28 +141,21 @@ class ThemeGoldenTest :
                     qwerty0.labelTransform shouldBe TextKeyboard.LabelTransform.UPPERCASE
                 }
 
-                Then("the __include 'letter' keyboard applies its own sibling keys but has no keys at source level") {
-                    // `letter` holds __include + its own ascii_mode/reset_ascii_mode/lock; deployment
-                    // splices /preset_keyboards/default into it. At source level it has no keys.
+                Then("the letter keyboard reuses default keys and preserves its mode overrides") {
                     val letter = theme.presetKeyboards.getValue("letter")
                     letter.asciiMode shouldBe true
                     letter.resetAsciiMode shouldBe true
                     letter.lock shouldBe false
-                    letter.keys shouldBe emptyList()
+                    letter shouldBe theme.presetKeyboards.getValue("default").copy(asciiMode = true, resetAsciiMode = true, lock = false)
                 }
 
-                Then("the pure __include 'scj6' keyboard decodes as a default keyboard at source level") {
-                    // `scj6` only has __include (/preset_keyboards/cangjie5); nothing to decode
-                    // at source level. ascii_mode defaults to 1 when absent ((?:1)==1).
+                Then("the scj6 alias preserves the complete cangjie5 keyboard") {
                     val scj6 = theme.presetKeyboards.getValue("scj6")
-                    scj6.keys shouldBe emptyList()
-                    scj6.asciiMode shouldBe true
-                    scj6.width shouldBe 0f
+                    scj6 shouldBe theme.presetKeyboards.getValue("cangjie5")
                 }
 
-                Then("every non-include keyboard decodes a non-empty key set") {
+                Then("every keyboard decodes a non-empty key set") {
                     theme.presetKeyboards
-                        .filterKeys { it !in setOf("letter", "scj6") }
                         .forEach { (id, keyboard) ->
                             keyboard.keys shouldNotBe emptyList<TextKeyboard.TextKey>()
                         }

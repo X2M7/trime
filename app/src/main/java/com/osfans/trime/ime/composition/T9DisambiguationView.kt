@@ -5,6 +5,9 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Rect
+import android.text.SpannableStringBuilder
+import android.text.Spanned
+import android.text.style.RelativeSizeSpan
 import android.view.ContextThemeWrapper
 import android.view.Gravity
 import android.view.View
@@ -130,6 +133,36 @@ class T9DisambiguationView(
         minWidth = dp(48)
         setPadding(dp(12), 0, dp(12), 0)
         setTextColor(normalTextColor)
+        TextViewCompat.setAutoSizeTextTypeUniformWithConfiguration(this, 10, 17, 1, android.util.TypedValue.COMPLEX_UNIT_SP)
+    }
+
+    private fun sourceLabel(sources: Int): String {
+        val labels = listOf(
+            "n/l", "z/zh", "c/ch", "s/sh", "en/eng", "in/ing",
+            context.getString(R.string.t9_source_adjacent),
+            context.getString(R.string.t9_source_missing),
+            context.getString(R.string.t9_source_repeat),
+        )
+        return labels.filterIndexed { index, _ -> sources and (1 shl index) != 0 }.joinToString(", ")
+    }
+
+    private fun showSpelling(view: TextView, span: T9SpanProto, normal: String) {
+        view.setSingleLine(span.sources == 0)
+        view.maxLines = if (span.sources == 0) 1 else 2
+        if (span.sources == 0) {
+            view.text = normal
+            view.contentDescription = normal
+        } else {
+            val source = sourceLabel(span.sources)
+            val text = SpannableStringBuilder(span.spelling).append('\n')
+            val start = text.length
+            text.append(source)
+            text.setSpan(RelativeSizeSpan(0.65f), start, text.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+            view.text = text
+            val description = if (span.sources and 63 != 0) context.getString(R.string.t9_source_fuzzy, source) else source
+            view.contentDescription = context.getString(R.string.t9_suggestion_source, span.spelling, description)
+        }
+        TooltipCompat.setTooltipText(view, view.contentDescription)
     }
 
     fun update(data: T9StateProto) {
@@ -140,7 +173,7 @@ class T9DisambiguationView(
         data.segments.forEach { span ->
             segments.addView(
                 label().apply {
-                    text = span.spelling
+                    showSpelling(this, span, span.spelling)
                     val selected = span.start == data.focus
                     isSelected = selected
                     setTextColor(if (selected) selectedForeground else normalTextColor)
@@ -160,7 +193,7 @@ class T9DisambiguationView(
                     }
                     contentDescription = context.getString(
                         if (span.locked) R.string.t9_locked_syllable else R.string.t9_input_segment,
-                        span.spelling,
+                        contentDescription,
                     )
                     if (selected) contentDescription = context.getString(R.string.t9_current_segment, contentDescription)
                     setOnClickListener { action(data.revision, T9Action.Focus, span.start, 0, "") }
@@ -223,9 +256,8 @@ class T9DisambiguationView(
             val boundRevision = revision
             holder.text.setTextColor(normalTextColor)
             val description = if (span.completion) context.getString(R.string.t9_completion, span.spelling) else span.spelling
-            holder.text.text = if (sideMode && span.completion) "${span.spelling}+" else description
-            holder.text.contentDescription = description
-            TooltipCompat.setTooltipText(holder.text, description)
+            showSpelling(holder.text, span, if (sideMode && span.completion) "${span.spelling}+" else description)
+            if (span.sources == 0) holder.text.contentDescription = description
             holder.text.setOnClickListener { action(boundRevision, T9Action.Lock, span.start, span.end, span.spelling) }
         }
     }

@@ -31,11 +31,18 @@ SPDX-License-Identifier: GPL-3.0-or-later
 
 [项目页面](https://x2m7.github.io/trime/) | [下载九键预览 APK](https://github.com/X2M7/trime/releases/latest)
 
+新增预发布版 [t9.7-dev.2](https://github.com/X2M7/trime/releases/tag/v3.3.13-t9.7-dev.2)，versionCode `20261111`，包含 T04/T05 与运行安全修复。ARM 转译环境下的启动排队及慢帧告警仍未关闭，详见[发行说明](doc/releases/v3.3.13-t9.7-dev.2.md)。t9.6 暂时保留为 Latest。
+
 预览版 `3.3.13-t9.6`（versionCode `20261108`）包含基于方案词典的拼音选择、逐段锁定、中间纠错、解锁和撤销；选拼音不提交汉字。T03 同步两个内置主题，保留 3x3 主键区，拼音列表按宽度切换侧栏或横排，支持左右单手模式、键高设置、长按输入数字和空格滑动移光标。详见[键位规则](script/quality/T03.md)和[开发版验收记录](script/quality/VALIDATION-t9.6-T03.md)。
 
 本版合并上游至 `d9a1f424`，纳入主题作用域、配色原地刷新及按安装 ID 同步数据。九键拼音区跟随键盘更新配色，安装标识缺失时保留同步备份。范围和测试结果见[上游合并验收记录](script/t9/UPSTREAM-t9.3.zh-CN.md)。
 
 ARM64 预览 APK 保留 Android 5.0+ 支持，并延续旧预览版包名 `com.osfans.trime.debug` 和调试签名以支持覆盖升级，显示名称没有“调试版”后缀。它不是生产签名或 R8 构建。升级前请备份配置及词库；用户目录若有同名九键方案或主题，需要合并新增规则和布局后重新部署，不要清空个人词库。详见[发布说明](doc/releases/v3.3.13-t9.6.md)、[九键设计与测试](script/t9/README.md)、[启动 ANR 回归检查](script/t9/STARTUP-ANR.md)。
+
+新预发布版中的 T04 新增[固定中文排名测试集](script/quality/t04/README.md)、锁定版本的分层词库实验、用户学习验证和 APK 资源校验。实验只使用独立测试目录，不覆盖个人词库；大词库和语法模型不默认启用。
+[首轮评测](script/quality/VALIDATION-T04.md)发现了改善与退步，但保留集首选率没有净提高，因此仍保留朙月默认。
+
+预发布版 [T05](script/quality/t05/README.md) 将六组模糊音与相邻数字键、漏按、重复输入三类纠错分开设置，默认全部关闭。新增拼音建议带来源标记，点选前不改变原有汉字排序；仍保留原始数字、解锁和撤销。它不替换旧版 Latest。
 
 ## 下载
 

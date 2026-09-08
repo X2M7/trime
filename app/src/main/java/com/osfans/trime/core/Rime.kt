@@ -65,6 +65,8 @@ class Rime :
 
     override fun getRuntimeOptionCached(option: String): Boolean = optionCache[option]
 
+    override suspend fun refreshT9Options() = withRimeContext { emitResponse() }
+
     override suspend fun t9Action(
         revision: Int,
         action: T9Action,
@@ -72,19 +74,29 @@ class Rime :
         end: Int,
         spelling: String,
     ): Boolean = withRimeContext {
-        performRimeT9Action(revision, action.ordinal, start, end, spelling).also { emitResponse() }
+        performRimeT9Action(revision, action.ordinal, start, end, spelling, AppPrefs.defaultInstance().keyboard.t9AssistMask())
+            .also { emitResponse() }
     }
 
     private val dispatcher =
         RimeDispatcher(
             object : RimeDispatcher.RimeController {
                 override fun nativeStartup() {
-                    startRime(BuildConfig.DEBUG)
+                    // Loading/relocating the native engine must not block Activity or IME creation.
+                    System.loadLibrary("rime_jni")
+                    startRime(startupFullCheck)
                     lifecycleRegistry.emitEvent(RimeLifecycle.Event.ON_READY)
                 }
 
                 override fun nativeFinalize() {
-                    exitRime()
+                    stopRime()
+                }
+
+                override fun nativeFailure(error: Throwable) {
+                    Timber.e(error, "Rime engine lifecycle failed")
+                    lifecycleRegistry.fail(error)
+                    handleRimeMessage(RimeMessage.MessageType.Deploy.ordinal, arrayOf("failure"))
+                    unregisterRimeMessageHandler(::handleRimeMessage)
                 }
             },
         )
@@ -93,6 +105,8 @@ class Rime :
     private val showAsciiSwitchTips by AppPrefs.defaultInstance().general.asciiSwitchTips
 
     private var asciiSwitchTipsJob: Job? = null
+    private var startupFullCheck = false
+    private var nativeInitialized = false
     private var isNullInputType = true
     private var lastAsciiTipsText = ""
     private var pagingMode = false
@@ -103,7 +117,7 @@ class Rime :
         }
     }
 
-    private suspend inline fun <T> withRimeContext(crossinline block: suspend () -> T): T = withContext(dispatcher) {
+    private suspend inline fun <T> withRimeContext(crossinline block: suspend () -> T): T = dispatcher.runConfined {
         block()
     }
 
@@ -143,8 +157,7 @@ class Rime :
         registerRimeMessageHandler(deployHandler)
         try {
             withRimeContext {
-                exitRime()
-                startRime(true)
+                restartNative(true)
             }
             val success =
                 withContext(Dispatchers.IO) {
@@ -152,15 +165,14 @@ class Rime :
                         deployFinished.await()
                     }
                 }
-            check(success) { "Rime deploy failed" }
+            if (!success) throw RimeUnavailableException(IllegalStateException("Rime deploy failed"))
         } finally {
             unregisterRimeMessageHandler(deployHandler)
         }
     }
 
-    override suspend fun updateConfig() = withRimeContext {
-        exitRime()
-        startRime(false)
+    override suspend fun updateConfig() = RimeMaintenanceMutex.withLock {
+        withRimeContext { restartNative(false) }
     }
 
     override suspend fun deployConfigFile(fileName: String, versionKey: String): Boolean = RimeMaintenanceMutex.withLock {
@@ -168,15 +180,11 @@ class Rime :
     }
 
     override suspend fun syncUserData(): Boolean = RimeMaintenanceMutex.withLock {
-        // Keep the local user data dir a fresh copy of the external tree before
-        // syncing. The first sync also migrates the user databases (imported
-        // once, never synced afterwards, see UserDbMigration); every subsequent
-        // sync imports incrementally (SyncIndex) before the rime maintenance
-        // runs. The import progress notification is suppressed so syncing does
-        // not show a deploy notification.
+        // Import configurations and portable text dumps before native merging.
+        // Never replace open binary user databases with a file-by-file SAF copy.
+        // Suppress import progress so synchronization does not show deployment UI.
         if (RimeDataSync.usesExternalSync() && RimeDataSync.hasExternalAccess(appContext)) {
-            RimeDataSync.importToLocal(appContext, showProgress = false)
-                .onFailure { Timber.e(it, "Failed to import before user-data sync") }
+            if (RimeDataSync.importToLocal(appContext, showProgress = false).isFailure) return@withLock false
         }
         // RimeSyncUserData schedules maintenance asynchronously and returns once the
         // worker is started. Wait for DeployMessage so callers (e.g. export) only
@@ -354,10 +362,45 @@ class Rime :
             fullCheck: $fullCheck
             """.trimIndent(),
         )
-        startupRime(sharedDataDir, userDataDir, BuildConfig.BUILD_VERSION_NAME, fullCheck)
+        val deployFailed = java.util.concurrent.atomic.AtomicBoolean(false)
+        val startupHandler: (RimeMessage<*>) -> Unit = { message ->
+            if (message is RimeMessage.DeployMessage && message.data == RimeMessage.DeployMessage.State.Failure) {
+                deployFailed.set(true)
+            }
+        }
+        registerRimeMessageHandler(startupHandler)
+        try {
+            nativeInitialized = true
+            startupRime(sharedDataDir, userDataDir, BuildConfig.BUILD_VERSION_NAME, fullCheck)
+            check(!deployFailed.get()) { "Rime configuration deployment failed" }
+        } finally {
+            unregisterRimeMessageHandler(startupHandler)
+        }
         // Create the engine session and publish restored options before any view
         // uses the schema or toggle labels for the first time.
         emitResponse()
+    }
+
+    private fun stopRime() {
+        if (!nativeInitialized) return
+        try {
+            exitRime()
+        } finally {
+            nativeInitialized = false
+        }
+    }
+
+    private fun restartNative(fullCheck: Boolean) {
+        try {
+            stopRime()
+            startRime(fullCheck)
+        } catch (e: Exception) {
+            dispatcher.fail(e)
+            throw RimeUnavailableException(e)
+        } catch (e: LinkageError) {
+            dispatcher.fail(e)
+            throw RimeUnavailableException(e)
+        }
     }
 
     private fun processKeyInner(value: Int, modifiers: Int, isVirtual: Boolean): Boolean {
@@ -382,7 +425,7 @@ class Rime :
 
     private fun emitResponse(commit: CommitProto? = null) {
         val response = getRimeResponse(pagingMode)
-        val t9 = getRimeT9State()
+        val t9 = getRimeT9State(AppPrefs.defaultInstance().keyboard.t9AssistMask())
         handleRimeMessage(4, arrayOf(commit ?: response.commit))
         handlePreedit(response.composition, t9.enabled)
         if (response.composition.length <= 0 && lastAsciiTipsText != asciiTipsText(response.status)) {
@@ -504,32 +547,37 @@ class Rime :
         }
     }
 
-    fun startup() {
+    fun startup(fullCheck: Boolean = false) {
         if (!RimeDataSync.isStorageAvailable(appContext)) {
-            Timber.w("Skip starting rime: storage not available!")
+            lifecycleRegistry.fail(IllegalStateException("Rime storage is unavailable"))
             return
         }
-        if (lifecycle.currentState != RimeLifecycle.State.STOPPED) {
+        if (lifecycle.currentState == RimeLifecycle.State.FAILED) dispatcher.stop()
+        if (lifecycle.currentState != RimeLifecycle.State.STOPPED && lifecycle.currentState != RimeLifecycle.State.FAILED) {
             Timber.w("Skip starting rime: not at stopped state!")
             return
         }
         registerRimeMessageHandler(::handleRimeMessage)
+        startupFullCheck = fullCheck
         lifecycleRegistry.emitEvent(RimeLifecycle.Event.ON_START)
         dispatcher.start()
     }
 
-    fun finalize() {
-        if (lifecycle.currentState != RimeLifecycle.State.READY) {
-            Timber.w("Skip stopping rime: not at ready state!")
-            return
-        }
+    fun beginShutdown() {
         lifecycleRegistry.emitEvent(RimeLifecycle.Event.ON_STOP)
+    }
+
+    fun finishShutdown() {
+        val state = lifecycle.currentState
+        if (state == RimeLifecycle.State.FAILED) throw RimeUnavailableException(lifecycle.failureCause)
+        check(state == RimeLifecycle.State.STOPPING)
         Timber.i("Rime finalize()")
         dispatcher.stop().let {
             if (it.isNotEmpty()) {
                 Timber.w("${it.size} job(s) didn't get a chance to run!")
             }
         }
+        if (lifecycle.currentState == RimeLifecycle.State.FAILED) throw RimeUnavailableException(lifecycle.failureCause)
         lifecycleRegistry.emitEvent(RimeLifecycle.Event.ON_STOPPED)
         unregisterRimeMessageHandler(::handleRimeMessage)
     }
@@ -542,10 +590,6 @@ class Rime :
             )
 
         private val rimeMessageHandlers = CopyOnWriteArrayList<(RimeMessage<*>) -> Unit>()
-
-        init {
-            System.loadLibrary("rime_jni")
-        }
 
         // init
         @JvmStatic
@@ -573,7 +617,7 @@ class Rime :
 
         // input
         @JvmStatic
-        external fun getRimeT9State(): T9StateProto
+        external fun getRimeT9State(assistOptions: Int): T9StateProto
 
         @JvmStatic
         external fun performRimeT9Action(
@@ -582,6 +626,7 @@ class Rime :
             start: Int,
             end: Int,
             spelling: String,
+            assistOptions: Int,
         ): Boolean
 
         @JvmStatic
@@ -671,7 +716,7 @@ class Rime :
             params: Array<Any>,
         ) {
             val message = RimeMessage.nativeCreate(type, params)
-            Timber.d("Handling $message")
+            Timber.d("Handling ${message.javaClass.simpleName}")
             rimeMessageHandlers.forEach { it.invoke(message) }
             messageFlow_.tryEmit(message)
         }

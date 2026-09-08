@@ -12,10 +12,13 @@ import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
+import com.osfans.trime.core.RimeMaintenanceMutex
+import com.osfans.trime.core.RimeUnavailableException
 import com.osfans.trime.daemon.RimeDaemon
 import com.osfans.trime.data.prefs.AppPrefs
 import com.osfans.trime.data.sync.ExternalSyncFallback
 import com.osfans.trime.data.sync.RimeDataSync
+import kotlinx.coroutines.CancellationException
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
 
@@ -27,6 +30,11 @@ class BackgroundSyncWork(
         try {
             Timber.i("Starting background sync ...")
             return doBackgroundSync()
+        } catch (e: RimeUnavailableException) {
+            Timber.e(e, "Background sync engine unavailable")
+            return Result.retry()
+        } catch (e: CancellationException) {
+            throw e
         } catch (e: Exception) {
             Timber.e(e, "Background sync job failed.")
             return Result.retry()
@@ -37,12 +45,15 @@ class BackgroundSyncWork(
         if (!enable) {
             return Result.failure()
         }
-        if (RimeDataSync.usesExternalSync(applicationContext) &&
-            !RimeDataSync.hasExternalAccess(applicationContext)
-        ) {
-            ExternalSyncFallback.fallbackToAppStorage(applicationContext)
+        val available = RimeMaintenanceMutex.withLock {
+            if (RimeDataSync.usesExternalSync(applicationContext) &&
+                !RimeDataSync.hasExternalAccess(applicationContext)
+            ) {
+                ExternalSyncFallback.fallbackToAppStorage(applicationContext)
+            }
+            RimeDataSync.isStorageAvailable(applicationContext)
         }
-        if (!RimeDataSync.isStorageAvailable(applicationContext)) {
+        if (!available) {
             Timber.w("Background sync skipped: storage not available")
             return Result.failure()
         }

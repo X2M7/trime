@@ -9,7 +9,7 @@ import com.osfans.trime.daemon.RimeDaemon
 import com.osfans.trime.data.base.DataManager
 import com.osfans.trime.util.yaml.Yaml
 import com.osfans.trime.util.yaml.mapping
-import timber.log.Timber
+import kotlinx.coroutines.CancellationException
 import java.io.File
 
 /**
@@ -26,6 +26,8 @@ object ThemeLoader {
         message: String,
         cause: Throwable? = null,
     ) : Exception(message, cause) {
+        class DeploymentFailure(themeId: String, cause: Throwable? = null) : ThemeLoadError(themeId, "Failed to deploy theme: $themeId", cause)
+
         class FileNotFound(
             themeId: String,
             val path: String,
@@ -68,10 +70,17 @@ object ThemeLoader {
      * Requires an established session; lifecycle errors and cancellation propagate.
      */
     suspend fun loadTheme(themeId: String): ThemeLoadResult {
-        // Returns false when the artifact is already up to date (mtime cache), which is fine.
+        // A failed rebuild must not be disguised by a stale deployed artifact.
         val session = checkNotNull(RimeDaemon.getFirstSessionOrNull()) { "Theme loading requires a Rime session" }
-        if (!session.runOnReady { deployConfigFile(themeId, CONFIG_VERSION_KEY) }) {
-            Timber.w("Failed to deploy theme config file '$themeId.yaml'")
+        val deployed = try {
+            session.runOnReady { deployConfigFile(themeId, CONFIG_VERSION_KEY) }
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            return ThemeLoadResult.Failure(themeId, ThemeLoadError.DeploymentFailure(themeId, e))
+        }
+        if (!deployed) {
+            return ThemeLoadResult.Failure(themeId, ThemeLoadError.DeploymentFailure(themeId))
         }
 
         val paths =

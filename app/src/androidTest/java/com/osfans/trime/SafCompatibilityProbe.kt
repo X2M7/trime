@@ -17,12 +17,18 @@ import android.provider.DocumentsContract.Document
 import android.provider.DocumentsProvider
 import androidx.annotation.RequiresApi
 import androidx.core.net.toUri
+import com.osfans.trime.core.RimeMaintenanceMutex
+import com.osfans.trime.data.base.DataManager
+import com.osfans.trime.data.prefs.AppPrefs
 import com.osfans.trime.data.sync.AtomicLocalFileCopy
 import com.osfans.trime.data.sync.AtomicSafFileCopy
+import com.osfans.trime.data.sync.RimeDataSync
 import com.osfans.trime.data.sync.SafPathCache
 import com.osfans.trime.data.sync.SafTreeListing
 import com.osfans.trime.data.sync.SafTreeWalker
+import com.osfans.trime.data.sync.SyncIndex
 import com.osfans.trime.provider.RimeDataProvider
+import kotlinx.coroutines.runBlocking
 import java.io.File
 import java.io.FileNotFoundException
 import java.util.UUID
@@ -35,10 +41,17 @@ object SafCompatibilityProbe {
         var passed = false
         try {
             check(Build.HARDWARE in setOf("ranchu", "goldfish")) { "Emulator only" }
-            check(Build.VERSION.SDK_INT >= 29) { "ContentResolver.wrap requires API 29" }
-            val checks = verify(instrumentation)
+            var checks = if (Build.VERSION.SDK_INT >= 29) {
+                verify(instrumentation)
+            } else {
+                check(externalTree != null) { "API 21-28 requires a real dedicated SAF tree; virtual resolver fixtures need API 29" }
+                0
+            }
             check(!revoke || externalTree != null) { "Revocation requires the dedicated tree URI" }
-            externalTree?.let { verifyExternalTree(instrumentation, it, revoke) }
+            externalTree?.let {
+                verifyExternalTree(instrumentation, it, revoke)
+                checks++
+            }
             val externalResult = when {
                 revoke -> "; system provider permission revoked and access denied"
                 externalTree != null -> "; system provider persisted grant and round trip"
@@ -52,6 +65,11 @@ object SafCompatibilityProbe {
         }
         result.putBoolean("passed", passed)
         instrumentation.finish(if (passed) Activity.RESULT_OK else Activity.RESULT_CANCELED, result)
+    }
+
+    @RequiresApi(29)
+    private object ResolverWrapper {
+        fun wrap(provider: DocumentsProvider): ContentResolver = ContentResolver.wrap(provider)
     }
 
     private fun verifyExternalTree(instrumentation: Instrumentation, value: String, revoke: Boolean) {
@@ -89,6 +107,90 @@ object SafCompatibilityProbe {
             check(DocumentsContract.deleteDocument(cr, directory))
         }
         instrumentation.sendStatus(0, Bundle().apply { putString("stream", "PASS: system provider persisted grant, create, replace, read-back and cleanup\n") })
+        verifyImportHistory(instrumentation, tree, rootId)
+    }
+
+    private fun verifyImportHistory(instrumentation: Instrumentation, tree: android.net.Uri, rootId: String) = runBlocking {
+        RimeMaintenanceMutex.withLock {
+            val context = instrumentation.targetContext
+            check(RimeDataSync.usesExternalSync(context) && RimeDataSync.treeUri() == tree)
+            val cr = context.contentResolver
+            val id = "__saf_history_${UUID.randomUUID()}"
+            val names = listOf("$id-edited.yaml", "$id-unchanged.yaml")
+            val binaryNames = listOf("$id-existing.userdb", "$id-fresh.userdb")
+            val portableName = "$id.userdb.txt"
+            val migration = AppPrefs.defaultInstance().profile.userDbMigrated
+            val previousMigration = migration.getValue()
+            val untracked = File(DataManager.userDataDir, "$id-untracked.yaml")
+            val source = File.createTempFile("saf-history", ".yaml", context.cacheDir)
+            val cache = SafPathCache(SafTreeListing(emptyList(), mapOf("" to rootId)), rootId)
+            try {
+                untracked.writeText("personal")
+                source.writeText("old")
+                migration.setValue(false)
+                val personalDb = File(DataManager.userDataDir, binaryNames.first())
+                check(personalDb.mkdir())
+                File(personalDb, "LOG").writeText("personal-learning")
+                binaryNames.forEach { name -> AtomicSafFileCopy.copyFromFile(cr, tree, cache, source, "$name/LOG", name, "LOG") }
+                AtomicSafFileCopy.copyFromFile(cr, tree, cache, source, portableName, "", portableName)
+                names.forEach { name -> AtomicSafFileCopy.copyFromFile(cr, tree, cache, source, name, "", name) }
+                RimeDataSync.importToLocal(context, showProgress = false).getOrThrow()
+                check(untracked.readText() == "personal")
+                check(File(personalDb, "LOG").readText() == "personal-learning")
+                check(!File(DataManager.userDataDir, binaryNames.last()).exists())
+                check(File(DataManager.userDataDir, portableName).readText() == "old")
+                val history = SyncIndex.load().entries
+                check(names.all { history[it]?.localSha256?.length == 64 })
+                val edited = File(DataManager.userDataDir, names.first())
+                val timestamp = edited.lastModified()
+                edited.writeText("new")
+                check(edited.setLastModified(timestamp))
+                SafTreeWalker.listFiles(cr, tree, rootId).filter { it.relativePath in names }.forEach { entry ->
+                    check(DocumentsContract.deleteDocument(cr, DocumentsContract.buildDocumentUriUsingTree(tree, entry.documentId)))
+                }
+                RimeDataSync.importToLocal(context, showProgress = false).getOrThrow()
+                check(edited.readText() == "new")
+                check(!File(DataManager.userDataDir, names.last()).exists())
+                check(untracked.readText() == "personal")
+                check(names.none { it in SyncIndex.load().entries })
+                val blockedName = "$id-blocked.yaml"
+                val blocked = File(DataManager.userDataDir, blockedName)
+                try {
+                    AtomicSafFileCopy.copyFromFile(cr, tree, cache, source, blockedName, "", blockedName)
+                    check(blocked.mkdir())
+                    check(RimeDataSync.importToLocal(context, showProgress = false).isFailure)
+                    check(RimeDataSync.importThemeToLocal(context, blockedName.removeSuffix(".yaml")).isFailure)
+                    check(blocked.isDirectory && untracked.readText() == "personal")
+                    check(blockedName !in SyncIndex.load().entries)
+                } finally {
+                    SafTreeWalker.listFiles(cr, tree, rootId).filter { it.relativePath == blockedName }.forEach { entry ->
+                        check(DocumentsContract.deleteDocument(cr, DocumentsContract.buildDocumentUriUsingTree(tree, entry.documentId)))
+                    }
+                    check(!blocked.exists() || blocked.delete())
+                }
+            } finally {
+                migration.setValue(previousMigration)
+                (binaryNames + portableName).forEach { name ->
+                    SafTreeWalker.findFileEntry(cr, tree, rootId, name)?.let { entry ->
+                        check(DocumentsContract.deleteDocument(cr, DocumentsContract.buildDocumentUriUsingTree(tree, entry.documentId)))
+                    }
+                    val local = File(DataManager.userDataDir, name)
+                    check(!local.exists() || local.deleteRecursively())
+                }
+                SafTreeWalker.listFiles(cr, tree, rootId).filter { it.relativePath in names }.forEach { entry ->
+                    check(DocumentsContract.deleteDocument(cr, DocumentsContract.buildDocumentUriUsingTree(tree, entry.documentId)))
+                }
+                names.forEach { File(DataManager.userDataDir, it).delete() }
+                untracked.delete()
+                source.delete()
+            }
+            instrumentation.sendStatus(
+                0,
+                Bundle().apply {
+                    putString("stream", "PASS: real SAF import preserves untracked files and same-metadata local edits; only hash-verified deletions propagate\n")
+                },
+            )
+        }
     }
 
     @RequiresApi(29)
@@ -109,7 +211,7 @@ object SafCompatibilityProbe {
             val directory = File(sandbox, "case-${checks + 1}").apply { mkdir() }
             val provider = FixtureProvider(directory)
             provider.attachInfo(context, info)
-            val resolver = ContentResolver.wrap(provider)
+            val resolver = ResolverWrapper.wrap(provider)
             val source = File(sandbox, "source").apply { writeText("new dictionary\n".repeat(1024)) }
             block(provider, resolver, source)
             checks++
@@ -147,6 +249,7 @@ object SafCompatibilityProbe {
                 val local = File(sandbox, "round-trip")
                 val descriptor = checkNotNull(cr.openFileDescriptor(uri, "r"))
                 ParcelFileDescriptor.AutoCloseInputStream(descriptor).use { input ->
+                    check(descriptor.canDetectErrors())
                     AtomicLocalFileCopy.writeFromStream(local) { output ->
                         input.copyTo(output)
                         descriptor.checkError()
@@ -247,7 +350,7 @@ object SafCompatibilityProbe {
             }
             checks += 4
             val ownTree = DocumentsContract.buildTreeDocumentUri(authority, rootId)
-            val ownResolver = ContentResolver.wrap(own)
+            val ownResolver = ResolverWrapper.wrap(own)
             val probeId = own.createDocument(rootId, Document.MIME_TYPE_DIR, ".saf-probe-${UUID.randomUUID()}")
             try {
                 val cache = SafPathCache(SafTreeListing(emptyList(), mapOf("" to probeId)), probeId)

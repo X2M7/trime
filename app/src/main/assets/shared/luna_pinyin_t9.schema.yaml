@@ -4,7 +4,7 @@
 schema:
   schema_id: luna_pinyin_t9
   name: 朙月拼音九键
-  version: '0.2'
+  version: '0.3'
   author:
     - Rime community
   description: |
@@ -15,6 +15,15 @@ schema:
 
 trime:
   t9: true
+  # Optional, single-rule suggestions. Applied to letters BEFORE speller/algebra.
+  # They never enter the main prism or the recognizer's punctuation/number paths.
+  t9_fuzzy:
+    nl: [ 'derive/^n/l/', 'derive/^l/n/' ]
+    z_zh: [ 'derive/^z([aeiouv])/zh$1/', 'derive/^zh/z/' ]
+    c_ch: [ 'derive/^c([aeiouv])/ch$1/', 'derive/^ch/c/' ]
+    s_sh: [ 'derive/^s([aeiouv])/sh$1/', 'derive/^sh/s/' ]
+    en_eng: [ 'derive/en$/eng/', 'derive/eng$/en/' ]
+    in_ing: [ 'derive/in$/ing/', 'derive/ing$/in/' ]
 
 switches:
   - name: ascii_mode

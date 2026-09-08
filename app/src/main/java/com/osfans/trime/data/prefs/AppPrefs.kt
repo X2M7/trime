@@ -179,6 +179,24 @@ class AppPrefs(
 
         val t9OneHand = enum(R.string.t9_one_hand, T9_ONE_HAND, OneHandMode.OFF)
         val t9KeyHeight = int(R.string.t9_key_height, T9_KEY_HEIGHT, 0, 0, 80, "dp", defaultLabel = R.string.system_default)
+
+        // Bit order is the T9Assist native protocol; every rule is opt-in.
+        val t9AssistOptions = listOf(
+            switch(R.string.t9_fuzzy_nl, "t9_fuzzy_nl", false),
+            switch(R.string.t9_fuzzy_z_zh, "t9_fuzzy_z_zh", false),
+            switch(R.string.t9_fuzzy_c_ch, "t9_fuzzy_c_ch", false),
+            switch(R.string.t9_fuzzy_s_sh, "t9_fuzzy_s_sh", false),
+            switch(R.string.t9_fuzzy_en_eng, "t9_fuzzy_en_eng", false),
+            switch(R.string.t9_fuzzy_in_ing, "t9_fuzzy_in_ing", false),
+            switch(R.string.t9_typo_adjacent, "t9_typo_adjacent", false),
+            switch(R.string.t9_typo_missing, "t9_typo_missing", false),
+            switch(R.string.t9_typo_repeat, "t9_typo_repeat", false),
+        )
+
+        fun t9AssistMask(): Int = t9AssistOptions.foldIndexed(0) { index, mask, preference ->
+            if (preference.getValue()) mask or (1 shl index) else mask
+        }
+
         val splitSpacePercent = int(
             R.string.split_space_percent,
             SPLIT_SPACE_PERCENT,

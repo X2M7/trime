@@ -4,6 +4,7 @@
 #include <rime/composition.h>
 #include <rime/dict/dictionary.h>
 #include <rime/service.h>
+#include "t9_assist.h"
 
 namespace trime {
 
@@ -13,6 +14,7 @@ struct T9Span {
   std::string spelling;
   bool completion = false;
   bool locked = false;
+  int sources = 0;
 };
 
 struct T9Snapshot {
@@ -36,7 +38,9 @@ class T9 {
   bool MoveCaret(rime::Session* session, size_t display_position);
   std::string RawInput(rime::Session* session);
   std::string CommitText(std::string text) const;
+  void Clear();
   void Reset();
+  void SetAssistOptions(int options);
 
  private:
   struct Edit {
@@ -52,6 +56,7 @@ class T9 {
   void Replace(int start, int end, const std::string& text);
   std::vector<T9Span> Edges() const;
   bool Exact(const std::string& spelling, int syllable) const;
+  void AddAlternatives(T9Snapshot* snapshot);
   int RawPosition(size_t pos) const;
 
   rime::Schema* schema_ = nullptr;
@@ -67,6 +72,9 @@ class T9 {
   std::vector<Edit> history_;
   int revision_ = 0;
   int confirmed_ = 0;
+  int assist_options_ = 0;
+  bool assist_attempted_ = false;
+  rime::the<T9Assist> assist_;
 };
 
 }  // namespace trime

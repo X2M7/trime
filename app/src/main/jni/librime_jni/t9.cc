@@ -17,14 +17,21 @@ using namespace rime;
 void T9::Reset() {
   schema_ = nullptr;
   dictionary_.reset();
+  assist_.reset();
+  assist_attempted_ = false;
   enabled_ = false;
+  completion_ = true;
+  delimiters_ = " '";
+  Clear();
+}
+
+void T9::Clear() {
+  // Ending a composition must not rebuild schema-dependent indexes on the next key.
   edit_ = {};
   rendered_.clear();
   engine_to_raw_ = {0};
   raw_to_engine_ = {0};
   display_to_raw_ = {0};
-  completion_ = true;
-  delimiters_ = " '";
   history_.clear();
   confirmed_ = 0;
   ++revision_;
@@ -32,6 +39,15 @@ void T9::Reset() {
 
 int T9::RawPosition(size_t pos) const {
   return engine_to_raw_[std::min(pos, engine_to_raw_.size() - 1)];
+}
+
+void T9::SetAssistOptions(int options) {
+  options &= T9Assist::kAllRules;
+  if (assist_options_ == options) return;
+  assist_options_ = options;
+  assist_.reset();
+  assist_attempted_ = false;
+  ++revision_;  // A click from the previous settings must not apply a disabled rule.
 }
 
 bool T9::Sync(Session* session) {
@@ -315,7 +331,44 @@ T9Snapshot T9::Snapshot(Session* session) {
   result.input = edit_.input;
   result.focus = edit_.focus;
   result.can_undo = !history_.empty();
+  AddAlternatives(&result);
   return result;
+}
+
+void T9::AddAlternatives(T9Snapshot* snapshot) {
+  if (!assist_options_) return;
+  if (!assist_attempted_) {
+    assist_attempted_ = true;
+    rime::Script syllables;
+    const auto count = dictionary_->primary_table()->metadata()->num_syllables;
+    if (count > 4096) return;
+    for (uint32_t id = 0; id < count; ++id) {
+      auto spelling = dictionary_->primary_table()->GetSyllableById(id);
+      if (spelling.empty() || spelling.size() > 6 ||
+          !std::all_of(spelling.begin(), spelling.end(), [](char c) {
+            return c >= 'a' && c <= 'z';
+          }) || !Exact(spelling, id)) continue;
+      syllables.AddSyllable(spelling);
+    }
+    auto index = std::make_unique<T9Assist>();
+    if (index->Build(schema_->config(), syllables, assist_options_))
+      assist_ = std::move(index);
+  }
+  if (!assist_) return;
+  int start = snapshot->focus;
+  int end = std::min(static_cast<int>(edit_.input.size()), start + T9Assist::kMaxInput);
+  for (const auto& lock : edit_.locks)
+    if (lock.start > start) end = std::min(end, lock.start);
+  auto alternatives = assist_->Find(edit_.input.substr(start, end - start), assist_options_);
+  int added = 0;
+  for (const auto& alternative : alternatives) {
+    const int finish = start + alternative.length;
+    if (std::any_of(snapshot->choices.begin(), snapshot->choices.end(), [&](const auto& choice) {
+          return choice.start == start && choice.end == finish && choice.spelling == alternative.spelling;
+        })) continue;
+    snapshot->choices.push_back({start, finish, alternative.spelling, false, false, alternative.sources});
+    if (++added == T9Assist::kMaxChoices) break;
+  }
 }
 
 bool T9::Act(Session* session, int revision, int action, int start, int end,
@@ -342,7 +395,7 @@ bool T9::Act(Session* session, int revision, int action, int start, int end,
   }
   if (action == 4) {
     session->context()->AbortComposition();
-    Reset();
+    Clear();
     return true;
   }
   if (action == 2) {
@@ -407,7 +460,7 @@ bool T9::ProcessKey(Session* session, int keycode, int mask) {
   }
   if (keycode == XK_Escape && (!edit_.input.empty() || !history_.empty())) {
     ctx->AbortComposition();
-    Reset();
+    Clear();
     return true;
   }
   if (keycode == XK_Left || keycode == XK_Right || keycode == XK_Home ||

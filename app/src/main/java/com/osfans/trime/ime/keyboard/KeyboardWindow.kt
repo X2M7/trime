@@ -163,13 +163,11 @@ class KeyboardWindow(di: DI) :
         return width
     }
 
-    private fun selectKeyboardConfig(name: String): TextKeyboard? {
-        val config = theme.presetKeyboards[name] ?: theme.presetKeyboards["default"]
-        val importPreset = config?.importPreset
-        if (!importPreset.isNullOrEmpty()) {
-            return selectKeyboardConfig(importPreset)
-        }
-        return config
+    private fun selectKeyboardConfig(name: String): TextKeyboard? = try {
+        resolveKeyboardConfig(name, theme.presetKeyboards)
+    } catch (e: IllegalArgumentException) {
+        Timber.e(e, "Invalid keyboard import")
+        theme.presetKeyboards["default"]?.takeIf { it.importPreset.isEmpty() }
     }
 
     private fun attachKeyboard(target: String) {

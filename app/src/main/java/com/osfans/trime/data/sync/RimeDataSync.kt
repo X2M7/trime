@@ -15,10 +15,13 @@ import com.osfans.trime.data.base.DataManager
 import com.osfans.trime.data.prefs.AppPrefs
 import com.osfans.trime.util.DeployNotification
 import com.osfans.trime.util.appContext
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.io.File
+import java.security.DigestOutputStream
+import java.security.MessageDigest
 
 data class SyncStats(
     val copied: Int = 0,
@@ -46,7 +49,14 @@ object RimeDataSync {
         }
     }
 
-    fun isRuntimeReady(): Boolean = DataManager.userDataDir.canWrite() && DataManager.sharedDataDir.canWrite()
+    fun isRuntimeReady(): Boolean = try {
+        DataManager.userDataDir.let { it.isDirectory && it.canWrite() } &&
+            DataManager.sharedDataDir.let { it.isDirectory && it.canWrite() }
+    } catch (_: IllegalStateException) {
+        false
+    } catch (_: SecurityException) {
+        false
+    }
 
     fun usesExternalSync(context: Context = appContext): Boolean = AppPrefs.defaultInstance().profile.dataStorageMode.getValue() ==
         DataStorageMode.EXTERNAL_SYNC
@@ -118,68 +128,76 @@ object RimeDataSync {
             return Result.success(SyncStats())
         }
         if (showProgress) DeployNotification.showProgress()
-        return withContext(Dispatchers.IO) {
-            runCatching {
-                val treeUri = treeUri() ?: error("No data path selected")
-                check(hasExternalAccess(context)) { "No access to data path" }
-                val cr = context.contentResolver
-                val rootId = DocumentsContract.getTreeDocumentId(treeUri)
-                val destRoot = DataManager.userDataDir
-                val index = SyncIndex.load()
-                val skipUserDb = !UserDbMigration.shouldImportUserDb()
-                val ownId = SyncPathPolicy.readOwnInstallationId()
-                val syncDir =
-                    SyncPathPolicy.treeRelativeSyncDir(
-                        SyncPathPolicy.readOwnSyncDir(),
-                        destRoot,
-                    )
-                val skipPrefix =
-                    ownId?.takeIf { it.isNotEmpty() }?.let {
-                        runCatching { SyncPathPolicy.ownSyncPrefix(it, syncDir) }.getOrNull()
-                    }
-                val files =
-                    SafTreeWalker.listFiles(
-                        cr,
-                        treeUri,
-                        rootId,
-                        skipUserDb = skipUserDb,
-                        skipPrefix = skipPrefix,
-                    )
-                val externalPaths = files.map { it.relativePath }.toSet()
-                val toCopy = files.filter { SyncPathPolicy.shouldImport(it.relativePath, ownId, syncDir) }
-                val createdDirs = LocalDirectoryGate()
-                val copyResults =
-                    BoundedCopyPool.mapParallel(toCopy, parallelism) { entry ->
-                        copySafToLocal(
-                            context,
-                            treeUri,
-                            entry,
+        var deferNotificationCleanup = false
+        try {
+            return withContext(Dispatchers.IO) {
+                runCatching {
+                    val treeUri = treeUri() ?: error("No data path selected")
+                    check(hasExternalAccess(context)) { "No access to data path" }
+                    val cr = context.contentResolver
+                    val rootId = DocumentsContract.getTreeDocumentId(treeUri)
+                    val destRoot = DataManager.userDataDir
+                    val index = SyncIndex.load()
+                    val ownId = SyncPathPolicy.readOwnInstallationId()
+                    val syncDir =
+                        SyncPathPolicy.treeRelativeSyncDir(
+                            SyncPathPolicy.readOwnSyncDir(),
                             destRoot,
-                            index.entries,
-                            externalWins = true,
-                            createdDirs,
                         )
-                    }
-                val removeResult =
-                    if (copyResults.none { it.result.failed > 0 }) {
-                        OrphanCleaner.removeLocalOrphans(destRoot, externalPaths, ownId, syncDir)
-                    } else {
-                        OrphanCleaner.Result()
-                    }
-                SyncIndex.save(SyncIndex.withCurrentTree(mergeIndexEntries(index.entries, copyResults)))
-                val importStats = mergeStats(copyResults.map { it.result })
-                if (UserDbMigration.shouldImportUserDb() && importStats.failed == 0) {
-                    UserDbMigration.markImported()
+                    val skipPrefix =
+                        ownId?.takeIf { it.isNotEmpty() }?.let {
+                            runCatching { SyncPathPolicy.ownSyncPrefix(it, syncDir) }.getOrNull()
+                        }
+                    val files =
+                        SafTreeWalker.listFiles(
+                            cr,
+                            treeUri,
+                            rootId,
+                            // LevelDB files are not portable snapshots and may be
+                            // open by the engine. Merge portable text dumps instead.
+                            skipUserDb = true,
+                            skipPrefix = skipPrefix,
+                        )
+                    val externalPaths = files.map { it.relativePath }.toSet()
+                    val toCopy = files.filter { SyncPathPolicy.shouldImport(it.relativePath, ownId, syncDir) }
+                    val createdDirs = LocalDirectoryGate()
+                    val copyResults =
+                        BoundedCopyPool.mapParallel(toCopy, parallelism) { entry ->
+                            copySafToLocal(
+                                context,
+                                treeUri,
+                                entry,
+                                destRoot,
+                                index.entries,
+                                externalWins = true,
+                                createdDirs,
+                            )
+                        }
+                    val complete = copyResults.none { it.result.failed > 0 }
+                    val removeResult =
+                        if (complete) {
+                            OrphanCleaner.removeLocalOrphans(destRoot, externalPaths, ownId, syncDir, index.entries)
+                        } else {
+                            OrphanCleaner.Result()
+                        }
+                    // A new tree has no deletion history. Retire old absent paths so
+                    // a later unrelated local file can never inherit a tombstone.
+                    val history = if (complete) index.entries.filterKeys { it in externalPaths } else index.entries
+                    SyncIndex.save(SyncIndex.withCurrentTree(mergeIndexEntries(history, copyResults)))
+                    val importStats = mergeStats(copyResults.map { it.result })
+                    DeployNotification.notifyPartialCopyIfNeeded(
+                        importStats + removeResult.toCopyResult(),
+                        "importToLocal",
+                    ).also { check(it.failed == 0) { "Failed to import ${it.failed} file(s)" } }
+                }.onFailure {
+                    if (it is CancellationException) throw it
+                    Timber.e(it, "importToLocal failed")
                 }
-                DeployNotification.notifyPartialCopyIfNeeded(
-                    importStats + removeResult.toCopyResult(),
-                    "importToLocal",
-                )
-            }.onFailure { Timber.e(it, "importToLocal failed") }
-        }.also { result ->
-            if (!keepNotificationUntilDeploySuccess || result.isFailure) {
-                DeployNotification.cancel()
+            }.also { result ->
+                deferNotificationCleanup = keepNotificationUntilDeploySuccess && result.isSuccess
             }
+        } finally {
+            if (!deferNotificationCleanup) DeployNotification.cancel()
         }
     }
 
@@ -228,7 +246,10 @@ object RimeDataSync {
                 )
                 check(stats.failed == 0) { "Failed to export ${stats.failed} config file(s)" }
             }
-        }.onFailure { Timber.e(it, "exportConfigFilesToExternal failed") }
+        }.onFailure {
+            if (it is CancellationException) throw it
+            Timber.e(it, "exportConfigFilesToExternal failed")
+        }
     }
 
     suspend fun importThemeToLocal(
@@ -266,8 +287,11 @@ object RimeDataSync {
             DeployNotification.notifyPartialCopyIfNeeded(
                 mergeStats(listOf(copyResult.result)),
                 "importThemeToLocal for '$configId'",
-            )
-        }.onFailure { Timber.e(it, "importThemeToLocal failed for '$configId'") }
+            ).also { check(it.failed == 0) { "Failed to import theme: $configId" } }
+        }.onFailure {
+            if (it is CancellationException) throw it
+            Timber.e(it, "importThemeToLocal failed for '$configId'")
+        }
     }
 
     suspend fun exportToExternal(context: Context = appContext): Result<SyncStats> = withContext(Dispatchers.IO) {
@@ -353,7 +377,10 @@ object RimeDataSync {
                 )
                 check(stats.failed == 0) { "Failed to export ${stats.failed} file(s)" }
             }
-        }.onFailure { Timber.e(it, "exportToExternal failed") }
+        }.onFailure {
+            if (it is CancellationException) throw it
+            Timber.e(it, "exportToExternal failed")
+        }
     }
 
     private data class CopyResult(
@@ -404,7 +431,7 @@ object RimeDataSync {
                 ) {
                     return IndexedCopyResult(
                         CopyResult(0, 1, deleted = 0, failed = 0, bytesCopied = 0),
-                        entry.relativePath to SyncEntry(entry.size, entry.lastModified),
+                        entry.relativePath to SyncEntry(entry.size, entry.lastModified, indexEntries[entry.relativePath]?.localSha256),
                     )
                 }
             }
@@ -422,12 +449,13 @@ object RimeDataSync {
                 }
             }
             val docUri = DocumentsContract.buildDocumentUriUsingTree(treeUri, entry.documentId)
+            val digest = MessageDigest.getInstance("SHA-256")
             val bytes =
                 context.contentResolver.openFileDescriptor(docUri, "r")?.use { pfd ->
                     ParcelFileDescriptor.AutoCloseInputStream(pfd).use { input ->
                         AtomicLocalFileCopy.writeFromStream(destFile) { output ->
-                            val copied = input.copyTo(output)
-                            pfd.checkError()
+                            val copied = input.copyTo(DigestOutputStream(output, digest))
+                            if (pfd.canDetectErrors()) pfd.checkError()
                             check(entry.size < 0 || copied == entry.size) { "Incomplete document: ${entry.relativePath}" }
                         }
                     }
@@ -435,7 +463,7 @@ object RimeDataSync {
             if (entry.lastModified > 0) destFile.setLastModified(entry.lastModified)
             IndexedCopyResult(
                 CopyResult(1, 0, deleted = 0, failed = 0, bytesCopied = bytes),
-                entry.relativePath to SyncEntry(entry.size, entry.lastModified),
+                entry.relativePath to SyncEntry(entry.size, entry.lastModified, SyncFingerprint.hex(digest.digest())),
             )
         }.getOrElse {
             Timber.w(it, "Failed to import ${entry.relativePath}")
@@ -475,13 +503,13 @@ object RimeDataSync {
                 if (cache.hasFile(relativePath, size)) {
                     return IndexedCopyResult(
                         CopyResult(0, 1, deleted = 0, failed = 0, bytesCopied = 0),
-                        relativePath to SyncEntry(size, lastModified),
+                        relativePath to SyncEntry(size, lastModified, indexEntries[relativePath]?.localSha256),
                     )
                 }
             }
             val parentDir = relativePath.substringBeforeLast('/', "")
             val fileName = relativePath.substringAfterLast('/')
-            AtomicSafFileCopy.copyFromFile(
+            val fingerprint = AtomicSafFileCopy.copyFromFile(
                 contentResolver,
                 treeUri,
                 cache,
@@ -492,7 +520,7 @@ object RimeDataSync {
             )
             IndexedCopyResult(
                 CopyResult(1, 0, deleted = 0, failed = 0, bytesCopied = size),
-                relativePath to SyncEntry(size, lastModified),
+                relativePath to SyncEntry(size, lastModified, fingerprint),
             )
         }.getOrElse {
             Timber.w(it, "Failed to export $relativePath")

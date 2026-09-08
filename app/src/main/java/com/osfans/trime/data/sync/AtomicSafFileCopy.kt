@@ -10,8 +10,6 @@ import android.os.ParcelFileDescriptor
 import android.provider.DocumentsContract
 import android.provider.DocumentsContract.Document
 import java.io.File
-import java.io.InputStream
-import java.security.MessageDigest
 import java.util.UUID
 
 object AtomicSafFileCopy {
@@ -28,7 +26,7 @@ object AtomicSafFileCopy {
         relativePath: String,
         parentDir: String,
         fileName: String,
-    ) {
+    ): String {
         SafTreeWalker.requireName(fileName)
         check(relativePath == if (parentDir.isEmpty()) fileName else "$parentDir/$fileName")
         val parentId = cache.ensureDirectory(contentResolver, treeUri, parentDir)
@@ -42,7 +40,7 @@ object AtomicSafFileCopy {
             }
         }
         val operationId = UUID.randomUUID().toString()
-        val expected = sourceFile.inputStream().use(::digest)
+        val expected = sourceFile.inputStream().use(SyncFingerprint::digest)
         var staged: Uri? = null
         var backup: Uri? = null
         var published: Uri? = null
@@ -91,6 +89,7 @@ object AtomicSafFileCopy {
             // Never discard recovery data after an unsuccessful replacement/rollback.
             if (committed) backup?.let { runCatching { DocumentsContract.deleteDocument(contentResolver, it) } }
         }
+        return SyncFingerprint.hex(expected)
     }
 
     private fun create(cr: ContentResolver, parent: Uri, name: String): Uri = DocumentsContract.createDocument(cr, parent, "application/octet-stream", name)
@@ -116,19 +115,8 @@ object AtomicSafFileCopy {
         }
         val inputPfd = cr.openFileDescriptor(uri, "r") ?: error("Cannot read $uri")
         val actual = ParcelFileDescriptor.AutoCloseInputStream(inputPfd).use { input ->
-            digest(input).also { inputPfd.checkError() }
+            SyncFingerprint.digest(input).also { if (inputPfd.canDetectErrors()) inputPfd.checkError() }
         }
         check(actual.contentEquals(expected)) { "Document read-back mismatch: $uri" }
-    }
-
-    private fun digest(input: InputStream): ByteArray {
-        val digest = MessageDigest.getInstance("SHA-256")
-        val buffer = ByteArray(DEFAULT_BUFFER_SIZE)
-        while (true) {
-            val count = input.read(buffer)
-            if (count < 0) break
-            digest.update(buffer, 0, count)
-        }
-        return digest.digest()
     }
 }

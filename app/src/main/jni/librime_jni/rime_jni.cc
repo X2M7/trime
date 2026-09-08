@@ -5,6 +5,7 @@
 #include <rime_api.h>
 
 #include <memory>
+#include <mutex>
 #include <algorithm>
 #include <string>
 #include <vector>
@@ -50,12 +51,17 @@ class Rime {
     trime_traits.shared_data_dir = sharedDir;
     trime_traits.user_data_dir = userDir;
     trime_traits.log_dir = "";  // set empty log_dir to log to logcat only
+    // Keep warnings/errors without logging every vocabulary entry or input query.
+    trime_traits.min_log_level = 1;
     trime_traits.app_name = "rime.trime";
     trime_traits.distribution_name = "Trime";
     trime_traits.distribution_code_name = "trime";
     trime_traits.distribution_version = versionName;
 
-    rime->setup(&trime_traits);
+    // Logging/module declarations are process-wide. initialize() below reapplies
+    // directories and traits and reloads modules after every finalize().
+    static std::once_flag setup_once;
+    std::call_once(setup_once, [&] { rime->setup(&trime_traits); });
     rime->initialize(&trime_traits);
     rime->set_notification_handler(notificationHandler, GlobalRef->jvm);
     rime->start_maintenance(fullCheck);
@@ -93,7 +99,7 @@ class Rime {
   bool commitComposition() { return rime->commit_composition(session()); }
 
   void clearComposition() {
-    t9_.Reset();
+    t9_.Clear();
     rime->clear_composition(session());
   }
 
@@ -101,6 +107,8 @@ class Rime {
     auto current = rime::Service::instance().GetSession(session());
     return t9_.Snapshot(current.get());
   }
+
+  void setT9AssistOptions(int options) { t9_.SetAssistOptions(options); }
 
   bool t9Action(int revision, int action, int start, int end,
                 const std::string& spelling) {
@@ -278,16 +286,17 @@ class Rime {
 GlobalRefSingleton* GlobalRef;
 
 extern "C" JNIEXPORT jobject JNICALL
-Java_com_osfans_trime_core_Rime_getRimeT9State(JNIEnv* env, jclass) {
+Java_com_osfans_trime_core_Rime_getRimeT9State(JNIEnv* env, jclass, jint options) {
+  Rime::Instance().setT9AssistOptions(options);
   auto state = Rime::Instance().t9Snapshot();
   JRef<jclass> span_class(env, env->FindClass("com/osfans/trime/core/T9SpanProto"));
-  auto span_init = env->GetMethodID(span_class, "<init>", "(IILjava/lang/String;ZZ)V");
+  auto span_init = env->GetMethodID(span_class, "<init>", "(IILjava/lang/String;ZZI)V");
   auto spans = [&](const std::vector<trime::T9Span>& items) {
     auto result = env->NewObjectArray(items.size(), span_class, nullptr);
     for (size_t i = 0; i < items.size(); ++i) {
       const auto& s = items[i];
       JRef item(env, env->NewObject(span_class, span_init, s.start, s.end,
-          *JString(env, s.spelling), s.completion, s.locked));
+          *JString(env, s.spelling), s.completion, s.locked, s.sources));
       env->SetObjectArrayElement(result, i, item);
     }
     return result;
@@ -303,7 +312,8 @@ Java_com_osfans_trime_core_Rime_getRimeT9State(JNIEnv* env, jclass) {
 
 extern "C" JNIEXPORT jboolean JNICALL
 Java_com_osfans_trime_core_Rime_performRimeT9Action(JNIEnv* env, jclass,
-    jint revision, jint action, jint start, jint end, jstring spelling) {
+    jint revision, jint action, jint start, jint end, jstring spelling, jint options) {
+  Rime::Instance().setT9AssistOptions(options);
   return Rime::Instance().t9Action(revision, action, start, end, *CString(env, spelling));
 }
 
@@ -316,6 +326,7 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM* jvm, void* reserved) {
 extern "C" JNIEXPORT void JNICALL Java_com_osfans_trime_core_Rime_startupRime(
     JNIEnv* env, jclass clazz, jstring shared_dir, jstring user_dir,
     jstring version_name, jboolean full_check) {
+  jniCall(env, [&] {
   // for rime shared data dir
   setenv("RIME_SHARED_DATA_DIR", CString(env, shared_dir), 1);
   // for rime user data dir
@@ -342,11 +353,12 @@ extern "C" JNIEXPORT void JNICALL Java_com_osfans_trime_core_Rime_startupRime(
   };
 
   Rime::Instance().startup(full_check, notificationHandler);
+  });
 }
 
 extern "C" JNIEXPORT void JNICALL
 Java_com_osfans_trime_core_Rime_exitRime(JNIEnv* env, jclass /* thiz */) {
-  Rime::Instance().exit();
+  jniCall(env, [&] { Rime::Instance().exit(); });
 }
 
 // deployment
@@ -354,7 +366,7 @@ extern "C" JNIEXPORT jboolean JNICALL
 Java_com_osfans_trime_core_Rime_deployRimeSchemaFile(JNIEnv* env,
                                                      jclass /* thiz */,
                                                      jstring schema_file) {
-  return Rime::Instance().deploySchema(*CString(env, schema_file));
+  return jniCall(env, [&] { return Rime::Instance().deploySchema(*CString(env, schema_file)); });
 }
 
 extern "C" JNIEXPORT jboolean JNICALL
@@ -362,14 +374,14 @@ Java_com_osfans_trime_core_Rime_deployRimeConfigFile(JNIEnv* env,
                                                      jclass /* thiz */,
                                                      jstring file_name,
                                                      jstring version_key) {
-  return Rime::Instance().deployConfigFile(*CString(env, file_name),
-                                           *CString(env, version_key));
+  return jniCall(env, [&] { return Rime::Instance().deployConfigFile(*CString(env, file_name),
+                                           *CString(env, version_key)); });
 }
 
 extern "C" JNIEXPORT jboolean JNICALL
 Java_com_osfans_trime_core_Rime_syncRimeUserData(JNIEnv* env,
                                                  jclass /* thiz */) {
-  return Rime::Instance().sync();
+  return jniCall(env, [&] { return Rime::Instance().sync(); });
 }
 
 // input
@@ -431,7 +443,7 @@ Java_com_osfans_trime_core_Rime_getRimeSchemaList(JNIEnv* env,
 extern "C" JNIEXPORT jstring JNICALL
 Java_com_osfans_trime_core_Rime_getCurrentRimeSchema(JNIEnv* env,
                                                      jclass /* thiz */) {
-  return env->NewStringUTF(Rime::Instance().currentSchemaId().c_str());
+  return makeJavaString(env, Rime::Instance().currentSchemaId());
 }
 
 extern "C" JNIEXPORT jboolean JNICALL
@@ -451,7 +463,7 @@ Java_com_osfans_trime_core_Rime_simulateRimeKeySequence(JNIEnv* env,
 extern "C" JNIEXPORT jstring JNICALL
 Java_com_osfans_trime_core_Rime_getRimeRawInput(JNIEnv* env,
                                                 jclass /* thiz */) {
-  return env->NewStringUTF(Rime::Instance().rawInput().data());
+  return makeJavaString(env, Rime::Instance().rawInput());
 }
 
 extern "C" JNIEXPORT jint JNICALL
@@ -500,6 +512,7 @@ Java_com_osfans_trime_core_Rime_getRimeCandidates(JNIEnv* env, jclass clazz,
 extern "C" JNIEXPORT jobject JNICALL
 Java_com_osfans_trime_core_Rime_getRimeResponse(JNIEnv* env, jclass clazz,
                                                 jboolean paging_mode) {
+  return jniCall(env, [&]() -> jobject {
   auto commit = Rime::Instance().commit();
   // the menu is only needed in paging mode, otherwise its candidates would be
   // duplicated by the bulk candidates query below
@@ -529,4 +542,5 @@ Java_com_osfans_trime_core_Rime_getRimeResponse(JNIEnv* env, jclass clazz,
   }
   return rimeResponseToJObject(env, jCommit, jComposition, jCandidates,
                                jStatus);
+  });
 }

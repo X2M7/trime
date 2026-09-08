@@ -14,6 +14,7 @@ import java.io.File
 data class SyncEntry(
     val size: Long,
     val lastModified: Long,
+    val localSha256: String? = null,
 )
 
 @Serializable
@@ -50,7 +51,9 @@ object SyncIndex {
     }
 
     fun save(data: SyncIndexData) {
-        indexFile.writeText(json.encodeToString(data))
+        AtomicLocalFileCopy.writeFromStream(indexFile) { output ->
+            output.write(json.encodeToString(data).toByteArray(Charsets.UTF_8))
+        }
     }
 
     fun clear() {

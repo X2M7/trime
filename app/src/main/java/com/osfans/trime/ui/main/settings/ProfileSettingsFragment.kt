@@ -16,6 +16,7 @@ import androidx.preference.ListPreference
 import androidx.preference.Preference
 import androidx.preference.SwitchPreferenceCompat
 import com.osfans.trime.R
+import com.osfans.trime.core.RimeMaintenanceMutex
 import com.osfans.trime.data.base.DataManager
 import com.osfans.trime.data.prefs.AppPrefs
 import com.osfans.trime.data.prefs.PreferenceDelegate
@@ -32,9 +33,11 @@ import com.osfans.trime.util.addPreference
 import com.osfans.trime.util.buildDocumentsProviderIntent
 import com.osfans.trime.util.customFormatTimeInDefault
 import com.osfans.trime.util.toast
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 
 class ProfileSettingsFragment : PaddingPreferenceFragment() {
     private val viewModel: MainViewModel by activityViewModels()
@@ -45,6 +48,26 @@ class ProfileSettingsFragment : PaddingPreferenceFragment() {
 
     private var pendingPickerCancelToAppStorage = false
     private var pendingResetDataPath = false
+    private var storageBusy = false
+
+    private fun runStorageChange(block: suspend () -> Unit) {
+        if (storageBusy) return
+        storageBusy = true
+        updateStorageModeUi()
+        viewLifecycleOwner.lifecycleScope.launch {
+            try {
+                block()
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                Timber.w(e, "Unable to change storage settings")
+                context?.toast(R.string.setup__data_path_import_failed)
+            } finally {
+                storageBusy = false
+                updateStorageModeUi()
+            }
+        }
+    }
 
     private val onBackgroundSyncEnable = PreferenceDelegate.OnChangeListener<Boolean> { _, v ->
         editSyncIntervalPreference.isEnabled = v
@@ -105,10 +128,12 @@ class ProfileSettingsFragment : PaddingPreferenceFragment() {
     private fun updateStorageModeUi() {
         val externalSync = RimeDataSync.usesExternalSync()
         if (::dataPathPreference.isInitialized) {
-            dataPathPreference.isEnabled = externalSync
+            dataPathPreference.isEnabled = externalSync && !storageBusy
         }
-        findPreference<ListPreference>(AppPrefs.Profile.DATA_STORAGE_MODE)?.value =
-            prefs.dataStorageMode.getValue().name
+        findPreference<ListPreference>(AppPrefs.Profile.DATA_STORAGE_MODE)?.let {
+            it.value = prefs.dataStorageMode.getValue().name
+            it.isEnabled = !storageBusy
+        }
     }
 
     private fun launchDataPathPicker(cancelToAppStorage: Boolean) {
@@ -128,23 +153,30 @@ class ProfileSettingsFragment : PaddingPreferenceFragment() {
         onCancelToAppStorage: Boolean,
     ) {
         val ctx = requireContext()
-        lifecycleScope.launch {
+        runStorageChange {
             withLoadingDialog(ctx) {
                 runCatching {
                     withContext(Dispatchers.IO) {
-                        RimeDataSync.persistTreeUri(ctx, uri)
-                        RimeDataSync.importToLocal(ctx).getOrThrow()
+                        RimeMaintenanceMutex.withLock {
+                            RimeDataSync.persistTreeUri(ctx, uri)
+                            UserDbMigration.onStorageModeChanged(prefs.dataStorageMode.getValue(), DataStorageMode.EXTERNAL_SYNC)
+                            prefs.dataStorageMode.setValue(DataStorageMode.EXTERNAL_SYNC)
+                            RimeDataSync.importToLocal(ctx).getOrThrow()
+                        }
                         viewModel.rime.runOnReady { deploy(skipImport = true) }
                     }
                 }.onSuccess {
                     updateDataPathSummary()
                     ctx.toast(R.string.setup__data_path_imported)
                 }.onFailure {
+                    if (it is CancellationException) throw it
                     if (onCancelToAppStorage) {
-                        fallbackToAppStorage()
+                        applyAppStorageFallback()
                     } else {
                         withContext(Dispatchers.IO) {
-                            RimeDataSync.clearExternalTree(ctx)
+                            RimeMaintenanceMutex.withLock {
+                                if (RimeDataSync.treeUri() == uri) RimeDataSync.clearExternalTree(ctx)
+                            }
                         }
                         updateDataPathSummary()
                         ctx.toast(R.string.setup__data_path_import_failed)
@@ -159,8 +191,6 @@ class ProfileSettingsFragment : PaddingPreferenceFragment() {
             .Builder(requireContext())
             .setMessage(R.string.select_another_directory_to_sync)
             .setPositiveButton(R.string.select_another_directory) { _, _ ->
-                RimeDataSync.clearExternalTree(requireContext())
-                updateDataPathSummary()
                 launchResetDataPathPicker()
             }.setNegativeButton(android.R.string.cancel, null)
             .show()
@@ -194,12 +224,18 @@ class ProfileSettingsFragment : PaddingPreferenceFragment() {
     }
 
     private fun fallbackToAppStorage() {
-        RimeDataSync.clearExternalTree(requireContext())
-        UserDbMigration.onStorageModeChanged(
-            DataStorageMode.EXTERNAL_SYNC,
-            DataStorageMode.APP_STORAGE,
-        )
-        prefs.dataStorageMode.setValue(DataStorageMode.APP_STORAGE)
+        runStorageChange { applyAppStorageFallback() }
+    }
+
+    private suspend fun applyAppStorageFallback() {
+        val ctx = requireContext()
+        withContext(Dispatchers.IO) {
+            RimeMaintenanceMutex.withLock {
+                RimeDataSync.clearExternalTree(ctx)
+                UserDbMigration.onStorageModeChanged(prefs.dataStorageMode.getValue(), DataStorageMode.APP_STORAGE)
+                prefs.dataStorageMode.setValue(DataStorageMode.APP_STORAGE)
+            }
+        }
         updateStorageModeUi()
         updateDataPathSummary()
         AlertDialog
@@ -228,25 +264,22 @@ class ProfileSettingsFragment : PaddingPreferenceFragment() {
                         value = prefs.dataStorageMode.getValue().name
                         summaryProvider = ListPreference.SimpleSummaryProvider.getInstance()
                         setOnPreferenceChangeListener { _, newValue ->
-                            val oldMode = prefs.dataStorageMode.getValue()
                             val mode =
                                 DataStorageMode.valueOf(newValue as String)
-                            UserDbMigration.onStorageModeChanged(oldMode, mode)
-                            prefs.dataStorageMode.setValue(mode)
-                            if (
-                                oldMode == DataStorageMode.APP_STORAGE &&
-                                mode == DataStorageMode.EXTERNAL_SYNC &&
-                                !RimeDataSync.hasExternalAccess()
-                            ) {
-                                promptExternalSyncFolderSelection()
-                            } else if (
-                                oldMode == DataStorageMode.EXTERNAL_SYNC &&
-                                mode == DataStorageMode.APP_STORAGE
-                            ) {
-                                RimeDataSync.clearExternalTree(ctx)
+                            runStorageChange {
+                                val needsPicker = withContext(Dispatchers.IO) {
+                                    RimeMaintenanceMutex.withLock {
+                                        val oldMode = prefs.dataStorageMode.getValue()
+                                        UserDbMigration.onStorageModeChanged(oldMode, mode)
+                                        if (mode == DataStorageMode.APP_STORAGE) RimeDataSync.clearExternalTree(ctx)
+                                        prefs.dataStorageMode.setValue(mode)
+                                        mode == DataStorageMode.EXTERNAL_SYNC && !RimeDataSync.hasExternalAccess(ctx)
+                                    }
+                                }
                                 updateDataPathSummary()
+                                if (needsPicker) promptExternalSyncFolderSelection()
                             }
-                            true
+                            false
                         }
                     },
                 )

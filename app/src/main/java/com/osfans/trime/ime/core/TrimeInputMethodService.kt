@@ -134,6 +134,12 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
         }
 
     @Keep
+    private val refreshT9AssistListener =
+        PreferenceDelegate.OnChangeListener<Boolean> { _, _ ->
+            postRimeJob { refreshT9Options() }
+        }
+
+    @Keep
     private val recreateCandidatesViewListener =
         PreferenceDelegateProvider.OnChangeListener {
             if (themeReady && inputViewRequested) replaceCandidateView(themeScope)
@@ -213,10 +219,11 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
         recreateInputViewPrefs.forEach {
             it.registerOnChangeListener(recreateInputViewListener)
         }
+        prefs.keyboard.t9AssistOptions.forEach { it.registerOnChangeListener(refreshT9AssistListener) }
         prefs.candidates.registerOnChangeListener(recreateCandidatesViewListener)
         // ensure theme and color managers are initialized after rime is ready
         prepareTheme()
-        InputFeedbackManager.init(this)
+        InputFeedbackManager.init()
         registerReceiver()
         super.onCreate()
         Timber.d("onCreate")
@@ -225,10 +232,11 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
         lastKnownConfig = Configuration(resources.configuration)
     }
 
-    private fun prepareTheme() {
+    private fun prepareTheme(retry: Boolean = false) {
         if (themeInitialization?.isActive == true) return
         themeInitialization = lifecycleScope.launch {
             try {
+                if (retry) RimeDaemon.retryFailedStartup()
                 rime.runOnReady { ThemeManager.init(resources.configuration) }
                 themeReady = true
                 ThemeManager.addOnChangedListener(onThemeChangeListener)
@@ -237,9 +245,8 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
                     replaceInputViews(themeScope)
                     if (isInputViewShown) inputView?.startInput(currentInputEditorInfo, false)
                 }
-            } catch (e: CancellationException) {
-                throw e
             } catch (e: Exception) {
+                if (e is CancellationException && e !is com.osfans.trime.core.RimeUnavailableException) throw e
                 Timber.e(e, "Failed to initialize keyboard theme")
                 loadingPanel?.apply {
                     removeAllViews()
@@ -249,7 +256,7 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
                             contentDescription = getString(R.string.deploy)
                             setOnClickListener {
                                 showThemeLoading()
-                                prepareTheme()
+                                prepareTheme(retry = true)
                             }
                         },
                         FrameLayout.LayoutParams(dp(48), dp(48), Gravity.CENTER),
@@ -304,9 +311,9 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
                                     if (it.value.value > 0) {
                                         runCatching {
                                             commitText(Character.toString(it.value.value))
-                                        }.getOrElse { t -> Timber.w(t, "Unhandled Virtual KeyEvent: $it") }
+                                        }.getOrElse { t -> Timber.w(t, "Unhandled Virtual KeyEvent") }
                                     } else {
-                                        Timber.w("Unhandled Virtual KeyEvent: $it")
+                                        Timber.w("Unhandled Virtual KeyEvent")
                                     }
                                 }
                             }
@@ -325,14 +332,15 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
                             if (!it.modifiers.release && it.value.value > 0) {
                                 runCatching {
                                     commitText(Character.toString(it.value.value))
-                                }.getOrElse { t -> Timber.w(t, "Unhandled Rime KeyEvent: $it") }
+                                }.getOrElse { t -> Timber.w(t, "Unhandled Rime KeyEvent") }
                             } else {
-                                Timber.w("Unhandled Rime KeyEvent: $it")
+                                Timber.w("Unhandled Rime KeyEvent")
                             }
                         }
                     }
                 }
             is RimeMessage.DeployMessage -> {
+                if (!themeReady && it.data == RimeMessage.DeployMessage.State.Success) prepareTheme()
                 if (themeReady && it.data == RimeMessage.DeployMessage.State.Success) {
                     // The deployment may have refreshed the current theme's artifact.
                     val themeId = ThemeManager.prefs.selectedTheme.getValue()
@@ -391,6 +399,7 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
         recreateInputViewPrefs.forEach {
             it.unregisterOnChangeListener(recreateInputViewListener)
         }
+        prefs.keyboard.t9AssistOptions.forEach { it.unregisterOnChangeListener(refreshT9AssistListener) }
         prefs.candidates.unregisterOnChangeListener(recreateCandidatesViewListener)
         ThemeManager.removeOnChangedListener(onThemeChangeListener)
         ColorManager.removeOnChangedListener(onColorChangeListener)
@@ -463,6 +472,7 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
     private val anchorPosition = RectF()
 
     override fun onUpdateCursorAnchorInfo(info: CursorAnchorInfo) {
+        if (!isInputViewShown || !inputDeviceManager.useCandidatesView) return
         val bounds = info.getCharacterBounds(0)
         // update anchorPosition
         if (bounds == null) {
@@ -683,15 +693,14 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
         if (useVirtualKeyboard) {
             inputView?.startInput(attribute, restarting)
         }
-        if (useCandidatesView) {
-            if (currentInputConnection?.monitorCursorAnchor() != true) {
-                if (!decorLocationUpdated) {
-                    updateDecorLocation()
-                }
-                // anchor CandidatesView to bottom-left corner in case InputConnection does not
-                // support monitoring CursorAnchorInfo
-                candidatesView?.updateCursorAnchor(contentSize)
+        val cursorUpdatesScheduled = currentInputConnection?.monitorCursorAnchor(useCandidatesView) == true
+        if (useCandidatesView && !cursorUpdatesScheduled) {
+            if (!decorLocationUpdated) {
+                updateDecorLocation()
             }
+            // anchor CandidatesView to bottom-left corner in case InputConnection does not
+            // support monitoring CursorAnchorInfo
+            candidatesView?.updateCursorAnchor(contentSize)
         }
     }
 
@@ -701,10 +710,9 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
         inputView?.dismissCandidateActionMenu()
         candidatesView?.dismissCandidateActionMenu()
         inputDeviceManager.onFinishInputView()
-        currentInputConnection?.apply {
-            finishComposingText()
-            monitorCursorAnchor(false)
-        }
+        // The editor may already have invalidated this connection. Cursor monitoring
+        // is reset with the next active view/session; do not query the old editor here.
+        currentInputConnection?.finishComposingText()
         composingText = ""
         composingCursor = null
         composingStart = null
@@ -862,7 +870,7 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
             }
             return true
         }
-        Timber.d("Skipped KeyEvent: $event")
+        Timber.d("Skipped KeyEvent")
         return false
     }
 
@@ -1073,14 +1081,18 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
         if (text.isNotEmpty()) selectionAfterCancel = null
         ic.beginBatchEdit()
         if (composingText.isNotEmpty() || text.isNotEmpty()) {
-            ic.setComposingText(text, 1)
             if (text.isEmpty()) {
+                // Replace the composing range without attaching spans to empty text.
+                ic.commitText("", 1)
                 ic.finishComposingText()
                 composingStart = null
                 selectionAfterCancel?.let { ic.setSelection(it.first, it.second) }
                 selectionAfterCancel = null
-            } else if (position != null) {
-                composingStart?.let { start -> ic.setSelection(start + position, start + position) }
+            } else {
+                ic.setComposingText(text, 1)
+                if (position != null) {
+                    composingStart?.let { start -> ic.setSelection(start + position, start + position) }
+                }
             }
         }
         composingText = text

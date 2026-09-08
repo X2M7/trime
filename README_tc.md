@@ -31,11 +31,18 @@ SPDX-License-Identifier: GPL-3.0-or-later
 
 [專案頁面](https://x2m7.github.io/trime/) | [下載九鍵預覽 APK](https://github.com/X2M7/trime/releases/latest)
 
+新增預發行版 [t9.7-dev.2](https://github.com/X2M7/trime/releases/tag/v3.3.13-t9.7-dev.2)，versionCode `20261111`，包含 T04/T05 與執行安全修正。ARM 轉譯環境下的啟動排隊及慢幀警告仍未解決，詳見[發行說明](doc/releases/v3.3.13-t9.7-dev.2.md)。t9.6 暫時保留為 Latest。
+
 預覽版 `3.3.13-t9.6`（versionCode `20261108`）包含基於方案詞典的拼音選擇、逐段鎖定、中間修正、解鎖和復原；選拼音不提交漢字。T03 同步兩個內建主題，保留 3x3 主鍵區，拼音清單依寬度切換側欄或橫排，支援左右單手模式、鍵高設定、長按輸入數字和空格滑動移游標。詳見[鍵位規則](script/quality/T03.md)和[開發版驗收記錄](script/quality/VALIDATION-t9.6-T03.md)。
 
 本版合併上游至 `d9a1f424`，納入主題作用域、配色原地更新及依安裝 ID 同步資料。九鍵拼音區隨鍵盤更新配色，安裝識別缺失時保留同步備份。範圍與測試結果見[上游合併驗收記錄](script/t9/UPSTREAM-t9.3.zh-CN.md)。
 
 ARM64 預覽 APK 保留 Android 5.0+ 支援，並延續舊預覽版套件名稱 `com.osfans.trime.debug` 和除錯簽章以支援覆蓋升級，顯示名稱沒有「除錯版」後綴。它不是正式簽章或 R8 建置。升級前請備份設定及詞庫；使用者目錄若有同名九鍵方案或主題，需要合併新增規則和佈局後重新部署，不要清空個人詞庫。詳見[發行說明](doc/releases/v3.3.13-t9.6.md)、[九鍵設計與測試](script/t9/README.md)、[啟動 ANR 回歸檢查](script/t9/STARTUP-ANR.md)。
+
+新預發行版中的 T04 新增[固定中文排名測試集](script/quality/t04/README.md)、鎖定版本的分層詞庫實驗、使用者學習驗證及 APK 資源校驗。實驗僅使用獨立測試目錄，不覆蓋個人詞庫；大詞庫和語法模型不預設啟用。
+[首輪評測](script/quality/VALIDATION-T04.md)發現了改善與退步，但保留集首選率沒有淨提高，因此仍保留朙月預設。
+
+預發行版 [T05](script/quality/t05/README.md) 將六組模糊音與相鄰數字鍵、漏按、重複輸入三類修正分開設定，預設全部關閉。新增拼音建議附來源標記，點選前不改變原有漢字排序；仍保留原始數字、解鎖和復原。它不取代舊版 Latest。
 
 ## 下載
 

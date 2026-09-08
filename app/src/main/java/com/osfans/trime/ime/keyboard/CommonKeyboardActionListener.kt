@@ -431,7 +431,7 @@ class CommonKeyboardActionListener(override val di: DI) : DIAware {
 
             override fun onText(input: String) {
                 if (input.isEmpty()) return
-                Timber.d("onText: $input")
+                Timber.d("onText")
                 val status = rime.run { statusCached }
                 if (!input[0].isAsciiPrintable() && status.isComposing) {
                     service.postRimeJob { commitComposition() }

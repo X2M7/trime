@@ -14,6 +14,8 @@ dependencies {
     compileOnly(libs.android.gradlePlugin)
     compileOnly(libs.kotlin.gradlePlugin)
     implementation(libs.kotlinx.serialization.json)
+    implementation(libs.snakeyaml)
+    testImplementation(kotlin("test"))
 }
 
 gradlePlugin {

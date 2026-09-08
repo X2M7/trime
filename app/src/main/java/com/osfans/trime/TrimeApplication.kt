@@ -23,6 +23,7 @@ import com.osfans.trime.ui.main.LogActivity
 import com.osfans.trime.util.isNightMode
 import com.osfans.trime.worker.BackgroundSyncWork
 import kotlinx.coroutines.CoroutineName
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
@@ -161,7 +162,7 @@ class TrimeApplication : Application() {
     }
 
     private fun startWorkManager() {
-        coroutineScope.launch {
+        coroutineScope.launch(Dispatchers.IO) {
             BackgroundSyncWork.start(applicationContext)
         }
     }

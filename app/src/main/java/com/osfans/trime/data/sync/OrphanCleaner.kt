@@ -19,10 +19,12 @@ object OrphanCleaner {
         externalPaths: Set<String>,
         ownId: String? = null,
         syncDir: String = SyncPathPolicy.DEFAULT_SYNC_DIR,
+        knownEntries: Map<String, SyncEntry> = emptyMap(),
     ): Result {
         if (!root.exists()) return Result()
         var deleted = 0
         var failed = 0
+        val emptiedParents = mutableSetOf<File>()
         root
             .walkBottomUp()
             .onEnter {
@@ -44,17 +46,26 @@ object OrphanCleaner {
                     }
                 when {
                     file.isFile && SyncPathPolicy.shouldPreserveLocal(relative, ownId, syncDir) -> Unit
-                    file.isFile && relative !in externalPaths -> {
+                    file.isFile && relative !in externalPaths && knownEntries[relative]?.let {
+                        it.size >= 0 && it.lastModified > 0 &&
+                            file.length() == it.size && file.lastModified() == it.lastModified &&
+                            it.localSha256 != null && runCatching { SyncFingerprint.of(file) }.getOrNull() == it.localSha256
+                    } == true -> {
                         val deleteResult = FileUtils.delete(file)
                         if (deleteResult.isSuccess) {
                             deleted++
+                            var parent = file.parentFile
+                            while (parent != null && parent != root) {
+                                emptiedParents.add(parent)
+                                parent = parent.parentFile
+                            }
                             Timber.i("Delete orphan $relative")
                         } else {
                             failed++
                             Timber.w(deleteResult.exceptionOrNull(), "Failed to delete orphan $relative")
                         }
                     }
-                    file.isDirectory && file.list()?.isEmpty() == true -> {
+                    file.isDirectory && file in emptiedParents && file.list()?.isEmpty() == true -> {
                         if (file.delete()) {
                             deleted++
                         } else {

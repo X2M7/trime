@@ -22,10 +22,14 @@ def main():
     p.add_argument('--library', type=pathlib.Path, required=True)
     p.add_argument('--adb', type=pathlib.Path, required=True)
     p.add_argument('--serial', default='emulator-5554')
-    p.add_argument('--source', choices=['experiment.cc', 'controller_test.cc'], default='experiment.cc')
+    p.add_argument('--source', choices=['experiment.cc', 'controller_test.cc', 'assist_test.cc', 'assist_benchmark.cc', 'jni_bridge_test.cc', 'deployment_test.cc'], default='experiment.cc')
+    p.add_argument('--benchmark-shared', type=pathlib.Path,
+                   help='Isolated system resources including build/*.bin for assist_benchmark.cc')
     p.add_argument('--double-schema', type=pathlib.Path,
                    default=pathlib.Path('/usr/share/rime-data/double_pinyin.schema.yaml'))
     args = p.parse_args()
+    if (args.source == 'assist_benchmark.cc') != bool(args.benchmark_shared):
+        p.error('assist_benchmark.cc requires --benchmark-shared, and only it accepts this option')
     output = ROOT / 'build/t9' / uuid.uuid4().hex[:12]
     output.mkdir(parents=True)
     remote = '/data/local/tmp/trime-t9-' + output.name
@@ -50,7 +54,10 @@ def main():
         '-L' + str(args.library.resolve().parent), '-lrime_jni',
         '-static-libstdc++', '-Wl,-rpath,' + remote, '-o', exe, cwd=base['directory'])
     shared = output / 'shared'
-    shutil.copytree(ROOT / 'script/t9/fixtures', shared)
+    shutil.copytree(args.benchmark_shared or ROOT / 'script/t9/fixtures', shared)
+    if args.source == 'assist_test.cc':
+        for fixture in (ROOT / 'script/quality/t05/fixtures').iterdir():
+            shutil.copy2(fixture, shared / fixture.name)
     shutil.copy2(ROOT / 'app/src/main/assets/shared/luna_pinyin_t9.schema.yaml', shared)
     shutil.copy2(ROOT / 'app/src/main/assets/shared/symbols.yaml', shared)
     if args.source == 'controller_test.cc':
@@ -67,8 +74,9 @@ def main():
     run(*adb, 'push', args.library, remote + '/librime_jni.so', stdout=subprocess.DEVNULL)
     run(*adb, 'shell', 'chmod', '700', remote + '/probe')
     identity = {
-        'kind': 'native_controller_test' if args.source == 'controller_test.cc' else 'design_experiment',
-        'engine_source': 'provided_library_not_installed_apk',
+        'kind': 'native_' + args.source.removesuffix('.cc'),
+        'engine_source': 'mock_jni_header_contracts' if args.source == 'jni_bridge_test.cc' else 'provided_library_not_installed_apk',
+        'jni_header_sha256': hashlib.sha256((ROOT / 'app/src/main/jni/librime_jni/jni-utils.h').read_bytes()).hexdigest(),
         'git_sha': run('git', 'rev-parse', 'HEAD', cwd=ROOT, capture_output=True, text=True).stdout.strip(),
         'worktree_dirty': bool(run('git', 'status', '--porcelain', cwd=ROOT,
                                   capture_output=True, text=True).stdout.strip()),
@@ -77,9 +85,11 @@ def main():
         'files': {str(x.relative_to(ROOT)): hashlib.sha256(x.read_bytes()).hexdigest()
                   for x in [source, ROOT / 'app/src/main/jni/librime_jni/t9.cc',
                             ROOT / 'app/src/main/jni/librime_jni/t9.h',
+                            ROOT / 'app/src/main/jni/librime_jni/t9_assist.cc',
+                            ROOT / 'app/src/main/jni/librime_jni/t9_assist.h',
                             ROOT / 'app/src/main/jni/librime_jni/helper-types.h',
                             ROOT / 'app/src/main/jni/librime_jni/rime_jni.cc',
-                            *shared.iterdir()] if x.is_file()},
+                            *shared.rglob('*')] if x.is_file()},
         'state': 'running',
     }
     report = output / 'identity.json'
@@ -90,9 +100,10 @@ def main():
             result = subprocess.run(list(map(str, [*adb, 'shell',
                 f'LD_LIBRARY_PATH={remote}', remote + '/probe', remote + '/shared', remote + '/user'])),
                 stdout=stdout, stderr=stderr, timeout=180)
-            if result.returncode == 0 and args.source == 'controller_test.cc':
+            if result.returncode == 0 and args.source in ('controller_test.cc', 'assist_test.cc', 'deployment_test.cc'):
+                phase = 'verify-recovery' if args.source == 'deployment_test.cc' else 'verify-learning'
                 result = subprocess.run(list(map(str, [*adb, 'shell',
-                    f'LD_LIBRARY_PATH={remote}', remote + '/probe', remote + '/shared', remote + '/user', 'verify-learning'])),
+                    f'LD_LIBRARY_PATH={remote}', remote + '/probe', remote + '/shared', remote + '/user', phase])),
                     stdout=stdout, stderr=stderr, timeout=60)
     except (subprocess.TimeoutExpired, KeyboardInterrupt):
         identity['state'] = 'interrupted'

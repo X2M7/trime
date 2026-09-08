@@ -6,6 +6,7 @@ package com.osfans.trime.data.sync
 
 import com.osfans.trime.data.prefs.AppPrefs
 
+/** Legacy preference compatibility; SAF imports no longer copy raw databases. */
 object UserDbMigration {
     private val prefs get() = AppPrefs.defaultInstance().profile
 

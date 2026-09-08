@@ -7,6 +7,7 @@ package com.osfans.trime.ui.main.settings.schema
 
 import android.view.View
 import com.osfans.trime.TrimeApplication
+import com.osfans.trime.core.RimeMaintenanceMutex
 import com.osfans.trime.core.SchemaItem
 import com.osfans.trime.daemon.RimeDaemon
 import com.osfans.trime.data.sync.RimeDataSync
@@ -14,6 +15,7 @@ import com.osfans.trime.ui.common.OnItemChangedListener
 import com.osfans.trime.ui.main.settings.ProgressFragment
 import com.osfans.trime.util.NaiveDustman
 import com.osfans.trime.util.appContext
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -107,13 +109,18 @@ class SchemaListFragment :
                             setEnabledSchemata(schemaIds)
                             deploy(skipImport = true)
                         }
-                        if (RimeDataSync.usesExternalSync(appContext)) {
-                            RimeDataSync.exportConfigFilesToExternal(appContext).getOrThrow()
+                        RimeMaintenanceMutex.withLock {
+                            if (RimeDataSync.usesExternalSync(appContext)) {
+                                RimeDataSync.exportConfigFilesToExternal(appContext).getOrThrow()
+                            }
                         }
                     } finally {
                         RimeDaemon.destroySession(sessionName)
                     }
-                }.onFailure { Timber.e(it, "Failed to persist schema list") }
+                }.onFailure {
+                    if (it is CancellationException) throw it
+                    Timber.e(it, "Failed to persist schema list")
+                }
             }
         }
     }

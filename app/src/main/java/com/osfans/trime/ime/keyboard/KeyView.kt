@@ -104,7 +104,7 @@ class KeyView(
         }
 
         onRelease = { behavior, isFromLongPress ->
-            Timber.d("KeyView release: label=${key.getLabel()}, behavior=$behavior, fromLongPress=$isFromLongPress")
+            Timber.d("KeyView release: behavior=$behavior, fromLongPress=$isFromLongPress")
             if (isFromLongPress) {
                 if (hasPopup) {
                     val triggerAction = PopupAction.TriggerAction(id)
@@ -223,7 +223,7 @@ class KeyView(
     }
 
     private fun processKeyAction(action: KeyAction, behavior: KeyBehavior, repeated: Boolean = false) {
-        Timber.d("processKeyAction: label=${key.getLabel()}, code=${action.code}, type=$behavior")
+        Timber.d("processKeyAction: type=$behavior")
 
         if (action.isModifierKey) {
             keyboard.clickModifierKey(
