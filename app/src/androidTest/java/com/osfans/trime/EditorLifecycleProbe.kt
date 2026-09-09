@@ -3,6 +3,8 @@ package com.osfans.trime
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.AlertDialog
+import android.app.Dialog
 import android.app.Instrumentation
 import android.content.Intent
 import android.graphics.Bitmap
@@ -25,6 +27,7 @@ import android.widget.PopupWindow
 import android.widget.TextView
 import androidx.core.view.children
 import com.osfans.trime.core.RimeApi
+import com.osfans.trime.core.RimeSchema
 import com.osfans.trime.daemon.RimeDaemon
 import com.osfans.trime.daemon.RimeSession
 import com.osfans.trime.data.base.DataManager
@@ -42,6 +45,9 @@ import com.osfans.trime.ime.keyboard.CommonKeyboardActionListener
 import com.osfans.trime.ime.keyboard.KeyAction
 import com.osfans.trime.ime.keyboard.KeyView
 import com.osfans.trime.ime.keyboard.KeyboardWindow
+import com.osfans.trime.ime.switches.SwitchOptionAdapter
+import com.osfans.trime.ime.switches.SwitchOptionEntry
+import com.osfans.trime.ime.switches.SwitchOptionWindow
 import com.osfans.trime.ui.main.ClipEditActivity
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.async
@@ -386,6 +392,113 @@ object EditorLifecycleProbe {
                     waiting.await()
                     check(overtook)
                     phase("PASS: joining an engine job preserves queue order")
+
+                    // A real suspend builder must retain the editor that requested its dialog.
+                    // Reflection keeps this deterministic fault gate out of the production API.
+                    main {
+                        other.inputType = InputType.TYPE_CLASS_TEXT
+                        other.imeOptions = EditorInfo.IME_ACTION_SEARCH
+                        other.setImeActionLabel(null, 0)
+                    }
+                    val switchWindow = main { SwitchOptionWindow(checkNotNull(input()).di) }
+                    val dialogEntered = CompletableDeferred<Unit>()
+                    val dialogRelease = CompletableDeferred<Unit>()
+                    val dialogReturned = CompletableDeferred<Unit>()
+                    val delayedDialog = main { AlertDialog.Builder(service).setTitle("Editor-owned dialog audit").create() }
+                    val delayedBuilder: suspend (RimeApi) -> Dialog = {
+                        dialogEntered.complete(Unit)
+                        dialogRelease.await()
+                        dialogReturned.complete(Unit)
+                        delayedDialog
+                    }
+                    main {
+                        SwitchOptionWindow::class.java.declaredMethods.single { it.name == "showDialog" }.apply {
+                            isAccessible = true
+                        }.invoke(switchWindow, delayedBuilder)
+                    }
+                    try {
+                        withTimeout(5000) { dialogEntered.await() }
+                        main {
+                            other.setText("fresh target")
+                            other.requestFocus()
+                        }
+                        until("new editor replaces a pending switch-window dialog") { service.currentInputEditorInfo?.fieldId == other.id }
+                        dialogRelease.complete(Unit)
+                        withTimeout(5000) { dialogReturned.await() }
+                        api { }
+                        main {
+                            check(!delayedDialog.isShowing) { "Old editor dialog appeared over the new editor" }
+                            check(other.text.toString() == "fresh target") { "Old dialog changed the new editor text" }
+                        }
+                    } finally {
+                        dialogRelease.complete(Unit)
+                        main { delayedDialog.dismiss() }
+                    }
+                    focus(chat)
+
+                    val switchAdapter = main {
+                        SwitchOptionWindow::class.java.getDeclaredMethod("getAdapter").apply {
+                            isAccessible = true
+                        }.invoke(switchWindow) as SwitchOptionAdapter
+                    }
+                    val queuedOption = "_editor_audit_queued_option"
+                    api { setRuntimeOption(queuedOption, false) }
+                    val optionEntered = CompletableDeferred<Unit>()
+                    val optionRelease = CompletableDeferred<Unit>()
+                    main {
+                        service.postRimeJob {
+                            optionEntered.complete(Unit)
+                            optionRelease.await()
+                        }
+                    }
+                    withTimeout(5000) { optionEntered.await() }
+                    try {
+                        main {
+                            switchAdapter.onItemClick(
+                                checkNotNull(input()),
+                                SwitchOptionEntry.Custom(RimeSchema.Switch(name = queuedOption, states = listOf("Off", "On")), "Audit option", 0),
+                            )
+                        }
+                        delay(150)
+                        checkNotNull(session).runOnReady {
+                            check(!getRuntimeOption(queuedOption)) { "Switch-window option bypassed the editor queue" }
+                        }
+                        main {
+                            other.setText("")
+                            other.requestFocus()
+                        }
+                        until("editor changes with a queued switch-window option") { service.currentInputEditorInfo?.fieldId == other.id }
+                    } finally {
+                        optionRelease.complete(Unit)
+                    }
+                    api {
+                        check(!getRuntimeOption(queuedOption)) { "Old switch-window option changed the new editor" }
+                        check(getRawInput().isEmpty())
+                    }
+                    check(main { other.text.isEmpty() }) { "Queued switch-window option committed into the new editor" }
+                    focus(chat)
+
+                    // A dismissed popup's retained callback must use the menu's original token,
+                    // even when Android delivers its click after the next editor has bound.
+                    val menuOptions = listOf("_editor_audit_menu_first", "_editor_audit_menu_second")
+                    api { menuOptions.forEach { setRuntimeOption(it, false) } }
+                    val oldMenu = main {
+                        switchAdapter.onItemClick(
+                            checkNotNull(input()),
+                            SwitchOptionEntry.Custom(RimeSchema.Switch(options = menuOptions, states = listOf("First", "Second")), "Audit menu", 0),
+                        )
+                        checkNotNull(switchWindow.popupMenu).menu.also { switchWindow.onDetached() }
+                    }
+                    focus(other)
+                    main { check(oldMenu.performIdentifierAction(0, 0)) { "Retained option menu callback did not execute" } }
+                    delay(150)
+                    api {
+                        check(menuOptions.none { getRuntimeOption(it) }) { "Old option popup changed the new editor" }
+                        check(getRawInput().isEmpty())
+                    }
+                    check(main { other.text.isEmpty() }) { "Old option popup committed into the new editor" }
+                    focus(chat)
+                    phase("PASS: delayed switch dialogs, queued options and stale popup callbacks remain editor-owned")
 
                     type("64")
                     api { check(getRawInput() == "64") }

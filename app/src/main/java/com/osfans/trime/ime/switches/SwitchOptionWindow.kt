@@ -26,7 +26,9 @@ import com.osfans.trime.ime.dialog.EnabledSchemaPickerDialog
 import com.osfans.trime.ime.window.BoardWindow
 import com.osfans.trime.ui.main.settings.ThemePickerDialog
 import com.osfans.trime.util.AppUtils
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.kodein.di.DI
 import org.kodein.di.instance
 import splitties.dimensions.dp
@@ -80,18 +82,20 @@ class SwitchOptionWindow(di: DI) :
 
     private suspend fun RimeApi.applyOption(option: String, value: Boolean) {
         setRuntimeOption(option, value)
-        if (option in saveOptions) {
-            RimeConfig.openUserConfig("user").use {
-                it.setBool("var/option/$option", value)
+        withContext(Dispatchers.IO) {
+            if (option in saveOptions) {
+                RimeConfig.openUserConfig("user").use {
+                    it.setBool("var/option/$option", value)
+                }
             }
         }
     }
 
     private fun showDialog(builder: suspend (RimeApi) -> Dialog) {
-        rime.launchOnReady { api ->
-            service.lifecycleScope.launch {
-                service.showDialog(builder(api))
-            }
+        val editorToken = service.editorToken
+        service.postRimeJob {
+            val dialog = builder(this)
+            if (service.isCurrentEditor(editorToken)) service.showDialog(dialog)
         }
     }
 
@@ -119,18 +123,24 @@ class SwitchOptionWindow(di: DI) :
                             }
                         }
                         SwitchOptionEntry.Static.Type.Keyboard -> AppUtils.launchMainToKeyboard(context)
-                        SwitchOptionEntry.Static.Type.ThemeList -> showDialog { r ->
-                            ThemePickerDialog.build(service.lifecycleScope, context) {
-                                r.commitComposition()
+                        SwitchOptionEntry.Static.Type.ThemeList -> {
+                            val editorToken = service.editorToken
+                            showDialog {
+                                ThemePickerDialog.build(service.lifecycleScope, context) {
+                                    service.postRimeJob {
+                                        if (service.isCurrentEditor(editorToken)) commitComposition()
+                                    }.join()
+                                }
                             }
                         }
                     }
                     is SwitchOptionEntry.Custom -> {
+                        val editorToken = service.editorToken
                         val options = entry.switch.options
                         if (options.isEmpty()) {
-                            rime.launchOnReady {
-                                val oldValue = it.getRuntimeOption(entry.switch.name)
-                                it.applyOption(entry.switch.name, !oldValue)
+                            service.postRimeJob {
+                                val oldValue = getRuntimeOption(entry.switch.name)
+                                applyOption(entry.switch.name, !oldValue)
                             }
                         } else {
                             val popup = PopupMenu(context, view)
@@ -138,9 +148,11 @@ class SwitchOptionWindow(di: DI) :
                             entry.switch.states.forEachIndexed { i, state ->
                                 menu.add(0, 0, 0, state).apply {
                                     setOnMenuItemClickListener {
-                                        rime.launchOnReady {
-                                            options.forEachIndexed { j, option ->
-                                                it.applyOption(option, i == j)
+                                        service.postRimeJob {
+                                            if (service.isCurrentEditor(editorToken)) {
+                                                options.forEachIndexed { j, option ->
+                                                    applyOption(option, i == j)
+                                                }
                                             }
                                         }
                                         true
