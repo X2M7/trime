@@ -437,9 +437,10 @@ object EditorLifecycleProbe {
                     focus(chat)
 
                     val switchAdapter = main {
-                        SwitchOptionWindow::class.java.getDeclaredMethod("getAdapter").apply {
-                            isAccessible = true
-                        }.invoke(switchWindow) as SwitchOptionAdapter
+                        // setAdapter invokes onAttachedToRecyclerView, which supplies the
+                        // adapter's context for its real popup-menu action below.
+                        switchWindow.onCreateView()
+                        checkNotNull(switchWindow.view.adapter) as SwitchOptionAdapter
                     }
                     val queuedOption = "_editor_audit_queued_option"
                     api { setRuntimeOption(queuedOption, false) }

@@ -6,8 +6,9 @@ Work in progress. This is not a claim of a warning-free release.
 
 The user has authorized publication of `v3.3.13-t9.8` as a stable release after
 acceptance. Its planned versionCode is `20261113`; the existing package and
-signing certificate remain compatible. The final stable APKs are not yet built
-or accepted at this checkpoint. Older results below remain historical evidence.
+signing certificate remain compatible. At this initial preparation checkpoint,
+the stable APKs had not yet been built or accepted. Subsequent candidate results
+are recorded separately below; older results retain their original identities.
 
 The exact Build11 x86_64 APK passed `api21-build11-editors`: deferred overlay
 attachment/detachment, the editor/action matrix, theme/schema restoration,
@@ -24,11 +25,65 @@ and applies backpressure on native/maintenance workers; consumers must enqueue
 native work asynchronously. Four-consumer burst, cancellation, no-subscriber and
 nested cache notification tests cover its delivery contract. Build timestamps
 now normalize epoch seconds into the milliseconds used by Android date helpers.
-These new changes still require the frozen final build and device matrix.
+At this checkpoint these changes still required a frozen build and device matrix.
 
 `stable-host1` passed 91 host tests (quality 47, T04 13, T05 5, baseline 26).
 `stable-format1` passed Spotless application and nine build-logic tests, including
 five timestamp regressions. No build warning occurred in that preparation step.
+
+## Stable-build2 Checkpoint (Not Final Acceptance)
+
+`stable-build1` was built from `b910b3e8e4fba9acdb4a53eedbd84b14bcbb1b4f`;
+`stable-build2` was built from `91ffa02934c5739fb4ac6d54dc191b96ef701395`.
+Both source snapshots were clean and unchanged during their builds. They share
+versionName `3.3.13-t9.8` and versionCode `20261113`, but their APKs differ.
+Build1 remains retained under its own identity and is not promoted by build2's
+checks. Build2 is still a candidate, not a published or accepted stable release.
+
+Build2 passed 285 application and nine build-logic JVM tests with zero failures,
+errors or skips, Spotless and Lint with zero issues. Its complete build log has
+no build warning; the existing 91 host checks also passed. Both application APKs
+and the test APK passed identity/signature verification. Each application APK
+retains exactly three v1 META-INF warnings; the test APK has none. All 48 packaged
+resource hashes and static ZIP/ELF 16 KB checks passed. These static checks do
+not establish runtime compatibility with physical 16 KB-page devices.
+
+| Candidate artifact | stable-build2 SHA-256 |
+| --- | --- |
+| ARM64 APK | `981c30a13af03425fb53f09721d7d14b5cebbc9d6bcddbf59e19765c3eaacbe2` |
+| x86_64 APK | `bc47d11f7ac8be93dc9e42b5c213f2523b506346b3b933ae23532107db00eacf` |
+| Android test APK | `fb58e0b60ed13af4a519f403e182ac144310532a9d95a77cbc6ec70a7cb1e5e6` |
+
+`api21-stable2-install3/identity.json` records an in-place upgrade from the
+Build11 x86_64 APK (`3d51aebe4d7f04d3ee3880cb65d844057b143691a3a8f0670475adfe11df7f54`),
+versionCode `20261112`, to the build2 x86_64 APK, versionCode `20261113`.
+The independent app-private data marker was preserved byte for byte and the
+installed APK hashes were checked. This is a development-candidate upgrade on
+API21; it does not establish upgrade from the published ARM64 t9.7 APK, personal
+dictionary migration or coverage for a later rebuilt artifact. Earlier install
+attempt directories remain retained separately.
+
+`api21-stable2-editors` FAILED with
+`IllegalStateException: Please get it after onAttachedToRecyclerView()`.
+The fixture directly called the switch-option adapter's click callback before
+attaching it to RecyclerView; the exception occurs at the adapter's context
+lookup. The test APK above and the original instrumentation failure/stack are
+retained. This is an incomplete editor matrix, even though earlier assertions
+ran and the tested Trime interval has zero recognized project diagnostics.
+The full preparation audit records one diagnostic and 11 warning/error lines.
+A corrected test fixture requires a separately identified rerun; this failed
+attempt must not be relabeled as a pass.
+
+Any following build or test-only rebuild must preserve the mapping between its
+application APKs, test APK, source revision and device evidence. Matching version
+names/codes alone cannot justify reusing device results. Final API21/API35
+matrices, independent editors, deployment recovery and translated ARM64 checks
+remain incomplete at this checkpoint. No physical ARM phone/OEM editor or
+physical 16 KB-page device is available. The historical 2920 ms ARM-translation
+queue warning remains open; the current functional changes do not prove a
+latency repair. The earlier sections below are historical checkpoints, including
+their original pending status and failures, rather than the current candidate
+publication status.
 
 ## Release Boundary
 
