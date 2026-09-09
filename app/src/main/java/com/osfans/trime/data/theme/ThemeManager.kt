@@ -102,6 +102,7 @@ object ThemeManager {
             return
         }
         KeyActionManager.resetCache()
+        KeyActionManager.presetDiagnostics(theme.presetKeys).forEach { Timber.e(it) }
         FontManager.resetCache(theme)
         LiquidData.init(theme)
         ColorManager.attachTheme(theme)

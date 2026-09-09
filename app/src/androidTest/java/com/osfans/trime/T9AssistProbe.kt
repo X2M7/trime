@@ -21,6 +21,7 @@ import com.osfans.trime.core.T9Action
 import com.osfans.trime.core.T9StateProto
 import com.osfans.trime.data.prefs.AppPrefs
 import com.osfans.trime.data.theme.ThemeManager
+import com.osfans.trime.data.theme.model.KeyActionToken
 import com.osfans.trime.ime.core.InputView
 import com.osfans.trime.ime.core.TrimeInputMethodService
 import com.osfans.trime.ime.keyboard.KeyAction
@@ -187,7 +188,7 @@ class T9AssistProbe(
                 val theme = ThemeManager.activeTheme
                 val keyboard = Keyboard(instrumentation.targetContext, theme, 720, theme.presetKeyboards["luna_pinyin_t9"])
                 for (macro in listOf("(){Left}", "[]{Left}", "{}{Left}", "{Control+a}")) {
-                    val action = KeyAction(macro)
+                    val action = KeyAction(KeyActionToken.Plain(macro), theme.presetKeys)
                     check(action.code == KeyEvent.KEYCODE_UNKNOWN && action.getText(keyboard) == macro)
                 }
                 val plus = KeyCode.parse("+")
@@ -195,7 +196,7 @@ class T9AssistProbe(
                 check(KeyCode.parse("Control++") == (plus.first to KeyEvent.META_CTRL_ON))
                 check(KeyCode.parse("A") == (KeyEvent.KEYCODE_A to KeyEvent.META_SHIFT_ON))
                 for (literal in listOf("你好", "abc+xyz")) {
-                    check(KeyAction(literal).getText(keyboard) == literal)
+                    check(KeyAction(KeyActionToken.Plain(literal), theme.presetKeys).getText(keyboard) == literal)
                 }
             }
             phase("literal key, chord and text macro contracts passed")

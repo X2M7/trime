@@ -27,8 +27,8 @@ android {
         applicationId = "com.osfans.trime"
         minSdk = 21
         targetSdk = 37
-        versionCode = 20261113
-        versionName = "3.3.13-t9.8"
+        versionCode = 20261114
+        versionName = "3.3.13-t9.9"
         testInstrumentationRunner = "com.osfans.trime.StartupResponsivenessInstrumentation"
 
         multiDexEnabled = true
@@ -105,6 +105,8 @@ android {
                     "/META-INF/*.version",
                     "/META-INF/*.kotlin_module", // cannot be excluded actually
                     "/META-INF/androidx/**",
+                    // SDK Console ownership metadata is not used by serialization at runtime.
+                    "/META-INF/org/jetbrains/kotlinx/kotlinx-serialization-core-jvm/verification.properties",
                     "/DebugProbesKt.bin",
                     "/kotlin-tooling-metadata.json",
                 )

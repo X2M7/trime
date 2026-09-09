@@ -16,6 +16,7 @@ import com.osfans.trime.daemon.RimeDaemon
 import com.osfans.trime.daemon.RimeSession
 import com.osfans.trime.data.theme.ColorManager
 import com.osfans.trime.data.theme.ThemeManager
+import com.osfans.trime.data.theme.model.KeyActionToken
 import com.osfans.trime.ime.core.TrimeInputMethodService
 import com.osfans.trime.ime.keyboard.KeyAction
 import com.osfans.trime.ime.keyboard.Keyboard
@@ -130,6 +131,7 @@ class StartupResponsivenessInstrumentation : Instrumentation() {
         try {
             check(Build.HARDWARE in setOf("ranchu", "goldfish")) { "This probe only runs on an emulator" }
             handler.post(heartbeat)
+            result.putInt("coroutine_packaging_checks", CoroutinePackagingProbe.verify(this))
             if (shutdownOnly) {
                 runBlocking {
                     withTimeout(300_000) {
@@ -265,7 +267,7 @@ class StartupResponsivenessInstrumentation : Instrumentation() {
                     withContext(Dispatchers.Main) {
                         val theme = ThemeManager.activeTheme
                         val keyboard = Keyboard(targetContext, theme, 720, theme.presetKeyboards["luna_pinyin_t9"])
-                        val mode = KeyAction("Mode_switch")
+                        val mode = KeyAction(KeyActionToken.Plain("Mode_switch"), theme.presetKeys)
                         repeat(100) { mode.getLabel(keyboard) }
                     }
                     queries.await()

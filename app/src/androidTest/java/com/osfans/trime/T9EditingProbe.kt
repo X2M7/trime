@@ -22,6 +22,8 @@ import com.osfans.trime.daemon.RimeDaemon
 import com.osfans.trime.daemon.RimeSession
 import com.osfans.trime.data.prefs.AppPrefs
 import com.osfans.trime.data.sync.RimeDataSync
+import com.osfans.trime.data.theme.ThemeManager
+import com.osfans.trime.data.theme.model.KeyActionToken
 import com.osfans.trime.ime.composition.T9DisambiguationView
 import com.osfans.trime.ime.core.InlinePreeditMode
 import com.osfans.trime.ime.core.InputView
@@ -110,7 +112,7 @@ object T9EditingProbe {
                     }
                     val listener = main { view.di.direct.instance<CommonKeyboardActionListener>().listener }
                     fun switchKeyboard(action: String) {
-                        main { listener.onAction(KeyAction(action)) }
+                        main { listener.onAction(KeyAction(KeyActionToken.Plain(action), ThemeManager.activeTheme.presetKeys)) }
                         // KeyboardWindow posts attachment to the main queue before posting its Rime job.
                         main { }
                     }

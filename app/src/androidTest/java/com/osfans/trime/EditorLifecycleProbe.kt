@@ -36,6 +36,7 @@ import com.osfans.trime.daemon.RimeSession
 import com.osfans.trime.data.base.DataManager
 import com.osfans.trime.data.prefs.AppPrefs
 import com.osfans.trime.data.theme.ThemeManager
+import com.osfans.trime.data.theme.model.KeyActionToken
 import com.osfans.trime.ime.broadcast.EnterKeyDisplayDelegate
 import com.osfans.trime.ime.candidates.compact.CompactCandidateDelegate
 import com.osfans.trime.ime.candidates.popup.PopupCandidatesMode
@@ -199,7 +200,7 @@ object EditorLifecycleProbe {
                     }
                     fun keyboard() = checkNotNull(input()).di.direct.instance<KeyboardWindow>().currentKeyboard
                     fun type(value: String) = main { checkNotNull(input()).di.direct.instance<CommonKeyboardActionListener>().listener.onText(value) }
-                    fun enter() = main { checkNotNull(input()).di.direct.instance<CommonKeyboardActionListener>().listener.onAction(KeyAction("Return")) }
+                    fun enter() = main { checkNotNull(input()).di.direct.instance<CommonKeyboardActionListener>().listener.onAction(KeyAction(KeyActionToken.Plain("Return"), ThemeManager.activeTheme.presetKeys)) }
                     suspend fun focus(field: EditText) {
                         main {
                             field.requestFocus()
