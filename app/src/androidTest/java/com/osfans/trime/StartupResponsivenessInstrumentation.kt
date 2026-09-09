@@ -136,9 +136,15 @@ class StartupResponsivenessInstrumentation : Instrumentation() {
                 runBlocking {
                     withTimeout(300_000) {
                         check(RimeDaemon.getFirstSessionOrNull() == null) { "Shutdown probe requires no other clients" }
+                        // Record the brief startup state before creating the client.
+                        // The later Main-thread removal may occur after it reaches READY.
+                        val startupObserved = async(Dispatchers.Unconfined, start = CoroutineStart.UNDISPATCHED) {
+                            RimeDaemon.engineState.first { it == RimeLifecycle.State.STARTING }
+                        }
                         val first = withContext(Dispatchers.Main) { RimeDaemon.createSession("abandoned-startup") }
                         val stopped = first.lifecycleScope.launch(start = CoroutineStart.UNDISPATCHED) { awaitCancellation() }
-                        RimeDaemon.engineState.first { it == RimeLifecycle.State.STARTING }
+                        startupObserved.await()
+                        phase("Initial STARTING observed before client removal")
                         withContext(Dispatchers.Main) { RimeDaemon.destroySession("abandoned-startup") }
                         stopped.join()
                         check(stopped.isCancelled) { "Removed client's jobs were not cancelled" }
@@ -174,11 +180,16 @@ class StartupResponsivenessInstrumentation : Instrumentation() {
                             check(next !== previous)
                             check(runCatching { previous.run { isReady } }.isFailure)
                             next.runOnReady { check(isReady) }
-                            val restartStarted = async(start = CoroutineStart.UNDISPATCHED) {
-                                RimeDaemon.engineState.first { it == RimeLifecycle.State.STOPPING || it == RimeLifecycle.State.STOPPED }
+                            // Cancellation survives a fast STOPPING/STOPPED transition
+                            // that a conflated StateFlow observer could miss.
+                            val oldGeneration = next.lifecycleScope.launch(start = CoroutineStart.UNDISPATCHED) {
+                                awaitCancellation()
                             }
+                            check(oldGeneration.isActive) { "Restart observer was cancelled before the request" }
                             withContext(Dispatchers.Main) { RimeDaemon.restartRime() }
-                            restartStarted.await()
+                            oldGeneration.join()
+                            check(oldGeneration.isCancelled) { "Restart did not cancel the old generation" }
+                            phase("Restart cycle $cycle cancelled the old generation")
                             next.runOnReady { check(isReady) }
                             withContext(Dispatchers.Main) { RimeDaemon.destroySession("rapid-reconnect") }
                             RimeDaemon.engineState.first { it == RimeLifecycle.State.STOPPED }
