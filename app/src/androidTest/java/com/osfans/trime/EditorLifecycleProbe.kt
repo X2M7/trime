@@ -8,6 +8,9 @@ import android.app.Dialog
 import android.app.Instrumentation
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Paint
+import android.graphics.Rect
 import android.os.Build
 import android.os.Bundle
 import android.os.SystemClock
@@ -43,12 +46,14 @@ import com.osfans.trime.ime.core.TouchEventReceiverWindow
 import com.osfans.trime.ime.core.TrimeInputMethodService
 import com.osfans.trime.ime.keyboard.CommonKeyboardActionListener
 import com.osfans.trime.ime.keyboard.KeyAction
+import com.osfans.trime.ime.keyboard.KeyBehavior
 import com.osfans.trime.ime.keyboard.KeyView
 import com.osfans.trime.ime.keyboard.KeyboardWindow
 import com.osfans.trime.ime.switches.SwitchOptionAdapter
 import com.osfans.trime.ime.switches.SwitchOptionEntry
 import com.osfans.trime.ime.switches.SwitchOptionWindow
 import com.osfans.trime.ui.main.ClipEditActivity
+import com.osfans.trime.util.sp
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
@@ -247,6 +252,70 @@ object EditorLifecycleProbe {
                             setRuntimeOption("ascii_mode", false)
                         }
                         until("$theme T9 returns after full pinyin") { input() != null && keyboard().isT9Layout }
+                        // A narrow numeric SPACE key must show its purpose without clipping
+                        // the longer current schema name. Check both shipped themes, not
+                        // arbitrary user-defined labels or typography.
+                        for (numericType in listOf(InputType.TYPE_CLASS_PHONE, InputType.TYPE_CLASS_NUMBER)) {
+                            main {
+                                other.hint = "$theme numeric space"
+                                other.inputType = numericType
+                                other.imeOptions = EditorInfo.IME_ACTION_DONE
+                                other.setImeActionLabel(null, 0)
+                                other.setText("")
+                            }
+                            focus(other)
+                            until("$theme numeric space key is laid out") {
+                                val activeInput = input() ?: return@until false
+                                val window = activeInput.di.direct.instance<KeyboardWindow>()
+                                val selectedId = KeyboardWindow::class.java.getDeclaredField("currentKeyboardId").apply { isAccessible = true }.get(window)
+                                if (selectedId != "number" || window.currentKeyboard.isT9Layout) return@until false
+                                val keys = window.currentKeyboard.keys
+                                val space = keys.singleOrNull { it.code == KeyEvent.KEYCODE_SPACE } ?: return@until false
+                                descendants(activeInput).filterIsInstance<KeyView>()
+                                    .singleOrNull { it.id == keys.indexOf(space) }
+                                    ?.let { it.isShown && it.width > 0 && it.height > 0 } == true
+                            }
+                            main {
+                                val keys = keyboard().keys
+                                val space = keys.single { it.code == KeyEvent.KEYCODE_SPACE }
+                                check(space.getCode(KeyBehavior.CLICK) == KeyEvent.KEYCODE_SPACE) { "$theme space lost its action" }
+                                val view = descendants(checkNotNull(input())).filterIsInstance<KeyView>()
+                                    .single { it.id == keys.indexOf(space) }
+                                val visible = Rect()
+                                check(view.getLocalVisibleRect(visible) && visible == Rect(0, 0, view.width, view.height)) {
+                                    "$theme numeric space key is clipped: $visible"
+                                }
+                                val bitmap = Bitmap.createBitmap(view.width, view.height, Bitmap.Config.ARGB_8888)
+                                try {
+                                    // Render the actual KeyView before reading its final text paint;
+                                    // nominal theme size alone would miss drawing-time fitting.
+                                    view.draw(Canvas(bitmap))
+                                    val paint = KeyView::class.java.getDeclaredField("textPaint").apply { isAccessible = true }.get(view) as Paint
+                                    check(paint.textAlign == Paint.Align.CENTER) { "Numeric space bounds require the actual centered text paint" }
+                                    val label = space.getLabel()
+                                    val glyphs = Rect()
+                                    paint.getTextBounds(label, 0, label.length, glyphs)
+                                    val centerX = (view.width - view.paddingLeft - view.paddingRight) / 2f + view.paddingLeft + view.sp(space.keyTextOffsetX)
+                                    val left = centerX - paint.measureText(label) / 2f + glyphs.left
+                                    val right = centerX - paint.measureText(label) / 2f + glyphs.right
+                                    check(!glyphs.isEmpty && left >= view.paddingLeft && right <= view.width - view.paddingRight) {
+                                        "$theme numeric space label '$label' is horizontally clipped: $left..$right in ${view.paddingLeft}..${view.width - view.paddingRight}"
+                                    }
+                                    val metrics = paint.fontMetrics
+                                    val baseline = (view.height - view.paddingTop - view.paddingBottom) / 2f + view.paddingTop -
+                                        (metrics.ascent + metrics.descent) / 2f + view.sp(space.keyTextOffsetY)
+                                    check(baseline + glyphs.top >= view.paddingTop && baseline + glyphs.bottom <= view.height - view.paddingBottom) {
+                                        "$theme numeric space label '$label' is vertically clipped"
+                                    }
+                                    check(label == "空格") { "$theme numeric space must identify the space action" }
+                                } finally {
+                                    bitmap.recycle()
+                                }
+                            }
+                            phase("PASS: $theme numeric space action and rendered label fit its visible key")
+                            focus(chat)
+                            until("$theme T9 returns after numeric space check") { input() != null && keyboard().isT9Layout }
+                        }
                     }
                     ThemeManager.selectTheme(originalTheme)
                     until("original theme retains selected T9") { input() != null && keyboard().isT9Layout }

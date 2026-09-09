@@ -2,7 +2,162 @@
 
 Work in progress. This is not a claim of a warning-free release.
 
-## Stable Candidate Follow-up (2026-09-09)
+## Latest Checkpoint: Build5 Rejected For Numeric-Space Label; Build6 Pending
+
+Build5's existing API21/API35 functional matrices passed, but screenshot review
+confirmed an application visual defect on both APIs: the `trime` numeric
+keyboard's narrow bottom-center space key displays the full schema name and
+hard-clips it. This blocks final Build5 acceptance. The numeric layout now uses
+the existing `space1` action with its explicit `空格` label and unchanged space
+event; actual glyph visibility and action regression checks are prepared and
+formatted. Build6 is planned, not yet built or accepted. Stable publication
+remains pending, and all previous results below retain their original identities.
+
+The final Build5 API21 seven-probe batch, 17 independent-app checkpoints,
+fallback/retry and navigation passed. The actual published t9.6 ARM64 APK
+(`92e0e56244559b091801e8748f25a7fb2d80313938147c0ca006290e1d7ad9f6`)
+was replaced in place by Build5 ARM64
+(`8325b1b58753328aafab35d25a0dec84d4948c9c4482bf139a8c00b43de2923a`),
+preserving the independent 53-byte marker. Old-version initial deployment was
+incomplete; this is not evidence that the old version reached Chinese-input
+readiness. Build5 ARM-translation engine and T02 diagnostics passed, with native
+deployment taking 115.7 seconds and engine maximum observed main-loop gap 939 ms.
+No greater-than-2-second queue diagnostic or scoped application fatal/ANR/window
+leak was observed for the new app PIDs 6087/6343. Earlier Google/system ANRs remain
+retained and precede those PIDs. These are Build5 diagnostics, not Build6 acceptance
+or physical ARM/OEM performance coverage. After the resource edit, `stable-host4`
+passed 102 tests. Full Build6 artifact, device and source/archive gates remain.
+
+## Stable-build5 Checkpoint (Historical API35 Acceptance; Later Visual Rejection Above)
+
+The frozen APK build commit is
+`f84e2365a7b7bdf924665373eef1e315d5d4e9c2`; versionName is `3.3.13-t9.8`,
+versionCode `20261113`. Build5 completed from a clean, unchanged source snapshot.
+The 285 application and nine build-logic JVM test XMLs show zero failures, errors
+or skips. The application test task executed; build-logic was UP-TO-DATE with
+retained successful XML. Spotless passed, Lint has zero issues and the full build
+log has no warning/deprecation line. `stable-host3` separately passed 102 tests
+(quality 58, T04 13, T05 5, baseline 26), with helper-source hashes retained.
+Earlier host1/host2 counts below remain historical checkpoints.
+
+| Frozen candidate artifact | stable-build5 SHA-256 |
+| --- | --- |
+| ARM64 APK | `8325b1b58753328aafab35d25a0dec84d4948c9c4482bf139a8c00b43de2923a` |
+| x86_64 APK | `e7678a21dcc298941462b4e9f17e338172565fe655ca79bd82502e07b324ed97` |
+| Android test APK | `7c5719bb4d5b9ff1a4d01cae290eebec541cbe14e0f6b0d385ea6a5910740483` |
+
+Independent `stable-build5/release-preflight-review.json` confirms all three APK
+hashes, 479 frozen build-source hashes, raw manifests/signatures/BuildConfig,
+each application's 48 resource hashes and static ZIP/ELF 16 KB alignment.
+The package remains `com.osfans.trime.debug`, minSdk 21 / targetSdk 37, with the
+existing certificate and debuggable build. v1/v2 verify; each application retains
+three META-INF warnings and the instrumentation APK has none. Build timestamp
+`1788970459843` ms resolves to `2026-09-09T16:14:19.843Z`. The preflight review's
+92-host-test count predates host3; neither count is silently rewritten.
+
+The following accepted API35 checks use the frozen Build5 x86_64 APK. The
+complete API35 selection is accepted; API21 and ARM64 acceptance remain pending.
+
+| Evidence under `build/t06-runtime/` | Build5 result |
+| --- | --- |
+| `api35-stable5-t03-landscape-large` | At 800×412dp/fontScale 2, individual candidate text/comment visibility assertions and all eight screenshots across both builtin themes passed. The formerly clipped fifth `擬稿` / `ni gao` annotation is complete inside the row. This is geometry-only coverage, not a repeated gesture/corpus run. |
+| `api35-stable5-clip-visibility` | Short/eight-line text passed actual Back, same-window/text preservation, unobstructed title/controls and actual Cancel. Old eight-line field/button overlap of 59px becomes zero: field `[532,207][1068,578]`, Cancel `[692,578][936,688]`. Display/font/rotation/IME restoration passed. |
+| `api35-stable5-setup` | Five notification-dialog lifecycle phases passed, alongside 300 wizard refresh requests and 29 navigation clicks. No WindowLeaked or other critical finding was identified in the reviewed application and scoped cross-process intervals. |
+| `api35-stable5-main-{editors,engine,startupFailure,feedback,shutdown,clipSave,saf,clip,t02}` | All nine main probes passed; together with setup above this is ten instrumented probes. The complete editor matrix and 100 show/hide cycles, startup/recovery, sound, shutdown, eight real clipboard/collection persistence checks, 21 isolated-provider SAF checks and T02 editing passed. |
+| `api35-stable5-t03` / `api35-stable5-t05` | Full 360dp T03 semantics and full T05 corpus/UI passed on both themes. T03 has eight portrait screenshots plus the eight large-font geometry screenshots above (16 total); T05 has two screenshots. |
+| `api35-stable5-independent` | All 23 checkpoints passed, including process recovery, rotation, application switching and both split positions. Real editor commits change `STABLE` → `STABLE你` → `STABLE你你`; six split pixel checks show nonblank keys. |
+| `api35-stable5-unavailable` | Actual fallback numeric entry/deletion passed with resources blocked; Retry restored the T9 keyboard and candidates after real 6→4 taps. Resources were restored. |
+| `api35-stable5-navigation` | Two Profile/Back and Test-input/Back cycles returned to Schemata. Twelve fresh XML captures verify navigation; this run does not assert clipboard or PNG screenshot checks. |
+
+The five notification phases verify: repeated checks retain one showing prompt;
+an old queued dismissal cannot clear its replacement; recreation removes the
+old window and gives the new Activity its own prompt; covering the Activity
+dismisses its prompt and rejects late checks; finishing removes both window and
+owner reference. `stable-build5/api35-notification-clip-independent-review.json`
+retains these phases, raw evidence hashes and separate log boundaries. Setup has
+23 platform-tag warnings; clipboard has 35, including 21 missed-frame records
+and two FrameTracker force-finish timeouts. Functional success is not a
+warning-free or smoothness claim.
+
+`stable-build5/api35-final-instrumentation-review.json`,
+`api35-final-t03-t05-review.json` and `api35-final-external-review.json` retain
+the final API35 identities, raw evidence hashes and independent log reviews.
+The nine main probes retain 579 scoped warning/error lines, including 13
+injected missing-theme diagnostics, 72 startup-fault diagnostics and 28
+intentional deleted-row failure lines. SAF uses isolated fixtures; its three
+injected rename failures produce 78 framework-tag warning/stack lines and do
+not establish an external system-provider persisted-grant test. The editor
+probe itself retains 241 warning/error lines. No unexpected critical finding
+remains after the specific renderer event below is individually adjudicated.
+
+Build5's Chromium diagnostic at 2026-09-10 00:30:58.710 identifies renderer PID
+3667 with `code -1`, while main Trime PID 3579 continues. At .721 ActivityManager
+records `isolated not needed`; at .786 Zygote reports `exited cleanly (0)` for
+3667. Together with the frozen probe's explicit WebView destruction before its
+100 show/hide cycles, this supports the inference that the event belongs to
+WebView teardown. The real diagnostic remains critical in the automatic summary
+and is preserved with those system lines. Later full-device captures contain
+copies of the same timed event as backlog. This Build5 clean-exit evidence must
+not replace Build3 renderer 2965's historical signal-9 termination record.
+
+The 360dp T03/T05 runs retain 22/17 platform-tag warnings. T05 preserves all 24
+exact candidate lists; explicit fuzzy/typo syllable recovery reaches 12/12 each.
+The single sequential off/on timing/PSS samples are observations influenced by
+warmup and scheduling, not evidence of a causal speedup, memory reduction or
+automatic Hanzi Top-1 improvement. This run uses x86_64 APKs on an x86_64 emulator;
+the metrics helper's historical native-bridge wording does not establish ARM
+execution. The compiled assertions are bound by the test APK hash; the reviewed
+driver matches the frozen source, although its hash is not pinned in T03 run identity.
+
+Independent/unavailable/navigation runs retain 40/75/36 app warning/error lines.
+Independent-app IPCThreadState errors correlate with forced fixture replacement;
+subsequent editor checkpoints succeed. All 67 recognized unavailable-run errors
+belong to deliberately blocking the shared/default.yaml destination. Animation
+and binder diagnostics remain retained rather than suppressed. Screenshot/XML
+capture attempts include four/one/one retries respectively; final captures and
+checks passed. Password verification checks masked length, not disclosed text.
+
+Clipboard XML retains all eight lines and the end caret; the editor automatically
+scrolls to the last lines. No explicit manual scroll-back-to-Line1 gesture was
+tested. While the IME is visible the floating editor title may pan partly above
+the display; actual Back restores the complete title and controls. These checks
+use Back key dispatch and real Cancel taps, not gesture-navigation animation,
+database-row writes or Save/OK execution.
+
+The candidate negative control deliberately pairs old Build3 x86_64 hash
+`07d78c06e7947e85ca9ddffca2854283f216748e93028e49676ea807a3818d55`
+with the new Build5 test APK above. It fails on the first `ni hao` comment view:
+53 visible vertical pixels out of a 54-pixel view, at `T9LayoutProbe.kt:136`.
+It stops before reaching the originally clipped fifth `ni gao`; glyph clipping
+of that first label is not independently asserted. The real attached adapter
+and candidate view were reached without a linkage/unattached-fixture error.
+The assertion precedes screenshot export, so missing screenshots and
+`artifacts_complete=false` are expected for this negative control, which is
+excluded from final passing runs. `candidate-negative-independent-review.json`
+and `candidate-positive-independent-review.json` preserve that distinction.
+The matching Build5 positive run has all eight screenshots, 17 platform-tag
+warnings and no recognized project diagnostics or critical findings.
+
+`api35-stable5-install/failure-review.json` retains an installation-preparation
+failure: `adb exec-in run-as dd` returned success but wrote a zero-byte marker.
+The exact-byte precondition rejected it before installing the candidate APK.
+`api35-stable5-install2/identity.json` then records successful Build3 → Build5
+x86_64 replacement, using adb push/app-UID copy and raw exec-out verification.
+Its independent 53-byte app-private marker matches before/after and installed
+app/test hashes match Build5. `api21-stable5-install/identity.json` likewise
+records Build3 → Build5 replacement with a preserved 53-byte marker and exact
+installed hashes. Neither procedure uninstalled the app or cleared its data;
+neither establishes personal-dictionary migration or ARM64 upgrade.
+
+Final API21 functional coverage, real published t9.6 ARM64 in-place upgrade and
+publication source/archive verification remain pending. The API21 probe batch
+is still running at this checkpoint; successful installation is not a full
+matrix pass. No stable release has been published. Physical
+ARM64/OEM and physical 16 KB-page devices remain unavailable; historical
+translated-ARM queue/performance findings are not resolved by these checks.
+All sections below preserve their earlier identities, plans and failures.
+
+## Stable Candidate Follow-up (Historical Preparation, 2026-09-09)
 
 The user has authorized publication of `v3.3.13-t9.8` as a stable release after
 acceptance. Its planned versionCode is `20261113`; the existing package and
@@ -31,7 +186,7 @@ At this checkpoint these changes still required a frozen build and device matrix
 `stable-format1` passed Spotless application and nine build-logic tests, including
 five timestamp regressions. No build warning occurred in that preparation step.
 
-## Build4 Aborted; Window Leak Fix And Build5 Pending
+## Historical Build4 Abort (Window Leak Found Before Build5)
 
 The candidate-annotation and clipboard-height corrections, their regression
 coverage and the preceding documentation checkpoint were committed as
@@ -180,7 +335,7 @@ and only separately completed installation identities support upgrade claims.
 The earlier Build2 unattached-adapter fixture failure below is unchanged; the
 corrected Build3 fixture completed its own matrix.
 
-## Stable-build2 Checkpoint (Not Final Acceptance)
+## Stable-build2 Checkpoint (Historical; Not Final Acceptance)
 
 `stable-build1` was built from `b910b3e8e4fba9acdb4a53eedbd84b14bcbb1b4f`;
 `stable-build2` was built from `91ffa02934c5739fb4ac6d54dc191b96ef701395`.
