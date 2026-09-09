@@ -17,12 +17,15 @@ import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.children
+import androidx.recyclerview.widget.RecyclerView
 import com.osfans.trime.core.RimeApi
 import com.osfans.trime.data.prefs.AppPrefs
 import com.osfans.trime.data.theme.ThemeManager
 import com.osfans.trime.ime.bar.InputBarDelegate
+import com.osfans.trime.ime.candidates.CandidateViewHolder
 import com.osfans.trime.ime.composition.PreeditDelegate
 import com.osfans.trime.ime.composition.T9DisambiguationView
+import com.osfans.trime.ime.core.AutoScaleTextView
 import com.osfans.trime.ime.core.InputView
 import com.osfans.trime.ime.core.TrimeInputMethodService
 import com.osfans.trime.ime.keyboard.KeyView
@@ -95,6 +98,51 @@ class T9LayoutProbe(
         Rect(point[0], point[1], point[0] + view.width, point[1] + view.height)
     }
 
+    private fun candidateTextVisible(label: String, candidateBar: View) {
+        val recycler = candidateBar.findViewById<RecyclerView>(R.id.candidate_view)
+        check(recycler != null && recycler.isShown && recycler.childCount > 0) { "$label: missing visible candidates" }
+        fun screenBounds(view: View): Rect {
+            val point = IntArray(2)
+            view.getLocationOnScreen(point)
+            return Rect(point[0], point[1], point[0] + view.width, point[1] + view.height)
+        }
+        val viewport = Rect()
+        check(recycler.getLocalVisibleRect(viewport))
+        val origin = screenBounds(recycler)
+        viewport.offset(origin.left, origin.top)
+        var checked = 0
+        for (item in recycler.children) {
+            val bounds = screenBounds(item)
+            if (!Rect.intersects(viewport, bounds)) continue
+            // A viewport can expose part of the next horizontal candidate. Vertical
+            // clipping is always a failure, including on those partial candidates.
+            check(bounds.top >= viewport.top && bounds.bottom <= viewport.bottom) { "$label: candidate row clipped: $bounds in $viewport" }
+            val fullyVisibleWidth = bounds.left >= viewport.left && bounds.right <= viewport.right
+            val holder = recycler.getChildViewHolder(item) as CandidateViewHolder
+            val labels = descendants(item).filterIsInstance<AutoScaleTextView>()
+                .filter { it.isShown && it.text.isNotEmpty() }.toList()
+            check(labels.any { it.text.toString() == holder.text }) { "$label: missing candidate text ${holder.text}" }
+            if (holder.comment.isNotEmpty()) {
+                check(labels.any { it.text.toString() == holder.comment }) { "$label: missing candidate comment ${holder.comment}" }
+            }
+            for (text in labels) {
+                val textBounds = screenBounds(text)
+                check(text.width > 0 && text.height > 0 && textBounds.top >= bounds.top && textBounds.bottom <= bounds.bottom) { "$label: candidate label ${text.text} vertically outside its row: $textBounds in $bounds" }
+                if (fullyVisibleWidth) {
+                    check(bounds.contains(textBounds)) { "$label: candidate label ${text.text} outside its row: $textBounds in $bounds" }
+                }
+                if (!Rect.intersects(viewport, textBounds)) continue
+                val visible = Rect()
+                check(text.getLocalVisibleRect(visible) && visible.top == 0 && visible.bottom == text.height) { "$label: candidate label ${text.text} vertically clipped: $visible of ${text.width}x${text.height}" }
+                if (fullyVisibleWidth) {
+                    check(visible == Rect(0, 0, text.width, text.height)) { "$label: candidate label ${text.text} clipped: $visible of ${text.width}x${text.height}" }
+                }
+            }
+            if (fullyVisibleWidth) checked++
+        }
+        check(checked > 0) { "$label: no fully visible candidate checked" }
+    }
+
     private suspend fun snapshot(label: String) {
         settle()
         val before = main {
@@ -146,6 +194,7 @@ class T9LayoutProbe(
             candidate.getLocationOnScreen(candidatePosition)
             val topInset = ViewCompat.getRootWindowInsets(input())?.getInsets(WindowInsetsCompat.Type.statusBars())?.top ?: 0
             check(candidatePosition[1] >= topInset && candidatePosition[1] + candidate.height <= position[1]) { "$label: candidates overlap status or composition controls" }
+            candidateTextVisible(label, candidate)
             check(!input().di.direct.instance<PreeditDelegate>().ui.visible) { "$label: duplicated floating preedit" }
             val labelView = descendants(bar).filterIsInstance<AppCompatTextView>().first()
             check(labelView.context.theme.resolveAttribute(androidx.appcompat.R.attr.windowActionBar, TypedValue(), true)) { "$label: pinyin label lacks an AppCompat theme" }

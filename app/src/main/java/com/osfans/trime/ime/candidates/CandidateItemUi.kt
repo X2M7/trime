@@ -20,7 +20,6 @@ import com.osfans.trime.ime.core.AutoScaleTextView
 import com.osfans.trime.ime.keyboard.GestureFrame
 import com.osfans.trime.util.roundedRippleDrawable
 import splitties.dimensions.dp
-import splitties.views.dsl.constraintlayout.baselineToBaselineOf
 import splitties.views.dsl.constraintlayout.bottomOfParent
 import splitties.views.dsl.constraintlayout.bottomToTopOf
 import splitties.views.dsl.constraintlayout.centerHorizontally
@@ -103,9 +102,11 @@ class CandidateItemUi(
                 add(
                     comment,
                     lParams(wrapContent, wrapContent) {
+                        // AutoScaleTextView's drawn baseline changes as Flexbox measures
+                        // candidate widths. Keep both labels inside the candidate row.
+                        centerVertically()
                         startToEndOf(text, ctx.dp(1))
                         endOfParent()
-                        baselineToBaselineOf(text)
                         horizontalChainStyle = ConstraintLayout.LayoutParams.CHAIN_PACKED
                     },
                 )

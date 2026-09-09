@@ -31,6 +31,123 @@ At this checkpoint these changes still required a frozen build and device matrix
 `stable-format1` passed Spotless application and nine build-logic tests, including
 five timestamp regressions. No build warning occurred in that preparation step.
 
+## Stable-build3 Checkpoint (Visual Defects; Build4 Pending)
+
+`stable-build3` was built from clean commit
+`1bd657725e0d28db2cde13b9b0cec935e6dff9db`, with versionName `3.3.13-t9.8`
+and versionCode `20261113`. It passed 285 application and nine build-logic JVM
+tests, the 91 host checks, Spotless and Lint (zero issues), with no build warning.
+Both application APKs and the test APK passed frozen identity/signature checks;
+the 48 packaged resources and static ZIP/ELF 16 KB alignment checks passed.
+Each application APK retains three v1 META-INF warnings. These checks do not
+constitute final acceptance, physical-device coverage or a warning-free release.
+
+| Candidate artifact | stable-build3 SHA-256 |
+| --- | --- |
+| ARM64 APK | `89304d67b5f1f63cf833a0f2e288892d3efb42667158a1f26ca2c11127b76876` |
+| x86_64 APK | `07d78c06e7947e85ca9ddffca2854283f216748e93028e49676ea807a3818d55` |
+| Android test APK | `195b2a75fbe4f9b903fe795a80e8437106964eb26796bb9713d504f4fb7b2073` |
+
+The following results apply to that x86_64 application and, where used, that test
+APK. Evidence directories are under `build/t06-runtime/`; independent review
+JSON files are retained under `stable-build3/`.
+
+| Evidence | Build3 result and scope |
+| --- | --- |
+| `api21-stable3-{editors,engine,startupFailure,feedback,shutdown}` | All five functional probes passed. The complete editor/action matrix includes overlay ownership, both themes, physical keys, stale callbacks, third-party fallback, WebView and all 100 show/hide cycles. |
+| `api21-stable3-independent` / `api21-stable3-unavailable` | All 17 independent-app checkpoints passed, including field switching, return to T9, process recovery, rotation and application switching. Resource-unavailable numeric input, retry/recovery and resource restoration passed. |
+| `api35-stable3-{editors,engine,startupFailure,feedback,shutdown}` and `api35-stable3-extra-{setup,clipSave,saf,clip,t02}` | All ten functional probes passed. Setup refresh/navigation, eight clipboard/collection saves, 21 isolated-provider SAF checks and real T02 editing are included. The isolated provider is not a real-system tree-grant acceptance test. |
+| `api35-stable3-independent` / `api35-stable3-unavailable` | All 23 independent-app checkpoints passed, including fullscreen field switching, process recovery, rotation, application switching and split-screen. Fallback typing, retry/recovery and resource restoration passed. |
+| `api35-stable3-t03` / `api35-stable3-t05` | Full 360dp T03 and T05 passed on both themes; screenshots and corpus metrics are retained. Other viewports are not implied. |
+| `api35-stable3-t03-landscape-large` | Existing geometry-only assertions passed at 800×412dp, fontScale 2.0. Manual screenshot review nevertheless found clipped candidate annotation text. This viewport is not visually accepted. |
+
+The blocking screenshot is
+`api35-stable3-t03-landscape-large/landscape-large/t03-trime-800x412-font2.0.png`
+(SHA-256 `7aed10148490454f7ed97d0be4a84fe2e3fe81b2b34751d3d4ea0d5a5bd583ec`).
+With RIGHT annotations, the fifth candidate `擬稿` has its `ni gao` annotation
+lower than the other candidates and clipped by the row bottom. This is a real
+application layout defect, not a platform-log classification or harmless
+renderer artifact. The old geometry gate checked containers but did not check
+every candidate text/comment view. Its original automatic pass remains recorded
+alongside this failed manual review; it must not be promoted into a visual pass.
+
+At this checkpoint a bounded `CandidateItemUi` RIGHT-annotation
+`centerVertically` correction and `T9LayoutProbe` individual-candidate visibility
+assertions are prepared but uncommitted. A fresh Build4 and a negative control
+using the old application with the new test APK are pending. Build3 is not the
+accepted final artifact. Any changed APK needs its own identity and regression
+evidence; matching version names/codes cannot carry acceptance forward.
+
+An additional real clipboard-layout defect was confirmed at the same
+800×412dp/fontScale 2.0 viewport. After actual Back hides the IME, the eight-line
+EditText occupies `[532,207][1068,637]` while Cancel occupies
+`[692,578][936,688]` (OK shares that vertical range): the controls overlap by
+59 physical pixels. The earlier helper3 checked each control's screen bounds
+but missed overlap; its automatic pass is not visual acceptance.
+
+The strengthened negative control
+`api35-stable3-clip-overlap-negative/report.json` uses the unchanged Build3
+x86_64 APK hash above. The short-text case passes actual Back, same-window/text
+preservation, unobstructed controls and an actual Cancel tap. The eight-line
+case correctly fails with `Edit text overlaps OK/Cancel after hiding IME`.
+Its screenshot `eight-lines-after-back-01.png` has SHA-256
+`2042e84d96dc2ed8b1dc5f841639a46b3e9555f5396a16076d42928f5a03c097`.
+Original font/display/rotation/IME settings were restored successfully; 60 raw
+warning/error lines remain, with zero recognized project diagnostics. The
+overlap is nevertheless a real application defect.
+
+The final helper is tracked as `script/quality/run_clip_visibility.py`; it uses
+actual Back/Cancel input, checks text/window preservation and does not write a
+database row or click Save. This covers Back key dispatch, not gesture-animation
+acceptance or save behavior. Earlier focus-command and unsupported-flag helper
+failures remain retained. A minimal EditText `app:layout_constrainedHeight="true"`
+correction is prepared but not yet built or accepted. Both this clipboard fix
+and the candidate-annotation fix await Build4; only the clipboard negative
+control has run at this checkpoint.
+
+`stable-build3/api21-independent-log-review.json`,
+`api21-external-apps-review.json`, `api35-independent-log-review.json` and
+`api35-t03-t05-review.json` retain scoped findings and raw evidence hashes.
+No unexpected critical or engine-queue finding was identified in the reviewed
+five/ten instrumented probe intervals. Deliberate missing-resource, invalid
+configuration and deleted-row diagnostics remain counted as injected faults,
+with original stacks. API21 retains EGL/WebView, AudioTrack and SQLite records,
+including a pre-activation inactive-connection diagnostic outside the tested
+Trime interval. Zero recognized project diagnostics is not zero platform errors.
+
+In API35 editors, Chromium reports renderer PID 2965 termination at
+23:44:21.636; ChildProcessService destruction, ActivityManager's
+`isolated not needed` kill and Zygote signal 9 follow in the retained system log.
+This correlates with teardown after the successful WebView check while Trime
+PID 2865 continues through all 100 visibility cycles and completion. It does not
+establish a Trime process/native crash, and it is not a clean renderer exit-code-0
+claim. Later full-device captures retain this earlier record as backlog. API35
+also retains FrameTracker animation timeouts/missed frames and six
+SurfaceComposerClient sync-transaction timeouts in `extra-clipSave`; no jank-free
+or performance-repair claim follows from the functional passes.
+
+`api21-stable3-install/identity.json` records Build2 → Build3 x86_64 replacement
+with the independent app-private marker preserved and installed hashes checked.
+Together with the earlier Build11 → Build2 evidence this covers development
+candidate replacement on API21, not published ARM64 upgrade or personal-dictionary
+migration. `arm35-stable3-upgrade-prep/upgrade-compatibility.json` confirms the
+real published t9.6 ARM64 APK matches both GitHub's asset digest and a newly
+streamed public download: SHA-256
+`92e0e56244559b091801e8748f25a7fb2d80313938147c0ca006290e1d7ad9f6`.
+Its package and signing certificate match Build3 and versionCode increases
+`20261108` → `20261113`; actual translated ARM64 installation/upgrade remains
+pending. The historical 2920 ms ARM-translation queue warning remains unresolved
+by these x86_64 checks. No physical ARM/OEM or physical 16 KB-page device was tested.
+
+Setup failures remain historical failures: the API35 batch first collided with
+the existing manual-setup output directory, before instrumentation started;
+the successful retry is `api35-stable3-extra-setup`. The initial API35 missing
+package/`pm` exit-1 installation helper attempt and the two earlier data-marker
+helper attempts do not count as successful installs. Their evidence is retained,
+and only separately completed installation identities support upgrade claims.
+The earlier Build2 unattached-adapter fixture failure below is unchanged; the
+corrected Build3 fixture completed its own matrix.
+
 ## Stable-build2 Checkpoint (Not Final Acceptance)
 
 `stable-build1` was built from `b910b3e8e4fba9acdb4a53eedbd84b14bcbb1b4f`;
