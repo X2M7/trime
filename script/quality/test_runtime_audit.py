@@ -6,7 +6,7 @@ from unittest.mock import Mock, patch
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
-from runtime_audit import audit_log, device_audit_lock, filter_pid_log, instrumentation_passed, instrumentation_pid, record_logcat, validate_screenshots
+from runtime_audit import audit_log, device_audit_lock, filter_pid_log, instrumentation_passed, instrumentation_pid, log_after_marker, record_logcat, validate_screenshots
 
 
 class RuntimeAuditTest(unittest.TestCase):
@@ -62,6 +62,30 @@ class RuntimeAuditTest(unittest.TestCase):
         selected += "09-08 12:00:00.002 1234 5678 I Trime: detail\n"
         other = "09-08 12:00:00.003 91234 5678 E Other: PID 1234 in message\n"
         self.assertEqual(selected, filter_pid_log(other + selected, 1234))
+
+    def test_capture_boundary_keeps_every_new_level_not_previous_faults(self):
+        old = '09-08 12:00:00.001 1234 5678 E Trime: injected fault\n'
+        boundary = '09-08 12:00:00.002 2000 2000 I TrimeRuntimeAudit: BEGIN-test\n'
+        fresh = '09-08 12:00:00.003 1234 5678 I Trime: ready\n09-08 12:00:00.004 1234 5678 E Trime: real defect\n'
+        self.assertEqual(fresh, log_after_marker(old + boundary + fresh, 'BEGIN-test'))
+        self.assertEqual(1, len(audit_log(log_after_marker(old + boundary + fresh, 'BEGIN-test'))['warnings']))
+
+    def test_capture_boundary_rejects_missing_duplicate_and_wrong_tag(self):
+        boundary = '09-08 12:00:00.002 2000 2000 I TrimeRuntimeAudit: BEGIN-test\n'
+        for log in ('', boundary * 2, boundary.replace('TrimeRuntimeAudit', 'Other'), boundary.replace('BEGIN-test', 'BEGIN-other')):
+            with self.assertRaises(ValueError):
+                log_after_marker(log, 'BEGIN-test')
+
+    def test_legacy_shell_log_trailing_space_does_not_lose_boundary(self):
+        boundary = '09-08 12:00:00.002 2000 2000 I TrimeRuntimeAudit: BEGIN-test \r\n'
+        fresh = '09-08 12:00:00.003 1234 5678 E Trime: real defect\n'
+        self.assertEqual(fresh, log_after_marker(boundary + fresh, 'BEGIN-test'))
+        with self.assertRaises(ValueError):
+            log_after_marker(boundary.replace('BEGIN-test ', 'BEGIN-test-more '), 'BEGIN-test')
+
+    def test_boundary_without_new_records_is_not_warning_free(self):
+        boundary = '09-08 12:00:00.002 2000 2000 I TrimeRuntimeAudit: BEGIN-test\n'
+        self.assertFalse(audit_log(log_after_marker(boundary, 'BEGIN-test'))['warning_free'])
 
     def test_every_warning_is_retained_including_platform(self):
         log = ("09-08 12:00:00.001 1234 5678 W HWUI    : platform warning\n"

@@ -35,6 +35,7 @@ open class GestureFrame(context: Context) : FrameLayout(context) {
     private var longPressJob: Job? = null
     private var repeatJob: Job? = null
     private var doubleTapJob: Job? = null
+    private var touchActive = false
 
     private var lastTapTime = 0L
     private var lastSwipeBehavior: KeyBehavior = KeyBehavior.CLICK
@@ -87,6 +88,7 @@ open class GestureFrame(context: Context) : FrameLayout(context) {
         when (event.actionMasked) {
             MotionEvent.ACTION_DOWN -> {
                 if (!isEnabled) return false
+                touchActive = true
                 touchId = (touchId + 1) and 0xFFFF
                 val currentTouchId = touchId
                 startX = x
@@ -112,6 +114,7 @@ open class GestureFrame(context: Context) : FrameLayout(context) {
             }
 
             MotionEvent.ACTION_MOVE -> {
+                if (!touchActive) return true
                 if (!isEnabled) return false
                 drawableHotspotChanged(x, y)
 
@@ -150,7 +153,9 @@ open class GestureFrame(context: Context) : FrameLayout(context) {
             }
 
             MotionEvent.ACTION_UP -> {
+                if (!touchActive) return true
                 if (!isEnabled) return false
+                touchActive = false
                 val dx = x - startX
                 val dy = y - startY
 
@@ -209,14 +214,7 @@ open class GestureFrame(context: Context) : FrameLayout(context) {
             }
 
             MotionEvent.ACTION_CANCEL -> {
-                isPressed = false
-                cancelJobs()
-
-                isLongPressed = false
-                slideActivated = false
-                swipeTriggered = false
-
-                onCancel?.invoke()
+                cancelGesture()
                 return true
             }
         }
@@ -301,16 +299,26 @@ open class GestureFrame(context: Context) : FrameLayout(context) {
         doubleTapJob?.cancel()
     }
 
-    override fun onDetachedFromWindow() {
+    fun cancelGesture() {
+        touchActive = false
+        touchId = (touchId + 1) and 0xFFFF
+        lastTapTime = 0
+        isPressed = false
+        isLongPressed = false
+        slideActivated = false
+        swipeTriggered = false
         cancelJobs()
         onCancel?.invoke()
+    }
+
+    override fun onDetachedFromWindow() {
+        cancelGesture()
         super.onDetachedFromWindow()
     }
 
     override fun setEnabled(enabled: Boolean) {
         if (!enabled) {
-            cancelJobs()
-            onCancel?.invoke()
+            cancelGesture()
         }
         super.setEnabled(enabled)
     }

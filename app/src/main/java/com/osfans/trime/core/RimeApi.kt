@@ -12,6 +12,8 @@ interface RimeApi {
 
     val isReady: Boolean
 
+    val usingExistingResources: Boolean
+
     val schemaCached: RimeSchema
 
     val statusCached: StatusProto
@@ -103,6 +105,9 @@ interface RimeApi {
     fun getRuntimeOptionCached(option: String): Boolean
 
     suspend fun setNullInputType(value: Boolean)
+
+    /** Discard the previous editor's composition before binding any new input. */
+    suspend fun beginEditor(token: Long, nullInputType: Boolean)
 
     suspend fun getCandidates(
         startIndex: Int,

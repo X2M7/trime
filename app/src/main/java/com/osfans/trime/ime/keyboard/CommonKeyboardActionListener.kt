@@ -58,25 +58,31 @@ class CommonKeyboardActionListener(override val di: DI) : DIAware {
     private val prefs = AppPrefs.defaultInstance()
 
     private fun showDialog(dialog: suspend (RimeApi) -> Dialog) {
-        rime.launchOnReady { api ->
-            service.lifecycleScope.launch {
-                service.showDialog(dialog(api))
-            }
+        val editorToken = service.editorToken
+        service.postRimeJob {
+            val view = dialog(this)
+            if (service.isCurrentEditor(editorToken)) service.showDialog(view)
         }
     }
 
     private fun showThemePicker() {
-        showDialog { api ->
+        val editorToken = service.editorToken
+        showDialog {
             ThemePickerDialog.build(service.lifecycleScope, context) {
-                api.commitComposition()
+                service.postRimeJob {
+                    if (service.isCurrentEditor(editorToken)) commitComposition()
+                }.join()
             }
         }
     }
 
     private fun showColorPicker() {
-        showDialog { api ->
+        val editorToken = service.editorToken
+        showDialog {
             ColorPickerDialog.build(service.lifecycleScope, context) {
-                api.commitComposition()
+                service.postRimeJob {
+                    if (service.isCurrentEditor(editorToken)) commitComposition()
+                }.join()
             }
         }
     }
@@ -148,17 +154,15 @@ class CommonKeyboardActionListener(override val di: DI) : DIAware {
 
             private fun handleSwitchCharset(action: KeyAction) {
                 val option = action.toggle.ifEmpty { return }
-
-                rime.launchOnReady { api ->
-                    service.lifecycleScope.launch {
-                        val isEnabled = api.getRuntimeOption(option)
-                        val isComposing = api.statusCached.isComposing
-                        api.setRuntimeOption(option, !isEnabled)
-                        if (option == "ascii_mode" && isComposing) {
-                            api.getRawInput().takeIf { it.isNotEmpty() }?.let {
-                                service.commitText(it)
-                                api.clearComposition()
-                            }
+                val editorToken = service.editorToken
+                service.postRimeJob {
+                    val isEnabled = getRuntimeOption(option)
+                    val isComposing = statusCached.isComposing
+                    setRuntimeOption(option, !isEnabled)
+                    if (option == "ascii_mode" && isComposing) {
+                        getRawInput().takeIf { it.isNotEmpty() }?.let {
+                            if (service.isCurrentEditor(editorToken)) service.commitText(it)
+                            clearComposition()
                         }
                     }
                 }
@@ -290,11 +294,7 @@ class CommonKeyboardActionListener(override val di: DI) : DIAware {
 
             private fun handleSelectCandidate(arg: String) {
                 val index = arg.toIntOrNull() ?: return
-                rime.launchOnReady { api ->
-                    service.lifecycleScope.launch {
-                        api.selectCandidate(index, false)
-                    }
-                }
+                service.postRimeJob { selectCandidate(index, false) }
             }
 
             private fun switchHideKeySymbol() {

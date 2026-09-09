@@ -9,6 +9,8 @@ import com.osfans.trime.core.RimeLifecycle
 import com.osfans.trime.core.RimeUnavailableException
 import com.osfans.trime.daemon.RimeDaemon
 import com.osfans.trime.data.base.DataManager
+import com.osfans.trime.data.prefs.AppPrefs
+import com.osfans.trime.data.sync.DataStorageMode
 import com.osfans.trime.data.theme.ThemeLoader
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
@@ -71,6 +73,31 @@ internal object StartupFailureProbe {
                         if (savedChecksum.exists()) check(savedChecksum.renameTo(checksum))
                     }
                     RimeDaemon.engineState.first { it == RimeLifecycle.State.STOPPED }
+                    val profile = AppPrefs.defaultInstance().profile
+                    val previousMode = profile.dataStorageMode.getValue()
+                    val previousTree = profile.externalRimeTreeUri.getValue()
+                    try {
+                        profile.externalRimeTreeUri.setValue("")
+                        profile.dataStorageMode.setValue(DataStorageMode.EXTERNAL_SYNC)
+                        val session = RimeDaemon.createSession("external-permission-failure-probe")
+                        try {
+                            session.runOnReady {
+                                check(isReady && usingExistingResources)
+                                check(selectSchema("luna_pinyin_t9"))
+                                setRuntimeOption("ascii_mode", false)
+                                "64".forEach { check(processKey(it.code)) }
+                                check(t9Cached.choices.any { it.spelling == "ni" })
+                                clearComposition()
+                            }
+                        } finally {
+                            RimeDaemon.destroySession("external-permission-failure-probe")
+                        }
+                    } finally {
+                        profile.dataStorageMode.setValue(previousMode)
+                        profile.externalRimeTreeUri.setValue(previousTree)
+                        check(profile.externalRimeTreeUri.sharedPreferences.edit().commit())
+                    }
+                    RimeDaemon.engineState.first { it == RimeLifecycle.State.STOPPED }
                     val custom = File(DataManager.userDataDir, "default.custom.yaml")
                     val savedCustom = File(custom.parentFile, "default-$suffix.saved")
                     val hadCustom = custom.exists()
@@ -84,7 +111,7 @@ internal object StartupFailureProbe {
                         try {
                             val failure = runCatching { session.runOnReady { error("Unexpected engine ready") } }.exceptionOrNull()
                             check(failure is RimeUnavailableException) { "Expected configuration startup failure, got $failure" }
-                            check(failure.cause?.message == "Rime configuration deployment failed")
+                            check(failure.cause?.message?.startsWith("Rime configuration deployment failed") == true)
                             check(RimeDaemon.engineState.value == RimeLifecycle.State.FAILED)
                             check(custom.delete())
                             if (hadCustom) check(savedCustom.renameTo(custom))
@@ -139,12 +166,20 @@ internal object StartupFailureProbe {
                         check(custom.setLastModified(System.currentTimeMillis() + 2000))
                         val session = RimeDaemon.createSession("malformed-optional-probe")
                         try {
-                            val failure = runCatching { session.runOnReady { error("Unexpected engine ready") } }.exceptionOrNull()
-                            check(failure is RimeUnavailableException && failure.cause?.message == "Rime configuration deployment failed")
+                            session.runOnReady {
+                                check(isReady && usingExistingResources) { "Existing valid dictionary was not reused after failed deployment" }
+                                clearComposition()
+                                setRuntimeOption("ascii_mode", false)
+                                "64".forEach { check(processKey(it.code)) }
+                                check(t9Cached.choices.any { it.spelling == "ni" })
+                                clearComposition()
+                            }
                             check(custom.delete())
                             if (hadCustom) check(savedCustom.renameTo(custom))
-                            RimeDaemon.retryFailedStartup()
-                            session.runOnReady { check(isReady && selectSchema("luna_pinyin_t9")) }
+                            session.runOnReady {
+                                updateConfig()
+                                check(isReady && !usingExistingResources && selectSchema("luna_pinyin_t9"))
+                            }
                         } finally {
                             RimeDaemon.destroySession("malformed-optional-probe")
                         }
@@ -160,7 +195,7 @@ internal object StartupFailureProbe {
                 }
             }
             success = true
-            result.putString("stream", "PASS: asset-copy and configuration failure, bounded wait, unchanged checksums, retry, typing, stale-theme rejection and shutdown\n")
+            result.putString("stream", "PASS: asset-copy and unusable-configuration failure, usable existing dictionary after malformed optional patch, bounded wait, unchanged checksums, retry, typing, stale-theme rejection and shutdown\n")
         } catch (e: Throwable) {
             result.putString("stream", "FAIL: ${e.stackTraceToString()}\n")
         } finally {

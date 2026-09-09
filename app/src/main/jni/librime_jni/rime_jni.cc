@@ -16,6 +16,9 @@
 #include "session.h"
 #include "t9.h"
 #include <rime/key_event.h>
+#include <rime/dict/dictionary.h>
+#include <rime/schema.h>
+#include <rime/ticket.h>
 
 #define MAX_BUFFER_LENGTH 2048
 
@@ -72,6 +75,17 @@ class Rime {
 
   bool deploySchema(std::string_view schemaFile) {
     return rime->deploy_schema(schemaFile.data());
+  }
+
+  bool hasUsableDictionary() {
+    auto current = rime::Service::instance().GetSession(session());
+    if (!current || !current->schema() || current->schema()->schema_id() == ".default")
+      return false;
+    auto component = rime::Dictionary::Require("dictionary");
+    if (!component) return false;
+    std::unique_ptr<rime::Dictionary> dictionary(
+        component->Create(rime::Ticket(current->schema(), "translator")));
+    return dictionary && dictionary->Load();
   }
 
   bool deployConfigFile(std::string_view configFile,
@@ -359,6 +373,11 @@ extern "C" JNIEXPORT void JNICALL Java_com_osfans_trime_core_Rime_startupRime(
 extern "C" JNIEXPORT void JNICALL
 Java_com_osfans_trime_core_Rime_exitRime(JNIEnv* env, jclass /* thiz */) {
   jniCall(env, [&] { Rime::Instance().exit(); });
+}
+
+extern "C" JNIEXPORT jboolean JNICALL
+Java_com_osfans_trime_core_Rime_hasUsableRimeDictionary(JNIEnv* env, jclass /* thiz */) {
+  return jniCall(env, [&] { return Rime::Instance().hasUsableDictionary(); });
 }
 
 // deployment

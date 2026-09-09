@@ -366,6 +366,7 @@ class InputView(
     ) {
         updateEnterKeyLabel(info)
         broadcaster.onStartInput(info)
+        preedit.restoreTouchOverlay()
         if (!restarting) {
             windowManager.attachWindow(KeyboardWindow)
         }
@@ -373,6 +374,13 @@ class InputView(
 
     fun updateEnterKeyLabel(info: EditorInfo) {
         enterKeyDisplay.updateLabelOnEditorInfo(info)
+    }
+
+    fun finishInput() {
+        dismissCandidateActionMenu()
+        keyboardWindow.finishInput()
+        popup.dismissAll()
+        preedit.dismissTouchOverlay()
     }
 
     override fun handleRimeMessage(it: RimeMessage<*>) {

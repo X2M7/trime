@@ -30,7 +30,6 @@ import com.osfans.trime.ime.keyboard.KeyboardPrefs.isLandscapeMode
 import com.osfans.trime.ime.keyboard.KeyboardView
 import com.osfans.trime.ime.keyboard.KeyboardWindow
 import com.osfans.trime.ime.keyboard.T9LayoutPolicy
-import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withTimeout
 import org.kodein.di.direct
@@ -46,6 +45,7 @@ class T9LayoutProbe(
     private val prefs = AppPrefs.defaultInstance().keyboard
 
     private fun <T> main(block: () -> T): T {
+        if (android.os.Looper.myLooper() == android.os.Looper.getMainLooper()) return block()
         var value: Result<T>? = null
         instrumentation.runOnMainSync { value = runCatching(block) }
         return checkNotNull(value).getOrThrow()
@@ -64,16 +64,11 @@ class T9LayoutProbe(
     private fun keyboard() = descendants(input()).filterIsInstance<KeyboardView>().first { it.isShown }
 
     private suspend fun api(block: suspend RimeApi.() -> Unit) {
-        val completed = CompletableDeferred<Unit>()
-        service.postRimeJob {
-            try {
-                block()
-                completed.complete(Unit)
-            } catch (failure: Throwable) {
-                completed.completeExceptionally(failure)
-            }
-        }
-        completed.await()
+        var outcome: Result<Unit>? = null
+        val job = main { service.postRimeJob { outcome = runCatching { block() } } }
+        job.join()
+        check(!job.isCancelled) { "Engine/editor job cancelled" }
+        checkNotNull(outcome) { "Editor changed before operation ran" }.getOrThrow()
         delay(150)
     }
 

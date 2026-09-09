@@ -32,6 +32,7 @@ data class Theme(
     val colorSchemes: List<ColorScheme>,
     val fallbackColors: Map<String, String>,
     val toolBar: ToolBar,
+    val fallbackKeyboards: Map<String, String> = emptyMap(),
 ) : Parcelable {
     companion object {
         fun decode(node: Node.Mapping): Theme = Theme(

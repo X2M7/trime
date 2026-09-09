@@ -136,16 +136,21 @@ class RimeDispatcher(
                         fail(e)
                         if (e !is Exception && e !is LinkageError) throw e
                     } finally {
-                        synchronized(submissionLock) {
-                            isRunning.set(false)
-                            try {
-                                failure?.let { error ->
+                        try {
+                            val error = synchronized(submissionLock) {
+                                isRunning.set(false)
+                                failure?.also { error ->
                                     while (true) (queue.poll() ?: break).reject(error)
-                                    controller.nativeFailure(error)
                                 }
-                            } finally {
-                                completion.complete(Unit)
                             }
+                            // Failure publication can wait for slow message subscribers. Never
+                            // hold the submission lock while waiting for their main-thread work:
+                            // a concurrent UI dispatch must be able to reject without blocking.
+                            error?.let(controller::nativeFailure)
+                        } finally {
+                            // Keep restart/stop behind the entire failure notification, even
+                            // though other callers can now acquire the submission lock.
+                            completion.complete(Unit)
                         }
                     }
                 }

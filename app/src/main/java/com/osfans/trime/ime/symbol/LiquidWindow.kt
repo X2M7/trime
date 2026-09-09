@@ -6,12 +6,9 @@
 package com.osfans.trime.ime.symbol
 
 import android.view.View
-import androidx.core.content.ContextCompat
 import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexWrap
 import com.google.android.flexbox.FlexboxLayoutManager
-import com.osfans.trime.daemon.RimeSession
-import com.osfans.trime.daemon.launchOnReady
 import com.osfans.trime.data.SymbolHistory
 import com.osfans.trime.data.theme.LiquidData
 import com.osfans.trime.data.theme.ThemeScope
@@ -31,7 +28,6 @@ class LiquidWindow(di: DI) :
     override val showTitle = false
 
     private val service: TrimeInputMethodService by instance()
-    private val rime: RimeSession by instance()
     private val scope: ThemeScope by instance()
     private val windowManager: BoardWindowManager by instance()
     private val commonKeyboardActionListener: CommonKeyboardActionListener by instance()
@@ -118,14 +114,19 @@ class LiquidWindow(di: DI) :
     }
 
     private fun triggerSymbolInput(symbol: String) {
-        rime.launchOnReady {
-            val (isAsciiMode, isAsciiPunch) = it.statusCached.run { isAsciiMode to isAsciiPunct }
-            if (isAsciiMode) it.setRuntimeOption("ascii_mode", false)
-            if (isAsciiPunch) it.setRuntimeOption("ascii_punch", false)
-            it.clearComposition()
-            it.simulateKeySequence(symbol)
-            if (isAsciiPunch) it.setRuntimeOption("ascii_punch", true)
-            ContextCompat.getMainExecutor(service).execute {
+        val editorToken = service.editorToken
+        service.postRimeJob {
+            val (wasAsciiMode, wasAsciiPunct) = statusCached.run { isAsciiMode to isAsciiPunct }
+            try {
+                if (wasAsciiMode) setRuntimeOption("ascii_mode", false)
+                if (wasAsciiPunct) setRuntimeOption("ascii_punct", false)
+                clearComposition()
+                simulateKeySequence(symbol)
+            } finally {
+                if (wasAsciiMode) setRuntimeOption("ascii_mode", true)
+                if (wasAsciiPunct) setRuntimeOption("ascii_punct", true)
+            }
+            if (service.isCurrentEditor(editorToken)) {
                 windowManager.attachWindow(KeyboardWindow)
             }
         }

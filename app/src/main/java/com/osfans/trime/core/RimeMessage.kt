@@ -8,7 +8,16 @@ package com.osfans.trime.core
 sealed class RimeMessage<T>(
     open val data: T,
 ) {
+    var editorToken: Long = 0
+        internal set
+
     abstract val messageType: MessageType
+
+    val isEditorResponse: Boolean
+        get() = when (messageType) {
+            MessageType.Unknown, MessageType.Schema, MessageType.Option, MessageType.Deploy -> false
+            else -> true
+        }
 
     data class UnknownMessage(
         override val data: Array<Any>,

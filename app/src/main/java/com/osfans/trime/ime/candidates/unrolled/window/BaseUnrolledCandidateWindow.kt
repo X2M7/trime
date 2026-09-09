@@ -15,7 +15,6 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.recyclerview.widget.RecyclerView
 import com.osfans.trime.daemon.RimeSession
-import com.osfans.trime.daemon.launchOnReady
 import com.osfans.trime.data.theme.Theme
 import com.osfans.trime.data.theme.ThemeScope
 import com.osfans.trime.ime.bar.InputBarDelegate
@@ -139,7 +138,8 @@ abstract class BaseUnrolledCandidateWindow(di: DI) :
     fun bindCandidateUiViewHolder(holder: CandidateViewHolder) {
         holder.itemView.run {
             setOnClickListener { _ ->
-                rime.launchOnReady { it.selectCandidate(holder.idx, global = true) }
+                val index = holder.idx
+                service.postRimeJob { selectCandidate(index, global = true) }
             }
             setOnLongClickListener { view ->
                 inputView.showCandidateActionMenu(holder.idx, holder.text, view, global = true)

@@ -61,6 +61,7 @@ object T9EditingProbe {
         var session: RimeSession? = null
         var passed = false
         fun <T> main(block: () -> T): T {
+            if (android.os.Looper.myLooper() == android.os.Looper.getMainLooper()) return block()
             var value: Result<T>? = null
             instrumentation.runOnMainSync { value = runCatching(block) }
             return checkNotNull(value).getOrThrow()
@@ -114,16 +115,11 @@ object T9EditingProbe {
                         main { }
                     }
                     suspend fun api(block: suspend RimeApi.() -> Unit) {
-                        val completed = CompletableDeferred<Unit>()
-                        service.postRimeJob {
-                            try {
-                                block()
-                                completed.complete(Unit)
-                            } catch (failure: Throwable) {
-                                completed.completeExceptionally(failure)
-                            }
-                        }
-                        completed.await()
+                        var outcome: Result<Unit>? = null
+                        val job = main { service.postRimeJob { outcome = runCatching { block() } } }
+                        job.join()
+                        check(!job.isCancelled) { "Engine/editor job cancelled" }
+                        checkNotNull(outcome) { "Editor changed before operation ran" }.getOrThrow()
                         delay(200)
                     }
                     suspend fun text(expected: String) {
@@ -371,6 +367,7 @@ object T9EditingProbe {
             undoPreference.setValue(originalUndoHook)
             activity?.let { main { it.finish() } }
             if (session != null) RimeDaemon.destroySession(javaClass.name)
+            check(preference.sharedPreferences.edit().commit())
         }
         result.putBoolean("passed", passed)
         instrumentation.finish(if (passed) Activity.RESULT_OK else Activity.RESULT_CANCELED, result)

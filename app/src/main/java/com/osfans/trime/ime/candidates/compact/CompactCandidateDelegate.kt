@@ -14,8 +14,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.flexbox.FlexboxLayoutManager
 import com.osfans.trime.R
 import com.osfans.trime.core.Candidates
-import com.osfans.trime.daemon.RimeSession
-import com.osfans.trime.daemon.launchOnReady
 import com.osfans.trime.data.prefs.AppPrefs
 import com.osfans.trime.data.theme.Theme
 import com.osfans.trime.data.theme.ThemeScope
@@ -24,6 +22,7 @@ import com.osfans.trime.ime.bar.UnrollButtonStateMachine
 import com.osfans.trime.ime.broadcast.InputBroadcastReceiver
 import com.osfans.trime.ime.candidates.unrolled.decoration.FlexboxVerticalDecoration
 import com.osfans.trime.ime.core.InputView
+import com.osfans.trime.ime.core.TrimeInputMethodService
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -38,9 +37,9 @@ class CompactCandidateDelegate(override val di: DI) :
     DIAware,
     InputBroadcastReceiver {
     private val context: ContextThemeWrapper by instance()
-    private val rime: RimeSession by instance()
     private val scope: ThemeScope by instance()
     private val inputView: InputView by instance()
+    private val service: TrimeInputMethodService by instance()
     private val bar: InputBarDelegate by instance()
 
     private val theme: Theme
@@ -96,7 +95,7 @@ class CompactCandidateDelegate(override val di: DI) :
     val adapter by lazy {
         CompactCandidateViewAdapter(scope).apply {
             setOnItemClickListener { _, _, position ->
-                rime.launchOnReady { it.selectCandidate(position, global = true) }
+                service.postRimeJob { selectCandidate(position, global = true) }
             }
             setOnItemLongClickListener { _, view, position ->
                 inputView.showCandidateActionMenu(position, items[position].text, view, global = true)

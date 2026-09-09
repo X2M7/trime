@@ -14,3 +14,27 @@ internal fun resolveKeyboardConfig(name: String, presets: Map<String, TextKeyboa
         current = config.importPreset
     }
 }
+
+internal fun matchKeyboard(
+    schemaId: String,
+    requested: String,
+    pinyinT9: Boolean,
+    alphabet: String,
+    presets: Map<String, TextKeyboard>,
+    fallbacks: Map<String, String>,
+): String {
+    if (requested.isNotEmpty() && requested in presets) return requested
+    if (schemaId in presets) return schemaId
+    if (pinyinT9) {
+        return "luna_pinyin_t9".takeIf { it in presets }
+            ?: fallbacks["luna_pinyin_t9"] ?: "default"
+    }
+    val layout = when {
+        alphabet.isEmpty() -> "default"
+        alphabet.all { it.isLetter() } -> "qwerty"
+        alphabet.all { it.isLetter() || it in ",./;" } -> "qwerty_"
+        alphabet.all { it.isLetterOrDigit() } -> "qwerty0"
+        else -> "default"
+    }
+    return layout.takeIf { it in presets } ?: "default"
+}

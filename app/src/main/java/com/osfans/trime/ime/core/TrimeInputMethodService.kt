@@ -30,13 +30,12 @@ import android.view.inputmethod.ExtractedTextRequest
 import android.view.inputmethod.InlineSuggestionsRequest
 import android.view.inputmethod.InlineSuggestionsResponse
 import android.widget.FrameLayout
-import android.widget.ImageButton
-import android.widget.ProgressBar
 import androidx.annotation.Keep
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.doOnAttach
 import androidx.core.view.updateLayoutParams
 import androidx.lifecycle.lifecycleScope
 import com.osfans.trime.R
@@ -44,6 +43,7 @@ import com.osfans.trime.core.KeyModifiers
 import com.osfans.trime.core.KeyValue
 import com.osfans.trime.core.RimeApi
 import com.osfans.trime.core.RimeKeyMapping
+import com.osfans.trime.core.RimeLifecycle
 import com.osfans.trime.core.RimeMessage
 import com.osfans.trime.daemon.RimeDaemon
 import com.osfans.trime.daemon.RimeSession
@@ -61,6 +61,7 @@ import com.osfans.trime.util.findSectionFrom
 import com.osfans.trime.util.forceShowSelf
 import com.osfans.trime.util.monitorCursorAnchor
 import com.osfans.trime.util.styledFloat
+import com.osfans.trime.util.toast
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
@@ -69,7 +70,6 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.launch
 import splitties.bitflags.hasFlag
-import splitties.dimensions.dp
 import splitties.systemservices.clipboardManager
 import splitties.systemservices.inputMethodManager
 import timber.log.Timber
@@ -90,12 +90,19 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
     private var inputViewRequested = false
     private var themeInitialization: Job? = null
     private var loadingPanel: FrameLayout? = null
+    private var startupFailed = false
+    private val editorGeneration = EditorGeneration()
+    internal val editorToken: Long get() = editorGeneration.token
+    internal fun isCurrentEditor(token: Long): Boolean = editorActive && editorGeneration.accepts(token)
+    private var editorActive = false
+    private val cursorAnchorSubscription = CursorAnchorSubscription()
+    var editorModeOverride: EditorModeOverride? = null
     private val navBarManager = NavigationBarManager()
     private val inputDeviceManager = InputDeviceManager { useVirtualKeyboard, useCandidatesView ->
         postRimeJob {
             setCandidatePagingMode(useCandidatesView)
         }
-        currentInputConnection?.monitorCursorAnchor(useCandidatesView)
+        updateCursorAnchorSubscription(useCandidatesView)
         if (themeReady) {
             window.window?.let {
                 navBarManager.evaluate(it, useVirtualKeyboard, themeScope.colors)
@@ -170,9 +177,18 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
         scope: CoroutineScope,
         block: suspend () -> Unit,
     ): Job {
+        // Joining a LAZY coroutine starts it. Return a separate completion handle
+        // so callers cannot accidentally bypass the serial queue.
+        val completion = Job()
         val job = scope.launch(start = CoroutineStart.LAZY) { block() }
-        jobs.trySend(job)
-        return job
+        job.invokeOnCompletion { failure ->
+            if (failure == null) completion.complete() else completion.completeExceptionally(failure)
+        }
+        completion.invokeOnCompletion { failure ->
+            if (failure is CancellationException) job.cancel(failure)
+        }
+        if (jobs.trySend(job).isFailure) job.cancel()
+        return completion
     }
 
     /**
@@ -182,7 +198,22 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
      * subsequent operations can start if the prior operation is not finished (suspended),
      * [postRimeJob] ensures that operations are executed sequentially.
      */
-    fun postRimeJob(block: suspend RimeApi.() -> Unit) = postJob(rime.lifecycleScope) { rime.runOnReady(block) }
+    fun postRimeJob(block: suspend RimeApi.() -> Unit): Job {
+        val origin = editorGeneration.token
+        return postJob(lifecycleScope) {
+            if (editorGeneration.accepts(origin)) {
+                rime.runOnReady {
+                    if (editorGeneration.accepts(origin)) block()
+                }
+            }
+        }
+    }
+
+    private fun bindEditor() {
+        val info = currentInputEditorInfo ?: return
+        val origin = editorGeneration.token
+        postRimeJob { beginEditor(origin, info.inputType and InputType.TYPE_MASK_CLASS == InputType.TYPE_NULL) }
+    }
 
     private suspend fun updateRimeOption(api: RimeApi) {
         try {
@@ -223,6 +254,20 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
         prefs.candidates.registerOnChangeListener(recreateCandidatesViewListener)
         // ensure theme and color managers are initialized after rime is ready
         prepareTheme()
+        lifecycleScope.launch {
+            RimeDaemon.engineState.collect { state ->
+                when (state) {
+                    RimeLifecycle.State.READY -> if (!themeReady) prepareTheme()
+                    RimeLifecycle.State.FAILED, RimeLifecycle.State.STOPPING -> {
+                        startupFailed = state == RimeLifecycle.State.FAILED
+                        themeReady = false
+                        inputView?.finishInput()
+                        if (inputViewRequested) setInputView(createUnavailableInputView())
+                    }
+                    else -> Unit
+                }
+            }
+        }
         InputFeedbackManager.init()
         registerReceiver()
         super.onCreate()
@@ -239,29 +284,18 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
                 if (retry) RimeDaemon.retryFailedStartup()
                 rime.runOnReady { ThemeManager.init(resources.configuration) }
                 themeReady = true
+                startupFailed = false
+                if (rime.run { usingExistingResources }) toast(R.string.ime_existing_resources)
                 ThemeManager.addOnChangedListener(onThemeChangeListener)
                 ColorManager.addOnChangedListener(onColorChangeListener)
                 if (inputViewRequested) {
                     replaceInputViews(themeScope)
-                    if (isInputViewShown) inputView?.startInput(currentInputEditorInfo, false)
                 }
             } catch (e: Exception) {
                 if (e is CancellationException && e !is com.osfans.trime.core.RimeUnavailableException) throw e
                 Timber.e(e, "Failed to initialize keyboard theme")
-                loadingPanel?.apply {
-                    removeAllViews()
-                    addView(
-                        ImageButton(context).apply {
-                            setImageResource(R.drawable.ic_baseline_refresh_reversed_24)
-                            contentDescription = getString(R.string.deploy)
-                            setOnClickListener {
-                                showThemeLoading()
-                                prepareTheme(retry = true)
-                            }
-                        },
-                        FrameLayout.LayoutParams(dp(48), dp(48), Gravity.CENTER),
-                    )
-                }
+                startupFailed = true
+                showThemeLoading()
             }
         }
     }
@@ -270,15 +304,56 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
         loadingPanel?.apply {
             removeAllViews()
             addView(
-                ProgressBar(context).apply {
-                    contentDescription = getString(R.string.loading)
-                },
-                FrameLayout.LayoutParams(dp(48), dp(48), Gravity.CENTER),
+                EngineUnavailableView(
+                    context,
+                    failed = startupFailed,
+                    retry = {
+                        startupFailed = false
+                        showThemeLoading()
+                        prepareTheme(retry = true)
+                    },
+                    commit = { if (editorActive) commitText(it) },
+                    delete = { if (editorActive) sendDownUpKeyEvents(KeyEvent.KEYCODE_DEL) },
+                    enter = { if (editorActive) handleReturnKey() },
+                ),
+                FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT),
             )
+            updateUnavailableEditor()
         }
     }
 
+    private fun updateUnavailableEditor() {
+        val view = loadingPanel?.getChildAt(0) as? EngineUnavailableView ?: return
+        val info = currentInputEditorInfo
+        val action = info?.let(EditorPolicy::enterAction)
+        val label = if (action != null && action == info.actionId && !info.actionLabel.isNullOrEmpty()) {
+            info.actionLabel
+        } else {
+            action?.let(::getTextForImeAction)
+        }
+        view.updateEnterAction(action, label ?: getString(R.string.ime_enter))
+    }
+
+    private fun createUnavailableInputView(): View = FrameLayout(this).apply {
+        inputView = null
+        inputDeviceManager.setInputView(null)
+        contentView.removeView(candidatesView)
+        candidatesView = null
+        inputDeviceManager.setCandidatesView(null)
+        val panel = FrameLayout(context)
+        loadingPanel = panel
+        addView(panel, FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, Gravity.BOTTOM))
+        ViewCompat.setOnApplyWindowInsetsListener(panel) { view, insets ->
+            val safe = insets.getInsets(WindowInsetsCompat.Type.navigationBars() or WindowInsetsCompat.Type.displayCutout() or WindowInsetsCompat.Type.mandatorySystemGestures())
+            view.setPadding(safe.left, 0, safe.right, safe.bottom)
+            insets
+        }
+        panel.doOnAttach { it.requestApplyInsets() }
+        showThemeLoading()
+    }
+
     private fun handleRimeMessage(it: RimeMessage<*>) {
+        if (it.isEditorResponse && !isCurrentEditor(it.editorToken)) return
         when (it) {
             is RimeMessage.CommitTextMessage -> {
                 if (!it.data.text.isNullOrEmpty()) {
@@ -360,10 +435,12 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
     }
 
     private fun replaceInputView(scope: ThemeScope): InputView {
+        inputView?.finishInput()
         val newInputView = InputView(this, rime, scope)
         setInputView(newInputView)
         inputDeviceManager.setInputView(newInputView)
         inputView = newInputView
+        if (editorActive) newInputView.startInput(currentInputEditorInfo, false)
         return newInputView
     }
 
@@ -386,10 +463,13 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
         navBarManager.evaluate(window.window!!, inputDeviceManager.useVirtualKeyboard, scope.colors)
         replaceInputView(scope)
         replaceCandidateView(scope)
-        inputView?.updateEnterKeyLabel(currentInputEditorInfo)
+        if (editorActive) bindEditor()
     }
 
     override fun onDestroy() {
+        editorActive = false
+        editorGeneration.advance()
+        inputView?.finishInput()
         themeReady = false
         inputViewRequested = false
         themeInitialization?.cancel()
@@ -409,25 +489,10 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
     }
 
     private fun handleReturnKey() {
-        currentInputEditorInfo.run {
-            if (inputType and InputType.TYPE_MASK_CLASS == InputType.TYPE_NULL ||
-                imeOptions.hasFlag(EditorInfo.IME_FLAG_NO_ENTER_ACTION)
-            ) {
-                sendDownUpKeyEvents(KeyEvent.KEYCODE_ENTER)
-                return
-            }
-            if (!actionLabel.isNullOrEmpty() && actionId != EditorInfo.IME_ACTION_UNSPECIFIED) {
-                currentInputConnection.performEditorAction(actionId)
-                return
-            }
-            when (val action = imeOptions and EditorInfo.IME_MASK_ACTION) {
-                EditorInfo.IME_ACTION_UNSPECIFIED,
-                EditorInfo.IME_ACTION_NONE,
-                -> sendDownUpKeyEvents(KeyEvent.KEYCODE_ENTER)
-
-                else -> currentInputConnection.performEditorAction(action)
-            }
-        }
+        val info = currentInputEditorInfo ?: return
+        val ic = currentInputConnection ?: return
+        val action = EditorPolicy.enterAction(info)
+        if (action == null) sendDownUpKeyEvents(KeyEvent.KEYCODE_ENTER) else ic.performEditorAction(action)
     }
 
     /**
@@ -572,7 +637,7 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
     private val inputViewLocation = intArrayOf(0, 0)
 
     override fun onComputeInsets(outInsets: Insets) {
-        if (inputDeviceManager.useVirtualKeyboard) {
+        if (inputDeviceManager.useVirtualKeyboard || !themeReady) {
             val visibleView = inputView?.keyboardView ?: loadingPanel
             if (visibleView == null) {
                 inputViewLocation[1] = decorView.height
@@ -605,21 +670,8 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
         Timber.d("onCreateInputView")
         inputViewRequested = true
         if (!themeReady) {
-            prepareTheme()
-            return FrameLayout(this).apply {
-                val panel = FrameLayout(context).apply {
-                    setBackgroundColor(ContextCompat.getColor(context, R.color.colorPrimary))
-                }
-                loadingPanel = panel
-                addView(panel, FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dp(64), Gravity.BOTTOM))
-                ViewCompat.setOnApplyWindowInsetsListener(panel) { view, insets ->
-                    val bottom = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom
-                    view.setPadding(0, 0, 0, bottom)
-                    view.updateLayoutParams { height = dp(64) + bottom }
-                    insets
-                }
-                showThemeLoading()
-            }
+            if (!startupFailed) prepareTheme()
+            return createUnavailableInputView()
         }
         replaceInputViews(themeScope)
         // We will call `setInputView` by ourselves. This is fine.
@@ -649,20 +701,40 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
         attribute: EditorInfo,
         restarting: Boolean,
     ) {
+        super.onStartInput(attribute, restarting)
+        cursorAnchorSubscription.reset()
+        inputView?.finishInput()
+        editorGeneration.advance()
+        editorActive = true
+        inputView?.resetEditorUi()
+        candidatesView?.resetEditorUi()
+        lastCommittedText = ""
+        InputFeedbackManager.startInput(EditorPolicy.isPassword(attribute.inputType))
         composingText = ""
         composingCursor = null
         composingStart = null
         selectionAfterCancel = null
         cursorUpdateIndex += 1
         Timber.d("onStartInput: restarting=$restarting")
-        val isNullType = attribute.inputType and InputType.TYPE_MASK_CLASS == InputType.TYPE_NULL
-        postRimeJob {
-            if (restarting) {
-                // when input restarts in the same editor, clear previous composition
-                clearComposition()
-            }
-            setNullInputType(isNullType)
-        }
+        bindEditor()
+    }
+
+    override fun onFinishInput() {
+        editorActive = false
+        cursorAnchorSubscription.reset()
+        showingDialog?.dismiss()
+        lastCommittedText = ""
+        InputFeedbackManager.finishInput()
+        editorGeneration.advance()
+        inputView?.finishInput()
+        inputView?.resetEditorUi()
+        candidatesView?.resetEditorUi()
+        composingText = ""
+        composingCursor = null
+        composingStart = null
+        selectionAfterCancel = null
+        cursorUpdateIndex += 1
+        super.onFinishInput()
     }
 
     private val inlineSuggestions by prefs.general.inlineSuggestions
@@ -684,7 +756,8 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
         restarting: Boolean,
     ) {
         Timber.d("onStartInputView: restarting=$restarting")
-        InputFeedbackManager.startInput()
+        if (!themeReady) updateUnavailableEditor()
+        InputFeedbackManager.startInput(EditorPolicy.isPassword(attribute.inputType))
         postRimeJob {
             updateRimeOption(this)
         }
@@ -693,7 +766,7 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
         if (useVirtualKeyboard) {
             inputView?.startInput(attribute, restarting)
         }
-        val cursorUpdatesScheduled = currentInputConnection?.monitorCursorAnchor(useCandidatesView) == true
+        val cursorUpdatesScheduled = updateCursorAnchorSubscription(useCandidatesView)
         if (useCandidatesView && !cursorUpdatesScheduled) {
             if (!decorLocationUpdated) {
                 updateDecorLocation()
@@ -704,21 +777,27 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
         }
     }
 
+    private fun updateCursorAnchorSubscription(enable: Boolean): Boolean {
+        if (!editorActive) return false
+        val connection = currentInputConnection ?: return false
+        return cursorAnchorSubscription.update(enable) { connection.monitorCursorAnchor(it) }
+    }
+
     override fun onFinishInputView(finishingInput: Boolean) {
         Timber.d("onFinishInputView: finishingInput=$finishingInput")
         decorLocationUpdated = false
         inputView?.dismissCandidateActionMenu()
+        inputView?.finishInput()
         candidatesView?.dismissCandidateActionMenu()
         inputDeviceManager.onFinishInputView()
-        // The editor may already have invalidated this connection. Cursor monitoring
-        // is reset with the next active view/session; do not query the old editor here.
-        currentInputConnection?.finishComposingText()
-        composingText = ""
-        composingCursor = null
-        composingStart = null
-        selectionAfterCancel = null
-        postRimeJob {
-            clearComposition()
+        // Hiding the window is not leaving the editor. Keep its composition so
+        // showing it again cannot silently submit raw T9 digits or lose a lock.
+        if (finishingInput) {
+            composingText = ""
+            composingCursor = null
+            composingStart = null
+            selectionAfterCancel = null
+            postRimeJob { clearComposition() }
         }
         InputFeedbackManager.finishInput()
     }
@@ -734,7 +813,7 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
         } else {
             ic.commitText(text, 1)
         }
-        lastCommittedText = text
+        lastCommittedText = if (EditorPolicy.isPassword(currentInputEditorInfo?.inputType ?: 0)) "" else text
         composingText = ""
         composingCursor = null
         composingStart = null
@@ -862,6 +941,12 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
     }
 
     private fun forwardKeyEvent(event: KeyEvent): Boolean {
+        if (!themeReady || !editorActive) return false
+        val info = currentInputEditorInfo ?: return false
+        // A physical keyboard can start an editor without creating/showing InputView.
+        // Restricted editors must receive its keys directly, independently of the
+        // soft keyboard's temporary ASCII mode and layout lifecycle.
+        if (EditorPolicy.keyboard(info.inputType, info.imeOptions) != EditorKeyboard.USER) return false
         val keyVal = KeyValue.fromKeyEvent(event)
         if (keyVal.value != RimeKeyMapping.RimeKey_VoidSymbol) {
             val modifiers = KeyModifiers.fromKeyEvent(event)
@@ -1100,6 +1185,8 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
     }
 
     fun getActiveText(type: Int): String {
+        if (!editorActive) return ""
+        if (EditorPolicy.isPassword(currentInputEditorInfo?.inputType ?: 0)) return ""
         val rimeComposition = rime.run { compositionCached }
         val selected = currentInputConnection?.getSelectedText(0)?.toString()
         val commitPreview = rimeComposition.commitTextPreview

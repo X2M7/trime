@@ -47,6 +47,7 @@ object InputFeedbackManager {
     private var initialized = false
     private var soundLoading: Job? = null
     private var speechReady = false
+    private var speechAllowed = false
     private var pendingSpeech: String? = null
     private var generation = 0
     private var speechRetryAfter = 0L
@@ -73,7 +74,7 @@ object InputFeedbackManager {
                         speechRetryAfter = SystemClock.uptimeMillis() + 30_000
                         Timber.w("Speech feedback engine initialization failed: %d", status)
                     }
-                    if (speechReady && (speakOnKeyPress || speakOnCommit)) {
+                    if (speechReady && speechAllowed && (speakOnKeyPress || speakOnCommit)) {
                         pendingSpeech?.let { tts?.speak(it, TextToSpeech.QUEUE_FLUSH, null, "TrimeTTS") }
                     }
                     pendingSpeech = null
@@ -141,7 +142,10 @@ object InputFeedbackManager {
         }
     }
 
-    fun startInput() {
+    fun startInput(sensitive: Boolean = false) {
+        pendingSpeech = null
+        if (speechReady) tts?.stop()
+        speechAllowed = !sensitive
         cacheSoundId()
     }
 
@@ -257,12 +261,12 @@ object InputFeedbackManager {
     private val speakOnCommit by keyboardPrefs.speakOnCommit
 
     fun keyPressSpeak(keyCode: Int) {
-        if (!speakOnKeyPress) return
+        if (!speakOnKeyPress || !speechAllowed) return
         contentSpeakInternal(keyCode)
     }
 
     fun textCommitSpeak(text: String) {
-        if (!speakOnCommit) return
+        if (!speakOnCommit || !speechAllowed) return
         contentSpeakInternal(text)
     }
 
@@ -288,18 +292,22 @@ object InputFeedbackManager {
     }
 
     fun finishInput() {
+        speechAllowed = false
+        pendingSpeech = null
+        if (speechReady) tts?.stop()
         effectPlayProgress = 0
     }
 
     fun destroy() {
+        if (speechReady) tts?.stop()
         generation++
         soundLoading?.cancel()
         soundLoading = null
         initialized = false
         speechReady = false
+        speechAllowed = false
         speechRetryAfter = 0
         pendingSpeech = null
-        tts?.stop()
         tts?.shutdown()
         tts = null
         soundPool?.release()

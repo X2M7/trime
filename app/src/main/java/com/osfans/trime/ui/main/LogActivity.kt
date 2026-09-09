@@ -7,6 +7,8 @@ package com.osfans.trime.ui.main
 
 import android.content.ClipData
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.enableEdgeToEdge
@@ -21,12 +23,15 @@ import androidx.core.view.updateLayoutParams
 import androidx.lifecycle.lifecycleScope
 import com.osfans.trime.R
 import com.osfans.trime.TrimeApplication
+import com.osfans.trime.core.RimeLifecycle
+import com.osfans.trime.daemon.RimeDaemon
 import com.osfans.trime.databinding.ActivityLogBinding
 import com.osfans.trime.ui.main.log.LogView
 import com.osfans.trime.util.DeviceInfo
 import com.osfans.trime.util.Logcat
 import com.osfans.trime.util.iso8601UTCDateTime
 import com.osfans.trime.util.toast
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -41,6 +46,37 @@ import splitties.systemservices.clipboardManager
 class LogActivity : AppCompatActivity() {
     private lateinit var launcher: ActivityResultLauncher<String>
     private lateinit var logView: LogView
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        if (intent.hasExtra(FROM_DEPLOY)) {
+            menu.add(Menu.NONE, R.id.action_retry_deploy, Menu.NONE, R.string.ime_retry).apply {
+                setIcon(R.drawable.ic_baseline_refresh_reversed_24)
+                setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
+                setOnMenuItemClickListener {
+                    isEnabled = false
+                    lifecycleScope.launch {
+                        val name = "LogActivity.retry"
+                        val session = RimeDaemon.createSession(name)
+                        try {
+                            if (RimeDaemon.engineState.value == RimeLifecycle.State.FAILED) {
+                                RimeDaemon.retryFailedStartup()
+                            } else {
+                                session.runOnReady { deploy() }
+                            }
+                        } catch (failure: Exception) {
+                            if (failure is CancellationException && failure !is com.osfans.trime.core.RimeUnavailableException) throw failure
+                            toast(R.string.deploy_failure)
+                        } finally {
+                            RimeDaemon.destroySession(name)
+                            isEnabled = true
+                        }
+                    }
+                    true
+                }
+            }
+        }
+        return super.onCreateOptionsMenu(menu)
+    }
 
     companion object {
         const val FROM_CRASH = "from_crash"

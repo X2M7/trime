@@ -17,7 +17,10 @@ import androidx.core.text.color
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
 import com.osfans.trime.R
+import com.osfans.trime.core.Candidates
+import com.osfans.trime.core.CompositionProto
 import com.osfans.trime.core.RimeMessage
+import com.osfans.trime.core.T9StateProto
 import com.osfans.trime.daemon.RimeSession
 import com.osfans.trime.data.prefs.AppPrefs
 import com.osfans.trime.data.theme.Theme
@@ -48,7 +51,7 @@ abstract class BaseInputView(
         messageHandlerJob =
             service.lifecycleScope.launch {
                 rime.run { messageFlow }.collect {
-                    handleRimeMessage(it)
+                    if (!it.isEditorResponse || service.isCurrentEditor(it.editorToken)) handleRimeMessage(it)
                 }
             }
     }
@@ -70,7 +73,16 @@ abstract class BaseInputView(
 
     private var candidateActionMenu: PopupMenu? = null
 
+    fun resetEditorUi() {
+        dismissCandidateActionMenu()
+        handleRimeMessage(RimeMessage.T9Message(T9StateProto()))
+        handleRimeMessage(RimeMessage.CompositionMessage(CompositionProto()))
+        handleRimeMessage(RimeMessage.BulkCandidatesMessage(Candidates.Bulk(total = 0)))
+        handleRimeMessage(RimeMessage.PagedCandidatesMessage(Candidates.Paged()))
+    }
+
     fun showCandidateActionMenu(idx: Int, text: String, view: View, global: Boolean) {
+        val editorToken = service.editorToken
         candidateActionMenu?.dismiss()
         candidateActionMenu = null
         val highlightColor = scope.colors.hilitedCandidateTextColor
@@ -80,6 +92,7 @@ abstract class BaseInputView(
             }
         }
         service.lifecycleScope.launch {
+            if (!service.isCurrentEditor(editorToken) || !view.isAttachedToWindow) return@launch
             InputFeedbackManager.keyPressVibrate(view, longPress = true)
             candidateActionMenu =
                 PopupMenu(themedContext, view).apply {
@@ -87,7 +100,9 @@ abstract class BaseInputView(
                         isEnabled = false
                     }
                     menu.add(R.string.forget_this_word).setOnMenuItemClickListener {
-                        rime.runIfReady { deleteCandidate(idx, global) }
+                        service.postRimeJob {
+                            if (service.isCurrentEditor(editorToken)) deleteCandidate(idx, global)
+                        }
                         true
                     }
                     setOnDismissListener {

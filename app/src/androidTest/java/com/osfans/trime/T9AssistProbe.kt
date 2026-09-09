@@ -27,7 +27,6 @@ import com.osfans.trime.ime.keyboard.KeyAction
 import com.osfans.trime.ime.keyboard.KeyCode
 import com.osfans.trime.ime.keyboard.KeyView
 import com.osfans.trime.ime.keyboard.Keyboard
-import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
@@ -44,6 +43,7 @@ class T9AssistProbe(
 ) {
     private val prefs = AppPrefs.defaultInstance().keyboard
     private fun <T> main(block: () -> T): T {
+        if (android.os.Looper.myLooper() == android.os.Looper.getMainLooper()) return block()
         var value: Result<T>? = null
         instrumentation.runOnMainSync { value = runCatching(block) }
         return checkNotNull(value).getOrThrow()
@@ -58,16 +58,11 @@ class T9AssistProbe(
         .filterIsInstance<InputView>().first { it.isShown }
 
     private suspend fun api(block: suspend RimeApi.() -> Unit) {
-        val completed = CompletableDeferred<Unit>()
-        service.postRimeJob {
-            try {
-                block()
-                completed.complete(Unit)
-            } catch (error: Throwable) {
-                completed.completeExceptionally(error)
-            }
-        }
-        completed.await()
+        var outcome: Result<Unit>? = null
+        val job = main { service.postRimeJob { outcome = runCatching { block() } } }
+        job.join()
+        check(!job.isCancelled) { "Engine/editor job cancelled" }
+        checkNotNull(outcome) { "Editor changed before operation ran" }.getOrThrow()
         delay(200)
     }
 
@@ -277,10 +272,28 @@ class T9AssistProbe(
                 }
                 check(main { editor.text.toString() } == "P:你") { "Incorrect editor commit after repair" }
                 api { clearComposition() }
-                main {
+                val previousEditor = main {
+                    val token = service.editorToken
                     editor.setText("P:")
                     editor.setSelection(2)
+                    val imm = editor.context.getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
+                    imm.restartInput(editor)
+                    token
                 }
+                // setText/restartInput invalidates the old connection asynchronously.
+                // Wait before cleanup or the next theme issues an editor-owned job.
+                withTimeout(10_000) {
+                    while (!main {
+                            service.editorToken != previousEditor && service.isCurrentEditor(service.editorToken) &&
+                                service.currentInputEditorInfo?.initialSelStart == 2 &&
+                                service.currentInputEditorInfo?.initialSelEnd == 2 && editor.hasWindowFocus()
+                        }
+                    ) {
+                        delay(50)
+                    }
+                }
+                api { }
+                phase("editor reset acknowledged after $selectedTheme")
                 prefs.t9AssistOptions[6].setValue(false)
             }
         } finally {

@@ -7,10 +7,10 @@ package com.osfans.trime.ime.broadcast
 
 import android.view.inputmethod.EditorInfo
 import com.osfans.trime.data.theme.Theme
+import com.osfans.trime.ime.core.EditorPolicy
 import org.kodein.di.DI
 import org.kodein.di.DIAware
 import org.kodein.di.instance
-import splitties.bitflags.hasFlag
 
 class EnterKeyDisplayDelegate(override val di: DI) : DIAware {
     private val broadcaster: InputBroadcaster by instance()
@@ -35,20 +35,22 @@ class EnterKeyDisplayDelegate(override val di: DI) : DIAware {
     private var actionLabel: String = DEFAULT_LABEL
 
     private fun labelFromEditorInfo(info: EditorInfo): String {
-        if (info.imeOptions.hasFlag(EditorInfo.IME_FLAG_NO_ENTER_ACTION)) {
+        val action = EditorPolicy.enterAction(info)
+        if (action == null) {
             return theme.generalStyle.enterLabel.default
         } else {
-            val action = info.imeOptions and EditorInfo.IME_MASK_ACTION
-            val actionLabel = info.actionLabel
+            val actionLabel = info.actionLabel?.takeIf { action == info.actionId }
+            // A custom actionId wins over imeOptions when the key is pressed.
+            if (!actionLabel.isNullOrEmpty() && action == info.actionId) return actionLabel.toString()
             when (mode) {
                 Mode.ACTION_LABEL_ONLY -> {
-                    return actionLabel.toString()
+                    return actionLabel?.toString()?.takeIf { it.isNotEmpty() } ?: standardLabel(action)
                 }
                 Mode.ACTION_LABEL_PREFERRED -> {
                     return if (!actionLabel.isNullOrEmpty()) {
                         actionLabel.toString()
                     } else {
-                        theme.generalStyle.enterLabel.default
+                        standardLabel(action)
                     }
                 }
                 Mode.CUSTOM_PREFERRED,
@@ -75,6 +77,18 @@ class EnterKeyDisplayDelegate(override val di: DI) : DIAware {
                     }
                 }
             }
+        }
+    }
+
+    private fun standardLabel(action: Int): String = with(theme.generalStyle.enterLabel) {
+        when (action) {
+            EditorInfo.IME_ACTION_DONE -> done
+            EditorInfo.IME_ACTION_GO -> go
+            EditorInfo.IME_ACTION_NEXT -> next
+            EditorInfo.IME_ACTION_PREVIOUS -> pre
+            EditorInfo.IME_ACTION_SEARCH -> search
+            EditorInfo.IME_ACTION_SEND -> send
+            else -> default
         }
     }
 

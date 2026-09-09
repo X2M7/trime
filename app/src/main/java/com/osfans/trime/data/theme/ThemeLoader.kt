@@ -7,6 +7,7 @@ package com.osfans.trime.data.theme
 
 import com.osfans.trime.daemon.RimeDaemon
 import com.osfans.trime.data.base.DataManager
+import com.osfans.trime.util.appContext
 import com.osfans.trime.util.yaml.Yaml
 import com.osfans.trime.util.yaml.mapping
 import kotlinx.coroutines.CancellationException
@@ -19,6 +20,12 @@ import java.io.File
  */
 object ThemeLoader {
     const val CONFIG_VERSION_KEY = "config_version"
+
+    private val builtin by lazy {
+        appContext.assets.open("shared/trime.yaml").bufferedReader().use {
+            Theme.decode(checkNotNull(Yaml.parseToYamlNode(it.readText()).mapping))
+        }
+    }
 
     /** Structured failure of a single theme load. */
     sealed class ThemeLoadError(
@@ -120,7 +127,7 @@ object ThemeLoader {
 
         val theme =
             try {
-                Theme.decode(mapping)
+                Theme.decode(mapping).withCompatibleKeyboards(builtin)
             } catch (e: Exception) {
                 return ThemeLoadResult.Failure(
                     themeId,

@@ -72,6 +72,14 @@ class PreeditDelegate(override val di: DI) :
 
     private val touchEventReceiverWindow = TouchEventReceiverWindow(ui.root)
 
+    fun dismissTouchOverlay() {
+        touchEventReceiverWindow.dismiss()
+    }
+
+    fun restoreTouchOverlay() {
+        if (ui.visible) touchEventReceiverWindow.show()
+    }
+
     override fun onCompositionUpdate(data: CompositionProto) {
         ui.update(data)
         ui.root.visibility = if (ui.visible) View.VISIBLE else View.INVISIBLE

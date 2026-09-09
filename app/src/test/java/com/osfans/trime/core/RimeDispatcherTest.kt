@@ -4,10 +4,16 @@ package com.osfans.trime.core
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.async
+import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.take
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
@@ -16,6 +22,7 @@ import java.util.concurrent.CountDownLatch
 import java.util.concurrent.ExecutionException
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
+import java.util.concurrent.TimeoutException
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.atomic.AtomicReference
 import kotlin.coroutines.EmptyCoroutineContext
@@ -224,6 +231,79 @@ class RimeDispatcherTest :
             } finally {
                 caller.shutdownNow()
                 dispatcher.close()
+            }
+        }
+
+        "backpressured failure publication releases the submission lock but retains the stop barrier" {
+            coroutineScope {
+                val bus = RimeMessageBus(1)
+                val consumerEntered = CompletableDeferred<Unit>()
+                val releaseConsumer = CompletableDeferred<Unit>()
+                val failureEntered = CountDownLatch(1)
+                val attempts = AtomicInteger()
+                val ran = AtomicInteger()
+                val cause = IOException("injected startup failure with a stalled message consumer")
+                val first = RimeMessage.CommitTextMessage(CommitProto("first"))
+                val second = RimeMessage.CommitTextMessage(CommitProto("second"))
+                val failed = RimeMessage.DeployMessage(RimeMessage.DeployMessage.State.Failure)
+                val received = mutableListOf<RimeMessage<*>>()
+                val consumer = launch(Dispatchers.Default, start = CoroutineStart.UNDISPATCHED) {
+                    bus.flow.take(3).collect {
+                        received += it
+                        consumerEntered.complete(Unit)
+                        releaseConsumer.await()
+                    }
+                }
+                val callers = Executors.newFixedThreadPool(2) { runnable ->
+                    Thread(runnable, "failure-lock-probe").apply { isDaemon = true }
+                }
+                val dispatcher = RimeDispatcher(object : RimeDispatcher.RimeController {
+                    override fun nativeStartup() {
+                        if (attempts.incrementAndGet() == 1) throw cause
+                    }
+                    override fun nativeFinalize() = Unit
+                    override fun nativeFailure(error: Throwable) {
+                        error shouldBe cause
+                        failureEntered.countDown()
+                        bus.publish(failed)
+                    }
+                })
+                try {
+                    withContext(Dispatchers.IO) { bus.publish(first) }
+                    withTimeout(5000) { consumerEntered.await() }
+                    withContext(Dispatchers.IO) { bus.publish(second) }
+                    dispatcher.start()
+                    failureEntered.await(5, TimeUnit.SECONDS) shouldBe true
+
+                    // This represents a UI dispatch while its message collector is delayed.
+                    // If the worker holds submissionLock while publishing, neither can proceed.
+                    val rejected = callers.submit<Boolean> {
+                        runBlocking {
+                            val task = async(dispatcher) { ran.incrementAndGet() }
+                            task.join()
+                            dispatcher.start() // Must not restart before failure publication ends.
+                            task.isCancelled
+                        }
+                    }
+                    rejected.get(2, TimeUnit.SECONDS) shouldBe true
+                    ran.get() shouldBe 0
+                    attempts.get() shouldBe 1
+                    val stop = callers.submit<List<Runnable>> { dispatcher.stop() }
+                    shouldThrow<TimeoutException> { stop.get(100, TimeUnit.MILLISECONDS) }
+
+                    releaseConsumer.complete(Unit)
+                    stop.get(5, TimeUnit.SECONDS).isEmpty() shouldBe true
+                    withTimeout(5000) { consumer.join() }
+                    received shouldBe listOf(first, second, failed)
+                    dispatcher.start()
+                    dispatcher.runConfined { 9 } shouldBe 9
+                    attempts.get() shouldBe 2
+                } finally {
+                    releaseConsumer.complete(Unit)
+                    consumer.cancelAndJoin()
+                    callers.shutdownNow()
+                    dispatcher.close()
+                }
             }
         }
     })

@@ -47,6 +47,7 @@ class StartupResponsivenessInstrumentation : Instrumentation() {
     private var shutdownOnly = false
     private var failureOnly = false
     private var feedbackOnly = false
+    private var editorsOnly = false
     override fun onCreate(arguments: Bundle?) {
         super.onCreate(arguments)
         safOnly = arguments?.getString("saf") == "true"
@@ -62,6 +63,7 @@ class StartupResponsivenessInstrumentation : Instrumentation() {
         shutdownOnly = arguments?.getString("shutdown") == "true"
         failureOnly = arguments?.getString("startupFailure") == "true"
         feedbackOnly = arguments?.getString("feedback") == "true"
+        editorsOnly = arguments?.getString("editors") == "true"
         start()
     }
 
@@ -72,6 +74,10 @@ class StartupResponsivenessInstrumentation : Instrumentation() {
         val applicationWait = SystemClock.uptimeMillis()
         waitForIdleSync()
         sendStatus(0, Bundle().apply { putLong("application_ready_wait_ms", SystemClock.uptimeMillis() - applicationWait) })
+        if (editorsOnly) {
+            EditorLifecycleProbe.run(this)
+            return
+        }
         if (feedbackOnly) {
             InputFeedbackProbe.run(this)
             return

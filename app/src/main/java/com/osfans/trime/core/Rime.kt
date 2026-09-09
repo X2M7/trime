@@ -16,10 +16,7 @@ import com.osfans.trime.util.appContext
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
@@ -38,10 +35,13 @@ class Rime :
     private val lifecycleRegistry = RimeLifecycleRegistry()
     override val lifecycle get() = lifecycleRegistry
 
-    override val messageFlow = messageFlow_.asSharedFlow()
+    override val messageFlow = messageBus.flow
 
     override val isReady: Boolean
         get() = lifecycle.currentState == RimeLifecycle.State.READY
+
+    @Volatile override var usingExistingResources: Boolean = false
+        private set
 
     override var schemaCached = RimeSchema.empty()
         private set
@@ -66,6 +66,16 @@ class Rime :
     override fun getRuntimeOptionCached(option: String): Boolean = optionCache[option]
 
     override suspend fun refreshT9Options() = withRimeContext { emitResponse() }
+
+    override suspend fun beginEditor(token: Long, nullInputType: Boolean) = withRimeContext {
+        if (editorToken != token) {
+            clearRimeComposition()
+            getRimeCommit()
+        }
+        editorToken = token
+        isNullInputType = nullInputType
+        emitResponse()
+    }
 
     override suspend fun t9Action(
         revision: Int,
@@ -241,7 +251,7 @@ class Rime :
     }
 
     override suspend fun simulateKeySequence(sequence: String): Boolean = withRimeContext {
-        Timber.d("simulateKeySequence: $sequence")
+        Timber.d("simulateKeySequence")
         if (simulateRimeKeySequence(sequence)) {
             val commit = getRimeCommit()
             val input = getRimeRawInput()
@@ -350,8 +360,21 @@ class Rime :
     }
 
     private fun startRime(fullCheck: Boolean) {
+        // Editor ownership outlives an in-place native restart/deployment.
+        usingExistingResources = false
         optionCache.clear()
-        DataManager.sync()
+        val mayRecover = DataManager.hasDeployedResources()
+        val resourceFailure = try {
+            DataManager.sync()
+            if (RimeDataSync.usesExternalSync() && !RimeDataSync.hasExternalAccess()) {
+                IllegalStateException("External sync folder permission is unavailable; using local resources")
+            } else {
+                null
+            }
+        } catch (failure: Exception) {
+            if (!mayRecover) throw failure
+            failure
+        }
         val sharedDataDir = DataManager.sharedDataDir.absolutePath
         val userDataDir = DataManager.userDataDir.absolutePath
         Timber.d(
@@ -372,7 +395,12 @@ class Rime :
         try {
             nativeInitialized = true
             startupRime(sharedDataDir, userDataDir, BuildConfig.BUILD_VERSION_NAME, fullCheck)
-            check(!deployFailed.get()) { "Rime configuration deployment failed" }
+            if (deployFailed.get() || resourceFailure != null) {
+                check(hasUsableRimeDictionary()) { "Rime configuration deployment failed; no usable current dictionary" }
+                usingExistingResources = true
+                Timber.w(resourceFailure, "Deployment failed; using the current schema's validated existing dictionary")
+                if (resourceFailure != null) handleRimeMessage(RimeMessage.MessageType.Deploy.ordinal, arrayOf("failure"))
+            }
         } finally {
             unregisterRimeMessageHandler(startupHandler)
         }
@@ -512,7 +540,7 @@ class Rime :
             optionCache.clear()
             schemaCached = RimeSchema(schemaId)
             // notify downstream consumers that schema has changed
-            messageFlow_.tryEmit(
+            messageBus.publish(
                 RimeMessage.SchemaMessage(
                     SchemaItem(schemaId, schemaName),
                 ),
@@ -535,8 +563,7 @@ class Rime :
         lastAsciiTipsText = tipsText
 
         val tips = CompositionProto(tipsText)
-        messageFlow_.tryEmit(RimeMessage.CompositionMessage(tips))
-        compositionCached = tips
+        handleRimeMessage(6, arrayOf(tips))
         asciiSwitchTipsJob?.cancel()
         asciiSwitchTipsJob = lifecycleScope.launch {
             delay(1000L)
@@ -548,7 +575,9 @@ class Rime :
     }
 
     fun startup(fullCheck: Boolean = false) {
-        if (!RimeDataSync.isStorageAvailable(appContext)) {
+        if (!RimeDataSync.isStorageAvailable(appContext) &&
+            !(RimeDataSync.isRuntimeReady() && DataManager.hasDeployedResources())
+        ) {
             lifecycleRegistry.fail(IllegalStateException("Rime storage is unavailable"))
             return
         }
@@ -583,11 +612,8 @@ class Rime :
     }
 
     companion object {
-        private val messageFlow_ =
-            MutableSharedFlow<RimeMessage<*>>(
-                extraBufferCapacity = 15,
-                onBufferOverflow = BufferOverflow.DROP_OLDEST,
-            )
+        @Volatile private var editorToken = 0L
+        private val messageBus = RimeMessageBus()
 
         private val rimeMessageHandlers = CopyOnWriteArrayList<(RimeMessage<*>) -> Unit>()
 
@@ -602,6 +628,9 @@ class Rime :
 
         @JvmStatic
         external fun exitRime()
+
+        @JvmStatic
+        private external fun hasUsableRimeDictionary(): Boolean
 
         @JvmStatic
         external fun deployRimeSchemaFile(schemaFile: String): Boolean
@@ -716,9 +745,11 @@ class Rime :
             params: Array<Any>,
         ) {
             val message = RimeMessage.nativeCreate(type, params)
+            message.editorToken = editorToken
             Timber.d("Handling ${message.javaClass.simpleName}")
-            rimeMessageHandlers.forEach { it.invoke(message) }
-            messageFlow_.tryEmit(message)
+            messageBus.publish(message) {
+                rimeMessageHandlers.forEach { it.invoke(message) }
+            }
         }
 
         private fun registerRimeMessageHandler(handler: (RimeMessage<*>) -> Unit) {

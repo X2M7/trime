@@ -27,6 +27,7 @@ object ThemeManager {
     }
 
     private var _activeTheme: Theme? = null
+    private var activeConfigId: String? = null
     private val loadMutex = Mutex()
 
     // Reading a theme must never start deployment from a view/layout callback.
@@ -60,6 +61,11 @@ object ThemeManager {
             is ThemeLoader.ThemeLoadResult.Failure -> Timber.w(result.error)
         }
 
+        // Keep a decoded, usable theme on a failed reload, not a possibly partial disk artifact.
+        _activeTheme?.let { active ->
+            activeConfigId?.let { return ResolvedTheme(it, active) }
+        }
+
         if (id != "trime") {
             when (val result = ThemeLoader.loadTheme("trime")) {
                 is ThemeLoader.ThemeLoadResult.Success -> {
@@ -91,12 +97,16 @@ object ThemeManager {
         // UI tree keeps its views and their injected scope. Replace neither the
         // caches nor the scope in that case, or later scheme changes would update
         // the new global scope while existing views still read the old one.
-        if (_activeTheme == theme) return
+        if (_activeTheme == theme) {
+            activeConfigId = resolvedTheme.configId
+            return
+        }
         KeyActionManager.resetCache()
         FontManager.resetCache(theme)
         LiquidData.init(theme)
         ColorManager.attachTheme(theme)
         _activeTheme = theme
+        activeConfigId = resolvedTheme.configId
         fireChange()
     }
 

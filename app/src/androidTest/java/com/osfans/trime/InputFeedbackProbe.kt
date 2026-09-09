@@ -64,6 +64,14 @@ internal object InputFeedbackProbe {
                             InputFeedbackManager.init()
                             repeat(20) { InputFeedbackManager.startInput() }
                             check(field("tts") == null && field("soundPool") == null)
+                            prefs.speakOnKeyPress.setValue(true)
+                            prefs.speakOnCommit.setValue(true)
+                            InputFeedbackManager.startInput(sensitive = true)
+                            InputFeedbackManager.keyPressSpeak(KeyEvent.KEYCODE_A)
+                            InputFeedbackManager.textCommitSpeak("private-test-only")
+                            check(field("tts") == null && field("pendingSpeech") == null)
+                            prefs.speakOnKeyPress.setValue(false)
+                            prefs.speakOnCommit.setValue(false)
                         }
                         val fdsBefore = File("/proc/self/fd").list()!!.size
                         repeat(200) { SoundEffectManager.getAllSoundEffects() }
@@ -111,6 +119,7 @@ internal object InputFeedbackProbe {
                 descriptors.forEach { if (it.exists()) check(it.delete()) }
                 check(folder.deleteRecursively())
                 SoundEffectManager.init()
+                check(prefs.customSoundEffect.sharedPreferences.edit().commit())
             }
             success = true
             result.putString("stream", "PASS: lazy feedback, 200 descriptor scans, actual SoundPool loading, shorter melody switch, playback and resource release\n")

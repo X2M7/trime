@@ -8,6 +8,7 @@ package com.osfans.trime.ime.keyboard
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Canvas
+import android.view.KeyEvent
 import android.widget.FrameLayout
 import androidx.core.view.children
 import com.osfans.trime.data.prefs.AppPrefs
@@ -92,6 +93,17 @@ class KeyboardView(
         children.forEach { it.invalidate() }
     }
 
+    fun updateEnterLabel() {
+        keys.forEachIndexed { index, key ->
+            if (key.click?.code == KeyEvent.KEYCODE_ENTER) {
+                getChildAt(index)?.apply {
+                    contentDescription = labelEnter
+                    invalidate()
+                }
+            }
+        }
+    }
+
     fun invalidateKeyByIndex(index: Int) {
         getChildAt(index)?.invalidate()
     }
@@ -100,6 +112,7 @@ class KeyboardView(
         get() = keyboard.mShiftKey?.isOn == true
 
     fun onDetach() {
+        children.filterIsInstance<GestureFrame>().forEach { it.cancelGesture() }
         popup.dismissAll()
     }
 }

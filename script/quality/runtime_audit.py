@@ -82,6 +82,16 @@ def filter_pid_log(log, pid):
                      if (match := LOG_LINE.match(line)) and int(match[1]) == pid) + "\n"
 
 
+def log_after_marker(log, marker):
+    """Scope reused-process probes without deleting the retained device backlog."""
+    lines = log.splitlines()
+    positions = [index for index, line in enumerate(lines)
+                 if (match := LOG_LINE.match(line)) and match[4].strip() == 'TrimeRuntimeAudit' and match[5].strip() == marker]
+    if len(positions) != 1:
+        raise ValueError('Expected exactly one log capture boundary')
+    return '\n'.join(lines[positions[0] + 1:]) + '\n'
+
+
 def audit_log(log):
     warnings = []
     defects = []

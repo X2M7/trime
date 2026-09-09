@@ -20,11 +20,15 @@ class RimeSchema private constructor(val schemaId: String, loadConfig: Boolean) 
 
     val switches: List<Switch>
     val alphabet: String
+    val keyboard: String
+    val isPinyinT9: Boolean
 
     init {
         if (!loadConfig) {
             switches = emptyList()
             alphabet = ""
+            keyboard = ""
+            isPinyinT9 = false
         } else {
             val schemaConfig = when {
                 schemaId.isEmpty() -> RimeConfig.openConfig("default")
@@ -42,6 +46,8 @@ class RimeSchema private constructor(val schemaId: String, loadConfig: Boolean) 
                     )
                 }
                 alphabet = it.getString("speller/alphabet") ?: ""
+                keyboard = it.getString("trime/keyboard") ?: ""
+                isPinyinT9 = it.getString("trime/t9") == "true"
             }
         }
     }

@@ -66,9 +66,11 @@ val Project.buildCommitHash
 
 val Project.buildTimestamp
     get() =
-        envOrProp("BUILD_TIMESTAMP", "buildTimestamp") {
-            System.currentTimeMillis().toString()
-        }
+        normalizeBuildTimestamp(
+            envOrProp("BUILD_TIMESTAMP", "buildTimestamp") {
+                System.currentTimeMillis().toString()
+            },
+        )
 
 val Project.signKeyStoreProps: Properties?
     get() {

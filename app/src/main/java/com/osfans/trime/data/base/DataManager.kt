@@ -74,6 +74,15 @@ object DataManager {
     val prebuiltDataDir get() = File(sharedDataDir, "build")
     val stagingDir get() = File(userDataDir, "build")
 
+    /** Only permission to attempt recovery; native dictionary loading must still validate it. */
+    fun hasDeployedResources(): Boolean = runCatching {
+        File(sharedDataDir, "default.yaml").isFile &&
+            File(resolveDeployedResourcePath("default")).isFile &&
+            listOf(stagingDir, prebuiltDataDir).any { dir ->
+                dir.listFiles()?.any { it.name.endsWith(".schema.yaml") && it.isFile && it.canRead() } == true
+            }
+    }.getOrDefault(false)
+
     /**
      * Return the absolute path of the compiled config file
      * based on given resource id.
