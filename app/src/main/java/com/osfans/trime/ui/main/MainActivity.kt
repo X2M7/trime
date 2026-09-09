@@ -24,7 +24,9 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.forEach
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.withStarted
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.fragment.NavHostFragment
@@ -54,6 +56,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var navController: NavController
     private var testInputPanel: TestInputPanel? = null
+    private var notificationDialog: AlertDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         val uiMode =
@@ -150,7 +153,9 @@ class MainActivity : AppCompatActivity() {
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         processIntent(intent)
-        checkNotificationPermission()
+        lifecycleScope.launch {
+            lifecycle.withStarted { checkNotificationPermission() }
+        }
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -237,30 +242,49 @@ class MainActivity : AppCompatActivity() {
     override fun onStop() {
         super.onStop()
         testInputPanel?.dismiss()
+        dismissNotificationDialog()
     }
 
     override fun onDestroy() {
+        dismissNotificationDialog()
         testInputPanel = null
         super.onDestroy()
     }
 
+    private fun dismissNotificationDialog() {
+        val dialog = notificationDialog
+        notificationDialog = null
+        dialog?.dismiss()
+    }
+
     private fun checkNotificationPermission() {
-        if (XXPermissions.isGranted(this, Permission.POST_NOTIFICATIONS)) {
+        if (isFinishing || isDestroyed || !lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED) ||
+            notificationDialog?.isShowing == true || XXPermissions.isGranted(this, Permission.POST_NOTIFICATIONS)
+        ) {
             return
-        } else {
+        }
+        val dialog =
             AlertDialog
                 .Builder(this)
                 .setIconAttribute(android.R.attr.alertDialogIcon)
                 .setTitle(R.string.notification_permission_title)
                 .setMessage(R.string.notification_permission_message)
-                .setPositiveButton(R.string.grant_permission) { _, _ ->
-                    XXPermissions
-                        .with(this)
-                        .permission(Permission.POST_NOTIFICATIONS)
-                        .request(null)
+                .setPositiveButton(R.string.grant_permission) { source, _ ->
+                    if (notificationDialog === source && !isFinishing && !isDestroyed &&
+                        lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)
+                    ) {
+                        XXPermissions
+                            .with(this)
+                            .permission(Permission.POST_NOTIFICATIONS)
+                            .request(null)
+                    }
                 }.setNegativeButton(android.R.string.cancel, null)
-                .show()
+                .create()
+        notificationDialog = dialog
+        dialog.setOnDismissListener {
+            if (notificationDialog === dialog) notificationDialog = null
         }
+        dialog.show()
     }
 
     companion object {

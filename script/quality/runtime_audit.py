@@ -65,6 +65,8 @@ PROJECT_DIAGNOSTICS = (
     "FATAL EXCEPTION",
     "Fatal signal",
     "ANR in com.osfans.trime",
+    "android.view.WindowLeaked",
+    "has leaked window",
     "Glog is already initialized",
     "Encode failure:",
     "circular dependencies detected",

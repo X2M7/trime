@@ -121,6 +121,15 @@ class RuntimeAuditTest(unittest.TestCase):
             self.assertEqual(1, len(result["known_project_diagnostics"]))
             self.assertFalse(result["warning_free"])
 
+    def test_activity_window_leak_is_a_project_defect_under_framework_tag(self):
+        leak = ("09-10 00:02:53.500 9680 9680 E WindowManager: android.view.WindowLeaked: "
+                "Activity com.osfans.trime.ui.main.MainActivity has leaked window "
+                "DecorView@1234[MainActivity] that was originally added here\n")
+        result = audit_log(leak)
+        self.assertEqual(1, len(result["known_project_diagnostics"]))
+        self.assertEqual(1, len(result["warnings"]))
+        self.assertFalse(result["warning_free"])
+
     def test_protocol_rejects_contradictory_and_duplicate_success(self):
         ok = "INSTRUMENTATION_RESULT: passed=true\nINSTRUMENTATION_CODE: -1\n"
         self.assertTrue(instrumentation_passed(0, ok))

@@ -31,7 +31,38 @@ At this checkpoint these changes still required a frozen build and device matrix
 `stable-format1` passed Spotless application and nine build-logic tests, including
 five timestamp regressions. No build warning occurred in that preparation step.
 
-## Stable-build3 Checkpoint (Visual Defects; Build4 Pending)
+## Build4 Aborted; Window Leak Fix And Build5 Pending
+
+The candidate-annotation and clipboard-height corrections, their regression
+coverage and the preceding documentation checkpoint were committed as
+`3d4057fa800edd961ae7b581f00fe80b6b049db5`. The planned `stable-build4` was
+started, then intentionally stopped before completion when another application
+defect was confirmed. `stable-build4/aborted.json` records the reason, termination
+of the owned Gradle process PID 81291 and `frozen_apks: false` at
+2026-09-09T16:10:20.654015Z. Its source-before/source-after JSON files are identical;
+that establishes an unchanged source snapshot, not a completed build or tested APK.
+
+The new defect is in the original
+`api35-stable3-clip-overlap-negative/app-logcat.txt`: at 2026-09-10 00:02:53.500
+device-local time, PID 9680 reports `android.view.WindowLeaked` from
+`MainActivity.checkNotificationPermission(MainActivity.kt:262)`. The locally
+created notification-permission AlertDialog was not dismissed when configuration
+change destroyed its Activity. This is a real application lifecycle defect;
+it is distinct from the previously correlated isolated WebView renderer teardown.
+The old classifier's zero-project-diagnostics result missed this stack and is
+not an acceptance result. Raw logs, the clipboard overlap failure and its
+successful display/font/IME restoration remain retained.
+
+The runtime failure classifier now recognizes `WindowLeaked` and
+`has leaked window`, with a host regression. `stable-host2` passed 92 tests
+(quality 48, T04 13, T05 5, baseline 26). MainActivity dialog ownership,
+STARTED-state window gating and a SetupProbe lifecycle regression are in progress;
+their device result is not yet available. Build5 must freeze and validate the
+completed fixes. Build3 remains unaccepted, Build4 has no frozen APK, and stable
+publication remains pending. The Build3 section below preserves the earlier
+plan to use Build4; that plan was superseded by this aborted-build checkpoint.
+
+## Stable-build3 Checkpoint (Historical; Visual Defects)
 
 `stable-build3` was built from clean commit
 `1bd657725e0d28db2cde13b9b0cec935e6dff9db`, with versionName `3.3.13-t9.8`
@@ -93,8 +124,9 @@ case correctly fails with `Edit text overlaps OK/Cancel after hiding IME`.
 Its screenshot `eight-lines-after-back-01.png` has SHA-256
 `2042e84d96dc2ed8b1dc5f841639a46b3e9555f5396a16076d42928f5a03c097`.
 Original font/display/rotation/IME settings were restored successfully; 60 raw
-warning/error lines remain, with zero recognized project diagnostics. The
-overlap is nevertheless a real application defect.
+warning/error lines remain. The original classifier reported zero recognized
+project diagnostics, but later raw-log review found the MainActivity window leak
+recorded above. Both the overlap and the window leak are real application defects.
 
 The final helper is tracked as `script/quality/run_clip_visibility.py`; it uses
 actual Back/Cancel input, checks text/window preservation and does not write a
