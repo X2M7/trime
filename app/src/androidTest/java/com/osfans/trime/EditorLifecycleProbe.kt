@@ -29,6 +29,7 @@ import android.widget.LinearLayout
 import android.widget.PopupWindow
 import android.widget.TextView
 import androidx.core.view.children
+import com.osfans.trime.core.Rime
 import com.osfans.trime.core.RimeApi
 import com.osfans.trime.core.RimeSchema
 import com.osfans.trime.daemon.RimeDaemon
@@ -56,6 +57,7 @@ import com.osfans.trime.ime.switches.SwitchOptionWindow
 import com.osfans.trime.ui.main.ClipEditActivity
 import com.osfans.trime.util.sp
 import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
@@ -682,7 +684,36 @@ object EditorLifecycleProbe {
                     }
                     until("compatible T9 produces Hanzi") { chat.text.any { it.code > 127 } }
                     val beforeRedeploy = main { chat.text.toString() }
-                    api { updateConfig() }
+                    val tipsPreference = AppPrefs.defaultInstance().general.asciiSwitchTips
+                    val previousTipsPreference = tipsPreference.getValue()
+                    // Observe the real timer without exposing a production test API.
+                    val realRime = RimeDaemon::class.java.getDeclaredMethod("getRealRime").apply {
+                        isAccessible = true
+                    }.invoke(RimeDaemon) as Rime
+                    val tipJobField = Rime::class.java.getDeclaredField("asciiSwitchTipsJob").apply {
+                        isAccessible = true
+                    }
+                    try {
+                        main { tipsPreference.setValue(true) }
+                        api {
+                            setRuntimeOption("ascii_mode", true)
+                            setRuntimeOption("ascii_mode", false)
+                            val previousTip = checkNotNull(tipJobField.get(realRime) as Job?)
+                            check(previousTip.isActive) { "No pending ASCII tip before redeploy" }
+                            updateConfig()
+                            check(previousTip.isCancelled) { "Old native context's ASCII tip survived redeploy" }
+                            val currentTip = checkNotNull(tipJobField.get(realRime) as Job?)
+                            check(currentTip !== previousTip) { "Redeploy reused the old ASCII-tip timer" }
+                            withTimeout(5000) { currentTip.join() }
+                            check(currentTip.isCompleted && !currentTip.isCancelled) { "New engine's ASCII tip did not clear normally" }
+                            check(compositionCached.length == 0 && compositionCached.preedit.orEmpty().isEmpty()) {
+                                "New engine's ASCII tip did not restore its empty composition"
+                            }
+                        }
+                        phase("PASS: redeploy cancels the old ASCII tip and the new engine clears its own tip")
+                    } finally {
+                        main { tipsPreference.setValue(previousTipsPreference) }
+                    }
                     type("64")
                     api {
                         check(getRawInput() == "64")

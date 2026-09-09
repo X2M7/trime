@@ -410,6 +410,11 @@ class Rime :
     }
 
     private fun stopRime() {
+        // A delayed tip belongs to the native context that displayed it. It must
+        // not queue a context read behind maintenance or clear the new engine's tip.
+        asciiSwitchTipsJob?.cancel()
+        asciiSwitchTipsJob = null
+        lastAsciiTipsText = ""
         if (!nativeInitialized) return
         try {
             exitRime()
