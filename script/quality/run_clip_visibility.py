@@ -69,6 +69,31 @@ def intersects(a, b):
     return max(a[0], b[0]) < min(a[2], b[2]) and max(a[1], b[1]) < min(a[3], b[3])
 
 
+def finalize_log_review(report, out, pids, marker):
+    """Require readable, scoped application evidence before accepting UI success."""
+    report.update({"diagnostics_passed": False, "capture_has_records": False,
+                   "diagnostic_scope": "application PIDs after the unique capture marker"})
+    try:
+        scoped = log_after_marker((out / "logcat-full.txt").read_text(), marker)
+        (out / "logcat-after-marker.txt").write_text(scoped)
+        app_log = "\n".join(filter_pid_log(scoped, pid).strip() for pid in sorted(pids)) + "\n"
+        (out / "app-logcat.txt").write_text(app_log)
+        audit = audit_log(app_log)
+        (out / "runtime-audit.json").write_text(json.dumps(audit, ensure_ascii=False, indent=2) + "\n")
+        report.update({"app_pids": sorted(pids), "capture_has_records": audit["capture_has_records"],
+                       "warning_count": len(audit["warnings"]), "warning_free": audit["warning_free"],
+                       "project_diagnostic_count": len(audit["known_project_diagnostics"]),
+                       "requires_log_review": bool(audit["warnings"] or audit["known_project_diagnostics"])})
+        require(audit["capture_has_records"], "Scoped log capture contains no application records")
+        require(not audit["known_project_diagnostics"], "Scoped log capture contains project diagnostics; see runtime-audit.json")
+        report["diagnostics_passed"] = True
+    except Exception as error:
+        report["log_review_error"] = f"{type(error).__name__}: {error}"
+    report["passed"] = (report["functional_passed"] and report["restoration"].get("passed", False)
+                        and report["diagnostics_passed"]
+                        and not any(key in report for key in ("error", "cleanup_error", "log_review_error")))
+
+
 def run(args):
     out = args.output.resolve()
     out.mkdir(parents=True, exist_ok=False)
@@ -342,26 +367,14 @@ def run(args):
                 report["restoration"] = {"passed": not errors and observed == original, "observed": observed, "errors": errors}
             except Exception as error:
                 report["restoration"] = {"passed": False, "errors": errors + [str(error)]}
-        if (out / "logcat-full.txt").exists():
-            try:
-                scoped = log_after_marker((out / "logcat-full.txt").read_text(), marker)
-                (out / "logcat-after-marker.txt").write_text(scoped)
-                app_log = "\n".join(filter_pid_log(scoped, pid).strip() for pid in sorted(pids)) + "\n"
-                (out / "app-logcat.txt").write_text(app_log)
-                audit = audit_log(app_log)
-                save("runtime-audit.json", audit)
-                report.update({"app_pids": sorted(pids), "warning_count": len(audit["warnings"]),
-                               "warning_free": audit["warning_free"], "project_diagnostic_count": len(audit["known_project_diagnostics"]),
-                               "requires_log_review": bool(audit["warnings"] or audit["known_project_diagnostics"])})
-            except Exception as error:
-                report["log_review_error"] = str(error)
-        report["passed"] = (report["functional_passed"] and report["restoration"].get("passed", False)
-                            and not any(key in report for key in ("error", "cleanup_error", "log_review_error")))
+        finalize_log_review(report, out, pids, marker)
         report["artifact_sha256"] = {p.name: hashlib.sha256(p.read_bytes()).hexdigest()
                                      for p in sorted(out.iterdir()) if p.is_file() and p.name != "report.json"}
         save("report.json", report)
         print(json.dumps({"passed": report["passed"], "report": str(out / "report.json"),
-                          "error": report.get("error"), "restored": report["restoration"].get("passed")}, indent=2), flush=True)
+                          "error": report.get("error") or report.get("log_review_error"),
+                          "diagnostics_passed": report["diagnostics_passed"],
+                          "restored": report["restoration"].get("passed")}, indent=2), flush=True)
     return 0 if report["passed"] else 1
 
 
