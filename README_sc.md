@@ -20,35 +20,25 @@ SPDX-License-Identifier: GPL-3.0-or-later
 
 [查看文档](https://github.com/osfans/trime/wiki)
 
-## 九键拼音预览版
+## 九键拼音
 
-这个 fork 在 Trime 的基础上加入了 `朙月拼音九键` / `luna_pinyin_t9`：
+这个 fork 在 Trime 中加入基于方案词典的 `朙月拼音九键` / `luna_pinyin_t9`，两个内置主题均提供 3x3 主键区。使用 2–9 输入拼音，支持逐段锁定、中间编辑、解锁与撤销；选择拼音不提交汉字。布局支持拼音侧栏或横排、左右单手模式、键高设置、长按数字和空格滑动移光标。
 
-- 新增基于朙月拼音词典的九键拼音方案，使用 `2-9` 输入拼音。
-- 新增九宫格键盘布局，键位映射为 `ABC=2`、`DEF=3`、`GHI=4`、`JKL=5`、`MNO=6`、`PQRS=7`、`TUV=8`、`WXYZ=9`。
-- 切换到 `luna_pinyin_t9` 方案时，Trime 会自动切换到九键布局。
-- 改进输入法服务启动阶段的主题加载，避免首次部署时找不到主题导致崩溃。
+[项目页面](https://x2m7.github.io/trime/) | [下载九键稳定版 APK](https://github.com/X2M7/trime/releases/latest)
 
-[项目页面](https://x2m7.github.io/trime/) | [下载九键预览 APK](https://github.com/X2M7/trime/releases/latest)
+稳定版 [3.3.13-t9.8](https://github.com/X2M7/trime/releases/tag/v3.3.13-t9.8)，versionCode `20261113`，包含 T06 输入框适配、统一回车动作、返回聊天框恢复九键、编辑器连接隔离、第三方主题回退及部署重试，并修复 Android 5.0 预编辑浮层崩溃。具体 APK 与验证范围见[发布说明](doc/releases/v3.3.13-t9.8.md)和 [T06 验证报告](script/quality/VALIDATION-T06.md)。
 
-新增预发布版 [t9.7-dev.2](https://github.com/X2M7/trime/releases/tag/v3.3.13-t9.7-dev.2)，versionCode `20261111`，包含 T04/T05 与运行安全修复。ARM 转译环境下的启动排队及慢帧告警仍未关闭，详见[发行说明](doc/releases/v3.3.13-t9.7-dev.2.md)。t9.6 暂时保留为 Latest。
+ARM64 与 x86_64 APK 保留 Android 5.0+ 支持，延续此前 fork 的包名 `com.osfans.trime.debug` 和签名证书，以支持覆盖升级；显示名称为 `Trime`。附件仍是调试签名、可调试构建，未启用生产签名或 R8。升级前备份配置和词库；自定义目录中的同名方案或主题可能需要合并新规则、布局并重新部署，请保留个人词库。
 
-预览版 `3.3.13-t9.6`（versionCode `20261108`）包含基于方案词典的拼音选择、逐段锁定、中间纠错、解锁和撤销；选拼音不提交汉字。T03 同步两个内置主题，保留 3x3 主键区，拼音列表按宽度切换侧栏或横排，支持左右单手模式、键高设置、长按输入数字和空格滑动移光标。详见[键位规则](script/quality/T03.md)和[开发版验收记录](script/quality/VALIDATION-t9.6-T03.md)。
+[T04](script/quality/t04/README.md) 在独立目录中提供固定排名与学习测试，默认继续使用朙月词典，不启用大词库或语法模型。[T05](script/quality/t05/README.md) 将六组可选模糊音与三类有界数字键纠错分开设置，默认全部关闭，建议标明来源。
 
-本版合并上游至 `d9a1f424`，纳入主题作用域、配色原地刷新及按安装 ID 同步数据。九键拼音区跟随键盘更新配色，安装标识缺失时保留同步备份。范围和测试结果见[上游合并验收记录](script/t9/UPSTREAM-t9.3.zh-CN.md)。
-
-ARM64 预览 APK 保留 Android 5.0+ 支持，并延续旧预览版包名 `com.osfans.trime.debug` 和调试签名以支持覆盖升级，显示名称没有“调试版”后缀。它不是生产签名或 R8 构建。升级前请备份配置及词库；用户目录若有同名九键方案或主题，需要合并新增规则和布局后重新部署，不要清空个人词库。详见[发布说明](doc/releases/v3.3.13-t9.6.md)、[九键设计与测试](script/t9/README.md)、[启动 ANR 回归检查](script/t9/STARTUP-ANR.md)。
-
-新预发布版中的 T04 新增[固定中文排名测试集](script/quality/t04/README.md)、锁定版本的分层词库实验、用户学习验证和 APK 资源校验。实验只使用独立测试目录，不覆盖个人词库；大词库和语法模型不默认启用。
-[首轮评测](script/quality/VALIDATION-T04.md)发现了改善与退步，但保留集首选率没有净提高，因此仍保留朙月默认。
-
-预发布版 [T05](script/quality/t05/README.md) 将六组模糊音与相邻数字键、漏按、重复输入三类纠错分开设置，默认全部关闭。新增拼音建议带来源标记，点选前不改变原有汉字排序；仍保留原始数字、解锁和撤销。它不替换旧版 Latest。
+仍保留三项 v1 META-INF 签名覆盖警告。模拟器验收不代表 ARM64 真机性能、所有 OEM 编辑器或物理 16 KB 页设备已验证；此前 ARM 转译启动排队与慢帧记录见发布说明。另见[键位规则](script/quality/T03.md)、[九键设计](script/t9/README.md)和[上游合并记录](script/t9/UPSTREAM-t9.3.zh-CN.md)。
 
 ## 下载
 
-- 九键预览版 [点击下载](https://github.com/X2M7/trime/releases/latest)
+- 九键稳定版 [点击下载](https://github.com/X2M7/trime/releases/latest)
 
-- 稳定版 <br>
+- 上游稳定版 <br>
   [<img alt='Get it on F-Droid' src='https://fdroid.gitlab.io/artwork/badge/get-it-on.png' height='80px'/>](https://f-droid.org/packages/com.osfans.trime)
   [<img alt='Google Play 立即下载' src='https://play.google.com/intl/en_us/badges/images/generic/zh-cn_badge_web_generic.png' height='80px'/>](https://play.google.com/store/apps/details?id=com.osfans.trime)
 

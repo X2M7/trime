@@ -22,35 +22,25 @@ Trime is originally a frontend of open-source [Android Traditional Chinese IME],
 
 [Documentation](https://github.com/osfans/trime/wiki)
 
-## T9 Pinyin Preview
+## T9 Pinyin
 
-This fork adds `Luna Pinyin T9` / `luna_pinyin_t9` on top of Trime:
+This fork adds dictionary-backed `Luna Pinyin T9` / `luna_pinyin_t9` to Trime, with a 3x3 main key area in both bundled themes. Digits 2–9 enter pinyin; syllable locking, middle editing, unlocking and undo preserve the original numeric input. Selecting pinyin does not commit Hanzi. The layout supports a pinyin sidebar or horizontal list, one-handed modes, adjustable key height, literal digits on long press and Space cursor sliding.
 
-- Adds a T9 pinyin schema based on the Luna Pinyin dictionary, using digits `2-9` for pinyin input.
-- Adds a 3x3 main key area with side controls in both bundled themes, with `ABC=2`, `DEF=3`, `GHI=4`, `JKL=5`, `MNO=6`, `PQRS=7`, `TUV=8`, and `WXYZ=9`.
-- Automatically switches to the T9 keyboard when the `luna_pinyin_t9` schema is selected.
-- Improves early theme loading during IME startup to avoid first-run theme deployment crashes.
+[Project page](https://x2m7.github.io/trime/) | [Download T9 stable APKs](https://github.com/X2M7/trime/releases/latest)
 
-[Project page](https://x2m7.github.io/trime/) | [Download the T9 preview APK](https://github.com/X2M7/trime/releases/latest)
+Stable release [3.3.13-t9.8](https://github.com/X2M7/trime/releases/tag/v3.3.13-t9.8), versionCode `20261113`, includes T06 input-field adaptation, consistent Enter actions, T9 restoration, editor-connection isolation, third-party theme fallback and deployment retry. It also fixes the Android 5.0 preedit-overlay crash. See the [release notes](doc/releases/v3.3.13-t9.8.md) and [T06 validation record](script/quality/VALIDATION-T06.md) for the exact APKs and coverage.
 
-New prerelease: [t9.7-dev.2](https://github.com/X2M7/trime/releases/tag/v3.3.13-t9.7-dev.2), versionCode `20261111`, adds T04/T05 and runtime safety fixes. Known ARM-translation startup/slow-frame warnings remain; see [release notes](doc/releases/v3.3.13-t9.7-dev.2.md). The previous t9.6 remains Latest.
+ARM64 and x86_64 APKs retain Android 5.0+ support, package `com.osfans.trime.debug`, and the previous fork signing certificate for in-place upgrades. The displayed name is `Trime`. These are debug-signed, debuggable builds; production signing and R8 are not enabled. Back up configuration and dictionaries before upgrading. Custom copies of the T9 schema or themes may need the updated rules/layout and redeployment; retain personal dictionaries.
 
-Preview `3.3.13-t9.6` (versionCode `20261108`) includes dictionary-backed pinyin selection, syllable locking, middle-segment editing, unlocking and undo. Selecting pinyin does not commit Hanzi. T03 adds an adaptive sidebar/horizontal pinyin list, left/right one-handed modes, adjustable key height, literal digits on long press and Space cursor sliding. See the [key contracts](script/quality/T03.md) and [development validation](script/quality/VALIDATION-t9.6-T03.md).
+[T04](script/quality/t04/README.md) provides fixed ranking and learning benchmarks in isolated data directories. Luna remains the default; no large dictionary or grammar model is enabled. [T05](script/quality/t05/README.md) separates six optional fuzzy-pinyin rules from three bounded numeric-key repair rules. All are off by default; suggestions display their source.
 
-This version integrates upstream through `d9a1f424`, including scoped theme colors, in-place color refresh and installation-aware data sync. T9 colors now refresh with the keyboard, and sync backups are protected when the installation identity is unavailable. See the [merge validation record](script/t9/UPSTREAM-t9.3.zh-CN.md) for scope and test results.
-
-The ARM64 preview retains Android 5.0+ support and the previous preview's package (`com.osfans.trime.debug`) and debug signing certificate for in-place upgrades. Its displayed name has no Debug suffix. This is a preview, not a production-signed/R8 build. Back up configuration and dictionaries before upgrading. Custom copies of the T9 schema or themes need the updated rules/layout and redeployment; do not reset personal dictionaries. See [release notes](doc/releases/v3.3.13-t9.6.md), [T9 design and tests](script/t9/README.md) and [startup ANR checks](script/t9/STARTUP-ANR.md).
-
-T04 in the new prerelease adds a [fixed Chinese ranking benchmark](script/quality/t04/README.md), pinned dictionary-layer experiments, user-learning checks and APK resource checksum verification. Experiments use isolated data directories and do not overwrite personal dictionaries. No large dictionary or grammar model is enabled by default.
-The [first evaluation](script/quality/VALIDATION-T04.md) found improvements and regressions, but no net holdout Top-1 gain, so Luna remains the default.
-
-Prerelease [T05](script/quality/t05/README.md) separates six optional fuzzy-pinyin rules from three bounded numeric-key repair rules. All are off by default. Source-labeled pinyin suggestions preserve the original Hanzi ranking until explicitly selected; raw digits, unlocking and undo remain available. This does not replace the previous Latest release.
+Three v1 META-INF signature-coverage warnings remain. Native phone performance, OEM editor coverage and physical 16 KB-page devices are not established by emulator acceptance. The release notes retain these limits and the earlier ARM-translation startup/slow-frame findings. See also the [key contracts](script/quality/T03.md), [T9 design](script/t9/README.md) and [upstream merge record](script/t9/UPSTREAM-t9.3.zh-CN.md).
 
 ## Download
 
-- T9 Preview [Download](https://github.com/X2M7/trime/releases/latest)
+- T9 Stable [Download](https://github.com/X2M7/trime/releases/latest)
 
-- Stable Channel <br>
+- Upstream Stable Channel <br>
   [<img alt='Get it on F-Droid' src='https://fdroid.gitlab.io/artwork/badge/get-it-on.png' height='80px'/>](https://f-droid.org/packages/com.osfans.trime)
   [<img alt='Google Play Download Now' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png' height='80px'/>](https://play.google.com/store/apps/details?id=com.osfans.trime)
 

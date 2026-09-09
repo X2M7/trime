@@ -1,753 +1,211 @@
-# T06 Editor And Lifecycle Regression
+# T06 输入框与生命周期验收
 
-Work in progress. This is not a claim of a warning-free release.
+**`stable-build6` 的冻结APK已通过本报告列明的构建、宿主及30组运行验收；逐项日志裁决无未解释的发布阻断。**
+范围为Android5.0/15模拟器及ARM64转译，历史负向对照和准备失败不计入通过组数。
+这是冻结APK的限定范围验收；源码/发布附件绑定须独立通过，不能由本页代替实际发布验证。
+本报告不把构建通过、功能断言通过或零项目诊断等同于零警告、无性能风险。
 
-## Latest Checkpoint: Build5 Rejected For Numeric-Space Label; Build6 Pending
+## 冻结身份
 
-Build5's existing API21/API35 functional matrices passed, but screenshot review
-confirmed an application visual defect on both APIs: the `trime` numeric
-keyboard's narrow bottom-center space key displays the full schema name and
-hard-clips it. This blocks final Build5 acceptance. The numeric layout now uses
-the existing `space1` action with its explicit `空格` label and unchanged space
-event; actual glyph visibility and action regression checks are prepared and
-formatted. Build6 is planned, not yet built or accepted. Stable publication
-remains pending, and all previous results below retain their original identities.
+当前候选唯一来源为 `build/t06-runtime/stable-build6/identity.json`。
+APK 构建提交：`dd87f879286a54e0d6e7a82afeee3abf6a82e0dc`。
+`versionName=3.3.13-t9.8`，`versionCode=20261113`，包名 `com.osfans.trime.debug`。
+最低 API21、target API37，保留 ARM64 与 x86_64；构建仍为 debuggable/debug 签名。
+`BUILD_TIMESTAMP=1788973552491` 毫秒，即 `2026-09-09T17:05:52.491Z`。
+构建环境、BuildConfig 的提交/仓库/时间戳相互一致。
 
-The final Build5 API21 seven-probe batch, 17 independent-app checkpoints,
-fallback/retry and navigation passed. The actual published t9.6 ARM64 APK
-(`92e0e56244559b091801e8748f25a7fb2d80313938147c0ca006290e1d7ad9f6`)
-was replaced in place by Build5 ARM64
-(`8325b1b58753328aafab35d25a0dec84d4948c9c4482bf139a8c00b43de2923a`),
-preserving the independent 53-byte marker. Old-version initial deployment was
-incomplete; this is not evidence that the old version reached Chinese-input
-readiness. Build5 ARM-translation engine and T02 diagnostics passed, with native
-deployment taking 115.7 seconds and engine maximum observed main-loop gap 939 ms.
-No greater-than-2-second queue diagnostic or scoped application fatal/ANR/window
-leak was observed for the new app PIDs 6087/6343. Earlier Google/system ANRs remain
-retained and precede those PIDs. These are Build5 diagnostics, not Build6 acceptance
-or physical ARM/OEM performance coverage. After the resource edit, `stable-host4`
-passed 102 tests. Full Build6 artifact, device and source/archive gates remain.
+| 冻结产物 | SHA-256 | 字节 |
+| --- | --- | ---: |
+| ARM64 应用 APK | `0587308c1452504d2f295778213883b7a4465027f4b220be62eaae07028f51aa` | 21261783 |
+| x86_64 应用 APK | `c5599476e322e5d3d58de8d854156105580c15e7d2fd0f48327b6234d946d150` | 21357064 |
+| Android 测试 APK | `6fca26d8b0009c25299f3a15df042e4e3c8aaed3cb825a28acefc23c2aff2ae2` | 861273 |
+| 独立编辑器 fixture APK | `f39509702ef75911c7848908a8a17dd77be6b20a0aace78bca66094d38144233` | — |
+| 独立 observer APK | `226a3add8818759a8f2135669f738abbd7d91091bad810b50dc9f2578181e0d8` | — |
 
-## Stable-build5 Checkpoint (Historical API35 Acceptance; Later Visual Rejection Above)
+发布应用文件名为 `trime-v3.3.13-t9.8-{arm64-v8a,x86_64}.apk`，重命名不得改变字节。
+最终标签/发布文档提交及附件实际名称由独立 `release-identity.json` 记录。
+后续仅改文档的提交不是新的 APK 构建提交；此文不提前自引用未知的最终 Git 提交。
 
-The frozen APK build commit is
-`f84e2365a7b7bdf924665373eef1e315d5d4e9c2`; versionName is `3.3.13-t9.8`,
-versionCode `20261113`. Build5 completed from a clean, unchanged source snapshot.
-The 285 application and nine build-logic JVM test XMLs show zero failures, errors
-or skips. The application test task executed; build-logic was UP-TO-DATE with
-retained successful XML. Spotless passed, Lint has zero issues and the full build
-log has no warning/deprecation line. `stable-host3` separately passed 102 tests
-(quality 58, T04 13, T05 5, baseline 26), with helper-source hashes retained.
-Earlier host1/host2 counts below remain historical checkpoints.
+## 已修复的行为
 
-| Frozen candidate artifact | stable-build5 SHA-256 |
+- 按输入框类型选择临时 ASCII/数字布局，返回聊天框恢复选定九键和模式。
+- 回车文字与实际动作使用同一策略，覆盖发送、搜索、下一项、自定义动作和换行。
+- 编辑器连接拥有独立标识，拒绝旧连接的提交、候选、排队按键、对话框和选项回调。
+- 隐藏时取消长按/连发；物理键盘在受限输入框内遵循 Android 编辑器处理路径。
+- 第三方主题缺少必要布局时以内置兼容布局回退，切换方案清理旧布局锁。
+- 启动/部署不可用时保留数字降级输入、重试和系统输入法入口，并验证实际词典可用性。
+- 修复 Android5 浮层提前显示的 BadToken；按锚点附着、可见性与布局状态管理浮层。
+- 消息使用 64 帧有界缓冲和工作线程背压，故障通知移出调度锁以避免阻塞并发接单。
+- 修复大字体候选注释裁切、剪贴板多行编辑区覆盖按钮、通知权限对话框窗口泄漏。
+- 数字键盘用现有“空格”标签替代窄键位中的长方案名，保留 SPACE 动作代码。
+- 构建时间统一为毫秒，避免旧秒数在“关于”/设备信息中显示为 1970 年。
+
+## 构建与宿主检查
+
+`stable-build6` 用时 607.438 秒，从干净源码完成；479 项源码哈希前后及复核时一致。
+应用 JVM 285 项通过；build-logic 9 项成功 XML 保留，任务为 UP-TO-DATE。
+两组均无失败、错误或跳过；应用测试任务实际执行，不能称 build-logic 全量重新执行。
+Spotless 完成、Lint 0 项；本次完整构建日志没有 warning/deprecation 行。
+`stable-host4` 的 102 项通过：quality58、T04 13、T05 5、baseline26。
+30 个宿主源码哈希和四组日志哈希匹配；忽略目录摘要器测试不计入这 102 项。
+两应用各 48 个资源与 checksums.json 匹配；ZIP 16KB 对齐和 ELF 三个 PT_LOAD 对齐/同余通过。
+依据：`release-preflight-review.{json,md}`、`apk-verification.json`、JVM XML、Lint 和 host4 报告。
+
+## 最终候选覆盖矩阵
+
+下表只写 `stable-build6` 的证据；此前版本号相同的候选不能代替本轮 APK。
+证据根目录为 `build/t06-runtime/`；公共归档按附件清单绑定这些明确选择的证据。
+
+| 范围 | 本轮结果与边界 |
 | --- | --- |
-| ARM64 APK | `8325b1b58753328aafab35d25a0dec84d4948c9c4482bf139a8c00b43de2923a` |
-| x86_64 APK | `e7678a21dcc298941462b4e9f17e338172565fe655ca79bd82502e07b324ed97` |
-| Android test APK | `7c5719bb4d5b9ff1a4d01cae290eebec541cbe14e0f6b0d385ea6a5910740483` |
-
-Independent `stable-build5/release-preflight-review.json` confirms all three APK
-hashes, 479 frozen build-source hashes, raw manifests/signatures/BuildConfig,
-each application's 48 resource hashes and static ZIP/ELF 16 KB alignment.
-The package remains `com.osfans.trime.debug`, minSdk 21 / targetSdk 37, with the
-existing certificate and debuggable build. v1/v2 verify; each application retains
-three META-INF warnings and the instrumentation APK has none. Build timestamp
-`1788970459843` ms resolves to `2026-09-09T16:14:19.843Z`. The preflight review's
-92-host-test count predates host3; neither count is silently rewritten.
-
-The following accepted API35 checks use the frozen Build5 x86_64 APK. The
-complete API35 selection is accepted; API21 and ARM64 acceptance remain pending.
-
-| Evidence under `build/t06-runtime/` | Build5 result |
-| --- | --- |
-| `api35-stable5-t03-landscape-large` | At 800×412dp/fontScale 2, individual candidate text/comment visibility assertions and all eight screenshots across both builtin themes passed. The formerly clipped fifth `擬稿` / `ni gao` annotation is complete inside the row. This is geometry-only coverage, not a repeated gesture/corpus run. |
-| `api35-stable5-clip-visibility` | Short/eight-line text passed actual Back, same-window/text preservation, unobstructed title/controls and actual Cancel. Old eight-line field/button overlap of 59px becomes zero: field `[532,207][1068,578]`, Cancel `[692,578][936,688]`. Display/font/rotation/IME restoration passed. |
-| `api35-stable5-setup` | Five notification-dialog lifecycle phases passed, alongside 300 wizard refresh requests and 29 navigation clicks. No WindowLeaked or other critical finding was identified in the reviewed application and scoped cross-process intervals. |
-| `api35-stable5-main-{editors,engine,startupFailure,feedback,shutdown,clipSave,saf,clip,t02}` | All nine main probes passed; together with setup above this is ten instrumented probes. The complete editor matrix and 100 show/hide cycles, startup/recovery, sound, shutdown, eight real clipboard/collection persistence checks, 21 isolated-provider SAF checks and T02 editing passed. |
-| `api35-stable5-t03` / `api35-stable5-t05` | Full 360dp T03 semantics and full T05 corpus/UI passed on both themes. T03 has eight portrait screenshots plus the eight large-font geometry screenshots above (16 total); T05 has two screenshots. |
-| `api35-stable5-independent` | All 23 checkpoints passed, including process recovery, rotation, application switching and both split positions. Real editor commits change `STABLE` → `STABLE你` → `STABLE你你`; six split pixel checks show nonblank keys. |
-| `api35-stable5-unavailable` | Actual fallback numeric entry/deletion passed with resources blocked; Retry restored the T9 keyboard and candidates after real 6→4 taps. Resources were restored. |
-| `api35-stable5-navigation` | Two Profile/Back and Test-input/Back cycles returned to Schemata. Twelve fresh XML captures verify navigation; this run does not assert clipboard or PNG screenshot checks. |
-
-The five notification phases verify: repeated checks retain one showing prompt;
-an old queued dismissal cannot clear its replacement; recreation removes the
-old window and gives the new Activity its own prompt; covering the Activity
-dismisses its prompt and rejects late checks; finishing removes both window and
-owner reference. `stable-build5/api35-notification-clip-independent-review.json`
-retains these phases, raw evidence hashes and separate log boundaries. Setup has
-23 platform-tag warnings; clipboard has 35, including 21 missed-frame records
-and two FrameTracker force-finish timeouts. Functional success is not a
-warning-free or smoothness claim.
-
-`stable-build5/api35-final-instrumentation-review.json`,
-`api35-final-t03-t05-review.json` and `api35-final-external-review.json` retain
-the final API35 identities, raw evidence hashes and independent log reviews.
-The nine main probes retain 579 scoped warning/error lines, including 13
-injected missing-theme diagnostics, 72 startup-fault diagnostics and 28
-intentional deleted-row failure lines. SAF uses isolated fixtures; its three
-injected rename failures produce 78 framework-tag warning/stack lines and do
-not establish an external system-provider persisted-grant test. The editor
-probe itself retains 241 warning/error lines. No unexpected critical finding
-remains after the specific renderer event below is individually adjudicated.
-
-Build5's Chromium diagnostic at 2026-09-10 00:30:58.710 identifies renderer PID
-3667 with `code -1`, while main Trime PID 3579 continues. At .721 ActivityManager
-records `isolated not needed`; at .786 Zygote reports `exited cleanly (0)` for
-3667. Together with the frozen probe's explicit WebView destruction before its
-100 show/hide cycles, this supports the inference that the event belongs to
-WebView teardown. The real diagnostic remains critical in the automatic summary
-and is preserved with those system lines. Later full-device captures contain
-copies of the same timed event as backlog. This Build5 clean-exit evidence must
-not replace Build3 renderer 2965's historical signal-9 termination record.
-
-The 360dp T03/T05 runs retain 22/17 platform-tag warnings. T05 preserves all 24
-exact candidate lists; explicit fuzzy/typo syllable recovery reaches 12/12 each.
-The single sequential off/on timing/PSS samples are observations influenced by
-warmup and scheduling, not evidence of a causal speedup, memory reduction or
-automatic Hanzi Top-1 improvement. This run uses x86_64 APKs on an x86_64 emulator;
-the metrics helper's historical native-bridge wording does not establish ARM
-execution. The compiled assertions are bound by the test APK hash; the reviewed
-driver matches the frozen source, although its hash is not pinned in T03 run identity.
-
-Independent/unavailable/navigation runs retain 40/75/36 app warning/error lines.
-Independent-app IPCThreadState errors correlate with forced fixture replacement;
-subsequent editor checkpoints succeed. All 67 recognized unavailable-run errors
-belong to deliberately blocking the shared/default.yaml destination. Animation
-and binder diagnostics remain retained rather than suppressed. Screenshot/XML
-capture attempts include four/one/one retries respectively; final captures and
-checks passed. Password verification checks masked length, not disclosed text.
-
-Clipboard XML retains all eight lines and the end caret; the editor automatically
-scrolls to the last lines. No explicit manual scroll-back-to-Line1 gesture was
-tested. While the IME is visible the floating editor title may pan partly above
-the display; actual Back restores the complete title and controls. These checks
-use Back key dispatch and real Cancel taps, not gesture-navigation animation,
-database-row writes or Save/OK execution.
-
-The candidate negative control deliberately pairs old Build3 x86_64 hash
-`07d78c06e7947e85ca9ddffca2854283f216748e93028e49676ea807a3818d55`
-with the new Build5 test APK above. It fails on the first `ni hao` comment view:
-53 visible vertical pixels out of a 54-pixel view, at `T9LayoutProbe.kt:136`.
-It stops before reaching the originally clipped fifth `ni gao`; glyph clipping
-of that first label is not independently asserted. The real attached adapter
-and candidate view were reached without a linkage/unattached-fixture error.
-The assertion precedes screenshot export, so missing screenshots and
-`artifacts_complete=false` are expected for this negative control, which is
-excluded from final passing runs. `candidate-negative-independent-review.json`
-and `candidate-positive-independent-review.json` preserve that distinction.
-The matching Build5 positive run has all eight screenshots, 17 platform-tag
-warnings and no recognized project diagnostics or critical findings.
-
-`api35-stable5-install/failure-review.json` retains an installation-preparation
-failure: `adb exec-in run-as dd` returned success but wrote a zero-byte marker.
-The exact-byte precondition rejected it before installing the candidate APK.
-`api35-stable5-install2/identity.json` then records successful Build3 → Build5
-x86_64 replacement, using adb push/app-UID copy and raw exec-out verification.
-Its independent 53-byte app-private marker matches before/after and installed
-app/test hashes match Build5. `api21-stable5-install/identity.json` likewise
-records Build3 → Build5 replacement with a preserved 53-byte marker and exact
-installed hashes. Neither procedure uninstalled the app or cleared its data;
-neither establishes personal-dictionary migration or ARM64 upgrade.
-
-Final API21 functional coverage, real published t9.6 ARM64 in-place upgrade and
-publication source/archive verification remain pending. The API21 probe batch
-is still running at this checkpoint; successful installation is not a full
-matrix pass. No stable release has been published. Physical
-ARM64/OEM and physical 16 KB-page devices remain unavailable; historical
-translated-ARM queue/performance findings are not resolved by these checks.
-All sections below preserve their earlier identities, plans and failures.
-
-## Stable Candidate Follow-up (Historical Preparation, 2026-09-09)
-
-The user has authorized publication of `v3.3.13-t9.8` as a stable release after
-acceptance. Its planned versionCode is `20261113`; the existing package and
-signing certificate remain compatible. At this initial preparation checkpoint,
-the stable APKs had not yet been built or accepted. Subsequent candidate results
-are recorded separately below; older results retain their original identities.
-
-The exact Build11 x86_64 APK passed `api21-build11-editors`: deferred overlay
-attachment/detachment, the editor/action matrix, theme/schema restoration,
-third-party fallback, WebView and 100 visibility cycles. The tested Trime interval
-has zero recognized project diagnostics. The full preparation log retains one
-LatinIME inactive-connection diagnostic and 71 warning/error lines; this is not
-a warning-free run.
-
-Additional review found and repaired attached-but-invisible overlay ownership,
-full-pinyin overlay hide/show, physical-keyboard input leaking into the Chinese
-engine in restricted editors, and dropped commit/key messages when the old
-15-frame broadcast overflowed. The new broadcast has a bounded 64-frame buffer
-and applies backpressure on native/maintenance workers; consumers must enqueue
-native work asynchronously. Four-consumer burst, cancellation, no-subscriber and
-nested cache notification tests cover its delivery contract. Build timestamps
-now normalize epoch seconds into the milliseconds used by Android date helpers.
-At this checkpoint these changes still required a frozen build and device matrix.
-
-`stable-host1` passed 91 host tests (quality 47, T04 13, T05 5, baseline 26).
-`stable-format1` passed Spotless application and nine build-logic tests, including
-five timestamp regressions. No build warning occurred in that preparation step.
-
-## Historical Build4 Abort (Window Leak Found Before Build5)
-
-The candidate-annotation and clipboard-height corrections, their regression
-coverage and the preceding documentation checkpoint were committed as
-`3d4057fa800edd961ae7b581f00fe80b6b049db5`. The planned `stable-build4` was
-started, then intentionally stopped before completion when another application
-defect was confirmed. `stable-build4/aborted.json` records the reason, termination
-of the owned Gradle process PID 81291 and `frozen_apks: false` at
-2026-09-09T16:10:20.654015Z. Its source-before/source-after JSON files are identical;
-that establishes an unchanged source snapshot, not a completed build or tested APK.
-
-The new defect is in the original
-`api35-stable3-clip-overlap-negative/app-logcat.txt`: at 2026-09-10 00:02:53.500
-device-local time, PID 9680 reports `android.view.WindowLeaked` from
-`MainActivity.checkNotificationPermission(MainActivity.kt:262)`. The locally
-created notification-permission AlertDialog was not dismissed when configuration
-change destroyed its Activity. This is a real application lifecycle defect;
-it is distinct from the previously correlated isolated WebView renderer teardown.
-The old classifier's zero-project-diagnostics result missed this stack and is
-not an acceptance result. Raw logs, the clipboard overlap failure and its
-successful display/font/IME restoration remain retained.
-
-The runtime failure classifier now recognizes `WindowLeaked` and
-`has leaked window`, with a host regression. `stable-host2` passed 92 tests
-(quality 48, T04 13, T05 5, baseline 26). MainActivity dialog ownership,
-STARTED-state window gating and a SetupProbe lifecycle regression are in progress;
-their device result is not yet available. Build5 must freeze and validate the
-completed fixes. Build3 remains unaccepted, Build4 has no frozen APK, and stable
-publication remains pending. The Build3 section below preserves the earlier
-plan to use Build4; that plan was superseded by this aborted-build checkpoint.
-
-## Stable-build3 Checkpoint (Historical; Visual Defects)
-
-`stable-build3` was built from clean commit
-`1bd657725e0d28db2cde13b9b0cec935e6dff9db`, with versionName `3.3.13-t9.8`
-and versionCode `20261113`. It passed 285 application and nine build-logic JVM
-tests, the 91 host checks, Spotless and Lint (zero issues), with no build warning.
-Both application APKs and the test APK passed frozen identity/signature checks;
-the 48 packaged resources and static ZIP/ELF 16 KB alignment checks passed.
-Each application APK retains three v1 META-INF warnings. These checks do not
-constitute final acceptance, physical-device coverage or a warning-free release.
-
-| Candidate artifact | stable-build3 SHA-256 |
-| --- | --- |
-| ARM64 APK | `89304d67b5f1f63cf833a0f2e288892d3efb42667158a1f26ca2c11127b76876` |
-| x86_64 APK | `07d78c06e7947e85ca9ddffca2854283f216748e93028e49676ea807a3818d55` |
-| Android test APK | `195b2a75fbe4f9b903fe795a80e8437106964eb26796bb9713d504f4fb7b2073` |
-
-The following results apply to that x86_64 application and, where used, that test
-APK. Evidence directories are under `build/t06-runtime/`; independent review
-JSON files are retained under `stable-build3/`.
-
-| Evidence | Build3 result and scope |
-| --- | --- |
-| `api21-stable3-{editors,engine,startupFailure,feedback,shutdown}` | All five functional probes passed. The complete editor/action matrix includes overlay ownership, both themes, physical keys, stale callbacks, third-party fallback, WebView and all 100 show/hide cycles. |
-| `api21-stable3-independent` / `api21-stable3-unavailable` | All 17 independent-app checkpoints passed, including field switching, return to T9, process recovery, rotation and application switching. Resource-unavailable numeric input, retry/recovery and resource restoration passed. |
-| `api35-stable3-{editors,engine,startupFailure,feedback,shutdown}` and `api35-stable3-extra-{setup,clipSave,saf,clip,t02}` | All ten functional probes passed. Setup refresh/navigation, eight clipboard/collection saves, 21 isolated-provider SAF checks and real T02 editing are included. The isolated provider is not a real-system tree-grant acceptance test. |
-| `api35-stable3-independent` / `api35-stable3-unavailable` | All 23 independent-app checkpoints passed, including fullscreen field switching, process recovery, rotation, application switching and split-screen. Fallback typing, retry/recovery and resource restoration passed. |
-| `api35-stable3-t03` / `api35-stable3-t05` | Full 360dp T03 and T05 passed on both themes; screenshots and corpus metrics are retained. Other viewports are not implied. |
-| `api35-stable3-t03-landscape-large` | Existing geometry-only assertions passed at 800×412dp, fontScale 2.0. Manual screenshot review nevertheless found clipped candidate annotation text. This viewport is not visually accepted. |
-
-The blocking screenshot is
-`api35-stable3-t03-landscape-large/landscape-large/t03-trime-800x412-font2.0.png`
-(SHA-256 `7aed10148490454f7ed97d0be4a84fe2e3fe81b2b34751d3d4ea0d5a5bd583ec`).
-With RIGHT annotations, the fifth candidate `擬稿` has its `ni gao` annotation
-lower than the other candidates and clipped by the row bottom. This is a real
-application layout defect, not a platform-log classification or harmless
-renderer artifact. The old geometry gate checked containers but did not check
-every candidate text/comment view. Its original automatic pass remains recorded
-alongside this failed manual review; it must not be promoted into a visual pass.
-
-At this checkpoint a bounded `CandidateItemUi` RIGHT-annotation
-`centerVertically` correction and `T9LayoutProbe` individual-candidate visibility
-assertions are prepared but uncommitted. A fresh Build4 and a negative control
-using the old application with the new test APK are pending. Build3 is not the
-accepted final artifact. Any changed APK needs its own identity and regression
-evidence; matching version names/codes cannot carry acceptance forward.
-
-An additional real clipboard-layout defect was confirmed at the same
-800×412dp/fontScale 2.0 viewport. After actual Back hides the IME, the eight-line
-EditText occupies `[532,207][1068,637]` while Cancel occupies
-`[692,578][936,688]` (OK shares that vertical range): the controls overlap by
-59 physical pixels. The earlier helper3 checked each control's screen bounds
-but missed overlap; its automatic pass is not visual acceptance.
-
-The strengthened negative control
-`api35-stable3-clip-overlap-negative/report.json` uses the unchanged Build3
-x86_64 APK hash above. The short-text case passes actual Back, same-window/text
-preservation, unobstructed controls and an actual Cancel tap. The eight-line
-case correctly fails with `Edit text overlaps OK/Cancel after hiding IME`.
-Its screenshot `eight-lines-after-back-01.png` has SHA-256
-`2042e84d96dc2ed8b1dc5f841639a46b3e9555f5396a16076d42928f5a03c097`.
-Original font/display/rotation/IME settings were restored successfully; 60 raw
-warning/error lines remain. The original classifier reported zero recognized
-project diagnostics, but later raw-log review found the MainActivity window leak
-recorded above. Both the overlap and the window leak are real application defects.
-
-The final helper is tracked as `script/quality/run_clip_visibility.py`; it uses
-actual Back/Cancel input, checks text/window preservation and does not write a
-database row or click Save. This covers Back key dispatch, not gesture-animation
-acceptance or save behavior. Earlier focus-command and unsupported-flag helper
-failures remain retained. A minimal EditText `app:layout_constrainedHeight="true"`
-correction is prepared but not yet built or accepted. Both this clipboard fix
-and the candidate-annotation fix await Build4; only the clipboard negative
-control has run at this checkpoint.
-
-`stable-build3/api21-independent-log-review.json`,
-`api21-external-apps-review.json`, `api35-independent-log-review.json` and
-`api35-t03-t05-review.json` retain scoped findings and raw evidence hashes.
-No unexpected critical or engine-queue finding was identified in the reviewed
-five/ten instrumented probe intervals. Deliberate missing-resource, invalid
-configuration and deleted-row diagnostics remain counted as injected faults,
-with original stacks. API21 retains EGL/WebView, AudioTrack and SQLite records,
-including a pre-activation inactive-connection diagnostic outside the tested
-Trime interval. Zero recognized project diagnostics is not zero platform errors.
-
-In API35 editors, Chromium reports renderer PID 2965 termination at
-23:44:21.636; ChildProcessService destruction, ActivityManager's
-`isolated not needed` kill and Zygote signal 9 follow in the retained system log.
-This correlates with teardown after the successful WebView check while Trime
-PID 2865 continues through all 100 visibility cycles and completion. It does not
-establish a Trime process/native crash, and it is not a clean renderer exit-code-0
-claim. Later full-device captures retain this earlier record as backlog. API35
-also retains FrameTracker animation timeouts/missed frames and six
-SurfaceComposerClient sync-transaction timeouts in `extra-clipSave`; no jank-free
-or performance-repair claim follows from the functional passes.
-
-`api21-stable3-install/identity.json` records Build2 → Build3 x86_64 replacement
-with the independent app-private marker preserved and installed hashes checked.
-Together with the earlier Build11 → Build2 evidence this covers development
-candidate replacement on API21, not published ARM64 upgrade or personal-dictionary
-migration. `arm35-stable3-upgrade-prep/upgrade-compatibility.json` confirms the
-real published t9.6 ARM64 APK matches both GitHub's asset digest and a newly
-streamed public download: SHA-256
-`92e0e56244559b091801e8748f25a7fb2d80313938147c0ca006290e1d7ad9f6`.
-Its package and signing certificate match Build3 and versionCode increases
-`20261108` → `20261113`; actual translated ARM64 installation/upgrade remains
-pending. The historical 2920 ms ARM-translation queue warning remains unresolved
-by these x86_64 checks. No physical ARM/OEM or physical 16 KB-page device was tested.
-
-Setup failures remain historical failures: the API35 batch first collided with
-the existing manual-setup output directory, before instrumentation started;
-the successful retry is `api35-stable3-extra-setup`. The initial API35 missing
-package/`pm` exit-1 installation helper attempt and the two earlier data-marker
-helper attempts do not count as successful installs. Their evidence is retained,
-and only separately completed installation identities support upgrade claims.
-The earlier Build2 unattached-adapter fixture failure below is unchanged; the
-corrected Build3 fixture completed its own matrix.
-
-## Stable-build2 Checkpoint (Historical; Not Final Acceptance)
-
-`stable-build1` was built from `b910b3e8e4fba9acdb4a53eedbd84b14bcbb1b4f`;
-`stable-build2` was built from `91ffa02934c5739fb4ac6d54dc191b96ef701395`.
-Both source snapshots were clean and unchanged during their builds. They share
-versionName `3.3.13-t9.8` and versionCode `20261113`, but their APKs differ.
-Build1 remains retained under its own identity and is not promoted by build2's
-checks. Build2 is still a candidate, not a published or accepted stable release.
-
-Build2 passed 285 application and nine build-logic JVM tests with zero failures,
-errors or skips, Spotless and Lint with zero issues. Its complete build log has
-no build warning; the existing 91 host checks also passed. Both application APKs
-and the test APK passed identity/signature verification. Each application APK
-retains exactly three v1 META-INF warnings; the test APK has none. All 48 packaged
-resource hashes and static ZIP/ELF 16 KB checks passed. These static checks do
-not establish runtime compatibility with physical 16 KB-page devices.
-
-| Candidate artifact | stable-build2 SHA-256 |
-| --- | --- |
-| ARM64 APK | `981c30a13af03425fb53f09721d7d14b5cebbc9d6bcddbf59e19765c3eaacbe2` |
-| x86_64 APK | `bc47d11f7ac8be93dc9e42b5c213f2523b506346b3b933ae23532107db00eacf` |
-| Android test APK | `fb58e0b60ed13af4a519f403e182ac144310532a9d95a77cbc6ec70a7cb1e5e6` |
-
-`api21-stable2-install3/identity.json` records an in-place upgrade from the
-Build11 x86_64 APK (`3d51aebe4d7f04d3ee3880cb65d844057b143691a3a8f0670475adfe11df7f54`),
-versionCode `20261112`, to the build2 x86_64 APK, versionCode `20261113`.
-The independent app-private data marker was preserved byte for byte and the
-installed APK hashes were checked. This is a development-candidate upgrade on
-API21; it does not establish upgrade from the published ARM64 t9.7 APK, personal
-dictionary migration or coverage for a later rebuilt artifact. Earlier install
-attempt directories remain retained separately.
-
-`api21-stable2-editors` FAILED with
-`IllegalStateException: Please get it after onAttachedToRecyclerView()`.
-The fixture directly called the switch-option adapter's click callback before
-attaching it to RecyclerView; the exception occurs at the adapter's context
-lookup. The test APK above and the original instrumentation failure/stack are
-retained. This is an incomplete editor matrix, even though earlier assertions
-ran and the tested Trime interval has zero recognized project diagnostics.
-The full preparation audit records one diagnostic and 11 warning/error lines.
-A corrected test fixture requires a separately identified rerun; this failed
-attempt must not be relabeled as a pass.
-
-Any following build or test-only rebuild must preserve the mapping between its
-application APKs, test APK, source revision and device evidence. Matching version
-names/codes alone cannot justify reusing device results. Final API21/API35
-matrices, independent editors, deployment recovery and translated ARM64 checks
-remain incomplete at this checkpoint. No physical ARM phone/OEM editor or
-physical 16 KB-page device is available. The historical 2920 ms ARM-translation
-queue warning remains open; the current functional changes do not prove a
-latency repair. The earlier sections below are historical checkpoints, including
-their original pending status and failures, rather than the current candidate
-publication status.
-
-## Release Boundary
-
-The requested pre-optimization publication is complete:
-`v3.3.13-t9.7-dev.2`, commit
-`5bd0bc92dfb57151e669bd3688c7825ed2531194`, on `X2M7/trime` only.
-The release is a prerelease; stable Latest remains `v3.3.13-t9.6`.
-See [the release](https://github.com/X2M7/trime/releases/tag/v3.3.13-t9.7-dev.2)
-for its tested APK/source identities, debug-signing caveat and open risks.
-No changes were pushed to `osfans/trime`.
-
-T06 targets a separate dirty-worktree development version:
-`3.3.13-t9.8-dev.1`, versionCode `20261112`, package
-`com.osfans.trime.debug`, label `Trime`, minSdk 21, targetSdk 37.
-ARM64 and x86_64 APKs are built separately. APKs are debug-signed, not R8
-release artifacts. A passed host test is not evidence of a tested APK.
-Builds through `build6` still report Android `versionName=3.3.13-t9.7-dev.2`
-despite their t9.8 filename/BUILD_VERSION_NAME and increased versionCode.
-This discrepancy is fixed and APK-manifest-verified in build7; those earlier APKs
-are identified by their retained installed-package dump and SHA-256.
-
-## State Ownership
-
-- Creating a Rime client requests startup. Native deployment stays on the
-  engine worker; keyboard UI waits asynchronously for READY.
-- STARTING displays an engine-independent numeric fallback. FAILED preserves
-  the cause and exposes Retry and the system input-method picker.
-- A failed copy/deploy may use existing resources only after the current
-  schema's native translator dictionary successfully loads. File presence
-  alone is not considered successful recovery. Missing external-sync folder
-  permission can likewise use validated local resources, without claiming an
-  external import/export succeeded.
-- READY initializes or retains a decoded theme and replaces the fallback.
-  A failed theme reload does not reinterpret a partially deployed disk file
-  as the previous good theme. STOPPING/FAILED cancels active gestures.
-- Each new editor receives a process-unique ownership token. A queued job
-  checks it before execution; commit/preedit/key and candidate/status frames
-  carry their editor token. Candidate clicks and candidate menus use the same
-  queue. In-place native redeploy retains the editor's identity. A new editor
-  clears displayed composition/candidates before asynchronous native binding.
-- Joining a queued job waits for completion; it must not start a lazy job
-  ahead of the queue. Canceling its completion handle cancels the queued job.
-- Email, address, password and FORCE_ASCII fields use temporary ASCII;
-  phone, numeric and decimal fields use a numeric layout. Returning to a
-  user editor restores its selected schema/layout/mode. Password content
-  is not retained in last-commit helpers or handed to speech feedback.
-- Hiding the same editor's keyboard cancels held/repeating keys but retains
-  composition and locks. Finishing an editor isolates its composition; it
-  must not submit raw digits into the next InputConnection.
-- Enter display and dispatch share one editor-action policy. NO_ENTER_ACTION,
-  TYPE_NULL and NONE/UNSPECIFIED use a real Enter; valid custom IDs/labels and
-  standard actions retain their actual dispatch semantics.
-- Cursor monitoring belongs to one editor connection. Ordinary virtual-keyboard
-  starts no longer send redundant unsubscribe requests. New/restarted editors
-  reset the subscription state without calling a replaced connection.
-
-The cursor subscription uses the existing API21-compatible monitor request.
-Zero disables monitoring; rejected requests remain retryable. See the
-[Android InputConnection contract](https://developer.android.com/reference/android/view/inputmethod/InputConnection#requestCursorUpdates(int)).
-
-## Latest Correction: Touch Overlay Ownership
-
-The final API21 reruns found another real lifecycle crash. In
-`api21-build10-editors4`, `PreeditDelegate.onCompositionUpdate` tried to show
-`TouchEventReceiverWindow` before its replacement anchor had a window token.
-Android threw `BadTokenException` on the main thread. That run and build10
-are not a final acceptance pass, despite earlier successful matrices.
-
-Build11 defers an overlay request until its anchor is attached, visible and
-laid out. Detachment dismisses it and clears pending ownership, so reattaching
-an old anchor cannot resurrect its popup. An expired WindowManager token
-discards the failed popup instead of crashing or reusing its invalid state.
-The editor probe now exercises 100 pre-attachment requests, deferred show,
-detach, reattachment without resurrection, explicit show/dismiss and another
-detached request. Build11 completed in 6m03s: 280 application JVM tests passed
-with zero failures/errors/skips, Spotless passed and Lint XML has zero issues.
-The 91 host tests passed in `host-checks7` (quality 47, T04 13, T05 5, baseline
-26). All frozen application/build-logic source hashes still match the worktree.
-Build11 device verification has NOT started; earlier device passes do not
-establish this correction's acceptance.
-
-| Build11 Artifact | SHA-256 |
-| --- | --- |
-| ARM64 APK | `4691546d3130a70e706ef8438d02169deaa149fbbba43f4942f41a7cc385f6d7` |
-| x86_64 APK | `3d51aebe4d7f04d3ee3880cb65d844057b143691a3a8f0670475adfe11df7f54` |
-| Android test APK | `a456c1bb5ddd416e5c757cdbf197c2c9d80e7eb7abe2b13469d9c7f9648a8f91` |
-
-API21 setup also needs a separate provenance boundary. The first build10
-matrix passed all assertions but its full-log gate caught an inactive cursor
-request. A controlled rerun (`api21-build10-editors3`) caught the same request
-at 12:43:24.221, before Trime's service was created at 12:43:26.081; LatinIME
-was still serving the fixture. The previous script switched IMEs as soon as
-the activity window had focus, even when InputMethodManager still served the
-launcher. The driver now waits for four observations of the actual fixture's
-LatinIME connection and visible input view. A unique marker is emitted BEFORE
-switching to Trime, so the Trime gate includes service startup, initial binding
-and the entire matrix. Full preparation logs/diagnostics remain in
-`runtime-audit.json`; the additional `tested-ime-audit.json` does not grant the
-full run a warning-free label. API21 shell `log` appends whitespace to messages;
-the marker parser accepts surrounding whitespace but rejects missing, duplicate,
-wrong-tag or prefix-only matches. The crash run's original marker-parser failure
-and raw crash stack are retained.
-
-## Frozen Build9 (Superseded)
-
-Build9 completed in 10m52s: 280 JVM tests with no failures/errors/skips,
-Spotless and Lint passed, no build warnings. The 85 host tests passed in
-`host-checks6` (quality 41, T04 13, T05 5, baseline 26). App/build-logic source
-hashes match before/after compilation; only `KeyboardWindow.kt` and
-`EditorLifecycleProbe.kt` changed from build8. Native libraries and all packaged
-assets remain byte-identical to build8. This is the same unreleased
-`3.3.13-t9.8-dev.1` version/code; distinguish attempts by these APK hashes.
-
-| Artifact | SHA-256 |
-| --- | --- |
-| ARM64 APK | `55338aec713bf9e121ff99bb066259b0d1bb5eafa726dcfc31e298c65db11b3f` |
-| x86_64 APK | `61fea1219a7af354319c8e04e9bab9f6a3cedcadea44c3035ca09f5a7e989a11` |
-| Android test APK | `4a6efea5d35e11e90b2342fd3c274727cab7107f751d29de73333a87aad87956` |
-
-Both manifests, ABI declarations, signatures, 16KB ZIP alignment and all 48
-packaged resource checksums were checked again. The three v1 META-INF signing
-warnings below remain. Build9 device acceptance is recorded separately from
-the superseded build8 results.
-
-| Build9 Evidence | Result |
-| --- | --- |
-| `api35-build9-engine` | Fresh installation/deployment and engine checks passed; full-probe maximum main-loop gap 747 ms. Deliberate missing-theme diagnostics retained. |
-| `api35-build9-t03` | Full 360dp T03 passed: both themes, eight geometry screenshots, gestures, literal numbers, cancel, symbol/number round trips and actual full-pinyin letter taps/Hanzi commit. The build8 schema-lock failure is fixed. 42 raw platform warning/error lines; zero recognized project diagnostics. Other T03 viewports were not rerun here. |
-| `api35-build9-t05` | Failed after completing the corpus and both themes' candidate/source/commit sequence: the test reset its EditText and issued cleanup before Android's asynchronous connection restart completed. The editor ownership guard correctly rejected the old-token job. Two screenshots and the failure log are retained, not called a complete T05 pass. Build10 changes only this test reset to wait for the acknowledged new connection. |
-
-Build10 completed in 4m33s, with no build warnings and successful Spotless/Lint.
-Only `T9AssistProbe.kt` changed. Both application APKs were compared byte for
-byte with build9 and are identical; the 280 JVM tests and application Lint were
-up-to-date, not rerun. Android-test Lint was rerun. The new signed test APK is
-`9cdc9ae2d143246ad705d145be4636877d219a44e86c27762eabd95cc5581842`.
-`build10/verification-reuse.json` records reuse of build9's application artifact
-checks. T06 remains local and unpublished while final device checks continue.
-
-## Build10 Device Runs (Superseded)
-
-`build10` contains the exact same application APKs as build9, with the corrected
-T05 test APK. All runs below record installed package hashes independently.
-
-| Evidence | Result |
-| --- | --- |
-| `api35-build10-engine` | Fresh deployment/engine checks passed; full-probe maximum main-loop gap 779 ms. The 13 intentionally missing-theme diagnostic lines are retained. |
-| `api35-build10-t05` | Full 360dp T05 passed: corpus, per-rule recovery, both themes' source labels, exact priority, repair locking, undo, Hanzi commit and acknowledged editor reset. 24 raw platform warning/error lines, zero recognized project diagnostics. Both screenshots and measured corpus results retained. Other T05 viewport cases were not rerun. |
-| `api35-build10-editors` | Both builtin themes switch T9 to full pinyin, survive email/chat focus and return to T9. Full field/action matrix, stale candidate/native output rejection, third-party layout fallback, redeploy, real WebView, 100 show/hide cycles, lock retention and cancel passed. 217 raw platform warning/error lines, zero recognized project diagnostics. |
-| `api35-build10-t02` | Real editor/caret/selection/locks/undo/cancel/commit/symbol/repeat-cancellation tests passed. 18 raw platform warning/error lines, zero recognized project diagnostics. |
-| `api35-build10-startupFailure` | Failed copy/configuration/permission and malformed-patch recovery checks passed, with 72 intentionally injected project diagnostic lines retained. |
-| `api35-build10-feedback` | Passed, with 14 raw platform warning/error lines and zero recognized project diagnostics. |
-| `api35-build10-saf` | 21 isolated provider checks passed, with zero recognized project diagnostics. Not a new real-system tree-grant test. |
-| `api35-build10-external` | 23 independent checkpoints passed, including actual PID replacement (3625 to 4181), rotation, app switching and both split-screen positions. All six split screenshots passed the key-pixel gate; originals manually inspected. Zero recognized project diagnostics. |
-| `api35-build10-unavailable` | Actual numeric fallback input/delete, 18 controls without navigation overlap, Retry and T9 recovery passed. Original resources/checksums restored byte for byte; screenshot inspected. |
-| `api21-build10-engine` | Fresh API21 installation and deployment/engine checks passed; 13 intentional missing-theme diagnostic lines retained. |
-| `api21-build10-editors` / `api21-build10-editors3` | All field/WebView/schema/theme/stale-output and 100-cycle assertions passed. Full-log diagnostic gates failed on LatinIME preparation's inactive cursor request. The second run establishes the request precedes Trime service creation. Neither is relabeled a full-log pass. |
-| `api21-build10-editors2` | Preflight failed on an incorrect local test APK filename, before instrumentation or IME changes. |
-| `api21-build10-editors4` | FAILED with a real preedit touch-overlay BadTokenException. Build11 addresses the missing anchor lifecycle check. |
-
-## Frozen Build8
-
-Build8 completed in 10m54s with 280 application JVM tests, zero failures/errors/
-skips, Spotless success and a Lint XML containing no issues. No build warning
-was emitted. Source hashes match before/after compilation. The test APK is
-unchanged from build7. Four additional tests cover cursor subscription ownership.
-The unchanged build-logic tests were not rerun as a separate test task in build8.
-
-| Artifact | SHA-256 |
-| --- | --- |
-| ARM64 APK | `e900d2f41112106ac26ed23abc12eb9453349529937462ac8897c4dfeee9d744` |
-| x86_64 APK | `42368970c9cc809b24bd1c9d39cc3c5c306d9d1ad46640126d92d3f34b0302e4` |
-| Android test APK | `6a04e790f570125f3b61bb194b659404ffe26ce9635444a1a182e61f4dd865cb` |
-| Signing certificate | `c6fb875b1959f56fc6b3992d603b86e2dcd793677d32aba83687b34ef6937dd2` |
-| Shared resource digest | `3f0d830b93a67d15dbd0c5329039594760e7fc0bf0ead6f4866c2145fe6d26bf` |
-| Packaged T9 schema | `61fb794f90e2a3eba15e2e07a2d21f13737d67f69a5758b3929e7f7f1836667e` |
-| Packaged luna dictionary | `53e438d22eab81b430d36d608c51abae53c90c714720cce6948eaa36fcaff1cb` |
-
-Both manifests, ABI declarations, v1/v2 signatures and 16KB ZIP alignment were
-verified. All 48 shared resource hashes match the packaged manifest; all assets
-and native libraries are byte-identical to build7, not a fresh native rebuild.
-Three v1-signature META-INF warnings remain (serialization verification metadata
-and the two coroutine ServiceLoader entries). Required service entries are not
-deleted just to silence them. These remain debug-signed/debuggable previews,
-not production-signing or R8 validation. Physical 16KB-page compatibility is
-not established by ZIP alignment.
-
-## Theme Contract
-
-`trime/t9: true` explicitly identifies the pinyin nine-key scheme;
-`trime/keyboard: luna_pinyin_t9` requests its layout. A numeric alphabet is
-not enough to enable pinyin T9. Existing named scheme layouts take priority.
-Missing T9/ASCII/numeric/symbol layouts can use namespaced in-memory copies
-of packaged builtin layouts and key actions. Third-party action names cannot
-override those copies. User theme files are not rewritten. Compatibility
-layouts do not become extra entries in the theme's next/previous cycle.
-Changing schemas also invalidates the previous schema's locked layout. A
-non-locking full-pinyin default must not reselect an old T9 layout on the
-current or subsequent focus update. This additional regression was found by
-the build8 T03 run; the fix and both-theme focus assertions are in build9.
-
-## Build8 Device Results
-
-Build8 is superseded by the schema-lock correction, not a final acceptance APK.
-All runs below installed the exact build8 APK/test hashes above. Host quality
-tests subsequently grew from 32 to 41: six nonblank-key checks and three
-capture-boundary checks. Other host suites remain T04 13, T05 5 and baseline 26.
-
-| Evidence | Result |
-| --- | --- |
-| `api21-build8-engine` / `api35-build8-engine` | Fresh install/deployment and engine/theme checks passed. Each includes 13 deliberately injected missing-theme diagnostic lines. |
-| `api21-build8-editors` / `api35-build8-editors` | Field/action matrix, stale queued/native response rejection, third-party T9 fallback, in-place redeploy, real WebView, 100 show/hide cycles, lock retention and cancel passed on each API. Respectively 63/209 raw warning/error lines; zero recognized project diagnostics. The inactive cursor-monitor requests from build7 did not recur. |
-| `api21-build8-external` | Failed after nine checkpoints because API21 redacts the entire password accessibility value, not just its characters. No password content verification is claimed. |
-| `api21-build8-external2` | 17 independent editor checkpoints passed, including actual IME PID replacement, rotation, app switching and restricted-field returns. Password evidence is restricted input type and caret position, not contents; the later current-caret assertion was checked against the retained dump, not called a new device run. Landscape screenshot inspected in native screenshot orientation. |
-| `api35-build8-external` | 23 functional checkpoints passed, including both split-screen positions and actual Hanzi commits. Zero recognized project diagnostics. Original top/bottom screenshots and key-pixel checks confirm visible T9; an initial manual screenshot misreading was corrected, not treated as an application bug. |
-| `api21-build8-unavailable` / `api35-build8-unavailable` | Real numeric fallback input/delete, 18 visible controls with no navigation overlap, UI Retry, T9 recovery and byte-for-byte resource/checksum restoration passed. Screenshots inspected. Deliberate fault logs retained. |
-| `api21-build8-startupFailure` / `api35-build8-startupFailure` | Functional passes with 72 deliberate copy/configuration/permission/malformed-patch diagnostic lines each. The build7 2448 ms fault-sequence queue wait did not recur; this is not proof of a performance fix. |
-| `api21-build8-feedback` / `api35-build8-feedback` | Passed; 107/14 platform warning/error lines, zero recognized project diagnostics. |
-| `api35-build8-t02` / `api35-build8-saf` | T02 editing and 21 isolated provider checks passed. T02 has zero recognized project diagnostics. Not a new real-system SAF grant test. |
-| `api35-build8-split-pixels` | All six functional/pixel checkpoints passed, but the overall diagnostic gate FAILED: logcat replayed earlier fault-injection records from the reused PID 6897. Full historical log retained. The independent editor driver now records a unique start marker and audits only subsequent records, without deleting device logs or suppressing any severity/tag within the capture interval. |
-| `api35-build8-t03` | Both themes' eight geometry screenshots, long presses, swipes, cancel and number-page round trips passed. Overall FAILED waiting for full pinyin: focus policy reselected Tongwenfeng's previous locked T9 after the schema changed. Build9 clears that schema-owned lock. This run is not relabeled a pass. |
-
-API21's remaining `showStatusIcon on inactive InputConnection` line is retained.
-In [AOSP Android 5.0's InputConnection wrapper](https://raw.githubusercontent.com/aosp-mirror/platform_frameworks_base/android-5.0.0_r1/core/java/com/android/internal/view/IInputConnectionWrapper.java)
-that message is emitted by the fullscreen-mode reporting branch, not cursor
-monitoring. Its occurrence during focus cleanup does not establish a fixed
-framework issue or a warning-free run. API35 also retains an inactive
-`finishComposingTextFromImm` cleanup diagnostic. Its WebView renderer log is
-paired with the system killing the isolated process as no longer needed and
-reporting clean exit code 0; it is not relabeled a Trime crash.
-
-## Evidence So Far
-
-Evidence lives in ignored `build/t06-runtime/`; each probe records installed
-APK hashes and all logcat levels, including platform warnings. No personal
-dictionary is reset. Fault injection requires an explicitly marked emulator.
-
-| Evidence | Result |
-| --- | --- |
-| `build2` JVM / Lint | 273 app + 4 build-logic tests passed; Lint reported no issues. Superseded APK because source edits overlapped compilation. |
-| `build4` build | Successful; app/build-logic source hashes identical before/after compilation. Frozen APKs retained. |
-| `api35-build4-editors` | Failed at the email assertion; waiting on a lazy returned job could bypass the serial queue. Corrected and covered by the later build7/build8 editor runs. |
-| `api35-build4-startup` | Passed asset/config failure, usable old dictionary, retry, candidate generation and stale-theme rejection. Expected injected diagnostics retained. |
-| `api35-build4-feedback` | Passed lazy feedback, real SoundPool loading/release and sensitive-editor speech isolation. Platform warnings retained. |
-| `api35-build4-unavailable3` | Passed real external editor, numeric fallback input/delete, UI Retry, actual T9 recovery and `64` Hanzi/pinyin candidates. Screenshots inspected. |
-| `build5` build | Source-consistent ARM64/x86_64 APKs; 273 app tests, Spotless and Lint passed. Superseded by later candidate-frame/queue changes. |
-| `api35-build5-engine` | Passed cold deployment and engine/theme/cache probes. No invalid-metadata diagnostic; the intentional missing-theme fault is retained. Cold-ready heartbeat max gap 98 ms; full-probe max gap 987 ms. |
-| `api35-build5-editors` | Field/action matrix, user ASCII restoration, queue order, stale output and held-key cancellation passed. Failed after the fixture cleared an editor and typed during Android's connection restart. The fixture now waits for the new editor token; later editor runs passed. |
-| `api35-build5-startup` | Passed failure/retry and validated local dictionary recovery, including unavailable external-sync permission. This is not real persisted SAF grant revocation. |
-| Host quality harness | 32 tests passed, including all-window capture freshness and requiring every expected control. |
-| `host-checks2` | 76 host tests passed: quality 32, T04 13, T05 5, baseline 26. |
-| `build6` | Source-consistent APKs, 273 JVM tests; one redundant safe-call compiler warning. Two new JUnit 4 tests were not discovered by the Kotest runner. Both issues corrected for build7. |
-| `api35-build6-engine` | Passed cold deployment and engine checks; full-probe heartbeat max gap 803 ms, no invalid-metadata diagnostic. |
-| `api35-build6-editors` | All field/action, queued candidate isolation, third-party T9, redeploy, real WebView, 100 visibility cycles, lock retention and cancel assertions passed. Overall audit FAILED on two literal-parenthesis key parsing errors. Fixed for build7; this run is not relabeled a pass. |
-| `api35-build6-startupFailure` / `feedback` | Functional passes, including missing external permission/local recovery. Fault/platform diagnostics retained. |
-| `api35-build6-external3` | 17 external-editor checkpoints passed, including process replacement, rotation and restricted-field returns. No recognized project diagnostic. Landscape screenshot exposed the fixture header obscuring its editor; fixture3 puts the editor first for the final rerun. |
-| `api35-build6-split-explore` | Actual AOSP API35 multi-window tasks confirmed. Moving an already-visible IME target directly with WMShell initially obscured the bottom editor; hiding/refocusing let the system reposition it. Final driver tests both positions after explicit focus and verifies actual input. |
-| `api35-build6-unavailable` | Numeric input/delete/UI retry and resource restoration passed. Visual review FAILED on navigation buttons overlapping the bottom row. Insets-on-attach and overlap assertions added for the next run. |
-| `api35-build6-t02` | Old test helper failed by calling runOnMainSync from the main thread after the queue ownership change. T02/T03/T05 helpers now handle either thread and canceled/skipped jobs explicitly. T02 passed on build7/build8; the separate build8 T03 schema-lock failure is recorded above. |
-| `api35-build6-saf` | 21 isolated Android provider checks passed. Not evidence of real persisted system grants or every cloud provider. |
-| `build7` | Source-consistent ARM64/x86_64/test APKs; 276 discovered JVM tests passed, including both message-ownership tests. Spotless/Lint passed, no compiler/native build warning. Both manifests have the intended t9.8 version. All 48 packaged shared resources match the resource manifest. |
-| `api35-build7-engine` / `t02` | Passed startup/engine/theme and actual T02 editing/caret/selection/undo/symbol/repeat-cancellation tests. Full engine-probe maximum main-loop gap 755 ms. T02 has zero recognized project diagnostics. |
-| `api35-build7-editors` | Passed all input/action fields, stale queued candidate/native output rejection, third-party fallback, in-place redeploy, real WebView, 100 show/hide cycles, lock retention and cancel. 213 raw platform warnings/errors; zero recognized project diagnostics. |
-| `api35-build7-startupFailure` / `feedback` | Functional passes. All 72 project diagnostic lines in the startup probe correspond to deliberate copy/configuration/permission/malformed-patch failures and validated recovery. Feedback has zero recognized project diagnostics. |
-| `api35-build7-saf` | 21 isolated provider checks passed. This is not a real system grant test. |
-| `api35-build7-unavailable` | Real fallback numeric input/delete/UI Retry and T9 recovery passed. All 18 controls visible and separate from navigation controls; corrected screenshot inspected. All injected resources restored. |
-| `api35-build7-external` | All 17 fullscreen checkpoints and the pre-split checkpoint passed. Landscape editor visible with fixture3. Overall command FAILED on bottom-pane focus after a direct WMShell transition; retained as failed. |
-| `api35-build7-split2` | Separate split-only rerun passed six checkpoints, actual multi-window state, both positions and one Hanzi committed per input. Screenshots inspected. The driver explicitly hides/refocuses after WMShell transitions. Zero recognized project diagnostics. |
-| `api21-build7-engine` | Fresh API21 installation/deployment passed; cold-ready maximum main-loop gap 66 ms, full probe 307 ms. Intentional missing-theme diagnostics retained. |
-| `api21-build7-editors` | Timed out before initial keyboard visibility while instrumentation replaced the selected IME process. No editor matrix acceptance claimed. |
-| `api21-build7-editors2` | Selecting Trime after the test editor was focused allowed the entire matrix, real WebView and 100 cycles to pass. Overall diagnostic gate FAILED on two inactive-connection cursor requests. Subscription ownership repaired for build8; failed log retained. |
-| `api21-build7-external` | Rejected initial QWERTY because the engine probe restored the original non-T9 scheme. No process-recovery/rotation pass claimed for this attempt. Select T9 explicitly before rerunning. |
-| `api21-build7-startupFailure` / `feedback` | Functional passes. Startup also records a 2448 ms engine-queue wait during the fault sequence; this is not classified as an expected missing-file diagnostic or a no-latency-regression pass. Feedback has 107 platform warnings/errors, primarily AudioTrack, with zero recognized project diagnostics. |
-| `api21-build7-saf-roundtrip` / `saf-restart` / `saf-revoke` | Real system picker grant, create/replace/read-back/cleanup/import history, persistence across app process restart and actual SecurityException after revocation passed. API21 runs one aggregate system-provider probe per invocation, not the 21 API29+ virtual fixtures. |
-
-Earlier failed harness attempts are retained, not relabeled as application
-passes. `unavailable` used a single-window system dumper that omitted the
-IME. `unavailable2` hit Android's run-as external-path permissions; its saved
-resource/checksum were restored explicitly before the third attempt.
-The final harness moves only `shared/default.yaml`, never the whole directory.
-Build5's failed editor run has no recognized project diagnostic, but retains
-68 warnings/errors including an IME animation FrameTracker timeout, system
-back-dispatch warnings, graphics-driver warnings and instrumentation packaging
-diagnostics. It is not a warning-free run or a completed editor acceptance run.
-Build6's WebView destruction logged a Chromium renderer "crash detected (code -1)".
-The same retained system log reports PID 3541 killed as "isolated not needed"
-and then exiting cleanly with code 0. The warning is retained as a WebView
-cleanup diagnostic, not evidence of a Trime crash or a warning-free result.
-
-## Reproduction
-
-Use one dedicated emulator at a time, 2 GB guest RAM / 2 cores. Stop it before
-Gradle; build with one worker and bounded Java/native concurrency. Do not
-reuse a personal AVD or clear a normal application's data.
-
-1. Install the frozen app and Android-test APKs. Complete the storage choice,
-   enable Trime and select it using the normal setup UI. Mark only this
-   disposable installation with external-files `runtime-audit-dedicated`.
-   Before independent editor tests, explicitly select `luna_pinyin_t9` in the
-   schema picker; engine probes restore the previously selected schema.
-2. Run `run_runtime.py --probe editors` with explicit adb, serial, app APK,
-   test APK and a new output directory. It exercises real Android fields,
-   a real WebView, third-party theme fallback and 100 show/hide cycles.
-   On API21 add `--bind-ime-after-editor-focus`: the driver temporarily selects
-   AOSP LatinIME, starts instrumentation, then selects Trime when the test editor
-   is focused. This avoids the instrumentation process-replacement binding issue;
-   it is not used by the separate background-process-recovery regression.
-3. Build `editor-fixture/build.py` normally and with `--observer`; install
-   both APKs. The observer has no network permission and runs in a separate
-   process, so window capture does not restart the editor or input method.
-4. Run `run_editor_lifecycle.py` with pinned app/fixture/observer APKs for
-   external-editor process death, rotation and application switching. On the
-   verified AOSP API35 image, add `--split-screen` for actual multi-window
-   state, both positions, Hanzi input and exit. Do not use this flag on API21.
-   This portrait split-screen mode requires host Pillow and checks pixels inside
-   all eight T9 letter keys. Missing/blank keys or mismatched screenshot dimensions
-   fail; this gate is not OCR or proof that every UI element is unobscured.
-   `logcat-full.txt` keeps the device backlog; the unique marker in `identity.json`
-   bounds this independent driver's application audit to the current probe.
-5. Run `run_unavailable_keyboard.py` for actual fallback/Retry UI. Its fault
-   injection is expected to log errors; review them instead of suppressing
-   them. Run the engine fault probes with the system Latin IME selected.
-
-## Pending Acceptance
-
-Build9's schema-lock correction passed the frozen build and API35 T03 rerun.
-Build10's API35 lifecycle matrix, corrected T05 harness, independent editor/
-split-screen checks and fallback/Retry passed. A subsequent API21 run discovered
-the touch-overlay crash; build11 has the correction and deterministic regression
-but has only passed host/build checks so far. Next, install its exact pinned APKs
-on API21 and run the new overlay regression, field/action matrix and 100 cycles;
-then independent process recovery/rotation/app switches and failure/Retry.
-Repeat relevant API35 regressions including both split positions before accepting
-or publishing T06. No emulator or Gradle daemon is being left running at this
-status checkpoint. T06 source remains local, uncommitted and unpublished.
-Build8's subscription fix passed build/Lint and both API editor runs; independent
-API21 process recovery/rotation passed with T9 selected. API21 has no platform
-split-screen. Build7's real SAF tree was selected
-through Profile and the system picker, not a fabricated permission grant:
-`0000-0000:Documents/trime-saf-87390960-18de-41e8-b0f5-5a924e9c796e`.
-Only UUID-scoped test entries were created/removed. Raw binary user dictionaries
-were not reset. This does not establish every OEM/cloud-provider compatibility.
-
-Active composition across orientation changes or editor restarts is not a
-retention claim: connection restart/configuration changes may cancel it. The
-tested preservation case is hide/show within the same active editor. Split-screen
-tests use explicit hide/refocus after WMShell transitions; the initial direct
-transition's obscured bottom editor remains a documented limitation.
-The first build4 deployment emitted `invalid metadata`. Retained logs show
-PID 2359 began deployment at 08:40:12, and the instrumentation launcher
-force-stopped it at 08:40:35 before completion. PID 2600 reported the metadata
-error at 08:40:41 and completed deployment at 08:41:25. A partial compiled
-artifact left by the interrupted deployment is the likely explanation, not
-a proven identification of the specific file. Normal runs must wait for
-deployment before instrumentation; interrupted deployment remains a separate
-fault case. The emulator also had a boot-time System UI ANR,
-recorded separately from Trime tests. Neither is called warning-free.
-
-Native ARM64 phones/OEM editors and physical 16 KB-page devices are absent.
-Prior ARM-translation queue-latency and slow-frame findings are still open;
-these functional tests do not establish their resolution. Existing engine
-message buffering is not a universal losslessness guarantee under arbitrary
-backpressure. Recovery of nonstandard plugin-only translators is not proven
-by validating a standard dictionary.
+| API21 七项 instrumentation | PASS：editors、engine、startupFailure、feedback、shutdown、setup、clipSave |
+| API21 editors | 浮层、输入/回车矩阵、旧编辑器隔离、第三方回退、真实 WebView、完整100次显示/隐藏通过 |
+| 数字 SPACE | API21/API35 各两主题×PHONE/NUMBER共4项字形/动作代码检查通过；独立截图另核对窄键标签 |
+| API21 独立应用 | PASS：17检查点，进程3949→4433恢复、旋转、切应用、各输入框与返回九键 |
+| API21 不可用/重试 | PASS：18降级按钮无导航遮挡；实际 STABLE2→STABLE；Retry 后6→4出现 ni |
+| API21 导航 | PASS：两轮 Profile/Back 和测试输入/Back；真实 ClipEdit/Trime 显示/实际 Cancel |
+| API35 主探针 | PASS：editors、setup、engine、startupFailure、feedback、shutdown、clipSave、saf、clip、t02，共10项 |
+| API35 editors | 输入/生命周期矩阵、硬键输入、真实 WebView、数字 SPACE 与完整100次显示/隐藏通过 |
+| API35 通知生命周期 | PASS：5项；重复提示、旧 dismissal、重建、遮盖/延迟回调、finish 清理 |
+| API35 横屏大字体 T03 | PASS：800×412dp、font2、两主题 normal/left/right/height80，共8张实图；geometry-only |
+| API35 大字体 ClipVisibility | PASS：短/8行真实 Back、文本/原窗口保留、标题/按钮可见、实际 Cancel、完整设置恢复 |
+| API35 完整 T03/T05 | PASS：两主题完整手势/按键语义和全拼真实你好提交；24条候选列表不变、24项显式音节恢复通过；8+2张原图复核 |
+| API35 独立应用/分屏 | PASS：23检查点，杀进程恢复/旋转/切应用/两分屏位置，实际 STABLE→STABLE你→STABLE你你并保留；23张图复核 |
+| API35 不可用/重试与导航 | PASS：实际2/delete、Retry后6/4恢复ni，6张图与资源原字节恢复；navigation-only两轮，不含ClipEdit |
+| ARM64 真实旧版覆盖升级 | PASS：真实t9.6 ARM64→本轮ARM64，已安装SHA匹配，53字节独立标记完全保留 |
+| ARM64 转译engine/T02/独立应用 | PASS：engine与T02真实JNI/输入，独立17检查点及17张原图复核；准备不计入正式检查点 |
+| 汇总与发布绑定 | 最终选择30组：API21 10、API35 17、ARM 3；源码/附件必须通过下述独立校验门禁 |
+
+API21 采用 Android5.0.2 x86_64，API35 采用 Android15 x86_64 模拟器。
+独立应用的密码字段证据仅核对经删减的类型/光标状态，不声称密码内容或长度。
+API35普通字段由Intent预填；分屏的6/4/SPACE实际提交中文，退出分屏后仍保留。
+两位置Task113均为multi-window；6项键区像素检查支持非空键盘，不是OCR。
+顶部编辑器分屏截图中IME占用了另一应用的区域，不声称两应用全文同时可见。
+降级测试精确恢复default.yaml和checksums.json原字节，不称全资源树校验或实际汉字提交。
+API35外部共29张原始PNG已由专项review逐张查看；navigation-only没有PNG或ClipEdit操作。
+数字 SPACE 专项验证动作代码与真实字形边界，不能称它已实际点击空格并验证文本提交。
+API21/API35 editors 的 hide/show 保留同一连接组合；旋转/连接重启可能取消未提交组合。
+
+## 性能与故障注入的明确范围
+
+| 探针最大主线程循环间隔 | API21 | API35 |
+| --- | ---: | ---: |
+| engine | 316 ms | 769 ms |
+| shutdown | 68 ms | 72 ms |
+| setup | 230 ms | 1344 ms |
+
+以上是这次运行观察值，不是持续性能上限；setup 门限为原有 4000 ms。
+ARM engine初始化/维护到ready为100.528秒，2308次心跳、最大间隔766ms，门限仍为4000ms。
+其Application idle等待142ms；T02的idle等待406ms是另一次同步测量，均不称按键/屏幕延迟。
+ARM所测区间未出现2000ms阈值的队列等待诊断，不证明所有环境的偶发等待已根除。
+两平台 setup 均处理300次刷新、29次导航点击；API21不支持通知权限流程，明确跳过该5项。
+engine 的13条项目诊断来自有意缺失 `__missing_anr_test__` 主题及传播堆栈。
+startupFailure 的72条来自资源复制阻塞、外部同步不可用、缺失方案、JNI长名和坏YAML。
+这些测试检查有界等待、降级、重试、可用词典与缓存/资源恢复，注入标签不豁免崩溃。
+ClipSave 每平台8项（剪贴板4、收藏4）使用 LatinIME；不能算作活动 Trime 输入覆盖。
+两次故意删除待保存行验证文本/缓存保留：API21有66条失败堆栈，API35有28条。
+API21 ClipSave 另有11条 inactive cursor-anchor 项目诊断，所有54条 inactive IC 警告保留。
+API35 SAF 为21项隔离 provider 检查；3次故意 rename 失败产生78条框架警告/堆栈。
+该 SAF 探针不等于外部系统/云 provider 持久授权或所有 OEM 兼容性验收。
+feedback 包含200次描述符扫描、真实 SoundPool 加载/播放/释放；系统音频警告仍保留。
+
+## 图像、窗口与恢复证据
+
+T03 大字体8张原始 PNG 均已独立查看并核对 SHA；候选汉字/拼音注释完整。
+每个布局17个目标至少48dp，候选/组合/侧栏/九键不重叠，左右单手及height80均通过。
+完整360dp T03另有两主题8张图，完整T05有2张图，均已由专项review逐张复核。
+因此本轮T03共16张（完整8＋大字体8），T05为2张，不混计历史截图。
+T05的24个off/on原始候选列表一致；模糊恢复2/12→12/12，纠错恢复1/12→12/12。
+这24项恢复需显式选择音节，不是自动Top-1；21个新增恢复有对应来源位，3个原有恢复保留sources=0。
+完整指标见`api35-final-t03-t05-review.json`：首键/末键加候选耗时不含屏幕呈现，采样PSS不是峰值。
+这是一次顺序debug x86_64样本，不能据此推断因果速度/内存改善；规则默认关闭。
+
+ClipVisibility 的11次 observer 层级均新鲜，61个文件与报告 SHA 清单匹配。
+6张关键图已查看：短/8行各 Trime显示、Back后、Cancel后。
+短文本字段 `[532,207][1068,543]`，按钮起点y543；8行字段 `[532,207][1068,578]`，按钮起点y578。
+两者字段/按钮重叠面积为0，标题/OK/CANCEL字形完整；实际Cancel后Activity关闭。
+Back后保持原window token及全部文本。8行自然滚至光标末尾，实图显示部分Line4至Line8。
+未手动滚回首行、未点OK或写数据库；保存功能由独立ClipSave探针覆盖。
+键盘显示时adjustPan可能移出标题/按钮；实际Back恢复同窗口中的完整可用控件。
+Clip finally 对尺寸、密度、font1.0、旋转0和默认Trime输入法逐字段读回，完全恢复。
+T03原始显示状态与随后Clip preflight一致；T03自身没有单独最终读回文件。
+API35 主 `clip` 探针只在设备缓存生成并检查非空PNG，本次未拉取该PNG，未独立看图。
+它不能与另外有保留图像的 ClipVisibility 混为一项图像验收。
+
+## 运行日志与单独裁决
+
+API21七探针全应用范围保留404条W/E；editors全范围73条含准备阶段1条inactive诊断。
+该诊断在01:18:23.566、LatinIME准备阶段，早于01:18:24.585激活标记；活动范围64条W/E、0项目诊断。
+API21独立应用/不可用/导航分别保留5/72/6条W/E；不可用的67条项目错误均保留注入来源。
+API35对应范围为40/76/46条W/E；不可用的67条项目错误均源于故意资源阻塞。
+API35外部保留IPC事务失败、导航动画FrameTracker及实际kill/替换进程记录；继续通过不证明性能风险消失。
+具体PID/窗口/系统原因、全部警告及SHA见`api35-final-external-review.{json,md}`。
+API35十主探针保留638条W/E；完整T03/T05各22/17条，大字体T03另18条、ClipVisibility另24条。
+这些警告和错误均保留，不能称零警告。
+这些计数对应不同明确范围，不把同一进程的全量/活动子集或重复全系统backlog相加为新事件。
+
+API35 editors主PID2039在01:24:59.170报告renderer2154 `crash detected (code -1)`。
+01:24:59.188系统以`isolated not needed`终止2154；01:24:59.294 Zygote记录`exited cleanly (0)`。
+冻结探针在WebView真实邮箱输入断言之后销毁WebView，再继续完成100次循环。
+据此推断与该次WebView收尾关联；原始critical仍保留，不能写作未发生任何renderer诊断。
+后续全系统捕获含同一时间/PID记录，是同一事件backlog；其他PID/时间仍须分别裁决。
+这是1个独立事件，在后续完整日志中重复保留；自动摘要保留每次命中，不能将backlog当作新事件。
+最终`stable6-final-summary.json`的30组证据检查错误为0；原始critical仍保留，自动退出码仍为2。
+其SHA为`2478410d8d224fe14ed72ee7c3a8c10cd1a17d4823d43695aff6a78e59617d2c`。
+`stable6-runtime-adjudication.{json,md}`逐一核对44个critical ID，48个文件出现位置、10条不同原始行、8个事件。
+事件为上述renderer及7个更早的ARM准备期SystemUI/Google ANR（另有2条关联窗口行），不是44次新崩溃。
+全部614条启发式项目诊断出现位置均复核；额外01:24:04.144布局警告对应SystemUI PID794，并非之后的Trime PID8187。
+统一裁决`acceptance_passed=true`，未解释/未匹配/未审查项为空；仍保留`warning_free=false`。
+自动警告总数含不可用测试的全系统backlog，不是独立故障总数；各应用区间按上文分开列示。
+API21七探针完整critical扫描为0；外部日志保留此前BootReceiver导入及故意kill后的服务重启措辞。
+这些旧措辞不改写为新的应用崩溃，也不证明未检查的启动期tombstone普遍无害。
+FrameTracker超时/丢帧、图形/音频、回调取消及所有故障注入堆栈均保留原文。
+ARM engine/T02/独立应用分别保留27/24/43条W/E；engine13条项目诊断均为故意缺失主题。
+ARM初始化较慢、IPC/动画/图形警告保留；本轮已审查活动区间无未解释FATAL/ANR/窗口泄漏或队列等待。
+
+## 签名与兼容范围
+
+证书SHA-256：`c6fb875b1959f56fc6b3992d603b86e2dcd793677d32aba83687b34ef6937dd2`。
+两应用v1/v2均验证通过，但每份保留3项META-INF签名覆盖警告；测试APK为0项。
+
+- `META-INF/org/jetbrains/kotlinx/kotlinx-serialization-core-jvm/verification.properties`
+- `META-INF/services/kotlinx.coroutines.CoroutineExceptionHandler`
+- `META-INF/services/kotlinx.coroutines.internal.MainDispatcherFactory`
+
+协程ServiceLoader文件保留，未为减少警告而删除。Android5/6的v1支持继续保留。
+GitHub“稳定版”状态不改变debug签名、debuggable包或Gradle变体；未换生产密钥、未启用release/R8。
+没有物理ARM/OEM编辑器或物理16KB页设备证据；静态ZIP/ELF对齐不等于16KB设备运行。
+ARM35实际为2GB/2核Google API35 x86_64模拟器，经Berberis(aarch64)0.2.3/native bridge加载ARM64 JNI。
+独立17项为全屏状态/旋转/切应用/进程恢复，不含分屏或新输入中文；实际中文单次提交由T02覆盖。
+横屏辅助mode文字有部分被键盘区域覆盖，实际输入框与全部键盘行完整，原图/限制均保留。
+有界消息测试覆盖暂停订阅者、无订阅、取消解除背压及嵌套消息，不保证任意插件/背压永远无损。
+可用性恢复验证标准词典，不能推广为非标准plugin-only translator已经恢复。
+
+## 升级、附件与历史
+
+API21/API35安装identity记录stable-build5 x86_64 `e7678a21…`覆盖为本轮`c5599476…`并保留独立标记。
+这不是从t9.6直接升级的证据；独立标记保留也不证明所有个人学习词库/剪贴板已迁移。
+真实旧t9.6 ARM64 `92e0e56244559b091801e8748f25a7fb2d80313938147c0ca006290e1d7ad9f6`已无卸载覆盖为本轮`0587308c…`。
+`arm35-stable6-install/identity.json`确认已安装身份及53字节独立标记前后完全相同。
+旧版中文输入就绪未单独测试；不能据准备记录推断已就绪或初始部署一定未完成。
+旧版正常向导分阶段完成；系统ANR及UI假设/过渡导致的失败原样保留，见`arm35-preparation-review`。
+本轮T9准备第一次未及时取得预期键盘XML，仍为FAIL；随后真实菜单选T9成功，不改写首次结果。
+空失败XML与稍后已出现全拼的PNG不同步；12.718秒启动至键盘附着间隔不称输入延迟。
+该helper未单独重测installed APK SHA，按最近安装及包记录限定关联，详见`arm35-t9-preparation-review`。
+发布绑定附件为完整源码包、validation ZIP、`SHA256SUMS`、`source-verification.json`和`release-identity.json`。
+源码包 `trime-v3.3.13-t9.8-source-with-submodules.tar.gz`须逐项匹配Git blob及递归子模块；GitHub自动Source ZIP不含子模块。
+validation ZIP须通过逐文件SHA/CRC，发布文件、标签与公开下载须按清单再次验证；本页不能代替实际校验。
+上述源码/附件绑定未闭合前禁止发布；APK测试通过不自动表示GitHub已完成发布或替换Latest。
+发布归档只选择明确复核的证据；整机原始日志本地保留，公开review包含必要裁决片段。
+
+[历史记录](VALIDATION-T06-HISTORY.md)保留原正文60755字节及原SHA `af43547a93fe18287c0ba3a1e1e0c2fefacd0a09cde61017d758969d1d38829e`。
+历史中的Latest/Pending Acceptance/未提交等措辞属于原检查点，不再是本页当前状态。
+`T06-dev-build1…11`指早期本地开发轮次，`stable-build1…6`指本轮稳定候选；同号不混用。
+`stable-hostN`是独立宿主执行批次；目录名不能代替APK SHA。
+stable-build2有测试装置未附着错误；stable-build3有候选/按钮裁切；stable-build4因WindowLeaked中止、无冻结APK。
+stable-build5虽相关回归通过，仍因数字空格标签裁切被拒绝；旧应用配新测试的失败对照原样保留。
+
+复现使用固定APK/test/fixture身份、一个专用模拟器及device_audit_lock；构建时停止模拟器。
+API21 editors使用`--bind-ime-after-editor-focus`，避免instrumentation替换进程的IME绑定干扰。
+独立进程恢复测试不使用该绑定辅助；故障注入只操作专用资源并在finally恢复。
+归档选择须区分30组正式运行、历史负向对照、旧版向导失败和T9准备失败；失败记录不改写为PASS。
