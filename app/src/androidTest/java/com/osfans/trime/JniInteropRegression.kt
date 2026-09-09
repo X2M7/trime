@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package com.osfans.trime
 
+import android.util.Log
 import com.osfans.trime.core.RimeConfig
 import com.osfans.trime.data.base.DataManager
 import com.osfans.trime.data.opencc.OpenCCDictManager
@@ -9,6 +10,7 @@ import java.util.UUID
 
 internal object JniInteropRegression {
     fun verify() {
+        verifyDictionaryConversions()
         val supplementary = "\uD842\uDFB7\uD83C\uDF0F"
         val config = File(DataManager.sharedDataDir, "opencc/t2s.json")
         check(config.isFile)
@@ -48,6 +50,57 @@ internal object JniInteropRegression {
             } finally {
                 check(content.delete())
             }
+        }
+    }
+
+    private fun verifyDictionaryConversions() {
+        val directory = File(DataManager.userDataDir, "__jni_opencc_${UUID.randomUUID()}")
+        check(directory.mkdir())
+        try {
+            val source = directory.resolve("source.tmp")
+            val binary = directory.resolve("dictionary.tmp")
+            val roundTrip = directory.resolve("roundtrip.tmp")
+            val truncated = directory.resolve("truncated.tmp")
+            val entries = setOf("漢語\t汉语", "測試\t测试")
+            fun verifyRoundTrip() {
+                source.writeText(entries.joinToString("\n", postfix = "\n"))
+                OpenCCDictManager.openCCDictConv(source.path, binary.path, OpenCCDictManager.MODE_TXT_TO_BIN)
+                check(binary.length() > 0) { "OpenCC .tmp conversion produced no dictionary" }
+                OpenCCDictManager.openCCDictConv(binary.path, roundTrip.path, OpenCCDictManager.MODE_BIN_TO_TXT)
+                check(roundTrip.readLines().toSet() == entries) { "OpenCC .tmp roundtrip changed dictionary entries" }
+            }
+            verifyRoundTrip()
+            Log.i("JniInteropRegression", "PASS: OpenCC explicit-format .tmp roundtrip")
+            val complete = binary.readBytes()
+            val headerSize = "OPENCC_MARISA_0.2.5".length
+            // This fixture uses the bundled OCD2/Marisa format. The second cut
+            // retains the 16-byte Marisa header but truncates its first data block.
+            val cuts = listOf("header" to headerSize - 1, "trie" to headerSize + 16 + 1, "values-tail" to complete.size - 1)
+            for ((label, size) in cuts) {
+                check(size in 1 until complete.size)
+                truncated.writeBytes(complete.copyOf(size))
+                roundTrip.writeText("previous output")
+                val failure = runCatching {
+                    OpenCCDictManager.openCCDictConv(truncated.path, roundTrip.path, OpenCCDictManager.MODE_BIN_TO_TXT)
+                }.exceptionOrNull()
+                check(failure is Exception) { "OpenCC accepted nonempty $label truncation" }
+                check(roundTrip.readText() == "previous output") { "Invalid OpenCC $label input replaced the output" }
+                verifyRoundTrip()
+                Log.i("JniInteropRegression", "PASS: OpenCC nonempty $label truncation rejected and conversion recovered")
+            }
+            source.writeText("missing tab and value\n")
+            val retained = binary.readBytes()
+            val malformed = runCatching {
+                OpenCCDictManager.openCCDictConv(source.path, binary.path, OpenCCDictManager.MODE_TXT_TO_BIN)
+            }.exceptionOrNull()
+            check(malformed is Exception && malformed.message?.contains("Tabular not found") == true) {
+                "Malformed text dictionary did not return the OpenCC parse exception"
+            }
+            check(binary.readBytes().contentEquals(retained)) { "Invalid text dictionary replaced the output" }
+            verifyRoundTrip()
+            Log.i("JniInteropRegression", "PASS: OpenCC malformed text rejected and conversion recovered")
+        } finally {
+            check(directory.deleteRecursively()) { "OpenCC JNI regression files were not removed" }
         }
     }
 }

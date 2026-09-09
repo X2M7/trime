@@ -21,6 +21,7 @@ object OpenCCDictManager {
 
     private val sharedDir = File(DataManager.sharedDataDir, "opencc").also { it.mkdirs() }
     private val userDir get() = File(DataManager.userDataDir, "opencc").also { it.mkdirs() }
+    private val conversionCache = DictionaryConversionCache()
 
     fun sharedDictionaries(): List<Dictionary> = sharedDir
         .listFiles()
@@ -57,12 +58,19 @@ object OpenCCDictManager {
         for (d in getAllDictionaries()) {
             if (d is TextDictionary) {
                 val result: Result<OpenCCDictionary>
+                var converted = false
                 measureTimeMillis {
-                    result = runCatching { d.toOpenCCDictionary() }
+                    result = runCatching {
+                        val output = d.file.resolveSibling("${d.name}.${Dictionary.Type.OCD2.ext}")
+                        converted = conversionCache.convert(d.file, output) { source, temporary ->
+                            openCCDictConv(source.absolutePath, temporary.absolutePath, MODE_TXT_TO_BIN)
+                        }
+                        OpenCCDictionary(output)
+                    }
                 }.also {
                     result
                         .onSuccess { r ->
-                            Timber.d("Took $it to convert to $r")
+                            if (converted) Timber.d("Took $it to convert to $r") else Timber.d("Using unchanged $r")
                         }.onFailure {
                             Timber.e(it, "Failed to convert $d")
                         }
