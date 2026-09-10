@@ -211,6 +211,8 @@ object EditorLifecycleProbe {
                         until("editor ${field.hint} owns connection") { service.currentInputEditorInfo?.fieldId == field.id && input() != null }
                         api { }
                     }
+                    api { clearComposition() }
+                    EngineUnavailableGlyphProbe.verify(instrumentation, service, chat)
                     api {
                         check(selectSchema("luna_pinyin_t9"))
                         setRuntimeOption("ascii_mode", false)

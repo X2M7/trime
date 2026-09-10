@@ -110,6 +110,11 @@ class EngineUnavailableView(
                     else -> Button(context).apply {
                         text = label
                         textSize = 18f
+                        // Keep the scaled label inside the fixed 48dp touch target.
+                        setPadding(0, 0, 0, 0)
+                        includeFontPadding = false
+                        setSingleLine(true)
+                        gravity = Gravity.CENTER
                     }
                 }
                 key.isFocusable = false

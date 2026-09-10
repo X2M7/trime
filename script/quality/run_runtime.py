@@ -141,6 +141,49 @@ def run(args):
         else:
             run = subprocess.run(command, stdout=log, stderr=subprocess.STDOUT, timeout=1000)
     output = (args.output / "instrumentation.log").read_text()
+    glyph_evidence = None
+    if args.probe == "editors":
+        # Pull only the probe's own fixed artifacts, including on assertion
+        # failure. Its nonce and content hashes reject stale private files.
+        glyph_evidence = {"collected": False, "passed": False}
+        try:
+            identifiers = set(re.findall(
+                r"INSTRUMENTATION_(?:STATUS|RESULT): fallback_glyph_run_id=([0-9a-f-]{36})",
+                output))
+            if len(identifiers) != 1:
+                raise ValueError("Missing or ambiguous fallback glyph run identity")
+            directory = args.output / "fallback-glyph"
+            directory.mkdir()
+
+            def pull_glyph(name):
+                data = subprocess.check_output(
+                    adb + ["exec-out", "run-as", package, "cat",
+                           "files/runtime-audit/fallback-glyph/" + name], timeout=60)
+                (directory / name).write_bytes(data)
+                return data
+
+            manifest = json.loads(pull_glyph("report.json"))
+            if not isinstance(manifest, dict):
+                raise ValueError("Invalid fallback glyph manifest")
+            if manifest.get("run_id") != identifiers.pop():
+                raise ValueError("Fallback glyph evidence belongs to a different probe run")
+            expected = {f"{state}-font{scale}.{extension}"
+                        for state in ("preparing", "failed") for scale in (1, 2)
+                        for extension in ("png", "json")}
+            attachments = manifest.get("attachments", {})
+            if not isinstance(attachments, dict) or not set(attachments) <= expected:
+                raise ValueError("Unexpected fallback glyph attachment names")
+            for name in sorted(attachments):
+                if hashlib.sha256(pull_glyph(name)).hexdigest() != attachments[name]:
+                    raise ValueError("Fallback glyph attachment hash mismatch: " + name)
+            if set(attachments) != expected:
+                raise ValueError("Incomplete fallback glyph evidence")
+            glyph_evidence.update(collected=True, passed=manifest.get("passed") is True,
+                                  run_id=manifest["run_id"],
+                                  report_sha256=hashlib.sha256((directory / "report.json").read_bytes()).hexdigest())
+        except (ValueError, OSError, subprocess.SubprocessError) as error:
+            glyph_evidence["error"] = str(error)
+        (args.output / "fallback-glyph-collection.json").write_text(json.dumps(glyph_evidence, indent=2) + "\n")
     pid = instrumentation_pid(output)
     app_log = filter_pid_log((args.output / "logcat-full.txt").read_text(), pid)
     (args.output / "app-logcat.txt").write_text(app_log)
@@ -157,6 +200,8 @@ def run(args):
     injects_faults = args.probe in ("engine", "startupFailure", "saf", "clipSave")
     assertions_passed = instrumentation_passed(run.returncode, output)
     passed = assertions_passed and tested_audit["capture_has_records"]
+    if glyph_evidence is not None:
+        passed = passed and glyph_evidence["collected"] and glyph_evidence["passed"]
     if not injects_faults:
         passed = passed and not tested_audit["known_project_diagnostics"]
     report = {"functional_passed": passed, "assertions_passed": assertions_passed,
@@ -166,6 +211,8 @@ def run(args):
               "full_probe_diagnostic_count": len(audit["known_project_diagnostics"]),
               "warning_count": len(audit["warnings"]), "injects_faults": injects_faults,
               "requires_log_review": bool(audit["warnings"] or audit["known_project_diagnostics"]), "pid": pid}
+    if glyph_evidence is not None:
+        report["fallback_glyph_evidence"] = glyph_evidence
     (args.output / "report.json").write_text(json.dumps(report, indent=2) + "\n")
     print(json.dumps(report), flush=True)
     if not passed:
