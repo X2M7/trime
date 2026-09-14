@@ -1,5 +1,6 @@
 /*
  * SPDX-FileCopyrightText: 2015 - 2026 Rime community
+ *
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
@@ -8,18 +9,24 @@ package com.osfans.trime.data.theme
 import com.osfans.trime.daemon.RimeDaemon
 import com.osfans.trime.data.base.DataManager
 import com.osfans.trime.util.appContext
+import com.osfans.trime.util.yaml.Node
 import com.osfans.trime.util.yaml.Yaml
 import com.osfans.trime.util.yaml.mapping
 import kotlinx.coroutines.CancellationException
+import timber.log.Timber
 import java.io.File
 
 /**
- * Loads a theme from its deployed artifact: librime deploy -> read -> YAML parse -> [Theme] decode.
- * Failures are reported as [ThemeLoadError] instead of a bare log line, so callers can fall back
- * and surface diagnostics (YAML syntax errors carry line/column info).
+ * Loads a theme from its source YAML, expanding the supported librime DSL
+ * subset directly. Themes using constructs outside that subset fall back to
+ * the librime-deployed artifact. Failures are reported as [ThemeLoadError]
+ * instead of a bare log line, so callers can fall back and surface
+ * diagnostics (YAML syntax errors carry line/column info).
  */
 object ThemeLoader {
     const val CONFIG_VERSION_KEY = "config_version"
+
+    private const val PATCH = "__patch"
 
     private val builtin by lazy {
         appContext.assets.open("shared/trime.yaml").bufferedReader().use {
@@ -73,10 +80,206 @@ object ThemeLoader {
     }
 
     /**
-     * Does not fall back: file/decoding failures return a structured [ThemeLoadError].
-     * Requires an established session; lifecycle errors and cancellation propagate.
+     * Reads supported source YAML first; otherwise rebuilds and reads the deployed artifact.
+     * File, deployment and decoding failures are structured; cancellation propagates.
+     * Only the deployed path requires an established Rime session.
      */
     suspend fun loadTheme(themeId: String): ThemeLoadResult {
+        val result = loadFromSource(themeId) ?: loadDeployedTheme(themeId)
+        if (result !is ThemeLoadResult.Success) return result
+        return try {
+            result.copy(theme = result.theme.withCompatibleKeyboards(builtin))
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            ThemeLoadResult.Failure(themeId, ThemeLoadError.InvalidStructure(themeId, "Compatible keyboard fallback failed", e))
+        }
+    }
+
+    /**
+     * Reads [themeId] and its dependencies from source files, expands the
+     * supported DSL subset and decodes the result. Returns null whenever the
+     * source cannot be read faithfully — missing, unreadable, using DSL outside
+     * the subset, or failing to decode — so the caller falls back to the
+     * deployed artifact and librime decides what the file means.
+     *
+     * @param file source file of [themeId] when it is already known.
+     * @param sources resource lookup; the data dirs by default, a fixture loader
+     *   in tests.
+     */
+    internal fun loadFromSource(
+        themeId: String,
+        file: File? = null,
+        sources: SourceLoader = SourceLoader(),
+    ): ThemeLoadResult? {
+        return try {
+            val node = sources.load(themeId, file) ?: return null
+            ThemeLoadResult.Success(themeId, decodeSource(themeId, node) { id -> sources.load(id, null) })
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: ThemeDslExpander.UnsupportedDsl) {
+            fallBack(themeId, e, "uses DSL outside the supported subset (%s)")
+        } catch (e: ThemeDslExpander.UnresolvedReference) {
+            fallBack(themeId, e, "has unresolved references (%s)")
+        } catch (e: Exception) {
+            fallBack(themeId, e, "cannot be decoded from its source (%s)")
+        }
+    }
+
+    /** Reports why the source was not used and asks for the deployed artifact. */
+    private fun fallBack(
+        themeId: String,
+        cause: Exception,
+        reason: String,
+    ): ThemeLoadResult? {
+        Timber.w(cause, "Theme '%s' $reason, falling back to the deployed artifact", themeId, cause.message)
+        return null
+    }
+
+    /**
+     * Expands [node] with [loadResource] and decodes the result. Kept separate
+     * from the file lookup so tests can feed fixture resources.
+     */
+    internal fun decodeSource(
+        themeId: String,
+        node: Node,
+        loadResource: (String) -> Node?,
+    ): Theme {
+        val expanded = ThemeDslExpander.expand(themeId, node, loadResource)
+        requireSourceValues(expanded)
+        val mapping = expanded.mapping
+            ?: throw ThemeLoadError.InvalidStructure(themeId, "YAML root is not a mapping")
+        return Theme.decode(mapping)
+    }
+
+    /** librime omits null map values and list elements when writing an artifact. */
+    private fun requireSourceValues(node: Node) {
+        when (node) {
+            is Node.Scalar -> if (node.isNull) throw ThemeDslExpander.UnsupportedDsl("null values require deployed artifact serialization")
+            is Node.Mapping -> node.values.forEach(::requireSourceValues)
+            is Node.Sequence -> node.forEach(::requireSourceValues)
+            is Node.Alias -> throw ThemeDslExpander.UnsupportedDsl("unresolved YAML alias")
+        }
+    }
+
+    /**
+     * Reads [themeId] from [file], or looks its source up in the user and
+     * shared data dirs when [file] is null, and expands the supported DSL
+     * subset, so a name that an `__include` provides is resolved as well.
+     * Returns null when the source is missing, unreadable, or uses DSL outside
+     * the supported subset.
+     *
+     * @param sources resource lookup; the data dirs by default, a fixture loader
+     *   in tests.
+     */
+    internal fun loadSourceNode(
+        themeId: String,
+        file: File? = null,
+        sources: SourceLoader = SourceLoader(),
+    ): Node? {
+        return try {
+            val node = sources.load(themeId, file) ?: return null
+            ThemeDslExpander.expand(themeId, node) { id -> sources.load(id, null) }.also(::requireSourceValues)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (_: Exception) {
+            null
+        }
+    }
+
+    /**
+     * Applies the librime auto-patch convention: unless the root already has an
+     * explicit `__patch`, the `patch` node of `<id>.custom.yaml` is applied on
+     * top of the resource. Reads `trime.yaml` source files (user data first,
+     * then shared data) the same way librime resolves resources.
+     *
+     * @param findSource source file of a resource id; the data dirs by default.
+     */
+    internal class SourceLoader(
+        private val findSource: (String) -> File? = ::findSourceFile,
+    ) {
+        private val cache = HashMap<String, Node?>()
+
+        /**
+         * @param file source file of [resourceId] when it is already known.
+         *   Included resources are always looked up by id.
+         */
+        fun load(resourceId: String, file: File?): Node? {
+            if (cache.containsKey(resourceId)) return cache[resourceId]
+            val source = file ?: findSource(resourceId)
+            // An unreadable optional custom file is not an absent file: let the caller
+            // use librime instead of silently accepting a theme without that patch.
+            val node = source?.let { Yaml.parseToYamlNode(it.readText()) }
+            val result = node?.let {
+                val patched = applyCustomPatch(resourceId, it)
+                if (patched === it) {
+                    it
+                } else {
+                    // A genuinely absent optional patch is a no-op. Avoid adding a
+                    // pending root directive that would block otherwise local includes.
+                    val patchId = resourceId.removeSuffix(".schema") + ".custom"
+                    if (findSource(patchId) == null) it else patched
+                }
+            }
+            cache[resourceId] = result
+            return result
+        }
+    }
+
+    /** Source file of [resourceId]: the user data dir first, then the shared one. */
+    private fun findSourceFile(resourceId: String): File? = findSourceFile(resourceId, listOf(DataManager.userDataDir, DataManager.sharedDataDir))
+
+    /**
+     * Source file of [resourceId] under [roots], in order. A resource id is free
+     * text in an include directive, so a file that resolves outside the root it
+     * was found in is refused; librime still resolves such an id on its own, so
+     * the caller falls back to the deployed artifact.
+     */
+    internal fun findSourceFile(
+        resourceId: String,
+        roots: List<File>,
+    ): File? {
+        val relative = "$resourceId.yaml"
+        for (root in roots) {
+            val file = root.resolve(relative)
+            if (!file.exists()) continue
+            if (!file.isFile) {
+                throw ThemeDslExpander.UnsupportedDsl("resource '$resourceId' is not a regular file")
+            }
+            if (!file.isInside(root)) {
+                throw ThemeDslExpander.UnsupportedDsl("resource '$resourceId' resolves outside its data directory")
+            }
+            return file
+        }
+        return null
+    }
+
+    /** Whether this file really lives in [root]: `..` and absolute ids are escapes. */
+    private fun File.isInside(root: File): Boolean = runCatching {
+        canonicalPath.startsWith(root.canonicalPath.trimEnd(File.separatorChar) + File.separator)
+    }.getOrDefault(false)
+
+    /**
+     * Injects the patch of `<id>.custom.yaml` as librime's auto-patch plugin
+     * does: the optional reference `__patch: <id>.custom:/patch?`, resolved in
+     * that resource. Reading it as a resource keeps the patch's own directives
+     * (an `__include`, for instance) relative to the file they are written in.
+     * An explicit root `__patch` wins; `.custom` files are never patched.
+     */
+    internal fun applyCustomPatch(
+        resourceId: String,
+        node: Node,
+    ): Node {
+        if (resourceId.endsWith(".custom")) return node
+        val root = node as? Node.Mapping ?: return node
+        if (root[PATCH] != null) return node
+        val patchId = resourceId.removeSuffix(".schema") + ".custom"
+        val reference = Node.Scalar("$patchId:/patch?")
+        return Node.Mapping(root.pairs + (Node.Scalar(PATCH) to reference), root.anchor)
+    }
+
+    /** Loads only a successfully rebuilt theme artifact; a failed rebuild must not use stale data. */
+    private suspend fun loadDeployedTheme(themeId: String): ThemeLoadResult {
         // A failed rebuild must not be disguised by a stale deployed artifact.
         val session = checkNotNull(RimeDaemon.getFirstSessionOrNull()) { "Theme loading requires a Rime session" }
         val deployed = try {
@@ -90,13 +293,7 @@ object ThemeLoader {
             return ThemeLoadResult.Failure(themeId, ThemeLoadError.DeploymentFailure(themeId))
         }
 
-        val paths =
-            listOf(
-                DataManager.resolveDeployedResourcePath(themeId),
-                File(DataManager.userDataDir, "$themeId.yaml").absolutePath,
-                File(DataManager.sharedDataDir, "$themeId.yaml").absolutePath,
-            )
-        val path = paths.firstOrNull { File(it).exists() } ?: paths.first()
+        val path = DataManager.resolveDeployedResourcePath(themeId)
         val file = File(path)
         if (!file.exists()) {
             return ThemeLoadResult.Failure(themeId, ThemeLoadError.FileNotFound(themeId, path))
@@ -127,7 +324,7 @@ object ThemeLoader {
 
         val theme =
             try {
-                Theme.decode(mapping).withCompatibleKeyboards(builtin)
+                Theme.decode(mapping)
             } catch (e: Exception) {
                 return ThemeLoadResult.Failure(
                     themeId,

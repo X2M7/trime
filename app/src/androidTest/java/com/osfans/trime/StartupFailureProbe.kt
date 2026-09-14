@@ -130,7 +130,10 @@ internal object StartupFailureProbe {
                             val compiledTheme = File(DataManager.stagingDir, "$themeId.yaml")
                             try {
                                 File(DataManager.sharedDataDir, "trime.yaml").copyTo(theme)
+                                check(!compiledTheme.exists())
                                 check(ThemeLoader.loadTheme(themeId) is ThemeLoader.ThemeLoadResult.Success)
+                                check(!compiledTheme.exists()) { "Supported source theme unexpectedly required deployment" }
+                                session.runOnReady { check(deployConfigFile(themeId, ThemeLoader.CONFIG_VERSION_KEY)) }
                                 check(compiledTheme.isFile)
                                 val nextTimestamp = theme.lastModified() + 2000
                                 theme.writeText("config_version: 'broken'\n__include: __missing_$suffix:/\n")
