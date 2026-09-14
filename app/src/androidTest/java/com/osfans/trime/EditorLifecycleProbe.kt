@@ -213,6 +213,7 @@ object EditorLifecycleProbe {
                     }
                     api { clearComposition() }
                     EngineUnavailableGlyphProbe.verify(instrumentation, service, chat)
+                    PopupColorRegression.verify(instrumentation, main { checkNotNull(input()) }, chat)
                     api {
                         check(selectSchema("luna_pinyin_t9"))
                         setRuntimeOption("ascii_mode", false)

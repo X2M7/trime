@@ -76,6 +76,7 @@ jobs:
         with:
           name: "Nightly Build"
           tag_name: nightly
+          target_commitish: ${{ github.sha }}
           prerelease: true
           working_directory: "app/build/outputs/apk/release/"
           files: |
