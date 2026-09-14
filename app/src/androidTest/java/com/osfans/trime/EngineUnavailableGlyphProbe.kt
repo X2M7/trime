@@ -70,14 +70,23 @@ object EngineUnavailableGlyphProbe {
         val background = Bitmap.createBitmap(button.width, button.height, Bitmap.Config.ARGB_8888)
         var reference: Bitmap? = null
         val colors = button.textColors
+        val scrollX = button.scrollX
+        val scrollY = button.scrollY
+        fun drawViewport(bitmap: Bitmap) {
+            // View's parent draw path applies this offset before invoking draw(Canvas).
+            // Single-line centered TextViews can have a large internal horizontal scroll.
+            val canvas = Canvas(bitmap)
+            canvas.translate(-scrollX.toFloat(), -scrollY.toFloat())
+            button.draw(canvas)
+        }
         try {
             button.jumpDrawablesToCurrentState()
-            button.draw(Canvas(actual))
+            drawViewport(actual)
             val paint = Paint(button.paint)
             val natural = Rect()
             paint.getTextBounds(label, 0, label.length, natural)
             button.setTextColor(Color.TRANSPARENT)
-            button.draw(Canvas(background))
+            drawViewport(background)
             button.setTextColor(colors)
             // An unclipped single-glyph reference uses the same actual font/size, independent of Button padding.
             val margin = 8
@@ -118,12 +127,18 @@ object EngineUnavailableGlyphProbe {
             button.getLocationOnScreen(location)
             val screen = Rect(location[0], location[1], location[0] + button.width, location[1] + button.height)
             val visible = Rect()
-            val fullyVisible = button.getLocalVisibleRect(visible) && visible == Rect(0, 0, button.width, button.height)
+            val hasVisibleRect = button.getLocalVisibleRect(visible)
+            val contentVisible = Rect(visible)
+            // getLocalVisibleRect returns scrolled content coordinates, not viewport coordinates.
+            visible.offset(-scrollX, -scrollY)
+            val fullyVisible = hasVisibleRect && visible == Rect(0, 0, button.width, button.height)
             visible.offset(location[0], location[1])
             val minimum = (48 * button.resources.displayMetrics.density).roundToInt()
             val hitArea = button.width >= minimum && abs(button.height - minimum) <= 1
-            val glyphTop = button.baseline + natural.top
-            val glyphBottom = button.baseline + natural.bottom
+            // TextView.getBaseline does not include the parent's scroll translation.
+            val drawnBaseline = button.baseline - scrollY
+            val glyphTop = drawnBaseline + natural.top
+            val glyphBottom = drawnBaseline + natural.bottom
             val verticalFit = glyphTop >= button.compoundPaddingTop && glyphBottom <= button.height - button.compoundPaddingBottom
             if (!fullyVisible) problems.add("key not completely visible")
             if (!hitArea) problems.add("key does not retain its 48dp touch area")
@@ -137,11 +152,15 @@ object EngineUnavailableGlyphProbe {
                 put("label", label)
                 put("text_size_px", paint.textSize)
                 put("baseline_px", button.baseline)
+                put("drawn_baseline_px", drawnBaseline)
+                put("scroll_x_px", scrollX)
+                put("scroll_y_px", scrollY)
                 put("font_ascent_px", paint.fontMetrics.ascent)
                 put("font_descent_px", paint.fontMetrics.descent)
                 put("include_font_padding", button.includeFontPadding)
                 put("padding", JSONArray(listOf(button.paddingLeft, button.paddingTop, button.paddingRight, button.paddingBottom)))
                 put("screen_bounds", rect(screen))
+                put("local_visible_content_bounds", rect(contentVisible))
                 put("visible_bounds", rect(visible))
                 put("natural_glyph_bounds", rect(natural))
                 put("natural_ink_bounds", rect(referenceBounds))
