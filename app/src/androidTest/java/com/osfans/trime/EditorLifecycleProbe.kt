@@ -142,7 +142,6 @@ object EditorLifecycleProbe {
                 row.addView(other, LinearLayout.LayoutParams(-1, 72))
                 editor.setContentView(row)
                 chat.requestFocus()
-                (editor.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager).showSoftInput(chat, 0)
                 Triple(chat, other, row)
             }
             val (chat, other, container) = fields
@@ -153,6 +152,14 @@ object EditorLifecycleProbe {
                         phase("PASS: $label")
                     }
                     fun input(): InputView? = roots().asSequence().flatMap(::descendants).filterIsInstance<InputView>().firstOrNull { it.isShown }
+                    val inputManager = editor.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+                    // Window focus and the served editor are established after setContentView.
+                    // On API 21 this first shows LatinIME, before the runner switches to Trime.
+                    until("initial editor attached, laid out and served") {
+                        chat.isAttachedToWindow && chat.isLaidOut && chat.width > 0 && chat.height > 0 &&
+                            chat.hasWindowFocus() && chat.hasFocus() && inputManager.isActive(chat)
+                    }
+                    main { inputManager.showSoftInput(chat, 0) }
                     until("initial keyboard visible") { input() != null }
                     val (overlayView, overlay, popup) = main {
                         val view = View(editor)

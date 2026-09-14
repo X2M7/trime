@@ -2,15 +2,19 @@
 package com.osfans.trime
 
 import android.app.Instrumentation
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
+import android.graphics.PorterDuff
+import android.graphics.PorterDuffColorFilter
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import com.mikepenz.iconics.IconicsDrawable
 import com.osfans.trime.data.theme.ColorManager
 import com.osfans.trime.data.theme.ThemeManager
 import com.osfans.trime.ime.core.InputView
@@ -25,7 +29,6 @@ import kotlinx.coroutines.withTimeout
 import org.kodein.di.direct
 import org.kodein.di.instance
 import java.util.LinkedList
-import kotlin.math.abs
 
 /** Actual IME popup pool and scheme-change listener chain, including Android 5 drawable pixels. */
 object PopupColorRegression {
@@ -42,30 +45,59 @@ object PopupColorRegression {
         return Rect(point[0], point[1], point[0] + view.width, point[1] + view.height)
     }
 
-    private fun pixels(drawable: Drawable, expected: Int, solid: Boolean) {
+    private fun pixels(context: Context, drawable: Drawable, expected: Int, solid: Boolean, rejectedColor: Int = expected) {
         val originalBounds = Rect(drawable.bounds)
         val bitmap = Bitmap.createBitmap(64, 64, Bitmap.Config.ARGB_8888)
+        val controls = mutableListOf<Bitmap>()
         try {
             drawable.setBounds(0, 0, 64, 64)
+            // Capture the production drawable before constructing either independent color control.
+            // Its colors, filter and state are never changed by this comparison.
             drawable.draw(Canvas(bitmap))
             if (solid) {
                 check(bitmap.getPixel(32, 32) == expected) { "Popup background retained the previous scheme" }
             } else {
+                check(drawable is IconicsDrawable) { "Unexpected popup icon drawable: ${drawable.javaClass.name}" }
+                check(Color.alpha(expected) == 255 && Color.alpha(rejectedColor) == 255 && expected != rejectedColor)
+                check(drawable.sizeXPx > 0 && drawable.sizeYPx > 0)
+                val icon = checkNotNull(drawable.icon)
+                fun reference(color: Int): IntArray {
+                    val referenceBitmap = Bitmap.createBitmap(64, 64, Bitmap.Config.ARGB_8888)
+                    controls.add(referenceBitmap)
+                    // Production constructs these icons with only their icon, size and explicit filter.
+                    // Do not copy the live filter, paint, tint or state into the oracle.
+                    val reference = IconicsDrawable(context, icon).apply {
+                        sizeXPx = drawable.sizeXPx
+                        sizeYPx = drawable.sizeYPx
+                        colorFilter = PorterDuffColorFilter(color, PorterDuff.Mode.SRC_IN)
+                    }
+                    reference.setBounds(0, 0, 64, 64)
+                    reference.draw(Canvas(referenceBitmap))
+                    return IntArray(64 * 64).also { referenceBitmap.getPixels(it, 0, 64, 0, 0, 64, 64) }
+                }
+                val actualPixels = IntArray(64 * 64).also { bitmap.getPixels(it, 0, 64, 0, 0, 64, 64) }
+                val expectedPixels = reference(expected)
+                val rejectedPixels = reference(rejectedColor)
+                check(!expectedPixels.contentEquals(rejectedPixels)) { "Popup color control cannot reject the other palette" }
+                var nontransparentPixels = 0
                 var opaquePixels = 0
-                for (y in 0 until 64) {
-                    for (x in 0 until 64) {
-                        val pixel = bitmap.getPixel(x, y)
-                        if (Color.alpha(pixel) > 128) {
-                            opaquePixels++
-                            check(abs(Color.red(pixel) - Color.red(expected)) <= 1 && abs(Color.green(pixel) - Color.green(expected)) <= 1 && abs(Color.blue(pixel) - Color.blue(expected)) <= 1) { "Popup icon retained the previous tint" }
-                        }
+                for (index in actualPixels.indices) {
+                    val pixel = actualPixels[index]
+                    check(pixel == expectedPixels[index]) {
+                        "Popup icon raster mismatch: expected=${Integer.toHexString(expectedPixels[index])}, actual=${Integer.toHexString(pixel)}, x=${index % 64}, y=${index / 64}, drawable=${drawable.javaClass.name}"
+                    }
+                    if (Color.alpha(pixel) > 0) nontransparentPixels++
+                    if (Color.alpha(pixel) == 255) {
+                        opaquePixels++
+                        check(pixel == expected && rejectedPixels[index] == rejectedColor) { "Opaque popup icon colors differ from the two explicit palettes" }
                     }
                 }
-                check(opaquePixels > 0) { "Popup icon is empty" }
+                check(nontransparentPixels > 0 && opaquePixels > 0) { "Popup icon is empty or lacks opaque ink" }
             }
         } finally {
             drawable.bounds = originalBounds
             bitmap.recycle()
+            controls.forEach(Bitmap::recycle)
         }
     }
 
@@ -153,6 +185,7 @@ object PopupColorRegression {
                     check(ColorManager.activeColorScheme == second)
                     second
                 }
+                val rejectedPalette = if (palette == first) second else first
                 check(scope.colors.popupBackColor == Color.parseColor(palette.colors.getValue("popup_back_color")))
                 check(scope.colors.popupTextColor == Color.parseColor(palette.colors.getValue("popup_text_color")))
                 check(scope.colors.hilitedPopupBackColor == Color.parseColor(palette.colors.getValue("hilited_popup_back_color")))
@@ -161,20 +194,20 @@ object PopupColorRegression {
                 check(free.single() === pooled && containers[ids[2]] === keyboard)
                 check(views.map(::bounds) == geometry) { "Scheme switch changed popup geometry" }
                 for (entry in visible.values + pooled) {
-                    pixels(checkNotNull(entry.root.background), scope.colors.popupBackColor, true)
+                    pixels(input.context, checkNotNull(entry.root.background), scope.colors.popupBackColor, true)
                     check(entry.textView.currentTextColor == scope.colors.popupTextColor)
-                    entry.imageView.drawable?.let { pixels(it, scope.colors.popupTextColor, false) }
+                    entry.imageView.drawable?.let { pixels(input.context, it, scope.colors.popupTextColor, false, Color.parseColor(rejectedPalette.colors.getValue("popup_text_color"))) }
                 }
                 check(visible.getValue(ids[0]).textView.text.toString() == "A")
                 check(visible.getValue(ids[1]).imageView.visibility == View.VISIBLE)
                 val focused = field<Int>(keyboard, "focusedIndex")
-                pixels(checkNotNull(keyboard.root.background), scope.colors.popupBackColor, true)
+                pixels(input.context, checkNotNull(keyboard.root.background), scope.colors.popupBackColor, true)
                 check(keys.size == 3 && keys[0].imageView.visibility == View.VISIBLE)
                 keys.forEachIndexed { index, key ->
                     val color = if (index == focused) scope.colors.hilitedPopupTextColor else scope.colors.popupTextColor
                     check(key.textView.currentTextColor == color)
-                    key.imageView.drawable?.let { pixels(it, color, false) }
-                    if (index == focused) pixels(checkNotNull(key.root.background), scope.colors.hilitedPopupBackColor, true) else check(key.root.background == null)
+                    key.imageView.drawable?.let { pixels(input.context, it, color, false, Color.parseColor(rejectedPalette.colors.getValue(if (index == focused) "hilited_popup_text_color" else "popup_text_color"))) }
+                    if (index == focused) pixels(input.context, checkNotNull(key.root.background), scope.colors.hilitedPopupBackColor, true) else check(key.root.background == null)
                 }
                 val triggerAction = PopupAction.TriggerAction(ids[2])
                 action(triggerAction)
@@ -201,7 +234,7 @@ object PopupColorRegression {
                 action(PopupAction.PreviewAction(ids[3], "R", trigger))
                 check(entries[ids[3]] === pooled && free.isEmpty()) { "Popup did not reuse the recolored pooled entry" }
                 check(pooled.textView.text.toString() == "R" && pooled.textView.currentTextColor == scope.colors.popupTextColor)
-                pixels(checkNotNull(pooled.root.background), scope.colors.popupBackColor, true)
+                pixels(input.context, checkNotNull(pooled.root.background), scope.colors.popupBackColor, true)
                 unchangedEditor()
             }
             phase("reused popup retains the current scheme without replacing its pooled object")
