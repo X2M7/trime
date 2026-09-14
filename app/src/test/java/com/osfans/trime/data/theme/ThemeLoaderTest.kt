@@ -4,6 +4,7 @@
 
 package com.osfans.trime.data.theme
 
+import android.util.Log
 import com.osfans.trime.util.yaml.Node
 import com.osfans.trime.util.yaml.Yaml
 import com.osfans.trime.util.yaml.get
@@ -14,6 +15,7 @@ import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.maps.shouldContainKey
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.CancellationException
+import timber.log.Timber
 import java.io.File
 import java.nio.file.Files
 
@@ -138,6 +140,44 @@ class ThemeLoaderTest :
                         noResources,
                     )
                 (result as? ThemeLoader.ThemeLoadResult.Success)?.theme?.name shouldBe "from_source"
+            }
+
+            Then("normal native parsing is informational while source errors retain their warning and cause") {
+                val entries = mutableListOf<Triple<Int, String, Throwable?>>()
+                val tree = object : Timber.Tree() {
+                    override fun log(priority: Int, tag: String?, message: String, t: Throwable?) {
+                        entries.add(Triple(priority, message, t))
+                    }
+                }
+                Timber.plant(tree)
+                try {
+                    ThemeLoader.loadFromSource(
+                        "native-theme",
+                        sourceFile("name: base\nstyle: {}\n__patch: {preset_keyboards/luna_pinyin_t9: {}}\n"),
+                        ThemeLoader.SourceLoader { null },
+                    ) shouldBe null
+                    val decision = entries.single()
+                    decision.first shouldBe Log.INFO
+                    decision.second.contains("native-theme") shouldBe true
+                    decision.second.contains("preset_keyboards/luna_pinyin_t9") shouldBe true
+                    decision.second.contains('\n') shouldBe false
+                    decision.third shouldBe null
+                    val unreadable = sourceFile("").apply {
+                        check(delete())
+                        check(mkdir())
+                        check(isDirectory)
+                    }
+                    for (file in listOf(sourceFile("name: [\n"), sourceFile("__include: missing:/style\n"), unreadable)) {
+                        entries.clear()
+                        ThemeLoader.loadFromSource("broken-theme", file, ThemeLoader.SourceLoader { null }) shouldBe null
+                        val failure = entries.single()
+                        failure.first shouldBe Log.WARN
+                        failure.second.contains("broken-theme") shouldBe true
+                        (failure.third != null) shouldBe true
+                    }
+                } finally {
+                    Timber.uproot(tree)
+                }
             }
 
             Then("an existing malformed optional custom file rejects the source theme and its name") {

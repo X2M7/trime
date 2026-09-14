@@ -118,7 +118,10 @@ object ThemeLoader {
         } catch (e: CancellationException) {
             throw e
         } catch (e: ThemeDslExpander.UnsupportedDsl) {
-            fallBack(themeId, e, "uses DSL outside the supported subset (%s)")
+            // Selecting the full native parser is normal for supported librime themes.
+            // A failed native rebuild still returns a structured DeploymentFailure.
+            Timber.i("Theme '%s' requires native configuration processing: %s", themeId, e.message)
+            null
         } catch (e: ThemeDslExpander.UnresolvedReference) {
             fallBack(themeId, e, "has unresolved references (%s)")
         } catch (e: Exception) {
