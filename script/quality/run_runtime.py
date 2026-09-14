@@ -20,6 +20,13 @@ def api21_editor_bound(dump: str, pid: int) -> bool:
     if dump.count(header) != 1:
         return False
     manager, service = dump.split(header)
+    attributes = re.findall(
+        r"(?m)^\s*inputType=(0x[0-9a-fA-F]+)\s+imeOptions=(0x[0-9a-fA-F]+)(?=\s|$)", service)
+    if len(attributes) != 1:
+        return False
+    input_type, ime_options = (int(value, 16) for value in attributes[0])
+    # API 21 adds IME_FLAG_NAVIGATE_NEXT when a laid-out editor has a next
+    # focus target. Keep ACTION_SEND and reject every other action or flag.
     return all((
         "mCurMethodId=com.android.inputmethod.latin/.LatinIME" in manager,
         re.search(rf"mCurClient=ClientState\{{[^\n]*\bpid {pid}\}}", manager),
@@ -27,7 +34,7 @@ def api21_editor_bound(dump: str, pid: int) -> bool:
         "mWindowVisible=true" in service,
         "mInputStarted=true mInputViewStarted=true" in service,
         "packageName=com.osfans.trime.debug " in service,
-        "inputType=0x1 imeOptions=0x4 " in service,
+        input_type == 1 and ime_options in (0x4, 0x08000004),
     ))
 
 
@@ -106,15 +113,40 @@ def run(args):
                 start = time.monotonic()
                 bound = False
                 stable_binding = 0
+                previous_observation = None
+                observation_index = 0
                 while process.poll() is None:
                     if time.monotonic() - start > 1000:
                         raise subprocess.TimeoutExpired(command, 1000)
                     output = (args.output / "instrumentation.log").read_text()
                     if not bound and "application_ready_wait_ms" in output:
                         windows = shell("dumpsys", "window", "windows", timeout=15)
-                        if any("mCurrentFocus=" in line and "ClipEditActivity" in line for line in windows.splitlines()):
-                            state = shell("dumpsys", "input_method")
-                            stable_binding = stable_binding + 1 if api21_editor_bound(state, instrumentation_pid(output)) else 0
+                        focus = [line for line in windows.splitlines() if "mCurrentFocus=" in line]
+                        focused = any("ClipEditActivity" in line for line in focus)
+                        state = shell("dumpsys", "input_method") if focused else None
+                        pid = instrumentation_pid(output)
+                        ready = state is not None and api21_editor_bound(state, pid)
+                        stable_binding = stable_binding + 1 if ready else 0
+                        observation = (focus, state, pid)
+                        if observation != previous_observation:
+                            # Preserve the dumps already read by this gate. Only changed
+                            # states need full snapshots; each poll records its outcome.
+                            files = {}
+                            for name, data in (("windows", windows), ("input_method", state)):
+                                if data is not None:
+                                    filename = f"api21-binding-{observation_index:04d}-{name}.txt"
+                                    (args.output / filename).write_text(data)
+                                    files[name] = {"file": filename, "sha256": hashlib.sha256(data.encode()).hexdigest()}
+                            previous_observation = observation
+                        with (args.output / "api21-binding-observations.jsonl").open("a") as observations:
+                            observations.write(json.dumps({"index": observation_index,
+                                                          "elapsed_seconds": time.monotonic() - start,
+                                                          "pid": pid, "focused": focused,
+                                                          "editor_ready": ready,
+                                                          "stable_editor_observations": stable_binding,
+                                                          "snapshots": files}) + "\n")
+                        observation_index += 1
+                        if focused:
                             if stable_binding >= 4:
                                 (args.output / "api21-binding-before.txt").write_text(state)
                                 # Audit Trime from BEFORE its activation, including service startup.
@@ -127,12 +159,10 @@ def run(args):
                                            "result": shell("ime", "set", trime)}
                                 (args.output / "api21-test-binding.json").write_text(json.dumps(binding, indent=2) + "\n")
                                 bound = True
-                        else:
-                            stable_binding = 0
                     time.sleep(.2)
                 run = subprocess.CompletedProcess(command, process.wait())
                 if not bound:
-                    raise RuntimeError("Test editor was never focused; Trime binding was not exercised")
+                    raise RuntimeError("Test editor did not meet the LatinIME binding gate; see api21-binding-observations.jsonl")
             finally:
                 if process is not None and process.poll() is None:
                     process.kill()
