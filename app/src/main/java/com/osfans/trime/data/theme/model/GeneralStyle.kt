@@ -20,7 +20,8 @@ import kotlinx.parcelize.Parcelize
 /**
  * Decoded `style` section of a theme. The constructor defaults are the single
  * source of truth for theme defaults; [decode] fills fields from YAML and
- * falls back to [DEFAULTS] for absent keys.
+ * falls back to [DEFAULTS] for absent keys. Legacy preview fields are used only
+ * when the corresponding popup field is absent.
  */
 @Parcelize
 data class GeneralStyle(
@@ -66,12 +67,12 @@ data class GeneralStyle(
     val latinFont: List<String> = emptyList(),
     val keyboardHeight: Int = 0,
     val keyboardHeightLand: Int = 0,
-    val popupBottomMargin: Int = 0,
-    val popupWidth: Int = 0,
-    val popupHeight: Int = 0,
-    val popupKeyHeight: Int = 0,
+    val popupBottomMargin: Int = 68,
+    val popupWidth: Int = 38,
+    val popupHeight: Int = 48,
+    val popupKeyHeight: Int = 48,
     val popupFont: List<String> = emptyList(),
-    val popupTextSize: Float = 0f,
+    val popupTextSize: Float = 23f,
     val resetAsciiModeOnFocusChange: Boolean = false,
     val roundCorner: Float = 0f,
     val shadowRadius: Float = 0f,
@@ -117,6 +118,8 @@ data class GeneralStyle(
         val DEFAULTS = GeneralStyle()
 
         private fun Node?.stringList(): List<String> = this?.sequence?.mapNotNull(Node::string) ?: emptyList()
+
+        private fun Node?.previewFontList(): List<String> = this?.string?.takeIf { it.isNotEmpty() }?.let(::listOf) ?: stringList()
 
         fun decode(node: Node): GeneralStyle = GeneralStyle(
             autoCaps = node["auto_caps"]?.boolean ?: DEFAULTS.autoCaps,
@@ -165,10 +168,10 @@ data class GeneralStyle(
             keyboardHeightLand = node["keyboard_height_land"]?.int ?: DEFAULTS.keyboardHeightLand,
             popupBottomMargin = node["popup_bottom_margin"]?.int ?: DEFAULTS.popupBottomMargin,
             popupWidth = node["popup_width"]?.int ?: DEFAULTS.popupWidth,
-            popupHeight = node["popup_height"]?.int ?: DEFAULTS.popupHeight,
-            popupKeyHeight = node["popup_key_height"]?.int ?: DEFAULTS.popupKeyHeight,
-            popupFont = node["popup_font"].stringList(),
-            popupTextSize = node["popup_text_size"]?.float ?: DEFAULTS.popupTextSize,
+            popupHeight = (node["popup_height"] ?: node["preview_height"])?.int ?: DEFAULTS.popupHeight,
+            popupKeyHeight = (node["popup_key_height"] ?: node["preview_height"])?.int ?: DEFAULTS.popupKeyHeight,
+            popupFont = node["popup_font"]?.stringList() ?: node["preview_font"].previewFontList(),
+            popupTextSize = (node["popup_text_size"] ?: node["preview_text_size"])?.float ?: DEFAULTS.popupTextSize,
             resetAsciiModeOnFocusChange = node["reset_ascii_mode_on_focus_change"]?.boolean
                 ?: DEFAULTS.resetAsciiModeOnFocusChange,
             roundCorner = node["round_corner"]?.float ?: DEFAULTS.roundCorner,

@@ -10,7 +10,7 @@ import android.graphics.PorterDuffColorFilter
 import android.graphics.Rect
 import android.graphics.drawable.GradientDrawable
 import android.view.ViewOutlineProvider
-import androidx.appcompat.widget.AppCompatImageView
+import android.widget.ImageView
 import androidx.core.view.isVisible
 import com.mikepenz.iconics.IconicsDrawable
 import com.mikepenz.iconics.utils.sizeDp
@@ -78,7 +78,8 @@ class PopupKeyboardUi(
             typeface = FontManager.getTypeface("POPUP_FONT")
         }
 
-        val imageView = view(::AppCompatImageView) {}
+        // The IME uses a framework theme; icons are drawn and tinted explicitly.
+        val imageView = view(::ImageView) {}
 
         override val root = frameLayout {
             add(

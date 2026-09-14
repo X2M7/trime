@@ -9,7 +9,7 @@ import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
 import android.graphics.drawable.GradientDrawable
 import android.view.ViewOutlineProvider
-import androidx.appcompat.widget.AppCompatImageView
+import android.widget.ImageView
 import androidx.core.view.isVisible
 import com.mikepenz.iconics.IconicsDrawable
 import com.mikepenz.iconics.utils.sizeDp
@@ -48,7 +48,8 @@ class PopupEntryUi(
         typeface = FontManager.getTypeface("POPUP_FONT")
     }
 
-    val imageView = view(::AppCompatImageView) {
+    // The IME uses a framework theme; icons are drawn and tinted explicitly.
+    val imageView = view(::ImageView) {
         visibility = android.view.View.GONE
     }
 
