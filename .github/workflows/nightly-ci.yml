@@ -64,12 +64,19 @@ jobs:
         if: ${{ !steps.jni-cache.outputs.cache-hit }}
         run: cp -R app/build/intermediates/merged_native_libs/release/mergeReleaseNativeLibs/out/lib app/prebuilt
 
-      - name: Create Nightly release
-        uses: 'marvinpinto/action-automatic-releases@latest'
+      - name: Delete Previous Nightly Release
+        continue-on-error: true
+        run: |
+          gh release delete --yes --cleanup-tag nightly
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create Nightly Release
+        uses: softprops/action-gh-release@v3
         with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          automatic_release_tag: nightly
+          name: "Nightly Build"
+          tag_name: nightly
           prerelease: true
-          title: "Nightly Build"
+          working_directory: "app/build/outputs/apk/release/"
           files: |
-            app/build/outputs/apk/release/*.apk
+            *.apk

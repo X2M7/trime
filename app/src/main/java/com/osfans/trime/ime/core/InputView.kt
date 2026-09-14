@@ -177,6 +177,7 @@ class InputView(
     /** Restyles colors after a scheme switch without rebuilding the view tree. */
     fun refreshColors() {
         keyboardBackground.imageDrawable = scope.drawable("keyboard_background")
+        popup.refreshColors()
         keyboardWindow.refreshColors()
         inputBar.refreshColors()
         preedit.refreshColors()
