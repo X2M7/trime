@@ -1,16 +1,22 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package com.osfans.trime
 
+import android.system.ErrnoException
+import android.system.Os
+import android.system.OsConstants
 import android.util.Log
 import com.osfans.trime.core.RimeConfig
 import com.osfans.trime.data.base.DataManager
 import com.osfans.trime.data.opencc.OpenCCDictManager
+import org.json.JSONArray
+import org.json.JSONObject
 import java.io.File
 import java.util.UUID
 
 internal object JniInteropRegression {
     fun verify() {
         verifyDictionaryConversions()
+        verifyConfigFailureResources()
         val supplementary = "\uD842\uDFB7\uD83C\uDF0F"
         val config = File(DataManager.sharedDataDir, "opencc/t2s.json")
         check(config.isFile)
@@ -50,6 +56,72 @@ internal object JniInteropRegression {
             } finally {
                 check(content.delete())
             }
+        }
+    }
+
+    private fun verifyConfigFailureResources() {
+        val directory = File(DataManager.userDataDir, "__jni_opencc_resources_${UUID.randomUUID()}")
+        check(directory.mkdir())
+        // Match the unique directory component: Android storage aliases can give
+        // a different absolute prefix in /proc/self/fd than the Java file path.
+        val ownedPath = "/${directory.name}/"
+        fun descriptors(): Map<String, String> = buildMap {
+            for (fd in checkNotNull(File("/proc/self/fd").listFiles())) {
+                val target = try {
+                    Os.readlink(fd.path)
+                } catch (failure: ErrnoException) {
+                    // Other threads may close an unrelated descriptor after listFiles.
+                    if (failure.errno != OsConstants.ENOENT) throw failure
+                    continue
+                }
+                if (ownedPath in target) put(fd.name, target)
+            }
+        }
+        fun noRetainedDescriptors(stage: String) {
+            val retained = descriptors()
+            check(retained.isEmpty()) { "OpenCC retained fixture descriptors at $stage: $retained" }
+        }
+        try {
+            val text = directory.resolve("source.txt")
+            val dictionary = directory.resolve("dictionary.ocd2")
+            val config = directory.resolve("config.json")
+            text.writeText("漢語\t汉语\n測試\t测试\n")
+            OpenCCDictManager.openCCDictConv(text.path, dictionary.path, OpenCCDictManager.MODE_TXT_TO_BIN)
+            val complete = dictionary.readBytes()
+            val header = "OPENCC_MARISA_0.2.5".toByteArray(Charsets.US_ASCII)
+            check(complete.size > header.size && complete.copyOf(header.size).contentEquals(header))
+            val dict = JSONObject().put("type", "ocd2").put("file", dictionary.path)
+            config.writeText(
+                JSONObject().put("name", "JNI resource regression")
+                    .put("segmentation", JSONObject().put("type", "mmseg").put("dict", dict))
+                    .put("conversion_chain", JSONArray().put(JSONObject().put("dict", dict)))
+                    .toString(),
+            )
+            noRetainedDescriptors("before calibration")
+            dictionary.inputStream().use {
+                check(descriptors().values.any { it.endsWith("/dictionary.ocd2") }) { "Fixture descriptor scan cannot detect an open dictionary" }
+            }
+            noRetainedDescriptors("after calibration")
+            repeat(32) { index ->
+                noRetainedDescriptors("before attempt $index")
+                val malformed = if (index % 2 == 0) {
+                    complete.copyOf(header.size - 1)
+                } else {
+                    complete.copyOf().apply { this[0] = 'X'.code.toByte() }
+                }
+                dictionary.writeBytes(malformed)
+                val failure = runCatching { OpenCCDictManager.openCCLineConv("漢語測試", config.path) }.exceptionOrNull()
+                check(failure is Exception && failure.message?.contains("Invalid OpenCC dictionary header") == true) {
+                    "OpenCC config did not reject malformed header at attempt $index: $failure"
+                }
+                noRetainedDescriptors("after rejected attempt $index")
+                dictionary.writeBytes(complete)
+                check(OpenCCDictManager.openCCLineConv("漢語測試", config.path) == "汉语测试") { "Valid OpenCC config retry failed at attempt $index" }
+                noRetainedDescriptors("after valid retry $index")
+            }
+            Log.i("JniInteropRegression", "PASS: OpenCC config failures close fixture descriptors across 32 short/bad-header retries")
+        } finally {
+            check(directory.deleteRecursively()) { "OpenCC resource regression fixtures were not removed" }
         }
     }
 

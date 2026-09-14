@@ -10,6 +10,7 @@ import unittest
 ROOT = Path(__file__).resolve().parents[2]
 CMAKE = os.environ.get("CMAKE_EXECUTABLE", "cmake")
 ADAPTER = ROOT / "app/src/main/jni/cmake/ThirdPartyCmake.cmake"
+OPENCC = ROOT / "app/src/main/jni/OpenCC/src"
 
 
 class ThirdPartyCmakeTest(unittest.TestCase):
@@ -32,6 +33,11 @@ class ThirdPartyCmakeTest(unittest.TestCase):
             (directory / "CMakeLists.txt").write_text(
                 f'cmake_minimum_required(VERSION {version})\nproject({name} NONE)\n'
                 + ('add_subdirectory(data)\n' if name == "OpenCC" else ''), encoding="utf-8")
+        # Exercise the exact pinned resource code that the build-tree patch consumes.
+        opencc_source = self.source / "vendor/OpenCC/src"
+        opencc_source.mkdir()
+        for name in ("MarisaDict.cpp", "SerializableDict.hpp"):
+            (opencc_source / name).write_bytes((OPENCC / name).read_bytes())
         data = self.source / "vendor/OpenCC/data"
         data.mkdir()
         (data / "CMakeLists.txt").write_text(
@@ -54,7 +60,7 @@ class ThirdPartyCmakeTest(unittest.TestCase):
             self.assertIn("Re-audit", result.stderr)
         return result
 
-    def test_all_four_adaptations_preserve_sources_and_refresh(self):
+    def test_all_adaptations_preserve_sources_and_refresh(self):
         before = {p.relative_to(self.source): p.read_bytes()
                   for p in self.source.rglob("*") if p.is_file()}
         self.configure()
@@ -65,6 +71,16 @@ class ThirdPartyCmakeTest(unittest.TestCase):
         data = self.build / "trime-deps/OpenCC/data/CMakeLists.txt"
         self.assertNotIn("find_package(PythonInterp", data.read_text())
         self.assertIn("find_package(Python3 REQUIRED COMPONENTS Interpreter)", data.read_text())
+        patched = self.build / "trime-deps/OpenCC/src"
+        marisa = (patched / "MarisaDict.cpp").read_text()
+        serializable = (patched / "SerializableDict.hpp").read_text()
+        self.assertNotIn("void* buffer = malloc", marisa)
+        self.assertIn("std::vector<char> buffer(headerLen)", marisa)
+        self.assertIn("Invalid OpenCC dictionary header", marisa)
+        self.assertIn("std::unique_ptr<FILE, decltype(&fclose)> input", serializable)
+        self.assertIn("std::unique_ptr<FILE, decltype(&fclose)> output", serializable)
+        resource_outputs = {name: (patched / name).read_bytes()
+                            for name in ("MarisaDict.cpp", "SerializableDict.hpp")}
         added = self.source / "vendor/snappy/added.txt"
         added.write_text("new input", encoding="utf-8")
         self.configure()
@@ -73,6 +89,11 @@ class ThirdPartyCmakeTest(unittest.TestCase):
         added.unlink()
         self.configure()
         self.assertFalse(copy.exists())
+        self.assertEqual(resource_outputs, {name: (patched / name).read_bytes()
+                                            for name in resource_outputs})
+        for name in resource_outputs:
+            self.assertEqual((self.source / "vendor/OpenCC/src" / name).read_bytes(),
+                             (OPENCC / name).read_bytes())
 
     def test_minimum_version_drift_requires_reaudit(self):
         path = self.source / "vendor/snappy/CMakeLists.txt"
@@ -82,6 +103,23 @@ class ThirdPartyCmakeTest(unittest.TestCase):
     def test_python_find_drift_requires_reaudit(self):
         path = self.source / "vendor/OpenCC/data/CMakeLists.txt"
         path.write_text(path.read_text().replace("PythonInterp", "Python"), encoding="utf-8")
+        self.configure(success=False)
+
+    def test_opencc_resource_drift_requires_reaudit(self):
+        path = self.source / "vendor/OpenCC/src/MarisaDict.cpp"
+        # Alter the exact ownership code, not merely surrounding declarations.
+        path.write_text(path.read_text().replace("malloc(sizeof(char) * headerLen)",
+                                                "malloc(headerLen)"), encoding="utf-8")
+        self.configure(success=False)
+
+    def test_duplicate_opencc_resource_target_requires_reaudit(self):
+        path = self.source / "vendor/OpenCC/src/SerializableDict.hpp"
+        ownership = '    std::shared_ptr<DICT> loadedDict = DICT::NewFromFile(fp);'
+        text = path.read_text()
+        start = text.index('    if (fp == NULL) {\n      return false;')
+        end = text.index('    return true;', start) + len('    return true;')
+        self.assertIn(ownership, text[start:end])
+        path.write_text(text + '\n' + text[start:end] + '\n', encoding="utf-8")
         self.configure(success=False)
 
     def test_duplicate_patch_target_requires_reaudit(self):

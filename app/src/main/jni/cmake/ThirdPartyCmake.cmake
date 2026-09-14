@@ -36,6 +36,8 @@ function(trime_add_dependency source_dir binary_dir minimum)
     "cmake_minimum_required(VERSION ${minimum}...3.10)")
 
   if(binary_dir STREQUAL "OpenCC")
+    include("${CMAKE_CURRENT_FUNCTION_LIST_DIR}/OpenccResourceSafety.cmake")
+    trime_adapt_opencc_resources("${destination}/src")
     # Dictionary generation needs a host interpreter, not Android Python libs.
     trime_replace_dependency_cmake(
       "${destination}/data/CMakeLists.txt"
