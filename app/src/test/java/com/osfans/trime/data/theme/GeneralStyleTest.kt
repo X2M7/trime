@@ -55,12 +55,12 @@ class GeneralStyleTest :
                     style.keyFont shouldBe emptyList()
                 }
 
-                Then("legacy preview fields produce visible popup dimensions and preserve the preview font") {
+                Then("legacy preview fields produce visible popup dimensions with the bundled system font") {
                     style.popupWidth shouldBe 38
                     style.popupHeight shouldBe 60
                     style.popupKeyHeight shouldBe 60
                     style.popupTextSize shouldBe 40f
-                    style.popupFont shouldBe listOf("latin.ttf")
+                    style.popupFont shouldBe emptyList()
                     // Legacy preview_offset is not a bottom margin: the two use different origins.
                     style.popupBottomMargin shouldBe 68
                 }
@@ -173,8 +173,8 @@ class GeneralStyleTest :
             }
         }
 
-        Given("a third-party legacy theme with preview font lists") {
-            Then("the popup retains font order and explicit legacy zero values") {
+        Given("a third-party legacy theme with preview fonts") {
+            Then("the popup retains scalar fonts, font order and explicit legacy zero values") {
                 val style = GeneralStyle.decode(
                     Node.Mapping(
                         Node.Scalar("preview_height") to Node.Scalar("0"),
@@ -186,6 +186,10 @@ class GeneralStyleTest :
                 style.popupKeyHeight shouldBe 0
                 style.popupTextSize shouldBe 0f
                 style.popupFont shouldBe listOf("a.ttf", "b.ttf")
+                val scalarStyle = GeneralStyle.decode(
+                    Node.Mapping(Node.Scalar("preview_font") to Node.Scalar("latin.ttf")),
+                )
+                scalarStyle.popupFont shouldBe listOf("latin.ttf")
             }
         }
     })
