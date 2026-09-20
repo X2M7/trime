@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 import unittest
 
-from run_runtime import api21_editor_bound
+from run_runtime import PROBES, api21_editor_bound, instrumentation_options
 
 
 READY = """Current Input Method Manager state:
@@ -18,6 +18,17 @@ Input method service state for com.android.inputmethod.latin.LatinIME@30aa:
 
 
 class RuntimeBindingTest(unittest.TestCase):
+    def test_privacy_probe_is_exposed_and_maps_to_its_runner_argument(self):
+        self.assertIn("privacy", PROBES)
+        self.assertEqual(["-e", "privacy", "true"], instrumentation_options("privacy"))
+
+    def test_existing_engine_and_saf_option_mapping_is_preserved(self):
+        self.assertEqual([], instrumentation_options("engine"))
+        self.assertEqual(
+            ["-e", "saf", "true", "-e", "safTree", "content://tree", "-e", "safRevoke", "true"],
+            instrumentation_options("saf", "content://tree", True),
+        )
+
     def test_ready_editor(self):
         self.assertTrue(api21_editor_bound(READY, 3123))
 

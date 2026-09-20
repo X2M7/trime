@@ -111,8 +111,13 @@ class KeyboardView(
     val isCapsOn: Boolean
         get() = keyboard.mShiftKey?.isOn == true
 
-    fun onDetach() {
+    /** Cancel gestures and erase per-key undo text at every editor or privacy boundary. */
+    fun clearTransientContent() {
         children.filterIsInstance<GestureFrame>().forEach { it.cancelGesture() }
         popup.dismissAll()
+    }
+
+    fun onDetach() {
+        clearTransientContent()
     }
 }

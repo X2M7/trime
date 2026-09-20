@@ -424,4 +424,9 @@ class KeyboardWindow(di: DI) :
     fun finishInput() {
         currentKeyboardView?.onDetach()
     }
+
+    /** Clear content-bearing gesture state from active and cached keyboards. */
+    fun clearEditorBoundaryState() {
+        cachedKeyboards.values.forEach { (_, view) -> view.clearTransientContent() }
+    }
 }

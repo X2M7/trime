@@ -83,6 +83,7 @@ open class PreeditUi(
         val hasPreedit = composition.length > 0
         visible = hasPreedit
         if (!visible) {
+            preedit.clearTransientContent()
             updateTextView("", false)
             return
         }

@@ -11,13 +11,16 @@ import android.content.IntentFilter
 import android.content.res.Configuration
 import android.os.Process
 import android.util.Log
+import androidx.annotation.Keep
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
 import androidx.preference.PreferenceManager
 import com.osfans.trime.data.db.ClipboardHelper
 import com.osfans.trime.data.db.CollectionHelper
 import com.osfans.trime.data.prefs.AppPrefs
+import com.osfans.trime.data.prefs.PreferenceDelegate
 import com.osfans.trime.data.theme.ColorManager
+import com.osfans.trime.ime.core.PrivacyModeState
 import com.osfans.trime.receiver.RimeIntentReceiver
 import com.osfans.trime.ui.main.LogActivity
 import com.osfans.trime.util.isNightMode
@@ -40,6 +43,12 @@ class TrimeApplication : Application() {
     val coroutineScope = MainScope() + CoroutineName("TrimeApplication")
 
     private val rimeIntentReceiver = RimeIntentReceiver()
+
+    @Keep
+    private val manualPrivacyModeListener =
+        PreferenceDelegate.OnChangeListener<Boolean> { _, enabled ->
+            PrivacyModeState.setManual(enabled, ClipboardHelper::quarantineCurrentPrimaryClip)
+        }
 
     private fun registerBroadcastReceiver() {
         val intentFilter =
@@ -135,6 +144,8 @@ class TrimeApplication : Application() {
             }
             val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
             val appPrefs = AppPrefs.initDefault(sharedPreferences)
+            PrivacyModeState.initialize(appPrefs.general.manualPrivacyMode.getValue())
+            appPrefs.general.manualPrivacyMode.registerOnChangeListener(manualPrivacyModeListener)
             // record last pid for crash logs
             appPrefs.internal.pid.apply {
                 val currentPid = Process.myPid()

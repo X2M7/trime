@@ -25,6 +25,7 @@ import com.osfans.trime.R
 import com.osfans.trime.TrimeApplication
 import com.osfans.trime.core.RimeLifecycle
 import com.osfans.trime.daemon.RimeDaemon
+import com.osfans.trime.data.db.ClipboardHelper
 import com.osfans.trime.databinding.ActivityLogBinding
 import com.osfans.trime.ui.main.log.LogView
 import com.osfans.trime.util.DeviceInfo
@@ -160,8 +161,10 @@ class LogActivity : AppCompatActivity() {
                 launcher.launch("$packageName-${iso8601UTCDateTime()}.txt")
             }
             copyButton.setOnClickListener {
-                val data = ClipData.newPlainText("log", logView.currentLog)
-                clipboardManager.setPrimaryClip(data)
+                ClipboardHelper.setSensitivePrimaryClip(
+                    clipboardManager,
+                    ClipData.newPlainText("log", logView.currentLog),
+                )
                 if (clipboardManager.hasPrimaryClip()) {
                     toast(R.string.copy_done)
                 }

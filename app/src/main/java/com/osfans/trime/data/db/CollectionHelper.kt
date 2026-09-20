@@ -8,6 +8,7 @@ package com.osfans.trime.data.db
 import android.content.Context
 import androidx.room.Room
 import androidx.room.withTransaction
+import com.osfans.trime.ime.core.PrivacyModeState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -33,8 +34,6 @@ object CollectionHelper : CoroutineScope by CoroutineScope(SupervisorJob() + Dis
         cltDao = cltDb.databaseDao()
     }
 
-    suspend fun insert(bean: DatabaseBean) = cltDao.insert(bean)
-
     suspend fun get(id: Int) = cltDao.get(id)
 
     suspend fun haveUnpinned() = cltDao.haveUnpinned()
@@ -59,35 +58,66 @@ object CollectionHelper : CoroutineScope by CoroutineScope(SupervisorJob() + Dis
         id: Int,
         text: String,
     ) {
-        mutex.withLock {
-            check(cltDao.updateText(id, text) == 1) { "Collection entry no longer exists" }
-            lastBean?.let {
-                if (id == it.id) lastBean = it.copy(text = text)
+        val permit = clipboardPersistenceGate.acquire(isSensitive = false)
+            ?: throw PersistencePermitExpiredException()
+        try {
+            mutex.withLock {
+                val existing = checkNotNull(cltDao.get(id)) { "Collection entry no longer exists" }
+                val updated = existing.copy(text = text)
+                cltDb.withTransaction {
+                    clipboardPersistenceGate.guardTransaction(permit) {
+                        check(cltDao.updateText(id, text) == 1) { "Collection entry no longer exists" }
+                    }
+                }
+                PrivacyModeState.publishIfOrdinary(permit) {
+                    if (lastBean?.id == id) lastBean = updated
+                }
             }
+        } finally {
+            clipboardPersistenceGate.release(permit)
         }
     }
 
     fun addNewBean(text: String) {
+        val permit = clipboardPersistenceGate.acquire(isSensitive = false) ?: return
         launch {
-            mutex.withLock {
-                val bean = DatabaseBean(text = text)
-                if (bean.text.isNullOrBlank()) return@withLock
-                try {
-                    cltDao.find(text)?.let {
-                        lastBean = it.copy(time = bean.time)
-                        cltDao.updateTime(it.id, bean.time)
+            try {
+                mutex.withLock {
+                    val bean = DatabaseBean(text = text)
+                    if (bean.text.isNullOrBlank()) return@withLock
+                    cltDao.find(text)?.let { existing ->
+                        val refreshed =
+                            cltDb.withTransaction {
+                                clipboardPersistenceGate.guardTransaction(permit) {
+                                    cltDao.updateTime(existing.id, bean.time)
+                                    existing.copy(time = bean.time)
+                                }
+                            }
+                        PrivacyModeState.publishIfOrdinary(permit) {
+                            lastBean = refreshed
+                        }
                         return@withLock
                     }
-                    val insertedBean = cltDb.withTransaction {
-                        val rowId = cltDao.insert(bean)
-                        cltDao.get(rowId) ?: bean
+                    val insertedBean =
+                        cltDb.withTransaction {
+                            clipboardPersistenceGate.guardTransaction(permit) {
+                                val rowId = cltDao.insert(bean)
+                                val id = rowId.toInt()
+                                cltDao.get(rowId) ?: bean.copy(id = id)
+                            }
+                        }
+                    PrivacyModeState.publishIfOrdinary(permit) {
+                        lastBean = insertedBean
                     }
-                    lastBean = insertedBean
-                } catch (e: Exception) {
-                    Timber.w("Failed to update collection database: $e")
-                    lastBean = bean
                 }
+            } catch (_: PersistencePermitExpiredException) {
+                // Room rolled the transaction back; never expose the rejected content.
+            } catch (e: Exception) {
+                Timber.w("Failed to update collection database: $e")
             }
+        }.invokeOnCompletion {
+            // Completion handlers also run when a coroutine is cancelled before its body starts.
+            clipboardPersistenceGate.release(permit)
         }
     }
 }

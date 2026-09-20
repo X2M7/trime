@@ -14,6 +14,7 @@ import android.graphics.RectF
 import android.inputmethodservice.InputMethodService
 import android.os.Build
 import android.os.Bundle
+import android.os.Looper
 import android.os.SystemClock
 import android.text.InputType
 import android.view.Gravity
@@ -39,6 +40,7 @@ import androidx.core.view.doOnAttach
 import androidx.core.view.updateLayoutParams
 import androidx.lifecycle.lifecycleScope
 import com.osfans.trime.R
+import com.osfans.trime.TrimeApplication
 import com.osfans.trime.core.KeyModifiers
 import com.osfans.trime.core.KeyValue
 import com.osfans.trime.core.RimeApi
@@ -47,6 +49,7 @@ import com.osfans.trime.core.RimeLifecycle
 import com.osfans.trime.core.RimeMessage
 import com.osfans.trime.daemon.RimeDaemon
 import com.osfans.trime.daemon.RimeSession
+import com.osfans.trime.data.db.ClipboardHelper
 import com.osfans.trime.data.prefs.AppPrefs
 import com.osfans.trime.data.prefs.PreferenceDelegate
 import com.osfans.trime.data.prefs.PreferenceDelegateProvider
@@ -69,15 +72,19 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeout
 import splitties.bitflags.hasFlag
 import splitties.systemservices.clipboardManager
 import splitties.systemservices.inputMethodManager
 import timber.log.Timber
 
+private const val DESTROY_EDITOR_CLEANUP_TIMEOUT_MS = 45_000L
+
 /** [輸入法][InputMethodService]主程序  */
 
 open class TrimeInputMethodService : LifecycleInputMethodService() {
     private lateinit var rime: RimeSession
+    private lateinit var rimeSessionName: String
     private val jobs = Channel<Job>(capacity = Channel.UNLIMITED)
 
     private val prefs = AppPrefs.defaultInstance()
@@ -94,7 +101,17 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
     private val editorGeneration = EditorGeneration()
     internal val editorToken: Long get() = editorGeneration.token
     internal fun isCurrentEditor(token: Long): Boolean = editorActive && editorGeneration.accepts(token)
+    private val inlineSuggestionRequestGate = InlineSuggestionRequestGate(::isCurrentEditor)
     private var editorActive = false
+
+    @Volatile private var nativeBoundEditorToken = 0L
+
+    @Volatile private var serviceDestroying = false
+    private var privacyMode = PrivacyMode()
+    private var privacyOwner = 0L
+    private val editorOwnership = EditorOwnership()
+    val isPrivacyModeActive: Boolean
+        get() = editorActive && privacyMode.active
     private val cursorAnchorSubscription = CursorAnchorSubscription()
     var editorModeOverride: EditorModeOverride? = null
     private val navBarManager = NavigationBarManager()
@@ -145,6 +162,18 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
     private val refreshT9AssistListener =
         PreferenceDelegate.OnChangeListener<Boolean> { _, _ ->
             postRimeJob { refreshT9Options() }
+        }
+
+    @Keep
+    private val manualPrivacyModeListener =
+        PreferenceDelegate.OnChangeListener<Boolean> { _, enabled ->
+            PrivacyModeState.setManual(enabled, ClipboardHelper::quarantineCurrentPrimaryClip)
+            inlineSuggestionRequestGate.invalidate()
+            if (Looper.myLooper() == Looper.getMainLooper()) {
+                applyManualPrivacyMode(enabled)
+            } else {
+                ContextCompat.getMainExecutor(this).execute { applyManualPrivacyMode(enabled) }
+            }
         }
 
     @Keep
@@ -216,7 +245,75 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
     private fun bindEditor() {
         val info = currentInputEditorInfo ?: return
         val origin = editorGeneration.token
-        postRimeJob { beginEditor(origin, info.inputType and InputType.TYPE_MASK_CLASS == InputType.TYPE_NULL) }
+        val targetMode = privacyMode
+        // Rime caches still belong to the preceding editor until beginEditor returns.
+        nativeBoundEditorToken = 0L
+        postRimeJob {
+            beginEditor(
+                origin,
+                info.inputType and InputType.TYPE_MASK_CLASS == InputType.TYPE_NULL,
+                targetMode.active,
+            )
+            if (isCurrentEditor(origin)) nativeBoundEditorToken = origin
+            // Releasing a previous private policy is part of the serialized native boundary.
+            // The owner check keeps a stale bind from changing a newer editor's process policy.
+            completeProcessPrivacyUpdate(origin, targetMode)
+        }.invokeOnCompletion { failure ->
+            // The fallback keyboard remains usable while Rime is unavailable. Do not leave a
+            // transitional private snapshot stuck after a failed native bind.
+            if (failure != null && !serviceDestroying) {
+                if (nativeBoundEditorToken == origin) nativeBoundEditorToken = 0L
+                completeProcessPrivacyUpdate(origin, targetMode)
+            }
+        }
+    }
+
+    private fun completeProcessPrivacyUpdate(
+        owner: Long,
+        mode: PrivacyMode,
+    ) {
+        PrivacyModeState.updateInput(owner, mode, ClipboardHelper::quarantineCurrentPrimaryClip)
+    }
+
+    private fun completeProcessPrivacyEnd(owner: Long) {
+        PrivacyModeState.endInput(owner, ClipboardHelper::quarantineCurrentPrimaryClip)
+    }
+
+    private fun applyManualPrivacyMode(enabled: Boolean) {
+        if (editorActive) {
+            updatePrivacyMode(enabled)
+        } else {
+            ClipboardHelper.clearTransientSuggestion()
+        }
+    }
+
+    private fun updatePrivacyMode(manual: Boolean = prefs.general.manualPrivacyMode.getValue()) {
+        val info = currentInputEditorInfo ?: return
+        val updated = EditorPolicy.privacy(info, manual)
+        if (updated == privacyMode) return
+        inlineSuggestionRequestGate.invalidate()
+        editorGeneration.advance()
+        nativeBoundEditorToken = 0L
+        privacyOwner = editorGeneration.token
+        editorOwnership.add(privacyOwner)
+        privacyMode = updated
+        val retainPrivacyUntilUpdate = PrivacyModeState.active && !updated.active
+        PrivacyModeState.beginInput(
+            privacyOwner,
+            updated,
+            retainPrivacyUntilUpdate = retainPrivacyUntilUpdate,
+        )
+        lastCommittedText = ""
+        composingText = ""
+        composingCursor = null
+        composingStart = null
+        selectionAfterCancel = null
+        inputView?.clearEditorBoundaryState(updated.active)
+        inputView?.resetEditorUi()
+        candidatesView?.resetEditorUi()
+        ClipboardHelper.clearTransientSuggestion()
+        InputFeedbackManager.startInput(sensitive = updated.active)
+        bindEditor()
     }
 
     private suspend fun updateRimeOption(api: RimeApi) {
@@ -242,7 +339,8 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
     }
 
     override fun onCreate() {
-        rime = RimeDaemon.createSession(javaClass.name)
+        rimeSessionName = imeRimeSessionName(javaClass.name, editorGeneration.token)
+        rime = RimeDaemon.createSession(rimeSessionName)
         lifecycleScope.launch {
             jobs.consumeEach { it.join() }
         }
@@ -255,6 +353,7 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
             it.registerOnChangeListener(recreateInputViewListener)
         }
         prefs.keyboard.t9AssistOptions.forEach { it.registerOnChangeListener(refreshT9AssistListener) }
+        prefs.general.manualPrivacyMode.registerOnChangeListener(manualPrivacyModeListener)
         prefs.candidates.registerOnChangeListener(recreateCandidatesViewListener)
         // ensure theme and color managers are initialized after rime is ready
         prepareTheme()
@@ -264,6 +363,7 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
                     RimeLifecycle.State.READY -> if (!themeReady) prepareTheme()
 
                     RimeLifecycle.State.FAILED, RimeLifecycle.State.STOPPING -> {
+                        nativeBoundEditorToken = 0L
                         startupFailed = state == RimeLifecycle.State.FAILED
                         themeReady = false
                         inputView?.finishInput()
@@ -486,6 +586,12 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
     }
 
     override fun onDestroy() {
+        val destroyedEditors = editorOwnership.snapshot()
+        val destroyedOwner = privacyOwner
+        serviceDestroying = true
+        inlineSuggestionRequestGate.invalidate()
+        nativeBoundEditorToken = 0L
+        privacyOwner = 0
         editorActive = false
         editorGeneration.advance()
         inputView?.finishInput()
@@ -499,12 +605,35 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
             it.unregisterOnChangeListener(recreateInputViewListener)
         }
         prefs.keyboard.t9AssistOptions.forEach { it.unregisterOnChangeListener(refreshT9AssistListener) }
+        prefs.general.manualPrivacyMode.unregisterOnChangeListener(manualPrivacyModeListener)
         prefs.candidates.unregisterOnChangeListener(recreateCandidatesViewListener)
         ThemeManager.removeOnChangedListener(onThemeChangeListener)
         ColorManager.removeOnChangedListener(onColorChangeListener)
         super.onDestroy()
         unregisterReceiver(rimeIntentReceiver)
-        RimeDaemon.destroySession(javaClass.name)
+        if (::rime.isInitialized && ::rimeSessionName.isInitialized && destroyedEditors.isNotEmpty()) {
+            val destroyedSession = rime
+            val destroyedSessionName = rimeSessionName
+            TrimeApplication.getInstance().coroutineScope.launch {
+                try {
+                    withTimeout(DESTROY_EDITOR_CLEANUP_TIMEOUT_MS) {
+                        destroyedSession.runOnReady { finishOwnedEditors(destroyedEditors) }
+                    }
+                } catch (failure: Exception) {
+                    Timber.w(failure, "Unable to finish editors owned by the destroyed IME")
+                } catch (failure: LinkageError) {
+                    Timber.w(failure, "Unable to finish editors owned by the destroyed IME")
+                } finally {
+                    completeProcessPrivacyEnd(destroyedOwner)
+                    RimeDaemon.destroySession(destroyedSessionName)
+                }
+            }
+        } else if (::rimeSessionName.isInitialized) {
+            completeProcessPrivacyEnd(destroyedOwner)
+            RimeDaemon.destroySession(rimeSessionName)
+        } else {
+            completeProcessPrivacyEnd(destroyedOwner)
+        }
     }
 
     private fun handleReturnKey() {
@@ -725,15 +854,30 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
         attribute: EditorInfo,
         restarting: Boolean,
     ) {
+        inlineSuggestionRequestGate.invalidate()
         super.onStartInput(attribute, restarting)
         cursorAnchorSubscription.reset()
-        inputView?.finishInput()
         editorGeneration.advance()
+        nativeBoundEditorToken = 0L
         editorActive = true
+        privacyOwner = editorGeneration.token
+        editorOwnership.add(privacyOwner)
+        privacyMode = EditorPolicy.privacy(attribute, prefs.general.manualPrivacyMode.getValue())
+        val retainPrivacyUntilUpdate = PrivacyModeState.active && !privacyMode.active
+        PrivacyModeState.beginInput(
+            privacyOwner,
+            privacyMode,
+            retainPrivacyUntilUpdate = retainPrivacyUntilUpdate,
+        )
+        // Publish the editor policy before any view teardown or asynchronous clipboard callback
+        // can observe content that belongs to the new editor.
+        inputView?.finishInput()
+        inputView?.clearEditorBoundaryState(privacyMode.active)
         inputView?.resetEditorUi()
         candidatesView?.resetEditorUi()
+        if (privacyMode.active) ClipboardHelper.clearTransientSuggestion()
         lastCommittedText = ""
-        InputFeedbackManager.startInput(EditorPolicy.isPassword(attribute.inputType))
+        InputFeedbackManager.startInput(sensitive = privacyMode.active)
         composingText = ""
         composingCursor = null
         composingStart = null
@@ -744,19 +888,31 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
     }
 
     override fun onFinishInput() {
+        inlineSuggestionRequestGate.invalidate()
+        val finishedEditor = privacyOwner
+        nativeBoundEditorToken = 0L
         editorActive = false
         cursorAnchorSubscription.reset()
         showingDialog?.dismiss()
         lastCommittedText = ""
         InputFeedbackManager.finishInput()
         editorGeneration.advance()
+        postRimeJob { finishEditor(finishedEditor) }
+            .invokeOnCompletion {
+                // Engine failure must not strand the Java fallback keyboard in privacy mode.
+                // Service destruction is cleaned from the application scope in onDestroy.
+                // A newer editor has a different owner, so stale cleanup cannot clear it.
+                if (!serviceDestroying) completeProcessPrivacyEnd(finishedEditor)
+            }
         inputView?.finishInput()
+        inputView?.clearEditorBoundaryState(privateInput = false)
         inputView?.resetEditorUi()
         candidatesView?.resetEditorUi()
         composingText = ""
         composingCursor = null
         composingStart = null
         selectionAfterCancel = null
+        privacyMode = PrivacyMode(manual = prefs.general.manualPrivacyMode.getValue())
         cursorUpdateIndex += 1
         super.onFinishInput()
     }
@@ -765,15 +921,23 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
 
     @RequiresApi(Build.VERSION_CODES.R)
     override fun onCreateInlineSuggestionsRequest(uiExtras: Bundle): InlineSuggestionsRequest? {
-        if (!themeReady || !inlineSuggestions || !inputDeviceManager.useVirtualKeyboard) return null
+        inlineSuggestionRequestGate.invalidate()
+        if (PrivacyModeState.active || !themeReady || !inlineSuggestions || !inputDeviceManager.useVirtualKeyboard) return null
         val colors = themeScope?.colors ?: return null
-        return InlineSuggestions.createRequest(this, colors)
+        val request = InlineSuggestions.createRequest(this, colors)
+        if (!inlineSuggestionRequestGate.record(editorToken, privacyMode.active || PrivacyModeState.active)) return null
+        return request
     }
 
     @SuppressLint("NewApi")
     override fun onInlineSuggestionsResponse(response: InlineSuggestionsResponse): Boolean {
+        if (PrivacyModeState.active) {
+            inlineSuggestionRequestGate.invalidate()
+            return false
+        }
         if (!inputDeviceManager.useVirtualKeyboard) return false
-        return inputView?.handleInlineSuggestions(response) == true
+        val requestEditorToken = inlineSuggestionRequestGate.acceptedEditorToken() ?: return false
+        return inputView?.handleInlineSuggestions(response, requestEditorToken) == true
     }
 
     override fun onStartInputView(
@@ -782,7 +946,7 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
     ) {
         Timber.d("onStartInputView: restarting=$restarting")
         if (!themeReady) updateUnavailableEditor()
-        InputFeedbackManager.startInput(EditorPolicy.isPassword(attribute.inputType))
+        InputFeedbackManager.startInput(sensitive = privacyMode.active)
         postRimeJob {
             updateRimeOption(this)
         }
@@ -838,12 +1002,13 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
         } else {
             ic.commitText(text, 1)
         }
-        lastCommittedText = if (EditorPolicy.isPassword(currentInputEditorInfo?.inputType ?: 0)) "" else text
+        val contentAllowed = privacyMode.allowContentAccess && !PrivacyModeState.active
+        lastCommittedText = if (contentAllowed) text else ""
         composingText = ""
         composingCursor = null
         composingStart = null
         selectionAfterCancel = null
-        InputFeedbackManager.textCommitSpeak(text)
+        if (contentAllowed) InputFeedbackManager.textCommitSpeak(text)
     }
 
     /**
@@ -1043,6 +1208,7 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
     }
 
     fun shareText(): Boolean {
+        if (!canReadEditorContent()) return false
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             val ic = currentInputConnection ?: return false
             val cs = ic.getSelectedText(0)
@@ -1210,8 +1376,7 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
     }
 
     fun getActiveText(type: Int): String {
-        if (!editorActive) return ""
-        if (EditorPolicy.isPassword(currentInputEditorInfo?.inputType ?: 0)) return ""
+        if (!canReadEditorContent()) return ""
         val rimeComposition = rime.run { compositionCached }
         val selected = currentInputConnection?.getSelectedText(0)?.toString()
         val commitPreview = rimeComposition.commitTextPreview
@@ -1236,6 +1401,14 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
         )
             .firstOrNull { it?.isNotEmpty() == true } ?: ""
     }
+
+    private fun canReadEditorContent(): Boolean = canAccessEditorContent(
+        editorActive = editorActive,
+        policyAllowsContent = privacyMode.allowContentAccess,
+        processPrivacyActive = PrivacyModeState.active,
+        currentEditorToken = editorGeneration.token,
+        nativeBoundEditorToken = nativeBoundEditorToken,
+    )
 
     private fun getTextAroundCursor(
         initialStep: Int = 1024,

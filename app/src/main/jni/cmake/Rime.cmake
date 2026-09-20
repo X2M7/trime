@@ -25,6 +25,8 @@ option(BUILD_STATIC "" ON)
 add_subdirectory(librime)
 include(RimeConfigCompat)
 trime_adapt_rime_config()
+include(RimePrivacyCompat)
+trime_adapt_rime_privacy()
 include(RimeLuaCompat)
 trime_adapt_rime_lua()
 target_compile_options(

@@ -67,13 +67,48 @@ class Rime :
 
     override suspend fun refreshT9Options() = withRimeContext { emitResponse() }
 
-    override suspend fun beginEditor(token: Long, nullInputType: Boolean) = withRimeContext {
-        if (editorToken != token) {
+    override suspend fun beginEditor(
+        token: Long,
+        nullInputType: Boolean,
+        privacyMode: Boolean,
+    ) = withRimeContext {
+        val editorChanged = editorToken != token
+        if (editorChanged) {
             clearRimeComposition()
             getRimeCommit()
         }
+        // Every editor boundary clears native gear caches, including ordinary-to-ordinary app
+        // switches. Privacy changes use the same guarded boundary before the new editor can type.
+        if (editorChanged || this.privacyMode != privacyMode) {
+            setRimePrivacyMode(privacyMode)
+        }
         editorToken = token
+        this.privacyMode = privacyMode
         isNullInputType = nullInputType
+        emitResponse()
+    }
+
+    override suspend fun finishEditor(token: Long) = withRimeContext {
+        if (editorToken != token) return@withRimeContext
+        finishCurrentEditor()
+    }
+
+    override suspend fun finishOwnedEditors(tokens: LongArray) = withRimeContext {
+        if (editorToken == 0L || !tokens.contains(editorToken)) return@withRimeContext
+        finishCurrentEditor()
+    }
+
+    /** Must only be called from [withRimeContext]. */
+    private fun finishCurrentEditor() {
+        if (privacyMode) {
+            setRimePrivacyMode(false)
+        } else {
+            clearRimeComposition()
+        }
+        getRimeCommit()
+        privacyMode = false
+        editorToken = 0
+        isNullInputType = true
         emitResponse()
     }
 
@@ -120,6 +155,7 @@ class Rime :
     private var isNullInputType = true
     private var lastAsciiTipsText = ""
     private var pagingMode = false
+    private var privacyMode = false
 
     init {
         if (lifecycle.currentState != RimeLifecycle.State.STOPPED) {
@@ -397,6 +433,7 @@ class Rime :
         try {
             nativeInitialized = true
             startupRime(sharedDataDir, userDataDir, BuildConfig.BUILD_VERSION_NAME, fullCheck)
+            setRimePrivacyMode(editorToken != 0L && privacyMode)
             if (deployFailed.get() || resourceFailure != null) {
                 check(hasUsableRimeDictionary()) { "Rime configuration deployment failed; no usable current dictionary" }
                 usingExistingResources = true
@@ -709,6 +746,15 @@ class Rime :
 
         @JvmStatic
         external fun clearRimeComposition()
+
+        @JvmStatic
+        external fun setRimePrivacyMode(enabled: Boolean)
+
+        @JvmStatic
+        external fun getRimeCommitHistorySizeForTesting(): Int
+
+        @JvmStatic
+        external fun isRimePrivacyGuardEnabledForTesting(): Boolean
 
         // output
         @JvmStatic

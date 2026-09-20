@@ -17,6 +17,7 @@ import com.osfans.trime.core.RimeMessage
 import com.osfans.trime.core.SchemaItem
 import com.osfans.trime.daemon.RimeSession
 import com.osfans.trime.daemon.launchOnReady
+import com.osfans.trime.data.prefs.AppPrefs
 import com.osfans.trime.data.theme.Theme
 import com.osfans.trime.data.theme.ThemeScope
 import com.osfans.trime.ime.bar.ui.ToolButton
@@ -47,30 +48,37 @@ class SwitchOptionWindow(di: DI) :
     private val scope: ThemeScope by instance()
     private val theme: Theme get() = scope.theme
 
-    private val staticEntries by lazy {
-        arrayOf(
-            SwitchOptionEntry.Static(
-                context.getString(R.string.theme),
-                R.drawable.ic_baseline_color_lens_24,
-                SwitchOptionEntry.Static.Type.ThemeList,
+    private val manualPrivacyMode = AppPrefs.defaultInstance().general.manualPrivacyMode
+
+    private fun staticEntries() = arrayOf(
+        SwitchOptionEntry.Static(
+            context.getString(R.string.theme),
+            R.drawable.ic_baseline_color_lens_24,
+            SwitchOptionEntry.Static.Type.ThemeList,
+        ),
+        SwitchOptionEntry.Static(
+            context.getString(R.string.schemata),
+            R.drawable.ic_round_view_list_24,
+            SwitchOptionEntry.Static.Type.SchemaList,
+        ),
+        SwitchOptionEntry.Static(
+            context.getString(R.string.update_config),
+            R.drawable.ic_baseline_sync_24,
+            SwitchOptionEntry.Static.Type.UpdateConfig,
+        ),
+        SwitchOptionEntry.Static(
+            context.getString(R.string.virtual_keyboard),
+            R.drawable.ic_baseline_keyboard_24,
+            SwitchOptionEntry.Static.Type.Keyboard,
+        ),
+        SwitchOptionEntry.Static(
+            context.getString(
+                if (manualPrivacyMode.getValue()) R.string.disable_privacy_mode else R.string.enable_privacy_mode,
             ),
-            SwitchOptionEntry.Static(
-                context.getString(R.string.schemata),
-                R.drawable.ic_round_view_list_24,
-                SwitchOptionEntry.Static.Type.SchemaList,
-            ),
-            SwitchOptionEntry.Static(
-                context.getString(R.string.update_config),
-                R.drawable.ic_baseline_sync_24,
-                SwitchOptionEntry.Static.Type.UpdateConfig,
-            ),
-            SwitchOptionEntry.Static(
-                context.getString(R.string.virtual_keyboard),
-                R.drawable.ic_baseline_keyboard_24,
-                SwitchOptionEntry.Static.Type.Keyboard,
-            ),
-        )
-    }
+            R.drawable.ic_baseline_lock_24,
+            SwitchOptionEntry.Static.Type.Privacy,
+        ),
+    )
 
     var popupMenu: PopupMenu? = null
 
@@ -125,6 +133,11 @@ class SwitchOptionWindow(di: DI) :
                         }
 
                         SwitchOptionEntry.Static.Type.Keyboard -> AppUtils.launchMainToKeyboard(context)
+
+                        SwitchOptionEntry.Static.Type.Privacy -> {
+                            manualPrivacyMode.setValue(!manualPrivacyMode.getValue())
+                            updateSchemaOptionEntries()
+                        }
 
                         SwitchOptionEntry.Static.Type.ThemeList -> {
                             val editorToken = service.editorToken
@@ -184,7 +197,7 @@ class SwitchOptionWindow(di: DI) :
         val switches = rime.run { schemaCached }.switches
         adapter.submitList(
             listOf(
-                *staticEntries,
+                *staticEntries(),
                 *switches.mapNotNull { SwitchOptionEntry.fromSwitch(rime, it) }.toTypedArray(),
             ),
         )
@@ -237,7 +250,7 @@ class SwitchOptionWindow(di: DI) :
             service.lifecycleScope.launch {
                 adapter.submitList(
                     listOf(
-                        *staticEntries,
+                        *staticEntries(),
                         *data.mapNotNull { SwitchOptionEntry.fromSwitch(rime, it) }.toTypedArray(),
                     ),
                 )

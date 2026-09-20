@@ -50,6 +50,7 @@ class StartupResponsivenessInstrumentation : Instrumentation() {
     private var lateStorageOnly = false
     private var feedbackOnly = false
     private var editorsOnly = false
+    private var privacyOnly = false
     override fun onCreate(arguments: Bundle?) {
         super.onCreate(arguments)
         safOnly = arguments?.getString("saf") == "true"
@@ -67,6 +68,7 @@ class StartupResponsivenessInstrumentation : Instrumentation() {
         lateStorageOnly = arguments?.getString("lateStorage") == "true"
         feedbackOnly = arguments?.getString("feedback") == "true"
         editorsOnly = arguments?.getString("editors") == "true"
+        privacyOnly = arguments?.getString("privacy") == "true"
         start()
     }
 
@@ -79,6 +81,10 @@ class StartupResponsivenessInstrumentation : Instrumentation() {
         sendStatus(0, Bundle().apply { putLong("application_ready_wait_ms", SystemClock.uptimeMillis() - applicationWait) })
         if (editorsOnly) {
             EditorLifecycleProbe.run(this)
+            return
+        }
+        if (privacyOnly) {
+            PrivacyModeProbe.run(this)
             return
         }
         if (feedbackOnly) {

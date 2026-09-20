@@ -2,9 +2,12 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+#include <glog/logging.h>
+#include <rime/context.h>
 #include <rime/dict/dictionary.h>
 #include <rime/key_event.h>
 #include <rime/schema.h>
+#include <rime/service.h>
 #include <rime/ticket.h>
 #include <rime_api.h>
 
@@ -19,6 +22,7 @@
 #include "objconv.h"
 #include "session.h"
 #include "t9.h"
+#include "trime_privacy_guard.h"
 
 #define MAX_BUFFER_LENGTH 2048
 
@@ -45,6 +49,9 @@ class Rime {
 
   void startup(bool fullCheck,
                const RimeNotificationHandler& notificationHandler) {
+    privacy_mode_ = false;
+    trime::SetPrivacyModeEnabled(false);
+    FLAGS_minloglevel = google::GLOG_WARNING;
     if (!rime) return;
     const char* userDir = getenv("RIME_USER_DATA_DIR");
     const char* sharedDir = getenv("RIME_SHARED_DATA_DIR");
@@ -187,6 +194,43 @@ class Rime {
     return rime->get_option(session(), key.data());
   }
 
+  int commitHistorySizeForTesting() {
+    const auto id = session(false);
+    auto current = id ? rime::Service::instance().GetSession(id) : nullptr;
+    return current && current->context()
+               ? static_cast<int>(current->context()->commit_history().size())
+               : 0;
+  }
+
+  bool privacyGuardEnabledForTesting() const {
+    return trime::IsPrivacyModeEnabled();
+  }
+
+  void setPrivacyMode(bool enabled) {
+    // Suppress native content logs before touching state from the previous
+    // editor. Keep the process guard enabled until a private editor has been
+    // fully cleared on exit.
+    FLAGS_minloglevel = google::GLOG_FATAL;
+    trime::SetPrivacyModeEnabled(true);
+    privacy_mode_ = enabled;
+
+    {
+      trime::PrivacyTransitionBoundary transition_boundary;
+      t9_.Clear();
+      const auto id = session(enabled);
+      auto current = id ? rime::Service::instance().GetSession(id) : nullptr;
+      if (current) {
+        current->ResetPrivacyContexts(enabled);
+      }
+    }
+
+    if (!enabled) {
+      privacy_mode_ = false;
+      trime::SetPrivacyModeEnabled(false);
+      FLAGS_minloglevel = google::GLOG_WARNING;
+    }
+  }
+
   std::string currentSchemaId() {
     char result[MAX_BUFFER_LENGTH];
     return rime->get_current_schema(session(), result, MAX_BUFFER_LENGTH)
@@ -268,9 +312,16 @@ class Rime {
   }
 
   void exit() {
+    if (privacy_mode_) {
+      FLAGS_minloglevel = google::GLOG_FATAL;
+      trime::SetPrivacyModeEnabled(true);
+    }
     t9_.Reset();
     session_.reset();
     rime->finalize();
+    privacy_mode_ = false;
+    trime::SetPrivacyModeEnabled(false);
+    FLAGS_minloglevel = google::GLOG_WARNING;
   }
 
   bool sync() {
@@ -283,12 +334,19 @@ class Rime {
   RimeApi* rime;
   trime::T9 t9_;
   std::shared_ptr<SessionHolder> session_;
+  bool privacy_mode_ = false;
 
   RimeSessionId session(bool requestNewSession = true) {
     if (!session_ && requestNewSession) {
       try {
         auto newSession = std::make_shared<SessionHolder>();
         session_ = newSession;
+        if (privacy_mode_) {
+          auto current = rime::Service::instance().GetSession(newSession->id());
+          if (current && current->context()) {
+            current->context()->set_option("trime_privacy_mode", true);
+          }
+        }
       } catch (...) {
         session_ = nullptr;
       }
@@ -465,6 +523,24 @@ Java_com_osfans_trime_core_Rime_getRimeStatus(JNIEnv* env, jclass /* thiz */) {
 extern "C" JNIEXPORT void JNICALL Java_com_osfans_trime_core_Rime_setRimeOption(
     JNIEnv* env, jclass /* thiz */, jstring option, jboolean value) {
   Rime::Instance().setOption(*CString(env, option), value);
+}
+
+extern "C" JNIEXPORT void JNICALL
+Java_com_osfans_trime_core_Rime_setRimePrivacyMode(JNIEnv*, jclass,
+                                                   jboolean enabled) {
+  Rime::Instance().setPrivacyMode(enabled == JNI_TRUE);
+}
+
+extern "C" JNIEXPORT jint JNICALL
+Java_com_osfans_trime_core_Rime_getRimeCommitHistorySizeForTesting(JNIEnv*,
+                                                                   jclass) {
+  return Rime::Instance().commitHistorySizeForTesting();
+}
+
+extern "C" JNIEXPORT jboolean JNICALL
+Java_com_osfans_trime_core_Rime_isRimePrivacyGuardEnabledForTesting(JNIEnv*,
+                                                                    jclass) {
+  return Rime::Instance().privacyGuardEnabledForTesting();
 }
 
 extern "C" JNIEXPORT jboolean JNICALL

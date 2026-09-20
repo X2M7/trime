@@ -16,6 +16,44 @@ class EditorPolicyTest :
             EditorPolicy.isPassword(InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_URI) shouldBe false
             EditorPolicy.isPassword(InputType.TYPE_CLASS_NUMBER) shouldBe false
         }
+        "privacy combines password app request and manual reasons" {
+            val password = EditorPolicy.privacy(
+                InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD,
+                0,
+                manual = false,
+            )
+            password shouldBe PrivacyMode(password = true)
+
+            val appRequested = EditorPolicy.privacy(
+                InputType.TYPE_CLASS_TEXT,
+                EditorInfo.IME_ACTION_DONE or EditorPolicy.NO_PERSONALIZED_LEARNING_FLAG,
+                manual = false,
+            )
+            appRequested shouldBe PrivacyMode(appRequested = true)
+
+            val combined = EditorPolicy.privacy(
+                InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_VARIATION_PASSWORD,
+                EditorPolicy.NO_PERSONALIZED_LEARNING_FLAG,
+                manual = true,
+            )
+            combined shouldBe PrivacyMode(password = true, appRequested = true, manual = true)
+            combined.allowLearning shouldBe false
+            combined.allowContext shouldBe false
+            combined.allowClipboardHistory shouldBe false
+            combined.allowClipboardSuggestion shouldBe false
+            combined.allowSpeech shouldBe false
+            combined.allowContentAccess shouldBe false
+        }
+        "ordinary editor permits private-data features" {
+            val mode = EditorPolicy.privacy(InputType.TYPE_CLASS_TEXT, EditorInfo.IME_ACTION_DONE, manual = false)
+            mode.active shouldBe false
+            mode.allowLearning shouldBe true
+            mode.allowContext shouldBe true
+            mode.allowClipboardHistory shouldBe true
+            mode.allowClipboardSuggestion shouldBe true
+            mode.allowSpeech shouldBe true
+            mode.allowContentAccess shouldBe true
+        }
         "chat search and multiline keep the user's keyboard" {
             listOf(
                 InputType.TYPE_CLASS_TEXT,

@@ -384,6 +384,16 @@ class InputView(
         preedit.dismissTouchOverlay()
     }
 
+    /** Drop content-bearing surfaces at an editor/privacy boundary. */
+    fun clearEditorBoundaryState(privateInput: Boolean) {
+        inputBar.clearEditorBoundaryState()
+        keyboardWindow.clearEditorBoundaryState()
+        preedit.clearEditorBoundaryState()
+        if (privateInput && !windowManager.isAttached(keyboardWindow)) {
+            windowManager.attachWindow(KeyboardWindow)
+        }
+    }
+
     override fun handleRimeMessage(it: RimeMessage<*>) {
         when (it) {
             is RimeMessage.SchemaMessage -> {
@@ -436,7 +446,10 @@ class InputView(
     }
 
     @RequiresApi(Build.VERSION_CODES.R)
-    fun handleInlineSuggestions(response: InlineSuggestionsResponse): Boolean = inputBar.handleInlineSuggestions(response)
+    fun handleInlineSuggestions(
+        response: InlineSuggestionsResponse,
+        editorToken: Long,
+    ): Boolean = inputBar.handleInlineSuggestions(response, editorToken)
 
     override fun onDetachedFromWindow() {
         ViewCompat.setOnApplyWindowInsetsListener(this, null)

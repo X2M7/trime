@@ -23,6 +23,7 @@ import com.osfans.trime.data.theme.KeyActionManager
 import com.osfans.trime.data.theme.LiquidData
 import com.osfans.trime.data.theme.ThemeManager
 import com.osfans.trime.ime.clipboard.ClipboardWindow
+import com.osfans.trime.ime.core.PrivacyModeState
 import com.osfans.trime.ime.core.TrimeInputMethodService
 import com.osfans.trime.ime.dialog.EnabledSchemaPickerDialog
 import com.osfans.trime.ime.switches.SwitchOptionWindow
@@ -223,7 +224,7 @@ class CommonKeyboardActionListener(override val di: DI) : DIAware {
             private fun handleLiquidKeyboard(arg: String) {
                 // for compatibility
                 if (arg == "剪贴" || arg == "clipboard") {
-                    windowManager.attachWindow(ClipboardWindow(di))
+                    if (!PrivacyModeState.active) windowManager.attachWindow(ClipboardWindow(di))
                     return
                 }
                 val liquidTagList = LiquidData.getTagList()
@@ -242,6 +243,7 @@ class CommonKeyboardActionListener(override val di: DI) : DIAware {
             }
 
             private fun handleClipboardWindow(arg: String) {
+                if (PrivacyModeState.active) return
                 val tabIndex = arg.toIntOrNull()?.coerceIn(0, 1) ?: 0
                 windowManager.attachWindow(ClipboardWindow(di, tabIndex))
             }

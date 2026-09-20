@@ -20,6 +20,7 @@ import androidx.core.util.containsValue
 import com.osfans.trime.TrimeApplication
 import com.osfans.trime.data.prefs.AppPrefs
 import com.osfans.trime.data.soundeffect.SoundEffectManager
+import com.osfans.trime.ime.core.PrivacyModeState
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -74,7 +75,7 @@ object InputFeedbackManager {
                         speechRetryAfter = SystemClock.uptimeMillis() + 30_000
                         Timber.w("Speech feedback engine initialization failed: %d", status)
                     }
-                    if (speechReady && speechAllowed && (speakOnKeyPress || speakOnCommit)) {
+                    if (speechReady && speechAllowed && !PrivacyModeState.active && (speakOnKeyPress || speakOnCommit)) {
                         pendingSpeech?.let { tts?.speak(it, TextToSpeech.QUEUE_FLUSH, null, "TrimeTTS") }
                     }
                     pendingSpeech = null
@@ -261,12 +262,12 @@ object InputFeedbackManager {
     private val speakOnCommit by keyboardPrefs.speakOnCommit
 
     fun keyPressSpeak(keyCode: Int) {
-        if (!speakOnKeyPress || !speechAllowed) return
+        if (!speakOnKeyPress || !speechAllowed || PrivacyModeState.active) return
         contentSpeakInternal(keyCode)
     }
 
     fun textCommitSpeak(text: String) {
-        if (!speakOnCommit || !speechAllowed) return
+        if (!speakOnCommit || !speechAllowed || PrivacyModeState.active) return
         contentSpeakInternal(text)
     }
 

@@ -20,6 +20,7 @@ sealed class SwitchOptionEntry(
             UpdateConfig,
             Keyboard,
             ThemeList,
+            Privacy,
         }
     }
 

@@ -4,6 +4,7 @@
 
 package com.osfans.trime.data
 
+import com.osfans.trime.ime.core.PrivacyModeState
 import com.osfans.trime.util.appContext
 
 class SymbolHistory(
@@ -14,23 +15,45 @@ class SymbolHistory(
     }
 
     private val file = appContext.filesDir.resolve(FILE_NAME).apply { createNewFile() }
+    private var loaded = false
 
     fun load() {
+        if (PrivacyModeState.active) return
+        loadFromDisk()
+    }
+
+    private fun loadFromDisk() {
+        clear()
         val all = file.readLines()
         all.forEach {
             if (it.isNotBlank()) {
                 put(it, it)
             }
         }
+        loaded = true
+    }
+
+    private fun ensureLoaded() {
+        if (!loaded) loadFromDisk()
     }
 
     fun save() {
+        if (PrivacyModeState.active) return
+        ensureLoaded()
         file.writeText(values.joinToString("\n"))
     }
 
     override fun removeEldestEntry(eldest: MutableMap.MutableEntry<String, String>?) = size > capacity
 
-    fun insert(s: String) = put(s, s)
+    fun insert(s: String): String? {
+        if (PrivacyModeState.active) return null
+        ensureLoaded()
+        return put(s, s)
+    }
 
-    fun toOrderedList() = values.toList().reversed()
+    fun toOrderedList(): List<String> {
+        if (PrivacyModeState.active) return emptyList()
+        ensureLoaded()
+        return values.toList().reversed()
+    }
 }

@@ -14,6 +14,21 @@ import uuid
 from runtime_audit import audit_log, device_audit_lock, filter_pid_log, instrumentation_passed, instrumentation_pid, log_after_marker, record_logcat
 
 
+PROBES = (
+    "setup", "engine", "shutdown", "startupFailure", "lateStorage", "feedback",
+    "t02", "clip", "clipSave", "saf", "editors", "privacy",
+)
+
+
+def instrumentation_options(probe, saf_tree=None, saf_revoke=False):
+    options = [] if probe == "engine" else ["-e", probe, "true"]
+    if saf_tree:
+        options += ["-e", "safTree", saf_tree]
+    if saf_revoke:
+        options += ["-e", "safRevoke", "true"]
+    return options
+
+
 def api21_editor_bound(dump: str, pid: int) -> bool:
     """Window focus can precede both the editor connection and LatinIME startup."""
     header = "Input method service state for com.android.inputmethod.latin.LatinIME@"
@@ -45,7 +60,7 @@ def main():
     parser.add_argument("--apk", type=Path, required=True)
     parser.add_argument("--test-apk", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
-    parser.add_argument("--probe", choices=("setup", "engine", "shutdown", "startupFailure", "lateStorage", "feedback", "t02", "clip", "clipSave", "saf", "editors"), required=True)
+    parser.add_argument("--probe", choices=PROBES, required=True)
     parser.add_argument("--saf-tree")
     parser.add_argument("--saf-revoke", action="store_true")
     parser.add_argument("--bind-ime-after-editor-focus", action="store_true",
@@ -93,11 +108,7 @@ def run(args):
         identity["packages"][name] = {"apk_sha256": actual, "installed_path": installed}
         (args.output / f"{name}.txt").write_text(shell("dumpsys", "package", name))
     (args.output / "identity.json").write_text(json.dumps(identity, indent=2) + "\n")
-    options = [] if args.probe == "engine" else ["-e", args.probe, "true"]
-    if args.saf_tree:
-        options += ["-e", "safTree", args.saf_tree]
-    if args.saf_revoke:
-        options += ["-e", "safRevoke", "true"]
+    options = instrumentation_options(args.probe, args.saf_tree, args.saf_revoke)
     activation_marker = None
     with record_logcat(adb, args.output / "logcat-full.txt"), (args.output / "instrumentation.log").open("w") as log:
         command = adb + ["shell", "am", "instrument", "-w", "-r", *options,

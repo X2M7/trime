@@ -43,10 +43,13 @@ import com.osfans.trime.ime.candidates.compact.CompactCandidateDelegate
 import com.osfans.trime.ime.candidates.popup.PopupCandidatesMode
 import com.osfans.trime.ime.composition.PreeditDelegate
 import com.osfans.trime.ime.composition.T9DisambiguationView
+import com.osfans.trime.ime.core.EditorPolicy
 import com.osfans.trime.ime.core.InputView
+import com.osfans.trime.ime.core.PrivacyModeState
 import com.osfans.trime.ime.core.TouchEventReceiverWindow
 import com.osfans.trime.ime.core.TrimeInputMethodService
 import com.osfans.trime.ime.keyboard.CommonKeyboardActionListener
+import com.osfans.trime.ime.keyboard.InputFeedbackManager
 import com.osfans.trime.ime.keyboard.KeyAction
 import com.osfans.trime.ime.keyboard.KeyBehavior
 import com.osfans.trime.ime.keyboard.KeyView
@@ -92,6 +95,8 @@ object EditorLifecycleProbe {
         val originalTheme = ThemeManager.prefs.selectedTheme.getValue()
         val candidatesMode = AppPrefs.defaultInstance().candidates.mode
         val originalCandidatesMode = candidatesMode.getValue()
+        val manualPrivacyMode = AppPrefs.defaultInstance().general.manualPrivacyMode
+        val originalManualPrivacyMode = manualPrivacyMode.getValue()
         var originalSchema = ""
         var originalAscii = false
         var fixture: File? = null
@@ -105,6 +110,7 @@ object EditorLifecycleProbe {
         try {
             check(Build.HARDWARE in setOf("ranchu", "goldfish")) { "Emulator only" }
             check(File(context.getExternalFilesDir(null), "runtime-audit-dedicated").isFile) { "Requires a dedicated runtime-audit installation" }
+            main { manualPrivacyMode.setValue(false) }
             session = main { RimeDaemon.createSession(javaClass.name) }
             runBlocking {
                 withTimeout(300_000) {
@@ -210,6 +216,10 @@ object EditorLifecycleProbe {
                     fun keyboard() = checkNotNull(input()).di.direct.instance<KeyboardWindow>().currentKeyboard
                     fun type(value: String) = main { checkNotNull(input()).di.direct.instance<CommonKeyboardActionListener>().listener.onText(value) }
                     fun enter() = main { checkNotNull(input()).di.direct.instance<CommonKeyboardActionListener>().listener.onAction(KeyAction(KeyActionToken.Plain("Return"), ThemeManager.activeTheme.presetKeys)) }
+                    fun speechAllowed(): Boolean = InputFeedbackManager::class.java
+                        .getDeclaredField("speechAllowed")
+                        .apply { isAccessible = true }
+                        .getBoolean(InputFeedbackManager)
                     suspend fun focus(field: EditText) {
                         main {
                             field.requestFocus()
@@ -355,6 +365,15 @@ object EditorLifecycleProbe {
                             actions.clear()
                         }
                         focus(other)
+                        val expectedPrivate = "password" in name
+                        check(service.isPrivacyModeActive == expectedPrivate) { "$name privacy state mismatch" }
+                        check(PrivacyModeState.active == expectedPrivate) { "$name process privacy state mismatch" }
+                        check(speechAllowed() != expectedPrivate) { "$name speech privacy state mismatch" }
+                        api {
+                            check(Rime.isRimePrivacyGuardEnabledForTesting() == expectedPrivate) {
+                                "$name native privacy state mismatch"
+                            }
+                        }
                         val restricted = name !in setOf("search", "multiline")
                         api { check(statusCached.isAsciiMode == restricted) { "$name ASCII state mismatch" } }
                         check(main { keyboard().isT9Layout } != restricted) { "$name layout mismatch" }
@@ -379,6 +398,55 @@ object EditorLifecycleProbe {
                         }
                         check(main { keyboard().isT9Layout }) { "$name did not restore T9" }
                     }
+                    main {
+                        other.hint = "no-personalized-learning"
+                        other.inputType = InputType.TYPE_CLASS_TEXT
+                        other.imeOptions = EditorInfo.IME_ACTION_DONE or EditorPolicy.NO_PERSONALIZED_LEARNING_FLAG
+                    }
+                    focus(other)
+                    check(service.isPrivacyModeActive && PrivacyModeState.active)
+                    check(!speechAllowed())
+                    check(main { keyboard().isT9Layout }) { "No-learning flag must not force an unrelated keyboard layout" }
+                    api { check(Rime.isRimePrivacyGuardEnabledForTesting()) }
+                    focus(chat)
+                    check(!service.isPrivacyModeActive && !PrivacyModeState.active)
+                    api { check(!Rime.isRimePrivacyGuardEnabledForTesting()) }
+                    phase("PASS: no-personalized-learning flag controls privacy without replacing T9")
+
+                    main { manualPrivacyMode.setValue(true) }
+                    until("manual privacy reaches the active editor") {
+                        service.isPrivacyModeActive && PrivacyModeState.active && !speechAllowed()
+                    }
+                    api { check(Rime.isRimePrivacyGuardEnabledForTesting()) }
+                    val privateUndoSuffix = "x"
+                    val privateUndoPrefix = "virtual-password-"
+                    val slideDelete = main {
+                        descendants(checkNotNull(input()))
+                            .filterIsInstance<KeyView>()
+                            .first { it.isSlideDelete }
+                    }
+                    api { clearComposition() }
+                    main {
+                        chat.setText(privateUndoPrefix + privateUndoSuffix)
+                        chat.setSelection(chat.length())
+                        checkNotNull(slideDelete.onSlide).invoke(-1, 0f, 0f)
+                        check(chat.text.toString() == privateUndoPrefix) {
+                            "Private slide-delete did not stage the virtual suffix"
+                        }
+                    }
+                    main { manualPrivacyMode.setValue(false) }
+                    until("manual privacy restores the active editor") {
+                        !service.isPrivacyModeActive && !PrivacyModeState.active && speechAllowed()
+                    }
+                    api { check(!Rime.isRimePrivacyGuardEnabledForTesting()) }
+                    main {
+                        checkNotNull(slideDelete.onSlide).invoke(1, 0f, 0f)
+                        check(chat.text.toString() == privateUndoPrefix) {
+                            "Private slide-delete undo survived the privacy boundary"
+                        }
+                        chat.setText("")
+                    }
+                    phase("PASS: manual privacy atomically gates speech and native learning, then restores normal input")
                     main {
                         other.inputType = InputType.TYPE_CLASS_TEXT
                         other.imeOptions = EditorInfo.IME_ACTION_SEARCH
@@ -436,6 +504,11 @@ object EditorLifecycleProbe {
                             other.setText("")
                         }
                         focusPhysical(other)
+                        val expectedPrivate = "password" in name
+                        check(service.isPrivacyModeActive == expectedPrivate) { "$name privacy state mismatch" }
+                        check(PrivacyModeState.active == expectedPrivate) { "$name process privacy state mismatch" }
+                        check(speechAllowed() != expectedPrivate) { "$name speech privacy state mismatch" }
+                        api { check(Rime.isRimePrivacyGuardEnabledForTesting() == expectedPrivate) }
                         api { check(!statusCached.isAsciiMode) { "Hardware test must exercise an unchanged Chinese engine mode" } }
                         instrumentation.sendKeyDownUpSync(KeyEvent.KEYCODE_6)
                         instrumentation.sendKeyDownUpSync(KeyEvent.KEYCODE_4)
@@ -847,6 +920,7 @@ object EditorLifecycleProbe {
         } finally {
             main {
                 candidatesMode.setValue(originalCandidatesMode)
+                manualPrivacyMode.setValue(originalManualPrivacyMode)
                 web?.destroy()
                 activity?.finish()
             }

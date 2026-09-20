@@ -80,6 +80,10 @@ class PreeditDelegate(override val di: DI) :
         if (ui.visible) touchEventReceiverWindow.show()
     }
 
+    fun clearEditorBoundaryState() {
+        ui.preedit.clearTransientContent()
+    }
+
     override fun onCompositionUpdate(data: CompositionProto) {
         ui.update(data)
         ui.root.visibility = if (ui.visible) View.VISIBLE else View.INVISIBLE

@@ -23,6 +23,11 @@ constructor(
     private var touchedText: String? = null
     private var newCursorPos = -1
 
+    fun clearTransientContent() {
+        touchedText = null
+        newCursorPos = -1
+    }
+
     @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent): Boolean {
         val x = event.x
@@ -51,8 +56,7 @@ constructor(
             }
 
             MotionEvent.ACTION_CANCEL -> {
-                touchedText = null
-                newCursorPos = -1
+                clearTransientContent()
                 return true
             }
         }

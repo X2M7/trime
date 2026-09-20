@@ -106,8 +106,21 @@ interface RimeApi {
 
     suspend fun setNullInputType(value: Boolean)
 
-    /** Discard the previous editor's composition before binding any new input. */
-    suspend fun beginEditor(token: Long, nullInputType: Boolean)
+    /** Discard the previous editor's transient state before binding any new input. */
+    suspend fun beginEditor(
+        token: Long,
+        nullInputType: Boolean,
+        privacyMode: Boolean,
+    )
+
+    /** Clear state owned by [token] when that editor is no longer active. */
+    suspend fun finishEditor(token: Long)
+
+    /**
+     * Clear state only when the native editor belongs to one of [tokens].
+     * Ownership matching and cleanup execute as one Rime dispatcher operation.
+     */
+    suspend fun finishOwnedEditors(tokens: LongArray)
 
     suspend fun getCandidates(
         startIndex: Int,
