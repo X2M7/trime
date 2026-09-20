@@ -28,13 +28,13 @@ This fork adds dictionary-backed `Luna Pinyin T9` / `luna_pinyin_t9` to Trime, w
 
 [Project page](https://x2m7.github.io/trime/) | [Download T9 stable APKs](https://github.com/X2M7/trime/releases/latest)
 
-Stable release [3.3.13-t9.8](https://github.com/X2M7/trime/releases/tag/v3.3.13-t9.8), versionCode `20261113`, includes T06 input-field adaptation, consistent Enter actions, T9 restoration, editor-connection isolation, third-party theme fallback and deployment retry. It also fixes the Android 5.0 preedit-overlay crash. See the [release notes](doc/releases/v3.3.13-t9.8.md) and [T06 validation record](script/quality/VALIDATION-T06.md) for the exact APKs and coverage.
+Stable release [3.3.13-t9.9](https://github.com/X2M7/trime/releases/tag/v3.3.13-t9.9), versionCode `20261114`, integrates 11 pinned upstream commits and improves theme defaults, geometry inheritance, key actions and source-config handling. It also fixes stale popup colors, legacy popup sizing and fonts, large-text fallback keys, Android 5.0 status-icon theme lookup, stale engine-context work, repeated dictionary conversion, and OpenCC buffer/file leaks on failure paths. See the [release notes](doc/releases/v3.3.13-t9.9.md) and [T07 validation record](script/quality/VALIDATION-T07.md) for the exact APKs and coverage.
 
 ARM64 and x86_64 APKs retain Android 5.0+ support, package `com.osfans.trime.debug`, and the previous fork signing certificate for in-place upgrades. The displayed name is `Trime`. These are debug-signed, debuggable builds; production signing and R8 are not enabled. Back up configuration and dictionaries before upgrading. Custom copies of the T9 schema or themes may need the updated rules/layout and redeployment; retain personal dictionaries.
 
 [T04](script/quality/t04/README.md) provides fixed ranking and learning benchmarks in isolated data directories. Luna remains the default; no large dictionary or grammar model is enabled. [T05](script/quality/t05/README.md) separates six optional fuzzy-pinyin rules from three bounded numeric-key repair rules. All are off by default; suggestions display their source.
 
-Three v1 META-INF signature-coverage warnings remain. Native phone performance, OEM editor coverage and physical 16 KB-page devices are not established by emulator acceptance. The release notes retain these limits and the earlier ARM-translation startup/slow-frame findings. See also the [key contracts](script/quality/T03.md), [T9 design](script/t9/README.md) and [upstream merge record](script/t9/UPSTREAM-t9.3.zh-CN.md).
+Two required coroutine service descriptors retain v1 META-INF signature-coverage warnings in each application APK. Native phone performance, OEM editor coverage and physical 16 KB-page devices are not established by emulator acceptance. The release notes distinguish current acceptance from historical failures. The three uploaded release assets are two application APKs and one complete source archive. See also the [key contracts](script/quality/T03.md), [T9 design](script/t9/README.md) and [upstream merge record](script/t9/UPSTREAM-t9.3.zh-CN.md).
 
 ## Download
 

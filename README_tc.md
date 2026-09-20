@@ -26,13 +26,13 @@ SPDX-License-Identifier: GPL-3.0-or-later
 
 [專案頁面](https://x2m7.github.io/trime/) | [下載九鍵穩定版 APK](https://github.com/X2M7/trime/releases/latest)
 
-穩定版 [3.3.13-t9.8](https://github.com/X2M7/trime/releases/tag/v3.3.13-t9.8)，versionCode `20261113`，包含 T06 輸入框適配、統一 Enter 動作、返回聊天框恢復九鍵、編輯器連線隔離、第三方主題回退及部署重試，並修復 Android 5.0 預編輯浮層當機。具體 APK 與驗證範圍見[發行說明](doc/releases/v3.3.13-t9.8.md)和 [T06 驗證報告](script/quality/VALIDATION-T06.md)。
+穩定版 [3.3.13-t9.9](https://github.com/X2M7/trime/releases/tag/v3.3.13-t9.9)，versionCode `20261114`，整合固定上游的 11 項提交，改善主題預設值、幾何繼承、按鍵動作及來源設定讀取；並修復氣泡配色與舊主題尺寸/字型、大字級降級鍵盤文字、Android 5.0 狀態圖示主題查找、舊引擎內容工作、重複詞典轉換，以及 OpenCC 失敗路徑的緩衝與檔案描述符洩漏。具體 APK 與驗證範圍見[發行說明](doc/releases/v3.3.13-t9.9.md)和 [T07 驗證報告](script/quality/VALIDATION-T07.md)。
 
 ARM64 與 x86_64 APK 保留 Android 5.0+ 支援，延續此前 fork 的套件名稱 `com.osfans.trime.debug` 和簽章憑證，以支援覆蓋升級；顯示名稱為 `Trime`。附件仍是除錯簽章、可除錯建置，未啟用正式簽章或 R8。升級前備份設定與詞庫；自訂目錄中的同名方案或主題可能需要合併新規則、佈局並重新部署，請保留個人詞庫。
 
 [T04](script/quality/t04/README.md) 在獨立目錄中提供固定排名與學習測試，預設繼續使用朙月詞典，不啟用大詞庫或語法模型。[T05](script/quality/t05/README.md) 將六組可選模糊音與三類有界數字鍵修正分開設定，預設全部關閉，建議標明來源。
 
-仍保留三項 v1 META-INF 簽章覆蓋警告。模擬器驗收不代表 ARM64 實機效能、所有 OEM 編輯器或物理 16 KB 頁裝置已驗證；此前 ARM 轉譯啟動排隊與慢幀記錄見發行說明。另見[鍵位規則](script/quality/T03.md)、[九鍵設計](script/t9/README.md)和[上游合併記錄](script/t9/UPSTREAM-t9.3.zh-CN.md)。
+每份應用 APK 仍保留兩項必要協程服務檔案的 v1 META-INF 簽章覆蓋警告。模擬器驗收不代表 ARM64 實機效能、所有 OEM 編輯器或物理 16 KB 頁裝置已驗證；本次驗證與歷史失敗分開記錄。Release 僅上傳兩個應用 APK 和一個完整原始碼套件，共三個附件。另見[鍵位規則](script/quality/T03.md)、[九鍵設計](script/t9/README.md)和[上游合併記錄](script/t9/UPSTREAM-t9.3.zh-CN.md)。
 
 ## 下載
 
