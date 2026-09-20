@@ -8,10 +8,11 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.os.Build
 import android.os.Bundle
-import android.os.ParcelFileDescriptor
 import android.os.PersistableBundle
+import android.util.Log
 import com.osfans.trime.core.Rime
 import com.osfans.trime.core.RimeKeyEvent
+import com.osfans.trime.core.RimeLifecycle
 import com.osfans.trime.daemon.RimeDaemon
 import com.osfans.trime.daemon.RimeSession
 import com.osfans.trime.data.SymbolHistory
@@ -22,34 +23,74 @@ import com.osfans.trime.data.db.Database
 import com.osfans.trime.data.db.DatabaseBean
 import com.osfans.trime.data.db.PersistencePermitExpiredException
 import com.osfans.trime.data.prefs.AppPrefs
+import com.osfans.trime.data.userdict.UserDictManager
 import com.osfans.trime.ime.core.PrivacyMode
 import com.osfans.trime.ime.core.PrivacyModeState
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
+import java.io.ByteArrayOutputStream
 import java.io.File
-import java.security.MessageDigest
 import java.util.UUID
+import java.util.concurrent.ExecutionException
+import java.util.concurrent.FutureTask
+import java.util.concurrent.TimeUnit
+import java.util.concurrent.TimeoutException
 
 /** Emulator-only acceptance probe for T07. Every persistent fixture has a unique owned prefix. */
 internal object PrivacyModeProbe {
     private const val SENSITIVE_CLIP_EXTRA = "android.content.extra.IS_SENSITIVE"
+    private const val LOG_TAG = "T07PrivacyProbe"
 
-    private data class TreeDigest(
+    private data class UserDbSnapshot(
         val entries: Int,
-        val sha256: String,
+        val contents: String,
     )
 
-    private fun shell(
-        instrumentation: Instrumentation,
-        command: String,
-    ): String {
-        val descriptor = instrumentation.uiAutomation.executeShellCommand(command)
-        return ParcelFileDescriptor.AutoCloseInputStream(descriptor)
-            .bufferedReader()
-            .use { it.readText() }
+    private fun ownLogcat(): String {
+        // A process may read its own logd records without privileged READ_LOGS.
+        // Avoid UiAutomation here: its output pipe can remain open on API 21.
+        val process =
+            ProcessBuilder("logcat", "-d", "-v", "threadtime", "*:V")
+                .redirectErrorStream(true)
+                .start()
+        val result =
+            FutureTask<Pair<String, Int>> {
+                val output = process.inputStream.bufferedReader().use { it.readText() }
+                output to process.waitFor()
+            }
+        val reader =
+            Thread(result, "t07-privacy-logcat").apply {
+                isDaemon = true
+                start()
+            }
+        try {
+            val (output, exitCode) = result.get(15, TimeUnit.SECONDS)
+            check(exitCode == 0) { "Could not read the application log" }
+            return output
+        } catch (failure: TimeoutException) {
+            throw IllegalStateException("Timed out while reading the application log", failure)
+        } catch (failure: ExecutionException) {
+            throw failure.cause ?: failure
+        } catch (failure: InterruptedException) {
+            Thread.currentThread().interrupt()
+            throw failure
+        } finally {
+            process.destroy()
+            runCatching { process.inputStream.close() }
+            runCatching { process.errorStream.close() }
+            runCatching { process.outputStream.close() }
+            result.cancel(true)
+            reader.interrupt()
+            try {
+                reader.join(1_000)
+            } catch (_: InterruptedException) {
+                Thread.currentThread().interrupt()
+            }
+        }
     }
 
     /** Retain continuation lines only while their preceding threadtime record belongs to this process. */
@@ -67,46 +108,13 @@ internal object PrivacyModeProbe {
         }
     }
 
-    private fun userDbDigest(prefix: String): TreeDigest {
-        val root = DataManager.userDataDir
-        val paths =
-            root.walkTopDown()
-                .filter { entry ->
-                    entry != root && entry.relativeTo(root).invariantSeparatorsPath
-                        .split('/')
-                        .any { it.startsWith("$prefix.userdb") }
-                }.filterNot { it.name in setOf("LOCK", "LOG", "LOG.old") }
-                .sortedBy { it.relativeTo(root).invariantSeparatorsPath }
-                .toList()
-        val digest = MessageDigest.getInstance("SHA-256")
-        paths.forEach { entry ->
-            val relative = entry.relativeTo(root).invariantSeparatorsPath
-            digest.update(if (entry.isDirectory) 0.toByte() else 1.toByte())
-            digest.update(relative.toByteArray(Charsets.UTF_8))
-            digest.update(0.toByte())
-            if (entry.isFile) {
-                entry.inputStream().use { input ->
-                    val buffer = ByteArray(DEFAULT_BUFFER_SIZE)
-                    while (true) {
-                        val read = input.read(buffer)
-                        if (read < 0) break
-                        digest.update(buffer, 0, read)
-                    }
-                }
-            }
-        }
-        return TreeDigest(paths.size, digest.digest().joinToString("") { "%02x".format(it) })
-    }
-
-    private suspend fun stableUserDbDigest(prefix: String): TreeDigest {
-        var previous = userDbDigest(prefix)
-        repeat(30) {
-            delay(100)
-            val current = userDbDigest(prefix)
-            if (current == previous) return current
-            previous = current
-        }
-        error("Temporary user dictionary did not settle")
+    /** Export logical records after the fixture schema has released its LevelDB handle. */
+    private fun userDbSnapshot(prefix: String): UserDbSnapshot {
+        val output = ByteArrayOutputStream()
+        val entries =
+            UserDictManager.exportUserDict(output, prefix, "$prefix-export.txt")
+                .getOrThrow()
+        return UserDbSnapshot(entries, output.toByteArray().toString(Charsets.UTF_8))
     }
 
     private fun removeOwnedFiles(prefix: String) {
@@ -291,6 +299,9 @@ internal object PrivacyModeProbe {
         val retainedSymbol = "retainedsymbol${UUID.randomUUID().toString().replace("-", "")}"
         val normalSymbol = "normalsymbol${UUID.randomUUID().toString().replace("-", "")}"
         val privateCandidate = "virtualpassword${UUID.randomUUID().toString().replace("-", "")}"
+        val logBoundary = UUID.randomUUID().toString().replace("-", "")
+        val privateLogStart = "T07_PRIVATE_BEGIN_$logBoundary"
+        val privateLogEnd = "T07_PRIVATE_END_$logBoundary"
         val privacyOwner = System.nanoTime().let { if (it == 0L) 1L else it }
         val privateEditor = privacyOwner xor 0x51A7L
         val normalEditor = privacyOwner xor 0x6E0BL
@@ -310,6 +321,8 @@ internal object PrivacyModeProbe {
         val previousLastBean = ClipboardHelper.lastBean
         val symbolHistoryFile = File(instrumentation.targetContext.filesDir, SymbolHistory.FILE_NAME)
         val previousSymbolHistory = symbolHistoryFile.takeIf(File::exists)?.readBytes()
+        val userConfigFile = File(DataManager.userDataDir, "user.yaml")
+        val previousUserConfig = userConfigFile.takeIf(File::exists)?.readBytes()
         // API 21 constructs ClipboardManager with a Handler for the calling thread.
         // Instrumentation.onStart runs on a worker without a Looper, so create and
         // cache the framework service on the main thread before the probe uses it.
@@ -379,6 +392,7 @@ internal object PrivacyModeProbe {
 
             runBlocking {
                 withTimeout(600_000) {
+                    Log.i(LOG_TAG, privateLogStart)
                     instrumentation.runOnMainSync {
                         ClipboardHelper.setSensitivePrimaryClip(
                             clipboard,
@@ -409,7 +423,7 @@ internal object PrivacyModeProbe {
                     val luaGearMarker = writeRimeFixture(fixturePrefix, privateCandidate)
                     session = RimeDaemon.createSession(sessionName)
                     val activeSession = checkNotNull(session)
-                    activeSession.runOnReady {
+                    val beforePrivate = activeSession.runOnReady {
                         originalSchema =
                             selectedSchemaId().also {
                                 check(it.isNotBlank()) { "Original schema has no identifier" }
@@ -420,11 +434,25 @@ internal object PrivacyModeProbe {
                         check(selectSchema(fixturePrefix)) { "Temporary privacy schema selection failed" }
                         setRuntimeOption("ascii_mode", false)
                         clearComposition()
+                        check(selectSchema(checkNotNull(originalSchema))) {
+                            "Could not close the temporary privacy schema for its baseline export"
+                        }
+                        userDbSnapshot(fixturePrefix)
                     }
+                    check(!beforePrivate.contents.contains(privateCandidate)) {
+                        "The private fixture candidate existed before private input"
+                    }
+                    activeSession.runOnReady {
+                        check(selectSchema(fixturePrefix)) { "Temporary privacy schema reselection failed" }
+                        setRuntimeOption("ascii_mode", false)
+                        clearComposition()
+                    }
+                    // The ordinary preflight teardown may run fixture fini hooks. Only events
+                    // produced after this boundary belong to the private-input assertion.
+                    luaGearMarker.writeBytes(ByteArray(0))
                     check(luaGearEvents(luaGearMarker).isEmpty()) {
                         "The Lua gear marker was not clean before private input"
                     }
-                    val beforePrivate = stableUserDbDigest(fixturePrefix)
 
                     setClipboard(ClipData.newPlainText("editable test", editableClip))
                     val editableClipboardBean = awaitCaptured(editableClip)
@@ -443,7 +471,6 @@ internal object PrivacyModeProbe {
                     // Its first ordinary insert must restore the disk history before saving.
                     val sharedSymbolHistory = SymbolHistory(180)
 
-                    shell(instrumentation, "logcat -c")
                     PrivacyModeState.beginInput(privacyOwner, PrivacyMode(password = true))
                     stateStarted = true
                     setClipboard(ClipData.newPlainText("private test", privateClip))
@@ -482,7 +509,7 @@ internal object PrivacyModeProbe {
                     }
                     phase("privacy mode hides symbol history and rejects symbol persistence")
 
-                    activeSession.runOnReady {
+                    val afterPrivateCommits = activeSession.runOnReady {
                         beginEditor(privateEditor, nullInputType = false, privacyMode = true)
                         privateEditorStarted = true
                         check(Rime.isRimePrivacyGuardEnabledForTesting()) { "Native privacy guard is inactive" }
@@ -589,7 +616,7 @@ internal object PrivacyModeProbe {
                         check(processKey('y'.code)) { "Private key-binding fixture was not processed" }
                         check(processKey('q'.code)) { "Private inline-ASCII fixture key was not processed" }
                         val shiftDown = RimeKeyEvent.parse("Shift_L")
-                        val shiftUp = RimeKeyEvent.parse("Shift_L+Release")
+                        val shiftUp = RimeKeyEvent.parse("Release+Shift_L")
                         processKey(shiftDown.value, shiftDown.modifiers.toUInt())
                         processKey(shiftUp.value, shiftUp.modifiers.toUInt())
                         check(getRuntimeOption("ascii_mode")) { "Private inline ASCII mode did not activate" }
@@ -649,9 +676,18 @@ internal object PrivacyModeProbe {
                         check(Rime.getRimeCommitHistorySizeForTesting() == 0) {
                             "Active-switcher transition restored private history"
                         }
+                        check(selectSchema(checkNotNull(originalSchema))) {
+                            "Could not close the private fixture for its protected export"
+                        }
+                        check(Rime.isRimePrivacyGuardEnabledForTesting()) {
+                            "Private fixture export disabled the privacy guard"
+                        }
+                        userDbSnapshot(fixturePrefix)
                     }
-                    val afterPrivateCommits = stableUserDbDigest(fixturePrefix)
-                    check(afterPrivateCommits == beforePrivate) { "Private input changed the fixture user dictionary" }
+                    check(
+                        afterPrivateCommits == beforePrivate &&
+                            !afterPrivateCommits.contents.contains(privateCandidate),
+                    ) { "Private input changed the fixture user dictionary" }
                     check(luaGearEvents(luaGearMarker).isEmpty()) {
                         "A Lua gear callback or fini hook wrote through io.open during private input"
                     }
@@ -659,8 +695,8 @@ internal object PrivacyModeProbe {
                         "malicious Lua processor, segmentor, translator, filter/tags_match and fini hooks " +
                             "remain inert across private teardown and redeployment",
                     )
-                    activeSession.runOnReady {
-                        check(selectedSchemaId() == fixturePrefix) { "Built-in state fixture was not retained" }
+                    val afterPrivate = activeSession.runOnReady {
+                        check(selectSchema(fixturePrefix)) { "Could not restore the built-in state fixture" }
                         check(Rime.isRimePrivacyGuardEnabledForTesting()) { "Schema switch disabled the privacy guard" }
                         check(Rime.getRimeCommitHistorySizeForTesting() == 0) { "Schema switch restored private history" }
                         finishOwnedEditors(longArrayOf(privateEditor + 1))
@@ -672,19 +708,45 @@ internal object PrivacyModeProbe {
                         check(!Rime.isRimePrivacyGuardEnabledForTesting()) {
                             "Privacy guard remained enabled after owned-editor cleanup"
                         }
+                        check(selectSchema(checkNotNull(originalSchema))) {
+                            "Could not close the private fixture after owned-editor cleanup"
+                        }
+                        userDbSnapshot(fixturePrefix)
                     }
-                    val afterPrivate = stableUserDbDigest(fixturePrefix)
-                    check(afterPrivate == beforePrivate) { "Private input changed the fixture user dictionary" }
+                    check(
+                        afterPrivate == beforePrivate &&
+                            !afterPrivate.contents.contains(privateCandidate),
+                    ) { "Private input changed the fixture user dictionary" }
                     PrivacyModeState.endInput(privacyOwner)
                     stateStarted = false
+                    Log.i(LOG_TAG, privateLogEnd)
                     phase(
                         "private commits, $enabledSchemaCount enabled schemas and active-switcher boundaries " +
                             "retain the guard without history or userdb writes",
                     )
 
-                    val privateLogs = logForPid(shell(instrumentation, "logcat -d -v threadtime"), pid)
+                    val processLogs = logForPid(ownLogcat(), pid)
+                    val privateLogStartIndex = processLogs.indexOf(privateLogStart)
+                    val privateLogEndIndex = processLogs.indexOf(privateLogEnd, privateLogStartIndex + 1)
+                    check(privateLogStartIndex >= 0 && privateLogEndIndex > privateLogStartIndex) {
+                        "Application log boundaries were not captured for the private input window"
+                    }
+                    val privateLogs =
+                        processLogs.substring(
+                            privateLogStartIndex + privateLogStart.length,
+                            privateLogEndIndex,
+                        )
                     check(
-                        listOf(privateClip, privateClipEdit, privateCollectionEdit, privateSymbol, privateCandidate)
+                        listOf(
+                            sensitiveClip,
+                            appOwnedSensitiveClip,
+                            secondAppOwnedSensitiveClip,
+                            privateClip,
+                            privateClipEdit,
+                            privateCollectionEdit,
+                            privateSymbol,
+                            privateCandidate,
+                        )
                             .none { privateLogs.contains(it) },
                     ) {
                         "Private content appeared in application log output"
@@ -741,8 +803,17 @@ internal object PrivacyModeProbe {
                         check(getRawInput().isEmpty()) { "Ordinary editor boundary restored stale chord input" }
                     }
                     phase("stateful chord, navigation and paired-punctuation gears clear only at editor boundaries")
-                    val beforeNormal = stableUserDbDigest(fixturePrefix)
-                    activeSession.runOnReady {
+                    val beforeNormal = activeSession.runOnReady {
+                        check(selectSchema(checkNotNull(originalSchema))) {
+                            "Could not close the normal fixture for its learning baseline"
+                        }
+                        userDbSnapshot(fixturePrefix)
+                    }
+                    check(beforeNormal == afterPrivate && !beforeNormal.contents.contains(privateCandidate)) {
+                        "Ordinary non-commit input changed the fixture user dictionary"
+                    }
+                    val afterNormal = activeSession.runOnReady {
+                        check(selectSchema(fixturePrefix)) { "Could not restore the normal-learning fixture" }
                         check(processKey('q'.code)) { "Normal fixture key was not processed" }
                         val index = getCandidates(0, 10).indexOfFirst { it.text == privateCandidate }
                         check(index >= 0) { "Normal fixture candidate is unavailable" }
@@ -765,22 +836,22 @@ internal object PrivacyModeProbe {
                         check(selectCandidate(index, false)) { "Normal fixture candidate was not selected" }
                         check(getRawInput().isEmpty()) { "Normal fixture candidate did not commit" }
                         // Memory batches a selected candidate until an unhandled key or the next
-                        // query. Force that production boundary before reading the LevelDB tree.
+                        // query. Force that production boundary before exporting the userdb.
                         processKey(' '.code)
                         check(Rime.getRimeCommitHistorySizeForTesting() > 0) { "Normal commit did not enter Rime history" }
-                    }
-                    val afterNormal = stableUserDbDigest(fixturePrefix)
-                    check(afterNormal != beforeNormal && afterNormal.entries > 0) {
-                        "Normal learning did not change the fixture user dictionary"
-                    }
-                    activeSession.runOnReady {
                         check(selectSchema(checkNotNull(originalSchema))) {
                             "Could not tear down the ordinary Lua fixture"
                         }
                         check(!Rime.isRimePrivacyGuardEnabledForTesting()) {
                             "Ordinary Lua teardown unexpectedly restored privacy mode"
                         }
+                        userDbSnapshot(fixturePrefix)
                     }
+                    check(
+                        afterNormal != beforeNormal &&
+                            afterNormal.entries > beforeNormal.entries &&
+                            afterNormal.contents.contains(privateCandidate),
+                    ) { "Normal learning did not change the fixture user dictionary" }
                     val eventsAfterNormalTeardown = luaGearEvents(luaGearMarker).toSet()
                     check(
                         setOf(
@@ -806,6 +877,8 @@ internal object PrivacyModeProbe {
                     cleanupFailure?.addSuppressed(failure) ?: run { cleanupFailure = failure }
                 }
             }
+            fun cleanMain(block: () -> Unit) = clean { instrumentation.runOnMainSync(block) }
+
             clean {
                 runBlocking {
                     withContext(NonCancellable) {
@@ -819,22 +892,39 @@ internal object PrivacyModeProbe {
                                 originalSchema?.let { check(selectSchema(it)) { "Could not restore the original schema" } }
                             }
                         }
-                        if (stateStarted) PrivacyModeState.endInput(privacyOwner)
-                        listOf(
-                            sensitiveClip,
-                            appOwnedSensitiveClip,
-                            secondAppOwnedSensitiveClip,
-                            privateClip,
-                            normalClip,
-                            editableClip,
-                            privateClipEdit,
-                        ).forEach { text ->
+                    }
+                }
+            }
+            clean {
+                if (stateStarted) {
+                    PrivacyModeState.endInput(privacyOwner)
+                    stateStarted = false
+                }
+            }
+            listOf(
+                sensitiveClip,
+                appOwnedSensitiveClip,
+                secondAppOwnedSensitiveClip,
+                privateClip,
+                normalClip,
+                editableClip,
+                privateClipEdit,
+            ).forEach { text ->
+                clean {
+                    runBlocking {
+                        withContext(NonCancellable) {
                             while (true) {
                                 val bean = dao.find(text) ?: break
                                 ClipboardHelper.delete(bean.id)
                             }
                         }
-                        listOf(editableCollection, privateCollectionEdit).forEach { text ->
+                    }
+                }
+            }
+            listOf(editableCollection, privateCollectionEdit).forEach { text ->
+                clean {
+                    runBlocking {
+                        withContext(NonCancellable) {
                             while (true) {
                                 val bean = collectionDao.find(text) ?: break
                                 CollectionHelper.delete(bean.id)
@@ -843,8 +933,38 @@ internal object PrivacyModeProbe {
                     }
                 }
             }
-            clean { session?.let { RimeDaemon.destroySession(sessionName) } }
+            clean {
+                runBlocking {
+                    withContext(NonCancellable) {
+                        session?.let {
+                            RimeDaemon.destroySession(sessionName)
+                            session = null
+                            val terminalState =
+                                withTimeout(120_000) {
+                                    RimeDaemon.engineState.first { state ->
+                                        state == RimeLifecycle.State.STOPPED ||
+                                            state == RimeLifecycle.State.FAILED
+                                    }
+                                }
+                            // FAILED follows native finalization. Continue restoring fixtures, but
+                            // fail acceptance because a clean probe run must finish in STOPPED.
+                            check(terminalState == RimeLifecycle.State.STOPPED) {
+                                "Rime shutdown ended in $terminalState before restoring user.yaml"
+                            }
+                        }
+                    }
+                }
+            }
             clean { removeOwnedFiles(fixturePrefix) }
+            clean {
+                if (previousUserConfig == null) {
+                    check(!userConfigFile.exists() || userConfigFile.delete()) {
+                        "Could not remove the probe-created user configuration"
+                    }
+                } else {
+                    userConfigFile.writeBytes(previousUserConfig)
+                }
+            }
             clean {
                 if (previousSymbolHistory == null) {
                     check(!symbolHistoryFile.exists() || symbolHistoryFile.delete()) {
@@ -854,25 +974,19 @@ internal object PrivacyModeProbe {
                     symbolHistoryFile.writeBytes(previousSymbolHistory)
                 }
             }
-            clean {
-                instrumentation.runOnMainSync {
-                    clipboardPrefs.clipboardListening.setValue(false)
-                    PrivacyModeState.initialize(manual = false)
-                    clipboard.setPrimaryClip(ClipData.newPlainText("privacy-probe-cleanup", ""))
-                    ClipboardHelper.onPrimaryClipChanged()
-                    generalPrefs.manualPrivacyMode.setValue(previousManualPrivacy)
-                    PrivacyModeState.initialize(previousManualPrivacy)
-                    ClipboardHelper.lastBean = previousLastBean
-                    clipboardPrefs.clipboardListening.setValue(previousClipboardListening)
-                }
-            }
+            cleanMain { clipboardPrefs.clipboardListening.setValue(false) }
+            cleanMain { PrivacyModeState.initialize(manual = false) }
+            cleanMain { clipboard.setPrimaryClip(ClipData.newPlainText("privacy-probe-cleanup", "")) }
+            cleanMain { ClipboardHelper.onPrimaryClipChanged() }
+            cleanMain { generalPrefs.manualPrivacyMode.setValue(previousManualPrivacy) }
+            cleanMain { PrivacyModeState.initialize(previousManualPrivacy) }
+            cleanMain { ClipboardHelper.lastBean = previousLastBean }
+            cleanMain { clipboardPrefs.clipboardListening.setValue(previousClipboardListening) }
             cleanupFailure?.let { failure ->
                 passed = false
-                if (recordedFailure == null) {
-                    result.putString("stream", "FAIL: ${failure.stackTraceToString()}\n")
-                } else {
-                    recordedFailure.addSuppressed(failure)
-                }
+                val combinedFailure = recordedFailure?.apply { addSuppressed(failure) } ?: failure
+                recordedFailure = combinedFailure
+                result.putString("stream", "FAIL: ${combinedFailure.stackTraceToString()}\n")
             }
         }
         result.putBoolean("passed", passed)
