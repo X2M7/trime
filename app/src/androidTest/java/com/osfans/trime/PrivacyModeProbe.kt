@@ -310,7 +310,19 @@ internal object PrivacyModeProbe {
         val previousLastBean = ClipboardHelper.lastBean
         val symbolHistoryFile = File(instrumentation.targetContext.filesDir, SymbolHistory.FILE_NAME)
         val previousSymbolHistory = symbolHistoryFile.takeIf(File::exists)?.readBytes()
-        val clipboard = instrumentation.targetContext.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        // API 21 constructs ClipboardManager with a Handler for the calling thread.
+        // Instrumentation.onStart runs on a worker without a Looper, so create and
+        // cache the framework service on the main thread before the probe uses it.
+        val clipboard =
+            java.util.concurrent.atomic.AtomicReference<ClipboardManager>().let { reference ->
+                instrumentation.runOnMainSync {
+                    reference.set(
+                        instrumentation.targetContext.getSystemService(Context.CLIPBOARD_SERVICE)
+                            as ClipboardManager,
+                    )
+                }
+                checkNotNull(reference.get())
+            }
         val database = ClipboardHelper::class.java.getDeclaredField("clbDb").let {
             it.isAccessible = true
             it.get(ClipboardHelper) as Database
