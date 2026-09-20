@@ -425,13 +425,26 @@ object EditorLifecycleProbe {
                             .filterIsInstance<KeyView>()
                             .first { it.isSlideDelete }
                     }
+                    val deletedTextBuffer = KeyView::class.java
+                        .getDeclaredField("deletedTextBuffer")
+                        .apply { isAccessible = true }
                     api { clearComposition() }
                     main {
-                        chat.setText(privateUndoPrefix + privateUndoSuffix)
-                        chat.setSelection(chat.length())
-                        checkNotNull(slideDelete.onSlide).invoke(-1, 0f, 0f)
-                        check(chat.text.toString() == privateUndoPrefix) {
-                            "Private slide-delete did not stage the virtual suffix"
+                        check(chat.text.isEmpty()) { "Private slide-delete fixture requires an empty editor" }
+                        check(checkNotNull(service.currentInputConnection).commitText(privateUndoPrefix + privateUndoSuffix, 1))
+                    }
+                    until("private slide-delete fixture reaches the active connection") {
+                        chat.text.toString() == privateUndoPrefix + privateUndoSuffix
+                    }
+                    main { checkNotNull(slideDelete.onSlide).invoke(-1, 0f, 0f) }
+                    until("private slide-delete stages the virtual suffix") {
+                        chat.text.toString() == privateUndoPrefix
+                    }
+                    main {
+                        @Suppress("UNCHECKED_CAST")
+                        val buffered = deletedTextBuffer.get(slideDelete) as Collection<String>
+                        check(buffered.toList() == listOf(privateUndoSuffix)) {
+                            "Private slide-delete buffer did not retain only the virtual suffix"
                         }
                     }
                     main { manualPrivacyMode.setValue(false) }
@@ -440,12 +453,20 @@ object EditorLifecycleProbe {
                     }
                     api { check(!Rime.isRimePrivacyGuardEnabledForTesting()) }
                     main {
+                        @Suppress("UNCHECKED_CAST")
+                        val buffered = deletedTextBuffer.get(slideDelete) as Collection<String>
+                        check(buffered.isEmpty()) { "Private slide-delete buffer survived the privacy boundary" }
                         checkNotNull(slideDelete.onSlide).invoke(1, 0f, 0f)
+                    }
+                    instrumentation.waitForIdleSync()
+                    delay(250)
+                    main {
                         check(chat.text.toString() == privateUndoPrefix) {
                             "Private slide-delete undo survived the privacy boundary"
                         }
-                        chat.setText("")
+                        check(checkNotNull(service.currentInputConnection).deleteSurroundingText(privateUndoPrefix.length, 0))
                     }
+                    until("private slide-delete fixture is cleared") { chat.text.isEmpty() }
                     phase("PASS: manual privacy atomically gates speech and native learning, then restores normal input")
                     main {
                         other.inputType = InputType.TYPE_CLASS_TEXT
