@@ -61,7 +61,7 @@ class GeneralStyleTest :
                     style.popupKeyHeight shouldBe 60
                     style.popupTextSize shouldBe 40f
                     style.popupFont shouldBe emptyList()
-                    // Legacy preview_offset is not a bottom margin: the two use different origins.
+                    // The obsolete preview_offset is absent; popupBottomMargin keeps its own default.
                     style.popupBottomMargin shouldBe 68
                 }
 

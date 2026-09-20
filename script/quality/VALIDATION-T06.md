@@ -5,6 +5,30 @@
 这是冻结APK的限定范围验收；源码/发布附件绑定须独立通过，不能由本页代替实际发布验证。
 本报告不把构建通过、功能断言通过或零项目诊断等同于零警告、无性能风险。
 
+## 2026-09-20 osfans/develop 合并验收
+
+本轮已合并 `origin/develop` 的 `f3ca316f27084d0ce111aca077bdd9014d90b38b`，候选版本为
+`3.3.13-t9.9`。应用 JVM 测试 478 项、build-logic 测试 9 项通过；宿主测试
+quality 71 项、T04 13 项、T05 5 项、baseline 26 项通过。Lint 为 0 项，
+`armeabi-v7a`、`arm64-v8a`、`x86`、`x86_64` 四 ABI 应用 APK 及 AndroidTest
+APK 构建成功。
+
+| 设备范围 | 最终运行结果 |
+| --- | --- |
+| Android 5.0 / API21 | 5 个主探针通过；独立编辑器 17 个检查点通过，其中 11 个 T9 检查点的键区像素检查通过；editors 连续显示/隐藏 100/100 通过 |
+| Android 15 / API35 | 6 个主探针通过；独立编辑器 23 个检查点通过，其中 17 个 T9 检查点的键区像素检查通过；editors 连续显示/隐藏 100/100 通过 |
+
+两平台的资源不可用降级输入、Retry 和资源恢复均通过。本轮最终设备日志范围内，
+`FATAL EXCEPTION`、`ANR in com.osfans.trime`、`BadTokenException`、`Fatal signal`
+和 `WindowLeaked` 的命中数为 0。用于设备验收的 x86_64 应用 APK SHA-256 为
+`e5fa1442e720577ceb8988b626516b8f525779d0dfd8e84c87ebde40c3038b58`，AndroidTest
+APK SHA-256 为 `4edf828d08a3e9b101d0170d33850a4f1d6fce165979b44b6d5b4fbf223ad111`。
+
+故障注入运行仍明确记录 `warning_free=false`，其预期警告和故障堆栈不改写为零警告。
+最终冻结的四个应用 APK 各保留 2 条 v1/JAR `META-INF/services` 覆盖提示；AndroidTest
+APK 为 0 条。五个 APK 均通过 v1、v2 签名验证、ZIP 完整性和 16 KiB 对齐检查，
+但这些服务条目本身不受 v1 保护，因此本节不声称零风险。
+
 ## 冻结身份
 
 当前候选唯一来源为 `build/t06-runtime/stable-build6/identity.json`。

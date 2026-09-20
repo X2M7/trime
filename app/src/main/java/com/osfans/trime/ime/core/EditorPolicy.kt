@@ -10,18 +10,22 @@ enum class EditorKeyboard { USER, ASCII, NUMBER }
 object EditorPolicy {
     fun isPassword(inputType: Int): Boolean = when (inputType and InputType.TYPE_MASK_CLASS) {
         InputType.TYPE_CLASS_NUMBER -> inputType and InputType.TYPE_MASK_VARIATION == InputType.TYPE_NUMBER_VARIATION_PASSWORD
+
         InputType.TYPE_CLASS_TEXT -> inputType and InputType.TYPE_MASK_VARIATION in setOf(
             InputType.TYPE_TEXT_VARIATION_PASSWORD,
             InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD,
             InputType.TYPE_TEXT_VARIATION_WEB_PASSWORD,
         )
+
         else -> false
     }
 
     fun keyboard(inputType: Int, imeOptions: Int): EditorKeyboard = when (inputType and InputType.TYPE_MASK_CLASS) {
         InputType.TYPE_CLASS_NUMBER, InputType.TYPE_CLASS_PHONE, InputType.TYPE_CLASS_DATETIME -> EditorKeyboard.NUMBER
+
         else -> when {
             imeOptions and EditorInfo.IME_FLAG_FORCE_ASCII != 0 -> EditorKeyboard.ASCII
+
             inputType and InputType.TYPE_MASK_CLASS == InputType.TYPE_CLASS_TEXT &&
                 inputType and InputType.TYPE_MASK_VARIATION in setOf(
                     InputType.TYPE_TEXT_VARIATION_URI,
@@ -31,6 +35,7 @@ object EditorPolicy {
                     InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD,
                     InputType.TYPE_TEXT_VARIATION_WEB_PASSWORD,
                 ) -> EditorKeyboard.ASCII
+
             else -> EditorKeyboard.USER
         }
     }

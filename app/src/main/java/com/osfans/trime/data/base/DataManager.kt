@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2015 - 2024 Rime community
+// SPDX-FileCopyrightText: 2015 - 2026 Rime community
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -11,8 +11,42 @@ import com.osfans.trime.util.appContext
 import kotlinx.serialization.json.Json
 import timber.log.Timber
 import java.io.File
+import java.io.IOException
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
+
+/**
+ * Resolve [name] under [parent].
+ *
+ * Returns null when [parent] is null, cannot be created, or the resulting directory
+ * is not writable. Callers must not cache a failed result permanently; retry when
+ * storage may have become available (for example after reboot).
+ */
+internal fun resolveWritableChildDir(
+    parent: File?,
+    name: String,
+): File? {
+    if (parent == null) return null
+    if (name.isEmpty() || name == "." || name == ".." || '/' in name || '\\' in name) return null
+    return try {
+        if (!parent.exists() && !parent.mkdirs() && !parent.isDirectory) return null
+        val canonicalParent = parent.canonicalFile
+        if (!canonicalParent.isDirectory || !canonicalParent.canWrite()) return null
+
+        val requested = File(canonicalParent, name)
+        if (!requested.exists() && !requested.mkdir() && !requested.isDirectory) return null
+        requested.canonicalFile.takeIf {
+            it == requested.absoluteFile &&
+                it.parentFile == canonicalParent &&
+                it.isDirectory &&
+                it.canWrite()
+        }
+    } catch (_: IOException) {
+        null
+    } catch (_: SecurityException) {
+        null
+    }
+}
 
 object DataManager {
     const val DEFAULT_CUSTOM_FILE_NAME = "default.custom.yaml"
@@ -26,6 +60,8 @@ object DataManager {
         )
 
     private const val DATA_CHECKSUMS_NAME = "checksums.json"
+    private const val SHARED_DIR_NAME = "shared"
+    private const val USER_DIR_NAME = "rime"
 
     private const val SCHEMA_LIST_CUSTOM_PATCH = """
       patch:
@@ -56,22 +92,66 @@ object DataManager {
         .use { it.readText() }
         .let { deserializeDataChecksums(it) }
 
-    // A failed lazy initialization can retry after storage is mounted. Never
-    // turn a null external directory into a relative path cached for this process.
-    private val runtimeDataDir by lazy {
-        checkNotNull(appContext.getExternalFilesDir(null)) { "App-scoped storage is not available" }
+    @Volatile
+    private var cachedSharedDataDir: File? = null
+
+    @Volatile
+    private var cachedUserDataDir: File? = null
+
+    private fun resolveAppScopedDir(
+        cached: () -> File?,
+        name: String,
+        store: (File?) -> Unit,
+    ): File? = lock.withLock {
+        val externalFilesDir =
+            try {
+                appContext.getExternalFilesDir(null)
+            } catch (_: SecurityException) {
+                null
+            }
+        val resolved = resolveWritableChildDir(externalFilesDir, name)
+        if (resolved == null) {
+            store(null)
+            return@withLock null
+        }
+
+        val current = cached()
+        val currentIsResolved =
+            try {
+                current != null &&
+                    current.isDirectory &&
+                    current.canWrite() &&
+                    current.canonicalFile == resolved
+            } catch (_: IOException) {
+                false
+            } catch (_: SecurityException) {
+                false
+            }
+        if (currentIsResolved) return@withLock current
+
+        store(resolved)
+        resolved
     }
 
-    val sharedDataDir by lazy { File(runtimeDataDir, "shared").also { it.mkdirs() } }
+    /** Writable shared assets dir, or null when external app files are not ready yet. */
+    fun resolvedSharedDataDir(): File? = resolveAppScopedDir({ cachedSharedDataDir }, SHARED_DIR_NAME) { cachedSharedDataDir = it }
 
-    private val runtimeUserDataDir by lazy {
-        File(runtimeDataDir, "rime").also { it.mkdirs() }
-    }
+    /** Writable Rime user dir, or null when external app files are not ready yet. */
+    fun resolvedUserDataDir(): File? = resolveAppScopedDir({ cachedUserDataDir }, USER_DIR_NAME) { cachedUserDataDir = it }
+
+    val sharedDataDir: File
+        get() =
+            resolvedSharedDataDir()
+                ?: error("Shared data dir is not available")
 
     /** App-scoped path used by Rime at runtime. */
-    val userDataDir get() = runtimeUserDataDir
+    val userDataDir: File
+        get() =
+            resolvedUserDataDir()
+                ?: error("User data dir is not available")
 
-    val prebuiltDataDir get() = File(sharedDataDir, "build")
+    val prebuiltDataDir: File
+        get() = File(sharedDataDir, "build")
     val stagingDir get() = File(userDataDir, "build")
 
     /** Only permission to attempt recovery; native dictionary loading must still validate it. */

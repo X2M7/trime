@@ -103,10 +103,10 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
             setCandidatePagingMode(useCandidatesView)
         }
         updateCursorAnchorSubscription(useCandidatesView)
-        if (themeReady) {
-            window.window?.let {
-                navBarManager.evaluate(it, useVirtualKeyboard, themeScope.colors)
-            }
+        val scope = themeScope
+        if (!themeReady || scope == null) return@InputDeviceManager
+        window.window?.let {
+            navBarManager.evaluate(it, useVirtualKeyboard, scope.colors)
         }
     }
     private val rimeIntentReceiver = RimeIntentReceiver()
@@ -131,13 +131,14 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
         prefs.advanced.ignoreSystemGestureInsets,
     )
 
-    private val themeScope: ThemeScope
-        get() = requireNotNull(ColorManager.currentScope())
+    private val themeScope: ThemeScope?
+        get() = ColorManager.currentScope()
 
     @Keep
     private val recreateInputViewListener =
         PreferenceDelegate.OnChangeListener<Any> { _, _ ->
-            if (themeReady && inputViewRequested) replaceInputView(themeScope)
+            val scope = themeScope
+            if (themeReady && inputViewRequested && scope != null) replaceInputView(scope)
         }
 
     @Keep
@@ -149,13 +150,15 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
     @Keep
     private val recreateCandidatesViewListener =
         PreferenceDelegateProvider.OnChangeListener {
-            if (themeReady && inputViewRequested) replaceCandidateView(themeScope)
+            val scope = themeScope
+            if (themeReady && inputViewRequested && scope != null) replaceCandidateView(scope)
         }
 
     @Keep
     private val onThemeChangeListener =
         ThemeManager.OnThemeChangeListener {
-            if (themeReady && inputViewRequested) replaceInputViews(themeScope)
+            val scope = themeScope
+            if (themeReady && inputViewRequested && scope != null) replaceInputViews(scope)
         }
 
     @Keep
@@ -165,10 +168,11 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
                 if (!themeReady) return@execute
                 // A scheme-only change restyles the tree in place; theme
                 // switches rebuild it through onThemeChangeListener.
+                val scope = themeScope ?: return@execute
                 inputView?.refreshColors()
                 candidatesView?.refreshColors()
                 window.window?.let {
-                    navBarManager.evaluate(it, inputDeviceManager.useVirtualKeyboard, themeScope.colors)
+                    navBarManager.evaluate(it, inputDeviceManager.useVirtualKeyboard, scope.colors)
                 }
             }
         }
@@ -258,12 +262,14 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
             RimeDaemon.engineState.collect { state ->
                 when (state) {
                     RimeLifecycle.State.READY -> if (!themeReady) prepareTheme()
+
                     RimeLifecycle.State.FAILED, RimeLifecycle.State.STOPPING -> {
                         startupFailed = state == RimeLifecycle.State.FAILED
                         themeReady = false
                         inputView?.finishInput()
                         if (inputViewRequested) setInputView(createUnavailableInputView())
                     }
+
                     else -> Unit
                 }
             }
@@ -283,13 +289,21 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
             try {
                 if (retry) RimeDaemon.retryFailedStartup()
                 rime.runOnReady { ThemeManager.init(resources.configuration) }
+                val scope = themeScope
+                if (scope == null) {
+                    themeReady = false
+                    startupFailed = false
+                    Timber.w("ThemeScope is not ready after theme initialization; keeping fallback input view")
+                    showThemeLoading()
+                    return@launch
+                }
                 themeReady = true
                 startupFailed = false
                 if (rime.run { usingExistingResources }) toast(R.string.ime_existing_resources)
                 ThemeManager.addOnChangedListener(onThemeChangeListener)
                 ColorManager.addOnChangedListener(onColorChangeListener)
                 if (inputViewRequested) {
-                    replaceInputViews(themeScope)
+                    replaceInputViews(scope)
                 }
             } catch (e: Exception) {
                 if (e is CancellationException && e !is com.osfans.trime.core.RimeUnavailableException) throw e
@@ -360,14 +374,17 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
                     commitText(it.data.text)
                 }
             }
+
             is RimeMessage.InlinePreeditMessage -> {
                 updateComposingText(it.data.text, it.data.cursor)
             }
+
             is RimeMessage.KeyMessage ->
                 it.data.let msg@{
                     if (it.isVirtual) {
                         when (it.value.value) {
                             RimeKeyMapping.RimeKey_Return -> handleReturnKey()
+
                             else -> {
                                 val keyCode = it.value.keyCode
                                 if (keyCode != KeyEvent.KEYCODE_UNKNOWN) {
@@ -414,6 +431,7 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
                         }
                     }
                 }
+
             is RimeMessage.DeployMessage -> {
                 if (!themeReady && it.data == RimeMessage.DeployMessage.State.Success) prepareTheme()
                 if (themeReady && it.data == RimeMessage.DeployMessage.State.Success) {
@@ -430,6 +448,7 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
                     }
                 }
             }
+
             else -> {}
         }
     }
@@ -669,11 +688,16 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
     override fun onCreateInputView(): View? {
         Timber.d("onCreateInputView")
         inputViewRequested = true
-        if (!themeReady) {
+        val scope = themeScope
+        if (!themeReady || scope == null) {
+            if (scope == null && themeReady) {
+                Timber.w("ThemeScope disappeared; returning fallback input view")
+                themeReady = false
+            }
             if (!startupFailed) prepareTheme()
             return createUnavailableInputView()
         }
-        replaceInputViews(themeScope)
+        replaceInputViews(scope)
         // We will call `setInputView` by ourselves. This is fine.
         return null
     }
@@ -742,7 +766,8 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
     @RequiresApi(Build.VERSION_CODES.R)
     override fun onCreateInlineSuggestionsRequest(uiExtras: Bundle): InlineSuggestionsRequest? {
         if (!themeReady || !inlineSuggestions || !inputDeviceManager.useVirtualKeyboard) return null
-        return InlineSuggestions.createRequest(this, themeScope.colors)
+        val colors = themeScope?.colors ?: return null
+        return InlineSuggestions.createRequest(this, colors)
     }
 
     @SuppressLint("NewApi")

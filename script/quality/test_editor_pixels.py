@@ -4,7 +4,7 @@ import xml.etree.ElementTree as ET
 
 from PIL import Image, ImageDraw
 
-from editor_pixels import audit_t9_pixels
+from editor_pixels import audit_t9_pixels, normalize_screenshot
 
 
 class EditorPixelsTest(unittest.TestCase):
@@ -56,6 +56,45 @@ class EditorPixelsTest(unittest.TestCase):
         ET.SubElement(root, 'node', dict(root[0].attrib))
         with self.assertRaises(ValueError):
             audit_t9_pixels(image, root, image.size)
+
+    def test_natural_portrait_capture_is_normalized_for_rotation_90(self):
+        logical, root = self.fixture()
+        raw = logical.transpose(Image.Transpose.ROTATE_270)
+        normalized, evidence = normalize_screenshot(raw, root, 1)
+        self.assertEqual(normalized.tobytes(), logical.tobytes())
+        self.assertEqual(evidence, {
+            'raw_size': [200, 400],
+            'logical_size': [400, 200],
+            'display_rotation': 1,
+            'transform': 'rotate_90_counterclockwise',
+        })
+        self.assertTrue(audit_t9_pixels(normalized, root, evidence['logical_size'])['passed'])
+
+    def test_natural_portrait_capture_is_normalized_for_rotation_270(self):
+        logical, root = self.fixture()
+        raw = logical.transpose(Image.Transpose.ROTATE_90)
+        normalized, evidence = normalize_screenshot(raw, root, 3)
+        self.assertEqual(normalized.tobytes(), logical.tobytes())
+        self.assertEqual(evidence['transform'], 'rotate_90_clockwise')
+
+    def test_current_orientation_is_not_changed(self):
+        image, root = self.fixture()
+        normalized, evidence = normalize_screenshot(image, root, 1)
+        self.assertIs(normalized, image)
+        self.assertEqual(evidence['transform'], 'none')
+
+    def test_missing_rotation_is_allowed_when_dimensions_already_match(self):
+        image, root = self.fixture()
+        normalized, evidence = normalize_screenshot(image, root, None)
+        self.assertIs(normalized, image)
+        self.assertIsNone(evidence['display_rotation'])
+        self.assertEqual(evidence['transform'], 'none')
+
+    def test_transposed_capture_requires_matching_rotation(self):
+        logical, root = self.fixture()
+        raw = logical.transpose(Image.Transpose.ROTATE_270)
+        with self.assertRaisesRegex(ValueError, 'matching display rotation'):
+            normalize_screenshot(raw, root, 0)
 
 
 if __name__ == '__main__':

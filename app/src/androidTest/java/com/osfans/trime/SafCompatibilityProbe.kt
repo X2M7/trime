@@ -404,13 +404,19 @@ object SafCompatibilityProbe {
                         columns.map { column ->
                             when (column) {
                                 Document.COLUMN_DOCUMENT_ID -> node.id
+
                                 Document.COLUMN_DISPLAY_NAME -> node.name
+
                                 Document.COLUMN_MIME_TYPE -> if (node.directory) Document.MIME_TYPE_DIR else "text/plain"
+
                                 Document.COLUMN_SIZE -> if (pipeReads) null else node.file.length()
+
                                 Document.COLUMN_LAST_MODIFIED -> if (pipeReads) null else node.file.lastModified()
+
                                 Document.COLUMN_FLAGS ->
                                     Document.FLAG_SUPPORTS_WRITE or Document.FLAG_SUPPORTS_DELETE or
                                         Document.FLAG_DIR_SUPPORTS_CREATE or (if (canRename) Document.FLAG_SUPPORTS_RENAME else 0)
+
                                 else -> null
                             }
                         }.toTypedArray<Any?>(),

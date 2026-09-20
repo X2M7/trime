@@ -11,8 +11,10 @@ import tempfile
 import time
 import uuid
 
+from PIL import Image
+
 from editor_windows import capture_editor_window
-from editor_pixels import audit_t9_pixels
+from editor_pixels import audit_t9_pixels, normalize_screenshot
 from runtime_audit import LOG_LINE, audit_log, device_audit_lock, log_after_marker, record_logcat
 
 PACKAGE = 'com.osfans.trime.debug'
@@ -66,7 +68,6 @@ def run(args):
     (out / 'identity.json').write_text(json.dumps(identity, indent=2) + '\n')
     if args.split_screen:
         assert identity['api'] == 35, 'Split-screen driver verified on AOSP API 35 only'
-        from PIL import Image
         sizes = re.findall(r'(?:Physical|Override) size: (\d+)x(\d+)', shell('wm', 'size'))
         assert sizes, 'Cannot establish screenshot coordinates'
         portrait_size = tuple(map(int, sizes[-1]))
@@ -146,9 +147,16 @@ def run(args):
         with (out / (label + '.png')).open('wb') as png:
             subprocess.run(adb + ['exec-out', 'screencap', '-p'], stdout=png, check=True, timeout=60)
         pixels = None
-        if args.split_screen and 'split' in label:
+        if t9:
             with Image.open(out / (label + '.png')) as screenshot:
-                pixels = audit_t9_pixels(screenshot, root, portrait_size)
+                rotation_value = shell('settings', 'get', 'system', 'user_rotation')
+                display_rotation = None if rotation_value == 'null' else int(rotation_value)
+                normalized, screenshot_info = normalize_screenshot(screenshot, root, display_rotation)
+                if args.split_screen and 'split' in label:
+                    assert tuple(screenshot_info['raw_size']) == portrait_size, 'Split screenshot dimensions changed'
+                    assert tuple(screenshot_info['logical_size']) == portrait_size, 'Split hierarchy dimensions changed'
+                pixels = audit_t9_pixels(normalized, root, screenshot_info['logical_size'])
+                pixels['screenshot'] = screenshot_info
             (out / (label + '-pixels.json')).write_text(json.dumps(pixels, indent=2) + '\n')
             assert pixels['passed'], 'T9 surface is blank or obscured; inspect screenshot and pixel audit'
         checkpoints.append({'name': label, 'pid': pid(), 't9': nine_key, 'expected_editor_text': expected,

@@ -15,7 +15,8 @@
 #include <type_traits>
 
 // Rime/OpenCC use UTF-8; JNI's NewStringUTF/GetStringUTFChars use Modified
-// UTF-8 instead. Cross this boundary through UTF-16, including supplementary Han.
+// UTF-8 instead. Cross this boundary through UTF-16, including supplementary
+// Han.
 static inline jstring makeJavaString(JNIEnv* env, std::string_view text) {
   if (env->ExceptionCheck()) return nullptr;
   std::u16string result;
@@ -23,10 +24,13 @@ static inline jstring makeJavaString(JNIEnv* env, std::string_view text) {
     utf8::utf8to16(text.begin(), text.end(), std::back_inserter(result));
   } else {
     std::string normalized;
-    utf8::replace_invalid(text.begin(), text.end(), std::back_inserter(normalized));
-    utf8::utf8to16(normalized.begin(), normalized.end(), std::back_inserter(result));
+    utf8::replace_invalid(text.begin(), text.end(),
+                          std::back_inserter(normalized));
+    utf8::utf8to16(normalized.begin(), normalized.end(),
+                   std::back_inserter(result));
   }
-  return env->NewString(reinterpret_cast<const jchar*>(result.data()), result.size());
+  return env->NewString(reinterpret_cast<const jchar*>(result.data()),
+                        result.size());
 }
 
 static inline void throwJavaException(JNIEnv* env, const char* msg) {
@@ -37,7 +41,8 @@ static inline void throwJavaException(JNIEnv* env, const char* msg) {
   if (init) {
     auto message = makeJavaString(env, msg);
     if (message) {
-      auto exception = static_cast<jthrowable>(env->NewObject(c, init, message));
+      auto exception =
+          static_cast<jthrowable>(env->NewObject(c, init, message));
       if (exception) {
         env->Throw(exception);
         env->DeleteLocalRef(exception);
@@ -86,7 +91,8 @@ class CString {
           }
         }
         value_.clear();
-        utf8::utf16to8(normalized.begin(), normalized.end(), std::back_inserter(value_));
+        utf8::utf16to8(normalized.begin(), normalized.end(),
+                       std::back_inserter(value_));
       }
     } catch (...) {
       env->ReleaseStringChars(str, chars);
@@ -153,7 +159,9 @@ class JEnv {
     }
   }
 
-  ~JEnv() { if (attached_) jvm_->DetachCurrentThread(); }
+  ~JEnv() {
+    if (attached_) jvm_->DetachCurrentThread();
+  }
   JEnv(const JEnv&) = delete;
   JEnv& operator=(const JEnv&) = delete;
 

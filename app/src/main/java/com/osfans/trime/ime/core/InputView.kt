@@ -404,6 +404,7 @@ class InputView(
                     }
                 }
             }
+
             is RimeMessage.CompositionMessage -> {
                 val data = if (candidatesMode == PopupCandidatesMode.ALWAYS_SHOW || t9.isVisible) {
                     CompositionProto()
@@ -412,13 +413,16 @@ class InputView(
                 }
                 broadcaster.onCompositionUpdate(data)
             }
+
             is RimeMessage.BulkCandidatesMessage -> {
                 broadcaster.onCandidateListUpdate(it.data)
             }
+
             is RimeMessage.T9Message -> {
                 t9.update(it.data)
                 if (it.data.enabled) preedit.onCompositionUpdate(CompositionProto())
             }
+
             else -> {}
         }
         broadcastKeyAppearanceUpdate()

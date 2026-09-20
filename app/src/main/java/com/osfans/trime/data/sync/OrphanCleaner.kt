@@ -46,6 +46,7 @@ object OrphanCleaner {
                     }
                 when {
                     file.isFile && SyncPathPolicy.shouldPreserveLocal(relative, ownId, syncDir) -> Unit
+
                     file.isFile && relative !in externalPaths && knownEntries[relative]?.let {
                         it.size >= 0 && it.lastModified > 0 &&
                             file.length() == it.size && file.lastModified() == it.lastModified &&
@@ -65,6 +66,7 @@ object OrphanCleaner {
                             Timber.w(deleteResult.exceptionOrNull(), "Failed to delete orphan $relative")
                         }
                     }
+
                     file.isDirectory && file in emptiedParents && file.list()?.isEmpty() == true -> {
                         if (file.delete()) {
                             deleted++

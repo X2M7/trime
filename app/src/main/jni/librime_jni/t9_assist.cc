@@ -9,9 +9,8 @@ namespace trime {
 namespace {
 bool Digits(const std::string& text) {
   return !text.empty() && text.size() <= T9Assist::kMaxInput &&
-         std::all_of(text.begin(), text.end(), [](char c) {
-           return c >= '2' && c <= '9';
-         });
+         std::all_of(text.begin(), text.end(),
+                     [](char c) { return c >= '2' && c <= '9'; });
 }
 
 bool Adjacent(char a, char b) {
@@ -28,14 +27,18 @@ bool T9Assist::Build(rime::Config* config, const rime::Script& syllables,
   if (!config || syllables.size() > 4096) return false;
   rime::Projection numeric;
   if (!numeric.Load(config->GetList("speller/algebra"))) return false;
-  struct Origin { int index; std::string spelling; };
+  struct Origin {
+    int index;
+    std::string spelling;
+  };
   std::map<std::string, Origin> origins;
   rime::Script combined;
   auto append = [&](const rime::Script& script, int index) {
     for (const auto& [key, spellings] : script) {
       for (auto spelling : spellings) {
         if (index && spelling.str == key) continue;
-        // Private build-time identities keep each rule's properties independent.
+        // Private build-time identities keep each rule's properties
+        // independent.
         auto token = std::to_string(index) + ":" + spelling.str;
         origins.emplace(token, Origin{index, spelling.str});
         spelling.str = std::move(token);
@@ -48,21 +51,25 @@ bool T9Assist::Build(rime::Config* config, const rime::Script& syllables,
   for (int rule = 0; rule < 6; ++rule) {
     if (!(options & (1 << rule))) continue;
     rime::Projection fuzzy;
-    if (!fuzzy.Load(config->GetList(std::string("trime/t9_fuzzy/") + names[rule])))
+    if (!fuzzy.Load(
+            config->GetList(std::string("trime/t9_fuzzy/") + names[rule])))
       continue;
-    // Start from canonical letters for EVERY rule, never from another fuzzy index.
+    // Start from canonical letters for EVERY rule, never from another fuzzy
+    // index.
     auto script = syllables;
     fuzzy.Apply(&script);
     append(script, rule + 1);
   }
-  // Project each shared letter key once, preserving canonical spelling and source.
+  // Project each shared letter key once, preserving canonical spelling and
+  // source.
   numeric.Apply(&combined);
   std::array<Index, 7> indexes;
   std::array<size_t, 7> counts{};
   for (const auto& [key, spellings] : combined) {
     if (!Digits(key) || key.size() > 6) continue;
     for (const auto& spelling : spellings) {
-      if (spelling.properties.type != rime::kNormalSpelling || spelling.properties.is_correction)
+      if (spelling.properties.type != rime::kNormalSpelling ||
+          spelling.properties.is_correction)
         continue;
       const auto& origin = origins.at(spelling.str);
       if (++counts[origin.index] > 8192) return false;
@@ -77,12 +84,13 @@ bool T9Assist::Build(rime::Config* config, const rime::Script& syllables,
   }
   if (indexes[0].empty()) return false;
   exact_ = std::move(indexes[0]);
-  for (int rule = 0; rule < 6; ++rule) fuzzy_[rule] = std::move(indexes[rule + 1]);
+  for (int rule = 0; rule < 6; ++rule)
+    fuzzy_[rule] = std::move(indexes[rule + 1]);
   return true;
 }
 
 std::vector<T9Alternative> T9Assist::Find(const std::string& input,
-                                        int options) const {
+                                          int options) const {
   std::map<std::pair<int, std::string>, int> matches;
   const int length = std::min(static_cast<int>(input.size()), kMaxInput);
   for (int end = 1; end <= length; ++end) {
@@ -94,7 +102,8 @@ std::vector<T9Alternative> T9Assist::Find(const std::string& input,
       auto exact = exact_.find(key);
       for (const auto& spelling : found->second) {
         if (exact != exact_.end() &&
-            std::binary_search(exact->second.begin(), exact->second.end(), spelling))
+            std::binary_search(exact->second.begin(), exact->second.end(),
+                               spelling))
           continue;
         matches[{end, spelling}] |= source;
       }
@@ -132,7 +141,8 @@ std::vector<T9Alternative> T9Assist::Find(const std::string& input,
   std::vector<T9Alternative> result;
   for (const auto& [key, sources] : matches)
     result.push_back({key.first, key.second, sources});
-  // Prefer corrections covering more of the focused input, with a stable tie order.
+  // Prefer corrections covering more of the focused input, with a stable tie
+  // order.
   std::sort(result.begin(), result.end(), [](const auto& a, const auto& b) {
     if (a.length != b.length) return a.length > b.length;
     return std::tie(a.sources, a.spelling) < std::tie(b.sources, b.spelling);

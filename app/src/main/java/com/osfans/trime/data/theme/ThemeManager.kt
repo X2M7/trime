@@ -27,12 +27,24 @@ object ThemeManager {
     }
 
     private var _activeTheme: Theme? = null
+    private var _activeFindings: List<ThemeDiagnostics.Finding>? = null
     private var activeConfigId: String? = null
     private val loadMutex = Mutex()
 
     // Reading a theme must never start deployment from a view/layout callback.
     val activeTheme: Theme
         get() = checkNotNull(_activeTheme) { "ThemeManager.init must complete before creating themed views" }
+
+    /**
+     * What static checks found in the active theme, or null when it was read
+     * but the checks could not run. The findings always belong to the load
+     * that produced [activeTheme].
+     */
+    val activeFindings: List<ThemeDiagnostics.Finding>?
+        get() {
+            checkNotNull(_activeTheme) { "ThemeManager.init must complete before reading theme diagnostics" }
+            return _activeFindings
+        }
 
     private val onChangeListeners = WeakHashSet<OnThemeChangeListener>()
 
@@ -53,25 +65,27 @@ object ThemeManager {
     private data class ResolvedTheme(
         val configId: String,
         val theme: Theme,
+        val findings: List<ThemeDiagnostics.Finding>?,
     )
 
     private suspend fun getThemeById(id: String): ResolvedTheme {
         when (val result = ThemeLoader.loadTheme(id)) {
-            is ThemeLoader.ThemeLoadResult.Success -> return ResolvedTheme(id, result.theme)
+            is ThemeLoader.ThemeLoadResult.Success -> return ResolvedTheme(id, result.theme, result.findings)
             is ThemeLoader.ThemeLoadResult.Failure -> Timber.w(result.error)
         }
 
         // Keep a decoded, usable theme on a failed reload, not a possibly partial disk artifact.
         _activeTheme?.let { active ->
-            activeConfigId?.let { return ResolvedTheme(it, active) }
+            activeConfigId?.let { return ResolvedTheme(it, active, _activeFindings) }
         }
 
         if (id != "trime") {
             when (val result = ThemeLoader.loadTheme("trime")) {
                 is ThemeLoader.ThemeLoadResult.Success -> {
                     Timber.w("Theme '$id' is unavailable, fallback to default theme 'trime'")
-                    return ResolvedTheme("trime", result.theme)
+                    return ResolvedTheme("trime", result.theme, result.findings)
                 }
+
                 is ThemeLoader.ThemeLoadResult.Failure -> Timber.w(result.error)
             }
         }
@@ -81,8 +95,9 @@ object ThemeManager {
             when (val result = ThemeLoader.loadTheme(fallbackId)) {
                 is ThemeLoader.ThemeLoadResult.Success -> {
                     Timber.w("Theme '$id' is unavailable, fallback to available theme '$fallbackId'")
-                    return ResolvedTheme(fallbackId, result.theme)
+                    return ResolvedTheme(fallbackId, result.theme, result.findings)
                 }
+
                 is ThemeLoader.ThemeLoadResult.Failure -> lastFailure = result.error
             }
         }
@@ -95,19 +110,20 @@ object ThemeManager {
         val theme = resolvedTheme.theme
         // A structurally equal theme suppresses the change notification below, so the
         // UI tree keeps its views and their injected scope. Replace neither the
-        // caches nor the scope in that case, or later scheme changes would update
-        // the new global scope while existing views still read the old one.
+        // caches nor the scope in that case. Findings describe the loaded file,
+        // however, so refresh them even when no view rebuild is needed.
         if (_activeTheme == theme) {
             activeConfigId = resolvedTheme.configId
+            _activeFindings = resolvedTheme.findings
             return
         }
         KeyActionManager.resetCache()
-        KeyActionManager.presetDiagnostics(theme.presetKeys).forEach { Timber.e(it) }
         FontManager.resetCache(theme)
         LiquidData.init(theme)
         ColorManager.attachTheme(theme)
         _activeTheme = theme
         activeConfigId = resolvedTheme.configId
+        _activeFindings = resolvedTheme.findings
         fireChange()
     }
 
@@ -119,6 +135,8 @@ object ThemeManager {
                     applyTheme(resolved)
                 } catch (e: Exception) {
                     _activeTheme = null
+                    _activeFindings = null
+                    activeConfigId = null
                     throw e
                 }
                 prefs.selectedTheme.setValue(resolved.configId)

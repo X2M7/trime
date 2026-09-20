@@ -710,8 +710,9 @@ reuse a personal AVD or clear a normal application's data.
    external-editor process death, rotation and application switching. On the
    verified AOSP API35 image, add `--split-screen` for actual multi-window
    state, both positions, Hanzi input and exit. Do not use this flag on API21.
-   This portrait split-screen mode requires host Pillow and checks pixels inside
-   all eight T9 letter keys. Missing/blank keys or mismatched screenshot dimensions
+   Every checkpoint recorded as T9 requires host Pillow and checks pixels inside
+   all eight T9 letter keys. Split-screen additionally requires the pinned portrait
+   screenshot dimensions. Missing/blank keys or an applicable dimension mismatch
    fail; this gate is not OCR or proof that every UI element is unobscured.
    `logcat-full.txt` keeps the device backlog; the unique marker in `identity.json`
    bounds this independent driver's application audit to the current probe.

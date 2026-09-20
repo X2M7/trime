@@ -39,19 +39,22 @@ object RimeDataSync {
 
     private val prefs get() = AppPrefs.defaultInstance().profile
 
-    fun treeUri(): Uri? = prefs.externalRimeTreeUri.getValue().takeIf { it.isNotEmpty() }?.toUri()
+    fun treeUri(): Uri? = prefs.externalRimeTreeUri.getValue().takeIf { it.isNotBlank() }?.toUri()
 
     fun hasExternalAccess(context: Context = appContext): Boolean {
         val uri = treeUri() ?: return false
         val uriString = uri.toString()
-        return context.contentResolver.persistedUriPermissions.any {
-            it.uri.toString() == uriString && it.isReadPermission && it.isWritePermission
+        return try {
+            context.contentResolver.persistedUriPermissions.any {
+                it.uri.toString() == uriString && it.isReadPermission && it.isWritePermission
+            }
+        } catch (_: SecurityException) {
+            false
         }
     }
 
     fun isRuntimeReady(): Boolean = try {
-        DataManager.userDataDir.let { it.isDirectory && it.canWrite() } &&
-            DataManager.sharedDataDir.let { it.isDirectory && it.canWrite() }
+        DataManager.resolvedUserDataDir() != null && DataManager.resolvedSharedDataDir() != null
     } catch (_: IllegalStateException) {
         false
     } catch (_: SecurityException) {
@@ -60,6 +63,28 @@ object RimeDataSync {
 
     fun usesExternalSync(context: Context = appContext): Boolean = AppPrefs.defaultInstance().profile.dataStorageMode.getValue() ==
         DataStorageMode.EXTERNAL_SYNC
+
+    /**
+     * Whether the user finished the storage-mode setup step.
+     *
+     * This does not require runtime dirs under [Context.getExternalFilesDir]
+     * to be writable yet, so late media after reboot does not reopen the setup wizard.
+     */
+    internal fun isStorageChoiceComplete(
+        mode: DataStorageMode,
+        treeUri: String,
+    ): Boolean = when (mode) {
+        DataStorageMode.APP_STORAGE -> true
+        DataStorageMode.EXTERNAL_SYNC -> treeUri.isNotBlank()
+    }
+
+    fun isStorageChoiceDone(): Boolean {
+        val profile = AppPrefs.defaultInstance().profile
+        return isStorageChoiceComplete(
+            profile.dataStorageMode.getValue(),
+            profile.externalRimeTreeUri.getValue(),
+        )
+    }
 
     fun isStorageAvailable(context: Context = appContext): Boolean = isRuntimeReady() && (!usesExternalSync(context) || hasExternalAccess(context))
 
@@ -75,10 +100,12 @@ object RimeDataSync {
         val exportOk =
             when {
                 !usesExternalSync(context) -> true
+
                 !hasExternalAccess(context) -> {
                     Timber.w("Export skipped: no data path selected")
                     false
                 }
+
                 else -> exportToExternal(context).isSuccess
             }
         return exportOk
@@ -88,8 +115,12 @@ object RimeDataSync {
         context: Context,
         uri: Uri,
     ) {
-        val stillGranted =
+        val stillGranted = try {
             context.contentResolver.persistedUriPermissions.any { it.uri == uri }
+        } catch (e: SecurityException) {
+            Timber.w(e, "Cannot inspect persisted URI permission: $uri")
+            false
+        }
         if (!stillGranted) return
         runCatching {
             context.contentResolver.releasePersistableUriPermission(uri, uriPermissionFlags)

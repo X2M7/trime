@@ -2,11 +2,15 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+#include <rime/dict/dictionary.h>
+#include <rime/key_event.h>
+#include <rime/schema.h>
+#include <rime/ticket.h>
 #include <rime_api.h>
 
+#include <algorithm>
 #include <memory>
 #include <mutex>
-#include <algorithm>
 #include <string>
 #include <vector>
 
@@ -15,10 +19,6 @@
 #include "objconv.h"
 #include "session.h"
 #include "t9.h"
-#include <rime/key_event.h>
-#include <rime/dict/dictionary.h>
-#include <rime/schema.h>
-#include <rime/ticket.h>
 
 #define MAX_BUFFER_LENGTH 2048
 
@@ -54,15 +54,17 @@ class Rime {
     trime_traits.shared_data_dir = sharedDir;
     trime_traits.user_data_dir = userDir;
     trime_traits.log_dir = "";  // set empty log_dir to log to logcat only
-    // Keep warnings/errors without logging every vocabulary entry or input query.
+    // Keep warnings/errors without logging every vocabulary entry or input
+    // query.
     trime_traits.min_log_level = 1;
     trime_traits.app_name = "rime.trime";
     trime_traits.distribution_name = "Trime";
     trime_traits.distribution_code_name = "trime";
     trime_traits.distribution_version = versionName;
 
-    // Logging/module declarations are process-wide. initialize() below reapplies
-    // directories and traits and reloads modules after every finalize().
+    // Logging/module declarations are process-wide. initialize() below
+    // reapplies directories and traits and reloads modules after every
+    // finalize().
     static std::once_flag setup_once;
     std::call_once(setup_once, [&] { rime->setup(&trime_traits); });
     rime->initialize(&trime_traits);
@@ -79,7 +81,8 @@ class Rime {
 
   bool hasUsableDictionary() {
     auto current = rime::Service::instance().GetSession(session());
-    if (!current || !current->schema() || current->schema()->schema_id() == ".default")
+    if (!current || !current->schema() ||
+        current->schema()->schema_id() == ".default")
       return false;
     auto component = rime::Dictionary::Require("dictionary");
     if (!component) return false;
@@ -102,7 +105,7 @@ class Rime {
   bool simulateKeySequence(const std::string& sequence) {
     const auto state = t9Snapshot();
     if (std::none_of(state.segments.begin(), state.segments.end(),
-        [](const auto& span) { return span.locked; }))
+                     [](const auto& span) { return span.locked; }))
       return rime->simulate_key_sequence(session(), sequence.data());
     rime::KeySequence keys;
     if (!keys.Parse(sequence)) return false;
@@ -300,35 +303,47 @@ class Rime {
 GlobalRefSingleton* GlobalRef;
 
 extern "C" JNIEXPORT jobject JNICALL
-Java_com_osfans_trime_core_Rime_getRimeT9State(JNIEnv* env, jclass, jint options) {
+Java_com_osfans_trime_core_Rime_getRimeT9State(JNIEnv* env, jclass,
+                                               jint options) {
   Rime::Instance().setT9AssistOptions(options);
   auto state = Rime::Instance().t9Snapshot();
-  JRef<jclass> span_class(env, env->FindClass("com/osfans/trime/core/T9SpanProto"));
-  auto span_init = env->GetMethodID(span_class, "<init>", "(IILjava/lang/String;ZZI)V");
+  JRef<jclass> span_class(env,
+                          env->FindClass("com/osfans/trime/core/T9SpanProto"));
+  auto span_init =
+      env->GetMethodID(span_class, "<init>", "(IILjava/lang/String;ZZI)V");
   auto spans = [&](const std::vector<trime::T9Span>& items) {
     auto result = env->NewObjectArray(items.size(), span_class, nullptr);
     for (size_t i = 0; i < items.size(); ++i) {
       const auto& s = items[i];
       JRef item(env, env->NewObject(span_class, span_init, s.start, s.end,
-          *JString(env, s.spelling), s.completion, s.locked, s.sources));
+                                    *JString(env, s.spelling), s.completion,
+                                    s.locked, s.sources));
       env->SetObjectArrayElement(result, i, item);
     }
     return result;
   };
   JRef segments(env, spans(state.segments));
   JRef choices(env, spans(state.choices));
-  JRef<jclass> state_class(env, env->FindClass("com/osfans/trime/core/T9StateProto"));
-  auto init = env->GetMethodID(state_class, "<init>",
-      "(ZILjava/lang/String;IZ[Lcom/osfans/trime/core/T9SpanProto;[Lcom/osfans/trime/core/T9SpanProto;)V");
+  JRef<jclass> state_class(
+      env, env->FindClass("com/osfans/trime/core/T9StateProto"));
+  auto init =
+      env->GetMethodID(state_class, "<init>",
+                       "(ZILjava/lang/String;IZ[Lcom/osfans/trime/core/"
+                       "T9SpanProto;[Lcom/osfans/trime/core/T9SpanProto;)V");
   return env->NewObject(state_class, init, state.enabled, state.revision,
-      *JString(env, state.input), state.focus, state.can_undo, *segments, *choices);
+                        *JString(env, state.input), state.focus, state.can_undo,
+                        *segments, *choices);
 }
 
 extern "C" JNIEXPORT jboolean JNICALL
 Java_com_osfans_trime_core_Rime_performRimeT9Action(JNIEnv* env, jclass,
-    jint revision, jint action, jint start, jint end, jstring spelling, jint options) {
+                                                    jint revision, jint action,
+                                                    jint start, jint end,
+                                                    jstring spelling,
+                                                    jint options) {
   Rime::Instance().setT9AssistOptions(options);
-  return Rime::Instance().t9Action(revision, action, start, end, *CString(env, spelling));
+  return Rime::Instance().t9Action(revision, action, start, end,
+                                   *CString(env, spelling));
 }
 
 JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM* jvm, void* reserved) {
@@ -341,32 +356,32 @@ extern "C" JNIEXPORT void JNICALL Java_com_osfans_trime_core_Rime_startupRime(
     JNIEnv* env, jclass clazz, jstring shared_dir, jstring user_dir,
     jstring version_name, jboolean full_check) {
   jniCall(env, [&] {
-  // for rime shared data dir
-  setenv("RIME_SHARED_DATA_DIR", CString(env, shared_dir), 1);
-  // for rime user data dir
-  setenv("RIME_USER_DATA_DIR", CString(env, user_dir), 1);
-  setenv("RIME_DISTRIBUTION_VERSION", CString(env, version_name), 1);
+    // for rime shared data dir
+    setenv("RIME_SHARED_DATA_DIR", CString(env, shared_dir), 1);
+    // for rime user data dir
+    setenv("RIME_USER_DATA_DIR", CString(env, user_dir), 1);
+    setenv("RIME_DISTRIBUTION_VERSION", CString(env, version_name), 1);
 
-  auto notificationHandler = [](void* context_object, RimeSessionId session_id,
-                                const char* message_type,
-                                const char* message_value) {
-    auto env = GlobalRef->AttachEnv();
-    int type = 0;  // unknown
-    if (strcmp(message_type, "schema") == 0) {
-      type = 1;
-    } else if (strcmp(message_type, "option") == 0) {
-      type = 2;
-    } else if (strcmp(message_type, "deploy") == 0) {
-      type = 3;
-    }
-    auto vararg = JRef<jobjectArray>(
-        env, env->NewObjectArray(1, GlobalRef->Object, nullptr));
-    env->SetObjectArrayElement(vararg, 0, JString(env, message_value));
-    env->CallStaticVoidMethod(GlobalRef->Rime, GlobalRef->HandleRimeMessage,
-                              type, *vararg);
-  };
+    auto notificationHandler =
+        [](void* context_object, RimeSessionId session_id,
+           const char* message_type, const char* message_value) {
+          auto env = GlobalRef->AttachEnv();
+          int type = 0;  // unknown
+          if (strcmp(message_type, "schema") == 0) {
+            type = 1;
+          } else if (strcmp(message_type, "option") == 0) {
+            type = 2;
+          } else if (strcmp(message_type, "deploy") == 0) {
+            type = 3;
+          }
+          auto vararg = JRef<jobjectArray>(
+              env, env->NewObjectArray(1, GlobalRef->Object, nullptr));
+          env->SetObjectArrayElement(vararg, 0, JString(env, message_value));
+          env->CallStaticVoidMethod(
+              GlobalRef->Rime, GlobalRef->HandleRimeMessage, type, *vararg);
+        };
 
-  Rime::Instance().startup(full_check, notificationHandler);
+    Rime::Instance().startup(full_check, notificationHandler);
   });
 }
 
@@ -376,7 +391,8 @@ Java_com_osfans_trime_core_Rime_exitRime(JNIEnv* env, jclass /* thiz */) {
 }
 
 extern "C" JNIEXPORT jboolean JNICALL
-Java_com_osfans_trime_core_Rime_hasUsableRimeDictionary(JNIEnv* env, jclass /* thiz */) {
+Java_com_osfans_trime_core_Rime_hasUsableRimeDictionary(JNIEnv* env,
+                                                        jclass /* thiz */) {
   return jniCall(env, [&] { return Rime::Instance().hasUsableDictionary(); });
 }
 
@@ -385,7 +401,9 @@ extern "C" JNIEXPORT jboolean JNICALL
 Java_com_osfans_trime_core_Rime_deployRimeSchemaFile(JNIEnv* env,
                                                      jclass /* thiz */,
                                                      jstring schema_file) {
-  return jniCall(env, [&] { return Rime::Instance().deploySchema(*CString(env, schema_file)); });
+  return jniCall(env, [&] {
+    return Rime::Instance().deploySchema(*CString(env, schema_file));
+  });
 }
 
 extern "C" JNIEXPORT jboolean JNICALL
@@ -393,8 +411,10 @@ Java_com_osfans_trime_core_Rime_deployRimeConfigFile(JNIEnv* env,
                                                      jclass /* thiz */,
                                                      jstring file_name,
                                                      jstring version_key) {
-  return jniCall(env, [&] { return Rime::Instance().deployConfigFile(*CString(env, file_name),
-                                           *CString(env, version_key)); });
+  return jniCall(env, [&] {
+    return Rime::Instance().deployConfigFile(*CString(env, file_name),
+                                             *CString(env, version_key));
+  });
 }
 
 extern "C" JNIEXPORT jboolean JNICALL
@@ -532,34 +552,34 @@ extern "C" JNIEXPORT jobject JNICALL
 Java_com_osfans_trime_core_Rime_getRimeResponse(JNIEnv* env, jclass clazz,
                                                 jboolean paging_mode) {
   return jniCall(env, [&]() -> jobject {
-  auto commit = Rime::Instance().commit();
-  // the menu is only needed in paging mode, otherwise its candidates would be
-  // duplicated by the bulk candidates query below
-  auto context = Rime::Instance().context(paging_mode);
-  auto status = Rime::Instance().status();
-  auto jCommit = JRef(env, rimeCommitToJObject(env, *commit));
-  auto jComposition =
-      JRef(env, rimeCompositionToJObject(env, context->composition));
-  auto jStatus = JRef(env, rimeStatusToJObject(env, *status));
-  // keep the local references alive until RimeResponse is constructed below
-  jobject jCandidates = nullptr;
-  if (paging_mode) {
-    // the candidate layout is queried right where the page is built, so the
-    // consumer does not need a separate rime option round-trip per key
-    auto& rime = Rime::Instance();
-    bool is_horizontal_layout =
-        rime.getOption("_linear") || rime.getOption("_horizontal");
-    jCandidates =
-        rimeCandidatesPagedToJObject(env, context->menu, is_horizontal_layout);
-  } else {
-    auto [size, highlighted, list] = Rime::Instance().getBulkCandidates();
-    auto jList =
-        JRef<jobjectArray>(env, rimeCandidateListToJObjectArray(env, list));
-    jCandidates =
-        env->NewObject(GlobalRef->CandidatesBulk, GlobalRef->CandidatesBulkInit,
-                       size, highlighted, *jList);
-  }
-  return rimeResponseToJObject(env, jCommit, jComposition, jCandidates,
-                               jStatus);
+    auto commit = Rime::Instance().commit();
+    // the menu is only needed in paging mode, otherwise its candidates would be
+    // duplicated by the bulk candidates query below
+    auto context = Rime::Instance().context(paging_mode);
+    auto status = Rime::Instance().status();
+    auto jCommit = JRef(env, rimeCommitToJObject(env, *commit));
+    auto jComposition =
+        JRef(env, rimeCompositionToJObject(env, context->composition));
+    auto jStatus = JRef(env, rimeStatusToJObject(env, *status));
+    // keep the local references alive until RimeResponse is constructed below
+    jobject jCandidates = nullptr;
+    if (paging_mode) {
+      // the candidate layout is queried right where the page is built, so the
+      // consumer does not need a separate rime option round-trip per key
+      auto& rime = Rime::Instance();
+      bool is_horizontal_layout =
+          rime.getOption("_linear") || rime.getOption("_horizontal");
+      jCandidates = rimeCandidatesPagedToJObject(env, context->menu,
+                                                 is_horizontal_layout);
+    } else {
+      auto [size, highlighted, list] = Rime::Instance().getBulkCandidates();
+      auto jList =
+          JRef<jobjectArray>(env, rimeCandidateListToJObjectArray(env, list));
+      jCandidates = env->NewObject(GlobalRef->CandidatesBulk,
+                                   GlobalRef->CandidatesBulkInit, size,
+                                   highlighted, *jList);
+    }
+    return rimeResponseToJObject(env, jCommit, jComposition, jCandidates,
+                                 jStatus);
   });
 }

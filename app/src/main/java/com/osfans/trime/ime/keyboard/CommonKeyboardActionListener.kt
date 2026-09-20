@@ -130,10 +130,12 @@ class CommonKeyboardActionListener(override val di: DI) : DIAware {
                         service.commitText(action.commit)
                         false
                     }
+
                     text.isNotEmpty() -> {
                         onText(text)
                         false
                     }
+
                     else -> true
                 }
 
@@ -183,21 +185,37 @@ class CommonKeyboardActionListener(override val di: DI) : DIAware {
                     "t9_digit" -> arg.singleOrNull()?.takeIf { it in '0'..'9' }?.let { digit ->
                         service.postRimeJob { commitT9Digit(digit) }
                     }
+
                     "liquid_keyboard" -> handleLiquidKeyboard(arg)
+
                     "menu_keyboard" -> windowManager.attachWindow(SwitchOptionWindow(di))
+
                     "clipboard_window" -> handleClipboardWindow(arg)
+
                     "set_color_scheme" -> handleColorScheme(arg)
+
                     "set_theme" -> handleTheme(arg)
+
                     "broadcast" -> service.sendBroadcast(Intent(arg))
+
                     "clipboard" -> handleClipboard()
+
                     "commit" -> service.commitText(arg)
+
                     "date" -> service.commitText(customFormatDateTime(arg))
+
                     "run" -> handleRunCommand(arg)
+
                     "apply" -> handleApplyCommand(arg)
+
                     "share_text" -> service.shareText()
+
                     "select_candidate" -> handleSelectCandidate(arg)
+
                     "switch_hide_key_symbol" -> switchHideKeySymbol()
+
                     "switch_hide_key_hint" -> switchHideKeyHint()
+
                     else -> handleIntentAction(action.command, arg)
                 }
             }
@@ -268,10 +286,12 @@ class CommonKeyboardActionListener(override val di: DI) : DIAware {
                         Timber.i("try to start maintenance via command ...")
                         rime.launchOnReady { api -> api.deploy() }
                     }
+
                     "SYNC_USER_DATA" -> {
                         Timber.i("try to sync rime user data via command ...")
                         rime.launchOnReady { api -> api.syncUserData() }
                     }
+
                     "UPDATE_CONFIG" -> {
                         Timber.i("try to update rime config via command ...")
                         rime.launchOnReady { api ->
@@ -281,6 +301,7 @@ class CommonKeyboardActionListener(override val di: DI) : DIAware {
                             }
                         }
                     }
+
                     else -> Timber.w("Unknown apply method: $arg")
                 }
             }
@@ -352,8 +373,10 @@ class CommonKeyboardActionListener(override val di: DI) : DIAware {
 
                 val modifier = when {
                     action.modifier == 0 -> keyboardWindow.currentKeyboard.modifier
+
                     (action.modifier and KeyEvent.META_CTRL_ON) != 0 && isNavigationKey(action.code) ->
                         action.modifier or keyboardWindow.currentKeyboard.modifier
+
                     else -> action.modifier
                 }
 

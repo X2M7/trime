@@ -85,7 +85,9 @@ class EngineUnavailableView(
             labels.forEach { label ->
                 val action = when (label) {
                     "DEL" -> delete
+
                     "ENTER" -> enter
+
                     else -> {
                         { commit(label) }
                     }
@@ -107,6 +109,7 @@ class EngineUnavailableView(
                             },
                         )
                     }
+
                     else -> Button(context).apply {
                         text = label
                         textSize = 18f

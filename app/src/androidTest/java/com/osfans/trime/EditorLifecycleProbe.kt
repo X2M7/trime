@@ -671,6 +671,7 @@ object EditorLifecycleProbe {
                               preset_keyboards/luna_pinyin_t9: null
                               preset_keyboards/number: null
                               preset_keyboards/letter: null
+                              preset_keyboards/bopomofo/ascii_keyboard: default
                             """.trimIndent(),
                         )
                     }

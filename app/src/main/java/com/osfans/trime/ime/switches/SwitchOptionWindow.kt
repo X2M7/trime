@@ -116,13 +116,16 @@ class SwitchOptionWindow(di: DI) :
                                 }
                             }
                         }
+
                         SwitchOptionEntry.Static.Type.UpdateConfig -> rime.launchOnReady { r ->
                             r.updateConfig()
                             service.lifecycleScope.launch {
                                 Toast.makeText(service, R.string.done, Toast.LENGTH_SHORT).show()
                             }
                         }
+
                         SwitchOptionEntry.Static.Type.Keyboard -> AppUtils.launchMainToKeyboard(context)
+
                         SwitchOptionEntry.Static.Type.ThemeList -> {
                             val editorToken = service.editorToken
                             showDialog {
@@ -134,6 +137,7 @@ class SwitchOptionWindow(di: DI) :
                             }
                         }
                     }
+
                     is SwitchOptionEntry.Custom -> {
                         val editorToken = service.editorToken
                         val options = entry.switch.options

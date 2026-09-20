@@ -15,8 +15,6 @@ open class AndroidBaseConventionPlugin : Plugin<Project> {
             compilerOptions {
                 // https://youtrack.jetbrains.com/issue/KT-55947
                 jvmTarget.set(JvmTarget.JVM_11)
-                // https://youtrack.jetbrains.com/issue/KT-73255/Change-defaulting-rule-for-annotations
-                freeCompilerArgs.add("-Xannotation-default-target=param-property")
             }
         }
     }

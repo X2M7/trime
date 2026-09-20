@@ -4,6 +4,7 @@
 #include <rime/composition.h>
 #include <rime/dict/dictionary.h>
 #include <rime/service.h>
+
 #include "t9_assist.h"
 
 namespace trime {

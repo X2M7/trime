@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2015 - 2024 Rime community
+// SPDX-FileCopyrightText: 2015 - 2026 Rime community
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -21,18 +21,22 @@ import com.osfans.trime.ui.main.LogActivity
 import com.osfans.trime.util.DeployNotification
 import com.osfans.trime.util.appContext
 import com.osfans.trime.util.subprocess
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import splitties.systemservices.notificationManager
+import timber.log.Timber
 import java.io.IOException
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.locks.ReentrantLock
@@ -53,6 +57,9 @@ import kotlin.concurrent.withLock
  * Adapted from [fcitx5-android/FcitxDaemon.kt](https://github.com/fcitx5-android/fcitx5-android/blob/364afb44dcf0d9e3db3d43a21a32601b2190cbdf/app/src/main/java/org/fcitx/fcitx5/android/daemon/FcitxDaemon.kt)
  */
 object RimeDaemon {
+    private const val STARTUP_RETRY_DELAY_MS = 1_000L
+    private const val STARTUP_RETRY_MAX_ATTEMPTS = 30
+
     private val realRime by lazy { Rime() }
 
     private val rimeImpl by lazy { object : RimeApi by realRime {} }
@@ -64,6 +71,30 @@ object RimeDaemon {
     private var restartRequested = false
     private var fullCheckRequested = false
     private val restartNotifications = mutableSetOf<Int>()
+    private var manualRetryRequested = false
+    private val manualRetryWaiters = mutableListOf<CompletableDeferred<Unit>>()
+    private var lifecycleGeneration = 0L
+    private var startupRetryEpoch = 0L
+    private var startupRetryBlocked = false
+    private var retryExhaustionPending: Long? = null
+
+    @Volatile
+    private var startupRetryJob: Job? = null
+
+    private data class PendingLifecycleChange(
+        val restart: Boolean,
+        val fullCheck: Boolean,
+        val notifications: List<Int>,
+        val manualRetry: Boolean,
+        val manualWaiters: List<CompletableDeferred<Unit>>,
+        val generation: Long,
+        val retryExhaustionEpoch: Long?,
+    )
+
+    private data class AbandonedRequests(
+        val notifications: List<Int>,
+        val waiters: List<CompletableDeferred<Unit>>,
+    )
 
     internal val engineState: StateFlow<RimeLifecycle.State>
         get() = realRime.lifecycle.stateFlow
@@ -110,6 +141,99 @@ object RimeDaemon {
         }
     }
 
+    private fun cancelStartupRetryLocked() {
+        startupRetryJob?.cancel()
+        startupRetryJob = null
+    }
+
+    private fun resetStartupRetryLocked() {
+        cancelStartupRetryLocked()
+        startupRetryEpoch += 1
+        startupRetryBlocked = false
+        retryExhaustionPending = null
+    }
+
+    private fun sessionEndedFailure() = RimeUnavailableException(
+        IllegalStateException("All Rime sessions closed before startup completed"),
+    )
+
+    /**
+     * Poll app-scoped storage after reboot, then wake the lifecycle worker once.
+     * This job never starts or stops native Rime itself. When the bounded poll is
+     * exhausted, the worker publishes a retryable failure instead of leaving the
+     * engine indefinitely stopped with disabled recovery UI.
+     */
+    private fun scheduleStartupRetry() {
+        lock.withLock {
+            if (sessions.isEmpty()) return
+            if (startupRetryJob?.isActive == true) return
+            if (startupRetryBlocked) return
+            val retryEpoch = ++startupRetryEpoch
+            Timber.i("Scheduling Rime startup retry until storage is available")
+            val retryJob =
+                TrimeApplication.getInstance().coroutineScope.launch(Dispatchers.IO) {
+                    val owner = currentCoroutineContext()[Job]
+                    repeat(STARTUP_RETRY_MAX_ATTEMPTS) { attempt ->
+                        delay(STARTUP_RETRY_DELAY_MS)
+                        val canPoll = lock.withLock {
+                            startupRetryJob === owner &&
+                                sessions.isNotEmpty() &&
+                                realRime.lifecycle.currentState in
+                                setOf(RimeLifecycle.State.STOPPED, RimeLifecycle.State.FAILED)
+                        }
+                        if (!canPoll) return@launch
+                        if (!realRime.isStorageReadyForStartup()) {
+                            Timber.d("Rime startup retry ${attempt + 1}: storage still unavailable")
+                            return@repeat
+                        }
+                        val shouldDispatch = lock.withLock {
+                            if (startupRetryJob !== owner ||
+                                sessions.isEmpty() ||
+                                startupRetryEpoch != retryEpoch ||
+                                realRime.lifecycle.currentState !in
+                                setOf(RimeLifecycle.State.STOPPED, RimeLifecycle.State.FAILED)
+                            ) {
+                                false
+                            } else {
+                                // Release ownership before signalling. If storage becomes
+                                // unavailable again, the worker can schedule a fresh batch.
+                                startupRetryJob = null
+                                true
+                            }
+                        }
+                        if (shouldDispatch) lifecycleChanges.trySend(Unit)
+                        return@launch
+                    }
+                    val exhausted =
+                        lock.withLock {
+                            if (startupRetryJob !== owner ||
+                                sessions.isEmpty() ||
+                                startupRetryEpoch != retryEpoch ||
+                                realRime.lifecycle.currentState !in
+                                setOf(RimeLifecycle.State.STOPPED, RimeLifecycle.State.FAILED)
+                            ) {
+                                false
+                            } else {
+                                startupRetryJob = null
+                                startupRetryBlocked = true
+                                retryExhaustionPending = retryEpoch
+                                true
+                            }
+                        }
+                    if (exhausted) {
+                        Timber.w("Rime startup retry exhausted while sessions remain connected")
+                        lifecycleChanges.trySend(Unit)
+                    }
+                }
+            startupRetryJob = retryJob
+            retryJob.invokeOnCompletion {
+                lock.withLock {
+                    if (startupRetryJob === retryJob) startupRetryJob = null
+                }
+            }
+        }
+    }
+
     fun createSession(name: String): RimeSession = lock.withLock {
         if (sessions.containsKey(name)) {
             return@withLock sessions.getValue(name)
@@ -120,10 +244,33 @@ object RimeDaemon {
         return@withLock session
     }
 
-    fun destroySession(name: String): Unit = lock.withLock {
-        val session = sessions.remove(name) ?: return
-        session.close()
-        lifecycleChanges.trySend(Unit)
+    fun destroySession(name: String) {
+        val abandoned = lock.withLock {
+            val session = sessions.remove(name) ?: return
+            session.close()
+            val requests =
+                if (sessions.isEmpty()) {
+                    lifecycleGeneration += 1
+                    resetStartupRetryLocked()
+                    AbandonedRequests(
+                        restartNotifications.toList(),
+                        manualRetryWaiters.toList(),
+                    ).also {
+                        restartRequested = false
+                        fullCheckRequested = false
+                        restartNotifications.clear()
+                        manualRetryRequested = false
+                        manualRetryWaiters.clear()
+                    }
+                } else {
+                    null
+                }
+            lifecycleChanges.trySend(Unit)
+            requests
+        }
+        abandoned?.notifications?.forEach(notificationManager::cancel)
+        val failure = sessionEndedFailure()
+        abandoned?.waiters?.forEach { it.completeExceptionally(failure) }
     }
 
     /**
@@ -135,42 +282,157 @@ object RimeDaemon {
 
     init {
         DeployNotification.ensureChannel()
-        // Only this worker changes the native lifecycle. Never hold the session
-        // lock while waiting for deployment, shutdown, or restarting the engine.
+        // Session, restart, and automatic retry events change the native lifecycle here.
+        // Never hold the session lock while waiting for deployment, shutdown, or restart.
         TrimeApplication.getInstance().coroutineScope.launch(Dispatchers.IO) {
             for (change in lifecycleChanges) {
                 var activeNotifications = emptyList<Int>()
+                var activeManualWaiters = emptyList<CompletableDeferred<Unit>>()
+                var activeGeneration: Long? = null
+                var retainPending = false
+                var completionFailure: Throwable? = null
                 try {
                     RimeMaintenanceMutex.withLock {
-                        val (restart, fullCheck, notifications) = lock.withLock {
-                            Triple(restartRequested, fullCheckRequested, restartNotifications.toList()).also {
+                        val pending = lock.withLock {
+                            PendingLifecycleChange(
+                                restartRequested,
+                                fullCheckRequested,
+                                restartNotifications.toList(),
+                                manualRetryRequested,
+                                manualRetryWaiters.toList(),
+                                lifecycleGeneration,
+                                retryExhaustionPending,
+                            ).also {
                                 restartRequested = false
                                 fullCheckRequested = false
                                 restartNotifications.clear()
+                                manualRetryRequested = false
+                                manualRetryWaiters.clear()
+                                retryExhaustionPending = null
                             }
                         }
-                        activeNotifications = notifications
-                        if (realRime.lifecycle.currentState == RimeLifecycle.State.STARTING) {
-                            realRime.lifecycle.whenReady {}
+                        activeNotifications = pending.notifications
+                        activeManualWaiters = pending.manualWaiters
+                        activeGeneration = pending.generation
+                        if (pending.manualRetry) {
+                            lock.withLock { cancelStartupRetryLocked() }
                         }
-                        val stopping = lock.withLock {
-                            (realRime.isReady && (sessions.isEmpty() || restart)).also {
-                                if (it) realRime.beginShutdown()
+                        val generationCurrent = lock.withLock {
+                            pending.generation == lifecycleGeneration
+                        }
+                        if (!generationCurrent) {
+                            completionFailure = sessionEndedFailure()
+                        } else {
+                            val exhaustionCause =
+                                pending.retryExhaustionEpoch?.let {
+                                    IllegalStateException(
+                                        "Rime storage remained unavailable after " +
+                                            "$STARTUP_RETRY_MAX_ATTEMPTS startup checks",
+                                    )
+                                }
+                            val storageUnavailable =
+                                exhaustionCause != null && !realRime.isStorageReadyForStartup()
+                            val exhaustionApplied =
+                                if (storageUnavailable) {
+                                    val cause = checkNotNull(exhaustionCause)
+                                    lock.withLock {
+                                        pending.generation == lifecycleGeneration &&
+                                            pending.retryExhaustionEpoch == startupRetryEpoch &&
+                                            startupRetryBlocked &&
+                                            sessions.isNotEmpty() &&
+                                            realRime.failStartup(cause)
+                                    }
+                                } else {
+                                    false
+                                }
+                            if (exhaustionApplied) {
+                                completionFailure = RimeUnavailableException(exhaustionCause)
+                                // Preserve deployment intent for the explicit retry, but
+                                // retire ongoing notifications and this batch's waiters.
+                                lock.withLock {
+                                    if (pending.generation == lifecycleGeneration) {
+                                        restartRequested = restartRequested || pending.restart
+                                        fullCheckRequested = fullCheckRequested || pending.fullCheck
+                                    }
+                                }
+                            } else {
+                                pending.retryExhaustionEpoch?.let { epoch ->
+                                    lock.withLock {
+                                        if (startupRetryEpoch == epoch) startupRetryBlocked = false
+                                    }
+                                }
+                                if (realRime.lifecycle.currentState == RimeLifecycle.State.STARTING) {
+                                    realRime.lifecycle.whenReady {}
+                                }
+                                val stopping = lock.withLock {
+                                    (
+                                        pending.generation == lifecycleGeneration &&
+                                            realRime.isReady &&
+                                            (sessions.isEmpty() || pending.restart)
+                                        ).also {
+                                        if (it) realRime.beginShutdown()
+                                    }
+                                }
+                                if (stopping) realRime.finishShutdown()
+                                val sessionState = lock.withLock {
+                                    (pending.generation == lifecycleGeneration) to sessions.isNotEmpty()
+                                }
+                                if (!sessionState.first) {
+                                    completionFailure = sessionEndedFailure()
+                                } else if (sessionState.second &&
+                                    realRime.lifecycle.currentState in
+                                    setOf(RimeLifecycle.State.STOPPED, RimeLifecycle.State.FAILED)
+                                ) {
+                                    if (realRime.startup(pending.fullCheck)) {
+                                        lock.withLock {
+                                            if (pending.generation == lifecycleGeneration) {
+                                                resetStartupRetryLocked()
+                                            }
+                                        }
+                                        realRime.lifecycle.whenReady {}
+                                    } else {
+                                        retainPending = lock.withLock {
+                                            if (pending.generation != lifecycleGeneration || sessions.isEmpty()) {
+                                                false
+                                            } else {
+                                                restartRequested = restartRequested || pending.restart
+                                                fullCheckRequested = fullCheckRequested || pending.fullCheck
+                                                restartNotifications.addAll(pending.notifications)
+                                                manualRetryWaiters.addAll(pending.manualWaiters)
+                                                true
+                                            }
+                                        }
+                                        if (retainPending) scheduleStartupRetry()
+                                    }
+                                } else if (!sessionState.second) {
+                                    lock.withLock {
+                                        if (pending.generation == lifecycleGeneration) resetStartupRetryLocked()
+                                    }
+                                    completionFailure = sessionEndedFailure()
+                                }
                             }
-                        }
-                        if (stopping) realRime.finishShutdown()
-                        if (lock.withLock { sessions.isNotEmpty() } &&
-                            realRime.lifecycle.currentState in setOf(RimeLifecycle.State.STOPPED, RimeLifecycle.State.FAILED)
-                        ) {
-                            realRime.startup(fullCheck)
-                            realRime.lifecycle.whenReady {}
                         }
                     }
-                } catch (_: RimeUnavailableException) {
+                } catch (error: RimeUnavailableException) {
+                    completionFailure = error
                     // The engine published the cause and failure notification. Keep
                     // this worker alive for an explicit retry or a new session.
+                } catch (error: Throwable) {
+                    completionFailure = error
+                    throw error
                 } finally {
-                    activeNotifications.forEach(notificationManager::cancel)
+                    if (!retainPending) {
+                        if (completionFailure == null && activeGeneration != null) {
+                            val generationStillCurrent = lock.withLock {
+                                activeGeneration == lifecycleGeneration
+                            }
+                            if (!generationStillCurrent) completionFailure = sessionEndedFailure()
+                        }
+                        activeNotifications.forEach(notificationManager::cancel)
+                        activeManualWaiters.forEach { waiter ->
+                            completionFailure?.let(waiter::completeExceptionally) ?: waiter.complete(Unit)
+                        }
+                    }
                 }
             }
         }
@@ -182,12 +444,16 @@ object RimeDaemon {
     }
 
     suspend fun retryFailedStartup() = withContext(Dispatchers.IO) {
-        RimeMaintenanceMutex.withLock {
-            if (realRime.lifecycle.currentState == RimeLifecycle.State.FAILED && sessions.isNotEmpty()) {
-                realRime.startup()
-            }
-            if (realRime.lifecycle.currentState == RimeLifecycle.State.STARTING) realRime.lifecycle.whenReady {}
+        val completion = CompletableDeferred<Unit>()
+        val enqueued = lock.withLock {
+            if (sessions.isEmpty()) return@withLock false
+            resetStartupRetryLocked()
+            manualRetryRequested = true
+            manualRetryWaiters += completion
+            lifecycleChanges.trySend(Unit)
+            true
         }
+        if (enqueued) completion.await()
     }
 
     private inline fun sendNotification(
@@ -229,9 +495,11 @@ object RimeDaemon {
                 RimeMessage.DeployMessage.State.Start -> {
                     DeployNotification.showProgress()
                 }
+
                 RimeMessage.DeployMessage.State.Success -> {
                     DeployNotification.showSuccess()
                 }
+
                 RimeMessage.DeployMessage.State.Failure -> {
                     val log = withContext(Dispatchers.IO) {
                         try {

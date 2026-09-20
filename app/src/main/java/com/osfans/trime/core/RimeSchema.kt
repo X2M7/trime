@@ -32,8 +32,10 @@ class RimeSchema private constructor(val schemaId: String, loadConfig: Boolean) 
         } else {
             val schemaConfig = when {
                 schemaId.isEmpty() -> RimeConfig.openConfig("default")
+
                 schemaId.startsWith('.') ->
                     RimeConfig.openConfig(schemaId.substring(1))
+
                 else -> RimeConfig.openSchema(schemaId)
             }
             schemaConfig.use {

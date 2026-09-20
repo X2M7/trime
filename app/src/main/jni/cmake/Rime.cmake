@@ -25,6 +25,8 @@ option(BUILD_STATIC "" ON)
 add_subdirectory(librime)
 include(RimeConfigCompat)
 trime_adapt_rime_config()
+include(RimeLuaCompat)
+trime_adapt_rime_lua()
 target_compile_options(
   rime-static PRIVATE "-ffile-prefix-map=${CMAKE_CURRENT_SOURCE_DIR}=." "-Wno-error=deprecated-declarations")
 

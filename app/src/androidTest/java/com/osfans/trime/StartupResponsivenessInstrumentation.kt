@@ -47,6 +47,7 @@ class StartupResponsivenessInstrumentation : Instrumentation() {
     private var setupOnly = false
     private var shutdownOnly = false
     private var failureOnly = false
+    private var lateStorageOnly = false
     private var feedbackOnly = false
     private var editorsOnly = false
     override fun onCreate(arguments: Bundle?) {
@@ -63,6 +64,7 @@ class StartupResponsivenessInstrumentation : Instrumentation() {
         setupOnly = arguments?.getString("setup") == "true"
         shutdownOnly = arguments?.getString("shutdown") == "true"
         failureOnly = arguments?.getString("startupFailure") == "true"
+        lateStorageOnly = arguments?.getString("lateStorage") == "true"
         feedbackOnly = arguments?.getString("feedback") == "true"
         editorsOnly = arguments?.getString("editors") == "true"
         start()
@@ -85,6 +87,10 @@ class StartupResponsivenessInstrumentation : Instrumentation() {
         }
         if (failureOnly) {
             StartupFailureProbe.run(this)
+            return
+        }
+        if (lateStorageOnly) {
+            LateStorageProbe.run(this)
             return
         }
         if (setupOnly) {

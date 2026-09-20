@@ -2,13 +2,13 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+#include <cstdio>
+#include <memory>
 #include <opencc/Common.hpp>
 #include <opencc/Exception.hpp>
 #include <opencc/MarisaDict.hpp>
 #include <opencc/SimpleConverter.hpp>
 #include <opencc/TextDict.hpp>
-#include <cstdio>
-#include <memory>
 #include <stdexcept>
 #include <string>
 
@@ -81,8 +81,9 @@ Java_com_osfans_trime_data_opencc_OpenCCDictManager_openCCDictConv(
         serializeDictionary(*converted, dest_file);
       }
       if (!mode) {
-        // Validate the produced dictionary before Kotlin atomically publishes it.
-        // This checks readability, not arbitrary malformed-input safety or fsync.
+        // Validate the produced dictionary before Kotlin atomically publishes
+        // it. This checks readability, not arbitrary malformed-input safety or
+        // fsync.
         loadDictionary<opencc::MarisaDict>(dest_file);
       }
     } catch (const opencc::Exception& error) {

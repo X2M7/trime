@@ -12,8 +12,10 @@ import com.osfans.trime.util.yaml.mapping
 import com.osfans.trime.util.yaml.string
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
+import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.maps.shouldContainKey
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeInstanceOf
 import kotlinx.coroutines.CancellationException
 import timber.log.Timber
 import java.io.File
@@ -136,7 +138,7 @@ class ThemeLoaderTest :
                 val result =
                     ThemeLoader.loadFromSource(
                         "theme",
-                        sourceFile("name: from_source\nstyle: {}\n"),
+                        sourceFile("name: from_source\nstyle: {}\npreset_color_schemes: {default: {}}\n"),
                         noResources,
                     )
                 (result as? ThemeLoader.ThemeLoadResult.Success)?.theme?.name shouldBe "from_source"
@@ -197,14 +199,17 @@ class ThemeLoaderTest :
             }
 
             Then("actually absent optional custom and include files still allow source loading") {
-                val file = sourceFile("name: base\nstyle:\n  __include: missing:/style?\n")
+                val file = sourceFile(
+                    "name: base\nstyle:\n  __include: missing:/style?\n" +
+                        "preset_color_schemes: {default: {}}\n",
+                )
                 val result = ThemeLoader.loadFromSource("theme", file, ThemeLoader.SourceLoader { null })
                 (result as? ThemeLoader.ThemeLoadResult.Success)?.theme?.name shouldBe "base"
                 ThemeLoader.loadSourceNode("theme", file, ThemeLoader.SourceLoader { null })?.mapping?.get("name")?.string shouldBe "base"
             }
 
             Then("a fresh load retries a repaired custom file and reads later edits") {
-                val file = sourceFile("name: base\nstyle: {}\n")
+                val file = sourceFile("name: base\nstyle: {}\npreset_color_schemes: {default: {}}\n")
                 val custom = sourceFile("patch: [\n")
                 fun loader() = ThemeLoader.SourceLoader { id -> custom.takeIf { id == "theme.custom" } }
                 ThemeLoader.loadFromSource("theme", file, loader()) shouldBe null
@@ -224,6 +229,38 @@ class ThemeLoaderTest :
                 shouldThrow<CancellationException> {
                     ThemeLoader.loadFromSource("theme", file, ThemeLoader.SourceLoader { throw CancellationException("custom lookup cancelled") })
                 }
+            }
+
+            Then("a theme that declares no color scheme is refused") {
+                // Nothing could be rendered with it, so it is reported as a load
+                // failure instead of crashing when a scheme is first needed.
+                val result =
+                    ThemeLoader.loadFromSource(
+                        "theme",
+                        sourceFile("name: no_scheme\nstyle: {}\n"),
+                        noResources,
+                    )
+                (result as? ThemeLoader.ThemeLoadResult.Failure)
+                    ?.error
+                    .shouldBeInstanceOf<ThemeLoader.ThemeLoadError.NoColorScheme>()
+            }
+
+            Then("what the checks found travels with the loaded theme") {
+                val result =
+                    ThemeLoader.loadFromSource(
+                        "theme",
+                        sourceFile("name: t\nheight: 5\nstyle: {}\npreset_color_schemes: {default: {}}\n"),
+                        noResources,
+                    )
+                val findings = (result as? ThemeLoader.ThemeLoadResult.Success)?.findings
+                findings.orEmpty().map { it.code } shouldContain ThemeDiagnostics.Code.UNKNOWN_TOP_LEVEL_KEY
+            }
+
+            Then("an explicit file wins over the loader cache") {
+                val loader = ThemeLoader.SourceLoader { null }
+                fun nameOf(file: File): String? = loader.load("theme", file)?.mapping?.get("name")?.string
+                nameOf(sourceFile("name: first\n")) shouldBe "first"
+                nameOf(sourceFile("name: second\n")) shouldBe "second"
             }
         }
 
@@ -378,6 +415,56 @@ class ThemeLoaderTest :
                 letter.name shouldBe "shared"
                 letter.asciiMode shouldBe true
                 letter.keys.size shouldBe 1
+            }
+        }
+
+        Given("theme diagnostics") {
+            /** Collects the lines the loader logs, one per finding. */
+            class CollectingTree(val lines: MutableList<String>) : Timber.Tree() {
+                override fun log(
+                    priority: Int,
+                    tag: String?,
+                    message: String,
+                    t: Throwable?,
+                ) {
+                    val level =
+                        when (priority) {
+                            Log.INFO -> "I"
+                            Log.WARN -> "W"
+                            else -> "?"
+                        }
+                    lines += "$level $message"
+                }
+            }
+
+            val lines = mutableListOf<String>()
+            val tree = CollectingTree(lines)
+            beforeTest { Timber.plant(tree) }
+            afterTest { Timber.uproot(tree) }
+
+            Then("decodeAndReport decodes and reports in one step") {
+                // The JVM cannot parse colors (android.graphics is not mocked),
+                // so only the structural findings are asserted here; the color
+                // findings are covered by ThemeDiagnosticsTest.
+                val result =
+                    ThemeLoader.decodeAndReport(
+                        "fixture",
+                        node(
+                            """
+                            config_version: "3.0"
+                            name: fixture
+                            style: {candidate_texts_size: 12}
+                            preset_color_schemes: {default: {back_color: "#000000"}}
+                            height: 5
+                            """.trimIndent(),
+                        ).mapping!!,
+                    )
+                result.shouldBeInstanceOf<ThemeLoader.ThemeLoadResult.Success>().theme.name shouldBe "fixture"
+                lines.filter { "unknown key" in it } shouldBe
+                    listOf(
+                        "I Theme 'fixture': unknown key 'height' in ''; the runtime ignores it",
+                        "W Theme 'fixture': unknown key 'candidate_texts_size' in 'style'; the runtime ignores it",
+                    )
             }
         }
     })

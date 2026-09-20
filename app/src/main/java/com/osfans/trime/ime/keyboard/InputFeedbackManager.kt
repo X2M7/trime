@@ -280,7 +280,9 @@ object InputFeedbackManager {
                         .replace("_", " ")
                         .lowercase()
                 }
+
                 "" is T -> content as String
+
                 else -> return
             }
 

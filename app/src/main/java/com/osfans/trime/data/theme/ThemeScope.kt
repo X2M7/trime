@@ -47,12 +47,20 @@ class ThemeScope internal constructor(
         val table = ColorTable.resolve(scheme, theme.fallbackColors, parseColor)
         colorTable = table
         colorsValue = ThemeColors(table)
+        // Values the theme file cannot resolve are reported once at load, per
+        // scheme (see ThemeDiagnostics); this is the demand-driven remainder.
         if (table.unresolvedKeys.isNotEmpty()) {
             Timber.w("Unknown color key: %s", table.unresolvedKeys.joinToString { it.key })
         }
-        if (table.invalidValues.isNotEmpty()) {
-            Timber.w("Invalid color value: %s", table.invalidValues.joinToString { it.key })
-        }
+    }
+
+    /** Resolves a color while preserving the difference between transparent and unavailable. */
+    internal fun colorOrNull(key: String): Int? {
+        val tableEntry = ColorKey.from(key)?.let { colorTable?.get(it) }
+        if (tableEntry is ColorTable.Value.Color) return tableEntry.argb
+        val scheme = requireNotNull(activeColorScheme) { "ThemeScope is not initialized" }
+        val raw = ColorTable.resolveRaw(key, scheme.colors, theme.fallbackColors)
+        return runCatching { parseColor(raw ?: key) }.getOrNull()
     }
 
     /** Resolves a color key through this scope; theme-only keys resolve via the fallback chain. */

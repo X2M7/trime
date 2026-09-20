@@ -26,7 +26,8 @@ void T9::Reset() {
 }
 
 void T9::Clear() {
-  // Ending a composition must not rebuild schema-dependent indexes on the next key.
+  // Ending a composition must not rebuild schema-dependent indexes on the next
+  // key.
   edit_ = {};
   rendered_.clear();
   engine_to_raw_ = {0};
@@ -47,7 +48,8 @@ void T9::SetAssistOptions(int options) {
   assist_options_ = options;
   assist_.reset();
   assist_attempted_ = false;
-  ++revision_;  // A click from the previous settings must not apply a disabled rule.
+  ++revision_;  // A click from the previous settings must not apply a disabled
+                // rule.
 }
 
 bool T9::Sync(Session* session) {
@@ -345,9 +347,10 @@ void T9::AddAlternatives(T9Snapshot* snapshot) {
     for (uint32_t id = 0; id < count; ++id) {
       auto spelling = dictionary_->primary_table()->GetSyllableById(id);
       if (spelling.empty() || spelling.size() > 6 ||
-          !std::all_of(spelling.begin(), spelling.end(), [](char c) {
-            return c >= 'a' && c <= 'z';
-          }) || !Exact(spelling, id)) continue;
+          !std::all_of(spelling.begin(), spelling.end(),
+                       [](char c) { return c >= 'a' && c <= 'z'; }) ||
+          !Exact(spelling, id))
+        continue;
       syllables.AddSyllable(spelling);
     }
     auto index = std::make_unique<T9Assist>();
@@ -356,17 +359,23 @@ void T9::AddAlternatives(T9Snapshot* snapshot) {
   }
   if (!assist_) return;
   int start = snapshot->focus;
-  int end = std::min(static_cast<int>(edit_.input.size()), start + T9Assist::kMaxInput);
+  int end = std::min(static_cast<int>(edit_.input.size()),
+                     start + T9Assist::kMaxInput);
   for (const auto& lock : edit_.locks)
     if (lock.start > start) end = std::min(end, lock.start);
-  auto alternatives = assist_->Find(edit_.input.substr(start, end - start), assist_options_);
+  auto alternatives =
+      assist_->Find(edit_.input.substr(start, end - start), assist_options_);
   int added = 0;
   for (const auto& alternative : alternatives) {
     const int finish = start + alternative.length;
-    if (std::any_of(snapshot->choices.begin(), snapshot->choices.end(), [&](const auto& choice) {
-          return choice.start == start && choice.end == finish && choice.spelling == alternative.spelling;
-        })) continue;
-    snapshot->choices.push_back({start, finish, alternative.spelling, false, false, alternative.sources});
+    if (std::any_of(snapshot->choices.begin(), snapshot->choices.end(),
+                    [&](const auto& choice) {
+                      return choice.start == start && choice.end == finish &&
+                             choice.spelling == alternative.spelling;
+                    }))
+      continue;
+    snapshot->choices.push_back({start, finish, alternative.spelling, false,
+                                 false, alternative.sources});
     if (++added == T9Assist::kMaxChoices) break;
   }
 }

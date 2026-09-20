@@ -45,7 +45,7 @@ def main():
     parser.add_argument("--apk", type=Path, required=True)
     parser.add_argument("--test-apk", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
-    parser.add_argument("--probe", choices=("setup", "engine", "shutdown", "startupFailure", "feedback", "t02", "clip", "clipSave", "saf", "editors"), required=True)
+    parser.add_argument("--probe", choices=("setup", "engine", "shutdown", "startupFailure", "lateStorage", "feedback", "t02", "clip", "clipSave", "saf", "editors"), required=True)
     parser.add_argument("--saf-tree")
     parser.add_argument("--saf-revoke", action="store_true")
     parser.add_argument("--bind-ime-after-editor-focus", action="store_true",
@@ -227,7 +227,7 @@ def run(args):
         (args.output / "tested-ime-audit.json").write_text(json.dumps(tested_audit, indent=2) + "\n")
     # Deliberate missing-theme/storage/provider faults still retain all warnings
     # for review. They never receive a warning-free label based on functional PASS.
-    injects_faults = args.probe in ("engine", "startupFailure", "saf", "clipSave")
+    injects_faults = args.probe in ("engine", "startupFailure", "lateStorage", "saf", "clipSave")
     assertions_passed = instrumentation_passed(run.returncode, output)
     passed = assertions_passed and tested_audit["capture_has_records"]
     if glyph_evidence is not None:

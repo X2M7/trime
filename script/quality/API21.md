@@ -4,15 +4,15 @@ The application must retain `minSdk = 21`. Do not use `tools:overrideLibrary`
 to force incompatible Android libraries into the APK. Compile/target SDK upgrades
 do not authorize changing this minimum.
 
-Audited on 2026-09-06 against the published AAR manifests and POM dependencies:
+Audited on 2026-09-20 against the published AAR manifests and POM dependencies:
 
 | Dependency | Selected | Incompatible update | Reason |
 | --- | --- | --- | --- |
 | Activity | 1.11.0 | 1.12.0 / 1.13.0 | minSdk 23 |
 | Core | 1.17.0 | 1.18.0 / 1.19.0 | minSdk 23 |
 | AppCompat | 1.7.1 | 1.8.0 | minSdk 23 |
-| Navigation | 2.9.8 | 2.10.0 | runtime-android minSdk 24 |
-| Room | 2.7.2 | 2.8.4 | runtime-android minSdk 23 |
+| Navigation | 2.9.8 | 2.10.1 | runtime-android minSdk 24 |
+| Room | 2.7.2 | 2.8.5 | runtime-android minSdk 23 |
 | Paging | 3.3.6 | 3.5.1 | runtime minSdk 23 |
 | WorkManager | 2.10.5 | 2.11.x | minSdk 23 |
 
@@ -44,7 +44,8 @@ Primary references:
 - [Activity 1.12 AAR](https://dl.google.com/dl/android/maven2/androidx/activity/activity/1.12.0/activity-1.12.0.aar)
 - [Activity 1.13 AAR](https://dl.google.com/dl/android/maven2/androidx/activity/activity/1.13.0/activity-1.13.0.aar)
 - [Core 1.19 AAR](https://dl.google.com/dl/android/maven2/androidx/core/core/1.19.0/core-1.19.0.aar)
-- [Navigation 2.10 runtime AAR](https://dl.google.com/dl/android/maven2/androidx/navigation/navigation-runtime-android/2.10.0/navigation-runtime-android-2.10.0.aar)
+- [Navigation 2.10.1 runtime AAR](https://dl.google.com/dl/android/maven2/androidx/navigation/navigation-runtime-android/2.10.1/navigation-runtime-android-2.10.1.aar)
+- [Room 2.8.5 runtime AAR](https://dl.google.com/dl/android/maven2/androidx/room/room-runtime-android/2.8.5/room-runtime-android-2.8.5.aar)
 - [Iconics 5.6 dependency POM](https://repo.maven.apache.org/maven2/com/mikepenz/iconics-core/5.6.0/iconics-core-5.6.0.pom)
 
 Runtime test coverage, APK fingerprints and any remaining limitations belong in

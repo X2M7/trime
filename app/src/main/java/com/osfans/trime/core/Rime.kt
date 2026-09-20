@@ -155,9 +155,11 @@ class Rime :
             if (message is RimeMessage.DeployMessage) {
                 when (message.data) {
                     RimeMessage.DeployMessage.State.Start -> Unit
+
                     RimeMessage.DeployMessage.State.Success -> {
                         deployFinished.complete(true)
                     }
+
                     RimeMessage.DeployMessage.State.Failure -> {
                         deployFinished.complete(false)
                     }
@@ -451,8 +453,10 @@ class Rime :
 
     private fun asciiTipsText(status: StatusProto): String = when {
         status.isAsciiMode -> "En"
+
         status.schemaName.isNotEmpty() && !status.schemaName.startsWith('.') ->
             status.schemaName.take(2)
+
         else -> ""
     }
 
@@ -480,8 +484,10 @@ class Rime :
         }
         val inlinePreedit = when {
             mode == InlinePreeditMode.DISABLE -> InlinePreeditProto("")
+
             mode == InlinePreeditMode.COMPOSING_TEXT || t9 ->
                 InlinePreeditProto(composition.preedit ?: "", composition.cursorPos)
+
             else -> InlinePreeditProto(composition.commitTextPreview ?: "")
         }
         val composition = if (mode == InlinePreeditMode.COMPOSING_TEXT) {
@@ -501,6 +507,7 @@ class Rime :
                 statusCached = getRimeStatus()
                 schemaCached = RimeSchema(it.data.id)
             }
+
             is RimeMessage.OptionMessage -> {
                 optionCache.update(it.data.option, it.data.value)
                 // Option change won't trigger response update
@@ -511,29 +518,36 @@ class Rime :
                     showAsciiSwitchTips(status)
                 }
             }
+
             is RimeMessage.DeployMessage -> {
                 if (it.data == RimeMessage.DeployMessage.State.Start) {
                     OpenCCDictManager.buildOpenCCDict()
                 }
             }
+
             is RimeMessage.CompositionMessage -> {
                 val composition = it.data
                 compositionCached = composition
             }
+
             is RimeMessage.PagedCandidatesMessage -> {
                 val paged = it.data
                 paging = paged.hasPrevPage
                 hasMenu = paged.candidates.isNotEmpty()
             }
+
             is RimeMessage.BulkCandidatesMessage -> {
                 hasMenu = it.data.candidates.isNotEmpty()
             }
+
             is RimeMessage.StatusMessage -> {
                 statusCached = it.data
                 updateSchemaCached(it.data)
                 refreshOptionCache()
             }
+
             is RimeMessage.T9Message -> t9Cached = it.data
+
             else -> {}
         }
     }
@@ -579,22 +593,43 @@ class Rime :
         }
     }
 
-    fun startup(fullCheck: Boolean = false) {
-        if (!RimeDataSync.isStorageAvailable(appContext) &&
-            !(RimeDataSync.isRuntimeReady() && DataManager.hasDeployedResources())
-        ) {
-            lifecycleRegistry.fail(IllegalStateException("Rime storage is unavailable"))
-            return
+    /**
+     * Start the native Rime dispatcher when storage is ready and the lifecycle can start.
+     *
+     * App-scoped storage can appear late after reboot. That is a transient condition rather
+     * than an engine failure, so leave the lifecycle unchanged and let the daemon retry.
+     * An unavailable external sync tree must not block an already deployed local runtime.
+     *
+     * @return true when startup was accepted; false when it should be retried later or the
+     * lifecycle is already running.
+     */
+    fun startup(fullCheck: Boolean = false): Boolean {
+        if (!isStorageReadyForStartup()) {
+            Timber.w("Skip starting rime: storage not available!")
+            return false
         }
         if (lifecycle.currentState == RimeLifecycle.State.FAILED) dispatcher.stop()
         if (lifecycle.currentState != RimeLifecycle.State.STOPPED && lifecycle.currentState != RimeLifecycle.State.FAILED) {
             Timber.w("Skip starting rime: not at stopped state!")
-            return
+            return false
         }
         registerRimeMessageHandler(::handleRimeMessage)
         startupFullCheck = fullCheck
         lifecycleRegistry.emitEvent(RimeLifecycle.Event.ON_START)
         dispatcher.start()
+        return true
+    }
+
+    /** The storage predicate shared by startup and the daemon's bounded late-media poll. */
+    internal fun isStorageReadyForStartup(): Boolean = RimeDataSync.isStorageAvailable(appContext) ||
+        (RimeDataSync.isRuntimeReady() && DataManager.hasDeployedResources())
+
+    /** Publish a bounded late-storage failure so callers can offer an explicit retry. */
+    internal fun failStartup(error: Throwable): Boolean = if (lifecycle.currentState in setOf(RimeLifecycle.State.STOPPED, RimeLifecycle.State.FAILED)) {
+        lifecycleRegistry.fail(error)
+        true
+    } else {
+        false
     }
 
     fun beginShutdown() {

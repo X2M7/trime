@@ -245,10 +245,15 @@ class KeyboardWindow(di: DI) :
         val dot =
             when (id) {
                 ".default" -> smartMatchKeyboard()
+
                 ".prior" -> cycleKeyboardIds.getOrNull(currentIdx - 1) ?: currentKeyboardId
+
                 ".next" -> cycleKeyboardIds.getOrNull(currentIdx + 1) ?: currentKeyboardId
+
                 ".last" -> lastKeyboardId
+
                 ".last_lock" -> lastLockKeyboardId
+
                 ".ascii" -> {
                     var ascii = activeKeyboard?.asciiKeyboard
                     if (ascii.isNullOrEmpty()) {
@@ -260,6 +265,7 @@ class KeyboardWindow(di: DI) :
                         theme.fallbackKeyboards["letter"] ?: "default"
                     }
                 }
+
                 else -> {
                     id.ifEmpty {
                         if (activeKeyboard?.isLock == true) currentKeyboardId else lastLockKeyboardId
@@ -315,8 +321,10 @@ class KeyboardWindow(di: DI) :
         }
         val target = when (policy) {
             EditorKeyboard.ASCII -> evalKeyboard(".ascii")
+
             EditorKeyboard.NUMBER -> "number".takeIf { it in presetKeyboardIds }
                 ?: theme.fallbackKeyboards["number"] ?: "default"
+
             EditorKeyboard.USER -> saved?.takeIf { it.schemaId == schema && it.keyboardId in presetKeyboardIds }?.keyboardId
                 ?: if (saved != null) smartMatchKeyboard() else evalKeyboard("")
         }
@@ -325,10 +333,14 @@ class KeyboardWindow(di: DI) :
         attachKeyboard(target, updateMode = false)
         val targetMode = when {
             restrictedEditor -> true
+
             saved != null && saved.schemaId == schema -> saved.asciiMode
+
             saved != null -> currentKeyboard.asciiMode
+
             theme.generalStyle.resetAsciiModeOnFocusChange ->
                 if (currentKeyboard.resetAsciiMode) currentKeyboard.asciiMode else currentKeyboard.lastAsciiMode
+
             else -> ascii
         }
         desiredAsciiMode = targetMode
@@ -382,12 +394,14 @@ class KeyboardWindow(di: DI) :
         val option = value.option
         when {
             option == "ascii_mode" -> desiredAsciiMode = value.value
+
             option.startsWith("_keyboard_") -> {
                 val target = option.removePrefix("_keyboard_")
                 if (target.isNotEmpty()) {
                     switchKeyboard(target)
                 }
             }
+
             option.startsWith("_key_") -> {
                 val what = option.removePrefix("_key_")
                 if (what.isNotEmpty() && value.value) {

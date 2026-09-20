@@ -2,6 +2,7 @@
 #pragma once
 
 #include <rime/algo/algebra.h>
+
 #include <array>
 
 namespace trime {

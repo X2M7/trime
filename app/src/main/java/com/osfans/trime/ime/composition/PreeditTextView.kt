@@ -40,6 +40,7 @@ constructor(
                 newCursorPos = bytes.size
                 return true
             }
+
             MotionEvent.ACTION_UP -> {
                 touchedText?.let {
                     if (newCursorPos >= 0 && it == text.toString()) onMoveCursor?.invoke(newCursorPos, it)
@@ -48,6 +49,7 @@ constructor(
                 newCursorPos = -1
                 return true
             }
+
             MotionEvent.ACTION_CANCEL -> {
                 touchedText = null
                 newCursorPos = -1

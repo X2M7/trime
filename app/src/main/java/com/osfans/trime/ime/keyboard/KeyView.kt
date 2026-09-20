@@ -127,11 +127,13 @@ class KeyView(
                         val actionBehavior = if (pressedIdx != -1 && pressedIdx != id) KeyBehavior.COMBO else behavior
                         key.getAction(actionBehavior)?.let { processKeyAction(it, actionBehavior) }
                     }
+
                     KeyBehavior.DOUBLE_CLICK, KeyBehavior.LAZY_DOUBLE_CLICK,
                     KeyBehavior.SWIPE_UP, KeyBehavior.SWIPE_DOWN, KeyBehavior.SWIPE_LEFT, KeyBehavior.SWIPE_RIGHT,
                     -> if (key.hasAction(behavior)) {
                         key.getAction(behavior)?.let { processKeyAction(it, behavior) }
                     }
+
                     else -> {}
                 }
 
@@ -155,6 +157,7 @@ class KeyView(
                 if (rime.run { statusCached.isComposing }) {
                     when {
                         delta < 0 -> keyboardActionListener.onKey(KeyEvent.KEYCODE_DEL, 0)
+
                         delta > 0 -> service.postRimeJob {
                             if (t9Cached.canUndo) t9Action(t9Cached.revision, T9Action.Undo)
                         }

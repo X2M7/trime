@@ -41,11 +41,13 @@ class LiquidWindow(di: DI) :
         LiquidAdapter(scope) {
             when (currentDataType) {
                 LiquidData.Type.SYMBOL -> triggerSymbolInput(this.altText)
+
                 LiquidData.Type.TABS -> {
                     val realPosition = LiquidData.getTagList()
                         .indexOfFirst { it.label == this.text }
                     setDataByIndex(realPosition)
                 }
+
                 else -> {
                     service.commitText(this.text)
                     if (currentDataType != LiquidData.Type.HISTORY) {
@@ -102,6 +104,7 @@ class LiquidWindow(di: DI) :
                 symbolHistory.load()
                 submitData(symbolHistory.toOrderedList().map { LiquidKeyboard.KeyItem(it) })
             }
+
             else -> {
                 val data = LiquidData.getDataByIndex(i)
                 submitData(data)
