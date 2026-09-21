@@ -806,15 +806,15 @@ object EditorLifecycleProbe {
                             val previousTip = checkNotNull(tipJobField.get(realRime) as Job?)
                             check(previousTip.isActive) { "No pending ASCII tip before redeploy" }
                             updateConfig()
-                            checkTransientEditorStateCleared("successful native restart")
                             check(previousTip.isCancelled) { "Old native context's ASCII tip survived redeploy" }
                             val currentTip = checkNotNull(tipJobField.get(realRime) as Job?)
                             check(currentTip !== previousTip) { "Redeploy reused the old ASCII-tip timer" }
                             withTimeout(5000) { currentTip.join() }
                             check(currentTip.isCompleted && !currentTip.isCancelled) { "New engine's ASCII tip did not clear normally" }
-                            check(compositionCached.length == 0 && compositionCached.preedit.orEmpty().isEmpty()) {
-                                "New engine's ASCII tip did not restore its empty composition"
-                            }
+                            // startRime() intentionally publishes a fresh, non-editor ASCII/schema
+                            // tip. Assert the complete transient-state boundary after that new
+                            // timer restores the native engine's empty composition.
+                            checkTransientEditorStateCleared("successful native restart after ASCII tip")
                         }
                         phase("PASS: redeploy cancels the old ASCII tip and the new engine clears its own tip")
                     } finally {
