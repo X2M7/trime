@@ -187,6 +187,10 @@ class MainActivity : AppCompatActivity() {
         deferredToolbarMenu = binding.mainToolbar.toolbar.menu
         binding.root.doOnPreDraw {
             firstContentPreDraw = true
+            // A recreated Activity can inherit an already-focused window without
+            // receiving a new onWindowFocusChanged(true) callback. Its first
+            // pre-draw still proves that this window owns focus.
+            if (hasWindowFocus()) firstWindowFocusReceived = true
             postToolbarMenuIfReady()
         }
         navController = binding.navHostFragment.getFragment<NavHostFragment>().navController

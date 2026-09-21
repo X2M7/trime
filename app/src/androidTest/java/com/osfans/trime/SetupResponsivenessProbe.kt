@@ -173,8 +173,33 @@ object SetupResponsivenessProbe {
             return main { checkNotNull(dialog(activity)) }
         }
         fun awaitToolbarMenu(activity: MainActivity) {
-            await("Deferred toolbar menu was not installed after the first pre-draw and focus handoff") {
-                main { hasExpectedMainToolbarMenu(activity) }
+            val deadline = SystemClock.uptimeMillis() + 15_000
+            while (!main { hasExpectedMainToolbarMenu(activity) }) {
+                check(SystemClock.uptimeMillis() < deadline) {
+                    main {
+                        val flags =
+                            listOf(
+                                "firstContentPreDraw",
+                                "firstWindowFocusReceived",
+                                "toolbarMenuPosted",
+                                "deferredToolbarMenu",
+                            ).joinToString { name ->
+                                val field = MainActivity::class.java.getDeclaredField(name).apply { isAccessible = true }
+                                "$name=${field.get(activity)}"
+                            }
+                        val menu = activity.findViewById<Toolbar>(R.id.toolbar)?.menu
+                        val items = menu?.let {
+                            (0 until it.size()).joinToString { index ->
+                                val item = it.getItem(index)
+                                "${item.itemId}:${item.isVisible}:${item.isEnabled}"
+                            }
+                        }
+                        "Deferred toolbar menu was not installed after the first pre-draw and focus handoff: " +
+                            "focused=${activity.hasWindowFocus()}, lifecycle=${activity.lifecycle.currentState}, " +
+                            "$flags, menu=$items"
+                    }
+                }
+                SystemClock.sleep(50)
             }
         }
         var checks = 0
