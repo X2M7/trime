@@ -13,9 +13,11 @@ import android.widget.Button
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.Toolbar
 import androidx.lifecycle.Lifecycle
+import androidx.navigation.NavController
 import com.hjq.permissions.Permission
 import com.hjq.permissions.XXPermissions
 import com.osfans.trime.ui.main.MainActivity
+import com.osfans.trime.ui.main.NavigationRoute
 import com.osfans.trime.ui.setup.SetupActivity
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.atomic.AtomicLong
@@ -219,6 +221,118 @@ object SetupResponsivenessProbe {
         }
     }
 
+    private fun actionRunRestoration(instrumentation: Instrumentation): Int {
+        fun <T> main(block: () -> T): T {
+            var result: Result<T>? = null
+            instrumentation.runOnMainSync { result = runCatching(block) }
+            return checkNotNull(result).getOrThrow()
+        }
+        fun await(message: String, condition: () -> Boolean) {
+            val deadline = SystemClock.uptimeMillis() + 15_000
+            while (!condition()) {
+                check(SystemClock.uptimeMillis() < deadline) { message }
+                SystemClock.sleep(50)
+            }
+        }
+        val controllerField = MainActivity::class.java.getDeclaredField("navController").apply { isAccessible = true }
+        val dialogField = MainActivity::class.java.getDeclaredField("notificationDialog").apply { isAccessible = true }
+        fun controller(activity: MainActivity): NavController? = runCatching { controllerField.get(activity) as? NavController }.getOrNull()
+        fun awaitRoute(activity: MainActivity, route: String, message: String) {
+            await(message) { main { controller(activity)?.currentDestination?.route == route } }
+        }
+        val activities = mutableListOf<Activity>()
+        try {
+            val command =
+                Intent(instrumentation.targetContext, MainActivity::class.java)
+                    .setAction(Intent.ACTION_RUN)
+                    .putExtra(MainActivity.EXTRA_SETTINGS_ROUTE, NavigationRoute.About)
+                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            val first = (instrumentation.startActivitySync(command) as MainActivity).also { activities += it }
+            awaitRoute(first, NavigationRoute.About.path, "ACTION_RUN did not reach the requested destination")
+            main {
+                check(first.intent.action == null && !first.intent.hasExtra(MainActivity.EXTRA_SETTINGS_ROUTE)) {
+                    "MainActivity retained a consumed ACTION_RUN command"
+                }
+                val nav = checkNotNull(controller(first))
+                nav.popBackStack(NavigationRoute.Main.path, false)
+                nav.navigate(NavigationRoute.Developer.path)
+                (dialogField.get(first) as? AlertDialog)?.dismiss()
+            }
+            awaitRoute(first, NavigationRoute.Developer.path, "Could not leave the direct destination")
+
+            val monitor = instrumentation.addMonitor(MainActivity::class.java.name, null, false)
+            val recreated = try {
+                main { first.recreate() }
+                (monitor.waitForActivityWithTimeout(15_000) as? MainActivity)
+                    .also { if (it != null) activities += it }
+            } finally {
+                instrumentation.removeMonitor(monitor)
+            }
+            checkNotNull(recreated) { "ACTION_RUN MainActivity did not recreate" }
+            awaitRoute(
+                recreated,
+                NavigationRoute.Developer.path,
+                "Recreation replayed ACTION_RUN or lost the restored non-default destination",
+            )
+            main {
+                check(recreated.intent.action == null && !recreated.intent.hasExtra(MainActivity.EXTRA_SETTINGS_ROUTE))
+                (dialogField.get(recreated) as? AlertDialog)?.dismiss()
+            }
+
+            // MainActivity is singleTask. A command sent while it is alive must
+            // be consumed through onNewIntent without becoming persistent state.
+            val warmCommand =
+                Intent(instrumentation.targetContext, MainActivity::class.java)
+                    .setAction(Intent.ACTION_RUN)
+                    .putExtra(MainActivity.EXTRA_SETTINGS_ROUTE, NavigationRoute.About)
+                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            instrumentation.targetContext.startActivity(warmCommand)
+            awaitRoute(recreated, NavigationRoute.About.path, "Warm ACTION_RUN did not reach the existing MainActivity")
+            main {
+                check(recreated.intent.action == null && !recreated.intent.hasExtra(MainActivity.EXTRA_SETTINGS_ROUTE)) {
+                    "MainActivity retained a warm ACTION_RUN command"
+                }
+                val nav = checkNotNull(controller(recreated))
+                nav.popBackStack(NavigationRoute.Main.path, false)
+                nav.navigate(NavigationRoute.General.path)
+                (dialogField.get(recreated) as? AlertDialog)?.dismiss()
+            }
+            awaitRoute(recreated, NavigationRoute.General.path, "Could not leave the warm direct destination")
+
+            val secondMonitor = instrumentation.addMonitor(MainActivity::class.java.name, null, false)
+            val warmRecreated = try {
+                main { recreated.recreate() }
+                (secondMonitor.waitForActivityWithTimeout(15_000) as? MainActivity)
+                    .also { if (it != null) activities += it }
+            } finally {
+                instrumentation.removeMonitor(secondMonitor)
+            }
+            checkNotNull(warmRecreated) { "Warm ACTION_RUN MainActivity did not recreate" }
+            awaitRoute(
+                warmRecreated,
+                NavigationRoute.General.path,
+                "Warm recreation replayed ACTION_RUN or lost the restored non-default destination",
+            )
+            main {
+                check(warmRecreated.intent.action == null && !warmRecreated.intent.hasExtra(MainActivity.EXTRA_SETTINGS_ROUTE))
+                (dialogField.get(warmRecreated) as? AlertDialog)?.dismiss()
+            }
+            instrumentation.sendStatus(
+                0,
+                Bundle().apply {
+                    putString(
+                        "stream",
+                        "PASS: cold and warm ACTION_RUN commands are consumed and preserve later destinations across recreation\n",
+                    )
+                },
+            )
+            return 2
+        } finally {
+            main { activities.asReversed().forEach { if (!it.isFinishing && !it.isDestroyed) it.finish() } }
+            await("ACTION_RUN test Activity cleanup did not finish") { main { activities.all { it.isDestroyed } } }
+        }
+    }
+
     fun run(instrumentation: Instrumentation) {
         val handler = Handler(Looper.getMainLooper())
         val ticks = AtomicInteger()
@@ -238,6 +352,7 @@ object SetupResponsivenessProbe {
         var clicks = 0
         var toolbarChecks = 0
         var notificationChecks = 0
+        var actionRunChecks = 0
         var passed = false
         try {
             check(Build.HARDWARE in setOf("ranchu", "goldfish"))
@@ -262,6 +377,7 @@ object SetupResponsivenessProbe {
             }
             instrumentation.runOnMainSync { wizard.finish() }
             SystemClock.sleep(200)
+            actionRunChecks = actionRunRestoration(instrumentation)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 notificationChecks = notificationDialogLifecycle(instrumentation)
             } else {
@@ -272,7 +388,7 @@ object SetupResponsivenessProbe {
             check(clicks >= 5) { "Wizard navigation was not exercised: $clicks clicks" }
             check(maxGap.get() < 4000) { "Wizard blocked main for ${maxGap.get()} ms" }
             passed = true
-            result.putString("stream", "PASS: setup launch, 300 refresh requests, $clicks navigation clicks and pause; $toolbarChecks standalone toolbar checks; $notificationChecks notification dialog lifecycle checks; ticks=${ticks.get()}, maximum gap=${maxGap.get()} ms\n")
+            result.putString("stream", "PASS: setup launch, 300 refresh requests, $clicks navigation clicks and pause; $actionRunChecks ACTION_RUN restoration check; $toolbarChecks standalone toolbar checks; $notificationChecks notification dialog lifecycle checks; ticks=${ticks.get()}, maximum gap=${maxGap.get()} ms\n")
         } catch (error: Throwable) {
             result.putString("stream", "FAIL: ${error.stackTraceToString()}\n")
         } finally {
@@ -284,6 +400,7 @@ object SetupResponsivenessProbe {
         result.putInt("main_ticks", ticks.get())
         result.putInt("toolbar_menu_checks", toolbarChecks)
         result.putInt("notification_dialog_checks", notificationChecks)
+        result.putInt("action_run_checks", actionRunChecks)
         instrumentation.finish(if (passed) Activity.RESULT_OK else Activity.RESULT_CANCELED, result)
     }
 }

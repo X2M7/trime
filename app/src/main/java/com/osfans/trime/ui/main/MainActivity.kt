@@ -9,6 +9,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import androidx.activity.addCallback
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
@@ -60,6 +61,12 @@ class MainActivity : AppCompatActivity() {
     private var firstContentPreDraw = false
     private var firstWindowFocusReceived = false
     private var toolbarMenuPosted = false
+    private var startupShellPreDraw = false
+    private var contentRequested = false
+    private var contentInflationPosted = false
+    private var contentCreated = false
+    private var startupShell: FrameLayout? = null
+    private var contentInflationRunnable: Runnable? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         val uiMode =
@@ -70,18 +77,69 @@ class MainActivity : AppCompatActivity() {
             }
         AppCompatDelegate.setDefaultNightMode(uiMode)
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
+        val restoreCreatedContent = savedInstanceState?.getBoolean(STATE_CONTENT_CREATED) == true
+        if (restoreCreatedContent) {
+            // Android restores the ordinary view hierarchy after onStart. Rebuild
+            // an already-created content tree synchronously so its state has real
+            // target views. A first launch still uses the lightweight shell below.
+            contentRequested = true
+            contentCreated = true
+            createContent()
+        } else {
+            installStartupShell()
+        }
         lifecycleScope.launch {
             if (SetupActivity.shouldShowUp()) {
                 startActivity<SetupActivity>()
                 finish()
-            } else {
-                createContent()
+            } else if (!contentCreated) {
+                contentRequested = true
+                postContentInflationIfReady()
             }
         }
     }
 
+    private fun installStartupShell() {
+        val shell = FrameLayout(this).also { startupShell = it }
+        setContentView(shell)
+        shell.doOnPreDraw {
+            startupShellPreDraw = true
+            postContentInflationIfReady()
+        }
+    }
+
+    private fun postContentInflationIfReady() {
+        val shell = startupShell ?: return
+        if (!contentRequested || !startupShellPreDraw || !firstWindowFocusReceived ||
+            !hasWindowFocus() || !lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED) ||
+            supportFragmentManager.isStateSaved || contentInflationPosted || contentCreated
+        ) {
+            return
+        }
+        contentInflationPosted = true
+        val runnable = Runnable {
+            contentInflationRunnable = null
+            contentInflationPosted = false
+            if (isFinishing || isDestroyed || startupShell !== shell || contentCreated ||
+                !hasWindowFocus() || !lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED) ||
+                supportFragmentManager.isStateSaved
+            ) {
+                return@Runnable
+            }
+            // Let the lightweight window draw and receive focus before inflating
+            // navigation, fragments, and the test-input panel. On a cold
+            // software-rendered device, doing this work during the Setup -> Main
+            // handoff can hold the outgoing window past Android's input timeout.
+            contentCreated = true
+            startupShell = null
+            createContent()
+        }
+        contentInflationRunnable = runnable
+        window.decorView.post(runnable)
+    }
+
     private fun createContent() {
-        enableEdgeToEdge()
         val binding = ActivityMainBinding.inflate(layoutInflater)
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { _, windowInsets ->
             val systemBars = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -165,18 +223,31 @@ class MainActivity : AppCompatActivity() {
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
         super.onWindowFocusChanged(hasFocus)
-        if (hasFocus && !firstWindowFocusReceived) {
-            firstWindowFocusReceived = true
+        if (hasFocus) {
+            if (!firstWindowFocusReceived) firstWindowFocusReceived = true
+            postContentInflationIfReady()
             postToolbarMenuIfReady()
+            if (toolbarMenuPosted && deferredToolbarMenu == null) {
+                checkNotificationPermission()
+            }
         }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        outState.putBoolean(STATE_CONTENT_CREATED, contentCreated)
+        super.onSaveInstanceState(outState)
     }
 
     private fun postToolbarMenuIfReady() {
         val menu = deferredToolbarMenu ?: return
-        if (!firstContentPreDraw || !firstWindowFocusReceived || toolbarMenuPosted) return
+        if (!firstContentPreDraw || !firstWindowFocusReceived || !hasWindowFocus() || toolbarMenuPosted) return
         toolbarMenuPosted = true
         window.decorView.post {
             if (isFinishing || isDestroyed || deferredToolbarMenu !== menu) return@post
+            if (!hasWindowFocus()) {
+                toolbarMenuPosted = false
+                return@post
+            }
             // Show menu icons and actions after the first pre-draw and focus
             // handoff. Don't use setSupportActionBar(): NavController would then
             // own the custom title.
@@ -206,6 +277,11 @@ class MainActivity : AppCompatActivity() {
                 val route = intent.parcelable<NavigationRoute>(EXTRA_SETTINGS_ROUTE) ?: return
                 navController.popBackStack(NavigationRoute.Main.path, false)
                 navController.navigate(route.path)
+                // This command describes one navigation event, not persistent
+                // Activity state. Consuming it prevents recreation from
+                // overriding NavController's restored destination.
+                intent.action = null
+                intent.removeExtra(EXTRA_SETTINGS_ROUTE)
             }
         }
     }
@@ -264,8 +340,22 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    override fun onStart() {
+        super.onStart()
+        postContentInflationIfReady()
+        postToolbarMenuIfReady()
+        if (toolbarMenuPosted && deferredToolbarMenu == null) {
+            checkNotificationPermission()
+        }
+    }
+
     override fun onResume() {
         super.onResume()
+        postContentInflationIfReady()
+        postToolbarMenuIfReady()
+        if (toolbarMenuPosted && deferredToolbarMenu == null) {
+            checkNotificationPermission()
+        }
         lifecycleScope.launch(Dispatchers.IO) {
             if (isStorageAvailable()) SoundEffectManager.init()
         }
@@ -278,6 +368,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onDestroy() {
+        contentInflationRunnable?.let(window.decorView::removeCallbacks)
+        contentInflationRunnable = null
+        startupShell = null
         dismissNotificationDialog()
         deferredToolbarMenu = null
         testInputPanel = null
@@ -291,7 +384,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun checkNotificationPermission() {
-        if (isFinishing || isDestroyed || !lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED) ||
+        if (isFinishing || isDestroyed || !hasWindowFocus() ||
+            !lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED) ||
             notificationDialog?.isShowing == true || XXPermissions.isGranted(this, Permission.POST_NOTIFICATIONS)
         ) {
             return
@@ -322,5 +416,6 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
         const val EXTRA_SETTINGS_ROUTE = "${BuildConfig.APPLICATION_ID}.EXTRA_SETTINGS_ROUTE"
+        private const val STATE_CONTENT_CREATED = "main_content_created"
     }
 }

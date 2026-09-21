@@ -195,10 +195,67 @@ internal object StartupFailureProbe {
                         }
                     }
                     RimeDaemon.engineState.first { it == RimeLifecycle.State.STOPPED }
+                    if (hadCustom) check(custom.renameTo(savedCustom))
+                    val privateEditor = 0x7052_4956_4154L
+                    try {
+                        val session = RimeDaemon.createSession("private-restart-failure-probe")
+                        try {
+                            session.runOnReady {
+                                check(isReady && selectSchema("luna_pinyin_t9"))
+                                setRuntimeOption("ascii_mode", false)
+                                beginEditor(privateEditor, nullInputType = false, privacyMode = true)
+                                clearComposition()
+                                "64".forEach { check(processKey(it.code)) }
+                                check(t9Cached.input == "64") {
+                                    "Private restart fixture did not populate transient snapshots"
+                                }
+                            }
+                            custom.writeText("patch:\n  schema_list:\n    - schema: __missing_private_$suffix\n")
+                            check(custom.setLastModified(System.currentTimeMillis() + 2000))
+                            val failure =
+                                runCatching {
+                                    session.runOnReady { updateConfig() }
+                                }.exceptionOrNull()
+                            check(failure is RimeUnavailableException) {
+                                "Expected private in-session restart failure, got $failure"
+                            }
+                            RimeDaemon.engineState.first { it == RimeLifecycle.State.FAILED }
+                            session.run {
+                                checkTransientEditorStateCleared("failed private native restart")
+                            }
+
+                            check(custom.delete())
+                            if (hadCustom) check(savedCustom.renameTo(custom))
+                            RimeDaemon.retryFailedStartup()
+                            session.runOnReady {
+                                check(isReady && selectSchema("luna_pinyin_t9"))
+                                finishEditor(privateEditor)
+                                checkTransientEditorStateCleared("private retry finish")
+                                beginEditor(privateEditor + 1, nullInputType = false, privacyMode = false)
+                                setRuntimeOption("ascii_mode", false)
+                                "64".forEach { check(processKey(it.code)) }
+                                check(t9Cached.choices.any { it.spelling == "ni" }) {
+                                    "Ordinary input did not recover after private restart failure"
+                                }
+                                finishEditor(privateEditor + 1)
+                                checkTransientEditorStateCleared("ordinary retry finish")
+                            }
+                        } finally {
+                            RimeDaemon.destroySession("private-restart-failure-probe")
+                        }
+                    } finally {
+                        if (savedCustom.exists()) {
+                            custom.delete()
+                            check(savedCustom.renameTo(custom))
+                        } else if (!hadCustom) {
+                            custom.delete()
+                        }
+                    }
+                    RimeDaemon.engineState.first { it == RimeLifecycle.State.STOPPED }
                 }
             }
             success = true
-            result.putString("stream", "PASS: asset-copy and unusable-configuration failure, usable existing dictionary after malformed optional patch, bounded wait, unchanged checksums, retry, typing, stale-theme rejection and shutdown\n")
+            result.putString("stream", "PASS: asset-copy and unusable-configuration failure, usable existing dictionary after malformed optional patch, private transient-state clearing on failed restart, bounded wait, unchanged checksums, retry, typing, stale-theme rejection and shutdown\n")
         } catch (e: Throwable) {
             result.putString("stream", "FAIL: ${e.stackTraceToString()}\n")
         } finally {

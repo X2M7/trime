@@ -73,6 +73,11 @@ class Rime :
         privacyMode: Boolean,
     ) = withRimeContext {
         val editorChanged = editorToken != token
+        if (editorChanged || this.privacyMode != privacyMode) {
+            // Drop the previous editor's Java snapshots before any JNI boundary
+            // can fail. Native privacy cleanup is still performed below.
+            clearTransientEditorState()
+        }
         if (editorChanged) {
             clearRimeComposition()
             getRimeCommit()
@@ -100,16 +105,24 @@ class Rime :
 
     /** Must only be called from [withRimeContext]. */
     private fun finishCurrentEditor() {
-        if (privacyMode) {
-            setRimePrivacyMode(false)
-        } else {
-            clearRimeComposition()
+        clearTransientEditorState()
+        try {
+            if (privacyMode) {
+                setRimePrivacyMode(false)
+            } else {
+                clearRimeComposition()
+            }
+            getRimeCommit()
+            emitResponse()
+        } finally {
+            // The engine may fail during privacy reset, composition clearing,
+            // commit retrieval, or response publication. No editor-owned Java
+            // snapshot may survive that failure or the process privacy boundary.
+            clearTransientEditorState()
+            privacyMode = false
+            editorToken = 0
+            isNullInputType = true
         }
-        getRimeCommit()
-        privacyMode = false
-        editorToken = 0
-        isNullInputType = true
-        emitResponse()
     }
 
     override suspend fun t9Action(
@@ -138,6 +151,7 @@ class Rime :
                 }
 
                 override fun nativeFailure(error: Throwable) {
+                    clearTransientEditorState()
                     Timber.e(error, "Rime engine lifecycle failed")
                     lifecycleRegistry.fail(error)
                     handleRimeMessage(RimeMessage.MessageType.Deploy.ordinal, arrayOf("failure"))
@@ -449,6 +463,7 @@ class Rime :
     }
 
     private fun stopRime() {
+        clearTransientEditorState()
         // A delayed tip belongs to the native context that displayed it. It must
         // not queue a context read behind maintenance or clear the new engine's tip.
         asciiSwitchTipsJob?.cancel()
@@ -460,6 +475,15 @@ class Rime :
         } finally {
             nativeInitialized = false
         }
+    }
+
+    /** Clear process-global snapshots that can contain editor-owned text. */
+    private fun clearTransientEditorState() {
+        compositionCached = CompositionProto()
+        t9Cached = T9StateProto()
+        hasMenu = false
+        paging = false
+        statusCached = statusCached.copy(isComposing = false)
     }
 
     private fun restartNative(fullCheck: Boolean) {

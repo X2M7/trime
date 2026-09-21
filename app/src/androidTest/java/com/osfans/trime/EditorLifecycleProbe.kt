@@ -806,6 +806,7 @@ object EditorLifecycleProbe {
                             val previousTip = checkNotNull(tipJobField.get(realRime) as Job?)
                             check(previousTip.isActive) { "No pending ASCII tip before redeploy" }
                             updateConfig()
+                            checkTransientEditorStateCleared("successful native restart")
                             check(previousTip.isCancelled) { "Old native context's ASCII tip survived redeploy" }
                             val currentTip = checkNotNull(tipJobField.get(realRime) as Job?)
                             check(currentTip !== previousTip) { "Redeploy reused the old ASCII-tip timer" }

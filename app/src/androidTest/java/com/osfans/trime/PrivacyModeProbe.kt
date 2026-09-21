@@ -708,6 +708,7 @@ internal object PrivacyModeProbe {
                         check(!Rime.isRimePrivacyGuardEnabledForTesting()) {
                             "Privacy guard remained enabled after owned-editor cleanup"
                         }
+                        checkTransientEditorStateCleared("successful private editor finish")
                         check(selectSchema(checkNotNull(originalSchema))) {
                             "Could not close the private fixture after owned-editor cleanup"
                         }
