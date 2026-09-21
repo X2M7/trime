@@ -109,6 +109,9 @@ def run(args):
         (args.output / f"{name}.txt").write_text(shell("dumpsys", "package", name))
     (args.output / "identity.json").write_text(json.dumps(identity, indent=2) + "\n")
     options = instrumentation_options(args.probe, args.saf_tree, args.saf_revoke)
+    # The editor probe waits for 100 complete system IME hide/show transitions.
+    # Its 15-minute test bound plus startup needs a longer host process bound.
+    instrumentation_timeout = 1400 if args.probe == "editors" else 1000
     activation_marker = None
     with record_logcat(adb, args.output / "logcat-full.txt"), (args.output / "instrumentation.log").open("w") as log:
         command = adb + ["shell", "am", "instrument", "-w", "-r", *options,
@@ -127,8 +130,8 @@ def run(args):
                 previous_observation = None
                 observation_index = 0
                 while process.poll() is None:
-                    if time.monotonic() - start > 1000:
-                        raise subprocess.TimeoutExpired(command, 1000)
+                    if time.monotonic() - start > instrumentation_timeout:
+                        raise subprocess.TimeoutExpired(command, instrumentation_timeout)
                     output = (args.output / "instrumentation.log").read_text()
                     if not bound and "application_ready_wait_ms" in output:
                         windows = shell("dumpsys", "window", "windows", timeout=15)
@@ -180,7 +183,7 @@ def run(args):
                     process.wait(timeout=10)
                 shell("ime", "set", trime)
         else:
-            run = subprocess.run(command, stdout=log, stderr=subprocess.STDOUT, timeout=1000)
+            run = subprocess.run(command, stdout=log, stderr=subprocess.STDOUT, timeout=instrumentation_timeout)
     output = (args.output / "instrumentation.log").read_text()
     glyph_evidence = None
     if args.probe == "editors":

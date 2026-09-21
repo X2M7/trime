@@ -28,6 +28,8 @@ import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.PopupWindow
 import android.widget.TextView
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.children
 import com.osfans.trime.core.Rime
 import com.osfans.trime.core.RimeApi
@@ -152,7 +154,7 @@ object EditorLifecycleProbe {
             }
             val (chat, other, container) = fields
             runBlocking {
-                withTimeout(600_000) {
+                withTimeout(900_000) {
                     suspend fun until(label: String, predicate: () -> Boolean) {
                         withTimeout(30_000) { while (!main(predicate)) delay(50) }
                         phase("PASS: $label")
@@ -886,14 +888,61 @@ object EditorLifecycleProbe {
 
                     val baseline = main { chat.text.toString() }
                     val imm = editor.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+                    suspend fun awaitPlatformImeHidden(index: Int) {
+                        val completed = kotlinx.coroutines.withTimeoutOrNull(10_000) {
+                            var stableSince = 0L
+                            while (true) {
+                                val hidden = main {
+                                    if (Build.VERSION.SDK_INT < 30) {
+                                        !service.isInputViewShown
+                                    } else {
+                                        val insets = ViewCompat.getRootWindowInsets(chat)
+                                        !service.isInputViewShown &&
+                                            insets != null &&
+                                            !insets.isVisible(WindowInsetsCompat.Type.ime()) &&
+                                            insets.getInsets(WindowInsetsCompat.Type.ime()).bottom == 0
+                                    }
+                                }
+                                val now = SystemClock.uptimeMillis()
+                                if (hidden) {
+                                    if (stableSince == 0L) stableSince = now
+                                    if (now - stableSince >= 700L) break
+                                } else {
+                                    stableSince = 0L
+                                }
+                                delay(40)
+                            }
+                            true
+                        } == true
+                        check(completed) {
+                            "IME hide did not settle at cycle $index: " +
+                                main {
+                                    "viewShown=${service.isInputViewShown}, " +
+                                        "insetsVisible=${ViewCompat.getRootWindowInsets(chat)?.isVisible(WindowInsetsCompat.Type.ime())}, " +
+                                        "editorFocused=${chat.hasFocus()}"
+                                }
+                        }
+                    }
                     repeat(100) { index ->
                         main { imm.hideSoftInputFromWindow(chat.windowToken, 0) }
-                        withTimeout(10_000) { while (main { service.isInputViewShown }) delay(40) }
+                        awaitPlatformImeHidden(index + 1)
                         main {
                             chat.requestFocus()
-                            imm.showSoftInput(chat, 0)
+                            check(chat.hasFocus()) { "Editor lost focus before show cycle ${index + 1}" }
+                            check(imm.showSoftInput(chat, 0)) { "IME show request rejected at cycle ${index + 1}" }
                         }
-                        withTimeout(10_000) { while (!main { service.isInputViewShown && input() != null && keyboard().isT9Layout }) delay(40) }
+                        val shown = kotlinx.coroutines.withTimeoutOrNull(10_000) {
+                            while (!main { service.isInputViewShown && input() != null && keyboard().isT9Layout }) delay(40)
+                            true
+                        } == true
+                        check(shown) {
+                            "IME did not show at cycle ${index + 1}: " +
+                                main {
+                                    "viewShown=${service.isInputViewShown}, " +
+                                        "insetsVisible=${ViewCompat.getRootWindowInsets(chat)?.isVisible(WindowInsetsCompat.Type.ime())}, " +
+                                        "editorFocused=${chat.hasFocus()}"
+                                }
+                        }
                         api {
                             check(!statusCached.isAsciiMode)
                             check(getRawInput().isEmpty())
@@ -918,8 +967,11 @@ object EditorLifecycleProbe {
                         check(t9Cached.segments.any { it.locked && it.spelling == "ni" })
                     }
                     main { imm.hideSoftInputFromWindow(chat.windowToken, 0) }
-                    withTimeout(10_000) { while (main { service.isInputViewShown }) delay(40) }
-                    main { imm.showSoftInput(chat, 0) }
+                    awaitPlatformImeHidden(101)
+                    main {
+                        chat.requestFocus()
+                        check(imm.showSoftInput(chat, 0)) { "IME show request rejected after locked composition" }
+                    }
                     until("locked composition survives hide and show") { service.isInputViewShown && input() != null }
                     api {
                         check(getRawInput() == "64426")
