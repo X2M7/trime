@@ -11,6 +11,7 @@ import android.os.Looper
 import android.os.SystemClock
 import android.widget.Button
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.widget.Toolbar
 import androidx.lifecycle.Lifecycle
 import com.hjq.permissions.Permission
 import com.hjq.permissions.XXPermissions
@@ -46,6 +47,23 @@ object SetupResponsivenessProbe {
             }
             return main { checkNotNull(dialog(activity)) }
         }
+        fun awaitToolbarMenu(activity: MainActivity) {
+            val expected =
+                intArrayOf(
+                    R.id.action_deploy,
+                    R.id.action_test_input,
+                    R.id.action_developer,
+                    R.id.action_about,
+                    R.id.action_edit,
+                    R.id.action_delete,
+                )
+            await("Deferred toolbar menu was not installed after the first focused frame") {
+                main {
+                    val menu = activity.findViewById<Toolbar>(R.id.toolbar)?.menu
+                    menu != null && menu.size() == expected.size && expected.all { menu.findItem(it) != null }
+                }
+            }
+        }
         var checks = 0
         fun passed(name: String) {
             checks++
@@ -58,6 +76,8 @@ object SetupResponsivenessProbe {
                     Intent(instrumentation.targetContext, MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
                 ) as MainActivity
                 ).also { activities += it }
+            awaitToolbarMenu(first)
+            passed("first focused frame installs every toolbar action")
             val firstDialog = pending(first)
             main {
                 repeat(3) { recheck.invoke(first) }
@@ -87,6 +107,8 @@ object SetupResponsivenessProbe {
             }
             checkNotNull(recreated) { "MainActivity did not recreate" }
             check(recreated !== first)
+            awaitToolbarMenu(recreated)
+            passed("recreation installs every toolbar action exactly once")
             val recreatedDialog = pending(recreated)
             await("Recreation retained the destroyed Activity's dialog window") {
                 main { first.isDestroyed && dialog(first) == null && !replacement.isShowing && !oldDecor.isAttachedToWindow }

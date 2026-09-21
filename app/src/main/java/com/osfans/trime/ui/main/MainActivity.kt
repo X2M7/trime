@@ -21,6 +21,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsAnimationCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.doOnPreDraw
 import androidx.core.view.forEach
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
@@ -56,6 +57,10 @@ class MainActivity : AppCompatActivity() {
     private lateinit var navController: NavController
     private var testInputPanel: TestInputPanel? = null
     private var notificationDialog: AlertDialog? = null
+    private var deferredToolbarMenu: Menu? = null
+    private var firstContentPreDraw = false
+    private var firstWindowFocusReceived = false
+    private var toolbarMenuPosted = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         val uiMode =
@@ -117,10 +122,15 @@ class MainActivity : AppCompatActivity() {
                 progress = 1f
                 color = ContextCompat.getColor(this@MainActivity, R.color.toolbarForegroundColor)
             }
-        // show menu icon and other action icons on toolbar
-        // don't use `setSupportActionBar(binding.toolbar)` here,
-        // because navController would change toolbar title, we need to control it by ourselves
-        setupToolbarMenu(binding.mainToolbar.toolbar.menu)
+        // Building action-item views can be expensive on a cold, software-rendered
+        // device. Let the first frame and the Setup -> Main focus handoff finish
+        // before adding them so the outgoing Setup window can acknowledge focus
+        // loss within Android's input-dispatch timeout.
+        deferredToolbarMenu = binding.mainToolbar.toolbar.menu
+        binding.root.doOnPreDraw {
+            firstContentPreDraw = true
+            postToolbarMenuIfReady()
+        }
         navController = binding.navHostFragment.getFragment<NavHostFragment>().navController
         navController.graph = NavigationRoute.createGraph(navController)
         binding.mainToolbar.toolbar.setNavigationOnClickListener {
@@ -154,6 +164,27 @@ class MainActivity : AppCompatActivity() {
         processIntent(intent)
         lifecycleScope.launch {
             lifecycle.withStarted { checkNotificationPermission() }
+        }
+    }
+
+    override fun onWindowFocusChanged(hasFocus: Boolean) {
+        super.onWindowFocusChanged(hasFocus)
+        if (hasFocus && !firstWindowFocusReceived) {
+            firstWindowFocusReceived = true
+            postToolbarMenuIfReady()
+        }
+    }
+
+    private fun postToolbarMenuIfReady() {
+        val menu = deferredToolbarMenu ?: return
+        if (!firstContentPreDraw || !firstWindowFocusReceived || toolbarMenuPosted) return
+        toolbarMenuPosted = true
+        window.decorView.post {
+            if (isFinishing || isDestroyed || deferredToolbarMenu !== menu) return@post
+            // Show menu icons and actions after the first focused frame. Don't use
+            // setSupportActionBar(): NavController would then own the custom title.
+            deferredToolbarMenu = null
+            setupToolbarMenu(menu)
         }
     }
 
@@ -247,6 +278,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         dismissNotificationDialog()
+        deferredToolbarMenu = null
         testInputPanel = null
         super.onDestroy()
     }
