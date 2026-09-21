@@ -19,11 +19,20 @@ import com.hjq.permissions.XXPermissions
 import com.osfans.trime.ui.main.MainActivity
 import com.osfans.trime.ui.main.NavigationRoute
 import com.osfans.trime.ui.setup.SetupActivity
+import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.atomic.AtomicLong
+import java.util.concurrent.atomic.AtomicReference
 
 /** Repeated wizard navigation/status refresh without changing storage or user dictionaries. */
 object SetupResponsivenessProbe {
+    private data class MainThreadStallSample(
+        val heartbeatUptimeMs: Long,
+        val sampledUptimeMs: Long,
+        val stage: String,
+        val stackMethods: String,
+    )
+
     private val visibleMainMenuItems =
         intArrayOf(
             R.id.action_deploy,
@@ -378,16 +387,63 @@ object SetupResponsivenessProbe {
         val handler = Handler(Looper.getMainLooper())
         val ticks = AtomicInteger()
         val maxGap = AtomicLong()
-        var previous = SystemClock.uptimeMillis()
+        val stage = AtomicReference("wizard-launch")
+        val maxGapStage = AtomicReference("wizard-launch")
+        val maxGapStartUptime = AtomicLong(-1)
+        val maxGapEndUptime = AtomicLong(-1)
+        val maxGapStartElapsed = AtomicLong(-1)
+        val maxGapEndElapsed = AtomicLong(-1)
+        var previousUptime = SystemClock.uptimeMillis()
+        var previousElapsed = SystemClock.elapsedRealtime()
+        var previousStage = stage.get()
+        val lastHeartbeatUptime = AtomicLong(previousUptime)
+        val heartbeatActive = AtomicBoolean(true)
         val heartbeat = object : Runnable {
             override fun run() {
-                val now = SystemClock.uptimeMillis()
-                maxGap.set(maxOf(maxGap.get(), now - previous))
-                previous = now
+                if (!heartbeatActive.get()) return
+                val nowUptime = SystemClock.uptimeMillis()
+                val nowElapsed = SystemClock.elapsedRealtime()
+                val currentStage = stage.get()
+                val gap = nowUptime - previousUptime
+                if (gap > maxGap.get()) {
+                    maxGap.set(gap)
+                    maxGapStartUptime.set(previousUptime)
+                    maxGapEndUptime.set(nowUptime)
+                    maxGapStartElapsed.set(previousElapsed)
+                    maxGapEndElapsed.set(nowElapsed)
+                    maxGapStage.set(if (previousStage == currentStage) currentStage else "$previousStage->$currentStage")
+                }
+                previousUptime = nowUptime
+                previousElapsed = nowElapsed
+                previousStage = currentStage
+                lastHeartbeatUptime.set(nowUptime)
                 ticks.incrementAndGet()
-                handler.postDelayed(this, 50)
+                if (heartbeatActive.get()) handler.postDelayed(this, 50)
             }
         }
+        val sampling = AtomicBoolean(true)
+        val stallSamples = mutableListOf<MainThreadStallSample>()
+        val mainThread = Looper.getMainLooper().thread
+        val sampler = Thread({
+            var sampledHeartbeatUptime = -1L
+            while (sampling.get()) {
+                val heartbeatUptime = lastHeartbeatUptime.get()
+                val nowUptime = SystemClock.uptimeMillis()
+                if (nowUptime - heartbeatUptime >= 2_000 && sampledHeartbeatUptime != heartbeatUptime) {
+                    val methods = mainThread.stackTrace.take(32).joinToString(" > ") { "${it.className}.${it.methodName}" }
+                    synchronized(stallSamples) {
+                        if (stallSamples.size == 32) stallSamples.removeAt(0)
+                        stallSamples.add(MainThreadStallSample(heartbeatUptime, nowUptime, stage.get(), methods))
+                    }
+                    sampledHeartbeatUptime = heartbeatUptime
+                }
+                try {
+                    Thread.sleep(100)
+                } catch (_: InterruptedException) {
+                    break
+                }
+            }
+        }, "setup-main-stall-sampler").apply { isDaemon = true }
         val result = Bundle()
         var activity: SetupActivity? = null
         var clicks = 0
@@ -398,11 +454,13 @@ object SetupResponsivenessProbe {
         try {
             check(Build.HARDWARE in setOf("ranchu", "goldfish"))
             handler.post(heartbeat)
+            sampler.start()
             val intent = Intent(instrumentation.targetContext, SetupActivity::class.java)
                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             activity = instrumentation.startActivitySync(intent) as SetupActivity
             val wizard = activity
             // IO refreshes may coalesce, but must never block navigation or the looper.
+            stage.set("wizard-navigation")
             repeat(30) { index ->
                 instrumentation.runOnMainSync {
                     repeat(10) { wizard.refreshCurrentFragment() }
@@ -418,10 +476,13 @@ object SetupResponsivenessProbe {
             }
             instrumentation.runOnMainSync { wizard.finish() }
             SystemClock.sleep(200)
+            stage.set("ACTION_RUN")
             actionRunChecks = actionRunRestoration(instrumentation)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                stage.set("notification")
                 notificationChecks = notificationDialogLifecycle(instrumentation)
             } else {
+                stage.set("toolbar")
                 toolbarChecks = toolbarMenuLifecycle(instrumentation)
                 instrumentation.sendStatus(0, Bundle().apply { putString("stream", "SKIP: notification runtime-permission dialog lifecycle requires API 33+\n") })
             }
@@ -433,11 +494,27 @@ object SetupResponsivenessProbe {
         } catch (error: Throwable) {
             result.putString("stream", "FAIL: ${error.stackTraceToString()}\n")
         } finally {
+            heartbeatActive.set(false)
             handler.removeCallbacks(heartbeat)
+            sampling.set(false)
+            sampler.interrupt()
+            if (sampler.isAlive) sampler.join(1_000)
             activity?.let { instrumentation.runOnMainSync { if (!it.isFinishing) it.finish() } }
         }
         result.putBoolean("passed", passed)
         result.putLong("max_main_gap_ms", maxGap.get())
+        result.putLong("max_main_gap_start_uptime_ms", maxGapStartUptime.get())
+        result.putLong("max_main_gap_end_uptime_ms", maxGapEndUptime.get())
+        result.putLong("max_main_gap_start_elapsed_realtime_ms", maxGapStartElapsed.get())
+        result.putLong("max_main_gap_end_elapsed_realtime_ms", maxGapEndElapsed.get())
+        result.putString("max_main_gap_stage", maxGapStage.get())
+        val samples = synchronized(stallSamples) { stallSamples.toList() }
+        val sample = samples.lastOrNull { it.heartbeatUptimeMs == maxGapStartUptime.get() }
+            ?: samples.maxByOrNull { it.sampledUptimeMs - it.heartbeatUptimeMs }
+        result.putInt("main_stall_sample_count", samples.size)
+        result.putLong("main_stall_sample_uptime_ms", sample?.sampledUptimeMs ?: -1)
+        result.putString("main_stall_sample_stage", sample?.stage ?: "")
+        result.putString("main_stall_stack_methods", sample?.stackMethods ?: "")
         result.putInt("main_ticks", ticks.get())
         result.putInt("toolbar_menu_checks", toolbarChecks)
         result.putInt("notification_dialog_checks", notificationChecks)
