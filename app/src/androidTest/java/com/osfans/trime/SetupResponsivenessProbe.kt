@@ -48,6 +48,53 @@ object SetupResponsivenessProbe {
             hiddenMainMenuItems.all { menu.findItem(it)?.isVisible == false }
     }
 
+    /**
+     * Android 5 also reports the Activity being destroyed to an ActivityMonitor.
+     * Keep waiting until the monitor observes the live replacement created by
+     * recreate(), then let the old/new lifecycle handoff finish.
+     */
+    private fun recreateAndAwaitReplacement(
+        instrumentation: Instrumentation,
+        previous: MainActivity,
+    ): MainActivity {
+        fun <T> main(block: () -> T): T {
+            var result: Result<T>? = null
+            instrumentation.runOnMainSync { result = runCatching(block) }
+            return checkNotNull(result).getOrThrow()
+        }
+        val monitor = instrumentation.addMonitor(MainActivity::class.java.name, null, false)
+        val deadline = SystemClock.uptimeMillis() + 15_000
+        try {
+            main { previous.recreate() }
+            while (true) {
+                val remaining = deadline - SystemClock.uptimeMillis()
+                check(remaining > 0) { "MainActivity did not produce a live replacement" }
+                val seen = monitor.waitForActivityWithTimeout(remaining) as? MainActivity
+                if (seen == null) {
+                    check(SystemClock.uptimeMillis() < deadline) { "MainActivity did not recreate" }
+                    continue
+                }
+                if (seen === previous || main { seen.isDestroyed || seen.isFinishing }) continue
+                while (
+                    !main {
+                        previous.isDestroyed &&
+                            !seen.isDestroyed &&
+                            !seen.isFinishing &&
+                            seen.lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)
+                    }
+                ) {
+                    check(SystemClock.uptimeMillis() < deadline) {
+                        "MainActivity replacement did not finish its lifecycle handoff"
+                    }
+                    SystemClock.sleep(50)
+                }
+                return seen
+            }
+        } finally {
+            instrumentation.removeMonitor(monitor)
+        }
+    }
+
     private fun toolbarMenuLifecycle(instrumentation: Instrumentation): Int {
         fun <T> main(block: () -> T): T {
             var result: Result<T>? = null
@@ -76,15 +123,7 @@ object SetupResponsivenessProbe {
             await(first, "Toolbar menu was not installed after the first pre-draw and focus handoff")
             passed("first launch installs one correctly configured menu")
 
-            val monitor = instrumentation.addMonitor(MainActivity::class.java.name, null, false)
-            val recreated = try {
-                main { first.recreate() }
-                (monitor.waitForActivityWithTimeout(15_000) as? MainActivity)
-                    .also { if (it != null) activities += it }
-            } finally {
-                instrumentation.removeMonitor(monitor)
-            }
-            checkNotNull(recreated) { "MainActivity did not recreate" }
+            val recreated = recreateAndAwaitReplacement(instrumentation, first).also { activities += it }
             check(recreated !== first)
             await(recreated, "Recreated Activity did not install one correctly configured menu")
             passed("recreation preserves one correctly configured menu")
@@ -163,15 +202,7 @@ object SetupResponsivenessProbe {
             passed("old queued dismissal cannot clear the replacement prompt")
 
             val oldDecor = main { checkNotNull(replacement.window).decorView }
-            val monitor = instrumentation.addMonitor(MainActivity::class.java.name, null, false)
-            val recreated = try {
-                main { first.recreate() }
-                (monitor.waitForActivityWithTimeout(15_000) as? MainActivity)
-                    .also { if (it != null) activities += it }
-            } finally {
-                instrumentation.removeMonitor(monitor)
-            }
-            checkNotNull(recreated) { "MainActivity did not recreate" }
+            val recreated = recreateAndAwaitReplacement(instrumentation, first).also { activities += it }
             check(recreated !== first)
             awaitToolbarMenu(recreated)
             passed("recreation installs every toolbar action exactly once")
@@ -240,6 +271,20 @@ object SetupResponsivenessProbe {
         fun awaitRoute(activity: MainActivity, route: String, message: String) {
             await(message) { main { controller(activity)?.currentDestination?.route == route } }
         }
+        fun awaitOwnerWindowFocused(activity: MainActivity, message: String) {
+            await(message) {
+                main {
+                    !activity.isDestroyed &&
+                        !activity.isFinishing &&
+                        activity.lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED) &&
+                        (
+                            activity.hasWindowFocus() ||
+                                (dialogField.get(activity) as? AlertDialog)
+                                    ?.window?.decorView?.hasWindowFocus() == true
+                            )
+                }
+            }
+        }
         val activities = mutableListOf<Activity>()
         try {
             val command =
@@ -260,15 +305,8 @@ object SetupResponsivenessProbe {
             }
             awaitRoute(first, NavigationRoute.Developer.path, "Could not leave the direct destination")
 
-            val monitor = instrumentation.addMonitor(MainActivity::class.java.name, null, false)
-            val recreated = try {
-                main { first.recreate() }
-                (monitor.waitForActivityWithTimeout(15_000) as? MainActivity)
-                    .also { if (it != null) activities += it }
-            } finally {
-                instrumentation.removeMonitor(monitor)
-            }
-            checkNotNull(recreated) { "ACTION_RUN MainActivity did not recreate" }
+            val recreated = recreateAndAwaitReplacement(instrumentation, first).also { activities += it }
+            check(recreated !== first)
             awaitRoute(
                 recreated,
                 NavigationRoute.Developer.path,
@@ -276,8 +314,9 @@ object SetupResponsivenessProbe {
             )
             main {
                 check(recreated.intent.action == null && !recreated.intent.hasExtra(MainActivity.EXTRA_SETTINGS_ROUTE))
-                (dialogField.get(recreated) as? AlertDialog)?.dismiss()
             }
+            instrumentation.waitForIdleSync()
+            awaitOwnerWindowFocused(recreated, "ACTION_RUN recreation did not finish its focus handoff")
 
             // MainActivity is singleTask. A command sent while it is alive must
             // be consumed through onNewIntent without becoming persistent state.
@@ -299,15 +338,8 @@ object SetupResponsivenessProbe {
             }
             awaitRoute(recreated, NavigationRoute.General.path, "Could not leave the warm direct destination")
 
-            val secondMonitor = instrumentation.addMonitor(MainActivity::class.java.name, null, false)
-            val warmRecreated = try {
-                main { recreated.recreate() }
-                (secondMonitor.waitForActivityWithTimeout(15_000) as? MainActivity)
-                    .also { if (it != null) activities += it }
-            } finally {
-                instrumentation.removeMonitor(secondMonitor)
-            }
-            checkNotNull(warmRecreated) { "Warm ACTION_RUN MainActivity did not recreate" }
+            val warmRecreated = recreateAndAwaitReplacement(instrumentation, recreated).also { activities += it }
+            check(warmRecreated !== recreated)
             awaitRoute(
                 warmRecreated,
                 NavigationRoute.General.path,
