@@ -27,7 +27,6 @@ import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.withStarted
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.hjq.permissions.Permission
@@ -162,9 +161,6 @@ class MainActivity : AppCompatActivity() {
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         processIntent(intent)
-        lifecycleScope.launch {
-            lifecycle.withStarted { checkNotificationPermission() }
-        }
     }
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
@@ -181,10 +177,15 @@ class MainActivity : AppCompatActivity() {
         toolbarMenuPosted = true
         window.decorView.post {
             if (isFinishing || isDestroyed || deferredToolbarMenu !== menu) return@post
-            // Show menu icons and actions after the first focused frame. Don't use
-            // setSupportActionBar(): NavController would then own the custom title.
+            // Show menu icons and actions after the first pre-draw and focus
+            // handoff. Don't use setSupportActionBar(): NavController would then
+            // own the custom title.
             deferredToolbarMenu = null
             setupToolbarMenu(menu)
+            // A permission dialog shown before this window receives focus can
+            // hold up the Setup -> Main focus handoff. Show it only after the
+            // deferred menu is installed and the focus callback has returned.
+            checkNotificationPermission()
         }
     }
 
@@ -228,28 +229,28 @@ class MainActivity : AppCompatActivity() {
                 navController.navigate(NavigationRoute.About.path)
             },
         )
+        val editItem = menu.item(R.string.edit, R.drawable.ic_baseline_edit_24, showAsAction = true, id = R.id.action_edit) {
+            viewModel.toolbarEditButtonOnClickListener.value?.invoke()
+        }
+        val deleteItem = menu.item(R.string.delete, R.drawable.ic_baseline_delete_24, showAsAction = true, id = R.id.action_delete) {
+            viewModel.toolbarDeleteButtonOnClickListener.value?.invoke()
+        }
+        menu.forEach { item ->
+            // show menu item on demand
+            item.isVisible = false
+        }
+        // Establish defaults before observing. LiveData immediately replays the
+        // current destination state, which must be the final visibility value.
         optionMenuItems.forEach { item ->
             viewModel.topOptionsMenu.observe(this) { enabled ->
                 item.isVisible = enabled
             }
         }
-        menu.item(R.string.edit, R.drawable.ic_baseline_edit_24, showAsAction = true, id = R.id.action_edit) {
-            viewModel.toolbarEditButtonOnClickListener.value?.invoke()
-        }.apply {
-            viewModel.toolbarEditButtonVisible.observe(this@MainActivity) {
-                isVisible = it
-            }
+        viewModel.toolbarEditButtonVisible.observe(this) {
+            editItem.isVisible = it
         }
-        menu.item(R.string.delete, R.drawable.ic_baseline_delete_24, showAsAction = true, id = R.id.action_delete) {
-            viewModel.toolbarDeleteButtonOnClickListener.value?.invoke()
-        }.apply {
-            viewModel.toolbarDeleteButtonOnClickListener.observe(this@MainActivity) {
-                isVisible = it != null
-            }
-        }
-        menu.forEach { item ->
-            // show menu item on demand
-            item.isVisible = false
+        viewModel.toolbarDeleteButtonOnClickListener.observe(this) {
+            deleteItem.isVisible = it != null
         }
     }
 

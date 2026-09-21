@@ -22,6 +22,81 @@ import java.util.concurrent.atomic.AtomicLong
 
 /** Repeated wizard navigation/status refresh without changing storage or user dictionaries. */
 object SetupResponsivenessProbe {
+    private val visibleMainMenuItems =
+        intArrayOf(
+            R.id.action_deploy,
+            R.id.action_test_input,
+            R.id.action_developer,
+            R.id.action_about,
+        )
+    private val hiddenMainMenuItems =
+        intArrayOf(
+            R.id.action_edit,
+            R.id.action_delete,
+        )
+
+    private fun hasExpectedMainToolbarMenu(activity: MainActivity): Boolean {
+        val expected = visibleMainMenuItems + hiddenMainMenuItems
+        val menu = activity.findViewById<Toolbar>(R.id.toolbar)?.menu ?: return false
+        if (menu.size() != expected.size) return false
+        val actual = IntArray(menu.size()) { menu.getItem(it).itemId }
+        return actual.toSet() == expected.toSet() &&
+            actual.size == actual.toSet().size &&
+            visibleMainMenuItems.all { menu.findItem(it)?.run { isVisible && isEnabled } == true } &&
+            hiddenMainMenuItems.all { menu.findItem(it)?.isVisible == false }
+    }
+
+    private fun toolbarMenuLifecycle(instrumentation: Instrumentation): Int {
+        fun <T> main(block: () -> T): T {
+            var result: Result<T>? = null
+            instrumentation.runOnMainSync { result = runCatching(block) }
+            return checkNotNull(result).getOrThrow()
+        }
+        fun await(activity: MainActivity, message: String) {
+            val deadline = SystemClock.uptimeMillis() + 15_000
+            while (!main { hasExpectedMainToolbarMenu(activity) }) {
+                check(SystemClock.uptimeMillis() < deadline) { message }
+                SystemClock.sleep(50)
+            }
+        }
+        var checks = 0
+        fun passed(name: String) {
+            checks++
+            instrumentation.sendStatus(0, Bundle().apply { putString("stream", "PASS toolbar $checks: $name\n") })
+        }
+        val activities = mutableListOf<Activity>()
+        try {
+            val first = (
+                instrumentation.startActivitySync(
+                    Intent(instrumentation.targetContext, MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
+                ) as MainActivity
+                ).also { activities += it }
+            await(first, "Toolbar menu was not installed after the first pre-draw and focus handoff")
+            passed("first launch installs one correctly configured menu")
+
+            val monitor = instrumentation.addMonitor(MainActivity::class.java.name, null, false)
+            val recreated = try {
+                main { first.recreate() }
+                (monitor.waitForActivityWithTimeout(15_000) as? MainActivity)
+                    .also { if (it != null) activities += it }
+            } finally {
+                instrumentation.removeMonitor(monitor)
+            }
+            checkNotNull(recreated) { "MainActivity did not recreate" }
+            check(recreated !== first)
+            await(recreated, "Recreated Activity did not install one correctly configured menu")
+            passed("recreation preserves one correctly configured menu")
+            return checks
+        } finally {
+            main { activities.asReversed().forEach { if (!it.isFinishing && !it.isDestroyed) it.finish() } }
+            val deadline = SystemClock.uptimeMillis() + 15_000
+            while (!main { activities.all { it.isDestroyed } }) {
+                check(SystemClock.uptimeMillis() < deadline) { "Toolbar test Activity cleanup did not finish" }
+                SystemClock.sleep(50)
+            }
+        }
+    }
+
     private fun notificationDialogLifecycle(instrumentation: Instrumentation): Int {
         check(!XXPermissions.isGranted(instrumentation.targetContext, Permission.POST_NOTIFICATIONS)) {
             "Notification dialog regression requires notifications denied on this disposable emulator"
@@ -48,20 +123,8 @@ object SetupResponsivenessProbe {
             return main { checkNotNull(dialog(activity)) }
         }
         fun awaitToolbarMenu(activity: MainActivity) {
-            val expected =
-                intArrayOf(
-                    R.id.action_deploy,
-                    R.id.action_test_input,
-                    R.id.action_developer,
-                    R.id.action_about,
-                    R.id.action_edit,
-                    R.id.action_delete,
-                )
-            await("Deferred toolbar menu was not installed after the first focused frame") {
-                main {
-                    val menu = activity.findViewById<Toolbar>(R.id.toolbar)?.menu
-                    menu != null && menu.size() == expected.size && expected.all { menu.findItem(it) != null }
-                }
+            await("Deferred toolbar menu was not installed after the first pre-draw and focus handoff") {
+                main { hasExpectedMainToolbarMenu(activity) }
             }
         }
         var checks = 0
@@ -77,7 +140,7 @@ object SetupResponsivenessProbe {
                 ) as MainActivity
                 ).also { activities += it }
             awaitToolbarMenu(first)
-            passed("first focused frame installs every toolbar action")
+            passed("first pre-draw and focus handoff install every toolbar action")
             val firstDialog = pending(first)
             main {
                 repeat(3) { recheck.invoke(first) }
@@ -94,6 +157,7 @@ object SetupResponsivenessProbe {
             }
             instrumentation.waitForIdleSync()
             main { check(dialog(first) === replacement && replacement.isShowing) }
+            awaitToolbarMenu(first)
             passed("old queued dismissal cannot clear the replacement prompt")
 
             val oldDecor = main { checkNotNull(replacement.window).decorView }
@@ -139,6 +203,7 @@ object SetupResponsivenessProbe {
             await("MainActivity did not resume after closing the covering page") {
                 main { recreated.lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED) }
             }
+            awaitToolbarMenu(recreated)
             main { recheck.invoke(recreated) }
             val finishingDialog = pending(recreated)
             val finishingDecor = main { checkNotNull(finishingDialog.window).decorView }
@@ -171,6 +236,7 @@ object SetupResponsivenessProbe {
         val result = Bundle()
         var activity: SetupActivity? = null
         var clicks = 0
+        var toolbarChecks = 0
         var notificationChecks = 0
         var passed = false
         try {
@@ -199,13 +265,14 @@ object SetupResponsivenessProbe {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 notificationChecks = notificationDialogLifecycle(instrumentation)
             } else {
+                toolbarChecks = toolbarMenuLifecycle(instrumentation)
                 instrumentation.sendStatus(0, Bundle().apply { putString("stream", "SKIP: notification runtime-permission dialog lifecycle requires API 33+\n") })
             }
             check(ticks.get() >= 20) { "Main looper did not progress" }
             check(clicks >= 5) { "Wizard navigation was not exercised: $clicks clicks" }
             check(maxGap.get() < 4000) { "Wizard blocked main for ${maxGap.get()} ms" }
             passed = true
-            result.putString("stream", "PASS: setup launch, 300 refresh requests, $clicks navigation clicks and pause; $notificationChecks notification dialog lifecycle checks; ticks=${ticks.get()}, maximum gap=${maxGap.get()} ms\n")
+            result.putString("stream", "PASS: setup launch, 300 refresh requests, $clicks navigation clicks and pause; $toolbarChecks standalone toolbar checks; $notificationChecks notification dialog lifecycle checks; ticks=${ticks.get()}, maximum gap=${maxGap.get()} ms\n")
         } catch (error: Throwable) {
             result.putString("stream", "FAIL: ${error.stackTraceToString()}\n")
         } finally {
@@ -215,6 +282,7 @@ object SetupResponsivenessProbe {
         result.putBoolean("passed", passed)
         result.putLong("max_main_gap_ms", maxGap.get())
         result.putInt("main_ticks", ticks.get())
+        result.putInt("toolbar_menu_checks", toolbarChecks)
         result.putInt("notification_dialog_checks", notificationChecks)
         instrumentation.finish(if (passed) Activity.RESULT_OK else Activity.RESULT_CANCELED, result)
     }
