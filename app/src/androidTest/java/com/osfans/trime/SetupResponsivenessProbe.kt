@@ -220,6 +220,21 @@ object SetupResponsivenessProbe {
             passed("focus handoff restores one prompt and old dismissal cannot clear its owner")
 
             val oldDecor = main { checkNotNull(replacement.window).decorView }
+            main {
+                check(replacement.getButton(AlertDialog.BUTTON_NEGATIVE).performClick())
+            }
+            await("Cancel did not return focus to MainActivity without reopening the prompt") {
+                main { first.hasWindowFocus() && dialog(first) == null && !replacement.isShowing }
+            }
+            instrumentation.waitForIdleSync()
+            main {
+                repeat(3) {
+                    recheck.invoke(first)
+                    check(dialog(first) == null && first.hasWindowFocus())
+                }
+            }
+            passed("cancel returns focus without immediately reopening the prompt")
+
             val recreated = recreateAndAwaitReplacement(instrumentation, first).also { activities += it }
             check(recreated !== first)
             awaitToolbarMenu(recreated)

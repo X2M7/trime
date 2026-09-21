@@ -57,6 +57,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var navController: NavController
     private var testInputPanel: TestInputPanel? = null
     private var notificationDialog: AlertDialog? = null
+    private var notificationPromptCancelled = false
     private var deferredToolbarMenu: Menu? = null
     private var firstContentPreDraw = false
     private var firstWindowFocusReceived = false
@@ -386,7 +387,8 @@ class MainActivity : AppCompatActivity() {
     private fun checkNotificationPermission() {
         if (isFinishing || isDestroyed || !hasWindowFocus() ||
             !lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED) ||
-            notificationDialog?.isShowing == true || XXPermissions.isGranted(this, Permission.POST_NOTIFICATIONS)
+            notificationPromptCancelled || notificationDialog?.isShowing == true ||
+            XXPermissions.isGranted(this, Permission.POST_NOTIFICATIONS)
         ) {
             return
         }
@@ -405,7 +407,11 @@ class MainActivity : AppCompatActivity() {
                             .permission(Permission.POST_NOTIFICATIONS)
                             .request(null)
                     }
-                }.setNegativeButton(android.R.string.cancel, null)
+                }.setNegativeButton(android.R.string.cancel) { _, _ ->
+                    notificationPromptCancelled = true
+                }.setOnCancelListener {
+                    notificationPromptCancelled = true
+                }
                 .create()
         notificationDialog = dialog
         dialog.setOnDismissListener {
