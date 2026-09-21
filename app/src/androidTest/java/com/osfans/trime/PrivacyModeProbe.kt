@@ -405,17 +405,16 @@ internal object PrivacyModeProbe {
                     // Android 13+ denies clipboard reads to a background app that is not
                     // the selected IME. Keep the daemon idle and give this probe its own
                     // focused Activity so negative assertions exercise a readable clip.
-                    clipboardForegroundActivity = instrumentation.startActivitySync(
+                    val foregroundActivity = instrumentation.startActivitySync(
                         Intent(instrumentation.targetContext, ClipEditActivity::class.java)
                             .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
                     ) as ClipEditActivity
+                    clipboardForegroundActivity = foregroundActivity
                     withTimeout(15_000) {
                         while (true) {
                             var focused = false
                             instrumentation.runOnMainSync {
-                                focused = clipboardForegroundActivity?.let {
-                                    !it.isFinishing && it.hasWindowFocus()
-                                } == true
+                                focused = !foregroundActivity.isFinishing && foregroundActivity.hasWindowFocus()
                             }
                             if (focused) break
                             delay(50)
