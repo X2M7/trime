@@ -6,6 +6,7 @@ import android.app.Instrumentation
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.os.PersistableBundle
@@ -26,6 +27,7 @@ import com.osfans.trime.data.prefs.AppPrefs
 import com.osfans.trime.data.userdict.UserDictManager
 import com.osfans.trime.ime.core.PrivacyMode
 import com.osfans.trime.ime.core.PrivacyModeState
+import com.osfans.trime.ui.main.ClipEditActivity
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
@@ -308,6 +310,7 @@ internal object PrivacyModeProbe {
         val secondNormalEditor = privacyOwner xor 0x71B2L
         val sessionName = "${PrivacyModeProbe::class.java.name}-$pid"
         var session: RimeSession? = null
+        var clipboardForegroundActivity: ClipEditActivity? = null
         var originalSchema: String? = null
         var privateEditorStarted = false
         var normalEditorStarted = false
@@ -399,6 +402,28 @@ internal object PrivacyModeProbe {
 
             runBlocking {
                 withTimeout(600_000) {
+                    // Android 13+ denies clipboard reads to a background app that is not
+                    // the selected IME. Keep the daemon idle and give this probe its own
+                    // focused Activity so negative assertions exercise a readable clip.
+                    clipboardForegroundActivity = instrumentation.startActivitySync(
+                        Intent(instrumentation.targetContext, ClipEditActivity::class.java)
+                            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
+                    ) as ClipEditActivity
+                    withTimeout(15_000) {
+                        while (true) {
+                            var focused = false
+                            instrumentation.runOnMainSync {
+                                focused = clipboardForegroundActivity?.let {
+                                    !it.isFinishing && it.hasWindowFocus()
+                                } == true
+                            }
+                            if (focused) break
+                            delay(50)
+                        }
+                    }
+                    check(RimeDaemon.getFirstSessionOrNull() == null) {
+                        "The clipboard foreground Activity unexpectedly started a Rime session"
+                    }
                     Log.i(LOG_TAG, privateLogStart)
                     setClipboard(ClipData.newPlainText("editable test", editableClip))
                     val editableClipboardBean = awaitCaptured(editableClip)
@@ -993,6 +1018,7 @@ internal object PrivacyModeProbe {
             cleanMain { PrivacyModeState.initialize(previousManualPrivacy) }
             cleanMain { ClipboardHelper.lastBean = previousLastBean }
             cleanMain { clipboardPrefs.clipboardListening.setValue(previousClipboardListening) }
+            cleanMain { clipboardForegroundActivity?.finish() }
             cleanupFailure?.let { failure ->
                 passed = false
                 val combinedFailure = recordedFailure?.apply { addSuppressed(failure) } ?: failure
