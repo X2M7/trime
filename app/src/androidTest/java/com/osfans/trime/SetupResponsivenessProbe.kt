@@ -189,17 +189,26 @@ object SetupResponsivenessProbe {
             }
             passed("repeated permission checks retain one showing prompt")
 
-            val replacement = main {
-                // Dialog posts OnDismiss on its Handler. Create the replacement
-                // before that queued callback runs to exercise ownership identity.
+            main {
+                // Permission checks require the Activity window to own focus.
+                // Dismissing a dialog hands focus back asynchronously, so an
+                // immediate recheck is allowed to defer showing its replacement.
                 firstDialog.dismiss()
                 recheck.invoke(first)
-                checkNotNull(dialog(first)).also { check(it !== firstDialog && it.isShowing) }
+                check(!firstDialog.isShowing)
             }
+            await("Notification prompt was not restored after the focus handoff") {
+                main {
+                    if (first.hasWindowFocus()) recheck.invoke(first)
+                    val current = dialog(first)
+                    current !== firstDialog && current?.isShowing == true
+                }
+            }
+            val replacement = main { checkNotNull(dialog(first)) }
             instrumentation.waitForIdleSync()
             main { check(dialog(first) === replacement && replacement.isShowing) }
             awaitToolbarMenu(first)
-            passed("old queued dismissal cannot clear the replacement prompt")
+            passed("focus handoff restores one prompt and old dismissal cannot clear its owner")
 
             val oldDecor = main { checkNotNull(replacement.window).decorView }
             val recreated = recreateAndAwaitReplacement(instrumentation, first).also { activities += it }
