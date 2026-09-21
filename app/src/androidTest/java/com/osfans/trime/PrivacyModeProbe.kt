@@ -352,9 +352,16 @@ internal object PrivacyModeProbe {
             instrumentation.sendStatus(0, Bundle().apply { putString("stream", "PASS $checks: $name\n") })
         }
 
+        fun assertClipboardReadable(expected: String) {
+            check(clipboard.primaryClip?.getItemAt(0)?.text?.toString() == expected) {
+                "Privacy probe cannot read its own clipboard; negative assertions would be inconclusive"
+            }
+        }
+
         fun setClipboard(clip: ClipData) {
             instrumentation.runOnMainSync {
                 clipboard.setPrimaryClip(clip)
+                assertClipboardReadable(checkNotNull(clip.getItemAt(0).text).toString())
                 // The listener is asynchronous on some releases. Invoke the same production entry
                 // point once so a negative assertion never passes because delivery was late.
                 ClipboardHelper.onPrimaryClipChanged()
@@ -393,15 +400,20 @@ internal object PrivacyModeProbe {
             runBlocking {
                 withTimeout(600_000) {
                     Log.i(LOG_TAG, privateLogStart)
+                    setClipboard(ClipData.newPlainText("editable test", editableClip))
+                    val editableClipboardBean = awaitCaptured(editableClip)
+                    phase("ordinary clipboard is readable and persists before exclusion checks")
                     instrumentation.runOnMainSync {
                         ClipboardHelper.setSensitivePrimaryClip(
                             clipboard,
                             ClipData.newPlainText("private app log", appOwnedSensitiveClip),
                         )
+                        assertClipboardReadable(appOwnedSensitiveClip)
                         ClipboardHelper.setSensitivePrimaryClip(
                             clipboard,
                             ClipData.newPlainText("private app crash", secondAppOwnedSensitiveClip),
                         )
+                        assertClipboardReadable(secondAppOwnedSensitiveClip)
                     }
                     instrumentation.waitForIdleSync()
                     assertNotCaptured(appOwnedSensitiveClip)
@@ -454,8 +466,6 @@ internal object PrivacyModeProbe {
                         "The Lua gear marker was not clean before private input"
                     }
 
-                    setClipboard(ClipData.newPlainText("editable test", editableClip))
-                    val editableClipboardBean = awaitCaptured(editableClip)
                     val editableCollectionBean =
                         checkNotNull(
                             collectionDao.get(
