@@ -28,7 +28,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.withStarted
 import androidx.navigation.NavController
-import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.fragment.NavHostFragment
 import com.hjq.permissions.Permission
 import com.hjq.permissions.XXPermissions
@@ -144,7 +143,7 @@ class MainActivity : AppCompatActivity() {
         navController.addOnDestinationChangedListener { _, dest, _ ->
             dest.label?.let { viewModel.setToolbarTitle(it.toString()) }
             binding.mainToolbar.toolbar.subtitle =
-                if (dest.hasRoute<NavigationRoute.Main>()) {
+                if (dest.route == NavigationRoute.Main.path) {
                     getString(R.string.trime_app_slogan)
                 } else {
                     ""
@@ -173,8 +172,8 @@ class MainActivity : AppCompatActivity() {
 
             Intent.ACTION_RUN -> {
                 val route = intent.parcelable<NavigationRoute>(EXTRA_SETTINGS_ROUTE) ?: return
-                navController.popBackStack(NavigationRoute.Main, false)
-                navController.navigate(route)
+                navController.popBackStack(NavigationRoute.Main.path, false)
+                navController.navigate(route.path)
             }
         }
     }
@@ -192,10 +191,10 @@ class MainActivity : AppCompatActivity() {
                 testInputPanel?.show(window)
             },
             menu.item(R.string.developer, id = R.id.action_developer) {
-                navController.navigate(NavigationRoute.Developer)
+                navController.navigate(NavigationRoute.Developer.path)
             },
             menu.item(R.string.about, id = R.id.action_about) {
-                navController.navigate(NavigationRoute.About)
+                navController.navigate(NavigationRoute.About.path)
             },
         )
         optionMenuItems.forEach { item ->
