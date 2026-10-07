@@ -296,12 +296,37 @@ class CaptureIntervalTest(unittest.TestCase):
         )
         self.assertEqual([1080, 1920], state['effective_size'])
         self.assertEqual(3, state['window_rotation'])
+        absent_user = parse_display_state(
+            'Physical size: 1080x1920',
+            'header\n  mRotation=0\n',
+            '1',
+            'null',
+        )
+        self.assertEqual('1', absent_user['accelerometer_rotation'])
+        self.assertEqual('null', absent_user['user_rotation'])
+        absent_accelerometer = parse_display_state(
+            'Physical size: 1080x1920',
+            'header\n  mRotation=0\n',
+            'null',
+            '0',
+        )
+        self.assertEqual('null', absent_accelerometer['accelerometer_rotation'])
+        self.assertEqual('0', absent_accelerometer['user_rotation'])
         for size, dump in (
                 ('unknown', '  mRotation=0\n'),
                 ('Physical size: 1x1', 'no rotation'),
                 ('Physical size: 1x1', '  mRotation=0\n  mRotation=1\n')):
             with self.assertRaises(RuntimeError):
                 parse_display_state(size, dump, '0', '0')
+        for accelerometer, user in (
+                ('', '0'), ('2', '0'), ('0', ''), ('0', '4'), ('0', 'garbage')):
+            with self.assertRaises(RuntimeError):
+                parse_display_state(
+                    'Physical size: 1080x1920',
+                    '  mRotation=0\n',
+                    accelerometer,
+                    user,
+                )
 
     def test_bounds_parser_rejects_malformed_and_empty_values(self):
         self.assertEqual((0, 1, 2, 3), parse_bounds('[0,1][2,3]'))

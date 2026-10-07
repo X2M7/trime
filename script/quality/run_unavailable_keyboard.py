@@ -176,8 +176,14 @@ def parse_display_state(wm_size, window_dump, accelerometer_rotation, user_rotat
     require(sizes, 'wm size did not expose a physical or override display size')
     rotations = re.findall(r'^\s*mRotation=(?:ROTATION_)?([0-3])(?:\s|$)', window_dump, re.M)
     require(len(rotations) == 1, 'Window manager did not expose exactly one display rotation')
-    require(accelerometer_rotation in ('0', '1'), 'Invalid accelerometer rotation setting')
-    require(user_rotation in ('0', '1', '2', '3'), 'Invalid user rotation setting')
+    # ``settings get`` returns the literal string ``null`` when a setting has
+    # never been persisted.  Fresh API 21 devices commonly omit
+    # ``user_rotation``; the effective orientation still comes from Window
+    # Manager above and the capture bracket verifies that it remains stable.
+    require(accelerometer_rotation in ('0', '1', 'null'),
+            'Invalid accelerometer rotation setting')
+    require(user_rotation in ('0', '1', '2', '3', 'null'),
+            'Invalid user rotation setting')
     width, height = map(int, sizes[-1])
     require(width > 0 and height > 0, 'Display size is empty')
     return {
