@@ -321,6 +321,8 @@ class KeyboardWindow(di: DI) :
         val policy = EditorPolicy.keyboard(info.inputType, info.imeOptions)
         val schema = rime.run { statusCached.schemaId }
         val saved = service.editorModeOverride
+        val restoring = saved.takeIf { policy == EditorKeyboard.USER }
+        val editorToken = service.editorToken
         val ascii = desiredAsciiMode ?: rime.run { statusCached.isAsciiMode }
         if (policy != EditorKeyboard.USER && saved == null) {
             service.editorModeOverride = EditorModeOverride(schema, currentKeyboardId, ascii)
@@ -354,10 +356,22 @@ class KeyboardWindow(di: DI) :
         desiredAsciiMode = targetMode
         if (!restrictedEditor) {
             currentKeyboard.lastAsciiMode = targetMode
-            service.editorModeOverride = null
         }
-        // Always enqueue the final policy: an earlier layout switch may still be in flight.
-        service.postRimeJob { setRuntimeOption("ascii_mode", targetMode) }
+        // Always enqueue the final policy: an earlier layout switch may still be in flight. Keep
+        // a restricted editor's restore snapshot until the native mode has changed. A deployment
+        // can rebuild this KeyboardWindow while the queue is busy; clearing the snapshot first
+        // would let the replacement initialize from the restricted ASCII cache and overwrite the
+        // pending restore.
+        service.postRimeJob {
+            setRuntimeOption("ascii_mode", targetMode)
+            if (restoring != null) {
+                withContext(Dispatchers.Main.immediate) {
+                    if (service.isCurrentEditor(editorToken) && service.editorModeOverride === restoring) {
+                        service.editorModeOverride = null
+                    }
+                }
+            }
+        }
     }
 
     private fun dispatchCapsState(setShift: (Boolean, Boolean) -> Unit) {

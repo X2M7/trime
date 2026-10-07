@@ -87,6 +87,78 @@ object EditorLifecycleProbe {
         return (type.getDeclaredField("mViews").apply { isAccessible = true }.get(instance) as List<View>).toList()
     }
 
+    private suspend fun verifyQueuedModeRestoreAcrossThemeReload(
+        instrumentation: Instrumentation,
+        service: TrimeInputMethodService,
+        inputManager: InputMethodManager,
+        chat: EditText,
+        themeId: String,
+    ) {
+        fun <T> main(block: () -> T): T {
+            if (android.os.Looper.myLooper() == android.os.Looper.getMainLooper()) return block()
+            var value: Result<T>? = null
+            instrumentation.runOnMainSync { value = runCatching(block) }
+            return checkNotNull(value).getOrThrow()
+        }
+        fun input(): InputView? = roots().asSequence().flatMap(::descendants).filterIsInstance<InputView>().firstOrNull { it.isShown }
+        fun keyboard() = checkNotNull(input()).di.direct.instance<KeyboardWindow>().currentKeyboard
+        suspend fun until(label: String, predicate: () -> Boolean) {
+            withTimeout(30_000) { while (!main(predicate)) delay(50) }
+            instrumentation.sendStatus(0, Bundle().apply { putString("stream", "PASS: $label\n") })
+        }
+        suspend fun api(block: suspend RimeApi.() -> Unit) {
+            var outcome: Result<Unit>? = null
+            val job = main { service.postRimeJob { outcome = runCatching { block() } } }
+            job.join()
+            check(!job.isCancelled) { "Engine/editor job cancelled" }
+            checkNotNull(outcome) { "Editor changed before operation ran" }.getOrThrow()
+            main { }
+        }
+
+        // Hold the native queue after the restricted editor has entered ASCII mode. Returning to
+        // chat queues its restore while a deployment-style theme rebuild creates another
+        // KeyboardWindow from the still-ASCII native cache. The restore snapshot must survive the
+        // rebuild so both windows queue the same final Chinese mode.
+        val restoreQueueEntered = CompletableDeferred<Unit>()
+        val restoreQueueRelease = CompletableDeferred<Unit>()
+        val restoreQueueGate = main {
+            service.postRimeJob {
+                restoreQueueEntered.complete(Unit)
+                restoreQueueRelease.await()
+            }
+        }
+        restoreQueueEntered.await()
+        val inputViewBeforeBlockedReload = main { checkNotNull(input()) }
+        try {
+            main {
+                chat.requestFocus()
+                inputManager.showSoftInput(chat, 0)
+            }
+            until("editor chat owns connection while mode restore is queued") {
+                service.currentInputEditorInfo?.fieldId == chat.id && input() != null
+            }
+            until("queued chat restore selects T9 layout") {
+                input() != null && keyboard().isT9Layout
+            }
+            ThemeManager.selectTheme(themeId, forceReload = true)
+            until("forced theme reload overlaps the queued editor restore") {
+                input()?.let { it !== inputViewBeforeBlockedReload && keyboard().isT9Layout } == true
+            }
+        } finally {
+            restoreQueueRelease.complete(Unit)
+        }
+        restoreQueueGate.join()
+        check(!restoreQueueGate.isCancelled) { "Mode-restore queue gate was cancelled" }
+        api {
+            check(!statusCached.isAsciiMode) { "Theme reload overwrote the queued Chinese-mode restore" }
+        }
+        check(main { service.editorModeOverride == null }) { "Completed editor-mode restore left a stale snapshot" }
+        instrumentation.sendStatus(
+            0,
+            Bundle().apply { putString("stream", "PASS: theme reload preserves a queued restricted-editor mode restore\n") },
+        )
+    }
+
     fun run(instrumentation: Instrumentation) {
         val context = instrumentation.targetContext
         val result = Bundle()
@@ -820,6 +892,7 @@ object EditorLifecycleProbe {
                     }
                     until("compatible T9 produces Hanzi") { chat.text.any { it.code > 127 } }
                     val beforeRedeploy = main { chat.text.toString() }
+                    val inputViewBeforeRedeploy = main { checkNotNull(input()) }
                     val tipsPreference = AppPrefs.defaultInstance().general.asciiSwitchTips
                     val previousTipsPreference = tipsPreference.getValue()
                     // Observe the real timer without exposing a production test API.
@@ -851,6 +924,12 @@ object EditorLifecycleProbe {
                     } finally {
                         main { tipsPreference.setValue(previousTipsPreference) }
                     }
+                    until("deployment reloads the active theme and preserves compatible T9") {
+                        input()?.let { it !== inputViewBeforeRedeploy && keyboard().isT9Layout } == true
+                    }
+                    api {
+                        check(!statusCached.isAsciiMode) { "Theme reload lost the active editor's Chinese mode" }
+                    }
                     type("64")
                     api {
                         check(getRawInput() == "64")
@@ -862,11 +941,16 @@ object EditorLifecycleProbe {
                         other.setImeActionLabel(null, 0)
                     }
                     focus(other)
-                    api { check(statusCached.isAsciiMode) }
-                    check(!main { keyboard().isT9Layout })
-                    focus(chat)
-                    api { check(!statusCached.isAsciiMode) }
-                    check(main { keyboard().isT9Layout })
+                    // currentInputEditorInfo is published by onStartInput before the separate
+                    // onStartInputView callback applies KeyboardWindow's editor policy. The
+                    // visible layout change is the main-thread completion boundary for that
+                    // callback; the following queued API read then observes its mode update.
+                    until("redeployed number editor applies its ASCII layout") {
+                        input() != null && !keyboard().isT9Layout
+                    }
+                    api { check(statusCached.isAsciiMode) { "Number editor did not enter ASCII mode" } }
+
+                    verifyQueuedModeRestoreAcrossThemeReload(instrumentation, service, inputManager, chat, id)
 
                     val webReady = CompletableDeferred<Unit>()
                     web = main {
