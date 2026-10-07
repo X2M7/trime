@@ -377,6 +377,19 @@ class InputView(
         enterKeyDisplay.updateLabelOnEditorInfo(info)
     }
 
+    fun reapplyCurrentEditorMode() {
+        keyboardWindow.reapplyCurrentEditorMode()
+    }
+
+    fun restoreModeForHardwareEditor(info: EditorInfo) {
+        keyboardWindow.restoreModeForHardwareEditor(info)
+    }
+
+    fun resumeInputAfterHardware(info: EditorInfo) {
+        keyboardWindow.syncModeFromNative()
+        startInput(info, restarting = true)
+    }
+
     fun finishInput() {
         dismissCandidateActionMenu()
         keyboardWindow.finishInput()

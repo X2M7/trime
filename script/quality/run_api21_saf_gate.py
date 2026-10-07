@@ -45,8 +45,6 @@ RUNTIME_ROOT = T07_ROOT / "runtime"
 QUALITY = REPO / "script/quality"
 RUNTIME_DRIVER = QUALITY / "run_runtime.py"
 DEFAULT_ADB = Path("/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb")
-DEFAULT_CANDIDATE = T07_ROOT / "stable-candidate18"
-EXPECTED_BUILD_COMMIT = "a80c8e9d1d34a4d4e95d49e7a96fb53cb8d9c070"
 APP_NAME = "com.osfans.trime-3.3.13-t9.10-x86_64-debug.apk"
 TEST_NAME = "com.osfans.trime-3.3.13-t9.10-debug-androidTest.apk"
 PACKAGE = "com.osfans.trime.debug"
@@ -1131,19 +1129,30 @@ def selftest() -> int:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--stage", choices=STAGES)
-    parser.add_argument("--candidate", type=Path, default=DEFAULT_CANDIDATE)
-    parser.add_argument("--commit", default=EXPECTED_BUILD_COMMIT)
+    parser.add_argument("--candidate", type=Path)
+    parser.add_argument("--commit")
     parser.add_argument("--adb", type=Path, default=DEFAULT_ADB)
     parser.add_argument("--serial", default="emulator-5560")
     parser.add_argument("--output", type=Path)
     parser.add_argument("--selftest", action="store_true")
     args = parser.parse_args()
     if args.selftest:
-        if args.stage is not None or args.output is not None:
-            parser.error("--selftest cannot be combined with a runtime stage/output")
+        if (
+            args.stage is not None
+            or args.candidate is not None
+            or args.commit is not None
+            or args.output is not None
+        ):
+            parser.error(
+                "--selftest cannot be combined with a runtime stage/candidate/commit/output"
+            )
         return selftest()
     if args.stage is None:
         parser.error("--stage is required")
+    if args.candidate is None:
+        parser.error("--candidate is required for a runtime stage")
+    if args.commit is None:
+        parser.error("--commit is required for a runtime stage")
     if args.output is None:
         parser.error("--output is required")
     return run_phase(args)

@@ -314,6 +314,17 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
         ClipboardHelper.clearTransientSuggestion()
         InputFeedbackManager.startInput(sensitive = updated.active)
         bindEditor()
+        // Advancing the editor generation invalidates queued operations from the preceding
+        // privacy boundary, including a restricted editor's pending ASCII-mode restoration.
+        // Reapply only the current native mode after the new bind so that a manual privacy toggle
+        // cannot strand a normal editor in restricted ASCII mode or change its visible layout.
+        if (themeReady) {
+            if (inputDeviceManager.useVirtualKeyboard) {
+                inputView?.reapplyCurrentEditorMode()
+            } else {
+                inputView?.restoreModeForHardwareEditor(info)
+            }
+        }
     }
 
     private suspend fun updateRimeOption(api: RimeApi) {
@@ -954,6 +965,8 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
             inputDeviceManager.evaluateOnStartInputView(attribute, this)
         if (useVirtualKeyboard) {
             inputView?.startInput(attribute, restarting)
+        } else {
+            inputView?.restoreModeForHardwareEditor(attribute)
         }
         val cursorUpdatesScheduled = updateCursorAnchorSubscription(useCandidatesView)
         if (useCandidatesView && !cursorUpdatesScheduled) {
@@ -1170,13 +1183,22 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
     @Suppress("DEPRECATION", "OVERRIDE_DEPRECATION")
     override fun onViewClicked(focusChanged: Boolean) {
         super.onViewClicked(focusChanged)
+        val wasVirtual = inputDeviceManager.useVirtualKeyboard
         inputDeviceManager.evaluateOnViewClicked(this)
+        restartInputViewAfterDeviceTransition(wasVirtual)
     }
 
     @RequiresApi(34)
     override fun onUpdateEditorToolType(toolType: Int) {
         super.onUpdateEditorToolType(toolType)
+        val wasVirtual = inputDeviceManager.useVirtualKeyboard
         inputDeviceManager.evaluateOnUpdateEditorToolType(toolType, this)
+        restartInputViewAfterDeviceTransition(wasVirtual)
+    }
+
+    private fun restartInputViewAfterDeviceTransition(wasVirtual: Boolean) {
+        if (wasVirtual || !inputDeviceManager.useVirtualKeyboard || !themeReady || !editorActive) return
+        currentInputEditorInfo?.let { inputView?.resumeInputAfterHardware(it) }
     }
 
     fun switchToPrevIme() {

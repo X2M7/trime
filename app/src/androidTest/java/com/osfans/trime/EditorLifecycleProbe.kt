@@ -127,9 +127,9 @@ object EditorLifecycleProbe {
                 restoreQueueRelease.await()
             }
         }
-        restoreQueueEntered.await()
         val inputViewBeforeBlockedReload = main { checkNotNull(input()) }
         try {
+            withTimeout(10_000) { restoreQueueEntered.await() }
             main {
                 chat.requestFocus()
                 inputManager.showSoftInput(chat, 0)
@@ -147,7 +147,7 @@ object EditorLifecycleProbe {
         } finally {
             restoreQueueRelease.complete(Unit)
         }
-        restoreQueueGate.join()
+        withTimeout(10_000) { restoreQueueGate.join() }
         check(!restoreQueueGate.isCancelled) { "Mode-restore queue gate was cancelled" }
         api {
             check(!statusCached.isAsciiMode) { "Theme reload overwrote the queued Chinese-mode restore" }
@@ -156,6 +156,415 @@ object EditorLifecycleProbe {
         instrumentation.sendStatus(
             0,
             Bundle().apply { putString("stream", "PASS: theme reload preserves a queued restricted-editor mode restore\n") },
+        )
+    }
+
+    private suspend fun verifyQueuedModeRestoreAcrossPrivacyChange(
+        instrumentation: Instrumentation,
+        service: TrimeInputMethodService,
+        inputManager: InputMethodManager,
+        restrictedEditor: EditText,
+        chat: EditText,
+    ) {
+        fun <T> main(block: () -> T): T {
+            if (android.os.Looper.myLooper() == android.os.Looper.getMainLooper()) return block()
+            var value: Result<T>? = null
+            instrumentation.runOnMainSync { value = runCatching(block) }
+            return checkNotNull(value).getOrThrow()
+        }
+        fun input(): InputView? = roots().asSequence().flatMap(::descendants).filterIsInstance<InputView>().firstOrNull { it.isShown }
+        fun keyboard() = checkNotNull(input()).di.direct.instance<KeyboardWindow>().currentKeyboard
+        suspend fun until(label: String, predicate: () -> Boolean) {
+            withTimeout(30_000) { while (!main(predicate)) delay(50) }
+            instrumentation.sendStatus(0, Bundle().apply { putString("stream", "PASS: $label\n") })
+        }
+        suspend fun api(block: suspend RimeApi.() -> Unit) {
+            var outcome: Result<Unit>? = null
+            val job = main { service.postRimeJob { outcome = runCatching { block() } } }
+            job.join()
+            check(!job.isCancelled) { "Engine/editor job cancelled" }
+            checkNotNull(outcome) { "Editor changed before operation ran" }.getOrThrow()
+            main { }
+        }
+
+        val manualPrivacyMode = AppPrefs.defaultInstance().general.manualPrivacyMode
+        check(!manualPrivacyMode.getValue()) { "Queued privacy-boundary fixture requires ordinary mode" }
+        main {
+            restrictedEditor.requestFocus()
+            inputManager.showSoftInput(restrictedEditor, 0)
+        }
+        until("privacy-boundary number editor owns connection") {
+            service.currentInputEditorInfo?.fieldId == restrictedEditor.id && input() != null
+        }
+        until("privacy-boundary number editor applies its ASCII layout") {
+            input() != null && !keyboard().isT9Layout
+        }
+        api { check(statusCached.isAsciiMode) { "Privacy-boundary fixture did not enter ASCII mode" } }
+
+        val restoreQueueEntered = CompletableDeferred<Unit>()
+        val restoreQueueRelease = CompletableDeferred<Unit>()
+        val restoreQueueGate = main {
+            service.postRimeJob {
+                restoreQueueEntered.complete(Unit)
+                restoreQueueRelease.await()
+            }
+        }
+        var privacyEnabled = false
+        try {
+            withTimeout(10_000) { restoreQueueEntered.await() }
+            main {
+                chat.requestFocus()
+                inputManager.showSoftInput(chat, 0)
+            }
+            until("editor chat owns connection before queued privacy change") {
+                service.currentInputEditorInfo?.fieldId == chat.id && input() != null
+            }
+            until("queued privacy-boundary restore selects T9 layout") {
+                input() != null && keyboard().isT9Layout
+            }
+            check(main { service.editorModeOverride != null }) {
+                "Queued privacy-boundary restore lost its restricted-editor snapshot before replay"
+            }
+            main { manualPrivacyMode.setValue(true) }
+            privacyEnabled = true
+            until("manual privacy supersedes the queued editor generation") {
+                service.isPrivacyModeActive && PrivacyModeState.active
+            }
+            restoreQueueRelease.complete(Unit)
+            withTimeout(10_000) { restoreQueueGate.join() }
+            check(!restoreQueueGate.isCancelled) { "Privacy-boundary queue gate was cancelled" }
+            api {
+                check(Rime.isRimePrivacyGuardEnabledForTesting()) {
+                    "Queued privacy change did not bind the native privacy policy"
+                }
+                check(!statusCached.isAsciiMode) {
+                    "Privacy change discarded the queued normal-editor mode restore"
+                }
+            }
+            check(main { service.editorModeOverride == null }) {
+                "Privacy change left a stale restricted-editor mode snapshot"
+            }
+        } finally {
+            restoreQueueRelease.complete(Unit)
+            if (privacyEnabled) main { manualPrivacyMode.setValue(false) }
+        }
+        until("ordinary mode returns after queued privacy change") {
+            !service.isPrivacyModeActive && !PrivacyModeState.active
+        }
+        api {
+            check(!Rime.isRimePrivacyGuardEnabledForTesting())
+            check(!statusCached.isAsciiMode) { "Privacy exit lost the normal editor's Chinese mode" }
+        }
+        instrumentation.sendStatus(
+            0,
+            Bundle().apply {
+                putString("stream", "PASS: privacy changes preserve a queued restricted-editor mode restore\n")
+            },
+        )
+    }
+
+    private suspend fun verifyHardwareEditorPolicies(
+        instrumentation: Instrumentation,
+        service: TrimeInputMethodService,
+        editor: Activity,
+        chat: EditText,
+        other: EditText,
+    ) {
+        fun <T> main(block: () -> T): T {
+            if (android.os.Looper.myLooper() == android.os.Looper.getMainLooper()) return block()
+            var value: Result<T>? = null
+            instrumentation.runOnMainSync { value = runCatching(block) }
+            return checkNotNull(value).getOrThrow()
+        }
+        fun input(): InputView? = roots().asSequence().flatMap(::descendants).filterIsInstance<InputView>().firstOrNull { it.isShown }
+        fun keyboard() = checkNotNull(input()).di.direct.instance<KeyboardWindow>().currentKeyboard
+        suspend fun until(label: String, predicate: () -> Boolean) {
+            withTimeout(30_000) { while (!main(predicate)) delay(50) }
+            instrumentation.sendStatus(0, Bundle().apply { putString("stream", "PASS: $label\n") })
+        }
+        suspend fun api(block: suspend RimeApi.() -> Unit) {
+            var outcome: Result<Unit>? = null
+            val job = main { service.postRimeJob { outcome = runCatching { block() } } }
+            job.join()
+            check(!job.isCancelled) { "Engine/editor job cancelled" }
+            checkNotNull(outcome) { "Editor changed before operation ran" }.getOrThrow()
+            main { }
+        }
+        fun speechAllowed(): Boolean = InputFeedbackManager::class.java
+            .getDeclaredField("speechAllowed")
+            .apply { isAccessible = true }
+            .getBoolean(InputFeedbackManager)
+        val inputManager = editor.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+        suspend fun focusVirtual(field: EditText) {
+            main {
+                field.requestFocus()
+                inputManager.showSoftInput(field, 0)
+            }
+            until("virtual editor ${field.hint} owns connection") {
+                service.currentInputEditorInfo?.fieldId == field.id && input() != null
+            }
+        }
+        suspend fun focusPhysical(field: EditText) {
+            main { field.requestFocus() }
+            until("physical editor ${field.hint} owns connection") {
+                service.currentInputEditorInfo?.fieldId == field.id
+            }
+            api { }
+        }
+
+        val candidatesMode = AppPrefs.defaultInstance().candidates.mode
+        val originalCandidatesMode = candidatesMode.getValue()
+        val manualPrivacyMode = AppPrefs.defaultInstance().general.manualPrivacyMode
+        check(!manualPrivacyMode.getValue()) { "Hardware policy fixture requires ordinary mode" }
+        try {
+            main {
+                other.hint = "soft-number-before-hardware"
+                other.inputType = InputType.TYPE_CLASS_NUMBER
+                other.setText("")
+            }
+            focusVirtual(other)
+            val keyboardWindow = main { checkNotNull(input()).di.direct.instance<KeyboardWindow>() }
+            val restrictedEditorField = KeyboardWindow::class.java.getDeclaredField("restrictedEditor").apply { isAccessible = true }
+            until("soft number establishes its restricted layout before hardware input") {
+                input() != null && !keyboard().isT9Layout
+            }
+            check(main { restrictedEditorField.getBoolean(keyboardWindow) }) {
+                "Soft number did not establish a restricted keyboard policy"
+            }
+            api { check(statusCached.isAsciiMode) }
+            check(main { service.editorModeOverride != null }) {
+                "Soft number did not retain the preceding editor mode"
+            }
+
+            main { candidatesMode.setValue(PopupCandidatesMode.INPUT_DEVICE) }
+            instrumentation.sendKeyDownUpSync(KeyEvent.KEYCODE_6)
+            until("physical keyboard hides the virtual keyboard") {
+                service.isInputViewShown && input() == null
+            }
+            focusPhysical(chat)
+            api {
+                check(!statusCached.isAsciiMode) {
+                    "Hardware chat did not restore the mode saved before soft number input"
+                }
+                check(getRawInput().isEmpty())
+            }
+            check(main { service.editorModeOverride == null }) {
+                "Hardware chat left a stale soft-number mode snapshot"
+            }
+            main {
+                @Suppress("DEPRECATION")
+                service.onViewClicked(false)
+            }
+            until("same hardware chat restores its virtual T9 keyboard") {
+                input() != null && keyboard().isT9Layout
+            }
+            check(!main { restrictedEditorField.getBoolean(keyboardWindow) }) {
+                "Virtual chat retained the hidden number editor policy"
+            }
+            api {
+                check(!statusCached.isAsciiMode) {
+                    "Virtual chat returned from hardware input with a stale ASCII mode"
+                }
+            }
+            instrumentation.sendKeyDownUpSync(KeyEvent.KEYCODE_6)
+            until("physical key hides the restored virtual keyboard") { input() == null }
+            api {
+                check(getRawInput() == "6")
+                clearComposition()
+                setRuntimeOption("ascii_mode", true)
+            }
+            main {
+                @Suppress("DEPRECATION")
+                service.onViewClicked(false)
+            }
+            until("same hardware chat returns after an explicit hardware mode change") {
+                input() != null && keyboard().isT9Layout
+            }
+            api {
+                check(statusCached.isAsciiMode) {
+                    "Virtual chat discarded the mode selected during hardware input"
+                }
+                setRuntimeOption("ascii_mode", false)
+            }
+            instrumentation.sendKeyDownUpSync(KeyEvent.KEYCODE_6)
+            until("physical key hides the mode-restored virtual keyboard") { input() == null }
+            api {
+                check(getRawInput() == "6")
+                clearComposition()
+            }
+
+            for ((name, inputType) in listOf(
+                "hardware-password" to (InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD),
+                "hardware-email" to (InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS),
+                "hardware-number" to InputType.TYPE_CLASS_NUMBER,
+            )) {
+                main {
+                    other.hint = name
+                    other.inputType = inputType
+                    other.setText("")
+                }
+                focusPhysical(other)
+                val expectedPrivate = "password" in name
+                check(service.isPrivacyModeActive == expectedPrivate) { "$name privacy state mismatch" }
+                check(PrivacyModeState.active == expectedPrivate) { "$name process privacy state mismatch" }
+                check(speechAllowed() != expectedPrivate) { "$name speech privacy state mismatch" }
+                api { check(Rime.isRimePrivacyGuardEnabledForTesting() == expectedPrivate) }
+                api { check(!statusCached.isAsciiMode) { "Hardware test must exercise an unchanged Chinese engine mode" } }
+                if (name == "hardware-number") {
+                    main { manualPrivacyMode.setValue(true) }
+                    until("manual privacy reaches the hardware number editor") {
+                        service.isPrivacyModeActive && PrivacyModeState.active
+                    }
+                    api {
+                        check(Rime.isRimePrivacyGuardEnabledForTesting())
+                        check(!statusCached.isAsciiMode) {
+                            "Privacy rebind applied a hidden virtual-keyboard policy to hardware input"
+                        }
+                    }
+                    main { manualPrivacyMode.setValue(false) }
+                    until("manual privacy leaves the hardware number editor") {
+                        !service.isPrivacyModeActive && !PrivacyModeState.active
+                    }
+                    api {
+                        check(!Rime.isRimePrivacyGuardEnabledForTesting())
+                        check(!statusCached.isAsciiMode) {
+                            "Privacy exit left hardware input in a hidden ASCII policy"
+                        }
+                        setRuntimeOption("ascii_mode", true)
+                    }
+                    main { manualPrivacyMode.setValue(true) }
+                    until("second manual privacy change reaches the hardware number editor") {
+                        service.isPrivacyModeActive && PrivacyModeState.active
+                    }
+                    api {
+                        check(Rime.isRimePrivacyGuardEnabledForTesting())
+                        check(statusCached.isAsciiMode) {
+                            "Privacy rebind overwrote a hardware editor's explicit ASCII mode"
+                        }
+                    }
+                    main { manualPrivacyMode.setValue(false) }
+                    until("second manual privacy change leaves the hardware number editor") {
+                        !service.isPrivacyModeActive && !PrivacyModeState.active
+                    }
+                    api {
+                        check(!Rime.isRimePrivacyGuardEnabledForTesting())
+                        check(statusCached.isAsciiMode) {
+                            "Privacy exit overwrote a hardware editor's explicit ASCII mode"
+                        }
+                        setRuntimeOption("ascii_mode", false)
+                    }
+                }
+                instrumentation.sendKeyDownUpSync(KeyEvent.KEYCODE_6)
+                instrumentation.sendKeyDownUpSync(KeyEvent.KEYCODE_4)
+                until("$name receives physical digits directly") { other.text.toString() == "64" }
+                api { check(getRawInput().isEmpty()) { "$name leaked hardware input to Rime" } }
+                focusPhysical(chat)
+                instrumentation.sendKeyDownUpSync(KeyEvent.KEYCODE_6)
+                instrumentation.sendKeyDownUpSync(KeyEvent.KEYCODE_4)
+                api {
+                    check(!statusCached.isAsciiMode && getRawInput() == "64") {
+                        "Physical chat did not retain Chinese input after $name"
+                    }
+                    clearComposition()
+                }
+            }
+        } finally {
+            main {
+                manualPrivacyMode.setValue(false)
+                candidatesMode.setValue(originalCandidatesMode)
+                @Suppress("DEPRECATION")
+                service.onViewClicked(false)
+                chat.requestFocus()
+                inputManager.showSoftInput(chat, 0)
+            }
+        }
+        until("virtual chat returns after hardware policy checks") {
+            service.currentInputEditorInfo?.fieldId == chat.id &&
+                input() != null &&
+                keyboard().isT9Layout
+        }
+        api { check(!statusCached.isAsciiMode) }
+        instrumentation.sendStatus(
+            0,
+            Bundle().apply { putString("stream", "PASS: hardware editors preserve and restore native input modes\n") },
+        )
+    }
+
+    private suspend fun verifyTransientKeyboardAcrossPrivacyChange(
+        instrumentation: Instrumentation,
+        service: TrimeInputMethodService,
+    ) {
+        fun <T> main(block: () -> T): T {
+            if (android.os.Looper.myLooper() == android.os.Looper.getMainLooper()) return block()
+            var value: Result<T>? = null
+            instrumentation.runOnMainSync { value = runCatching(block) }
+            return checkNotNull(value).getOrThrow()
+        }
+        fun input(): InputView? = roots().asSequence().flatMap(::descendants).filterIsInstance<InputView>().firstOrNull { it.isShown }
+        suspend fun until(label: String, predicate: () -> Boolean) {
+            withTimeout(30_000) { while (!main(predicate)) delay(50) }
+            instrumentation.sendStatus(0, Bundle().apply { putString("stream", "PASS: $label\n") })
+        }
+        suspend fun api(block: suspend RimeApi.() -> Unit) {
+            var outcome: Result<Unit>? = null
+            val job = main { service.postRimeJob { outcome = runCatching { block() } } }
+            job.join()
+            check(!job.isCancelled) { "Engine/editor job cancelled" }
+            checkNotNull(outcome) { "Editor changed before operation ran" }.getOrThrow()
+            main { }
+        }
+
+        val manualPrivacyMode = AppPrefs.defaultInstance().general.manualPrivacyMode
+        check(!manualPrivacyMode.getValue()) { "Transient keyboard fixture requires ordinary mode" }
+        val window = main { checkNotNull(input()).di.direct.instance<KeyboardWindow>() }
+        try {
+            main { window.switchKeyboard("symbols") }
+            until("manual privacy layout fixture selects a transient keyboard") {
+                !window.currentKeyboard.isLock && !window.currentKeyboard.isT9Layout
+            }
+            val transientKeyboard = main { window.currentKeyboard }
+            api {
+                check(statusCached.isAsciiMode) {
+                    "Transient symbols keyboard did not establish its native ASCII mode"
+                }
+            }
+            main { manualPrivacyMode.setValue(true) }
+            until("manual privacy reaches the transient keyboard") {
+                service.isPrivacyModeActive && PrivacyModeState.active
+            }
+            api {
+                check(Rime.isRimePrivacyGuardEnabledForTesting())
+                check(statusCached.isAsciiMode) {
+                    "Privacy entry changed the transient keyboard's native mode"
+                }
+            }
+            check(main { window.currentKeyboard === transientKeyboard }) {
+                "Privacy entry replaced the user's transient keyboard"
+            }
+            main { manualPrivacyMode.setValue(false) }
+            until("manual privacy leaves the transient keyboard") {
+                !service.isPrivacyModeActive && !PrivacyModeState.active
+            }
+            api {
+                check(!Rime.isRimePrivacyGuardEnabledForTesting())
+                check(statusCached.isAsciiMode) {
+                    "Privacy exit changed the transient keyboard's native mode"
+                }
+            }
+            check(main { window.currentKeyboard === transientKeyboard }) {
+                "Privacy exit replaced the user's transient keyboard"
+            }
+        } finally {
+            main {
+                manualPrivacyMode.setValue(false)
+                window.switchKeyboard(".last_lock")
+            }
+        }
+        until("manual privacy layout fixture restores T9") { window.currentKeyboard.isT9Layout }
+        api { check(!statusCached.isAsciiMode) }
+        instrumentation.sendStatus(
+            0,
+            Bundle().apply { putString("stream", "PASS: manual privacy preserves the user's transient keyboard\n") },
         )
     }
 
@@ -497,6 +906,8 @@ object EditorLifecycleProbe {
                     api { check(!Rime.isRimePrivacyGuardEnabledForTesting()) }
                     phase("PASS: no-personalized-learning flag controls privacy without replacing T9")
 
+                    verifyTransientKeyboardAcrossPrivacyChange(instrumentation, service)
+
                     main { manualPrivacyMode.setValue(true) }
                     until("manual privacy reaches the active editor") {
                         service.isPrivacyModeActive && PrivacyModeState.active && !speechAllowed()
@@ -603,55 +1014,7 @@ object EditorLifecycleProbe {
                     check(main { checkNotNull(input()).di.direct.instance<EnterKeyDisplayDelegate>().keyLabel } != "Unusable action")
                     focus(chat)
 
-                    // Hardware mode does not start KeyboardWindow for subsequent editors.
-                    // Restricted fields must therefore bypass Rime independently of its mode.
-                    main { candidatesMode.setValue(PopupCandidatesMode.INPUT_DEVICE) }
-                    instrumentation.sendKeyDownUpSync(KeyEvent.KEYCODE_6)
-                    until("physical keyboard hides the virtual keyboard") { service.isInputViewShown && input() == null }
-                    api {
-                        check(getRawInput() == "6")
-                        clearComposition()
-                    }
-                    suspend fun focusPhysical(field: EditText) {
-                        main { field.requestFocus() }
-                        until("physical editor ${field.hint} owns connection") { service.currentInputEditorInfo?.fieldId == field.id }
-                        api { }
-                    }
-                    for ((name, inputType) in listOf(
-                        "hardware-password" to (InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD),
-                        "hardware-email" to (InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS),
-                        "hardware-number" to InputType.TYPE_CLASS_NUMBER,
-                    )) {
-                        main {
-                            other.hint = name
-                            other.inputType = inputType
-                            other.setText("")
-                        }
-                        focusPhysical(other)
-                        val expectedPrivate = "password" in name
-                        check(service.isPrivacyModeActive == expectedPrivate) { "$name privacy state mismatch" }
-                        check(PrivacyModeState.active == expectedPrivate) { "$name process privacy state mismatch" }
-                        check(speechAllowed() != expectedPrivate) { "$name speech privacy state mismatch" }
-                        api { check(Rime.isRimePrivacyGuardEnabledForTesting() == expectedPrivate) }
-                        api { check(!statusCached.isAsciiMode) { "Hardware test must exercise an unchanged Chinese engine mode" } }
-                        instrumentation.sendKeyDownUpSync(KeyEvent.KEYCODE_6)
-                        instrumentation.sendKeyDownUpSync(KeyEvent.KEYCODE_4)
-                        until("$name receives physical digits directly") { other.text.toString() == "64" }
-                        api { check(getRawInput().isEmpty()) { "$name leaked hardware input to Rime" } }
-                        focusPhysical(chat)
-                        instrumentation.sendKeyDownUpSync(KeyEvent.KEYCODE_6)
-                        instrumentation.sendKeyDownUpSync(KeyEvent.KEYCODE_4)
-                        api {
-                            check(!statusCached.isAsciiMode && getRawInput() == "64") { "Physical chat did not retain Chinese input after $name" }
-                            clearComposition()
-                        }
-                    }
-                    main {
-                        candidatesMode.setValue(originalCandidatesMode)
-                        @Suppress("DEPRECATION")
-                        service.onViewClicked(false)
-                    }
-                    focus(chat)
+                    verifyHardwareEditorPolicies(instrumentation, service, editor, chat, other)
 
                     val queueEntered = CompletableDeferred<Unit>()
                     val queueRelease = CompletableDeferred<Unit>()
@@ -951,6 +1314,13 @@ object EditorLifecycleProbe {
                     api { check(statusCached.isAsciiMode) { "Number editor did not enter ASCII mode" } }
 
                     verifyQueuedModeRestoreAcrossThemeReload(instrumentation, service, inputManager, chat, id)
+                    verifyQueuedModeRestoreAcrossPrivacyChange(
+                        instrumentation,
+                        service,
+                        inputManager,
+                        other,
+                        chat,
+                    )
 
                     val webReady = CompletableDeferred<Unit>()
                     web = main {

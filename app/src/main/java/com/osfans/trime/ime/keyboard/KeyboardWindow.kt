@@ -92,6 +92,7 @@ class KeyboardWindow(di: DI) :
     private var lastLockKeyboardId = ""
     private var restrictedEditor = false
     private var desiredAsciiMode: Boolean? = null
+    private var preserveNativeModeOnNextStart = false
     private var preservedSymbolMode: Pair<Keyboard, Boolean>? = null
     private val cachedKeyboards = mutableMapOf<String, Pair<Keyboard, KeyboardView>>()
     private val activeKeyboard: Keyboard? get() = cachedKeyboards[currentKeyboardId]?.first
@@ -322,6 +323,8 @@ class KeyboardWindow(di: DI) :
         val schema = rime.run { statusCached.schemaId }
         val saved = service.editorModeOverride
         val restoring = saved.takeIf { policy == EditorKeyboard.USER }
+        val leavingRestrictedEditor = policy == EditorKeyboard.USER && restrictedEditor
+        val preserveNativeMode = preserveNativeModeOnNextStart.also { preserveNativeModeOnNextStart = false }
         val editorToken = service.editorToken
         val ascii = desiredAsciiMode ?: rime.run { statusCached.isAsciiMode }
         if (policy != EditorKeyboard.USER && saved == null) {
@@ -336,7 +339,11 @@ class KeyboardWindow(di: DI) :
                 saved
                     ?.takeIf { it.schemaId == schema && it.keyboardId in presetKeyboardIds }
                     ?.let { evalKeyboard(it.keyboardId) }
-                    ?: if (saved != null) evalKeyboard(".default") else evalKeyboard("")
+                    ?: when {
+                        saved != null -> evalKeyboard(".default")
+                        leavingRestrictedEditor -> evalKeyboard(".last_lock")
+                        else -> evalKeyboard("")
+                    }
         }
         detachCurrentView()
         restrictedEditor = policy != EditorKeyboard.USER
@@ -348,6 +355,8 @@ class KeyboardWindow(di: DI) :
 
             saved != null -> currentKeyboard.asciiMode
 
+            preserveNativeMode -> ascii
+
             theme.style.resetAsciiModeOnFocusChange ->
                 if (currentKeyboard.resetAsciiMode) currentKeyboard.asciiMode else currentKeyboard.lastAsciiMode
 
@@ -357,6 +366,42 @@ class KeyboardWindow(di: DI) :
         if (!restrictedEditor) {
             currentKeyboard.lastAsciiMode = targetMode
         }
+        enqueueEditorMode(targetMode, restoring, editorToken)
+    }
+
+    /** Replays only the native mode after a privacy boundary invalidates older queued jobs. */
+    fun reapplyCurrentEditorMode() {
+        val targetMode = desiredAsciiMode ?: rime.run { statusCached.isAsciiMode }
+        val restoring = service.editorModeOverride.takeIf { !restrictedEditor }
+        enqueueEditorMode(targetMode, restoring, service.editorToken)
+    }
+
+    /** Picks up native changes made while the hidden input view was not receiving messages. */
+    fun syncModeFromNative() {
+        desiredAsciiMode = rime.run { statusCached.isAsciiMode }
+        preserveNativeModeOnNextStart = true
+    }
+
+    /** Restores a virtual restricted editor's snapshot without showing or changing a keyboard. */
+    fun restoreModeForHardwareEditor(info: EditorInfo) {
+        val restoring = service.editorModeOverride ?: return
+        if (EditorPolicy.keyboard(info.inputType, info.imeOptions) != EditorKeyboard.USER) return
+        val schema = rime.run { statusCached.schemaId }
+        val targetMode =
+            if (restoring.schemaId == schema) {
+                restoring.asciiMode
+            } else {
+                selectKeyboardConfig(evalKeyboard(".default"))?.asciiMode == 1
+            }
+        desiredAsciiMode = targetMode
+        enqueueEditorMode(targetMode, restoring, service.editorToken)
+    }
+
+    private fun enqueueEditorMode(
+        targetMode: Boolean,
+        restoring: EditorModeOverride?,
+        editorToken: Long,
+    ) {
         // Always enqueue the final policy: an earlier layout switch may still be in flight. Keep
         // a restricted editor's restore snapshot until the native mode has changed. A deployment
         // can rebuild this KeyboardWindow while the queue is busy; clearing the snapshot first
