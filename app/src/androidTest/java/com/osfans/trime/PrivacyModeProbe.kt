@@ -64,9 +64,9 @@ internal object PrivacyModeProbe {
         label: String,
     ) {
         val editor = preferences.edit()
-        values.forEach(editor::putBoolean)
+        for ((key, value) in values) editor.putBoolean(key, value)
         check(editor.commit()) { "Could not persist restored $label preferences" }
-        values.forEach { (key, value) ->
+        for ((key, value) in values) {
             check(preferences.getBoolean(key, !value) == value) {
                 "Restored $label preference did not persist: $key"
             }
