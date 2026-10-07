@@ -334,11 +334,14 @@ internal object PrivacyTriggerSinkProbe {
         private suspend fun activate(item: TriggerCase): EditText = when (item.kind) {
             TriggerKind.PASSWORD -> {
                 main {
+                    // Clear the previous fixture text before changing the editor policy. On
+                    // Android 5, changing a populated field from ordinary text to another
+                    // variation can start the platform SpellChecker against stale content.
+                    harness.target.setText("")
                     harness.target.hint = "t07-password"
                     harness.target.inputType =
                         InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
                     harness.target.imeOptions = EditorInfo.IME_ACTION_DONE
-                    harness.target.setText("")
                 }
                 harness.focus(harness.target)
                 harness.target
@@ -346,11 +349,14 @@ internal object PrivacyTriggerSinkProbe {
 
             TriggerKind.APP_REQUESTED -> {
                 main {
+                    // The password case commits a long synthetic token. Remove it while the
+                    // no-suggestions password variation is still active, before API 21 can
+                    // schedule a spell-check span for the old text.
+                    harness.target.setText("")
                     harness.target.hint = "t07-no-personalized-learning"
                     harness.target.inputType = InputType.TYPE_CLASS_TEXT
                     harness.target.imeOptions =
                         EditorInfo.IME_ACTION_DONE or EditorPolicy.NO_PERSONALIZED_LEARNING_FLAG
-                    harness.target.setText("")
                 }
                 harness.focus(harness.target)
                 harness.target

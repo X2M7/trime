@@ -128,13 +128,20 @@ object EditorLifecycleProbe {
             val actions = mutableListOf<Int>()
             val fields = main {
                 val row = LinearLayout(editor).apply { orientation = LinearLayout.VERTICAL }
-                val chat = EditText(editor).apply {
+                // The fixture owns these editors in the same PID as the IME. Keep Android's
+                // platform SpellChecker out of the runtime log while preserving the exact
+                // EditorInfo inputType values under test.
+                val chat = object : EditText(editor) {
+                    override fun isSuggestionsEnabled(): Boolean = false
+                }.apply {
                     id = View.generateViewId()
                     hint = "chat"
                     inputType = InputType.TYPE_CLASS_TEXT
                     imeOptions = EditorInfo.IME_ACTION_SEND
                 }
-                val other = EditText(editor).apply {
+                val other = object : EditText(editor) {
+                    override fun isSuggestionsEnabled(): Boolean = false
+                }.apply {
                     id = View.generateViewId()
                     hint = "target"
                 }
