@@ -292,6 +292,8 @@ internal object PrivacyModeProbe {
         val appOwnedSensitiveClip = "trimesensitivelog${UUID.randomUUID().toString().replace("-", "")}"
         val secondAppOwnedSensitiveClip = "trimesensitivecrash${UUID.randomUUID().toString().replace("-", "")}"
         val privateClip = "virtualpin${UUID.randomUUID().toString().replace("-", "")}"
+        val appRequestedClip = "virtualotp${UUID.randomUUID().toString().replace("-", "")}"
+        val manualPrivacyClip = "virtualpin${UUID.randomUUID().toString().replace("-", "")}"
         val normalClip = "ordinarytext${UUID.randomUUID().toString().replace("-", "")}"
         val editableClip = "editableclip${UUID.randomUUID().toString().replace("-", "")}"
         val editableCollection = "editablecollection${UUID.randomUUID().toString().replace("-", "")}"
@@ -548,11 +550,21 @@ internal object PrivacyModeProbe {
                         privateEditorStarted = true
                         check(Rime.isRimePrivacyGuardEnabledForTesting()) { "Native privacy guard is inactive" }
                         check(Rime.getRimeCommitHistorySizeForTesting() == 0) { "Private editor inherited commit history" }
+                        var privateCandidateOrder: List<String>? = null
 
                         suspend fun commitFixtureCandidate() {
                             clearComposition()
                             check(processKey('q'.code)) { "Fixture key was not processed" }
-                            val index = getCandidates(0, 10).indexOfFirst { it.text == privateCandidate }
+                            val candidateOrder = getCandidates(0, 10).map { it.text }
+                            check(candidateOrder.count { it == privateCandidate } == 1) {
+                                "Fixture candidate list is ambiguous: $candidateOrder"
+                            }
+                            privateCandidateOrder?.let { expected ->
+                                check(candidateOrder == expected) {
+                                    "Private selection changed candidate text/order: $expected -> $candidateOrder"
+                                }
+                            } ?: run { privateCandidateOrder = candidateOrder }
+                            val index = candidateOrder.indexOf(privateCandidate)
                             check(index >= 0) { "Fixture candidate is unavailable" }
                             check(selectCandidate(index, false)) { "Fixture candidate was not selected" }
                             check(getRawInput().isEmpty()) { "Fixture candidate did not commit" }
@@ -586,8 +598,10 @@ internal object PrivacyModeProbe {
                         setRuntimeOption("ascii_mode", false)
                         clearComposition()
                         check(processKey('q'.code)) { "Redeployed private fixture key was not processed" }
-                        check(getCandidates(0, 10).any { it.text == privateCandidate }) {
-                            "Redeployed private fixture candidate is unavailable"
+                        val redeployedCandidateOrder = getCandidates(0, 10).map { it.text }
+                        check(redeployedCandidateOrder == privateCandidateOrder) {
+                            "Private redeployment changed candidate text/order: " +
+                                "$privateCandidateOrder -> $redeployedCandidateOrder"
                         }
                         check(selectSchema(checkNotNull(originalSchema))) {
                             "Could not tear down the redeployed private Lua fixture"
@@ -752,13 +766,38 @@ internal object PrivacyModeProbe {
                         afterPrivate == beforePrivate &&
                             !afterPrivate.contents.contains(privateCandidate),
                     ) { "Private input changed the fixture user dictionary" }
-                    PrivacyModeState.endInput(privacyOwner)
+                    instrumentation.runOnMainSync {
+                        PrivacyModeState.endInput(privacyOwner, ClipboardHelper::quarantineCurrentPrimaryClip)
+                    }
                     stateStarted = false
+                    instrumentation.runOnMainSync { ClipboardHelper.onPrimaryClipChanged() }
+                    assertNotCaptured(privateClip)
+                    listOf(
+                        Triple(privacyOwner xor 0x23A1L, PrivacyMode(appRequested = true), appRequestedClip),
+                        Triple(privacyOwner xor 0x34B2L, PrivacyMode(manual = true), manualPrivacyClip),
+                    ).forEach { (owner, mode, text) ->
+                        check(owner != 0L)
+                        instrumentation.runOnMainSync { PrivacyModeState.beginInput(owner, mode) }
+                        try {
+                            check(PrivacyModeState.active) { "$mode did not activate unified privacy" }
+                            setClipboard(ClipData.newPlainText("private trigger test", text))
+                            assertNotCaptured(text)
+                        } finally {
+                            instrumentation.runOnMainSync {
+                                if (mode.manual) PrivacyModeState.setManual(false)
+                                PrivacyModeState.endInput(owner, ClipboardHelper::quarantineCurrentPrimaryClip)
+                            }
+                        }
+                        check(!PrivacyModeState.active) { "$mode did not restore ordinary persistence" }
+                        instrumentation.runOnMainSync { ClipboardHelper.onPrimaryClipChanged() }
+                        assertNotCaptured(text)
+                    }
                     Log.i(LOG_TAG, privateLogEnd)
                     phase(
                         "private commits, $enabledSchemaCount enabled schemas and active-switcher boundaries " +
                             "retain the guard without history or userdb writes",
                     )
+                    phase("password, no-learning and manual privacy each reject an independently owned clipboard token")
 
                     val processLogs = logForPid(ownLogcat(), pid)
                     val privateLogStartIndex = processLogs.indexOf(privateLogStart)
@@ -777,6 +816,8 @@ internal object PrivacyModeProbe {
                             appOwnedSensitiveClip,
                             secondAppOwnedSensitiveClip,
                             privateClip,
+                            appRequestedClip,
+                            manualPrivacyClip,
                             privateClipEdit,
                             privateCollectionEdit,
                             privateSymbol,
@@ -941,6 +982,8 @@ internal object PrivacyModeProbe {
                 appOwnedSensitiveClip,
                 secondAppOwnedSensitiveClip,
                 privateClip,
+                appRequestedClip,
+                manualPrivacyClip,
                 normalClip,
                 editableClip,
                 privateClipEdit,
