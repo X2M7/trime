@@ -389,7 +389,11 @@ def run(args):
                 ],
             }, indent=2) + '\n')
             tap(root, 'text', '2')
-            root = capture('limited-input', [('text', 'STABLE2')])
+            root = capture('limited-input', [
+                ('text', 'STABLE2'),
+                ('content-desc', 'Delete'),
+            ])
+            fallback_control_snapshot(root)
             tap(root, 'content-desc', 'Delete')
             capture('limited-delete', [('text', 'STABLE')])
             shell('rmdir', shared)
