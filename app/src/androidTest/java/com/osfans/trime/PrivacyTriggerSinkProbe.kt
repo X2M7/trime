@@ -22,12 +22,16 @@ import com.osfans.trime.ime.core.PrivacyModeState
 import com.osfans.trime.ime.core.TrimeInputMethodService
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withTimeout
+import kotlinx.coroutines.withTimeoutOrNull
 import java.io.File
 import java.util.UUID
 
 /** End-to-end T07 checks that start at real EditorInfo/preference boundaries. */
 internal object PrivacyTriggerSinkProbe {
     private const val LOG_TAG = "T07TriggerSink"
+
+    // Keep this in lockstep with InputBarDelegate's deliberately bounded suggestion text.
+    private const val CLIPBOARD_UI_TEXT_LIMIT = 42
 
     internal data class Harness(
         val service: TrimeInputMethodService,
@@ -129,35 +133,35 @@ internal object PrivacyTriggerSinkProbe {
               enable_user_dict: true
               enable_sentence: false
               enable_completion: false
+
+            punctuator:
+              full_shape:
+                '"': { pair: [ PAIR_OPEN, PAIR_CLOSE ] }
+              half_shape:
+                '"': { pair: [ PAIR_OPEN, PAIR_CLOSE ] }
             """.trimIndent() + "\n",
         )
+    }
+
+    /** The input bar deliberately renders only a prefix of long clipboard suggestions. */
+    private fun clipboardUiProbe(text: String): String {
+        check(text.isNotEmpty()) { "Clipboard fixture is empty" }
+        return text.take(CLIPBOARD_UI_TEXT_LIMIT)
     }
 
     suspend fun verify(
         instrumentation: Instrumentation,
         harness: Harness,
+    ) = Runner(instrumentation, harness).run()
+
+    private class Runner(
+        private val instrumentation: Instrumentation,
+        private val harness: Harness,
     ) {
-        val context = instrumentation.targetContext
-        fun <T> main(block: () -> T): T {
-            if (android.os.Looper.myLooper() == android.os.Looper.getMainLooper()) return block()
-            var value: Result<T>? = null
-            instrumentation.runOnMainSync { value = runCatching(block) }
-            return checkNotNull(value).getOrThrow()
-        }
-
-        suspend fun awaitMain(
-            label: String,
-            predicate: () -> Boolean,
-        ) {
-            withTimeout(30_000) {
-                while (!main(predicate)) delay(50)
-            }
-            harness.phase("PASS: $label")
-        }
-
-        val suffix = UUID.randomUUID().toString().replace("-", "")
-        val prefix = "__t07_real_triggers_${android.os.Process.myPid()}_$suffix"
-        val cases =
+        private val context = instrumentation.targetContext
+        private val suffix = UUID.randomUUID().toString().replace("-", "")
+        private val prefix = "__t07_real_triggers_${android.os.Process.myPid()}_$suffix"
+        private val cases =
             listOf(
                 TriggerCase(
                     TriggerKind.PASSWORD,
@@ -184,47 +188,69 @@ internal object PrivacyTriggerSinkProbe {
                     "manualsymbol$suffix",
                 ),
             )
-        val ordinaryCode = 'r'
-        val ordinaryCandidate = "ordinarylearning$suffix"
-        val ordinaryClipboard = "ordinaryclipboard$suffix"
-        val ordinarySymbol = "ordinarysymbol$suffix"
-        val logBoundary = UUID.randomUUID().toString().replace("-", "")
-        val logStart = "T07_REAL_TRIGGER_BEGIN_$logBoundary"
-        val logEnd = "T07_REAL_TRIGGER_END_$logBoundary"
-        val pid = android.os.Process.myPid()
+        private val ordinaryCode = 'r'
+        private val ordinaryCandidate = "ordinarylearning$suffix"
+        private val ordinaryClipboard = "ordinaryclipboard$suffix"
+        private val ordinarySymbol = "ordinarysymbol$suffix"
+        private val logBoundary = UUID.randomUUID().toString().replace("-", "")
+        private val logStart = "T07_REAL_TRIGGER_BEGIN_$logBoundary"
+        private val logEnd = "T07_REAL_TRIGGER_END_$logBoundary"
+        private val pid = android.os.Process.myPid()
 
-        val clipboardPrefs = AppPrefs.defaultInstance().clipboard
-        val manualPrivacy = AppPrefs.defaultInstance().general.manualPrivacyMode
-        val previousClipboardListening = clipboardPrefs.clipboardListening.getValue()
-        val previousClipboardSuggestion = clipboardPrefs.clipboardSuggestion.getValue()
-        val previousClipboardSuggestionTimeout = clipboardPrefs.clipboardSuggestionTimeout.getValue()
-        val previousManualPrivacy = manualPrivacy.getValue()
-        val previousLastBean = ClipboardHelper.lastBean
-        val clipboard =
+        private val clipboardPrefs = AppPrefs.defaultInstance().clipboard
+        private val manualPrivacy = AppPrefs.defaultInstance().general.manualPrivacyMode
+        private val previousClipboardListening = clipboardPrefs.clipboardListening.getValue()
+        private val previousClipboardSuggestion = clipboardPrefs.clipboardSuggestion.getValue()
+        private val previousClipboardSuggestionTimeout = clipboardPrefs.clipboardSuggestionTimeout.getValue()
+        private val previousManualPrivacy = manualPrivacy.getValue()
+        private val previousLastBean = ClipboardHelper.lastBean
+        private val clipboard =
             main {
                 context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
             }
-        val previousPrimaryClip = main { clipboard.primaryClip?.let(::ClipData) }
-        val database =
+        private val previousPrimaryClip = main { clipboard.primaryClip?.let(::ClipData) }
+        private val database =
             ClipboardHelper::class.java.getDeclaredField("clbDb").let {
                 it.isAccessible = true
                 it.get(ClipboardHelper) as Database
             }
-        val dao = database.databaseDao()
-        val expectedSymbolFile =
+        private val dao = database.databaseDao()
+        private val expectedSymbolFile =
             TrimeApplication.getInstance().directBootAwareContext.filesDir.resolve(SymbolHistory.FILE_NAME)
-        val previousSymbolHistory = expectedSymbolFile.takeIf(File::exists)?.readBytes()
-        val symbolHistory = SymbolHistory(180)
-        val symbolFile =
+        private val previousSymbolHistory = expectedSymbolFile.takeIf(File::exists)?.readBytes()
+        private val symbolHistory = SymbolHistory(180)
+        private val symbolFile =
             SymbolHistory::class.java.getDeclaredField("file").let {
                 it.isAccessible = true
                 it.get(symbolHistory) as File
             }
-        var schemaBeforeFixture = ""
-        var logStarted = false
-        var primaryFailure: Throwable? = null
 
-        suspend fun setClipboard(text: String) {
+        private var schemaBeforeFixture = ""
+        private var logStarted = false
+        private var primaryFailure: Throwable? = null
+        private var cleanupFailure: Throwable? = null
+        private lateinit var symbolBaseline: ByteArray
+        private lateinit var symbolBaselineEntries: List<String>
+        private lateinit var userDbBaseline: PrivacyModeProbe.UserDbSnapshot
+
+        private fun <T> main(block: () -> T): T {
+            if (android.os.Looper.myLooper() == android.os.Looper.getMainLooper()) return block()
+            var value: Result<T>? = null
+            instrumentation.runOnMainSync { value = runCatching(block) }
+            return checkNotNull(value).getOrThrow()
+        }
+
+        private suspend fun awaitMain(
+            label: String,
+            predicate: () -> Boolean,
+        ) {
+            withTimeout(30_000) {
+                while (!main(predicate)) delay(50)
+            }
+            harness.phase("PASS: $label")
+        }
+
+        private suspend fun setClipboard(text: String) {
             main {
                 clipboard.setPrimaryClip(ClipData.newPlainText("T07 trigger", text))
                 check(clipboard.primaryClip?.getItemAt(0)?.text?.toString() == text) {
@@ -234,32 +260,48 @@ internal object PrivacyTriggerSinkProbe {
             }
         }
 
-        suspend fun assertPrivateClipboardRejected(item: TriggerCase) {
+        private suspend fun awaitClipboardSuggestion(
+            text: String,
+            label: String,
+        ) {
+            var persisted = false
+            var published = false
+            var rendered = false
+            val ready =
+                withTimeoutOrNull(15_000) {
+                    while (true) {
+                        persisted = dao.find(text) != null
+                        published = ClipboardHelper.lastBean?.text == text
+                        rendered = main { harness.inputTextContains(clipboardUiProbe(text)) }
+                        if (persisted && published && rendered) break
+                        delay(50)
+                    }
+                    true
+                } ?: false
+            check(ready) {
+                "$label clipboard suggestion was incomplete " +
+                    "(persisted=$persisted, published=$published, rendered=$rendered)"
+            }
+        }
+
+        private suspend fun assertPrivateClipboardRejected(item: TriggerCase) {
             setClipboard(item.clipboard)
             delay(750)
             check(dao.find(item.clipboard) == null) { "${item.label} clipboard token reached Room" }
             check(ClipboardHelper.lastBean?.text != item.clipboard) {
                 "${item.label} clipboard token reached lastBean"
             }
-            check(!main { harness.inputTextContains(item.clipboard) }) {
+            check(!main { harness.inputTextContains(clipboardUiProbe(item.clipboard)) }) {
                 "${item.label} clipboard token reached input-bar text"
             }
         }
 
-        suspend fun publishExistingSuggestion(item: TriggerCase) {
+        private suspend fun publishExistingSuggestion(item: TriggerCase) {
             setClipboard(item.existingSuggestion)
-            withTimeout(15_000) {
-                while (true) {
-                    val persisted = dao.find(item.existingSuggestion) != null
-                    val published = ClipboardHelper.lastBean?.text == item.existingSuggestion
-                    val rendered = main { harness.inputTextContains(item.existingSuggestion) }
-                    if (persisted && published && rendered) break
-                    delay(50)
-                }
-            }
+            awaitClipboardSuggestion(item.existingSuggestion, item.label)
         }
 
-        suspend fun selectFixtureCandidate(item: TriggerCase) {
+        private suspend fun selectFixtureCandidate(item: TriggerCase) {
             harness.runApi {
                 check(selectedSchemaId() == prefix) { "${item.label} lost the fixture schema" }
                 // Password editors intentionally request ASCII. Force the fixture's native
@@ -275,7 +317,7 @@ internal object PrivacyTriggerSinkProbe {
                     }
                     expectedOrder?.let { expected ->
                         check(candidates == expected) {
-                            "${item.label} candidate text/order changed: $expected -> $candidates"
+                            "${item.label} candidate text/order changed"
                         }
                     } ?: run { expectedOrder = candidates }
                     check(selectCandidate(candidates.indexOf(item.candidate), false)) {
@@ -289,7 +331,7 @@ internal object PrivacyTriggerSinkProbe {
             }
         }
 
-        suspend fun activate(item: TriggerCase): EditText = when (item.kind) {
+        private suspend fun activate(item: TriggerCase): EditText = when (item.kind) {
             TriggerKind.PASSWORD -> {
                 main {
                     harness.target.hint = "t07-password"
@@ -325,7 +367,7 @@ internal object PrivacyTriggerSinkProbe {
             }
         }
 
-        suspend fun leavePrivate(item: TriggerCase) {
+        private suspend fun leavePrivate(item: TriggerCase) {
             when (item.kind) {
                 TriggerKind.MANUAL -> main { manualPrivacy.setValue(false) }
                 else -> harness.focus(harness.chat)
@@ -354,7 +396,21 @@ internal object PrivacyTriggerSinkProbe {
             }
         }
 
-        try {
+        suspend fun run() {
+            try {
+                prepareFixture()
+                verifyPrivateCases()
+                verifyPrivateLogBoundary()
+                verifyOrdinaryRecovery()
+            } catch (failure: Throwable) {
+                primaryFailure = failure
+                throw failure
+            } finally {
+                cleanup()
+            }
+        }
+
+        private suspend fun prepareFixture() {
             check(symbolFile.canonicalFile == expectedSymbolFile.canonicalFile) {
                 "Real-trigger symbol history resolved to an unexpected storage root"
             }
@@ -366,8 +422,8 @@ internal object PrivacyTriggerSinkProbe {
                 ClipboardHelper.clearTransientSuggestion()
             }
             symbolHistory.load()
-            val symbolBaseline = symbolFile.readBytes()
-            val symbolBaselineEntries = symbolHistory.toOrderedList()
+            symbolBaseline = symbolFile.readBytes()
+            symbolBaselineEntries = symbolHistory.toOrderedList()
             writeFixture(prefix, cases, ordinaryCode, ordinaryCandidate)
             harness.runApi {
                 schemaBeforeFixture = selectedSchemaId()
@@ -382,73 +438,81 @@ internal object PrivacyTriggerSinkProbe {
                 clearComposition()
                 check(selectSchema(schemaBeforeFixture)) { "Could not close the real-trigger baseline" }
             }
-            val userDbBaseline = PrivacyModeProbe.userDbSnapshot(prefix)
+            userDbBaseline = PrivacyModeProbe.userDbSnapshot(prefix)
             Log.i(LOG_TAG, logStart)
             logStarted = true
+        }
 
-            cases.forEach { item ->
-                harness.runApi {
-                    check(selectSchema(prefix)) { "Could not select the ${item.label} fixture" }
-                    setRuntimeOption("ascii_mode", false)
-                    clearComposition()
-                }
-                publishExistingSuggestion(item)
-                val activeEditor = activate(item)
-                awaitMain("${item.label} reaches the real policy and hides the existing clipboard suggestion") {
-                    harness.service.isPrivacyModeActive &&
-                        PrivacyModeState.active &&
-                        !harness.speechAllowed() &&
-                        ClipboardHelper.lastBean == null &&
-                        !harness.inputTextContains(item.existingSuggestion)
-                }
-                check(dao.find(item.existingSuggestion) != null) {
-                    "${item.label} deleted the pre-existing ordinary clipboard history row"
-                }
-                harness.runApi {
-                    check(Rime.isRimePrivacyGuardEnabledForTesting()) {
-                        "${item.label} did not reach the native guard"
-                    }
-                }
-                selectFixtureCandidate(item)
-                awaitMain("${item.label} commits its unique virtual secret") {
-                    activeEditor.text.toString().contains(item.candidate)
-                }
-                check(main { (0..4).all { harness.service.getActiveText(it).isEmpty() } }) {
-                    "${item.label} exposed private editor content through getActiveText"
-                }
-                assertPrivateClipboardRejected(item)
+        private suspend fun verifyPrivateCases() {
+            for (item in cases) {
+                verifyPrivateCase(item)
+            }
+        }
 
-                val symbolBefore = symbolFile.readBytes()
-                symbolHistory.insert(item.symbol)
-                symbolHistory.save()
-                check(item.symbol !in symbolHistory.toOrderedList()) {
-                    "${item.label} exposed its private symbol"
+        private suspend fun verifyPrivateCase(item: TriggerCase) {
+            harness.runApi {
+                check(selectSchema(prefix)) { "Could not select the ${item.label} fixture" }
+                setRuntimeOption("ascii_mode", false)
+                clearComposition()
+            }
+            publishExistingSuggestion(item)
+            val activeEditor = activate(item)
+            awaitMain("${item.label} reaches the real policy and hides the existing clipboard suggestion") {
+                harness.service.isPrivacyModeActive &&
+                    PrivacyModeState.active &&
+                    !harness.speechAllowed() &&
+                    ClipboardHelper.lastBean == null &&
+                    !harness.inputTextContains(clipboardUiProbe(item.existingSuggestion))
+            }
+            check(dao.find(item.existingSuggestion) != null) {
+                "${item.label} deleted the pre-existing ordinary clipboard history row"
+            }
+            harness.runApi {
+                check(Rime.isRimePrivacyGuardEnabledForTesting()) {
+                    "${item.label} did not reach the native guard"
                 }
-                check(symbolFile.readBytes().contentEquals(symbolBefore)) {
-                    "${item.label} changed symbol history"
-                }
-                check(!symbolFile.readText().contains(item.symbol)) {
-                    "${item.label} symbol token reached disk"
-                }
+            }
+            selectFixtureCandidate(item)
+            awaitMain("${item.label} commits its unique virtual secret") {
+                activeEditor.text.toString().contains(item.candidate)
+            }
+            check(main { (0..4).all { harness.service.getActiveText(it).isEmpty() } }) {
+                "${item.label} exposed private editor content through getActiveText"
+            }
+            assertPrivateClipboardRejected(item)
 
-                leavePrivate(item)
-                val afterTrigger = PrivacyModeProbe.userDbSnapshot(prefix)
-                check(afterTrigger == userDbBaseline) { "${item.label} changed the fixture user dictionary" }
-                check(!afterTrigger.contents.contains(item.candidate)) {
-                    "${item.label} candidate reached the fixture user dictionary"
-                }
-                check(symbolFile.readBytes().contentEquals(symbolBaseline)) {
-                    "${item.label} left a symbol-history mutation"
-                }
-                check(symbolHistory.toOrderedList() == symbolBaselineEntries) {
-                    "${item.label} changed the pre-existing symbol-history entries"
-                }
-                harness.phase(
-                    "PASS: ${item.label} rejects userdb, private clipboard Room/lastBean/UI, " +
-                        "editor content context, symbol history and speech while retaining ordinary history",
-                )
+            val symbolBefore = symbolFile.readBytes()
+            symbolHistory.insert(item.symbol)
+            symbolHistory.save()
+            check(item.symbol !in symbolHistory.toOrderedList()) {
+                "${item.label} exposed its private symbol"
+            }
+            check(symbolFile.readBytes().contentEquals(symbolBefore)) {
+                "${item.label} changed symbol history"
+            }
+            check(!symbolFile.readText().contains(item.symbol)) {
+                "${item.label} symbol token reached disk"
             }
 
+            leavePrivate(item)
+            val afterTrigger = PrivacyModeProbe.userDbSnapshot(prefix)
+            check(afterTrigger == userDbBaseline) { "${item.label} changed the fixture user dictionary" }
+            check(!afterTrigger.contents.contains(item.candidate)) {
+                "${item.label} candidate reached the fixture user dictionary"
+            }
+            check(symbolFile.readBytes().contentEquals(symbolBaseline)) {
+                "${item.label} left a symbol-history mutation"
+            }
+            check(symbolHistory.toOrderedList() == symbolBaselineEntries) {
+                "${item.label} changed the pre-existing symbol-history entries"
+            }
+            harness.phase(
+                "PASS: ${item.label} rejects userdb, private clipboard Room/lastBean/UI, " +
+                    "editor content context, symbol history and speech while retaining ordinary history",
+            )
+        }
+
+        private fun verifyPrivateLogBoundary() {
             Log.i(LOG_TAG, logEnd)
             logStarted = false
             val processLogs = PrivacyModeProbe.ownProcessLogs(pid)
@@ -463,7 +527,9 @@ internal object PrivacyTriggerSinkProbe {
                 "A real-trigger private token appeared in application logs"
             }
             harness.phase("PASS: all three real trigger windows contain no private token in PID logs")
+        }
 
+        private suspend fun verifyOrdinaryRecovery() {
             main { harness.chat.setText("") }
             harness.focus(harness.chat)
             harness.runApi {
@@ -513,15 +579,7 @@ internal object PrivacyTriggerSinkProbe {
             }
 
             setClipboard(ordinaryClipboard)
-            withTimeout(15_000) {
-                while (true) {
-                    val persisted = dao.find(ordinaryClipboard) != null
-                    val published = ClipboardHelper.lastBean?.text == ordinaryClipboard
-                    val rendered = main { harness.inputTextContains(ordinaryClipboard) }
-                    if (persisted && published && rendered) break
-                    delay(50)
-                }
-            }
+            awaitClipboardSuggestion(ordinaryClipboard, "ordinary recovery")
             symbolHistory.insert(ordinarySymbol)
             symbolHistory.save()
             check(symbolFile.readText().contains(ordinarySymbol)) {
@@ -538,17 +596,9 @@ internal object PrivacyTriggerSinkProbe {
             harness.phase(
                 "PASS: ordinary userdb learning, clipboard Room/lastBean/UI, symbol history and speech recover",
             )
-        } catch (failure: Throwable) {
-            primaryFailure = failure
-            throw failure
-        } finally {
-            var cleanupFailure: Throwable? = null
-            suspend fun clean(block: suspend () -> Unit) {
-                runCatching { block() }.onFailure { failure ->
-                    cleanupFailure?.addSuppressed(failure) ?: run { cleanupFailure = failure }
-                }
-            }
+        }
 
+        private suspend fun cleanup() {
             if (logStarted) {
                 runCatching { Log.i(LOG_TAG, logEnd) }
             }
@@ -630,6 +680,12 @@ internal object PrivacyTriggerSinkProbe {
             clean { PrivacyModeProbe.removeOwnedFiles(prefix) }
             cleanupFailure?.let { cleanup ->
                 primaryFailure?.addSuppressed(cleanup) ?: throw cleanup
+            }
+        }
+
+        private suspend fun clean(block: suspend () -> Unit) {
+            runCatching { block() }.onFailure { failure ->
+                cleanupFailure?.addSuppressed(failure) ?: run { cleanupFailure = failure }
             }
         }
     }
