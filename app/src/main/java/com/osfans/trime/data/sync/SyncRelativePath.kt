@@ -23,6 +23,13 @@ object SyncRelativePath {
         return segments.joinToString("/")
     }
 
+    fun requireSafeName(name: String?) {
+        require(
+            !name.isNullOrBlank() && name != "." && name != ".." &&
+                name.none { it == '/' || it == '\\' || it == '\u0000' },
+        ) { "Unsafe document name: $name" }
+    }
+
     fun isContained(root: File, file: File): Boolean = file.canonicalPath == root.canonicalPath ||
         file.canonicalPath.startsWith(root.canonicalPath + File.separator)
 

@@ -4,10 +4,17 @@
 
 package com.osfans.trime.data.theme
 
-import com.osfans.trime.util.yaml.Node
-import com.osfans.trime.util.yaml.get
-import com.osfans.trime.util.yaml.isNull
-import com.osfans.trime.util.yaml.string
+import com.charleskorn.kaml.YamlList
+import com.charleskorn.kaml.YamlMap
+import com.charleskorn.kaml.YamlNode
+import com.charleskorn.kaml.YamlScalar
+import com.charleskorn.kaml.YamlTaggedNode
+import com.osfans.trime.util.get
+import com.osfans.trime.util.isNull
+import com.osfans.trime.util.pairs
+import com.osfans.trime.util.string
+import com.osfans.trime.util.yamlListOf
+import com.osfans.trime.util.yamlMapOf
 import java.util.IdentityHashMap
 
 /**
@@ -33,8 +40,9 @@ import java.util.IdentityHashMap
  *   empty string replaces it (`MergeTree` / `EditNode`);
  * - merging a mapping into a sibling key whose value is not a mapping fails in
  *   librime, so it is refused here as well;
- * - nodes are expanded once per run and shared, so YAML anchors/aliases — which
- *   the parser resolves to one node — stay equivalent at every use site.
+ * - a node is expanded once per run: the parser resolves anchors and aliases
+ *   into equivalent copies, and the memo keeps a shared node from being
+ *   expanded twice.
  */
 object ThemeDslExpander {
     /** A construct outside the supported subset; callers should fall back. */
@@ -56,52 +64,64 @@ object ThemeDslExpander {
      */
     fun expand(
         resourceId: String,
-        node: Node,
-        loadResource: (String) -> Node?,
-    ): Node = Context(loadResource).expandNode(node, resourceId, node)
+        node: YamlNode,
+        loadResource: (String) -> YamlNode?,
+    ): YamlNode = Context(loadResource).expandNode(node, resourceId, node)
 
-    private class Context(private val loadResource: (String) -> Node?) {
+    private class Context(private val loadResource: (String) -> YamlNode?) {
         private val expanding = LinkedHashSet<String>()
 
-        /**
-         * Results by node identity. A parsed node is reached with the same
-         * resource and root from every place it appears (anchors and their
-         * aliases are the same object), so one pass is enough.
-         */
-        private val expanded = IdentityHashMap<Node, Node>()
+        /** Results by node identity, so a node reached twice is expanded once. */
+        private val expanded = IdentityHashMap<YamlNode, YamlNode>()
 
         fun expandNode(
-            node: Node,
+            node: YamlNode,
             resourceId: String,
-            root: Node,
-        ): Node = when (node) {
-            is Node.Scalar, is Node.Alias -> node
+            root: YamlNode,
+        ): YamlNode = when (node) {
+            // Kaml may resolve the scalar inside a tag before exposing the
+            // wrapper (for example, `!!str null`). Do not erase the tag and
+            // guess at librime's type semantics.
+            is YamlTaggedNode -> throw UnsupportedDsl("tagged YAML nodes require librime")
 
-            is Node.Sequence ->
+            is YamlScalar -> {
+                // Kaml discards quoting information. A plain `Null`/`NULL` is
+                // null to yaml-cpp, while a quoted one is a string, so only the
+                // native parser can decide without changing user data.
+                if (node.content == "Null" || node.content == "NULL") {
+                    throw UnsupportedDsl("ambiguous capitalized null scalar requires librime")
+                }
+                node
+            }
+
+            is YamlList ->
                 expanded.getOrPut(node) {
-                    Node.Sequence(node.nodes.map { expandNode(it, resourceId, root) }, node.anchor)
+                    yamlListOf(*node.items.map { expandNode(it, resourceId, root) }.toTypedArray())
                 }
 
-            is Node.Mapping -> expanded.getOrPut(node) { expandMapping(node, resourceId, root) }
+            is YamlMap -> expanded.getOrPut(node) { expandMapping(node, resourceId, root) }
+
+            else -> node
         }
 
         private fun expandMapping(
-            map: Node.Mapping,
+            map: YamlMap,
             resourceId: String,
-            root: Node,
-        ): Node {
-            val include = map[INCLUDE]
-            val patch = map[PATCH]
-            val overrides = map.pairs.filterKeys { it.string != INCLUDE && it.string != PATCH }
-            overrides.keys.forEach { checkPlainKey(it.string) }
+            root: YamlNode,
+        ): YamlNode {
+            val entries = map.pairs
+            val include = entries[INCLUDE]
+            val patch = entries[PATCH]
+            val overrides = entries.filterKeys { it != INCLUDE && it != PATCH }
+            overrides.keys.forEach(::checkPlainKey)
 
-            var result: Node = Node.Mapping(overrides.mapValues { expandNode(it.value, resourceId, root) })
+            var result: YamlNode = yamlMapOf(overrides.mapValues { expandNode(it.value, resourceId, root) })
             if (include != null) {
                 val included = reference(include, resourceId, root)
                 if (included != null) {
                     result = when {
                         overrides.isEmpty() -> included
-                        included is Node.Mapping -> mergeMaps(included, result as Node.Mapping)
+                        included is YamlMap -> mergeMaps(included, result as YamlMap)
                         else -> throw UnsupportedDsl("cannot merge sibling keys into a non-mapping '$INCLUDE' target")
                     }
                 }
@@ -114,63 +134,63 @@ object ThemeDslExpander {
 
         /** Overwrites [base] with the literal or referenced [patch]. */
         private fun applyPatch(
-            base: Node,
-            patch: Node,
+            base: YamlNode,
+            patch: YamlNode,
             resourceId: String,
-            root: Node,
-        ): Node {
+            root: YamlNode,
+        ): YamlNode {
             val patchMap = when (patch) {
-                is Node.Mapping -> {
-                    if (patch[INCLUDE] != null || patch[PATCH] != null) {
+                is YamlTaggedNode -> throw UnsupportedDsl("tagged '$PATCH' values require librime")
+
+                is YamlMap -> {
+                    if (patch.pairs[INCLUDE] != null || patch.pairs[PATCH] != null) {
                         throw UnsupportedDsl("directives inside a literal '$PATCH' require librime")
                     }
                     patch
                 }
 
-                is Node.Scalar -> {
+                is YamlScalar -> {
                     // A reference, usually `__patch: <id>.custom:/patch?`; absent means
                     // "no such patch", which librime tolerates for optional references.
                     val target = reference(patch, resourceId, root) ?: return base
-                    target as? Node.Mapping
+                    target as? YamlMap
                         ?: throw UnsupportedDsl("'$PATCH' target is not a mapping")
                 }
 
                 else -> throw UnsupportedDsl("unsupported '$PATCH' value")
             }
-            val baseMap = base as? Node.Mapping
+            val baseMap = base as? YamlMap
                 ?: throw UnsupportedDsl("cannot '$PATCH' a non-mapping node")
             val patched = LinkedHashMap(baseMap.pairs)
             patchMap.pairs.forEach { (key, value) ->
-                checkPlainKey(key.string)
+                checkPlainKey(key)
                 patched[key] = expandNode(value, resourceId, root)
             }
-            return Node.Mapping(patched, baseMap.anchor)
+            return yamlMapOf(patched)
         }
 
         /**
          * Merges already-expanded [overrides] into [base] following librime's
          * rules: mappings merge recursively, everything else is replaced.
          */
-        private fun mergeMaps(base: Node.Mapping, overrides: Node.Mapping): Node.Mapping {
+        private fun mergeMaps(base: YamlMap, overrides: YamlMap): YamlMap {
             val merged = LinkedHashMap(base.pairs)
             overrides.pairs.forEach { (key, value) ->
                 // librime leaves the included node untouched for a key without a value.
                 if (value.isNull) return@forEach
                 val existing = merged[key]
                 merged[key] = when {
-                    existing is Node.Mapping && value is Node.Mapping -> mergeMaps(existing, value)
+                    existing is YamlMap && value is YamlMap -> mergeMaps(existing, value)
 
                     // librime cannot merge a tree into a node of another type and fails
                     // the whole include; refuse it so the deployed path decides.
-                    value is Node.Mapping && existing != null && existing !is Node.Mapping ->
-                        throw UnsupportedDsl(
-                            "cannot merge a mapping into the non-mapping sibling key '${key.string}'",
-                        )
+                    value is YamlMap && existing != null && existing !is YamlMap ->
+                        throw UnsupportedDsl("cannot merge a mapping into the non-mapping sibling key '$key'")
 
                     else -> value
                 }
             }
-            return Node.Mapping(merged)
+            return yamlMapOf(merged)
         }
 
         /**
@@ -179,10 +199,13 @@ object ThemeDslExpander {
          * is absent.
          */
         private fun reference(
-            value: Node,
+            value: YamlNode,
             resourceId: String,
-            root: Node,
-        ): Node? {
+            root: YamlNode,
+        ): YamlNode? {
+            if (value is YamlTaggedNode) {
+                throw UnsupportedDsl("tagged '$INCLUDE'/'$PATCH' references require librime")
+            }
             val raw = value.string
                 ?: throw UnsupportedDsl("'$INCLUDE'/'$PATCH' expects a path")
             val optional = raw.endsWith("?")
@@ -218,24 +241,28 @@ object ThemeDslExpander {
             }
         }
 
-        private fun findLocal(root: Node, path: String): Node? {
-            var current: Node = root
+        private fun findLocal(root: YamlNode, path: String): YamlNode? {
+            var current: YamlNode = root
             for (segment in path.split('/')) {
                 if (segment.isEmpty()) continue
-                // librime indexes lists with @0 / @last, whereas Node.get accepts
-                // plain integers. Neither spelling can use that generic accessor
+                // librime indexes lists with @0 / @last, whereas the generic accessor
+                // accepts plain integers. Neither spelling can use that accessor
                 // faithfully here, even when the reference is optional.
-                if (current is Node.Sequence) {
+                if (current is YamlTaggedNode) {
+                    throw UnsupportedDsl("references through tagged YAML nodes require librime: '$path'")
+                }
+                val self = current
+                if (self is YamlList) {
                     throw UnsupportedDsl("references through sequences require librime: '$path'")
                 }
                 // Native GetResolvedItem resolves blocking dependencies before
                 // entering a child. Looking in this unexpanded map could return
                 // an old value or mistake an inherited optional child for absent.
                 // An auto-injected root custom patch also requires this fallback.
-                if (current is Node.Mapping && (current[INCLUDE] != null || current[PATCH] != null)) {
+                if (self is YamlMap && (self.pairs[INCLUDE] != null || self.pairs[PATCH] != null)) {
                     throw UnsupportedDsl("references through an ancestor with directives require librime: '$path'")
                 }
-                current = current[segment] ?: return null
+                current = self[segment] ?: return null
             }
             return current
         }
@@ -245,8 +272,8 @@ object ThemeDslExpander {
      * Paths and operators such as `a/b`, `key/+` or `key/=` carry patch
      * semantics outside the supported subset.
      */
-    private fun checkPlainKey(key: String?) {
-        if (key.isNullOrEmpty()) throw UnsupportedDsl("non-scalar or empty mapping key")
+    private fun checkPlainKey(key: String) {
+        if (key.isEmpty()) throw UnsupportedDsl("empty mapping key")
         if (key.startsWith("__") && key != INCLUDE && key != PATCH) {
             throw UnsupportedDsl("unsupported directive '$key'")
         }

@@ -16,7 +16,18 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
-        maven("https://jitpack.io")
+        exclusiveContent {
+            forRepository {
+                maven {
+                    name = "JitPackStorageAccess"
+                    url = uri("https://jitpack.io")
+                }
+            }
+            filter {
+                includeGroup("com.github.getActivity")
+                includeGroup("com.github.WhiredPlanck")
+            }
+        }
     }
 }
 

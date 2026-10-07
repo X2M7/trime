@@ -4,10 +4,10 @@
 
 package com.osfans.trime.data.sync
 
+import com.charleskorn.kaml.Yaml
 import com.osfans.trime.data.base.DataManager
-import com.osfans.trime.util.yaml.Yaml
-import com.osfans.trime.util.yaml.mapping
-import com.osfans.trime.util.yaml.string
+import com.osfans.trime.util.get
+import com.osfans.trime.util.string
 import timber.log.Timber
 import java.io.File
 
@@ -18,19 +18,26 @@ import java.io.File
 object SyncPathPolicy {
     const val DEFAULT_SYNC_DIR = "sync"
 
+    /**
+     * `installation.yaml` is written by librime, not by hand: it carries no DSL
+     * and no anchors, so kaml's defaults apply here. Themes go through
+     * [com.osfans.trime.data.theme.ThemeYaml] instead.
+     */
+    private val yaml = Yaml.default
+
     fun readOwnInstallationId(): String? = readInstallationId(localInstallationFile())
 
     fun readOwnSyncDir(): String = readSyncDir(localInstallationFile())
 
     fun readInstallationId(text: String): String? {
-        val node = Yaml.parseToYamlNode(text)
-        val id = node.mapping?.get("installation_id")?.string?.trim().orEmpty()
+        val node = yaml.parseToYamlNode(text)
+        val id = node["installation_id"]?.string?.trim().orEmpty()
         return id.takeIf(::isValidInstallationId)
     }
 
     fun readSyncDir(text: String): String {
-        val node = Yaml.parseToYamlNode(text)
-        val dir = node.mapping?.get("sync_dir")?.string?.trim().orEmpty()
+        val node = yaml.parseToYamlNode(text)
+        val dir = node["sync_dir"]?.string?.trim().orEmpty()
         return cleanSyncDir(dir)
     }
 
@@ -102,14 +109,14 @@ object SyncPathPolicy {
         val normalized =
             runCatching { SyncRelativePath.normalize(relativePath) }.getOrElse { return false }
         if (normalized == DataManager.INSTALLATION_FILE_NAME) return false
-        return ownId == null || !isValidInstallationId(ownId) || !isOwnSyncPath(normalized, ownId, syncDir)
+        return ownId == null || !isValidInstallationId(ownId) ||
+            !isOwnSyncPath(normalized, ownId, syncDir)
     }
 
     /**
      * Whether a local file must survive orphan cleanup. [relativePath] is already
      * normalized. True for [DataManager.INSTALLATION_FILE_NAME] and this device's
-     * `<syncDir>/<ownId>/` tree when [ownId] is known. If the identity is unreadable,
-     * retain sync dumps until ownership can be determined, while still importing peers.
+     * `<syncDir>/<ownId>/` tree when [ownId] is known.
      */
     fun shouldPreserveLocal(
         relativePath: String,
@@ -118,6 +125,8 @@ object SyncPathPolicy {
     ): Boolean {
         if (relativePath == DataManager.INSTALLATION_FILE_NAME) return true
         if (ownId == null || !isValidInstallationId(ownId)) {
+            // If installation identity is unreadable, ownership cannot be proven.
+            // Preserve every sync dump rather than deleting another installation's data.
             val prefix = treeRelativeSyncDir(syncDir)
             return relativePath == prefix || relativePath.startsWith("$prefix/")
         }

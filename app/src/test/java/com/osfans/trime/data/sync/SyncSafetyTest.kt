@@ -14,7 +14,7 @@ class SyncSafetyTest :
             val root = createTempDirectory().toFile()
             try {
                 val blockingFile = File(root, "folder").apply { writeText("blocked") }
-                val gate = LocalDirectoryGate()
+                val gate = RimeDataSync.LocalDirectoryGate()
                 shouldThrow<IllegalStateException> { gate.ensure(root, "folder/sub") }
                 blockingFile.delete()
                 gate.ensure(root, "folder/sub")
@@ -29,7 +29,7 @@ class SyncSafetyTest :
                 val directory = File(root, "folder").apply { mkdir() }
                 val sentinel = File(directory, "sentinel").apply { writeText("retained") }
                 shouldThrow<IllegalStateException> {
-                    AtomicLocalFileCopy.writeFromStream(directory) { it.write(1) }
+                    RimeDataSync.writeFromStream(directory) { it.write(1) }
                 }
                 sentinel.readText() shouldBe "retained"
             } finally {
@@ -40,9 +40,9 @@ class SyncSafetyTest :
             val root = createTempDirectory().toFile()
             try {
                 val backup = File(root, ".trime-bak-12345678-1234-1234-1234-123456789abc.tmp").apply { writeText("recovery") }
-                OrphanCleaner.removeLocalOrphans(root, emptySet()).deleted shouldBe 0
+                RimeDataSync.removeLocalOrphans(root, emptySet()).deleted shouldBe 0
                 backup.readText() shouldBe "recovery"
-                SafTreeWalker.shouldSkip("user.yaml.bak") shouldBe false
+                RimeDataSync.shouldSkip("user.yaml.bak") shouldBe false
             } finally {
                 root.deleteRecursively()
             }
@@ -50,10 +50,13 @@ class SyncSafetyTest :
         "unknown metadata never produces a cached skip" {
             for ((size, time) in listOf(-1L to 0L, 12L to 0L, -1L to 123L)) {
                 val index = SyncIndexData(entries = mapOf("test" to SyncEntry(size, time)))
-                SyncIndex.shouldCopy("test", size, time, index) shouldBe true
+                RimeDataSync.shouldCopy("test", size, time, index) shouldBe true
             }
             val index = SyncIndexData(entries = mapOf("test" to SyncEntry(12, 123)))
-            SyncIndex.shouldCopy("test", 12, 123, index) shouldBe false
+            RimeDataSync.shouldCopy("test", 12, 123, index) shouldBe false
+            // StorageAccess represents a provider's unknown size as zero. A previous actual
+            // byte count must therefore force another verified copy.
+            RimeDataSync.shouldCopy("test", 0, 123, index) shouldBe true
         }
         "names preserve spaces but reject path components" {
             SyncRelativePath.normalize(" folder/file ") shouldBe " folder/file "
@@ -61,10 +64,10 @@ class SyncSafetyTest :
                 shouldThrow<SyncRelativePath.PathEscapeException> { SyncRelativePath.normalize(path) }
             }
             for (name in listOf(".", "..", "a/b", "a\\b", "\u0000", "")) {
-                shouldThrow<IllegalArgumentException> { SafTreeWalker.requireName(name) }
+                shouldThrow<IllegalArgumentException> { SyncRelativePath.requireSafeName(name) }
             }
-            SafTreeWalker.requireName(" file.yaml ")
-            SafTreeWalker.shouldSkip("build /file.yaml") shouldBe false
+            SyncRelativePath.requireSafeName(" file.yaml ")
+            RimeDataSync.shouldSkip("build /file.yaml") shouldBe false
         }
         "orphan cleanup never traverses a symlink outside the test root" {
             val sandbox = createTempDirectory().toFile()
@@ -74,7 +77,7 @@ class SyncSafetyTest :
                 val sentinel = File(outside, "sentinel").apply { writeText("retained") }
                 Files.createSymbolicLink(File(root, "linked-dir").toPath(), outside.toPath())
                 Files.createSymbolicLink(File(root, "linked-file").toPath(), sentinel.toPath())
-                OrphanCleaner.removeLocalOrphans(root, emptySet()).failed shouldBe 0
+                RimeDataSync.removeLocalOrphans(root, emptySet()).failed shouldBe 0
                 sentinel.readText() shouldBe "retained"
             } finally {
                 sandbox.deleteRecursively()
@@ -93,7 +96,7 @@ class SyncSafetyTest :
                 shouldThrow<SyncRelativePath.PathEscapeException> {
                     SyncRelativePath.resolveContained(root, "alias/data")
                 }
-                OrphanCleaner.removeLocalOrphans(root, emptySet()).deleted shouldBe 0
+                RimeDataSync.removeLocalOrphans(root, emptySet()).deleted shouldBe 0
                 sentinel.readText() shouldBe "personal"
             } finally {
                 alias.delete()

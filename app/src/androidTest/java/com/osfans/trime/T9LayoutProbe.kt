@@ -149,7 +149,7 @@ class T9LayoutProbe(
             val boxes = bounds()
             val density = keyboard().resources.displayMetrics.density
             val display = keyboard().resources.displayMetrics
-            val style = input().theme.generalStyle
+            val style = input().theme.style
             val expected = T9LayoutPolicy.widths(
                 (display.widthPixels / density).toInt(),
                 if (input().context.isLandscapeMode()) style.keyboardPaddingLand else style.keyboardPadding,

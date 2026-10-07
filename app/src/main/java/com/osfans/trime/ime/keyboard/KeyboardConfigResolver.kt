@@ -15,6 +15,39 @@ internal fun resolveKeyboardConfig(name: String, presets: Map<String, TextKeyboa
     }
 }
 
+/** Resolves an existing layout, including an injected compatibility layout. */
+internal fun findAvailableKeyboard(
+    name: String,
+    presets: Map<String, TextKeyboard>,
+    fallbacks: Map<String, String>,
+): String? = name.takeIf { it in presets }
+    ?: fallbacks[name]?.takeIf { it in presets }
+
+/** Resolves a switch target to a layout that is guaranteed to exist. */
+internal fun normalizeKeyboardTarget(
+    name: String,
+    presets: Map<String, TextKeyboard>,
+    fallbacks: Map<String, String>,
+): String {
+    require(presets.isNotEmpty()) { "No keyboard layouts are available" }
+    return findAvailableKeyboard(name, presets, fallbacks)
+        ?: findAvailableKeyboard("default", presets, fallbacks)
+        ?: findAvailableKeyboard("letter", presets, fallbacks)
+        ?: presets.keys.first()
+}
+
+/** Applies a landscape override only after [base] has resolved to an existing layout. */
+internal fun resolveLandscapeKeyboard(
+    base: String,
+    presets: Map<String, TextKeyboard>,
+    fallbacks: Map<String, String>,
+): String {
+    val landscape = presets.getValue(base).landscapeKeyboard
+    return landscape.takeIf { it.isNotEmpty() }
+        ?.let { findAvailableKeyboard(it, presets, fallbacks) }
+        ?: base
+}
+
 internal fun matchKeyboard(
     schemaId: String,
     requested: String,
@@ -23,11 +56,13 @@ internal fun matchKeyboard(
     presets: Map<String, TextKeyboard>,
     fallbacks: Map<String, String>,
 ): String {
-    if (requested.isNotEmpty() && requested in presets) return requested
-    if (schemaId in presets) return schemaId
+    if (requested.isNotEmpty()) {
+        findAvailableKeyboard(requested, presets, fallbacks)?.let { return it }
+    }
+    findAvailableKeyboard(schemaId, presets, fallbacks)?.let { return it }
     if (pinyinT9) {
-        return "luna_pinyin_t9".takeIf { it in presets }
-            ?: fallbacks["luna_pinyin_t9"] ?: "default"
+        return findAvailableKeyboard("luna_pinyin_t9", presets, fallbacks)
+            ?: normalizeKeyboardTarget("default", presets, fallbacks)
     }
     val layout = when {
         alphabet.isEmpty() -> "default"
@@ -36,5 +71,6 @@ internal fun matchKeyboard(
         alphabet.all { it.isLetterOrDigit() } -> "qwerty0"
         else -> "default"
     }
-    return layout.takeIf { it in presets } ?: "default"
+    return findAvailableKeyboard(layout, presets, fallbacks)
+        ?: normalizeKeyboardTarget("default", presets, fallbacks)
 }

@@ -9,8 +9,10 @@ import android.view.KeyEvent
 import androidx.annotation.ColorInt
 import com.osfans.trime.daemon.RimeDaemon
 import com.osfans.trime.data.theme.ColorManager
-import com.osfans.trime.data.theme.KeyActionManager
+import com.osfans.trime.data.theme.Theme
+import com.osfans.trime.data.theme.model.KeyActionToken
 import com.osfans.trime.data.theme.model.TextKeyboard
+import com.osfans.trime.data.theme.model.orAbsent
 import splitties.bitflags.hasFlag
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
@@ -19,20 +21,36 @@ import kotlin.reflect.KProperty
 @Suppress("ktlint:standard:mixed-condition-operators")
 class Key(
     private val parent: Keyboard,
-    private val selfConfig: TextKeyboard.TextKey? = null,
+    private val theme: Theme,
+    private val keyDef: TextKeyboard.TextKey? = null,
 ) {
     private val rime get() = RimeDaemon.getFirstSessionOrNull()!!
 
     var index: Int = -1
 
-    val keyActions: Map<KeyBehavior, KeyAction> =
-        selfConfig?.behaviors?.mapNotNull { (key, value) ->
-            if (value != null) {
-                key to KeyActionManager.getAction(value)
-            } else {
-                null
-            }
-        }?.toMap() ?: mapOf()
+    val keyActions: Map<KeyBehavior, KeyAction> = buildMap {
+        if (keyDef == null) return@buildMap
+
+        // A blank token means the behavior is unset, see [orAbsent].
+        fun bind(behavior: KeyBehavior, token: KeyActionToken?) {
+            token.orAbsent?.let { put(behavior, theme.resolveAction(it)) }
+        }
+
+        bind(KeyBehavior.CLICK, keyDef.click)
+        bind(KeyBehavior.DOUBLE_CLICK, keyDef.doubleClick)
+        bind(KeyBehavior.LAZY_DOUBLE_CLICK, keyDef.lazyDoubleClick)
+        bind(KeyBehavior.LONG_CLICK, keyDef.longClick)
+        bind(KeyBehavior.SWIPE_UP, keyDef.swipeUp)
+        bind(KeyBehavior.SWIPE_DOWN, keyDef.swipeDown)
+        bind(KeyBehavior.SWIPE_LEFT, keyDef.swipeLeft)
+        bind(KeyBehavior.SWIPE_RIGHT, keyDef.swipeRight)
+        bind(KeyBehavior.COMPOSING, keyDef.composing)
+        bind(KeyBehavior.HAS_MENU, keyDef.hasMenu)
+        bind(KeyBehavior.PAGING, keyDef.paging)
+        bind(KeyBehavior.COMBO, keyDef.combo)
+        bind(KeyBehavior.ASCII, keyDef.ascii)
+    }
+
     var edgeFlags = 0
     private val sendBindings: Boolean
 
@@ -53,15 +71,15 @@ class Key(
     var extraWidthLeft = 0
     var extraWidthRight = 0
 
-    private val label = selfConfig?.label ?: ""
-    private val labelSymbol = selfConfig?.labelSymbol ?: ""
-    val hint: String = selfConfig?.hint ?: ""
-    val popup = selfConfig?.popup ?: emptyList()
+    private val label = keyDef?.label ?: ""
+    private val labelSymbol = keyDef?.labelSymbol ?: ""
+    val hint: String = keyDef?.hint ?: ""
+    val popup = keyDef?.popup ?: emptyList()
 
-    val keyTextSize: Float = selfConfig?.keyTextSize ?: 0f
-    val symbolTextSize: Float = selfConfig?.symbolTextSize ?: 0f
-    val roundCorner: Float = selfConfig?.roundCorner?.takeIf { it >= 0 } ?: parent.roundCorner
-    val keyBorder: Int = selfConfig?.keyBorder?.takeIf { it >= 0 } ?: parent.keyBorder
+    val keyTextSize: Float = keyDef?.keyTextSize ?: 0f
+    val symbolTextSize: Float = keyDef?.symbolTextSize ?: 0f
+    val roundCorner: Float = keyDef?.roundCorner?.takeIf { it >= 0 } ?: parent.roundCorner
+    val keyBorder: Int = keyDef?.keyBorder?.takeIf { it >= 0 } ?: parent.keyBorder
     var keyTextOffsetX = 0f
         get() = field + keyOffsetX
     var keyTextOffsetY = 0f
@@ -81,7 +99,7 @@ class Key(
     private fun getColor(
         src: TextKeyboard.TextKey.() -> String,
         fallback: String,
-    ): Int = selfConfig?.let {
+    ): Int = keyDef?.let {
         ColorManager.getColorOrNull(src(it))
     } ?: ColorManager.getColor(fallback)
 
@@ -94,7 +112,7 @@ class Key(
     private fun getDrawable(
         src: TextKeyboard.TextKey.() -> String,
         fallback: String,
-    ) = selfConfig?.let {
+    ) = keyDef?.let {
         if (src(it).isEmpty()) null else ColorManager.getDrawable(src(it))
     } ?: ColorManager.getDrawable(fallback)
 
@@ -124,35 +142,36 @@ class Key(
     private val keyBackground by schemeColor { getDrawable({ keyBackColor }, "key_back_color") }
     private val offKeyBackground by schemeColor { ColorManager.getDrawable("off_key_back_color") ?: keyBackground }
     private val onKeyBackground by schemeColor { ColorManager.getDrawable("on_key_back_color") ?: keyBackground }
-    private val hlKeyBackground by schemeColor { getDrawable({ hlKeyBackColor }, "hilited_key_back_color") }
+    private val hlKeyBackground by schemeColor { getDrawable({ hilitedKeyBackColor }, "hilited_key_back_color") }
     private val hlOffKeyBackground by schemeColor { ColorManager.getDrawable("hilited_off_key_back_color") ?: hlKeyBackground }
     private val hlOnKeyBackground by schemeColor { ColorManager.getDrawable("hilited_on_key_back_color") ?: hlKeyBackground }
 
     private val keyBorderColor by schemeColor { getColor({ keyBorderColor }, "key_border_color") }
     private val offKeyBorderColor by schemeColor { getColor("off_key_border_color", keyBorderColor) }
     private val onKeyBorderColor by schemeColor { getColor("on_key_border_color", keyBorderColor) }
-    private val hlKeyBorderColor by schemeColor { getColor({ hlKeyBorderColor }, "hilited_key_border_color") }
+    private val hlKeyBorderColor by schemeColor { getColor({ hilitedKeyBorderColor }, "hilited_key_border_color") }
     private val hlOffKeyBorderColor by schemeColor { getColor("hilited_off_key_border_color", hlKeyBorderColor) }
     private val hlOnKeyBorderColor by schemeColor { getColor("hilited_on_key_border_color", hlKeyBorderColor) }
 
     private val keyTextColor by schemeColor { getColor({ keyTextColor }, "key_text_color") }
     private val offKeyTextColor by schemeColor { getColor("off_key_text_color", keyTextColor) }
     private val onKeyTextColor by schemeColor { getColor("on_key_text_color", keyTextColor) }
-    private val hlKeyTextColor by schemeColor { getColor({ hlKeyTextColor }, "hilited_key_text_color") }
+    private val hlKeyTextColor by schemeColor { getColor({ hilitedKeyTextColor }, "hilited_key_text_color") }
     private val hlOffKeyTextColor by schemeColor { getColor("hilited_off_key_text_color", hlKeyTextColor) }
     private val hlOnKeyTextColor by schemeColor { getColor("hilited_on_key_text_color", hlKeyTextColor) }
     private val keySymbolColor by schemeColor { getColor({ keySymbolColor }, "key_symbol_color") }
     private val offKeySymbolColor by schemeColor { getColor("off_key_symbol_color", keySymbolColor) }
     private val onKeySymbolColor by schemeColor { getColor("on_key_symbol_color", keySymbolColor) }
-    private val hlKeySymbolColor by schemeColor { getColor({ hlKeySymbolColor }, "hilited_key_symbol_color") }
+    private val hlKeySymbolColor by schemeColor { getColor({ hilitedKeySymbolColor }, "hilited_key_symbol_color") }
     private val hlOffKeySymbolColor by schemeColor { getColor("hilited_off_key_symbol_color", hlKeySymbolColor) }
     private val hlOnKeySymbolColor by schemeColor { getColor("hilited_on_key_symbol_color", hlKeySymbolColor) }
 
     init {
-        if (selfConfig != null) {
-            val hasStateDependentBehavior = selfConfig.behaviors.keys.any { it < KeyBehavior.COMBO }
+        if (keyDef != null) {
+            val hasStateDependentBehavior =
+                keyDef.composing.orAbsent != null || keyDef.hasMenu.orAbsent != null || keyDef.paging.orAbsent != null
             if (hasStateDependentBehavior) parent.appearanceStateKeys.add(this)
-            sendBindings = selfConfig.sendBindings || hasStateDependentBehavior
+            sendBindings = keyDef.sendBindings || hasStateDependentBehavior
         } else {
             sendBindings = true
         }
@@ -303,7 +322,7 @@ class Key(
             if (isPressed) {
                 hlOffKeyBackground
             } else {
-                selfConfig?.keyBackColor.takeIf { !it.isNullOrEmpty() }?.let { keyBackground }
+                keyDef?.keyBackColor.takeIf { !it.isNullOrEmpty() }?.let { keyBackground }
                     ?: offKeyBackground
             }
         }
@@ -313,19 +332,19 @@ class Key(
 
     fun getBorderColor(): Int = when (appearanceType) {
         2 -> if (isPressed) hlOnKeyBorderColor else onKeyBorderColor
-        1 -> if (isPressed) hlOffKeyBorderColor else getColor(selfConfig?.keyBorderColor ?: "", offKeyBorderColor)
+        1 -> if (isPressed) hlOffKeyBorderColor else getColor(keyDef?.keyBorderColor ?: "", offKeyBorderColor)
         else -> if (isPressed) hlKeyBorderColor else keyBorderColor
     }
 
     fun getTextColor(): Int = when (appearanceType) {
         2 -> if (isPressed) hlOnKeyTextColor else onKeyTextColor
-        1 -> if (isPressed) hlOffKeyTextColor else getColor(selfConfig?.keyTextColor ?: "", offKeyTextColor)
+        1 -> if (isPressed) hlOffKeyTextColor else getColor(keyDef?.keyTextColor ?: "", offKeyTextColor)
         else -> if (isPressed) hlKeyTextColor else keyTextColor
     }
 
     fun getSymbolColor(): Int = when (appearanceType) {
         2 -> if (isPressed) hlOnKeySymbolColor else onKeySymbolColor
-        1 -> if (isPressed) hlOffKeySymbolColor else getColor(selfConfig?.keySymbolColor ?: "", offKeySymbolColor)
+        1 -> if (isPressed) hlOffKeySymbolColor else getColor(keyDef?.keySymbolColor ?: "", offKeySymbolColor)
         else -> if (isPressed) hlKeySymbolColor else keySymbolColor
     }
 }

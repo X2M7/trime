@@ -103,6 +103,8 @@ class BoardWindowManager(override val di: DI) : DIAware {
         }
         if (window is ResidentWindow) {
             window.beforeAttached()
+            // Its cached view may have been off screen during a scheme switch.
+            window.refreshColors()
         }
         view.apply { add(newView, lParams(matchParent, matchParent)) }
         currentView = newView

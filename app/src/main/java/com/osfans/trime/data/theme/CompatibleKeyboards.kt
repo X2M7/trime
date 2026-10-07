@@ -4,7 +4,24 @@ package com.osfans.trime.data.theme
 import com.osfans.trime.core.RimeKeyMapping
 import com.osfans.trime.data.theme.model.KeyActionToken
 import com.osfans.trime.data.theme.model.PresetKey
+import com.osfans.trime.data.theme.model.TextKeyboard
 import com.osfans.trime.ime.keyboard.resolveKeyboardConfig
+
+private fun TextKeyboard.TextKey.mapActionTokens(transform: (KeyActionToken?) -> KeyActionToken?): TextKeyboard.TextKey = copy(
+    click = transform(click),
+    doubleClick = transform(doubleClick),
+    lazyDoubleClick = transform(lazyDoubleClick),
+    longClick = transform(longClick),
+    swipeUp = transform(swipeUp),
+    swipeDown = transform(swipeDown),
+    swipeLeft = transform(swipeLeft),
+    swipeRight = transform(swipeRight),
+    composing = transform(composing),
+    hasMenu = transform(hasMenu),
+    paging = transform(paging),
+    combo = transform(combo),
+    ascii = transform(ascii),
+)
 
 /** In-memory only: never copy a desktop/theme configuration into the user's directory. */
 internal fun Theme.withCompatibleKeyboards(builtin: Theme): Theme {
@@ -20,9 +37,10 @@ internal fun Theme.withCompatibleKeyboards(builtin: Theme): Theme {
             landscapeKeyboard = "",
             importPreset = "",
             keys = keyboard.keys.map { key ->
-                key.copy(
-                    behaviors = key.behaviors.mapValues { (_, token) ->
-                        if (token !is KeyActionToken.Plain) return@mapValues token
+                key.mapActionTokens { token ->
+                    if (token !is KeyActionToken.Plain || token.token.isEmpty()) {
+                        token
+                    } else {
                         val id = prefix + "key_" + token.token
                         val literalSymbol = token.token.length == 1 && !token.token[0].isLetterOrDigit() && RimeKeyMapping.charToCode(token.token) == null
                         val preset = builtin.presetKeys[token.token] ?: if (literalSymbol || token.token.any { it.code > 127 } || '{' in token.token) {
@@ -32,8 +50,8 @@ internal fun Theme.withCompatibleKeyboards(builtin: Theme): Theme {
                         }
                         actions[id] = preset.copy(select = ids[preset.select] ?: preset.select)
                         KeyActionToken.Plain(id)
-                    },
-                )
+                    }
+                }
             },
         )
     }

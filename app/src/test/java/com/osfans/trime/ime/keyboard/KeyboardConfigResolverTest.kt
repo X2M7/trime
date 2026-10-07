@@ -27,4 +27,36 @@ class KeyboardConfigResolverTest :
                 resolveKeyboardConfig("a", mapOf("a" to base.copy(importPreset = "b"), "b" to base.copy(importPreset = "a")))
             }
         }
+
+        "switch targets resolve existing and compatible layouts before the default" {
+            val presets =
+                linkedMapOf(
+                    "default" to base,
+                    "custom" to base,
+                    "__compat_symbols" to base,
+                )
+            val fallbacks = mapOf("symbols" to "__compat_symbols", "number" to "missing")
+
+            normalizeKeyboardTarget("custom", presets, fallbacks) shouldBe "custom"
+            normalizeKeyboardTarget("symbols", presets, fallbacks) shouldBe "__compat_symbols"
+            normalizeKeyboardTarget("number", presets, fallbacks) shouldBe "default"
+            normalizeKeyboardTarget("unknown", presets, fallbacks) shouldBe "default"
+        }
+
+        "a missing default still resolves to an existing compatible letter layout" {
+            val presets = linkedMapOf("custom" to base, "__compat_letter" to base)
+            normalizeKeyboardTarget("unknown", presets, mapOf("letter" to "__compat_letter")) shouldBe "__compat_letter"
+        }
+
+        "landscape targets can reuse compatibility lookup without replacing a valid base" {
+            val presets = mapOf("base" to base.copy(landscapeKeyboard = "symbols"), "__compat_symbols" to base)
+            val fallbacks = mapOf("symbols" to "__compat_symbols")
+
+            resolveLandscapeKeyboard("base", presets, fallbacks) shouldBe "__compat_symbols"
+            resolveLandscapeKeyboard(
+                "base",
+                presets + ("base" to base.copy(landscapeKeyboard = "missing_landscape")),
+                fallbacks,
+            ) shouldBe "base"
+        }
     })

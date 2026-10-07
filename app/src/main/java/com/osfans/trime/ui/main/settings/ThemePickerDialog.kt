@@ -46,7 +46,7 @@ object ThemePickerDialog {
                             val imported = withContext(Dispatchers.IO) {
                                 RimeMaintenanceMutex.withLock {
                                     if (RimeDataSync.usesExternalSync()) {
-                                        RimeDataSync.importThemeToLocal(context, newItem.configId).isSuccess
+                                        RimeDataSync.importThemeToLocal(newItem.configId).isSuccess
                                     } else {
                                         true
                                     }

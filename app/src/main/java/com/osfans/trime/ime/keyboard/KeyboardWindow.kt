@@ -13,11 +13,9 @@ import android.view.inputmethod.EditorInfo
 import android.widget.FrameLayout
 import androidx.lifecycle.lifecycleScope
 import com.osfans.trime.R
-import com.osfans.trime.core.CompositionProto
 import com.osfans.trime.core.RimeMessage
 import com.osfans.trime.core.SchemaItem
 import com.osfans.trime.daemon.RimeSession
-import com.osfans.trime.data.theme.KeyActionManager
 import com.osfans.trime.data.theme.Theme
 import com.osfans.trime.data.theme.model.TextKeyboard
 import com.osfans.trime.ime.broadcast.EnterKeyDisplayDelegate
@@ -144,7 +142,7 @@ class KeyboardWindow(di: DI) :
             return containerWidth
         }
 
-        val padding = theme.generalStyle.run {
+        val padding = theme.style.run {
             if (context.isLandscapeMode()) keyboardPaddingLand else keyboardPadding
         }
 
@@ -259,7 +257,7 @@ class KeyboardWindow(di: DI) :
                     if (ascii.isNullOrEmpty()) {
                         ascii = lastLockKeyboardId
                     }
-                    if (presetKeyboardIds.contains(ascii) && selectKeyboardConfig(ascii)?.asciiMode == true) {
+                    if (presetKeyboardIds.contains(ascii) && selectKeyboardConfig(ascii)?.asciiMode == 1) {
                         ascii
                     } else {
                         theme.fallbackKeyboards["letter"] ?: "default"
@@ -272,13 +270,21 @@ class KeyboardWindow(di: DI) :
                     }
                 }
             }
-        var final = dot.ifEmpty { smartMatchKeyboard() }
+        var final =
+            normalizeKeyboardTarget(
+                dot.ifEmpty { smartMatchKeyboard() },
+                theme.presetKeyboards,
+                theme.fallbackKeyboards,
+            )
 
         // 切换到横屏布局
         if (service.isLandscapeMode()) {
-            val landscape =
-                theme.presetKeyboards[final]?.landscapeKeyboard ?: ""
-            if (landscape.isNotEmpty() && presetKeyboardIds.contains(landscape)) final = landscape
+            final =
+                resolveLandscapeKeyboard(
+                    final,
+                    theme.presetKeyboards,
+                    theme.fallbackKeyboards,
+                )
         }
         return final
     }
@@ -322,11 +328,13 @@ class KeyboardWindow(di: DI) :
         val target = when (policy) {
             EditorKeyboard.ASCII -> evalKeyboard(".ascii")
 
-            EditorKeyboard.NUMBER -> "number".takeIf { it in presetKeyboardIds }
-                ?: theme.fallbackKeyboards["number"] ?: "default"
+            EditorKeyboard.NUMBER -> evalKeyboard("number")
 
-            EditorKeyboard.USER -> saved?.takeIf { it.schemaId == schema && it.keyboardId in presetKeyboardIds }?.keyboardId
-                ?: if (saved != null) smartMatchKeyboard() else evalKeyboard("")
+            EditorKeyboard.USER ->
+                saved
+                    ?.takeIf { it.schemaId == schema && it.keyboardId in presetKeyboardIds }
+                    ?.let { evalKeyboard(it.keyboardId) }
+                    ?: if (saved != null) evalKeyboard(".default") else evalKeyboard("")
         }
         detachCurrentView()
         restrictedEditor = policy != EditorKeyboard.USER
@@ -338,7 +346,7 @@ class KeyboardWindow(di: DI) :
 
             saved != null -> currentKeyboard.asciiMode
 
-            theme.generalStyle.resetAsciiModeOnFocusChange ->
+            theme.style.resetAsciiModeOnFocusChange ->
                 if (currentKeyboard.resetAsciiMode) currentKeyboard.asciiMode else currentKeyboard.lastAsciiMode
 
             else -> ascii
@@ -355,7 +363,7 @@ class KeyboardWindow(di: DI) :
     private fun dispatchCapsState(setShift: (Boolean, Boolean) -> Unit) {
         val status = rime.run { statusCached }
         // TODO: 启用自动首句大写后，点击方向键时，保持Shift锁定状态功能将无法生效
-        if (theme.generalStyle.autoCaps && status.isAsciiMode && currentKeyboardView?.isCapsOn == false) {
+        if (theme.style.autoCaps == true && status.isAsciiMode && currentKeyboardView?.isCapsOn == false) {
             setShift(false, cursorCapsMode != 0)
         }
     }
@@ -407,7 +415,7 @@ class KeyboardWindow(di: DI) :
                 if (what.isNotEmpty() && value.value) {
                     commonKeyboardActionListener
                         .listener
-                        .onAction(KeyActionManager.getAction(what))
+                        .onAction(theme.resolveAction(what))
                 }
             }
         }

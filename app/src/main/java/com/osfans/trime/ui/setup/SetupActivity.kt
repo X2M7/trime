@@ -7,12 +7,9 @@ package com.osfans.trime.ui.setup
 
 import android.app.PendingIntent
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
-import android.view.View
 import android.widget.Button
 import androidx.activity.enableEdgeToEdge
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.NotificationCompat
 import androidx.core.os.bundleOf
@@ -36,6 +33,7 @@ import com.osfans.trime.util.appContext
 import com.osfans.trime.util.createNotificationChannel
 import com.osfans.trime.util.startActivity
 import com.osfans.trime.util.toast
+import io.planck.storageaccess.StorageAccess
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -51,6 +49,7 @@ class SetupActivity : FragmentActivity() {
     private lateinit var prevButton: Button
     private lateinit var nextButton: Button
 
+    private val storageAccess = StorageAccess(this)
     private var completedPages = emptySet<SetupPage>()
     private var refreshJob: Job? = null
     private var refreshPending = false
@@ -61,47 +60,44 @@ class SetupActivity : FragmentActivity() {
 
     fun isPageDone(page: SetupPage) = page in completedPages
 
-    private val dataPathPicker =
-        registerForActivityResult(ActivityResultContracts.OpenDocumentTree()) { uri ->
-            if (uri == null || changingStorageMode) return@registerForActivityResult
-            changingStorageMode = true
-            storageRevision++
-            renderStatus()
-            lifecycleScope.launch {
-                try {
-                    runCatching {
-                        withContext(Dispatchers.IO) {
-                            RimeMaintenanceMutex.withLock {
-                                try {
-                                    RimeDataSync.persistTreeUri(this@SetupActivity, uri)
-                                    RimeDataSync.importToLocal(this@SetupActivity).getOrThrow()
-                                } catch (failure: Exception) {
-                                    if (failure !is CancellationException && RimeDataSync.treeUri() == uri) {
-                                        RimeDataSync.clearExternalTree(this@SetupActivity)
-                                    }
-                                    throw failure
-                                }
-                            }
+    fun pickDataPath() {
+        if (changingStorageMode) return
+        changingStorageMode = true
+        storageRevision++
+        renderStatus()
+        lifecycleScope.launch {
+            try {
+                val picked = storageAccess.pickDirectory() ?: return@launch
+                runCatching {
+                    withContext(Dispatchers.IO) {
+                        RimeMaintenanceMutex.withLock {
+                            RimeDataSync.persistTreeUri(picked.uri)
+                            RimeDataSync.importToLocal().getOrThrow()
                         }
-                        storageRevision++
-                        refreshCurrentFragment()
-                        toast(R.string.setup__data_path_imported)
-                    }.onFailure {
-                        if (it is CancellationException) throw it
-                        storageRevision++
-                        refreshCurrentFragment()
-                        toast(R.string.setup__data_path_import_failed)
                     }
-                } finally {
-                    changingStorageMode = false
                     storageRevision++
                     refreshCurrentFragment()
+                    toast(R.string.setup__data_path_imported)
+                }.onFailure {
+                    if (it is CancellationException) throw it
+                    Timber.w(it, "Unable to import selected data folder")
+                    // Keep the picked folder: a later deploy can retry, and the runtime
+                    // falls back to app-specific storage if the grant remains unusable.
+                    storageRevision++
+                    refreshCurrentFragment()
+                    toast(R.string.setup__data_path_import_failed)
                 }
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                Timber.w(e, "Unable to pick data folder")
+                toast(R.string.setup__data_path_import_failed)
+            } finally {
+                changingStorageMode = false
+                storageRevision++
+                refreshCurrentFragment()
             }
         }
-
-    fun launchDataPathPicker() {
-        if (!changingStorageMode) dataPathPicker.launch(null as Uri?)
     }
 
     fun refreshCurrentFragment() {
@@ -118,7 +114,6 @@ class SetupActivity : FragmentActivity() {
                             .getOrDefault(false)
                     }.toSet()
                 }
-                // Repeated refresh requests must not starve the UI; only changed storage invalidates a result.
                 if (revision != storageRevision) {
                     refreshPending = true
                     continue
@@ -151,12 +146,6 @@ class SetupActivity : FragmentActivity() {
             try {
                 withContext(Dispatchers.IO) {
                     RimeMaintenanceMutex.withLock {
-                        if (prefs.dataStorageMode.getValue() == DataStorageMode.EXTERNAL_SYNC &&
-                            mode == DataStorageMode.APP_STORAGE
-                        ) {
-                            prefs.userDbMigrated.setValue(false)
-                            RimeDataSync.clearExternalTree(this@SetupActivity)
-                        }
                         prefs.dataStorageMode.setValue(mode)
                     }
                 }

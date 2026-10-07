@@ -22,7 +22,7 @@ class OrphanHistoryTest :
             fixture { root ->
                 val personal = File(root, "personal.custom.yaml").apply { writeText("personal") }
                 val directory = File(root, "empty-personal").apply { mkdir() }
-                OrphanCleaner.removeLocalOrphans(root, emptySet()).deleted shouldBe 0
+                RimeDataSync.removeLocalOrphans(root, emptySet()).deleted shouldBe 0
                 personal.readText() shouldBe "personal"
                 directory.isDirectory shouldBe true
             }
@@ -33,7 +33,7 @@ class OrphanHistoryTest :
                 val entry = record(file)
                 file.writeText("local edits")
                 file.setLastModified(entry.lastModified)
-                OrphanCleaner.removeLocalOrphans(root, emptySet(), knownEntries = mapOf(file.name to entry)).deleted shouldBe 0
+                RimeDataSync.removeLocalOrphans(root, emptySet(), knownEntries = mapOf(file.name to entry)).deleted shouldBe 0
                 file.readText() shouldBe "local edits"
             }
         }
@@ -43,7 +43,7 @@ class OrphanHistoryTest :
                 val entry = record(file)
                 file.writeText("new")
                 check(file.setLastModified(entry.lastModified + 2000))
-                OrphanCleaner.removeLocalOrphans(root, emptySet(), knownEntries = mapOf(file.name to entry)).deleted shouldBe 0
+                RimeDataSync.removeLocalOrphans(root, emptySet(), knownEntries = mapOf(file.name to entry)).deleted shouldBe 0
                 file.readText() shouldBe "new"
             }
         }
@@ -51,7 +51,7 @@ class OrphanHistoryTest :
             fixture { root ->
                 val file = File(root, "unknown.yaml").apply { writeText("retained") }
                 for (entry in listOf(SyncEntry(-1, file.lastModified()), SyncEntry(file.length(), 0))) {
-                    OrphanCleaner.removeLocalOrphans(root, emptySet(), knownEntries = mapOf(file.name to entry)).deleted shouldBe 0
+                    RimeDataSync.removeLocalOrphans(root, emptySet(), knownEntries = mapOf(file.name to entry)).deleted shouldBe 0
                     file.exists() shouldBe true
                 }
             }
@@ -60,7 +60,7 @@ class OrphanHistoryTest :
             fixture { root ->
                 val file = File(root, "legacy.yaml").apply { writeText("retained") }
                 val entry = SyncEntry(file.length(), file.lastModified())
-                OrphanCleaner.removeLocalOrphans(root, emptySet(), knownEntries = mapOf(file.name to entry)).deleted shouldBe 0
+                RimeDataSync.removeLocalOrphans(root, emptySet(), knownEntries = mapOf(file.name to entry)).deleted shouldBe 0
                 file.exists() shouldBe true
             }
         }
@@ -70,7 +70,7 @@ class OrphanHistoryTest :
                 val entry = record(file)
                 file.writeText("new")
                 check(file.setLastModified(entry.lastModified))
-                OrphanCleaner.removeLocalOrphans(root, emptySet(), knownEntries = mapOf(file.name to entry)).deleted shouldBe 0
+                RimeDataSync.removeLocalOrphans(root, emptySet(), knownEntries = mapOf(file.name to entry)).deleted shouldBe 0
                 file.readText() shouldBe "new"
             }
         }
@@ -82,8 +82,8 @@ class OrphanHistoryTest :
                 }
                 val unrelated = File(root, "unrelated").apply { mkdir() }
                 val entries = mapOf("tracked/orphan.yaml" to record(file))
-                OrphanCleaner.removeLocalOrphans(root, entries.keys, knownEntries = entries).deleted shouldBe 0
-                OrphanCleaner.removeLocalOrphans(root, emptySet(), knownEntries = entries).deleted shouldBe 2
+                RimeDataSync.removeLocalOrphans(root, entries.keys, knownEntries = entries).deleted shouldBe 0
+                RimeDataSync.removeLocalOrphans(root, emptySet(), knownEntries = entries).deleted shouldBe 2
                 file.exists() shouldBe false
                 unrelated.isDirectory shouldBe true
             }
@@ -91,7 +91,7 @@ class OrphanHistoryTest :
         "synchronized history never overrides installation identity protection" {
             fixture { root ->
                 val file = File(root, "installation.yaml").apply { writeText("identity") }
-                OrphanCleaner.removeLocalOrphans(root, emptySet(), knownEntries = mapOf(file.name to record(file))).deleted shouldBe 0
+                RimeDataSync.removeLocalOrphans(root, emptySet(), knownEntries = mapOf(file.name to record(file))).deleted shouldBe 0
                 file.readText() shouldBe "identity"
             }
         }

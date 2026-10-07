@@ -4,6 +4,8 @@
  */
 @file:Suppress("UnstableApiUsage")
 
+import java.util.regex.Pattern
+
 plugins {
     id("com.osfans.trime.app-convention")
     id("com.osfans.trime.native-app-convention")
@@ -47,7 +49,6 @@ android {
     buildFeatures {
         buildConfig = true
         viewBinding = true
-        resValues = true
     }
 
     buildTypes {
@@ -121,6 +122,13 @@ aboutLibraries {
         fetchRemoteFunding.set(false)
         includePlatform.set(false)
     }
+    library {
+        // JitPack publishes StorageAccess' Apache-2.0 license as "Other".
+        // Exclude that metadata and restore the audited entry from app/licenses.
+        exclusionPatterns.add(
+            Pattern.compile("com.github.WhiredPlanck:StorageAccess", Pattern.LITERAL),
+        )
+    }
     export {
         excludeFields.set(
             setOf("generated", "developers", "organization", "scm", "funding", "content"),
@@ -157,7 +165,8 @@ dependencies {
     implementation(libs.timber)
     implementation(libs.xxpermissions)
     implementation(libs.kodein.di)
-    implementation(libs.snakeyaml)
+    implementation(libs.kaml)
+    implementation(libs.storageaccess)
     implementation(libs.splitties.bitflags)
     implementation(libs.splitties.systemservices)
     implementation(libs.splitties.views.dsl)

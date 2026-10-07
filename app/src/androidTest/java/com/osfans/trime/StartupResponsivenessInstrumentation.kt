@@ -228,9 +228,22 @@ class StartupResponsivenessInstrumentation : Instrumentation() {
                     withContext(Dispatchers.Main) { ThemeManager.init(targetContext.resources.configuration) }
                     val selected = ThemeManager.prefs.selectedTheme.getValue()
                     val originalScope = ColorManager.currentScope()
-                    repeat(3) {
-                        ThemeManager.selectTheme(selected)
-                        check(ColorManager.currentScope() === originalScope) { "Equal-theme reload detached the view scope" }
+                    var themeChanges = 0
+                    val reloadListener = ThemeManager.OnThemeChangeListener { themeChanges++ }
+                    withContext(Dispatchers.Main) { ThemeManager.addOnChangedListener(reloadListener) }
+                    try {
+                        repeat(3) {
+                            ThemeManager.selectTheme(selected)
+                            check(ColorManager.currentScope() === originalScope) { "Equal-theme reload detached the view scope" }
+                        }
+                        check(themeChanges == 0) { "Equal-theme selection emitted a change" }
+                        val themeBeforeForcedReload = ThemeManager.activeTheme
+                        ThemeManager.selectTheme(selected, forceReload = true)
+                        check(ColorManager.currentScope() !== originalScope) { "Forced equal-theme reload retained stale caches and scope" }
+                        check(ThemeManager.activeTheme == themeBeforeForcedReload) { "Forced reload changed the decoded theme" }
+                        check(themeChanges == 1) { "Forced equal-theme reload did not emit exactly one change" }
+                    } finally {
+                        withContext(Dispatchers.Main) { ThemeManager.removeOnChangedListener(reloadListener) }
                     }
                     try {
                         phase("Inject missing theme")
@@ -252,7 +265,7 @@ class StartupResponsivenessInstrumentation : Instrumentation() {
                         if (selected == "trime") {
                             val base = checkNotNull(presets["default"])
                             val letter = checkNotNull(presets["letter"])
-                            check(letter == base.copy(asciiMode = true, resetAsciiMode = true, lock = false))
+                            check(letter == base.copy(asciiMode = 1, resetAsciiMode = true, lock = false))
                             check(presets["scj6"] == presets["cangjie5"])
                         }
                         val originalSchema = selectedSchemaId()

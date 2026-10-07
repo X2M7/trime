@@ -2,15 +2,16 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-package com.osfans.trime.data.sync
+package com.osfans.trime.data.sync.fixture
 
 import android.content.ContentResolver
 import android.net.Uri
 import android.provider.DocumentsContract
+import com.osfans.trime.data.sync.SyncRelativePath
 import java.util.concurrent.ConcurrentHashMap
 
-class SafPathCache(
-    listing: SafTreeListing,
+class FixtureSafPathCache(
+    listing: FixtureSafTreeListing,
     private val rootDocumentId: String,
 ) {
     private val directoryIds = ConcurrentHashMap(listing.directoryIds)
@@ -36,7 +37,7 @@ class SafPathCache(
         val segment = relativeDir.substringAfterLast('/')
         val parentId = ensureDirectory(contentResolver, treeUri, parentDir)
         val documentId =
-            SafTreeWalker.findFileEntry(contentResolver, treeUri, parentId, segment)?.let {
+            FixtureSafTreeWalker.findFileEntry(contentResolver, treeUri, parentId, segment)?.let {
                 check(it.mimeType == DocumentsContract.Document.MIME_TYPE_DIR) { "Not a directory: $relativeDir" }
                 it.documentId
             }
@@ -66,7 +67,7 @@ class SafPathCache(
             return DocumentsContract.buildDocumentUriUsingTree(treeUri, it)
         }
         val parentId = directoryIds[parentDir] ?: ensureDirectory(contentResolver, treeUri, parentDir)
-        val existingId = SafTreeWalker.findChildDocumentId(contentResolver, treeUri, parentId, fileName)
+        val existingId = FixtureSafTreeWalker.findChildDocumentId(contentResolver, treeUri, parentId, fileName)
         val docUri =
             if (existingId != null) {
                 fileIds[relativePath] = existingId

@@ -19,9 +19,9 @@ import com.osfans.trime.daemon.RimeSession
 import com.osfans.trime.daemon.launchOnReady
 import com.osfans.trime.data.prefs.AppPrefs
 import com.osfans.trime.data.theme.ColorManager
-import com.osfans.trime.data.theme.KeyActionManager
-import com.osfans.trime.data.theme.LiquidData
+import com.osfans.trime.data.theme.Theme
 import com.osfans.trime.data.theme.ThemeManager
+import com.osfans.trime.data.theme.model.LiquidKeyboard
 import com.osfans.trime.ime.clipboard.ClipboardWindow
 import com.osfans.trime.ime.core.PrivacyModeState
 import com.osfans.trime.ime.core.TrimeInputMethodService
@@ -51,6 +51,7 @@ class CommonKeyboardActionListener(override val di: DI) : DIAware {
 
     private val context: ContextThemeWrapper by instance()
     private val service: TrimeInputMethodService by instance()
+    private val theme: Theme by instance()
     private val rime: RimeSession by instance()
     private val windowManager: BoardWindowManager by instance()
     private val keyboardWindow: KeyboardWindow by instance()
@@ -227,10 +228,10 @@ class CommonKeyboardActionListener(override val di: DI) : DIAware {
                     if (!PrivacyModeState.active) windowManager.attachWindow(ClipboardWindow(di))
                     return
                 }
-                val liquidTagList = LiquidData.getTagList()
+                val liquidTagList = theme.liquidKeyboard.getTagList()
                 val index = liquidTagList.indexOfFirst { tag ->
                     tag.label == arg || runCatching {
-                        LiquidData.Type.valueOf(arg.uppercase())
+                        LiquidKeyboard.DataType.valueOf(arg.uppercase())
                     }.getOrNull() == tag.type
                 }
 
@@ -249,16 +250,16 @@ class CommonKeyboardActionListener(override val di: DI) : DIAware {
             }
 
             private fun handleColorScheme(arg: String) {
-                ThemeManager.activeTheme.colorSchemes
-                    .find { it.id == arg }
-                    ?.let { ColorManager.setColorScheme(it) }
+                if (arg in ThemeManager.activeTheme.presetColorSchemes) {
+                    ColorManager.setColorScheme(arg)
+                }
             }
 
             private fun handleTheme(arg: String) {
                 if (arg.isEmpty()) {
                     // 参数为空时，刷新当前主题
                     val themeId = ThemeManager.prefs.selectedTheme.getValue()
-                    service.lifecycleScope.launch { ThemeManager.selectTheme(themeId) }
+                    service.lifecycleScope.launch { ThemeManager.selectTheme(themeId, forceReload = true) }
                 } else {
                     // 通过主题名称查找对应的配置ID并切换主题
                     ThemeManager.getAllThemes()
@@ -473,7 +474,7 @@ class CommonKeyboardActionListener(override val di: DI) : DIAware {
                     service.postRimeJob {
                         if (value.run { startsWith('{') && endsWith('}') }) {
                             val token = value.removeSurrounding("{", "}")
-                            onAction(KeyActionManager.getAction(token))
+                            onAction(theme.resolveAction(token))
                         } else if (!value[0].isAsciiPrintable()) {
                             service.commitText(value)
                         } else {

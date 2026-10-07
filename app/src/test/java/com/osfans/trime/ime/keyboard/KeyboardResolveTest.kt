@@ -6,8 +6,10 @@
 
 package com.osfans.trime.ime.keyboard
 
+import com.osfans.trime.data.theme.ThemeTestSupport
 import com.osfans.trime.data.theme.model.GeneralStyle
-import com.osfans.trime.util.yaml.Node
+import com.osfans.trime.util.yamlMapOf
+import com.osfans.trime.util.yamlScalarOf
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
 
@@ -64,14 +66,15 @@ class KeyboardResolveTest :
             }
 
             When("a third-party theme supplies negative gaps and heights") {
-                val style = GeneralStyle.decode(
-                    Node.Mapping(
-                        Node.Scalar("horizontal_gap") to Node.Scalar("-2"),
-                        Node.Scalar("vertical_gap") to Node.Scalar("-3"),
-                        Node.Scalar("key_height") to Node.Scalar("-4"),
-                        Node.Scalar("keyboard_height") to Node.Scalar("-5"),
-                    ),
-                )
+                val style =
+                    ThemeTestSupport.yaml.decodeFromYamlNode<GeneralStyle>(
+                        yamlMapOf(
+                            "horizontal_gap" to yamlScalarOf("-2"),
+                            "vertical_gap" to yamlScalarOf("-3"),
+                            "key_height" to yamlScalarOf("-4"),
+                            "keyboard_height" to yamlScalarOf("-5"),
+                        ),
+                    )
 
                 Then("negative style values cannot become keyboard geometry") {
                     resolvePositive(null, style.horizontalGap, unit) shouldBe 0

@@ -9,7 +9,6 @@ import android.content.Context
 import android.text.TextUtils
 import android.view.View
 import com.osfans.trime.R
-import com.osfans.trime.data.theme.FontManager
 import com.osfans.trime.data.theme.Theme
 import com.osfans.trime.data.theme.ThemeScope
 import com.osfans.trime.ime.keyboard.GestureFrame
@@ -41,7 +40,7 @@ class ClipboardBeanUi(
             minLines = 1
             maxLines = 4
             textSize = 14f
-            typeface = FontManager.getTypeface("key_font")
+            typeface = theme.fonts.key
             setPaddingDp(8, 4, 8, 4)
             ellipsize = TextUtils.TruncateAt.END
             setTextColor(scope.colors.keyTextColor)
@@ -81,8 +80,8 @@ class ClipboardBeanUi(
                 scope.decorDrawable(
                     "key_back_color",
                     "key_border_color",
-                    dp(theme.generalStyle.keyBorder),
-                    dp(theme.generalStyle.roundCorner),
+                    dp(theme.style.keyBorder),
+                    dp(theme.style.roundCorner),
                 )
             add(layout, lParams(matchParent, matchParent))
             layoutParams = lParams(matchParent, wrapContent)
@@ -104,8 +103,8 @@ class ClipboardBeanUi(
             scope.decorDrawable(
                 "key_back_color",
                 "key_border_color",
-                ctx.dp(theme.generalStyle.keyBorder),
-                ctx.dp(theme.generalStyle.roundCorner),
+                ctx.dp(theme.style.keyBorder),
+                ctx.dp(theme.style.roundCorner),
             )
     }
 }

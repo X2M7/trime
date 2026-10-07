@@ -3,6 +3,8 @@ package com.osfans.trime
 
 import android.content.Context
 import android.content.res.Configuration
+import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.graphics.Color
 import android.view.View
 import android.view.ViewGroup
@@ -19,18 +21,16 @@ object ThemeMergeRegression {
         val scope = checkNotNull(ColorManager.currentScope())
         val original = ColorManager.activeColorScheme
         val selection = com.osfans.trime.data.theme.ThemeManager.prefs.normalModeColor.getValue()
-        val alternate = original.copy(
-            id = "__merge_probe__",
-            colors = original.colors + mapOf(
+        val alternate = original +
+            mapOf(
                 "candidate_text_color" to "#123456",
                 "hilited_candidate_text_color" to "#fefdfc",
                 "hilited_candidate_back_color" to "#543210",
                 "candidate_background" to "#ffffff",
-            ),
-        )
+            )
         try {
             for (orientation in listOf(Configuration.ORIENTATION_PORTRAIT, Configuration.ORIENTATION_LANDSCAPE)) {
-                ColorManager.setColorScheme(original)
+                ColorManager.setColorSchemeForTesting(original)
                 val configuration = Configuration(context.resources.configuration).apply { this.orientation = orientation }
                 val themedContext = context.createConfigurationContext(configuration)
                 val actions = mutableListOf<Pair<Int, T9Action>>()
@@ -42,8 +42,25 @@ object ThemeMergeRegression {
                 val height = view.measuredHeight
                 val before = descendants(view).filterIsInstance<TextView>().map { it.text.toString() }
                 check("ni" in before && "426" in before) { "Missing locked syllable or suffix" }
-                ColorManager.setColorScheme(alternate)
+                ColorManager.setColorSchemeForTesting(alternate)
                 check(ColorManager.currentScope() === scope) { "Scheme switch replaced the injected scope" }
+                val borderless = checkNotNull(
+                    scope.decorDrawable(
+                        colorKey = "candidate_background",
+                        borderColorKey = "candidate_border_color",
+                        borderPx = 8,
+                    ),
+                )
+                val borderBitmap = Bitmap.createBitmap(32, 32, Bitmap.Config.ARGB_8888)
+                try {
+                    borderless.setBounds(0, 0, borderBitmap.width, borderBitmap.height)
+                    borderless.draw(Canvas(borderBitmap))
+                    check(borderBitmap.getPixel(1, 16) == Color.WHITE) {
+                        "An omitted candidate border rendered as a transparent stroke"
+                    }
+                } finally {
+                    borderBitmap.recycle()
+                }
                 view.refreshColors()
                 layout(view)
                 val labels = descendants(view).filterIsInstance<TextView>()
@@ -58,7 +75,7 @@ object ThemeMergeRegression {
                 check(actions == listOf(state.revision to T9Action.Focus)) { "Recolor lost the composition revision" }
             }
         } finally {
-            ColorManager.setColorScheme(original)
+            ColorManager.setColorSchemeForTesting(original)
             com.osfans.trime.data.theme.ThemeManager.prefs.normalModeColor.setValue(selection)
         }
     }

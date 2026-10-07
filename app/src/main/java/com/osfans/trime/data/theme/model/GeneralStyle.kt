@@ -6,41 +6,27 @@
 
 package com.osfans.trime.data.theme.model
 
-import android.os.Parcelable
-import com.osfans.trime.util.yaml.Node
-import com.osfans.trime.util.yaml.boolean
-import com.osfans.trime.util.yaml.enum
-import com.osfans.trime.util.yaml.float
-import com.osfans.trime.util.yaml.get
-import com.osfans.trime.util.yaml.int
-import com.osfans.trime.util.yaml.sequence
-import com.osfans.trime.util.yaml.string
-import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
-/**
- * Decoded `style` section of a theme. The constructor defaults are the single
- * source of truth for theme defaults; [decode] fills fields from YAML and
- * falls back to [DEFAULTS] for absent keys. Legacy preview fields are used only
- * when the corresponding popup field is absent.
- */
-@Parcelize
+@Serializable
 data class GeneralStyle(
-    val autoCaps: Boolean = false,
+    val autoCaps: Boolean? = false,
     val candidateBorder: Int = 0,
     val candidateBorderRound: Float = 0f,
-    val candidateFont: List<String> = emptyList(),
+    val candidateFont: MaybeStringList = MaybeStringList.Empty,
     val candidatePadding: Int = 0,
     val candidateSpacing: Float = 0f,
     val candidateTextSize: Float = 15f,
     val candidateTextVerticalBias: Float = 1f,
     val candidateViewHeight: Int = 28,
     val candidateCornerRadius: Float = 5f,
-    val commentFont: List<String> = emptyList(),
+    val commentFont: MaybeStringList = MaybeStringList.Empty,
     val commentHeight: Int = 12,
     val commentPosition: CommentPosition = CommentPosition.RIGHT,
     val commentTextSize: Float = 10f,
     val commentVerticalBias: Float = 0f,
-    val hanbFont: List<String> = emptyList(),
+    val hanbFont: MaybeStringList = MaybeStringList.Empty,
     val horizontalGap: Int = 0,
     val keyboardPadding: Int = 0,
     val keyboardPaddingLeft: Int = 0,
@@ -48,7 +34,7 @@ data class GeneralStyle(
     val keyboardPaddingBottom: Int = 0,
     val keyboardPaddingLand: Int = 0,
     val keyboardPaddingLandBottom: Int = 0,
-    val keyFont: List<String> = emptyList(),
+    val keyFont: MaybeStringList = MaybeStringList.Empty,
     val keyBorder: Int = 0,
     val keyHeight: Int = 0,
     val keyLongTextSize: Float = 15f,
@@ -63,34 +49,54 @@ data class GeneralStyle(
     val keyPressOffsetY: Float = 0f,
     val keyWidth: Float = 0f,
     val labelTextSize: Float = 0f,
-    val labelFont: List<String> = emptyList(),
-    val latinFont: List<String> = emptyList(),
+    val labelFont: MaybeStringList = MaybeStringList.Empty,
+    val latinFont: MaybeStringList = MaybeStringList.Empty,
     val keyboardHeight: Int = 0,
     val keyboardHeightLand: Int = 0,
-    val popupBottomMargin: Int = 68,
-    val popupWidth: Int = 38,
-    val popupHeight: Int = 48,
-    val popupKeyHeight: Int = 48,
-    val popupFont: List<String> = emptyList(),
-    val popupTextSize: Float = 23f,
+    @SerialName("popup_bottom_margin")
+    private val configuredPopupBottomMargin: Int? = null,
+    @SerialName("popup_width")
+    private val configuredPopupWidth: Int? = null,
+    @SerialName("popup_height")
+    private val configuredPopupHeight: Int? = null,
+    @SerialName("popup_key_height")
+    private val configuredPopupKeyHeight: Int? = null,
+    @SerialName("popup_font")
+    private val configuredPopupFont: MaybeStringList? = null,
+    @SerialName("popup_text_size")
+    private val configuredPopupTextSize: Float? = null,
+    @SerialName("preview_height")
+    private val previewHeight: Int? = null,
+    @SerialName("preview_font")
+    private val previewFont: MaybeStringList? = null,
+    @SerialName("preview_text_size")
+    private val previewTextSize: Float? = null,
     val resetAsciiModeOnFocusChange: Boolean = false,
     val roundCorner: Float = 0f,
     val shadowRadius: Float = 0f,
-    val symbolFont: List<String> = emptyList(),
+    val symbolFont: MaybeStringList = MaybeStringList.Empty,
     val symbolTextSize: Float = 0f,
-    val textFont: List<String> = emptyList(),
+    val textFont: MaybeStringList = MaybeStringList.Empty,
     val verticalGap: Int = 0,
     val backgroundFolder: String = "backgrounds",
     val enterLabelMode: Int = 0,
-    val enterLabel: EnterLabel = EnterLabel(),
-) : Parcelable {
+    val enterLabels: EnterLabel = EnterLabel(),
+) {
+    /** Popup values keep compatibility with themes written before the popup_* rename. */
+    val popupBottomMargin: Int get() = configuredPopupBottomMargin ?: 68
+    val popupWidth: Int get() = configuredPopupWidth ?: 38
+    val popupHeight: Int get() = configuredPopupHeight ?: previewHeight ?: 48
+    val popupKeyHeight: Int get() = configuredPopupKeyHeight ?: previewHeight ?: 48
+    val popupFont: MaybeStringList get() = configuredPopupFont ?: previewFont ?: MaybeStringList.Empty
+    val popupTextSize: Float get() = configuredPopupTextSize ?: previewTextSize ?: 23f
+
     enum class CommentPosition {
         RIGHT,
         TOP,
         OVERLAY,
     }
 
-    @Parcelize
+    @Serializable
     data class EnterLabel(
         val go: String = "go",
         val done: String = "done",
@@ -99,26 +105,11 @@ data class GeneralStyle(
         val search: String = "search",
         val send: String = "send",
         val default: String = "default",
-    ) : Parcelable {
-        companion object {
-            fun decode(node: Node?): EnterLabel = EnterLabel(
-                go = node?.get("go")?.string ?: "go",
-                done = node?.get("done")?.string ?: "done",
-                next = node?.get("next")?.string ?: "next",
-                pre = node?.get("pre")?.string ?: "pre",
-                search = node?.get("search")?.string ?: "search",
-                send = node?.get("send")?.string ?: "send",
-                default = node?.get("default")?.string ?: "default",
-            )
-        }
-    }
+    )
 
     companion object {
-        /** The default style; decode falls back to these values key by key. */
-        val DEFAULTS = GeneralStyle()
-
         /**
-         * Every key [decode] reads, used by the theme linter to spot typos.
+         * Every key reads on decoding, used by the theme linter to spot typos.
          * [com.osfans.trime.data.theme.ThemeDiagnosticsTest] fails when this
          * drifts from the literals below.
          */
@@ -186,73 +177,5 @@ data class GeneralStyle(
                 "text_font",
                 "vertical_gap",
             )
-
-        private fun Node?.stringList(): List<String> = this?.sequence?.mapNotNull(Node::string) ?: emptyList()
-
-        private fun Node?.previewFontList(): List<String> = this?.string?.takeIf { it.isNotEmpty() }?.let(::listOf) ?: stringList()
-
-        fun decode(node: Node): GeneralStyle = GeneralStyle(
-            autoCaps = node["auto_caps"]?.boolean ?: DEFAULTS.autoCaps,
-            candidateBorder = node["candidate_border"]?.int ?: DEFAULTS.candidateBorder,
-            candidateBorderRound = node["candidate_border_round"]?.float ?: DEFAULTS.candidateBorderRound,
-            candidateFont = node["candidate_font"].stringList(),
-            candidatePadding = node["candidate_padding"]?.int ?: DEFAULTS.candidatePadding,
-            candidateSpacing = node["candidate_spacing"]?.float ?: DEFAULTS.candidateSpacing,
-            candidateTextSize = node["candidate_text_size"]?.float ?: DEFAULTS.candidateTextSize,
-            candidateTextVerticalBias = node["candidate_text_vertical_bias"]?.float
-                ?: DEFAULTS.candidateTextVerticalBias,
-            candidateViewHeight = node["candidate_view_height"]?.int ?: DEFAULTS.candidateViewHeight,
-            candidateCornerRadius = node["candidate_corner_radius"]?.float ?: DEFAULTS.candidateCornerRadius,
-            commentFont = node["comment_font"].stringList(),
-            commentHeight = node["comment_height"]?.int ?: DEFAULTS.commentHeight,
-            commentPosition = node["comment_position"]?.enum<CommentPosition>() ?: DEFAULTS.commentPosition,
-            commentTextSize = node["comment_text_size"]?.float ?: DEFAULTS.commentTextSize,
-            commentVerticalBias = node["comment_vertical_bias"]?.float ?: DEFAULTS.commentVerticalBias,
-            hanbFont = node["hanb_font"].stringList(),
-            horizontalGap = node["horizontal_gap"]?.int ?: DEFAULTS.horizontalGap,
-            keyboardPadding = node["keyboard_padding"]?.int ?: DEFAULTS.keyboardPadding,
-            keyboardPaddingLeft = node["keyboard_padding_left"]?.int ?: DEFAULTS.keyboardPaddingLeft,
-            keyboardPaddingRight = node["keyboard_padding_right"]?.int ?: DEFAULTS.keyboardPaddingRight,
-            keyboardPaddingBottom = node["keyboard_padding_bottom"]?.int ?: DEFAULTS.keyboardPaddingBottom,
-            keyboardPaddingLand = node["keyboard_padding_land"]?.int ?: DEFAULTS.keyboardPaddingLand,
-            keyboardPaddingLandBottom = node["keyboard_padding_land_bottom"]?.int
-                ?: DEFAULTS.keyboardPaddingLandBottom,
-            keyFont = node["key_font"].stringList(),
-            keyBorder = node["key_border"]?.int ?: DEFAULTS.keyBorder,
-            keyHeight = node["key_height"]?.int ?: DEFAULTS.keyHeight,
-            keyLongTextSize = node["key_long_text_size"]?.float ?: DEFAULTS.keyLongTextSize,
-            keyTextSize = node["key_text_size"]?.float ?: DEFAULTS.keyTextSize,
-            keyTextOffsetX = node["key_text_offset_x"]?.float ?: DEFAULTS.keyTextOffsetX,
-            keyTextOffsetY = node["key_text_offset_y"]?.float ?: DEFAULTS.keyTextOffsetY,
-            keySymbolOffsetX = node["key_symbol_offset_x"]?.float ?: DEFAULTS.keySymbolOffsetX,
-            keySymbolOffsetY = node["key_symbol_offset_y"]?.float ?: DEFAULTS.keySymbolOffsetY,
-            keyHintOffsetX = node["key_hint_offset_x"]?.float ?: DEFAULTS.keyHintOffsetX,
-            keyHintOffsetY = node["key_hint_offset_y"]?.float ?: DEFAULTS.keyHintOffsetY,
-            keyPressOffsetX = node["key_press_offset_x"]?.float ?: DEFAULTS.keyPressOffsetX,
-            keyPressOffsetY = node["key_press_offset_y"]?.float ?: DEFAULTS.keyPressOffsetY,
-            keyWidth = node["key_width"]?.float ?: DEFAULTS.keyWidth,
-            labelTextSize = node["label_text_size"]?.float ?: DEFAULTS.labelTextSize,
-            labelFont = node["label_font"].stringList(),
-            latinFont = node["latin_font"].stringList(),
-            keyboardHeight = node["keyboard_height"]?.int ?: DEFAULTS.keyboardHeight,
-            keyboardHeightLand = node["keyboard_height_land"]?.int ?: DEFAULTS.keyboardHeightLand,
-            popupBottomMargin = node["popup_bottom_margin"]?.int ?: DEFAULTS.popupBottomMargin,
-            popupWidth = node["popup_width"]?.int ?: DEFAULTS.popupWidth,
-            popupHeight = (node["popup_height"] ?: node["preview_height"])?.int ?: DEFAULTS.popupHeight,
-            popupKeyHeight = (node["popup_key_height"] ?: node["preview_height"])?.int ?: DEFAULTS.popupKeyHeight,
-            popupFont = node["popup_font"]?.stringList() ?: node["preview_font"].previewFontList(),
-            popupTextSize = (node["popup_text_size"] ?: node["preview_text_size"])?.float ?: DEFAULTS.popupTextSize,
-            resetAsciiModeOnFocusChange = node["reset_ascii_mode_on_focus_change"]?.boolean
-                ?: DEFAULTS.resetAsciiModeOnFocusChange,
-            roundCorner = node["round_corner"]?.float ?: DEFAULTS.roundCorner,
-            shadowRadius = node["shadow_radius"]?.float ?: DEFAULTS.shadowRadius,
-            symbolFont = node["symbol_font"].stringList(),
-            symbolTextSize = node["symbol_text_size"]?.float ?: DEFAULTS.symbolTextSize,
-            textFont = node["text_font"].stringList(),
-            verticalGap = node["vertical_gap"]?.int ?: DEFAULTS.verticalGap,
-            backgroundFolder = node["background_folder"]?.string ?: DEFAULTS.backgroundFolder,
-            enterLabelMode = node["enter_label_mode"]?.int ?: DEFAULTS.enterLabelMode,
-            enterLabel = EnterLabel.decode(node["enter_labels"]),
-        )
     }
 }

@@ -16,7 +16,6 @@ import android.provider.DocumentsContract.Root
 import android.provider.DocumentsProvider
 import android.webkit.MimeTypeMap
 import com.osfans.trime.R
-import com.osfans.trime.data.sync.SafTreeWalker
 import com.osfans.trime.data.sync.SyncRelativePath
 import java.io.File
 import java.io.FileNotFoundException
@@ -343,7 +342,7 @@ class RimeDataProvider : DocumentsProvider() {
         val root = requireRootState()
         val oldFile = fileFromDocId(documentId, root)
         check(oldFile != root.baseDir) { "Cannot rename provider root" }
-        SafTreeWalker.requireName(displayName)
+        SyncRelativePath.requireSafeName(displayName)
         val newFile = oldFile.resolveSibling(displayName)
         if (newFile.exists()) {
             throw FileNotFoundException("renameDocument id=$documentId to $displayName failed: target exists")
@@ -417,7 +416,7 @@ class RimeDataProvider : DocumentsProvider() {
         displayName: String,
         root: RootState,
     ): File {
-        SafTreeWalker.requireName(displayName)
+        SyncRelativePath.requireSafeName(displayName)
         val parent = fileFromDocId(parentDocumentId, root)
         check(parent.isDirectory) { "Not a directory: $parentDocumentId" }
         var newFile = parent.resolve(displayName)

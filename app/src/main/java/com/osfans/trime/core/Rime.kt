@@ -9,10 +9,8 @@ import com.osfans.trime.BuildConfig
 import com.osfans.trime.data.base.DataManager
 import com.osfans.trime.data.opencc.OpenCCDictManager
 import com.osfans.trime.data.prefs.AppPrefs
-import com.osfans.trime.data.sync.ExternalSyncFallback
 import com.osfans.trime.data.sync.RimeDataSync
 import com.osfans.trime.ime.core.InlinePreeditMode
-import com.osfans.trime.util.appContext
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -187,15 +185,15 @@ class Rime :
 
     override suspend fun deploy(skipImport: Boolean) = RimeMaintenanceMutex.withLock {
         if (RimeDataSync.usesExternalSync()) {
-            if (!RimeDataSync.hasExternalAccess(appContext)) {
-                ExternalSyncFallback.fallbackToAppStorage(appContext)
+            if (!RimeDataSync.hasExternalAccess()) {
+                RimeDataSync.fallbackToAppStorage()
             }
         }
         if (RimeDataSync.usesExternalSync() && !skipImport) {
             val importResult =
-                RimeDataSync.importToLocal(appContext, keepNotificationUntilDeploySuccess = true)
+                RimeDataSync.importToLocal(keepNotificationUntilDeploySuccess = true)
             if (importResult.isFailure) {
-                ExternalSyncFallback.fallbackToAppStorage(appContext, importResult.exceptionOrNull())
+                RimeDataSync.fallbackToAppStorage(importResult.exceptionOrNull())
             } else {
                 Timber.i("Import finished: ${importResult.getOrNull()}")
             }
@@ -245,8 +243,8 @@ class Rime :
         // Import configurations and portable text dumps before native merging.
         // Never replace open binary user databases with a file-by-file SAF copy.
         // Suppress import progress so synchronization does not show deployment UI.
-        if (RimeDataSync.usesExternalSync() && RimeDataSync.hasExternalAccess(appContext)) {
-            if (RimeDataSync.importToLocal(appContext, showProgress = false).isFailure) return@withLock false
+        if (RimeDataSync.usesExternalSync() && RimeDataSync.hasExternalAccess()) {
+            if (RimeDataSync.importToLocal(showProgress = false).isFailure) return@withLock false
         }
         // RimeSyncUserData schedules maintenance asynchronously and returns once the
         // worker is started. Wait for DeployMessage so callers (e.g. export) only
@@ -279,11 +277,11 @@ class Rime :
             }
         if (!syncOk) return@withLock false
         if (!RimeDataSync.usesExternalSync()) return@withLock true
-        if (!RimeDataSync.hasExternalAccess(appContext)) {
+        if (!RimeDataSync.hasExternalAccess()) {
             Timber.w("Export skipped: no data path selected")
             return@withLock false
         }
-        RimeDataSync.exportToExternal(appContext).isSuccess
+        RimeDataSync.exportToExternal().isSuccess
     }
 
     override suspend fun processKey(
@@ -682,7 +680,7 @@ class Rime :
     }
 
     /** The storage predicate shared by startup and the daemon's bounded late-media poll. */
-    internal fun isStorageReadyForStartup(): Boolean = RimeDataSync.isStorageAvailable(appContext) ||
+    internal fun isStorageReadyForStartup(): Boolean = RimeDataSync.isStorageAvailable() ||
         (RimeDataSync.isRuntimeReady() && DataManager.hasDeployedResources())
 
     /** Publish a bounded late-storage failure so callers can offer an explicit retry. */

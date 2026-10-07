@@ -2,17 +2,18 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-package com.osfans.trime.data.sync
+package com.osfans.trime.data.sync.fixture
 
 import android.content.ContentResolver
 import android.net.Uri
 import android.os.ParcelFileDescriptor
 import android.provider.DocumentsContract
 import android.provider.DocumentsContract.Document
+import com.osfans.trime.data.sync.SyncFingerprint
 import java.io.File
 import java.util.UUID
 
-object AtomicSafFileCopy {
+object FixtureAtomicSafFileCopy {
     /**
      * Stage and read back before replacing an existing document. Providers without
      * rename support may receive new files, but cannot safely replace existing ones.
@@ -21,17 +22,17 @@ object AtomicSafFileCopy {
     fun copyFromFile(
         contentResolver: ContentResolver,
         treeUri: Uri,
-        cache: SafPathCache,
+        cache: FixtureSafPathCache,
         sourceFile: File,
         relativePath: String,
         parentDir: String,
         fileName: String,
     ): String {
-        SafTreeWalker.requireName(fileName)
+        FixtureSafTreeWalker.requireName(fileName)
         check(relativePath == if (parentDir.isEmpty()) fileName else "$parentDir/$fileName")
         val parentId = cache.ensureDirectory(contentResolver, treeUri, parentDir)
         val parentUri = DocumentsContract.buildDocumentUriUsingTree(treeUri, parentId)
-        val existing = SafTreeWalker.findFileEntry(contentResolver, treeUri, parentId, fileName)
+        val existing = FixtureSafTreeWalker.findFileEntry(contentResolver, treeUri, parentId, fileName)
         check(existing?.mimeType != Document.MIME_TYPE_DIR) { "Destination is a directory: $fileName" }
         val existingUri = existing?.let { DocumentsContract.buildDocumentUriUsingTree(treeUri, it.documentId) }
         if (existingUri != null) {

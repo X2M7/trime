@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package com.osfans.trime.data.base
 
-import com.osfans.trime.data.sync.AtomicLocalFileCopy
+import com.osfans.trime.data.sync.RimeDataSync
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
@@ -43,7 +43,7 @@ class DataResourceInstallerTest :
                 var published = false
                 shouldThrow<IOException> {
                     DataResourceInstaller.install(shared, changes, { _, file ->
-                        AtomicLocalFileCopy.writeFromStream(file) {
+                        RimeDataSync.writeFromStream(file) {
                             it.write("partial".toByteArray())
                             throw IOException("disk full")
                         }
@@ -52,7 +52,7 @@ class DataResourceInstallerTest :
                 published shouldBe false
                 dest.readText() shouldBe "old"
                 DataResourceInstaller.install(shared, changes, { _, file ->
-                    AtomicLocalFileCopy.writeFromStream(file) { it.write("new".toByteArray()) }
+                    RimeDataSync.writeFromStream(file) { it.write("new".toByteArray()) }
                 }, { published = true })
                 published shouldBe true
                 dest.readText() shouldBe "new"

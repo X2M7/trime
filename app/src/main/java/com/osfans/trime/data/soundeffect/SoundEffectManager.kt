@@ -5,11 +5,13 @@
 
 package com.osfans.trime.data.soundeffect
 
+import com.charleskorn.kaml.Yaml
+import com.charleskorn.kaml.YamlConfiguration
 import com.osfans.trime.data.base.DataManager
 import com.osfans.trime.data.prefs.AppPrefs
 import com.osfans.trime.ime.keyboard.InputFeedbackManager
 import com.osfans.trime.util.FileUtils
-import com.osfans.trime.util.yaml.Yaml
+import kotlinx.serialization.decodeFromString
 import timber.log.Timber
 import java.io.File
 
@@ -23,13 +25,23 @@ object SoundEffectManager {
             return FileUtils.rename(old, dest.name).getOrDefault(dest.also { it.mkdirs() })
         }
 
+    /**
+     * Descriptors are standalone files with their own key spelling (`inOrder`,
+     * `keyset`), so unlike [com.osfans.trime.data.theme.ThemeYaml] no naming
+     * strategy applies and unknown keys are ignored.
+     */
+    private val yaml = Yaml(
+        configuration = YamlConfiguration(
+            strictMode = false,
+        ),
+    )
+
     private fun listSounds(): MutableList<SoundEffect> {
         val files = userDir.listFiles { f -> f.name.endsWith("sound.yaml") }
         return files
             ?.mapNotNull decode@{ f ->
                 val effect = try {
-                    val node = Yaml.parseToYamlNode(f.bufferedReader().use { it.readText() })
-                    val result = SoundEffect.decode(node)
+                    val result = yaml.decodeFromString<SoundEffect>(f.bufferedReader().use { it.readText() })
                     if (result.name.isEmpty()) {
                         result.copy(name = f.name.substringBefore("."))
                     } else {
@@ -48,6 +60,15 @@ object SoundEffectManager {
     private val userEffects: MutableList<SoundEffect> get() = listSounds()
 
     private var soundEffectPref by AppPrefs.defaultInstance().keyboard.customSoundEffect
+
+    fun switchEffect(name: String) {
+        val effect = getEffect(name)
+        if (effect == null) {
+            Timber.w("Unknown sound effect '$name'")
+            return
+        }
+        switchEffect(effect)
+    }
 
     fun switchEffect(effect: SoundEffect) {
         synchronized(selectionLock) {

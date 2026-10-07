@@ -13,7 +13,6 @@ import android.widget.ImageView
 import androidx.core.view.isVisible
 import com.mikepenz.iconics.IconicsDrawable
 import com.mikepenz.iconics.utils.sizeDp
-import com.osfans.trime.data.theme.FontManager
 import com.osfans.trime.data.theme.Theme
 import com.osfans.trime.data.theme.ThemeScope
 import com.osfans.trime.ime.core.AutoScaleTextView
@@ -42,10 +41,10 @@ class PopupEntryUi(
 
     val textView = view(::AutoScaleTextView) {
         scaleMode = AutoScaleTextView.Mode.Proportional
-        textSize = theme.generalStyle.popupTextSize
+        textSize = theme.style.popupTextSize
         gravity = gravityCenter
         setTextColor(scope.colors.popupTextColor)
-        typeface = FontManager.getTypeface("POPUP_FONT")
+        typeface = theme.fonts.popup
     }
 
     // The IME uses a framework theme; icons are drawn and tinted explicitly.
@@ -90,7 +89,7 @@ class PopupEntryUi(
         if (text.isIconFont) {
             imageView.setImageDrawable(
                 IconicsDrawable(ctx, text.toIconName()).apply {
-                    sizeDp = theme.generalStyle.popupTextSize.toInt()
+                    sizeDp = theme.style.popupTextSize.toInt()
                     colorFilter = PorterDuffColorFilter(scope.colors.popupTextColor, PorterDuff.Mode.SRC_IN)
                 },
             )

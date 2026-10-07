@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-package com.osfans.trime.data.sync
+package com.osfans.trime.data.sync.fixture
 
 import android.content.ContentResolver
 import android.net.Uri
@@ -10,7 +10,7 @@ import android.provider.DocumentsContract
 import java.io.IOException
 import java.util.ArrayDeque
 
-data class SafFileEntry(
+data class FixtureSafFileEntry(
     val documentId: String,
     val displayName: String,
     val mimeType: String,
@@ -19,12 +19,12 @@ data class SafFileEntry(
     val relativePath: String,
 )
 
-data class SafTreeListing(
-    val files: List<SafFileEntry>,
+data class FixtureSafTreeListing(
+    val files: List<FixtureSafFileEntry>,
     val directoryIds: Map<String, String>,
 )
 
-object SafTreeWalker {
+object FixtureSafTreeWalker {
     private const val SKIP_DIR = "build"
     private const val SKIP_DIR_SUBSTRING = ".userdb"
     private val operationArtifact = Regex("\\.trime-(?:replace|new|bak)-[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}\\.(?:tmp|bak)")
@@ -85,7 +85,7 @@ object SafTreeWalker {
         skipUserDb: Boolean = true,
         skipPrefix: String? = null,
         limitToPrefix: String? = null,
-    ): List<SafFileEntry> = listTree(
+    ): List<FixtureSafFileEntry> = listTree(
         contentResolver,
         treeUri,
         rootDocumentId,
@@ -101,8 +101,8 @@ object SafTreeWalker {
         skipUserDb: Boolean = true,
         skipPrefix: String? = null,
         limitToPrefix: String? = null,
-    ): SafTreeListing {
-        val result = mutableListOf<SafFileEntry>()
+    ): FixtureSafTreeListing {
+        val result = mutableListOf<FixtureSafFileEntry>()
         val directoryIds = mutableMapOf("" to rootDocumentId)
         val visitedIds = mutableSetOf(rootDocumentId)
         val visitedPaths = mutableSetOf<String>()
@@ -114,7 +114,7 @@ object SafTreeWalker {
             val childrenUri = DocumentsContract.buildChildDocumentsUriUsingTree(treeUri, parentId)
             val cursor =
                 contentResolver.query(childrenUri, documentProjection, null, null, null)
-                    ?: throw SafQueryException(childrenUri, relativePath.ifEmpty { "." })
+                    ?: throw FixtureSafQueryException(childrenUri, relativePath.ifEmpty { "." })
             cursor.use {
                 requireComplete(cursor.extras.getBoolean(DocumentsContract.EXTRA_LOADING), childrenUri)
                 val idCol = cursor.getColumnIndexOrThrow(DocumentsContract.Document.COLUMN_DOCUMENT_ID)
@@ -144,7 +144,7 @@ object SafTreeWalker {
                         queue.add(childPath to documentId)
                     } else {
                         result.add(
-                            SafFileEntry(
+                            FixtureSafFileEntry(
                                 documentId = documentId,
                                 displayName = name,
                                 mimeType = mimeType,
@@ -157,7 +157,7 @@ object SafTreeWalker {
                 }
             }
         }
-        return SafTreeListing(result, directoryIds)
+        return FixtureSafTreeListing(result, directoryIds)
     }
 
     fun findFileEntry(
@@ -165,11 +165,11 @@ object SafTreeWalker {
         treeUri: Uri,
         parentDocumentId: String,
         displayName: String,
-    ): SafFileEntry? {
+    ): FixtureSafFileEntry? {
         val childrenUri = DocumentsContract.buildChildDocumentsUriUsingTree(treeUri, parentDocumentId)
         val cursor =
             contentResolver.query(childrenUri, documentProjection, null, null, null)
-                ?: throw SafQueryException(childrenUri, displayName)
+                ?: throw FixtureSafQueryException(childrenUri, displayName)
         cursor.use {
             requireComplete(it.extras.getBoolean(DocumentsContract.EXTRA_LOADING), childrenUri)
             val idCol = it.getColumnIndexOrThrow(DocumentsContract.Document.COLUMN_DOCUMENT_ID)
@@ -177,13 +177,13 @@ object SafTreeWalker {
             val mimeCol = it.getColumnIndexOrThrow(DocumentsContract.Document.COLUMN_MIME_TYPE)
             val sizeCol = it.getColumnIndexOrThrow(DocumentsContract.Document.COLUMN_SIZE)
             val modCol = it.getColumnIndexOrThrow(DocumentsContract.Document.COLUMN_LAST_MODIFIED)
-            var found: SafFileEntry? = null
+            var found: FixtureSafFileEntry? = null
             while (it.moveToNext()) {
                 val name = it.getString(nameCol)
                 if (name == displayName) {
                     requireName(name)
                     check(found == null) { "Duplicate document name: $name" }
-                    found = SafFileEntry(
+                    found = FixtureSafFileEntry(
                         documentId = it.getString(idCol),
                         displayName = name,
                         mimeType = it.getString(mimeCol),

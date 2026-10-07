@@ -10,7 +10,6 @@ import android.content.res.ColorStateList
 import android.graphics.drawable.StateListDrawable
 import android.view.ViewOutlineProvider
 import com.google.android.flexbox.FlexboxLayoutManager
-import com.osfans.trime.data.theme.FontManager
 import com.osfans.trime.data.theme.Theme
 import com.osfans.trime.data.theme.ThemeScope
 import com.osfans.trime.ime.keyboard.GestureFrame
@@ -32,7 +31,7 @@ class SegmentUi(override val ctx: Context, private val scope: ThemeScope) : Ui {
         textView {
             textSize = 16f
             isSingleLine = true
-            typeface = FontManager.getTypeface("key_font")
+            typeface = theme.fonts.key
             setPaddingDp(8, 4, 8, 4)
             setTextColor(textColorStates())
         }
@@ -53,14 +52,14 @@ class SegmentUi(override val ctx: Context, private val scope: ThemeScope) : Ui {
             intArrayOf(-android.R.attr.state_selected),
             scope.decorDrawable(
                 "key_back_color",
-                cornerRadius = ctx.dp(theme.generalStyle.roundCorner),
+                cornerRadius = ctx.dp(theme.style.roundCorner),
             ),
         )
         addState(
             intArrayOf(android.R.attr.state_selected),
             scope.decorDrawable(
                 "hilited_key_back_color",
-                cornerRadius = ctx.dp(theme.generalStyle.roundCorner),
+                cornerRadius = ctx.dp(theme.style.roundCorner),
             ),
         )
     }

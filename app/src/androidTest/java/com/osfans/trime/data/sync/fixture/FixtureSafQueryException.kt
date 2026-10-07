@@ -2,11 +2,11 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-package com.osfans.trime.data.sync
+package com.osfans.trime.data.sync.fixture
 
 import android.net.Uri
 
-class SafQueryException(
+class FixtureSafQueryException(
     val uri: Uri,
     val relativePath: String,
 ) : RuntimeException("SAF query returned null for '$relativePath' ($uri)")

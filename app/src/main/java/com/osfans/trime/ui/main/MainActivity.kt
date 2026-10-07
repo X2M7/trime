@@ -38,9 +38,9 @@ import com.osfans.trime.TrimeApplication
 import com.osfans.trime.daemon.RimeDaemon
 import com.osfans.trime.data.prefs.AppPrefs
 import com.osfans.trime.data.soundeffect.SoundEffectManager
+import com.osfans.trime.data.sync.RimeDataSync
 import com.osfans.trime.databinding.ActivityMainBinding
 import com.osfans.trime.ui.setup.SetupActivity
-import com.osfans.trime.util.isStorageAvailable
 import com.osfans.trime.util.item
 import com.osfans.trime.util.parcelable
 import com.osfans.trime.util.startActivity
@@ -362,7 +362,7 @@ class MainActivity : AppCompatActivity() {
             checkNotificationPermission()
         }
         lifecycleScope.launch(Dispatchers.IO) {
-            if (isStorageAvailable()) SoundEffectManager.init()
+            if (RimeDataSync.isStorageAvailable()) SoundEffectManager.init()
         }
     }
 

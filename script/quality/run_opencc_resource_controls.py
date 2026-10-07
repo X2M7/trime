@@ -10,8 +10,13 @@ complete every valid retry. Original failing logs are preserved. This does
 not build an APK or establish Android device acceptance. Requires clang++,
 CMake, Ninja, Python 3, /proc/self/fd and /dev/full on Linux.
 """
-import argparse,hashlib,json,os,shutil,subprocess,time
+import argparse,hashlib,json,os,shutil,subprocess,sys,time
 from pathlib import Path
+if sys.flags.optimize:
+    raise SystemExit(
+        "OpenCC resource gate refuses optimized Python (-O/-OO); "
+        "its control assertions must remain enabled"
+    )
 ROOT=Path(__file__).resolve().parents[2]
 DRAFT=Path(__file__).resolve().parent
 parser=argparse.ArgumentParser(description=__doc__)

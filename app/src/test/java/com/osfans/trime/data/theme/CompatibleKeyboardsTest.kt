@@ -3,7 +3,7 @@ package com.osfans.trime.data.theme
 
 import com.osfans.trime.data.theme.model.KeyActionToken
 import com.osfans.trime.data.theme.model.PresetKey
-import com.osfans.trime.ime.keyboard.KeyBehavior
+import com.osfans.trime.data.theme.model.TextKeyboard
 import com.osfans.trime.ime.keyboard.matchKeyboard
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
@@ -13,13 +13,13 @@ class CompatibleKeyboardsTest :
         val builtin = ThemeTestSupport.decodeBuiltinTheme("trime.yaml")
         val thirdParty = builtin.copy(
             name = "third-party without T9",
-            presetKeyboards = builtin.presetKeyboards - "luna_pinyin_t9" - "number" - "letter",
+            presetKeyboards = builtin.presetKeyboards - "luna_pinyin_t9" - "number" - "letter" - "symbols",
             presetKeys = builtin.presetKeys + ("T9_digit_2" to PresetKey(commit = "wrong")) + ("2" to PresetKey(commit = "wrong")),
         )
         val patched = thirdParty.withCompatibleKeyboards(builtin)
         "third-party style and every original key and keyboard remain untouched" {
-            patched.generalStyle shouldBe thirdParty.generalStyle
-            patched.colorSchemes shouldBe thirdParty.colorSchemes
+            patched.style shouldBe thirdParty.style
+            patched.presetColorSchemes shouldBe thirdParty.presetColorSchemes
             thirdParty.presetKeyboards.forEach { (id, value) -> patched.presetKeyboards[id] shouldBe value }
             thirdParty.presetKeys.forEach { (id, value) -> patched.presetKeys[id] shouldBe value }
         }
@@ -38,12 +38,13 @@ class CompatibleKeyboardsTest :
             matchKeyboard(".default", "", false, "", patched.presetKeyboards, patched.fallbackKeyboards) shouldBe "default"
         }
         "explicit schema layout takes priority over alphabet inference" {
-            matchKeyboard("custom", "symbols", false, "12345", patched.presetKeyboards, patched.fallbackKeyboards) shouldBe "symbols"
+            matchKeyboard("custom", "symbols", false, "12345", patched.presetKeyboards, patched.fallbackKeyboards) shouldBe
+                patched.fallbackKeyboards["symbols"]
         }
         "compatible literal digits and long presses cannot be hijacked by same-named third-party keys" {
             val key = patched.presetKeyboards.getValue(patched.fallbackKeyboards.getValue("luna_pinyin_t9")).keys[1]
-            val click = (key.behaviors.getValue(KeyBehavior.CLICK) as KeyActionToken.Plain).token
-            val long = (key.behaviors.getValue(KeyBehavior.LONG_CLICK) as KeyActionToken.Plain).token
+            val click = (key.click as KeyActionToken.Plain).token
+            val long = (key.longClick as KeyActionToken.Plain).token
             patched.presetKeys.getValue(click).send shouldBe "2"
             patched.presetKeys.getValue(long).command shouldBe "t9_digit"
             patched.presetKeys.getValue(long).option shouldBe "2"
@@ -55,7 +56,22 @@ class CompatibleKeyboardsTest :
         }
         "unmapped literal parentheses stay text while mapped punctuation keeps key semantics" {
             val keys = patched.presetKeyboards.getValue(patched.fallbackKeyboards.getValue("symbols")).keys
-            val actions = keys.flatMap { it.behaviors.values }.filterIsInstance<KeyActionToken.Plain>()
+            fun TextKeyboard.TextKey.actions() = listOfNotNull(
+                click,
+                doubleClick,
+                lazyDoubleClick,
+                longClick,
+                swipeUp,
+                swipeDown,
+                swipeLeft,
+                swipeRight,
+                composing,
+                hasMenu,
+                paging,
+                combo,
+                ascii,
+            )
+            val actions = keys.flatMap { it.actions() }.filterIsInstance<KeyActionToken.Plain>()
                 .map { patched.presetKeys.getValue(it.token) }
             listOf("(", ")").forEach { symbol ->
                 actions.any { it.text == symbol && it.label == symbol && it.send.isEmpty() } shouldBe true

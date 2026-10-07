@@ -8,6 +8,7 @@ import android.content.Intent
 import android.content.pm.ProviderInfo
 import android.database.Cursor
 import android.database.MatrixCursor
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.CancellationSignal
@@ -20,21 +21,30 @@ import androidx.core.net.toUri
 import com.osfans.trime.core.RimeMaintenanceMutex
 import com.osfans.trime.data.base.DataManager
 import com.osfans.trime.data.prefs.AppPrefs
-import com.osfans.trime.data.sync.AtomicLocalFileCopy
-import com.osfans.trime.data.sync.AtomicSafFileCopy
 import com.osfans.trime.data.sync.RimeDataSync
-import com.osfans.trime.data.sync.SafPathCache
-import com.osfans.trime.data.sync.SafTreeListing
-import com.osfans.trime.data.sync.SafTreeWalker
-import com.osfans.trime.data.sync.SyncIndex
+import com.osfans.trime.data.sync.SyncEntry
+import com.osfans.trime.data.sync.SyncFingerprint
+import com.osfans.trime.data.sync.fixture.FixtureAtomicSafFileCopy
+import com.osfans.trime.data.sync.fixture.FixtureSafPathCache
+import com.osfans.trime.data.sync.fixture.FixtureSafTreeListing
+import com.osfans.trime.data.sync.fixture.FixtureSafTreeWalker
 import com.osfans.trime.provider.RimeDataProvider
+import io.planck.storageaccess.StorageAccess
+import io.planck.storageaccess.StorageDocument
 import kotlinx.coroutines.runBlocking
 import java.io.File
 import java.io.FileNotFoundException
+import java.io.OutputStream
 import java.util.UUID
 import kotlin.concurrent.thread
 
-/** Uses Android cursors, pipes and DocumentsContract, with only UUID-scoped fixtures. */
+/**
+ * Uses Android cursors, pipes and DocumentsContract, with only UUID-scoped fixtures.
+ *
+ * The isolated resolver cases below validate the hostile-provider fixture contract. Production
+ * StorageAccess/RimeDataSync is exercised by [verifyExternalTree] and [verifyImportHistory]
+ * against a picker-granted system-provider tree.
+ */
 object SafCompatibilityProbe {
     fun run(instrumentation: Instrumentation, externalTree: String? = null, revoke: Boolean = false) {
         val result = Bundle()
@@ -72,6 +82,118 @@ object SafCompatibilityProbe {
         fun wrap(provider: DocumentsProvider): ContentResolver = ContentResolver.wrap(provider)
     }
 
+    /** Runs the production replacement algorithm against an isolated hostile provider. */
+    private class ResolverExternalFileOperations(
+        private val resolver: ContentResolver,
+    ) : RimeDataSync.ExternalFileOperations {
+        private val projection =
+            arrayOf(
+                Document.COLUMN_DOCUMENT_ID,
+                Document.COLUMN_DISPLAY_NAME,
+                Document.COLUMN_MIME_TYPE,
+                Document.COLUMN_SIZE,
+                Document.COLUMN_LAST_MODIFIED,
+            )
+
+        override suspend fun list(dirUri: Uri): List<StorageDocument> {
+            val parentId = DocumentsContract.getDocumentId(dirUri)
+            val childrenUri = DocumentsContract.buildChildDocumentsUriUsingTree(dirUri, parentId)
+            val cursor =
+                resolver.query(childrenUri, projection, null, null, null)
+                    ?: error("Cannot list documents: $dirUri")
+            return cursor.use {
+                check(!it.extras.getBoolean(DocumentsContract.EXTRA_LOADING)) {
+                    "Document listing is still loading: $dirUri"
+                }
+                check(it.extras.getString(DocumentsContract.EXTRA_ERROR).isNullOrEmpty()) {
+                    "Document listing failed: $dirUri"
+                }
+                val documents = mutableListOf<StorageDocument>()
+                while (it.moveToNext()) {
+                    documents += documentFromCursor(dirUri, it)
+                }
+                documents
+            }
+        }
+
+        override suspend fun writeFile(
+            dirUri: Uri,
+            name: String,
+            mime: String,
+            write: suspend (OutputStream) -> Unit,
+        ): StorageDocument {
+            val uri =
+                DocumentsContract.createDocument(resolver, dirUri, mime, name)
+                    ?: error("Cannot create document: $name")
+            val descriptor =
+                resolver.openFileDescriptor(uri, "wt")
+                    ?: error("Cannot write document: $uri")
+            ParcelFileDescriptor.AutoCloseOutputStream(descriptor).use { output ->
+                write(output)
+            }
+            return stat(uri)
+        }
+
+        override suspend fun rename(
+            uri: Uri,
+            name: String,
+        ): StorageDocument {
+            val renamed =
+                DocumentsContract.renameDocument(resolver, uri, name)
+                    ?: error("Cannot rename $uri to $name")
+            return stat(renamed)
+        }
+
+        override suspend fun delete(uri: Uri) {
+            check(DocumentsContract.deleteDocument(resolver, uri)) {
+                "Cannot delete document: $uri"
+            }
+        }
+
+        override suspend fun supportsRename(uri: Uri): Boolean = resolver.query(uri, arrayOf(Document.COLUMN_FLAGS), null, null, null)?.use {
+            check(it.moveToFirst()) { "Missing document: $uri" }
+            it.getInt(0) and Document.FLAG_SUPPORTS_RENAME != 0
+        } ?: error("Cannot query document: $uri")
+
+        override suspend fun digest(uri: Uri): ByteArray {
+            val descriptor =
+                resolver.openFileDescriptor(uri, "r")
+                    ?: error("Cannot read document: $uri")
+            return ParcelFileDescriptor.AutoCloseInputStream(descriptor).use { input ->
+                SyncFingerprint.digest(input).also {
+                    if (descriptor.canDetectErrors()) descriptor.checkError()
+                }
+            }
+        }
+
+        private fun stat(uri: Uri): StorageDocument = resolver.query(uri, projection, null, null, null)?.use {
+            check(it.moveToFirst()) { "Missing document: $uri" }
+            documentFromCursor(uri, it)
+        } ?: error("Cannot query document: $uri")
+
+        private fun documentFromCursor(
+            treeUri: Uri,
+            cursor: Cursor,
+        ): StorageDocument {
+            val id = cursor.getString(cursor.getColumnIndexOrThrow(Document.COLUMN_DOCUMENT_ID))
+            val name = cursor.getString(cursor.getColumnIndexOrThrow(Document.COLUMN_DISPLAY_NAME))
+            val mime = cursor.getString(cursor.getColumnIndexOrThrow(Document.COLUMN_MIME_TYPE))
+            val sizeColumn = cursor.getColumnIndexOrThrow(Document.COLUMN_SIZE)
+            val modifiedColumn = cursor.getColumnIndexOrThrow(Document.COLUMN_LAST_MODIFIED)
+            check(!id.isNullOrEmpty() && !name.isNullOrEmpty() && !mime.isNullOrEmpty()) {
+                "Invalid document metadata"
+            }
+            return StorageDocument(
+                DocumentsContract.buildDocumentUriUsingTree(treeUri, id),
+                name,
+                mime == Document.MIME_TYPE_DIR,
+                if (cursor.isNull(sizeColumn)) 0 else cursor.getLong(sizeColumn),
+                if (cursor.isNull(modifiedColumn)) 0 else cursor.getLong(modifiedColumn),
+                mime,
+            )
+        }
+    }
+
     private fun verifyExternalTree(instrumentation: Instrumentation, value: String, revoke: Boolean) {
         val tree = value.toUri()
         val rootId = DocumentsContract.getTreeDocumentId(tree)
@@ -91,29 +213,31 @@ object SafCompatibilityProbe {
             return
         }
         val directory = checkNotNull(DocumentsContract.createDocument(cr, root, Document.MIME_TYPE_DIR, "probe-${UUID.randomUUID()}"))
-        val directoryId = DocumentsContract.getDocumentId(directory)
         val source = File.createTempFile("saf-source", ".yaml", instrumentation.targetContext.cacheDir)
         try {
-            val cache = SafPathCache(SafTreeListing(emptyList(), mapOf("" to directoryId)), directoryId)
-            for (payload in listOf("initial data", "replacement\n".repeat(1024))) {
-                source.writeText(payload)
-                AtomicSafFileCopy.copyFromFile(cr, tree, cache, source, "config.yaml", "", "config.yaml")
-                val entry = SafTreeWalker.listFiles(cr, tree, directoryId).single()
-                val uri = DocumentsContract.buildDocumentUriUsingTree(tree, entry.documentId)
-                check(cr.openInputStream(uri)?.bufferedReader()?.use { it.readText() } == payload)
+            runBlocking {
+                for (payload in listOf("initial data", "replacement\n".repeat(1024))) {
+                    source.writeText(payload)
+                    RimeMaintenanceMutex.withLock {
+                        RimeDataSync.replaceExternalFileForTesting(source, directory, "config.yaml")
+                    }
+                    val document = checkNotNull(StorageAccess.child(directory, "config.yaml"))
+                    val actual = StorageAccess.readFile(document.uri) { it.bufferedReader().readText() }
+                    check(actual == payload)
+                }
             }
         } finally {
             source.delete()
             check(DocumentsContract.deleteDocument(cr, directory))
         }
-        instrumentation.sendStatus(0, Bundle().apply { putString("stream", "PASS: system provider persisted grant, create, replace, read-back and cleanup\n") })
+        instrumentation.sendStatus(0, Bundle().apply { putString("stream", "PASS: production StorageAccess replacement via system provider, persisted grant, read-back and cleanup\n") })
         verifyImportHistory(instrumentation, tree, rootId)
     }
 
     private fun verifyImportHistory(instrumentation: Instrumentation, tree: android.net.Uri, rootId: String) = runBlocking {
         RimeMaintenanceMutex.withLock {
             val context = instrumentation.targetContext
-            check(RimeDataSync.usesExternalSync(context) && RimeDataSync.treeUri() == tree)
+            check(RimeDataSync.usesExternalSync() && RimeDataSync.treeUri() == tree)
             val cr = context.contentResolver
             val id = "__saf_history_${UUID.randomUUID()}"
             val names = listOf("$id-edited.yaml", "$id-unchanged.yaml")
@@ -123,7 +247,7 @@ object SafCompatibilityProbe {
             val previousMigration = migration.getValue()
             val untracked = File(DataManager.userDataDir, "$id-untracked.yaml")
             val source = File.createTempFile("saf-history", ".yaml", context.cacheDir)
-            val cache = SafPathCache(SafTreeListing(emptyList(), mapOf("" to rootId)), rootId)
+            val cache = FixtureSafPathCache(FixtureSafTreeListing(emptyList(), mapOf("" to rootId)), rootId)
             try {
                 untracked.writeText("personal")
                 source.writeText("old")
@@ -131,39 +255,39 @@ object SafCompatibilityProbe {
                 val personalDb = File(DataManager.userDataDir, binaryNames.first())
                 check(personalDb.mkdir())
                 File(personalDb, "LOG").writeText("personal-learning")
-                binaryNames.forEach { name -> AtomicSafFileCopy.copyFromFile(cr, tree, cache, source, "$name/LOG", name, "LOG") }
-                AtomicSafFileCopy.copyFromFile(cr, tree, cache, source, portableName, "", portableName)
-                names.forEach { name -> AtomicSafFileCopy.copyFromFile(cr, tree, cache, source, name, "", name) }
-                RimeDataSync.importToLocal(context, showProgress = false).getOrThrow()
+                binaryNames.forEach { name -> FixtureAtomicSafFileCopy.copyFromFile(cr, tree, cache, source, "$name/LOG", name, "LOG") }
+                FixtureAtomicSafFileCopy.copyFromFile(cr, tree, cache, source, portableName, "", portableName)
+                names.forEach { name -> FixtureAtomicSafFileCopy.copyFromFile(cr, tree, cache, source, name, "", name) }
+                RimeDataSync.importToLocal(showProgress = false).getOrThrow()
                 check(untracked.readText() == "personal")
                 check(File(personalDb, "LOG").readText() == "personal-learning")
                 check(!File(DataManager.userDataDir, binaryNames.last()).exists())
                 check(File(DataManager.userDataDir, portableName).readText() == "old")
-                val history = SyncIndex.load().entries
+                val history = RimeDataSync.indexSnapshotForTesting().entries
                 check(names.all { history[it]?.localSha256?.length == 64 })
                 val edited = File(DataManager.userDataDir, names.first())
                 val timestamp = edited.lastModified()
                 edited.writeText("new")
                 check(edited.setLastModified(timestamp))
-                SafTreeWalker.listFiles(cr, tree, rootId).filter { it.relativePath in names }.forEach { entry ->
+                FixtureSafTreeWalker.listFiles(cr, tree, rootId).filter { it.relativePath in names }.forEach { entry ->
                     check(DocumentsContract.deleteDocument(cr, DocumentsContract.buildDocumentUriUsingTree(tree, entry.documentId)))
                 }
-                RimeDataSync.importToLocal(context, showProgress = false).getOrThrow()
+                RimeDataSync.importToLocal(showProgress = false).getOrThrow()
                 check(edited.readText() == "new")
                 check(!File(DataManager.userDataDir, names.last()).exists())
                 check(untracked.readText() == "personal")
-                check(names.none { it in SyncIndex.load().entries })
+                check(names.none { it in RimeDataSync.indexSnapshotForTesting().entries })
                 val blockedName = "$id-blocked.yaml"
                 val blocked = File(DataManager.userDataDir, blockedName)
                 try {
-                    AtomicSafFileCopy.copyFromFile(cr, tree, cache, source, blockedName, "", blockedName)
+                    FixtureAtomicSafFileCopy.copyFromFile(cr, tree, cache, source, blockedName, "", blockedName)
                     check(blocked.mkdir())
-                    check(RimeDataSync.importToLocal(context, showProgress = false).isFailure)
-                    check(RimeDataSync.importThemeToLocal(context, blockedName.removeSuffix(".yaml")).isFailure)
+                    check(RimeDataSync.importToLocal(showProgress = false).isFailure)
+                    check(RimeDataSync.importThemeToLocal(blockedName.removeSuffix(".yaml")).isFailure)
                     check(blocked.isDirectory && untracked.readText() == "personal")
-                    check(blockedName !in SyncIndex.load().entries)
+                    check(blockedName !in RimeDataSync.indexSnapshotForTesting().entries)
                 } finally {
-                    SafTreeWalker.listFiles(cr, tree, rootId).filter { it.relativePath == blockedName }.forEach { entry ->
+                    FixtureSafTreeWalker.listFiles(cr, tree, rootId).filter { it.relativePath == blockedName }.forEach { entry ->
                         check(DocumentsContract.deleteDocument(cr, DocumentsContract.buildDocumentUriUsingTree(tree, entry.documentId)))
                     }
                     check(!blocked.exists() || blocked.delete())
@@ -171,13 +295,13 @@ object SafCompatibilityProbe {
             } finally {
                 migration.setValue(previousMigration)
                 (binaryNames + portableName).forEach { name ->
-                    SafTreeWalker.findFileEntry(cr, tree, rootId, name)?.let { entry ->
+                    FixtureSafTreeWalker.findFileEntry(cr, tree, rootId, name)?.let { entry ->
                         check(DocumentsContract.deleteDocument(cr, DocumentsContract.buildDocumentUriUsingTree(tree, entry.documentId)))
                     }
                     val local = File(DataManager.userDataDir, name)
                     check(!local.exists() || local.deleteRecursively())
                 }
-                SafTreeWalker.listFiles(cr, tree, rootId).filter { it.relativePath in names }.forEach { entry ->
+                FixtureSafTreeWalker.listFiles(cr, tree, rootId).filter { it.relativePath in names }.forEach { entry ->
                     check(DocumentsContract.deleteDocument(cr, DocumentsContract.buildDocumentUriUsingTree(tree, entry.documentId)))
                 }
                 names.forEach { File(DataManager.userDataDir, it).delete() }
@@ -193,6 +317,7 @@ object SafCompatibilityProbe {
         }
     }
 
+    /** Provider-fault fixtures; these do not substitute for the real-tree production checks. */
     @RequiresApi(29)
     private fun verify(instrumentation: Instrumentation): Int {
         val context = instrumentation.targetContext
@@ -218,18 +343,57 @@ object SafCompatibilityProbe {
             instrumentation.sendStatus(0, Bundle().apply { putString("stream", "PASS $checks: $name\n") })
         }
         fun copy(cr: ContentResolver, source: File, path: String = "sample.yaml") {
-            val cache = SafPathCache(SafTreeListing(emptyList(), mapOf("" to "root")), "root")
-            AtomicSafFileCopy.copyFromFile(cr, tree, cache, source, path, path.substringBeforeLast('/', ""), path.substringAfterLast('/'))
+            val cache = FixtureSafPathCache(FixtureSafTreeListing(emptyList(), mapOf("" to "root")), "root")
+            FixtureAtomicSafFileCopy.copyFromFile(cr, tree, cache, source, path, path.substringBeforeLast('/', ""), path.substringAfterLast('/'))
+        }
+        fun productionCopy(cr: ContentResolver, source: File, name: String = "sample.yaml") {
+            val root = DocumentsContract.buildDocumentUriUsingTree(tree, "root")
+            runBlocking {
+                RimeDataSync.replaceExternalFileForTesting(
+                    source,
+                    root,
+                    name,
+                    ResolverExternalFileOperations(cr),
+                )
+            }
         }
         fun expectFailure(block: () -> Unit) {
             check(runCatching(block).isFailure) { "Failure was not reported" }
+        }
+        fun productionListing(cr: ContentResolver) = runBlocking { RimeDataSync.listExternalEntriesForTesting(cr, tree) }
+        fun expectRejectedListingPreservesTrackedLocal(cr: ContentResolver) {
+            val localRoot = File(sandbox, "listing-orphan-${UUID.randomUUID()}").apply { mkdir() }
+            val sentinel = File(localRoot, "tracked.yaml").apply { writeText("must survive") }
+            val known =
+                mapOf(
+                    sentinel.name to
+                        SyncEntry(
+                            sentinel.length(),
+                            sentinel.lastModified(),
+                            SyncFingerprint.of(sentinel),
+                        ),
+                )
+            try {
+                val result =
+                    runCatching {
+                        val externalPaths = productionListing(cr).map { it.relativePath }.toSet()
+                        RimeDataSync.removeLocalOrphans(localRoot, externalPaths, knownEntries = known)
+                    }
+                check(result.isFailure) { "Unsafe provider listing was accepted" }
+                check(sentinel.readText() == "must survive") {
+                    "Rejected provider listing triggered orphan deletion"
+                }
+            } finally {
+                localRoot.deleteRecursively()
+            }
         }
         try {
             test("new file, nested Unicode/spaces and changed rename ID") { p, cr, source ->
                 val name = "\u8bcd\u5178 folder/sample.yaml"
                 copy(cr, source, name)
-                val listing = SafTreeWalker.listTree(cr, tree, "root")
+                val listing = FixtureSafTreeWalker.listTree(cr, tree, "root")
                 check(listing.files.single().relativePath == name)
+                check(productionListing(cr).single { !it.file.isDir }.relativePath == name)
                 check(p.file("sample.yaml").readBytes().contentEquals(source.readBytes()))
             }
             test("replace retains unrelated .bak file") { p, cr, source ->
@@ -243,14 +407,14 @@ object SafCompatibilityProbe {
             test("unknown metadata and nonseekable reliable pipe") { p, cr, source ->
                 p.pipeReads = true
                 copy(cr, source)
-                val entry = SafTreeWalker.listFiles(cr, tree, "root").single()
+                val entry = FixtureSafTreeWalker.listFiles(cr, tree, "root").single()
                 check(entry.size == -1L && entry.lastModified == 0L)
                 val uri = DocumentsContract.buildDocumentUriUsingTree(tree, entry.documentId)
                 val local = File(sandbox, "round-trip")
                 val descriptor = checkNotNull(cr.openFileDescriptor(uri, "r"))
                 ParcelFileDescriptor.AutoCloseInputStream(descriptor).use { input ->
                     check(descriptor.canDetectErrors())
-                    AtomicLocalFileCopy.writeFromStream(local) { output ->
+                    RimeDataSync.writeFromStream(local) { output ->
                         input.copyTo(output)
                         descriptor.checkError()
                     }
@@ -296,38 +460,64 @@ object SafCompatibilityProbe {
             }
             test("provider without rename supports new files") { p, cr, source ->
                 p.canRename = false
-                copy(cr, source)
+                productionCopy(cr, source)
                 check(p.file("sample.yaml").readBytes().contentEquals(source.readBytes()))
                 check(p.names() == listOf("sample.yaml"))
+            }
+            test("provider without rename cleans failed new files") { p, cr, source ->
+                p.canRename = false
+                p.corruptPublishedRead = true
+                expectFailure { productionCopy(cr, source) }
+                check(p.names().isEmpty())
             }
             test("provider without rename retains existing files") { p, cr, source ->
                 p.canRename = false
                 p.seed("sample.yaml", "old")
-                expectFailure { copy(cr, source) }
+                expectFailure { productionCopy(cr, source) }
                 check(p.file("sample.yaml").readText() == "old")
                 check(p.names() == listOf("sample.yaml"))
             }
             test("loading listing fails closed") { p, cr, source ->
                 p.loading = true
-                expectFailure { SafTreeWalker.listTree(cr, tree, "root") }
+                expectRejectedListingPreservesTrackedLocal(cr)
+                expectFailure { FixtureSafTreeWalker.listTree(cr, tree, "root") }
                 expectFailure { copy(cr, source) }
                 check(p.names().isEmpty())
             }
             test("null listing fails closed") { p, cr, source ->
                 p.nullListing = true
-                expectFailure { SafTreeWalker.listTree(cr, tree, "root") }
+                expectRejectedListingPreservesTrackedLocal(cr)
+                expectFailure { FixtureSafTreeWalker.listTree(cr, tree, "root") }
                 expectFailure { copy(cr, source) }
                 check(p.names().isEmpty())
             }
+            test("provider listing error fails closed") { p, cr, _ ->
+                p.listingError = "fixture unavailable"
+                expectRejectedListingPreservesTrackedLocal(cr)
+            }
             test("unsafe provider display name rejected") { p, cr, _ ->
                 p.seed("../escape", "old")
-                expectFailure { SafTreeWalker.listTree(cr, tree, "root") }
+                expectRejectedListingPreservesTrackedLocal(cr)
+                expectFailure { FixtureSafTreeWalker.listTree(cr, tree, "root") }
             }
             test("duplicate display names rejected") { p, cr, _ ->
                 p.seed("same", "a")
                 p.seed("same", "b")
-                expectFailure { SafTreeWalker.listTree(cr, tree, "root") }
-                expectFailure { SafTreeWalker.findFileEntry(cr, tree, "root", "same") }
+                expectRejectedListingPreservesTrackedLocal(cr)
+                expectFailure { FixtureSafTreeWalker.listTree(cr, tree, "root") }
+                expectFailure { FixtureSafTreeWalker.findFileEntry(cr, tree, "root", "same") }
+            }
+            test("repeated provider row rejected") { p, cr, _ ->
+                p.seed("same", "a")
+                p.repeatFirstListingRow = true
+                expectRejectedListingPreservesTrackedLocal(cr)
+            }
+            test("listing beyond the traversal limit fails closed") { p, cr, _ ->
+                var parent = "root"
+                repeat(65) { depth ->
+                    parent = p.createDocument(parent, Document.MIME_TYPE_DIR, "depth-$depth")
+                }
+                expectRejectedListingPreservesTrackedLocal(cr)
             }
             test("revoked permission does not alter destination") { p, cr, source ->
                 p.seed("sample.yaml", "old")
@@ -337,7 +527,7 @@ object SafCompatibilityProbe {
             }
             test("duplicate directory names rejected before index overwrite") { p, cr, _ ->
                 repeat(2) { p.createDocument("root", Document.MIME_TYPE_DIR, "same") }
-                expectFailure { SafTreeWalker.listTree(cr, tree, "root") }
+                expectFailure { FixtureSafTreeWalker.listTree(cr, tree, "root") }
             }
             val own = RimeDataProvider().apply { attachInfo(context, info) }
             val rootId = checkNotNull(context.getExternalFilesDir(null)).name
@@ -353,12 +543,12 @@ object SafCompatibilityProbe {
             val ownResolver = ResolverWrapper.wrap(own)
             val probeId = own.createDocument(rootId, Document.MIME_TYPE_DIR, ".saf-probe-${UUID.randomUUID()}")
             try {
-                val cache = SafPathCache(SafTreeListing(emptyList(), mapOf("" to probeId)), probeId)
+                val cache = FixtureSafPathCache(FixtureSafTreeListing(emptyList(), mapOf("" to probeId)), probeId)
                 val source = File(sandbox, "own-source")
                 for (payload in listOf("initial", "updated")) {
                     source.writeText(payload)
-                    AtomicSafFileCopy.copyFromFile(ownResolver, ownTree, cache, source, "config.yaml", "", "config.yaml")
-                    val entry = SafTreeWalker.listFiles(ownResolver, ownTree, probeId).single()
+                    FixtureAtomicSafFileCopy.copyFromFile(ownResolver, ownTree, cache, source, "config.yaml", "", "config.yaml")
+                    val entry = FixtureSafTreeWalker.listFiles(ownResolver, ownTree, probeId).single()
                     val uri = DocumentsContract.buildDocumentUriUsingTree(ownTree, entry.documentId)
                     check(ownResolver.openInputStream(uri)?.bufferedReader()?.use { it.readText() } == payload)
                 }
@@ -381,10 +571,13 @@ object SafCompatibilityProbe {
         var failPipeRead = false
         var failWrite = false
         var corruptRead = false
+        var corruptPublishedRead = false
         var failPublish = false
         var failRestore = false
         var loading = false
+        var listingError: String? = null
         var nullListing = false
+        var repeatFirstListingRow = false
         var denied = false
         fun names() = nodes.values.filter { !it.directory }.map { it.name }
         fun file(name: String) = nodes.values.first { it.name == name }.file
@@ -398,7 +591,11 @@ object SafCompatibilityProbe {
             if (denied) throw SecurityException("Fixture permission revoked")
             val columns = projection ?: arrayOf(Document.COLUMN_DOCUMENT_ID, Document.COLUMN_DISPLAY_NAME)
             return MatrixCursor(columns).apply {
-                extras = Bundle().apply { putBoolean(DocumentsContract.EXTRA_LOADING, loading) }
+                extras =
+                    Bundle().apply {
+                        putBoolean(DocumentsContract.EXTRA_LOADING, loading)
+                        listingError?.let { putString(DocumentsContract.EXTRA_ERROR, it) }
+                    }
                 rows.forEach { node ->
                     addRow(
                         columns.map { column ->
@@ -425,7 +622,12 @@ object SafCompatibilityProbe {
             }
         }
         override fun queryDocument(documentId: String, projection: Array<out String>?) = cursor(projection, listOf(nodes.getValue(documentId)))
-        override fun queryChildDocuments(parentDocumentId: String, projection: Array<String>?, sortOrder: String?) = if (nullListing) null else cursor(projection, nodes.values.filter { it.parent == parentDocumentId })
+        override fun queryChildDocuments(parentDocumentId: String, projection: Array<String>?, sortOrder: String?) = if (nullListing) {
+            null
+        } else {
+            val rows = nodes.values.filter { it.parent == parentDocumentId }
+            cursor(projection, if (repeatFirstListingRow && rows.isNotEmpty()) rows + rows.first() else rows)
+        }
         override fun createDocument(parentDocumentId: String, mimeType: String, displayName: String): String {
             val id = UUID.randomUUID().toString()
             val dir = mimeType == Document.MIME_TYPE_DIR
@@ -454,7 +656,15 @@ object SafCompatibilityProbe {
         override fun openDocument(documentId: String, mode: String, signal: CancellationSignal?): ParcelFileDescriptor {
             val node = nodes.getValue(documentId)
             if (mode.contains('w') && failWrite) throw FileNotFoundException("Injected write failure")
-            if (mode == "r" && corruptRead && node.name.endsWith(".tmp")) node.file.writeText("truncated")
+            if (
+                mode == "r" &&
+                (
+                    (corruptRead && node.name.endsWith(".tmp")) ||
+                        (corruptPublishedRead && node.name == "sample.yaml")
+                    )
+            ) {
+                node.file.writeText("truncated")
+            }
             if (mode == "r" && pipeReads) {
                 val pipe = ParcelFileDescriptor.createReliablePipe()
                 thread(name = "saf-fixture-pipe") {

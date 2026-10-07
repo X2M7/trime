@@ -7,9 +7,16 @@ import json
 from pathlib import Path
 import re
 import subprocess
+import sys
 import tempfile
 import time
 import uuid
+
+if sys.flags.optimize:
+    raise SystemExit(
+        "Editor lifecycle gate refuses optimized Python (-O/-OO); "
+        "its runtime assertions must remain enabled"
+    )
 
 from PIL import Image
 

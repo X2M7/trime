@@ -7,9 +7,16 @@ import json
 from pathlib import Path
 import re
 import subprocess
+import sys
 import tempfile
 import time
 import xml.etree.ElementTree as ET
+
+if sys.flags.optimize:
+    raise SystemExit(
+        "Navigation gate refuses optimized Python (-O/-OO); "
+        "its runtime assertions must remain enabled"
+    )
 
 from runtime_audit import audit_log, device_audit_lock, filter_pid_log, record_logcat
 

@@ -7,7 +7,6 @@
 package com.osfans.trime.data.theme
 
 import android.graphics.Color
-import com.osfans.trime.data.theme.model.ColorScheme
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
 
@@ -17,7 +16,7 @@ import io.kotest.matchers.shouldBe
  */
 class ThemeColorsTest :
     BehaviorSpec({
-        fun scheme(vararg pairs: Pair<String, String>) = ColorScheme("test", pairs.toMap())
+        fun scheme(vararg pairs: Pair<String, String>) = pairs.toMap()
 
         val parseHex: (String) -> Int? = { s ->
             val digits =
@@ -65,12 +64,12 @@ class ThemeColorsTest :
         }
         Given("the built-in tongwenfeng theme") {
             val theme = ThemeTestSupport.decodeBuiltinTheme("tongwenfeng.trime.yaml")
-            val defaultScheme = theme.colorSchemes.first { it.id == "default" }
-            val view = ThemeColors(ColorTable.resolve(defaultScheme, theme.fallbackColors, parseHex))
+            val colors = theme.presetColorSchemes.getValue("default")
+            val view = ThemeColors(ColorTable.resolve(colors, theme.fallbackColors, parseHex))
             Then("the day scheme colors resolve to the parsed scheme values") {
-                view.candidateTextColor shouldBe parseHex(defaultScheme.colors.getValue("candidate_text_color"))
-                view.keyBackColor shouldBe parseHex(defaultScheme.colors.getValue("key_back_color"))
-                view.textColor shouldBe parseHex(defaultScheme.colors.getValue("text_color"))
+                view.candidateTextColor shouldBe parseHex(colors.getValue("candidate_text_color"))
+                view.keyBackColor shouldBe parseHex(colors.getValue("key_back_color"))
+                view.textColor shouldBe parseHex(colors.getValue("text_color"))
             }
         }
     })

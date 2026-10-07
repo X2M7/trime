@@ -10,7 +10,6 @@ import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexWrap
 import com.google.android.flexbox.FlexboxLayoutManager
 import com.osfans.trime.data.SymbolHistory
-import com.osfans.trime.data.theme.LiquidData
 import com.osfans.trime.data.theme.ThemeScope
 import com.osfans.trime.data.theme.model.LiquidKeyboard
 import com.osfans.trime.ime.core.TrimeInputMethodService
@@ -34,23 +33,23 @@ class LiquidWindow(di: DI) :
 
     private lateinit var liquidLayout: LiquidLayout
     private val symbolHistory = SymbolHistory(180)
-    var currentDataType: LiquidData.Type = LiquidData.Type.SINGLE
+    var currentDataType: LiquidKeyboard.DataType = LiquidKeyboard.DataType.SINGLE
         private set
 
     private val adapter by lazy {
         LiquidAdapter(scope) {
             when (currentDataType) {
-                LiquidData.Type.SYMBOL -> triggerSymbolInput(this.altText)
+                LiquidKeyboard.DataType.SYMBOL -> triggerSymbolInput(this.altText)
 
-                LiquidData.Type.TABS -> {
-                    val realPosition = LiquidData.getTagList()
+                LiquidKeyboard.DataType.TABS -> {
+                    val realPosition = scope.theme.liquidKeyboard.getTagList()
                         .indexOfFirst { it.label == this.text }
                     setDataByIndex(realPosition)
                 }
 
                 else -> {
                     service.commitText(this.text)
-                    if (currentDataType != LiquidData.Type.HISTORY) {
+                    if (currentDataType != LiquidKeyboard.DataType.HISTORY) {
                         symbolHistory.insert(this.text)
                         symbolHistory.save()
                     }
@@ -74,7 +73,7 @@ class LiquidWindow(di: DI) :
     override fun onCreateView(): View = LiquidLayout(context, scope, commonKeyboardActionListener).apply {
         liquidLayout = this
         tabsUi.apply {
-            setTags(LiquidData.getTagList())
+            setTags(scope.theme.liquidKeyboard.getTagList())
             setOnTabClickListener { i ->
                 setDataByIndex(i)
             }
@@ -96,17 +95,17 @@ class LiquidWindow(di: DI) :
     }
 
     fun setDataByIndex(i: Int) {
-        val tag = LiquidData.getTagList()[i]
+        val tag = scope.theme.liquidKeyboard.getTagList()[i]
         currentDataType = tag.type
         liquidLayout.tabsUi.activateTab(i)
         when (tag.type) {
-            LiquidData.Type.HISTORY -> {
+            LiquidKeyboard.DataType.HISTORY -> {
                 symbolHistory.load()
                 submitData(symbolHistory.toOrderedList().map { LiquidKeyboard.KeyItem(it) })
             }
 
             else -> {
-                val data = LiquidData.getDataByIndex(i)
+                val data = scope.theme.liquidKeyboard.getDataByIndex(i)
                 submitData(data)
             }
         }

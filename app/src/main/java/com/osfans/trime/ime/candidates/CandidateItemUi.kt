@@ -12,7 +12,6 @@ import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import com.osfans.trime.core.CandidateProto
-import com.osfans.trime.data.theme.FontManager
 import com.osfans.trime.data.theme.Theme
 import com.osfans.trime.data.theme.ThemeScope
 import com.osfans.trime.data.theme.model.GeneralStyle
@@ -49,11 +48,8 @@ class CandidateItemUi(
     private val theme: Theme
         get() = scope.theme
 
-    private val textSize = theme.generalStyle.candidateTextSize
-    private val commentSize = theme.generalStyle.commentTextSize
-
-    private val textFont = FontManager.getTypeface("candidate_font")
-    private val commentFont = FontManager.getTypeface("comment_font")
+    private val textSize = theme.style.candidateTextSize
+    private val commentSize = theme.style.commentTextSize
 
     // Read at use time so a scheme switch re-binds rows with the new colors.
     private val textColor: Int get() = scope.colors.candidateTextColor
@@ -62,15 +58,15 @@ class CandidateItemUi(
     private val hlTextColor: Int get() = scope.colors.hilitedCandidateTextColor
     private val hlBackColor: Int get() = scope.colors.hilitedCandidateBackColor
 
-    private val commentPosition = theme.generalStyle.commentPosition
-    private val commentVerticalBias = theme.generalStyle.commentVerticalBias
-    private val candidateTextVerticalBias = theme.generalStyle.candidateTextVerticalBias
+    private val commentPosition = theme.style.commentPosition
+    private val commentVerticalBias = theme.style.commentVerticalBias
+    private val candidateTextVerticalBias = theme.style.candidateTextVerticalBias
 
     private val text =
         view(::AutoScaleTextView) {
             id = View.generateViewId()
             this.textSize = this@CandidateItemUi.textSize
-            typeface = textFont
+            typeface = theme.fonts.candidate
             isSingleLine = true
             gravity = gravityCenter
             scaleMode = AutoScaleTextView.Mode.Proportional
@@ -80,14 +76,14 @@ class CandidateItemUi(
         view(::AutoScaleTextView) {
             id = View.generateViewId()
             this.textSize = commentSize
-            typeface = commentFont
+            typeface = theme.fonts.comment
             isSingleLine = true
             gravity = gravityCenter
             scaleMode = AutoScaleTextView.Mode.Proportional
         }
 
     private val content = constraintLayout {
-        horizontalPadding = dp(theme.generalStyle.candidatePadding)
+        horizontalPadding = dp(theme.style.candidatePadding)
         when (commentPosition) {
             GeneralStyle.CommentPosition.RIGHT -> {
                 add(
@@ -157,7 +153,7 @@ class CandidateItemUi(
     override val root = view(::GestureFrame) {
         add(
             content,
-            lParams(wrapContent, dp(theme.generalStyle.candidateViewHeight)) {
+            lParams(wrapContent, dp(theme.style.candidateViewHeight)) {
                 gravity = gravityCenter
             },
         )
@@ -170,7 +166,7 @@ class CandidateItemUi(
     ) {
         val tColor = if (highlighted) hlTextColor else textColor
         val cColor = if (highlighted) hlCommentColor else commentColor
-        val cornerRadius = ctx.dp(theme.generalStyle.candidateCornerRadius)
+        val cornerRadius = ctx.dp(theme.style.candidateCornerRadius)
         val contentColor = if (highlighted) hlBackColor else Color.TRANSPARENT
 
         content.background = roundedRippleDrawable(hlBackColor, cornerRadius, contentColor)

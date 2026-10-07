@@ -6,13 +6,20 @@
 
 package com.osfans.trime.data.theme
 
+import com.charleskorn.kaml.YamlList
+import com.charleskorn.kaml.YamlMap
+import com.charleskorn.kaml.YamlNode
 import com.osfans.trime.daemon.RimeDaemon
 import com.osfans.trime.data.base.DataManager
 import com.osfans.trime.util.appContext
-import com.osfans.trime.util.yaml.Node
-import com.osfans.trime.util.yaml.Yaml
-import com.osfans.trime.util.yaml.mapping
+import com.osfans.trime.util.isNull
+import com.osfans.trime.util.mapping
+import com.osfans.trime.util.pairs
+import com.osfans.trime.util.untagged
+import com.osfans.trime.util.yamlMapOf
+import com.osfans.trime.util.yamlScalarOf
 import kotlinx.coroutines.CancellationException
+import kotlinx.serialization.decodeFromString
 import timber.log.Timber
 import java.io.File
 
@@ -30,7 +37,7 @@ object ThemeLoader {
 
     private val builtin by lazy {
         appContext.assets.open("shared/trime.yaml").bufferedReader().use {
-            Theme.decode(checkNotNull(Yaml.parseToYamlNode(it.readText()).mapping))
+            ThemeYaml.parser.decodeFromString<Theme>(it.readText())
         }
     }
 
@@ -162,10 +169,10 @@ object ThemeLoader {
      */
     internal fun decodeAndReport(
         themeId: String,
-        mapping: Node.Mapping,
+        mapping: YamlMap,
     ): ThemeLoadResult {
-        val theme = Theme.decode(mapping)
-        if (theme.colorSchemes.isEmpty()) {
+        val theme = ThemeYaml.parser.decodeFromYamlNode<Theme>(mapping)
+        if (theme.presetColorSchemes.isEmpty()) {
             return ThemeLoadResult.Failure(themeId, ThemeLoadError.NoColorScheme(themeId))
         }
         val findings =
@@ -182,16 +189,16 @@ object ThemeLoader {
      */
     internal fun decodeSource(
         themeId: String,
-        node: Node,
-        loadResource: (String) -> Node?,
-    ): Theme = Theme.decode(expandSource(themeId, node, loadResource))
+        node: YamlNode,
+        loadResource: (String) -> YamlNode?,
+    ): Theme = ThemeYaml.parser.decodeFromYamlNode(expandSource(themeId, node, loadResource))
 
     /** Applies the supported DSL subset to [node] and returns its root mapping. */
     private fun expandSource(
         themeId: String,
-        node: Node,
-        loadResource: (String) -> Node?,
-    ): Node.Mapping {
+        node: YamlNode,
+        loadResource: (String) -> YamlNode?,
+    ): YamlMap {
         val expanded = ThemeDslExpander.expand(themeId, node, loadResource)
         requireSourceValues(expanded)
         return expanded.mapping
@@ -199,12 +206,14 @@ object ThemeLoader {
     }
 
     /** librime omits null map values and list elements when writing an artifact. */
-    private fun requireSourceValues(node: Node) {
-        when (node) {
-            is Node.Scalar -> if (node.isNull) throw ThemeDslExpander.UnsupportedDsl("null values require deployed artifact serialization")
-            is Node.Mapping -> node.values.forEach(::requireSourceValues)
-            is Node.Sequence -> node.forEach(::requireSourceValues)
-            is Node.Alias -> throw ThemeDslExpander.UnsupportedDsl("unresolved YAML alias")
+    private fun requireSourceValues(node: YamlNode) {
+        if (node.isNull) {
+            throw ThemeDslExpander.UnsupportedDsl("null values require deployed artifact serialization")
+        }
+        when (val self = node.untagged) {
+            is YamlMap -> self.pairs.values.forEach(::requireSourceValues)
+            is YamlList -> self.items.forEach(::requireSourceValues)
+            else -> Unit
         }
     }
 
@@ -222,7 +231,7 @@ object ThemeLoader {
         themeId: String,
         file: File? = null,
         sources: SourceLoader = SourceLoader(),
-    ): Node? {
+    ): YamlNode? {
         return try {
             val node = sources.load(themeId, file) ?: return null
             ThemeDslExpander.expand(themeId, node) { id -> sources.load(id, null) }.also(::requireSourceValues)
@@ -244,14 +253,14 @@ object ThemeLoader {
     internal class SourceLoader(
         private val findSource: (String) -> File? = ::findSourceFile,
     ) {
-        private val cache = HashMap<String, Node?>()
+        private val cache = HashMap<String, YamlNode?>()
 
         /**
          * @param file source file of [resourceId] when it is already known.
          *   Included resources are always looked up by id. An explicit file
          *   wins over the id lookup cache.
          */
-        fun load(resourceId: String, file: File?): Node? {
+        fun load(resourceId: String, file: File?): YamlNode? {
             if (file != null) return readAndPatch(resourceId, file)
             if (cache.containsKey(resourceId)) return cache[resourceId]
             val result = findSource(resourceId)?.let { readAndPatch(resourceId, it) }
@@ -259,10 +268,10 @@ object ThemeLoader {
             return result
         }
 
-        private fun readAndPatch(resourceId: String, file: File): Node? {
+        private fun readAndPatch(resourceId: String, file: File): YamlNode {
             // Parsing failures are not equivalent to an absent optional resource:
             // propagate them so the caller delegates the complete file to librime.
-            val node = Yaml.parseToYamlNode(file.readText())
+            val node = ThemeYaml.parser.parseToYamlNode(file.readText())
             val patched = applyCustomPatch(resourceId, node)
             if (patched === node) return node
 
@@ -315,14 +324,13 @@ object ThemeLoader {
      */
     internal fun applyCustomPatch(
         resourceId: String,
-        node: Node,
-    ): Node {
+        node: YamlNode,
+    ): YamlNode {
         if (resourceId.endsWith(".custom")) return node
-        val root = node as? Node.Mapping ?: return node
-        if (root[PATCH] != null) return node
+        val root = node as? YamlMap ?: return node
+        if (root.pairs[PATCH] != null) return node
         val patchId = resourceId.removeSuffix(".schema") + ".custom"
-        val reference = Node.Scalar("$patchId:/patch?")
-        return Node.Mapping(root.pairs + (Node.Scalar(PATCH) to reference), root.anchor)
+        return yamlMapOf(root.pairs + (PATCH to yamlScalarOf("$patchId:/patch?")))
     }
 
     /** Loads only a successfully rebuilt theme artifact; a failed rebuild must not use stale data. */
@@ -357,7 +365,7 @@ object ThemeLoader {
 
         val node =
             try {
-                Yaml.parseToYamlNode(content)
+                ThemeYaml.parser.parseToYamlNode(content)
             } catch (e: Exception) {
                 return ThemeLoadResult.Failure(
                     themeId,

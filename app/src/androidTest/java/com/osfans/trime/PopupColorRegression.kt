@@ -120,24 +120,20 @@ object PopupColorRegression {
         val entries = main { field<Map<Int, PopupEntryUi>>(delegate, "showingEntryUi") }
         val containers = main { field<Map<Int, Any>>(delegate, "showingContainerUi") }
         val ids = main { List(4) { View.generateViewId() } }
-        val first = originalScheme.copy(
-            id = "__popup_color_a__",
-            colors = originalScheme.colors + mapOf(
+        val first = originalScheme +
+            mapOf(
                 "popup_back_color" to "#e4edf6",
                 "popup_text_color" to "#173451",
                 "hilited_popup_back_color" to "#214365",
                 "hilited_popup_text_color" to "#f2e1c0",
-            ),
-        )
-        val second = originalScheme.copy(
-            id = "__popup_color_b__",
-            colors = originalScheme.colors + mapOf(
+            )
+        val second = originalScheme +
+            mapOf(
                 "popup_back_color" to "#253647",
                 "popup_text_color" to "#e6d5c4",
                 "hilited_popup_back_color" to "#d3b291",
                 "hilited_popup_text_color" to "#102f4e",
-            ),
-        )
+            )
         fun action(action: PopupAction) = delegate.listener.onPopupAction(action)
         fun unchangedEditor() {
             check(service.isCurrentEditor(token) && service.currentInputEditorInfo?.fieldId == editor.id)
@@ -158,7 +154,7 @@ object PopupColorRegression {
                 key.getLocationInWindow(point)
                 Rect(point[0], point[1], point[0] + key.width, point[1] + key.height)
             }
-            main { ColorManager.setColorScheme(first) }
+            main { ColorManager.setColorSchemeForTesting(first) }
             main { repeat(4) { action(PopupAction.PreviewAction(ids[it], "A", trigger)) } }
             withTimeout(10_000) { while (!main { entries.size == 4 && entries.values.all { it.root.isShown && it.root.width > 0 && it.root.height > 0 } }) delay(50) }
             main {
@@ -186,17 +182,17 @@ object PopupColorRegression {
                     second
                 }
                 val rejectedPalette = if (palette == first) second else first
-                check(scope.colors.popupBackColor == Color.parseColor(palette.colors.getValue("popup_back_color")))
-                check(scope.colors.popupTextColor == Color.parseColor(palette.colors.getValue("popup_text_color")))
-                check(scope.colors.hilitedPopupBackColor == Color.parseColor(palette.colors.getValue("hilited_popup_back_color")))
-                check(scope.colors.hilitedPopupTextColor == Color.parseColor(palette.colors.getValue("hilited_popup_text_color")))
+                check(scope.colors.popupBackColor == Color.parseColor(palette.getValue("popup_back_color")))
+                check(scope.colors.popupTextColor == Color.parseColor(palette.getValue("popup_text_color")))
+                check(scope.colors.hilitedPopupBackColor == Color.parseColor(palette.getValue("hilited_popup_back_color")))
+                check(scope.colors.hilitedPopupTextColor == Color.parseColor(palette.getValue("hilited_popup_text_color")))
                 check(entries.keys == visible.keys && entries.all { (id, entry) -> visible[id] === entry })
                 check(free.single() === pooled && containers[ids[2]] === keyboard)
                 check(views.map(::bounds) == geometry) { "Scheme switch changed popup geometry" }
                 for (entry in visible.values + pooled) {
                     pixels(input.context, checkNotNull(entry.root.background), scope.colors.popupBackColor, true)
                     check(entry.textView.currentTextColor == scope.colors.popupTextColor)
-                    entry.imageView.drawable?.let { pixels(input.context, it, scope.colors.popupTextColor, false, Color.parseColor(rejectedPalette.colors.getValue("popup_text_color"))) }
+                    entry.imageView.drawable?.let { pixels(input.context, it, scope.colors.popupTextColor, false, Color.parseColor(rejectedPalette.getValue("popup_text_color"))) }
                 }
                 check(visible.getValue(ids[0]).textView.text.toString() == "A")
                 check(visible.getValue(ids[1]).imageView.visibility == View.VISIBLE)
@@ -206,7 +202,7 @@ object PopupColorRegression {
                 keys.forEachIndexed { index, key ->
                     val color = if (index == focused) scope.colors.hilitedPopupTextColor else scope.colors.popupTextColor
                     check(key.textView.currentTextColor == color)
-                    key.imageView.drawable?.let { pixels(input.context, it, color, false, Color.parseColor(rejectedPalette.colors.getValue(if (index == focused) "hilited_popup_text_color" else "popup_text_color"))) }
+                    key.imageView.drawable?.let { pixels(input.context, it, color, false, Color.parseColor(rejectedPalette.getValue(if (index == focused) "hilited_popup_text_color" else "popup_text_color"))) }
                     if (index == focused) pixels(input.context, checkNotNull(key.root.background), scope.colors.hilitedPopupBackColor, true) else check(key.root.background == null)
                 }
                 val triggerAction = PopupAction.TriggerAction(ids[2])
@@ -216,7 +212,7 @@ object PopupColorRegression {
             main { verifyColors() }
             // Each separate runOnMainSync is a queue barrier after the service's posted color listener.
             // Calling refreshColors directly here would miss a broken InputView -> PopupDelegate chain.
-            main { ColorManager.setColorScheme(second) }
+            main { ColorManager.setColorSchemeForTesting(second) }
             main { verifyColors() }
             phase("popup scheme A to B recolors visible text/icon, pooled bubble and focused long-press icon in place")
             main {
@@ -227,7 +223,7 @@ object PopupColorRegression {
                 expectedFocus = "a"
                 verifyColors()
             }
-            main { ColorManager.setColorScheme(first) }
+            main { ColorManager.setColorSchemeForTesting(first) }
             main { verifyColors() }
             phase("popup scheme B to A preserves long-press text focus, geometry and editor state")
             main {
@@ -243,7 +239,7 @@ object PopupColorRegression {
                 delegate.dismissAll()
                 free.clear()
                 free.addAll(originalFree)
-                ColorManager.setColorScheme(originalScheme)
+                ColorManager.setColorSchemeForTesting(originalScheme)
                 ThemeManager.prefs.normalModeColor.setValue(originalPreference)
             }
             main {

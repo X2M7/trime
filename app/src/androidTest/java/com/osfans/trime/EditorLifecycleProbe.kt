@@ -241,6 +241,9 @@ object EditorLifecycleProbe {
                     for (theme in listOf("trime", "tongwenfeng.trime")) {
                         ThemeManager.selectTheme(theme)
                         until("$theme T9 before schema switch") { input() != null && keyboard().isT9Layout }
+                        if (theme == "trime") {
+                            ResidentWindowColorRegression.verify(instrumentation, main { checkNotNull(input()) })
+                        }
                         api {
                             check(selectSchema("luna_pinyin_simp"))
                             setRuntimeOption("ascii_mode", false)

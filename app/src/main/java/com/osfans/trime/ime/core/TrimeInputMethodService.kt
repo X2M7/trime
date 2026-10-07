@@ -539,7 +539,7 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
                     val themeId = ThemeManager.prefs.selectedTheme.getValue()
                     lifecycleScope.launch {
                         try {
-                            ThemeManager.selectTheme(themeId)
+                            ThemeManager.selectTheme(themeId, forceReload = true)
                         } catch (e: CancellationException) {
                             throw e
                         } catch (e: Exception) {

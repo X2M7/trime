@@ -7,7 +7,6 @@
 package com.osfans.trime.data.theme
 
 import android.graphics.drawable.Drawable
-import com.osfans.trime.data.theme.model.ColorScheme
 import com.osfans.trime.util.ColorUtils
 import timber.log.Timber
 
@@ -59,7 +58,7 @@ class ThemeScope internal constructor(
         val tableEntry = ColorKey.from(key)?.let { colorTable?.get(it) }
         if (tableEntry is ColorTable.Value.Color) return tableEntry.argb
         val scheme = requireNotNull(activeColorScheme) { "ThemeScope is not initialized" }
-        val raw = ColorTable.resolveRaw(key, scheme.colors, theme.fallbackColors)
+        val raw = ColorTable.resolveRaw(key, scheme, theme.fallbackColors)
         return runCatching { parseColor(raw ?: key) }.getOrNull()
     }
 

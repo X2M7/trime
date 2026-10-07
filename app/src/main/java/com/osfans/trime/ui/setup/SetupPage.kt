@@ -43,7 +43,7 @@ enum class SetupPage {
 
     fun getButtonAction(activity: FragmentActivity) {
         when (this) {
-            Mode -> (activity as SetupActivity).launchDataPathPicker()
+            Mode -> (activity as SetupActivity).pickDataPath()
             Enable -> InputMethodUtils.showImeEnablerActivity(activity)
             Select -> InputMethodUtils.showImePicker()
         }
