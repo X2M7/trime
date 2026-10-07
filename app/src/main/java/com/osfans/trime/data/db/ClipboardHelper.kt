@@ -179,10 +179,18 @@ object ClipboardHelper :
         }
     }
 
-    fun init(context: Context) {
+    fun init(
+        context: Context,
+        persistHistory: Boolean = true,
+    ) {
         clbDb =
-            Room
-                .databaseBuilder(context, Database::class.java, "clipboard.db")
+            (
+                if (persistHistory) {
+                    Room.databaseBuilder(context, Database::class.java, "clipboard.db")
+                } else {
+                    Room.inMemoryDatabaseBuilder(context, Database::class.java)
+                }
+                )
                 .addMigrations(Database.MIGRATION_3_4)
                 .build()
         clbDao = clbDb.databaseDao()

@@ -43,6 +43,19 @@ open class PreferenceDelegate<T : Any>(
         }
     }
 
+    open fun putValueTo(editor: SharedPreferences.Editor) {
+        with(editor) {
+            when (val value = getValue()) {
+                is Int -> putInt(key, value)
+                is Long -> putLong(key, value)
+                is Float -> putFloat(key, value)
+                is Boolean -> putBoolean(key, value)
+                is String -> putString(key, value)
+                is Set<*> -> putStringSet(key, value.map { it.toString() }.toHashSet())
+            }
+        }
+    }
+
     override fun getValue(
         thisRef: Any?,
         property: KProperty<*>,
@@ -77,6 +90,10 @@ open class PreferenceDelegate<T : Any>(
         } catch (e: Exception) {
             setValue(defaultValue)
             defaultValue
+        }
+
+        override fun putValueTo(editor: SharedPreferences.Editor) {
+            editor.putString(key, serializer.serialize(getValue()))
         }
     }
 

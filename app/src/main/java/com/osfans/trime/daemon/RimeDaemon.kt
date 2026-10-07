@@ -77,6 +77,7 @@ object RimeDaemon {
     private var startupRetryEpoch = 0L
     private var startupRetryBlocked = false
     private var retryExhaustionPending: Long? = null
+    private var processExitRequested = false
 
     @Volatile
     private var startupRetryJob: Job? = null
@@ -139,6 +140,22 @@ object RimeDaemon {
         fun close() {
             clientScope?.cancel()
         }
+    }
+
+    /** A detached session returned only while the direct-boot process is being replaced. */
+    private object ProcessExitSession : RimeSession {
+        private val cancelledScope = CoroutineScope(SupervisorJob() + Dispatchers.Default).apply { cancel() }
+
+        override fun <T> run(block: suspend RimeApi.() -> T): T = runBlocking { block(rimeImpl) }
+
+        override suspend fun <T> runOnReady(block: suspend RimeApi.() -> T): T = throw RimeUnavailableException(
+            IllegalStateException("Rime process replacement is in progress"),
+        )
+
+        override fun runIfReady(block: suspend RimeApi.() -> Unit) = Unit
+
+        override val lifecycleScope: CoroutineScope
+            get() = cancelledScope
     }
 
     private fun cancelStartupRetryLocked() {
@@ -235,6 +252,7 @@ object RimeDaemon {
     }
 
     fun createSession(name: String): RimeSession = lock.withLock {
+        if (processExitRequested) return@withLock ProcessExitSession
         if (sessions.containsKey(name)) {
             return@withLock sessions.getValue(name)
         }
@@ -276,7 +294,51 @@ object RimeDaemon {
     /**
      * Reuse a session for remote service
      */
-    fun getFirstSessionOrNull(): RimeSession? = sessions.firstNotNullOfOrNull { it.value }
+    fun getFirstSessionOrNull(): RimeSession? = lock.withLock {
+        sessions.firstNotNullOfOrNull { it.value }
+            ?: ProcessExitSession.takeIf { processExitRequested }
+    }
+
+    /**
+     * Best-effort native shutdown before replacing the direct-boot process after unlock.
+     * New lifecycle work is invalidated first, then an already-running engine is stopped
+     * under the same maintenance mutex used by deployment and normal session teardown.
+     */
+    suspend fun shutdownForProcessExit() {
+        val abandoned = lock.withLock {
+            processExitRequested = true
+            lifecycleGeneration += 1
+            resetStartupRetryLocked()
+            sessions.values.forEach(Session::close)
+            sessions.clear()
+            AbandonedRequests(
+                restartNotifications.toList(),
+                manualRetryWaiters.toList(),
+            ).also {
+                restartRequested = false
+                fullCheckRequested = false
+                restartNotifications.clear()
+                manualRetryRequested = false
+                manualRetryWaiters.clear()
+            }
+        }
+        abandoned.notifications.forEach(notificationManager::cancel)
+        val failure = sessionEndedFailure()
+        abandoned.waiters.forEach { it.completeExceptionally(failure) }
+
+        RimeMaintenanceMutex.withLock {
+            when (realRime.lifecycle.currentState) {
+                RimeLifecycle.State.READY -> {
+                    realRime.beginShutdown()
+                    realRime.finishShutdown()
+                }
+
+                RimeLifecycle.State.STOPPING -> realRime.finishShutdown()
+
+                else -> Unit
+            }
+        }
+    }
 
     private var restartId = 0
 

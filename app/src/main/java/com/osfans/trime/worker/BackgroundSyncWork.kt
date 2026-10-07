@@ -6,6 +6,9 @@
 package com.osfans.trime.worker
 
 import android.content.Context
+import android.os.Build
+import android.os.UserManager
+import androidx.work.Configuration
 import androidx.work.Constraints
 import androidx.work.CoroutineWorker
 import androidx.work.ExistingPeriodicWorkPolicy
@@ -19,6 +22,26 @@ import com.osfans.trime.data.sync.RimeDataSync
 import kotlinx.coroutines.CancellationException
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
+
+internal fun canInitializeWorkManager(
+    sdkInt: Int,
+    userUnlocked: Boolean,
+    deviceProtectedContext: Boolean,
+): Boolean = sdkInt < Build.VERSION_CODES.N || (userUnlocked && !deviceProtectedContext)
+
+internal class RetryableInitializer {
+    @Volatile
+    private var initialized = false
+
+    fun ensureInitialized(initializer: () -> Unit) {
+        if (initialized) return
+        synchronized(this) {
+            if (initialized) return
+            initializer()
+            initialized = true
+        }
+    }
+}
 
 class BackgroundSyncWork(
     context: Context,
@@ -65,6 +88,8 @@ class BackgroundSyncWork(
     companion object {
         private const val PERIODIC_BACKGROUND_SYNC_KEY = "periodic_background_sync"
 
+        private val workManagerInitializer = RetryableInitializer()
+
         private val prefs = AppPrefs.defaultInstance().profile
         private val enable by prefs.periodicBackgroundSync
         private val interval by prefs.periodicBackgroundSyncInterval
@@ -84,7 +109,11 @@ class BackgroundSyncWork(
             context: Context,
             policy: ExistingPeriodicWorkPolicy,
         ) {
-            val instance = WorkManager.getInstance(context.applicationContext)
+            if (!canUseWorkManager(context)) {
+                Timber.i("BackgroundSyncWork deferred until credential-protected storage is available")
+                return
+            }
+            val instance = getWorkManager(context)
             if (!enable) {
                 instance.cancelUniqueWork(PERIODIC_BACKGROUND_SYNC_KEY)
                 Timber.i("BackgroundSyncWork canceled!")
@@ -110,6 +139,28 @@ class BackgroundSyncWork(
                 policy,
                 workRequest,
             )
+        }
+
+        private fun canUseWorkManager(context: Context): Boolean {
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) return true
+            val userManager = context.getSystemService(UserManager::class.java)
+            return canInitializeWorkManager(
+                Build.VERSION.SDK_INT,
+                userManager?.isUserUnlocked == true,
+                context.isDeviceProtectedStorage,
+            )
+        }
+
+        private fun getWorkManager(context: Context): WorkManager {
+            val applicationContext = context.applicationContext
+            workManagerInitializer.ensureInitialized {
+                try {
+                    WorkManager.getInstance(applicationContext)
+                } catch (_: IllegalStateException) {
+                    WorkManager.initialize(applicationContext, Configuration.Builder().build())
+                }
+            }
+            return WorkManager.getInstance(applicationContext)
         }
     }
 }

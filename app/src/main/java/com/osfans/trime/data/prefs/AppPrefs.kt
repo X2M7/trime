@@ -5,9 +5,13 @@
 
 package com.osfans.trime.data.prefs
 
-import android.content.Context
+import android.annotation.SuppressLint
 import android.content.SharedPreferences
+import android.os.Build
+import android.os.UserManager
 import androidx.annotation.Keep
+import androidx.annotation.RequiresApi
+import androidx.preference.PreferenceManager
 import com.osfans.trime.R
 import com.osfans.trime.data.sync.DataStorageMode
 import com.osfans.trime.ime.candidates.compact.CompactCandidateMode
@@ -17,16 +21,136 @@ import com.osfans.trime.ime.composition.PopupPosition
 import com.osfans.trime.ime.core.InlinePreeditMode
 import com.osfans.trime.util.InputMethodUtils
 import com.osfans.trime.util.appContext
-import java.lang.ref.WeakReference
+import timber.log.Timber
+
+@Suppress("UNUSED_PARAMETER")
+internal fun directBootPreferenceProviders(
+    internalPreferences: PreferenceDelegateProvider,
+    general: PreferenceDelegateProvider,
+    profile: PreferenceDelegateProvider,
+    keyboard: PreferenceDelegateProvider,
+    candidates: PreferenceDelegateProvider,
+    clipboard: PreferenceDelegateProvider,
+    advanced: PreferenceDelegateProvider,
+): List<PreferenceDelegateProvider> = // Direct Boot needs input behavior, but must not copy process bookkeeping or
+    // credential-bound SAF/background-sync state into device-protected storage.
+    listOf(general, keyboard, candidates, clipboard, advanced)
+
+internal class DirectBootPreferenceMirror(
+    private val targetPreferences: () -> SharedPreferences?,
+    providers: List<PreferenceDelegateProvider>,
+) {
+    private val delegates = providers.flatMap { it.preferenceDelegates.values }.associateBy { it.key }
+
+    internal val mirroredKeys: Set<String>
+        get() = delegates.keys
+
+    @Synchronized
+    fun syncAll(): Boolean = sync(delegates.values)
+
+    @Synchronized
+    fun syncChanged(key: String): Boolean = sync(listOfNotNull(delegates[key]))
+
+    @Synchronized
+    fun syncKeys(
+        keys: Collection<String>,
+        commit: Boolean = false,
+    ): Boolean = sync(keys.mapNotNull(delegates::get), commit)
+
+    // KTX edit(commit = true) discards Editor.commit()'s success result, which the journal needs.
+    @SuppressLint("ApplySharedPref", "UseKtx")
+    private fun sync(
+        preferences: Collection<PreferenceDelegate<*>>,
+        commit: Boolean = false,
+    ): Boolean {
+        if (preferences.isEmpty()) return true
+        val target = targetPreferences() ?: return false
+        val editor = target.edit()
+        var changed = false
+        preferences.forEach { preference ->
+            val source = preference.sharedPreferences
+            if (source === target) return@forEach
+            val key = preference.key
+            if (!source.contains(key)) {
+                if (target.contains(key)) {
+                    editor.remove(key)
+                    changed = true
+                }
+            } else if (!target.contains(key) || source.all[key] != target.all[key]) {
+                preference.putValueTo(editor)
+                changed = true
+            }
+        }
+        if (!changed) return true
+        return if (commit) {
+            editor.commit()
+        } else {
+            editor.apply()
+            true
+        }
+    }
+}
+
+internal class DirectBootChangeJournal(
+    private val preferences: SharedPreferences,
+    private val allowedKeys: Set<String>,
+) {
+    // KTX edit(commit = true) discards Editor.commit()'s success result, which the journal needs.
+    @SuppressLint("ApplySharedPref", "UseKtx")
+    fun record(key: String): Boolean = synchronized(lock) {
+        if (key !in allowedKeys) return@synchronized true
+        val changedKeys = changedKeys(includeUnrecognized = true) + key
+        preferences.edit().putStringSet(KEY, changedKeys).commit()
+    }
+
+    fun changedKeys(): Set<String> = synchronized(lock) { changedKeys(includeUnrecognized = false) }
+
+    /**
+     * Applies and then clears the journal as one process-local transaction. If [restore] fails,
+     * the journal remains intact so a later unlock or process start can retry it.
+     */
+    fun restoreChanges(restore: (Set<String>) -> Boolean): DirectBootRestoreResult = synchronized(lock) {
+        val changedKeys = changedKeys(includeUnrecognized = false)
+        if (changedKeys.isNotEmpty() && !restore(changedKeys)) {
+            return@synchronized DirectBootRestoreResult(valuesRestored = false, journalRetained = true)
+        }
+        DirectBootRestoreResult(valuesRestored = true, journalRetained = !clear())
+    }
+
+    private fun changedKeys(includeUnrecognized: Boolean): Set<String> {
+        val changedKeys = preferences.getStringSet(KEY, emptySet()).orEmpty()
+        return if (includeUnrecognized) {
+            changedKeys
+        } else {
+            changedKeys.filterTo(mutableSetOf()) { it in allowedKeys }
+        }
+    }
+
+    // Keep the journal when the synchronous removal fails so unlock recovery can retry it.
+    @SuppressLint("ApplySharedPref", "UseKtx")
+    private fun clear(): Boolean = preferences.edit().remove(KEY).commit()
+
+    companion object {
+        const val KEY = "direct_boot_changed_preference_keys"
+
+        private val lock = Any()
+
+        fun hasRecordedChanges(preferences: SharedPreferences): Boolean = preferences.contains(KEY)
+    }
+}
+
+internal data class DirectBootRestoreResult(
+    val valuesRestored: Boolean,
+    val journalRetained: Boolean,
+)
 
 /**
  * Helper class for an organized access to the shared preferences.
  */
 class AppPrefs(
     private val shared: SharedPreferences,
+    private val usingDeviceProtectedStorage: Boolean = false,
 ) {
-    private val applicationContext: WeakReference<Context> = WeakReference(appContext)
-
     private val providers = mutableListOf<PreferenceDelegateProvider>()
 
     fun <T : PreferenceDelegateProvider> registerProvider(providerF: (SharedPreferences) -> T): T {
@@ -47,25 +171,116 @@ class AppPrefs(
     val clipboard = Clipboard(shared).register()
     val advanced = Advanced(shared).register()
 
+    private val directBootProviders =
+        directBootPreferenceProviders(
+            internal,
+            general,
+            profile,
+            keyboard,
+            candidates,
+            clipboard,
+            advanced,
+        )
+
+    private val directBootPreferenceMirror =
+        DirectBootPreferenceMirror(
+            targetPreferences = ::writableDeviceProtectedPreferences,
+            providers = directBootProviders,
+        )
+
+    private val credentialPreferenceMirror =
+        DirectBootPreferenceMirror(
+            targetPreferences = ::writableCredentialProtectedPreferences,
+            providers = directBootProviders,
+        )
+
+    private val directBootChangeJournal =
+        DirectBootChangeJournal(shared, directBootPreferenceMirror.mirroredKeys)
+
     @Keep
     private val onSharedPreferenceChangeListener =
         SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
             if (key == null) return@OnSharedPreferenceChangeListener
-            providers.forEach {
-                it.notifyChange(key)
-            }
+            onPreferenceChanged(key)
         }
+
+    internal fun onPreferenceChanged(key: String) {
+        providers.forEach {
+            it.notifyChange(key)
+        }
+        if (usingDeviceProtectedStorage) {
+            if (!directBootChangeJournal.record(key)) {
+                Timber.e("Unable to journal Direct Boot preference change for %s", key)
+            }
+        } else {
+            directBootPreferenceMirror.syncChanged(key)
+        }
+    }
+
+    private fun writableDeviceProtectedPreferences(): SharedPreferences? {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) return null
+        val context = appContext
+        val userManager = context.getSystemService(UserManager::class.java) ?: return null
+        if (!userManager.isUserUnlocked) return null
+        return PreferenceManager.getDefaultSharedPreferences(context.createDeviceProtectedStorageContext())
+    }
+
+    private fun writableCredentialProtectedPreferences(): SharedPreferences? {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) return null
+        val context = appContext
+        val userManager = context.getSystemService(UserManager::class.java) ?: return null
+        if (!userManager.isUserUnlocked) return null
+        return PreferenceManager.getDefaultSharedPreferences(context)
+    }
 
     companion object {
         private var defaultInstance: AppPrefs? = null
 
-        fun initDefault(sharedPreferences: SharedPreferences): AppPrefs {
-            val instance = AppPrefs(sharedPreferences)
+        fun initDefault(
+            sharedPreferences: SharedPreferences,
+            usingDeviceProtectedStorage: Boolean = false,
+        ): AppPrefs {
+            if (!usingDeviceProtectedStorage) {
+                val restoreResult = restoreDirectBootChangesToCredentialStorage()
+                if (!restoreResult.valuesRestored) {
+                    Timber.e("Unable to restore Direct Boot preference changes; the journal was retained")
+                } else if (restoreResult.journalRetained) {
+                    Timber.w("Direct Boot preferences were restored, but their journal could not be cleared")
+                }
+            }
+            val instance = AppPrefs(sharedPreferences, usingDeviceProtectedStorage)
             defaultInstance = instance
             sharedPreferences.registerOnSharedPreferenceChangeListener(
                 defaultInstance().onSharedPreferenceChangeListener,
             )
             return instance
+        }
+
+        /**
+         * Replays preferences changed while locked before credential-protected preferences are
+         * initialized. This is safe to call both from the unlock receiver and on every normal
+         * process start; the journal is cleared only after the credential-store commit succeeds.
+         */
+        internal fun restoreDirectBootChangesToCredentialStorage(): DirectBootRestoreResult {
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
+                return DirectBootRestoreResult(valuesRestored = true, journalRetained = false)
+            }
+            val context = appContext
+            val userManager = context.getSystemService(UserManager::class.java)
+            if (userManager?.isUserUnlocked != true) {
+                return DirectBootRestoreResult(valuesRestored = true, journalRetained = false)
+            }
+            val devicePreferences =
+                PreferenceManager.getDefaultSharedPreferences(
+                    context.createDeviceProtectedStorageContext(),
+                )
+            if (!DirectBootChangeJournal.hasRecordedChanges(devicePreferences)) {
+                return DirectBootRestoreResult(valuesRestored = true, journalRetained = false)
+            }
+            return AppPrefs(
+                devicePreferences,
+                usingDeviceProtectedStorage = true,
+            ).restoreJournaledDirectBootChanges()
         }
 
         fun defaultInstance(): AppPrefs = defaultInstance
@@ -488,5 +703,20 @@ class AppPrefs(
             IGNORE_SYSTEM_GESTURE_INSETS,
             false,
         )
+    }
+
+    @RequiresApi(Build.VERSION_CODES.N)
+    fun syncToDeviceEncryptedStorage() {
+        directBootPreferenceMirror.syncAll()
+    }
+
+    @RequiresApi(Build.VERSION_CODES.N)
+    private fun restoreJournaledDirectBootChanges(): DirectBootRestoreResult {
+        if (!usingDeviceProtectedStorage) {
+            return DirectBootRestoreResult(valuesRestored = true, journalRetained = false)
+        }
+        return directBootChangeJournal.restoreChanges { changedKeys ->
+            credentialPreferenceMirror.syncKeys(changedKeys, commit = true)
+        }
     }
 }

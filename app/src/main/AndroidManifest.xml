@@ -32,6 +32,7 @@ SPDX-License-Identifier: GPL-3.0-or-later
 
         <service
             android:name=".ime.core.TrimeInputMethodService"
+            android:directBootAware="true"
             android:exported="true"
             android:label="@string/trime_app_name"
             android:permission="android.permission.BIND_INPUT_METHOD">
@@ -64,6 +65,19 @@ SPDX-License-Identifier: GPL-3.0-or-later
                 android:resource="@xml/provider_paths" />
         </provider>
 
+        <provider
+            android:name="androidx.startup.InitializationProvider"
+            android:authorities="${applicationId}.androidx-startup"
+            android:directBootAware="true"
+            android:exported="false"
+            tools:node="merge">
+            <!-- remove WorkManager default initializer -->
+            <meta-data
+                android:name="androidx.work.WorkManagerInitializer"
+                android:value="androidx.startup"
+                tools:node="remove" />
+        </provider>
+
         <!-- Settings activity -->
         <activity
             android:name=".ui.main.MainActivity"
@@ -77,6 +91,7 @@ SPDX-License-Identifier: GPL-3.0-or-later
 
         <activity
             android:name=".ui.main.LogActivity"
+            android:directBootAware="true"
             android:exported="false"
             android:launchMode="singleTask"
             android:parentActivityName=".ui.main.MainActivity" />
@@ -89,6 +104,7 @@ SPDX-License-Identifier: GPL-3.0-or-later
         <activity
             android:name=".ui.main.ClipEditActivity"
             android:autoRemoveFromRecents="true"
+            android:directBootAware="true"
             android:excludeFromRecents="true"
             android:label="@string/edit"
             android:launchMode="singleInstance"

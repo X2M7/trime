@@ -6,6 +6,7 @@ package com.osfans.trime.data.base
 
 import android.content.res.AssetManager
 import android.os.Build
+import com.osfans.trime.TrimeApplication
 import com.osfans.trime.util.ResourceUtils
 import com.osfans.trime.util.appContext
 import kotlinx.serialization.json.Json
@@ -14,6 +15,11 @@ import java.io.File
 import java.io.IOException
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
+
+private const val DATA_CHECKSUMS_NAME = "checksums.json"
+private const val DIRECT_BOOT_DATA_CHECKSUMS_NAME = "checksums.direct-boot.json"
+
+internal fun resolveDataChecksumsName(isDirectBootMode: Boolean): String = if (isDirectBootMode) DIRECT_BOOT_DATA_CHECKSUMS_NAME else DATA_CHECKSUMS_NAME
 
 /**
  * Resolve [name] under [parent].
@@ -48,6 +54,20 @@ internal fun resolveWritableChildDir(
     }
 }
 
+/**
+ * Select the root that backs the runtime data hierarchy.
+ *
+ * During direct boot the normal app-scoped external directory is not guaranteed to be
+ * available, so the hierarchy must live in device-protected storage. After unlock we keep
+ * using app-scoped external storage and preserve a null result so callers can retry when
+ * that storage becomes available later.
+ */
+internal fun selectRuntimeStorageParent(
+    externalFilesDir: File?,
+    deviceProtectedFilesDir: File,
+    isDirectBootMode: Boolean,
+): File? = if (isDirectBootMode) deviceProtectedFilesDir else externalFilesDir
+
 object DataManager {
     const val DEFAULT_CUSTOM_FILE_NAME = "default.custom.yaml"
     const val USER_CONFIG_FILE_NAME = "user.yaml"
@@ -59,7 +79,6 @@ object DataManager {
             USER_CONFIG_FILE_NAME,
         )
 
-    private const val DATA_CHECKSUMS_NAME = "checksums.json"
     private const val SHARED_DIR_NAME = "shared"
     private const val USER_DIR_NAME = "rime"
 
@@ -98,18 +117,26 @@ object DataManager {
     @Volatile
     private var cachedUserDataDir: File? = null
 
+    private fun runtimeStorageParent(): File? = try {
+        val application = TrimeApplication.getInstance()
+        val context = application.directBootAwareContext
+        selectRuntimeStorageParent(
+            externalFilesDir = if (application.isDirectBootMode) null else context.getExternalFilesDir(null),
+            deviceProtectedFilesDir = context.filesDir,
+            isDirectBootMode = application.isDirectBootMode,
+        )
+    } catch (_: SecurityException) {
+        null
+    } catch (_: IllegalStateException) {
+        null
+    }
+
     private fun resolveAppScopedDir(
         cached: () -> File?,
         name: String,
         store: (File?) -> Unit,
     ): File? = lock.withLock {
-        val externalFilesDir =
-            try {
-                appContext.getExternalFilesDir(null)
-            } catch (_: SecurityException) {
-                null
-            }
-        val resolved = resolveWritableChildDir(externalFilesDir, name)
+        val resolved = resolveWritableChildDir(runtimeStorageParent(), name)
         if (resolved == null) {
             store(null)
             return@withLock null
@@ -181,9 +208,12 @@ object DataManager {
     }
 
     fun sync() = lock.withLock {
-        val oldChecksumsFile = File(dataDir, DATA_CHECKSUMS_NAME)
+        // Direct-boot and normal mode can resolve to different roots. Keep separate
+        // descriptors so syncing one hierarchy never makes the other look current.
+        val checksumsName = resolveDataChecksumsName(TrimeApplication.getInstance().isDirectBootMode)
+        val destChecksumsFile = File(dataDir, checksumsName)
         val oldChecksums =
-            oldChecksumsFile
+            destChecksumsFile
                 .runCatching { deserializeDataChecksums(bufferedReader().use { it.readText() }) }
                 .getOrElse { DataChecksums("", emptyMap()) }
 
@@ -194,7 +224,7 @@ object DataManager {
             DataDiff.diff(oldChecksums, newChecksums),
             copyAsset = { path, destination -> ResourceUtils.copyFile(path, destination.absolutePath).getOrThrow() },
             publishChecksums = {
-                ResourceUtils.copyFile(DATA_CHECKSUMS_NAME, dataDir.resolve(DATA_CHECKSUMS_NAME).absolutePath).getOrThrow()
+                ResourceUtils.copyFile(DATA_CHECKSUMS_NAME, destChecksumsFile.absolutePath).getOrThrow()
             },
         )
 

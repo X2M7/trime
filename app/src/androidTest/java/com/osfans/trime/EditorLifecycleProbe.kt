@@ -473,6 +473,25 @@ object EditorLifecycleProbe {
                     }
                     until("private slide-delete fixture is cleared") { chat.text.isEmpty() }
                     phase("PASS: manual privacy atomically gates speech and native learning, then restores normal input")
+                    PrivacyTriggerSinkProbe.verify(
+                        instrumentation,
+                        PrivacyTriggerSinkProbe.Harness(
+                            service = service,
+                            chat = chat,
+                            target = other,
+                            focus = ::focus,
+                            runApi = ::api,
+                            inputTextContains = { token ->
+                                input()?.let { activeInput ->
+                                    descendants(activeInput)
+                                        .filterIsInstance<TextView>()
+                                        .any { it.text.toString().contains(token) }
+                                } == true
+                            },
+                            speechAllowed = ::speechAllowed,
+                            phase = ::phase,
+                        ),
+                    )
                     main {
                         other.inputType = InputType.TYPE_CLASS_TEXT
                         other.imeOptions = EditorInfo.IME_ACTION_SEARCH

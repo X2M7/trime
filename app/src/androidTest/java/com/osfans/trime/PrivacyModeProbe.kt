@@ -11,6 +11,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.PersistableBundle
 import android.util.Log
+import android.view.KeyEvent
 import com.osfans.trime.core.Rime
 import com.osfans.trime.core.RimeKeyEvent
 import com.osfans.trime.core.RimeLifecycle
@@ -27,6 +28,7 @@ import com.osfans.trime.data.prefs.AppPrefs
 import com.osfans.trime.data.userdict.UserDictManager
 import com.osfans.trime.ime.core.PrivacyMode
 import com.osfans.trime.ime.core.PrivacyModeState
+import com.osfans.trime.ime.keyboard.InputFeedbackManager
 import com.osfans.trime.ui.main.ClipEditActivity
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.delay
@@ -47,7 +49,12 @@ internal object PrivacyModeProbe {
     private const val SENSITIVE_CLIP_EXTRA = "android.content.extra.IS_SENSITIVE"
     private const val LOG_TAG = "T07PrivacyProbe"
 
-    private data class UserDbSnapshot(
+    private fun feedbackField(name: String): Any? = InputFeedbackManager::class.java.getDeclaredField(name).let {
+        it.isAccessible = true
+        it.get(InputFeedbackManager)
+    }
+
+    internal data class UserDbSnapshot(
         val entries: Int,
         val contents: String,
     )
@@ -110,8 +117,11 @@ internal object PrivacyModeProbe {
         }
     }
 
+    /** Shared by the real-editor trigger matrix so both probes apply the same PID filtering. */
+    internal fun ownProcessLogs(pid: Int): String = logForPid(ownLogcat(), pid)
+
     /** Export logical records after the fixture schema has released its LevelDB handle. */
-    private fun userDbSnapshot(prefix: String): UserDbSnapshot {
+    internal fun userDbSnapshot(prefix: String): UserDbSnapshot {
         val output = ByteArrayOutputStream()
         val entries =
             UserDictManager.exportUserDict(output, prefix, "$prefix-export.txt")
@@ -119,7 +129,7 @@ internal object PrivacyModeProbe {
         return UserDbSnapshot(entries, output.toByteArray().toString(Charsets.UTF_8))
     }
 
-    private fun removeOwnedFiles(prefix: String) {
+    internal fun removeOwnedFiles(prefix: String) {
         val root = DataManager.userDataDir
         root.walkBottomUp()
             .filter { it != root && it.name.startsWith(prefix) }
@@ -303,6 +313,7 @@ internal object PrivacyModeProbe {
         val retainedSymbol = "retainedsymbol${UUID.randomUUID().toString().replace("-", "")}"
         val normalSymbol = "normalsymbol${UUID.randomUUID().toString().replace("-", "")}"
         val privateCandidate = "virtualpassword${UUID.randomUUID().toString().replace("-", "")}"
+        val ordinarySpeech = "ordinaryspeech${UUID.randomUUID().toString().replace("-", "")}"
         val logBoundary = UUID.randomUUID().toString().replace("-", "")
         val privateLogStart = "T07_PRIVATE_BEGIN_$logBoundary"
         val privateLogEnd = "T07_PRIVATE_END_$logBoundary"
@@ -319,12 +330,19 @@ internal object PrivacyModeProbe {
         var stateStarted = false
         var enabledSchemaCount = 0
         var recordedFailure: Throwable? = null
+        var feedbackPrepared = false
+        var primaryClipboardCaptured = false
+        var previousPrimaryClip: ClipData? = null
         val generalPrefs = AppPrefs.defaultInstance().general
         val clipboardPrefs = AppPrefs.defaultInstance().clipboard
+        val feedbackPrefs = AppPrefs.defaultInstance().keyboard
         val previousManualPrivacy = generalPrefs.manualPrivacyMode.getValue()
         val previousClipboardListening = clipboardPrefs.clipboardListening.getValue()
+        val previousSpeakOnKeyPress = feedbackPrefs.speakOnKeyPress.getValue()
+        val previousSpeakOnCommit = feedbackPrefs.speakOnCommit.getValue()
         val previousLastBean = ClipboardHelper.lastBean
-        val symbolHistoryFile = File(instrumentation.targetContext.filesDir, SymbolHistory.FILE_NAME)
+        val symbolHistoryFile =
+            TrimeApplication.getInstance().directBootAwareContext.filesDir.resolve(SymbolHistory.FILE_NAME)
         val previousSymbolHistory = symbolHistoryFile.takeIf(File::exists)?.readBytes()
         val userConfigFile = File(DataManager.userDataDir, "user.yaml")
         val previousUserConfig = userConfigFile.takeIf(File::exists)?.readBytes()
@@ -389,6 +407,15 @@ internal object PrivacyModeProbe {
             checkNotNull(captured)
         }
 
+        fun assertSpeechRejected(text: String) {
+            instrumentation.runOnMainSync {
+                InputFeedbackManager.keyPressSpeak(KeyEvent.KEYCODE_A)
+                InputFeedbackManager.textCommitSpeak(text)
+                check(feedbackField("tts") == null) { "Private speech initialized TextToSpeech" }
+                check(feedbackField("pendingSpeech") == null) { "Private content reached pending speech" }
+            }
+        }
+
         try {
             check(Build.HARDWARE in setOf("ranchu", "goldfish")) { "Emulator only" }
             check(File(instrumentation.targetContext.getExternalFilesDir(null), "runtime-audit-dedicated").isFile) {
@@ -400,6 +427,14 @@ internal object PrivacyModeProbe {
                 clipboardPrefs.clipboardListening.setValue(true)
                 PrivacyModeState.initialize(manual = false)
                 ClipboardHelper.clearTransientSuggestion()
+                feedbackPrepared = true
+                InputFeedbackManager.destroy()
+                feedbackPrefs.speakOnKeyPress.setValue(true)
+                feedbackPrefs.speakOnCommit.setValue(true)
+                InputFeedbackManager.startInput(sensitive = false)
+                check(feedbackField("tts") == null && feedbackField("pendingSpeech") == null) {
+                    "Idle speech fixture was not clean"
+                }
             }
 
             runBlocking {
@@ -424,6 +459,10 @@ internal object PrivacyModeProbe {
                     }
                     check(RimeDaemon.getFirstSessionOrNull() == null) {
                         "The clipboard foreground Activity unexpectedly started a Rime session"
+                    }
+                    instrumentation.runOnMainSync {
+                        previousPrimaryClip = clipboard.primaryClip?.let(::ClipData)
+                        primaryClipboardCaptured = true
                     }
                     Log.i(LOG_TAG, privateLogStart)
                     setClipboard(ClipData.newPlainText("editable test", editableClip))
@@ -509,6 +548,7 @@ internal object PrivacyModeProbe {
 
                     PrivacyModeState.beginInput(privacyOwner, PrivacyMode(password = true))
                     stateStarted = true
+                    assertSpeechRejected(privateClip)
                     setClipboard(ClipData.newPlainText("private test", privateClip))
                     assertNotCaptured(privateClip)
                     phase("active unified privacy state excludes an ordinary clipboard item")
@@ -780,6 +820,7 @@ internal object PrivacyModeProbe {
                         instrumentation.runOnMainSync { PrivacyModeState.beginInput(owner, mode) }
                         try {
                             check(PrivacyModeState.active) { "$mode did not activate unified privacy" }
+                            assertSpeechRejected(text)
                             setClipboard(ClipData.newPlainText("private trigger test", text))
                             assertNotCaptured(text)
                         } finally {
@@ -792,6 +833,20 @@ internal object PrivacyModeProbe {
                         instrumentation.runOnMainSync { ClipboardHelper.onPrimaryClipChanged() }
                         assertNotCaptured(text)
                     }
+                    instrumentation.runOnMainSync {
+                        InputFeedbackManager.textCommitSpeak(ordinarySpeech)
+                        check(feedbackField("tts") == null) {
+                            "No-audio ordinary speech control initialized TextToSpeech"
+                        }
+                        check(feedbackField("pendingSpeech") == ordinarySpeech) {
+                            "Ordinary speech dispatch did not recover after privacy mode"
+                        }
+                        InputFeedbackManager.finishInput()
+                        check(feedbackField("pendingSpeech") == null) {
+                            "Ordinary speech control left pending content"
+                        }
+                    }
+                    phase("real speech entry points reject private content and recover without device audio")
                     Log.i(LOG_TAG, privateLogEnd)
                     phase(
                         "private commits, $enabledSchemaCount enabled schemas and active-switcher boundaries " +
@@ -1054,8 +1109,27 @@ internal object PrivacyModeProbe {
             }
             cleanMain { clipboardPrefs.clipboardListening.setValue(false) }
             cleanMain { PrivacyModeState.initialize(manual = false) }
-            cleanMain { clipboard.setPrimaryClip(ClipData.newPlainText("privacy-probe-cleanup", "")) }
+            if (primaryClipboardCaptured) {
+                cleanMain {
+                    val clipToRestore = previousPrimaryClip
+                    if (clipToRestore != null) {
+                        clipboard.setPrimaryClip(ClipData(clipToRestore))
+                    } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                        clipboard.clearPrimaryClip()
+                    } else {
+                        // Android 5.0-8.1 has no public clearPrimaryClip API.
+                        clipboard.setPrimaryClip(ClipData.newPlainText("privacy-probe-cleanup", ""))
+                    }
+                }
+            }
             cleanMain { ClipboardHelper.onPrimaryClipChanged() }
+            if (feedbackPrepared) {
+                cleanMain {
+                    InputFeedbackManager.destroy()
+                    feedbackPrefs.speakOnKeyPress.setValue(previousSpeakOnKeyPress)
+                    feedbackPrefs.speakOnCommit.setValue(previousSpeakOnCommit)
+                }
+            }
             cleanMain { generalPrefs.manualPrivacyMode.setValue(previousManualPrivacy) }
             cleanMain { PrivacyModeState.initialize(previousManualPrivacy) }
             cleanMain { ClipboardHelper.lastBean = previousLastBean }

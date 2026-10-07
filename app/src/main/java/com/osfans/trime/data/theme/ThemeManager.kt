@@ -6,9 +6,14 @@
 package com.osfans.trime.data.theme
 
 import android.content.res.Configuration
+import android.os.Build
+import androidx.annotation.RequiresApi
+import androidx.core.content.edit
+import androidx.preference.PreferenceManager
 import com.osfans.trime.data.base.DataManager
 import com.osfans.trime.data.prefs.AppPrefs
 import com.osfans.trime.util.WeakHashSet
+import com.osfans.trime.util.appContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -161,6 +166,17 @@ object ThemeManager {
             applyTheme(resolvedTheme, forceReload)
             prefs.selectedTheme.setValue(resolvedTheme.configId)
             resolvedTheme.configId
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.N)
+    fun syncToDeviceEncryptedStorage() {
+        val ctx = appContext.createDeviceProtectedStorageContext()
+        val sp = PreferenceManager.getDefaultSharedPreferences(ctx)
+        sp.edit {
+            prefs.preferenceDelegates.forEach {
+                it.value.putValueTo(this@edit)
+            }
         }
     }
 }

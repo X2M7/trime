@@ -6,20 +6,26 @@
 package com.osfans.trime
 
 import android.app.Application
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.res.Configuration
+import android.os.Build
+import android.os.Handler
 import android.os.Process
 import android.util.Log
 import androidx.annotation.Keep
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
 import androidx.preference.PreferenceManager
+import com.osfans.trime.daemon.RimeDaemon
 import com.osfans.trime.data.db.ClipboardHelper
 import com.osfans.trime.data.db.CollectionHelper
 import com.osfans.trime.data.prefs.AppPrefs
 import com.osfans.trime.data.prefs.PreferenceDelegate
 import com.osfans.trime.data.theme.ColorManager
+import com.osfans.trime.data.theme.ThemeManager
 import com.osfans.trime.ime.core.PrivacyModeState
 import com.osfans.trime.receiver.RimeIntentReceiver
 import com.osfans.trime.ui.main.LogActivity
@@ -30,7 +36,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
+import kotlinx.coroutines.withTimeoutOrNull
+import splitties.systemservices.userManager
 import timber.log.Timber
+import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.system.exitProcess
 
 /**
@@ -50,6 +59,61 @@ class TrimeApplication : Application() {
             PrivacyModeState.setManual(enabled, ClipboardHelper::quarantineCurrentPrimaryClip)
         }
 
+    private val unlockReplacementStarted = AtomicBoolean(false)
+
+    private val unlockReceiver =
+        object : BroadcastReceiver() {
+            override fun onReceive(context: Context, intent: Intent) {
+                if (intent.action != Intent.ACTION_USER_UNLOCKED) return
+                val pendingResult = goAsync()
+                replaceDirectBootProcessAfterUnlock(pendingResult::finish)
+            }
+        }
+
+    private fun replaceDirectBootProcessAfterUnlock(finishBroadcast: (() -> Unit)? = null) {
+        if (!isDirectBootMode || !unlockReplacementStarted.compareAndSet(false, true)) {
+            finishBroadcast?.invoke()
+            return
+        }
+        Timber.i("Device unlocked; replacing the direct-boot process")
+        val handler = Handler(mainLooper)
+        val broadcastFinished = AtomicBoolean(false)
+        val finishBroadcastOnce = {
+            if (broadcastFinished.compareAndSet(false, true)) finishBroadcast?.invoke()
+        }
+        val forceExit =
+            Runnable {
+                Timber.w("Forcing replacement of an unresponsive direct-boot process")
+                finishBroadcastOnce()
+                exitProcess(0)
+            }
+        handler.postDelayed(forceExit, UNLOCK_PROCESS_EXIT_TIMEOUT_MS)
+        coroutineScope.launch(Dispatchers.IO) {
+            try {
+                val restoreResult =
+                    runCatching { AppPrefs.restoreDirectBootChangesToCredentialStorage() }
+                        .onFailure { Timber.w(it, "Unable to restore Direct Boot preference changes") }
+                        .getOrNull()
+                if (restoreResult?.journalRetained == true) {
+                    Timber.w("Direct Boot preference changes remain journaled for the next normal start")
+                }
+                val stopped = withTimeoutOrNull(RIME_SHUTDOWN_TIMEOUT_MS) {
+                    RimeDaemon.shutdownForProcessExit()
+                    true
+                } ?: false
+                if (!stopped) {
+                    Timber.w("Timed out stopping Rime before process replacement")
+                }
+            } catch (error: Throwable) {
+                Timber.w(error, "Unable to stop Rime cleanly before process replacement")
+            } finally {
+                handler.removeCallbacks(forceExit)
+                finishBroadcastOnce()
+                exitProcess(0)
+            }
+        }
+    }
+
     private fun registerBroadcastReceiver() {
         val intentFilter =
             IntentFilter().apply {
@@ -66,14 +130,40 @@ class TrimeApplication : Application() {
         )
     }
 
+    var isDirectBootMode = false
+        private set
+
+    val directBootAwareContext: Context
+        get() = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && isDirectBootMode) {
+            createDeviceProtectedStorageContext()
+        } else {
+            applicationContext
+        }
+
     override fun onCreate() {
         super.onCreate()
+        instance = this
+        var unlockDetectedDuringStartup = false
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && !userManager.isUserUnlocked) {
+            isDirectBootMode = true
+            ContextCompat.registerReceiver(
+                this,
+                unlockReceiver,
+                IntentFilter(Intent.ACTION_USER_UNLOCKED),
+                ContextCompat.RECEIVER_NOT_EXPORTED,
+            )
+            // ACTION_USER_UNLOCKED is not sticky. Close the check/register race by checking again
+            // after the receiver is active. Finish the minimum DE initialization before replacing
+            // the process because Rime construction requires AppPrefs to be ready.
+            unlockDetectedDuringStartup = userManager.isUserUnlocked
+        }
+        val ctx = directBootAwareContext
         if (!BuildConfig.DEBUG) {
             val previousHandler = Thread.getDefaultUncaughtExceptionHandler()
             Thread.setDefaultUncaughtExceptionHandler { thread, e ->
                 try {
                     val crashTime = System.currentTimeMillis()
-                    val sharedPrefs = PreferenceManager.getDefaultSharedPreferences(applicationContext)
+                    val sharedPrefs = PreferenceManager.getDefaultSharedPreferences(ctx)
                     val lastCrashTimePrefKey = "last_crash_time"
                     val lastCrashTime = sharedPrefs.getLong(lastCrashTimePrefKey, -1L)
                     sharedPrefs.edit(commit = true) {
@@ -84,7 +174,7 @@ class TrimeApplication : Application() {
                         return@setDefaultUncaughtExceptionHandler
                     }
                     startActivity(
-                        Intent(applicationContext, LogActivity::class.java).apply {
+                        Intent(ctx, LogActivity::class.java).apply {
                             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                             putExtra(LogActivity.FROM_CRASH, true)
                             // avoid transaction overflow
@@ -105,7 +195,6 @@ class TrimeApplication : Application() {
                 }
             }
         }
-        instance = this
         try {
             if (BuildConfig.DEBUG) {
                 Timber.plant(
@@ -142,8 +231,13 @@ class TrimeApplication : Application() {
                     },
                 )
             }
-            val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
-            val appPrefs = AppPrefs.initDefault(sharedPreferences)
+            val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(ctx)
+            Timber.d("isDirectBootMode=$isDirectBootMode")
+            val appPrefs =
+                AppPrefs.initDefault(
+                    sharedPreferences,
+                    usingDeviceProtectedStorage = isDirectBootMode,
+                )
             PrivacyModeState.initialize(appPrefs.general.manualPrivacyMode.getValue())
             appPrefs.general.manualPrivacyMode.registerOnChangeListener(manualPrivacyModeListener)
             // record last pid for crash logs
@@ -153,12 +247,17 @@ class TrimeApplication : Application() {
                 Timber.d("Last pid is $lastPid. Set it to current pid: $currentPid")
                 setValue(currentPid)
             }
-            ClipboardHelper.init(applicationContext)
-            CollectionHelper.init(applicationContext)
+            ClipboardHelper.init(ctx, persistHistory = !isDirectBootMode)
+            CollectionHelper.init(ctx, persistHistory = !isDirectBootMode)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && !isDirectBootMode) {
+                appPrefs.syncToDeviceEncryptedStorage()
+                ThemeManager.syncToDeviceEncryptedStorage()
+            }
             registerBroadcastReceiver()
             startWorkManager()
+            if (unlockDetectedDuringStartup) replaceDirectBootProcessAfterUnlock()
         } catch (e: Exception) {
-            e.fillInStackTrace()
+            Timber.e(e, "Application initialization failed")
             return
         }
     }
@@ -173,6 +272,10 @@ class TrimeApplication : Application() {
     }
 
     private fun startWorkManager() {
+        if (isDirectBootMode) {
+            Timber.d("Skip WorkManager initialization in direct-boot mode")
+            return
+        }
         coroutineScope.launch(Dispatchers.IO) {
             BackgroundSyncWork.start(applicationContext)
         }
@@ -187,6 +290,8 @@ class TrimeApplication : Application() {
         fun getLastPid() = lastPid
 
         private const val MAX_STACKTRACE_SIZE = 128000
+        private const val RIME_SHUTDOWN_TIMEOUT_MS = 5_000L
+        private const val UNLOCK_PROCESS_EXIT_TIMEOUT_MS = 7_000L
 
         /**
          * This permission is requested by com.android.shell, makes it possible to start

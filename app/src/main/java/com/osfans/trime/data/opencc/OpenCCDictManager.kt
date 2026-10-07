@@ -19,7 +19,7 @@ object OpenCCDictManager {
         System.loadLibrary("rime_jni")
     }
 
-    private val sharedDir = File(DataManager.sharedDataDir, "opencc").also { it.mkdirs() }
+    private val sharedDir get() = File(DataManager.sharedDataDir, "opencc").also { it.mkdirs() }
     private val userDir get() = File(DataManager.userDataDir, "opencc").also { it.mkdirs() }
     private val conversionCache = DictionaryConversionCache()
 

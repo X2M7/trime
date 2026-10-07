@@ -4,8 +4,8 @@
 
 package com.osfans.trime.data
 
+import com.osfans.trime.TrimeApplication
 import com.osfans.trime.ime.core.PrivacyModeState
-import com.osfans.trime.util.appContext
 
 class SymbolHistory(
     val capacity: Int,
@@ -14,7 +14,9 @@ class SymbolHistory(
         const val FILE_NAME = "symbol_history"
     }
 
-    private val file = appContext.filesDir.resolve(FILE_NAME).apply { createNewFile() }
+    private val file =
+        TrimeApplication.getInstance().directBootAwareContext.filesDir.resolve(FILE_NAME)
+            .apply { createNewFile() }
     private var loaded = false
 
     fun load() {

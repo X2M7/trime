@@ -8,6 +8,7 @@ package com.osfans.trime.data.sync
 import android.content.ContentResolver
 import android.net.Uri
 import android.provider.DocumentsContract
+import com.osfans.trime.TrimeApplication
 import com.osfans.trime.data.base.DataManager
 import com.osfans.trime.data.prefs.AppPrefs
 import com.osfans.trime.util.DeployNotification
@@ -51,6 +52,22 @@ internal data class SyncIndexData(
     val treeUri: String = "",
     val entries: Map<String, SyncEntry> = emptyMap(),
 )
+
+internal data class RuntimeStorageChoice(
+    val mode: DataStorageMode,
+    val treeUri: String,
+)
+
+/** Direct boot always uses the isolated device-protected hierarchy and never a persisted SAF tree. */
+internal fun resolveRuntimeStorageChoice(
+    configuredMode: DataStorageMode,
+    configuredTreeUri: String,
+    isDirectBootMode: Boolean,
+): RuntimeStorageChoice = if (isDirectBootMode) {
+    RuntimeStorageChoice(DataStorageMode.APP_STORAGE, "")
+} else {
+    RuntimeStorageChoice(configuredMode, configuredTreeUri)
+}
 
 /**
  * Mirrors the user data dir against the folder the user picked in [DataStorageMode.EXTERNAL_SYNC]:
@@ -129,9 +146,17 @@ object RimeDataSync {
 
     // region Storage mode and picked folder
 
-    fun usesExternalSync(): Boolean = prefs.dataStorageMode.getValue() == DataStorageMode.EXTERNAL_SYNC
+    private fun isDirectBootMode(): Boolean = TrimeApplication.getInstance().isDirectBootMode
 
-    fun treeUri(): Uri? = prefs.externalRimeTreeUri.getValue().takeIf { it.isNotBlank() }?.let(Uri::parse)
+    private fun runtimeStorageChoice(): RuntimeStorageChoice = resolveRuntimeStorageChoice(
+        configuredMode = prefs.dataStorageMode.getValue(),
+        configuredTreeUri = prefs.externalRimeTreeUri.getValue(),
+        isDirectBootMode = isDirectBootMode(),
+    )
+
+    fun usesExternalSync(): Boolean = runtimeStorageChoice().mode == DataStorageMode.EXTERNAL_SYNC
+
+    fun treeUri(): Uri? = runtimeStorageChoice().treeUri.takeIf { it.isNotBlank() }?.let(Uri::parse)
 
     fun hasExternalAccess(): Boolean = try {
         val uriString = treeUri()?.toString() ?: return false
@@ -168,10 +193,7 @@ object RimeDataSync {
         DataStorageMode.EXTERNAL_SYNC -> treeUri.isNotBlank()
     }
 
-    fun isStorageChoiceDone(): Boolean = isStorageChoiceComplete(
-        prefs.dataStorageMode.getValue(),
-        prefs.externalRimeTreeUri.getValue(),
-    )
+    fun isStorageChoiceDone(): Boolean = runtimeStorageChoice().let { isStorageChoiceComplete(it.mode, it.treeUri) }
 
     /**
      * Remembers the folder picked by the user.
@@ -180,6 +202,7 @@ object RimeDataSync {
      * folder the app should sync with and drops the grant of the previous one.
      */
     suspend fun persistTreeUri(uri: Uri) {
+        check(!isDirectBootMode()) { "A SAF data folder cannot be selected during direct boot" }
         val previous = treeUri()
         val changed = previous?.toString() != uri.toString()
         try {

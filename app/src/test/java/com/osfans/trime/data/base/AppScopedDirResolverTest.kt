@@ -4,6 +4,8 @@
 
 package com.osfans.trime.data.base
 
+import com.osfans.trime.data.sync.DataStorageMode
+import com.osfans.trime.data.sync.resolveRuntimeStorageChoice
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.nulls.shouldNotBeNull
@@ -41,6 +43,78 @@ class AppScopedDirResolverTest :
             } finally {
                 parent.deleteRecursively()
             }
+        }
+
+        "normal mode keeps unavailable external storage unavailable" {
+            val deviceProtected = createTempDirectory().toFile()
+            try {
+                selectRuntimeStorageParent(
+                    externalFilesDir = null,
+                    deviceProtectedFilesDir = deviceProtected,
+                    isDirectBootMode = false,
+                ).shouldBeNull()
+            } finally {
+                deviceProtected.deleteRecursively()
+            }
+        }
+
+        "normal mode selects app scoped external storage" {
+            val external = createTempDirectory().toFile()
+            val deviceProtected = createTempDirectory().toFile()
+            try {
+                selectRuntimeStorageParent(
+                    externalFilesDir = external,
+                    deviceProtectedFilesDir = deviceProtected,
+                    isDirectBootMode = false,
+                ) shouldBe external
+            } finally {
+                external.deleteRecursively()
+                deviceProtected.deleteRecursively()
+            }
+        }
+
+        "direct boot selects device protected storage" {
+            val external = createTempDirectory().toFile()
+            val deviceProtected = createTempDirectory().toFile()
+            try {
+                selectRuntimeStorageParent(
+                    externalFilesDir = external,
+                    deviceProtectedFilesDir = deviceProtected,
+                    isDirectBootMode = true,
+                ) shouldBe deviceProtected
+            } finally {
+                external.deleteRecursively()
+                deviceProtected.deleteRecursively()
+            }
+        }
+
+        "direct boot isolates runtime storage from configured SAF state" {
+            val choice =
+                resolveRuntimeStorageChoice(
+                    configuredMode = DataStorageMode.EXTERNAL_SYNC,
+                    configuredTreeUri = "content://provider/tree/persisted",
+                    isDirectBootMode = true,
+                )
+
+            choice.mode shouldBe DataStorageMode.APP_STORAGE
+            choice.treeUri shouldBe ""
+        }
+
+        "normal mode preserves configured SAF state" {
+            val choice =
+                resolveRuntimeStorageChoice(
+                    configuredMode = DataStorageMode.EXTERNAL_SYNC,
+                    configuredTreeUri = "content://provider/tree/persisted",
+                    isDirectBootMode = false,
+                )
+
+            choice.mode shouldBe DataStorageMode.EXTERNAL_SYNC
+            choice.treeUri shouldBe "content://provider/tree/persisted"
+        }
+
+        "direct boot and normal mode keep independent checksum state" {
+            resolveDataChecksumsName(isDirectBootMode = true) shouldBe "checksums.direct-boot.json"
+            resolveDataChecksumsName(isDirectBootMode = false) shouldBe "checksums.json"
         }
 
         "missing child is created under parent" {

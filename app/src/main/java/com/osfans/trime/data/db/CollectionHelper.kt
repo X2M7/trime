@@ -25,10 +25,18 @@ object CollectionHelper : CoroutineScope by CoroutineScope(SupervisorJob() + Dis
 
     private var lastBean: DatabaseBean? = null
 
-    fun init(context: Context) {
+    fun init(
+        context: Context,
+        persistHistory: Boolean = true,
+    ) {
         cltDb =
-            Room
-                .databaseBuilder(context, Database::class.java, "collection.db")
+            (
+                if (persistHistory) {
+                    Room.databaseBuilder(context, Database::class.java, "collection.db")
+                } else {
+                    Room.inMemoryDatabaseBuilder(context, Database::class.java)
+                }
+                )
                 .addMigrations(Database.MIGRATION_3_4)
                 .build()
         cltDao = cltDb.databaseDao()
