@@ -5,6 +5,9 @@
 
 package com.osfans.trime.ime.keyboard
 
+import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
 import android.media.AudioAttributes
 import android.media.AudioManager
 import android.media.SoundPool
@@ -58,11 +61,30 @@ object InputFeedbackManager {
         initialized = true
     }
 
+    @Suppress("DEPRECATION")
+    private fun hasSpeechEngine(context: Context): Boolean = context.packageManager
+        .queryIntentServices(
+            Intent(TextToSpeech.Engine.INTENT_ACTION_TTS_SERVICE),
+            PackageManager.MATCH_DEFAULT_ONLY,
+        )
+        .orEmpty()
+        .isNotEmpty()
+
     private fun prepareSpeech(text: String) {
         pendingSpeech = text
-        if (tts != null || SystemClock.uptimeMillis() < speechRetryAfter) return
+        if (tts != null) return
+        if (SystemClock.uptimeMillis() < speechRetryAfter) {
+            pendingSpeech = null
+            return
+        }
         if (!initialized) return
         val context = TrimeApplication.getInstance()
+        if (!hasSpeechEngine(context)) {
+            pendingSpeech = null
+            speechRetryAfter = SystemClock.uptimeMillis() + 30_000
+            Timber.i("Speech feedback engine unavailable; retry delayed")
+            return
+        }
         val currentGeneration = generation
         try {
             tts = TextToSpeech(context) { status ->
@@ -73,7 +95,7 @@ object InputFeedbackManager {
                         tts?.shutdown()
                         tts = null
                         speechRetryAfter = SystemClock.uptimeMillis() + 30_000
-                        Timber.w("Speech feedback engine initialization failed: %d", status)
+                        Timber.i("Speech feedback engine unavailable (status=%d); retry delayed", status)
                     }
                     if (speechReady && speechAllowed && !PrivacyModeState.active && (speakOnKeyPress || speakOnCommit)) {
                         pendingSpeech?.let { tts?.speak(it, TextToSpeech.QUEUE_FLUSH, null, "TrimeTTS") }

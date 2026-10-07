@@ -1,17 +1,20 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package com.osfans.trime
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Instrumentation
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Build
 import android.os.Bundle
 import android.os.PersistableBundle
 import android.util.Log
 import android.view.KeyEvent
+import androidx.preference.PreferenceManager
 import com.osfans.trime.core.Rime
 import com.osfans.trime.core.RimeKeyEvent
 import com.osfans.trime.core.RimeLifecycle
@@ -52,6 +55,22 @@ internal object PrivacyModeProbe {
     private fun feedbackField(name: String): Any? = InputFeedbackManager::class.java.getDeclaredField(name).let {
         it.isAccessible = true
         it.get(InputFeedbackManager)
+    }
+
+    @SuppressLint("ApplySharedPref")
+    private fun commitBooleanPreferences(
+        preferences: SharedPreferences,
+        values: Map<String, Boolean>,
+        label: String,
+    ) {
+        val editor = preferences.edit()
+        values.forEach(editor::putBoolean)
+        check(editor.commit()) { "Could not persist restored $label preferences" }
+        values.forEach { (key, value) ->
+            check(preferences.getBoolean(key, !value) == value) {
+                "Restored $label preference did not persist: $key"
+            }
+        }
     }
 
     internal data class UserDbSnapshot(
@@ -1134,6 +1153,31 @@ internal object PrivacyModeProbe {
             cleanMain { PrivacyModeState.initialize(previousManualPrivacy) }
             cleanMain { ClipboardHelper.lastBean = previousLastBean }
             cleanMain { clipboardPrefs.clipboardListening.setValue(previousClipboardListening) }
+            cleanMain {
+                val credentialPreferences = feedbackPrefs.speakOnKeyPress.sharedPreferences
+                check(
+                    listOf(
+                        feedbackPrefs.speakOnCommit.sharedPreferences,
+                        generalPrefs.manualPrivacyMode.sharedPreferences,
+                        clipboardPrefs.clipboardListening.sharedPreferences,
+                    ).all { it === credentialPreferences },
+                ) { "Privacy probe preferences do not share the credential store" }
+                val restoredValues =
+                    mapOf(
+                        feedbackPrefs.speakOnKeyPress.key to previousSpeakOnKeyPress,
+                        feedbackPrefs.speakOnCommit.key to previousSpeakOnCommit,
+                        generalPrefs.manualPrivacyMode.key to previousManualPrivacy,
+                        clipboardPrefs.clipboardListening.key to previousClipboardListening,
+                    )
+                commitBooleanPreferences(credentialPreferences, restoredValues, "credential")
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    val devicePreferences =
+                        PreferenceManager.getDefaultSharedPreferences(
+                            instrumentation.targetContext.createDeviceProtectedStorageContext(),
+                        )
+                    commitBooleanPreferences(devicePreferences, restoredValues, "device-protected")
+                }
+            }
             cleanMain { clipboardForegroundActivity?.finish() }
             cleanupFailure?.let { failure ->
                 passed = false

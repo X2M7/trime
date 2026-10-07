@@ -3,8 +3,12 @@ package com.osfans.trime
 
 import android.app.Activity
 import android.app.Instrumentation
+import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.os.SystemClock
+import android.speech.tts.TextToSpeech
 import android.view.KeyEvent
 import com.osfans.trime.daemon.RimeDaemon
 import com.osfans.trime.data.base.DataManager
@@ -72,6 +76,27 @@ internal object InputFeedbackProbe {
                             check(field("tts") == null && field("pendingSpeech") == null)
                             prefs.speakOnKeyPress.setValue(false)
                             prefs.speakOnCommit.setValue(false)
+                            @Suppress("DEPRECATION")
+                            val hasSpeechEngine =
+                                instrumentation.targetContext.packageManager
+                                    .queryIntentServices(
+                                        Intent(TextToSpeech.Engine.INTENT_ACTION_TTS_SERVICE),
+                                        PackageManager.MATCH_DEFAULT_ONLY,
+                                    )
+                                    .orEmpty()
+                                    .isNotEmpty()
+                            if (!hasSpeechEngine) {
+                                prefs.speakOnCommit.setValue(true)
+                                InputFeedbackManager.startInput(sensitive = false)
+                                InputFeedbackManager.textCommitSpeak("unavailable-engine-control")
+                                check(field("tts") == null && field("pendingSpeech") == null)
+                                val retryAfter = field("speechRetryAfter") as Long
+                                check(retryAfter > SystemClock.uptimeMillis())
+                                InputFeedbackManager.textCommitSpeak("unavailable-engine-cooldown")
+                                check(field("tts") == null && field("pendingSpeech") == null)
+                                check(field("speechRetryAfter") == retryAfter)
+                                prefs.speakOnCommit.setValue(false)
+                            }
                         }
                         val fdsBefore = File("/proc/self/fd").list()!!.size
                         repeat(200) { SoundEffectManager.getAllSoundEffects() }
