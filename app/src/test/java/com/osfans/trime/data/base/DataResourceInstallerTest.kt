@@ -10,6 +10,67 @@ import kotlin.io.path.createTempDirectory
 
 class DataResourceInstallerTest :
     StringSpec({
+        "current descriptor repairs only missing installed files" {
+            val shared = createTempDirectory().toFile()
+            try {
+                shared.resolve("present.yaml").writeText("present")
+                val checksums =
+                    DataChecksums(
+                        "same",
+                        linkedMapOf(
+                            "shared" to "",
+                            "shared/present.yaml" to "present-sha256",
+                            "shared/missing.yaml" to "missing-sha256",
+                        ),
+                    )
+                val probed = mutableListOf<String>()
+
+                DataDiff.diff(checksums, checksums) { path ->
+                    probed += path
+                    resolveSharedAssetDestination(shared, path).isFile
+                } shouldBe listOf(DataDiff.CreateFile("shared/missing.yaml"))
+                probed shouldBe
+                    listOf(
+                        "shared/present.yaml",
+                        "shared/missing.yaml",
+                    )
+            } finally {
+                shared.deleteRecursively()
+            }
+        }
+
+        "changed descriptor preserves update and removal semantics" {
+            val old =
+                DataChecksums(
+                    "old",
+                    mapOf(
+                        "shared/changed.yaml" to "old-sha256",
+                        "shared/missing.yaml" to "same-sha256",
+                        "shared/removed.yaml" to "removed-sha256",
+                    ),
+                )
+            val new =
+                DataChecksums(
+                    "new",
+                    mapOf(
+                        "shared/changed.yaml" to "new-sha256",
+                        "shared/missing.yaml" to "same-sha256",
+                    ),
+                )
+            val probed = mutableListOf<String>()
+
+            DataDiff.diff(old, new) { path ->
+                probed += path
+                false
+            } shouldBe
+                listOf(
+                    DataDiff.UpdateFile("shared/changed.yaml"),
+                    DataDiff.CreateFile("shared/missing.yaml"),
+                    DataDiff.DeleteFile("shared/removed.yaml"),
+                )
+            probed shouldBe listOf("shared/missing.yaml")
+        }
+
         "nested removal preserves the top-level namesake and user data" {
             val root = createTempDirectory().toFile()
             try {
@@ -66,7 +127,18 @@ class DataResourceInstallerTest :
             val shared = createTempDirectory().toFile()
             try {
                 shared.resolve("keep.txt").writeText("keep")
-                for (path in listOf("rime/userdb", "shared/../rime/userdb", "shared/opencc/../../rime/userdb", "shared")) {
+                for (
+                path in
+                listOf(
+                    "rime/userdb",
+                    "shared/../rime/userdb",
+                    "shared/opencc/../../rime/userdb",
+                    "shared//alias",
+                    "shared/./alias",
+                    "shared\\alias",
+                    "shared",
+                )
+                ) {
                     shouldThrow<RuntimeException> {
                         DataResourceInstaller.install(
                             shared,

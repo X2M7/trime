@@ -39,6 +39,28 @@ internal object StartupFailureProbe {
                     val checksum = File(dataDir, "checksums.json")
                     val savedChecksum = File(checksum.parentFile, "checksums-$suffix.json")
                     val hadChecksum = checksum.exists()
+                    check(hadChecksum) { "Missing installed resource descriptor" }
+                    val checksumBeforeRepair = checksum.readBytes()
+                    val missingAsset = File(shared, "default.yaml")
+                    check(missingAsset.isFile)
+                    val missingAssetContents = missingAsset.readBytes()
+                    check(missingAsset.delete())
+                    try {
+                        val session = RimeDaemon.createSession("missing-asset-repair-probe")
+                        try {
+                            session.runOnReady {
+                                check(isReady && selectSchema("luna_pinyin_t9"))
+                            }
+                            check(missingAsset.isFile)
+                            check(missingAsset.readBytes().contentEquals(missingAssetContents))
+                            check(checksum.readBytes().contentEquals(checksumBeforeRepair))
+                        } finally {
+                            RimeDaemon.destroySession("missing-asset-repair-probe")
+                        }
+                    } finally {
+                        if (!missingAsset.isFile) missingAsset.writeBytes(missingAssetContents)
+                    }
+                    RimeDaemon.engineState.first { it == RimeLifecycle.State.STOPPED }
                     check(shared.renameTo(savedShared))
                     try {
                         if (hadChecksum) check(checksum.renameTo(savedChecksum))
@@ -255,7 +277,7 @@ internal object StartupFailureProbe {
                 }
             }
             success = true
-            result.putString("stream", "PASS: asset-copy and unusable-configuration failure, usable existing dictionary after malformed optional patch, private transient-state clearing on failed restart, bounded wait, unchanged checksums, retry, typing, stale-theme rejection and shutdown\n")
+            result.putString("stream", "PASS: missing asset repair, asset-copy and unusable-configuration failure, usable existing dictionary after malformed optional patch, private transient-state clearing on failed restart, bounded wait, unchanged checksums, retry, typing, stale-theme rejection and shutdown\n")
         } catch (e: Throwable) {
             result.putString("stream", "FAIL: ${e.stackTraceToString()}\n")
         } finally {

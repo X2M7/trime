@@ -218,10 +218,13 @@ object DataManager {
                 .getOrElse { DataChecksums("", emptyMap()) }
 
         val newChecksums = appContext.assets.dataChecksums()
+        val sharedDir = sharedDataDir
 
         DataResourceInstaller.install(
-            sharedDataDir,
-            DataDiff.diff(oldChecksums, newChecksums),
+            sharedDir,
+            DataDiff.diff(oldChecksums, newChecksums) { path ->
+                resolveSharedAssetDestination(sharedDir, path).isFile
+            },
             copyAsset = { path, destination -> ResourceUtils.copyFile(path, destination.absolutePath).getOrThrow() },
             publishChecksums = {
                 ResourceUtils.copyFile(DATA_CHECKSUMS_NAME, destChecksumsFile.absolutePath).getOrThrow()
