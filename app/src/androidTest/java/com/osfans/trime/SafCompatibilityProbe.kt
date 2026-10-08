@@ -22,6 +22,7 @@ import com.osfans.trime.core.RimeMaintenanceMutex
 import com.osfans.trime.data.base.DataManager
 import com.osfans.trime.data.prefs.AppPrefs
 import com.osfans.trime.data.sync.RimeDataSync
+import com.osfans.trime.data.sync.SafDirectoryListing
 import com.osfans.trime.data.sync.SyncEntry
 import com.osfans.trime.data.sync.SyncFingerprint
 import com.osfans.trime.data.sync.fixture.FixtureAtomicSafFileCopy
@@ -95,26 +96,7 @@ object SafCompatibilityProbe {
                 Document.COLUMN_LAST_MODIFIED,
             )
 
-        override suspend fun list(dirUri: Uri): List<StorageDocument> {
-            val parentId = DocumentsContract.getDocumentId(dirUri)
-            val childrenUri = DocumentsContract.buildChildDocumentsUriUsingTree(dirUri, parentId)
-            val cursor =
-                resolver.query(childrenUri, projection, null, null, null)
-                    ?: error("Cannot list documents: $dirUri")
-            return cursor.use {
-                check(!it.extras.getBoolean(DocumentsContract.EXTRA_LOADING)) {
-                    "Document listing is still loading: $dirUri"
-                }
-                check(it.extras.getString(DocumentsContract.EXTRA_ERROR).isNullOrEmpty()) {
-                    "Document listing failed: $dirUri"
-                }
-                val documents = mutableListOf<StorageDocument>()
-                while (it.moveToNext()) {
-                    documents += documentFromCursor(dirUri, it)
-                }
-                documents
-            }
-        }
+        override suspend fun list(dirUri: Uri): List<StorageDocument> = SafDirectoryListing.list(resolver, dirUri)
 
         override suspend fun writeFile(
             dirUri: Uri,
@@ -216,6 +198,8 @@ object SafCompatibilityProbe {
         val source = File.createTempFile("saf-source", ".yaml", instrumentation.targetContext.cacheDir)
         try {
             runBlocking {
+                val unrelated = checkNotNull(DocumentsContract.createDocument(cr, directory, "text/plain", "aaa-unrelated.txt"))
+                checkNotNull(cr.openOutputStream(unrelated, "wt")).use { it.write("must survive".toByteArray()) }
                 for (payload in listOf("initial data", "replacement\n".repeat(1024))) {
                     source.writeText(payload)
                     RimeMaintenanceMutex.withLock {
@@ -224,6 +208,9 @@ object SafCompatibilityProbe {
                     val document = checkNotNull(StorageAccess.child(directory, "config.yaml"))
                     val actual = StorageAccess.readFile(document.uri) { it.bufferedReader().readText() }
                     check(actual == payload)
+                    val listing = SafDirectoryListing.list(cr, directory)
+                    check(listing.map { it.name }.toSet() == setOf("aaa-unrelated.txt", "config.yaml"))
+                    check(StorageAccess.readFile(unrelated) { it.bufferedReader().readText() } == "must survive")
                 }
             }
         } finally {
@@ -404,6 +391,18 @@ object SafCompatibilityProbe {
                 check(p.file("sample.yaml.bak").readText() == "personal backup")
                 check(p.names().none { it.startsWith(".trime-") })
             }
+            test("production replacement finds an existing child after the first row") { p, cr, source ->
+                p.seed("first.yaml", "must survive")
+                p.seed("sample.yaml", "old")
+                check(SafDirectoryListing.list(cr, tree).map { it.name } == listOf("first.yaml", "sample.yaml"))
+                productionCopy(cr, source)
+                check(p.file("first.yaml").readText() == "must survive")
+                check(p.file("sample.yaml").readBytes().contentEquals(source.readBytes()))
+                check(p.names().toSet() == setOf("first.yaml", "sample.yaml"))
+            }
+            test("production listing rejects a document outside a tree URI") { _, cr, _ ->
+                expectFailure { SafDirectoryListing.list(cr, DocumentsContract.buildDocumentUri(authority, "root")) }
+            }
             test("unknown metadata and nonseekable reliable pipe") { p, cr, source ->
                 p.pipeReads = true
                 copy(cr, source)
@@ -482,6 +481,7 @@ object SafCompatibilityProbe {
                 expectRejectedListingPreservesTrackedLocal(cr)
                 expectFailure { FixtureSafTreeWalker.listTree(cr, tree, "root") }
                 expectFailure { copy(cr, source) }
+                expectFailure { productionCopy(cr, source) }
                 check(p.names().isEmpty())
             }
             test("null listing fails closed") { p, cr, source ->
@@ -489,23 +489,27 @@ object SafCompatibilityProbe {
                 expectRejectedListingPreservesTrackedLocal(cr)
                 expectFailure { FixtureSafTreeWalker.listTree(cr, tree, "root") }
                 expectFailure { copy(cr, source) }
+                expectFailure { productionCopy(cr, source) }
                 check(p.names().isEmpty())
             }
-            test("provider listing error fails closed") { p, cr, _ ->
+            test("provider listing error fails closed") { p, cr, source ->
                 p.listingError = "fixture unavailable"
                 expectRejectedListingPreservesTrackedLocal(cr)
+                expectFailure { productionCopy(cr, source) }
             }
-            test("unsafe provider display name rejected") { p, cr, _ ->
+            test("unsafe provider display name rejected") { p, cr, source ->
                 p.seed("../escape", "old")
                 expectRejectedListingPreservesTrackedLocal(cr)
                 expectFailure { FixtureSafTreeWalker.listTree(cr, tree, "root") }
+                expectFailure { productionCopy(cr, source) }
             }
-            test("duplicate display names rejected") { p, cr, _ ->
+            test("duplicate display names rejected") { p, cr, source ->
                 p.seed("same", "a")
                 p.seed("same", "b")
                 expectRejectedListingPreservesTrackedLocal(cr)
                 expectFailure { FixtureSafTreeWalker.listTree(cr, tree, "root") }
                 expectFailure { FixtureSafTreeWalker.findFileEntry(cr, tree, "root", "same") }
+                expectFailure { productionCopy(cr, source) }
             }
             test("repeated provider row rejected") { p, cr, _ ->
                 p.seed("same", "a")

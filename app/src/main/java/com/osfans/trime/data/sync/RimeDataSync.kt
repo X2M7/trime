@@ -99,7 +99,7 @@ object RimeDataSync {
     }
 
     private object StorageExternalFileOperations : ExternalFileOperations {
-        override suspend fun list(dirUri: Uri): List<StorageDocument> = StorageAccess.list(dirUri)
+        override suspend fun list(dirUri: Uri): List<StorageDocument> = SafDirectoryListing.list(appContext.contentResolver, dirUri)
 
         override suspend fun writeFile(
             dirUri: Uri,
@@ -587,7 +587,7 @@ object RimeDataSync {
         name: String,
     ): StorageDocument? {
         SyncRelativePath.requireSafeName(name)
-        val matches = StorageAccess.list(dirUri).filter { it.name == name }
+        val matches = SafDirectoryListing.list(appContext.contentResolver, dirUri).filter { it.name == name }
         check(matches.size <= 1) { "Remote directory contains duplicate name: $name" }
         return matches.singleOrNull()
     }
