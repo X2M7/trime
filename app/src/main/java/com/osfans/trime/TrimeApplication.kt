@@ -34,6 +34,7 @@ import com.osfans.trime.ui.main.LogActivity
 import com.osfans.trime.util.DirectBootProcessHandoff
 import com.osfans.trime.util.isNightMode
 import com.osfans.trime.worker.BackgroundSyncWork
+import com.osfans.trime.worker.canInitializeWorkManager
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
@@ -43,6 +44,7 @@ import kotlinx.coroutines.withTimeoutOrNull
 import splitties.systemservices.userManager
 import timber.log.Timber
 import kotlin.system.exitProcess
+import androidx.work.Configuration as WorkManagerConfiguration
 
 /**
  * Custom Application class.
@@ -50,8 +52,30 @@ import kotlin.system.exitProcess
  * so you can init a "global" class here, whose methods serve other
  * classes everywhere.
  */
-class TrimeApplication : Application() {
+class TrimeApplication :
+    Application(),
+    WorkManagerConfiguration.Provider {
     val coroutineScope = MainScope() + CoroutineName("TrimeApplication")
+
+    private val workManagerConfigurationDelegate = lazy { WorkManagerConfiguration.Builder().build() }
+
+    override val workManagerConfiguration: WorkManagerConfiguration
+        get() {
+            val userUnlocked =
+                Build.VERSION.SDK_INT < Build.VERSION_CODES.N || userManager.isUserUnlocked
+            val deviceProtectedContext =
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && isDeviceProtectedStorage
+            check(
+                canInitializeWorkManager(
+                    sdkInt = Build.VERSION.SDK_INT,
+                    userUnlocked = userUnlocked,
+                    deviceProtectedContext = deviceProtectedContext,
+                    directBootMode = isDirectBootMode,
+                    processReplacementPending = isDirectBootProcessReplacementPending,
+                ),
+            ) { "WorkManager is unavailable in this process state" }
+            return workManagerConfigurationDelegate.value
+        }
 
     private val rimeIntentReceiver = RimeIntentReceiver()
 

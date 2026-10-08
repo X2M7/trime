@@ -8,13 +8,13 @@ package com.osfans.trime.worker
 import android.content.Context
 import android.os.Build
 import android.os.UserManager
-import androidx.work.Configuration
 import androidx.work.Constraints
 import androidx.work.CoroutineWorker
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
+import com.osfans.trime.TrimeApplication
 import com.osfans.trime.core.RimeMaintenanceMutex
 import com.osfans.trime.daemon.RimeDaemon
 import com.osfans.trime.data.prefs.AppPrefs
@@ -27,21 +27,13 @@ internal fun canInitializeWorkManager(
     sdkInt: Int,
     userUnlocked: Boolean,
     deviceProtectedContext: Boolean,
-): Boolean = sdkInt < Build.VERSION_CODES.N || (userUnlocked && !deviceProtectedContext)
-
-internal class RetryableInitializer {
-    @Volatile
-    private var initialized = false
-
-    fun ensureInitialized(initializer: () -> Unit) {
-        if (initialized) return
-        synchronized(this) {
-            if (initialized) return
-            initializer()
-            initialized = true
-        }
-    }
-}
+    directBootMode: Boolean = false,
+    processReplacementPending: Boolean = false,
+): Boolean = !processReplacementPending &&
+    (
+        sdkInt < Build.VERSION_CODES.N ||
+            (userUnlocked && !deviceProtectedContext && !directBootMode)
+        )
 
 class BackgroundSyncWork(
     context: Context,
@@ -87,8 +79,6 @@ class BackgroundSyncWork(
 
     companion object {
         private const val PERIODIC_BACKGROUND_SYNC_KEY = "periodic_background_sync"
-
-        private val workManagerInitializer = RetryableInitializer()
 
         private val prefs = AppPrefs.defaultInstance().profile
         private val enable by prefs.periodicBackgroundSync
@@ -142,25 +132,26 @@ class BackgroundSyncWork(
         }
 
         private fun canUseWorkManager(context: Context): Boolean {
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) return true
+            val application = TrimeApplication.getInstance()
+            val processReplacementPending = application.isDirectBootProcessReplacementPending
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
+                return canInitializeWorkManager(
+                    Build.VERSION.SDK_INT,
+                    userUnlocked = true,
+                    deviceProtectedContext = false,
+                    processReplacementPending = processReplacementPending,
+                )
+            }
             val userManager = context.getSystemService(UserManager::class.java)
             return canInitializeWorkManager(
                 Build.VERSION.SDK_INT,
                 userManager?.isUserUnlocked == true,
                 context.isDeviceProtectedStorage,
+                application.isDirectBootMode,
+                processReplacementPending,
             )
         }
 
-        private fun getWorkManager(context: Context): WorkManager {
-            val applicationContext = context.applicationContext
-            workManagerInitializer.ensureInitialized {
-                try {
-                    WorkManager.getInstance(applicationContext)
-                } catch (_: IllegalStateException) {
-                    WorkManager.initialize(applicationContext, Configuration.Builder().build())
-                }
-            }
-            return WorkManager.getInstance(applicationContext)
-        }
+        private fun getWorkManager(context: Context): WorkManager = WorkManager.getInstance(context.applicationContext)
     }
 }
