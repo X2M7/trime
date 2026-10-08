@@ -13,6 +13,7 @@ import android.content.IntentFilter
 import android.content.res.Configuration
 import android.os.Build
 import android.os.Handler
+import android.os.HandlerThread
 import android.os.Process
 import android.util.Log
 import androidx.annotation.Keep
@@ -119,6 +120,26 @@ class TrimeApplication : Application() {
         }
     }
 
+    private fun registerDirectBootUnlockReceiver() {
+        val receiverThread = HandlerThread("TrimeDirectBootUnlock")
+        try {
+            receiverThread.start()
+            ContextCompat.registerReceiver(
+                this,
+                unlockReceiver,
+                IntentFilter(Intent.ACTION_USER_UNLOCKED),
+                null,
+                Handler(receiverThread.looper),
+                ContextCompat.RECEIVER_NOT_EXPORTED,
+            )
+        } catch (error: Throwable) {
+            receiverThread.quitSafely()
+            throw error
+        }
+        // The registered receiver owns its scheduler until this DE process exits. Keeping it
+        // alive also lets a broadcast arriving after a lifecycle request finish normally.
+    }
+
     private fun registerBroadcastReceiver() {
         val intentFilter =
             IntentFilter().apply {
@@ -148,19 +169,8 @@ class TrimeApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         instance = this
-        var unlockDetectedDuringStartup = false
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && !userManager.isUserUnlocked) {
             isDirectBootMode = true
-            ContextCompat.registerReceiver(
-                this,
-                unlockReceiver,
-                IntentFilter(Intent.ACTION_USER_UNLOCKED),
-                ContextCompat.RECEIVER_NOT_EXPORTED,
-            )
-            // ACTION_USER_UNLOCKED is not sticky. Close the check/register race by checking again
-            // after the receiver is active. Finish the minimum DE initialization before replacing
-            // the process because Rime construction requires AppPrefs to be ready.
-            unlockDetectedDuringStartup = userManager.isUserUnlocked
         }
         val ctx = directBootAwareContext
         if (!BuildConfig.DEBUG) {
@@ -260,7 +270,14 @@ class TrimeApplication : Application() {
             }
             registerBroadcastReceiver()
             startWorkManager()
-            if (unlockDetectedDuringStartup) requestDirectBootProcessReplacementIfUnlocked()
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && isDirectBootMode) {
+                // A background receiver can run immediately. Register only after the minimum DE
+                // initialization so it cannot restore preferences before AppPrefs is ready or have
+                // its private boundary cleared by PrivacyModeState.initialize.
+                registerDirectBootUnlockReceiver()
+                // USER_UNLOCKED is not sticky; close an unlock-during-initialization/register race.
+                if (userManager.isUserUnlocked) requestDirectBootProcessReplacementIfUnlocked()
+            }
         } catch (e: Exception) {
             Timber.e(e, "Application initialization failed")
             return
