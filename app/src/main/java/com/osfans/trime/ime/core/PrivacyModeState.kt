@@ -20,10 +20,11 @@ object PrivacyModeState {
         val editorPrivate: Boolean = false,
         val manualRequested: Boolean = false,
         val manual: Boolean = false,
+        val processReplacementPending: Boolean = false,
         val epoch: Long = 0,
     ) {
         val active: Boolean
-            get() = editorPrivate || manual
+            get() = editorPrivate || manual || processReplacementPending
     }
 
     val active: Boolean
@@ -35,6 +36,17 @@ object PrivacyModeState {
             snapshot = Snapshot(
                 manualRequested = manual,
                 manual = manual,
+                epoch = snapshot.epoch + 1,
+            )
+        }
+    }
+
+    /** Keep the old DE process private until it exits, including across editor/preference changes. */
+    fun beginProcessReplacement() {
+        synchronized(lock) {
+            if (snapshot.processReplacementPending) return
+            snapshot = snapshot.copy(
+                processReplacementPending = true,
                 epoch = snapshot.epoch + 1,
             )
         }

@@ -29,6 +29,7 @@ import com.osfans.trime.data.theme.ThemeManager
 import com.osfans.trime.ime.core.PrivacyModeState
 import com.osfans.trime.receiver.RimeIntentReceiver
 import com.osfans.trime.ui.main.LogActivity
+import com.osfans.trime.util.DirectBootProcessHandoff
 import com.osfans.trime.util.isNightMode
 import com.osfans.trime.worker.BackgroundSyncWork
 import kotlinx.coroutines.CoroutineName
@@ -39,7 +40,6 @@ import kotlinx.coroutines.plus
 import kotlinx.coroutines.withTimeoutOrNull
 import splitties.systemservices.userManager
 import timber.log.Timber
-import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.system.exitProcess
 
 /**
@@ -59,28 +59,33 @@ class TrimeApplication : Application() {
             PrivacyModeState.setManual(enabled, ClipboardHelper::quarantineCurrentPrimaryClip)
         }
 
-    private val unlockReplacementStarted = AtomicBoolean(false)
+    private val unlockHandoff = DirectBootProcessHandoff(PrivacyModeState::beginProcessReplacement)
+
+    internal val isDirectBootProcessReplacementPending: Boolean
+        get() = unlockHandoff.pending
 
     private val unlockReceiver =
         object : BroadcastReceiver() {
             override fun onReceive(context: Context, intent: Intent) {
                 if (intent.action != Intent.ACTION_USER_UNLOCKED) return
                 val pendingResult = goAsync()
-                replaceDirectBootProcessAfterUnlock(pendingResult::finish)
+                requestDirectBootProcessReplacementIfUnlocked(pendingResult::finish)
             }
         }
 
-    private fun replaceDirectBootProcessAfterUnlock(finishBroadcast: (() -> Unit)? = null) {
-        if (!isDirectBootMode || !unlockReplacementStarted.compareAndSet(false, true)) {
-            finishBroadcast?.invoke()
-            return
-        }
+    internal fun requestDirectBootProcessReplacementIfUnlocked(finishBroadcast: (() -> Unit)? = null): Boolean = unlockHandoff.request(
+        apiLevel = Build.VERSION.SDK_INT,
+        directBootMode = isDirectBootMode,
+        isUserUnlocked = {
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && userManager.isUserUnlocked
+        },
+        finishBroadcast = finishBroadcast,
+        replaceProcess = ::replaceDirectBootProcessAfterUnlock,
+    )
+
+    private fun replaceDirectBootProcessAfterUnlock(finishBroadcastOnce: () -> Unit) {
         Timber.i("Device unlocked; replacing the direct-boot process")
         val handler = Handler(mainLooper)
-        val broadcastFinished = AtomicBoolean(false)
-        val finishBroadcastOnce = {
-            if (broadcastFinished.compareAndSet(false, true)) finishBroadcast?.invoke()
-        }
         val forceExit =
             Runnable {
                 Timber.w("Forcing replacement of an unresponsive direct-boot process")
@@ -255,7 +260,7 @@ class TrimeApplication : Application() {
             }
             registerBroadcastReceiver()
             startWorkManager()
-            if (unlockDetectedDuringStartup) replaceDirectBootProcessAfterUnlock()
+            if (unlockDetectedDuringStartup) requestDirectBootProcessReplacementIfUnlocked()
         } catch (e: Exception) {
             Timber.e(e, "Application initialization failed")
             return

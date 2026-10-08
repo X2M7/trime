@@ -43,6 +43,47 @@ class PrivacyModeStateTest :
             PrivacyModeState.active shouldBe false
         }
 
+        "process replacement blocks ordinary input binds manual changes and editor cleanup" {
+            PrivacyModeState.beginInput(101, PrivacyMode(password = true))
+            PrivacyModeState.beginProcessReplacement()
+
+            PrivacyModeState.beginInput(102, PrivacyMode())
+            var ordinaryBoundary = false
+            PrivacyModeState.updateInput(102, PrivacyMode()) { ordinaryBoundary = true } shouldBe true
+            PrivacyModeState.setManual(false) { ordinaryBoundary = true }
+            PrivacyModeState.endInput(102) { ordinaryBoundary = true }
+            PrivacyModeState.endInput(101) { ordinaryBoundary = true }
+
+            PrivacyModeState.active shouldBe true
+            ordinaryBoundary shouldBe false
+            PrivacyModeState.observeOrdinaryPersistence().shouldBeNull()
+            PrivacyModeState.acquirePersistencePermit().shouldBeNull()
+        }
+
+        "a replacement boundary rejects stale clipboard reads and publication of prior writes" {
+            val observation = requireNotNull(PrivacyModeState.observeOrdinaryPersistence())
+            val permit = requireNotNull(PrivacyModeState.acquirePersistencePermit(observation))
+            PrivacyModeState.beginProcessReplacement()
+            PrivacyModeState.beginProcessReplacement()
+
+            PrivacyModeState.acquirePersistencePermit(observation).shouldBeNull()
+            var published = false
+            PrivacyModeState.publishIfOrdinary(permit) { published = true } shouldBe false
+            published shouldBe false
+            PrivacyModeState.allowsPersistence(permit) shouldBe true
+            PrivacyModeState.releasePersistencePermit(permit)
+        }
+
+        "a new normal process resets replacement privacy and preserves the saved manual preference" {
+            PrivacyModeState.beginProcessReplacement()
+            PrivacyModeState.initialize(manual = true)
+            PrivacyModeState.active shouldBe true
+
+            PrivacyModeState.setManual(false)
+            PrivacyModeState.active shouldBe false
+            PrivacyModeState.observeOrdinaryPersistence() shouldNotBe null
+        }
+
         "manual mode remains active after an editor ends and ordinary mode resumes when disabled" {
             PrivacyModeState.setManual(true)
             PrivacyModeState.beginInput(31, PrivacyMode(manual = true))
