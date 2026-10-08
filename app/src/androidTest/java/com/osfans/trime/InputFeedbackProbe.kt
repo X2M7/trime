@@ -7,6 +7,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.os.ParcelFileDescriptor
 import android.os.SystemClock
 import android.speech.tts.TextToSpeech
 import android.system.ErrnoException
@@ -24,6 +25,7 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
 import java.io.File
+import java.io.IOException
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.util.UUID
@@ -38,8 +40,33 @@ internal object InputFeedbackProbe {
     private data class SoundDescriptorIdentity(val device: Long, val inode: Long)
 
     private data class DescriptorHandle(
-        val identity: SoundDescriptorIdentity,
+        val identity: SoundDescriptorIdentity?,
         val target: String,
+        val provenNonFixture: DeniedDescriptorProof? = null,
+    ) {
+        init {
+            check((identity == null) == (provenNonFixture != null))
+        }
+    }
+
+    private data class DeniedDescriptorProof(
+        val copiedSlot: Int,
+        val errno: Int,
+        val rawFailure: String,
+        val inode: Long,
+        val rawFdInfo: String,
+    )
+
+    private data class DescriptorFallbackCalibration(
+        val fixtureInodes: Set<Long>,
+        val available: Boolean,
+    )
+
+    private data class DescriptorAuditContext(
+        val soundIdentities: Set<SoundDescriptorIdentity>,
+        val fallbackCalibration: DescriptorFallbackCalibration,
+        val audit: MutableList<String>,
+        val result: Bundle,
     )
 
     private data class DescriptorSnapshot(
@@ -47,63 +74,157 @@ internal object InputFeedbackProbe {
         val handles: Map<String, DescriptorHandle>,
         val disappearedSlots: List<String>,
     ) {
-        fun ownedBy(identities: Set<SoundDescriptorIdentity>): Map<String, DescriptorHandle> = handles.filterValues { it.identity in identities }
+        fun ownedBy(identities: Set<SoundDescriptorIdentity>): Map<String, DescriptorHandle> = handles.filterValues { it.identity?.let(identities::contains) == true }
     }
 
     private fun descriptorIdentity(file: File): SoundDescriptorIdentity = Os.stat(file.path).let { SoundDescriptorIdentity(it.st_dev, it.st_ino) }
 
-    private fun descriptorSnapshot(): DescriptorSnapshot {
+    private fun copiedFdInfo(copy: ParcelFileDescriptor): String = File("/proc/self/fdinfo/${copy.fd}").bufferedReader().use { reader ->
+        val raw = StringBuilder()
+        val buffer = CharArray(4096)
+        while (true) {
+            val count = reader.read(buffer)
+            if (count < 0) break
+            check(raw.length + count <= 65_536) { "Owned-copy fdinfo exceeded 64 Ki characters: copied_slot=${copy.fd}" }
+            raw.append(buffer, 0, count)
+        }
+        raw.toString()
+    }
+
+    private fun topLevelFdInfoInode(raw: String): Long? {
+        // Embedded inotify/epoll ino labels describe other objects. Only the
+        // exact top-level common field can identify this opened descriptor.
+        val fields = raw.lineSequence().filter { Regex("^ino\\b").containsMatchIn(it) }.toList()
+        if (fields.isEmpty()) return null
+        check(fields.size == 1) { "Expected one top-level fdinfo ino field: $raw" }
+        val value = checkNotNull(Regex("ino:[ \\t]*([0-9]+)[ \\t]*").matchEntire(fields.single())) {
+            "Malformed top-level fdinfo ino field: $raw"
+        }.groupValues[1]
+        return checkNotNull(value.toLongOrNull()) { "Unrepresentable top-level fdinfo ino field: $raw" }
+    }
+
+    private fun calibrateDescriptorFallback(
+        fixtures: Map<File, SoundDescriptorIdentity>,
+        audit: MutableList<String>,
+    ): DescriptorFallbackCalibration {
+        var available = true
+        for ((file, expected) in fixtures) {
+            val pathIdentity = descriptorIdentity(file)
+            check(pathIdentity == expected) { "Sound fixture path identity changed: $file" }
+            ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY).use { held ->
+                val direct = Os.fstat(held.fileDescriptor).let { SoundDescriptorIdentity(it.st_dev, it.st_ino) }
+                ParcelFileDescriptor.fromFd(held.fd).use { copy ->
+                    val pinned = Os.fstat(copy.fileDescriptor).let { SoundDescriptorIdentity(it.st_dev, it.st_ino) }
+                    check(pathIdentity == direct && direct == pinned) {
+                        "Sound fixture identity calibration disagreed: $file path=$pathIdentity direct=$direct pinned=$pinned"
+                    }
+                    val raw = copiedFdInfo(copy)
+                    val inode = topLevelFdInfoInode(raw)
+                    if (inode == null) {
+                        // Older kernels have no common ino field. Full fstat
+                        // identity remains usable; EACCES fallback does not.
+                        available = false
+                    } else {
+                        check(inode == pathIdentity.inode) { "Sound fixture fdinfo calibration disagreed: $file raw=$raw" }
+                    }
+                    audit += "fdinfo-calibration fixture=$file path=$pathIdentity direct=$direct pinned=$pinned " +
+                        "original_slot=${held.fd} copied_slot=${copy.fd} ino=$inode raw_fdinfo=$raw"
+                }
+            }
+        }
+        return DescriptorFallbackCalibration(fixtures.values.map { it.inode }.toSet(), available)
+    }
+
+    private fun recordDescriptorFailure(context: DescriptorAuditContext, detail: String) {
+        context.audit += detail
+        if (!context.result.containsKey("sound_descriptor_first_failed_slot")) {
+            context.result.putString("sound_descriptor_first_failed_slot", detail)
+        }
+    }
+
+    private fun descriptorSnapshot(context: DescriptorAuditContext, stage: String): DescriptorSnapshot {
         val slots = checkNotNull(File("/proc/self/fd").listFiles()) {
             "Cannot list the current process descriptor slots"
         }
         val handles = linkedMapOf<String, DescriptorHandle>()
         val disappeared = mutableListOf<String>()
         for (slot in slots) {
-            val stat = try {
-                // stat follows the procfs magic link to the actual open file,
-                // including aliased paths and files unlinked after opening.
-                Os.stat(slot.path)
-            } catch (failure: ErrnoException) {
-                // An unrelated slot may close between directory listing and stat.
-                // Other errors (including EBADF for this pathname call) must fail.
-                if (failure.errno != OsConstants.ENOENT) throw failure
-                disappeared += "${slot.name}:stat:ENOENT"
+            val originalFd = checkNotNull(slot.name.toIntOrNull()) { "Invalid descriptor slot: ${slot.name}" }
+            check(originalFd >= 0)
+            val copy = try {
+                // An owned duplicate pins the selected object without adopting,
+                // reading, seeking or otherwise mutating the original handle.
+                ParcelFileDescriptor.fromFd(originalFd)
+            } catch (failure: IOException) {
+                val errnoFailure = failure.cause as? ErrnoException
+                val detail = "$stage original_slot=${slot.name} phase=pre-pin-dup " +
+                    "errno=${errnoFailure?.errno} raw_failure=$failure raw_cause=${failure.cause}"
+                if (errnoFailure?.errno != OsConstants.EBADF) {
+                    recordDescriptorFailure(context, detail)
+                    throw failure
+                }
+                // Only acquisition EBADF proves a listed slot vanished before
+                // pinning, including the already-closed listing directory FD.
+                disappeared += detail
+                context.audit += detail
                 continue
             }
-            val target = try {
-                Os.readlink(slot.path)
-            } catch (failure: ErrnoException) {
-                if (failure.errno != OsConstants.ENOENT) throw failure
-                disappeared += "${slot.name}:readlink:ENOENT"
-                // Do not discard a stat-confirmed fixture handle just because
-                // its diagnostic pathname disappears after the ownership check.
-                "<readlink disappeared after stat>"
+            var copiedSlot: Int? = null
+            try {
+                copy.use {
+                    copiedSlot = copy.fd
+                    var target: String? = null
+                    var proof: DeniedDescriptorProof? = null
+                    val identity = try {
+                        Os.fstat(copy.fileDescriptor).let { SoundDescriptorIdentity(it.st_dev, it.st_ino) }
+                    } catch (failure: ErrnoException) {
+                        val detail = "$stage original_slot=${slot.name} copied_slot=${copy.fd} " +
+                            "phase=pinned-fstat errno=${failure.errno} raw_failure=$failure"
+                        // Save the first denied raw slot before any further
+                        // metadata operation can fail and replace its exception.
+                        if (!context.result.containsKey("sound_descriptor_first_fstat_denial")) {
+                            context.result.putString("sound_descriptor_first_fstat_denial", detail)
+                        }
+                        context.audit += detail
+                        if (failure.errno != OsConstants.EACCES) throw failure
+                        target = Os.readlink("/proc/self/fd/${copy.fd}")
+                        val raw = copiedFdInfo(copy)
+                        context.audit += "$detail target=$target raw_fdinfo=$raw"
+                        if (!context.result.containsKey("sound_descriptor_first_eacces_metadata")) {
+                            context.result.putString("sound_descriptor_first_eacces_metadata", "$detail target=$target raw_fdinfo=$raw")
+                        }
+                        check(context.fallbackCalibration.available) { "EACCES fallback unavailable after all-fixture calibration: $detail" }
+                        val inode = checkNotNull(topLevelFdInfoInode(raw)) { "Missing top-level fdinfo ino after EACCES: $detail raw=$raw" }
+                        check(inode !in context.fallbackCalibration.fixtureInodes) {
+                            "EACCES descriptor inode is ambiguous with a fixture: $detail ino=$inode raw=$raw"
+                        }
+                        proof = DeniedDescriptorProof(copy.fd, failure.errno, failure.toString(), inode, raw)
+                        null
+                    }
+                    val observedTarget = target ?: Os.readlink("/proc/self/fd/${copy.fd}")
+                    check(handles.put(slot.name, DescriptorHandle(identity, observedTarget, proof)) == null) {
+                        "Duplicate current-process descriptor slot: ${slot.name}"
+                    }
+                }
+            } catch (failure: Throwable) {
+                recordDescriptorFailure(context, "$stage original_slot=${slot.name} copied_slot=$copiedSlot phase=pinned-audit raw_failure=$failure")
+                throw failure
             }
-            check(
-                handles.put(
-                    slot.name,
-                    DescriptorHandle(
-                        SoundDescriptorIdentity(stat.st_dev, stat.st_ino),
-                        target,
-                    ),
-                ) == null,
-            ) { "Duplicate current-process descriptor slot: ${slot.name}" }
         }
         return DescriptorSnapshot(slots.size, handles, disappeared)
     }
 
     private fun verifySoundDescriptorHandles(
-        identities: Set<SoundDescriptorIdentity>,
+        context: DescriptorAuditContext,
         stage: String,
         expected: Int,
-        audit: MutableList<String>,
         includeAllTargets: Boolean = false,
     ): DescriptorSnapshot {
-        val snapshot = descriptorSnapshot()
-        val owned = snapshot.ownedBy(identities)
-        audit += "$stage listed_total=${snapshot.listedCount} observed_total=${snapshot.handles.size} " +
+        val snapshot = descriptorSnapshot(context, stage)
+        val owned = snapshot.ownedBy(context.soundIdentities)
+        context.audit += "$stage listed_total=${snapshot.listedCount} observed_total=${snapshot.handles.size} " +
             "fixture_slots=$owned disappeared=${snapshot.disappearedSlots}"
-        if (includeAllTargets) audit += "$stage all_observed_slots=${snapshot.handles}"
+        if (includeAllTargets) context.audit += "$stage all_observed_slots=${snapshot.handles}"
         check(owned.size == expected) {
             "Sound fixture descriptor slots at $stage: expected=$expected actual=${owned.size} " +
                 "owned=$owned all_observed_slots=${snapshot.handles} disappeared=${snapshot.disappearedSlots}"
@@ -186,26 +307,36 @@ internal object InputFeedbackProbe {
                                 prefs.speakOnCommit.setValue(false)
                             }
                         }
-                        val soundIdentities = descriptors.map(::descriptorIdentity).toSet()
+                        val soundFixtures = descriptors.associateWith(::descriptorIdentity)
+                        val soundIdentities = soundFixtures.values.toSet()
                         check(soundIdentities.size == 2) { "Expected two distinct sound descriptor fixture identities" }
-                        verifySoundDescriptorHandles(soundIdentities, "before-controls", 0, descriptorAudit)
+                        var descriptorContext = DescriptorAuditContext(
+                            soundIdentities,
+                            calibrateDescriptorFallback(soundFixtures, descriptorAudit),
+                            descriptorAudit,
+                            result,
+                        )
+                        verifySoundDescriptorHandles(descriptorContext, "before-controls", 0)
                         // Open the SAME fixture twice. Counting only distinct inodes
                         // would incorrectly report one handle in the two-slot control.
                         descriptors.first().inputStream().use {
-                            verifySoundDescriptorHandles(soundIdentities, "held-one", 1, descriptorAudit)
+                            verifySoundDescriptorHandles(descriptorContext, "held-one", 1)
                             descriptors.first().inputStream().use {
-                                verifySoundDescriptorHandles(soundIdentities, "held-two-same-file", 2, descriptorAudit)
+                                verifySoundDescriptorHandles(descriptorContext, "held-two-same-file", 2)
                             }
-                            verifySoundDescriptorHandles(soundIdentities, "held-one-after-inner-close", 1, descriptorAudit)
+                            verifySoundDescriptorHandles(descriptorContext, "held-one-after-inner-close", 1)
                         }
-                        verifySoundDescriptorHandles(soundIdentities, "after-target-controls", 0, descriptorAudit)
+                        verifySoundDescriptorHandles(descriptorContext, "after-target-controls", 0)
                         val unrelated = File(folder, "unrelated-fd-control.bin")
                         unrelated.writeBytes(byteArrayOf(1))
                         val unrelatedIdentity = descriptorIdentity(unrelated)
                         check(unrelatedIdentity !in soundIdentities)
-                        val unrelatedBefore = descriptorSnapshot()
+                        descriptorContext = descriptorContext.copy(
+                            fallbackCalibration = calibrateDescriptorFallback(soundFixtures + (unrelated to unrelatedIdentity), descriptorAudit),
+                        )
+                        val unrelatedBefore = descriptorSnapshot(descriptorContext, "before-unrelated-control")
                         withOpenReaders(unrelated, 9) {
-                            val held = verifySoundDescriptorHandles(soundIdentities, "held-nine-unrelated", 0, descriptorAudit)
+                            val held = verifySoundDescriptorHandles(descriptorContext, "held-nine-unrelated", 0)
                             val unrelatedSlots = held.ownedBy(setOf(unrelatedIdentity))
                             check(unrelatedSlots.size == 9) { "Unrelated open-slot control missing handles: $unrelatedSlots" }
                             // Remove only the verified nine-slot cohort from THIS
@@ -217,21 +348,21 @@ internal object InputFeedbackProbe {
                                 "same_snapshot_old_global_before=$withoutUnrelated " +
                                 "same_snapshot_old_global_after=${held.listedCount} old_plus8_rejected=true"
                         }
-                        val afterUnrelated = verifySoundDescriptorHandles(soundIdentities, "after-unrelated-close", 0, descriptorAudit)
+                        val afterUnrelated = verifySoundDescriptorHandles(descriptorContext, "after-unrelated-close", 0)
                         check(afterUnrelated.ownedBy(setOf(unrelatedIdentity)).isEmpty())
                         check(unrelated.delete())
-                        val beforeScans = verifySoundDescriptorHandles(soundIdentities, "before-scans", 0, descriptorAudit, true)
+                        val beforeScans = verifySoundDescriptorHandles(descriptorContext, "before-scans", 0, true)
                         result.putInt("sound_descriptor_process_fds_before", beforeScans.listedCount)
                         repeat(10) { batch ->
                             repeat(20) { SoundEffectManager.getAllSoundEffects() }
-                            verifySoundDescriptorHandles(soundIdentities, "after-scan-batch-${batch + 1}", 0, descriptorAudit)
+                            verifySoundDescriptorHandles(descriptorContext, "after-scan-batch-${batch + 1}", 0)
                         }
-                        val afterScans = verifySoundDescriptorHandles(soundIdentities, "after-200-scans", 0, descriptorAudit, true)
+                        val afterScans = verifySoundDescriptorHandles(descriptorContext, "after-200-scans", 0, true)
                         result.putInt("sound_descriptor_process_fds_after", afterScans.listedCount)
                         descriptorAudit += "scan_process_fd_delta=${afterScans.listedCount - beforeScans.listedCount} diagnostic_only=true"
                         val effects = SoundEffectManager.getAllSoundEffects().filter { it.name.startsWith(id) }.sortedBy { it.melody.size }
                         check(effects.size == 2)
-                        verifySoundDescriptorHandles(soundIdentities, "after-effects-read", 0, descriptorAudit)
+                        verifySoundDescriptorHandles(descriptorContext, "after-effects-read", 0)
                         withContext(Dispatchers.Main) {
                             prefs.soundOnKeyPress.setValue(true)
                             prefs.useCustomSoundEffect.setValue(true)
