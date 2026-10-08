@@ -17,6 +17,7 @@ import android.os.HandlerThread
 import android.os.Process
 import android.util.Log
 import androidx.annotation.Keep
+import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
 import androidx.preference.PreferenceManager
@@ -120,6 +121,7 @@ class TrimeApplication : Application() {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.N)
     private fun registerDirectBootUnlockReceiver() {
         val receiverThread = HandlerThread("TrimeDirectBootUnlock")
         try {
