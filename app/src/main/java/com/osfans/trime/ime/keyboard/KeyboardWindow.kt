@@ -461,6 +461,10 @@ class KeyboardWindow(di: DI) :
     }
 
     override fun onStartInput(info: EditorInfo) {
+        applyEditorKeyboard(info, schemaChanged = false)
+    }
+
+    private fun applyEditorKeyboard(info: EditorInfo, schemaChanged: Boolean) {
         val policy = EditorPolicy.keyboard(info.inputType, info.imeOptions)
         val schema = rime.run { statusCached.schemaId }
         val saved = service.editorModeOverride
@@ -485,6 +489,7 @@ class KeyboardWindow(di: DI) :
                 legacyKeyboard = saved?.let { restoreKeyboard(it, schema) }
                     ?: auxiliaryReturn?.let { restoreKeyboard(it, schema) }
                     ?: when {
+                        schemaChanged -> evalKeyboard(".default")
                         saved != null -> evalKeyboard(".default")
                         leavingRestrictedEditor -> evalKeyboard(".last_lock")
                         else -> evalKeyboard("")
@@ -612,7 +617,7 @@ class KeyboardWindow(di: DI) :
         // layout on this or the next editor-focus update.
         lastLockKeyboardId = ""
         auxiliaryReturn = null
-        service.currentInputEditorInfo?.let { onStartInput(it) }
+        service.currentInputEditorInfo?.let { applyEditorKeyboard(it, schemaChanged = true) }
     }
 
     override fun onRimeOptionUpdated(value: RimeMessage.OptionMessage.Data) {
