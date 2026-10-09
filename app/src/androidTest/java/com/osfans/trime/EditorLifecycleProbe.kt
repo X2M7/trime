@@ -9,6 +9,7 @@ import android.app.Instrumentation
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Rect
 import android.os.Build
@@ -41,10 +42,12 @@ import com.osfans.trime.data.prefs.AppPrefs
 import com.osfans.trime.data.theme.ThemeManager
 import com.osfans.trime.data.theme.model.KeyActionToken
 import com.osfans.trime.ime.broadcast.EnterKeyDisplayDelegate
+import com.osfans.trime.ime.candidates.CandidateViewHolder
 import com.osfans.trime.ime.candidates.compact.CompactCandidateDelegate
 import com.osfans.trime.ime.candidates.popup.PopupCandidatesMode
 import com.osfans.trime.ime.composition.PreeditDelegate
 import com.osfans.trime.ime.composition.T9DisambiguationView
+import com.osfans.trime.ime.core.AutoScaleTextView
 import com.osfans.trime.ime.core.EditorPolicy
 import com.osfans.trime.ime.core.InputView
 import com.osfans.trime.ime.core.PrivacyModeState
@@ -67,9 +70,13 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeout
+import org.json.JSONArray
+import org.json.JSONObject
 import org.kodein.di.direct
 import org.kodein.di.instance
 import java.io.File
+import java.security.MessageDigest
+import java.util.UUID
 
 /** Real InputConnections in an unsaved, disposable editor. Never resets learned words. */
 object EditorLifecycleProbe {
@@ -85,6 +92,172 @@ object EditorLifecycleProbe {
         val instance = type.getMethod("getInstance").invoke(null)
         @Suppress("UNCHECKED_CAST")
         return (type.getDeclaredField("mViews").apply { isAccessible = true }.get(instance) as List<View>).toList()
+    }
+
+    /** Check the actual native 64 row, including pixels captured before software drawing. */
+    private fun verifyCandidateGlyphs(instrumentation: Instrumentation, service: TrimeInputMethodService, theme: String) {
+        fun <T> main(block: () -> T): T {
+            var value: Result<T>? = null
+            instrumentation.runOnMainSync { value = runCatching(block) }
+            return checkNotNull(value).getOrThrow()
+        }
+        fun sha256(file: File) = MessageDigest.getInstance("SHA-256").digest(file.readBytes())
+            .joinToString("") { "%02x".format(it.toInt() and 255) }
+        fun colorDistance(first: Int, second: Int) = kotlin.math.abs(Color.red(first) - Color.red(second)) +
+            kotlin.math.abs(Color.green(first) - Color.green(second)) +
+            kotlin.math.abs(Color.blue(first) - Color.blue(second))
+
+        val directory = File(instrumentation.targetContext.filesDir, "runtime-audit/candidate-glyph/$theme")
+        check(directory.isDirectory || directory.mkdirs())
+        val ownedNames = listOf("screen.png", "label-0.png", "label-1.png", "report.json")
+        ownedNames.forEach { name ->
+            val file = File(directory, name)
+            check(!file.exists() || (file.isFile && file.delete())) { "Cannot clear owned candidate evidence: $name" }
+        }
+        val runId = UUID.randomUUID().toString()
+        instrumentation.sendStatus(
+            0,
+            Bundle().apply {
+                putString("candidate_glyph_case", theme)
+                putString("candidate_glyph_run_id", runId)
+            },
+        )
+        val records = JSONArray()
+        val nativeState = JSONObject()
+        var passed = false
+        var failure = ""
+        var screenshot: Bitmap? = null
+        try {
+            val (delegate, rime) = main {
+                val input = roots().asSequence().flatMap(::descendants).filterIsInstance<InputView>().first { it.isShown }
+                input.di.direct.instance<CompactCandidateDelegate>() to input.di.direct.instance<RimeSession>()
+            }
+            val holder = main {
+                checkNotNull(delegate.view.findViewHolderForAdapterPosition(0) as? CandidateViewHolder)
+            }
+            val snapshot = main { holder.snapshot }
+            fun checkCurrentSnapshot() = main {
+                check(service.isCurrentEditor(snapshot.editorToken) && delegate.adapter.snapshot == snapshot && holder.snapshot == snapshot) {
+                    "Editor or bound candidate changed during the pixel capture"
+                }
+                rime.run {
+                    check(candidateSnapshotCached == snapshot) { "Bound candidate is older than the current native snapshot" }
+                    val raw = t9Cached.input
+                    val schema = statusCached.schemaId
+                    check(t9Cached.enabled && raw == "64" && schema == "luna_pinyin_t9") { "Candidate capture no longer owns native T9 64" }
+                    nativeState.put("editor", snapshot.editorToken)
+                    nativeState.put("generation", snapshot.generation)
+                    nativeState.put("request", snapshot.requestId)
+                    nativeState.put("raw_input", raw)
+                    nativeState.put("raw_input_source", "t9Cached.input")
+                    nativeState.put("schema_id", schema)
+                    check(candidateSnapshotCached == snapshot) { "Native snapshot advanced while reading its cached metadata" }
+                }
+            }
+            val expected = main { listOf(holder.text, holder.comment).filter { it.isNotEmpty() } }
+            check(expected.firstOrNull()?.any { it in '\u3400'..'\u9fff' } == true) { "64 did not produce a native Hanzi candidate" }
+            val labels = main {
+                descendants(holder.itemView).filterIsInstance<AutoScaleTextView>()
+                    .filter { it.isShown && it.text.isNotEmpty() }.toList()
+            }
+            check(labels.size == expected.size && main { labels.map { it.text.toString() } } == expected) {
+                "Live candidate labels do not match their native holder"
+            }
+            // A software draw can invalidate cached framework state. Capture hardware pixels first.
+            checkCurrentSnapshot()
+            nativeState.put("capture_start_ns", SystemClock.elapsedRealtimeNanos())
+            val screen = checkNotNull(instrumentation.uiAutomation.takeScreenshot())
+            nativeState.put("capture_end_ns", SystemClock.elapsedRealtimeNanos())
+            screenshot = screen
+            File(directory, "screen.png").outputStream().use {
+                check(screen.compress(Bitmap.CompressFormat.PNG, 100, it))
+            }
+            checkCurrentSnapshot()
+            labels.forEachIndexed { index, view ->
+                val (software, record) = main {
+                    val node = view.createAccessibilityNodeInfo()
+                    val accessibleText = try {
+                        node.text?.toString().orEmpty()
+                    } finally {
+                        @Suppress("DEPRECATION")
+                        node.recycle()
+                    }
+                    val point = IntArray(2)
+                    view.getLocationOnScreen(point)
+                    val bounds = Rect(point[0], point[1], point[0] + view.width, point[1] + view.height)
+                    check(
+                        view.width > 0 && view.height > 0 && bounds.left >= 0 && bounds.top >= 0 &&
+                            bounds.right <= screen.width && bounds.bottom <= screen.height,
+                    )
+                    val bitmap = Bitmap.createBitmap(view.width, view.height, Bitmap.Config.ARGB_8888)
+                    val canvas = Canvas(bitmap)
+                    canvas.translate(-view.scrollX.toFloat(), -view.scrollY.toFloat())
+                    view.draw(canvas)
+                    val color = view.currentTextColor
+                    val background = screen.getPixel(bounds.left, bounds.top)
+                    var softwareInk = 0
+                    var screenInk = 0
+                    for (y in 0 until view.height) {
+                        for (x in 0 until view.width) {
+                            val softwarePixel = bitmap.getPixel(x, y)
+                            if (Color.alpha(softwarePixel) >= 128 && colorDistance(softwarePixel, color) <= 54) softwareInk++
+                            val pixel = screen.getPixel(bounds.left + x, bounds.top + y)
+                            if (colorDistance(pixel, color) <= 54 && colorDistance(pixel, background) > 54) screenInk++
+                        }
+                    }
+                    bitmap to JSONObject().apply {
+                        put("text", view.text.toString())
+                        put("accessibility_text", accessibleText)
+                        put("screen_bounds", JSONArray(listOf(bounds.left, bounds.top, bounds.right, bounds.bottom)))
+                        put("text_color_argb", color.toLong() and 0xffffffffL)
+                        put("text_size_px", view.textSize)
+                        put("text_scale_x", view.textScaleX)
+                        put("baseline_px", view.baseline)
+                        put("scroll_x_px", view.scrollX)
+                        put("scroll_y_px", view.scrollY)
+                        put("software_ink_pixels", softwareInk)
+                        put("screen_ink_pixels", screenInk)
+                        put("required_screen_ink_pixels", (softwareInk / 4).coerceAtLeast(1))
+                        put("accessibility_passed", accessibleText == expected[index])
+                        put("glyph_passed", Color.alpha(color) > 8 && softwareInk > 0 && screenInk >= (softwareInk / 4).coerceAtLeast(1))
+                    }
+                }
+                try {
+                    File(directory, "label-$index.png").outputStream().use {
+                        check(software.compress(Bitmap.CompressFormat.PNG, 100, it))
+                    }
+                } finally {
+                    software.recycle()
+                }
+                records.put(record)
+                check(record.getBoolean("accessibility_passed")) { "Candidate label has no matching Unicode accessibility text: $record" }
+                check(record.getBoolean("glyph_passed")) { "Candidate label has no visible screen glyph: $record" }
+            }
+            passed = true
+        } catch (error: Throwable) {
+            failure = error.stackTraceToString()
+            throw error
+        } finally {
+            screenshot?.recycle()
+            val attachments = JSONObject()
+            ownedNames.filter { it != "report.json" }.forEach { name ->
+                File(directory, name).takeIf { it.isFile }?.let { attachments.put(name, sha256(it)) }
+            }
+            File(directory, "report.json").writeText(
+                JSONObject().apply {
+                    put("run_id", runId)
+                    put("theme", theme)
+                    put("fixture", "native T9 64")
+                    put("native_state", nativeState)
+                    put("hardware_capture_before_software_draw", true)
+                    put("labels", records)
+                    put("passed", passed)
+                    put("error", failure)
+                    put("attachments_sha256", attachments)
+                }.toString(2) + "\n",
+            )
+        }
+        instrumentation.sendStatus(0, Bundle().apply { putString("stream", "PASS: $theme native 64 candidate Unicode accessibility and actual screen glyphs\n") })
     }
 
     private suspend fun verifyQueuedModeRestoreAcrossThemeReload(
@@ -768,6 +941,17 @@ object EditorLifecycleProbe {
                             setRuntimeOption("ascii_mode", false)
                         }
                         until("$theme T9 returns after full pinyin") { input() != null && keyboard().isT9Layout }
+                        type("64")
+                        api { check(getRawInput() == "64") }
+                        until("$theme native Hanzi row is laid out") {
+                            input()?.di?.direct?.instance<CompactCandidateDelegate>()?.view
+                                ?.findViewHolderForAdapterPosition(0)?.itemView
+                                ?.let { it.isShown && it.isLaidOut && !it.isLayoutRequested } == true
+                        }
+                        instrumentation.waitForIdleSync()
+                        delay(150)
+                        verifyCandidateGlyphs(instrumentation, service, theme)
+                        api { clearComposition() }
                         // A narrow numeric SPACE key must show its purpose without clipping
                         // the longer current schema name. Check both shipped themes, not
                         // arbitrary user-defined labels or typography.

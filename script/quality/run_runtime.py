@@ -53,6 +53,82 @@ def api21_editor_bound(dump: str, pid: int) -> bool:
     ))
 
 
+def candidate_glyph_runs(output):
+    """Pair theme and nonce from the same instrumentation status Bundle."""
+    cases = {}
+    for bundle in re.split(r"(?m)^INSTRUMENTATION_STATUS_CODE:.*$", output):
+        themes = re.findall(r"(?m)^INSTRUMENTATION_STATUS: candidate_glyph_case=(.*)$", bundle)
+        identifiers = re.findall(r"(?m)^INSTRUMENTATION_STATUS: candidate_glyph_run_id=([0-9a-f-]{36})$", bundle)
+        if not themes and not identifiers:
+            continue
+        if len(themes) != 1 or len(identifiers) != 1 or themes[0] not in ("trime", "tongwenfeng.trime") or themes[0] in cases:
+            raise ValueError("Missing, ambiguous or duplicate candidate glyph run identity")
+        uuid.UUID(identifiers[0])
+        cases[themes[0]] = identifiers[0]
+    return cases
+
+
+def collect_candidate_glyphs(adb, package, output, directory):
+    """Retain fixed private evidence on failure, and reject stale or empty screens."""
+    evidence = {"collected": False, "passed": False, "cases": {}}
+    try:
+        cases = candidate_glyph_runs(output)
+        for theme, identifier in cases.items():
+            destination = directory / theme
+            destination.mkdir(parents=True, exist_ok=False)
+
+            def pull(name):
+                data = subprocess.check_output(
+                    adb + ["exec-out", "run-as", package, "cat",
+                           f"files/runtime-audit/candidate-glyph/{theme}/{name}"], timeout=60)
+                (destination / name).write_bytes(data)
+                return data
+
+            raw = pull("report.json")
+            manifest = json.loads(raw)
+            if not isinstance(manifest, dict) or manifest.get("run_id") != identifier or manifest.get("theme") != theme:
+                raise ValueError("Candidate glyph evidence belongs to a different probe run")
+            if manifest.get("hardware_capture_before_software_draw") is not True or manifest.get("fixture") != "native T9 64":
+                raise ValueError("Candidate glyph capture order or fixture differs")
+            native = manifest.get("native_state", {})
+            if (not isinstance(native, dict) or native.get("raw_input") != "64" or
+                    native.get("raw_input_source") != "t9Cached.input" or native.get("schema_id") != "luna_pinyin_t9" or
+                    any(type(native.get(key)) is not int or native[key] <= 0 for key in ("editor", "generation", "capture_start_ns", "capture_end_ns")) or
+                    native["capture_end_ns"] < native["capture_start_ns"] or
+                    ("request" in native and (type(native["request"]) is not int or native["request"] < 0))):
+                raise ValueError("Candidate glyph native state is missing or invalid")
+            attachments = manifest.get("attachments_sha256", {})
+            allowed = {"screen.png", "label-0.png", "label-1.png"}
+            if not isinstance(attachments, dict) or not set(attachments) <= allowed:
+                raise ValueError("Unexpected candidate glyph attachment names")
+            for name, expected in sorted(attachments.items()):
+                data = pull(name)
+                if hashlib.sha256(data).hexdigest() != expected:
+                    raise ValueError("Candidate glyph attachment hash mismatch: " + name)
+                # Require a bounded, nonempty PNG header as well as matching bytes.
+                if (len(data) < 33 or len(data) > 24 * 1024 * 1024 or data[:8] != b"\x89PNG\r\n\x1a\n" or
+                        data[8:16] != b"\x00\x00\x00\rIHDR" or
+                        any(not 0 < int.from_bytes(data[start:start + 4], "big") <= 4096 for start in (16, 20))):
+                    raise ValueError("Candidate glyph attachment has an invalid PNG header: " + name)
+            labels = manifest.get("labels", [])
+            if not isinstance(labels, list) or not all(isinstance(label, dict) for label in labels):
+                raise ValueError("Invalid candidate glyph label records")
+            expected_files = {"screen.png", *(f"label-{index}.png" for index in range(len(labels)))}
+            passed = (manifest.get("passed") is True and 1 <= len(labels) <= 2 and set(attachments) == expected_files and
+                      all(label.get("accessibility_passed") is True and label.get("glyph_passed") is True for label in labels))
+            evidence["cases"][theme] = {"run_id": identifier, "report_sha256": hashlib.sha256(raw).hexdigest(),
+                                       "attachments_sha256": attachments, "passed": passed}
+        evidence["collected"] = set(cases) == {"trime", "tongwenfeng.trime"}
+        evidence["passed"] = evidence["collected"] and all(case["passed"] for case in evidence["cases"].values())
+        if not evidence["collected"]:
+            evidence["error"] = "Both shipped themes must have fresh candidate glyph evidence"
+    except (ValueError, OSError, subprocess.SubprocessError) as error:
+        evidence["error"] = str(error)
+    directory.mkdir(parents=True, exist_ok=True)
+    (directory / "collection.json").write_text(json.dumps(evidence, indent=2) + "\n")
+    return evidence
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--adb", required=True)
@@ -186,7 +262,9 @@ def run(args):
             run = subprocess.run(command, stdout=log, stderr=subprocess.STDOUT, timeout=instrumentation_timeout)
     output = (args.output / "instrumentation.log").read_text()
     glyph_evidence = None
+    candidate_glyph_evidence = None
     if args.probe == "editors":
+        candidate_glyph_evidence = collect_candidate_glyphs(adb, package, output, args.output / "candidate-glyph")
         # Pull only the probe's own fixed artifacts, including on assertion
         # failure. Its nonce and content hashes reject stale private files.
         glyph_evidence = {"collected": False, "passed": False}
@@ -246,6 +324,8 @@ def run(args):
     passed = assertions_passed and tested_audit["capture_has_records"]
     if glyph_evidence is not None:
         passed = passed and glyph_evidence["collected"] and glyph_evidence["passed"]
+    if candidate_glyph_evidence is not None:
+        passed = passed and candidate_glyph_evidence["collected"] and candidate_glyph_evidence["passed"]
     if not injects_faults:
         passed = passed and not tested_audit["known_project_diagnostics"]
     report = {"functional_passed": passed, "assertions_passed": assertions_passed,
@@ -257,6 +337,8 @@ def run(args):
               "requires_log_review": bool(audit["warnings"] or audit["known_project_diagnostics"]), "pid": pid}
     if glyph_evidence is not None:
         report["fallback_glyph_evidence"] = glyph_evidence
+    if candidate_glyph_evidence is not None:
+        report["candidate_glyph_evidence"] = candidate_glyph_evidence
     (args.output / "report.json").write_text(json.dumps(report, indent=2) + "\n")
     print(json.dumps(report), flush=True)
     if not passed:
