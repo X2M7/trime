@@ -13,10 +13,13 @@
 使用正式 `release` 构建，并通过 `-Ptrime.performanceTrace=true` 开启内容无关
 的 `TrimePerf` 日志。保留安装用 APK、源码提交、Gradle 构建参数和签名信息。
 基线也必须带同一套埋点，否则测量开销不同。日常构建默认关闭埋点。
+工具链更新后，基线和候选也使用相同的 Gradle、Kotlin 和构建插件版本重新
+生成，不能直接沿用旧工具链 APK 的测量作为同条件对照。
 采集器核对安装 APK 与传入正式 APK 的 SHA256，并拒绝 debuggable 应用和
 已知模拟器；这些检查无法单独证明构建来自指定源码或硬件未经伪装，仍需
-保存构建记录并人工确认真机。生产包使用混淆和资源压缩；调试包带 `.debug`
-后缀，原有 `t05/run_startup.py` 的模拟器 Debug 测量不适用本验收。
+保存构建记录并人工确认真机。正式包启用 R8 优化与代码缩减及资源压缩；当前
+通过 `-dontobfuscate` 保留类名。调试包带 `.debug` 后缀，原有
+`t05/run_startup.py` 的模拟器 Debug 测量不适用本验收。
 
 `candidate_draw` 是候选子树实际执行 draw 回调的时间，位于候选异步列表提交
 之后，并且至少有一个真实候选。空列表刷新记录 `candidate_clear`，其次数与
@@ -28,7 +31,8 @@ compute/generation 校验。它们衡量应用绘制提交，不能直接声称�
 另列反馈到候选绘制的时延。`feedback_ns=0` 的控制请求单列，不能混入主 P95。
 采样包含有 KeyView 反馈关联的按键，以及普通活动编辑器已经完成 native
 绑定时的控制请求；初始化、绑定和清理旧编辑器等不具备可靠归属的任务不
-创建请求。控制请求的计算与提交仍单列，并参与日志完整性检查。
+创建请求。控制请求参与总体队列、计算和提交延迟统计及日志完整性检查；
+这些延迟目前没有按控制/按键或直接/native 提交拆分独立分布。
 IME 串行队列等待（submitted→rime_queued）、native 队列等待
 （rime_queued→engine_start）、引擎计算、计算到绘制、编辑器提交分别报告。
 所有时间使用
@@ -58,7 +62,7 @@ IME 串行队列等待（submitted→rime_queued）、native 队列等待
   "input_method": "普通测试编辑器中点击实际键盘，固定输入和退格节奏",
   "schema_and_dictionary_snapshot": "固定测试配置的SHA256",
   "themes": ["trime", "tongwenfeng.trime"],
-  "round": "相同连续输入语料→相同模式切换→两主题来回切换→15秒静置",
+  "round": "相同连续输入语料→相同模式切换→两主题来回切换→静置期间完成至少三次PSS采样",
   "feedback": "固定声音、TTS、振动设置",
   "refresh_rate_hz": 60,
   "conditions": "记录环境温度/电源状态，排除热降频"
@@ -66,7 +70,7 @@ IME 串行队列等待（submitted→rime_queued）、native 队列等待
 ```
 
 协议不写测试输入明文也可以，使用固定文件的 SHA256 标识；基线和候选必须
-传入完全相同字节的协议文件。每一轮末尾保留至少三个采样间隔的静置，让
+传入完全相同字节的协议文件。每一轮末尾按实际时间保证三次完整静置采样，让
 最后三个 PSS 样本代表完成相同工作后的驻留。连续进行至少五轮，相同构建
 各轮保持同一应用进程和启动周期。每轮使用新目录、递增 `--round`：
 
@@ -78,7 +82,7 @@ python3 -B script/quality/t08/collect.py \
 ```
 
 把下一轮输出改成 `candidate-round-2`、`--round 2`，依次进行五轮。
-默认每五秒执行一次 `dumpsys meminfo`，降低采样干扰；若需要改频率，基线与
+默认每次采样完成后等待五秒再执行 `dumpsys meminfo`，实际间隔包含 ADB 耗时；若需要改频率，基线与
 候选保持相同。默认每次采集 180 秒、至多 16 MiB 日志；上限是 1800 秒/64 MiB，
 日志触及上限就明确失败，不会删除输入记录来伪造完整性。APK 流式落到主机
 临时文件后计算 SHA256，日志直接写文件；不启动 Gradle 或模拟器占用主机内存。
@@ -123,6 +127,9 @@ request→commit 包含该编辑器调用的耗时。feedback→editor_commit �
 的按键交互与按住按键的时长。返回失败会记录 job_failed，不能算作成功提交。
 native 候选提交（generation>0）必须关联已完成的
 同 generation 快照，不能把缺失计算事件当成直接提交。
+此阶段记录 `commitText` / `finishComposingText` 的成功返回。未处理的空格、
+回车若通过 `sendKeyEvent` 或 `performEditorAction` 转发，不计为这类提交；
+当前没有这些编辑器动作的独立结束时间，不能声称覆盖全部编辑器响应耗时。
 
 PSS 使用 `dumpsys meminfo` 详细表第一列：Java 为 `Dalvik Heap + Dalvik Other`，
 native 为 `Native Heap`，graphics 为 `Gfx dev + EGL mtrack + GL mtrack`，
@@ -135,8 +142,9 @@ RSS 不会被冒充 PSS。设备没有 GPU 记账时 graphics 为未知，不能
 total 的正向驻留增长预算为 `max(4 MiB, 起始驻留的5%)`，同时检查线性增长
 趋势；这是可调整的诊断预算，不是所有机型通用的峰值内存上限。可用
 `--growth-kib`、`--growth-percent`、`--tail-rounds` 更改，并在基线/候选保持
-相同设置。新增键盘模式前先保存这些结果。`keyboard_cache` 只记录窗口标识、
-布局数量和按键数量，帮助关联驻留趋势，不能替代 Java/native/graphics/total PSS。
+相同设置。新增键盘模式前先保存这些结果。`keyboard_cache` 记录窗口标识、
+布局数量和按键数量，通用 request/editor/generation 关联字段均为 0，帮助关联
+驻留趋势，不能替代 Java/native/graphics/total PSS。
 
 准确率文件由独立语料执行器或人工核对生成，不由性能日志猜测：
 
