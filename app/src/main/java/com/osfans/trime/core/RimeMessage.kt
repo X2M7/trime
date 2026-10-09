@@ -11,6 +11,9 @@ sealed class RimeMessage<T>(
     var editorToken: Long = 0
         internal set
 
+    var snapshot: CandidateSnapshot = CandidateSnapshot.EMPTY
+        internal set
+
     abstract val messageType: MessageType
 
     val isEditorResponse: Boolean

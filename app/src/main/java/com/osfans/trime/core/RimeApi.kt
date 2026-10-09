@@ -26,6 +26,8 @@ interface RimeApi {
 
     val t9Cached: T9StateProto
 
+    val candidateSnapshotCached: CandidateSnapshot
+
     suspend fun refreshT9Options()
 
     suspend fun t9Action(
@@ -62,11 +64,11 @@ interface RimeApi {
         sequence: String,
     ): Boolean
 
-    suspend fun selectCandidate(idx: Int, global: Boolean): Boolean
+    suspend fun selectCandidate(idx: Int, global: Boolean, expectedSnapshot: CandidateSnapshot? = null): Boolean
 
-    suspend fun deleteCandidate(idx: Int, global: Boolean): Boolean
+    suspend fun deleteCandidate(idx: Int, global: Boolean, expectedSnapshot: CandidateSnapshot? = null): Boolean
 
-    suspend fun changeCandidatePage(backward: Boolean): Boolean
+    suspend fun changeCandidatePage(backward: Boolean, expectedSnapshot: CandidateSnapshot? = null): Boolean
 
     /** Byte offset in the displayed UTF-8 preedit, not the private engine input. */
     suspend fun moveCursorPos(position: Int, expectedPreedit: String? = null)
@@ -125,6 +127,7 @@ interface RimeApi {
     suspend fun getCandidates(
         startIndex: Int,
         limit: Int,
+        expectedSnapshot: CandidateSnapshot? = null,
     ): Array<CandidateProto>
 
     suspend fun setCandidatePagingMode(enabled: Boolean)

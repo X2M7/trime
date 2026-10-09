@@ -8,25 +8,26 @@ package com.osfans.trime.ime.candidates.unrolled
 import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
-import com.osfans.trime.core.CandidateProto
+import com.osfans.trime.core.CandidateSnapshot
 import com.osfans.trime.data.theme.ThemeScope
 import com.osfans.trime.ime.candidates.CandidateItemUi
+import com.osfans.trime.ime.candidates.CandidateRow
 import com.osfans.trime.ime.candidates.CandidateViewHolder
 
 open class PagingCandidateViewAdapter(
     val scope: ThemeScope,
-) : PagingDataAdapter<CandidateProto, CandidateViewHolder>(diffCallback) {
+) : PagingDataAdapter<CandidateRow, CandidateViewHolder>(diffCallback) {
     companion object {
         private val diffCallback =
-            object : DiffUtil.ItemCallback<CandidateProto>() {
+            object : DiffUtil.ItemCallback<CandidateRow>() {
                 override fun areItemsTheSame(
-                    oldItem: CandidateProto,
-                    newItem: CandidateProto,
-                ): Boolean = oldItem === newItem
+                    oldItem: CandidateRow,
+                    newItem: CandidateRow,
+                ): Boolean = oldItem.snapshot == newItem.snapshot && oldItem.index == newItem.index
 
                 override fun areContentsTheSame(
-                    oldItem: CandidateProto,
-                    newItem: CandidateProto,
+                    oldItem: CandidateRow,
+                    newItem: CandidateRow,
                 ): Boolean = oldItem == newItem
             }
     }
@@ -37,9 +38,17 @@ open class PagingCandidateViewAdapter(
     var highlightedIndex: Int = -1
         private set
 
-    fun refreshWith(offset: Int, highlightedIndex: Int) {
+    var snapshot = CandidateSnapshot()
+        private set
+
+    var total: Int = -1
+        private set
+
+    fun refreshWith(offset: Int, total: Int, highlightedIndex: Int, snapshot: CandidateSnapshot) {
         this.offset = offset
+        this.total = total
         this.highlightedIndex = highlightedIndex
+        this.snapshot = snapshot
         refresh()
     }
 
@@ -52,12 +61,14 @@ open class PagingCandidateViewAdapter(
         holder: CandidateViewHolder,
         position: Int,
     ) {
-        val item = getItem(position) ?: return
-        val idx = position + offset
+        val row = getItem(position) ?: return
+        val item = row.candidate
+        val idx = row.index
         val highlighted = idx == highlightedIndex
         holder.ui.update(item, highlighted)
         holder.text = item.text
         holder.comment = item.comment
         holder.idx = idx
+        holder.snapshot = row.snapshot
     }
 }

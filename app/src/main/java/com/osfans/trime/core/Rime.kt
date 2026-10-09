@@ -11,9 +11,12 @@ import com.osfans.trime.data.opencc.OpenCCDictManager
 import com.osfans.trime.data.prefs.AppPrefs
 import com.osfans.trime.data.sync.RimeDataSync
 import com.osfans.trime.ime.core.InlinePreeditMode
+import com.osfans.trime.ime.performance.InputLatencyLog
+import com.osfans.trime.ime.performance.InputRequest
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -60,6 +63,15 @@ class Rime :
         private set
 
     private val optionCache = RuntimeOptionCache()
+    private val candidateSnapshots = CandidateSnapshotState()
+    private var activeRequest: InputRequest? = null
+
+    override val candidateSnapshotCached: CandidateSnapshot get() = candidateSnapshots.current
+
+    private fun invalidateCandidates() {
+        InputLatencyLog.supersede(candidateSnapshots.current)
+        candidateSnapshots.invalidate()
+    }
 
     override fun getRuntimeOptionCached(option: String): Boolean = optionCache[option]
 
@@ -70,6 +82,7 @@ class Rime :
         nullInputType: Boolean,
         privacyMode: Boolean,
     ) = withRimeContext {
+        invalidateCandidates()
         val editorChanged = editorToken != token
         if (editorChanged || this.privacyMode != privacyMode) {
             // Drop the previous editor's Java snapshots before any JNI boundary
@@ -103,6 +116,7 @@ class Rime :
 
     /** Must only be called from [withRimeContext]. */
     private fun finishCurrentEditor() {
+        invalidateCandidates()
         clearTransientEditorState()
         try {
             if (privacyMode) {
@@ -130,6 +144,7 @@ class Rime :
         end: Int,
         spelling: String,
     ): Boolean = withRimeContext {
+        invalidateCandidates()
         performRimeT9Action(revision, action.ordinal, start, end, spelling, AppPrefs.defaultInstance().keyboard.t9AssistMask())
             .also { emitResponse() }
     }
@@ -175,8 +190,19 @@ class Rime :
         }
     }
 
-    private suspend inline fun <T> withRimeContext(crossinline block: suspend () -> T): T = dispatcher.runConfined {
-        block()
+    private suspend inline fun <T> withRimeContext(crossinline block: suspend () -> T): T {
+        val request = currentCoroutineContext()[InputRequest]
+        InputLatencyLog.rimeQueued(request)
+        return dispatcher.runConfined {
+            InputLatencyLog.engineStart(request)
+            val previous = activeRequest
+            activeRequest = request
+            try {
+                block()
+            } finally {
+                activeRequest = previous
+            }
+        }
     }
 
     override suspend fun isEmpty(): Boolean = withRimeContext {
@@ -301,6 +327,7 @@ class Rime :
     }
 
     override suspend fun simulateKeySequence(sequence: String): Boolean = withRimeContext {
+        invalidateCandidates()
         Timber.d("simulateKeySequence")
         if (simulateRimeKeySequence(sequence)) {
             val commit = getRimeCommit()
@@ -313,24 +340,41 @@ class Rime :
                 false
             }
         } else {
+            emitResponse()
             false
         }.also { Timber.d("simulateKeySequence ${if (it) "success" else "failed"}") }
     }
 
-    override suspend fun selectCandidate(idx: Int, global: Boolean): Boolean = withRimeContext {
+    override suspend fun selectCandidate(idx: Int, global: Boolean, expectedSnapshot: CandidateSnapshot?): Boolean = withRimeContext {
+        if (!candidateSnapshots.accepts(expectedSnapshot, editorToken)) {
+            expectedSnapshot?.let(InputLatencyLog::stale)
+            return@withRimeContext false
+        }
+        invalidateCandidates()
         selectRimeCandidate(idx, global).also { emitResponse() }
     }
 
-    override suspend fun deleteCandidate(idx: Int, global: Boolean): Boolean = withRimeContext {
+    override suspend fun deleteCandidate(idx: Int, global: Boolean, expectedSnapshot: CandidateSnapshot?): Boolean = withRimeContext {
+        if (!candidateSnapshots.accepts(expectedSnapshot, editorToken)) {
+            expectedSnapshot?.let(InputLatencyLog::stale)
+            return@withRimeContext false
+        }
+        invalidateCandidates()
         deleteRimeCandidate(idx, global).also { emitResponse() }
     }
 
-    override suspend fun changeCandidatePage(backward: Boolean): Boolean = withRimeContext {
+    override suspend fun changeCandidatePage(backward: Boolean, expectedSnapshot: CandidateSnapshot?): Boolean = withRimeContext {
+        if (!candidateSnapshots.accepts(expectedSnapshot, editorToken)) {
+            expectedSnapshot?.let(InputLatencyLog::stale)
+            return@withRimeContext false
+        }
+        invalidateCandidates()
         changeRimeCandidatePage(backward).also { emitResponse() }
     }
 
     override suspend fun moveCursorPos(position: Int, expectedPreedit: String?) = withRimeContext {
         if (expectedPreedit != null && getRimeContext().composition.preedit != expectedPreedit) return@withRimeContext
+        invalidateCandidates()
         setRimeCaretPos(position)
         emitResponse()
     }
@@ -346,17 +390,22 @@ class Rime :
     override suspend fun selectedSchemaId(): String = withRimeContext { getCurrentRimeSchema() }
 
     override suspend fun selectSchema(schemaId: String) = withRimeContext {
-        selectRimeSchema(schemaId).also { if (it) emitResponse() }
+        invalidateCandidates()
+        selectRimeSchema(schemaId).also { emitResponse() }
     }
 
     override suspend fun currentSchema(): RimeSchema = withRimeContext {
         RimeSchema(getCurrentRimeSchema())
     }
 
-    override suspend fun commitComposition(): Boolean = withRimeContext { commitRimeComposition().also { if (it) emitResponse() } }
+    override suspend fun commitComposition(): Boolean = withRimeContext {
+        invalidateCandidates()
+        commitRimeComposition().also { emitResponse() }
+    }
 
     override suspend fun commitT9Digit(digit: Char): Boolean = withRimeContext {
         require(digit in '0'..'9')
+        invalidateCandidates()
         var pending = ""
         if (getRimeRawInput().isNotEmpty()) {
             // Use the same full-input Return path as T02, including a caret inside a locked syllable.
@@ -374,6 +423,7 @@ class Rime :
     }
 
     override suspend fun clearComposition() = withRimeContext {
+        invalidateCandidates()
         clearRimeComposition()
         emitResponse()
     }
@@ -386,7 +436,9 @@ class Rime :
         option: String,
         value: Boolean,
     ): Unit = withRimeContext {
+        invalidateCandidates()
         setRimeOption(option, value)
+        emitResponse()
     }
 
     override suspend fun getRuntimeOption(option: String): Boolean = withRimeContext {
@@ -400,17 +452,22 @@ class Rime :
     override suspend fun getCandidates(
         startIndex: Int,
         limit: Int,
+        expectedSnapshot: CandidateSnapshot?,
     ): Array<CandidateProto> = withRimeContext {
+        if (!candidateSnapshots.accepts(expectedSnapshot, editorToken)) throw StaleCandidateSnapshotException()
+        require(startIndex >= 0 && limit in 1..144)
         getRimeCandidates(startIndex, limit)
     }
 
     override suspend fun setCandidatePagingMode(enabled: Boolean) = withRimeContext {
+        invalidateCandidates()
         pagingMode = enabled
         emitResponse()
     }
 
     private fun startRime(fullCheck: Boolean) {
         // Editor ownership outlives an in-place native restart/deployment.
+        invalidateCandidates()
         usingExistingResources = false
         optionCache.clear()
         val mayRecover = DataManager.hasDeployedResources()
@@ -477,6 +534,7 @@ class Rime :
 
     /** Clear process-global snapshots that can contain editor-owned text. */
     private fun clearTransientEditorState() {
+        invalidateCandidates()
         compositionCached = CompositionProto()
         t9Cached = T9StateProto()
         hasMenu = false
@@ -498,13 +556,15 @@ class Rime :
     }
 
     private fun processKeyInner(value: Int, modifiers: Int, isVirtual: Boolean): Boolean {
+        invalidateCandidates()
         lastAsciiTipsText = asciiTipsText(getRimeStatus())
         val handled = processRimeKey(value, modifiers)
         emitResponse()
         if (!handled) {
-            handleRimeMessage(
+            publishSnapshotMessage(
                 10, // RimeMessage.MessageType.Key,
                 arrayOf(value, modifiers, isVirtual),
+                candidateSnapshotCached,
             )
         }
         return handled
@@ -522,20 +582,31 @@ class Rime :
     private fun emitResponse(commit: CommitProto? = null) {
         val response = getRimeResponse(pagingMode)
         val t9 = getRimeT9State(AppPrefs.defaultInstance().keyboard.t9AssistMask())
-        handleRimeMessage(4, arrayOf(commit ?: response.commit))
-        handlePreedit(response.composition, t9.enabled)
+        InputLatencyLog.supersede(candidateSnapshots.current)
+        val snapshot = candidateSnapshots.publish(editorToken, activeRequest?.id ?: 0)
+        when (val candidates = response.candidates) {
+            is Candidates.Paged -> candidates.snapshot = snapshot
+            is Candidates.Bulk -> candidates.snapshot = snapshot
+        }
+        InputLatencyLog.computed(activeRequest, snapshot)
+        publishSnapshotMessage(4, arrayOf(commit ?: response.commit), snapshot)
+        handlePreedit(response.composition, t9.enabled, snapshot)
         if (response.composition.length <= 0 && lastAsciiTipsText != asciiTipsText(response.status)) {
             showAsciiSwitchTips(response.status)
         }
         when (val candidates = response.candidates) {
-            is Candidates.Paged -> handleRimeMessage(7, arrayOf(candidates))
-            is Candidates.Bulk -> handleRimeMessage(9, arrayOf(candidates))
+            is Candidates.Paged -> publishSnapshotMessage(7, arrayOf(candidates), snapshot)
+            is Candidates.Bulk -> publishSnapshotMessage(9, arrayOf(candidates), snapshot)
         }
-        handleRimeMessage(8, arrayOf(response.status))
-        handleRimeMessage(11, arrayOf(t9))
+        publishSnapshotMessage(8, arrayOf(response.status), snapshot)
+        publishSnapshotMessage(11, arrayOf(t9), snapshot)
     }
 
-    private fun handlePreedit(composition: CompositionProto, t9: Boolean = false) {
+    private fun publishSnapshotMessage(type: Int, params: Array<Any>, snapshot: CandidateSnapshot) {
+        dispatchRimeMessage(RimeMessage.nativeCreate(type, params).apply { this.snapshot = snapshot })
+    }
+
+    private fun handlePreedit(composition: CompositionProto, t9: Boolean = false, snapshot: CandidateSnapshot = CandidateSnapshot.EMPTY) {
         val mode = if (isNullInputType) {
             InlinePreeditMode.DISABLE
         } else {
@@ -554,13 +625,14 @@ class Rime :
         } else {
             composition
         }
-        handleRimeMessage(5, arrayOf(inlinePreedit))
-        handleRimeMessage(6, arrayOf(composition))
+        publishSnapshotMessage(5, arrayOf(inlinePreedit), snapshot)
+        publishSnapshotMessage(6, arrayOf(composition), snapshot)
     }
 
     private fun handleRimeMessage(it: RimeMessage<*>) {
         when (it) {
             is RimeMessage.SchemaMessage -> {
+                invalidateCandidates()
                 t9Cached = T9StateProto()
                 optionCache.clear()
                 statusCached = getRimeStatus()
@@ -568,6 +640,7 @@ class Rime :
             }
 
             is RimeMessage.OptionMessage -> {
+                invalidateCandidates()
                 optionCache.update(it.data.option, it.data.value)
                 // Option change won't trigger response update
                 val status = getRimeStatus()
@@ -852,7 +925,10 @@ class Rime :
             type: Int,
             params: Array<Any>,
         ) {
-            val message = RimeMessage.nativeCreate(type, params)
+            dispatchRimeMessage(RimeMessage.nativeCreate(type, params))
+        }
+
+        private fun dispatchRimeMessage(message: RimeMessage<*>) {
             message.editorToken = editorToken
             Timber.d("Handling ${message.javaClass.simpleName}")
             messageBus.publish(message) {

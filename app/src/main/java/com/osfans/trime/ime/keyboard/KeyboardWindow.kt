@@ -25,6 +25,7 @@ import com.osfans.trime.ime.core.EditorModeOverride
 import com.osfans.trime.ime.core.EditorPolicy
 import com.osfans.trime.ime.core.TrimeInputMethodService
 import com.osfans.trime.ime.keyboard.KeyboardPrefs.isLandscapeMode
+import com.osfans.trime.ime.performance.InputLatencyLog
 import com.osfans.trime.ime.popup.PopupDelegate
 import com.osfans.trime.ime.window.BoardWindow
 import com.osfans.trime.ime.window.ResidentWindow
@@ -94,6 +95,7 @@ class KeyboardWindow(di: DI) :
     private var desiredAsciiMode: Boolean? = null
     private var preserveNativeModeOnNextStart = false
     private var preservedSymbolMode: Pair<Keyboard, Boolean>? = null
+    private val keyboardCacheId = InputLatencyLog.nextCacheId()
     private val cachedKeyboards = mutableMapOf<String, Pair<Keyboard, KeyboardView>>()
     private val activeKeyboard: Keyboard? get() = cachedKeyboards[currentKeyboardId]?.first
     private val currentKeyboardView: KeyboardView? get() = cachedKeyboards[currentKeyboardId]?.second
@@ -185,6 +187,7 @@ class KeyboardWindow(di: DI) :
 
         if (activeKeyboard == null) {
             cachedKeyboards[target] = keyboard to view
+            recordKeyboardCache()
             keyboard.lastAsciiMode = keyboard.asciiMode
         }
 
@@ -310,7 +313,18 @@ class KeyboardWindow(di: DI) :
         } else {
             cachedKeyboards.remove(id)
         }
+        recordKeyboardCache()
         attachKeyboard(id)
+    }
+
+    /** Reports existing layout/key counts only when the cache changes. */
+    private fun recordKeyboardCache() {
+        if (!InputLatencyLog.enabled) return
+        InputLatencyLog.keyboardCache(
+            keyboardCacheId,
+            cachedKeyboards.size,
+            cachedKeyboards.values.sumOf { (keyboard, _) -> keyboard.keys.size },
+        )
     }
 
     /** Repaints the keyboard after a color-scheme switch; keys re-resolve their colors. */

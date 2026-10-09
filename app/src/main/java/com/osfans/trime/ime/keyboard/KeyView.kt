@@ -21,6 +21,7 @@ import com.osfans.trime.core.T9Action
 import com.osfans.trime.daemon.RimeDaemon
 import com.osfans.trime.data.theme.Theme
 import com.osfans.trime.ime.core.TrimeInputMethodService
+import com.osfans.trime.ime.performance.InputLatencyLog
 import com.osfans.trime.ime.popup.PopupAction
 import com.osfans.trime.ime.popup.PopupDelegate
 import com.osfans.trime.util.sp
@@ -48,6 +49,9 @@ class KeyView(
 
     private val deletedTextBuffer = ArrayDeque<String>()
     private var pendingRepeat: Job? = null
+    private var feedbackNanos = 0L
+
+    private fun <T> dispatchInput(action: () -> T): T = service.withInputFeedback(feedbackNanos, action)
 
     private var keyPressed = false
     override fun isPressed(): Boolean = keyPressed
@@ -100,6 +104,7 @@ class KeyView(
             if (keyboard.firstPressedKeyIndex == -1) keyboard.firstPressedKeyIndex = id
             setPressedState(true)
             key.getCode(KeyBehavior.CLICK).let { keyboardActionListener.onPress(it) }
+            feedbackNanos = if (InputLatencyLog.enabled) InputLatencyLog.now() else 0L
             showPopupPreview()
         }
 
@@ -110,7 +115,7 @@ class KeyView(
                     val triggerAction = PopupAction.TriggerAction(id)
                     popup.listener.onPopupAction(triggerAction)
                     triggerAction.outAction?.let { action ->
-                        keyboardActionListener.onAction(theme.resolveAction(action))
+                        dispatchInput { keyboardActionListener.onAction(theme.resolveAction(action)) }
                         dismissPopupPreview()
                     }
                     setPressedState(false)
@@ -150,15 +155,17 @@ class KeyView(
         onSlide = slide@{ delta, _, _ ->
             if (isSlideCursor) {
                 repeat(kotlin.math.abs(delta).coerceAtMost(64)) {
-                    keyboardActionListener.onAction(theme.resolveAction(if (delta > 0) "Right" else "Left"))
+                    dispatchInput { keyboardActionListener.onAction(theme.resolveAction(if (delta > 0) "Right" else "Left")) }
                 }
             } else if (isSlideDelete) {
                 if (rime.run { statusCached.isComposing }) {
                     when {
-                        delta < 0 -> keyboardActionListener.onKey(KeyEvent.KEYCODE_DEL, 0)
+                        delta < 0 -> dispatchInput { keyboardActionListener.onKey(KeyEvent.KEYCODE_DEL, 0) }
 
-                        delta > 0 -> service.postRimeJob {
-                            if (t9Cached.canUndo) t9Action(t9Cached.revision, T9Action.Undo)
+                        delta > 0 -> dispatchInput {
+                            service.postRimeJob {
+                                if (t9Cached.canUndo) t9Action(t9Cached.revision, T9Action.Undo)
+                            }
                         }
                     }
                     return@slide
@@ -238,9 +245,9 @@ class KeyView(
         }
 
         if (repeated) {
-            pendingRepeat = keyboardActionListener.onRepeat(action)
+            pendingRepeat = dispatchInput { keyboardActionListener.onRepeat(action) }
         } else {
-            keyboardActionListener.onAction(action)
+            dispatchInput { keyboardActionListener.onAction(action) }
         }
 
         val hookArrow = if (keyboardView.hookShiftArrow) {

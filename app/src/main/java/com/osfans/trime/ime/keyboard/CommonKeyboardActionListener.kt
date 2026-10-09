@@ -12,6 +12,7 @@ import android.view.KeyEvent
 import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import com.osfans.trime.R
+import com.osfans.trime.core.CandidateSnapshot
 import com.osfans.trime.core.KeyModifiers
 import com.osfans.trime.core.RimeApi
 import com.osfans.trime.core.RimeKeyEvent
@@ -26,6 +27,7 @@ import com.osfans.trime.ime.clipboard.ClipboardWindow
 import com.osfans.trime.ime.core.PrivacyModeState
 import com.osfans.trime.ime.core.TrimeInputMethodService
 import com.osfans.trime.ime.dialog.EnabledSchemaPickerDialog
+import com.osfans.trime.ime.performance.InputRequest
 import com.osfans.trime.ime.switches.SwitchOptionWindow
 import com.osfans.trime.ime.symbol.LiquidWindow
 import com.osfans.trime.ime.window.BoardWindowManager
@@ -39,6 +41,7 @@ import com.osfans.trime.util.buildIntentFromArgument
 import com.osfans.trime.util.customFormatDateTime
 import com.osfans.trime.util.isAsciiPrintable
 import com.osfans.trime.util.toast
+import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.launch
 import org.kodein.di.DI
 import org.kodein.di.DIAware
@@ -476,7 +479,9 @@ class CommonKeyboardActionListener(override val di: DI) : DIAware {
                             val token = value.removeSurrounding("{", "}")
                             onAction(theme.resolveAction(token))
                         } else if (!value[0].isAsciiPrintable()) {
-                            service.commitText(value)
+                            val request = currentCoroutineContext()[InputRequest]
+                            val snapshot = request?.let { CandidateSnapshot(it.editor, 0, it.id) } ?: CandidateSnapshot.EMPTY
+                            service.commitText(value, snapshot)
                         } else {
                             simulateKeySequence(value)
                         }

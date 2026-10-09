@@ -41,6 +41,7 @@ import androidx.core.view.updateLayoutParams
 import androidx.lifecycle.lifecycleScope
 import com.osfans.trime.R
 import com.osfans.trime.TrimeApplication
+import com.osfans.trime.core.CandidateSnapshot
 import com.osfans.trime.core.KeyModifiers
 import com.osfans.trime.core.KeyValue
 import com.osfans.trime.core.RimeApi
@@ -58,6 +59,7 @@ import com.osfans.trime.data.theme.ThemeManager
 import com.osfans.trime.data.theme.ThemeScope
 import com.osfans.trime.ime.composition.CandidatesView
 import com.osfans.trime.ime.keyboard.InputFeedbackManager
+import com.osfans.trime.ime.performance.InputLatencyLog
 import com.osfans.trime.receiver.RimeIntentReceiver
 import com.osfans.trime.util.any
 import com.osfans.trime.util.findSectionFrom
@@ -72,6 +74,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
 import splitties.bitflags.hasFlag
 import splitties.systemservices.clipboardManager
@@ -234,13 +237,38 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
      * subsequent operations can start if the prior operation is not finished (suspended),
      * [postRimeJob] ensures that operations are executed sequentially.
      */
+    private var scopedFeedbackNanos = 0L
+
+    /** Scope a specific KeyView gesture to synchronous queue submissions, never the last global touch. */
+    fun <T> withInputFeedback(feedbackNanos: Long, action: () -> T): T {
+        val previous = scopedFeedbackNanos
+        scopedFeedbackNanos = feedbackNanos
+        try {
+            return action()
+        } finally {
+            scopedFeedbackNanos = previous
+        }
+    }
+
     fun postRimeJob(block: suspend RimeApi.() -> Unit): Job {
         val origin = editorGeneration.token
-        return postJob(lifecycleScope) {
+        val request = if (scopedFeedbackNanos > 0 || (editorActive && nativeBoundEditorToken == origin)) {
+            InputLatencyLog.request(origin, scopedFeedbackNanos)
+        } else {
+            null // Startup, rebind and teardown can still belong to the previous native editor.
+        }
+        val operation: suspend () -> Unit = {
             if (!replacingDirectBootProcess && editorGeneration.accepts(origin)) {
                 rime.runOnReady {
                     if (!replacingDirectBootProcess && editorGeneration.accepts(origin)) block()
                 }
+            }
+        }
+        if (request == null) return postJob(lifecycleScope, operation)
+        return postJob(lifecycleScope) { withContext(request) { operation() } }.also { job ->
+            job.invokeOnCompletion { failure ->
+                val failed = failure != null && (failure !is CancellationException || failure is com.osfans.trime.core.RimeUnavailableException)
+                InputLatencyLog.finish(request, failed)
             }
         }
     }
@@ -299,6 +327,7 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
         val updated = EditorPolicy.privacy(info, manual)
         if (updated == privacyMode) return
         inlineSuggestionRequestGate.invalidate()
+        InputLatencyLog.reset()
         editorGeneration.advance()
         nativeBoundEditorToken = 0L
         privacyOwner = editorGeneration.token
@@ -489,7 +518,7 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
         when (it) {
             is RimeMessage.CommitTextMessage -> {
                 if (!it.data.text.isNullOrEmpty()) {
-                    commitText(it.data.text)
+                    commitText(it.data.text, it.snapshot)
                 }
             }
 
@@ -497,7 +526,8 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
                 updateComposingText(it.data.text, it.data.cursor)
             }
 
-            is RimeMessage.KeyMessage ->
+            is RimeMessage.KeyMessage -> {
+                val snapshot = it.snapshot
                 it.data.let msg@{
                     if (it.isVirtual) {
                         when (it.value.value) {
@@ -520,7 +550,7 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
                                 } else {
                                     if (it.value.value > 0) {
                                         runCatching {
-                                            commitText(Character.toString(it.value.value))
+                                            commitText(Character.toString(it.value.value), snapshot)
                                         }.getOrElse { t -> Timber.w(t, "Unhandled Virtual KeyEvent") }
                                     } else {
                                         Timber.w("Unhandled Virtual KeyEvent")
@@ -541,7 +571,7 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
                         } else {
                             if (!it.modifiers.release && it.value.value > 0) {
                                 runCatching {
-                                    commitText(Character.toString(it.value.value))
+                                    commitText(Character.toString(it.value.value), snapshot)
                                 }.getOrElse { t -> Timber.w(t, "Unhandled Rime KeyEvent") }
                             } else {
                                 Timber.w("Unhandled Rime KeyEvent")
@@ -549,6 +579,7 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
                         }
                     }
                 }
+            }
 
             is RimeMessage.DeployMessage -> {
                 if (!themeReady && it.data == RimeMessage.DeployMessage.State.Success) prepareTheme()
@@ -611,6 +642,7 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
         nativeBoundEditorToken = 0L
         privacyOwner = 0
         editorActive = false
+        InputLatencyLog.reset()
         editorGeneration.advance()
         inputView?.finishInput()
         themeReady = false
@@ -881,6 +913,7 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
             return
         }
         cursorAnchorSubscription.reset()
+        InputLatencyLog.reset()
         editorGeneration.advance()
         nativeBoundEditorToken = 0L
         editorActive = true
@@ -913,6 +946,7 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
 
     private fun deferInputUntilProcessReplacement() {
         inlineSuggestionRequestGate.invalidate()
+        InputLatencyLog.reset()
         editorGeneration.advance()
         nativeBoundEditorToken = 0L
         editorActive = false
@@ -941,6 +975,7 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
         showingDialog?.dismiss()
         lastCommittedText = ""
         InputFeedbackManager.finishInput()
+        InputLatencyLog.reset()
         editorGeneration.advance()
         postRimeJob { finishEditor(finishedEditor) }
             .invokeOnCompletion {
@@ -1045,16 +1080,31 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
         InputFeedbackManager.finishInput()
     }
 
-    fun commitText(text: String) {
+    fun commitText(text: String, snapshot: CandidateSnapshot = CandidateSnapshot.EMPTY) {
         val ic = currentInputConnection ?: return
+        val directRequest = if (snapshot.requestId == 0L && scopedFeedbackNanos > 0) {
+            InputLatencyLog.request(editorGeneration.token, scopedFeedbackNanos)
+        } else {
+            null
+        }
 
         // Finishing in place preserves the caret, so it is only safe at the end.
-        if (composingText.isNotEmpty() && composingText == text &&
+        val committed = if (composingText.isNotEmpty() && composingText == text &&
             composingCursor == text.length && composingSelectionMatches
         ) {
             ic.finishComposingText()
         } else {
             ic.commitText(text, 1)
+        }
+        if (committed) {
+            if (snapshot.requestId != 0L) {
+                InputLatencyLog.editorCommit(snapshot)
+            } else {
+                directRequest?.let { InputLatencyLog.editorCommit(CandidateSnapshot(it.editor, 0, it.id)) }
+            }
+        } else {
+            InputLatencyLog.finish(directRequest, failed = true)
+            InputLatencyLog.failedCommit(snapshot)
         }
         val contentAllowed = privacyMode.allowContentAccess && !PrivacyModeState.active
         lastCommittedText = if (contentAllowed) text else ""

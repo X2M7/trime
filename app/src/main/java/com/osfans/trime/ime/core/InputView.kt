@@ -39,6 +39,7 @@ import com.osfans.trime.ime.keyboard.CommonKeyboardActionListener
 import com.osfans.trime.ime.keyboard.KeyboardPrefs.isLandscapeMode
 import com.osfans.trime.ime.keyboard.KeyboardWindow
 import com.osfans.trime.ime.keyboard.T9LayoutPolicy
+import com.osfans.trime.ime.performance.InputLatencyLog
 import com.osfans.trime.ime.popup.PopupDelegate
 import com.osfans.trime.ime.symbol.LiquidWindow
 import com.osfans.trime.ime.window.BoardWindow
@@ -438,6 +439,10 @@ class InputView(
             }
 
             is RimeMessage.BulkCandidatesMessage -> {
+                if (it.data.snapshot.isValid && it.data.snapshot != rime.run { candidateSnapshotCached }) {
+                    InputLatencyLog.stale(it.data.snapshot)
+                    return
+                }
                 broadcaster.onCandidateListUpdate(it.data)
             }
 

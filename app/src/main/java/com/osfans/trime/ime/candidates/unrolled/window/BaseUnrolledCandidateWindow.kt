@@ -28,6 +28,7 @@ import com.osfans.trime.ime.candidates.unrolled.UnrolledCandidateLayout
 import com.osfans.trime.ime.core.InputView
 import com.osfans.trime.ime.core.TrimeInputMethodService
 import com.osfans.trime.ime.keyboard.KeyboardWindow
+import com.osfans.trime.ime.performance.InputLatencyLog
 import com.osfans.trime.ime.window.BoardWindow
 import com.osfans.trime.ime.window.BoardWindowManager
 import kotlinx.coroutines.Job
@@ -79,6 +80,23 @@ abstract class BaseUnrolledCandidateWindow(di: DI) :
     final override fun onCreateView(): View {
         candidateLayout =
             onCreateCandidateLayout().apply {
+                onCandidatesDrawn = {
+                    val snapshot = adapter.snapshot
+                    val list = recyclerView
+                    if (service.isCurrentEditor(snapshot.editorToken) &&
+                        snapshot == rime.run { candidateSnapshotCached } && list.childCount > 0
+                    ) {
+                        var currentRows = true
+                        for (index in 0 until list.childCount) {
+                            val holder = list.getChildViewHolder(list.getChildAt(index)) as? CandidateViewHolder
+                            if (holder?.snapshot != snapshot) {
+                                currentRows = false
+                                break
+                            }
+                        }
+                        if (currentRows) InputLatencyLog.candidateDraw(snapshot)
+                    }
+                }
                 recyclerView.apply {
                     // disable item cross-fade animation
                     itemAnimator = null
@@ -95,14 +113,17 @@ abstract class BaseUnrolledCandidateWindow(di: DI) :
     private val candidatesPager by lazy {
         Pager(
             config = PagingConfig(
-                pageSize = 48,
+                pageSize = CandidatesPagingSource.PAGE_SIZE,
+                initialLoadSize = CandidatesPagingSource.PAGE_SIZE,
+                maxSize = CandidatesPagingSource.PAGE_SIZE * 3,
                 enablePlaceholders = false,
             ),
             pagingSourceFactory = {
                 CandidatesPagingSource(
                     rime,
-                    total = compactCandidate.adapter.total,
+                    total = adapter.total,
                     offset = adapter.offset,
+                    snapshot = adapter.snapshot,
                 )
             },
         )
@@ -116,13 +137,15 @@ abstract class BaseUnrolledCandidateWindow(di: DI) :
         offsetJob =
             lifecycleCoroutineScope.launch {
                 compactCandidate.unrolledCandidateOffset.collect {
-                    if (it <= 0) {
+                    if (it.offset <= 0) {
                         windowManager.attachWindow(KeyboardWindow)
                     } else {
                         candidateLayout.resetPosition()
                         adapter.refreshWith(
-                            offset = it,
-                            highlightedIndex = compactCandidate.adapter.highlightedIdx,
+                            offset = it.offset,
+                            total = it.total,
+                            highlightedIndex = it.highlighted,
+                            snapshot = it.snapshot,
                         )
                     }
                 }
@@ -139,10 +162,11 @@ abstract class BaseUnrolledCandidateWindow(di: DI) :
         holder.itemView.run {
             setOnClickListener { _ ->
                 val index = holder.idx
-                service.postRimeJob { selectCandidate(index, global = true) }
+                val snapshot = holder.snapshot
+                service.postRimeJob { selectCandidate(index, global = true, expectedSnapshot = snapshot) }
             }
             setOnLongClickListener { view ->
-                inputView.showCandidateActionMenu(holder.idx, holder.text, view, global = true)
+                inputView.showCandidateActionMenu(holder.idx, holder.text, view, global = true, snapshot = holder.snapshot)
                 true
             }
         }

@@ -91,6 +91,9 @@ data class StatusProto(
  * mode is on, or a bulk candidate list otherwise.
  */
 sealed interface Candidates {
+    /** Assigned after the JNI snapshot; does not change native constructor signatures. */
+    val snapshot: CandidateSnapshot
+
     /** Candidates of the current page */
     val candidates: Array<CandidateProto>
 
@@ -108,6 +111,9 @@ sealed interface Candidates {
         override val highlighted: Int = 0,
         override val candidates: Array<CandidateProto> = arrayOf(),
     ) : Candidates {
+        override var snapshot: CandidateSnapshot = CandidateSnapshot.EMPTY
+            internal set
+
         override fun equals(other: Any?): Boolean {
             if (this === other) return true
             if (javaClass != other?.javaClass) return false
@@ -141,6 +147,9 @@ sealed interface Candidates {
         override val highlighted: Int = 0,
         override val candidates: Array<CandidateProto> = arrayOf(),
     ) : Candidates {
+        override var snapshot: CandidateSnapshot = CandidateSnapshot.EMPTY
+            internal set
+
         override fun equals(other: Any?): Boolean {
             if (this === other) return true
             if (javaClass != other?.javaClass) return false

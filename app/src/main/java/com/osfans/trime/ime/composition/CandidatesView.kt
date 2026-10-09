@@ -28,6 +28,7 @@ import com.osfans.trime.ime.candidates.popup.PagedCandidatesUi
 import com.osfans.trime.ime.core.BaseInputView
 import com.osfans.trime.ime.core.TouchEventReceiverWindow
 import com.osfans.trime.ime.core.TrimeInputMethodService
+import com.osfans.trime.ime.performance.InputLatencyLog
 import splitties.dimensions.dp
 import splitties.views.dsl.constraintlayout.below
 import splitties.views.dsl.constraintlayout.bottomOfParent
@@ -97,10 +98,17 @@ class CandidatesView(
         PagedCandidatesUi(
             ctx,
             scope,
-            onCandidateClick = { index -> service.postRimeJob { selectCandidate(index, global = false) } },
-            onCandidateAction = { index, text, view -> showCandidateActionMenu(index, text, view, global = false) },
-            onPrevPage = { service.postRimeJob { changeCandidatePage(true) } },
-            onNextPage = { service.postRimeJob { changeCandidatePage(false) } },
+            onCandidateClick = { index, snapshot ->
+                service.postRimeJob { selectCandidate(index, global = false, expectedSnapshot = snapshot) }
+            },
+            onCandidateAction = { index, text, view, snapshot ->
+                showCandidateActionMenu(index, text, view, global = false, snapshot = snapshot)
+            },
+            onPrevPage = { snapshot -> service.postRimeJob { changeCandidatePage(true, snapshot) } },
+            onNextPage = { snapshot -> service.postRimeJob { changeCandidatePage(false, snapshot) } },
+            isCurrentSnapshot = { snapshot ->
+                service.isCurrentEditor(snapshot.editorToken) && snapshot == rime.run { candidateSnapshotCached }
+            },
         )
 
     private val touchEventReceiverWindow = TouchEventReceiverWindow(this)
@@ -115,6 +123,10 @@ class CandidatesView(
             }
 
             is RimeMessage.PagedCandidatesMessage -> {
+                if (it.data.snapshot.isValid && it.data.snapshot != rime.run { candidateSnapshotCached }) {
+                    InputLatencyLog.stale(it.data.snapshot)
+                    return
+                }
                 candidates = it.data
                 updateUi()
             }

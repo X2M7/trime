@@ -6,10 +6,12 @@ package com.osfans.trime.ime.candidates.unrolled
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.Canvas
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.osfans.trime.R
 import com.osfans.trime.data.theme.Theme
 import com.osfans.trime.data.theme.ThemeScope
+import com.osfans.trime.ime.performance.InputLatencyLog
 import splitties.dimensions.dp
 import splitties.views.dsl.constraintlayout.centerInParent
 import splitties.views.dsl.constraintlayout.lParams
@@ -23,6 +25,13 @@ class UnrolledCandidateLayout(
 ) : ConstraintLayout(context) {
     private val theme: Theme
         get() = scope.theme
+
+    var onCandidatesDrawn: (() -> Unit)? = null
+
+    override fun dispatchDraw(canvas: Canvas) {
+        super.dispatchDraw(canvas)
+        if (InputLatencyLog.enabled && isShown && isLaidOut) onCandidatesDrawn?.invoke()
+    }
 
     val recyclerView =
         recyclerView {

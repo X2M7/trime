@@ -17,6 +17,7 @@ import androidx.core.text.color
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
 import com.osfans.trime.R
+import com.osfans.trime.core.CandidateSnapshot
 import com.osfans.trime.core.Candidates
 import com.osfans.trime.core.CompositionProto
 import com.osfans.trime.core.RimeMessage
@@ -81,7 +82,7 @@ abstract class BaseInputView(
         handleRimeMessage(RimeMessage.PagedCandidatesMessage(Candidates.Paged()))
     }
 
-    fun showCandidateActionMenu(idx: Int, text: String, view: View, global: Boolean) {
+    fun showCandidateActionMenu(idx: Int, text: String, view: View, global: Boolean, snapshot: CandidateSnapshot) {
         val editorToken = service.editorToken
         candidateActionMenu?.dismiss()
         candidateActionMenu = null
@@ -101,7 +102,7 @@ abstract class BaseInputView(
                     }
                     menu.add(R.string.forget_this_word).setOnMenuItemClickListener {
                         service.postRimeJob {
-                            if (service.isCurrentEditor(editorToken)) deleteCandidate(idx, global)
+                            if (service.isCurrentEditor(editorToken)) deleteCandidate(idx, global, snapshot)
                         }
                         true
                     }

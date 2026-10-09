@@ -39,6 +39,12 @@ android {
         buildConfigField("String", "BUILD_COMMIT_HASH", "\"${project.buildCommitHash}\"")
         buildConfigField("String", "BUILD_GIT_REPO", "\"${project.buildGitRepo}\"")
         buildConfigField("String", "BUILD_VERSION_NAME", "\"${project.buildVersionName}\"")
+        // Explicit opt-in for the same release build used by both T08 benchmark cohorts.
+        buildConfigField(
+            "boolean",
+            "PERFORMANCE_TRACING",
+            providers.gradleProperty("trime.performanceTrace").map { it.toBooleanStrict().toString() }.orElse("false").get(),
+        )
     }
 
     base {
