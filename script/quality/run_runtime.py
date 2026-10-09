@@ -31,23 +31,30 @@ T09_THEMES = {"trime", "tongwenfeng.trime"}
 
 def t09_product_sources(reference, baseline, root):
     """Freeze production bytes; androidTest/host-only edits are outside product scope."""
+    import os
+
     if not re.fullmatch(r"[A-Za-z0-9_][A-Za-z0-9_./-]*", reference):
         raise ValueError("Explicit published T08 source ref required")
+    root = root.resolve()
     command = ["git", "-C", str(root)]
     published = subprocess.check_output(command + ["rev-parse", reference + "^{commit}"], text=True).strip()
     current = subprocess.check_output(command + ["rev-parse", "HEAD"], text=True).strip()
     prefixes = ("app/", "build-logic/", "codegen/", "gradle/")
     roots = {"build.gradle.kts", "settings.gradle.kts", "gradle.properties", "gradlew", "gradlew.bat", ".gitmodules"}
-    def entries(ref):
+    def tree(repository, ref):
         result = {}
-        for raw in subprocess.check_output(command + ["ls-tree", "-rz", ref]).split(b"\0"):
+        for raw in subprocess.check_output(["git", "-C", str(repository), "ls-tree", "-rz", ref]).split(b"\0"):
             if not raw:
                 continue
             metadata, name = raw.split(b"\t", 1)
             name = name.decode()
-            if (name.startswith(prefixes) or name in roots) and not name.startswith(("app/src/androidTest/", "app/src/test/")):
-                result[name] = metadata.decode().split()
+            result[name] = metadata.decode().split()
         return result
+    published_tree, current_tree = tree(root, published), tree(root, current)
+    def entries(ref):
+        full = published_tree if ref == published else current_tree
+        return {name: metadata for name, metadata in full.items() if
+                (name.startswith(prefixes) or name in roots) and not name.startswith(("app/src/androidTest/", "app/src/test/"))}
     before, now = entries(published), entries(current)
     untracked = subprocess.check_output(command + ["ls-files", "--others", "--exclude-standard", "-z"]).split(b"\0")
     unexpected = [name.decode() for name in untracked if name and
@@ -57,20 +64,79 @@ def t09_product_sources(reference, baseline, root):
         raise ValueError("Untracked product inputs exist: " + ", ".join(unexpected))
     if baseline and before != now:
         raise ValueError("Baseline production tree differs from published T08; only test/host changes allowed")
-    for name, (mode, kind, expected) in now.items():
-        if kind == "blob":
-            actual = subprocess.check_output(command + ["hash-object", "--", name], text=True).strip()
-            if actual != expected:
-                raise ValueError("Uncommitted product bytes differ: " + name)
-        elif kind == "commit":
-            actual = subprocess.check_output(["git", "-C", str(root / name), "rev-parse", "HEAD"], text=True).strip()
-            dirty = subprocess.check_output(["git", "-C", str(root / name), "status", "--porcelain", "--untracked-files=no"], text=True)
+    repositories = {root: current_tree}
+    submodules = {}
+    def verify_submodules(repository, full):
+        for name, (mode, kind, expected) in full.items():
+            if kind != "commit":
+                continue
+            path = repository / name
+            label = str(path.relative_to(root))
+            if mode != "160000" or path.is_symlink() or not path.is_dir() or not path.resolve().is_relative_to(root):
+                raise ValueError("Invalid pinned submodule path: " + label)
+            actual = subprocess.check_output(["git", "-C", str(path), "rev-parse", "HEAD"], text=True).strip()
+            dirty = subprocess.check_output(["git", "-C", str(path), "status", "--porcelain", "--untracked-files=all", "--ignore-submodules=none"], text=True)
             if actual != expected or dirty:
-                raise ValueError("Native submodule differs: " + name)
-    encoded = json.dumps(now, sort_keys=True, separators=(",", ":")).encode()
+                raise ValueError("Pinned submodule differs: " + label)
+            submodules[label] = actual
+            nested = tree(path, actual)
+            repositories[path] = nested
+            verify_submodules(path, nested)
+    verify_submodules(root, current_tree)
+
+    def regular_blob(repository, name, metadata):
+        mode, kind, expected = metadata
+        path = repository / name
+        if kind != "blob" or mode not in {"100644", "100755"} or path.is_symlink() or not path.is_file():
+            raise ValueError("Expected tracked regular product file: " + str(path.relative_to(root)))
+        if bool(path.stat().st_mode & 0o111) != (mode == "100755"):
+            raise ValueError("Product executable mode differs: " + str(path.relative_to(root)))
+        actual = subprocess.check_output(["git", "-C", str(repository), "hash-object", "--no-filters", "--", name], text=True).strip()
+        if actual != expected:
+            raise ValueError("Uncommitted product bytes differ: " + str(path.relative_to(root)))
+
+    linked_targets = {}
+    linked_dependencies_unchanged = True
+    for name, metadata in now.items():
+        mode, kind, expected = metadata
+        if kind == "commit":
+            continue # All levels were checked against their parent gitlink above.
+        path = root / name
+        if kind == "blob" and mode == "120000":
+            if not path.is_symlink():
+                raise ValueError("Tracked product symlink was replaced: " + name)
+            link_bytes = os.readlink(os.fsencode(path))
+            try:
+                link_bytes.decode("utf-8")
+                target = path.resolve(strict=True)
+            except (UnicodeError, OSError, RuntimeError) as failure:
+                raise ValueError("Product symlink target is unavailable: " + name) from failure
+            actual = subprocess.check_output(command + ["hash-object", "--stdin"], input=link_bytes).decode().strip()
+            if actual != expected or not target.is_relative_to(root) or not target.is_file():
+                raise ValueError("Product symlink bytes/target differ: " + name)
+            owner = max((repository for repository in repositories if target.is_relative_to(repository)), key=lambda repository: len(repository.parts))
+            target_name = str(target.relative_to(owner))
+            target_metadata = repositories[owner].get(target_name)
+            if target_metadata is None:
+                raise ValueError("Product symlink target is not tracked/pinned: " + name)
+            if owner == root:
+                dependency_unchanged = published_tree.get(target_name) == target_metadata
+            else:
+                top = min((repository for repository in repositories if repository != root and target.is_relative_to(repository)), key=lambda repository: len(repository.parts))
+                top_name = str(top.relative_to(root))
+                dependency_unchanged = published_tree.get(top_name) == current_tree.get(top_name)
+            linked_dependencies_unchanged = linked_dependencies_unchanged and dependency_unchanged
+            if baseline and not dependency_unchanged:
+                raise ValueError("Product symlink dependency differs from published T08: " + name)
+            regular_blob(owner, target_name, target_metadata)
+            linked_targets[name] = {"target": str(target.relative_to(root)), "metadata": target_metadata}
+        else:
+            regular_blob(root, name, metadata)
+    encoded = json.dumps({"product": now, "linked_targets": linked_targets, "submodules": submodules}, sort_keys=True, separators=(",", ":")).encode()
     return {"published_ref": reference, "published_commit": published, "current_commit": current,
             "production_tree_sha256": hashlib.sha256(encoded).hexdigest(), "production_files": len(now),
-            "published_production_bytes_unchanged": before == now, "baseline": baseline}
+            "published_production_bytes_unchanged": before == now and linked_dependencies_unchanged, "baseline": baseline,
+            "tracked_symlink_targets": linked_targets, "verified_recursive_submodules": submodules}
 
 
 def validate_t09_records(report, completion, run_id, baseline, schema):
