@@ -899,9 +899,87 @@ object EditorLifecycleProbe {
                         setRuntimeOption("ascii_mode", false)
                     }
                     until("selected T9 is actually a nine-key layout") { input() != null && keyboard().isT9Layout }
+                    suspend fun verifyT9Accessibility(theme: String) {
+                        fun currentViews(): Map<Int, KeyView> {
+                            val activeInput = checkNotNull(input())
+                            check(keyboard().isT9Layout) { "$theme accessibility fixture is not actual T9" }
+                            val visible = descendants(activeInput).filterIsInstance<KeyView>().filter { it.isShown }.toList()
+                            return keyboard().keys.indices.associateWith { index -> visible.single { it.id == index } }
+                        }
+                        fun descriptionsMatch(ascii: Boolean, expectedViews: Map<Int, KeyView>?): Boolean {
+                            val active = keyboard()
+                            val views = currentViews()
+                            if (expectedViews != null && views.any { (index, view) -> expectedViews[index] !== view }) return false
+                            val labels = listOf("ABC", "DEF", "GHI", "JKL", "MNO", "PQRS", "TUV", "WXYZ")
+                            for (digit in 2..9) {
+                                val key = active.keys.single { it.code == KeyEvent.KEYCODE_0 + digit }
+                                val description = "$digit ${if (ascii) digit.toString() else labels[digit - 2]}"
+                                if (views.getValue(key.index).contentDescription?.toString() != description) return false
+                            }
+                            val symbols = active.keys.single { it.click?.select == "symbols" }
+                            val symbolDescription = if (ascii) {
+                                if (theme == "trime") "符號" else "更多"
+                            } else {
+                                "符号"
+                            }
+                            if (views.getValue(symbols.index).contentDescription?.toString() != symbolDescription) return false
+                            for ((code, nativeLabel, asciiLabel) in listOf(
+                                Triple(KeyEvent.KEYCODE_COMMA, "，", ","),
+                                Triple(KeyEvent.KEYCODE_PERIOD, "。", "."),
+                            )) {
+                                val key = active.keys.single { it.code == code }
+                                if (views.getValue(key.index).contentDescription?.toString() != if (ascii) asciiLabel else nativeLabel) return false
+                            }
+                            return true
+                        }
+                        val cached = main { currentViews() }
+                        api {
+                            setRuntimeOption("ascii_mode", true)
+                            check(statusCached.isAsciiMode)
+                        }
+                        until("$theme cached T9 accessibility changes to actual ASCII labels") { descriptionsMatch(true, cached) }
+                        api {
+                            setRuntimeOption("ascii_mode", false)
+                            check(!statusCached.isAsciiMode)
+                        }
+                        until("$theme cached T9 accessibility changes back to ABC and Chinese punctuation") { descriptionsMatch(false, cached) }
+                        // Freeze the next queued native mode until a fresh themed T9 view has
+                        // actually been constructed from the preceding ASCII native cache.
+                        api { setRuntimeOption("ascii_mode", true) }
+                        until("$theme cached T9 is ASCII before a theme rebuild") { descriptionsMatch(true, cached) }
+                        val entered = CompletableDeferred<Unit>()
+                        val release = CompletableDeferred<Unit>()
+                        val held = main {
+                            service.postRimeJob {
+                                entered.complete(Unit)
+                                release.await()
+                            }
+                        }
+                        val rebuilt = try {
+                            withTimeout(30_000) { entered.await() }
+                            ThemeManager.selectTheme(theme, forceReload = true)
+                            until("$theme rebuild creates new real T9 views while ASCII mode is queued") {
+                                input() != null && keyboard().isT9Layout && currentViews().all { (index, view) -> cached[index] !== view }
+                            }
+                            main {
+                                currentViews().also { rebuilt ->
+                                    check(descriptionsMatch(true, rebuilt)) { "$theme rebuilt T9 did not describe its actual initial ASCII labels" }
+                                }
+                            }
+                        } finally {
+                            release.complete(Unit)
+                            held.join()
+                        }
+                        api {
+                            setRuntimeOption("ascii_mode", false)
+                            check(!statusCached.isAsciiMode)
+                        }
+                        until("$theme rebuilt T9 accessibility refreshes native labels without replacing views") { descriptionsMatch(false, rebuilt) }
+                    }
                     for (theme in listOf("trime", "tongwenfeng.trime")) {
                         ThemeManager.selectTheme(theme)
                         until("$theme T9 before schema switch") { input() != null && keyboard().isT9Layout }
+                        verifyT9Accessibility(theme)
                         if (theme == "trime") {
                             ResidentWindowColorRegression.verify(instrumentation, main { checkNotNull(input()) })
                         }

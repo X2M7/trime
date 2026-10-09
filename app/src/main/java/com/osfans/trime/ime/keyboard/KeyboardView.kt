@@ -90,7 +90,7 @@ class KeyboardView(
     }
 
     fun invalidateAllKeys() {
-        children.forEach { it.invalidate() }
+        children.forEach { (it as? KeyView)?.refreshAppearance() ?: it.invalidate() }
     }
 
     fun updateEnterLabel() {
@@ -98,14 +98,14 @@ class KeyboardView(
             if (key.click?.code == KeyEvent.KEYCODE_ENTER) {
                 getChildAt(index)?.apply {
                     contentDescription = labelEnter
-                    invalidate()
+                    (this as? KeyView)?.refreshAppearance() ?: invalidate()
                 }
             }
         }
     }
 
     fun invalidateKeyByIndex(index: Int) {
-        getChildAt(index)?.invalidate()
+        getChildAt(index)?.let { (it as? KeyView)?.refreshAppearance() ?: it.invalidate() }
     }
 
     val isCapsOn: Boolean

@@ -90,15 +90,7 @@ class KeyView(
         hasDouble = key.hasAction(KeyBehavior.DOUBLE_CLICK)
         hasLazyDouble = key.hasAction(KeyBehavior.LAZY_DOUBLE_CLICK)
         hasPopup = key.popup.isNotEmpty()
-        if (keyboard.isT9Layout) {
-            contentDescription = when (key.click?.code) {
-                KeyEvent.KEYCODE_DEL -> context.getString(R.string.delete)
-                KeyEvent.KEYCODE_ENTER -> keyboardView.labelEnter
-                KeyEvent.KEYCODE_SPACE -> context.getString(R.string.t9_space)
-                KeyEvent.KEYCODE_APOSTROPHE -> context.getString(R.string.t9_separator)
-                else -> listOf(key.hint, key.getLabel()).filter { it.isNotEmpty() }.joinToString(" ")
-            }
-        }
+        updateAccessibilityDescription()
 
         onPress = {
             if (keyboard.firstPressedKeyIndex == -1) keyboard.firstPressedKeyIndex = id
@@ -292,6 +284,29 @@ class KeyView(
         popup.listener.onPopupAction(
             PopupAction.DismissAction(id),
         )
+    }
+
+    /** Cached key views must describe the same current labels that onDraw renders. */
+    private fun updateAccessibilityDescription() {
+        if (!keyboard.isT9Layout) return
+        val description = when (key.click?.code) {
+            KeyEvent.KEYCODE_DEL -> context.getString(R.string.delete)
+            KeyEvent.KEYCODE_ENTER -> keyboardView.labelEnter
+            KeyEvent.KEYCODE_SPACE -> context.getString(R.string.t9_space)
+            KeyEvent.KEYCODE_APOSTROPHE -> context.getString(R.string.t9_separator)
+            else -> listOf(key.hint, key.getLabel()).filter { it.isNotEmpty() }.joinToString(" ")
+        }
+        if (contentDescription != description) contentDescription = description
+    }
+
+    fun refreshAppearance() {
+        updateAccessibilityDescription()
+        invalidate()
+    }
+
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        updateAccessibilityDescription()
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
