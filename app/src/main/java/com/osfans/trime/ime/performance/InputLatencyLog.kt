@@ -14,7 +14,7 @@ object InputLatencyLog {
     private const val CAPACITY = 256
     private val requestIds = AtomicLong()
     private val cacheIds = AtomicLong()
-    private val requests = LinkedHashMap<Long, InputRequest>()
+    private val requests = InputRequestLedger(CAPACITY)
 
     val enabled: Boolean get() = BuildConfig.PERFORMANCE_TRACING && !PrivacyModeState.active
 
@@ -26,11 +26,7 @@ object InputLatencyLog {
         if (!enabled) return null
         val request = InputRequest(requestIds.incrementAndGet(), editor, now(), feedbackNanos)
         synchronized(requests) {
-            if (requests.size == CAPACITY) {
-                val oldest = requests.entries.iterator().also { it.next() }
-                oldest.remove()
-            }
-            requests[request.id] = request
+            requests.record(request)
         }
         write(
             "request",
@@ -85,7 +81,7 @@ object InputLatencyLog {
     fun editorCommit(snapshot: CandidateSnapshot) {
         if (snapshot.requestId == 0L) return
         synchronized(requests) {
-            requests[snapshot.requestId]?.takeIf { it.editor == snapshot.editorToken }?.committed = true
+            requests.committed(snapshot.requestId, snapshot.editorToken)
         }
         write("editor_commit", snapshot.requestId, snapshot.editorToken, snapshot.generation)
     }
@@ -112,10 +108,11 @@ object InputLatencyLog {
 
     fun finish(request: InputRequest?, failed: Boolean) {
         if (request != null) {
-            if (!request.hasSnapshot && !request.committed) {
+            val completion = synchronized(requests) { requests.finish(request, failed) }
+            if (completion.cancelled) {
                 write("cancelled", request.id, request.editor, 0)
             }
-            if (failed) {
+            if (completion.failed) {
                 write("job_failed", request.id, request.editor, request.snapshotGeneration)
             }
         }

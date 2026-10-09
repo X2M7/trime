@@ -18,6 +18,8 @@ class InputRequest(
     @Volatile var hasSnapshot = false
 
     @Volatile var committed = false
+
+    @Volatile var evicted = false
     var retired = false
     var drawn = false
     var snapshotGeneration = 0L
