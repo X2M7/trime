@@ -48,6 +48,25 @@ internal fun resolveLandscapeKeyboard(
         ?: base
 }
 
+/** Resolves ASCII from the current native schema layout, never the transient active layout. */
+internal fun resolveAsciiKeyboard(
+    configuredAsciiKeyboard: String,
+    presets: Map<String, TextKeyboard>,
+    fallbacks: Map<String, String>,
+): String {
+    for (name in listOf(configuredAsciiKeyboard, "letter", fallbacks["letter"].orEmpty()).distinct()) {
+        if (name.isEmpty()) continue
+        val id = findAvailableKeyboard(name, presets, fallbacks) ?: continue
+        val config = try {
+            resolveKeyboardConfig(id, presets)
+        } catch (_: IllegalArgumentException) {
+            null
+        }
+        if (config?.asciiMode == 1) return id
+    }
+    return normalizeKeyboardTarget("default", presets, fallbacks)
+}
+
 internal fun matchKeyboard(
     schemaId: String,
     requested: String,

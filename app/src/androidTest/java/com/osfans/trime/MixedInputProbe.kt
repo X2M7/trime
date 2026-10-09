@@ -109,6 +109,27 @@ object MixedInputProbe {
     /** The wrapper forwards every call to the actual EditText connection. No fake commits. */
     private class RecordingEditor(context: Context) : EditText(context) {
         val calls = Collections.synchronizedList(mutableListOf<JSONObject>())
+        val keyRecipients = Collections.synchronizedList(mutableListOf<JSONObject>())
+
+        private fun recordRecipient(method: String, event: KeyEvent, operation: () -> Boolean): Boolean {
+            val item = json(
+                "method" to method,
+                "action" to event.action,
+                "key_code" to event.keyCode,
+                "down_time_ms" to event.downTime,
+                "event_time_ms" to event.eventTime,
+                "field_id" to id,
+                "editor_object" to System.identityHashCode(this),
+                "t_ns" to SystemClock.elapsedRealtimeNanos(),
+                "on_main_thread" to (Looper.myLooper() == Looper.getMainLooper()),
+            )
+            keyRecipients.add(item)
+            return operation().also { item.put("returned", it).put("completed_ns", SystemClock.elapsedRealtimeNanos()) }
+        }
+
+        override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean = recordRecipient("onKeyDown", event) { super.onKeyDown(keyCode, event) }
+
+        override fun onKeyUp(keyCode: Int, event: KeyEvent): Boolean = recordRecipient("onKeyUp", event) { super.onKeyUp(keyCode, event) }
 
         override fun isSuggestionsEnabled(): Boolean = false
 
@@ -122,15 +143,22 @@ object MixedInputProbe {
         override fun onCreateInputConnection(outAttrs: EditorInfo): InputConnection? {
             val delegate = super.onCreateInputConnection(outAttrs) ?: return null
             return object : InputConnectionWrapper(delegate, false) {
-                private fun record(method: String, text: CharSequence? = null, operation: () -> Boolean): Boolean {
+                private fun record(method: String, text: CharSequence? = null, event: KeyEvent? = null, operation: () -> Boolean): Boolean {
                     val item = json(
                         "method" to method,
                         "text" to text?.toString(),
                         "t_ns" to SystemClock.elapsedRealtimeNanos(),
                         "composing_before" to composingText(),
                     )
+                    if (event != null) {
+                        item.put("down_time_ms", event.downTime).put("event_time_ms", event.eventTime)
+                            .put("field_id", id).put("editor_object", System.identityHashCode(this@RecordingEditor))
+                    }
                     calls.add(item)
-                    return operation().also { item.put("returned", it).put("composing_after", composingText() ?: JSONObject.NULL) }
+                    return operation().also {
+                        item.put("returned", it).put("completed_ns", SystemClock.elapsedRealtimeNanos())
+                            .put("composing_after", composingText() ?: JSONObject.NULL)
+                    }
                 }
 
                 override fun commitText(text: CharSequence, newCursorPosition: Int): Boolean = record("commitText", text) { super.commitText(text, newCursorPosition) }
@@ -139,11 +167,39 @@ object MixedInputProbe {
 
                 override fun finishComposingText(): Boolean = record("finishComposingText") { super.finishComposingText() }
 
-                override fun sendKeyEvent(event: KeyEvent): Boolean = record("sendKeyEvent", "${event.action}:${event.keyCode}") { super.sendKeyEvent(event) }
+                override fun sendKeyEvent(event: KeyEvent): Boolean = record("sendKeyEvent", "${event.action}:${event.keyCode}", event) { super.sendKeyEvent(event) }
             }
         }
 
         fun snapshotCalls(): List<JSONObject> = synchronized(calls) { calls.toList() }
+
+        fun snapshotKeyRecipients(): List<JSONObject> = synchronized(keyRecipients) { keyRecipients.toList() }
+
+        fun checkAsciiKeyDelivery() {
+            val sent = snapshotCalls().filter { it.optString("method") == "sendKeyEvent" && it.optString("text") in setOf("0:${KeyEvent.KEYCODE_A}", "1:${KeyEvent.KEYCODE_A}") }
+            val received = snapshotKeyRecipients().filter { it.optInt("key_code", -1) == KeyEvent.KEYCODE_A }
+            check(sent.size == 2 && received.size == 2) { "ASCII a needs exactly one IC and View down/up pair" }
+            for (action in listOf(KeyEvent.ACTION_DOWN, KeyEvent.ACTION_UP)) {
+                val call = sent.single { it.getString("text") == "$action:${KeyEvent.KEYCODE_A}" }
+                val recipient = received.single { it.getInt("action") == action }
+                check(call.opt("returned") is Boolean && call.getLong("completed_ns") >= call.getLong("t_ns")) {
+                    "ASCII IC call did not complete with its real Boolean return value"
+                }
+                check(
+                    recipient.opt("returned") is Boolean && recipient.getBoolean("on_main_thread") &&
+                        recipient.getString("method") == (if (action == KeyEvent.ACTION_DOWN) "onKeyDown" else "onKeyUp") &&
+                        recipient.getLong("completed_ns") >= recipient.getLong("t_ns") &&
+                        recipient.getLong("t_ns") >= call.getLong("t_ns") &&
+                        recipient.getInt("field_id") == id && call.getInt("field_id") == id &&
+                        recipient.getInt("editor_object") == System.identityHashCode(this) && call.getInt("editor_object") == System.identityHashCode(this) &&
+                        recipient.getLong("down_time_ms") == call.getLong("down_time_ms") &&
+                        recipient.getLong("event_time_ms") == call.getLong("event_time_ms"),
+                ) { "ASCII IC event did not reach this real editor View once" }
+            }
+            check(sent[0].getString("text") == "0:${KeyEvent.KEYCODE_A}" && received[0].getInt("action") == KeyEvent.ACTION_DOWN) {
+                "ASCII down/up delivery was reordered"
+            }
+        }
 
         fun successfulFinalizations(value: String): List<JSONObject> = snapshotCalls().filter {
             it.optBoolean("returned") && (
@@ -688,6 +744,8 @@ object MixedInputProbe {
             prepared = JSONObject()
             chat.calls.clear()
             restricted.calls.clear()
+            chat.keyRecipients.clear()
+            restricted.keyRecipients.clear()
             synchronized(events) { events.clear() }
             manualPreference?.resetUnset() // Test fixture isolation, excluded from action costs.
             val oldEditorToken = main { service.editorToken }
@@ -733,6 +791,8 @@ object MixedInputProbe {
             }
             chat.calls.clear()
             restricted.calls.clear()
+            chat.keyRecipients.clear()
+            restricted.keyRecipients.clear()
             synchronized(events) { events.clear() }
             screenshot("start")
         }
@@ -986,15 +1046,15 @@ object MixedInputProbe {
                 check(commits.map { it.getString("text") } == if (withChinese) listOf("你") else emptyList()) { "Rapid native commits differ" }
                 check(commits.all { it.getLong("editor") == final.getLong("editor_token") })
                 val calls = current.snapshotCalls()
-                // Native ascii_composer rejects direct ASCII keys; the real service forwards
-                // KEYCODE_A as a successful down/up pair to the real editor connection.
+                // AOSP BaseInputConnection dispatches sendKeyEvent then returns false.
+                // Preserve that actual return; completed calls and real View recipients prove delivery.
                 for (action in listOf(KeyEvent.ACTION_DOWN, KeyEvent.ACTION_UP)) {
                     check(
                         calls.count {
-                            it.optBoolean("returned") && it.optString("method") == "sendKeyEvent" &&
+                            it.opt("returned") is Boolean && it.optString("method") == "sendKeyEvent" &&
                                 it.optString("text") == "$action:${KeyEvent.KEYCODE_A}"
                         } == 1,
-                    ) { "ASCII a lacks one successful real IC down/up pair" }
+                    ) { "ASCII a lacks one completed real IC down/up pair" }
                 }
                 check(current.successfulFinalizations("a").isEmpty()) { "ASCII a was also finalized as a second text commit" }
                 check(current.successfulFinalizations("你").size == if (withChinese) 1 else 0) { "Chinese text lacks exactly one real IC finalization" }
@@ -1012,6 +1072,7 @@ object MixedInputProbe {
                     "Late queued callback changed the completed rapid text/mode/owner"
                 }
                 item.put("post_delay_state", delayed)
+                current.checkAsciiKeyDelivery()
                 item.put("status", "passed")
                 phase("PASS: T09 $theme $id")
             } catch (unsupported: Unsupported) {
@@ -1024,6 +1085,7 @@ object MixedInputProbe {
             } finally {
                 item.put("counts", counts()).put("actions", ledger).put("ic_calls", JSONArray(current.snapshotCalls()))
                     .put("native_events", JSONArray(synchronized(events) { events.toList() }))
+                    .put("key_recipient_calls", JSONArray(current.snapshotKeyRecipients()))
                 screenshot("final")
                 save()
             }
@@ -1107,11 +1169,12 @@ object MixedInputProbe {
                 val messages = native.filter { it.optString("event") == "native_commit" && !it.isNull("text") && it.optString("text").isNotEmpty() }
                 val calls = current.snapshotCalls()
                 if (bracedKey) {
+                    current.checkAsciiKeyDelivery()
                     check(messages.isEmpty() && current.successfulFinalizations("a").isEmpty()) { "Braced key fabricated a native/text commit" }
                     for (action in listOf(KeyEvent.ACTION_DOWN, KeyEvent.ACTION_UP)) {
                         check(
                             calls.count {
-                                it.optBoolean("returned") && it.optString("method") == "sendKeyEvent" &&
+                                it.opt("returned") is Boolean && it.optString("method") == "sendKeyEvent" &&
                                     it.optString("text") == "$action:${KeyEvent.KEYCODE_A}"
                             } == 1,
                         )
@@ -1132,6 +1195,7 @@ object MixedInputProbe {
             } finally {
                 item.put("counts", counts()).put("actions", ledger).put("ic_calls", JSONArray(current.snapshotCalls()))
                     .put("native_events", JSONArray(synchronized(events) { events.toList() }))
+                    .put("key_recipient_calls", JSONArray(current.snapshotKeyRecipients()))
                 screenshot("final")
                 save()
             }
@@ -1169,8 +1233,12 @@ object MixedInputProbe {
             if (manualEnglish) letters()
             val before = settled()
             val policySteps = JSONArray()
+            val item = regressions.getJSONObject(regressions.length() - 1)
+            item.put("user_selected_mode_before_focus", before).put("editor_focus_steps", policySteps)
+            save()
             fun record(label: String, state: JSONObject) {
                 policySteps.put(json("driver" to "instrumentation_editor_focus", "label" to label, "state" to state))
+                save() // Retain each actual state before an assertion can fail.
             }
             main { manager.hideSoftInputFromWindow(chat.windowToken, 0) }
             until { !service.isInputViewShown }

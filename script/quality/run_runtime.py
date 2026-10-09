@@ -144,6 +144,36 @@ def t09_product_sources(reference, baseline, root):
 T09_RAPID_IDS = {"rapid_cn_en_a_cn", "rapid_cn_en_a_cn_64_space"}
 
 
+def validate_t09_ascii_key_delivery(row):
+    """AOSP sendKeyEvent returns false after dispatch; prove actual View delivery."""
+    calls, recipients = row.get("ic_calls"), row.get("key_recipient_calls")
+    if not isinstance(calls, list) or not isinstance(recipients, list):
+        raise ValueError("T09 ASCII IC/View delivery records missing")
+    sent = [call for call in calls if call.get("method") == "sendKeyEvent" and call.get("text") in {"0:29", "1:29"}]
+    received = [call for call in recipients if call.get("key_code") == 29]
+    if len(sent) != 2 or len(received) != 2 or [call.get("text") for call in sent] != ["0:29", "1:29"] or [call.get("action") for call in received] != [0, 1]:
+        raise ValueError("T09 ASCII needs one ordered IC/View down/up pair")
+    released = row["gate"]["release_ns"]
+    field = row["prepared"]["field_id"]
+    if type(released) is not int or released <= 0 or type(field) is not int:
+        raise ValueError("T09 ASCII gate/editor field identity differs")
+    for action, call, recipient in zip((0, 1), sent, received):
+        if (type(call.get("returned")) is not bool or type(recipient.get("returned")) is not bool or
+                type(recipient.get("action")) is not int or recipient["action"] != action or
+                recipient.get("method") != ("onKeyDown" if action == 0 else "onKeyUp") or recipient.get("on_main_thread") is not True or
+                any(type(record.get(name)) is not int for record in (call, recipient) for name in (
+                    "t_ns", "completed_ns", "field_id", "editor_object", "down_time_ms", "event_time_ms")) or
+                not released <= call["t_ns"] <= call["completed_ns"] or
+                not call["t_ns"] <= recipient["t_ns"] <= recipient["completed_ns"] or
+                not 0 < call["down_time_ms"] <= call["event_time_ms"] or
+                call["field_id"] != field or recipient["field_id"] != field or
+                any(recipient[name] != call[name] for name in ("editor_object", "down_time_ms", "event_time_ms"))):
+            raise ValueError("T09 ASCII completed IC event did not reach its actual editor View")
+    if (sent[0]["editor_object"] != sent[1]["editor_object"] or sent[0]["down_time_ms"] != sent[1]["down_time_ms"] or
+            sent[0]["t_ns"] > sent[1]["t_ns"] or received[0]["t_ns"] > received[1]["t_ns"]):
+        raise ValueError("T09 ASCII IC/View ownership or down/up order differs")
+
+
 def validate_t09_rapid(report, baseline, schema):
     rows = report.get("rapid_regressions", [])
     if baseline:
@@ -231,9 +261,7 @@ def validate_t09_rapid(report, baseline, schema):
                 any(type(event.get("t_ns")) is not int or event["t_ns"] < released for event in options + commits)):
             raise ValueError("T09 rapid native options/commits lost or reordered")
         calls = row.get("ic_calls", [])
-        for event in ("0:29", "1:29"):
-            if sum(call.get("returned") is True and call.get("method") == "sendKeyEvent" and call.get("text") == event for call in calls) != 1:
-                raise ValueError("T09 rapid ASCII lacks one successful real IC down/up pair")
+        validate_t09_ascii_key_delivery(row)
         def finalizations(value):
             return [call for call in calls if call.get("returned") is True and (
                 (call.get("method") == "commitText" and call.get("text") == value) or
@@ -323,9 +351,9 @@ def validate_t09_macros(report, baseline, schema):
         if row.get("librime_ascii_commit_claimed") is not False:
             raise ValueError("T09 app ASCII fallback mislabeled as a native librime commit")
         if row["id"] == "macro_ascii_key":
-            if (commits or finalizations or row.get("submission_mode") != "native_unhandled_key_to_real_ic_keyevent" or
-                    any(sum(call.get("returned") is True and call.get("text") == key for call in keycalls) != 1 for key in ("0:29", "1:29"))):
-                raise ValueError("T09 braced key lacks one real IC pair or fabricated commit")
+            if commits or finalizations or row.get("submission_mode") != "native_unhandled_key_to_real_ic_keyevent":
+                raise ValueError("T09 braced key fabricated commit or changed submission mode")
+            validate_t09_ascii_key_delivery(row)
         elif ([event.get("text") for event in commits] != ["a"] or any(event.get("editor") != prepared.get("editor_token") for event in commits) or
               len(finalizations) != 1 or keycalls or row.get("submission_mode") != "app_simulate_literal_fallback_commit_proto_to_real_ic_text"):
             raise ValueError("T09 plain text lacks one app fallback/real IC finalization or duplicated key path")

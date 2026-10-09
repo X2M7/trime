@@ -264,17 +264,11 @@ class KeyboardWindow(di: DI) :
 
                 ".last_lock" -> lastLockKeyboardId
 
-                ".ascii" -> {
-                    var ascii = activeKeyboard?.asciiKeyboard
-                    if (ascii.isNullOrEmpty()) {
-                        ascii = lastLockKeyboardId
-                    }
-                    if (presetKeyboardIds.contains(ascii) && selectKeyboardConfig(ascii)?.asciiMode == 1) {
-                        ascii
-                    } else {
-                        theme.fallbackKeyboards["letter"] ?: "default"
-                    }
-                }
+                ".ascii" -> resolveAsciiKeyboard(
+                    selectKeyboardConfig(evalKeyboard(".native"))?.asciiKeyboard.orEmpty(),
+                    theme.presetKeyboards,
+                    theme.fallbackKeyboards,
+                )
 
                 else -> {
                     id.ifEmpty {
