@@ -16,7 +16,7 @@ from runtime_audit import audit_log, device_audit_lock, filter_pid_log, instrume
 
 PROBES = (
     "setup", "engine", "shutdown", "startupFailure", "lateStorage", "feedback",
-    "t02", "clip", "clipSave", "saf", "editors", "privacy",
+    "t02", "t08", "clip", "clipSave", "saf", "editors", "privacy",
 )
 
 

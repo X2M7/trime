@@ -44,6 +44,7 @@ class StartupResponsivenessInstrumentation : Instrumentation() {
     private var t03Only = false
     private var t03GeometryOnly = false
     private var t05Only = false
+    private var t08Only = false
     private var setupOnly = false
     private var shutdownOnly = false
     private var failureOnly = false
@@ -62,6 +63,7 @@ class StartupResponsivenessInstrumentation : Instrumentation() {
         t03Only = arguments?.getString("t03") == "true"
         t03GeometryOnly = arguments?.getString("t03GeometryOnly") == "true" || arguments?.getString("t05GeometryOnly") == "true"
         t05Only = arguments?.getString("t05") == "true"
+        t08Only = arguments?.getString("t08") == "true"
         setupOnly = arguments?.getString("setup") == "true"
         shutdownOnly = arguments?.getString("shutdown") == "true"
         failureOnly = arguments?.getString("startupFailure") == "true"
@@ -79,6 +81,10 @@ class StartupResponsivenessInstrumentation : Instrumentation() {
         val applicationWait = SystemClock.uptimeMillis()
         waitForIdleSync()
         sendStatus(0, Bundle().apply { putLong("application_ready_wait_ms", SystemClock.uptimeMillis() - applicationWait) })
+        if (t08Only) {
+            CandidateSnapshotProbe.run(this)
+            return
+        }
         if (editorsOnly) {
             EditorLifecycleProbe.run(this)
             return

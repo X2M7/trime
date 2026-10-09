@@ -11,6 +11,14 @@
 # Keep JNI interface
 -keep class com.osfans.trime.core.* { *; }
 
+# Preserve the coroutine ServiceLoader contract in the public Release APK.
+# Keeping the interfaces prevents R8 from merging them into their sole providers
+# and renaming META-INF/services entries to implementation-class names.
+-keep interface kotlinx.coroutines.CoroutineExceptionHandler { *; }
+-keep interface kotlinx.coroutines.internal.MainDispatcherFactory { *; }
+-keep class kotlinx.coroutines.android.AndroidExceptionPreHandler { public <init>(); }
+-keep class kotlinx.coroutines.android.AndroidDispatcherFactory { public <init>(); }
+
 # remove kotlin null checks
 -assumenosideeffects class kotlin.jvm.internal.Intrinsics {
     static void checkNotNull(...);

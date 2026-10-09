@@ -36,6 +36,8 @@ def main():
     parser.add_argument('--fixture-apk', type=Path, required=True)
     parser.add_argument('--observer-apk', type=Path, required=True)
     parser.add_argument('--output', type=Path, required=True)
+    parser.add_argument('--release', action='store_true',
+                        help='Verify the non-debuggable public package; use an already-rooted disposable emulator for process death')
     parser.add_argument('--split-screen', action='store_true', help='Exercise the verified AOSP API 35 split-screen shell commands')
     parser.add_argument('--split-screen-only', action='store_true', help='Run only split-screen checkpoints, without claiming the fullscreen matrix')
     args = parser.parse_args()
@@ -53,11 +55,14 @@ def run(args):
         return subprocess.check_output(adb + ['shell', *map(str, command)], text=True, stderr=subprocess.STDOUT, timeout=120).strip()
 
     assert shell('getprop', 'ro.kernel.qemu') == '1', 'Disposable emulator only'
+    if args.release:
+        assert shell('id', '-u') == '0', 'Release process-death probe requires an already-rooted disposable emulator'
     assert shell('cat', f'/sdcard/Android/data/{PACKAGE}/files/runtime-audit-dedicated') == ''
     assert shell('settings', 'get', 'secure', 'default_input_method').startswith(PACKAGE + '/')
     identity = {'api': int(shell('getprop', 'ro.build.version.sdk')), 'fingerprint': shell('getprop', 'ro.build.fingerprint'),
                 'serial': args.serial, 'source_sha256': hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
-                'fullscreen_matrix': not args.split_screen_only, 'split_screen': args.split_screen, 'packages': {}}
+                'fullscreen_matrix': not args.split_screen_only, 'split_screen': args.split_screen,
+                'release': args.release, 'process_kill': 'root_shell' if args.release else 'run_as', 'packages': {}}
     for package, path in ((PACKAGE, args.apk), (FIXTURE, args.fixture_apk), ('org.x2m7.trime.editorobserver', args.observer_apk)):
         remote = shell('pm', 'path', package).removeprefix('package:')
         assert remote.startswith('/') and '\n' not in remote
@@ -67,7 +72,10 @@ def run(args):
             digest = hashlib.file_digest(apk, 'sha256').hexdigest()
         assert digest == hashlib.sha256(path.read_bytes()).hexdigest()
         identity['packages'][package] = digest
-        (out / (package + '.txt')).write_text(shell('dumpsys', 'package', package))
+        package_dump = shell('dumpsys', 'package', package)
+        (out / (package + '.txt')).write_text(package_dump)
+        if args.release and package == PACKAGE:
+            assert not re.search(r'\bDEBUGGABLE\b', package_dump), 'Expected a non-debuggable Release APK'
     marker = 'BEGIN-' + str(uuid.uuid4())
     identity['log_capture_marker'] = marker
     identity['harness_sha256'] = {name: hashlib.sha256(Path(__file__).with_name(name).read_bytes()).hexdigest()
@@ -219,7 +227,11 @@ def run(args):
                 before = pid()
                 shell('input', 'keyevent', 'KEYCODE_HOME')
                 time.sleep(.8)
-                shell('run-as', PACKAGE, 'kill', '-9', before)
+                if args.release:
+                    assert shell('cat', f'/proc/{before}/cmdline').split('\0', 1)[0] == PACKAGE, 'Kill target is no longer the tested Trime process'
+                    shell('kill', '-9', before)
+                else:
+                    shell('run-as', PACKAGE, 'kill', '-9', before)
                 shell('am', 'start', '-W', '-f', '0x00020000', '-n', FIXTURE + '/.EditorActivity')
                 checkpoint('after-background-process-death')
                 assert pid() != before, 'Trime process was not replaced'
@@ -291,13 +303,19 @@ def run(args):
             (out / 'app-logcat.txt').write_text(app_log)
             audit = audit_log(app_log)
             (out / 'runtime-audit.json').write_text(json.dumps(audit, indent=2) + '\n')
+            trace_lines = [line for line in app_log.splitlines()
+                           if (match := LOG_LINE.match(line)) and match[4].strip() == 'TrimePerf']
             report = {'assertions_passed': passed, 'pids': sorted(pids), 'checkpoints': len(checkpoints),
-                      'passed': passed and audit['capture_has_records'] and not audit['known_project_diagnostics'],
+                      'release': args.release, 'performance_trace_lines': trace_lines,
+                      'passed': passed and audit['capture_has_records'] and not audit['known_project_diagnostics']
+                      and (not args.release or not trace_lines),
                       'warning_free': audit['warning_free'], 'known_project_diagnostics': audit['known_project_diagnostics']}
             (out / 'report.json').write_text(json.dumps(report, indent=2) + '\n')
             if passed:
                 assert audit['capture_has_records'], 'No application records captured during the test'
                 assert not audit['known_project_diagnostics'], 'Project diagnostics found; see retained logs'
+                if args.release:
+                    assert not trace_lines, 'Daily Release must not emit performance trace records'
 
 
 if __name__ == '__main__':

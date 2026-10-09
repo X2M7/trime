@@ -29,8 +29,8 @@ android {
         applicationId = "com.osfans.trime"
         minSdk = 21
         targetSdk = 37
-        versionCode = 20261115
-        versionName = "3.3.13-t9.10"
+        versionCode = 20261116
+        versionName = "3.3.13-t9.11"
         testInstrumentationRunner = "com.osfans.trime.StartupResponsivenessInstrumentation"
 
         multiDexEnabled = true
@@ -65,8 +65,13 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",
             )
-            signingConfig =
-                project.signKeyFile?.let {
+            // Keep the fork's existing public installation and certificate when explicitly requested.
+            // The default upstream release identity is unchanged; this remains a non-debuggable build.
+            if (providers.gradleProperty("trime.forkReleaseIdentity").map { it.toBooleanStrict() }.orElse(false).get()) {
+                applicationIdSuffix = ".debug"
+                signingConfig = signingConfigs.getByName("debug")
+            } else {
+                signingConfig = project.signKeyFile?.let {
                     signingConfigs.create("release") {
                         storeFile = it
                         storePassword = project.signKeyStorePwd
@@ -74,6 +79,7 @@ android {
                         keyPassword = project.signKeyPwd
                     }
                 }
+            }
         }
         debug {
             applicationIdSuffix = ".debug"
