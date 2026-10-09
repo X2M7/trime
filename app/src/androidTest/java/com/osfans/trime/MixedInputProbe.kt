@@ -61,12 +61,12 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
-import kotlinx.serialization.json.Json
 import org.json.JSONArray
 import org.json.JSONObject
 import org.kodein.di.direct
 import org.kodein.di.instance
 import java.io.File
+import java.lang.reflect.Modifier
 import java.security.MessageDigest
 import java.util.Collections
 import java.util.UUID
@@ -315,7 +315,7 @@ object MixedInputProbe {
                 check(checkNotNull(input()).theme == ThemeManager.activeTheme) { "InputView retained an old effective theme" }
                 ThemeManager.activeTheme
             }
-            val serialized = Json { encodeDefaults = true }.encodeToString(Theme.serializer(), active)
+            val serialized = main { diagnosticThemeSnapshot(active).toString() }
             val snapshot = File(output, "$theme-effective-theme.json")
             if (!snapshot.exists()) {
                 snapshot.writeText(serialized + "\n")
@@ -328,9 +328,64 @@ object MixedInputProbe {
                 "dependency_scope" to "active canonical theme plus packaged Trime compatible fallback; source YAML has no external DSL references",
                 "packaged_sha256" to packaged, "source_files" to configFiles,
                 "effective_theme_file" to snapshot.name, "effective_theme_sha256" to digest(snapshot.readBytes()),
+                "effective_type_coverage_explicit" to true,
                 "source_identity_file" to sourceIdentityFile.name, "source_identity_sha256" to digest(sourceIdentityFile.readBytes()),
                 "fallback_keyboards" to JSONObject(active.fallbackKeyboards.toSortedMap()),
             )
+        }
+
+        // Theme serializers are deliberately read-only. Read actual immutable model
+        // fields without invoking serializers, fonts/resources or the action cache.
+        fun diagnosticThemeSnapshot(active: Theme): JSONObject {
+            check(Looper.myLooper() == Looper.getMainLooper())
+            var visited = 0
+            fun project(value: Any?, depth: Int): Any {
+                check(depth <= 32 && ++visited <= 1_000_000) { "Theme diagnostic exceeded bounded model graph" }
+                return when (value) {
+                    null -> JSONObject.NULL
+
+                    is String, is Boolean -> value
+
+                    is Number -> value.also {
+                        check(it is Byte || it is Short || it is Int || it is Long || it is Float || it is Double) { "Unknown theme numeric type" }
+                        check(it.toDouble().isFinite()) { "Non-finite theme configuration" }
+                    }
+
+                    is Enum<*> -> {
+                        check(value.declaringJavaClass.name.startsWith("com.osfans.trime.data.theme.model.")) { "Unknown theme enum type" }
+                        json("__class" to value.declaringJavaClass.name, "name" to value.name)
+                    }
+
+                    is List<*> -> JSONArray().apply { value.forEach { put(project(it, depth + 1)) } }
+
+                    is Map<*, *> -> JSONObject().apply {
+                        check(value.keys.all { it is String }) { "Unknown theme map key type" }
+                        value.entries.sortedBy { it.key as String }.forEach { (key, item) -> put(key as String, project(item, depth + 1)) }
+                    }
+
+                    else -> {
+                        val type = value.javaClass
+                        check(type == Theme::class.java || type.name.startsWith("com.osfans.trime.data.theme.model.")) {
+                            "Unknown effective theme model type: ${type.name}"
+                        }
+                        val fields = type.declaredFields.filterNot { field ->
+                            Modifier.isStatic(field.modifiers) || field.isSynthetic ||
+                                (type == Theme::class.java && field.name in setOf("fonts\$delegate", "actionCache")) ||
+                                (type.name == "com.osfans.trime.data.theme.model.LiquidKeyboard" && field.name == "data")
+                        }.sortedBy { it.name }
+                        check(fields.isNotEmpty() || type.name == "com.osfans.trime.data.theme.model.MaybeStringList\$Empty") {
+                            "Theme model has no explicit configuration fields: ${type.name}"
+                        }
+                        json("__class" to type.name).apply {
+                            fields.forEach { field ->
+                                field.isAccessible = true
+                                put(field.name, project(field.get(value), depth + 1))
+                            }
+                        }
+                    }
+                }
+            }
+            return project(active, 0) as JSONObject
         }
 
         suspend fun state(): JSONObject {
