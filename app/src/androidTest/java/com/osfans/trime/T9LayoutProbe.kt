@@ -133,7 +133,11 @@ class T9LayoutProbe(
                 }
                 if (!Rect.intersects(viewport, textBounds)) continue
                 val visible = Rect()
-                check(text.getLocalVisibleRect(visible) && visible.top == 0 && visible.bottom == text.height) { "$label: candidate label ${text.text} vertically clipped: $visible of ${text.width}x${text.height}" }
+                val textVisible = text.getLocalVisibleRect(visible)
+                // View reports content coordinates, including this TextView's scroll.
+                // Compare clipping in the unscrolled viewport coordinates instead.
+                visible.offset(-text.scrollX, -text.scrollY)
+                check(textVisible && visible.top == 0 && visible.bottom == text.height) { "$label: candidate label ${text.text} vertically clipped: $visible of ${text.width}x${text.height}" }
                 if (fullyVisibleWidth) {
                     check(visible == Rect(0, 0, text.width, text.height)) { "$label: candidate label ${text.text} clipped: $visible of ${text.width}x${text.height}" }
                 }
