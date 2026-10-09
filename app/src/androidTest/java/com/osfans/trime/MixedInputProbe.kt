@@ -122,22 +122,23 @@ object MixedInputProbe {
             val delegate = super.onCreateInputConnection(outAttrs) ?: return null
             return object : InputConnectionWrapper(delegate, false) {
                 private fun record(method: String, text: CharSequence? = null, operation: () -> Boolean): Boolean {
-                    val item = json("method" to method, "text" to text?.toString(), "t_ns" to SystemClock.elapsedRealtimeNanos(),
-                        "composing_before" to composingText())
+                    val item = json(
+                        "method" to method,
+                        "text" to text?.toString(),
+                        "t_ns" to SystemClock.elapsedRealtimeNanos(),
+                        "composing_before" to composingText(),
+                    )
                     calls.add(item)
                     return operation().also { item.put("returned", it).put("composing_after", composingText() ?: JSONObject.NULL) }
                 }
 
-                override fun commitText(text: CharSequence, newCursorPosition: Int): Boolean =
-                    record("commitText", text) { super.commitText(text, newCursorPosition) }
+                override fun commitText(text: CharSequence, newCursorPosition: Int): Boolean = record("commitText", text) { super.commitText(text, newCursorPosition) }
 
-                override fun setComposingText(text: CharSequence, newCursorPosition: Int): Boolean =
-                    record("setComposingText", text) { super.setComposingText(text, newCursorPosition) }
+                override fun setComposingText(text: CharSequence, newCursorPosition: Int): Boolean = record("setComposingText", text) { super.setComposingText(text, newCursorPosition) }
 
                 override fun finishComposingText(): Boolean = record("finishComposingText") { super.finishComposingText() }
 
-                override fun sendKeyEvent(event: KeyEvent): Boolean =
-                    record("sendKeyEvent", "${event.action}:${event.keyCode}") { super.sendKeyEvent(event) }
+                override fun sendKeyEvent(event: KeyEvent): Boolean = record("sendKeyEvent", "${event.action}:${event.keyCode}") { super.sendKeyEvent(event) }
             }
         }
 
@@ -165,15 +166,25 @@ object MixedInputProbe {
             check(!originallyPresent || originalRaw in setOf("unset", "native", "ascii")) { "Unexpected manual language wire value" }
         }
 
-        fun state(): JSONObject = json("status" to if (implemented) "registered" else "NOT_APPLICABLE_T09_PREF_NOT_IMPLEMENTED",
-            "key" to key, "exists" to (store?.contains(key) == true),
-            "raw" to if (store?.contains(key) == true) store.getString(key, null) else null)
+        fun state(): JSONObject = json(
+            "status" to if (implemented) "registered" else "NOT_APPLICABLE_T09_PREF_NOT_IMPLEMENTED",
+            "key" to key,
+            "exists" to (store?.contains(key) == true),
+            "raw" to if (store?.contains(key) == true) store.getString(key, null) else null,
+        )
 
-        fun original(): JSONObject = json("status" to if (implemented) "registered" else "NOT_APPLICABLE_T09_PREF_NOT_IMPLEMENTED",
-            "key" to key, "exists" to originallyPresent, "raw" to originalRaw)
+        fun original(): JSONObject = json(
+            "status" to if (implemented) "registered" else "NOT_APPLICABLE_T09_PREF_NOT_IMPLEMENTED",
+            "key" to key,
+            "exists" to originallyPresent,
+            "raw" to originalRaw,
+        )
 
         fun resetUnset() {
-            store?.let { check(it.edit().remove(key).commit()) { "Manual language reset did not persist" }; check(!it.contains(key)) }
+            store?.let {
+                check(it.edit().remove(key).commit()) { "Manual language reset did not persist" }
+                check(!it.contains(key))
+            }
         }
 
         fun verifyRestored() {
@@ -253,7 +264,9 @@ object MixedInputProbe {
             val packaged = JSONObject()
             val sourceIdentity = json("requested_config_id" to theme, "packaged_sha256" to packaged, "source_files" to configFiles)
             val sourceIdentityFile = File(output, "$theme-source-identity.json")
-            fun preserveSources() { sourceIdentityFile.writeText(sourceIdentity.toString(2) + "\n") }
+            fun preserveSources() {
+                sourceIdentityFile.writeText(sourceIdentity.toString(2) + "\n")
+            }
             val dataRoots = listOf("user" to DataManager.userDataDir, "shared" to DataManager.sharedDataDir)
             // The shipped two themes have only same-file YAML anchors and no DSL
             // resource directives. Exact source bytes and absent custom patches close
@@ -271,15 +284,22 @@ object MixedInputProbe {
                 for ((origin, directory) in dataRoots) {
                     val source = File(directory, "$id.yaml")
                     val custom = File(directory, "$id.custom.yaml")
-                    val record = json("resource_id" to id, "root" to origin,
-                        "source_path" to source.absolutePath, "source_exists" to source.exists(),
-                        "custom_path" to custom.absolutePath, "custom_exists" to custom.exists())
+                    val record = json(
+                        "resource_id" to id,
+                        "root" to origin,
+                        "source_path" to source.absolutePath,
+                        "source_exists" to source.exists(),
+                        "custom_path" to custom.absolutePath,
+                        "custom_exists" to custom.exists(),
+                    )
                     configFiles.put(record)
                     preserveSources()
                     check(!custom.exists()) { "Dedicated theme fixture has a custom override: $custom" }
                     if (source.exists()) {
-                        check(source.isFile && source.length() <= 10 * 1024 * 1024 &&
-                            source.canonicalPath.startsWith(directory.canonicalPath.trimEnd(File.separatorChar) + File.separator)) {
+                        check(
+                            source.isFile && source.length() <= 10 * 1024 * 1024 &&
+                                source.canonicalPath.startsWith(directory.canonicalPath.trimEnd(File.separatorChar) + File.separator),
+                        ) {
                             "Theme source is not a bounded regular file inside its data root"
                         }
                         record.put("sha256", digest(source.readBytes())).put("bytes", source.length())
@@ -297,24 +317,34 @@ object MixedInputProbe {
             }
             val serialized = Json { encodeDefaults = true }.encodeToString(Theme.serializer(), active)
             val snapshot = File(output, "$theme-effective-theme.json")
-            if (!snapshot.exists()) snapshot.writeText(serialized + "\n")
-            else check(snapshot.readText() == serialized + "\n") { "Effective theme changed during tasks" }
-            return json("requested_config_id" to theme, "selected_config_id" to theme,
+            if (!snapshot.exists()) {
+                snapshot.writeText(serialized + "\n")
+            } else {
+                check(snapshot.readText() == serialized + "\n") { "Effective theme changed during tasks" }
+            }
+            return json(
+                "requested_config_id" to theme, "selected_config_id" to theme,
                 "status" to "verified_packaged_source_no_custom_overrides",
                 "dependency_scope" to "active canonical theme plus packaged Trime compatible fallback; source YAML has no external DSL references",
                 "packaged_sha256" to packaged, "source_files" to configFiles,
                 "effective_theme_file" to snapshot.name, "effective_theme_sha256" to digest(snapshot.readBytes()),
                 "source_identity_file" to sourceIdentityFile.name, "source_identity_sha256" to digest(sourceIdentityFile.readBytes()),
-                "fallback_keyboards" to JSONObject(active.fallbackKeyboards.toSortedMap()))
+                "fallback_keyboards" to JSONObject(active.fallbackKeyboards.toSortedMap()),
+            )
         }
 
         suspend fun state(): JSONObject {
             val native = api {
-                json("ascii_mode" to getRuntimeOption("ascii_mode"), "raw_input" to getRawInput(),
-                    "preedit" to compositionCached.preedit, "generation" to candidateSnapshotCached.generation,
+                json(
+                    "ascii_mode" to getRuntimeOption("ascii_mode"),
+                    "raw_input" to getRawInput(),
+                    "preedit" to compositionCached.preedit,
+                    "generation" to candidateSnapshotCached.generation,
                     "snapshot_editor" to candidateSnapshotCached.editorToken,
-                    "snapshot_request" to candidateSnapshotCached.requestId, "schema_id" to selectedSchemaId(),
-                    "locked" to t9Cached.segments.count { it.locked })
+                    "snapshot_request" to candidateSnapshotCached.requestId,
+                    "schema_id" to selectedSchemaId(),
+                    "locked" to t9Cached.segments.count { it.locked },
+                )
             }
             return main {
                 native.put("editor_token", service.editorToken).put("field_id", service.currentInputEditorInfo?.fieldId)
@@ -349,24 +379,30 @@ object MixedInputProbe {
             instrumentation.uiAutomation.takeScreenshot()?.let { bitmap ->
                 try {
                     File(output, "$theme-$task-$label.png").outputStream().use { check(bitmap.compress(Bitmap.CompressFormat.PNG, 100, it)) }
-                } finally { bitmap.recycle() }
+                } finally {
+                    bitmap.recycle()
+                }
             } ?: error("Screenshot unavailable")
         }
 
         fun save() {
             val corpus = JSONArray(tasks.map { json("id" to it.id, "target" to it.target, "input_type" to it.inputType) })
-            File(output, "report.json").writeText(json("format" to 1, "baseline" to baseline,
-                "run_id" to runId, "collection_complete" to collectionComplete,
-                "driver" to "logical_visible_key_actions", "physical_touch_benchmark" to false,
-                "performance_acceptance" to false, "version" to BuildConfig.VERSION_NAME,
-                "schema_id" to schemaId,
-                "sdk" to Build.VERSION.SDK_INT, "fingerprint" to Build.FINGERPRINT,
-                "corpus" to corpus, "corpus_json" to corpus.toString(),
-                "corpus_sha256" to digest(corpus.toString().toByteArray(Charsets.UTF_8)),
-                "theme_asset_sha256" to themeHashes, "effective_theme_identity" to effectiveThemes,
-                "manual_language_preference" to (manualPreference?.original() ?: json("status" to "NOT_CAPTURED")),
-                "learning" to "real EditorInfo no-personalized-learning flag; normal privacy policy applies",
-                "results" to results, "regressions" to regressions).toString(2) + "\n")
+            File(output, "report.json").writeText(
+                json(
+                    "format" to 1, "baseline" to baseline,
+                    "run_id" to runId, "collection_complete" to collectionComplete,
+                    "driver" to "logical_visible_key_actions", "physical_touch_benchmark" to false,
+                    "performance_acceptance" to false, "version" to BuildConfig.VERSION_NAME,
+                    "schema_id" to schemaId,
+                    "sdk" to Build.VERSION.SDK_INT, "fingerprint" to Build.FINGERPRINT,
+                    "corpus" to corpus, "corpus_json" to corpus.toString(),
+                    "corpus_sha256" to digest(corpus.toString().toByteArray(Charsets.UTF_8)),
+                    "theme_asset_sha256" to themeHashes, "effective_theme_identity" to effectiveThemes,
+                    "manual_language_preference" to (manualPreference?.original() ?: json("status" to "NOT_CAPTURED")),
+                    "learning" to "real EditorInfo no-personalized-learning flag; normal privacy policy applies",
+                    "results" to results, "regressions" to regressions,
+                ).toString(2) + "\n",
+            )
             File(output, "$theme-$task-actions.json").writeText(ledger.toString(2) + "\n")
         }
 
@@ -389,9 +425,15 @@ object MixedInputProbe {
             }
         }
 
-        fun describe(action: KeyAction) = json("code" to action.code, "modifier" to action.modifier,
-            "text" to action.text, "commit" to action.commit, "select" to action.select, "toggle" to action.toggle,
-            "command" to action.command)
+        fun describe(action: KeyAction) = json(
+            "code" to action.code,
+            "modifier" to action.modifier,
+            "text" to action.text,
+            "commit" to action.commit,
+            "select" to action.select,
+            "toggle" to action.toggle,
+            "command" to action.command,
+        )
 
         fun outputOf(action: KeyAction): String? = main {
             if (action.commit.isNotEmpty()) return@main action.commit.takeIf { it.length == 1 }
@@ -419,10 +461,16 @@ object MixedInputProbe {
 
         suspend fun key(selected: VisibleKey, role: String = "input") {
             val before = settled()
-            val record = json("seq" to ledger.length() + 1, "driver" to "logical_key_action",
+            val record = json(
+                "seq" to ledger.length() + 1,
+                "driver" to "logical_key_action",
                 "behavior" to if (selected.behavior == KeyBehavior.CLICK) "click" else "long",
-                "role" to role, "key_index" to selected.index, "displayed_label" to selected.label,
-                "resolved_action" to describe(selected.action), "before" to before)
+                "role" to role,
+                "key_index" to selected.index,
+                "displayed_label" to selected.label,
+                "resolved_action" to describe(selected.action),
+                "before" to before,
+            )
             ledger.put(record) // Keep an attempted action even when dispatch throws.
             save()
             main {
@@ -441,7 +489,9 @@ object MixedInputProbe {
                         selected.view.onRelease?.invoke(KeyBehavior.LONG_CLICK, true)
                     }
                     record.put("dispatched", true)
-                } finally { selected.view.cancelGesture() }
+                } finally {
+                    selected.view.cancelGesture()
+                }
             }
             val after = settled()
             check(after.getLong("editor_token") == before.getLong("editor_token")) { "Action crossed an editor boundary" }
@@ -482,8 +532,10 @@ object MixedInputProbe {
 
         suspend fun digit(value: Char) {
             val code = KeyEvent.KEYCODE_0 + value.digitToInt()
-            key(visibleKeys().firstOrNull { it.behavior == KeyBehavior.CLICK && it.action.code == code }
-                ?: throw Unsupported("Actual T9 digit <$value> is missing"))
+            key(
+                visibleKeys().firstOrNull { it.behavior == KeyBehavior.CLICK && it.action.code == code }
+                    ?: throw Unsupported("Actual T9 digit <$value> is missing"),
+            )
         }
 
         suspend fun lockVisibleNi() {
@@ -494,11 +546,20 @@ object MixedInputProbe {
                         it.isShown && it.isEnabled && it.contentDescription?.toString() == "ni" && it.hasOnClickListeners()
                     }
             } ?: throw Unsupported("Exact ni syllable choice is not currently visible")
-            val item = json("seq" to ledger.length() + 1, "driver" to "logical_visible_syllable_click", "behavior" to "click",
-                "role" to "syllable", "displayed_label" to choice.text.toString(), "before" to before)
+            val item = json(
+                "seq" to ledger.length() + 1,
+                "driver" to "logical_visible_syllable_click",
+                "behavior" to "click",
+                "role" to "syllable",
+                "displayed_label" to choice.text.toString(),
+                "before" to before,
+            )
             ledger.put(item)
             save()
-            main { check(choice.performClick()); item.put("dispatched", true) }
+            main {
+                check(choice.performClick())
+                item.put("dispatched", true)
+            }
             item.put("after", settled())
             check(item.getJSONObject("after").getInt("locked") > 0) { "Actual syllable choice did not lock ni" }
             save()
@@ -530,13 +591,22 @@ object MixedInputProbe {
             val holder = main {
                 descendants(checkNotNull(input())).filterIsInstance<RecyclerView>().flatMap { list ->
                     list.children.mapNotNull { list.getChildViewHolder(it) as? CandidateViewHolder }
-                }.firstOrNull { it.itemView.isShown && it.snapshot.editorToken == before.getLong("editor_token") &&
-                    it.snapshot.generation == before.getLong("generation") && it.snapshot.requestId == before.getLong("snapshot_request") &&
-                    it.itemView.getGlobalVisibleRect(Rect()) && (text == null || it.text == text) }
+                }.firstOrNull {
+                    it.itemView.isShown && it.snapshot.editorToken == before.getLong("editor_token") &&
+                        it.snapshot.generation == before.getLong("generation") && it.snapshot.requestId == before.getLong("snapshot_request") &&
+                        it.itemView.getGlobalVisibleRect(Rect()) && (text == null || it.text == text)
+                }
             } ?: throw Unsupported("Target candidate <$text> is not currently visible/bound; no hidden native selection")
-            val record = json("seq" to ledger.length() + 1, "driver" to "logical_visible_candidate_click",
-                "behavior" to "click", "role" to "candidate", "candidate" to holder.text,
-                "candidate_index" to holder.idx, "candidate_generation" to holder.snapshot.generation, "before" to before)
+            val record = json(
+                "seq" to ledger.length() + 1,
+                "driver" to "logical_visible_candidate_click",
+                "behavior" to "click",
+                "role" to "candidate",
+                "candidate" to holder.text,
+                "candidate_index" to holder.idx,
+                "candidate_generation" to holder.snapshot.generation,
+                "before" to before,
+            )
             ledger.put(record)
             save()
             main {
@@ -571,7 +641,11 @@ object MixedInputProbe {
                 manager.showSoftInput(chat, 0)
             }
             until { input() != null && service.currentInputEditorInfo?.fieldId == chat.id && service.editorToken != oldEditorToken }
-            api { clearComposition(); check(selectSchema(schemaId)); setRuntimeOption("ascii_mode", false) }
+            api {
+                clearComposition()
+                check(selectSchema(schemaId))
+                setRuntimeOption("ascii_mode", false)
+            }
             // Explicit preparation only: not a user baseline action, never enters ledger.
             main { window().switchKeyboard(".default") }
             until { input() != null && keyboard().isT9Layout }
@@ -584,13 +658,20 @@ object MixedInputProbe {
             }
             if (item.inputType != InputType.TYPE_CLASS_TEXT) {
                 current = restricted
-                main { restricted.requestFocus(); manager.restartInput(restricted); manager.showSoftInput(restricted, 0) }
+                main {
+                    restricted.requestFocus()
+                    manager.restartInput(restricted)
+                    manager.showSoftInput(restricted, 0)
+                }
                 until { input() != null && service.currentInputEditorInfo?.fieldId == restricted.id && service.currentInputEditorInfo?.inputType == item.inputType }
             }
             prepared = settled().put("manual_language_preference", manualPreference?.state() ?: JSONObject.NULL)
                 .put("effective_theme_sha256", effectiveThemes.getJSONObject(theme).getString("effective_theme_sha256"))
-            if (item.inputType == InputType.TYPE_CLASS_TEXT) check(prepared.getBoolean("t9_layout") && !prepared.getBoolean("ascii_mode"))
-            else check(prepared.getBoolean("ascii_mode")) { "Real restricted editor did not force ASCII" }
+            if (item.inputType == InputType.TYPE_CLASS_TEXT) {
+                check(prepared.getBoolean("t9_layout") && !prepared.getBoolean("ascii_mode"))
+            } else {
+                check(prepared.getBoolean("ascii_mode")) { "Real restricted editor did not force ASCII" }
+            }
             chat.calls.clear()
             restricted.calls.clear()
             synchronized(events) { events.clear() }
@@ -599,7 +680,8 @@ object MixedInputProbe {
 
         fun counts(): JSONObject {
             val steps = (0 until ledger.length()).map { ledger.getJSONObject(it) }
-            return json("total_actions" to steps.size,
+            return json(
+                "total_actions" to steps.size,
                 "dispatched_actions" to steps.count { it.optBoolean("dispatched") },
                 "logical_clicks" to steps.count { it.getString("driver") == "logical_key_action" && it.getString("behavior") == "click" },
                 "logical_longs" to steps.count { it.getString("behavior") == "long" },
@@ -608,7 +690,8 @@ object MixedInputProbe {
                 "layout_actions" to steps.count { it.getString("role") == "layout" },
                 "mode_actions" to steps.count { it.getString("role") == "mode" },
                 "actual_stable_layout_changes" to steps.count { it.has("after") && it.getJSONObject("before").getString("keyboard_id") != it.getJSONObject("after").getString("keyboard_id") },
-                "actual_stable_ascii_changes" to steps.count { it.has("after") && it.getJSONObject("before").getBoolean("ascii_mode") != it.getJSONObject("after").getBoolean("ascii_mode") })
+                "actual_stable_ascii_changes" to steps.count { it.has("after") && it.getJSONObject("before").getBoolean("ascii_mode") != it.getJSONObject("after").getBoolean("ascii_mode") },
+            )
         }
 
         suspend fun runTask(item: Task) {
@@ -623,7 +706,9 @@ object MixedInputProbe {
                     returnT9()
                     "9426".forEach { digit(it) }
                     candidate("站")
-                } else item.target.forEach { character(it) }
+                } else {
+                    item.target.forEach { character(it) }
+                }
                 // A mixed ordinary task includes the actual route back to Chinese T9.
                 // This is measured input work, not preparation or an uncounted API reset.
                 if (item.inputType == InputType.TYPE_CLASS_TEXT) returnT9()
@@ -706,9 +791,11 @@ object MixedInputProbe {
             val selected = candidateAction.getString("candidate")
             check(committed.getString("editor_text") == selected && committed.getString("raw_input").isEmpty()) { "Symbol round trip committed unexpected text" }
             check(current.successfulFinalizations(selected).size == 1) { "Visible candidate did not forward exactly one successful IC finalization" }
-            check(synchronized(events) {
-                events.count { it.optString("event") == "native_commit" && it.optString("text") == selected && it.optLong("editor") == committed.getLong("editor_token") }
-            } == 1)
+            check(
+                synchronized(events) {
+                    events.count { it.optString("event") == "native_commit" && it.optString("text") == selected && it.optLong("editor") == committed.getLong("editor_token") }
+                } == 1,
+            )
             delay(400)
             check(settled().getString("editor_text") == selected) { "A second candidate commit arrived" }
         }
@@ -717,7 +804,9 @@ object MixedInputProbe {
             if (manualEnglish) letters()
             val before = settled()
             val policySteps = JSONArray()
-            fun record(label: String, state: JSONObject) { policySteps.put(json("driver" to "instrumentation_editor_focus", "label" to label, "state" to state)) }
+            fun record(label: String, state: JSONObject) {
+                policySteps.put(json("driver" to "instrumentation_editor_focus", "label" to label, "state" to state))
+            }
             main { manager.hideSoftInputFromWindow(chat.windowToken, 0) }
             until { !service.isInputViewShown }
             main { manager.showSoftInput(chat, 0) }
@@ -727,19 +816,33 @@ object MixedInputProbe {
             check(resumed.getBoolean("ascii_mode") == before.getBoolean("ascii_mode") && resumed.getString("keyboard_id") == before.getString("keyboard_id")) {
                 "Hide/show lost the actual user mode/layout"
             }
-            for (type in listOf(InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS,
+            for (type in listOf(
+                InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS,
                 InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_URI,
-                InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD, InputType.TYPE_CLASS_PHONE,
-                InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL or InputType.TYPE_NUMBER_FLAG_SIGNED)) {
-                main { restricted.inputType = type; restricted.imeOptions = EditorInfo.IME_ACTION_DONE or EditorPolicy.NO_PERSONALIZED_LEARNING_FLAG; restricted.setText("") }
+                InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD,
+                InputType.TYPE_CLASS_PHONE,
+                InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL or InputType.TYPE_NUMBER_FLAG_SIGNED,
+            )) {
+                main {
+                    restricted.inputType = type
+                    restricted.imeOptions = EditorInfo.IME_ACTION_DONE or EditorPolicy.NO_PERSONALIZED_LEARNING_FLAG
+                    restricted.setText("")
+                }
                 current = restricted
-                main { restricted.requestFocus(); manager.restartInput(restricted); manager.showSoftInput(restricted, 0) }
+                main {
+                    restricted.requestFocus()
+                    manager.restartInput(restricted)
+                    manager.showSoftInput(restricted, 0)
+                }
                 until { service.currentInputEditorInfo?.fieldId == restricted.id && service.currentInputEditorInfo?.inputType == type && input() != null }
                 val forced = settled()
                 record("forced_$type", forced)
                 check(forced.getBoolean("ascii_mode")) { "Restricted real editor did not enter ASCII" }
                 current = chat
-                main { chat.requestFocus(); manager.showSoftInput(chat, 0) }
+                main {
+                    chat.requestFocus()
+                    manager.showSoftInput(chat, 0)
+                }
                 until { service.currentInputEditorInfo?.fieldId == chat.id && input() != null }
                 val restored = settled()
                 record("ordinary_after_$type", restored)
@@ -796,7 +899,10 @@ object MixedInputProbe {
                     inputType = InputType.TYPE_CLASS_TEXT
                     imeOptions = EditorInfo.IME_ACTION_DONE or EditorPolicy.NO_PERSONALIZED_LEARNING_FLAG
                 }
-                runner.restricted = RecordingEditor(editor).apply { id = View.generateViewId(); hint = "T09 restricted test editor" }
+                runner.restricted = RecordingEditor(editor).apply {
+                    id = View.generateViewId()
+                    hint = "T09 restricted test editor"
+                }
                 runner.current = runner.chat
                 row.addView(runner.chat, LinearLayout.LayoutParams(-1, 96))
                 row.addView(runner.restricted, LinearLayout.LayoutParams(-1, 96))
@@ -814,10 +920,26 @@ object MixedInputProbe {
                     val collector = launch(start = CoroutineStart.UNDISPATCHED) {
                         checkNotNull(session).run { messageFlow }.collect { message ->
                             when (message) {
-                                is RimeMessage.CommitTextMessage -> runner.events.add(json("event" to "native_commit", "text" to message.data.text,
-                                    "editor" to message.editorToken, "generation" to message.snapshot.generation, "t_ns" to SystemClock.elapsedRealtimeNanos()))
-                                is RimeMessage.OptionMessage -> if (message.data.option == "ascii_mode") runner.events.add(json("event" to "ascii_option",
-                                    "value" to message.data.value, "t_ns" to SystemClock.elapsedRealtimeNanos()))
+                                is RimeMessage.CommitTextMessage -> runner.events.add(
+                                    json(
+                                        "event" to "native_commit",
+                                        "text" to message.data.text,
+                                        "editor" to message.editorToken,
+                                        "generation" to message.snapshot.generation,
+                                        "t_ns" to SystemClock.elapsedRealtimeNanos(),
+                                    ),
+                                )
+
+                                is RimeMessage.OptionMessage -> if (message.data.option == "ascii_mode") {
+                                    runner.events.add(
+                                        json(
+                                            "event" to "ascii_option",
+                                            "value" to message.data.value,
+                                            "t_ns" to SystemClock.elapsedRealtimeNanos(),
+                                        ),
+                                    )
+                                }
+
                                 else -> Unit
                             }
                         }
@@ -829,8 +951,11 @@ object MixedInputProbe {
                             val previousTheme = ThemeManager.prefs.selectedTheme.getValue()
                             val oldInput = runner.main { runner.input() }
                             check(ThemeManager.selectTheme(theme) == theme) { "Theme fell back" }
-                            if (theme != previousTheme) runner.until { runner.input()?.let { it !== oldInput } == true }
-                            else runner.until { runner.input() != null }
+                            if (theme != previousTheme) {
+                                runner.until { runner.input()?.let { it !== oldInput } == true }
+                            } else {
+                                runner.until { runner.input() != null }
+                            }
                             runner.effectiveThemes.put(theme, runner.effectiveThemeIdentity())
                             tasks.forEach { runner.runTask(it) }
                             runner.verifyComposition(false)
@@ -839,7 +964,10 @@ object MixedInputProbe {
                             runner.verifyEditorRestore(true)
                             check(runner.effectiveThemeIdentity().toString() == runner.effectiveThemes.getJSONObject(theme).toString()) { "Theme source dependencies changed during collection" }
                         }
-                    } finally { collector.cancel(); collector.join() }
+                    } finally {
+                        collector.cancel()
+                        collector.join()
+                    }
                 }
             }
             val statuses = (0 until runner.results.length()).map { runner.results.getJSONObject(it).getString("status") }
@@ -860,85 +988,118 @@ object MixedInputProbe {
         } finally {
             val cleanupErrors = mutableListOf<String>()
             if (dedicatedValidated) {
-            // One failed restore must not skip the independent preference/activity/client cleanup.
-            try {
-                runner.manualPreference?.restore()
-                runner.manualPreferenceCleanup.put("restored_store", runner.manualPreference?.state() ?: JSONObject.NULL)
-                if (runner.manualPreference?.implemented == true && runner.hasService()) {
-                    runBlocking {
-                        val priorToken = runner.main { runner.service.editorToken }
-                        runner.current = runner.chat
-                        runner.main { runner.chat.requestFocus(); runner.manager.restartInput(runner.chat); runner.manager.showSoftInput(runner.chat, 0) }
-                        runner.until { runner.input() != null && runner.service.currentInputEditorInfo?.fieldId == runner.chat.id && runner.service.editorToken != priorToken }
-                        val reread = runner.settled()
-                        val original = checkNotNull(runner.manualPreference).original()
-                        if (original.optString("raw") in setOf("native", "ascii")) {
-                            check(reread.getBoolean("ascii_mode") == (original.getString("raw") == "ascii")) { "Restored manual preference was not re-read by the new ordinary editor" }
+                // One failed restore must not skip the independent preference/activity/client cleanup.
+                try {
+                    runner.manualPreference?.restore()
+                    runner.manualPreferenceCleanup.put("restored_store", runner.manualPreference?.state() ?: JSONObject.NULL)
+                    if (runner.manualPreference?.implemented == true && runner.hasService()) {
+                        runBlocking {
+                            val priorToken = runner.main { runner.service.editorToken }
+                            runner.current = runner.chat
+                            runner.main {
+                                runner.chat.requestFocus()
+                                runner.manager.restartInput(runner.chat)
+                                runner.manager.showSoftInput(runner.chat, 0)
+                            }
+                            runner.until { runner.input() != null && runner.service.currentInputEditorInfo?.fieldId == runner.chat.id && runner.service.editorToken != priorToken }
+                            val reread = runner.settled()
+                            val original = checkNotNull(runner.manualPreference).original()
+                            if (original.optString("raw") in setOf("native", "ascii")) {
+                                check(reread.getBoolean("ascii_mode") == (original.getString("raw") == "ascii")) { "Restored manual preference was not re-read by the new ordinary editor" }
+                            }
+                            runner.manualPreferenceCleanup.put("new_ordinary_editor", reread).put("prior_editor_token", priorToken)
                         }
-                        runner.manualPreferenceCleanup.put("new_ordinary_editor", reread).put("prior_editor_token", priorToken)
                     }
+                    runner.manualPreferenceCleanup.put(
+                        "status",
+                        when {
+                            runner.manualPreference?.implemented != true -> "NOT_APPLICABLE_T09_PREF_NOT_IMPLEMENTED"
+                            runner.manualPreferenceCleanup.has("new_ordinary_editor") -> "restored_and_rebound"
+                            else -> "restored_store_only_editor_unavailable"
+                        },
+                    )
+                } catch (failure: Throwable) {
+                    cleanupErrors.add(failure.stackTraceToString())
                 }
-                runner.manualPreferenceCleanup.put("status", when {
-                    runner.manualPreference?.implemented != true -> "NOT_APPLICABLE_T09_PREF_NOT_IMPLEMENTED"
-                    runner.manualPreferenceCleanup.has("new_ordinary_editor") -> "restored_and_rebound"
-                    else -> "restored_store_only_editor_unavailable"
-                })
-            } catch (failure: Throwable) { cleanupErrors.add(failure.stackTraceToString()) }
-            val finalEditorToken = if (runner.hasService()) runner.main { runner.service.editorToken } else null
-            try { activity?.let { runner.main { it.finish() } } } catch (failure: Throwable) { cleanupErrors.add(failure.stackTraceToString()) }
-            runBlocking {
-                withContext(NonCancellable) {
-                    if (finalEditorToken != null) {
+                val finalEditorToken = if (runner.hasService()) runner.main { runner.service.editorToken } else null
+                try {
+                    activity?.let { runner.main { it.finish() } }
+                } catch (failure: Throwable) {
+                    cleanupErrors.add(failure.stackTraceToString())
+                }
+                runBlocking {
+                    withContext(NonCancellable) {
+                        if (finalEditorToken != null) {
+                            try {
+                                runner.until { !runner.service.isCurrentEditor(finalEditorToken) }
+                                runner.api { } // Drain the serial onFinishInput cleanup before restoring.
+                            } catch (failure: Throwable) {
+                                cleanupErrors.add(failure.stackTraceToString())
+                            }
+                        }
                         try {
-                            runner.until { !runner.service.isCurrentEditor(finalEditorToken) }
-                            runner.api { } // Drain the serial onFinishInput cleanup before restoring.
-                        } catch (failure: Throwable) { cleanupErrors.add(failure.stackTraceToString()) }
-                    }
-                    try {
-                        withTimeout(30_000) { ThemeManager.selectTheme(originalTheme) }
-                    } catch (failure: Throwable) { cleanupErrors.add(failure.stackTraceToString()) }
-                    try {
-                        withTimeout(30_000) {
-                            originalSchema?.let { schema -> session?.runOnReady {
-                                clearComposition()
-                                check(selectSchema(schema))
-                                setRuntimeOption("ascii_mode", originalAscii)
-                                check(selectedSchemaId() == schema && getRuntimeOption("ascii_mode") == originalAscii) { "Original native schema/mode did not restore" }
-                            } }
+                            withTimeout(30_000) { ThemeManager.selectTheme(originalTheme) }
+                        } catch (failure: Throwable) {
+                            cleanupErrors.add(failure.stackTraceToString())
                         }
-                    } catch (failure: Throwable) { cleanupErrors.add(failure.stackTraceToString()) }
+                        try {
+                            withTimeout(30_000) {
+                                originalSchema?.let { schema ->
+                                    session?.runOnReady {
+                                        clearComposition()
+                                        check(selectSchema(schema))
+                                        setRuntimeOption("ascii_mode", originalAscii)
+                                        check(selectedSchemaId() == schema && getRuntimeOption("ascii_mode") == originalAscii) { "Original native schema/mode did not restore" }
+                                    }
+                                }
+                            }
+                        } catch (failure: Throwable) {
+                            cleanupErrors.add(failure.stackTraceToString())
+                        }
+                    }
                 }
-            }
-            for (cleanup in listOf<() -> Unit>(
-                { preference.setValue(originalInline) },
-                { runner.manualPreference?.verifyRestored() },
-                { session?.let { runner.main { RimeDaemon.destroySession(javaClass.name) } } },
-            )) {
-                try { cleanup() } catch (failure: Throwable) { cleanupErrors.add(failure.stackTraceToString()) }
-            }
-            if (cleanupErrors.isNotEmpty()) {
-                passed = false
-                result.putString("cleanup_failure", cleanupErrors.joinToString("\n"))
-            }
-            try {
-                File(runner.output, "completion.json").writeText(json("passed" to passed, "baseline" to baseline,
-                    "run_id" to runner.runId, "collection_complete" to runner.collectionComplete,
-                    "cleanup_errors" to JSONArray(cleanupErrors), "manual_language_preference_cleanup" to runner.manualPreferenceCleanup, "device_run" to true,
-                    "physical_touch_benchmark" to false, "performance_acceptance" to false).toString(2) + "\n")
-                // Manifest binds this nonce to only this test-owned directory. It excludes
-                // itself, avoiding a circular digest; partial failure artifacts remain usable.
-                val attachments = JSONObject()
-                checkNotNull(runner.output.listFiles()).sortedBy { it.name }.forEach { file ->
-                    check(file.isFile) { "Unexpected nested test artifact" }
-                    attachments.put(file.name, json("sha256" to digest(file.readBytes()), "bytes" to file.length()))
+                for (cleanup in listOf<() -> Unit>(
+                    { preference.setValue(originalInline) },
+                    { runner.manualPreference?.verifyRestored() },
+                    { session?.let { runner.main { RimeDaemon.destroySession(javaClass.name) } } },
+                )) {
+                    try {
+                        cleanup()
+                    } catch (failure: Throwable) {
+                        cleanupErrors.add(failure.stackTraceToString())
+                    }
                 }
-                File(runner.output, "artifact-manifest.json").writeText(json(
-                    "format" to 1, "run_id" to runner.runId, "attachments" to attachments,
-                ).toString(2) + "\n")
-            } catch (failure: Throwable) {
-                passed = false
-                result.putString("report_failure", failure.stackTraceToString())
-            }
+                if (cleanupErrors.isNotEmpty()) {
+                    passed = false
+                    result.putString("cleanup_failure", cleanupErrors.joinToString("\n"))
+                }
+                try {
+                    File(runner.output, "completion.json").writeText(
+                        json(
+                            "passed" to passed, "baseline" to baseline,
+                            "run_id" to runner.runId, "collection_complete" to runner.collectionComplete,
+                            "cleanup_errors" to JSONArray(cleanupErrors), "manual_language_preference_cleanup" to runner.manualPreferenceCleanup, "device_run" to true,
+                            "physical_touch_benchmark" to false, "performance_acceptance" to false,
+                        ).toString(2) + "\n",
+                    )
+                    // Manifest binds this nonce to only this test-owned directory. It excludes
+                    // itself, avoiding a circular digest; partial failure artifacts remain usable.
+                    val attachments = JSONObject()
+                    checkNotNull(runner.output.listFiles()).sortedBy { it.name }.forEach { file ->
+                        check(file.isFile) { "Unexpected nested test artifact" }
+                        attachments.put(file.name, json("sha256" to digest(file.readBytes()), "bytes" to file.length()))
+                    }
+                    File(runner.output, "artifact-manifest.json").writeText(
+                        json(
+                            "format" to 1,
+                            "run_id" to runner.runId,
+                            "attachments" to attachments,
+                        ).toString(2) + "\n",
+                    )
+                } catch (failure: Throwable) {
+                    passed = false
+                    result.putString("report_failure", failure.stackTraceToString())
+                }
             }
             result.putBoolean("passed", passed)
             instrumentation.finish(if (passed) Activity.RESULT_OK else Activity.RESULT_CANCELED, result)
