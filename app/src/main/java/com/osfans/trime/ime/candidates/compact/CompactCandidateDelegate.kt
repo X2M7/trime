@@ -10,6 +10,7 @@ import android.graphics.Canvas
 import android.graphics.drawable.ShapeDrawable
 import android.graphics.drawable.shapes.RectShape
 import android.view.ContextThemeWrapper
+import androidx.core.view.isNotEmpty
 import androidx.core.view.updateLayoutParams
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.flexbox.FlexboxLayoutManager
@@ -190,7 +191,7 @@ class CompactCandidateDelegate(override val di: DI) :
                     val holder = getChildViewHolder(getChildAt(index)) as? CandidateViewHolder ?: return
                     if (holder.snapshot != snapshot) return
                 }
-                if (candidateAdapter.itemCount == 0 || childCount > 0) {
+                if (candidateAdapter.itemCount == 0 || isNotEmpty()) {
                     InputLatencyLog.candidateDraw(snapshot, hasCandidates = candidateAdapter.itemCount > 0)
                 }
             }

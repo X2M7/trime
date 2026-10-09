@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+import androidx.core.view.isNotEmpty
 import androidx.core.view.updateLayoutParams
 import androidx.recyclerview.widget.RecyclerView
 import com.chad.library.adapter4.BaseQuickAdapter
@@ -136,7 +137,7 @@ class PagedCandidatesUi(
                     val holder = getChildViewHolder(getChildAt(index)) as? UiHolder ?: return
                     if (holder.snapshot != snapshot) return
                 }
-                if (candidatesAdapter.itemCount == 0 || childCount > 0) {
+                if (candidatesAdapter.itemCount == 0 || isNotEmpty()) {
                     InputLatencyLog.candidateDraw(snapshot, hasCandidates = candidates.candidates.isNotEmpty())
                 }
             }

@@ -1,6 +1,7 @@
 /* SPDX-License-Identifier: GPL-3.0-or-later */
 package com.osfans.trime.ime.performance
 
+import android.annotation.SuppressLint
 import android.os.SystemClock
 import android.util.Log
 import com.osfans.trime.BuildConfig
@@ -134,9 +135,11 @@ object InputLatencyLog {
     }
 
     fun keyboardCache(windowId: Long, layouts: Int, keys: Int) {
-        if (enabled) Log.i("TrimePerf", "v=1 event=keyboard_cache window=$windowId layouts=$layouts keys=$keys t_ns=${now()}")
+        if (enabled) write("keyboard_cache", 0, 0, 0, extra = " window=$windowId layouts=$layouts keys=$keys")
     }
 
+    // The application's Timber trees rewrite tags; this numeric protocol needs a stable tag in release and debug.
+    @SuppressLint("LogNotTimber")
     private fun write(event: String, request: Long, editor: Long, generation: Long, timestamp: Long = now(), extra: String = "") {
         if (enabled) Log.i("TrimePerf", "v=1 event=$event request=$request editor=$editor generation=$generation t_ns=$timestamp$extra")
     }

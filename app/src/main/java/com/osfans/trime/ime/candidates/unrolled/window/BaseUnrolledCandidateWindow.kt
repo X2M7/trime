@@ -8,6 +8,7 @@ package com.osfans.trime.ime.candidates.unrolled.window
 import android.graphics.drawable.ShapeDrawable
 import android.graphics.drawable.shapes.RectShape
 import android.view.View
+import androidx.core.view.isNotEmpty
 import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.lifecycle.findViewTreeLifecycleOwner
 import androidx.lifecycle.lifecycleScope
@@ -84,7 +85,7 @@ abstract class BaseUnrolledCandidateWindow(di: DI) :
                     val snapshot = adapter.snapshot
                     val list = recyclerView
                     if (service.isCurrentEditor(snapshot.editorToken) &&
-                        snapshot == rime.run { candidateSnapshotCached } && list.childCount > 0
+                        snapshot == rime.run { candidateSnapshotCached } && list.isNotEmpty()
                     ) {
                         var currentRows = true
                         for (index in 0 until list.childCount) {
