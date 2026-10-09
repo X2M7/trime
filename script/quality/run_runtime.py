@@ -139,6 +139,200 @@ def t09_product_sources(reference, baseline, root):
             "tracked_symlink_targets": linked_targets, "verified_recursive_submodules": submodules}
 
 
+"""Post-baseline ignored FIFO guard; pure report validation, no commands on import."""
+
+T09_RAPID_IDS = {"rapid_cn_en_a_cn", "rapid_cn_en_a_cn_64_space"}
+
+
+def validate_t09_rapid(report, baseline, schema):
+    rows = report.get("rapid_regressions", [])
+    if baseline:
+        if rows:
+            raise ValueError("T09 baseline must not execute post-implementation rapid cases")
+        return {"rapid_scope": "NOT_RUN_BASELINE", "rapid_regressions": 0, "rapid_passed": True}
+    expected = {(theme, name) for theme in T09_THEMES for name in T09_RAPID_IDS}
+    if not isinstance(rows, list) or len(rows) != 4 or {(row.get("theme"), row.get("id")) for row in rows} != expected:
+        raise ValueError("T09 four separate rapid regressions missing or duplicate")
+    for row in rows:
+        if row.get("status") not in {"passed", "failed"}:
+            raise ValueError("T09 rapid outcome incomplete or unsupported")
+        if (row.get("scope") != "explicit_visible_commands_fifo" or row.get("excluded_from_fixed_task_costs") is not True or
+                any(type(row.get(name)) is not int or row[name] != 0 for name in ("interkey_queue_barriers", "interkey_native_queries"))):
+            raise ValueError("T09 rapid scope contains a query/barrier or fixed-task cost")
+        actions = row.get("actions")
+        counts = row.get("counts", {})
+        if (not isinstance(actions, list) or counts.get("total_actions") != len(actions) or
+                counts.get("dispatched_actions") != sum(action.get("dispatched") is True for action in actions)):
+            raise ValueError("T09 rapid attempted/dispatched counts differ")
+        if row["status"] == "failed":
+            if not row.get("reason"):
+                raise ValueError("T09 rapid failure lacks retained reason")
+            continue
+        chinese = row["id"] == "rapid_cn_en_a_cn_64_space"
+        target = "a你" if chinese else "a"
+        roles = ["english", "ascii_a", "chinese"] + (["native_6", "native_4", "native_space"] if chinese else [])
+        if row.get("expected_text") != target or len(actions) != len(roles):
+            raise ValueError("T09 rapid sequence/target differs")
+        prepared, final, delayed = (row.get(name, {}) for name in ("prepared", "final", "post_delay_state"))
+        theme_hash = report["effective_theme_identity"][row["theme"]]["effective_theme_sha256"]
+        isolated = prepared.get("manual_language_preference", {})
+        if (prepared.get("ascii_mode") is not False or prepared.get("t9_layout") is not True or
+                prepared.get("schema_id") != schema or prepared.get("raw_input") != "" or prepared.get("editor_text") != "" or
+                prepared.get("effective_theme_sha256") != theme_hash or isolated.get("status") != "registered" or
+                isolated.get("exists") is not False or isolated.get("raw") is not None):
+            raise ValueError("T09 rapid did not start at isolated actual Chinese T9")
+        for state in (final, delayed):
+            if (state.get("editor_text") != target or state.get("raw_input") != "" or state.get("ascii_mode") is not False or
+                    state.get("t9_layout") is not True or state.get("schema_id") != schema or
+                    state.get("editor_token") != prepared.get("editor_token") or state.get("composing_span") != [-1, -1] or
+                    state.get("selection") != [len(target), len(target)]):
+                raise ValueError("T09 rapid exact text/native/editor/final Chinese state differs")
+        gate = row.get("gate", {})
+        entered, released, joined = (gate.get(name) for name in ("entered_ns", "release_ns", "joined_ns"))
+        anchor = gate.get("identity", {})
+        if (gate.get("original_service_post_rime_job") is not True or gate.get("single_main_dispatch") is not True or
+                gate.get("cancelled") is not False or any(type(value) is not int or value <= 0 for value in (entered, released, joined)) or
+                not entered < released <= joined or anchor.get("editor_token") != prepared.get("editor_token") or
+                anchor.get("schema_id") != schema or anchor.get("generation") != prepared.get("generation") or
+                anchor.get("snapshot_editor") != prepared.get("snapshot_editor") or anchor.get("snapshot_request") != prepared.get("snapshot_request") or
+                anchor.get("theme") != row["theme"] or anchor.get("field_id") != prepared.get("field_id") or
+                any(type(anchor.get(key)) is not int for key in ("editor_token", "generation", "snapshot_editor", "snapshot_request", "theme_object", "input_object"))):
+            raise ValueError("T09 rapid lacks entered original FIFO gate and ownership")
+        previous = entered
+        for index, (action, role) in enumerate(zip(actions, roles), 1):
+            begin, end = action.get("callback_begin_ns"), action.get("callback_end_ns")
+            if (action.get("seq") != index or action.get("driver") != "logical_key_action" or action.get("role") != role or
+                    action.get("behavior") != ("long" if index == 1 else "click") or action.get("dispatched") is not True or
+                    action.get("identity") != anchor or action.get("identity_after") != anchor or action.get("gate_released") is not False or
+                    type(begin) is not int or type(end) is not int or not previous <= begin <= end < released or
+                    any(type(action.get(key)) is not int for key in ("key_index", "keyboard_object", "key_view_object")) or
+                    action["key_index"] < 0 or not action.get("visible_rect") or not action.get("keyboard_id")):
+                raise ValueError("T09 rapid callback did not stay visible/in-order/inside gate")
+            previous = end
+            resolved = action.get("resolved_action", {})
+            if (index == 1 and (resolved.get("code") != 212 or resolved.get("select") != ".ascii" or action.get("displayed_label") != "EN")):
+                raise ValueError("T09 rapid English is not actual visible long EN")
+            if index == 2 and (resolved.get("code") != 29 or resolved.get("modifier") != 0 or resolved.get("select") or resolved.get("toggle")):
+                raise ValueError("T09 rapid letter is not the actual unshifted A action")
+            if index == 3 and not ((resolved.get("code") == 212 and resolved.get("select") == ".native") or
+                                  (row["theme"] == "trime" and resolved.get("toggle") == "ascii_mode" and resolved.get("code") == 95)):
+                raise ValueError("T09 rapid Chinese return is not an actual visible command")
+            if index > 3 and resolved.get("code") != {4: 13, 5: 11, 6: 62}[index]:
+                raise ValueError("T09 rapid native digit/Space action differs")
+            if (action.get("t9_layout") is not (index == 1 or index > 3) or
+                    action.get("t9_layout_after") is not (index >= 3) or
+                    (index > 3 and resolved.get("modifier") != 0)):
+                raise ValueError("T09 rapid actual letter/T9 layout or native modifiers differ")
+        options = [event for event in row.get("native_events", []) if event.get("event") == "ascii_option"]
+        commits = [event for event in row.get("native_events", []) if event.get("event") == "native_commit" and event.get("text")]
+        if (any(type(event.get("value")) is not bool for event in options) or [event.get("value") for event in options] != [True, False] or
+                [event.get("text") for event in commits] != (["你"] if chinese else []) or
+                any(event.get("editor") != final["editor_token"] for event in commits) or
+                any(type(event.get("t_ns")) is not int or event["t_ns"] < released for event in options + commits)):
+            raise ValueError("T09 rapid native options/commits lost or reordered")
+        calls = row.get("ic_calls", [])
+        for event in ("0:29", "1:29"):
+            if sum(call.get("returned") is True and call.get("method") == "sendKeyEvent" and call.get("text") == event for call in calls) != 1:
+                raise ValueError("T09 rapid ASCII lacks one successful real IC down/up pair")
+        def finalizations(value):
+            return [call for call in calls if call.get("returned") is True and (
+                (call.get("method") == "commitText" and call.get("text") == value) or
+                (call.get("method") == "finishComposingText" and call.get("composing_before") == value and call.get("composing_after") is None))]
+        modes = row.get("submission_modes", {})
+        if (finalizations("a") or len(finalizations("你")) != (1 if chinese else 0) or
+                modes.get("a") != "native_unhandled_key_to_real_ic_keyevent" or
+                modes.get("你") != ("native_commit_to_real_ic_finalization" if chinese else "not_requested")):
+            raise ValueError("T09 rapid ASCII/native real editor submission proof differs")
+    return {"rapid_scope": "explicit_visible_commands_fifo", "rapid_regressions": 4,
+            "rapid_passed": all(row["status"] == "passed" for row in rows), "rapid_excluded_from_fixed_task_costs": True}
+
+
+"""Four post-baseline actual onText cases; independent of rapid4 and fixed14 costs."""
+T09_MACRO_SOURCES = {"macro_ascii_text": "{Keyboard_ascii}a{Keyboard_native}",
+                     "macro_ascii_key": "{Keyboard_ascii}{a}{Keyboard_native}"}
+
+
+def validate_t09_macros(report, baseline, schema):
+    rows = report.get("macro_regressions", [])
+    if baseline:
+        if rows:
+            raise ValueError("Baseline must not run post-implementation macros")
+        return {"macro_scope": "NOT_RUN_BASELINE", "macro_regressions": 0, "macro_passed": True}
+    expected = {(theme, name) for theme in T09_THEMES for name in T09_MACRO_SOURCES}
+    if not isinstance(rows, list) or len(rows) != 4 or {(row.get("theme"), row.get("id")) for row in rows} != expected:
+        raise ValueError("T09 four actual macro cases missing or duplicate")
+    for row in rows:
+        source = T09_MACRO_SOURCES[row["id"]]
+        if (row.get("scope") != "real_on_text_entry_original_fifo" or row.get("excluded_from_fixed_task_costs") is not True or
+                row.get("macro_source") != source or row.get("macro_source_sha256") != hashlib.sha256(source.encode()).hexdigest() or
+                any(type(row.get(name)) is not int or row[name] != 0 for name in ("interkey_queue_barriers", "interkey_native_queries")) or
+                row.get("status") not in {"passed", "failed"}):
+            raise ValueError("T09 actual macro scope/source/outcome differs")
+        actions = row.get("actions", [])
+        if (not isinstance(actions, list) or row.get("counts", {}).get("total_actions") != len(actions) or
+                row.get("counts", {}).get("dispatched_actions") != sum(action.get("dispatched") is True for action in actions)):
+            raise ValueError("T09 macro callback counts differ")
+        if row["status"] == "failed":
+            if not row.get("reason"):
+                raise ValueError("T09 macro failure lacks reason")
+            continue
+        prepared = row.get("prepared", {})
+        isolated = prepared.get("manual_language_preference", {})
+        if (prepared.get("ascii_mode") is not False or prepared.get("t9_layout") is not True or prepared.get("schema_id") != schema or
+                prepared.get("editor_text") != "" or prepared.get("raw_input") != "" or isolated.get("status") != "registered" or
+                isolated.get("exists") is not False or isolated.get("raw") is not None or
+                prepared.get("effective_theme_sha256") != report["effective_theme_identity"][row["theme"]]["effective_theme_sha256"]):
+            raise ValueError("T09 macro preparation is not isolated actual Chinese T9")
+        for name in ("final", "post_delay_state"):
+            state = row.get(name, {})
+            if (state.get("editor_text") != "a" or state.get("raw_input") != "" or state.get("ascii_mode") is not False or
+                    state.get("t9_layout") is not True or state.get("schema_id") != schema or
+                    state.get("editor_token") != prepared.get("editor_token") or state.get("composing_span") != [-1, -1] or state.get("selection") != [1, 1]):
+                raise ValueError("T09 actual macro final/late text/native/editor state differs")
+        gate = row.get("gate", {})
+        entered, released, joined = (gate.get(name) for name in ("entered_ns", "release_ns", "joined_ns"))
+        anchor = gate.get("identity", {})
+        if (gate.get("original_service_post_rime_job") is not True or gate.get("single_main_dispatch") is not True or
+                gate.get("cancelled") is not False or any(type(value) is not int or value <= 0 for value in (entered, released, joined)) or
+                not entered < released <= joined or any(anchor.get(name) != prepared.get(name) for name in (
+                    "editor_token", "field_id", "schema_id", "generation", "snapshot_editor", "snapshot_request")) or
+                anchor.get("theme") != row["theme"] or any(type(anchor.get(name)) is not int for name in ("theme_object", "input_object")) or len(actions) != 1):
+            raise ValueError("T09 macro is not within its original queue gate/owner")
+        action = actions[0]
+        begin, end = action.get("callback_begin_ns"), action.get("callback_end_ns")
+        if (action.get("seq") != 1 or action.get("driver") != "logical_input_macro" or action.get("behavior") != "macro" or
+                action.get("role") != "macro" or action.get("macro_source") != source or action.get("dispatched") is not True or
+                action.get("gate_released") is not False or action.get("identity") != anchor or action.get("identity_after") != anchor or
+                type(begin) is not int or type(end) is not int or not entered <= begin <= end < released):
+            raise ValueError("T09 macro did not call the actual onText entry once inside the gate")
+        for name, select in (("resolved_english", ".ascii"), ("resolved_chinese", ".native")):
+            resolved = action.get(name, {})
+            if resolved.get("code") != 212 or resolved.get("select") != select or resolved.get("commit") or resolved.get("text"):
+                raise ValueError("T09 macro fixture actions do not resolve to implemented theme language commands")
+        events = row.get("native_events", [])
+        options = [event for event in events if event.get("event") == "ascii_option"]
+        commits = [event for event in events if event.get("event") == "native_commit" and event.get("text")]
+        if (any(type(event.get("value")) is not bool for event in options) or [event.get("value") for event in options] != [True, False] or
+                any(type(event.get("t_ns")) is not int or event["t_ns"] < released for event in options + commits)):
+            raise ValueError("T09 actual macro native mode sequence differs")
+        calls = row.get("ic_calls", [])
+        finalizations = [call for call in calls if call.get("returned") is True and (
+            (call.get("method") == "commitText" and call.get("text") == "a") or
+            (call.get("method") == "finishComposingText" and call.get("composing_before") == "a" and call.get("composing_after") is None))]
+        keycalls = [call for call in calls if call.get("method") == "sendKeyEvent" and call.get("text") in {"0:29", "1:29"}]
+        if row.get("librime_ascii_commit_claimed") is not False:
+            raise ValueError("T09 app ASCII fallback mislabeled as a native librime commit")
+        if row["id"] == "macro_ascii_key":
+            if (commits or finalizations or row.get("submission_mode") != "native_unhandled_key_to_real_ic_keyevent" or
+                    any(sum(call.get("returned") is True and call.get("text") == key for call in keycalls) != 1 for key in ("0:29", "1:29"))):
+                raise ValueError("T09 braced key lacks one real IC pair or fabricated commit")
+        elif ([event.get("text") for event in commits] != ["a"] or any(event.get("editor") != prepared.get("editor_token") for event in commits) or
+              len(finalizations) != 1 or keycalls or row.get("submission_mode") != "app_simulate_literal_fallback_commit_proto_to_real_ic_text"):
+            raise ValueError("T09 plain text lacks one app fallback/real IC finalization or duplicated key path")
+    return {"macro_scope": "real_on_text_entry_original_fifo", "macro_regressions": 4,
+            "macro_passed": all(row["status"] == "passed" for row in rows), "macro_excluded_from_fixed_task_costs": True}
+
+
 def validate_t09_records(report, completion, run_id, baseline, schema):
     if (report.get("run_id") != run_id or completion.get("run_id") != run_id or
             report.get("baseline") is not baseline or completion.get("baseline") is not baseline or
@@ -250,14 +444,17 @@ def validate_t09_records(report, completion, run_id, baseline, schema):
     cleanup = completion.get("cleanup_errors")
     if not isinstance(cleanup, list):
         raise ValueError("T09 cleanup outcome missing")
-    probe_passed = "failed" not in statuses and not cleanup
+    rapid_facts = validate_t09_rapid(report, baseline, schema)
+    macro_facts = validate_t09_macros(report, baseline, schema)
+    probe_passed = "failed" not in statuses and not cleanup and rapid_facts["rapid_passed"] and macro_facts["macro_passed"]
     if completion.get("passed") is not probe_passed:
         raise ValueError("T09 completion conflicts with actual failed cases or cleanup")
     expected_unsupported = [{"theme": item["theme"], "task": item["task"]} for item in tasks if
                             item["status"] == "unsupported" and item["theme"] == "trime" and
                             item["task"] in {"android16", "wifi", "b_site"} and item.get("reason_code") == "no_visible_letter_route"]
     return {"collection_complete": True, "probe_collection_passed": probe_passed,
-            "product_task_acceptance_passed": all(status == "passed" for status in statuses) and not cleanup,
+            "product_task_acceptance_passed": all(status == "passed" for status in statuses) and not cleanup and rapid_facts["rapid_passed"] and macro_facts["macro_passed"],
+            **rapid_facts, **macro_facts,
             "supported_tasks": sum(item["status"] == "passed" for item in tasks),
             "unsupported_tasks": sum(item["status"] == "unsupported" for item in tasks),
             "failed_tasks": sum(item["status"] == "failed" for item in tasks),

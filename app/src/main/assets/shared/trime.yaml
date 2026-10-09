@@ -937,6 +937,9 @@ preset_keys:
   Keyboard_mini: {label: 迷你, send: Eisu_toggle, select: mini}
   Keyboard_letter: {label: 字母, send: Eisu_toggle, select: default}
   Keyboard_default: {label: 返回, send: Eisu_toggle, select: .default}
+  Keyboard_ascii: {label: EN, send: Eisu_toggle, select: .ascii}
+  Keyboard_native: {label: 中文, send: Eisu_toggle, select: .native}
+  Keyboard_return: {label: 返回, send: Eisu_toggle, select: .return}
   Keyboard_switch: {label: 鍵盤, send: Eisu_toggle, select: .next}
   liquid_keyboard_switch: { label: 更多, send: FUNCTION, command: liquid_keyboard, option: "更多" }
   liquid_keyboard_exit: {label: 返回, send: FUNCTION, command: liquid_keyboard, option: "-1"}  #退出liquidkeyboard
@@ -1036,7 +1039,7 @@ preset_keyboards:
       - {click: '/', long_click: '?'}
       - {click: Shift_L}
       - {click: Keyboard_symbols, long_click: Keyboard_number}
-      - {click: Mode_switch, long_click: Menu}
+      - {click: Mode_switch, ascii: Keyboard_native, long_click: Menu}
       - {click: space, width: 30}
       - {click: "'", long_click: '"'}
       - {click: BackSpace, width: 15}
@@ -1314,7 +1317,7 @@ preset_keyboards:
       - {click: '8', width: 26, label: 'TUV', hint: '8', long_click: T9_digit_8}
       - {click: '9', width: 26, label: 'WXYZ', hint: '9', long_click: T9_digit_9}
       - {click: Keyboard_symbols, width: 22, label: '符号', long_click: Menu}
-      - {click: Keyboard_number, width: 18, label: '123', long_click: Mode_switch}
+      - {click: Keyboard_number, width: 18, label: '123', hint: EN, long_click: Keyboard_ascii}
       - {click: ',', width: 16, label: '，'}
       - {click: T9_space, width: 32}
       - {click: '.', width: 16, label: '。'}
@@ -1346,7 +1349,7 @@ preset_keyboards:
     - {click: '.'}
     - {click: ','}
     - {click: '='}
-    - {click: Keyboard_default, long_click: Keyboard_symbols}
+    - {click: Keyboard_return, long_click: Keyboard_symbols}
     - {click: space1}
     - {click: BackSpace}
     - {click: Return}
@@ -1397,7 +1400,7 @@ preset_keyboards:
     - {click: '，', ascii: ',', long_click: one_hand_switch_1}
     - {click: '？', ascii: '?', long_click: one_hand_switch_3}
     - {click: BackSpace, long_click: Escape}
-    - {click: Keyboard_default, long_click: Menu, width: 15}
+    - {click: Keyboard_return, long_click: Menu, width: 15}
     - {click: Keyboard_number, long_click: Color_switch}
     - {click: Keyboard_mini, long_click: Theme_settings}
     - {click: space, width: 30}

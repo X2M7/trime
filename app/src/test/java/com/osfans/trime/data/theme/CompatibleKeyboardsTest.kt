@@ -49,6 +49,44 @@ class CompatibleKeyboardsTest :
             patched.presetKeys.getValue(long).command shouldBe "t9_digit"
             patched.presetKeys.getValue(long).option shouldBe "2"
         }
+        "compatible language actions preserve semantic targets despite third-party name collisions" {
+            val conflicts = mapOf(
+                "Keyboard_ascii" to PresetKey(commit = "wrong-ascii"),
+                "Keyboard_native" to PresetKey(commit = "wrong-native"),
+                "Keyboard_return" to PresetKey(commit = "wrong-return"),
+            )
+            val source = thirdParty.copy(presetKeys = thirdParty.presetKeys + conflicts)
+            val compatible = source.withCompatibleKeyboards(builtin)
+            fun action(token: KeyActionToken?): PresetKey = compatible.presetKeys.getValue((token as KeyActionToken.Plain).token)
+            val t9 = compatible.presetKeyboards.getValue(compatible.fallbackKeyboards.getValue("luna_pinyin_t9"))
+            action(t9.keys.single { it.label == "123" }.longClick).select shouldBe ".ascii"
+            val letter = compatible.presetKeyboards.getValue(compatible.fallbackKeyboards.getValue("letter"))
+            val chinese = letter.keys.single { action(it.click).toggle == "ascii_mode" }
+            action(chinese.click).send shouldBe "SWITCH_CHARSET"
+            action(chinese.ascii).select shouldBe ".native"
+            chinese.sendBindings shouldBe true
+            listOf("number", "symbols").forEach { layout ->
+                val keyboard = compatible.presetKeyboards.getValue(compatible.fallbackKeyboards.getValue(layout))
+                val back = keyboard.keys.single { action(it.click).select == ".return" }
+                action(back.click).send shouldBe "Eisu_toggle"
+                back.composing shouldBe null
+                back.hasMenu shouldBe null
+                back.paging shouldBe null
+            }
+            conflicts.forEach { (id, original) -> compatible.presetKeys.getValue(id) shouldBe original }
+        }
+        "compatible literal auxiliary targets use the private namespace while language targets stay semantic" {
+            val t9 = patched.presetKeyboards.getValue(patched.fallbackKeyboards.getValue("luna_pinyin_t9"))
+            val number = t9.keys.single { it.label == "123" }
+            patched.presetKeys.getValue((number.click as KeyActionToken.Plain).token).select shouldBe
+                patched.fallbackKeyboards.getValue("number")
+            patched.presetKeys.getValue((number.longClick as KeyActionToken.Plain).token).select shouldBe ".ascii"
+            t9.asciiKeyboard shouldBe patched.fallbackKeyboards.getValue("letter")
+            val symbols = patched.presetKeyboards.getValue(patched.fallbackKeyboards.getValue("symbols"))
+            val actions = symbols.keys.map { patched.presetKeys.getValue((it.click as KeyActionToken.Plain).token) }
+            actions.single { it.label == "返回" }.select shouldBe ".return"
+            actions.single { it.label == "數字" }.select shouldBe patched.fallbackKeyboards.getValue("number")
+        }
         "reserved namespace collisions select a new namespace without overwriting user content" {
             val twice = patched.withCompatibleKeyboards(builtin)
             patched.presetKeyboards.forEach { (id, value) -> twice.presetKeyboards[id] shouldBe value }

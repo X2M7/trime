@@ -106,4 +106,9 @@ object EditorPolicy {
     fun enterAction(info: EditorInfo): Int? = enterAction(info.inputType, info.imeOptions, info.actionId, info.actionLabel)
 }
 
-data class EditorModeOverride(val schemaId: String, val keyboardId: String, val asciiMode: Boolean)
+data class EditorModeOverride(
+    val schemaId: String,
+    val keyboardId: String,
+    val asciiMode: Boolean,
+    val themeIdentity: Int = 0,
+)

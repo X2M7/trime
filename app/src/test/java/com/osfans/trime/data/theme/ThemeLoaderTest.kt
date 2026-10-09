@@ -6,6 +6,7 @@ package com.osfans.trime.data.theme
 
 import android.util.Log
 import com.charleskorn.kaml.YamlNode
+import com.osfans.trime.data.theme.model.KeyActionToken
 import com.osfans.trime.util.mapping
 import com.osfans.trime.util.pairs
 import com.osfans.trime.util.string
@@ -113,6 +114,47 @@ class ThemeLoaderTest :
                 val custom = node("patch:\n  name: patched\n")
                 ThemeLoader.applyCustomPatch("theme.custom", custom) shouldBe custom
                 ThemeLoader.applyCustomPatch("trime.custom", custom) shouldBe custom
+            }
+        }
+
+        Given("the real built-in source files with explicit language navigation") {
+            listOf("trime.yaml", "tongwenfeng.trime.yaml").forEach { filename ->
+                Then("$filename retains reachable language actions and navigation bindings through the source loader") {
+                    val file = File("src/main/assets/shared/$filename")
+                    val loaded = ThemeLoader.loadFromSource(
+                        file.nameWithoutExtension,
+                        file,
+                        ThemeLoader.SourceLoader { null },
+                    ).shouldBeInstanceOf<ThemeLoader.ThemeLoadResult.Success>().theme
+                    mapOf("Keyboard_ascii" to ".ascii", "Keyboard_native" to ".native", "Keyboard_return" to ".return")
+                        .forEach { (action, target) -> loaded.presetKeys.getValue(action).select shouldBe target }
+                    val t9 = loaded.presetKeyboards.getValue("luna_pinyin_t9")
+                    t9.keys.size shouldBe 17
+                    t9.asciiKeyboard shouldBe "letter"
+                    val english = t9.keys.single { it.click == KeyActionToken.Plain("Keyboard_number") }
+                    english.longClick shouldBe KeyActionToken.Plain("Keyboard_ascii")
+                    english.hint shouldBe "EN"
+                    val letter = loaded.presetKeyboards.getValue("letter")
+                    if (filename == "trime.yaml") {
+                        letter.keys.single { it.click == KeyActionToken.Plain("Mode_switch") }.ascii shouldBe
+                            KeyActionToken.Plain("Keyboard_native")
+                    } else {
+                        letter.keys.single { it.click == KeyActionToken.Plain("Keyboard_native") }.longClick shouldBe
+                            KeyActionToken.Plain("Theme_settings")
+                    }
+                    listOf("number", "symbols").forEach { layout ->
+                        val back = loaded.presetKeyboards.getValue(layout).keys.single {
+                            it.click == KeyActionToken.Plain("Keyboard_return")
+                        }
+                        back.ascii shouldBe null
+                        back.composing shouldBe null
+                        back.hasMenu shouldBe null
+                        back.paging shouldBe null
+                    }
+                    loaded.presetKeyboards.getValue("symbols").keys.single {
+                        it.click == KeyActionToken.Plain("Keyboard_number")
+                    }.composing shouldBe null
+                }
             }
         }
 

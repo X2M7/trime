@@ -115,7 +115,7 @@ class ThemeGoldenTest :
 
                 Then("color schemes and preset keys are decoded") {
                     theme.presetColorSchemes.size shouldBe 37
-                    theme.presetKeys.size shouldBe 120
+                    theme.presetKeys.size shouldBe 123
                     val brightnessDown = theme.presetKeys.getValue("BRIGHTNESS_DOWN")
                     brightnessDown.label shouldBe "亮度-"
                     brightnessDown.send shouldBe "BRIGHTNESS_DOWN"
@@ -166,6 +166,102 @@ class ThemeGoldenTest :
                         .forEach { (_, keyboard) ->
                             keyboard.keys shouldNotBe emptyList<TextKeyboard.TextKey>()
                         }
+                }
+            }
+        }
+        Given("the explicit language and auxiliary navigation in both built-in themes") {
+            listOf("tongwenfeng.trime.yaml", "trime.yaml").forEach { name ->
+                val theme = ThemeTestSupport.decodeBuiltinTheme(name)
+                fun key(layout: String, click: String): TextKeyboard.TextKey = theme.presetKeyboards.getValue(layout).keys.single { it.click == KeyActionToken.Plain(click) }
+
+                Then("$name defines three distinct navigation commands without adding layouts") {
+                    mapOf("Keyboard_ascii" to ".ascii", "Keyboard_native" to ".native", "Keyboard_return" to ".return")
+                        .forEach { (action, target) ->
+                            val preset = theme.presetKeys.getValue(action)
+                            preset.send shouldBe "Eisu_toggle"
+                            preset.select shouldBe target
+                            preset.toggle shouldBe ""
+                        }
+                    theme.presetKeys.getValue("Keyboard_ascii").label shouldBe "EN"
+                    theme.presetKeys.getValue("Keyboard_native").label shouldBe "中文"
+                    theme.presetKeys.getValue("Keyboard_return").label shouldBe "返回"
+                    theme.presetKeyboards.size shouldBe if (name == "trime.yaml") 19 else 51
+                    theme.presetKeys.size shouldBe if (name == "trime.yaml") 123 else 257
+                }
+
+                Then("$name exposes English on the real T9 number key and preserves Chinese punctuation") {
+                    val number = key("luna_pinyin_t9", "Keyboard_number")
+                    number.label shouldBe "123"
+                    number.width shouldBe 18f
+                    number.longClick shouldBe KeyActionToken.Plain("Keyboard_ascii")
+                    number.hint shouldBe "EN"
+                    key("luna_pinyin_t9", ",").label shouldBe "，"
+                    key("luna_pinyin_t9", ".").label shouldBe "。"
+                    key("luna_pinyin_t9", ",").width shouldBe 16f
+                    key("luna_pinyin_t9", ".").width shouldBe 16f
+                }
+
+                Then("$name exposes a schema-native Chinese return on the actual English keyboard") {
+                    val letter = theme.presetKeyboards.getValue("letter")
+                    letter.asciiMode shouldBe 1
+                    letter.keys.size shouldBe if (name == "trime.yaml") 47 else 37
+                    val chinese = if (name == "trime.yaml") {
+                        val mode = key("letter", "Mode_switch")
+                        mode.ascii shouldBe KeyActionToken.Plain("Keyboard_native")
+                        mode.longClick shouldBe KeyActionToken.Plain("Menu")
+                        theme.presetKeys.getValue("Mode_switch").toggle shouldBe "ascii_mode"
+                        theme.presetKeyboards.getValue("default").keys shouldBe letter.keys
+                        mode
+                    } else {
+                        val native = key("letter", "Keyboard_native")
+                        native.longClick shouldBe KeyActionToken.Plain("Theme_settings")
+                        native.width shouldBe 12.5f
+                        native.ascii shouldBe null
+                        native
+                    }
+                    chinese.sendBindings shouldBe true
+                    chinese.composing shouldBe null
+                    chinese.hasMenu shouldBe null
+                    chinese.paging shouldBe null
+                }
+
+                Then("$name auxiliary return keys stay usable while composition or candidates are present") {
+                    listOf("number", "symbols").forEach { layout ->
+                        val back = key(layout, "Keyboard_return")
+                        back.sendBindings shouldBe true
+                        back.ascii shouldBe null
+                        back.composing shouldBe null
+                        back.hasMenu shouldBe null
+                        back.paging shouldBe null
+                    }
+                    val number = key("symbols", "Keyboard_number")
+                    number.composing shouldBe null
+                    number.hasMenu shouldBe null
+                    number.paging shouldBe null
+                    if (name == "tongwenfeng.trime.yaml") {
+                        key("number", "Keyboard_ascii").label shouldBe "EN"
+                    }
+                }
+
+                Then("$name preserves visible routes for email URL and signed decimal input") {
+                    val letter = theme.presetKeyboards.getValue("letter")
+                    letter.keys.any { it.longClick == KeyActionToken.Plain("@") } shouldBe true
+                    key("letter", ".").click shouldBe KeyActionToken.Plain(".")
+                    key("letter", "/").click shouldBe KeyActionToken.Plain("/")
+                    val minus = key("letter", if (name == "trime.yaml") "w" else "j")
+                    minus.longClick shouldBe KeyActionToken.Plain("-")
+                    key("number", "-").click shouldBe KeyActionToken.Plain("-")
+                    key("number", ".").click shouldBe KeyActionToken.Plain(".")
+                    if (name == "tongwenfeng.trime.yaml") {
+                        key("letter", "s").hint shouldBe "@"
+                        minus.hint shouldBe "-"
+                        minus.swipeDown shouldBe KeyActionToken.Plain("&")
+                        key("letter", "/").longClick shouldBe KeyActionToken.Plain("liquid_keyboard_switch")
+                        key("letter", "space").longClick shouldBe KeyActionToken.Plain("space_R2")
+                    } else {
+                        key("letter", "2").longClick shouldBe KeyActionToken.Plain("@")
+                        theme.presetKeyboards.getValue("mini").asciiMode shouldBe 0
+                    }
                 }
             }
         }

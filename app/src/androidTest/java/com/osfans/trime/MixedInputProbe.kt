@@ -1,7 +1,6 @@
 /* SPDX-License-Identifier: GPL-3.0-or-later */
 package com.osfans.trime
 
-// DRAFT ONLY. Keep in ignored build/t09 until the 9.11 publication boundary.
 // This file has not been compiled or executed; baseline paths need device verification.
 import android.annotation.SuppressLint
 import android.app.Activity
@@ -44,6 +43,7 @@ import com.osfans.trime.ime.core.EditorPolicy
 import com.osfans.trime.ime.core.InlinePreeditMode
 import com.osfans.trime.ime.core.InputView
 import com.osfans.trime.ime.core.TrimeInputMethodService
+import com.osfans.trime.ime.keyboard.CommonKeyboardActionListener
 import com.osfans.trime.ime.keyboard.KeyAction
 import com.osfans.trime.ime.keyboard.KeyBehavior
 import com.osfans.trime.ime.keyboard.KeyCode
@@ -53,6 +53,7 @@ import com.osfans.trime.ime.keyboard.KeyboardView
 import com.osfans.trime.ime.keyboard.KeyboardWindow
 import com.osfans.trime.ui.main.ClipEditActivity
 import com.osfans.trime.util.virtualKeyCharacterMap
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.delay
@@ -218,6 +219,9 @@ object MixedInputProbe {
         }
         val results = JSONArray()
         val regressions = JSONArray()
+        val rapidRegressions = JSONArray()
+        val macroRegressions = JSONArray()
+        lateinit var rapidSession: RimeSession
         val themeHashes = JSONObject()
         val effectiveThemes = JSONObject()
         var manualPreference: ManualLanguagePreference? = null
@@ -455,7 +459,7 @@ object MixedInputProbe {
                     "theme_asset_sha256" to themeHashes, "effective_theme_identity" to effectiveThemes,
                     "manual_language_preference" to (manualPreference?.original() ?: json("status" to "NOT_CAPTURED")),
                     "learning" to "real EditorInfo no-personalized-learning flag; normal privacy policy applies",
-                    "results" to results, "regressions" to regressions,
+                    "results" to results, "regressions" to regressions, "rapid_regressions" to rapidRegressions, "macro_regressions" to macroRegressions,
                 ).toString(2) + "\n",
             )
             File(output, "$theme-$task-actions.json").writeText(ledger.toString(2) + "\n")
@@ -827,6 +831,312 @@ object MixedInputProbe {
             }
         }
 
+        // Post-implementation-only queue test; never contributes to the fixed task costs.
+        fun rapidIdentity(): JSONObject = main {
+            check(checkNotNull(input()).theme == ThemeManager.activeTheme)
+            check(ThemeManager.prefs.selectedTheme.getValue() == theme)
+            val cached = rapidSession.run {
+                json(
+                    "schema_id" to statusCached.schemaId,
+                    "generation" to candidateSnapshotCached.generation,
+                    "snapshot_editor" to candidateSnapshotCached.editorToken,
+                    "snapshot_request" to candidateSnapshotCached.requestId,
+                )
+            }
+            cached.put("editor_token", service.editorToken).put("field_id", service.currentInputEditorInfo?.fieldId)
+                .put("theme", theme).put("theme_object", System.identityHashCode(ThemeManager.activeTheme))
+                .put("input_object", System.identityHashCode(checkNotNull(input())))
+        }
+
+        fun rapidKey(selected: VisibleKey, role: String, anchor: JSONObject, release: CompletableDeferred<Unit>) {
+            check(Looper.myLooper() == Looper.getMainLooper())
+            check(!release.isCompleted) { "FIFO gate was released between callbacks" }
+            val identity = rapidIdentity()
+            check(identity.toString() == anchor.toString()) { "Rapid callbacks crossed editor/schema/snapshot/theme ownership" }
+            val active = keyboard()
+            val activeView = descendants(checkNotNull(input())).filterIsInstance<KeyboardView>().single { it.isShown }
+            val visible = Rect()
+            check(selected.view.isShown && selected.view.isEnabled && selected.view.getLocalVisibleRect(visible)) { "Rapid KeyView is not visible" }
+            check(active === selected.keyboard && activeView.getChildAt(selected.index) === selected.view) { "Rapid key belongs to an old keyboard" }
+            check(active.keys[selected.index].getAction(selected.behavior) === selected.action) { "Rapid action changed before callback" }
+            val record = json(
+                "seq" to ledger.length() + 1, "driver" to "logical_key_action",
+                "behavior" to if (selected.behavior == KeyBehavior.CLICK) "click" else "long",
+                "role" to role, "key_index" to selected.index, "displayed_label" to selected.label,
+                "resolved_action" to describe(selected.action), "identity" to identity,
+                "keyboard_id" to keyboardId(), "t9_layout" to active.isT9Layout, "keyboard_object" to System.identityHashCode(active),
+                "key_view_object" to System.identityHashCode(selected.view), "visible_rect" to visible.toShortString(),
+                "callback_begin_ns" to SystemClock.elapsedRealtimeNanos(), "gate_released" to release.isCompleted,
+            )
+            ledger.put(record)
+            selected.view.onPress?.invoke() ?: error("Rapid KeyView lacks actual press callback")
+            try {
+                if (selected.behavior == KeyBehavior.CLICK) {
+                    selected.view.onRelease?.invoke(KeyBehavior.CLICK, false) ?: error("Rapid KeyView lacks actual release callback")
+                } else {
+                    check(selected.view.hasLongPress && !selected.view.hasPopup)
+                    check(selected.view.performLongClick()) { "Actual visible rapid long action was not handled" }
+                    selected.view.onRelease?.invoke(KeyBehavior.LONG_CLICK, true)
+                }
+                record.put("dispatched", true).put("callback_end_ns", SystemClock.elapsedRealtimeNanos())
+                    .put("identity_after", rapidIdentity()).put("keyboard_id_after", keyboardId()).put("t9_layout_after", keyboard().isT9Layout)
+                check(record.getJSONObject("identity_after").toString() == anchor.toString())
+            } finally {
+                selected.view.cancelGesture()
+            }
+        }
+
+        suspend fun verifyRapid(withChinese: Boolean) {
+            val id = if (withChinese) "rapid_cn_en_a_cn_64_space" else "rapid_cn_en_a_cn"
+            val expected = if (withChinese) "a你" else "a"
+            task = id
+            val item = json(
+                "theme" to theme,
+                "id" to id,
+                "status" to "incomplete",
+                "expected_text" to expected,
+                "scope" to "explicit_visible_commands_fifo",
+                "excluded_from_fixed_task_costs" to true,
+                "interkey_queue_barriers" to 0,
+                "interkey_native_queries" to 0,
+            )
+            rapidRegressions.put(item)
+            try {
+                prepare(Task(id, "", InputType.TYPE_CLASS_TEXT))
+                item.put("prepared", prepared)
+                check(prepared.getString("raw_input").isEmpty() && !prepared.getBoolean("ascii_mode") && prepared.getBoolean("t9_layout"))
+                val entered = CompletableDeferred<Unit>()
+                val release = CompletableDeferred<Unit>()
+                val gateProof = json("original_service_post_rime_job" to true, "single_main_dispatch" to true)
+                item.put("gate", gateProof)
+                val gate = main {
+                    service.postRimeJob {
+                        gateProof.put("entered_ns", SystemClock.elapsedRealtimeNanos())
+                        entered.complete(Unit)
+                        release.await()
+                    }
+                }
+                try {
+                    withTimeout(5_000) { entered.await() }
+                    main {
+                        val anchor = rapidIdentity()
+                        check(
+                            anchor.getLong("editor_token") == prepared.getLong("editor_token") &&
+                                anchor.getLong("generation") == prepared.getLong("generation") && anchor.getString("schema_id") == schemaId,
+                        )
+                        gateProof.put("identity", anchor)
+                        val english = visibleKeys().singleOrNull {
+                            it.behavior == KeyBehavior.LONG_CLICK &&
+                                it.action.code == KeyEvent.KEYCODE_EISU && it.action.select == ".ascii"
+                        }
+                            ?: throw Unsupported("No actual visible T9 123 long EN action", "rapid_english_route_unavailable")
+                        val englishKey = english.keyboard.keys[english.index]
+                        check(englishKey.getLabel() == "123" && englishKey.hint == "EN" && !AppPrefs.defaultInstance().keyboard.hideKeyHint.getValue()) {
+                            "Rapid English entry is not the visible T9 123 EN hint"
+                        }
+                        rapidKey(english, "english", anchor, release)
+                        check(!keyboard().isT9Layout) { "Accepted English command did not expose its real letter layout" }
+                        val a = visibleKeys().singleOrNull { it.behavior == KeyBehavior.CLICK && it.action.code == KeyEvent.KEYCODE_A && outputOf(it.action) == "a" }
+                            ?: throw Unsupported("No actual visible lowercase a key", "rapid_letter_route_unavailable")
+                        rapidKey(a, "ascii_a", anchor, release)
+                        val chinese = visibleKeys().singleOrNull {
+                            it.behavior == KeyBehavior.CLICK &&
+                                ((it.action.code == KeyEvent.KEYCODE_EISU && it.action.select == ".native") || it.action.toggle == "ascii_mode")
+                        }
+                            ?: throw Unsupported("No actual visible Chinese return command", "rapid_chinese_route_unavailable")
+                        // Trime may still resolve its visible base Mode_switch while native ASCII
+                        // is queued; record that actual action rather than inventing an override.
+                        rapidKey(chinese, "chinese", anchor, release)
+                        check(keyboard().isT9Layout) { "Accepted Chinese command did not expose schema-native T9" }
+                        if (withChinese) {
+                            for (digit in "64") {
+                                val key = visibleKeys().singleOrNull { it.behavior == KeyBehavior.CLICK && it.action.code == KeyEvent.KEYCODE_0 + (digit - '0') }
+                                    ?: throw Unsupported("No actual visible T9 $digit key", "rapid_digit_route_unavailable")
+                                rapidKey(key, "native_$digit", anchor, release)
+                            }
+                            val space = visibleKeys().singleOrNull { it.behavior == KeyBehavior.CLICK && it.action.code == KeyEvent.KEYCODE_SPACE }
+                                ?: throw Unsupported("No actual visible T9 Space key", "rapid_space_route_unavailable")
+                            rapidKey(space, "native_space", anchor, release)
+                        }
+                    }
+                } finally {
+                    // Even a failed visible-route assertion must release the original service
+                    // queue before cleanup or another task can start.
+                    gateProof.put("release_ns", SystemClock.elapsedRealtimeNanos())
+                    release.complete(Unit)
+                    withContext(NonCancellable) { withTimeout(5_000) { gate.join() } }
+                    gateProof.put("joined_ns", SystemClock.elapsedRealtimeNanos()).put("cancelled", gate.isCancelled)
+                }
+                check(!gate.isCancelled) { "Original queued FIFO gate was cancelled" }
+                val final = settled()
+                check(final.getLong("editor_token") == prepared.getLong("editor_token") && final.getString("schema_id") == schemaId)
+                check(
+                    final.getString("editor_text") == expected && final.getString("raw_input").isEmpty() &&
+                        !final.getBoolean("ascii_mode") && final.getBoolean("t9_layout"),
+                ) { "Rapid FIFO changed exact text or final Chinese mode" }
+                check(
+                    final.getJSONArray("composing_span").toString() == JSONArray(listOf(-1, -1)).toString() &&
+                        final.getJSONArray("selection").toString() == JSONArray(listOf(expected.length, expected.length)).toString(),
+                )
+                val native = synchronized(events) { events.toList() }
+                check(native.filter { it.optString("event") == "ascii_option" }.map { it.getBoolean("value") } == listOf(true, false)) {
+                    "Rapid native ASCII options were lost, merged or reordered"
+                }
+                val commits = native.filter { it.optString("event") == "native_commit" && !it.isNull("text") && it.optString("text").isNotEmpty() }
+                check(commits.map { it.getString("text") } == if (withChinese) listOf("你") else emptyList()) { "Rapid native commits differ" }
+                check(commits.all { it.getLong("editor") == final.getLong("editor_token") })
+                val calls = current.snapshotCalls()
+                // Native ascii_composer rejects direct ASCII keys; the real service forwards
+                // KEYCODE_A as a successful down/up pair to the real editor connection.
+                for (action in listOf(KeyEvent.ACTION_DOWN, KeyEvent.ACTION_UP)) {
+                    check(
+                        calls.count {
+                            it.optBoolean("returned") && it.optString("method") == "sendKeyEvent" &&
+                                it.optString("text") == "$action:${KeyEvent.KEYCODE_A}"
+                        } == 1,
+                    ) { "ASCII a lacks one successful real IC down/up pair" }
+                }
+                check(current.successfulFinalizations("a").isEmpty()) { "ASCII a was also finalized as a second text commit" }
+                check(current.successfulFinalizations("你").size == if (withChinese) 1 else 0) { "Chinese text lacks exactly one real IC finalization" }
+                item.put("submission_modes", json("a" to "native_unhandled_key_to_real_ic_keyevent", "你" to if (withChinese) "native_commit_to_real_ic_finalization" else "not_requested"))
+                item.put("final", final)
+                delay(400)
+                val delayed = settled()
+                check(
+                    delayed.getString("editor_text") == expected && delayed.getString("raw_input").isEmpty() &&
+                        !delayed.getBoolean("ascii_mode") && delayed.getBoolean("t9_layout") &&
+                        delayed.getLong("editor_token") == final.getLong("editor_token") && delayed.getString("schema_id") == schemaId &&
+                        delayed.getJSONArray("composing_span").toString() == final.getJSONArray("composing_span").toString() &&
+                        delayed.getJSONArray("selection").toString() == final.getJSONArray("selection").toString(),
+                ) {
+                    "Late queued callback changed the completed rapid text/mode/owner"
+                }
+                item.put("post_delay_state", delayed)
+                item.put("status", "passed")
+                phase("PASS: T09 $theme $id")
+            } catch (unsupported: Unsupported) {
+                item.put("status", "failed").put("reason", unsupported.message).put("reason_code", unsupported.code)
+                    .put("failure_kind", "visible_route_unsupported")
+                phase("FAIL: T09 $theme $id: ${unsupported.message}")
+            } catch (failure: Throwable) {
+                item.put("status", "failed").put("reason", failure.stackTraceToString()).put("failure_kind", "assertion_or_harness_failure")
+                phase("FAIL: T09 $theme $id: ${failure.message}")
+            } finally {
+                item.put("counts", counts()).put("actions", ledger).put("ic_calls", JSONArray(current.snapshotCalls()))
+                    .put("native_events", JSONArray(synchronized(events) { events.toList() }))
+                screenshot("final")
+                save()
+            }
+        }
+        suspend fun verifyMacro(bracedKey: Boolean) {
+            val id = if (bracedKey) "macro_ascii_key" else "macro_ascii_text"
+            val source = if (bracedKey) "{Keyboard_ascii}{a}{Keyboard_native}" else "{Keyboard_ascii}a{Keyboard_native}"
+            task = id
+            val item = json(
+                "theme" to theme, "id" to id, "status" to "incomplete",
+                "scope" to "real_on_text_entry_original_fifo", "excluded_from_fixed_task_costs" to true,
+                "macro_source" to source, "macro_source_sha256" to digest(source.toByteArray(Charsets.UTF_8)),
+                "interkey_queue_barriers" to 0, "interkey_native_queries" to 0,
+            )
+            macroRegressions.put(item)
+            try {
+                prepare(Task(id, "", InputType.TYPE_CLASS_TEXT))
+                item.put("prepared", prepared)
+                check(
+                    prepared.getString("editor_text").isEmpty() && prepared.getString("raw_input").isEmpty() &&
+                        !prepared.getBoolean("ascii_mode") && prepared.getBoolean("t9_layout"),
+                )
+                val entered = CompletableDeferred<Unit>()
+                val release = CompletableDeferred<Unit>()
+                val gateProof = json("original_service_post_rime_job" to true, "single_main_dispatch" to true)
+                item.put("gate", gateProof)
+                val gate = main {
+                    service.postRimeJob {
+                        gateProof.put("entered_ns", SystemClock.elapsedRealtimeNanos())
+                        entered.complete(Unit)
+                        release.await()
+                    }
+                }
+                try {
+                    withTimeout(5_000) { entered.await() }
+                    main {
+                        val anchor = rapidIdentity()
+                        check(
+                            anchor.getLong("editor_token") == prepared.getLong("editor_token") &&
+                                anchor.getLong("generation") == prepared.getLong("generation") && anchor.getString("schema_id") == schemaId,
+                        )
+                        gateProof.put("identity", anchor)
+                        val actualTheme = ThemeManager.activeTheme
+                        val english = actualTheme.resolveAction("Keyboard_ascii")
+                        val chinese = actualTheme.resolveAction("Keyboard_native")
+                        check(english.code == KeyEvent.KEYCODE_EISU && english.select == ".ascii" && english.commit.isEmpty() && english.text.isEmpty())
+                        check(chinese.code == KeyEvent.KEYCODE_EISU && chinese.select == ".native" && chinese.commit.isEmpty() && chinese.text.isEmpty())
+                        val record = json(
+                            "seq" to 1, "driver" to "logical_input_macro", "behavior" to "macro",
+                            "role" to "macro", "macro_source" to source, "identity" to anchor,
+                            "resolved_english" to describe(english), "resolved_chinese" to describe(chinese),
+                            "callback_begin_ns" to SystemClock.elapsedRealtimeNanos(), "gate_released" to release.isCompleted,
+                        )
+                        ledger.put(record)
+                        val listener = checkNotNull(input()).di.direct.instance<CommonKeyboardActionListener>().listener
+                        listener.onText(source) // The real existing mixed-text/key entry; no fake commits or invisible key callback.
+                        record.put("dispatched", true).put("callback_end_ns", SystemClock.elapsedRealtimeNanos()).put("identity_after", rapidIdentity())
+                        check(!release.isCompleted && record.getJSONObject("identity_after").toString() == anchor.toString())
+                    }
+                } finally {
+                    gateProof.put("release_ns", SystemClock.elapsedRealtimeNanos())
+                    release.complete(Unit)
+                    withContext(NonCancellable) { withTimeout(5_000) { gate.join() } }
+                    gateProof.put("joined_ns", SystemClock.elapsedRealtimeNanos()).put("cancelled", gate.isCancelled)
+                }
+                check(!gate.isCancelled)
+                val final = settled()
+                fun correct(value: JSONObject) = value.getString("editor_text") == "a" && value.getString("raw_input").isEmpty() &&
+                    !value.getBoolean("ascii_mode") && value.getBoolean("t9_layout") && value.getString("schema_id") == schemaId &&
+                    value.getLong("editor_token") == prepared.getLong("editor_token") &&
+                    value.getJSONArray("composing_span").toString() == JSONArray(listOf(-1, -1)).toString() &&
+                    value.getJSONArray("selection").toString() == JSONArray(listOf(1, 1)).toString()
+                check(correct(final)) { "Actual macro reordered English input or final Chinese state" }
+                item.put("final", final)
+                delay(400)
+                val delayed = settled()
+                check(correct(delayed)) { "Actual macro produced late/duplicate editor input" }
+                item.put("post_delay_state", delayed)
+                val native = synchronized(events) { events.toList() }
+                check(native.filter { it.optString("event") == "ascii_option" }.map { it.getBoolean("value") } == listOf(true, false))
+                val messages = native.filter { it.optString("event") == "native_commit" && !it.isNull("text") && it.optString("text").isNotEmpty() }
+                val calls = current.snapshotCalls()
+                if (bracedKey) {
+                    check(messages.isEmpty() && current.successfulFinalizations("a").isEmpty()) { "Braced key fabricated a native/text commit" }
+                    for (action in listOf(KeyEvent.ACTION_DOWN, KeyEvent.ACTION_UP)) {
+                        check(
+                            calls.count {
+                                it.optBoolean("returned") && it.optString("method") == "sendKeyEvent" &&
+                                    it.optString("text") == "$action:${KeyEvent.KEYCODE_A}"
+                            } == 1,
+                        )
+                    }
+                } else {
+                    // simulateKeySequence's existing literal fallback publishes CommitProto(a).
+                    // This is app fallback evidence, never proof of a librime ASCII commit.
+                    check(messages.map { it.getString("text") } == listOf("a") && messages.single().getLong("editor") == final.getLong("editor_token"))
+                    check(current.successfulFinalizations("a").size == 1)
+                    check(calls.none { it.optString("method") == "sendKeyEvent" && it.optString("text") in setOf("0:${KeyEvent.KEYCODE_A}", "1:${KeyEvent.KEYCODE_A}") })
+                }
+                item.put("submission_mode", if (bracedKey) "native_unhandled_key_to_real_ic_keyevent" else "app_simulate_literal_fallback_commit_proto_to_real_ic_text")
+                    .put("librime_ascii_commit_claimed", false).put("status", "passed")
+                phase("PASS: T09 $theme $id")
+            } catch (failure: Throwable) {
+                item.put("status", "failed").put("reason", failure.stackTraceToString()).put("failure_kind", "assertion_or_harness_failure")
+                phase("FAIL: T09 $theme $id: ${failure.message}")
+            } finally {
+                item.put("counts", counts()).put("actions", ledger).put("ic_calls", JSONArray(current.snapshotCalls()))
+                    .put("native_events", JSONArray(synchronized(events) { events.toList() }))
+                screenshot("final")
+                save()
+            }
+        }
+
         suspend fun verifyComposition(locked: Boolean) = regression(if (locked) "locked_ni_symbols" else "raw_64_symbols") {
             "64".forEach { digit(it) }
             if (locked) lockVisibleNi()
@@ -934,6 +1244,7 @@ object MixedInputProbe {
             instrumentation.sendStatus(0, Bundle().apply { putString("t09_run_id", runner.runId) })
             preference.setValue(InlinePreeditMode.COMMIT_TEXT_PREVIEW)
             session = runner.main { RimeDaemon.createSession(javaClass.name) }
+            runner.rapidSession = checkNotNull(session)
             runBlocking {
                 withTimeout(300_000) {
                     checkNotNull(session).runOnReady {
@@ -990,6 +1301,8 @@ object MixedInputProbe {
                                         json(
                                             "event" to "ascii_option",
                                             "value" to message.data.value,
+                                            "editor" to message.editorToken,
+                                            "generation" to message.snapshot.generation,
                                             "t_ns" to SystemClock.elapsedRealtimeNanos(),
                                         ),
                                     )
@@ -1017,6 +1330,12 @@ object MixedInputProbe {
                             runner.verifyComposition(true)
                             runner.verifyEditorRestore(false)
                             runner.verifyEditorRestore(true)
+                            if (!baseline) {
+                                runner.verifyRapid(false)
+                                runner.verifyRapid(true)
+                                runner.verifyMacro(false)
+                                runner.verifyMacro(true)
+                            }
                             check(runner.effectiveThemeIdentity().toString() == runner.effectiveThemes.getJSONObject(theme).toString()) { "Theme source dependencies changed during collection" }
                         }
                     } finally {
@@ -1027,13 +1346,18 @@ object MixedInputProbe {
             }
             val statuses = (0 until runner.results.length()).map { runner.results.getJSONObject(it).getString("status") }
             val regressions = (0 until runner.regressions.length()).map { runner.regressions.getJSONObject(it).getString("status") }
-            runner.collectionComplete = statuses.size == 14 && regressions.size == 8 && (statuses + regressions).none { it == "incomplete" }
+            val rapid = (0 until runner.rapidRegressions.length()).map { runner.rapidRegressions.getJSONObject(it).getString("status") }
+            val macros = (0 until runner.macroRegressions.length()).map { runner.macroRegressions.getJSONObject(it).getString("status") }
+            runner.collectionComplete = statuses.size == 14 && regressions.size == 8 && rapid.size == (if (baseline) 0 else 4) &&
+                macros.size == (if (baseline) 0 else 4) && (statuses + regressions + rapid + macros).none { it == "incomplete" }
             runner.save()
             result.putBoolean("collection_complete", runner.collectionComplete)
             // Known old-product failures remain failures. A complete baseline collection is a
             // separate fact, allowing comparison without pretending the old product passed.
             check(statuses.size == 14 && statuses.none { it in setOf("failed", "incomplete") }) { "T09 recorded failures; preserve report before retry" }
             check(regressions.size == 8 && regressions.none { it in setOf("failed", "incomplete") }) { "T09 composition/mode regression failed" }
+            check(rapid.size == (if (baseline) 0 else 4) && rapid.all { it == "passed" }) { "T09 rapid FIFO regressions failed" }
+            check(macros.size == (if (baseline) 0 else 4) && macros.all { it == "passed" }) { "T09 actual macro FIFO regressions failed" }
             passed = true
             val supported = statuses.count { it == "passed" }
             val unsupported = statuses.count { it == "unsupported" }

@@ -19,6 +19,7 @@ import com.osfans.trime.ime.candidates.popup.PopupCandidatesLayout
 import com.osfans.trime.ime.candidates.popup.PopupCandidatesMode
 import com.osfans.trime.ime.composition.PopupPosition
 import com.osfans.trime.ime.core.InlinePreeditMode
+import com.osfans.trime.ime.core.ManualLanguageMode
 import com.osfans.trime.util.InputMethodUtils
 import com.osfans.trime.util.appContext
 import timber.log.Timber
@@ -365,6 +366,7 @@ class AppPrefs(
             const val SLIDE_STEP_SIZE = "key_slide_step_size"
             const val T9_KEY_HEIGHT = "t9_key_height"
             const val T9_ONE_HAND = "t9_one_hand"
+            const val MANUAL_LANGUAGE_MODE = "manual_language_mode"
 
             const val HOOK_CTRL_A = "hook_ctrl_a"
             const val HOOK_CTRL_CV = "hook_ctrl_cv"
@@ -395,6 +397,18 @@ class AppPrefs(
         }
 
         val t9OneHand = enum(R.string.t9_one_hand, T9_ONE_HAND, OneHandMode.OFF)
+
+        // Behavior-only preference: register for the existing Direct Boot mirror, without a new settings page.
+        val manualLanguageMode = PreferenceDelegate.SerializableDelegate(
+            shared,
+            MANUAL_LANGUAGE_MODE,
+            ManualLanguageMode.UNSET,
+            object : PreferenceDelegate.Serializer<ManualLanguageMode> {
+                override fun serialize(t: ManualLanguageMode) = t.storedValue
+
+                override fun deserialize(raw: String) = ManualLanguageMode.fromStored(raw)
+            },
+        ).also { it.register() }
         val t9KeyHeight = int(R.string.t9_key_height, T9_KEY_HEIGHT, 0, 0, 80, "dp", defaultLabel = R.string.system_default)
 
         // Bit order is the T9Assist native protocol; every rule is opt-in.

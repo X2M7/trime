@@ -161,17 +161,12 @@ class CommonKeyboardActionListener(override val di: DI) : DIAware {
 
             private fun handleSwitchCharset(action: KeyAction) {
                 val option = action.toggle.ifEmpty { return }
-                val editorToken = service.editorToken
+                if (option == "ascii_mode") {
+                    keyboardWindow.switchLanguage()
+                    return
+                }
                 service.postRimeJob {
-                    val isEnabled = getRuntimeOption(option)
-                    val isComposing = statusCached.isComposing
-                    setRuntimeOption(option, !isEnabled)
-                    if (option == "ascii_mode" && isComposing) {
-                        getRawInput().takeIf { it.isNotEmpty() }?.let {
-                            if (service.isCurrentEditor(editorToken)) service.commitText(it)
-                            clearComposition()
-                        }
-                    }
+                    setRuntimeOption(option, !getRuntimeOption(option))
                 }
             }
 
@@ -458,51 +453,83 @@ class CommonKeyboardActionListener(override val di: DI) : DIAware {
                 }
             }
 
+            private fun isLanguageMacroAction(action: KeyAction): Boolean = action.commit.isEmpty() && action.text.isEmpty() && (
+                (action.code == KeyEvent.KEYCODE_SWITCH_CHARSET && action.toggle == "ascii_mode") ||
+                    (action.code == KeyEvent.KEYCODE_EISU && action.select in setOf(".ascii", ".native", ".return"))
+                )
+
+            private fun isDefaultMacroKey(action: KeyAction): Boolean = action.code !in setOf(
+                KeyEvent.KEYCODE_SWITCH_CHARSET,
+                KeyEvent.KEYCODE_EISU,
+                KeyEvent.KEYCODE_LANGUAGE_SWITCH,
+                KeyEvent.KEYCODE_FUNCTION,
+                KeyEvent.KEYCODE_SETTINGS,
+                KeyEvent.KEYCODE_PROG_RED,
+                KeyEvent.KEYCODE_MENU,
+                KeyEvent.KEYCODE_VOICE_ASSIST,
+            )
+
+            private suspend fun commitMacroText(text: String) {
+                val request = currentCoroutineContext()[InputRequest]
+                val snapshot = request?.let { CandidateSnapshot(it.editor, 0, it.id) } ?: CandidateSnapshot.EMPTY
+                service.commitText(text, snapshot)
+            }
+
             override fun onText(input: String) {
                 if (input.isEmpty()) return
                 Timber.d("onText")
+                val editorToken = service.editorToken
+                if (!service.isCurrentEditor(editorToken)) return
                 val status = rime.run { statusCached }
+                val schemaId = status.schemaId
+                val expanded = try {
+                    expandLanguageMacro(
+                        input,
+                        isLanguageAction = { isLanguageMacroAction(theme.resolveAction(it)) },
+                        textOfAction = { token -> theme.resolveAction(token).takeIf { it.commit.isEmpty() }?.text },
+                    )
+                } catch (failure: IllegalStateException) {
+                    Timber.w(failure, "Rejected cyclic or excessive language macro")
+                    return // No partial mode/text command was accepted.
+                }
                 if (!input[0].isAsciiPrintable() && status.isComposing) {
                     service.postRimeJob { commitComposition() }
                 }
-
-                val escaped = input.replace("{}", "{braceleft}{braceright}")
-                var i = 0
-                while (i < escaped.length) {
-                    val value = when (val match = TEXT_INPUT_PATTERN.matchEntire(escaped.substring(i))) {
-                        match if (match != null) -> match.groupValues[1]
-                        else -> escaped[i].toString()
+                for (value in expanded ?: keyboardMacroParts(input)) {
+                    if (!service.isCurrentEditor(editorToken) || (expanded != null && rime.run { statusCached.schemaId } != schemaId)) return
+                    val braced = value.startsWith('{') && value.endsWith('}')
+                    val action = if (braced) theme.resolveAction(value.removeSurrounding("{", "}")) else null
+                    if (expanded != null && action != null && action.commit.isEmpty() && (
+                            isLanguageMacroAction(action) || action.code == KeyEvent.KEYCODE_EISU ||
+                                action.getText(keyboardWindow.currentKeyboard).isNotEmpty() || isDefaultMacroKey(action)
+                            )
+                    ) {
+                        // Accept at the original macro position. Each mode/default-key callback
+                        // already enqueues its native operation exactly once; wrapping it in a
+                        // second job would append it after this macro's later text/key input.
+                        onAction(action)
+                        continue
                     }
-
                     service.postRimeJob {
-                        if (value.run { startsWith('{') && endsWith('}') }) {
-                            val token = value.removeSurrounding("{", "}")
-                            onAction(theme.resolveAction(token))
+                        if (!service.isCurrentEditor(editorToken) || (expanded != null && statusCached.schemaId != schemaId)) return@postRimeJob
+                        if (action != null) {
+                            if (expanded != null && action.commit.isNotEmpty()) {
+                                commitMacroText(action.commit)
+                            } else {
+                                onAction(action)
+                            }
                         } else if (!value[0].isAsciiPrintable()) {
-                            val request = currentCoroutineContext()[InputRequest]
-                            val snapshot = request?.let { CandidateSnapshot(it.editor, 0, it.id) } ?: CandidateSnapshot.EMPTY
-                            service.commitText(value, snapshot)
+                            commitMacroText(value)
                         } else {
                             simulateKeySequence(value)
                         }
                     }
-
-                    i += value.length
                 }
             }
         }
     }
 
     companion object {
-        /**
-         * Regex for combined key events.
-         * group(1) captures either:
-         *   - a plain prefix (optionally preceded by {Escape}) from the left branch,
-         *   - or a standalone {xxx} block from the right branch.
-         * The trailing .* consumes the rest of the input without affecting group(1).
-         */
-        private val TEXT_INPUT_PATTERN = """^((?:\{Escape\})?[^{}]+|\{[^{}]+\}).*$""".toRegex()
-
         private val PLACEHOLDER_PATTERN = Regex(".*(%([1-4]\\$)?s).*")
     }
 }

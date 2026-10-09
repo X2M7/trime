@@ -120,6 +120,34 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
         get() = TrimeApplication.getInstance().isDirectBootProcessReplacementPending
     private val cursorAnchorSubscription = CursorAnchorSubscription()
     var editorModeOverride: EditorModeOverride? = null
+    internal var auxiliaryKeyboardMode: EditorModeOverride? = null
+    internal val keyboardLanguage = KeyboardLanguageState(prefs.keyboard.manualLanguageMode.getValue())
+
+    /** Main-thread acceptance; every resulting command still executes through postRimeJob. */
+    internal fun acceptKeyboardMode(
+        targetAscii: Boolean?,
+        rememberLanguage: Boolean,
+        effect: KeyboardModeEffect,
+    ): KeyboardModeCommand? {
+        val info = currentInputEditorInfo ?: return null
+        if (!isCurrentEditor(editorToken)) return null
+        val schema = rime.run { statusCached.schemaId }
+        val nativeAscii = rime.run { statusCached.isAsciiMode }
+        val restricted = EditorPolicy.keyboard(info.inputType, info.imeOptions) != EditorKeyboard.USER
+        return keyboardLanguage.accept(editorToken, schema, nativeAscii, targetAscii, restricted, rememberLanguage, effect).also {
+            if (it.remembersLanguage) prefs.keyboard.manualLanguageMode.setValue(keyboardLanguage.remembered)
+        }
+    }
+
+    internal fun completeKeyboardMode(command: KeyboardModeCommand, result: KeyboardModeResult): Boolean {
+        if (!isCurrentEditor(command.editorToken)) return false
+        val before = keyboardLanguage.remembered
+        val repaint = keyboardLanguage.complete(command, result, editorToken, rime.run { statusCached.schemaId })
+        if (before != keyboardLanguage.remembered) {
+            prefs.keyboard.manualLanguageMode.setValue(keyboardLanguage.remembered)
+        }
+        return repaint
+    }
     private val navBarManager = NavigationBarManager()
     private val inputDeviceManager = InputDeviceManager { useVirtualKeyboard, useCandidatesView ->
         postRimeJob {
@@ -917,6 +945,7 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
         editorGeneration.advance()
         nativeBoundEditorToken = 0L
         editorActive = true
+        keyboardLanguage.reloadRemembered(prefs.keyboard.manualLanguageMode.getValue())
         privacyOwner = editorGeneration.token
         editorOwnership.add(privacyOwner)
         privacyMode = EditorPolicy.privacy(attribute, prefs.general.manualPrivacyMode.getValue())
