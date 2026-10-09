@@ -174,6 +174,46 @@ def validate_t09_ascii_key_delivery(row):
         raise ValueError("T09 ASCII IC/View ownership or down/up order differs")
 
 
+def validate_t09_ascii_text_delivery(row, chinese=False):
+    """A virtual printable fallback must finalize text once before later composition."""
+    calls, recipients = row.get("ic_calls"), row.get("key_recipient_calls")
+    if (not isinstance(calls, list) or not isinstance(recipients, list) or
+            any(not isinstance(call, dict) for call in calls + recipients)):
+        raise ValueError("T09 virtual ASCII actual IC/View records missing")
+    if any(call.get("method") == "sendKeyEvent" for call in calls) or recipients:
+        raise ValueError("T09 virtual ASCII text also used an unexpected asynchronous key-event path")
+    ascii_calls = [call for call in calls if call.get("method") == "commitText" and call.get("text") == "a"]
+    def finalizations(value):
+        return [call for call in calls if call.get("returned") is True and (
+            (call.get("method") == "commitText" and call.get("text") == value) or
+            (call.get("method") == "finishComposingText" and call.get("composing_before") == value and call.get("composing_after") is None))]
+    if len(ascii_calls) != 1 or finalizations("a") != ascii_calls:
+        raise ValueError("T09 virtual ASCII lacks exactly one successful commitText a")
+    ascii_call = ascii_calls[0]
+    if (any(name not in ascii_call or ascii_call[name] is not None for name in ("composing_before", "composing_after"))):
+        raise ValueError("T09 virtual ASCII text unexpectedly used a composing range")
+    preedit = [call for call in calls if call.get("method") == "setComposingText"]
+    native = finalizations("你")
+    text_calls = [call for call in calls if call.get("method") == "commitText" or
+                  call.get("method") == "finishComposingText" and call.get("composing_before") is not None]
+    if ([call.get("text") for call in preedit] != (["6", "64"] if chinese else []) or
+            len(native) != (1 if chinese else 0) or text_calls != ascii_calls + native):
+        raise ValueError("T09 virtual ASCII/native preedit or extra text finalization differs")
+    released, field = row.get("gate", {}).get("release_ns"), row.get("prepared", {}).get("field_id")
+    if type(released) is not int or released <= 0 or type(field) is not int:
+        raise ValueError("T09 virtual ASCII original gate/editor differs")
+    previous, editor_object = released, ascii_call.get("editor_object")
+    if type(editor_object) is not int:
+        raise ValueError("T09 virtual ASCII actual editor object missing")
+    for call in ascii_calls + preedit + native:
+        if (call.get("returned") is not True or call.get("on_main_thread") is not True or
+                any(type(call.get(name)) is not int for name in ("t_ns", "completed_ns", "field_id", "editor_object")) or
+                call["field_id"] != field or call["editor_object"] != editor_object or
+                not previous <= call["t_ns"] <= call["completed_ns"]):
+            raise ValueError("T09 virtual ASCII text/native sequence lacks same-editor Main completion in FIFO order")
+        previous = call["completed_ns"]
+
+
 def validate_t09_rapid(report, baseline, schema):
     rows = report.get("rapid_regressions", [])
     if baseline:
@@ -261,14 +301,20 @@ def validate_t09_rapid(report, baseline, schema):
                 any(type(event.get("t_ns")) is not int or event["t_ns"] < released for event in options + commits)):
             raise ValueError("T09 rapid native options/commits lost or reordered")
         calls = row.get("ic_calls", [])
-        validate_t09_ascii_key_delivery(row)
+        modes = row.get("submission_modes", {})
+        delivery = modes.get("a")
+        if delivery == "native_unhandled_key_to_real_ic_keyevent":
+            validate_t09_ascii_key_delivery(row)  # Historical producer contract remains exact.
+        elif delivery == "virtual_printable_ascii_to_real_ic_text":
+            validate_t09_ascii_text_delivery(row, chinese)
+        else:
+            raise ValueError("T09 rapid ASCII submission mode is unknown")
         def finalizations(value):
             return [call for call in calls if call.get("returned") is True and (
                 (call.get("method") == "commitText" and call.get("text") == value) or
                 (call.get("method") == "finishComposingText" and call.get("composing_before") == value and call.get("composing_after") is None))]
-        modes = row.get("submission_modes", {})
-        if (finalizations("a") or len(finalizations("你")) != (1 if chinese else 0) or
-                modes.get("a") != "native_unhandled_key_to_real_ic_keyevent" or
+        if (len(finalizations("a")) != (1 if delivery == "virtual_printable_ascii_to_real_ic_text" else 0) or
+                len(finalizations("你")) != (1 if chinese else 0) or
                 modes.get("你") != ("native_commit_to_real_ic_finalization" if chinese else "not_requested")):
             raise ValueError("T09 rapid ASCII/native real editor submission proof differs")
     return {"rapid_scope": "explicit_visible_commands_fifo", "rapid_regressions": 4,
@@ -351,9 +397,17 @@ def validate_t09_macros(report, baseline, schema):
         if row.get("librime_ascii_commit_claimed") is not False:
             raise ValueError("T09 app ASCII fallback mislabeled as a native librime commit")
         if row["id"] == "macro_ascii_key":
-            if commits or finalizations or row.get("submission_mode") != "native_unhandled_key_to_real_ic_keyevent":
-                raise ValueError("T09 braced key fabricated commit or changed submission mode")
-            validate_t09_ascii_key_delivery(row)
+            delivery = row.get("submission_mode")
+            if commits:
+                raise ValueError("T09 braced key fabricated a native ASCII commit")
+            if delivery == "native_unhandled_key_to_real_ic_keyevent":
+                if finalizations:
+                    raise ValueError("T09 historical braced key also finalized text")
+                validate_t09_ascii_key_delivery(row)
+            elif delivery == "virtual_printable_ascii_to_real_ic_text":
+                validate_t09_ascii_text_delivery(row)
+            else:
+                raise ValueError("T09 braced key ASCII submission mode is unknown")
         elif ([event.get("text") for event in commits] != ["a"] or any(event.get("editor") != prepared.get("editor_token") for event in commits) or
               len(finalizations) != 1 or keycalls or row.get("submission_mode") != "app_simulate_literal_fallback_commit_proto_to_real_ic_text"):
             raise ValueError("T09 plain text lacks one app fallback/real IC finalization or duplicated key path")

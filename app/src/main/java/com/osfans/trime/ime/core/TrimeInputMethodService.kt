@@ -67,6 +67,7 @@ import com.osfans.trime.util.forceShowSelf
 import com.osfans.trime.util.monitorCursorAnchor
 import com.osfans.trime.util.styledFloat
 import com.osfans.trime.util.toast
+import com.osfans.trime.util.virtualKeyCharacterMap
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
@@ -558,22 +559,35 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
                 val snapshot = it.snapshot
                 it.data.let msg@{
                     if (it.isVirtual) {
+                        val keyCode = it.value.keyCode
+                        val metaState = it.modifiers.metaState or meta(
+                            alt = it.modifiers.alt,
+                            shift = it.modifiers.shift,
+                            ctrl = it.modifiers.ctrl,
+                            meta = it.modifiers.meta,
+                        )
+                        val text = virtualKeyText(
+                            inputType = currentInputEditorInfo?.inputType,
+                            isVirtual = it.isVirtual,
+                            value = it.value.value,
+                            keyCode = keyCode,
+                            modifiers = it.modifiers,
+                            metaState = metaState,
+                            resolveCharacter = { code, state -> virtualKeyCharacterMap.get(code, state) },
+                        )
+                        if (text != null) {
+                            // Keep printable text and following composition updates on the same
+                            // InputConnection path; sendKeyEvent delivers through ViewRoot later.
+                            commitText(text, snapshot)
+                            return@msg
+                        }
                         when (it.value.value) {
                             RimeKeyMapping.RimeKey_Return -> handleReturnKey()
 
                             else -> {
-                                val keyCode = it.value.keyCode
                                 if (keyCode != KeyEvent.KEYCODE_UNKNOWN) {
                                     // recognized keyCode
-                                    sendDownUpKeyEvent(
-                                        keyCode,
-                                        it.modifiers.metaState or meta(
-                                            alt = it.modifiers.alt,
-                                            shift = it.modifiers.shift,
-                                            ctrl = it.modifiers.ctrl,
-                                            meta = it.modifiers.meta,
-                                        ),
-                                    )
+                                    sendDownUpKeyEvent(keyCode, metaState)
                                     if (it.modifiers.ctrl && keyCode == KeyEvent.KEYCODE_C) clearTextSelection()
                                 } else {
                                     if (it.value.value > 0) {

@@ -149,6 +149,9 @@ object MixedInputProbe {
                         "text" to text?.toString(),
                         "t_ns" to SystemClock.elapsedRealtimeNanos(),
                         "composing_before" to composingText(),
+                        "field_id" to id,
+                        "editor_object" to System.identityHashCode(this@RecordingEditor),
+                        "on_main_thread" to (Looper.myLooper() == Looper.getMainLooper()),
                     )
                     if (event != null) {
                         item.put("down_time_ms", event.downTime).put("event_time_ms", event.eventTime)
@@ -206,6 +209,38 @@ object MixedInputProbe {
                 (it.optString("method") == "commitText" && it.optString("text") == value) ||
                     (it.optString("method") == "finishComposingText" && it.optString("composing_before") == value && it.isNull("composing_after"))
                 )
+        }
+
+        fun checkVirtualAsciiTextDelivery(releasedNs: Long, withChinese: Boolean = false) {
+            val recorded = snapshotCalls()
+            val ascii = recorded.filter { it.optString("method") == "commitText" && it.optString("text") == "a" }
+            check(ascii.size == 1 && successfulFinalizations("a").size == 1) { "Virtual ASCII a needs exactly one real text finalization" }
+            val call = ascii.single()
+            check(
+                call.opt("returned") == true && call.getBoolean("on_main_thread") &&
+                    call.getInt("field_id") == id && call.getInt("editor_object") == System.identityHashCode(this) &&
+                    releasedNs <= call.getLong("t_ns") && call.getLong("t_ns") <= call.getLong("completed_ns") &&
+                    call.isNull("composing_before") && call.isNull("composing_after"),
+            ) { "Virtual ASCII text did not complete once in this actual editor" }
+            check(recorded.none { it.optString("method") == "sendKeyEvent" })
+            check(snapshotKeyRecipients().isEmpty())
+            val preedit = recorded.filter { it.optString("method") == "setComposingText" }
+            val native = successfulFinalizations("你")
+            check(preedit.map { it.getString("text") } == if (withChinese) listOf("6", "64") else emptyList())
+            check(native.size == if (withChinese) 1 else 0)
+            val textCalls = recorded.filter {
+                it.optString("method") == "commitText" || (it.optString("method") == "finishComposingText" && !it.isNull("composing_before"))
+            }
+            check(textCalls == ascii + native) { "Virtual ASCII sequence contains an extra text finalization" }
+            var completed = call.getLong("completed_ns")
+            (preedit + native).forEach { next ->
+                check(
+                    next.opt("returned") == true && next.getBoolean("on_main_thread") &&
+                        next.getInt("field_id") == id && next.getInt("editor_object") == System.identityHashCode(this) &&
+                        completed <= next.getLong("t_ns") && next.getLong("t_ns") <= next.getLong("completed_ns"),
+                ) { "Chinese preedit/finalization preceded virtual ASCII completion" }
+                completed = next.getLong("completed_ns")
+            }
         }
     }
 
@@ -946,6 +981,20 @@ object MixedInputProbe {
             }
         }
 
+        private suspend fun retainLateFailureState(item: JSONObject) {
+            withContext(NonCancellable) {
+                try {
+                    withTimeout(5_000) {
+                        delay(400)
+                        item.put("late_failure_state", settled())
+                    }
+                } catch (failure: Throwable) {
+                    item.put("late_failure_state_error", failure.stackTraceToString())
+                }
+                save()
+            }
+        }
+
         suspend fun verifyRapid(withChinese: Boolean) {
             val id = if (withChinese) "rapid_cn_en_a_cn_64_space" else "rapid_cn_en_a_cn"
             val expected = if (withChinese) "a你" else "a"
@@ -960,6 +1009,7 @@ object MixedInputProbe {
                 "interkey_queue_barriers" to 0,
                 "interkey_native_queries" to 0,
             )
+            item.put("submission_modes", json("a" to "virtual_printable_ascii_to_real_ic_text", "你" to if (withChinese) "native_commit_to_real_ic_finalization" else "not_requested"))
             rapidRegressions.put(item)
             try {
                 prepare(Task(id, "", InputType.TYPE_CLASS_TEXT))
@@ -1029,6 +1079,8 @@ object MixedInputProbe {
                 }
                 check(!gate.isCancelled) { "Original queued FIFO gate was cancelled" }
                 val final = settled()
+                item.put("final", final)
+                save()
                 check(final.getLong("editor_token") == prepared.getLong("editor_token") && final.getString("schema_id") == schemaId)
                 check(
                     final.getString("editor_text") == expected && final.getString("raw_input").isEmpty() &&
@@ -1045,23 +1097,12 @@ object MixedInputProbe {
                 val commits = native.filter { it.optString("event") == "native_commit" && !it.isNull("text") && it.optString("text").isNotEmpty() }
                 check(commits.map { it.getString("text") } == if (withChinese) listOf("你") else emptyList()) { "Rapid native commits differ" }
                 check(commits.all { it.getLong("editor") == final.getLong("editor_token") })
-                val calls = current.snapshotCalls()
-                // AOSP BaseInputConnection dispatches sendKeyEvent then returns false.
-                // Preserve that actual return; completed calls and real View recipients prove delivery.
-                for (action in listOf(KeyEvent.ACTION_DOWN, KeyEvent.ACTION_UP)) {
-                    check(
-                        calls.count {
-                            it.opt("returned") is Boolean && it.optString("method") == "sendKeyEvent" &&
-                                it.optString("text") == "$action:${KeyEvent.KEYCODE_A}"
-                        } == 1,
-                    ) { "ASCII a lacks one completed real IC down/up pair" }
-                }
-                check(current.successfulFinalizations("a").isEmpty()) { "ASCII a was also finalized as a second text commit" }
+                current.checkVirtualAsciiTextDelivery(gateProof.getLong("release_ns"), withChinese)
                 check(current.successfulFinalizations("你").size == if (withChinese) 1 else 0) { "Chinese text lacks exactly one real IC finalization" }
-                item.put("submission_modes", json("a" to "native_unhandled_key_to_real_ic_keyevent", "你" to if (withChinese) "native_commit_to_real_ic_finalization" else "not_requested"))
-                item.put("final", final)
                 delay(400)
                 val delayed = settled()
+                item.put("post_delay_state", delayed)
+                save()
                 check(
                     delayed.getString("editor_text") == expected && delayed.getString("raw_input").isEmpty() &&
                         !delayed.getBoolean("ascii_mode") && delayed.getBoolean("t9_layout") &&
@@ -1071,8 +1112,6 @@ object MixedInputProbe {
                 ) {
                     "Late queued callback changed the completed rapid text/mode/owner"
                 }
-                item.put("post_delay_state", delayed)
-                current.checkAsciiKeyDelivery()
                 item.put("status", "passed")
                 phase("PASS: T09 $theme $id")
             } catch (unsupported: Unsupported) {
@@ -1083,6 +1122,7 @@ object MixedInputProbe {
                 item.put("status", "failed").put("reason", failure.stackTraceToString()).put("failure_kind", "assertion_or_harness_failure")
                 phase("FAIL: T09 $theme $id: ${failure.message}")
             } finally {
+                if (item.optString("status") == "failed") retainLateFailureState(item)
                 item.put("counts", counts()).put("actions", ledger).put("ic_calls", JSONArray(current.snapshotCalls()))
                     .put("native_events", JSONArray(synchronized(events) { events.toList() }))
                     .put("key_recipient_calls", JSONArray(current.snapshotKeyRecipients()))
@@ -1100,6 +1140,8 @@ object MixedInputProbe {
                 "macro_source" to source, "macro_source_sha256" to digest(source.toByteArray(Charsets.UTF_8)),
                 "interkey_queue_barriers" to 0, "interkey_native_queries" to 0,
             )
+            item.put("submission_mode", if (bracedKey) "virtual_printable_ascii_to_real_ic_text" else "app_simulate_literal_fallback_commit_proto_to_real_ic_text")
+                .put("librime_ascii_commit_claimed", false)
             macroRegressions.put(item)
             try {
                 prepare(Task(id, "", InputType.TYPE_CLASS_TEXT))
@@ -1153,32 +1195,26 @@ object MixedInputProbe {
                 }
                 check(!gate.isCancelled)
                 val final = settled()
+                item.put("final", final)
+                save()
                 fun correct(value: JSONObject) = value.getString("editor_text") == "a" && value.getString("raw_input").isEmpty() &&
                     !value.getBoolean("ascii_mode") && value.getBoolean("t9_layout") && value.getString("schema_id") == schemaId &&
                     value.getLong("editor_token") == prepared.getLong("editor_token") &&
                     value.getJSONArray("composing_span").toString() == JSONArray(listOf(-1, -1)).toString() &&
                     value.getJSONArray("selection").toString() == JSONArray(listOf(1, 1)).toString()
                 check(correct(final)) { "Actual macro reordered English input or final Chinese state" }
-                item.put("final", final)
                 delay(400)
                 val delayed = settled()
-                check(correct(delayed)) { "Actual macro produced late/duplicate editor input" }
                 item.put("post_delay_state", delayed)
+                save()
+                check(correct(delayed)) { "Actual macro produced late/duplicate editor input" }
                 val native = synchronized(events) { events.toList() }
                 check(native.filter { it.optString("event") == "ascii_option" }.map { it.getBoolean("value") } == listOf(true, false))
                 val messages = native.filter { it.optString("event") == "native_commit" && !it.isNull("text") && it.optString("text").isNotEmpty() }
                 val calls = current.snapshotCalls()
                 if (bracedKey) {
-                    current.checkAsciiKeyDelivery()
-                    check(messages.isEmpty() && current.successfulFinalizations("a").isEmpty()) { "Braced key fabricated a native/text commit" }
-                    for (action in listOf(KeyEvent.ACTION_DOWN, KeyEvent.ACTION_UP)) {
-                        check(
-                            calls.count {
-                                it.opt("returned") is Boolean && it.optString("method") == "sendKeyEvent" &&
-                                    it.optString("text") == "$action:${KeyEvent.KEYCODE_A}"
-                            } == 1,
-                        )
-                    }
+                    current.checkVirtualAsciiTextDelivery(gateProof.getLong("release_ns"))
+                    check(messages.isEmpty()) { "Braced key fabricated a native ASCII commit" }
                 } else {
                     // simulateKeySequence's existing literal fallback publishes CommitProto(a).
                     // This is app fallback evidence, never proof of a librime ASCII commit.
@@ -1186,13 +1222,13 @@ object MixedInputProbe {
                     check(current.successfulFinalizations("a").size == 1)
                     check(calls.none { it.optString("method") == "sendKeyEvent" && it.optString("text") in setOf("0:${KeyEvent.KEYCODE_A}", "1:${KeyEvent.KEYCODE_A}") })
                 }
-                item.put("submission_mode", if (bracedKey) "native_unhandled_key_to_real_ic_keyevent" else "app_simulate_literal_fallback_commit_proto_to_real_ic_text")
-                    .put("librime_ascii_commit_claimed", false).put("status", "passed")
+                item.put("status", "passed")
                 phase("PASS: T09 $theme $id")
             } catch (failure: Throwable) {
                 item.put("status", "failed").put("reason", failure.stackTraceToString()).put("failure_kind", "assertion_or_harness_failure")
                 phase("FAIL: T09 $theme $id: ${failure.message}")
             } finally {
+                if (item.optString("status") == "failed") retainLateFailureState(item)
                 item.put("counts", counts()).put("actions", ledger).put("ic_calls", JSONArray(current.snapshotCalls()))
                     .put("native_events", JSONArray(synchronized(events) { events.toList() }))
                     .put("key_recipient_calls", JSONArray(current.snapshotKeyRecipients()))
