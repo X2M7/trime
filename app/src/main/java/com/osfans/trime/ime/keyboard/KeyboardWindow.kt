@@ -402,7 +402,7 @@ class KeyboardWindow(di: DI) :
                     commitComposition = { commitComposition() },
                     setAsciiMode = { setRuntimeOption("ascii_mode", it) },
                 )
-                if (result?.applied == true) afterMode(result!!.asciiMode)
+                if (result.applied) afterMode(result.asciiMode)
             } finally {
                 val finalResult = result ?: KeyboardModeResult(false, statusCached.isAsciiMode)
                 withContext(NonCancellable + Dispatchers.Main.immediate) {
