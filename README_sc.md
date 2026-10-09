@@ -14,6 +14,24 @@ SPDX-License-Identifier: GPL-3.0-or-later
 
 [English](README.md) | 简体中文 | [繁體中文](README_tc.md)
 
+## 当前状态：v3.3.13-t9.11 T08 验收记录
+
+**本次验收通过；公开发布状态以 GitHub 标签为准。** 本版实现 T08 候选快照关联、有界分页与可选数值延迟记录，维持输入按序送达和既有 JNI 聚合响应。T09 中英、数字、符号混输优化未进入该标签。
+
+冻结 APK 为不可调试的 Release/R8，日常性能追踪关闭，支持 Android 5.0+，提供 ARM64 与 x86_64。包名 `com.osfans.trime.debug` 和既有 fork 签名证书保持，以支持覆盖升级。R8 优化、缩减代码并压缩资源，当前规则保留类名；不宣称更换生产签名密钥或完成 ARM64 真机验收。
+
+编译源码 `2e0ab64a3bd590376c1d15805235241c36e83d33` 冻结于 `build/t08/stable-candidate-4`，536 项输入前后 SHA 一致。Debug 实际 542.599 秒、Release 653.891 秒；应用 JVM 598 项本轮执行通过，build-logic 9 项报告全 0、任务 UP-TO-DATE；在线 Debug/Release Lint 均 0 issue，本轮 host 174 项通过。
+
+API21/API35 x86_64 新轮模拟器验收通过：各 320 个 native FIFO 按键、49 候选 48+1 分页、旧快照/编辑器拒绝及 100 次显示隐藏。Debug 分别覆盖两个内置主题的 native Unicode、accessibility 与实际屏幕字形；日常 Release 各用一个当前主题完成 6 次真实点击、两次精确汉字提交，17/23 个生命周期检查点、36 次点击的诊断追踪，以及原正常 APK 的实际恢复。API35 另完成 T02 与完整 360 宽度 T03；其 Debug 和正常组保留各自实际 boot 身份。
+
+候选 2 因实际候选字形空白拒绝发布，本版恢复 TextView 框架文本、测量和布局契约并保留缩放；候选 3 的 API35 T03 几何检查失败。候选 4 只修正该探针自身 scroll 坐标归一化，并独立重做全部构建和设备阶段。旧候选与 T07 证据保留历史范围。
+
+真机候选 P95、Java/native/graphics/总 PSS、准确率对照与首次部署仍未测，不宣称达到性能预算。三个构建阶段各保留 55 条上游弃用提示（AGP 52/KSP 3），正常 APK 各保留两条 META-INF 服务签名提示，完整设备警告保留；不称 warning-free 或流畅度达标。
+
+附件命名为两个 APK 与含子模块源码包；实际上传、下载核验和 Latest 以 GitHub 为准。详见 [9.11 验收记录](doc/releases/v3.3.13-t9.11.md)与 [T08 验证报告](script/quality/VALIDATION-T08.md)。
+
+首 API35 Debug 的三次约 4 秒浮层 buffer 销毁 stall 单列保留。追加正常 Release 在独立核对的 3 GiB boot 中，两主题各完成三轮全拼，通过实际 fixture IMM 隐藏/显示按钮点击；各主题的三轮在各自同一 owned PID 中核对浮层 1/0/1、组合保留和一次精确 Space 提交；追加 scope 未见同类 stall，不等于真机延迟预算通过。
+
 ## 关于
 
 源于开源的[注音仓颉输入法]前端，基于著名的 [RIME] 输入法框架，使用 JNI 的 C 语言和 Android 的 Java/Kotlin 语言书写，旨在保护汉语各地方言母语，音码、形码通用的输入法平台。
@@ -25,6 +43,11 @@ SPDX-License-Identifier: GPL-3.0-or-later
 这个 fork 在 Trime 中加入基于方案词典的 `朙月拼音九键` / `luna_pinyin_t9`，两个内置主题均提供 3x3 主键区。使用 2–9 输入拼音，支持逐段锁定、中间编辑、解锁与撤销；选择拼音不提交汉字。布局支持拼音侧栏或横排、左右单手模式、键高设置、长按数字和空格滑动移光标。
 
 [项目页面](https://x2m7.github.io/trime/) | [下载九键稳定版 APK](https://github.com/X2M7/trime/releases/latest)
+
+<details>
+<summary>T07 / v3.3.13-t9.10 及更早候选历史记录</summary>
+
+以下保留各记录当时的构建与验收范围。其中“当前”“pending”“Latest”、APK 摘要和可调试构建说明均为历史原文，不代表 9.11 候选，也不提供本次验收。
 
 稳定版目标 [3.3.13-t9.10](https://github.com/X2M7/trime/releases/tag/v3.3.13-t9.10) 已完成C37构建/静态、API21/API35完整矩阵、真实SAF、Direct Boot压力、自然PIN及三轮冷启动验收。实际构建提交 `a5309c0256e325a0f042d2d9062ddbd4f1326c28`，冻结目录 `build/t07-privacy/stable-candidate37-final1`，时间戳1791464154404（2026-10-08T12:55:54.404Z）；完整构建708.260124秒，应用JVM582、build-logic9、Spotless与Lint0通过，编译/build warning行0，527项clean源码前后不变。
 
@@ -51,6 +74,8 @@ ARM64 与 x86_64 APK 保留 Android 5.0+ 支持，延续此前 fork 的包名 `c
 [T04](script/quality/t04/README.md) 在独立目录中提供固定排名与学习测试，默认继续使用朙月词典，不启用大词库或语法模型。[T05](script/quality/t05/README.md) 将六组可选模糊音与三类有界数字键纠错分开设置，默认全部关闭，建议标明来源。优化计划 T08–T10 仍是后续工作：本版不宣称已完成其要求的真机正式构建候选延迟/PSS 预算、固定混输切换次数验收，或扩展的个人词库与候选管理验收。
 
 C35 每份应用 APK 保留两项必要协程服务文件的 v1 META-INF 签名覆盖警告（测试 APK 为 0）；C36 新 APK 静态检查也实际确认两份应用各 2 条提示、测试 APK 为 0；必要资源继续保留，不能宣称 warning_free。模拟器验收不代表 ARM64 真机性能、所有 OEM 编辑器或物理 16 KB 页设备已验证。Release 仅上传两个应用 APK 和一个递归源码包，共三项手动附件；GitHub 自动生成的源码入口保留。另见[键位规则](script/quality/T03.md)、[九键设计](script/t9/README.md)和[上游合并记录](script/t9/UPSTREAM-t9.3.zh-CN.md)。
+
+</details>
 
 ## 下载
 

@@ -14,6 +14,24 @@ SPDX-License-Identifier: GPL-3.0-or-later
 
 [English](README.md) | [简体中文](README_sc.md) | 繁體中文
 
+## 目前狀態：v3.3.13-t9.11 T08 驗收紀錄
+
+**本次驗收通過；公開發佈狀態以 GitHub 標籤為準。** 本版實作 T08 候選快照關聯、有界分頁及可選數值延遲紀錄，維持輸入依序送達與既有 JNI 彙整回應。T09 中英、數字、符號混輸最佳化未進入此標籤。
+
+凍結 APK 為不可除錯的 Release/R8，日常效能追蹤關閉，支援 Android 5.0+，提供 ARM64 與 x86_64。套件 `com.osfans.trime.debug` 及既有 fork 簽章憑證保持，以支援覆蓋升級。R8 最佳化、縮減程式並壓縮資源，目前規則保留類別名稱；不宣稱更換正式簽章金鑰或完成 ARM64 實機驗收。
+
+編譯原始碼 `2e0ab64a3bd590376c1d15805235241c36e83d33` 凍結於 `build/t08/stable-candidate-4`，536 項輸入前後 SHA 相同。Debug 實際 542.599 秒、Release 653.891 秒；應用 JVM 598 項本輪執行通過，build-logic 9 項報告全 0、任務 UP-TO-DATE；線上 Debug/Release Lint 均 0 issue，本輪 host 174 項通過。
+
+API21/API35 x86_64 新輪模擬器驗收通過：各 320 個 native FIFO 按鍵、49 候選 48+1 分頁、舊快照/編輯器拒絕及 100 次顯示隱藏。Debug 分別涵蓋兩個內建主題的 native Unicode、accessibility 與實際螢幕字形；日常 Release 各以一個目前主題完成 6 次實際點擊、兩次精確漢字提交，17/23 個生命週期檢查點、36 次點擊診斷追蹤，以及原正常 APK 的實際恢復。API35 另完成 T02 與完整 360 寬度 T03；其 Debug 與正常組保留各自實際 boot 身分。
+
+候選 2 因實際候選字形空白拒絕發佈，本版恢復 TextView 框架文字、測量與版面配置契約並保留縮放；候選 3 的 API35 T03 幾何檢查失敗。候選 4 僅修正該探針自身 scroll 座標歸一化，並獨立重做全部建置與裝置階段。舊候選及 T07 證據保留歷史範圍。
+
+實機候選 P95、Java/native/graphics/總 PSS、準確率對照及首次部署仍未測，不宣稱達到效能預算。三個建置階段各保留 55 條上游棄用提示（AGP 52/KSP 3），正常 APK 各保留兩條 META-INF 服務簽章提示，完整裝置警告保留；不稱 warning-free 或流暢度達標。
+
+附件命名為兩個 APK 與含子模組原始碼封存包；實際上傳、下載核驗及 Latest 以 GitHub 為準。詳見 [9.11 驗收紀錄](doc/releases/v3.3.13-t9.11.md)與 [T08 驗證報告](script/quality/VALIDATION-T08.md)。
+
+首 API35 Debug 的三次約 4 秒浮層 buffer 銷毀 stall 單列保留。追加正常 Release 於獨立核對的 3 GiB boot，兩主題各完成三輪全拼，透過實際 fixture IMM 隱藏/顯示按鈕點擊；各主題的三輪在各自同一 owned PID 中核對浮層 1/0/1、組合保留與一次精確 Space 提交；追加 scope 未見同類 stall，不等於實機延遲預算通過。
+
 ## 關於
 
 源於開源的[注音倉頡輸入法]前端，基於著名的 [RIME] 輸入法框架，使用 JNI 的 C 語言和 Android 的 Java/Kotlin 語言書寫，旨在保護漢語各地方言母語，音碼、形碼通用的輸入法平臺。
@@ -25,6 +43,11 @@ SPDX-License-Identifier: GPL-3.0-or-later
 這個 fork 在 Trime 中加入基於方案詞典的 `朙月拼音九鍵` / `luna_pinyin_t9`，兩個內建主題均提供 3x3 主鍵區。使用 2–9 輸入拼音，支援逐段鎖定、中間編輯、解鎖與復原；選擇拼音不提交漢字。佈局支援拼音側欄或橫排、左右單手模式、鍵高設定、長按數字及空格滑動移游標。
 
 [專案頁面](https://x2m7.github.io/trime/) | [下載九鍵穩定版 APK](https://github.com/X2M7/trime/releases/latest)
+
+<details>
+<summary>T07 / v3.3.13-t9.10 與更早候選歷史紀錄</summary>
+
+以下保留各紀錄當時的建置與驗收範圍。其中「目前」「pending」「Latest」、APK 摘要與可除錯建置說明均為歷史原文，不代表 9.11 候選，也不提供本次驗收。
 
 穩定版目標 [3.3.13-t9.10](https://github.com/X2M7/trime/releases/tag/v3.3.13-t9.10) 已完成C37建置/靜態、API21/API35完整矩陣、真實SAF、Direct Boot壓力、自然PIN及三輪冷啟動驗收。實際建置提交 `a5309c0256e325a0f042d2d9062ddbd4f1326c28`，凍結目錄 `build/t07-privacy/stable-candidate37-final1`，時間戳1791464154404（2026-10-08T12:55:54.404Z）；完整建置708.260124秒，應用JVM582、build-logic9、Spotless與Lint0通過，編譯/build warning行0，527項clean原始碼前後不變。
 
@@ -51,6 +74,8 @@ ARM64 與 x86_64 APK 保留 Android 5.0+ 支援，延續此前 fork 的套件名
 [T04](script/quality/t04/README.md) 在獨立目錄中提供固定排名與學習測試，預設繼續使用朙月詞典，不啟用大詞庫或語法模型。[T05](script/quality/t05/README.md) 將六組可選模糊音與三類有界數字鍵修正分開設定，預設全部關閉，建議標明來源。最佳化計畫 T08–T10 仍是後續工作：本版不宣稱已完成其要求的實機正式建置候選延遲/PSS 預算、固定混輸切換次數驗收，或擴充的個人詞庫與候選管理驗收。
 
 C35 每份應用 APK 保留兩項必要協程服務檔案的 v1 META-INF 簽章覆蓋警告（測試 APK 為 0）；C36 新 APK 靜態檢查也實際確認兩份應用各 2 條提示、測試 APK 為 0；必要資源繼續保留，不能宣稱 warning_free。模擬器驗收不代表 ARM64 實機效能、所有 OEM 編輯器或物理 16 KB 頁裝置已驗證。Release 僅上傳兩個應用 APK 和一個遞迴原始碼套件，共三項手動附件；GitHub 自動產生的原始碼入口保留。另見[鍵位規則](script/quality/T03.md)、[九鍵設計](script/t9/README.md)和[上游合併記錄](script/t9/UPSTREAM-t9.3.zh-CN.md)。
+
+</details>
 
 ## 下載
 

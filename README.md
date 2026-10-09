@@ -16,6 +16,24 @@ Rime IME for Android
 
 English | [简体中文](README_sc.md) | [繁體中文](README_tc.md)
 
+## Current status: v3.3.13-t9.11 T08 acceptance record
+
+**Acceptance completed; publication status follows the GitHub tag.** This version contains T08 candidate snapshot guards, bounded paging and optional numeric latency diagnostics. Input delivery remains ordered and the existing aggregate JNI response is retained. T09 mixed-input changes are outside this tag.
+
+The frozen APKs are non-debuggable Release/R8 builds with performance tracing disabled, Android 5.0+ support, and ARM64 / x86_64 variants. Package `com.osfans.trime.debug` and the fork's previous signing certificate are retained for upgrades. R8 optimizes and shrinks code/resources while the current rules preserve class names; no new production signing key or ARM64 device testing is claimed.
+
+Compiled source `2e0ab64a3bd590376c1d15805235241c36e83d33` is frozen in `build/t08/stable-candidate-4`; all 536 selected input hashes match before/after the build. Debug took 542.599 seconds and Release 653.891 seconds. The 598 application JVM tests actually ran and passed; 9 build-logic reports have zero failures/errors/skips, with that task UP-TO-DATE. Both online Lint reports contain zero issues; the 174 host checks passed in this build's scope.
+
+Fresh API21/API35 x86_64 emulator acceptance passed: 320 native FIFO keys, a 49-candidate 48+1 paging fixture, stale snapshot/editor rejection, and 100 show/hide cycles per API. Debug covers both shipped themes' native candidate Unicode, accessibility and actual screen glyphs. Normal Release separately completed 6 actual taps and 2 exact Hanzi commits in one current theme per API, 17/23 lifecycle checkpoints, a 36-tap diagnostic trace, and restoration of the exact trace-disabled normal APK. API35 also ran T02 and the full 360-width T03 case. Debug and normal API35 stages have separately recorded boot identities.
+
+The prior candidate2 was rejected for actual blank candidate glyphs; this version restores the TextView text/measurement/layout contract while retaining scaling. Candidate3 failed its API35 T03 geometry check. Candidate4 corrects only that test's own-scroll normalization and uses entirely fresh build/device evidence. Earlier candidates and T07 results remain historical.
+
+Physical-device candidate P95, Java/native/graphics/total PSS, accuracy comparison and first deployment remain unmeasured. The T08 performance budget is not declared passed. Each build phase retains 55 upstream AGP/KSP deprecations (52/3), each normal APK retains two META-INF service-signature warnings, and full device warnings remain recorded. No warning-free or smoothness claim is made.
+
+The release asset names are the ARM64 APK, x86_64 APK and a source archive with submodules. Actual upload, downloads and Latest are determined by GitHub; see the [9.11 acceptance record](doc/releases/v3.3.13-t9.11.md) and [T08 validation report](script/quality/VALIDATION-T08.md).
+
+The first API35 Debug boot retains three approximately 4-second popup buffer destruction stalls as explicit findings. Additional normal Release checks use the separately verified 3 GiB boot: both themes complete three full-pinyin rounds with actual fixture IMM hide/show taps, owned popup visibility 1/0/1, retained preedit and one exact Space submission. Within each theme, all three rounds use one unchanged owned IME process. Those extra scopes show no matching stall; this is not a physical latency budget result.
+
 ## About
 
 Trime is originally a frontend of open-source [Android Traditional Chinese IME], based on [RIME] input method framework and written in Java/Kotlin with JNI. It is designed to protect the native language of various local dialects of Chinese and is a universal shape-based and phonetic-based input method platform.
@@ -27,6 +45,11 @@ Trime is originally a frontend of open-source [Android Traditional Chinese IME],
 This fork adds dictionary-backed `Luna Pinyin T9` / `luna_pinyin_t9` to Trime, with a 3x3 main key area in both bundled themes. Digits 2–9 enter pinyin; syllable locking, middle editing, unlocking and undo preserve the original numeric input. Selecting pinyin does not commit Hanzi. The layout supports a pinyin sidebar or horizontal list, one-handed modes, adjustable key height, literal digits on long press and Space cursor sliding.
 
 [Project page](https://x2m7.github.io/trime/) | [Download T9 stable APKs](https://github.com/X2M7/trime/releases/latest)
+
+<details>
+<summary>Historical T07 / v3.3.13-t9.10 and earlier candidate records</summary>
+
+These retained records describe their original time, build and test scope. Their “current”, “pending” and “Latest” wording, APK hashes and debuggable-build descriptions are historical; they do not describe the 9.11 candidate or supply its acceptance.
 
 Stable release target [3.3.13-t9.10](https://github.com/X2M7/trime/releases/tag/v3.3.13-t9.10) has completed C37 build/static, API21/API35 whole matrices, real SAF, Direct Boot pressure, natural PIN and three cold-start acceptance. The accepted build is `a5309c0256e325a0f042d2d9062ddbd4f1326c28`, frozen at `build/t07-privacy/stable-candidate37-final1`, timestamp1791464154404 (2026-10-08T12:55:54.404Z). The full708.260124-second build passed582 application JVM tests,9 build-logic tests, Spotless and Lint0, with zero compiler/build warning lines and527 unchanged clean source inputs.
 
@@ -53,6 +76,8 @@ ARM64 and x86_64 APKs retain Android 5.0+ support, package `com.osfans.trime.deb
 [T04](script/quality/t04/README.md) provides fixed ranking and learning benchmarks in isolated data directories. Luna remains the default; no large dictionary or grammar model is enabled. [T05](script/quality/t05/README.md) separates six optional fuzzy-pinyin rules from three bounded numeric-key repair rules. All are off by default; suggestions display their source. Optimization-plan T08–T10 remain follow-up work: this release does not claim the required physical-device candidate-latency/PSS budget, fixed mixed-input switch-count acceptance, or expanded personal-dictionary and candidate-management acceptance.
 
 Each C35 application APK has two required coroutine service descriptors with v1 META-INF signature-coverage warnings (test APK zero). The C36 static checks independently confirmed the same two v1 META-INF warnings per app APK (test APK zero); these required resources remain, and this draft makes no warning-free claim. Native phone performance, OEM editor coverage, and physical 16 KB-page devices are outside this emulator acceptance. The release has three manual assets: two application APKs and one recursive source archive; GitHub also provides its automatic source links. See also the [key contracts](script/quality/T03.md), [T9 design](script/t9/README.md), and [upstream merge record](script/t9/UPSTREAM-t9.3.zh-CN.md).
+
+</details>
 
 ## Download
 

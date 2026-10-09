@@ -1,5 +1,56 @@
 # T08 候选延迟与内存预算验证
 
+## 当前 9.11 验收记录
+
+源码 `2e0ab64a3bd590376c1d15805235241c36e83d33`，冻结目录 `build/t08/stable-candidate-4`，构建时间戳 `1791527345005`。构建前清单包含 536 项选定输入，`source-before.json` SHA256 `0d0ea51ffce8c886558f4b0361b7474b37aea20042afb2ed2d31e51650c2e015`；构建后清单和一致性结果为 **PASS；536 项清单字节相同，SHA256 `0d0ea51ffce8c886558f4b0361b7474b37aea20042afb2ed2d31e51650c2e015`**；两份清单逐字节相同。
+
+本次已完成 Debug JVM/回归、Release/R8、两 ABI 构建/静态检查及 API21/API35 x86_64 模拟器验收。本次验收通过；公开发布状态以 GitHub 标签为准。当前实际状态为 **PASS；Debug 542.599 秒，Release 653.891 秒；两阶段实际成功、536 项输入前后一致 / PASS；API21/API35各自完整新scope，20份核心全设备日志与2份追加正常浮层日志独立审阅**；未完成的阶段不计通过，旧 5 轮本地结果与早期预检查不替代最终冻结候选。
+
+公开 APK 使用既有包名 `com.osfans.trime.debug` 和既有签名证书；改为不可调试 Release/R8，日常性能追踪关闭。保留 Coroutine ServiceLoader 所需接口与提供者，维护 R8 后服务发现；正式 APK 核验结果为 PASS；两正常 ABI静态 flags，API21/API35实际安装 x86_64 SHA、正常输入/生命周期和诊断后新 PID 恢复均核对，runtime TrimePerf0。ARM64 只计本次构建/静态验证 PASS；minSdk 21、ABI/ELF、v1/v2 签名和 ServiceLoader 提供者/class 定义核验；没有 ARM64 运行结果，不计真机运行。
+
+## 旧 candidate2 拒发布与此次候选文字回归
+
+旧 `build/t08/stable-candidate-2` 因 API21 实际 T9 `64` 的候选栏文字空白被拒绝发布；其 APK 保持冻结且目录具有 `REJECTED-FOR-PUBLICATION.txt`。Debug、诊断 Release 和正常 Release 对照均为空白，因此不是 R8 专有现象。Space 可提交“你”、holder 文本/bounds 与 candidate_draw 事件均不等于真实屏幕已显示候选。旧静态和构建 PASS 保留原始范围，不转移给本轮。
+
+本轮恢复 AutoScaleTextView 的 TextView 契约：以 super.setText 同步框架文本，调用 super.onMeasure / super.onLayout，再保留既有自适应绘制尺寸；不追加广泛 R8 keep 或改动 native 候选内容。EditorLifecycleProbe 在两个主题上用真实 native `64` 检查 holder / accessibility node Unicode 一致，并在软件绘制前捕获实际屏幕，校验屏幕字形与软件字形，保留 nonce、PNG 与 SHA。失败也保存证据，不能只凭内部文字或 draw 回调通过。
+
+候选 3 的 API21 完整阶段通过，API35 的 t08/engine/editors/t02 子阶段通过，但 T03 几何检查失败，所以双 API 总体验收未通过。候选 4 只修正 T9LayoutProbe 自身 scroll 坐标归一化，不放宽几何容差；本轮已独立完成全新完整构建、全部新设备阶段和新日志。
+
+本次 host Python 检查实际 174/174 PASS（quality 125 + T08 31 + T04 13 + T05 5），4 份日志 SHA 与 candidate4 host summary 相符。此处只计本轮真实执行，不借用候选 3 的 host174、构建或设备结果。
+
+新冻结候选双主题实际字形结果：API21 **PASS；本轮两个 Debug 主题的原屏幕你/ni及独立像素重数，助理实际看图**；API35 **PASS；本轮两个 Debug 主题的原屏幕你/ni及独立像素重数，助理实际看图**。此处不以增量 Debug 实验或旧候选截图代替完整最终 Debug、正常 Release 与诊断 Release 范围。
+
+| 本次阶段 | 实际结果 |
+| --- | --- |
+| Debug 应用 JVM / build-logic | 598/598 PASS（59 suites，本轮实际执行；failure/error/skip 均为 0） / 9 项既有报告全 0；任务 UP-TO-DATE，未称本轮重新执行；PASS；Debug 542.599 秒，Release 653.891 秒；两阶段实际成功、536 项输入前后一致 |
+| 在线 Debug / Release Lint | Debug 0 issues；Release 0 issues |
+| Release/R8 ARM64 / x86_64 | PASS；两 ABI assembleRelease / R8；653.891 秒（10m 53s），64 tasks / 16 executed / 48 up-to-date |
+| API21 最终冻结模拟器范围、计数 | PASS（本轮实际完整范围）；8 native checks / 320 FIFO keys / 49 候选（48+1）；7 engine checks；100 显隐；Debug 3 子阶段；正常 6 taps/2 汉字/1 theme；生命周期 17 点；诊断36 taps/191 records；恢复正常新 PID 9654 / TrimePerf0 |
+| API35 最终冻结模拟器范围、计数 | PASS（本轮实际完整范围）；8 native checks / 320 FIFO keys / 49 候选（48+1）；7 engine checks；100 显隐；Debug 5 子阶段；正常 6 taps/2 汉字/1 theme；生命周期 23 点；诊断36 taps/191 records；恢复正常新 PID 8257 / TrimePerf0 |
+| 真实 native 候选探针 | 两 API 各 8 checks / 320 FIFO 按键 / 49 项受控候选；48+1 末页及旧分页 Invalid 实际通过；期望覆盖 320 按键顺序与 49 项候选 48+1，计数取自本轮实际 instrumentation 结果 |
+| 日常非 debuggable Release 生命周期 | PASS；API21 全屏17点保留文本，API35全屏+分屏23点含实际T9提交；各核对安装正常 APK 和 trace-off；trace 结论限被观测 main PID 与测试窗口 |
+| 完整原始日志与系统侧 fatal/ANR/OOM 审阅 | PASS；20份核心和2份追加全文每条 W/E/F及上下文/行 SHA保留，全PID fatal/ANR/OOM/BadToken/WindowLeaked/实际LMK及 unresolved均0，warning_free=false；首API35 Debug约4秒浮层销毁stall单列保留，后续正常浮层scope未见同类stall；保留 W/E/F 与 unresolved 列表 |
+| 两个 APK 与含子模块源码包、三项附件下载核验 | 本次验收通过；公开发布状态以 GitHub 标签为准；`build/t08/acceptance-4/final-device-receipt.json` 与 `independent-review.json`（独立本地证据；不充作公开下载凭据）；最终源码包 SHA 和发布来源提交只存独立收据 |
+
+本轮 Debug 实际 542.599 秒（Gradle 输出 9m 2s），112 tasks / 33 executed / 79 up-to-date；Release 实际 653.891 秒（10m 53s），64 tasks / 16 executed / 48 up-to-date。两阶段各保留 55 条 Configuration.setVisible 弃用提示，按首个上游 owner frame 分为 AGP 52、KSP 3；原文、堆栈和行 SHA 保留。在线 Debug 与 Release Lint 均为 0 issue。
+
+AGP/KSP 上游 Configuration.setVisible 弃用提示与每应用 APK 两项 META-INF 服务签名提示继续保留，三构建阶段各55条（AGP52/KSP3）；正常APK各2条。测试 APK 和审查日志不发布为 Release 附件。本文件不提前声明已发布；实际发布状态与 Latest 以 GitHub 标签和 Releases 页面为准。
+
+用户授权本次按模拟器验收稳定发布，不等于 T08 真机性能预算已完成。真机正式构建的候选 P95、Java/native/graphics/总 PSS、连续输入/主题切换驻留、正式语料准确率对照和首次部署仍待测。保留 P95 ≤ 100 ms（若基线明显更慢，先争取至少 30% 改善）目标，不填造数值，也不借用模拟器/Debug 数据达标。
+
+T09 混输切换优化尚未实现，未进入本标签。
+
+
+本轮助理独立查看两 API 各四张实际原PNG（Debug 两主题、正常 Release 一个当前主题的两帧），按各自 nonce/native/report/PNG/crop SHA 关联，并独立重数像素。报告中的 PENDING_HUMAN_REVIEW 不代表进行了 OCR 或人类参与；实际审阅者明确记录为 Codex assistant。
+
+API21 实测 guest MemTotal1535212KiB/2CPU/swiftshader；API35 Debug 实测2019412KiB/4CPU，最终正常组实测3048528KiB/4CPU，两者 host GPU且Vulkan关闭。 API35 Debug boot与最终正常组 boot不同；先前2GiB正常组实际5次系统LMK保留为非最终通过历史，最终3GiB正常组独立重跑全部阶段，trace→恢复保持同boot。设备消失原因未知、准备未完成尝试和handoff离线guard停止均保留原失败范围，不借为最终PASS，也不推断产品OOM。
+
+主机内存仅分段采样 available和进程RSS：phase1最后样本07:09:21、退出143原因未知，phase2从07:11:51开始，存在空窗；构建06:29至本轮sampler06:32前的旧采样属于自身记录。没有连续全程、瞬时完整峰值或Android PSS证明。Debug engine main-loop gap诊断也不作为候选P95。
+
+## 历史：3499398a 的实现与五轮本地检查
+
+以下完整保留此前报告。其“当前”“本轮”“未创建新标签”“Latest 9.10”“没有启动模拟器”等表述均指 3499398a / local-validation-5 当时的范围，不代表上方 9.11 候选状态；既有失败记录不改写为通过。真机性能未测的限制继续有效。
+
 状态（2026-10-09）：实现与本地验证已完成，最终 Debug/Release 构建、回归和在线 Lint 均通过；真机正式构建性能验收未完成。没有真机 P95/PSS、准确率对照或首次部署结果，不能宣称达到预算。源码和报告同步范围为 X2M7/trime 的 develop；未创建新标签或 Release，稳定版 Latest 保持 v3.3.13-t9.10。
 
 ## 实现范围
