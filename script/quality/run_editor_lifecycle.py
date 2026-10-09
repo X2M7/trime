@@ -56,7 +56,7 @@ def run(args):
 
     assert shell('getprop', 'ro.kernel.qemu') == '1', 'Disposable emulator only'
     if args.release:
-        assert shell('id', '-u') == '0', 'Release process-death probe requires an already-rooted disposable emulator'
+        assert re.fullmatch(r'uid=0\(root\)(?:[ \t]+[^\r\n]*)?', shell('id')), 'Release process-death probe requires an already-rooted disposable emulator'
     assert shell('cat', f'/sdcard/Android/data/{PACKAGE}/files/runtime-audit-dedicated') == ''
     assert shell('settings', 'get', 'secure', 'default_input_method').startswith(PACKAGE + '/')
     identity = {'api': int(shell('getprop', 'ro.build.version.sdk')), 'fingerprint': shell('getprop', 'ro.build.fingerprint'),
