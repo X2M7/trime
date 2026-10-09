@@ -578,7 +578,7 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
                         if (text != null) {
                             // Keep printable text and following composition updates on the same
                             // InputConnection path; sendKeyEvent delivers through ViewRoot later.
-                            commitText(text, snapshot)
+                            commitText(text, snapshot, updateCommittedContent = keyCode == KeyEvent.KEYCODE_UNKNOWN)
                             return@msg
                         }
                         when (it.value.value) {
@@ -1124,6 +1124,10 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
     }
 
     fun commitText(text: String, snapshot: CandidateSnapshot = CandidateSnapshot.EMPTY) {
+        commitText(text, snapshot, updateCommittedContent = true)
+    }
+
+    private fun commitText(text: String, snapshot: CandidateSnapshot, updateCommittedContent: Boolean) {
         val ic = currentInputConnection ?: return
         val directRequest = if (snapshot.requestId == 0L && scopedFeedbackNanos > 0) {
             InputLatencyLog.request(editorGeneration.token, scopedFeedbackNanos)
@@ -1150,12 +1154,16 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
             InputLatencyLog.failedCommit(snapshot)
         }
         val contentAllowed = privacyMode.allowContentAccess && !PrivacyModeState.active
-        lastCommittedText = if (contentAllowed) text else ""
+        if (!contentAllowed) {
+            lastCommittedText = ""
+        } else if (updateCommittedContent) {
+            lastCommittedText = text
+        }
         composingText = ""
         composingCursor = null
         composingStart = null
         selectionAfterCancel = null
-        if (contentAllowed) InputFeedbackManager.textCommitSpeak(text)
+        if (contentAllowed && updateCommittedContent) InputFeedbackManager.textCommitSpeak(text)
     }
 
     /**
