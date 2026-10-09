@@ -7,6 +7,9 @@ package com.osfans.trime.data.theme
 import android.util.Log
 import com.charleskorn.kaml.YamlNode
 import com.osfans.trime.data.theme.model.KeyActionToken
+import com.osfans.trime.ime.keyboard.KeyAction
+import com.osfans.trime.ime.keyboard.KeyCode
+import com.osfans.trime.ime.keyboard.KeyCodeTestSupport
 import com.osfans.trime.util.mapping
 import com.osfans.trime.util.pairs
 import com.osfans.trime.util.string
@@ -23,6 +26,10 @@ import java.nio.file.Files
 
 class ThemeLoaderTest :
     BehaviorSpec({
+        val platformLookup = KeyCode.androidKeyNameToCode
+        beforeSpec { KeyCode.androidKeyNameToCode = KeyCodeTestSupport::androidKeyNameToCode }
+        afterSpec { KeyCode.androidKeyNameToCode = platformLookup }
+
         fun node(yaml: String): YamlNode = ThemeTestSupport.yaml.parseToYamlNode(yaml)
 
         fun resources(vararg pairs: Pair<String, String>): (String) -> YamlNode? {
@@ -119,6 +126,59 @@ class ThemeLoaderTest :
 
         Given("the real built-in source files with explicit language navigation") {
             listOf("trime.yaml", "tongwenfeng.trime.yaml").forEach { filename ->
+                Then("$filename keeps the email and URL corpus on its real ASCII letter keyboard") {
+                    val file = File("src/main/assets/shared/$filename")
+                    val loaded = ThemeLoader.loadFromSource(
+                        file.nameWithoutExtension,
+                        file,
+                        ThemeLoader.SourceLoader { null },
+                    ).shouldBeInstanceOf<ThemeLoader.ThemeLoadResult.Success>().theme
+                    val letter = loaded.presetKeyboards.getValue("letter")
+                    letter.asciiMode shouldBe 1
+                    letter.keys.size shouldBe if (filename == "trime.yaml") 47 else 37
+                    // These corpus tasks start unshifted. Every character must use an
+                    // actual click/long binding on this page, without a layout detour.
+                    val bindings = letter.keys.flatMap { key ->
+                        listOfNotNull(key.ascii ?: key.click, key.longClick.takeIf { key.popup.isEmpty() })
+                    }.filterIsInstance<KeyActionToken.Plain>()
+                    listOf("trime.test+16@example.org", "https://example.org/a-b?x=16&lang=zh").forEach { corpus ->
+                        corpus.forEach { value ->
+                            val routes = bindings.filter { it.token == value.toString() }
+                            check(routes.isNotEmpty()) { "$filename: no visible click/long route for <$value>" }
+                            // Literal ASCII key codes resolve without a platform character
+                            // map or JNI. Preset collisions must not hijack that output.
+                            val expectedCode = KeyCode.nameToKeyCode(value.toString())
+                            check(expectedCode != 0)
+                            routes.forEach { token ->
+                                val action = KeyAction(token, loaded.presetKeys)
+                                action.code shouldBe expectedCode
+                                action.modifier shouldBe 0
+                                action.commit shouldBe ""
+                                action.text shouldBe ""
+                                action.command shouldBe ""
+                                action.select shouldBe ""
+                                action.toggle shouldBe ""
+                                action.isFunctional shouldBe false
+                            }
+                        }
+                    }
+                    if (filename == "tongwenfeng.trime.yaml") {
+                        listOf(
+                            Triple("h", "+", "!"),
+                            Triple("k", "&", "*"),
+                            Triple("l", "=", "(){Left}"),
+                        ).forEach { (click, output, preserved) ->
+                            val key = letter.keys.single { it.click == KeyActionToken.Plain(click) }
+                            key.hint shouldBe output
+                            key.swipeUp shouldBe KeyActionToken.Plain(preserved)
+                            key.swipeDown shouldBe KeyActionToken.Plain(if (click == "k") "_" else output)
+                            key.popup shouldBe emptyList()
+                            key.ascii shouldBe null
+                            key.composing shouldBe null
+                        }
+                    }
+                }
+
                 Then("$filename retains reachable language actions and navigation bindings through the source loader") {
                     val file = File("src/main/assets/shared/$filename")
                     val loaded = ThemeLoader.loadFromSource(
