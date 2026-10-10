@@ -376,7 +376,7 @@ class Keyboard(
     val isOnlyShiftOn: Boolean
         get() =
             isShifted &&
-                !modifier.hasFlag(KeyEvent.META_CTRL_ON or KeyEvent.META_ALT_ON or KeyEvent.META_SYM_ON or KeyEvent.META_META_ON)
+                (modifier and (KeyEvent.META_CTRL_ON or KeyEvent.META_ALT_ON or KeyEvent.META_SYM_ON or KeyEvent.META_META_ON)) == 0
 
     /**
      * 设置Shift键状态（用于自动大写）
@@ -411,7 +411,7 @@ class Keyboard(
                 KeyEvent.META_ALT_ON -> mAltKey
                 KeyEvent.META_CTRL_ON -> mCtrlKey
                 KeyEvent.META_META_ON -> mMetaKey
-                KeyEvent.KEYCODE_SYM -> mSymKey
+                KeyEvent.META_SYM_ON -> mSymKey
                 else -> null
             }
         val keepOn = modifierKey?.setOn(on) ?: on
@@ -424,13 +424,13 @@ class Keyboard(
     }
 
     fun refreshModifier(): Boolean {
-        // 这里改为了一次性重置全部修饰键状态并返回TRUE刷新UI，可能有bug
+        // Clear every temporary modifier, even after an earlier clear changed the state.
         var result = false
-        if (mShiftKey != null && !mShiftKey!!.isOn) result = result || setModifier(KeyEvent.META_SHIFT_ON, false)
-        if (mAltKey != null && !mAltKey!!.isOn) result = result || setModifier(KeyEvent.META_ALT_ON, false)
-        if (mCtrlKey != null && !mCtrlKey!!.isOn) result = result || setModifier(KeyEvent.META_CTRL_ON, false)
-        if (mMetaKey != null && !mMetaKey!!.isOn) result = result || setModifier(KeyEvent.META_META_ON, false)
-        if (mSymKey != null && !mSymKey!!.isOn) result = result || setModifier(KeyEvent.KEYCODE_SYM, false)
+        if (mShiftKey != null && !mShiftKey!!.isOn) result = setModifier(KeyEvent.META_SHIFT_ON, false) || result
+        if (mAltKey != null && !mAltKey!!.isOn) result = setModifier(KeyEvent.META_ALT_ON, false) || result
+        if (mCtrlKey != null && !mCtrlKey!!.isOn) result = setModifier(KeyEvent.META_CTRL_ON, false) || result
+        if (mMetaKey != null && !mMetaKey!!.isOn) result = setModifier(KeyEvent.META_META_ON, false) || result
+        if (mSymKey != null && !mSymKey!!.isOn) result = setModifier(KeyEvent.META_SYM_ON, false) || result
         return result
     }
 

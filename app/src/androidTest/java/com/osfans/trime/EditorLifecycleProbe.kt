@@ -51,6 +51,8 @@ import com.osfans.trime.data.prefs.AppPrefs
 import com.osfans.trime.data.theme.Theme
 import com.osfans.trime.data.theme.ThemeManager
 import com.osfans.trime.data.theme.model.KeyActionToken
+import com.osfans.trime.data.theme.model.PresetKey
+import com.osfans.trime.data.theme.model.TextKeyboard
 import com.osfans.trime.ime.broadcast.EnterKeyDisplayDelegate
 import com.osfans.trime.ime.broadcast.InputBroadcastReceiver
 import com.osfans.trime.ime.broadcast.InputBroadcaster
@@ -72,7 +74,11 @@ import com.osfans.trime.ime.keyboard.InputFeedbackManager
 import com.osfans.trime.ime.keyboard.KeyAction
 import com.osfans.trime.ime.keyboard.KeyBehavior
 import com.osfans.trime.ime.keyboard.KeyView
+import com.osfans.trime.ime.keyboard.Keyboard
+import com.osfans.trime.ime.keyboard.KeyboardActionListener
+import com.osfans.trime.ime.keyboard.KeyboardView
 import com.osfans.trime.ime.keyboard.KeyboardWindow
+import com.osfans.trime.ime.popup.PopupDelegate
 import com.osfans.trime.ime.switches.SwitchOptionAdapter
 import com.osfans.trime.ime.switches.SwitchOptionEntry
 import com.osfans.trime.ime.switches.SwitchOptionWindow
@@ -930,6 +936,137 @@ object EditorLifecycleProbe {
                 } finally {
                     broadcaster.clear()
                     manager.view.removeAllViews()
+                }
+            }
+        }
+        checkNotNull(outcome).getOrThrow()
+    }
+
+    /** Record actual KeyView dispatch with a disposable third-party layout; do not send native input. */
+    private fun verifyThirdPartyModifiers(instrumentation: Instrumentation, editor: Activity) {
+        var outcome: Result<Unit>? = null
+        instrumentation.runOnMainSync {
+            outcome = runCatching {
+                val input = roots().asSequence().flatMap(::descendants).filterIsInstance<InputView>().first { it.isShown }
+                val service = input.di.direct.instance<TrimeInputMethodService>()
+                data class ModifierCase(val token: String, val send: String, val code: Int, val mask: Int)
+                val modifiers = listOf(
+                    ModifierCase("probe_shift", "Shift_L", KeyEvent.KEYCODE_SHIFT_LEFT, KeyEvent.META_SHIFT_ON),
+                    ModifierCase("probe_alt", "Alt_L", KeyEvent.KEYCODE_ALT_LEFT, KeyEvent.META_ALT_ON),
+                    ModifierCase("probe_ctrl", "Control_L", KeyEvent.KEYCODE_CTRL_LEFT, KeyEvent.META_CTRL_ON),
+                    ModifierCase("probe_meta", "Meta_L", KeyEvent.KEYCODE_META_LEFT, KeyEvent.META_META_ON),
+                    ModifierCase("probe_sym", "SYM", KeyEvent.KEYCODE_SYM, KeyEvent.META_SYM_ON),
+                )
+                val theme = input.di.direct.instance<Theme>().copy(
+                    name = "third-party-modifier-probe",
+                    presetKeys = modifiers.associate { it.token to PresetKey(send = it.send, label = it.send, functional = true) },
+                )
+                val layout = TextKeyboard(
+                    width = 12.5f,
+                    height = 44f,
+                    keyboardHeight = 44,
+                    keyboardHeightLand = 44,
+                    keys = modifiers.map {
+                        TextKeyboard.TextKey(click = KeyActionToken.Plain(it.token), longClick = KeyActionToken.Plain(it.token))
+                    } + listOf("a", "b").map { TextKeyboard.TextKey(click = KeyActionToken.Plain(it)) },
+                )
+                val context = ContextThemeWrapper(editor, android.R.style.Theme_DeviceDefault)
+                val keyboard = Keyboard(context, theme, 800, layout)
+                val broadcaster = InputBroadcaster()
+                val di = DI {
+                    bindInstance<ContextThemeWrapper> { context }
+                    bindInstance<Theme> { theme }
+                    bindInstance<TrimeInputMethodService> { service }
+                    bindInstance<InputBroadcaster> { broadcaster }
+                }
+                val delivered = mutableListOf<Pair<Int, Int>>()
+                val listener = object : KeyboardActionListener {
+                    override fun onPress(keyEventCode: Int) = Unit
+
+                    override fun onAction(action: KeyAction) {
+                        check(!action.isModifierKey && action.modifier == 0) { "Modifier key escaped local KeyView handling" }
+                        delivered.add(action.code to keyboard.modifier)
+                    }
+
+                    override fun onKey(keyEventCode: Int, metaState: Int) = error("Unexpected direct key dispatch")
+
+                    override fun onText(input: String) = error("Unexpected text dispatch")
+                }
+                val view = KeyboardView(context, theme, keyboard, PopupDelegate(di), service, listener, EnterKeyDisplayDelegate(di))
+                val modifierKeys = listOf(keyboard.mShiftKey, keyboard.mAltKey, keyboard.mCtrlKey, keyboard.mMetaKey, keyboard.mSymKey).map(::checkNotNull)
+                modifiers.forEachIndexed { index, entry ->
+                    check(modifierKeys[index] === keyboard.keys[index]) { "Third-party layout did not register ${entry.send}" }
+                    val action = checkNotNull(keyboard.keys[index].click)
+                    check(action.code == entry.code && action.isModifierKey && action.modifierKeyOnMask == entry.mask) { "Unexpected platform modifier mapping for ${entry.send}" }
+                }
+                fun keyView(index: Int) = (view.getChildAt(index) as KeyView).also {
+                    check(it.parent === view && it.isEnabled) { "Third-party key lost its actual KeyboardView" }
+                }
+                fun click(index: Int) {
+                    keyView(index).onRelease?.invoke(KeyBehavior.CLICK, false) ?: error("Actual KeyView release callback absent")
+                }
+                fun lock(index: Int) {
+                    val keyView = keyView(index)
+                    check(keyView.hasLongPress && !keyView.hasPopup && keyView.performLongClick()) { "Actual modifier long action was not handled" }
+                    keyView.onRelease?.invoke(KeyBehavior.LONG_CLICK, true) ?: error("Actual KeyView release callback absent")
+                }
+                fun input(index: Int, expectedMask: Int) {
+                    val before = delivered.size
+                    click(index)
+                    val expectedCode = if (index == modifiers.size) KeyEvent.KEYCODE_A else KeyEvent.KEYCODE_B
+                    check(delivered.size == before + 1 && delivered.last() == (expectedCode to expectedMask)) { "Ordinary KeyView dispatch lost or leaked its modifier state" }
+                }
+                val allMasks = modifiers.fold(0) { mask, entry -> mask or entry.mask }
+                try {
+                    modifiers.indices.forEach(::click)
+                    check(delivered.isEmpty() && keyboard.modifier == allMasks && modifierKeys.none { it.isOn }) { "Temporary modifier clicks changed lock state or dispatched input" }
+                    check(!keyboard.isOnlyShiftOn) { "Combined modifiers were classified as Shift alone" }
+                    input(modifiers.size, allMasks)
+                    check(keyboard.modifier == 0 && modifierKeys.none { it.isOn }) { "A single ordinary key did not consume every temporary modifier" }
+                    input(modifiers.size + 1, 0)
+
+                    modifiers.forEachIndexed { index, entry ->
+                        click(index)
+                        check(keyboard.modifier == entry.mask && !modifierKeys[index].isOn) { "Temporary ${entry.send} acquired a lock" }
+                        input(modifiers.size, entry.mask)
+                        check(keyboard.modifier == 0) { "Temporary ${entry.send} leaked to subsequent input" }
+                        input(modifiers.size + 1, 0)
+
+                        val beforeLock = delivered.size
+                        lock(index)
+                        check(delivered.size == beforeLock && keyboard.modifier == entry.mask && modifierKeys[index].isOn) { "Long action did not lock actual ${entry.send}" }
+                        input(modifiers.size, entry.mask)
+                        input(modifiers.size + 1, entry.mask)
+                        check(keyboard.modifier == entry.mask && modifierKeys[index].isOn) { "Ordinary input consumed locked ${entry.send}" }
+                        lock(index)
+                        check(delivered.size == beforeLock + 2 && keyboard.modifier == 0 && !modifierKeys[index].isOn) { "Repeating the long action did not unlock ${entry.send}" }
+                        input(modifiers.size, 0)
+                    }
+
+                    modifiers.indices.drop(1).forEach { index ->
+                        click(0)
+                        check(keyboard.isOnlyShiftOn) { "Shift alone lost its special handling" }
+                        click(index)
+                        check(!keyboard.isOnlyShiftOn) { "Shift plus ${modifiers[index].send} was classified as Shift alone" }
+                        input(modifiers.size, KeyEvent.META_SHIFT_ON or modifiers[index].mask)
+                        check(keyboard.modifier == 0) { "A two-modifier chord retained a temporary modifier" }
+                        input(modifiers.size + 1, 0)
+                    }
+
+                    lock(0)
+                    modifiers.indices.drop(1).forEach(::click)
+                    input(modifiers.size, allMasks)
+                    check(keyboard.modifier == KeyEvent.META_SHIFT_ON && modifierKeys[0].isOn && modifierKeys.drop(1).none { it.isOn }) { "Clearing temporary modifiers changed the existing Shift lock" }
+                    check(keyboard.isOnlyShiftOn)
+                    input(modifiers.size + 1, KeyEvent.META_SHIFT_ON)
+                    lock(0)
+                    input(modifiers.size, 0)
+                    check(delivered.size == 38 && keyboard.modifier == 0 && modifierKeys.none { it.isOn }) { "Third-party modifier exercise left persistent state" }
+                    check(!keyboard.refreshModifier()) { "Unchanged modifiers requested a redundant refresh" }
+                } finally {
+                    view.clearTransientContent()
+                    view.removeAllViews()
+                    broadcaster.clear()
                 }
             }
         }
@@ -2305,6 +2442,8 @@ object EditorLifecycleProbe {
             }
             verifyResidentWindowIdempotency(instrumentation, editor)
             phase("PASS: resident windows preserve cached views and skip duplicate attachment lifecycles")
+            verifyThirdPartyModifiers(instrumentation, editor)
+            phase("PASS: isolated third-party KeyView dispatch consumes temporary modifiers and preserves actual locks")
             result.putString("stream", "PASS: input-field matrix, editor actions, stale output rejection, third-party T9 fallback, real WebView and 100 show/hide cycles\n")
             passed = true
         } catch (failure: Throwable) {
