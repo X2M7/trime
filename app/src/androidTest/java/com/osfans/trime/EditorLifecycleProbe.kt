@@ -886,7 +886,7 @@ object EditorLifecycleProbe {
                         if (!view.isAttachedToWindow || !view.isShown || !view.getLocalVisibleRect(bounds)) return bounds.apply { setEmpty() }
                         val location = IntArray(2)
                         view.getLocationInWindow(location)
-                        bounds.offset(location[0], location[1])
+                        bounds.offset(location[0] - view.scrollX, location[1] - view.scrollY)
                         return bounds
                     }
                     fun regionCovers(view: View): Boolean {
@@ -908,6 +908,7 @@ object EditorLifecycleProbe {
                             val location = IntArray(2)
                             val bounds = Rect()
                             check(view.getLocalVisibleRect(bounds))
+                            bounds.offset(-view.scrollX, -view.scrollY)
                             view.getLocationOnScreen(location)
                             val x = if (leadingText) view.paddingLeft + 1 else bounds.centerX()
                             val y = bounds.centerY()
@@ -966,7 +967,7 @@ object EditorLifecycleProbe {
                             val hostScreen = IntArray(2).also(hostContent::getLocationOnScreen)
                             val hostVisible = Rect()
                             val hostIsVisible = hostContent.isShown && hostContent.getLocalVisibleRect(hostVisible)
-                            hostVisible.offset(hostScreen[0], hostScreen[1])
+                            hostVisible.offset(hostScreen[0] - hostContent.scrollX, hostScreen[1] - hostContent.scrollY)
                             val windowScreenX = decorScreen[0] - decorWindow[0]
                             val windowScreenY = decorScreen[1] - decorWindow[1]
                             val preeditScreen = Rect(preeditBounds).apply { offset(windowScreenX, windowScreenY) }
@@ -1036,11 +1037,14 @@ object EditorLifecycleProbe {
                             main {
                                 val actualScreen = Rect()
                                 check(hostTarget.getLocalVisibleRect(actualScreen)) { "$theme host pointer target is clipped: ${hostGapGeometry().second}" }
+                                val targetLocalVisible = Rect(actualScreen)
                                 val targetLocation = IntArray(2).also(hostTarget::getLocationOnScreen)
-                                actualScreen.offset(targetLocation[0], targetLocation[1])
+                                actualScreen.offset(targetLocation[0] - hostTarget.scrollX, targetLocation[1] - hostTarget.scrollY)
                                 check(actualScreen == expectedHostTargetScreen) {
-                                    "$theme host pointer target moved or was clipped: expected=$expectedHostTargetScreen actual=$actualScreen ${hostGapGeometry().second}"
+                                    "$theme host pointer target moved or was clipped: expected=$expectedHostTargetScreen actual=$actualScreen " +
+                                        "localVisible=$targetLocalVisible location=${targetLocation.contentToString()} scroll=${hostTarget.scrollX},${hostTarget.scrollY} ${hostGapGeometry().second}"
                                 }
+                                phase("HOST_POINTER_ACTUAL: $theme screen=$actualScreen localVisible=$targetLocalVisible location=${targetLocation.contentToString()} scroll=${hostTarget.scrollX},${hostTarget.scrollY}")
                             }
                             tapActualView(hostTarget, imeTarget = false)
                             check(
@@ -1070,6 +1074,18 @@ object EditorLifecycleProbe {
                             main { iv.visibility = inputVisibility }
                         }
                         until("$theme visible preedit ancestor resumes the IME touch region") { regionCovers(root) }
+                        val originalScroll = main { root.scrollX to root.scrollY }
+                        val unscrolledBounds = main { visibleWindowBounds(root) }
+                        try {
+                            main { root.scrollTo(originalScroll.first + 11, originalScroll.second + 7) }
+                            until("$theme own content scrolling preserves the physical preedit touch region") {
+                                visibleWindowBounds(root) == unscrolledBounds && regionCovers(root) &&
+                                    !touchInsets().touchableRegion.contains(checkNotNull(service.window.window).decorView.width - 1, unscrolledBounds.centerY())
+                            }
+                        } finally {
+                            main { root.scrollTo(originalScroll.first, originalScroll.second) }
+                        }
+                        until("$theme restored preedit scroll preserves its physical touch region") { visibleWindowBounds(root) == unscrolledBounds && regionCovers(root) }
                         main {
                             val parent = root.parent as ViewGroup
                             val params = root.layoutParams

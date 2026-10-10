@@ -888,7 +888,8 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
             return
         }
         view.getLocationInWindow(touchableViewLocation)
-        touchableViewBounds.offset(touchableViewLocation[0], touchableViewLocation[1])
+        // Local visible bounds are in content coordinates and include the view's own scroll.
+        touchableViewBounds.offset(touchableViewLocation[0] - view.scrollX, touchableViewLocation[1] - view.scrollY)
         if (touchableViewBounds.intersect(0, 0, decorView.width, decorView.height)) {
             outInsets.touchableRegion.op(touchableViewBounds, Region.Op.UNION)
         }
