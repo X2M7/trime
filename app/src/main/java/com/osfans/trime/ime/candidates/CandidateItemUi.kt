@@ -8,15 +8,16 @@ package com.osfans.trime.ime.candidates
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Color
+import android.graphics.Typeface
+import android.text.TextUtils
 import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import com.osfans.trime.core.CandidateProto
+import com.osfans.trime.data.prefs.AppPrefs
 import com.osfans.trime.data.theme.Theme
 import com.osfans.trime.data.theme.ThemeScope
 import com.osfans.trime.data.theme.model.GeneralStyle
-import com.osfans.trime.ime.core.AutoScaleTextView
-import com.osfans.trime.ime.keyboard.GestureFrame
 import com.osfans.trime.util.roundedRippleDrawable
 import splitties.dimensions.dp
 import splitties.views.dsl.constraintlayout.bottomOfParent
@@ -36,6 +37,7 @@ import splitties.views.dsl.constraintlayout.topToBottomOf
 import splitties.views.dsl.core.Ui
 import splitties.views.dsl.core.add
 import splitties.views.dsl.core.lParams
+import splitties.views.dsl.core.textView
 import splitties.views.dsl.core.view
 import splitties.views.dsl.core.wrapContent
 import splitties.views.gravityCenter
@@ -63,23 +65,25 @@ class CandidateItemUi(
     private val candidateTextVerticalBias = theme.style.candidateTextVerticalBias
 
     private val text =
-        view(::AutoScaleTextView) {
+        textView {
             id = View.generateViewId()
             this.textSize = this@CandidateItemUi.textSize
             typeface = theme.fonts.candidate
             isSingleLine = true
+            ellipsize = TextUtils.TruncateAt.END
+            maxWidth = ctx.resources.displayMetrics.widthPixels
             gravity = gravityCenter
-            scaleMode = AutoScaleTextView.Mode.Proportional
         }
 
     private val comment =
-        view(::AutoScaleTextView) {
+        textView {
             id = View.generateViewId()
             this.textSize = commentSize
             typeface = theme.fonts.comment
             isSingleLine = true
+            ellipsize = TextUtils.TruncateAt.END
+            maxWidth = ctx.resources.displayMetrics.widthPixels
             gravity = gravityCenter
-            scaleMode = AutoScaleTextView.Mode.Proportional
         }
 
     private val content = constraintLayout {
@@ -98,8 +102,7 @@ class CandidateItemUi(
                 add(
                     comment,
                     lParams(wrapContent, wrapContent) {
-                        // AutoScaleTextView's drawn baseline changes as Flexbox measures
-                        // candidate widths. Keep both labels inside the candidate row.
+                        // Keep both labels inside the row as candidate widths change.
                         centerVertically()
                         startToEndOf(text, ctx.dp(1))
                         endOfParent()
@@ -150,7 +153,7 @@ class CandidateItemUi(
     /**
      * candidate long press feedback is handled by `showCandidateActionMenu`
      */
-    override val root = view(::GestureFrame) {
+    override val root = view(::CandidateGestureFrame) {
         add(
             content,
             lParams(wrapContent, dp(theme.style.candidateViewHeight)) {
@@ -172,10 +175,11 @@ class CandidateItemUi(
         content.background = roundedRippleDrawable(hlBackColor, cornerRadius, contentColor)
         text.text = item.text
         text.setTextColor(tColor)
+        text.typeface = if (highlighted) Typeface.create(theme.fonts.candidate, Typeface.BOLD) else theme.fonts.candidate
 
         val commentText = item.comment
         comment.text = commentText
         comment.setTextColor(cColor)
-        comment.isVisible = commentText.isNotEmpty()
+        comment.isVisible = AppPrefs.defaultInstance().candidates.showComments.getValue() && commentText.isNotEmpty()
     }
 }

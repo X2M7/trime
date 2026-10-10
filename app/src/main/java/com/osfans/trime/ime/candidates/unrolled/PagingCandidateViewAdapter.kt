@@ -10,6 +10,7 @@ import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import com.osfans.trime.core.CandidateSnapshot
 import com.osfans.trime.data.theme.ThemeScope
+import com.osfans.trime.ime.candidates.CandidateIdentity
 import com.osfans.trime.ime.candidates.CandidateItemUi
 import com.osfans.trime.ime.candidates.CandidateRow
 import com.osfans.trime.ime.candidates.CandidateViewHolder
@@ -61,7 +62,13 @@ open class PagingCandidateViewAdapter(
         holder: CandidateViewHolder,
         position: Int,
     ) {
-        val row = getItem(position) ?: return
+        val row = getItem(position)
+        if (row == null) {
+            holder.ui.root.identity = null
+            holder.idx = -1
+            holder.snapshot = CandidateSnapshot.EMPTY
+            return
+        }
         val item = row.candidate
         val idx = row.index
         val highlighted = idx == highlightedIndex
@@ -70,5 +77,6 @@ open class PagingCandidateViewAdapter(
         holder.comment = item.comment
         holder.idx = idx
         holder.snapshot = row.snapshot
+        holder.ui.root.identity = CandidateIdentity(row.snapshot, idx)
     }
 }

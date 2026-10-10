@@ -68,6 +68,15 @@ interface RimeApi {
 
     suspend fun deleteCandidate(idx: Int, global: Boolean, expectedSnapshot: CandidateSnapshot? = null): Boolean
 
+    /** Pin only this schema/input pair; never write learned frequencies. */
+    suspend fun pinCandidate(idx: Int, global: Boolean, expectedSnapshot: CandidateSnapshot): Boolean
+
+    /** Remove explicit pins for the current input, preserving ordinary Rime learning. */
+    suspend fun resetCandidateRanking(expectedSnapshot: CandidateSnapshot): Boolean
+
+    /** Execute dictionary file operations after closing native database handles. */
+    suspend fun <T> maintainUserDictionaries(block: () -> T): T
+
     suspend fun changeCandidatePage(backward: Boolean, expectedSnapshot: CandidateSnapshot? = null): Boolean
 
     /** Byte offset in the displayed UTF-8 preedit, not the private engine input. */

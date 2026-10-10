@@ -14,10 +14,12 @@
 #include <algorithm>
 #include <memory>
 #include <mutex>
+#include <map>
 #include <string>
 #include <vector>
 
 #include "frontend.h"
+#include "candidate_ranking.h"
 #include "jni-utils.h"
 #include "objconv.h"
 #include "session.h"
@@ -105,24 +107,41 @@ class Rime {
 
   bool processKey(int keycode, int mask) {
     auto current = rime::Service::instance().GetSession(session());
-    if (t9_.ProcessKey(current.get(), keycode, mask)) return true;
-    return rime->process_key(session(), keycode, mask);
+    const bool handled = t9_.ProcessKey(current.get(), keycode, mask) ||
+                         rime->process_key(session(), keycode, mask);
+    applyCandidatePins();
+    return handled;
   }
 
   bool simulateKeySequence(const std::string& sequence) {
     const auto state = t9Snapshot();
-    if (std::none_of(state.segments.begin(), state.segments.end(),
-                     [](const auto& span) { return span.locked; }))
+    const auto schema_id = currentSchemaId();
+    const bool has_pins = std::any_of(pins_.begin(), pins_.end(),
+        [&](const auto& pin) { return pin.first.first == schema_id; });
+    const bool has_locked = std::any_of(state.segments.begin(), state.segments.end(),
+                                       [](const auto& span) { return span.locked; });
+    if (!has_pins && !has_locked)
       return rime->simulate_key_sequence(session(), sequence.data());
     rime::KeySequence keys;
     if (!keys.Parse(sequence)) return false;
-    for (const auto& key : keys) processKey(key.keycode(), key.modifier());
+    for (const auto& key : keys) {
+      if (has_locked) {
+        processKey(key.keycode(), key.modifier());
+      } else {
+        // Preserve native macro caret/undo semantics. The T9 physical-key
+        // interceptor is only used for macros that already own a locked span.
+        rime->process_key(session(), key.keycode(), key.modifier());
+        applyCandidatePins();
+      }
+    }
     return true;
   }
 
   bool commitComposition() { return rime->commit_composition(session()); }
 
   void clearComposition() {
+    ranked_menu_.reset();
+    original_menu_.reset();
     t9_.Clear();
     rime->clear_composition(session());
   }
@@ -212,6 +231,8 @@ class Rime {
     // fully cleared on exit.
     FLAGS_minloglevel = google::GLOG_FATAL;
     trime::SetPrivacyModeEnabled(true);
+    ranked_menu_.reset();
+    original_menu_.reset();
     privacy_mode_ = enabled;
 
     {
@@ -249,6 +270,8 @@ class Rime {
   }
 
   bool selectSchema(std::string_view schemaId) {
+    ranked_menu_.reset();
+    original_menu_.reset();
     t9_.Reset();
     return rime->select_schema(session(), schemaId.data());
   }
@@ -275,15 +298,107 @@ class Rime {
   }
 
   bool deleteCandidate(size_t index, bool global) {
-    if (global) {
-      return rime->delete_candidate(session(), index);
-    } else {
-      return rime->delete_candidate_on_current_page(session(), index);
-    }
+    if (privacy_mode_) return false;
+    auto current = rime::Service::instance().GetSession(session());
+    if (!current || !current->context()->HasMenu()) return false;
+    auto& segment = current->context()->composition().back();
+    const auto page_size = current->schema()->page_size();
+    if (page_size <= 0 || (!global && index >= static_cast<size_t>(page_size)))
+      return false;
+    const auto actual = global ? index :
+        (segment.selected_index / page_size) * page_size + index;
+    if (!segment.GetCandidateAt(actual)) return false;
+    auto previous_menu = segment.menu;
+    const bool accepted = global ? rime->delete_candidate(session(), index) :
+        rime->delete_candidate_on_current_page(session(), index);
+    // Rime's Boolean acknowledges dispatch even when no translator handles it.
+    // A handling Memory refreshes the menu; this still does not promise durable
+    // storage success, which the UI accurately describes as a forget request.
+    return accepted && (current->context()->composition().empty() ||
+           current->context()->composition().back().menu != previous_menu);
   }
 
   bool changePage(bool backward) {
     return rime->change_page(session(), backward);
+  }
+
+  void suspendUserDictionarySession() {
+    t9_.Reset();
+    ranked_menu_.reset();
+    original_menu_.reset();
+    session_.reset();
+    rime->cleanup_all_sessions();
+  }
+
+  void setCandidatePins(const std::vector<std::string>& schemas,
+                        const std::vector<std::string>& inputs,
+                        const std::vector<std::string>& texts) {
+    if (schemas.size() != inputs.size() || schemas.size() != texts.size() ||
+        schemas.size() > 512)
+      throw std::invalid_argument("Invalid candidate pin list");
+    std::map<std::pair<std::string, std::string>, std::string> replacement;
+    for (size_t i = 0; i < schemas.size(); ++i) {
+      if (schemas[i].empty() || inputs[i].empty() || texts[i].empty())
+        throw std::invalid_argument("Invalid candidate pin");
+      replacement[{schemas[i], inputs[i]}] = texts[i];
+    }
+    auto current = rime::Service::instance().GetSession(session(false));
+    if (current && current->context()->HasMenu()) {
+      auto& segment = current->context()->composition().back();
+      if (segment.menu == ranked_menu_ && original_menu_) {
+        segment.menu = original_menu_;
+        segment.selected_index = 0;
+      }
+    }
+    ranked_menu_.reset();
+    original_menu_.reset();
+    pins_ = std::move(replacement);
+    applyCandidatePins();
+  }
+
+  std::vector<std::string> candidatePinIdentity(int index, bool global) {
+    if (privacy_mode_) return {};
+    auto current = rime::Service::instance().GetSession(session());
+    if (!current || !current->context()->HasMenu()) return {};
+    auto& segment = current->context()->composition().back();
+    if (!global) {
+      int page_size = 5;
+      current->schema()->config()->GetInt("menu/page_size", &page_size);
+      if (page_size <= 0 || index < 0 || index >= page_size) return {};
+      index += (segment.selected_index / page_size) * page_size;
+    }
+    if (index < 0 || index >= static_cast<int>(trime::PinnedTranslation::kWindow))
+      return {};
+    auto candidate = segment.GetCandidateAt(index);
+    if (!candidate) return {};
+    return {currentSchemaId(), rawInput(), candidate->text()};
+  }
+
+  void applyCandidatePins() {
+    auto current = rime::Service::instance().GetSession(session(false));
+    if (!current || !current->context()->HasMenu()) {
+      ranked_menu_.reset();
+      original_menu_.reset();
+      return;
+    }
+    auto& segment = current->context()->composition().back();
+    if (segment.menu == ranked_menu_) return;
+    ranked_menu_.reset();
+    original_menu_.reset();
+    if (privacy_mode_) return;
+    auto found = pins_.find({currentSchemaId(), rawInput()});
+    if (found == pins_.end()) return;
+    original_menu_ = segment.menu;
+    auto selected = segment.GetSelectedCandidate();
+    const auto selected_index = segment.selected_index;
+    auto translation = rime::New<trime::PinnedTranslation>(original_menu_, found->second);
+    ranked_menu_ = rime::New<rime::Menu>();
+    ranked_menu_->AddTranslation(translation);
+    segment.menu = ranked_menu_;
+    // A guessed first candidate becomes the pinned candidate. Explicit navigation
+    // retains its selected object even when its index moves within the window.
+    if (selected_index > 0 && selected_index < trime::PinnedTranslation::kWindow)
+      segment.selected_index = translation->indexOf(selected);
   }
 
   std::vector<CandidateProto> getCandidates(int startIndex, int limit) {
@@ -317,6 +432,8 @@ class Rime {
       trime::SetPrivacyModeEnabled(true);
     }
     t9_.Reset();
+    ranked_menu_.reset();
+    original_menu_.reset();
     session_.reset();
     rime->finalize();
     privacy_mode_ = false;
@@ -335,6 +452,9 @@ class Rime {
   trime::T9 t9_;
   std::shared_ptr<SessionHolder> session_;
   bool privacy_mode_ = false;
+  std::map<std::pair<std::string, std::string>, std::string> pins_;
+  rime::an<rime::Menu> ranked_menu_;
+  rime::an<rime::Menu> original_menu_;
 
   RimeSessionId session(bool requestNewSession = true) {
     if (!session_ && requestNewSession) {
@@ -446,6 +566,34 @@ extern "C" JNIEXPORT void JNICALL Java_com_osfans_trime_core_Rime_startupRime(
 extern "C" JNIEXPORT void JNICALL
 Java_com_osfans_trime_core_Rime_exitRime(JNIEnv* env, jclass /* thiz */) {
   jniCall(env, [&] { Rime::Instance().exit(); });
+}
+
+extern "C" JNIEXPORT void JNICALL
+Java_com_osfans_trime_core_Rime_suspendRimeUserDictionarySession(JNIEnv* env,
+                                                               jclass) {
+  jniCall(env, [&] { Rime::Instance().suspendUserDictionarySession(); });
+}
+
+extern "C" JNIEXPORT void JNICALL
+Java_com_osfans_trime_core_Rime_setRimeCandidatePins(JNIEnv* env, jclass,
+                                                   jobjectArray schemas,
+                                                   jobjectArray inputs,
+                                                   jobjectArray texts) {
+  jniCall(env, [&] {
+    Rime::Instance().setCandidatePins(stringArrayToStringVector(env, schemas),
+                                    stringArrayToStringVector(env, inputs),
+                                    stringArrayToStringVector(env, texts));
+  });
+}
+
+extern "C" JNIEXPORT jobjectArray JNICALL
+Java_com_osfans_trime_core_Rime_getRimeCandidatePinIdentity(JNIEnv* env, jclass,
+                                                          jint index,
+                                                          jboolean global) {
+  return jniCall(env, [&]() -> jobjectArray {
+    return stringVectorToJStringArray(
+        env, Rime::Instance().candidatePinIdentity(index, global));
+  });
 }
 
 extern "C" JNIEXPORT jboolean JNICALL
@@ -628,6 +776,7 @@ extern "C" JNIEXPORT jobject JNICALL
 Java_com_osfans_trime_core_Rime_getRimeResponse(JNIEnv* env, jclass clazz,
                                                 jboolean paging_mode) {
   return jniCall(env, [&]() -> jobject {
+    Rime::Instance().applyCandidatePins();
     auto commit = Rime::Instance().commit();
     // the menu is only needed in paging mode, otherwise its candidates would be
     // duplicated by the bulk candidates query below

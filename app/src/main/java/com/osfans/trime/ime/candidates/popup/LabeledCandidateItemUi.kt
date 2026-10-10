@@ -14,12 +14,18 @@ import androidx.annotation.ColorInt
 import androidx.core.text.buildSpannedString
 import androidx.core.text.inSpans
 import com.osfans.trime.core.CandidateProto
+import com.osfans.trime.data.prefs.AppPrefs
 import com.osfans.trime.data.theme.Theme
 import com.osfans.trime.data.theme.ThemeScope
+import com.osfans.trime.ime.candidates.CandidateGestureFrame
 import com.osfans.trime.util.sp
 import splitties.dimensions.dp
 import splitties.views.dsl.core.Ui
+import splitties.views.dsl.core.add
+import splitties.views.dsl.core.lParams
 import splitties.views.dsl.core.textView
+import splitties.views.dsl.core.view
+import splitties.views.dsl.core.wrapContent
 
 class LabeledCandidateItemUi(
     override val ctx: Context,
@@ -44,12 +50,16 @@ class LabeledCandidateItemUi(
     private val highlightCandidateTextColor: Int get() = scope.colors.hilitedCandidateTextColor
     private val highlightCandidateBackColor: Int get() = scope.colors.hilitedCandidateBackColor
 
-    override val root =
+    private val content =
         textView {
             val v = dp(theme.window.itemPadding.vertical)
             val h = dp(theme.window.itemPadding.horizontal)
             setPadding(h, v, h, v)
         }
+
+    override val root = view(::CandidateGestureFrame) {
+        add(content, lParams(wrapContent, wrapContent))
+    }
 
     private inline fun SpannableStringBuilder.inSpanWith(
         @ColorInt color: Int,
@@ -65,16 +75,17 @@ class LabeledCandidateItemUi(
         val labelFg = if (highlighted) highlightLabelColor else labelColor
         val textFg = if (highlighted) highlightCandidateTextColor else textColor
         val commentFg = if (highlighted) highlightCommentTextColor else commentColor
-        root.text =
+        content.text =
             buildSpannedString {
                 if (candidate.label.isNotEmpty()) {
                     inSpanWith(labelFg, ctx.sp(labelSize), labelFont) { append(candidate.label) }
                 }
                 append(" ")
                 if (candidate.text.isNotEmpty()) {
-                    inSpanWith(textFg, ctx.sp(textSize), textFont) { append(candidate.text) }
+                    val font = if (highlighted) Typeface.create(textFont, Typeface.BOLD) else textFont
+                    inSpanWith(textFg, ctx.sp(textSize), font) { append(candidate.text) }
                 }
-                if (candidate.comment.isNotBlank()) {
+                if (AppPrefs.defaultInstance().candidates.showComments.getValue() && candidate.comment.isNotBlank()) {
                     append(" ")
                     inSpanWith(commentFg, ctx.sp(commentSize), commentFont) { append(candidate.comment) }
                 }

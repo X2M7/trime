@@ -18,6 +18,7 @@ class CandidatesPagingSource(
     val total: Int,
     val offset: Int,
     val snapshot: CandidateSnapshot,
+    val initialIndex: Int = offset,
 ) : PagingSource<Int, CandidateRow>() {
     companion object {
         const val PAGE_SIZE = 48
@@ -25,7 +26,7 @@ class CandidatesPagingSource(
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, CandidateRow> {
         // use candidate index for key, null means load from beginning (including offset)
-        val startIndex = params.key ?: offset
+        val startIndex = params.key ?: candidatePageStart(initialIndex, offset, PAGE_SIZE)
         val pageSize = params.loadSize.coerceAtMost(PAGE_SIZE)
         Timber.d("getCandidates(offset=$startIndex, limit=$pageSize)")
         val candidates = try {
@@ -33,7 +34,7 @@ class CandidatesPagingSource(
         } catch (_: StaleCandidateSnapshotException) {
             return LoadResult.Invalid()
         }
-        val prevKey = if (startIndex >= pageSize) startIndex - pageSize else null
+        val prevKey = (startIndex - pageSize).takeIf { it >= offset }
         val nextKey = nextCandidatePage(startIndex, pageSize, candidates.size, total)
         return LoadResult.Page(
             candidates.mapIndexed { index, candidate -> CandidateRow(candidate, startIndex + index, snapshot) },
@@ -42,9 +43,14 @@ class CandidatesPagingSource(
         )
     }
 
-    // always reload from beginning
-    override fun getRefreshKey(state: PagingState<Int, CandidateRow>) = null
+    override fun getRefreshKey(state: PagingState<Int, CandidateRow>): Int? = state.anchorPosition
+        ?.let(state::closestItemToPosition)
+        ?.takeIf { it.snapshot == snapshot }
+        ?.let { candidatePageStart(it.index, offset, PAGE_SIZE) }
 }
+
+/** Align restored global indices to avoid overlapping preceding pages. */
+internal fun candidatePageStart(index: Int, offset: Int, pageSize: Int): Int = offset + (index.coerceAtLeast(offset) - offset) / pageSize * pageSize
 
 internal fun nextCandidatePage(startIndex: Int, pageSize: Int, count: Int, total: Int): Int? = when {
     count == 0 -> null

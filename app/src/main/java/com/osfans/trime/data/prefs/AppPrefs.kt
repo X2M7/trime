@@ -611,6 +611,8 @@ class AppPrefs(
         val mode = enum(R.string.show_candidates_window, MODE, PopupCandidatesMode.DISABLED)
         val layout = enum(R.string.candidates_layout, LAYOUT, PopupCandidatesLayout.AUTOMATIC)
         val position = enum(R.string.candidates_window_position, POSITION, PopupPosition.BOTTOM_LEFT)
+        val showComments = switch(R.string.candidate_show_comments, "candidate_show_comments", true)
+        val compactCandidateScroll = switch(R.string.candidate_horizontal_scroll, "candidate_horizontal_scroll", false)
     }
 
     /**

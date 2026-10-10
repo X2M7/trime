@@ -15,6 +15,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.flexbox.FlexboxLayoutManager
 import com.osfans.trime.daemon.RimeSession
 import com.osfans.trime.data.theme.Theme
 import com.osfans.trime.data.theme.ThemeScope
@@ -22,6 +23,7 @@ import com.osfans.trime.ime.bar.InputBarDelegate
 import com.osfans.trime.ime.bar.UnrollButtonStateMachine
 import com.osfans.trime.ime.broadcast.InputBroadcastReceiver
 import com.osfans.trime.ime.candidates.CandidateViewHolder
+import com.osfans.trime.ime.candidates.CandidateViewportState
 import com.osfans.trime.ime.candidates.compact.CompactCandidateDelegate
 import com.osfans.trime.ime.candidates.unrolled.CandidatesPagingSource
 import com.osfans.trime.ime.candidates.unrolled.PagingCandidateViewAdapter
@@ -56,6 +58,9 @@ abstract class BaseUnrolledCandidateWindow(di: DI) :
 
     private lateinit var lifecycleCoroutineScope: LifecycleCoroutineScope
     private lateinit var candidateLayout: UnrolledCandidateLayout
+    private val viewportState = CandidateViewportState()
+    private var rememberedIndex: Int? = null
+    private var pendingScrollIndex: Int? = null
 
     protected val separatorDrawable by lazy {
         ShapeDrawable(RectShape()).apply {
@@ -103,6 +108,14 @@ abstract class BaseUnrolledCandidateWindow(di: DI) :
                     itemAnimator = null
                 }
             }
+        adapter.addOnPagesUpdatedListener {
+            val target = pendingScrollIndex ?: return@addOnPagesUpdatedListener
+            val position = adapter.snapshot().items.indexOfFirst { it.index == target && it.snapshot == adapter.snapshot }
+            if (position >= 0) {
+                candidateLayout.recyclerView.scrollToPosition(position)
+                pendingScrollIndex = null
+            }
+        }
         return candidateLayout
     }
 
@@ -125,6 +138,7 @@ abstract class BaseUnrolledCandidateWindow(di: DI) :
                     total = adapter.total,
                     offset = adapter.offset,
                     snapshot = adapter.snapshot,
+                    initialIndex = rememberedIndex ?: adapter.offset,
                 )
             },
         )
@@ -135,20 +149,28 @@ abstract class BaseUnrolledCandidateWindow(di: DI) :
     override fun onAttached() {
         lifecycleCoroutineScope = candidateLayout.findViewTreeLifecycleOwner()!!.lifecycleScope
         bar.unrollButtonStateMachine.push(UnrollButtonStateMachine.TransitionEvent.UnrolledCandidatesAttached)
+        var firstEmission = true
         offsetJob =
             lifecycleCoroutineScope.launch {
                 compactCandidate.unrolledCandidateOffset.collect {
-                    if (it.offset <= 0) {
+                    if (!it.snapshot.isValid || it.total == 0) {
                         windowManager.attachWindow(KeyboardWindow)
                     } else {
-                        candidateLayout.resetPosition()
-                        adapter.refreshWith(
-                            offset = it.offset,
-                            total = it.total,
-                            highlightedIndex = it.highlighted,
-                            snapshot = it.snapshot,
-                        )
+                        if (viewportState.update(it.snapshot, it.offset)) {
+                            rememberedIndex = it.anchor.coerceAtLeast(it.offset)
+                            pendingScrollIndex = rememberedIndex
+                            candidateLayout.resetPosition()
+                            adapter.refreshWith(
+                                offset = it.offset,
+                                total = it.total,
+                                highlightedIndex = it.highlighted,
+                                snapshot = it.snapshot,
+                            )
+                        } else if (firstEmission) {
+                            pendingScrollIndex = rememberedIndex
+                        }
                     }
+                    firstEmission = false
                 }
             }
         candidatesSubmitJob =
@@ -174,6 +196,10 @@ abstract class BaseUnrolledCandidateWindow(di: DI) :
     }
 
     override fun onDetached() {
+        val position = (layoutManager as? FlexboxLayoutManager)?.findFirstVisibleItemPosition() ?: -1
+        val holder = candidateLayout.recyclerView.findViewHolderForAdapterPosition(position) as? CandidateViewHolder
+        if (holder?.snapshot == adapter.snapshot) rememberedIndex = holder.idx
+        pendingScrollIndex = rememberedIndex
         bar.unrollButtonStateMachine.push(
             UnrollButtonStateMachine.TransitionEvent.UnrolledCandidatesDetached,
             UnrollButtonStateMachine.BooleanKey.UnrolledCandidatesEmpty to

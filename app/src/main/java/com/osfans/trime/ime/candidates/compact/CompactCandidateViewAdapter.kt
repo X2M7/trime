@@ -13,9 +13,11 @@ import com.google.android.flexbox.FlexboxLayoutManager
 import com.osfans.trime.core.CandidateProto
 import com.osfans.trime.core.CandidateSnapshot
 import com.osfans.trime.data.theme.ThemeScope
+import com.osfans.trime.ime.candidates.CandidateIdentity
 import com.osfans.trime.ime.candidates.CandidateItemUi
 import com.osfans.trime.ime.candidates.CandidateRow
 import com.osfans.trime.ime.candidates.CandidateViewHolder
+import com.osfans.trime.ime.candidates.candidateStableId
 import splitties.dimensions.dp
 import splitties.views.dsl.core.matchParent
 import splitties.views.dsl.core.wrapContent
@@ -27,7 +29,7 @@ open class CompactCandidateViewAdapter(
         setHasStableIds(true)
     }
 
-    override fun getItemId(position: Int): Long = items.getOrNull(position)?.candidate.hashCode().toLong()
+    override fun getItemId(position: Int): Long = items.getOrNull(position)?.let { candidateStableId(it.index) } ?: -1L
 
     var total: Int = -1
         private set
@@ -43,6 +45,8 @@ open class CompactCandidateViewAdapter(
 
     var layoutFlexGrow: Float = 0f
         private set
+
+    var layoutFlexShrink: Float = 1f
 
     fun updateLayoutParams(minWidth: Int, flexGrow: Float) {
         layoutMinWidth = minWidth
@@ -86,9 +90,11 @@ open class CompactCandidateViewAdapter(
         holder.comment = item.candidate.comment
         holder.idx = item.index
         holder.snapshot = item.snapshot
+        holder.ui.root.identity = CandidateIdentity(item.snapshot, item.index)
         holder.ui.root.updateLayoutParams<FlexboxLayoutManager.LayoutParams> {
             minWidth = this@CompactCandidateViewAdapter.layoutMinWidth
             flexGrow = this@CompactCandidateViewAdapter.layoutFlexGrow
+            flexShrink = this@CompactCandidateViewAdapter.layoutFlexShrink
         }
     }
 }

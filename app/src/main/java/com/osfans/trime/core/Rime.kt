@@ -7,9 +7,12 @@ package com.osfans.trime.core
 
 import com.osfans.trime.BuildConfig
 import com.osfans.trime.data.base.DataManager
+import com.osfans.trime.data.candidates.CandidatePin
+import com.osfans.trime.data.candidates.CandidatePinStore
 import com.osfans.trime.data.opencc.OpenCCDictManager
 import com.osfans.trime.data.prefs.AppPrefs
 import com.osfans.trime.data.sync.RimeDataSync
+import com.osfans.trime.data.userdict.UserDictManager
 import com.osfans.trime.ime.core.InlinePreeditMode
 import com.osfans.trime.ime.performance.InputLatencyLog
 import com.osfans.trime.ime.performance.InputRequest
@@ -65,6 +68,7 @@ class Rime :
     private val optionCache = RuntimeOptionCache()
     private val candidateSnapshots = CandidateSnapshotState()
     private var activeRequest: InputRequest? = null
+    private val candidatePins = CandidatePinStore()
 
     override val candidateSnapshotCached: CandidateSnapshot get() = candidateSnapshots.current
 
@@ -355,12 +359,71 @@ class Rime :
     }
 
     override suspend fun deleteCandidate(idx: Int, global: Boolean, expectedSnapshot: CandidateSnapshot?): Boolean = withRimeContext {
-        if (!candidateSnapshots.accepts(expectedSnapshot, editorToken)) {
+        if (privacyMode || !candidateSnapshots.accepts(expectedSnapshot, editorToken)) {
             expectedSnapshot?.let(InputLatencyLog::stale)
             return@withRimeContext false
         }
         invalidateCandidates()
         deleteRimeCandidate(idx, global).also { emitResponse() }
+    }
+
+    override suspend fun pinCandidate(idx: Int, global: Boolean, expectedSnapshot: CandidateSnapshot): Boolean = withRimeContext {
+        if (privacyMode || !candidateSnapshots.accepts(expectedSnapshot, editorToken)) return@withRimeContext false
+        val identity = getRimeCandidatePinIdentity(idx, global)
+        if (identity.size != 3) return@withRimeContext false
+        candidatePins.pin(CandidatePin(identity[0], identity[1], identity[2]))
+        invalidateCandidates()
+        publishCandidatePins()
+        emitResponse()
+        true
+    }
+
+    override suspend fun resetCandidateRanking(expectedSnapshot: CandidateSnapshot): Boolean = withRimeContext {
+        if (privacyMode || !candidateSnapshots.accepts(expectedSnapshot, editorToken)) return@withRimeContext false
+        candidatePins.reset(getCurrentRimeSchema(), getRimeRawInput())
+        invalidateCandidates()
+        publishCandidatePins()
+        emitResponse()
+        true
+    }
+
+    private fun publishCandidatePins() {
+        val entries = candidatePins.entries
+        setRimeCandidatePins(
+            entries.map { it.schema }.toTypedArray(),
+            entries.map { it.input }.toTypedArray(),
+            entries.map { it.text }.toTypedArray(),
+        )
+    }
+
+    override suspend fun <T> maintainUserDictionaries(block: () -> T): T = RimeMaintenanceMutex.withLock {
+        withRimeContext {
+            val schemaId = getCurrentRimeSchema()
+            val options = (schemaCached.switches.flatMap { if (it.name.isEmpty()) it.options else listOf(it.name) } + "ascii_mode")
+                .distinct().associateWith(::getRimeOption)
+            asciiSwitchTipsJob?.cancel()
+            asciiSwitchTipsJob = null
+            clearTransientEditorState()
+            suspendRimeUserDictionarySession()
+            var operationFailure: Throwable? = null
+            try {
+                block()
+            } catch (failure: Throwable) {
+                operationFailure = failure
+                throw failure
+            } finally {
+                // Levers require initialized modules, so maintenance closes sessions
+                // without finalizing Rime. Always reopen after success or rollback.
+                try {
+                    check(selectRimeSchema(schemaId)) { "Unable to reopen the input schema" }
+                    options.forEach { (name, enabled) -> setRimeOption(name, enabled) }
+                    setRimePrivacyMode(privacyMode)
+                    emitResponse()
+                } catch (reopenFailure: Throwable) {
+                    if (operationFailure != null) operationFailure.addSuppressed(reopenFailure) else throw reopenFailure
+                }
+            }
+        }
     }
 
     override suspend fun changeCandidatePage(backward: Boolean, expectedSnapshot: CandidateSnapshot?): Boolean = withRimeContext {
@@ -501,7 +564,16 @@ class Rime :
         registerRimeMessageHandler(startupHandler)
         try {
             nativeInitialized = true
+            UserDictManager.recoverPendingMutation()
             startupRime(sharedDataDir, userDataDir, BuildConfig.BUILD_VERSION_NAME, fullCheck)
+            // Corrupt pin data must not disable ordinary input or be overwritten.
+            try {
+                candidatePins.load()
+                publishCandidatePins()
+            } catch (failure: Exception) {
+                setRimeCandidatePins(emptyArray(), emptyArray(), emptyArray())
+                Timber.e("Candidate pin storage is unavailable (%s)", failure.javaClass.simpleName)
+            }
             setRimePrivacyMode(editorToken != 0L && privacyMode)
             if (deployFailed.get() || resourceFailure != null) {
                 check(hasUsableRimeDictionary()) { "Rime configuration deployment failed; no usable current dictionary" }
@@ -800,6 +872,15 @@ class Rime :
 
         @JvmStatic
         external fun exitRime()
+
+        @JvmStatic
+        private external fun suspendRimeUserDictionarySession()
+
+        @JvmStatic
+        private external fun setRimeCandidatePins(schemas: Array<String>, inputs: Array<String>, texts: Array<String>)
+
+        @JvmStatic
+        private external fun getRimeCandidatePinIdentity(index: Int, global: Boolean): Array<String>
 
         @JvmStatic
         private external fun hasUsableRimeDictionary(): Boolean

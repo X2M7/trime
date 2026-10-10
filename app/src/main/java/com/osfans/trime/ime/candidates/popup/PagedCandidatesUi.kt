@@ -22,7 +22,9 @@ import com.google.android.flexbox.FlexboxLayoutManager
 import com.osfans.trime.core.CandidateSnapshot
 import com.osfans.trime.core.Candidates
 import com.osfans.trime.data.theme.ThemeScope
+import com.osfans.trime.ime.candidates.CandidateIdentity
 import com.osfans.trime.ime.candidates.CandidateRow
+import com.osfans.trime.ime.candidates.candidateStableId
 import com.osfans.trime.ime.performance.InputLatencyLog
 import splitties.views.dsl.core.Ui
 
@@ -61,7 +63,7 @@ class PagedCandidatesUi(
                 setHasStableIds(true)
             }
 
-            override fun getItemId(position: Int): Long = items.getOrNull(position)?.candidate.hashCode().toLong()
+            override fun getItemId(position: Int): Long = items.getOrNull(position)?.let { candidateStableId(it.index) } ?: Long.MAX_VALUE
 
             override fun getItemCount(items: List<CandidateRow>) = items.size + (if (candidates.hasPrevPage || candidates.hasNextPage) 1 else 0)
 
@@ -92,6 +94,7 @@ class PagedCandidatesUi(
                         val row = item ?: return
                         val candidate = row.candidate
                         holder.snapshot = row.snapshot
+                        holder.ui.root.identity = CandidateIdentity(row.snapshot, row.index)
                         holder.ui.update(candidate, position == candidates.highlighted)
                         holder.ui.root.setOnClickListener {
                             onCandidateClick.invoke(row.index, row.snapshot)

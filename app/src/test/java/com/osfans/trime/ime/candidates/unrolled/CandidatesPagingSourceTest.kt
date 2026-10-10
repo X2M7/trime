@@ -1,7 +1,9 @@
 /* SPDX-License-Identifier: GPL-3.0-or-later */
 package com.osfans.trime.ime.candidates.unrolled
 
+import androidx.paging.PagingConfig
 import androidx.paging.PagingSource
+import androidx.paging.PagingState
 import com.osfans.trime.core.CandidateProto
 import com.osfans.trime.core.CandidateSnapshot
 import com.osfans.trime.core.RimeApi
@@ -51,6 +53,50 @@ class CandidatesPagingSourceTest :
             val api = candidateApi { _, _, _ -> throw StaleCandidateSnapshotException() }
             val source = CandidatesPagingSource(candidateSession(api), -1, 16, CandidateSnapshot(7, 19, 23))
             (source.load(PagingSource.LoadParams.Refresh(null, 48, false)) is PagingSource.LoadResult.Invalid<*, *>) shouldBe true
+        }
+
+        "a restored candidate starts near its global index with bounded nonoverlapping pages" {
+            val snapshot = CandidateSnapshot(7, 19, 23)
+            var requestedStart = -1
+            var requestedLimit = -1
+            val api = candidateApi { start, limit, expected ->
+                requestedStart = start
+                requestedLimit = limit
+                expected shouldBe snapshot
+                Array(limit) { CandidateProto("candidate${start + it}", "", "") }
+            }
+            val source = CandidatesPagingSource(candidateSession(api), 500, 16, snapshot, initialIndex = 196)
+            val result = source.load(PagingSource.LoadParams.Refresh(null, 144, false)) as PagingSource.LoadResult.Page<Int, CandidateRow>
+            requestedStart shouldBe 160
+            requestedLimit shouldBe 48
+            result.data.map { it.index } shouldBe (160 until 208).toList()
+            result.prevKey shouldBe 112
+            result.nextKey shouldBe 208
+            val previous = source.load(PagingSource.LoadParams.Prepend(112, 48, false)) as PagingSource.LoadResult.Page<Int, CandidateRow>
+            previous.data.last().index shouldBe result.data.first().index - 1
+            previous.data.map { it.index }.intersect(result.data.map { it.index }.toSet()) shouldBe emptySet()
+            candidatePageStart(15, 16, 48) shouldBe 16
+            candidatePageStart(196, 16, 48) shouldBe 160
+        }
+
+        "refresh uses the visible global candidate only from the same snapshot" {
+            val snapshot = CandidateSnapshot(7, 19, 23)
+            val api = candidateApi { _, _, _ -> emptyArray() }
+            val source = CandidatesPagingSource(candidateSession(api), 500, 16, snapshot)
+            fun state(origin: CandidateSnapshot) = PagingState(
+                pages = listOf(
+                    PagingSource.LoadResult.Page(
+                        data = (160 until 208).map { CandidateRow(CandidateProto("candidate$it", "", ""), it, origin) },
+                        prevKey = 112,
+                        nextKey = 208,
+                    ),
+                ),
+                anchorPosition = 36,
+                config = PagingConfig(pageSize = 48, enablePlaceholders = false),
+                leadingPlaceholderCount = 0,
+            )
+            source.getRefreshKey(state(snapshot)) shouldBe 160
+            source.getRefreshKey(state(snapshot.copy(generation = 20))) shouldBe null
         }
     })
 

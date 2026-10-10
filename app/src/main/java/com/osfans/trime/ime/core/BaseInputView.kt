@@ -6,10 +6,15 @@
 package com.osfans.trime.ime.core
 
 import android.annotation.SuppressLint
+import android.app.AlertDialog
 import android.content.res.Resources
 import android.view.View
 import android.view.WindowInsets
+import android.view.WindowManager
 import android.widget.PopupMenu
+import android.widget.ScrollView
+import android.widget.TextView
+import androidx.annotation.StringRes
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.text.bold
 import androidx.core.text.buildSpannedString
@@ -20,6 +25,7 @@ import com.osfans.trime.R
 import com.osfans.trime.core.CandidateSnapshot
 import com.osfans.trime.core.Candidates
 import com.osfans.trime.core.CompositionProto
+import com.osfans.trime.core.RimeApi
 import com.osfans.trime.core.RimeMessage
 import com.osfans.trime.core.T9StateProto
 import com.osfans.trime.daemon.RimeSession
@@ -29,8 +35,12 @@ import com.osfans.trime.data.theme.ThemeManager
 import com.osfans.trime.data.theme.ThemePrefs
 import com.osfans.trime.data.theme.ThemeScope
 import com.osfans.trime.ime.keyboard.InputFeedbackManager
+import com.osfans.trime.util.toast
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import splitties.dimensions.dp
 import splitties.views.dsl.core.withTheme
 import kotlin.math.max
@@ -73,6 +83,7 @@ abstract class BaseInputView(
     val themedContext = context.withTheme(android.R.style.Theme_DeviceDefault_Settings)
 
     private var candidateActionMenu: PopupMenu? = null
+    private var candidateFullTextDialog: AlertDialog? = null
 
     fun resetEditorUi() {
         dismissCandidateActionMenu()
@@ -93,7 +104,11 @@ abstract class BaseInputView(
             }
         }
         service.lifecycleScope.launch {
-            if (!service.isCurrentEditor(editorToken) || !view.isAttachedToWindow) return@launch
+            if (!service.isCurrentEditor(editorToken) || !view.isAttachedToWindow ||
+                !snapshot.isValid || snapshot != rime.run { candidateSnapshotCached }
+            ) {
+                return@launch
+            }
             InputFeedbackManager.keyPressVibrate(view, longPress = true)
             candidateActionMenu =
                 PopupMenu(themedContext, view).apply {
@@ -101,9 +116,25 @@ abstract class BaseInputView(
                         isEnabled = false
                     }
                     menu.add(R.string.forget_this_word).setOnMenuItemClickListener {
-                        service.postRimeJob {
-                            if (service.isCurrentEditor(editorToken)) deleteCandidate(idx, global, snapshot)
+                        runCandidateAction(editorToken, R.string.candidate_forgotten, R.string.candidate_forget_failed) {
+                            deleteCandidate(idx, global, snapshot)
                         }
+                        true
+                    }
+                    menu.add(R.string.candidate_pin).setOnMenuItemClickListener {
+                        runCandidateAction(editorToken, R.string.candidate_pinned, R.string.candidate_action_failed) {
+                            pinCandidate(idx, global, snapshot)
+                        }
+                        true
+                    }
+                    menu.add(R.string.candidate_restore_ranking).setOnMenuItemClickListener {
+                        runCandidateAction(editorToken, R.string.candidate_ranking_restored, R.string.candidate_action_failed) {
+                            resetCandidateRanking(snapshot)
+                        }
+                        true
+                    }
+                    menu.add(R.string.candidate_read_full_text).setOnMenuItemClickListener {
+                        showCandidateFullText(text, editorToken)
                         true
                     }
                     setOnDismissListener {
@@ -111,6 +142,54 @@ abstract class BaseInputView(
                     }
                     show()
                 }
+        }
+    }
+
+    private fun runCandidateAction(
+        editorToken: Long,
+        @StringRes success: Int,
+        @StringRes failure: Int,
+        action: suspend RimeApi.() -> Boolean,
+    ) {
+        service.postRimeJob {
+            if (!service.isCurrentEditor(editorToken)) return@postRimeJob
+            val applied = try {
+                action()
+            } catch (cancelled: CancellationException) {
+                throw cancelled
+            } catch (_: Exception) {
+                // Neither the input text nor exception details belong in content logs.
+                false
+            }
+            withContext(Dispatchers.Main.immediate) {
+                if (service.isCurrentEditor(editorToken) && isAttachedToWindow) {
+                    service.toast(if (applied) success else failure)
+                }
+            }
+        }
+    }
+
+    private fun showCandidateFullText(text: String, editorToken: Long) {
+        if (!service.isCurrentEditor(editorToken) || !isAttachedToWindow || windowToken == null) return
+        candidateFullTextDialog?.dismiss()
+        val content = TextView(themedContext).apply {
+            this.text = text
+            textSize = 20f
+            setPadding(dp(16), dp(12), dp(16), dp(12))
+        }
+        val scroll = ScrollView(themedContext).apply { addView(content) }
+        val dialog = AlertDialog.Builder(themedContext)
+            .setTitle(R.string.candidate_read_full_text)
+            .setView(scroll)
+            .setPositiveButton(android.R.string.ok, null)
+            .create()
+        try {
+            // Trime attaches the dialog to the live IME window, including on Android 5.
+            service.showDialog(dialog)
+            candidateFullTextDialog = dialog
+        } catch (_: WindowManager.BadTokenException) {
+            dialog.dismiss()
+            service.toast(R.string.candidate_action_failed)
         }
     }
 
@@ -151,6 +230,8 @@ abstract class BaseInputView(
     fun dismissCandidateActionMenu() {
         candidateActionMenu?.dismiss()
         candidateActionMenu = null
+        candidateFullTextDialog?.dismiss()
+        candidateFullTextDialog = null
     }
 
     override fun onAttachedToWindow() {
