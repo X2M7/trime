@@ -14,6 +14,14 @@ SPDX-License-Identifier: GPL-3.0-or-later
 
 [English](README.md) | 简体中文 | [繁體中文](README_tc.md)
 
+## T09 开发验收状态
+
+当前编译提交 `d4994026` 的构建8通过：203项host、663项应用JVM本轮执行、9项build-logic缓存，双Lint0。Android 5.0/API21与Android 15/API35各30项混输检查及两主题语言额外功能通过：每API24份proof、12次真实进程重建、2次待提交64切英文，恢复和owned停止完成。两API语言完整日志证据闭包完成，普通警告仍UNKNOWN；当前正常Release在Android 15两主题各3轮通过：浮层1→0→1、同进程、准确一次提交，原文件停止后还原；完整日志未检出该范围的崩溃或约4秒浮层签名。
+
+严格成本比较实际为false；7项匹配任务未退步。仅标准主题Android 16、Wi-Fi、B站三项子集导航14→6（下降57.1%）、总动作39→31（下降20.5%）。邮件/URL起终键盘ID不同保留不可比，旧Trime不可达路线只记新增能力。API35 Debug两次约4秒窗口停顿仍未决；上游55条弃用提示、每Release APK两条META-INF提示及普通设备警告保留。真机P95/PSS、ARM64运行与一般准确率未测。
+
+公开 [v3.3.13-t9.11](https://github.com/X2M7/trime/releases/tag/v3.3.13-t9.11) 是T08稳定版，不含T09；T09源码及本记录同步在fork的develop，不新增稳定标签。详见 [T09验收记录](script/quality/VALIDATION-T09.md)。最终文档HEAD不改变当前APK的编译来源。
+
 ## 当前状态：v3.3.13-t9.11 T08 验收记录
 
 **本次验收通过；公开发布状态以 GitHub 标签为准。** 本版实现 T08 候选快照关联、有界分页与可选数值延迟记录，维持输入按序送达和既有 JNI 聚合响应。T09 中英、数字、符号混输优化未进入该标签。

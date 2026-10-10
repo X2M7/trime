@@ -16,6 +16,14 @@ Rime IME for Android
 
 English | [简体中文](README_sc.md) | [繁體中文](README_tc.md)
 
+## T09 development validation
+
+Compiled commit `d4994026` passed Build8: 203 host checks, 663 freshly executed app JVM tests, 9 cached build-logic tests and zero Lint issues in both variants. Android 5.0/API21 and Android 15/API35 each passed 30 mixed-input cases and two-theme language functional extras: 24 proofs, 12 real process recreations and 2 pending-composition-to-English transitions per API, followed by restoration and owned emulator shutdown. Both APIs' complete language-log evidence is closed, while ordinary warnings remain UNKNOWN; the current normal Release passed three popup rounds per theme on Android 15: visibility 1→0→1, the same process, one exact commit and stopped-file restoration. Full logs show no critical crash or four-second popup signature in this scope.
+
+The strict comparison returned false. Seven matching tasks did not regress. Only the standard theme's Android 16, Wi-Fi and B站 subset reduced navigation from 14 to 6 actions (57.1%) and total actions from 39 to 31 (20.5%). Email/URL keyboard IDs differ and remain incomparable; previously unreachable Trime routes are recorded as added capabilities. Two approximately four-second API35 Debug window stalls remain unresolved. The 55 upstream deprecations, two META-INF warnings per Release APK and ordinary device warnings remain recorded; physical P95/PSS, ARM64 runtime and general accuracy are unmeasured.
+
+Public [v3.3.13-t9.11](https://github.com/X2M7/trime/releases/tag/v3.3.13-t9.11) is the T08 stable release and contains no T09 changes. T09 source and this record are synchronized on the fork’s develop branch; this work does not create another stable tag. See the [T09 validation record](script/quality/VALIDATION-T09.md). A later documentation HEAD does not change the APK's compiled source.
+
 ## Current status: v3.3.13-t9.11 T08 acceptance record
 
 **Acceptance completed; publication status follows the GitHub tag.** This version contains T08 candidate snapshot guards, bounded paging and optional numeric latency diagnostics. Input delivery remains ordered and the existing aggregate JNI response is retained. T09 mixed-input changes are outside this tag.
