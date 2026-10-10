@@ -73,6 +73,7 @@ import com.osfans.trime.ui.main.ClipEditActivity
 import com.osfans.trime.util.sp
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
@@ -824,6 +825,9 @@ object EditorLifecycleProbe {
                 row.addView(chat, LinearLayout.LayoutParams(-1, 72))
                 row.addView(other, LinearLayout.LayoutParams(-1, 72))
                 editor.setContentView(row)
+                // ClipEditActivity normally uses a small floating dialog window. This disposable
+                // fixture needs a real host surface beside the full-width IME preedit.
+                editor.window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
                 chat.requestFocus()
                 Triple(chat, other, row)
             }
@@ -953,16 +957,58 @@ object EditorLifecycleProbe {
                             checkNoTouchPopup()
                         }
                         val hostPointerActions = mutableListOf<Int>()
-                        val hostTarget = main {
+                        val hostContent = main { editor.findViewById<FrameLayout>(android.R.id.content) }
+                        fun hostGapGeometry(): Pair<Rect, String> {
                             val decor = checkNotNull(service.window.window).decorView
                             val preeditBounds = visibleWindowBounds(root)
                             val decorScreen = IntArray(2).also(decor::getLocationOnScreen)
                             val decorWindow = IntArray(2).also(decor::getLocationInWindow)
-                            val hostContent = editor.findViewById<FrameLayout>(android.R.id.content)
                             val hostScreen = IntArray(2).also(hostContent::getLocationOnScreen)
-                            val left = decorScreen[0] - decorWindow[0] + decor.width - 48 - hostScreen[0]
-                            val top = decorScreen[1] - decorWindow[1] + preeditBounds.centerY() - 16 - hostScreen[1]
-                            check(left >= 0 && top >= 0 && left + 32 <= hostContent.width && top + 32 <= hostContent.height)
+                            val hostVisible = Rect()
+                            val hostIsVisible = hostContent.isShown && hostContent.getLocalVisibleRect(hostVisible)
+                            hostVisible.offset(hostScreen[0], hostScreen[1])
+                            val windowScreenX = decorScreen[0] - decorWindow[0]
+                            val windowScreenY = decorScreen[1] - decorWindow[1]
+                            val preeditScreen = Rect(preeditBounds).apply { offset(windowScreenX, windowScreenY) }
+                            val available = Rect(preeditScreen.right, preeditScreen.top, windowScreenX + decor.width, preeditScreen.bottom)
+                            val targetScreen = Rect()
+                            val targetWindow = Rect()
+                            val insets = touchInsets()
+                            if (!preeditBounds.isEmpty && hostIsVisible && available.intersect(hostVisible) && available.width() >= 32 && available.height() >= 32) {
+                                targetScreen.set(available.centerX() - 16, available.centerY() - 16, available.centerX() + 16, available.centerY() + 16)
+                                targetWindow.set(targetScreen)
+                                targetWindow.offset(-windowScreenX, -windowScreenY)
+                                if (!Region(targetWindow).apply { op(insets.touchableRegion, Region.Op.INTERSECT) }.isEmpty) targetScreen.setEmpty()
+                            }
+                            return targetScreen to "hostVisible=$hostVisible hostScreen=${hostScreen.contentToString()} " +
+                                "hostSize=${hostContent.width}x${hostContent.height} hostScroll=${hostContent.scrollX},${hostContent.scrollY} " +
+                                "hostPadding=${hostContent.paddingLeft},${hostContent.paddingTop},${hostContent.paddingRight},${hostContent.paddingBottom} " +
+                                "decorScreen=${decorScreen.contentToString()} decorWindow=${decorWindow.contentToString()} decorSize=${decor.width}x${decor.height} " +
+                                "preeditWindow=$preeditBounds preeditScreen=$preeditScreen intersection=$available targetScreen=$targetScreen targetWindow=$targetWindow " +
+                                "touchRegion=${insets.touchableRegion}"
+                        }
+                        var hostGeometryDiagnostic = "Host geometry has not been sampled"
+                        try {
+                            until("$theme actual host content can fit a pointer target beside preedit") {
+                                val (target, diagnostic) = hostGapGeometry()
+                                hostGeometryDiagnostic = diagnostic
+                                !target.isEmpty
+                            }
+                        } catch (failure: TimeoutCancellationException) {
+                            throw IllegalStateException("$theme host pointer target geometry did not become reachable: $hostGeometryDiagnostic", failure)
+                        }
+                        var expectedHostTargetScreen = Rect()
+                        val hostTarget = main {
+                            val (targetScreen, diagnostic) = hostGapGeometry()
+                            check(!targetScreen.isEmpty) { "$theme host pointer target geometry changed: $diagnostic" }
+                            expectedHostTargetScreen = Rect(targetScreen)
+                            val hostScreen = IntArray(2).also(hostContent::getLocationOnScreen)
+                            val left = targetScreen.left - hostScreen[0] + hostContent.scrollX - hostContent.paddingLeft
+                            val top = targetScreen.top - hostScreen[1] + hostContent.scrollY - hostContent.paddingTop
+                            check(left >= 0 && top >= 0 && left + 32 <= hostContent.width && top + 32 <= hostContent.height) {
+                                "$theme host pointer local placement is outside content: left=$left top=$top $diagnostic"
+                            }
+                            phase("HOST_POINTER_GEOMETRY: $theme left=$left top=$top $diagnostic")
                             object : EditText(editor) {
                                 @SuppressLint("ClickableViewAccessibility")
                                 override fun onTouchEvent(event: MotionEvent): Boolean {
@@ -987,6 +1033,15 @@ object EditorLifecycleProbe {
                             until("$theme host editor target is visible in the empty preedit gap") { hostTarget.isShown && hostTarget.isLaidOut }
                             delay(150)
                             touchStage("before_host_gap_pointer", theme)
+                            main {
+                                val actualScreen = Rect()
+                                check(hostTarget.getLocalVisibleRect(actualScreen)) { "$theme host pointer target is clipped: ${hostGapGeometry().second}" }
+                                val targetLocation = IntArray(2).also(hostTarget::getLocationOnScreen)
+                                actualScreen.offset(targetLocation[0], targetLocation[1])
+                                check(actualScreen == expectedHostTargetScreen) {
+                                    "$theme host pointer target moved or was clipped: expected=$expectedHostTargetScreen actual=$actualScreen ${hostGapGeometry().second}"
+                                }
+                            }
                             tapActualView(hostTarget, imeTarget = false)
                             check(
                                 main {
