@@ -1805,7 +1805,7 @@ object EditorLifecycleProbe {
                                 check(getRawInput() == "ni")
                                 expected = getCandidates(0, 1, holder.snapshot).single().text
                             }
-                            check(expected.isNotEmpty() && main { holder.ui.root.text.toString().contains(expected) })
+                            check(expected.isNotEmpty() && main { descendants(holder.ui.root).filterIsInstance<TextView>().any { it.isShown && it.text.toString().contains(expected) } })
                             delay(150)
                             tapActualView(holder.ui.root)
                             until("$theme real floating candidate pointer commits its native text exactly once") { chat.text.toString() == before + expected }
