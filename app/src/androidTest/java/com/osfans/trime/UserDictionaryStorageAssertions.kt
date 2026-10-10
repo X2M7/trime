@@ -245,7 +245,7 @@ internal object UserDictionaryStorageAssertions {
                     val location = checkNotNull(snapshotFile)
                     check(location.readBytes().contentEquals(snapshot))
                     check(
-                        checkNotNull(location.parentFile.listFiles()).none { file ->
+                        checkNotNull(checkNotNull(location.parentFile).listFiles()).none { file ->
                             file.name.startsWith("$dictionaryName.userdb.txt.tmp.")
                         },
                     ) { "Successful portable backup left an owned temporary file" }
