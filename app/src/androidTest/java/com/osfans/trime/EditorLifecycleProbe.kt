@@ -13,12 +13,14 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Rect
 import android.graphics.Region
+import android.graphics.drawable.ColorDrawable
 import android.inputmethodservice.InputMethodService
 import android.os.Build
 import android.os.Bundle
 import android.os.SystemClock
 import android.text.InputType
 import android.util.Log
+import android.view.ContextThemeWrapper
 import android.view.InputDevice
 import android.view.KeyEvent
 import android.view.MotionEvent
@@ -38,6 +40,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.children
 import androidx.recyclerview.widget.RecyclerView
+import androidx.transition.Transition
 import com.osfans.trime.core.Rime
 import com.osfans.trime.core.RimeApi
 import com.osfans.trime.core.RimeSchema
@@ -49,6 +52,8 @@ import com.osfans.trime.data.theme.Theme
 import com.osfans.trime.data.theme.ThemeManager
 import com.osfans.trime.data.theme.model.KeyActionToken
 import com.osfans.trime.ime.broadcast.EnterKeyDisplayDelegate
+import com.osfans.trime.ime.broadcast.InputBroadcastReceiver
+import com.osfans.trime.ime.broadcast.InputBroadcaster
 import com.osfans.trime.ime.candidates.CandidateViewHolder
 import com.osfans.trime.ime.candidates.compact.CompactCandidateDelegate
 import com.osfans.trime.ime.candidates.popup.PagedCandidatesUi
@@ -71,6 +76,9 @@ import com.osfans.trime.ime.keyboard.KeyboardWindow
 import com.osfans.trime.ime.switches.SwitchOptionAdapter
 import com.osfans.trime.ime.switches.SwitchOptionEntry
 import com.osfans.trime.ime.switches.SwitchOptionWindow
+import com.osfans.trime.ime.window.BoardWindow
+import com.osfans.trime.ime.window.BoardWindowManager
+import com.osfans.trime.ime.window.ResidentWindow
 import com.osfans.trime.ui.main.EditorProbeActivity
 import com.osfans.trime.util.sp
 import kotlinx.coroutines.CompletableDeferred
@@ -82,6 +90,8 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeout
 import org.json.JSONArray
 import org.json.JSONObject
+import org.kodein.di.DI
+import org.kodein.di.bindInstance
 import org.kodein.di.direct
 import org.kodein.di.instance
 import java.io.File
@@ -787,6 +797,143 @@ object EditorLifecycleProbe {
             0,
             Bundle().apply { putString("stream", "PASS: manual privacy preserves the user's transient keyboard\n") },
         )
+    }
+
+    /** Exercise the real manager with disposable views and observable window callbacks. */
+    private fun verifyResidentWindowIdempotency(instrumentation: Instrumentation, editor: Activity) {
+        var outcome: Result<Unit>? = null
+        instrumentation.runOnMainSync {
+            outcome = runCatching {
+                val broadcaster = InputBroadcaster()
+                val di = DI {
+                    bindInstance<ContextThemeWrapper> { ContextThemeWrapper(editor, android.R.style.Theme_DeviceDefault) }
+                    bindInstance<InputBroadcaster> { broadcaster }
+                }
+                val manager = BoardWindowManager(di)
+                var activeColor = Color.RED
+                val attached = mutableListOf<BoardWindow>()
+                val detached = mutableListOf<BoardWindow>()
+                broadcaster.addReceiver(object : InputBroadcastReceiver {
+                    override fun onWindowAttached(window: BoardWindow) {
+                        attached.add(window)
+                    }
+
+                    override fun onWindowDetached(window: BoardWindow) {
+                        detached.add(window)
+                    }
+                })
+                class CountedWindow(override val key: ResidentWindow.Key) :
+                    BoardWindow.NoBarBoardWindow(di),
+                    ResidentWindow,
+                    InputBroadcastReceiver {
+                    var creates = 0
+                    var beforeAttaches = 0
+                    var attaches = 0
+                    var detaches = 0
+                    var colorRefreshes = 0
+                    var enterTransitions = 0
+                    var exitTransitions = 0
+                    var inputStarts = 0
+                    lateinit var createdView: FrameLayout
+
+                    override fun onCreateView(): View {
+                        creates += 1
+                        return FrameLayout(context).also { createdView = it }
+                    }
+
+                    override fun beforeAttached() {
+                        beforeAttaches += 1
+                    }
+
+                    override fun refreshColors() {
+                        colorRefreshes += 1
+                        createdView.setBackgroundColor(activeColor)
+                    }
+
+                    override fun onAttached() {
+                        check(createdView.parent === manager.view) { "Window callback ran before actual view attachment" }
+                        check((createdView.background as ColorDrawable).color == activeColor) { "Window attached before color refresh" }
+                        attaches += 1
+                    }
+
+                    override fun onDetached() {
+                        check(createdView.parent === manager.view) { "Window callback ran after actual view removal" }
+                        detaches += 1
+                    }
+
+                    override fun enterAnimation(lastWindow: BoardWindow): Transition? {
+                        enterTransitions += 1
+                        return null
+                    }
+
+                    override fun exitAnimation(nextWindow: BoardWindow): Transition? {
+                        exitTransitions += 1
+                        return null
+                    }
+
+                    override fun onStartInput(info: EditorInfo) {
+                        inputStarts += 1
+                    }
+
+                    fun lifecycleCounts() = listOf(creates, beforeAttaches, attaches, detaches, colorRefreshes, enterTransitions, exitTransitions)
+                }
+
+                val firstKey = object : ResidentWindow.Key {}
+                val secondKey = object : ResidentWindow.Key {}
+                val first = CountedWindow(firstKey)
+                val second = CountedWindow(secondKey)
+                try {
+                    manager.cacheResidentWindow(first, createView = true)
+                    val originalView = first.createdView
+                    manager.cacheResidentWindow(first)
+                    manager.attachWindow(firstKey)
+                    check(first.creates == 1 && first.createdView === originalView) { "Repeated registration discarded the cached resident view" }
+                    check(manager.view.childCount == 1 && manager.view.getChildAt(0) === originalView && originalView.parent === manager.view)
+                    check(first.lifecycleCounts() == listOf(1, 1, 1, 0, 1, 0, 0)) { "Initial resident lifecycle did not execute exactly once" }
+                    broadcaster.onStartInput(EditorInfo())
+                    check(first.inputStarts == 1) { "Repeated registration changed the resident broadcast subscription" }
+
+                    val beforeDuplicateAttach = first.lifecycleCounts()
+                    manager.attachWindow(first)
+                    manager.attachWindow(firstKey)
+                    manager.cacheResidentWindow(first, createView = true)
+                    check(first.lifecycleCounts() == beforeDuplicateAttach) { "Same resident repeated creation, callbacks, color refresh or transitions" }
+                    check(attached == listOf(first) && detached.isEmpty()) { "Same resident emitted duplicate window broadcasts" }
+                    check(manager.view.childCount == 1 && manager.view.getChildAt(0) === originalView && originalView.parent === manager.view)
+
+                    manager.cacheResidentWindow(second)
+                    check(second.creates == 0) { "Lazy registration created its resident view" }
+                    manager.attachWindow(secondKey)
+                    check(first.detaches == 1 && first.exitTransitions == 1 && second.lifecycleCounts() == listOf(1, 1, 1, 0, 1, 1, 0)) { "Switching resident windows skipped lifecycle or transition callbacks" }
+                    check(originalView.parent == null && manager.view.childCount == 1 && manager.view.getChildAt(0) === second.createdView)
+                    check(attached == listOf(first, second) && detached == listOf(first))
+
+                    activeColor = Color.BLUE
+                    manager.refreshColors()
+                    check(second.colorRefreshes == 2 && (second.createdView.background as ColorDrawable).color == activeColor) { "Explicit active-window color refresh was lost" }
+                    check(first.colorRefreshes == 1 && (originalView.background as ColorDrawable).color == Color.RED)
+                    manager.attachWindow(firstKey)
+                    check(first.creates == 1 && first.createdView === originalView && first.beforeAttaches == 2 && first.attaches == 2 && first.colorRefreshes == 2) { "Reattachment failed to reuse and restyle the inactive resident" }
+                    check((originalView.background as ColorDrawable).color == activeColor && second.createdView.parent == null)
+                    check(first.enterTransitions == 1 && second.exitTransitions == 1 && second.detaches == 1)
+                    check(attached == listOf(first, second, first) && detached == listOf(first, second))
+
+                    val replacement = CountedWindow(firstKey)
+                    val beforeRejectedRegistration = first.lifecycleCounts()
+                    val failure = runCatching { manager.cacheResidentWindow(replacement, createView = true) }.exceptionOrNull()
+                    check(failure is IllegalStateException && replacement.creates == 0) { "Occupied resident key accepted a different window instance" }
+                    manager.attachWindow(firstKey)
+                    check(first.lifecycleCounts() == beforeRejectedRegistration && manager.view.getChildAt(0) === originalView) { "Rejected registration changed the active cached resident" }
+                    broadcaster.onStartInput(EditorInfo())
+                    check(first.inputStarts == 2 && second.inputStarts == 1 && replacement.inputStarts == 0) { "Rejected registration changed broadcast ownership" }
+                    check(attached == listOf(first, second, first) && detached == listOf(first, second))
+                } finally {
+                    broadcaster.clear()
+                    manager.view.removeAllViews()
+                }
+            }
+        }
+        checkNotNull(outcome).getOrThrow()
     }
 
     fun run(instrumentation: Instrumentation) {
@@ -2156,6 +2303,8 @@ object EditorLifecycleProbe {
                     }
                 }
             }
+            verifyResidentWindowIdempotency(instrumentation, editor)
+            phase("PASS: resident windows preserve cached views and skip duplicate attachment lifecycles")
             result.putString("stream", "PASS: input-field matrix, editor actions, stale output rejection, third-party T9 fallback, real WebView and 100 show/hide cycles\n")
             passed = true
         } catch (failure: Throwable) {
