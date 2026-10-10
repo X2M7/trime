@@ -8,6 +8,7 @@ package com.osfans.trime.ime.candidates.compact
 import android.content.Context
 import android.view.ViewGroup
 import androidx.core.view.updateLayoutParams
+import androidx.recyclerview.widget.RecyclerView
 import com.chad.library.adapter4.BaseQuickAdapter
 import com.google.android.flexbox.FlexboxLayoutManager
 import com.osfans.trime.core.CandidateProto
@@ -48,6 +49,8 @@ open class CompactCandidateViewAdapter(
 
     var layoutFlexShrink: Float = 1f
 
+    var horizontalScroll: Boolean = false
+
     fun updateLayoutParams(minWidth: Int, flexGrow: Float) {
         layoutMinWidth = minWidth
         layoutFlexGrow = flexGrow
@@ -73,7 +76,7 @@ open class CompactCandidateViewAdapter(
         val ui = CandidateItemUi(context, scope)
         ui.root.apply {
             minimumWidth = dp(40)
-            layoutParams = FlexboxLayoutManager.LayoutParams(wrapContent, matchParent)
+            layoutParams = if (horizontalScroll) RecyclerView.LayoutParams(wrapContent, matchParent) else FlexboxLayoutManager.LayoutParams(wrapContent, matchParent)
         }
         return CandidateViewHolder(ui)
     }
@@ -91,10 +94,16 @@ open class CompactCandidateViewAdapter(
         holder.idx = item.index
         holder.snapshot = item.snapshot
         holder.ui.root.identity = CandidateIdentity(item.snapshot, item.index)
-        holder.ui.root.updateLayoutParams<FlexboxLayoutManager.LayoutParams> {
-            minWidth = this@CompactCandidateViewAdapter.layoutMinWidth
-            flexGrow = this@CompactCandidateViewAdapter.layoutFlexGrow
-            flexShrink = this@CompactCandidateViewAdapter.layoutFlexShrink
+        val root = holder.ui.root
+        if (horizontalScroll) {
+            if (root.layoutParams is FlexboxLayoutManager.LayoutParams) root.layoutParams = RecyclerView.LayoutParams(root.layoutParams)
+        } else {
+            if (root.layoutParams !is FlexboxLayoutManager.LayoutParams) root.layoutParams = FlexboxLayoutManager.LayoutParams(root.layoutParams)
+            root.updateLayoutParams<FlexboxLayoutManager.LayoutParams> {
+                minWidth = this@CompactCandidateViewAdapter.layoutMinWidth
+                flexGrow = this@CompactCandidateViewAdapter.layoutFlexGrow
+                flexShrink = this@CompactCandidateViewAdapter.layoutFlexShrink
+            }
         }
     }
 }

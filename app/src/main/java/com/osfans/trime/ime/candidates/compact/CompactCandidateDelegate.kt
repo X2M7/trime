@@ -12,9 +12,8 @@ import android.graphics.drawable.shapes.RectShape
 import android.view.ContextThemeWrapper
 import androidx.core.view.isNotEmpty
 import androidx.core.view.updateLayoutParams
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.flexbox.FlexDirection
-import com.google.android.flexbox.FlexWrap
 import com.google.android.flexbox.FlexboxLayoutManager
 import com.osfans.trime.R
 import com.osfans.trime.core.CandidateSnapshot
@@ -94,8 +93,9 @@ class CompactCandidateDelegate(override val di: DI) :
     val unrolledCandidateOffset = _unrolledCandidateOffset.asSharedFlow()
 
     fun refreshUnrolled(childCount: Int) {
-        val offset = if (horizontalScroll) 0 else childCount
-        val anchor = if (horizontalScroll) layoutManager.findFirstVisibleItemPosition().coerceAtLeast(0) else offset
+        val scrolling = layoutManager is LinearLayoutManager
+        val offset = if (scrolling) 0 else childCount
+        val anchor = if (scrolling) CompactCandidateLayoutManagers.firstVisibleIndex(layoutManager).coerceAtLeast(0) else offset
         _unrolledCandidateOffset.tryEmit(UnrolledCandidateState(offset, adapter.total, adapter.highlightedIdx, adapter.snapshot, anchor))
         bar.unrollButtonStateMachine.push(
             UnrollButtonStateMachine.TransitionEvent.UnrolledCandidatesUpdated,
@@ -133,37 +133,30 @@ class CompactCandidateDelegate(override val di: DI) :
         layoutFlexGrow = flexGrow
     }
 
-    val layoutManager by lazy {
-        object : FlexboxLayoutManager(context) {
-            override fun canScrollHorizontally(): Boolean = horizontalScroll && super.canScrollHorizontally()
+    private val scrollingLayoutManager by lazy { CompactCandidateLayoutManagers.create(context, true, ::onLayoutCompleted) }
+    private val wrappedLayoutManager by lazy { CompactCandidateLayoutManagers.create(context, false, ::onLayoutCompleted) }
+    private var activeLayoutManager: RecyclerView.LayoutManager? = null
 
-            override fun canScrollVertically(): Boolean = false
+    val layoutManager: RecyclerView.LayoutManager
+        get() = activeLayoutManager ?: desiredLayoutManager().also { activeLayoutManager = it }
 
-            override fun onLayoutCompleted(state: RecyclerView.State?) {
-                super.onLayoutCompleted(state)
-                val cnt = this.childCount
-                if (secondLayoutPassNeeded) {
-                    if (cnt < adapter.itemCount) {
-                        // [^2] RecyclerView can't display all candidates
-                        // update LayoutParams in onLayoutCompleted would trigger another
-                        // onLayoutCompleted, skip the second one to avoid infinite loop
-                        if (secondLayoutPassDone) return
-                        secondLayoutPassDone = true
-                        for (i in 0 until cnt) {
-                            getChildAt(i)!!.updateLayoutParams<LayoutParams> {
-                                flexGrow = 1f
-                            }
-                        }
-                    } else {
-                        secondLayoutPassNeeded = false
-                    }
+    private fun desiredLayoutManager() = if (horizontalScroll) scrollingLayoutManager else wrappedLayoutManager
+
+    private fun onLayoutCompleted(manager: RecyclerView.LayoutManager) {
+        val count = manager.childCount
+        if (manager is FlexboxLayoutManager && secondLayoutPassNeeded) {
+            if (count < adapter.itemCount) {
+                // Updating flexGrow requests another layout; apply it once.
+                if (secondLayoutPassDone) return
+                secondLayoutPassDone = true
+                for (index in 0 until count) {
+                    manager.getChildAt(index)!!.updateLayoutParams<FlexboxLayoutManager.LayoutParams> { flexGrow = 1f }
                 }
-                refreshUnrolled(cnt)
+            } else {
+                secondLayoutPassNeeded = false
             }
-        }.apply {
-            flexDirection = FlexDirection.ROW
-            flexWrap = if (horizontalScroll) FlexWrap.NOWRAP else FlexWrap.WRAP
         }
+        refreshUnrolled(count)
     }
 
     private val separatorDrawable by lazy {
@@ -228,8 +221,14 @@ class CompactCandidateDelegate(override val di: DI) :
 
         val maxSpanCount = maxSpanCountPref.getValue()
 
-        val nextWrap = if (horizontalScroll) FlexWrap.NOWRAP else FlexWrap.WRAP
-        if (layoutManager.flexWrap != nextWrap) layoutManager.flexWrap = nextWrap
+        adapter.horizontalScroll = horizontalScroll
+        val nextManager = desiredLayoutManager()
+        if (layoutManager !== nextManager) {
+            view.stopScroll()
+            activeLayoutManager = nextManager
+            view.layoutManager = nextManager
+            adapter.notifyItemRangeChanged(0, adapter.itemCount)
+        }
         if (data.snapshot != adapter.snapshot) {
             view.stopScroll()
             layoutManager.scrollToPosition(0)

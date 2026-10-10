@@ -298,6 +298,17 @@ object PersonalDictionaryProbe {
                         check(getRawInput() == "b" && candidateSnapshotCached == before)
                     }
                     var current = query(rankSchema, "a")
+                    val layoutRows = checkNotNull(session).runOnReady { getCandidates(0, 144, current) }
+                    val layoutOutcome = CompactCandidateLayoutAssertions.verify(instrumentation, layoutRows, current)
+                    withObserver {
+                        commit(layoutOutcome.expectedText) {
+                            checkNotNull(session).runOnReady {
+                                check(selectCandidate(layoutOutcome.selected.index, true, layoutOutcome.selected.snapshot))
+                            }
+                        }
+                    }
+                    phase("${layoutOutcome.checks} production candidate layout/touch checks preserve first-visible index and pixel offset through two relayouts, restore both parameter modes and select the real native index exactly once; legacy NOWRAP relayout reset observed=${layoutOutcome.legacyRelayoutResetObserved}; no screenshot claim")
+                    current = query(rankSchema, "a")
                     val commitsBeforeInvalidIndices = synchronized(commits) { commits.size }
                     var invalidIndexChecks = 0
                     withObserver {
