@@ -942,6 +942,265 @@ object EditorLifecycleProbe {
         checkNotNull(outcome).getOrThrow()
     }
 
+    /** Measure the actual bar branches after the original editor and visibility assertions. */
+    private fun verifyInputBarMeasurement(instrumentation: Instrumentation) {
+        var outcome: Result<Int>? = null
+        instrumentation.runOnMainSync {
+            outcome = runCatching {
+                val input = roots().asSequence().flatMap(::descendants).filterIsInstance<InputView>().first { it.isShown }
+                val bar = input.di.direct.instance<com.osfans.trime.ime.bar.InputBarDelegate>().view
+                check(bar.isShown && bar.width > 0 && bar.height > 0 && bar.childCount == 3) { "Actual input bar was not laid out" }
+                val originalBarChild = bar.displayedChild
+                val originalBarBounds = Rect(bar.left, bar.top, bar.right, bar.bottom)
+                val originalBarWidth = bar.width
+                val originalBarHeight = bar.height
+                fun measureAndLayout(animator: android.widget.ViewAnimator, width: Int, height: Int) {
+                    descendants(animator).forEach { it.forceLayout() }
+                    animator.measure(
+                        View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY),
+                        View.MeasureSpec.makeMeasureSpec(height, View.MeasureSpec.EXACTLY),
+                    )
+                    animator.layout(animator.left, animator.top, animator.left + width, animator.top + height)
+                    check(animator.measuredWidth == width && animator.measuredHeight == height) { "Displayed branch changed the exact bar allocation" }
+                }
+                var exercised = 0
+                try {
+                    // Expose the existing AlwaysUi before measuring its two actual child animators.
+                    bar.displayedChild = 0
+                    measureAndLayout(bar, originalBarWidth, originalBarHeight)
+                    val always = bar.getChildAt(0) as ViewGroup
+                    val innerAnimators = always.children.filterIsInstance<android.widget.ViewAnimator>().toList()
+                    check(innerAnimators.size == 2) { "AlwaysUi did not retain both production animators" }
+                    val animators = listOf(bar) + innerAnimators
+                    check(animators.toSet().size == 3)
+                    animators.forEach { animator ->
+                        val shouldSkipGone = animator === bar || animator.childCount == 3 ||
+                            (animator.layoutParams.width > 0 && animator.layoutParams.height > 0)
+                        check(animator.measureAllChildren == !shouldSkipGone) { "Production animator changed its fixed versus flexible size policy" }
+                        val originalChild = animator.displayedChild
+                        val originalCount = animator.childCount
+                        val originalChildren = animator.children.toList()
+                        val originalParams = originalChildren.map { it.layoutParams.width to it.layoutParams.height }
+                        val width = animator.width
+                        val height = animator.height
+                        val originalBounds = Rect(animator.left, animator.top, animator.right, animator.bottom)
+                        check(width > 0 && height > 0 && originalChild in 0 until originalCount)
+                        val innerWidth = width - animator.paddingLeft - animator.paddingRight
+                        val innerHeight = height - animator.paddingTop - animator.paddingBottom
+                        check(innerWidth > 0 && innerHeight > 0)
+                        val witness = object : View(animator.context) {
+                            var measures = 0
+                            override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+                                measures += 1
+                                setMeasuredDimension(View.MeasureSpec.getSize(widthMeasureSpec), View.MeasureSpec.getSize(heightMeasureSpec))
+                            }
+                        }.apply {
+                            tag = "input-bar-measurement-${UUID.randomUUID()}"
+                            visibility = View.GONE
+                            isClickable = false
+                            isFocusable = false
+                        }
+                        try {
+                            animator.addView(witness, FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT))
+                            check(animator.getChildAt(originalCount) === witness && witness.visibility == View.GONE)
+                            repeat(originalCount) { index ->
+                                animator.displayedChild = index
+                                val beforeGoneMeasure = witness.measures
+                                measureAndLayout(animator, width, height)
+                                check(if (shouldSkipGone) witness.measures == beforeGoneMeasure else witness.measures > beforeGoneMeasure) { "GONE witness did not follow the production fixed versus flexible size policy" }
+                                val selected = originalChildren[index]
+                                check(animator.getChildAt(index) === selected && selected.visibility == View.VISIBLE)
+                                check(originalChildren.withIndex().all { (otherIndex, child) -> otherIndex == index || child.visibility == View.GONE })
+                                check(selected.measuredWidth == innerWidth && selected.measuredHeight == innerHeight) { "Original displayed branch did not fill its existing bar allocation" }
+                                check(selected.width == innerWidth && selected.height == innerHeight) { "Original displayed branch lost its laid-out bounds" }
+                                check(originalChildren.map { it.layoutParams.width to it.layoutParams.height } == originalParams) { "Displayed branch switching rewrote production layout parameters" }
+                                exercised += 1
+                            }
+                            animator.displayedChild = originalCount
+                            measureAndLayout(animator, width, height)
+                            check(witness.visibility == View.VISIBLE && witness.measures > 0) { "Visible witness was incorrectly skipped" }
+                            check(witness.measuredWidth == innerWidth && witness.measuredHeight == innerHeight && witness.width == innerWidth && witness.height == innerHeight)
+                            val visibleMeasures = witness.measures
+                            animator.displayedChild = originalChild
+                            measureAndLayout(animator, width, height)
+                            check(witness.visibility == View.GONE)
+                            check(if (shouldSkipGone) witness.measures == visibleMeasures else witness.measures > visibleMeasures) { "Restored production branch changed its GONE measurement policy" }
+                        } finally {
+                            animator.displayedChild = originalChild
+                            animator.removeView(witness)
+                            measureAndLayout(animator, width, height)
+                            check(animator.childCount == originalCount && animator.children.toList() == originalChildren && witness.parent == null)
+                            check(animator.displayedChild == originalChild && Rect(animator.left, animator.top, animator.right, animator.bottom) == originalBounds)
+                        }
+                    }
+                    check(exercised in 7..8) { "Original input-bar branch coverage changed" }
+                } finally {
+                    bar.displayedChild = originalBarChild
+                    measureAndLayout(bar, originalBarWidth, originalBarHeight)
+                    check(bar.childCount == 3 && bar.displayedChild == originalBarChild && Rect(bar.left, bar.top, bar.right, bar.bottom) == originalBarBounds)
+                    bar.requestLayout()
+                }
+                exercised
+            }
+        }
+        val branches = checkNotNull(outcome).getOrThrow()
+        instrumentation.sendStatus(0, Bundle().apply { putString("stream", "PASS: actual input-bar animators preserve flexible sizing, skip fixed GONE measurement and retain $branches original displayed branches\n") })
+    }
+
+    /** Keep real third-party WRAP_CONTENT sizing without activating a copied theme. */
+    private fun verifyFlexibleToolbarMeasurement(instrumentation: Instrumentation) {
+        var outcome: Result<Unit>? = null
+        instrumentation.runOnMainSync {
+            outcome = runCatching {
+                val input = roots().asSequence().flatMap(::descendants).filterIsInstance<InputView>().first { it.isShown }
+                val liveTheme = input.di.direct.instance<Theme>()
+                val liveScope = input.di.direct.instance<com.osfans.trime.data.theme.ThemeScope>()
+                val keyboard = input.di.direct.instance<KeyboardWindow>().currentKeyboard
+                val context = input.di.direct.instance<ContextThemeWrapper>()
+                val fixedButton = com.osfans.trime.data.theme.model.ToolBar.Button(
+                    action = "a",
+                    foreground = com.osfans.trime.data.theme.model.ToolBar.Button.Foreground(style = ".", fontSize = 8f, padding = 0),
+                    size = listOf(24, 24),
+                )
+                listOf(listOf(24, 24), listOf(0, -1), listOf(-2, -2)).forEach { size ->
+                    val theme = liveTheme.copy(
+                        name = "toolbar-measurement-${UUID.randomUUID()}",
+                        toolBar = com.osfans.trime.data.theme.model.ToolBar(primaryButton = fixedButton, buttons = listOf(fixedButton.copy(size = size))),
+                    )
+                    val scope = com.osfans.trime.data.theme.ThemeScope(theme).apply {
+                        updateScheme(checkNotNull(liveScope.activeColorScheme))
+                    }
+                    val ui = com.osfans.trime.ime.bar.ui.AlwaysUi(context, scope, { keyboard })
+                    val animator = ui.root.children.filterIsInstance<android.widget.ViewAnimator>().single { it.childCount == 2 }
+                    val fixed = animator.layoutParams.width > 0 && animator.layoutParams.height > 0
+                    check(animator.measureAllChildren == !fixed) { "Third-party toolbar sizing did not follow its resolved dimensions" }
+                    val content = ui.root.children.filterIsInstance<android.widget.ViewAnimator>().single { it.childCount == 3 }
+                    check(!content.measureAllChildren)
+                    try {
+                        if (size == listOf(-2, -2)) {
+                            check(animator.layoutParams.width == ViewGroup.LayoutParams.WRAP_CONTENT && animator.layoutParams.height == ViewGroup.LayoutParams.WRAP_CONTENT)
+                            val width = input.width
+                            val height = input.di.direct.instance<com.osfans.trime.ime.bar.InputBarDelegate>().view.height
+                            check(width > 0 && height > 0)
+                            fun measure() {
+                                descendants(ui.root).forEach { it.forceLayout() }
+                                ui.root.measure(
+                                    View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY),
+                                    View.MeasureSpec.makeMeasureSpec(height, View.MeasureSpec.EXACTLY),
+                                )
+                                ui.root.layout(0, 0, width, height)
+                            }
+                            measure()
+                            val baselineWidth = animator.measuredWidth
+                            val originalChild = animator.displayedChild
+                            val originalChildren = animator.children.toList()
+                            val desiredWidth = minOf(width / 2, baselineWidth + 64)
+                            check(desiredWidth > baselineWidth) { "Isolated WRAP_CONTENT fixture lacked measurable spare width" }
+                            val witness = object : View(context) {
+                                var measures = 0
+                                override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+                                    measures += 1
+                                    setMeasuredDimension(resolveSize(desiredWidth, widthMeasureSpec), resolveSize(1, heightMeasureSpec))
+                                }
+                            }.apply { tag = "toolbar-wrap-measurement-${UUID.randomUUID()}" }
+                            try {
+                                animator.addView(witness, FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT))
+                                witness.visibility = View.GONE
+                                var retainedWidth = -1
+                                originalChildren.indices.forEach { index ->
+                                    animator.displayedChild = index
+                                    val before = witness.measures
+                                    measure()
+                                    check(witness.visibility == View.GONE && witness.measures > before) { "Flexible toolbar stopped measuring its hidden sizing child" }
+                                    check(animator.measuredWidth >= desiredWidth && animator.measuredWidth > baselineWidth) { "WRAP_CONTENT toolbar lost the hidden child's size contribution" }
+                                    if (retainedWidth < 0) retainedWidth = animator.measuredWidth
+                                    check(animator.measuredWidth == retainedWidth) { "Flexible toolbar footprint changed with its displayed button" }
+                                }
+                            } finally {
+                                animator.displayedChild = originalChild
+                                animator.removeView(witness)
+                                measure()
+                                check(witness.parent == null && animator.children.toList() == originalChildren && animator.measuredWidth == baselineWidth)
+                            }
+                        }
+                    } finally {
+                        ui.root.removeAllViews()
+                    }
+                }
+                check(input.di.direct.instance<Theme>() === liveTheme && input.di.direct.instance<com.osfans.trime.data.theme.ThemeScope>() === liveScope) { "Isolated toolbar replaced the live theme scope" }
+            }
+        }
+        checkNotNull(outcome).getOrThrow()
+    }
+
+    private fun verifyThemeFontDirectoryCache(instrumentation: android.app.Instrumentation) {
+        check(android.os.Looper.myLooper() != android.os.Looper.getMainLooper())
+        val context = instrumentation.targetContext
+        val selected = com.osfans.trime.data.theme.ThemeManager.prefs.selectedTheme.getValue()
+        val originalTheme = com.osfans.trime.data.theme.ThemeManager.activeTheme
+        val originalFonts = originalTheme.fonts
+        val originalScope = com.osfans.trime.data.theme.ColorManager.currentScope()
+        val root = com.osfans.trime.data.base.DataManager.userDataDir.canonicalFile
+        val directory = java.io.File(root, "fonts")
+        val createdDirectory = !directory.exists()
+        if (createdDirectory) check(directory.mkdir())
+        check(directory.isDirectory && directory.canonicalFile.parentFile == root)
+        val name = "runtime-font-cache-${java.util.UUID.randomUUID()}.ttf"
+        val font = java.io.File(directory, name)
+        check(!font.exists())
+        val isolatedTheme = originalTheme.copy(
+            style = originalTheme.style.copy(
+                keyFont = com.osfans.trime.data.theme.model.MaybeStringList.Scalar(name),
+                symbolFont = com.osfans.trime.data.theme.model.MaybeStringList.Scalar(name),
+                latinFont = com.osfans.trime.data.theme.model.MaybeStringList.Empty,
+                hanbFont = com.osfans.trime.data.theme.model.MaybeStringList.Empty,
+            ),
+        )
+        val fonts = isolatedTheme.fonts
+        try {
+            check(fonts.key === android.graphics.Typeface.DEFAULT)
+            check(fonts.symbol === android.graphics.Typeface.DEFAULT)
+            val resource = com.mikepenz.iconics.typeface.library.community.R.font.community_material_design_icons_font_v7_0_96
+            context.resources.openRawResource(resource).use { source ->
+                font.outputStream().use { target -> source.copyTo(target) }
+            }
+            check(font.isFile && font.length() > 0)
+            val added = fonts.key
+            check(added !== android.graphics.Typeface.DEFAULT)
+            check(fonts.key === added && fonts.symbol === added)
+            val oldModified = font.lastModified()
+            check(font.setLastModified(oldModified + 60_000L))
+            check(font.lastModified() != oldModified)
+            val changed = fonts.key
+            check(changed !== added && changed !== android.graphics.Typeface.DEFAULT)
+            check(fonts.key === changed && fonts.symbol === changed)
+            check(font.delete())
+            check(fonts.key === android.graphics.Typeface.DEFAULT)
+            check(fonts.symbol === android.graphics.Typeface.DEFAULT)
+            kotlinx.coroutines.runBlocking {
+                check(com.osfans.trime.data.theme.ThemeManager.selectTheme(selected) == selected)
+                check(com.osfans.trime.data.theme.ThemeManager.activeTheme === originalTheme)
+                check(com.osfans.trime.data.theme.ThemeManager.activeTheme.fonts === originalFonts)
+                check(com.osfans.trime.data.theme.ColorManager.currentScope() === originalScope)
+                check(com.osfans.trime.data.theme.ThemeManager.selectTheme(selected, forceReload = true) == selected)
+                val reloadedTheme = com.osfans.trime.data.theme.ThemeManager.activeTheme
+                check(reloadedTheme == originalTheme && reloadedTheme !== originalTheme)
+                check(reloadedTheme.fonts !== originalFonts)
+                check(com.osfans.trime.data.theme.ColorManager.currentScope() !== originalScope)
+            }
+            instrumentation.sendStatus(
+                0,
+                android.os.Bundle().apply {
+                    putString("stream", "PASS: font directory cache preserves missing/add/change/delete and actual equal/forced theme lifecycle\n")
+                },
+            )
+        } finally {
+            // Only the new UUID file may be removed. Never remove pre-existing user fonts.
+            if (font.exists()) check(font.isFile && font.delete())
+            if (createdDirectory && directory.listFiles()?.isEmpty() == true) check(directory.delete())
+        }
+    }
+
     /** Record actual KeyView dispatch with a disposable third-party layout; do not send native input. */
     private fun verifyThirdPartyModifiers(instrumentation: Instrumentation, editor: Activity) {
         var outcome: Result<Unit>? = null
@@ -2444,6 +2703,10 @@ object EditorLifecycleProbe {
             phase("PASS: resident windows preserve cached views and skip duplicate attachment lifecycles")
             verifyThirdPartyModifiers(instrumentation, editor)
             phase("PASS: isolated third-party KeyView dispatch consumes temporary modifiers and preserves actual locks")
+            verifyInputBarMeasurement(instrumentation)
+            verifyFlexibleToolbarMeasurement(instrumentation)
+            phase("PASS: isolated production toolbar preserves adaptive third-party sizing")
+            verifyThemeFontDirectoryCache(instrumentation)
             result.putString("stream", "PASS: input-field matrix, editor actions, stale output rejection, third-party T9 fallback, real WebView and 100 show/hide cycles\n")
             passed = true
         } catch (failure: Throwable) {

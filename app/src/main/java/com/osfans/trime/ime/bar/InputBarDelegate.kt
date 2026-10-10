@@ -278,6 +278,7 @@ class InputBarDelegate(override val di: DI) :
 
     val view by lazy {
         ViewAnimator(context).apply {
+            measureAllChildren = false
             visibility =
                 if (hideQuickBar) {
                     View.GONE

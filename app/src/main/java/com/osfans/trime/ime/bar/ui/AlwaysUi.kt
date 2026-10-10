@@ -86,6 +86,7 @@ class AlwaysUi(
 
     private val animator =
         ViewAnimator(ctx).apply {
+            measureAllChildren = false
             add(buttonsUi.root, lParams(matchParent, matchParent))
             add(clipboardUi.root, lParams(matchParent, matchParent))
             add(inlineSuggestionsUi.root, lParams(matchParent, matchParent))
@@ -94,6 +95,8 @@ class AlwaysUi(
     override val root: ConstraintLayout = constraintLayout {
         val (leftWidth, leftHeight) = buttonsUi.getButtonSize(theme.toolBar.primaryButton)
         val (rightWidth, rightHeight) = buttonsUi.getButtonSize(theme.toolBar.buttons.firstOrNull())
+        // Adaptive third-party sizes still use every branch to determine their allocation.
+        rightMostButton.measureAllChildren = rightWidth <= 0 || rightHeight <= 0
 
         add(
             leftMostButton,
