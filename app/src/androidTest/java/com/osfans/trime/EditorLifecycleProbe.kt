@@ -740,10 +740,12 @@ object EditorLifecycleProbe {
                             "$theme privacy entry changed symbols' native mode"
                         }
                     }
-                    check(main {
-                        input()?.di?.direct?.instance<KeyboardWindow>() === window &&
-                            window.currentKeyboard === transientKeyboard
-                    }) { "$theme privacy entry replaced symbols" }
+                    check(
+                        main {
+                            input()?.di?.direct?.instance<KeyboardWindow>() === window &&
+                                window.currentKeyboard === transientKeyboard
+                        },
+                    ) { "$theme privacy entry replaced symbols" }
                     main { manualPrivacyMode.setValue(false) }
                     until("$theme manual privacy leaves symbols") {
                         !service.isPrivacyModeActive && !PrivacyModeState.active
@@ -754,10 +756,12 @@ object EditorLifecycleProbe {
                             "$theme privacy exit changed symbols' native mode"
                         }
                     }
-                    check(main {
-                        input()?.di?.direct?.instance<KeyboardWindow>() === window &&
-                            window.currentKeyboard === transientKeyboard
-                    }) { "$theme privacy exit replaced symbols" }
+                    check(
+                        main {
+                            input()?.di?.direct?.instance<KeyboardWindow>() === window &&
+                                window.currentKeyboard === transientKeyboard
+                        },
+                    ) { "$theme privacy exit replaced symbols" }
                 } finally {
                     main {
                         manualPrivacyMode.setValue(false)
