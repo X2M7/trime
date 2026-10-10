@@ -14,6 +14,7 @@ import android.os.Bundle
 import android.os.PersistableBundle
 import android.util.Log
 import android.view.KeyEvent
+import android.view.WindowManager
 import androidx.preference.PreferenceManager
 import com.osfans.trime.core.Rime
 import com.osfans.trime.core.RimeKeyEvent
@@ -32,7 +33,7 @@ import com.osfans.trime.data.userdict.UserDictManager
 import com.osfans.trime.ime.core.PrivacyMode
 import com.osfans.trime.ime.core.PrivacyModeState
 import com.osfans.trime.ime.keyboard.InputFeedbackManager
-import com.osfans.trime.ui.main.ClipEditActivity
+import com.osfans.trime.ui.main.EditorProbeActivity
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
@@ -342,7 +343,7 @@ internal object PrivacyModeProbe {
         val secondNormalEditor = privacyOwner xor 0x71B2L
         val sessionName = "${PrivacyModeProbe::class.java.name}-$pid"
         var session: RimeSession? = null
-        var clipboardForegroundActivity: ClipEditActivity? = null
+        var clipboardForegroundActivity: Activity? = null
         var originalSchema: String? = null
         var privateEditorStarted = false
         var normalEditorStarted = false
@@ -462,9 +463,10 @@ internal object PrivacyModeProbe {
                     // the selected IME. Keep the daemon idle and give this probe its own
                     // focused Activity so negative assertions exercise a readable clip.
                     val foregroundActivity = instrumentation.startActivitySync(
-                        Intent(instrumentation.targetContext, ClipEditActivity::class.java)
+                        Intent(instrumentation.targetContext, EditorProbeActivity::class.java)
+                            .putExtra(EditorProbeActivity.EXTRA_CLIPBOARD_FOREGROUND, true)
                             .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
-                    ) as ClipEditActivity
+                    )
                     clipboardForegroundActivity = foregroundActivity
                     withTimeout(15_000) {
                         while (true) {
@@ -474,6 +476,15 @@ internal object PrivacyModeProbe {
                             }
                             if (focused) break
                             delay(50)
+                        }
+                    }
+                    instrumentation.runOnMainSync {
+                        val windowFlags = foregroundActivity.window.attributes.flags
+                        check((windowFlags and WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM) != 0) {
+                            "Clipboard foreground window must not bind an input method"
+                        }
+                        check(foregroundActivity.currentFocus?.onCheckIsTextEditor() == false) {
+                            "Clipboard foreground fixture requires a focused non-editor view"
                         }
                     }
                     check(RimeDaemon.getFirstSessionOrNull() == null) {
