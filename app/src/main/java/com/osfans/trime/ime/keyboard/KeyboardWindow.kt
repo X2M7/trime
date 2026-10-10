@@ -430,6 +430,7 @@ class KeyboardWindow(di: DI) :
             detachCurrentView()
             attachKeyboard(languageKeyboard(result.asciiMode), updateMode = false)
         }
+        if (!result.asciiMode) activeKeyboard?.resetShift()
         currentKeyboardView?.invalidateAllKeys()
     }
 
@@ -628,7 +629,10 @@ class KeyboardWindow(di: DI) :
                     service.editorToken,
                     rime.run { statusCached.schemaId },
                     rime.run { statusCached.isAsciiMode },
-                )?.let { desiredAsciiMode = it }
+                )?.let {
+                    desiredAsciiMode = it
+                    if (!it) activeKeyboard?.resetShift()
+                }
             }
 
             option.startsWith("_keyboard_") -> {

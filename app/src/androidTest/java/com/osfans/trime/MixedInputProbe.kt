@@ -1046,6 +1046,15 @@ object MixedInputProbe {
                         }
                         rapidKey(english, "english", anchor, release)
                         check(!keyboard().isT9Layout) { "Accepted English command did not expose its real letter layout" }
+                        // Isolated notification control: an old Chinese payload must not clear
+                        // Shift in the newly accepted English layout while its native job waits.
+                        keyboard().setShifted(true, true)
+                        check(keyboard().isShifted)
+                        window().onRimeOptionUpdated(RimeMessage.OptionMessage.Data("ascii_mode", false))
+                        check(keyboard().isShifted) { "Old Chinese notification cleared pending English Shift" }
+                        gateProof.put("pending_english_shift_survived_old_chinese_notification", true)
+                        gateProof.put("shift_control_driver", "fixture_modifier_setup_and_direct_option_callback")
+                        keyboard().setShifted(false, false)
                         val a = visibleKeys().singleOrNull { it.behavior == KeyBehavior.CLICK && it.action.code == KeyEvent.KEYCODE_A && outputOf(it.action) == "a" }
                             ?: throw Unsupported("No actual visible lowercase a key", "rapid_letter_route_unavailable")
                         rapidKey(a, "ascii_a", anchor, release)
@@ -1150,6 +1159,13 @@ object MixedInputProbe {
                     prepared.getString("editor_text").isEmpty() && prepared.getString("raw_input").isEmpty() &&
                         !prepared.getBoolean("ascii_mode") && prepared.getBoolean("t9_layout"),
                 )
+                // Fixture setup only, outside measured input actions: retain a locked native
+                // keyboard in the cache so the real macro's Chinese return must release Shift.
+                main {
+                    keyboard().setShifted(true, true)
+                    check(keyboard().isShifted)
+                }
+                item.put("native_shift_locked_before_macro", true)
                 val entered = CompletableDeferred<Unit>()
                 val release = CompletableDeferred<Unit>()
                 val gateProof = json("original_service_post_rime_job" to true, "single_main_dispatch" to true)
@@ -1186,6 +1202,8 @@ object MixedInputProbe {
                         listener.onText(source) // The real existing mixed-text/key entry; no fake commits or invisible key callback.
                         record.put("dispatched", true).put("callback_end_ns", SystemClock.elapsedRealtimeNanos()).put("identity_after", rapidIdentity())
                         check(!release.isCompleted && record.getJSONObject("identity_after").toString() == anchor.toString())
+                        check(keyboard().isT9Layout && keyboard().isShifted) { "Native Shift control cleared before the queued mode completed" }
+                        gateProof.put("native_shift_still_locked_before_gate_release", true)
                     }
                 } finally {
                     gateProof.put("release_ns", SystemClock.elapsedRealtimeNanos())
@@ -1198,7 +1216,7 @@ object MixedInputProbe {
                 item.put("final", final)
                 save()
                 fun correct(value: JSONObject) = value.getString("editor_text") == "a" && value.getString("raw_input").isEmpty() &&
-                    !value.getBoolean("ascii_mode") && value.getBoolean("t9_layout") && value.getString("schema_id") == schemaId &&
+                    !value.getBoolean("ascii_mode") && !value.getBoolean("shifted") && value.getBoolean("t9_layout") && value.getString("schema_id") == schemaId &&
                     value.getLong("editor_token") == prepared.getLong("editor_token") &&
                     value.getJSONArray("composing_span").toString() == JSONArray(listOf(-1, -1)).toString() &&
                     value.getJSONArray("selection").toString() == JSONArray(listOf(1, 1)).toString()
