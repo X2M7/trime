@@ -916,6 +916,22 @@ object EditorLifecycleProbe {
                         chat.isAttachedToWindow && chat.isLaidOut && chat.width > 0 && chat.height > 0 &&
                             chat.hasWindowFocus() && chat.hasFocus() && inputManager.isActive(chat)
                     }
+                    if (Build.VERSION.SDK_INT >= 35) {
+                        until("initial editor is physically outside the system bars") {
+                            val decor = editor.window.decorView
+                            val insets = ViewCompat.getRootWindowInsets(decor)
+                            if (insets == null) {
+                                false
+                            } else {
+                                val bars = insets.getInsets(WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout())
+                                val origin = IntArray(2).also(decor::getLocationOnScreen)
+                                val position = IntArray(2).also(chat::getLocationOnScreen)
+                                position[0] >= origin[0] + bars.left && position[1] >= origin[1] + bars.top &&
+                                    position[0] + chat.width <= origin[0] + decor.width - bars.right &&
+                                    position[1] + chat.height <= origin[1] + decor.height - bars.bottom
+                            }
+                        }
+                    }
                     main { inputManager.showSoftInput(chat, 0) }
                     until("initial keyboard visible") { input() != null }
                     val service = main { checkNotNull(input()).di.direct.instance<TrimeInputMethodService>() }
