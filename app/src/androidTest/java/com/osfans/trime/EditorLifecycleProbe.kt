@@ -59,6 +59,7 @@ import com.osfans.trime.ime.composition.T9DisambiguationView
 import com.osfans.trime.ime.core.AutoScaleTextView
 import com.osfans.trime.ime.core.EditorPolicy
 import com.osfans.trime.ime.core.InputView
+import com.osfans.trime.ime.core.ManualLanguageMode
 import com.osfans.trime.ime.core.PrivacyModeState
 import com.osfans.trime.ime.core.TrimeInputMethodService
 import com.osfans.trime.ime.keyboard.CommonKeyboardActionListener
@@ -800,6 +801,13 @@ object EditorLifecycleProbe {
         val originalCandidatesMode = candidatesMode.getValue()
         val manualPrivacyMode = AppPrefs.defaultInstance().general.manualPrivacyMode
         val originalManualPrivacyMode = manualPrivacyMode.getValue()
+        val manualLanguageMode = AppPrefs.defaultInstance().keyboard.manualLanguageMode
+        val manualLanguageStore = manualLanguageMode.sharedPreferences
+        val manualLanguageKey = manualLanguageMode.key
+        val originalManualLanguagePresent = manualLanguageStore.contains(manualLanguageKey)
+        val originalManualLanguageRaw = if (originalManualLanguagePresent) manualLanguageStore.getString(manualLanguageKey, null) else null
+        val originalManualLanguageMode = manualLanguageMode.getValue()
+        var manualLanguageBaselineStarted = false
         var originalSchema = ""
         var originalAscii = false
         var fixture: File? = null
@@ -817,10 +825,33 @@ object EditorLifecycleProbe {
             return checkNotNull(value).getOrThrow()
         }
         fun phase(text: String) = instrumentation.sendStatus(0, Bundle().apply { putString("stream", "$text\n") })
+        fun restoreManualLanguage() {
+            if (!manualLanguageBaselineStarted) return
+            val edit = manualLanguageStore.edit()
+            if (originalManualLanguagePresent) {
+                edit.putString(manualLanguageKey, checkNotNull(originalManualLanguageRaw))
+            } else {
+                edit.remove(manualLanguageKey)
+            }
+            check(edit.commit()) { "Manual language restoration did not persist" }
+            check(
+                manualLanguageStore.contains(manualLanguageKey) == originalManualLanguagePresent &&
+                    (!originalManualLanguagePresent || manualLanguageStore.getString(manualLanguageKey, null) == originalManualLanguageRaw) &&
+                    manualLanguageMode.getValue() == originalManualLanguageMode,
+            ) { "Manual language original presence, raw value or typed mode did not restore" }
+        }
         try {
             check(Build.HARDWARE in setOf("ranchu", "goldfish")) { "Emulator only" }
             check(File(context.getExternalFilesDir(null), "runtime-audit-dedicated").isFile) { "Requires a dedicated runtime-audit installation" }
-            main { manualPrivacyMode.setValue(false) }
+            main {
+                check(!originalManualLanguagePresent || originalManualLanguageRaw in setOf("unset", "native", "ascii")) { "Unexpected manual language wire value" }
+                // This legacy matrix changes native ASCII directly; persistent user choices are
+                // covered by MixedInputProbe. Each new editor reloads this isolated UNSET mode.
+                manualLanguageBaselineStarted = true
+                check(manualLanguageStore.edit().remove(manualLanguageKey).commit()) { "Manual language baseline did not persist" }
+                check(!manualLanguageStore.contains(manualLanguageKey) && manualLanguageMode.getValue() == ManualLanguageMode.UNSET)
+                manualPrivacyMode.setValue(false)
+            }
             session = main { RimeDaemon.createSession(javaClass.name) }
             runBlocking {
                 withTimeout(300_000) {
@@ -1602,7 +1633,7 @@ object EditorLifecycleProbe {
                     }
                     focus(other)
                     focus(chat)
-                    api { check(statusCached.isAsciiMode) { "Temporary number mode lost the user's explicit ASCII choice" } }
+                    api { check(statusCached.isAsciiMode) { "Temporary number mode lost the preceding native ASCII mode" } }
                     api { setRuntimeOption("ascii_mode", false) }
 
                     main {
@@ -2075,28 +2106,33 @@ object EditorLifecycleProbe {
         } catch (failure: Throwable) {
             result.putString("stream", "FAIL: ${failure.stackTraceToString()}\n")
         } finally {
-            main {
-                candidatesMode.setValue(originalCandidatesMode)
-                manualPrivacyMode.setValue(originalManualPrivacyMode)
-                web?.destroy()
-                activity?.finish()
-            }
-            runBlocking {
-                runCatching {
-                    ThemeManager.selectTheme(originalTheme)
-                    session?.runOnReady {
-                        clearComposition()
-                        if (originalSchema.isNotEmpty()) selectSchema(originalSchema)
-                        setRuntimeOption("ascii_mode", originalAscii)
+            try {
+                main {
+                    candidatesMode.setValue(originalCandidatesMode)
+                    manualPrivacyMode.setValue(originalManualPrivacyMode)
+                    web?.destroy()
+                    activity?.finish()
+                }
+                runBlocking {
+                    runCatching {
+                        ThemeManager.selectTheme(originalTheme)
+                        session?.runOnReady {
+                            clearComposition()
+                            if (originalSchema.isNotEmpty()) selectSchema(originalSchema)
+                            setRuntimeOption("ascii_mode", originalAscii)
+                        }
                     }
                 }
+                fixture?.let { file ->
+                    file.delete()
+                    File(DataManager.stagingDir, file.name).delete()
+                }
+                main { RimeDaemon.destroySession(javaClass.name) }
+                check(ThemeManager.prefs.selectedTheme.sharedPreferences.edit().commit())
+            } finally {
+                // Restore even if other cleanup fails; the next editor reloads the original mode.
+                main { restoreManualLanguage() }
             }
-            fixture?.let { file ->
-                file.delete()
-                File(DataManager.stagingDir, file.name).delete()
-            }
-            main { RimeDaemon.destroySession(javaClass.name) }
-            check(ThemeManager.prefs.selectedTheme.sharedPreferences.edit().commit())
         }
         val touchReport = JSONObject().apply {
             put("run_id", touchRegionRunId)
