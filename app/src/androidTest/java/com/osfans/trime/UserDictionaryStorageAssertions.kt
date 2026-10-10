@@ -244,9 +244,11 @@ internal object UserDictionaryStorageAssertions {
                     UserDictManager.backupForRecovery(dictionaryName).getOrThrow()
                     val location = checkNotNull(snapshotFile)
                     check(location.readBytes().contentEquals(snapshot))
-                    check(checkNotNull(location.parentFile.listFiles()).none { file ->
-                        file.name.startsWith("$dictionaryName.userdb.txt.tmp.")
-                    }) { "Successful portable backup left an owned temporary file" }
+                    check(
+                        checkNotNull(location.parentFile.listFiles()).none { file ->
+                            file.name.startsWith("$dictionaryName.userdb.txt.tmp.")
+                        },
+                    ) { "Successful portable backup left an owned temporary file" }
                 }
                 check(records() == mapOf(("示例词库萤火" to "abc") to 4)) { "Repeated portable backup changed dictionary records" }
                 checks++
