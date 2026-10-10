@@ -26,6 +26,7 @@ import com.osfans.trime.ime.bar.InputBarDelegate
 import com.osfans.trime.ime.bar.UnrollButtonStateMachine
 import com.osfans.trime.ime.broadcast.InputBroadcastReceiver
 import com.osfans.trime.ime.candidates.CandidateViewHolder
+import com.osfans.trime.ime.candidates.CandidateViewportAnchor
 import com.osfans.trime.ime.candidates.unrolled.decoration.FlexboxVerticalDecoration
 import com.osfans.trime.ime.core.InputView
 import com.osfans.trime.ime.core.TrimeInputMethodService
@@ -91,11 +92,13 @@ class CompactCandidateDelegate(override val di: DI) :
         )
 
     val unrolledCandidateOffset = _unrolledCandidateOffset.asSharedFlow()
+    val expandedViewportAnchor = CandidateViewportAnchor()
 
     fun refreshUnrolled(childCount: Int) {
         val scrolling = layoutManager is LinearLayoutManager
         val offset = if (scrolling) 0 else childCount
         val anchor = if (scrolling) CompactCandidateLayoutManagers.firstVisibleIndex(layoutManager).coerceAtLeast(0) else offset
+        expandedViewportAnchor.update(adapter.snapshot, offset)
         _unrolledCandidateOffset.tryEmit(UnrolledCandidateState(offset, adapter.total, adapter.highlightedIdx, adapter.snapshot, anchor))
         bar.unrollButtonStateMachine.push(
             UnrollButtonStateMachine.TransitionEvent.UnrolledCandidatesUpdated,
@@ -230,6 +233,7 @@ class CompactCandidateDelegate(override val di: DI) :
             adapter.notifyItemRangeChanged(0, adapter.itemCount)
         }
         if (data.snapshot != adapter.snapshot) {
+            expandedViewportAnchor.clear()
             view.stopScroll()
             layoutManager.scrollToPosition(0)
         }

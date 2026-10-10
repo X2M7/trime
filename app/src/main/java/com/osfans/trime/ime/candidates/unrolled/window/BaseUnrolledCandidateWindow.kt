@@ -14,6 +14,7 @@ import androidx.lifecycle.findViewTreeLifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.flexbox.FlexboxLayoutManager
 import com.osfans.trime.daemon.RimeSession
@@ -153,11 +154,14 @@ abstract class BaseUnrolledCandidateWindow(di: DI) :
         offsetJob =
             lifecycleCoroutineScope.launch {
                 compactCandidate.unrolledCandidateOffset.collect {
+                    if (it.snapshot != compactCandidate.adapter.snapshot) return@collect
                     if (!it.snapshot.isValid || it.total == 0) {
                         windowManager.attachWindow(KeyboardWindow)
                     } else {
                         if (viewportState.update(it.snapshot, it.offset)) {
-                            rememberedIndex = it.anchor.coerceAtLeast(it.offset)
+                            rememberedIndex = compactCandidate.expandedViewportAnchor.restore(it.snapshot, it.offset)
+                                ?.takeIf { index -> it.total < 0 || index < it.total }
+                                ?: it.anchor.coerceAtLeast(it.offset)
                             pendingScrollIndex = rememberedIndex
                             candidateLayout.resetPosition()
                             adapter.refreshWith(
@@ -196,9 +200,16 @@ abstract class BaseUnrolledCandidateWindow(di: DI) :
     }
 
     override fun onDetached() {
-        val position = (layoutManager as? FlexboxLayoutManager)?.findFirstVisibleItemPosition() ?: -1
+        val position = when (val manager = layoutManager) {
+            is FlexboxLayoutManager -> manager.findFirstVisibleItemPosition()
+            is LinearLayoutManager -> manager.findFirstVisibleItemPosition()
+            else -> -1
+        }
         val holder = candidateLayout.recyclerView.findViewHolderForAdapterPosition(position) as? CandidateViewHolder
-        if (holder?.snapshot == adapter.snapshot) rememberedIndex = holder.idx
+        if (holder?.snapshot == adapter.snapshot && holder.snapshot == compactCandidate.adapter.snapshot) {
+            rememberedIndex = holder.idx
+            compactCandidate.expandedViewportAnchor.remember(holder.snapshot, adapter.offset, holder.idx, adapter.total)
+        }
         pendingScrollIndex = rememberedIndex
         bar.unrollButtonStateMachine.push(
             UnrollButtonStateMachine.TransitionEvent.UnrolledCandidatesDetached,

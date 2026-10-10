@@ -46,3 +46,36 @@ class CandidateViewportState {
         return changed
     }
 }
+
+/** A collapsed window is recreated; retain only its index in the owning input view. */
+class CandidateViewportAnchor {
+    private var snapshot = CandidateSnapshot.EMPTY
+    private var offset = -1
+    private var index: Int? = null
+
+    fun update(nextSnapshot: CandidateSnapshot, nextOffset: Int) {
+        if (snapshot != nextSnapshot || offset != nextOffset || !nextSnapshot.isValid) index = null
+        snapshot = nextSnapshot
+        offset = nextOffset
+    }
+
+    fun remember(currentSnapshot: CandidateSnapshot, currentOffset: Int, firstVisibleIndex: Int, total: Int = -1): Boolean {
+        if (!currentSnapshot.isValid || snapshot != currentSnapshot || offset != currentOffset ||
+            currentOffset < 0 || firstVisibleIndex < currentOffset || (total >= 0 && firstVisibleIndex >= total)
+        ) {
+            return false
+        }
+        index = firstVisibleIndex
+        return true
+    }
+
+    fun restore(currentSnapshot: CandidateSnapshot, currentOffset: Int): Int? = index.takeIf {
+        currentSnapshot.isValid && snapshot == currentSnapshot && offset == currentOffset
+    }
+
+    fun clear() {
+        snapshot = CandidateSnapshot.EMPTY
+        offset = -1
+        index = null
+    }
+}

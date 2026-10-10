@@ -1996,6 +1996,8 @@ object EditorLifecycleProbe {
                         instrumentation.waitForIdleSync()
                         delay(150)
                         verifyCandidateGlyphs(instrumentation, service, theme)
+                        val expandedChecks = ExpandedCandidateViewportAssertions.verify(instrumentation, main { checkNotNull(input()) }, service, chat)
+                        phase("PASS: $theme $expandedChecks actual expanded-window recreation/relayout checks preserve the global index and commit its native text exactly once")
                         api { clearComposition() }
                         // A narrow numeric SPACE key must show its purpose without clipping
                         // the longer current schema name. Check both shipped themes, not
