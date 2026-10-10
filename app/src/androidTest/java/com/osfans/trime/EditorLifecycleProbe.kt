@@ -63,7 +63,6 @@ import com.osfans.trime.ime.candidates.popup.PopupCandidatesMode
 import com.osfans.trime.ime.composition.CandidatesView
 import com.osfans.trime.ime.composition.PreeditDelegate
 import com.osfans.trime.ime.composition.T9DisambiguationView
-import com.osfans.trime.ime.core.AutoScaleTextView
 import com.osfans.trime.ime.core.EditorPolicy
 import com.osfans.trime.ime.core.InputView
 import com.osfans.trime.ime.core.ManualLanguageMode
@@ -158,10 +157,20 @@ object EditorLifecycleProbe {
                 val input = roots().asSequence().flatMap(::descendants).filterIsInstance<InputView>().first { it.isShown }
                 input.di.direct.instance<CompactCandidateDelegate>() to input.di.direct.instance<RimeSession>()
             }
-            val holder = main {
-                checkNotNull(delegate.view.findViewHolderForAdapterPosition(0) as? CandidateViewHolder)
+            val (holder, snapshot, labelState) = main {
+                val holder = checkNotNull(delegate.view.findViewHolderForAdapterPosition(0) as? CandidateViewHolder)
+                val snapshot = holder.snapshot
+                val showComments = AppPrefs.defaultInstance().candidates.showComments.getValue()
+                val expected = listOf(holder.text, holder.comment.takeIf { showComments }.orEmpty()).filter { it.isNotEmpty() }
+                check(expected.firstOrNull()?.any { it in '\u3400'..'\u9fff' } == true) { "64 did not produce a native Hanzi candidate" }
+                val labels = descendants(holder.itemView).filterIsInstance<TextView>()
+                    .filter { it.isShown && it.text.isNotEmpty() }.toList()
+                check(labels.size == expected.size && labels.map { it.text.toString() } == expected) {
+                    "Live candidate labels do not match their native holder"
+                }
+                Triple(holder, snapshot, expected to labels)
             }
-            val snapshot = main { holder.snapshot }
+            val (expected, labels) = labelState
             fun checkCurrentSnapshot() = main {
                 check(service.isCurrentEditor(snapshot.editorToken) && delegate.adapter.snapshot == snapshot && holder.snapshot == snapshot) {
                     "Editor or bound candidate changed during the pixel capture"
@@ -179,15 +188,6 @@ object EditorLifecycleProbe {
                     nativeState.put("schema_id", schema)
                     check(candidateSnapshotCached == snapshot) { "Native snapshot advanced while reading its cached metadata" }
                 }
-            }
-            val expected = main { listOf(holder.text, holder.comment).filter { it.isNotEmpty() } }
-            check(expected.firstOrNull()?.any { it in '\u3400'..'\u9fff' } == true) { "64 did not produce a native Hanzi candidate" }
-            val labels = main {
-                descendants(holder.itemView).filterIsInstance<AutoScaleTextView>()
-                    .filter { it.isShown && it.text.isNotEmpty() }.toList()
-            }
-            check(labels.size == expected.size && main { labels.map { it.text.toString() } } == expected) {
-                "Live candidate labels do not match their native holder"
             }
             // A software draw can invalidate cached framework state. Capture hardware pixels first.
             checkCurrentSnapshot()
