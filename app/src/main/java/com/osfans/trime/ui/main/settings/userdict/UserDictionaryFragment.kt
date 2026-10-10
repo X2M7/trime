@@ -17,8 +17,8 @@ import com.osfans.trime.data.userdict.UserDictManager
 import com.osfans.trime.util.importErrorDialog
 import com.osfans.trime.util.item
 import com.osfans.trime.util.toast
-import io.planck.storageaccess.StorageAccess
-import io.planck.storageaccess.StorageDocument
+import io.github.whiredplanck.storageaccess.StorageAccess
+import io.github.whiredplanck.storageaccess.StorageDocument
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

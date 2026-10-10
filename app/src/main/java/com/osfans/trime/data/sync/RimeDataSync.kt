@@ -14,9 +14,9 @@ import com.osfans.trime.data.prefs.AppPrefs
 import com.osfans.trime.util.DeployNotification
 import com.osfans.trime.util.FileUtils
 import com.osfans.trime.util.appContext
-import io.planck.storageaccess.StorageAccess
-import io.planck.storageaccess.StorageDocument
-import io.planck.storageaccess.StorageWalkEntry
+import io.github.whiredplanck.storageaccess.StorageAccess
+import io.github.whiredplanck.storageaccess.StorageDocument
+import io.github.whiredplanck.storageaccess.StorageWalkEntry
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers

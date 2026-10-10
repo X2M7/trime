@@ -8,7 +8,7 @@ package com.osfans.trime.data.sync
 import android.content.ContentResolver
 import android.net.Uri
 import android.provider.DocumentsContract
-import io.planck.storageaccess.StorageDocument
+import io.github.whiredplanck.storageaccess.StorageDocument
 import java.io.IOException
 
 /**
