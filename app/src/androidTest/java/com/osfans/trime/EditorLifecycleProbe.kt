@@ -12,26 +12,32 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Rect
+import android.graphics.Region
+import android.inputmethodservice.InputMethodService
 import android.os.Build
 import android.os.Bundle
 import android.os.SystemClock
 import android.text.InputType
+import android.util.Log
+import android.view.InputDevice
 import android.view.KeyEvent
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.view.inspector.WindowInspector
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.EditText
+import android.widget.FrameLayout
 import android.widget.LinearLayout
-import android.widget.PopupWindow
 import android.widget.TextView
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.children
+import androidx.recyclerview.widget.RecyclerView
 import com.osfans.trime.core.Rime
 import com.osfans.trime.core.RimeApi
 import com.osfans.trime.core.RimeSchema
@@ -44,14 +50,15 @@ import com.osfans.trime.data.theme.model.KeyActionToken
 import com.osfans.trime.ime.broadcast.EnterKeyDisplayDelegate
 import com.osfans.trime.ime.candidates.CandidateViewHolder
 import com.osfans.trime.ime.candidates.compact.CompactCandidateDelegate
+import com.osfans.trime.ime.candidates.popup.PagedCandidatesUi
 import com.osfans.trime.ime.candidates.popup.PopupCandidatesMode
+import com.osfans.trime.ime.composition.CandidatesView
 import com.osfans.trime.ime.composition.PreeditDelegate
 import com.osfans.trime.ime.composition.T9DisambiguationView
 import com.osfans.trime.ime.core.AutoScaleTextView
 import com.osfans.trime.ime.core.EditorPolicy
 import com.osfans.trime.ime.core.InputView
 import com.osfans.trime.ime.core.PrivacyModeState
-import com.osfans.trime.ime.core.TouchEventReceiverWindow
 import com.osfans.trime.ime.core.TrimeInputMethodService
 import com.osfans.trime.ime.keyboard.CommonKeyboardActionListener
 import com.osfans.trime.ime.keyboard.InputFeedbackManager
@@ -756,6 +763,13 @@ object EditorLifecycleProbe {
         var originalSchema = ""
         var originalAscii = false
         var fixture: File? = null
+        val touchRegionRunId = UUID.randomUUID().toString()
+        val touchRegionMeasurements = JSONArray()
+        fun touchStage(stage: String, theme: String, round: Int = -1, elapsedMs: Long = -1) {
+            val marker = "TOUCH_REGION run=$touchRegionRunId stage=$stage theme=$theme round=$round elapsed_ms=$elapsedMs uptime_ms=${SystemClock.uptimeMillis()}"
+            Log.i("TrimeProbe", marker)
+            instrumentation.sendStatus(0, Bundle().apply { putString("touch_region_phase", marker) })
+        }
         fun <T> main(block: () -> T): T {
             if (android.os.Looper.myLooper() == android.os.Looper.getMainLooper()) return block()
             var value: Result<T>? = null
@@ -830,43 +844,6 @@ object EditorLifecycleProbe {
                     }
                     main { inputManager.showSoftInput(chat, 0) }
                     until("initial keyboard visible") { input() != null }
-                    val (overlayView, overlay, popup) = main {
-                        val view = View(editor)
-                        val receiver = TouchEventReceiverWindow(view)
-                        val popup = TouchEventReceiverWindow::class.java.getDeclaredField("window").apply { isAccessible = true }.get(receiver) as PopupWindow
-                        repeat(100) { receiver.showAt(0, 0, 32, 32) }
-                        check(!popup.isShowing)
-                        receiver.show()
-                        container.addView(view, LinearLayout.LayoutParams(32, 32))
-                        Triple(view, receiver, popup)
-                    }
-                    until("touch overlay waits for attachment and layout") { popup.isShowing }
-                    main { overlayView.visibility = View.INVISIBLE }
-                    until("invisible anchor dismisses its touch overlay without resizing") { !popup.isShowing }
-                    main { overlayView.visibility = View.VISIBLE }
-                    until("visible anchor resumes its requested touch overlay") { popup.isShowing }
-                    main { container.visibility = View.INVISIBLE }
-                    until("invisible ancestor dismisses the touch overlay") { !popup.isShowing }
-                    main { container.visibility = View.VISIBLE }
-                    until("visible ancestor resumes the touch overlay") { popup.isShowing }
-                    main {
-                        container.removeView(overlayView)
-                        check(!popup.isShowing)
-                        container.addView(overlayView, LinearLayout.LayoutParams(32, 32))
-                    }
-                    until("touch overlay anchor reattached") { overlayView.isAttachedToWindow && overlayView.width > 0 }
-                    main {
-                        check(!popup.isShowing) { "Detached overlay must not resurrect" }
-                        overlay.show()
-                        check(popup.isShowing)
-                        overlay.dismiss()
-                        check(!popup.isShowing)
-                        container.removeView(overlayView)
-                        overlay.show()
-                        check(!popup.isShowing)
-                        overlay.dismiss()
-                    }
-                    phase("PASS: detached touch overlay cannot crash or leak across reattachment")
                     val service = main { checkNotNull(input()).di.direct.instance<TrimeInputMethodService>() }
                     suspend fun api(block: suspend RimeApi.() -> Unit) {
                         var outcome: Result<Unit>? = null
@@ -899,6 +876,242 @@ object EditorLifecycleProbe {
                         setRuntimeOption("ascii_mode", false)
                     }
                     until("selected T9 is actually a nine-key layout") { input() != null && keyboard().isT9Layout }
+                    fun touchInsets() = InputMethodService.Insets().also(service::onComputeInsets)
+                    fun visibleWindowBounds(view: View): Rect {
+                        val bounds = Rect()
+                        if (!view.isAttachedToWindow || !view.isShown || !view.getLocalVisibleRect(bounds)) return bounds.apply { setEmpty() }
+                        val location = IntArray(2)
+                        view.getLocationInWindow(location)
+                        bounds.offset(location[0], location[1])
+                        return bounds
+                    }
+                    fun regionCovers(view: View): Boolean {
+                        val bounds = visibleWindowBounds(view)
+                        return !bounds.isEmpty && Region(bounds).apply {
+                            op(touchInsets().touchableRegion, Region.Op.DIFFERENCE)
+                        }.isEmpty
+                    }
+                    fun checkNoTouchPopup() {
+                        check(
+                            roots().none { root ->
+                                (root.layoutParams as? WindowManager.LayoutParams)?.title?.toString()?.startsWith("PopupWindow:") == true
+                            },
+                        ) { "Composition must not create a separate PopupWindow surface" }
+                    }
+                    fun tapActualView(view: View, leadingText: Boolean = false, imeTarget: Boolean = true) {
+                        val point = main {
+                            if (imeTarget) check(regionCovers(view))
+                            val location = IntArray(2)
+                            val bounds = Rect()
+                            check(view.getLocalVisibleRect(bounds))
+                            view.getLocationOnScreen(location)
+                            val x = if (leadingText) view.paddingLeft + 1 else bounds.centerX()
+                            val y = bounds.centerY()
+                            check(bounds.contains(x, y))
+                            if (!imeTarget) {
+                                val decor = checkNotNull(service.window.window).decorView
+                                val decorScreen = IntArray(2).also(decor::getLocationOnScreen)
+                                val decorWindow = IntArray(2).also(decor::getLocationInWindow)
+                                check(
+                                    !touchInsets().touchableRegion.contains(
+                                        location[0] + x - decorScreen[0] + decorWindow[0],
+                                        location[1] + y - decorScreen[1] + decorWindow[1],
+                                    ),
+                                ) { "Host pointer target overlaps the IME touch region" }
+                            }
+                            (location[0] + x).toFloat() to (location[1] + y).toFloat()
+                        }
+                        val down = SystemClock.uptimeMillis()
+                        for (action in listOf(MotionEvent.ACTION_DOWN, MotionEvent.ACTION_UP)) {
+                            val event = MotionEvent.obtain(down, SystemClock.uptimeMillis(), action, point.first, point.second, 0)
+                            try {
+                                event.source = InputDevice.SOURCE_TOUCHSCREEN
+                                check(instrumentation.uiAutomation.injectInputEvent(event, true)) { "Actual pointer injection was rejected" }
+                            } finally {
+                                event.recycle()
+                            }
+                        }
+                    }
+                    suspend fun verifyTouchRegion(theme: String, committedBefore: String) {
+                        val iv = main { checkNotNull(input()) }
+                        val preedit = main { iv.di.direct.instance<PreeditDelegate>().ui }
+                        val root = preedit.root
+                        val pendingBefore = main { chat.text.toString() }
+                        val before = committedBefore
+                        touchStage("before_region_lifecycle", theme)
+                        main {
+                            val insets = touchInsets()
+                            val keyboardPosition = IntArray(2).also(iv.keyboardView::getLocationInWindow)
+                            check(insets.contentTopInsets == keyboardPosition[1] && insets.visibleTopInsets == keyboardPosition[1])
+                            check(insets.touchableInsets == InputMethodService.Insets.TOUCHABLE_INSETS_REGION)
+                            check(regionCovers(root))
+                            val bounds = visibleWindowBounds(root)
+                            check(visibleWindowBounds(iv).contains(bounds)) { "Preedit must be reachable through its actual InputView ancestor" }
+                            val decor = checkNotNull(service.window.window).decorView
+                            check(bounds.right < decor.width - 1)
+                            check(!insets.touchableRegion.contains(decor.width - 1, bounds.centerY())) { "Blank app space beside preedit must remain touch-through" }
+                            checkNoTouchPopup()
+                        }
+                        val hostPointerActions = mutableListOf<Int>()
+                        val hostTarget = main {
+                            val decor = checkNotNull(service.window.window).decorView
+                            val preeditBounds = visibleWindowBounds(root)
+                            val decorScreen = IntArray(2).also(decor::getLocationOnScreen)
+                            val decorWindow = IntArray(2).also(decor::getLocationInWindow)
+                            val hostContent = editor.findViewById<FrameLayout>(android.R.id.content)
+                            val hostScreen = IntArray(2).also(hostContent::getLocationOnScreen)
+                            val left = decorScreen[0] - decorWindow[0] + decor.width - 48 - hostScreen[0]
+                            val top = decorScreen[1] - decorWindow[1] + preeditBounds.centerY() - 16 - hostScreen[1]
+                            check(left >= 0 && top >= 0 && left + 32 <= hostContent.width && top + 32 <= hostContent.height)
+                            object : EditText(editor) {
+                                @SuppressLint("ClickableViewAccessibility")
+                                override fun onTouchEvent(event: MotionEvent): Boolean {
+                                    hostPointerActions.add(event.actionMasked)
+                                    return true
+                                }
+                            }.apply {
+                                minimumHeight = 0
+                                minimumWidth = 0
+                                setPadding(0, 0, 0, 0)
+                                isFocusable = false
+                                hostContent.addView(
+                                    this,
+                                    FrameLayout.LayoutParams(32, 32).apply {
+                                        leftMargin = left
+                                        topMargin = top
+                                    },
+                                )
+                            }
+                        }
+                        try {
+                            until("$theme host editor target is visible in the empty preedit gap") { hostTarget.isShown && hostTarget.isLaidOut }
+                            delay(150)
+                            touchStage("before_host_gap_pointer", theme)
+                            tapActualView(hostTarget, imeTarget = false)
+                            check(
+                                main {
+                                    hostPointerActions.filter { it == MotionEvent.ACTION_DOWN || it == MotionEvent.ACTION_UP } ==
+                                        listOf(MotionEvent.ACTION_DOWN, MotionEvent.ACTION_UP)
+                                },
+                            ) { "Empty space beside preedit intercepted the host editor pointer" }
+                            touchStage("after_host_gap_pointer", theme)
+                            phase("PASS: $theme empty preedit gap routes a real pointer to the host editor")
+                        } finally {
+                            main { (hostTarget.parent as? ViewGroup)?.removeView(hostTarget) }
+                        }
+                        val originalVisibility = main { root.visibility }
+                        try {
+                            main { root.visibility = View.INVISIBLE }
+                            until("$theme invisible preedit leaves the IME touch region") { !regionCovers(root) }
+                        } finally {
+                            main { root.visibility = originalVisibility }
+                        }
+                        until("$theme visible preedit resumes the IME touch region") { regionCovers(root) }
+                        val inputVisibility = main { iv.visibility }
+                        try {
+                            main { iv.visibility = View.INVISIBLE }
+                            until("$theme invisible preedit ancestor leaves the IME touch region") { !regionCovers(root) }
+                        } finally {
+                            main { iv.visibility = inputVisibility }
+                        }
+                        until("$theme visible preedit ancestor resumes the IME touch region") { regionCovers(root) }
+                        main {
+                            val parent = root.parent as ViewGroup
+                            val params = root.layoutParams
+                            parent.removeView(root)
+                            try {
+                                check(!regionCovers(root)) { "Detached preedit must not retain a touch region" }
+                            } finally {
+                                parent.addView(root, params)
+                            }
+                        }
+                        until("$theme reattached preedit restores only its visible touch region") { regionCovers(root) }
+                        // Preserve the historical host protocol label for the replaced overlay path.
+                        phase("PASS: detached touch overlay cannot crash or leak across reattachment")
+                        delay(150)
+                        check(main { iv.rime.run { compositionCached.cursorPos > 0 } }) { "Preedit pointer needs a nonzero native caret before the tap" }
+                        touchStage("before_preedit_pointer", theme)
+                        tapActualView(preedit.preedit, leadingText = true)
+                        until("$theme real preedit pointer changes the native caret without committing") {
+                            iv.rime.run { compositionCached.cursorPos == 0 && compositionCached.length > 0 } && chat.text.toString() == pendingBefore
+                        }
+                        api {
+                            check(getRawInput() == "ni")
+                            clearComposition()
+                        }
+                        touchStage("after_preedit_pointer", theme)
+                        repeat(20) { round ->
+                            touchStage("before_rapid_show", theme, round)
+                            val showStart = SystemClock.elapsedRealtimeNanos()
+                            type("ni")
+                            api { check(getRawInput() == "ni") }
+                            until("$theme rapid $round preedit included") { preedit.preedit.isShown && regionCovers(preedit.preedit) }
+                            val showMs = (SystemClock.elapsedRealtimeNanos() - showStart) / 1_000_000
+                            touchStage("before_rapid_clear", theme, round)
+                            val clearStart = SystemClock.elapsedRealtimeNanos()
+                            api { clearComposition() }
+                            until("$theme rapid $round cleared preedit excluded") { !preedit.preedit.isShown && !regionCovers(preedit.preedit) }
+                            val clearMs = (SystemClock.elapsedRealtimeNanos() - clearStart) / 1_000_000
+                            main { checkNoTouchPopup() }
+                            touchRegionMeasurements.put(
+                                JSONObject().apply {
+                                    put("theme", theme)
+                                    put("round", round)
+                                    put("show_ms", showMs)
+                                    put("clear_ms", clearMs)
+                                },
+                            )
+                            touchStage("after_rapid_clear", theme, round, clearMs)
+                            check(showMs < 2_000 && clearMs < 2_000) { "Rapid preedit operation exceeded the 2s stall regression limit: show=$showMs clear=$clearMs" }
+                            check(main { chat.text.toString() == before }) { "Showing/clearing preedit unexpectedly committed editor text" }
+                        }
+                        val previousMode = main { candidatesMode.getValue() }
+                        try {
+                            main { candidatesMode.setValue(PopupCandidatesMode.INPUT_DEVICE) }
+                            touchStage("before_hardware_candidate", theme)
+                            instrumentation.sendKeyDownUpSync(KeyEvent.KEYCODE_N)
+                            instrumentation.sendKeyDownUpSync(KeyEvent.KEYCODE_I)
+                            fun floatingCandidates() = roots().asSequence().flatMap(::descendants).filterIsInstance<CandidatesView>().firstOrNull { it.isShown }
+                            until("$theme hardware candidates own their main-window touch region") {
+                                service.isInputViewShown && input() == null && floatingCandidates()?.let(::regionCovers) == true
+                            }
+                            val cv = main { checkNotNull(floatingCandidates()) }
+                            val recycler = main { descendants(cv).filterIsInstance<RecyclerView>().first() }
+                            until("$theme hardware first candidate has a current native snapshot") {
+                                val holder = recycler.findViewHolderForAdapterPosition(0) as? PagedCandidatesUi.UiHolder.Candidate
+                                holder != null && holder.ui.root.isShown && holder.snapshot == iv.rime.run { candidateSnapshotCached }
+                            }
+                            val holder = main { recycler.findViewHolderForAdapterPosition(0) as PagedCandidatesUi.UiHolder.Candidate }
+                            var expected = ""
+                            api {
+                                check(getRawInput() == "ni")
+                                expected = getCandidates(0, 1, holder.snapshot).single().text
+                            }
+                            check(expected.isNotEmpty() && main { holder.ui.root.text.toString().contains(expected) })
+                            delay(150)
+                            tapActualView(holder.ui.root)
+                            until("$theme real floating candidate pointer commits its native text exactly once") { chat.text.toString() == before + expected }
+                            api { check(getRawInput().isEmpty()) }
+                            delay(400)
+                            check(main { chat.text.toString() == before + expected }) { "Floating candidate commit repeated after its snapshot changed" }
+                            main { checkNoTouchPopup() }
+                            touchStage("after_hardware_candidate", theme)
+                        } finally {
+                            main {
+                                candidatesMode.setValue(previousMode)
+                                chat.setText(before)
+                                chat.setSelection(chat.text.length)
+                                @Suppress("DEPRECATION")
+                                service.onViewClicked(false)
+                                inputManager.showSoftInput(chat, 0)
+                            }
+                        }
+                        until("$theme virtual full-pinyin returns after real floating candidate touch") { input() != null && !keyboard().isT9Layout }
+                        type("ni")
+                        api { check(getRawInput() == "ni") }
+                        until("$theme preedit restored before visibility regression") { regionCovers(preedit.preedit) }
+                        phase("PASS: $theme main IME touch region, real preedit/candidate pointers and 20 rapid show-clear rounds")
+                    }
                     suspend fun verifyT9Accessibility(theme: String) {
                         fun currentViews(): Map<Int, KeyView> {
                             val activeInput = checkNotNull(input())
@@ -988,23 +1201,24 @@ object EditorLifecycleProbe {
                             setRuntimeOption("ascii_mode", false)
                         }
                         until("$theme full pinyin replaces locked T9") { input() != null && !keyboard().isT9Layout }
+                        val touchCommittedBefore = main { chat.text.toString() }
                         type("ni")
                         api { check(getRawInput() == "ni") }
-                        val preeditOverlay = main {
-                            val preedit = checkNotNull(input()).di.direct.instance<PreeditDelegate>()
-                            val receiver = PreeditDelegate::class.java.getDeclaredField("touchEventReceiverWindow").apply { isAccessible = true }.get(preedit)
-                            TouchEventReceiverWindow::class.java.getDeclaredField("window").apply { isAccessible = true }.get(receiver) as PopupWindow
-                        }
-                        until("$theme full-pinyin preedit overlay is visible") { preeditOverlay.isShowing }
+                        val preeditView = main { checkNotNull(input()).di.direct.instance<PreeditDelegate>().ui.preedit }
+                        until("$theme full-pinyin preedit overlay is visible") { preeditView.isShown && regionCovers(preeditView) }
+                        verifyTouchRegion(theme, touchCommittedBefore)
                         val imm = editor.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+                        touchStage("before_hide", theme)
                         main { imm.hideSoftInputFromWindow(chat.windowToken, 0) }
-                        until("$theme hiding input dismisses the preedit overlay") { !service.isInputViewShown && !preeditOverlay.isShowing }
+                        until("$theme hiding input dismisses the preedit overlay") { !service.isInputViewShown && !regionCovers(preeditView) }
+                        touchStage("before_show", theme)
                         main { imm.showSoftInput(chat, 0) }
-                        until("$theme showing input restores the preedit overlay") { service.isInputViewShown && preeditOverlay.isShowing }
+                        until("$theme showing input restores the preedit overlay") { service.isInputViewShown && regionCovers(preeditView) }
                         api {
                             check(getRawInput() == "ni")
                             clearComposition()
                         }
+                        touchStage("after_hide_show_clear", theme)
                         main {
                             other.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS
                         }
@@ -1760,6 +1974,19 @@ object EditorLifecycleProbe {
             main { RimeDaemon.destroySession(javaClass.name) }
             check(ThemeManager.prefs.selectedTheme.sharedPreferences.edit().commit())
         }
+        val touchReport = JSONObject().apply {
+            put("run_id", touchRegionRunId)
+            put("api", Build.VERSION.SDK_INT)
+            put("main_pid", android.os.Process.myPid())
+            put("measurement", "instrumentation wall time including Rime queue, main-thread dispatch and visible-state polling; not candidate latency/P95")
+            put("rapid_stall_limit_ms", 2_000)
+            put("rapid_rounds", touchRegionMeasurements)
+            put("editor_probe_passed", passed)
+        }
+        result.putString("touch_region_metrics", touchReport.toString())
+        val touchDirectory = File(context.filesDir, "runtime-audit/touch-region")
+        check(touchDirectory.isDirectory || touchDirectory.mkdirs())
+        File(touchDirectory, "report.json").writeText(touchReport.toString(2) + "\n")
         result.putBoolean("passed", passed)
         instrumentation.finish(if (passed) Activity.RESULT_OK else Activity.RESULT_CANCELED, result)
     }

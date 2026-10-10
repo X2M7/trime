@@ -30,11 +30,12 @@ import com.osfans.trime.data.sync.fixture.FixtureSafPathCache
 import com.osfans.trime.data.sync.fixture.FixtureSafTreeListing
 import com.osfans.trime.data.sync.fixture.FixtureSafTreeWalker
 import com.osfans.trime.provider.RimeDataProvider
-import io.planck.storageaccess.StorageAccess
-import io.planck.storageaccess.StorageDocument
+import io.github.whiredplanck.storageaccess.StorageAccess
+import io.github.whiredplanck.storageaccess.StorageDocument
 import kotlinx.coroutines.runBlocking
 import java.io.File
 import java.io.FileNotFoundException
+import java.io.IOException
 import java.io.OutputStream
 import java.util.UUID
 import kotlin.concurrent.thread
@@ -348,7 +349,7 @@ object SafCompatibilityProbe {
             check(runCatching(block).isFailure) { "Failure was not reported" }
         }
         fun productionListing(cr: ContentResolver) = runBlocking { RimeDataSync.listExternalEntriesForTesting(cr, tree) }
-        fun expectRejectedListingPreservesTrackedLocal(cr: ContentResolver) {
+        fun expectRejectedListingPreservesTrackedLocal(cr: ContentResolver): Throwable {
             val localRoot = File(sandbox, "listing-orphan-${UUID.randomUUID()}").apply { mkdir() }
             val sentinel = File(localRoot, "tracked.yaml").apply { writeText("must survive") }
             val known =
@@ -370,6 +371,7 @@ object SafCompatibilityProbe {
                 check(sentinel.readText() == "must survive") {
                     "Rejected provider listing triggered orphan deletion"
                 }
+                return checkNotNull(result.exceptionOrNull())
             } finally {
                 localRoot.deleteRecursively()
             }
@@ -497,6 +499,22 @@ object SafCompatibilityProbe {
                 expectRejectedListingPreservesTrackedLocal(cr)
                 expectFailure { productionCopy(cr, source) }
             }
+            test("production walker rejects late loading before deleting tracked local data") { p, cr, _ ->
+                p.seed("first.yaml", "remote data must survive")
+                p.loadingAfterTraversal = true
+                val failure = expectRejectedListingPreservesTrackedLocal(cr)
+                check(failure is IOException && failure.message?.startsWith("Document listing is still loading:") == true)
+                check(p.exhaustedListingExtrasReads > 0) { "Loading must be observed after traversing the valid provider row" }
+                check(p.file("first.yaml").readText() == "remote data must survive")
+            }
+            test("production walker rejects late provider error before deleting tracked local data") { p, cr, _ ->
+                p.seed("first.yaml", "remote data must survive")
+                p.errorAfterTraversal = "fixture failed after its last row"
+                val failure = expectRejectedListingPreservesTrackedLocal(cr)
+                check(failure is IOException && failure.message?.contains("fixture failed after its last row") == true)
+                check(p.exhaustedListingExtrasReads > 0) { "Error must be observed after traversing the valid provider row" }
+                check(p.file("first.yaml").readText() == "remote data must survive")
+            }
             test("unsafe provider display name rejected") { p, cr, source ->
                 p.seed("../escape", "old")
                 expectRejectedListingPreservesTrackedLocal(cr)
@@ -580,6 +598,10 @@ object SafCompatibilityProbe {
         var failRestore = false
         var loading = false
         var listingError: String? = null
+        var loadingAfterTraversal = false
+        var errorAfterTraversal: String? = null
+        var exhaustedListingExtrasReads = 0
+            private set
         var nullListing = false
         var repeatFirstListingRow = false
         var denied = false
@@ -591,10 +613,21 @@ object SafCompatibilityProbe {
         override fun onCreate() = true
         override fun queryRoots(projection: Array<String>?) = MatrixCursor(projection ?: emptyArray())
         override fun isChildDocument(parentDocumentId: String, documentId: String) = nodes.containsKey(documentId)
-        private fun cursor(projection: Array<out String>?, rows: List<Node>): Cursor {
+        private fun cursor(projection: Array<out String>?, rows: List<Node>, listing: Boolean = false): Cursor {
             if (denied) throw SecurityException("Fixture permission revoked")
             val columns = projection ?: arrayOf(Document.COLUMN_DOCUMENT_ID, Document.COLUMN_DISPLAY_NAME)
-            return MatrixCursor(columns).apply {
+            return object : MatrixCursor(columns) {
+                override fun getExtras(): Bundle {
+                    val current = super.getExtras()
+                    if (!listing || !isAfterLast) return current
+                    if (!loadingAfterTraversal && errorAfterTraversal == null) return current
+                    exhaustedListingExtrasReads++
+                    return Bundle(current).apply {
+                        if (loadingAfterTraversal) putBoolean(DocumentsContract.EXTRA_LOADING, true)
+                        errorAfterTraversal?.let { putString(DocumentsContract.EXTRA_ERROR, it) }
+                    }
+                }
+            }.apply {
                 extras =
                     Bundle().apply {
                         putBoolean(DocumentsContract.EXTRA_LOADING, loading)
@@ -630,7 +663,7 @@ object SafCompatibilityProbe {
             null
         } else {
             val rows = nodes.values.filter { it.parent == parentDocumentId }
-            cursor(projection, if (repeatFirstListingRow && rows.isNotEmpty()) rows + rows.first() else rows)
+            cursor(projection, if (repeatFirstListingRow && rows.isNotEmpty()) rows + rows.first() else rows, listing = true)
         }
         override fun createDocument(parentDocumentId: String, mimeType: String, displayName: String): String {
             val id = UUID.randomUUID().toString()

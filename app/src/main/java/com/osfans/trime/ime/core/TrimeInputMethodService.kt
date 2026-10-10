@@ -10,7 +10,9 @@ import android.app.Dialog
 import android.content.IntentFilter
 import android.content.pm.ActivityInfo
 import android.content.res.Configuration
+import android.graphics.Rect
 import android.graphics.RectF
+import android.graphics.Region
 import android.inputmethodservice.InputMethodService
 import android.os.Build
 import android.os.Bundle
@@ -875,6 +877,22 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
     }
 
     private val inputViewLocation = intArrayOf(0, 0)
+    private val touchableViewLocation = intArrayOf(0, 0)
+    private val touchableViewBounds = Rect()
+
+    private fun includeTouchableView(outInsets: Insets, view: View?) {
+        if (view == null || !view.isAttachedToWindow || !view.isShown ||
+            view.windowVisibility != View.VISIBLE || view.windowToken != decorView.windowToken ||
+            !view.getLocalVisibleRect(touchableViewBounds)
+        ) {
+            return
+        }
+        view.getLocationInWindow(touchableViewLocation)
+        touchableViewBounds.offset(touchableViewLocation[0], touchableViewLocation[1])
+        if (touchableViewBounds.intersect(0, 0, decorView.width, decorView.height)) {
+            outInsets.touchableRegion.op(touchableViewBounds, Region.Op.UNION)
+        }
+    }
 
     override fun onComputeInsets(outInsets: Insets) {
         if (inputDeviceManager.useVirtualKeyboard || !themeReady) {
@@ -887,7 +905,6 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
             outInsets.apply {
                 contentTopInsets = inputViewLocation[1]
                 visibleTopInsets = inputViewLocation[1]
-                touchableInsets = Insets.TOUCHABLE_INSETS_VISIBLE
             }
         } else {
             val n = decorView.findViewById<View>(android.R.id.navigationBarBackground)?.height ?: 0
@@ -895,8 +912,21 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
             outInsets.apply {
                 contentTopInsets = h
                 visibleTopInsets = h
-                touchableInsets = Insets.TOUCHABLE_INSETS_VISIBLE
             }
+        }
+        // Preedit and floating candidates already belong to this IME's view tree.
+        // Include their exact visible bounds instead of creating touch-only PopupWindows:
+        // rapid composition changes must not synchronously destroy another HWUI surface.
+        outInsets.touchableInsets = Insets.TOUCHABLE_INSETS_REGION
+        outInsets.touchableRegion.set(
+            0,
+            outInsets.visibleTopInsets.coerceIn(0, decorView.height),
+            decorView.width,
+            decorView.height,
+        )
+        if (editorActive) {
+            includeTouchableView(outInsets, inputView?.touchablePreeditView)
+            includeTouchableView(outInsets, candidatesView)
         }
     }
 

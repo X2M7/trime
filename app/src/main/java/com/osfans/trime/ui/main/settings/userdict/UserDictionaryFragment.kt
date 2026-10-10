@@ -71,12 +71,9 @@ class UserDictionaryFragment : Fragment() {
                                 mimeType = "text/plain",
                             ) ?: return@launch
                             val count = withContext(Dispatchers.IO) {
-                                var exported = 0
                                 StorageAccess.writeFile(doc.uri) { outs ->
-                                    exported = UserDictManager.exportUserDict(outs, dictName, doc.name)
-                                        .getOrThrow()
+                                    UserDictManager.exportUserDict(outs, dictName, doc.name).getOrThrow()
                                 }
-                                exported
                             }
                             ui.showSnackBar(
                                 ctx.resources.getQuantityString(

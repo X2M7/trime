@@ -131,6 +131,9 @@ class InputView(
     private val popup: PopupDelegate by instance()
     private val enterKeyDisplay: EnterKeyDisplayDelegate by instance()
     private val preedit: PreeditDelegate by instance()
+    private var acceptsPreeditTouches = false
+    internal val touchablePreeditView: View?
+        get() = if (acceptsPreeditTouches) preedit.ui.root else null
     private val t9 = T9DisambiguationView(themedContext, scope) { revision, action, start, end, spelling ->
         service.postRimeJob { t9Action(revision, action, start, end, spelling) }
     }
@@ -368,7 +371,8 @@ class InputView(
     ) {
         updateEnterKeyLabel(info)
         broadcaster.onStartInput(info)
-        preedit.restoreTouchOverlay()
+        acceptsPreeditTouches = true
+        preedit.ui.root.invalidate()
         if (!restarting) {
             windowManager.attachWindow(KeyboardWindow)
         }
@@ -395,7 +399,8 @@ class InputView(
         dismissCandidateActionMenu()
         keyboardWindow.finishInput()
         popup.dismissAll()
-        preedit.dismissTouchOverlay()
+        acceptsPreeditTouches = false
+        preedit.ui.root.invalidate()
     }
 
     /** Drop content-bearing surfaces at an editor/privacy boundary. */

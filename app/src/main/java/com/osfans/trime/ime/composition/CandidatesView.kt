@@ -26,7 +26,6 @@ import com.osfans.trime.data.prefs.AppPrefs
 import com.osfans.trime.data.theme.ThemeScope
 import com.osfans.trime.ime.candidates.popup.PagedCandidatesUi
 import com.osfans.trime.ime.core.BaseInputView
-import com.osfans.trime.ime.core.TouchEventReceiverWindow
 import com.osfans.trime.ime.core.TrimeInputMethodService
 import com.osfans.trime.ime.performance.InputLatencyLog
 import splitties.dimensions.dp
@@ -110,8 +109,6 @@ class CandidatesView(
                 service.isCurrentEditor(snapshot.editorToken) && snapshot == rime.run { candidateSnapshotCached }
             },
         )
-
-    private val touchEventReceiverWindow = TouchEventReceiverWindow(this)
 
     private var bottomInsets = 0
 
@@ -235,8 +232,6 @@ class CandidatesView(
         }
         translationX = tX
         translationY = tY
-        // update touchEventReceiverWindow's position after CandidatesView's
-        touchEventReceiverWindow.showAt(tX.roundToInt(), tY.roundToInt(), w, h)
         shouldUpdatePosition = false
     }
 
@@ -331,17 +326,9 @@ class CandidatesView(
         viewTreeObserver.addOnPreDrawListener(preDrawListener)
     }
 
-    override fun setVisibility(visibility: Int) {
-        if (visibility != VISIBLE) {
-            touchEventReceiverWindow.dismiss()
-        }
-        super.setVisibility(visibility)
-    }
-
     override fun onDetachedFromWindow() {
         viewTreeObserver.removeOnPreDrawListener(preDrawListener)
         viewTreeObserver.removeOnGlobalLayoutListener(layoutListener)
-        touchEventReceiverWindow.dismiss()
         super.onDetachedFromWindow()
     }
 

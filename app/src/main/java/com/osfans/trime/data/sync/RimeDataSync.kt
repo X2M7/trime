@@ -1007,8 +1007,7 @@ object RimeDataSync {
      *
      * Subtrees rejected by [shouldSync] are never queried, so excluded `build`/`*.userdb`
      * directories neither cost a provider query each nor fail the walk when inaccessible. This
-     * queries the provider directly because StorageAccess 1.2.1 does not expose
-     * [DocumentsContract.EXTRA_LOADING]. Treating a partial cursor as complete could otherwise
+     * queries the provider directly to validate [DocumentsContract.EXTRA_LOADING] and errors. Treating a partial cursor as complete could otherwise
      * turn its missing rows into local orphan deletions.
      */
     private suspend fun listExternalEntries(
@@ -1052,12 +1051,15 @@ object RimeDataSync {
                 contentResolver.query(childrenUri, EXTERNAL_DOCUMENT_PROJECTION, null, null, null)
                     ?: throw IOException("Document provider returned no listing for $childrenUri")
             cursor.use {
-                if (it.extras.getBoolean(DocumentsContract.EXTRA_LOADING)) {
-                    throw IOException("Document listing is still loading: $childrenUri")
+                fun requireCompleteListing() {
+                    if (it.extras.getBoolean(DocumentsContract.EXTRA_LOADING)) {
+                        throw IOException("Document listing is still loading: $childrenUri")
+                    }
+                    it.extras.getString(DocumentsContract.EXTRA_ERROR)?.takeIf(String::isNotBlank)?.let { error ->
+                        throw IOException("Document provider failed to list $childrenUri: $error")
+                    }
                 }
-                it.extras.getString(DocumentsContract.EXTRA_ERROR)?.takeIf(String::isNotBlank)?.let { error ->
-                    throw IOException("Document provider failed to list $childrenUri: $error")
-                }
+                requireCompleteListing()
                 val idColumn = it.getColumnIndexOrThrow(DocumentsContract.Document.COLUMN_DOCUMENT_ID)
                 val nameColumn = it.getColumnIndexOrThrow(DocumentsContract.Document.COLUMN_DISPLAY_NAME)
                 val mimeColumn = it.getColumnIndexOrThrow(DocumentsContract.Document.COLUMN_MIME_TYPE)
@@ -1101,6 +1103,9 @@ object RimeDataSync {
                         pendingDirectories.addLast(ExternalDirectory(documentId, relativePath, depth))
                     }
                 }
+                // Providers can report an incomplete result after producing valid rows.
+                // Do not let that partial path set authorize local orphan deletions.
+                requireCompleteListing()
             }
         }
         return entries

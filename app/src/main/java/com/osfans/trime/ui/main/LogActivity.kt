@@ -32,7 +32,9 @@ import com.osfans.trime.util.iso8601UTCDateTime
 import com.osfans.trime.util.toast
 import io.github.whiredplanck.storageaccess.StorageAccess
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import splitties.systemservices.clipboardManager
 
 /**
@@ -142,12 +144,19 @@ class LogActivity : AppCompatActivity() {
                             filename = "$packageName-${iso8601UTCDateTime()}.txt",
                             mimeType = "text/plain",
                         ) ?: return@launch
-                        StorageAccess.writeFile(log.uri) { outs ->
-                            outs.bufferedWriter().use {
-                                it.write(DeviceInfo.get(this@LogActivity))
-                                it.write(logView.currentLog)
+                        // Snapshot UI-backed state before the provider write leaves Main.
+                        val deviceInfo = DeviceInfo.get(this@LogActivity)
+                        val logSnapshot = logView.currentLog
+                        withContext(Dispatchers.IO) {
+                            StorageAccess.writeFile(log.uri) { outs ->
+                                outs.bufferedWriter().use {
+                                    it.write(deviceInfo)
+                                    it.write(logSnapshot)
+                                }
                             }
                         }
+                    }.onFailure {
+                        if (it is CancellationException) throw it
                     }.let { toast(it) }
                 }
             }

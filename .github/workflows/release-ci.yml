@@ -12,7 +12,7 @@ env:
   CI_NAME: Release CI
 jobs:
   build:
-    # X2M7 publishes verified preview APKs with the existing preview identity.
+    # X2M7 publishes verified APKs and recursive source through the local release gate.
     if: github.repository != 'X2M7/trime'
     runs-on: ubuntu-26.04
     steps:
@@ -26,7 +26,7 @@ jobs:
         uses: actions/setup-java@v6
         with:
           distribution: "temurin"
-          java-version: 25
+          java-version: 17
           # will restore cache of dependencies and wrappers
           cache: 'gradle'
 

@@ -13,7 +13,7 @@ import java.io.IOException
 
 /**
  * Complete direct-child listings for synchronization and atomic replacement.
- * StorageAccess 1.2.1 stops its list after the first child, so use the provider cursor directly.
+ * Read the provider cursor directly to reject loading, failed or incomplete listings.
  */
 internal object SafDirectoryListing {
     internal data class Row(

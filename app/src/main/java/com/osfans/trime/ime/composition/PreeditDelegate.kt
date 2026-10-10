@@ -13,7 +13,6 @@ import com.osfans.trime.core.CompositionProto
 import com.osfans.trime.data.theme.Theme
 import com.osfans.trime.data.theme.ThemeScope
 import com.osfans.trime.ime.broadcast.InputBroadcastReceiver
-import com.osfans.trime.ime.core.TouchEventReceiverWindow
 import com.osfans.trime.ime.core.TrimeInputMethodService
 import org.kodein.di.DI
 import org.kodein.di.DIAware
@@ -70,16 +69,6 @@ class PreeditDelegate(override val di: DI) :
         setupPreeditBackground(ui.preedit)
     }
 
-    private val touchEventReceiverWindow = TouchEventReceiverWindow(ui.root)
-
-    fun dismissTouchOverlay() {
-        touchEventReceiverWindow.dismiss()
-    }
-
-    fun restoreTouchOverlay() {
-        if (ui.visible) touchEventReceiverWindow.show()
-    }
-
     fun clearEditorBoundaryState() {
         ui.preedit.clearTransientContent()
     }
@@ -87,10 +76,5 @@ class PreeditDelegate(override val di: DI) :
     override fun onCompositionUpdate(data: CompositionProto) {
         ui.update(data)
         ui.root.visibility = if (ui.visible) View.VISIBLE else View.INVISIBLE
-        if (data.length > 0) {
-            touchEventReceiverWindow.show()
-        } else {
-            touchEventReceiverWindow.dismiss()
-        }
     }
 }
