@@ -972,6 +972,25 @@ object EditorLifecycleProbe {
                             },
                         ) { "Composition must not create a separate PopupWindow surface" }
                     }
+                    fun fingerEvent(down: Long, action: Int, x: Float, y: Float): MotionEvent {
+                        val pointer = MotionEvent.PointerProperties().apply {
+                            id = 0
+                            toolType = MotionEvent.TOOL_TYPE_FINGER
+                        }
+                        val coordinates = MotionEvent.PointerCoords().apply {
+                            this.x = x
+                            this.y = y
+                            pressure = if (action == MotionEvent.ACTION_UP) 0f else 1f
+                            size = 1f
+                        }
+                        // setSource alone leaves the simplified obtain overload's tool type
+                        // UNKNOWN. Android's editor-tool callback needs an actual finger tap.
+                        return MotionEvent.obtain(
+                            down, SystemClock.uptimeMillis(), action, 1,
+                            arrayOf(pointer), arrayOf(coordinates), 0, 0,
+                            1f, 1f, 0, 0, InputDevice.SOURCE_TOUCHSCREEN, 0,
+                        )
+                    }
                     fun tapActualView(view: View, leadingText: Boolean = false, imeTarget: Boolean = true) {
                         val point = main {
                             if (imeTarget) check(regionCovers(view))
@@ -998,9 +1017,8 @@ object EditorLifecycleProbe {
                         }
                         val down = SystemClock.uptimeMillis()
                         for (action in listOf(MotionEvent.ACTION_DOWN, MotionEvent.ACTION_UP)) {
-                            val event = MotionEvent.obtain(down, SystemClock.uptimeMillis(), action, point.first, point.second, 0)
+                            val event = fingerEvent(down, action, point.first, point.second)
                             try {
-                                event.source = InputDevice.SOURCE_TOUCHSCREEN
                                 check(instrumentation.uiAutomation.injectInputEvent(event, true)) { "Actual pointer injection was rejected" }
                             } finally {
                                 event.recycle()
@@ -1243,7 +1261,28 @@ object EditorLifecycleProbe {
                             // calling the service directly after that races the old monitor.
                             main { candidatesMode.setValue(previousMode) }
                             touchStage("before_host_virtual_return", theme)
-                            tapActualView(chat, imeTarget = false)
+                            val hostTouches = mutableListOf<Pair<Int, Int>>()
+
+                            @SuppressLint("ClickableViewAccessibility")
+                            fun observeHostTouches() {
+                                // Return false so the real EditText handles focus, click and IME
+                                // callbacks. Record the delivered events, not just injected bytes.
+                                chat.setOnTouchListener { _, event ->
+                                    hostTouches.add(event.actionMasked to event.getToolType(0))
+                                    false
+                                }
+                            }
+                            main { observeHostTouches() }
+                            try {
+                                tapActualView(chat, imeTarget = false)
+                                until("$theme real host editor receives finger down/up") {
+                                    listOf(MotionEvent.ACTION_DOWN, MotionEvent.ACTION_UP).all { action ->
+                                        action to MotionEvent.TOOL_TYPE_FINGER in hostTouches
+                                    }
+                                }
+                            } finally {
+                                main { chat.setOnTouchListener(null) }
+                            }
                             until("$theme real host editor pointer restores the virtual keyboard before resetting text") {
                                 inputManager.isActive(chat) && input() != null && !keyboard().isT9Layout
                             }
@@ -1980,7 +2019,7 @@ object EditorLifecycleProbe {
                     }
                     val webDown = SystemClock.uptimeMillis()
                     for (action in listOf(MotionEvent.ACTION_DOWN, MotionEvent.ACTION_UP)) {
-                        MotionEvent.obtain(webDown, SystemClock.uptimeMillis(), action, webPoint.first, webPoint.second, 0).let {
+                        fingerEvent(webDown, action, webPoint.first, webPoint.second).let {
                             instrumentation.sendPointerSync(it)
                             it.recycle()
                         }
