@@ -13,6 +13,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inspector.WindowInspector
 import android.widget.EditText
+import android.widget.TextView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -25,7 +26,6 @@ import com.osfans.trime.ime.bar.InputBarDelegate
 import com.osfans.trime.ime.candidates.CandidateViewHolder
 import com.osfans.trime.ime.composition.PreeditDelegate
 import com.osfans.trime.ime.composition.T9DisambiguationView
-import com.osfans.trime.ime.core.AutoScaleTextView
 import com.osfans.trime.ime.core.InputView
 import com.osfans.trime.ime.core.TrimeInputMethodService
 import com.osfans.trime.ime.keyboard.KeyView
@@ -119,12 +119,13 @@ class T9LayoutProbe(
             check(bounds.top >= viewport.top && bounds.bottom <= viewport.bottom) { "$label: candidate row clipped: $bounds in $viewport" }
             val fullyVisibleWidth = bounds.left >= viewport.left && bounds.right <= viewport.right
             val holder = recycler.getChildViewHolder(item) as CandidateViewHolder
-            val labels = descendants(item).filterIsInstance<AutoScaleTextView>()
+            val labels = descendants(holder.ui.root).filterIsInstance<TextView>()
                 .filter { it.isShown && it.text.isNotEmpty() }.toList()
-            check(labels.any { it.text.toString() == holder.text }) { "$label: missing candidate text ${holder.text}" }
-            if (holder.comment.isNotEmpty()) {
-                check(labels.any { it.text.toString() == holder.comment }) { "$label: missing candidate comment ${holder.comment}" }
+            val expected = buildList {
+                add(holder.text)
+                if (AppPrefs.defaultInstance().candidates.showComments.getValue() && holder.comment.isNotEmpty()) add(holder.comment)
             }
+            check(labels.map { it.text.toString() } == expected) { "$label: visible candidate labels differ from native text and comment preference: expected=$expected" }
             for (text in labels) {
                 val textBounds = screenBounds(text)
                 check(text.width > 0 && text.height > 0 && textBounds.top >= bounds.top && textBounds.bottom <= bounds.bottom) { "$label: candidate label ${text.text} vertically outside its row: $textBounds in $bounds" }

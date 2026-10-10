@@ -88,17 +88,37 @@ object ExpandedCandidateViewportAssertions {
                 event(initialList, down, MotionEvent.ACTION_UP, x, initialList.height * 0.25f)
                 initialList.stopScroll()
             }
-            until { first(initial, initialList)?.let { it.snapshot == snapshot && it.idx > initialIndex } == true }
-            val selected = main { checkNotNull(first(initial, initialList)).let { CandidateIdentity(it.snapshot, it.idx) } }
-            check(main { editor.text.toString() == originalEditor }) { "Expanded scrolling committed editor text" }
+            until {
+                initialList.scrollState == RecyclerView.SCROLL_STATE_IDLE && !initialList.isLayoutRequested &&
+                    compact.adapter.snapshot == snapshot && initial.adapter.snapshot == snapshot &&
+                    first(initial, initialList)?.let { it.snapshot == snapshot && it.idx > initialIndex } == true
+            }
+            val selected = main {
+                check(initialList.scrollState == RecyclerView.SCROLL_STATE_IDLE && !initialList.isLayoutRequested)
+                check(compact.adapter.snapshot == snapshot && initial.adapter.snapshot == snapshot)
+                val holder = checkNotNull(first(initial, initialList))
+                check(holder.snapshot == snapshot && holder.idx > initialIndex)
+                val identity = CandidateIdentity(holder.snapshot, holder.idx)
+                check(editor.text.toString() == originalEditor) { "Expanded scrolling committed editor text" }
+                // Read the row immediately before onDetached captures it, without an intervening frame.
+                manager.attachWindow(KeyboardWindow)
+                check(!manager.isAttached(initial)) { "Collapsed expanded window remains the current window" }
+                val restored = compact.expandedViewportAnchor.restore(snapshot, initial.adapter.offset)
+                check(restored == identity.index) {
+                    "Collapsed anchor differs: expected=${identity.index}, actual=$restored, offset=${initial.adapter.offset}, snapshot=$snapshot"
+                }
+                identity
+            }
             checks++
-            main { manager.attachWindow(KeyboardWindow) }
-            check(
-                main {
-                    !manager.isAttached(initial) && initialList.parent?.parent == null &&
-                        compact.expandedViewportAnchor.restore(snapshot, initial.adapter.offset) == selected.index
-                },
-            ) { "Destroyed window did not retain its current global index" }
+            // The normal 100ms exit Slide temporarily reparents the removed root into an overlay.
+            until { !manager.view.isLayoutRequested && initialList.parent?.parent == null }
+            main {
+                check(!manager.isAttached(initial)) { "Destroyed expanded window became current again" }
+                val restored = compact.expandedViewportAnchor.restore(snapshot, initial.adapter.offset)
+                check(restored == selected.index) {
+                    "Destroyed anchor differs: expected=${selected.index}, actual=$restored, offset=${initial.adapter.offset}, snapshot=$snapshot"
+                }
+            }
             checks++
 
             val reopened = main {
