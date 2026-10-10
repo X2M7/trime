@@ -45,6 +45,7 @@ import com.osfans.trime.daemon.RimeDaemon
 import com.osfans.trime.daemon.RimeSession
 import com.osfans.trime.data.base.DataManager
 import com.osfans.trime.data.prefs.AppPrefs
+import com.osfans.trime.data.theme.Theme
 import com.osfans.trime.data.theme.ThemeManager
 import com.osfans.trime.data.theme.model.KeyActionToken
 import com.osfans.trime.ime.broadcast.EnterKeyDisplayDelegate
@@ -697,51 +698,85 @@ object EditorLifecycleProbe {
 
         val manualPrivacyMode = AppPrefs.defaultInstance().general.manualPrivacyMode
         check(!manualPrivacyMode.getValue()) { "Transient keyboard fixture requires ordinary mode" }
-        val window = main { checkNotNull(input()).di.direct.instance<KeyboardWindow>() }
+        val originalTheme = ThemeManager.prefs.selectedTheme.getValue()
+        val keyboardId = KeyboardWindow::class.java.getDeclaredField("currentKeyboardId").apply { isAccessible = true }
         try {
-            main { window.switchKeyboard("symbols") }
-            until("manual privacy layout fixture selects a transient keyboard") {
-                !window.currentKeyboard.isLock && !window.currentKeyboard.isT9Layout
-            }
-            val transientKeyboard = main { window.currentKeyboard }
-            api {
-                check(statusCached.isAsciiMode) {
-                    "Transient symbols keyboard did not establish its native ASCII mode"
+            // These shipped layouts intentionally use different native modes. The oracle
+            // must not depend on whichever theme a preceding test or user selected.
+            for ((theme, expectedAscii) in listOf("trime" to true, "tongwenfeng.trime" to false)) {
+                check(ThemeManager.selectTheme(theme) == theme) { "Transient keyboard theme fell back" }
+                until("$theme transient fixture has the current theme's T9") {
+                    input()?.let {
+                        it.di.direct.instance<Theme>() === ThemeManager.activeTheme &&
+                            it.di.direct.instance<KeyboardWindow>().currentKeyboard.isT9Layout
+                    } == true
                 }
-            }
-            main { manualPrivacyMode.setValue(true) }
-            until("manual privacy reaches the transient keyboard") {
-                service.isPrivacyModeActive && PrivacyModeState.active
-            }
-            api {
-                check(Rime.isRimePrivacyGuardEnabledForTesting())
-                check(statusCached.isAsciiMode) {
-                    "Privacy entry changed the transient keyboard's native mode"
+                api {
+                    check(getRawInput().isEmpty() && !statusCached.isComposing && !statusCached.isAsciiMode) {
+                        "$theme transient fixture requires an idle native T9 editor"
+                    }
                 }
-            }
-            check(main { window.currentKeyboard === transientKeyboard }) {
-                "Privacy entry replaced the user's transient keyboard"
-            }
-            main { manualPrivacyMode.setValue(false) }
-            until("manual privacy leaves the transient keyboard") {
-                !service.isPrivacyModeActive && !PrivacyModeState.active
-            }
-            api {
-                check(!Rime.isRimePrivacyGuardEnabledForTesting())
-                check(statusCached.isAsciiMode) {
-                    "Privacy exit changed the transient keyboard's native mode"
+                val window = main { checkNotNull(input()).di.direct.instance<KeyboardWindow>() }
+                try {
+                    main { window.switchKeyboard("symbols") }
+                    until("$theme manual privacy fixture selects symbols") {
+                        keyboardId.get(window) == "symbols" &&
+                            !window.currentKeyboard.isLock && !window.currentKeyboard.isT9Layout
+                    }
+                    val transientKeyboard = main { window.currentKeyboard }
+                    check(transientKeyboard.asciiMode == expectedAscii) { "$theme symbols configuration changed" }
+                    api {
+                        check(statusCached.isAsciiMode == expectedAscii) {
+                            "$theme symbols did not establish its configured native mode"
+                        }
+                    }
+                    main { manualPrivacyMode.setValue(true) }
+                    until("$theme manual privacy reaches symbols") {
+                        service.isPrivacyModeActive && PrivacyModeState.active
+                    }
+                    api {
+                        check(Rime.isRimePrivacyGuardEnabledForTesting())
+                        check(statusCached.isAsciiMode == expectedAscii) {
+                            "$theme privacy entry changed symbols' native mode"
+                        }
+                    }
+                    check(main {
+                        input()?.di?.direct?.instance<KeyboardWindow>() === window &&
+                            window.currentKeyboard === transientKeyboard
+                    }) { "$theme privacy entry replaced symbols" }
+                    main { manualPrivacyMode.setValue(false) }
+                    until("$theme manual privacy leaves symbols") {
+                        !service.isPrivacyModeActive && !PrivacyModeState.active
+                    }
+                    api {
+                        check(!Rime.isRimePrivacyGuardEnabledForTesting())
+                        check(statusCached.isAsciiMode == expectedAscii) {
+                            "$theme privacy exit changed symbols' native mode"
+                        }
+                    }
+                    check(main {
+                        input()?.di?.direct?.instance<KeyboardWindow>() === window &&
+                            window.currentKeyboard === transientKeyboard
+                    }) { "$theme privacy exit replaced symbols" }
+                } finally {
+                    main {
+                        manualPrivacyMode.setValue(false)
+                        window.switchKeyboard(".last_lock")
+                    }
                 }
-            }
-            check(main { window.currentKeyboard === transientKeyboard }) {
-                "Privacy exit replaced the user's transient keyboard"
+                until("$theme manual privacy fixture restores T9") { window.currentKeyboard.isT9Layout }
+                api { check(!statusCached.isAsciiMode) }
             }
         } finally {
-            main {
-                manualPrivacyMode.setValue(false)
-                window.switchKeyboard(".last_lock")
-            }
+            main { manualPrivacyMode.setValue(false) }
+            ThemeManager.selectTheme(originalTheme)
         }
-        until("manual privacy layout fixture restores T9") { window.currentKeyboard.isT9Layout }
+        until("manual privacy fixture restores the original theme's T9") {
+            input()?.let {
+                it.di.direct.instance<Theme>() === ThemeManager.activeTheme &&
+                    it.di.direct.instance<KeyboardWindow>().currentKeyboard.isT9Layout
+            } == true
+        }
         api { check(!statusCached.isAsciiMode) }
         instrumentation.sendStatus(
             0,
