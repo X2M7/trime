@@ -350,6 +350,7 @@ class Rime :
     }
 
     override suspend fun selectCandidate(idx: Int, global: Boolean, expectedSnapshot: CandidateSnapshot?): Boolean = withRimeContext {
+        if (idx < 0) return@withRimeContext false
         if (!candidateSnapshots.accepts(expectedSnapshot, editorToken)) {
             expectedSnapshot?.let(InputLatencyLog::stale)
             return@withRimeContext false
@@ -359,6 +360,7 @@ class Rime :
     }
 
     override suspend fun deleteCandidate(idx: Int, global: Boolean, expectedSnapshot: CandidateSnapshot?): Boolean = withRimeContext {
+        if (idx < 0) return@withRimeContext false
         if (privacyMode || !candidateSnapshots.accepts(expectedSnapshot, editorToken)) {
             expectedSnapshot?.let(InputLatencyLog::stale)
             return@withRimeContext false

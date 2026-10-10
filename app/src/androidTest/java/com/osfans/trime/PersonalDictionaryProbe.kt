@@ -298,6 +298,61 @@ object PersonalDictionaryProbe {
                         check(getRawInput() == "b" && candidateSnapshotCached == before)
                     }
                     var current = query(rankSchema, "a")
+                    val commitsBeforeInvalidIndices = synchronized(commits) { commits.size }
+                    var invalidIndexChecks = 0
+                    withObserver {
+                        dispatcher().runConfined {
+                            checkNotNull(session).runOnReady {
+                                val originalRaw = Rime.getRimeRawInput()
+                                val originalCaret = Rime.getRimeCaretPos()
+                                val originalHistorySize = Rime.getRimeCommitHistorySizeForTesting()
+                                check(candidateSnapshotCached == current && originalRaw == "a")
+                                check(Rime.getRimeCommit().text.isNullOrEmpty())
+
+                                fun unchanged() {
+                                    check(candidateSnapshotCached == current) { "Rejected negative index changed candidate snapshot" }
+                                    check(Rime.getRimeRawInput() == originalRaw && Rime.getRimeCaretPos() == originalCaret) {
+                                        "Rejected negative index changed native composition"
+                                    }
+                                    check(Rime.getRimeCommitHistorySizeForTesting() == originalHistorySize) {
+                                        "Rejected negative index changed native commit history"
+                                    }
+                                    check(Rime.getRimeCommit().text.isNullOrEmpty()) { "Rejected negative index generated a native commit" }
+                                }
+
+                                val nativeActions = listOf("selectRimeCandidate", "deleteRimeCandidate").map { name ->
+                                    Rime::class.java.getDeclaredMethod(name, Integer.TYPE, java.lang.Boolean.TYPE).apply { isAccessible = true }
+                                }
+                                for (index in intArrayOf(-1, -2, Int.MIN_VALUE)) {
+                                    for (global in listOf(true, false)) {
+                                        // Exercise both the explicit current identity and legacy
+                                        // nullable-snapshot API, without invalidating either one.
+                                        for (snapshot in listOf(current, null)) {
+                                            check(!selectCandidate(index, global, snapshot)) { "Negative Kotlin selection was accepted" }
+                                            unchanged()
+                                            check(!deleteCandidate(index, global, snapshot)) { "Negative Kotlin forget request was accepted" }
+                                            unchanged()
+                                            invalidIndexChecks += 2
+                                        }
+                                        // Use only the already confined engine; the signed JNI
+                                        // boundary must reject before conversion to size_t.
+                                        for (action in nativeActions) {
+                                            check(action.invoke(null, index, global) == false) { "Negative direct JNI action was accepted" }
+                                            unchanged()
+                                            invalidIndexChecks++
+                                        }
+                                    }
+                                }
+                                // Check all 200 fixture rows through two existing bounded reads,
+                                // never request an unbounded or negative native candidate range.
+                                val unchangedOrder = getCandidates(0, 144, current).map { it.text } +
+                                    getCandidates(144, 144, current).map { it.text }
+                                check(unchangedOrder == baseline) { "Rejected negative indices changed native candidate ordering" }
+                            }
+                        }
+                        check(synchronized(commits) { commits.size } == commitsBeforeInvalidIndices) { "Rejected negative indices emitted an editor commit" }
+                    }
+                    phase("$invalidIndexChecks negative-index Kotlin/JNI selection and forget checks reject -1, -2 and minimum Int in global/page modes; snapshot, native commits and 200-row order remain unchanged")
                     checkNotNull(session).runOnReady {
                         check(getCandidates(0, 144, current).map { it.text } == baseline.take(144))
                         check(!pinCandidate(144, true, current)) { "Out-of-window pin was accepted" }

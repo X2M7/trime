@@ -746,7 +746,11 @@ Java_com_osfans_trime_core_Rime_selectRimeCandidate(JNIEnv* env,
                                                     jclass /* thiz */,
                                                     jint index,
                                                     jboolean global) {
-  return Rime::Instance().selectCandidate(index, global);
+  if (index < 0) return JNI_FALSE;
+  return jniCall(env, [&] {
+    return static_cast<jboolean>(Rime::Instance().selectCandidate(
+        static_cast<size_t>(index), global));
+  });
 }
 
 extern "C" JNIEXPORT jboolean JNICALL
@@ -754,7 +758,11 @@ Java_com_osfans_trime_core_Rime_deleteRimeCandidate(JNIEnv* env,
                                                     jclass /* thiz */,
                                                     jint index,
                                                     jboolean global) {
-  return Rime::Instance().deleteCandidate(index, global);
+  if (index < 0) return JNI_FALSE;
+  return jniCall(env, [&] {
+    return static_cast<jboolean>(Rime::Instance().deleteCandidate(
+        static_cast<size_t>(index), global));
+  });
 }
 
 extern "C" JNIEXPORT jboolean JNICALL
