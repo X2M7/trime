@@ -1168,13 +1168,27 @@ object EditorLifecycleProbe {
                             main { checkNoTouchPopup() }
                             touchStage("after_hardware_candidate", theme)
                         } finally {
-                            main {
-                                candidatesMode.setValue(previousMode)
+                            // Return through Android's real editor click while its connection
+                            // is still active. setText can invalidate it and queue restartInput;
+                            // calling the service directly after that races the old monitor.
+                            main { candidatesMode.setValue(previousMode) }
+                            touchStage("before_host_virtual_return", theme)
+                            tapActualView(chat, imeTarget = false)
+                            until("$theme real host editor pointer restores the virtual keyboard before resetting text") {
+                                inputManager.isActive(chat) && input() != null && !keyboard().isT9Layout
+                            }
+                            touchStage("after_host_virtual_return", theme)
+                            val resetEditorToken = main {
+                                val token = service.editorToken
                                 chat.setText(before)
                                 chat.setSelection(chat.text.length)
-                                @Suppress("DEPRECATION")
-                                service.onViewClicked(false)
                                 inputManager.showSoftInput(chat, 0)
+                                token
+                            }
+                            until("$theme reset text belongs to the restarted host editor connection") {
+                                service.editorToken != resetEditorToken && service.isCurrentEditor(service.editorToken) &&
+                                    service.currentInputEditorInfo?.fieldId == chat.id && inputManager.isActive(chat) &&
+                                    input() != null && !keyboard().isT9Layout
                             }
                         }
                         until("$theme virtual full-pinyin returns after real floating candidate touch") { input() != null && !keyboard().isT9Layout }
