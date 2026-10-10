@@ -23,12 +23,14 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 /** Actual old/new APK native learning, independent of the Daemon lifecycle wrapper.
@@ -269,6 +271,117 @@ public final class UserDictionaryNativeUpgradeProbe {
         }
     }
 
+    private File portableBackupFile() throws Exception {
+        // Only the new Release verify branch calls these kept JNI methods.
+        // Avoid Kotlin configuration wrappers that an ordinary Release can inline.
+        long peer = (Long) production("core.RimeConfig", "openRimeUserConfig",
+                new Class<?>[]{String.class}, "installation");
+        check(peer != 0, "Cannot open actual native installation configuration");
+        String identity;
+        String configured;
+        try {
+            identity = (String) production("core.RimeConfig", "getRimeConfigString",
+                    new Class<?>[]{long.class, String.class}, peer, "installation_id");
+            configured = (String) production("core.RimeConfig", "getRimeConfigString",
+                    new Class<?>[]{long.class, String.class}, peer, "sync_dir");
+        } finally {
+            production("core.RimeConfig", "closeRimeConfig", new Class<?>[]{long.class}, peer);
+        }
+        check(identity != null && identity.matches("[A-Za-z0-9_-]+") && !identity.equals("unknown"),
+                "Actual native installation identity is unsafe or missing");
+        File canonicalUser = user.getCanonicalFile();
+        File requested = configured == null || configured.isEmpty() ? new File(canonicalUser, "sync") : new File(configured);
+        check(requested.isAbsolute(), "Actual native sync directory is not absolute");
+        // Android shared-storage ancestors can be aliases. Resolve that trusted
+        // parent, while rejecting a link in the sync leaf or owned snapshot path.
+        File parent = requested.getAbsoluteFile().getParentFile();
+        check(parent != null, "Actual native sync directory has no parent");
+        File root = new File(parent.getCanonicalFile(), requested.getName());
+        check(root.getCanonicalFile().equals(root.getAbsoluteFile()) &&
+                        root.getCanonicalPath().startsWith(canonicalUser.getPath() + File.separator),
+                "Portable backup must remain in the dedicated user tree");
+        File file = new File(new File(root, identity), prefix + ".userdb.txt");
+        check(file.getCanonicalFile().equals(file.getAbsoluteFile()), "Owned portable backup path contains a symbolic link");
+        return file;
+    }
+
+    private Map<String, Integer> snapshotEntries(File file) throws Exception {
+        check(file.isFile() && file.length() > 0 && file.length() <= 1024 * 1024,
+                "Owned native portable backup is absent, empty or too large");
+        Map<String, String> metadata = new TreeMap<>();
+        Map<String, Integer> entries = new TreeMap<>();
+        try (BufferedReader input = new BufferedReader(new StringReader(text(file)))) {
+            check("# Rime user dictionary".equals(input.readLine()), "Wrong native portable backup header");
+            String line;
+            while ((line = input.readLine()) != null) {
+                if (line.startsWith("#@")) {
+                    String[] fields = line.substring(2).split("\t", -1);
+                    check(fields.length == 2 && metadata.put(fields[0], fields[1]) == null,
+                            "Malformed or duplicate portable backup metadata");
+                } else if (!line.isEmpty() && !line.startsWith("#")) {
+                    String[] fields = line.split("\t", -1);
+                    check(fields.length == 3 && !fields[0].isEmpty() && !fields[1].isEmpty(),
+                            "Malformed native portable backup entry");
+                    Integer commits = null;
+                    for (String value : fields[2].split(" ", -1)) {
+                        if (value.startsWith("c=")) {
+                            check(commits == null, "Duplicate portable backup commit counter");
+                            commits = Integer.parseInt(value.substring(2));
+                        }
+                    }
+                    check(commits != null && commits > 0 &&
+                                    entries.put(fields[1] + "\t" + fields[0].trim(), commits) == null,
+                            "Missing, non-positive or duplicate portable learning entry");
+                }
+            }
+        }
+        check(prefix.equals(metadata.get("/db_name")) && "userdb".equals(metadata.get("/db_type")) &&
+                        file.getParentFile().getName().equals(metadata.get("/user_id")),
+                "Portable backup metadata does not identify the owned dictionary and real installation");
+        return entries;
+    }
+
+    private void verifyPortableBackups(Map<String, Integer> expected) throws Exception {
+        // export() selected the original schema, releasing the owned engine DB.
+        // The Daemon remains STOPPED and every backup uses the same serial worker.
+        File file = portableBackupFile();
+        check(!file.exists(), "Owned native portable backup already exists");
+        byte[] original = null;
+        JSONArray iterations = new JSONArray();
+        for (int index = 0; index < 3; index++) {
+            boolean backedUp = (Boolean) production("data.userdict.UserDictManager", "backupUserDict",
+                    new Class<?>[]{String.class}, prefix);
+            check(backedUp,
+                    "New normal Release native portable backup failed");
+            Map<String, Integer> entries = snapshotEntries(file);
+            check(entries.equals(expected), "Native portable backup lost or changed learned records");
+            byte[] current = bytes(file);
+            if (original == null) original = current;
+            else check(Arrays.equals(original, current), "Repeated native portable backup changed snapshot bytes");
+            File[] siblings = file.getParentFile().listFiles();
+            check(siblings != null, "Cannot inspect owned portable backup directory");
+            for (File sibling : siblings) check(!sibling.getName().startsWith(prefix + ".userdb.txt.tmp."),
+                    "Successful native portable backup left an owned temporary file");
+            Map<String, Integer> exported = export();
+            check(exported.equals(expected), "Repeated native portable backup changed exact database learning counters");
+            iterations.put(new JSONObject().put("call", index + 1).put("sha256", hash(file))
+                    .put("bytes", current.length).put("logical_entries", new JSONObject(entries))
+                    .put("exported_entries", new JSONObject(exported)).put("backup_returned", backedUp)
+                    .put("owned_temporary_files", 0));
+        }
+        verifyLearned();
+        check(export().equals(expected), "Post-backup full/T9 lookups changed old learning counters");
+        receipt.put("release_backup", new JSONObject().put("calls", 3).put("path", file.getAbsolutePath())
+                .put("sha256", hash(file)).put("bytes", file.length())
+                .put("snapshot_utf8_base64", Base64.encodeToString(original, Base64.NO_WRAP))
+                .put("logical_entries", new JSONObject(expected)).put("iterations", iterations)
+                .put("user_data_dir", user.getAbsolutePath()).put("canonical_user_data_dir", user.getCanonicalPath())
+                .put("sync_directory", file.getParentFile().getParentFile().getCanonicalPath())
+                .put("installation_id", file.getParentFile().getName())
+                .put("full_t9_lookup_preserved", true).put("native_context", "independent_serial_JNI_worker_not_Daemon_lifecycle"));
+        mark("new normal Release repeats actual native portable backup three times with identical bytes, records and full/T9 lookups");
+    }
+
     private void removeOwned(File file, boolean inside) throws Exception {
         check(file.getCanonicalFile().equals(file.getAbsoluteFile()), "Owned cleanup encountered a symbolic link");
         boolean owned = inside || file.getName().startsWith(prefix);
@@ -347,8 +460,10 @@ public final class UserDictionaryNativeUpgradeProbe {
                 mark("published old APK commits six fictional phrases through real JNI and exports positive learning counters");
             } else {
                 verifyLearned();
-                check(export().equals(integerMap(state.getJSONObject("logical_entries"))), "New APK read-only queries changed or lost old learning counters");
+                Map<String, Integer> entries = integerMap(state.getJSONObject("logical_entries"));
+                check(export().equals(entries), "New APK read-only queries changed or lost old learning counters");
                 mark("new normal Release reads old learned phrases first in both full/T9 and exports unchanged positive counters");
+                verifyPortableBackups(entries);
             }
             Rime.clearRimeComposition();
             check(Rime.selectRimeSchema(state.getString("original_schema")), "Could not restore native original schema");

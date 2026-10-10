@@ -237,6 +237,20 @@ internal object UserDictionaryStorageAssertions {
             checks++
             val snapshot = checkNotNull(snapshotFile).readBytes()
             check(!snapshot.toString(Charsets.UTF_8).contains("#@/tick\t")) { "Fresh imported fixture unexpectedly has tick metadata" }
+            repeat(3) {
+                maintained {
+                    // Each successful JNI call must exhaust and release both
+                    // LevelDB iterators before closing and reopening the DB.
+                    UserDictManager.backupForRecovery(dictionaryName).getOrThrow()
+                    val location = checkNotNull(snapshotFile)
+                    check(location.readBytes().contentEquals(snapshot))
+                    check(checkNotNull(location.parentFile.listFiles()).none { file ->
+                        file.name.startsWith("$dictionaryName.userdb.txt.tmp.")
+                    }) { "Successful portable backup left an owned temporary file" }
+                }
+                check(records() == mapOf(("示例词库萤火" to "abc") to 4)) { "Repeated portable backup changed dictionary records" }
+                checks++
+            }
             maintained {
                 // Only the fresh UUID-owned database is replaced, while all handles
                 // are closed. The portable snapshot must genuinely add its lost row.
@@ -255,6 +269,29 @@ internal object UserDictionaryStorageAssertions {
             // present, and require idempotent record weights rather than duplicates.
             maintained { UserDictManager.restoreUserDict(ByteArrayInputStream(snapshot), "$owned-portable-again.userdb.txt").getOrThrow() }
             check(records() == mapOf(("示例词库萤火" to "abc") to 4, ("示例词库青舟" to "def") to 6))
+            checks++
+            maintained {
+                val beforeFailure = inventory(dictionary)
+                val rollbackInput = File(root, "$owned-rollback.txt")
+                check(rollbackInput.createNewFile())
+                try {
+                    rollbackInput.writeText("示例回滚流萤\tghi\t3\n")
+                    val error = runCatching {
+                        DictionaryFileStore(root, backups).mutate(dictionary.name) {
+                            check(UserDictManager.importUserDict(dictionaryName, rollbackInput.absolutePath) == 1)
+                            throw IOException("Owned failure after a successful native dictionary write")
+                        }
+                    }.exceptionOrNull()
+                    check(error is IOException)
+                    check(inventory(dictionary) == beforeFailure) { "Failed native mutation did not restore exact dictionary files" }
+                    check(!File(backups, "pending").exists())
+                } finally {
+                    check(rollbackInput.delete())
+                }
+            }
+            check(records() == mapOf(("示例词库萤火" to "abc") to 4, ("示例词库青舟" to "def") to 6)) {
+                "Failed native mutation retained the added rollback record"
+            }
             checks++
         } catch (error: Throwable) {
             failure = error

@@ -62,19 +62,23 @@ static bool backupDictionaryChecked(const std::string& name) {
     return text.find_first_of("\t\r\n") == std::string::npos;
   };
   if (!write("# Rime user dictionary\n")) return false;
-  rime::DbSource source(db.get());
-  std::string key, value;
-  while (source.MetaGet(&key, &value)) {
-    if (!field(key) || !field(value) || !write("#@" + key + "\t" + value + "\n"))
-      return false;
-  }
-  while (source.Get(&key, &value)) {
-    const auto tab = key.find('\t');
-    if (tab == std::string::npos || tab == 0 || tab + 1 == key.size() ||
-        key.find('\t', tab + 1) != std::string::npos ||
-        key.find_first_of("\r\n") != std::string::npos || !field(value) ||
-        !write(key + "\t" + value + "\n"))
-      return false;
+  {
+    // DbSource owns metadata/data iterators. Release them before closing the
+    // database, including when both iterators have reached the end of the dump.
+    rime::DbSource source(db.get());
+    std::string key, value;
+    while (source.MetaGet(&key, &value)) {
+      if (!field(key) || !field(value) || !write("#@" + key + "\t" + value + "\n"))
+        return false;
+    }
+    while (source.Get(&key, &value)) {
+      const auto tab = key.find('\t');
+      if (tab == std::string::npos || tab == 0 || tab + 1 == key.size() ||
+          key.find('\t', tab + 1) != std::string::npos ||
+          key.find_first_of("\r\n") != std::string::npos || !field(value) ||
+          !write(key + "\t" + value + "\n"))
+        return false;
+    }
   }
   if (fflush(stream) != 0 || fsync(fileno(stream)) != 0) return false;
   if (fclose(output.release()) != 0 || !db->Close()) return false;
