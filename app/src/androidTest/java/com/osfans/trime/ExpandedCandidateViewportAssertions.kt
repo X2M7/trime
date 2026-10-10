@@ -8,7 +8,6 @@ import android.view.View
 import android.view.inputmethod.BaseInputConnection
 import android.widget.EditText
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.flexbox.FlexboxLayoutManager
 import com.osfans.trime.core.RimeApi
 import com.osfans.trime.ime.candidates.CandidateIdentity
 import com.osfans.trime.ime.candidates.CandidateViewHolder
@@ -64,7 +63,7 @@ object ExpandedCandidateViewportAssertions {
 
         fun list(): RecyclerView = checkNotNull(manager.view.findViewById<UnrolledCandidateLayout>(R.id.unrolled_candidate_view)).recyclerView
         fun first(window: FlexboxUnrolledCandidateWindow, recycler: RecyclerView): CandidateViewHolder? {
-            val position = (window.layoutManager as FlexboxLayoutManager).findFirstVisibleItemPosition()
+            val position = window.layoutManager.findFirstVisibleItemPosition()
             return recycler.findViewHolderForAdapterPosition(position) as? CandidateViewHolder
         }
 
