@@ -617,6 +617,20 @@ def instrumentation_options(probe, saf_tree=None, saf_revoke=False, t09_schema=N
     return options
 
 
+def api21_editor_focused(dump: str, probe="editors") -> bool:
+    """Require the exact disposable host for the selected probe, never another window."""
+    hosts = {"editors": "EditorProbeActivity", "t09": "ClipEditActivity"}
+    if probe not in hosts:
+        return False
+    focus = re.findall(r"(?m)^\s*mCurrentFocus=(.*)$", dump)
+    if len(focus) != 1:
+        return False
+    return re.fullmatch(
+        rf"Window\{{[0-9a-fA-F]+ u0 com\.osfans\.trime\.debug/com\.osfans\.trime\.ui\.main\.{hosts[probe]}\}}",
+        focus[0].strip(),
+    ) is not None
+
+
 def api21_editor_bound(dump: str, pid: int, probe="editors") -> bool:
     """Window focus can precede both the editor connection and LatinIME startup."""
     header = "Input method service state for com.android.inputmethod.latin.LatinIME@"
@@ -816,7 +830,7 @@ def run(args):
                         if not bound and "application_ready_wait_ms" in output:
                             windows = shell("dumpsys", "window", "windows", timeout=15)
                             focus = [line for line in windows.splitlines() if "mCurrentFocus=" in line]
-                            focused = any("ClipEditActivity" in line for line in focus)
+                            focused = api21_editor_focused(windows, args.probe)
                             state = shell("dumpsys", "input_method") if focused else None
                             pid = instrumentation_pid(output)
                             ready = state is not None and api21_editor_bound(state, pid, args.probe)

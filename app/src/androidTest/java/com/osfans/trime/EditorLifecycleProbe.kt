@@ -69,7 +69,7 @@ import com.osfans.trime.ime.keyboard.KeyboardWindow
 import com.osfans.trime.ime.switches.SwitchOptionAdapter
 import com.osfans.trime.ime.switches.SwitchOptionEntry
 import com.osfans.trime.ime.switches.SwitchOptionWindow
-import com.osfans.trime.ui.main.ClipEditActivity
+import com.osfans.trime.ui.main.EditorProbeActivity
 import com.osfans.trime.util.sp
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Job
@@ -792,7 +792,7 @@ object EditorLifecycleProbe {
                 }
                 ThemeManager.init(context.resources.configuration)
             }
-            val editor = instrumentation.startActivitySync(Intent(context, ClipEditActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+            val editor = instrumentation.startActivitySync(Intent(context, EditorProbeActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
             activity = editor
             val actions = mutableListOf<Int>()
             val fields = main {
@@ -825,8 +825,8 @@ object EditorLifecycleProbe {
                 row.addView(chat, LinearLayout.LayoutParams(-1, 72))
                 row.addView(other, LinearLayout.LayoutParams(-1, 72))
                 editor.setContentView(row)
-                // ClipEditActivity normally uses a small floating dialog window. This disposable
-                // fixture needs a real host surface beside the full-width IME preedit.
+                // The debug-only, non-floating host keeps a real application surface beside
+                // the preedit. adjustNothing leaves that surface available beneath the IME.
                 editor.window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
                 chat.requestFocus()
                 Triple(chat, other, row)

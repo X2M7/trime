@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 import unittest
 
-from run_runtime import PROBES, api21_editor_bound, instrumentation_options
+from run_runtime import PROBES, api21_editor_bound, api21_editor_focused, instrumentation_options
 
 
 READY = """Current Input Method Manager state:
@@ -18,6 +18,29 @@ Input method service state for com.android.inputmethod.latin.LatinIME@30aa:
 
 
 class RuntimeBindingTest(unittest.TestCase):
+    def test_editor_and_mixed_input_require_their_own_host(self):
+        editor = "  mCurrentFocus=Window{356a474e u0 com.osfans.trime.debug/com.osfans.trime.ui.main.EditorProbeActivity}\n"
+        mixed = editor.replace("EditorProbeActivity", "ClipEditActivity")
+        self.assertTrue(api21_editor_focused(editor, "editors"))
+        self.assertTrue(api21_editor_focused(mixed, "t09"))
+        self.assertFalse(api21_editor_focused(mixed, "editors"))
+        self.assertFalse(api21_editor_focused(editor, "t09"))
+
+    def test_wrong_package_user_or_component_suffix_cannot_bind(self):
+        editor = "mCurrentFocus=Window{356a474e u0 com.osfans.trime.debug/com.osfans.trime.ui.main.EditorProbeActivity}\n"
+        for wrong in (editor.replace("u0", "u10"),
+                      editor.replace("com.osfans.trime.debug/", "com.example/"),
+                      editor.replace("EditorProbeActivity}", "EditorProbeActivityOther}")):
+            with self.subTest(window=wrong):
+                self.assertFalse(api21_editor_focused(wrong))
+
+    def test_missing_duplicate_null_or_unsupported_focus_cannot_bind(self):
+        editor = "mCurrentFocus=Window{356a474e u0 com.osfans.trime.debug/com.osfans.trime.ui.main.EditorProbeActivity}\n"
+        for wrong in ("", "mCurrentFocus=null\n", editor + editor, editor + "mCurrentFocus=null\n"):
+            with self.subTest(window=wrong):
+                self.assertFalse(api21_editor_focused(wrong))
+        self.assertFalse(api21_editor_focused(editor, "privacy"))
+
     def test_privacy_probe_is_exposed_and_maps_to_its_runner_argument(self):
         self.assertIn("privacy", PROBES)
         self.assertEqual(["-e", "privacy", "true"], instrumentation_options("privacy"))
