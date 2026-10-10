@@ -103,8 +103,11 @@ can change in either route. Archive compression
 may differ. The raw artifact bytes and filename participate in transform input
 normalization. Other buildscript JARs use an identity transform, returning the
 original input file without writing or modifying it. The attribute is attached
-to JAR artifacts rather than published variants, leaving variant selection
-unchanged. Application runtime dependencies are outside the transform's scope.
+to external JAR artifacts rather than their published variants. The two local
+plugin modules explicitly publish the already compatible attribute on their
+`apiElements` and `runtimeElements`: their project JARs bypass this transform,
+preserving Gradle's included-build producer dependencies. Application runtime
+dependencies are outside this build-plugin transform's scope.
 The transform must run before plugin application; verify
 that requirement with `help --warning-mode=fail` before a complete build.
 
@@ -118,3 +121,31 @@ When stable AGP and KSP remove these calls, remove the settings plugin,
 `GradleCompatibilityPlugin.kt`, `GradleVisibleBackport.kt`, their tests, and the
 build-only ASM dependency. Do not silently update the pinned hashes or relax
 the guards merely to accommodate a new plugin release.
+
+## Unused coroutine service resources after R8
+
+Removing the legacy application keep rules lets the bundled coroutines 1.11.0
+R8 rules rewrite service loading into direct Android provider construction.
+The first actual t9.12 build still retained two service files, renamed after
+interface merging, and each Release APK still emitted two v1 signature warnings.
+That failed inspection is retained under `build/stable-warning-debug/inspection1/`.
+
+`RemoveOptimizedCoroutineServicesTask` transforms the R8-produced Java resource
+archive before APK packaging and signing. The original service descriptors stay
+available to R8. This requires the reviewed internal AGP 9.4.1 artifact graph:
+the resource transform is registered after AGP has registered its R8 producer,
+and consumes the actual R8 DEX, configuration and original resource artifacts.
+The expected order is merge resources, R8, checked resource transform, package,
+then normal signing. It does not rewrite a signed APK, change DEX or disable v1.
+
+The task pins AGP 9.4.1, R8 9.4.24 and its compiler revision, both original
+coroutines 1.11.0 JAR hashes and their selected modern R8 consumer-rule hashes.
+It requires the original two exact provider declarations and their exact
+post-R8 equivalents, then checks every DEX method ID, string and class
+definition. ServiceLoader calls, Class/ClassLoader resource lookups, dynamic
+SPI literals, missing Android provider classes, malformed DEX, duplicate class
+definitions, unknown services or provider contents, and signed input archives
+block the operation. Every retained resource entry's bytes are checked against
+the original archive. The eight binary DEX/ZIP tests include actual preservation
+and rejection cases; actual Release DEX semantic review, signature verification
+and Android acceptance are still required for publication.
