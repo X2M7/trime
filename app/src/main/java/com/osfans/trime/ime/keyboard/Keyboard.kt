@@ -418,6 +418,12 @@ class Keyboard(
         return if (on) setModifier(keycode, keepOn) else setModifier(keycode, keyDown)
     }
 
+    /** Keep the registered Shift locked even when the first tap already locked it. */
+    fun lockShift() {
+        mShiftKey?.let { if (!it.isOn) it.setOn(true) }
+        setModifier(KeyEvent.META_SHIFT_ON, true)
+    }
+
     fun resetShift() {
         mShiftKey?.setOn(false)
         setModifier(KeyEvent.META_SHIFT_ON, false)

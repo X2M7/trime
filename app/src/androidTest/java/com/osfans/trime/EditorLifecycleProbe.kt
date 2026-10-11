@@ -39,6 +39,8 @@ import android.widget.TextView
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.children
+import androidx.lifecycle.findViewTreeLifecycleOwner
+import androidx.lifecycle.setViewTreeLifecycleOwner
 import androidx.recyclerview.widget.RecyclerView
 import androidx.transition.Transition
 import com.osfans.trime.core.Rime
@@ -1322,6 +1324,180 @@ object EditorLifecycleProbe {
                     input(modifiers.size, 0)
                     check(delivered.size == 38 && keyboard.modifier == 0 && modifierKeys.none { it.isOn }) { "Third-party modifier exercise left persistent state" }
                     check(!keyboard.refreshModifier()) { "Unchanged modifiers requested a redundant refresh" }
+
+                    // Exercise the actual gesture detector separately; retain the original 38 deliveries.
+                    val shiftPrefs = AppPrefs.defaultInstance().keyboard
+                    val temporaryPrefs = listOf(shiftPrefs.hookShiftLock, shiftPrefs.doubleTapTimeout, shiftPrefs.popupOnKeyPress)
+                    val preferenceStore = shiftPrefs.hookShiftLock.sharedPreferences
+                    check(temporaryPrefs.all { it.sharedPreferences === preferenceStore })
+                    val savedPreferences = temporaryPrefs.associate { it.key to (preferenceStore.contains(it.key) to preferenceStore.all[it.key]) }
+                    val originalToken = service.editorToken
+                    val originalPrivacy = service.isPrivacyModeActive
+                    val languagePreference = shiftPrefs.manualLanguageMode
+                    val originalLanguage = languagePreference.sharedPreferences.contains(languagePreference.key) to languagePreference.sharedPreferences.all[languagePreference.key]
+                    val actualEditors = descendants(editor.window.decorView).filterIsInstance<EditText>()
+                        .map { it to Triple(it.text.toString(), it.selectionStart, it.selectionEnd) }.toList()
+                    try {
+                        shiftPrefs.doubleTapTimeout.setValue(1000)
+                        shiftPrefs.popupOnKeyPress.setValue(false)
+                        fun gestureCase(
+                            shiftLock: String = "",
+                            doubleAction: String? = null,
+                            lazyAction: String? = null,
+                            exercise: (Keyboard, KeyboardView, MutableList<Pair<Int, Int>>) -> Unit,
+                        ) {
+                            val gestureTheme = theme.copy(
+                                presetKeys = theme.presetKeys + mapOf(
+                                    "probe_shift" to PresetKey(send = "Shift_L", label = "Shift", shiftLock = shiftLock, functional = true),
+                                    "probe_explicit_shift" to PresetKey(send = "Shift_L", label = "Shift", shiftLock = "click", functional = true),
+                                    "probe_explicit_alt" to PresetKey(send = "Alt_L", label = "Alt", functional = true),
+                                ),
+                            )
+                            val gestureLayout = layout.copy(
+                                keys = listOf(
+                                    TextKeyboard.TextKey(
+                                        click = KeyActionToken.Plain("probe_shift"),
+                                        longClick = KeyActionToken.Plain("probe_shift"),
+                                        doubleClick = doubleAction?.let { KeyActionToken.Plain(it) },
+                                        lazyDoubleClick = lazyAction?.let { KeyActionToken.Plain(it) },
+                                    ),
+                                ) + listOf("a", "b").map { TextKeyboard.TextKey(click = KeyActionToken.Plain(it)) } +
+                                    TextKeyboard.TextKey(click = KeyActionToken.Plain("probe_alt")),
+                            )
+                            val gestureKeyboard = Keyboard(context, gestureTheme, 800, gestureLayout)
+                            val gestureBroadcaster = InputBroadcaster()
+                            val gestureDi = DI {
+                                bindInstance<ContextThemeWrapper> { context }
+                                bindInstance<Theme> { gestureTheme }
+                                bindInstance<TrimeInputMethodService> { service }
+                                bindInstance<InputBroadcaster> { gestureBroadcaster }
+                            }
+                            val gestures = mutableListOf<Pair<Int, Int>>()
+                            val gestureListener = object : KeyboardActionListener {
+                                override fun onPress(keyEventCode: Int) = Unit
+                                override fun onAction(action: KeyAction) {
+                                    check(!action.isModifierKey && action.modifier == 0)
+                                    gestures.add(action.code to gestureKeyboard.modifier)
+                                }
+                                override fun onKey(keyEventCode: Int, metaState: Int) = error("Gesture probe sent native key input")
+                                override fun onText(input: String) = error("Gesture probe sent native text input")
+                            }
+                            val gestureView = KeyboardView(context, gestureTheme, gestureKeyboard, PopupDelegate(gestureDi), service, gestureListener, EnterKeyDisplayDelegate(gestureDi))
+                            gestureView.setViewTreeLifecycleOwner(checkNotNull(input.findViewTreeLifecycleOwner()))
+                            gestureView.measure(View.MeasureSpec.makeMeasureSpec(800, View.MeasureSpec.EXACTLY), View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED))
+                            gestureView.layout(0, 0, gestureView.measuredWidth, gestureView.measuredHeight)
+                            try {
+                                exercise(gestureKeyboard, gestureView, gestures)
+                            } finally {
+                                gestureView.clearTransientContent()
+                                gestureView.removeAllViews()
+                                gestureBroadcaster.clear()
+                            }
+                        }
+                        fun tap(gestureView: KeyboardView, index: Int) {
+                            val target = gestureView.getChildAt(index) as KeyView
+                            check(target.width > 0 && target.height > 0 && target.isEnabled)
+                            val down = SystemClock.uptimeMillis()
+                            for (action in listOf(MotionEvent.ACTION_DOWN, MotionEvent.ACTION_UP)) {
+                                val event = MotionEvent.obtain(down, SystemClock.uptimeMillis(), action, target.width / 2f, target.height / 2f, 0)
+                                try {
+                                    check(target.dispatchTouchEvent(event)) { "Actual Shift gesture was not accepted" }
+                                } finally {
+                                    event.recycle()
+                                }
+                            }
+                        }
+                        shiftPrefs.hookShiftLock.setValue(true)
+                        for (lockMode in listOf("", "click", "ascii_long")) {
+                            gestureCase(shiftLock = lockMode) { actualKeyboard, actualView, gestures ->
+                                val firstLocks = checkNotNull(actualKeyboard.keys[0].click).isShiftLock
+                                tap(actualView, 0)
+                                check(actualKeyboard.modifier == KeyEvent.META_SHIFT_ON && actualKeyboard.mShiftKey?.isOn == firstLocks)
+                                tap(actualView, 0)
+                                check(actualKeyboard.modifier == KeyEvent.META_SHIFT_ON && actualKeyboard.mShiftKey?.isOn == true) { "Double Shift did not retain a lock, including an already locked first tap" }
+                                tap(actualView, 1)
+                                tap(actualView, 2)
+                                check(gestures == listOf(KeyEvent.KEYCODE_A to KeyEvent.META_SHIFT_ON, KeyEvent.KEYCODE_B to KeyEvent.META_SHIFT_ON))
+                                check(actualKeyboard.mShiftKey?.isOn == true && actualKeyboard.modifier == KeyEvent.META_SHIFT_ON)
+                                tap(actualView, 0)
+                                check(actualKeyboard.mShiftKey?.isOn == false && actualKeyboard.modifier == 0) { "A single Shift did not release the lock" }
+                                tap(actualView, 1)
+                                check(gestures.last() == (KeyEvent.KEYCODE_A to 0))
+                            }
+                        }
+                        // The same cached View must read the live setting; neither disabled tap is swallowed.
+                        gestureCase { actualKeyboard, actualView, gestures ->
+                            shiftPrefs.hookShiftLock.setValue(false)
+                            tap(actualView, 0)
+                            check(actualKeyboard.modifier == KeyEvent.META_SHIFT_ON && actualKeyboard.mShiftKey?.isOn == false)
+                            tap(actualView, 0)
+                            check(actualKeyboard.modifier == 0 && actualKeyboard.mShiftKey?.isOn == false)
+                            shiftPrefs.hookShiftLock.setValue(true)
+                            tap(actualView, 0)
+                            tap(actualView, 0)
+                            check(actualKeyboard.modifier == KeyEvent.META_SHIFT_ON && actualKeyboard.mShiftKey?.isOn == true)
+                            shiftPrefs.hookShiftLock.setValue(false)
+                            tap(actualView, 0)
+                            tap(actualView, 0)
+                            check(actualKeyboard.modifier == KeyEvent.META_SHIFT_ON && actualKeyboard.mShiftKey?.isOn == false)
+                            tap(actualView, 1)
+                            check(gestures == listOf(KeyEvent.KEYCODE_A to KeyEvent.META_SHIFT_ON) && actualKeyboard.modifier == 0)
+                        }
+                        shiftPrefs.hookShiftLock.setValue(true)
+                        gestureCase(shiftLock = "click", doubleAction = "probe_explicit_shift") { actualKeyboard, actualView, gestures ->
+                            tap(actualView, 0)
+                            check(actualKeyboard.mShiftKey?.isOn == true)
+                            tap(actualView, 0)
+                            check(actualKeyboard.mShiftKey?.isOn == false && actualKeyboard.modifier == 0 && gestures.isEmpty()) { "Built-in Shift lock overrode the explicit theme double toggle" }
+                        }
+                        gestureCase(doubleAction = "probe_explicit_alt") { actualKeyboard, actualView, gestures ->
+                            tap(actualView, 0)
+                            tap(actualView, 0)
+                            check(actualKeyboard.modifier == (KeyEvent.META_SHIFT_ON or KeyEvent.META_ALT_ON) && actualKeyboard.mShiftKey?.isOn == false)
+                            tap(actualView, 1)
+                            check(gestures == listOf(KeyEvent.KEYCODE_A to (KeyEvent.META_SHIFT_ON or KeyEvent.META_ALT_ON)) && actualKeyboard.modifier == 0)
+                        }
+                        gestureCase(lazyAction = "b") { actualKeyboard, actualView, gestures ->
+                            val shiftView = actualView.getChildAt(0) as KeyView
+                            check(!shiftView.hasDouble && shiftView.hasLazyDouble)
+                            tap(actualView, 0)
+                            check(actualKeyboard.modifier == 0 && gestures.isEmpty())
+                            tap(actualView, 0)
+                            check(actualKeyboard.modifier == 0 && actualKeyboard.mShiftKey?.isOn == false && gestures == listOf(KeyEvent.KEYCODE_B to 0)) { "Built-in Shift lock overrode explicit lazy double" }
+                        }
+                    } finally {
+                        val restore = preferenceStore.edit()
+                        for ((key, saved) in savedPreferences) {
+                            if (!saved.first) {
+                                restore.remove(key)
+                            } else {
+                                when (val raw = saved.second) {
+                                    is Boolean -> restore.putBoolean(key, raw)
+
+                                    is Int -> restore.putInt(key, raw)
+
+                                    is Long -> restore.putLong(key, raw)
+
+                                    is Float -> restore.putFloat(key, raw)
+
+                                    is String -> restore.putString(key, raw)
+
+                                    is Set<*> -> {
+                                        check(raw.all { it is String })
+                                        restore.putStringSet(key, raw.map { it as String }.toSet())
+                                    }
+
+                                    else -> error("Unexpected stored Shift preference type")
+                                }
+                            }
+                        }
+                        check(restore.commit()) { "Shift gesture probe could not restore preferences" }
+                        savedPreferences.forEach { (key, saved) -> check((preferenceStore.contains(key) to preferenceStore.all[key]) == saved) }
+                        check(service.editorToken == originalToken && service.isPrivacyModeActive == originalPrivacy)
+                        check((languagePreference.sharedPreferences.contains(languagePreference.key) to languagePreference.sharedPreferences.all[languagePreference.key]) == originalLanguage)
+                        actualEditors.forEach { (field, saved) -> check(Triple(field.text.toString(), field.selectionStart, field.selectionEnd) == saved) }
+                    }
+                    check(delivered.size == 38 && keyboard.modifier == 0 && modifierKeys.none { it.isOn })
                 } finally {
                     view.clearTransientContent()
                     view.removeAllViews()
