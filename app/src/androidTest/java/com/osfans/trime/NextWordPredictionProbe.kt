@@ -91,7 +91,7 @@ object NextWordPredictionProbe {
             check(createNewFile())
             writeText(
                 "---\nname: $prefix\nversion: \"1\"\nsort: by_weight\nuse_preset_vocabulary: false\n...\n" +
-                    "你\tni\t100\n好\thao\t100\n你好\tni hao\t1000\n世\tshi\t100\n界\tjie\t100\n世界\tshi jie\t1000\n" +
+                    "你\tni\t100\n妮\tni\t90\n泥\tni\t80\n好\thao\t100\n你好\tni hao\t1000\n世\tshi\t100\n界\tjie\t100\n世界\tshi jie\t1000\n" +
                     "收\tshou\t100\n到\tdao\t100\n收到\tshou dao\t1000\n",
             )
         }
@@ -147,6 +147,9 @@ object NextWordPredictionProbe {
         val firstEditor = SystemClock.elapsedRealtimeNanos().coerceAtLeast(1L)
         val secondEditor = firstEditor + 1
         val userConfig = File(DataManager.userDataDir, "user.yaml")
+        val pinFile = File(DataManager.userDataDir, ".trime-candidate-pins.json")
+        val pinFiles = listOf(pinFile, File(pinFile.path + ".bak"), File(pinFile.path + ".new"))
+        val originalPins = mutableMapOf<File, ByteArray?>()
         var originalConfig: ByteArray? = null
         var originalSchema: String? = null
         var originalAscii = false
@@ -189,6 +192,10 @@ object NextWordPredictionProbe {
             check(RimeDaemon.getFirstSessionOrNull() == null) { "Prediction probe requires an idle daemon" }
             runBlocking { stopped() }
             originalConfig = userConfig.takeIf(File::exists)?.readBytes()
+            pinFiles.forEach { file ->
+                check(!file.exists() || (file.isFile && file.length() <= 2 * 1024 * 1024)) { "Invalid original candidate pin storage" }
+                originalPins[file] = file.takeIf(File::exists)?.readBytes()
+            }
             val preference = AppPrefs.defaultInstance().candidates.nextWordPrediction
             preference.getValue() // Validate the original type before changing any preference.
             savedPreferences.add(SavedPreference.capture(preference.sharedPreferences, preference.key))
@@ -425,6 +432,58 @@ object NextWordPredictionProbe {
                         noCommit(beforeDigit)
                         phase("disabling and re-enabling suggestions preserves the unfinished T9 input")
 
+                        rime.runOnReady {
+                            check(selectSchema("${prefix}_full"))
+                            setRuntimeOption("ascii_mode", false)
+                            beginEditor(firstEditor, nullInputType = false, privacyMode = false)
+                            clearComposition()
+                            "ni".forEach { check(processKey(it.code)) }
+                        }
+                        val baselineRanking = rime.runOnReady {
+                            val snapshot = candidateSnapshotCached
+                            check(!snapshot.isPrediction && getRawInput() == "ni")
+                            getCandidates(0, 32, snapshot).map { it.text }
+                        }
+                        check(baselineRanking.size == 3 && baselineRanking.toSet() == setOf("你", "妮", "泥"))
+                        val pinnedText = baselineRanking.last()
+                        val pinnedRanking = listOf(pinnedText) + baselineRanking.dropLast(1)
+                        val beforeRanking = count()
+                        for (togglePreference in listOf(false, true)) {
+                            rime.runOnReady { check(pinCandidate(2, true, candidateSnapshotCached)) }
+                            repeat(100) {
+                                if (togglePreference) {
+                                    preference(false)
+                                    preference(true)
+                                } else {
+                                    rime.runOnReady { clearPredictionContext() }
+                                }
+                                rime.runOnReady {
+                                    val snapshot = candidateSnapshotCached
+                                    check(!snapshot.isPrediction && getRawInput() == "ni")
+                                    check(getCandidates(0, 32, snapshot).map { it.text } == pinnedRanking)
+                                }
+                            }
+                            rime.runOnReady {
+                                check(resetCandidateRanking(candidateSnapshotCached))
+                                val snapshot = candidateSnapshotCached
+                                check(getRawInput() == "ni" && !snapshot.isPrediction)
+                                check(getCandidates(0, 32, snapshot).map { it.text } == baselineRanking) {
+                                    "Prediction cleanup left a nested pinned menu after ranking reset"
+                                }
+                            }
+                            noCommit(beforeRanking)
+                            phase(
+                                if (togglePreference) {
+                                    "100 prediction preference cycles preserve unfinished input and restore ordinary candidate ranking"
+                                } else {
+                                    "100 prediction context clears preserve unfinished input and restore ordinary candidate ranking"
+                                },
+                            )
+                        }
+                        rime.runOnReady { check(selectCandidate(1, true, candidateSnapshotCached)) }
+                        exactCommit(beforeRanking, baselineRanking[1])
+                        phase("ordinary candidate selection commits the displayed text exactly once after prediction cleanup and ranking reset")
+
                         val oldEditor = hello()
                         val beforeBoundary = count()
                         rime.runOnReady {
@@ -555,6 +614,12 @@ object NextWordPredictionProbe {
             }
             if (nativeStopped && fixtureStarted) clean { PrivacyModeProbe.removeOwnedFiles(prefix) }
             if (nativeStopped && captured) {
+                clean {
+                    pinFiles.forEach { file ->
+                        originalPins[file]?.let(file::writeBytes) ?: check(!file.exists() || file.delete())
+                        check(originalPins[file]?.let { file.readBytes().contentEquals(it) } ?: !file.exists())
+                    }
+                }
                 clean {
                     originalConfig?.let(userConfig::writeBytes) ?: check(!userConfig.exists() || userConfig.delete())
                     check(originalConfig?.let { userConfig.readBytes().contentEquals(it) } ?: !userConfig.exists())

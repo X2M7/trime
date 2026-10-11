@@ -21,6 +21,57 @@ ROOT = Path(__file__).resolve().parents[3]
 NATIVE = ROOT / "app/src/main/jni"
 OVERLAYS = NATIVE / "librime_jni/predict"
 MODEL = ROOT / "app/src/main/assets/shared/trime_predict.db"
+JNI = NATIVE / "librime_jni/rime_jni.cc"
+PRIVACY_CMAKE = NATIVE / "cmake/RimePrivacyCompat.cmake"
+
+
+def method(source, signature):
+    """Extract a complete brace-balanced production method, without edits."""
+    assert source.count(signature) == 1, "Missing/duplicate production method"
+    start = source.index(signature)
+    opening = source.index("{", start)
+    depth = 1
+    end = opening + 1
+    while depth:
+        assert end < len(source), "Unclosed production method"
+        depth += (source[end] == "{") - (source[end] == "}")
+        end += 1
+    return source[start:end]
+
+
+def ranking_bridge(destination):
+    jni, cmake = JNI.read_text(), PRIVACY_CMAKE.read_text()
+    reset = method(cmake, "bool Session::ResetPredictionContexts(bool enabled, bool update_option)")
+    reset = reset.replace("bool Session::ResetPredictionContexts", "bool RankingSessionFixture::ResetPredictionContexts", 1)
+    methods = [method(jni, signature) for signature in (
+        "bool clearPredictionContext()", "bool setPredictionEnabled(bool enabled)",
+        "void setCandidatePins(const std::vector<std::string>& schemas,",
+        "void applyCandidatePins()")]
+    lookups = ("rime::Service::instance().GetSession(id)",
+               "rime::Service::instance().GetSession(session(false))")
+    # Production algorithms are unchanged. Typed lookup connects the private
+    # JNI singleton's methods to this exclusively owned real Engine fixture.
+    for lookup in lookups:
+        methods = [body.replace(lookup, "current_") for body in methods]
+    destination.write_text(
+        '#pragma once\n#include "candidate_ranking.h"\n#include <map>\n'
+        '#include <rime/engine.h>\n#include <rime/schema.h>\n'
+        'using rime::Context;\nusing rime::Engine;\n'
+        'class RankingSessionFixture {\n public:\n'
+        '  RankingSessionFixture() : engine_(rime::Engine::Create()) {}\n'
+        '  rime::Context* context() { return engine_->context(); }\n'
+        '  rime::Schema* schema() { return engine_->schema(); }\n'
+        '  bool ResetPredictionContexts(bool enabled, bool update_option);\n'
+        ' private:\n  std::unique_ptr<rime::Engine> engine_;\n};\n' + reset + '\n'
+        'class RankingBridgeFixture {\n public:\n'
+        '  explicit RankingBridgeFixture(RankingSessionFixture* current) : current_(current) {}\n' +
+        '\n'.join(methods) + '\n private:\n'
+        '  int session(bool = true) { return 1; }\n'
+        '  std::string currentSchemaId() { return current_->schema()->schema_id(); }\n'
+        '  std::string rawInput() { return current_->context()->input(); }\n'
+        '  RankingSessionFixture* current_;\n  bool privacy_mode_ = false;\n'
+        '  rime::an<rime::Menu> ranked_menu_, original_menu_;\n'
+        '  std::map<std::pair<std::string, std::string>, std::string> pins_;\n};\n')
 
 
 def digest(path):
@@ -57,6 +108,7 @@ def main():
     for name in ["predict_module.cc", "predict_translator.h"]:
         shutil.copyfile(NATIVE / "librime-predict/src" / name, generated / name)
     shutil.copyfile(OVERLAYS / "LICENSE", generated / "LICENSE")
+    ranking_bridge(generated / "ranking_boundary_bridge.h")
     shutil.copyfile(MODEL, scratch / "trime_predict.db")
     sources = [Path(__file__).with_name("prediction_native_test.cc"),
                *(generated / name for name in ["predictor.cc", "predict_engine.cc",
@@ -70,6 +122,9 @@ def main():
               NATIVE / "librime-predict/src/predict_translator.h",
               NATIVE / "librime_jni/trime_privacy_guard.h",
               NATIVE / "librime_jni/trime_prediction_guard.h", MODEL]
+    inputs += [JNI, PRIVACY_CMAKE, NATIVE / "librime_jni/candidate_ranking.h",
+               Path(__file__).with_name("ranking_boundary_test.h"),
+               generated / "ranking_boundary_bridge.h"]
     before = [digest(path) for path in inputs]
     boost = [f"-isystem{path}" for path in sorted((NATIVE / "boost/libs").glob("*/include"))
              if path.is_dir()]

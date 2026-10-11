@@ -9,6 +9,7 @@
 #include "prediction_key_policy.h"
 #include "trime_prediction_guard.h"
 #include "trime_privacy_guard.h"
+#include "candidate_ranking.h"
 #include <rime/candidate.h>
 #include <rime/context.h>
 #include <rime/engine.h>
@@ -22,6 +23,7 @@
 #include <dlfcn.h>
 #include <sys/stat.h>
 #include <iostream>
+#include <map>
 #include <stdexcept>
 
 namespace {
@@ -98,6 +100,8 @@ void Write(const rime::path& file, const std::vector<char>& image) {
   stream.write(image.data(), static_cast<std::streamsize>(image.size()));
   Check(static_cast<bool>(stream), "fixture write failed");
 }
+
+#include "ranking_boundary_test.h"
 
 void Run(const rime::path& model, const rime::path& scratch,
          RimeModule* linked_module) {
@@ -354,6 +358,7 @@ int main(int argc, char** argv) {
   api->initialize(&traits);
   try {
     Run(rime::path{argv[1]}, rime::path{argv[2]}, linked_module);
+    CheckOrdinaryRankingPredictionBoundaries();
     api->finalize();
     std::cout << "PASS " << checks << " actual native prediction checks\n";
     return 0;

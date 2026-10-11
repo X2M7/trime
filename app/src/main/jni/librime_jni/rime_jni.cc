@@ -159,8 +159,8 @@ class Rime {
   }
 
   bool clearPredictionContext() {
-    ranked_menu_.reset();
-    original_menu_.reset();
+    // Ordinary composition survives this boundary. Keep its original/ranked
+    // menu pair so the next snapshot does not wrap the same menu again.
     const auto id = session(false);
     auto current = id ? rime::Service::instance().GetSession(id) : nullptr;
     return current && current->ResetPredictionContexts(false, false);
@@ -170,8 +170,6 @@ class Rime {
     trime::SetPredictionRequested(enabled);
     const bool allowed = enabled && !privacy_mode_ &&
                            !trime::IsPrivacyModeEnabled();
-    ranked_menu_.reset();
-    original_menu_.reset();
     const auto id = session(false);
     auto current = id ? rime::Service::instance().GetSession(id) : nullptr;
     if (current) current->ResetPredictionContexts(allowed, true);
