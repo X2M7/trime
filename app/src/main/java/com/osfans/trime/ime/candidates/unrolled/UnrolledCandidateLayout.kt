@@ -27,6 +27,12 @@ class UnrolledCandidateLayout(
         get() = scope.theme
 
     var onCandidatesDrawn: (() -> Unit)? = null
+    var onCandidatesLaidOut: (() -> Unit)? = null
+
+    override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
+        super.onLayout(changed, left, top, right, bottom)
+        onCandidatesLaidOut?.invoke()
+    }
 
     override fun dispatchDraw(canvas: Canvas) {
         super.dispatchDraw(canvas)

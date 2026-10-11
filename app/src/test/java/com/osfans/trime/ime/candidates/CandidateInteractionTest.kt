@@ -67,23 +67,35 @@ class CandidateInteractionTest :
             viewport.update(identity.snapshot.copy(editorToken = 8), 0) shouldBe true
         }
 
-        "destroyed expanded windows share only an index scoped to the current source" {
+        "destroyed expanded windows share their row and signed pixel position in the current source" {
             val anchor = CandidateViewportAnchor()
             anchor.update(identity.snapshot, 16)
-            anchor.remember(identity.snapshot, 16, 53) shouldBe true
+            anchor.remember(identity.snapshot, 16, 53, firstVisiblePixelOffset = -71) shouldBe true
             // These are separate window instances, rather than reused View or paging caches.
             repeat(2) {
                 CandidateViewportState().update(identity.snapshot, 16) shouldBe true
                 anchor.restore(identity.snapshot, 16) shouldBe 53
+                anchor.restoreOffset(identity.snapshot, 16) shouldBe -71
             }
-            repeat(100) { anchor.update(identity.snapshot, 16) }
+            repeat(100) {
+                anchor.update(identity.snapshot, 16)
+                anchor.restore(identity.snapshot, 16) shouldBe 53
+                anchor.restoreOffset(identity.snapshot, 16) shouldBe -71
+            }
             anchor.restore(identity.snapshot, 16) shouldBe 53
+            anchor.restoreOffset(identity.snapshot, 16) shouldBe -71
             anchor.remember(identity.snapshot, 16, 15) shouldBe false
             anchor.remember(identity.snapshot, 16, 200, 200) shouldBe false
             anchor.restore(identity.snapshot, 16) shouldBe 53
+            anchor.restoreOffset(identity.snapshot, 16) shouldBe -71
+            anchor.remember(identity.snapshot, 16, 54, firstVisiblePixelOffset = 9) shouldBe true
+            anchor.restore(identity.snapshot, 16) shouldBe 54
+            anchor.restoreOffset(identity.snapshot, 16) shouldBe 9
+            anchor.remember(identity.snapshot, 16, 54) shouldBe true
+            anchor.restoreOffset(identity.snapshot, 16) shouldBe 0
         }
 
-        "changed editor engine generation request or paging offset invalidates the stored index" {
+        "changed editor engine generation request or paging offset invalidates both stored coordinates" {
             listOf(
                 identity.snapshot.copy(editorToken = 8) to 16,
                 identity.snapshot.copy(generation = 12) to 16,
@@ -93,17 +105,40 @@ class CandidateInteractionTest :
             ).forEach { (next, offset) ->
                 val anchor = CandidateViewportAnchor()
                 anchor.update(identity.snapshot, 16)
-                anchor.remember(identity.snapshot, 16, 53) shouldBe true
+                anchor.remember(identity.snapshot, 16, 53, firstVisiblePixelOffset = -71) shouldBe true
                 anchor.update(next, offset)
                 anchor.restore(next, offset) shouldBe null
+                anchor.restoreOffset(next, offset) shouldBe null
                 anchor.restore(identity.snapshot, 16) shouldBe null
+                anchor.restoreOffset(identity.snapshot, 16) shouldBe null
                 anchor.remember(identity.snapshot, 16, 53) shouldBe false
+                anchor.update(identity.snapshot, 16)
+                anchor.restore(identity.snapshot, 16) shouldBe null
+                anchor.restoreOffset(identity.snapshot, 16) shouldBe null
             }
             val anchor = CandidateViewportAnchor()
             anchor.update(identity.snapshot, 16)
-            anchor.remember(identity.snapshot, 16, 53) shouldBe true
+            anchor.remember(identity.snapshot, 16, 53, firstVisiblePixelOffset = -71) shouldBe true
             anchor.clear()
             anchor.remember(identity.snapshot, 16, 53) shouldBe false
             anchor.restore(identity.snapshot, 16) shouldBe null
+            anchor.restoreOffset(identity.snapshot, 16) shouldBe null
+        }
+
+        "late or out of range windows cannot replace a current partial row bookmark" {
+            val anchor = CandidateViewportAnchor()
+            anchor.update(identity.snapshot, 2)
+            anchor.remember(identity.snapshot, 2, 3, 64, -71) shouldBe true
+            anchor.remember(identity.snapshot.copy(requestId = 20), 2, 4, 64, 9) shouldBe false
+            anchor.remember(identity.snapshot, 0, 4, 64, 9) shouldBe false
+            listOf(-1, 1, 64, 100).forEach { index ->
+                anchor.remember(identity.snapshot, 2, index, 64, 9) shouldBe false
+            }
+            anchor.remember(identity.snapshot, 2, 3, 0, 9) shouldBe false
+            anchor.restore(identity.snapshot, 2) shouldBe 3
+            anchor.restoreOffset(identity.snapshot, 2) shouldBe -71
+            anchor.remember(identity.snapshot, 2, 4, -1, 9) shouldBe true
+            anchor.restore(identity.snapshot, 2) shouldBe 4
+            anchor.restoreOffset(identity.snapshot, 2) shouldBe 9
         }
     })

@@ -61,7 +61,9 @@ abstract class BaseUnrolledCandidateWindow(di: DI) :
     private lateinit var candidateLayout: UnrolledCandidateLayout
     private val viewportState = CandidateViewportState()
     private var rememberedIndex: Int? = null
+    private var rememberedPixelOffset = 0
     private var pendingScrollIndex: Int? = null
+    private var pendingScrollPosition: Int? = null
 
     protected val separatorDrawable by lazy {
         ShapeDrawable(RectShape()).apply {
@@ -87,6 +89,7 @@ abstract class BaseUnrolledCandidateWindow(di: DI) :
     final override fun onCreateView(): View {
         candidateLayout =
             onCreateCandidateLayout().apply {
+                onCandidatesLaidOut = { restorePendingViewport() }
                 onCandidatesDrawn = {
                     val snapshot = adapter.snapshot
                     val list = recyclerView
@@ -113,8 +116,13 @@ abstract class BaseUnrolledCandidateWindow(di: DI) :
             val target = pendingScrollIndex ?: return@addOnPagesUpdatedListener
             val position = adapter.snapshot().items.indexOfFirst { it.index == target && it.snapshot == adapter.snapshot }
             if (position >= 0) {
-                candidateLayout.recyclerView.scrollToPosition(position)
-                pendingScrollIndex = null
+                val list = candidateLayout.recyclerView
+                if (pendingScrollPosition != position) {
+                    pendingScrollPosition = position
+                    list.scrollToPosition(position)
+                }
+                // Paging notifications can precede layout; the pixel adjustment needs a laid-out row.
+                list.requestLayout()
             }
         }
         return candidateLayout
@@ -122,6 +130,31 @@ abstract class BaseUnrolledCandidateWindow(di: DI) :
 
     abstract val adapter: PagingCandidateViewAdapter
     abstract val layoutManager: RecyclerView.LayoutManager
+
+    private fun restorePendingViewport() {
+        val target = pendingScrollIndex ?: return
+        val snapshot = adapter.snapshot
+        if (!windowManager.isAttached(this) || !snapshot.isValid ||
+            snapshot != compactCandidate.adapter.snapshot || !service.isCurrentEditor(snapshot.editorToken)
+        ) {
+            pendingScrollIndex = null
+            pendingScrollPosition = null
+            return
+        }
+        val position = pendingScrollPosition ?: return
+        val list = candidateLayout.recyclerView
+        if (list.isComputingLayout || list.isLayoutRequested || list.hasPendingAdapterUpdates()) {
+            list.requestLayout()
+            return
+        }
+        val holder = list.findViewHolderForAdapterPosition(position) as? CandidateViewHolder ?: return
+        if (holder.snapshot != snapshot || holder.idx != target) return
+        val currentOffset = layoutManager.getDecoratedTop(holder.itemView) - list.paddingTop
+        // scrollBy may synchronously trigger paging callbacks. Consume the pending restore first.
+        pendingScrollIndex = null
+        pendingScrollPosition = null
+        list.scrollBy(0, currentOffset - rememberedPixelOffset)
+    }
 
     private var offsetJob: Job? = null
 
@@ -159,10 +192,13 @@ abstract class BaseUnrolledCandidateWindow(di: DI) :
                         windowManager.attachWindow(KeyboardWindow)
                     } else {
                         if (viewportState.update(it.snapshot, it.offset)) {
-                            rememberedIndex = compactCandidate.expandedViewportAnchor.restore(it.snapshot, it.offset)
+                            val anchor = compactCandidate.expandedViewportAnchor
+                            val restoredIndex = anchor.restore(it.snapshot, it.offset)
                                 ?.takeIf { index -> it.total < 0 || index < it.total }
-                                ?: it.anchor.coerceAtLeast(it.offset)
+                            rememberedIndex = restoredIndex ?: it.anchor.coerceAtLeast(it.offset)
+                            rememberedPixelOffset = if (restoredIndex != null) anchor.restoreOffset(it.snapshot, it.offset) ?: 0 else 0
                             pendingScrollIndex = rememberedIndex
+                            pendingScrollPosition = null
                             candidateLayout.resetPosition()
                             adapter.refreshWith(
                                 offset = it.offset,
@@ -172,6 +208,7 @@ abstract class BaseUnrolledCandidateWindow(di: DI) :
                             )
                         } else if (firstEmission) {
                             pendingScrollIndex = rememberedIndex
+                            pendingScrollPosition = null
                         }
                     }
                     firstEmission = false
@@ -206,11 +243,17 @@ abstract class BaseUnrolledCandidateWindow(di: DI) :
             else -> -1
         }
         val holder = candidateLayout.recyclerView.findViewHolderForAdapterPosition(position) as? CandidateViewHolder
-        if (holder?.snapshot == adapter.snapshot && holder.snapshot == compactCandidate.adapter.snapshot) {
-            rememberedIndex = holder.idx
-            compactCandidate.expandedViewportAnchor.remember(holder.snapshot, adapter.offset, holder.idx, adapter.total)
+        if (windowManager.isAttached(this) && pendingScrollIndex == null && holder?.snapshot == adapter.snapshot &&
+            holder.snapshot == compactCandidate.adapter.snapshot && service.isCurrentEditor(holder.snapshot.editorToken)
+        ) {
+            val pixelOffset = layoutManager.getDecoratedTop(holder.itemView) - candidateLayout.recyclerView.paddingTop
+            if (compactCandidate.expandedViewportAnchor.remember(holder.snapshot, adapter.offset, holder.idx, adapter.total, pixelOffset)) {
+                rememberedIndex = holder.idx
+                rememberedPixelOffset = pixelOffset
+            }
         }
-        pendingScrollIndex = rememberedIndex
+        pendingScrollIndex = null
+        pendingScrollPosition = null
         bar.unrollButtonStateMachine.push(
             UnrollButtonStateMachine.TransitionEvent.UnrolledCandidatesDetached,
             UnrollButtonStateMachine.BooleanKey.UnrolledCandidatesEmpty to

@@ -2,11 +2,14 @@
 package com.osfans.trime
 
 import android.app.Instrumentation
+import android.graphics.Rect
 import android.os.SystemClock
 import android.view.MotionEvent
 import android.view.View
+import android.view.ViewGroup
 import android.view.inputmethod.BaseInputConnection
 import android.widget.EditText
+import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.osfans.trime.core.RimeApi
 import com.osfans.trime.ime.candidates.CandidateIdentity
@@ -67,6 +70,25 @@ object ExpandedCandidateViewportAssertions {
             return recycler.findViewHolderForAdapterPosition(position) as? CandidateViewHolder
         }
 
+        fun label(holder: CandidateViewHolder): TextView {
+            fun descendants(view: View): Sequence<View> = sequence {
+                yield(view)
+                if (view is ViewGroup) for (index in 0 until view.childCount) yieldAll(descendants(view.getChildAt(index)))
+            }
+            return descendants(holder.itemView).filterIsInstance<TextView>().first { it.text.toString() == holder.text }
+        }
+
+        fun firstReadable(recycler: RecyclerView): CandidateViewHolder? = (0 until recycler.childCount)
+            .mapNotNull { recycler.getChildViewHolder(recycler.getChildAt(it)) as? CandidateViewHolder }
+            .filter {
+                val text = label(it)
+                val visible = Rect()
+                text.isShown && text.getGlobalVisibleRect(visible) && visible.height() == text.height && visible.width() > 0
+            }
+            .minByOrNull { it.idx }
+
+        fun pixelOffset(window: FlexboxUnrolledCandidateWindow, recycler: RecyclerView, holder: CandidateViewHolder): Int = window.layoutManager.getDecoratedTop(holder.itemView) - recycler.paddingTop
+
         try {
             val initial = main {
                 FlexboxUnrolledCandidateWindow(input.di).also {
@@ -93,12 +115,37 @@ object ExpandedCandidateViewportAssertions {
                     compact.adapter.snapshot == snapshot && initial.adapter.snapshot == snapshot &&
                     first(initial, initialList)?.let { it.snapshot == snapshot && it.idx > initialIndex } == true
             }
+            val partial = main {
+                val holder = checkNotNull(first(initial, initialList))
+                check(holder.itemView.height > 9)
+                // Reproduce the 80px row at -71px: only its bottom nine pixels remain visible.
+                val wantedOffset = 9 - holder.itemView.height
+                initialList.scrollBy(0, pixelOffset(initial, initialList, holder) - wantedOffset)
+                initialList.stopScroll()
+                CandidateIdentity(holder.snapshot, holder.idx) to wantedOffset
+            }
+            until {
+                initialList.scrollState == RecyclerView.SCROLL_STATE_IDLE && !initialList.isLayoutRequested &&
+                    first(initial, initialList)?.let {
+                        CandidateIdentity(it.snapshot, it.idx) == partial.first && pixelOffset(initial, initialList, it) == partial.second
+                    } == true
+            }
             val selected = main {
                 check(initialList.scrollState == RecyclerView.SCROLL_STATE_IDLE && !initialList.isLayoutRequested)
                 check(compact.adapter.snapshot == snapshot && initial.adapter.snapshot == snapshot)
                 val holder = checkNotNull(first(initial, initialList))
                 check(holder.snapshot == snapshot && holder.idx > initialIndex)
                 val identity = CandidateIdentity(holder.snapshot, holder.idx)
+                val savedOffset = pixelOffset(initial, initialList, holder)
+                check(identity == partial.first && savedOffset == partial.second && savedOffset < 0)
+                val leadingLabel = label(holder)
+                val leadingVisible = Rect()
+                check(!leadingLabel.getGlobalVisibleRect(leadingVisible) || leadingVisible.height() < leadingLabel.height) {
+                    "Partial leading row exposes a fully readable candidate label"
+                }
+                val readable = checkNotNull(firstReadable(initialList))
+                check(readable.snapshot == snapshot && readable.idx > holder.idx)
+                val readableIdentity = CandidateIdentity(readable.snapshot, readable.idx)
                 check(editor.text.toString() == originalEditor) { "Expanded scrolling committed editor text" }
                 // Read the row immediately before onDetached captures it, without an intervening frame.
                 manager.attachWindow(KeyboardWindow)
@@ -107,7 +154,10 @@ object ExpandedCandidateViewportAssertions {
                 check(restored == identity.index) {
                     "Collapsed anchor differs: expected=${identity.index}, actual=$restored, offset=${initial.adapter.offset}, snapshot=$snapshot"
                 }
-                identity
+                check(compact.expandedViewportAnchor.restoreOffset(snapshot, initial.adapter.offset) == savedOffset) {
+                    "Collapsed anchor lost its signed pixel offset: expected=$savedOffset"
+                }
+                Triple(identity, savedOffset, readableIdentity)
             }
             checks++
             // The normal 100ms exit Slide temporarily reparents the removed root into an overlay.
@@ -115,9 +165,10 @@ object ExpandedCandidateViewportAssertions {
             main {
                 check(!manager.isAttached(initial)) { "Destroyed expanded window became current again" }
                 val restored = compact.expandedViewportAnchor.restore(snapshot, initial.adapter.offset)
-                check(restored == selected.index) {
-                    "Destroyed anchor differs: expected=${selected.index}, actual=$restored, offset=${initial.adapter.offset}, snapshot=$snapshot"
+                check(restored == selected.first.index) {
+                    "Destroyed anchor differs: expected=${selected.first.index}, actual=$restored, offset=${initial.adapter.offset}, snapshot=$snapshot"
                 }
+                check(compact.expandedViewportAnchor.restoreOffset(snapshot, initial.adapter.offset) == selected.second)
             }
             checks++
 
@@ -130,18 +181,24 @@ object ExpandedCandidateViewportAssertions {
             check(reopened !== initial && reopened.adapter !== initial.adapter && reopened.layoutManager !== initial.layoutManager)
             until {
                 manager.isAttached(reopened) && reopened.adapter.snapshot == snapshot &&
-                    list().isShown && !list().isLayoutRequested && first(reopened, list())?.idx == selected.index
+                    list().isShown && !list().isLayoutRequested && first(reopened, list())?.let {
+                        CandidateIdentity(it.snapshot, it.idx) == selected.first && pixelOffset(reopened, list(), it) == selected.second
+                    } == true && firstReadable(list())?.let { CandidateIdentity(it.snapshot, it.idx) == selected.third } == true
             }
             val reopenedList = main { list() }
             check(reopenedList !== initialList)
             checks++
             repeat(2) {
                 main { reopenedList.requestLayout() }
-                until { !reopenedList.isLayoutRequested && first(reopened, reopenedList)?.idx == selected.index }
+                until {
+                    !reopenedList.isLayoutRequested && first(reopened, reopenedList)?.let {
+                        CandidateIdentity(it.snapshot, it.idx) == selected.first && pixelOffset(reopened, reopenedList, it) == selected.second
+                    } == true && firstReadable(reopenedList)?.let { CandidateIdentity(it.snapshot, it.idx) == selected.third } == true
+                }
                 check(main { editor.text.toString() == originalEditor }) { "Reopening or relayout committed editor text" }
                 checks++
             }
-            val expected = native { getCandidates(selected.index, 1, snapshot).single().text }
+            val expected = native { getCandidates(selected.third.index, 1, snapshot).single().text }
             val expectedEditor = main {
                 val value = editor.text
                 val start = BaseInputConnection.getComposingSpanStart(value)
@@ -155,8 +212,8 @@ object ExpandedCandidateViewportAssertions {
                 }
             }
             main {
-                val holder = checkNotNull(first(reopened, reopenedList))
-                check(CandidateIdentity(holder.snapshot, holder.idx) == selected && holder.text == expected)
+                val holder = checkNotNull(firstReadable(reopenedList))
+                check(CandidateIdentity(holder.snapshot, holder.idx) == selected.third && holder.text == expected)
                 val child = holder.itemView
                 val left = maxOf(0, child.left)
                 val right = minOf(reopenedList.width, child.right)
