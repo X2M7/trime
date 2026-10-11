@@ -189,8 +189,13 @@ abstract class BaseInputView(
             .setMessage(failure)
             .setPositiveButton(android.R.string.ok, null)
             .create()
+        // Keep the editor focused so its replacement can trigger the normal UI cleanup.
+        dialog.window?.addFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE)
         try {
             service.showDialog(dialog)
+            // The service and AlertDialog add this flag; with NOT_FOCUSABLE it puts
+            // the feedback below the keyboard instead of keeping it visible above it.
+            dialog.window?.clearFlags(WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM)
             candidateFeedbackDialog = dialog
         } catch (_: WindowManager.BadTokenException) {
             dialog.dismiss()
