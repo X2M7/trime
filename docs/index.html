@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Trime 九键拼音 · v3.3.13-t9.12</title>
+  <title>Trime 九键拼音 · v3.3.13-t9.13 稳定版</title>
   <meta name="description" content="Trime for Android fork with Luna Pinyin T9 keyboard support.">
   <style>
     :root {
@@ -370,24 +370,24 @@
   <main>
     <div class="wrap hero">
       <div>
-        <p class="eyebrow">Android RIME 输入法 · v3.3.13-t9.12</p>
+        <p class="eyebrow">Android RIME 输入法 · v3.3.13-t9.13 稳定版</p>
         <h1>Trime 九键拼音</h1>
-        <p><strong>v3.3.13-t9.12：Android 5.0+ 稳定版，提供ARM64和x86_64 APK。</strong>九键英文入口、手动语言记忆及临时输入框模式，修复候选/预编辑触摸区域、滚动坐标、重复窗口挂接与缓存丢失、组合修饰键、SAF目录完整性及日志导出；字体目录按实例复用，固定栏位减少隐藏分支测量。</p>
-        <p>验证：663项应用JVM测试、206项宿主检查通过，双Lint零问题、APK签名检查零警告；Android 5.0与Android 15的Debug／正常Release模拟器功能回归通过。支持Android 5.0+及ARM64/x86_64，手动附件为两个Release APK和完整递归源码包。</p>
-        <p>系统框架/图形W/E/F与失败历史保留；真机P95/PSS、ARM64/OEM及真实朗读引擎释放未验证。详见 <a href="https://github.com/X2M7/trime/blob/v3.3.13-t9.12/script/quality/VALIDATION-t9.12.md">验收报告</a>。</p>
+        <p><strong>v3.3.13-t9.13 本轮稳定版验收通过，线上状态以 Release 为准。</strong>默认全拼与九键共享学习库。个人词库可导入、导出和备份恢复；常用短语可编辑、导入导出，修改前自动备份供恢复。候选可按方案及输入置顶、恢复排序，提供可选横向滚动、注释和全文阅读，并拒绝刷新后的旧手势。</p>
+        <p>Rime portable 快照导入合并记录，精确文件备份恢复替换受保护文件。忘记此词请求移除已学习记录，未学习词可能提示无法忘记；不永久屏蔽系统词，也不删除置顶。操作失败时显示输入法提示框。失败提示可在通知权限被拒绝时显示，切换编辑器会清理旧提示。支持 Shift 双击锁定并保留自定义主题动作。</p>
+        <p>本轮 702 项新执行应用 JVM 测试、213 项新执行宿主测试及双 ABI Release 签名检查通过。Android 5.0 和 Android 15 功能回归已完成，包含正式版覆盖升级、候选和常用短语界面及单独 Debug 两主题检查；两轮4,463／11,620条原始W/E/F及完整控制台诊断均保留并逐行审阅，不宣称全部平台诊断已消失或环境风险全为零。缓存结果单列，原始框架与预期负例 W/E/F 保留并逐行审阅。真机 P95/PSS、物理 ARM64/OEM/16KiB 页、TTS 与 SAF 选择器未测。</p>
 
         <p class="lead">
           基于 Trime 的 GPL 开源 fork，加入 <code>朙月拼音九键</code> 方案和九宫格键盘布局。
           切换到 <code>luna_pinyin_t9</code> 后，可以用手机常见的 2-9 数字键输入拼音。
         </p>
         <div class="actions">
-          <a class="button primary" href="https://github.com/X2M7/trime/releases/latest">下载最新 APK</a>
+          <a class="button primary" href="https://github.com/X2M7/trime/releases/latest">下载稳定版（线上状态见 Release）</a>
           <a class="button secondary" href="https://github.com/X2M7/trime">查看源码</a>
         </div>
         <div class="meta">
-          <span class="pill">v3.3.13-t9.12 · 稳定版</span>
+          <span class="pill">v3.3.13-t9.13 · 本轮验收通过</span>
           <span class="pill">ABI：arm64-v8a / x86_64</span>
-          <span class="pill">Android 5.0+ · 候选versionCode 20261117</span>
+          <span class="pill">Android 5.0+ · versionCode 20261118</span>
           <span class="pill">License：GPL-3.0-or-later</span>
         </div>
                       </div>
@@ -427,7 +427,7 @@
           <li>打开任意输入框，切换方案到 <code>朙月拼音九键</code> / <code>luna_pinyin_t9</code>。</li>
           <li>输入 <code>64426</code>，选择拼音 <code>ni</code> 后保留 <code>426</code>，再选择汉字候选提交。</li>
         </ol>
-        <p>9.12采用正常Release/R8，日常关闭性能日志；包名、证书与覆盖升级已由新APK及模拟器验收确认。手动发布仅两个APK与含递归子模块的源码包。模拟器不代替真机P95/PSS、ARM64、物理16KiB页或全部OEM验证。详见 <a href="https://github.com/X2M7/trime/blob/develop/doc/releases/v3.3.13-t9.12.md">9.12发布说明</a>与 <a href="https://github.com/X2M7/trime/blob/develop/script/quality/VALIDATION-t9.12.md">验收报告</a>。</p>
+        <p>本轮 Release/R8 构建、既有包名／证书及双 ABI APK 签名检查已通过；两 API 本轮旧 9.12 正式版覆盖升级与候选、短语界面验收已通过，两 API 完整功能回归与逐行日志审阅均已通过，环境与未测范围保留。计划手动附件仅两个 ABI APK 与含递归子模块的完整源码包；GitHub 自带 source zip/tar 保留。展开每页 48 项、预取距离 16、maxSize 目标 144 为 best-effort 预算。模拟器不代替真机 P95/PSS、物理 ARM64／16KiB 页或全部 OEM 验证。线上状态见版本 Release 页面，详细范围和历史见验收报告。</p>
       </div>
     </section>
   </main>

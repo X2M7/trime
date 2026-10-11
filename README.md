@@ -16,15 +16,17 @@ Rime IME for Android
 
 English | [简体中文](README_sc.md) | [繁體中文](README_tc.md)
 
-## v3.3.13-t9.12
+## v3.3.13-t9.13 — Stable release acceptance passed
 
-Stable release for Android 5.0+; ARM64 and x86_64 APKs.
+Supports Android 5.0+ with ARM64 and x86_64 Release APKs. This release passed the current acceptance checks; online status is recorded on the [version Release page](https://github.com/X2M7/trime/releases/tag/v3.3.13-t9.13).
 
-This version adds an explicit QWERTY English route for T9, remembered manual language choices and temporary editor-forced modes. Number/symbol switching retains pending composition. It fixes preedit/candidate touch regions, own-scroll coordinates, repeated window attachment and lost cached views, combined modifier and SYM state, incomplete SAF listings and log-export threading/cancellation, and integrates upstream develop. Font directories are reused within each theme instance; fixed-size bars skip hidden-child measurement while flexible layouts retain their sizing behavior.
+Default full pinyin and T9 share the `luna_pinyin` learning dictionary and `custom_phrase.txt`. Personal dictionaries support import, export, backup and recovery. Common phrases support editing, import and export; changes are automatically backed up for recovery. Portable Rime snapshot import merges records; exact file-backup recovery replaces the protected files. Pins apply to the current scheme and raw input, and restoring order keeps learned records. Forgetting a word requests removal of learned records; an entry with no editable learned record may show a failed request. It neither permanently blocks a system word nor deletes a pin. Failed candidate actions show an IME-owned message dialog. Candidate comments, optional horizontal scrolling and full-text reading support longer entries; stale gestures after refresh are rejected. Supports Shift double-tap locking while retaining custom theme gestures.
 
-Validation: 663 application JVM tests and 206 host checks passed; both Lint runs reported zero issues and APK signature checks reported zero warnings; Android 5.0 and Android 15 emulator regressions passed with Debug and normal Release builds. Raw framework/graphics W/E/F remain retained: zero build or signature warnings does not mean a warning-free device. Physical P95/PSS, ARM64/OEM runtime and real enabled-speech engine teardown remain unverified.
+Pins are limited to 512 rules and lookup within the first 144 candidates; private mode does not apply or modify them. Alphabetic and numeric phrase codes remain separate. Expanded paging uses 48-item pages, prefetch distance 16 and a best-effort `maxSize` target of 144; this is not a universal measured memory bound.
 
-[Stable release downloads](https://github.com/X2M7/trime/releases/tag/v3.3.13-t9.12) · [Validation and history](script/quality/VALIDATION-t9.12.md). Manual assets are two Release APKs and a complete recursive-submodule source archive.
+702 fresh application JVM tests and 213 fresh host tests passed; 17 build-logic and 6 compatibility results were cached and counted separately. Debug/Release Lint, build and Release-signature warnings were zero. Android 5.0 and Android 15 emulators passed Release upgrades, candidate and common-phrase interfaces, and separate two-theme Debug regression, including 40 rapid-input rounds and 100 keyboard show/hide cycles. All 4,463 / 11,620 raw W/E/F rows and complete console diagnostics remain retained and individually reviewed. This does not mean every platform diagnostic disappeared or every environment risk was eliminated.
+
+Physical-device P95/PSS, long-term residency, first deployment, physical ARM64/OEM/16 KiB pages, real TTS and SAF picker permission/cancel flows remain unmeasured. [Validation scope and history](script/quality/VALIDATION-t9.13.md). Manual assets are two APKs and one complete source archive with recursive submodules; online status and asset integrity are recorded on Release and in external publication receipts.
 
 ## About
 
