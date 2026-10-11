@@ -53,6 +53,35 @@ open class PagingCandidateViewAdapter(
         refresh()
     }
 
+    /** Only actually visible rows may ask Paging to load their surrounding pages. */
+    fun accessVisibleRange(first: Int, last: Int, expectedSnapshot: CandidateSnapshot) {
+        if (!expectedSnapshot.isValid || snapshot != expectedSnapshot ||
+            first < 0 || last < first || last >= itemCount ||
+            peek(first)?.snapshot != expectedSnapshot || peek(last)?.snapshot != expectedSnapshot
+        ) {
+            return
+        }
+        // The final access is the leading row, so a refresh keeps the current leading anchor.
+        getItem(last)
+        if (first != last) getItem(first)
+    }
+
+    /** Recover an evicted viewport through one ordinary boundary access per page update. */
+    fun accessTowardIndex(index: Int, expectedSnapshot: CandidateSnapshot) {
+        if (!expectedSnapshot.isValid || snapshot != expectedSnapshot || index < 0 || index < offset ||
+            (total >= 0 && index >= total) || itemCount == 0
+        ) {
+            return
+        }
+        val first = peek(0) ?: return
+        val last = peek(itemCount - 1) ?: return
+        if (first.snapshot != expectedSnapshot || last.snapshot != expectedSnapshot) return
+        when {
+            index < first.index -> getItem(0)
+            index > last.index -> getItem(itemCount - 1)
+        }
+    }
+
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int,
@@ -62,7 +91,9 @@ open class PagingCandidateViewAdapter(
         holder: CandidateViewHolder,
         position: Int,
     ) {
-        val row = getItem(position)
+        // Flexbox also binds rows while measuring off-screen lines. Those binds must not
+        // advance Paging's viewport or allow a currently visible page to be dropped.
+        val row = peek(position)
         if (row == null) {
             holder.ui.root.identity = null
             holder.idx = -1
