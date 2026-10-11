@@ -58,16 +58,21 @@ class RimePrivacyCmakeTest(unittest.TestCase):
             "types_ext.cc",
             NATIVE / "librime-lua/src/types_ext.cc",
         )
-        self._make_plugin(
-            "librime-predict",
-            "rime-predict-objs",
-            "predictor.cc",
-            NATIVE / "librime-predict/src/predictor.cc",
+        self._make_plugin("librime-predict", "rime-predict-objs")
+        predict_dir = self.root / "librime-predict/src"
+        for source in (NATIVE / "librime-predict/src").glob("*"):
+            if source.suffix in {".cc", ".h"}:
+                shutil.copyfile(source, predict_dir / source.name)
+        (self.root / "librime-predict/CMakeLists.txt").write_text(
+            "add_library(rime-predict-objs OBJECT src/dummy.cc "
+            "src/predictor.cc src/predict_engine.cc src/predict_db.cc "
+            "src/predict_translator.cc src/predict_module.cc)\n"
         )
         self._make_plugin("librime-octagram", "rime-octagram-objs")
         guard_dir = self.root / "librime_jni"
         guard_dir.mkdir()
-        for name in ["trime_privacy_guard.cc", "trime_privacy_guard.h"]:
+        for name in ["trime_privacy_guard.cc", "trime_privacy_guard.h",
+                     "trime_prediction_guard.cc", "trime_prediction_guard.h"]:
             shutil.copyfile(NATIVE / "librime_jni" / name, guard_dir / name)
 
         (self.root / "CMakeLists.txt").write_text(
@@ -123,7 +128,7 @@ class RimePrivacyCmakeTest(unittest.TestCase):
             for path in [
                 *(self.root / "librime/src" / item for item in RIME_FILES),
                 self.root / "librime-lua/src/types_ext.cc",
-                self.root / "librime-predict/src/predictor.cc",
+                *(self.root / "librime-predict/src").glob("*"),
             ]
         }
         timestamps = None
@@ -134,7 +139,7 @@ class RimePrivacyCmakeTest(unittest.TestCase):
             outputs = [
                 *(self.root / "build/trime-rime-privacy" / item for item in RIME_FILES),
                 self.root / "build/trime-rime-lua-privacy/types_ext.cc",
-                self.root / "build/trime-rime-predict/predictor.cc",
+                *(self.root / "build/trime-rime-predict").glob("*"),
             ]
             current = {path: path.stat().st_mtime_ns for path in outputs}
             if timestamps is not None:
@@ -143,16 +148,18 @@ class RimePrivacyCmakeTest(unittest.TestCase):
 
         self.assertEqual(originals, {path: path.read_bytes() for path in originals})
         core = (self.root / "build/core.txt").read_text().split(";")
-        self.assertEqual(len(core), 13)
+        self.assertEqual(len(core), 14)
         self.assertEqual(sum("/trime-rime-privacy/" in path for path in core), 11)
         self.assertEqual(sum(path.endswith("/trime_privacy_guard.cc") for path in core), 1)
         self.assertIn("untouched.cc", core)
+        self.assertEqual(sum(path.endswith("/trime_prediction_guard.cc") for path in core), 1)
         lua = (self.root / "build/lua.txt").read_text().split(";")
         self.assertEqual(len(lua), 2)
         self.assertEqual(sum("/trime-rime-lua-privacy/types_ext.cc" in path for path in lua), 1)
         predict = (self.root / "build/predict.txt").read_text().split(";")
-        self.assertEqual(len(predict), 2)
+        self.assertEqual(len(predict), 6)
         self.assertEqual(sum("/trime-rime-predict/predictor.cc" in path for path in predict), 1)
+        self.assertEqual(sum("/trime-rime-predict/" in path for path in predict), 5)
 
         overlay = self.root / "build/trime-rime-privacy"
         context_header = (overlay / "rime/context.h").read_text()
@@ -177,6 +184,8 @@ class RimePrivacyCmakeTest(unittest.TestCase):
         self.assertIn("KeyEventNotifier unhandled_key_output_notifier_;", context_header)
         self.assertIn("context_->unhandled_key_output_notifier()", engine)
         self.assertEqual(engine.count("if (!trime::IsPrivacyModeEnabled())"), 4)
+        self.assertIn('context_->set_option("prediction", trime::IsPredictionRequested() &&', engine)
+        self.assertIn('!context_->get_option("ascii_mode"));', engine)
         self.assertIn("void ResetPrivacyContexts(bool enabled);", service_header)
         self.assertIn("Engine* primary = engine_.get();", service)
         self.assertIn("Engine* active = engine_->active_engine();", service)
@@ -247,8 +256,43 @@ class RimePrivacyCmakeTest(unittest.TestCase):
         self.assertIn("predict_engine_->Clear()", predictor)
         self.assertIn("trime::IsPrivacyModeEnabled()", predictor)
         self.assertIn("trime::IsPrivacyTransitionBoundary()", predictor)
-        self.assertIn("last_action_ = kUnspecified", predictor)
+        self.assertIn("pending_commit_ = false", predictor)
+        self.assertIn("pending_prediction_ = false", predictor)
+        self.assertIn("pending_text_.clear()", predictor)
+        self.assertIn("trime::IsPredictionTransitionBoundary()", predictor)
+        self.assertIn("option_update_connection_.disconnect()", predictor)
         self.assertIn("self_updating_ = false", predictor)
+        model_header = (self.root / "build/trime-rime-predict/trime_predict_model_hash.h").read_text()
+        self.assertIn("kBundledModelBytes = 6364", model_header)
+        self.assertIn("2bc7ee4fe184c433b82a0650625e0fc4ecbc1c64352ea9aa36342d2c7a612add", model_header)
+        self.assertEqual(
+            (self.root / "build/trime-rime-predict/predict_module.cc").read_bytes(),
+            (self.root / "librime-predict/src/predict_module.cc").read_bytes(),
+        )
+        self.assertEqual(
+            (self.root / "build/trime-rime-predict/LICENSE").read_bytes(),
+            (NATIVE / "librime-predict/LICENSE").read_bytes(),
+        )
+
+    def test_predict_source_and_module_drift_are_not_silently_ignored(self):
+        for name in ["predictor.cc", "predict_engine.h", "predict_db.cc", "predict_module.cc"]:
+            with self.subTest(name=name):
+                source = self.root / "librime-predict/src" / name
+                original = source.read_bytes()
+                try:
+                    source.write_bytes(original + b"\n// changed pinned source\n")
+                    result = self.configure(build="build-drift-" + name.replace(".", "-"))
+                    self.assertNotEqual(result.returncode, 0)
+                    self.assertIn("Re-audit Rime predict source", result.stderr)
+                finally:
+                    source.write_bytes(original)
+
+    def test_predict_module_registration_cannot_remain_in_vendor_directory(self):
+        cmake = self.root / "librime-predict/CMakeLists.txt"
+        cmake.write_text(cmake.read_text().replace(" src/predict_module.cc", ""))
+        result = self.configure(build="build-missing-module")
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("Re-audit Rime predict source registration: predict_module.cc", result.stderr)
 
     def test_upstream_drift_is_not_silently_ignored(self):
         source = self.root / "librime/src/rime/engine.cc"

@@ -50,6 +50,7 @@ import com.osfans.trime.core.RimeApi
 import com.osfans.trime.core.RimeKeyMapping
 import com.osfans.trime.core.RimeLifecycle
 import com.osfans.trime.core.RimeMessage
+import com.osfans.trime.core.compositionForEditor
 import com.osfans.trime.daemon.RimeDaemon
 import com.osfans.trime.daemon.RimeSession
 import com.osfans.trime.data.db.ClipboardHelper
@@ -199,6 +200,13 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
     private val refreshT9AssistListener =
         PreferenceDelegate.OnChangeListener<Boolean> { _, _ ->
             postRimeJob { refreshT9Options() }
+        }
+
+    @Keep
+    private val refreshPredictionListener =
+        PreferenceDelegate.OnChangeListener<Boolean> { _, _ ->
+            // Read the latest preference in FIFO; an older callback cannot re-enable it.
+            postRimeJob { refreshPredictionOptions() }
         }
 
     @Keep
@@ -431,6 +439,7 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
             it.registerOnChangeListener(recreateInputViewListener)
         }
         prefs.keyboard.t9AssistOptions.forEach { it.registerOnChangeListener(refreshT9AssistListener) }
+        prefs.candidates.nextWordPrediction.registerOnChangeListener(refreshPredictionListener)
         prefs.general.manualPrivacyMode.registerOnChangeListener(manualPrivacyModeListener)
         prefs.candidates.registerOnChangeListener(recreateCandidatesViewListener)
         // ensure theme and color managers are initialized after rime is ready
@@ -699,6 +708,7 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
             it.unregisterOnChangeListener(recreateInputViewListener)
         }
         prefs.keyboard.t9AssistOptions.forEach { it.unregisterOnChangeListener(refreshT9AssistListener) }
+        prefs.candidates.nextWordPrediction.unregisterOnChangeListener(refreshPredictionListener)
         prefs.general.manualPrivacyMode.unregisterOnChangeListener(manualPrivacyModeListener)
         prefs.candidates.unregisterOnChangeListener(recreateCandidatesViewListener)
         ThemeManager.removeOnChangedListener(onThemeChangeListener)
@@ -1142,6 +1152,8 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
         inputView?.finishInput()
         candidatesView?.dismissCandidateActionMenu()
         inputDeviceManager.onFinishInputView()
+        // A hidden keyboard retains unfinished spelling, but not a next-word chain.
+        postRimeJob { clearPredictionContext() }
         // Hiding the window is not leaving the editor. Keep its composition so
         // showing it again cannot silently submit raw T9 digits or lose a lock.
         if (finishingInput) {
@@ -1155,6 +1167,18 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
     }
 
     fun commitText(text: String, snapshot: CandidateSnapshot = CandidateSnapshot.EMPTY) {
+        if (!snapshot.isValid && rime.run { isReady } &&
+            (prefs.candidates.nextWordPrediction.getValue() || rime.run { candidateSnapshotCached.isPrediction })
+        ) {
+            // Clipboard, symbols and literal theme actions do not establish a Rime word context.
+            // The fallback keyboard must not enqueue one recovery waiter for every literal key.
+            postRimeJob { clearPredictionContext() }
+        }
+        commitText(text, snapshot, updateCommittedContent = true)
+    }
+
+    /** Literal macro caller already cleared prediction at its own position in the native FIFO. */
+    internal fun commitTextWithoutPredictionReset(text: String, snapshot: CandidateSnapshot) {
         commitText(text, snapshot, updateCommittedContent = true)
     }
 
@@ -1572,7 +1596,7 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
 
     fun getActiveText(type: Int): String {
         if (!canReadEditorContent()) return ""
-        val rimeComposition = rime.run { compositionCached }
+        val rimeComposition = rime.run { compositionForEditor(compositionCached, candidateSnapshotCached.isPrediction) }
         val selected = currentInputConnection?.getSelectedText(0)?.toString()
         val commitPreview = rimeComposition.commitTextPreview
         val preedit = rimeComposition.preedit ?: ""

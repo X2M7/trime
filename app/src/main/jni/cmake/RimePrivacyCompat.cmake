@@ -59,7 +59,21 @@ function(trime_adapt_rime_privacy)
 
   trime_replace_dependency_cmake("${root}/rime/engine.cc"
     "#include <rime/translation.h>"
-    "#include <rime/translation.h>\n\n#include \"trime_privacy_guard.h\"")
+    "#include <rime/translation.h>\n\n#include \"trime_privacy_guard.h\"\n#include \"trime_prediction_guard.h\"")
+  trime_replace_dependency_cmake("${root}/rime/engine.cc"
+    [=[    return Switches::kContinue;
+  });
+}]=]
+    [=[    return Switches::kContinue;
+  });
+  // This runs after every complete component/schema initialization, including
+  // the native switcher path that does not call the frontend select-schema JNI.
+  // A schema reset can neither bypass the frontend gate nor disable an active
+  // user request solely because its default prediction switch is off.
+  context_->set_option("prediction", trime::IsPredictionRequested() &&
+                         !trime::IsPrivacyModeEnabled() &&
+                         !context_->get_option("ascii_mode"));
+}]=])
   trime_replace_dependency_cmake("${root}/rime/engine.cc"
     "  context_->commit_notifier().connect([this](Context* ctx) { OnCommit(ctx); });"
     "  context_->commit_output_notifier().connect(\n      [this](Context* ctx) { OnCommit(ctx); });")
@@ -94,10 +108,10 @@ function(trime_adapt_rime_privacy)
   # editor/privacy boundary is published.
   trime_replace_dependency_cmake("${root}/rime/service.h"
     "  void ClearComposition();"
-    "  void ClearComposition();\n  void ResetPrivacyContexts(bool enabled);")
+    "  void ClearComposition();\n  void ResetPrivacyContexts(bool enabled);\n  bool ResetPredictionContexts(bool enabled, bool update_option);")
   trime_replace_dependency_cmake("${root}/rime/service.cc"
     "#include <rime/service.h>"
-    "#include <rime/service.h>\n#include <rime/switcher.h>")
+    "#include <rime/service.h>\n#include <rime/switcher.h>\n#include \"trime_prediction_guard.h\"")
   trime_replace_dependency_cmake("${root}/rime/service.cc"
     [=[void Session::ClearComposition() {
   if (!engine_)
@@ -142,6 +156,34 @@ void Session::ResetPrivacyContexts(bool enabled) {
     }
   }
   reset_context(primary->context());
+}
+
+bool Session::ResetPredictionContexts(bool enabled, bool update_option) {
+  if (!engine_)
+    return false;
+  bool had_prediction = false;
+  trime::PredictionTransitionBoundary boundary;
+  auto reset_context = [&](Context* context) {
+    if (!context)
+      return;
+    context->commit_history().clear();
+    const bool predicted = !context->composition().empty() &&
+        context->composition().back().HasTag("prediction");
+    had_prediction |= predicted;
+    if (predicted)
+      context->Clear();
+    else
+      context->update_notifier()(context);
+    if (update_option)
+      context->set_option("prediction", enabled && !context->get_option("ascii_mode"));
+    context->commit_history().clear();
+  };
+  Engine* primary = engine_.get();
+  Engine* active = engine_->active_engine();
+  if (active && active != primary)
+    reset_context(active->context());
+  reset_context(primary->context());
+  return had_prediction;
 }
 
 void Session::ApplySchema(Schema* schema) {]=])
@@ -566,56 +608,6 @@ void ScriptTranslator::OnContextUpdate(Context*) {
   list(APPEND lua_sources "${lua_ext_output}")
   set_property(TARGET rime-lua-objs PROPERTY SOURCES "${lua_sources}")
 
-  set(predict_original "${CMAKE_SOURCE_DIR}/librime-predict/src/predictor.cc")
-  set(predict_stage "${CMAKE_BINARY_DIR}/trime-rime-predict-stage/predictor.cc")
-  set(predict_output "${CMAKE_BINARY_DIR}/trime-rime-predict/predictor.cc")
-  set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS
-               "${predict_original}")
-  configure_file("${predict_original}" "${predict_stage}" COPYONLY)
-  trime_replace_dependency_cmake("${predict_stage}"
-    "#include <rime/translation.h>"
-    "#include <rime/translation.h>\n\n#include \"trime_privacy_guard.h\"")
-  trime_replace_dependency_cmake("${predict_stage}"
-    [=[  if (self_updating_ || !predict_engine_ || !ctx ||
-      !ctx->composition().empty() || !ctx->get_option("prediction") ||
-      last_action_ == kDelete) {
-    return;
-  }]=]
-    [=[  if (!predict_engine_ || !ctx)
-    return;
-  if (trime::IsPrivacyTransitionBoundary()) {
-    predict_engine_->Clear();
-    iteration_counter_ = 0;
-    last_action_ = kUnspecified;
-    self_updating_ = false;
-    return;
-  }
-  if (trime::IsPrivacyModeEnabled()) {
-    predict_engine_->Clear();
-    iteration_counter_ = 0;
-    return;
-  }
-  if (self_updating_ || !ctx->composition().empty() ||
-      !ctx->get_option("prediction") || last_action_ == kDelete) {
-    return;
-  }]=])
-  configure_file("${predict_stage}" "${predict_output}" COPYONLY)
-  get_target_property(predict_sources rime-predict-objs SOURCES)
-  set(predict_matches 0)
-  foreach(source IN LISTS predict_sources)
-    if(source STREQUAL "src/predictor.cc" OR
-       source STREQUAL "${CMAKE_SOURCE_DIR}/librime-predict/src/predictor.cc" OR
-       source STREQUAL "${CMAKE_SOURCE_DIR}/librime/plugins/librime-predict/src/predictor.cc")
-      list(REMOVE_ITEM predict_sources "${source}")
-      math(EXPR predict_matches "${predict_matches} + 1")
-    endif()
-  endforeach()
-  if(NOT predict_matches EQUAL 1)
-    message(FATAL_ERROR "Re-audit Rime predict privacy source registration")
-  endif()
-  list(APPEND predict_sources "${predict_output}")
-  set_property(TARGET rime-predict-objs PROPERTY SOURCES "${predict_sources}")
-  target_include_directories(rime-predict-objs BEFORE PRIVATE
-                             "${CMAKE_SOURCE_DIR}/librime_jni"
-                             "${CMAKE_SOURCE_DIR}/librime-predict/src")
+  include("${CMAKE_CURRENT_FUNCTION_LIST_DIR}/RimePredictCompat.cmake")
+  trime_adapt_rime_predict()
 endfunction()

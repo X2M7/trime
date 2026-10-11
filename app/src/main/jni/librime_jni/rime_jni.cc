@@ -25,6 +25,8 @@
 #include "session.h"
 #include "t9.h"
 #include "trime_privacy_guard.h"
+#include "trime_prediction_guard.h"
+#include "predict/prediction_key_policy.h"
 
 #define MAX_BUFFER_LENGTH 2048
 
@@ -53,6 +55,7 @@ class Rime {
                const RimeNotificationHandler& notificationHandler) {
     privacy_mode_ = false;
     trime::SetPrivacyModeEnabled(false);
+    trime::SetPredictionRequested(false);
     FLAGS_minloglevel = google::GLOG_WARNING;
     if (!rime) return;
     const char* userDir = getenv("RIME_USER_DATA_DIR");
@@ -107,6 +110,11 @@ class Rime {
 
   bool processKey(int keycode, int mask) {
     auto current = rime::Service::instance().GetSession(session());
+    // T9 intercepts physical digits before Rime processors. Remove the
+    // optional next-word menu first so this very key starts fresh T9 input.
+    if (hasPrediction() && trime::prediction::ShouldDismissForKey(
+                               rime::KeyEvent(keycode, mask)))
+      clearPredictionContext();
     const bool handled = t9_.ProcessKey(current.get(), keycode, mask) ||
                          rime->process_key(session(), keycode, mask);
     applyCandidatePins();
@@ -115,13 +123,8 @@ class Rime {
 
   bool simulateKeySequence(const std::string& sequence) {
     const auto state = t9Snapshot();
-    const auto schema_id = currentSchemaId();
-    const bool has_pins = std::any_of(pins_.begin(), pins_.end(),
-        [&](const auto& pin) { return pin.first.first == schema_id; });
     const bool has_locked = std::any_of(state.segments.begin(), state.segments.end(),
                                        [](const auto& span) { return span.locked; });
-    if (!has_pins && !has_locked)
-      return rime->simulate_key_sequence(session(), sequence.data());
     rime::KeySequence keys;
     if (!keys.Parse(sequence)) return false;
     for (const auto& key : keys) {
@@ -130,6 +133,8 @@ class Rime {
       } else {
         // Preserve native macro caret/undo semantics. The T9 physical-key
         // interceptor is only used for macros that already own a locked span.
+        if (hasPrediction() && trime::prediction::ShouldDismissForKey(key))
+          clearPredictionContext();
         rime->process_key(session(), key.keycode(), key.modifier());
         applyCandidatePins();
       }
@@ -137,9 +142,44 @@ class Rime {
     return true;
   }
 
-  bool commitComposition() { return rime->commit_composition(session()); }
+  bool commitComposition() {
+    if (hasPrediction()) {
+      clearPredictionContext();
+      return false;
+    }
+    return rime->commit_composition(session());
+  }
+
+  bool hasPrediction() {
+    const auto id = session(false);
+    auto current = id ? rime::Service::instance().GetSession(id) : nullptr;
+    return current && current->context() &&
+           !current->context()->composition().empty() &&
+           current->context()->composition().back().HasTag("prediction");
+  }
+
+  bool clearPredictionContext() {
+    ranked_menu_.reset();
+    original_menu_.reset();
+    const auto id = session(false);
+    auto current = id ? rime::Service::instance().GetSession(id) : nullptr;
+    return current && current->ResetPredictionContexts(false, false);
+  }
+
+  bool setPredictionEnabled(bool enabled) {
+    trime::SetPredictionRequested(enabled);
+    const bool allowed = enabled && !privacy_mode_ &&
+                           !trime::IsPrivacyModeEnabled();
+    ranked_menu_.reset();
+    original_menu_.reset();
+    const auto id = session(false);
+    auto current = id ? rime::Service::instance().GetSession(id) : nullptr;
+    if (current) current->ResetPredictionContexts(allowed, true);
+    return allowed && (!current || !current->context()->get_option("ascii_mode"));
+  }
 
   void clearComposition() {
+    clearPredictionContext();
     ranked_menu_.reset();
     original_menu_.reset();
     t9_.Clear();
@@ -206,7 +246,20 @@ class Rime {
   }
 
   void setOption(std::string_view key, bool value) {
+    if (key == "prediction") {
+      clearPredictionContext();
+      value = value && trime::IsPredictionRequested() && !privacy_mode_ &&
+              !trime::IsPrivacyModeEnabled() &&
+              !rime->get_option(session(), "ascii_mode");
+    } else if (key == "ascii_mode") {
+      clearPredictionContext();
+    }
     rime->set_option(session(), key.data(), value);
+    if (key == "ascii_mode") {
+      const bool effective = trime::IsPredictionRequested() && !privacy_mode_ &&
+                             !trime::IsPrivacyModeEnabled() && !value;
+      rime->set_option(session(), "prediction", effective);
+    }
   }
 
   bool getOption(std::string_view key) {
@@ -250,6 +303,7 @@ class Rime {
       trime::SetPrivacyModeEnabled(false);
       FLAGS_minloglevel = google::GLOG_WARNING;
     }
+    setPredictionEnabled(trime::IsPredictionRequested());
   }
 
   std::string currentSchemaId() {
@@ -270,10 +324,13 @@ class Rime {
   }
 
   bool selectSchema(std::string_view schemaId) {
+    clearPredictionContext();
     ranked_menu_.reset();
     original_menu_.reset();
     t9_.Reset();
-    return rime->select_schema(session(), schemaId.data());
+    const bool selected = rime->select_schema(session(), schemaId.data());
+    if (selected) setPredictionEnabled(trime::IsPredictionRequested());
+    return selected;
   }
 
   std::string rawInput() {
@@ -290,6 +347,11 @@ class Rime {
   }
 
   bool selectCandidate(size_t index, bool global) {
+    if (hasPrediction() && (!trime::IsPredictionRequested() ||
+                            trime::IsPrivacyModeEnabled())) {
+      clearPredictionContext();
+      return false;
+    }
     if (global) {
       return rime->select_candidate(session(), index);
     } else {
@@ -298,7 +360,7 @@ class Rime {
   }
 
   bool deleteCandidate(size_t index, bool global) {
-    if (privacy_mode_) return false;
+    if (privacy_mode_ || hasPrediction()) return false;
     auto current = rime::Service::instance().GetSession(session());
     if (!current || !current->context()->HasMenu()) return false;
     auto& segment = current->context()->composition().back();
@@ -357,7 +419,7 @@ class Rime {
   }
 
   std::vector<std::string> candidatePinIdentity(int index, bool global) {
-    if (privacy_mode_) return {};
+    if (privacy_mode_ || hasPrediction()) return {};
     auto current = rime::Service::instance().GetSession(session());
     if (!current || !current->context()->HasMenu()) return {};
     auto& segment = current->context()->composition().back();
@@ -385,7 +447,7 @@ class Rime {
     if (segment.menu == ranked_menu_) return;
     ranked_menu_.reset();
     original_menu_.reset();
-    if (privacy_mode_) return;
+    if (privacy_mode_ || segment.HasTag("prediction")) return;
     auto found = pins_.find({currentSchemaId(), rawInput()});
     if (found == pins_.end()) return;
     original_menu_ = segment.menu;
@@ -438,6 +500,7 @@ class Rime {
     rime->finalize();
     privacy_mode_ = false;
     trime::SetPrivacyModeEnabled(false);
+    trime::SetPredictionRequested(false);
     FLAGS_minloglevel = google::GLOG_WARNING;
   }
 
@@ -461,6 +524,11 @@ class Rime {
       try {
         auto newSession = std::make_shared<SessionHolder>();
         session_ = newSession;
+        auto current = rime::Service::instance().GetSession(newSession->id());
+        if (current) {
+          current->ResetPredictionContexts(
+              trime::IsPredictionRequested() && !privacy_mode_, true);
+        }
         if (privacy_mode_) {
           auto current = rime::Service::instance().GetSession(newSession->id());
           if (current && current->context()) {
@@ -679,6 +747,21 @@ Java_com_osfans_trime_core_Rime_setRimePrivacyMode(JNIEnv*, jclass,
   Rime::Instance().setPrivacyMode(enabled == JNI_TRUE);
 }
 
+extern "C" JNIEXPORT jboolean JNICALL
+Java_com_osfans_trime_core_Rime_setRimePredictionEnabled(JNIEnv* env, jclass,
+                                                       jboolean enabled) {
+  return jniCall(env, [&] {
+    return Rime::Instance().setPredictionEnabled(enabled == JNI_TRUE);
+  });
+}
+
+extern "C" JNIEXPORT jboolean JNICALL
+Java_com_osfans_trime_core_Rime_clearRimePredictionContext(JNIEnv* env, jclass) {
+  return jniCall(env, [&] {
+    return Rime::Instance().clearPredictionContext();
+  });
+}
+
 extern "C" JNIEXPORT jint JNICALL
 Java_com_osfans_trime_core_Rime_getRimeCommitHistorySizeForTesting(JNIEnv*,
                                                                    jclass) {
@@ -812,6 +895,15 @@ Java_com_osfans_trime_core_Rime_getRimeResponse(JNIEnv* env, jclass clazz,
                                    GlobalRef->CandidatesBulkInit, size,
                                    highlighted, *jList);
     }
+    // This flag describes the very same native snapshot as the candidate
+    // objects above; no per-candidate or extra frontend JNI query is needed.
+    if (!jCandidates || env->ExceptionCheck()) return nullptr;
+    const auto set_prediction = paging_mode ? GlobalRef->CandidatesPagedSetPrediction
+                                            : GlobalRef->CandidatesBulkSetPrediction;
+    if (!set_prediction) return nullptr;
+    env->CallVoidMethod(jCandidates, set_prediction,
+                        Rime::Instance().hasPrediction() ? JNI_TRUE : JNI_FALSE);
+    if (env->ExceptionCheck()) return nullptr;
     return rimeResponseToJObject(env, jCommit, jComposition, jCandidates,
                                  jStatus);
   });

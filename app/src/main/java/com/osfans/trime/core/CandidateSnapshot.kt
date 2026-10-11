@@ -6,6 +6,8 @@ data class CandidateSnapshot(
     val editorToken: Long = 0,
     val generation: Long = 0,
     val requestId: Long = 0,
+    /** Next-word suggestions belong to a different state from an unfinished composition. */
+    val isPrediction: Boolean = false,
 ) {
     val isValid: Boolean get() = editorToken > 0 && generation > 0
 
@@ -21,9 +23,9 @@ class CandidateSnapshotState {
     @Volatile var current: CandidateSnapshot = CandidateSnapshot.EMPTY
         private set
 
-    fun publish(editorToken: Long, requestId: Long = 0): CandidateSnapshot {
+    fun publish(editorToken: Long, requestId: Long = 0, isPrediction: Boolean = false): CandidateSnapshot {
         check(generation < Long.MAX_VALUE)
-        current = CandidateSnapshot(editorToken, ++generation, requestId)
+        current = CandidateSnapshot(editorToken, ++generation, requestId, isPrediction)
         return current
     }
 
@@ -32,6 +34,9 @@ class CandidateSnapshotState {
     }
 
     fun accepts(expected: CandidateSnapshot?, editorToken: Long): Boolean = expected == null || (expected.isValid && expected.editorToken == editorToken && expected == current)
+
+    /** A next-word suggestion requires a concrete row identity, never an implicit key binding. */
+    fun acceptsSelection(expected: CandidateSnapshot?, editorToken: Long): Boolean = (expected != null || !current.isPrediction) && accepts(expected, editorToken)
 }
 
 class StaleCandidateSnapshotException : IllegalStateException("Candidate snapshot is no longer current")

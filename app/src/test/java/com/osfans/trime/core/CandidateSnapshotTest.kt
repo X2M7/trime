@@ -60,6 +60,29 @@ class CandidateSnapshotTest :
             state.accepts(shown, 7) shouldBe true
         }
 
+        "next-word rows require an explicit current identity and cannot impersonate composition rows" {
+            val state = CandidateSnapshotState()
+            val shown = state.publish(7, 41, isPrediction = true)
+            state.acceptsSelection(null, 7) shouldBe false
+            state.acceptsSelection(shown, 7) shouldBe true
+            state.acceptsSelection(shown.copy(isPrediction = false), 7) shouldBe false
+            state.acceptsSelection(shown, 8) shouldBe false
+
+            val typed = state.publish(7, 42)
+            state.acceptsSelection(shown, 7) shouldBe false
+            state.acceptsSelection(typed, 7) shouldBe true
+            state.acceptsSelection(null, 7) shouldBe true
+        }
+
+        "prediction identity survives an asynchronous row then expires at a boundary" {
+            val state = CandidateSnapshotState()
+            val shown = state.publish(7, isPrediction = true)
+            val row = CandidateRow(CandidateProto("测试后词", "", ""), 0, shown)
+            row.snapshot.isPrediction shouldBe true
+            state.invalidate()
+            state.acceptsSelection(row.snapshot, 7) shouldBe false
+        }
+
         "an asynchronous candidate row retains its original snapshot and global index" {
             val state = CandidateSnapshotState()
             val origin = state.publish(7, 41)
@@ -81,6 +104,10 @@ class CandidateSnapshotTest :
             )
             val paged = pagedConstructor.newInstance(false, false, false, 0, emptyArray<CandidateProto>())
             paged.snapshot shouldBe CandidateSnapshot.EMPTY
+            paged.isPrediction shouldBe false
+            Candidates.Paged::class.java.getDeclaredMethod("setPrediction", Boolean::class.javaPrimitiveType)
+                .invoke(paged, true)
+            paged.isPrediction shouldBe true
 
             val bulkConstructor = Candidates.Bulk::class.java.getDeclaredConstructor(
                 Int::class.javaPrimitiveType,
@@ -89,6 +116,10 @@ class CandidateSnapshotTest :
             )
             val bulk = bulkConstructor.newInstance(-1, 0, emptyArray<CandidateProto>())
             bulk.snapshot shouldBe CandidateSnapshot.EMPTY
+            bulk.isPrediction shouldBe false
+            Candidates.Bulk::class.java.getDeclaredMethod("setPrediction", Boolean::class.javaPrimitiveType)
+                .invoke(bulk, true)
+            bulk.isPrediction shouldBe true
 
             val responseConstructor = RimeResponse::class.java.getDeclaredConstructor(
                 CommitProto::class.java,

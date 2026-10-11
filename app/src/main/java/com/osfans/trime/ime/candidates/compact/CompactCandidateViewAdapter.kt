@@ -88,7 +88,7 @@ open class CompactCandidateViewAdapter(
     ) {
         item ?: return
         val isHighlighted = position == highlightedIdx
-        holder.ui.update(item.candidate, isHighlighted)
+        holder.ui.update(item.candidate, isHighlighted, item.snapshot.isPrediction)
         holder.text = item.candidate.text
         holder.comment = item.candidate.comment
         holder.idx = item.index

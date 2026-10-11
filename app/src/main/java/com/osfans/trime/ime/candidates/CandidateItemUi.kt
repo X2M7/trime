@@ -13,6 +13,7 @@ import android.text.TextUtils
 import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
+import com.osfans.trime.R
 import com.osfans.trime.core.CandidateProto
 import com.osfans.trime.data.prefs.AppPrefs
 import com.osfans.trime.data.theme.Theme
@@ -166,6 +167,7 @@ class CandidateItemUi(
     fun update(
         item: CandidateProto,
         highlighted: Boolean,
+        isPrediction: Boolean = false,
     ) {
         val tColor = if (highlighted) hlTextColor else textColor
         val cColor = if (highlighted) hlCommentColor else commentColor
@@ -177,9 +179,10 @@ class CandidateItemUi(
         text.setTextColor(tColor)
         text.typeface = if (highlighted) Typeface.create(theme.fonts.candidate, Typeface.BOLD) else theme.fonts.candidate
 
-        val commentText = item.comment
+        val commentText = if (isPrediction) ctx.getString(R.string.next_word_prediction_label) else item.comment
         comment.text = commentText
         comment.setTextColor(cColor)
-        comment.isVisible = AppPrefs.defaultInstance().candidates.showComments.getValue() && commentText.isNotEmpty()
+        comment.isVisible = isPrediction || (AppPrefs.defaultInstance().candidates.showComments.getValue() && commentText.isNotEmpty())
+        root.contentDescription = if (isPrediction) "${item.text}, $commentText" else null
     }
 }

@@ -434,6 +434,7 @@ class CommonKeyboardActionListener(override val di: DI) : DIAware {
                         processKey(value, modifiers)
                         return@postRimeJob
                     }
+                    if (m and KeyEvent.META_CTRL_ON != 0) clearPredictionContext()
                     if (service.hookKeyboard(keyEventCode, m)) {
                         Timber.d("handleKey: hook")
                         return@postRimeJob
@@ -469,10 +470,11 @@ class CommonKeyboardActionListener(override val di: DI) : DIAware {
                 KeyEvent.KEYCODE_VOICE_ASSIST,
             )
 
-            private suspend fun commitMacroText(text: String) {
+            private suspend fun RimeApi.commitMacroText(text: String) {
+                clearPredictionContext()
                 val request = currentCoroutineContext()[InputRequest]
                 val snapshot = request?.let { CandidateSnapshot(it.editor, 0, it.id) } ?: CandidateSnapshot.EMPTY
-                service.commitText(text, snapshot)
+                service.commitTextWithoutPredictionReset(text, snapshot)
             }
 
             override fun onText(input: String) {

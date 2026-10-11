@@ -276,10 +276,7 @@ class Key(
         val paging = rime.run { paging }
         val hasMenu = rime.run { hasMenu }
         val composing = rime.run { statusCached }.isComposing
-        return keyActions[KeyBehavior.ASCII].takeIf { asciiMode }
-            ?: keyActions[KeyBehavior.PAGING]?.takeIf { paging }
-            ?: keyActions[KeyBehavior.HAS_MENU]?.takeIf { hasMenu }
-            ?: keyActions[KeyBehavior.COMPOSING]?.takeIf { composing }
+        return resolveKeyStateBinding(keyActions, asciiMode, composing, hasMenu, paging, rime.run { candidateSnapshotCached.isPrediction })
     }
 
     private fun checkKeyAction(sendBindings: Boolean): KeyAction? = checkKeyAction().takeIf { sendBindings }
@@ -348,6 +345,23 @@ class Key(
         else -> if (isPressed) hlKeySymbolColor else keySymbolColor
     }
 }
+
+/** Next-word suggestions must not turn a normal digit or Enter key into a menu-selection key. */
+internal fun <T> resolveKeyStateBinding(
+    actions: Map<KeyBehavior, T>,
+    asciiMode: Boolean,
+    composing: Boolean,
+    hasMenu: Boolean,
+    paging: Boolean,
+    isPrediction: Boolean,
+): T? = actions[KeyBehavior.ASCII].takeIf { asciiMode }
+    ?: if (isPrediction) {
+        null
+    } else {
+        actions[KeyBehavior.PAGING]?.takeIf { paging }
+            ?: actions[KeyBehavior.HAS_MENU]?.takeIf { hasMenu }
+            ?: actions[KeyBehavior.COMPOSING]?.takeIf { composing }
+    }
 
 private const val ICON_PREFIX = "ic@"
 

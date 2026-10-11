@@ -159,9 +159,10 @@ class InputView(
     private var lastAppearanceState = Triple(false, false, false)
 
     private fun broadcastKeyAppearanceUpdate() {
-        val composing = rime.run { statusCached.isComposing }
-        val hasMenu = rime.run { hasMenu }
-        val paging = rime.run { paging }
+        val prediction = rime.run { candidateSnapshotCached.isPrediction }
+        val composing = rime.run { statusCached.isComposing } && !prediction
+        val hasMenu = rime.run { hasMenu } && !prediction
+        val paging = rime.run { paging } && !prediction
         val current = Triple(composing, hasMenu, paging)
         if (current != lastAppearanceState) {
             lastAppearanceState = current

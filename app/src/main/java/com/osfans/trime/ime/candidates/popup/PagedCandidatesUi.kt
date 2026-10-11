@@ -95,7 +95,7 @@ class PagedCandidatesUi(
                         val candidate = row.candidate
                         holder.snapshot = row.snapshot
                         holder.ui.root.identity = CandidateIdentity(row.snapshot, row.index)
-                        holder.ui.update(candidate, position == candidates.highlighted)
+                        holder.ui.update(candidate, position == candidates.highlighted, row.snapshot.isPrediction)
                         holder.ui.root.setOnClickListener {
                             onCandidateClick.invoke(row.index, row.snapshot)
                         }

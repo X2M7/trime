@@ -613,6 +613,7 @@ class AppPrefs(
             const val MODE = "show_candidates_window"
             const val LAYOUT = "candidates_layout"
             const val POSITION = "candidates_window_position"
+            const val NEXT_WORD_PREDICTION = "next_word_prediction"
         }
 
         val mode = enum(R.string.show_candidates_window, MODE, PopupCandidatesMode.DISABLED)
@@ -620,6 +621,12 @@ class AppPrefs(
         val position = enum(R.string.candidates_window_position, POSITION, PopupPosition.BOTTOM_LEFT)
         val showComments = switch(R.string.candidate_show_comments, "candidate_show_comments", true)
         val compactCandidateScroll = switch(R.string.candidate_horizontal_scroll, "candidate_horizontal_scroll", false)
+        val nextWordPrediction = switch(
+            R.string.next_word_prediction,
+            NEXT_WORD_PREDICTION,
+            false,
+            R.string.next_word_prediction_summary,
+        )
     }
 
     /**

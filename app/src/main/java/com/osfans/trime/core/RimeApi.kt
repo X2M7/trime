@@ -30,6 +30,12 @@ interface RimeApi {
 
     suspend fun refreshT9Options()
 
+    /** Apply the current user preference on the confined native context. */
+    suspend fun refreshPredictionOptions()
+
+    /** End next-word context without discarding ordinary unfinished input. */
+    suspend fun clearPredictionContext()
+
     suspend fun t9Action(
         revision: Int,
         action: T9Action,

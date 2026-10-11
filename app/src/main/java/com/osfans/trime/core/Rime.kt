@@ -14,6 +14,7 @@ import com.osfans.trime.data.prefs.AppPrefs
 import com.osfans.trime.data.sync.RimeDataSync
 import com.osfans.trime.data.userdict.UserDictManager
 import com.osfans.trime.ime.core.InlinePreeditMode
+import com.osfans.trime.ime.core.PrivacyModeState
 import com.osfans.trime.ime.performance.InputLatencyLog
 import com.osfans.trime.ime.performance.InputRequest
 import kotlinx.coroutines.CompletableDeferred
@@ -81,6 +82,24 @@ class Rime :
 
     override suspend fun refreshT9Options() = withRimeContext { emitResponse() }
 
+    override suspend fun refreshPredictionOptions() = withRimeContext {
+        invalidateCandidates()
+        applyPredictionOptions()
+        emitResponse()
+    }
+
+    override suspend fun clearPredictionContext() = withRimeContext {
+        invalidateCandidates()
+        clearRimePredictionContext()
+        emitResponse()
+    }
+
+    private fun applyPredictionOptions() {
+        setRimePredictionEnabled(
+            editorToken != 0L && !isNullInputType && AppPrefs.defaultInstance().candidates.nextWordPrediction.getValue(),
+        )
+    }
+
     override suspend fun beginEditor(
         token: Long,
         nullInputType: Boolean,
@@ -92,6 +111,7 @@ class Rime :
             // Drop the previous editor's Java snapshots before any JNI boundary
             // can fail. Native privacy cleanup is still performed below.
             clearTransientEditorState()
+            clearRimePredictionContext()
         }
         if (editorChanged) {
             clearRimeComposition()
@@ -105,6 +125,7 @@ class Rime :
         editorToken = token
         this.privacyMode = privacyMode
         isNullInputType = nullInputType
+        applyPredictionOptions()
         emitResponse()
     }
 
@@ -123,6 +144,7 @@ class Rime :
         invalidateCandidates()
         clearTransientEditorState()
         try {
+            setRimePredictionEnabled(false)
             if (privacyMode) {
                 setRimePrivacyMode(false)
             } else {
@@ -340,8 +362,14 @@ class Rime :
                 emitResponse(commit)
                 true
             } else {
-                emitResponse(CommitProto(sequence))
-                false
+                val literal = literalKeySequenceFallback(sequence)
+                if (literal != null) {
+                    emitResponse(CommitProto(literal))
+                    false
+                } else {
+                    emitResponse()
+                    true
+                }
             }
         } else {
             emitResponse()
@@ -351,7 +379,13 @@ class Rime :
 
     override suspend fun selectCandidate(idx: Int, global: Boolean, expectedSnapshot: CandidateSnapshot?): Boolean = withRimeContext {
         if (idx < 0) return@withRimeContext false
-        if (!candidateSnapshots.accepts(expectedSnapshot, editorToken)) {
+        // Theme key bindings without a row identity must never select a next-word suggestion.
+        if (candidateSnapshotCached.isPrediction &&
+            (PrivacyModeState.active || !AppPrefs.defaultInstance().candidates.nextWordPrediction.getValue())
+        ) {
+            return@withRimeContext false
+        }
+        if (!candidateSnapshots.acceptsSelection(expectedSnapshot, editorToken)) {
             expectedSnapshot?.let(InputLatencyLog::stale)
             return@withRimeContext false
         }
@@ -361,7 +395,7 @@ class Rime :
 
     override suspend fun deleteCandidate(idx: Int, global: Boolean, expectedSnapshot: CandidateSnapshot?): Boolean = withRimeContext {
         if (idx < 0) return@withRimeContext false
-        if (privacyMode || !candidateSnapshots.accepts(expectedSnapshot, editorToken)) {
+        if (privacyMode || candidateSnapshotCached.isPrediction || !candidateSnapshots.accepts(expectedSnapshot, editorToken)) {
             expectedSnapshot?.let(InputLatencyLog::stale)
             return@withRimeContext false
         }
@@ -370,7 +404,7 @@ class Rime :
     }
 
     override suspend fun pinCandidate(idx: Int, global: Boolean, expectedSnapshot: CandidateSnapshot): Boolean = withRimeContext {
-        if (privacyMode || !candidateSnapshots.accepts(expectedSnapshot, editorToken)) return@withRimeContext false
+        if (privacyMode || candidateSnapshotCached.isPrediction || !candidateSnapshots.accepts(expectedSnapshot, editorToken)) return@withRimeContext false
         val identity = getRimeCandidatePinIdentity(idx, global)
         if (identity.size != 3) return@withRimeContext false
         candidatePins.pin(CandidatePin(identity[0], identity[1], identity[2]))
@@ -381,7 +415,7 @@ class Rime :
     }
 
     override suspend fun resetCandidateRanking(expectedSnapshot: CandidateSnapshot): Boolean = withRimeContext {
-        if (privacyMode || !candidateSnapshots.accepts(expectedSnapshot, editorToken)) return@withRimeContext false
+        if (privacyMode || candidateSnapshotCached.isPrediction || !candidateSnapshots.accepts(expectedSnapshot, editorToken)) return@withRimeContext false
         candidatePins.reset(getCurrentRimeSchema(), getRimeRawInput())
         invalidateCandidates()
         publishCandidatePins()
@@ -420,6 +454,7 @@ class Rime :
                     check(selectRimeSchema(schemaId)) { "Unable to reopen the input schema" }
                     options.forEach { (name, enabled) -> setRimeOption(name, enabled) }
                     setRimePrivacyMode(privacyMode)
+                    applyPredictionOptions()
                     emitResponse()
                 } catch (reopenFailure: Throwable) {
                     if (operationFailure != null) operationFailure.addSuppressed(reopenFailure) else throw reopenFailure
@@ -456,7 +491,11 @@ class Rime :
 
     override suspend fun selectSchema(schemaId: String) = withRimeContext {
         invalidateCandidates()
-        selectRimeSchema(schemaId).also { emitResponse() }
+        clearRimePredictionContext()
+        selectRimeSchema(schemaId).also {
+            applyPredictionOptions()
+            emitResponse()
+        }
     }
 
     override suspend fun currentSchema(): RimeSchema = withRimeContext {
@@ -471,6 +510,7 @@ class Rime :
     override suspend fun commitT9Digit(digit: Char): Boolean = withRimeContext {
         require(digit in '0'..'9')
         invalidateCandidates()
+        clearRimePredictionContext()
         var pending = ""
         if (getRimeRawInput().isNotEmpty()) {
             // Use the same full-input Return path as T02, including a caret inside a locked syllable.
@@ -502,7 +542,13 @@ class Rime :
         value: Boolean,
     ): Unit = withRimeContext {
         invalidateCandidates()
-        setRimeOption(option, value)
+        if (option == "prediction") {
+            // A schema switch and the settings screen control the same user decision.
+            AppPrefs.defaultInstance().candidates.nextWordPrediction.setValue(value)
+            applyPredictionOptions()
+        } else {
+            setRimeOption(option, value)
+        }
         emitResponse()
     }
 
@@ -512,6 +558,7 @@ class Rime :
 
     override suspend fun setNullInputType(value: Boolean) = withRimeContext {
         isNullInputType = value
+        applyPredictionOptions()
     }
 
     override suspend fun getCandidates(
@@ -577,6 +624,7 @@ class Rime :
                 Timber.e("Candidate pin storage is unavailable (%s)", failure.javaClass.simpleName)
             }
             setRimePrivacyMode(editorToken != 0L && privacyMode)
+            applyPredictionOptions()
             if (deployFailed.get() || resourceFailure != null) {
                 check(hasUsableRimeDictionary()) { "Rime configuration deployment failed; no usable current dictionary" }
                 usingExistingResources = true
@@ -657,7 +705,7 @@ class Rime :
         val response = getRimeResponse(pagingMode)
         val t9 = getRimeT9State(AppPrefs.defaultInstance().keyboard.t9AssistMask())
         InputLatencyLog.supersede(candidateSnapshots.current)
-        val snapshot = candidateSnapshots.publish(editorToken, activeRequest?.id ?: 0)
+        val snapshot = candidateSnapshots.publish(editorToken, activeRequest?.id ?: 0, response.candidates.isPrediction)
         when (val candidates = response.candidates) {
             is Candidates.Paged -> candidates.snapshot = snapshot
             is Candidates.Bulk -> candidates.snapshot = snapshot
@@ -686,21 +734,9 @@ class Rime :
         } else {
             inlinePreeditMode
         }
-        val inlinePreedit = when {
-            mode == InlinePreeditMode.DISABLE -> InlinePreeditProto("")
-
-            mode == InlinePreeditMode.COMPOSING_TEXT || t9 ->
-                InlinePreeditProto(composition.preedit ?: "", composition.cursorPos)
-
-            else -> InlinePreeditProto(composition.commitTextPreview ?: "")
-        }
-        val composition = if (mode == InlinePreeditMode.COMPOSING_TEXT) {
-            CompositionProto()
-        } else {
-            composition
-        }
-        publishSnapshotMessage(5, arrayOf(inlinePreedit), snapshot)
-        publishSnapshotMessage(6, arrayOf(composition), snapshot)
+        val response = editorPreeditResponse(composition, mode, t9, snapshot.isPrediction)
+        publishSnapshotMessage(5, arrayOf(response.inlinePreedit), snapshot)
+        publishSnapshotMessage(6, arrayOf(response.composition), snapshot)
     }
 
     private fun handleRimeMessage(it: RimeMessage<*>) {
@@ -781,7 +817,7 @@ class Rime :
     }
 
     private fun showAsciiSwitchTips(status: StatusProto) {
-        if (!showAsciiSwitchTips) return
+        if (!showAsciiSwitchTips || candidateSnapshotCached.isPrediction) return
         val tipsText = asciiTipsText(status)
         if (tipsText.isEmpty()) return
 
@@ -794,7 +830,10 @@ class Rime :
             delay(1000L)
             withRimeContext {
                 val ctx = getRimeContext()
-                handleRimeMessage(6, arrayOf(ctx.composition))
+                val snapshot = candidateSnapshotCached
+                val mode = if (isNullInputType) InlinePreeditMode.DISABLE else inlinePreeditMode
+                val response = editorPreeditResponse(ctx.composition, mode, t9Cached.enabled, snapshot.isPrediction)
+                publishSnapshotMessage(6, arrayOf(response.composition), snapshot)
             }
         }
     }
@@ -927,6 +966,14 @@ class Rime :
 
         @JvmStatic
         external fun setRimePrivacyMode(enabled: Boolean)
+
+        /** Global user request; native privacy and ASCII policies still take precedence. */
+        @JvmStatic
+        external fun setRimePredictionEnabled(enabled: Boolean): Boolean
+
+        /** Clears only next-word state and its preceding commit context. */
+        @JvmStatic
+        external fun clearRimePredictionContext(): Boolean
 
         @JvmStatic
         external fun getRimeCommitHistorySizeForTesting(): Int

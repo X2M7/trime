@@ -36,11 +36,15 @@ switches:
     states: [ 漢字, 汉字 ]
   - name: ascii_punct
     states: [ 。，, ．， ]
+  # Internal option; Trime's settings provide the single prediction control.
+  - name: prediction
+    reset: 0
 
 engine:
   processors:
     - ascii_composer
     - recognizer
+    - predictor
     - key_binder
     - speller
     - punctuator
@@ -54,6 +58,7 @@ engine:
     - punct_segmentor
     - fallback_segmentor
   translators:
+    - predict_translator
     - punct_translator
     - table_translator@custom_phrase
     - reverse_lookup_translator
@@ -61,6 +66,12 @@ engine:
   filters:
     - simplifier
     - uniquifier
+
+# Small offline next-word model, separate from pinyin completion/sentence ranking.
+predictor:
+  db: trime_predict.db
+  max_candidates: 5
+  max_iterations: 1
 
 speller:
   alphabet: zyxwvutsrqponmlkjihgfedcbaZYXWVUTSRQPONMLKJIHGFEDCBA987654321~

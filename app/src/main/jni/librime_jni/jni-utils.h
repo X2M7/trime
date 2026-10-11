@@ -207,9 +207,11 @@ class GlobalRefSingleton {
 
   jclass CandidatesPaged;
   jmethodID CandidatesPagedInit;
+  jmethodID CandidatesPagedSetPrediction;
 
   jclass CandidatesBulk;
   jmethodID CandidatesBulkInit;
+  jmethodID CandidatesBulkSetPrediction;
 
   jclass SchemaListItem;
   jmethodID SchemaListItemInit;
@@ -283,12 +285,16 @@ class GlobalRefSingleton {
     CandidatesPagedInit =
         env->GetMethodID(CandidatesPaged, "<init>",
                          "(ZZZI[Lcom/osfans/trime/core/CandidateProto;)V");
+    CandidatesPagedSetPrediction =
+        env->GetMethodID(CandidatesPaged, "setPrediction", "(Z)V");
 
     CandidatesBulk = reinterpret_cast<jclass>(env->NewGlobalRef(
         env->FindClass("com/osfans/trime/core/Candidates$Bulk")));
     CandidatesBulkInit =
         env->GetMethodID(CandidatesBulk, "<init>",
                          "(II[Lcom/osfans/trime/core/CandidateProto;)V");
+    CandidatesBulkSetPrediction =
+        env->GetMethodID(CandidatesBulk, "setPrediction", "(Z)V");
 
     SchemaListItem = reinterpret_cast<jclass>(
         env->NewGlobalRef(env->FindClass("com/osfans/trime/core/SchemaItem")));

@@ -117,23 +117,25 @@ abstract class BaseInputView(
                     menu.add(title).apply {
                         isEnabled = false
                     }
-                    menu.add(R.string.forget_this_word).setOnMenuItemClickListener {
-                        runCandidateAction(editorToken, R.string.candidate_forgotten, R.string.candidate_forget_failed) {
-                            deleteCandidate(idx, global, snapshot)
+                    if (!snapshot.isPrediction) {
+                        menu.add(R.string.forget_this_word).setOnMenuItemClickListener {
+                            runCandidateAction(editorToken, R.string.candidate_forgotten, R.string.candidate_forget_failed) {
+                                deleteCandidate(idx, global, snapshot)
+                            }
+                            true
                         }
-                        true
-                    }
-                    menu.add(R.string.candidate_pin).setOnMenuItemClickListener {
-                        runCandidateAction(editorToken, R.string.candidate_pinned, R.string.candidate_action_failed) {
-                            pinCandidate(idx, global, snapshot)
+                        menu.add(R.string.candidate_pin).setOnMenuItemClickListener {
+                            runCandidateAction(editorToken, R.string.candidate_pinned, R.string.candidate_action_failed) {
+                                pinCandidate(idx, global, snapshot)
+                            }
+                            true
                         }
-                        true
-                    }
-                    menu.add(R.string.candidate_restore_ranking).setOnMenuItemClickListener {
-                        runCandidateAction(editorToken, R.string.candidate_ranking_restored, R.string.candidate_action_failed) {
-                            resetCandidateRanking(snapshot)
+                        menu.add(R.string.candidate_restore_ranking).setOnMenuItemClickListener {
+                            runCandidateAction(editorToken, R.string.candidate_ranking_restored, R.string.candidate_action_failed) {
+                                resetCandidateRanking(snapshot)
+                            }
+                            true
                         }
-                        true
                     }
                     menu.add(R.string.candidate_read_full_text).setOnMenuItemClickListener {
                         showCandidateFullText(text, editorToken)

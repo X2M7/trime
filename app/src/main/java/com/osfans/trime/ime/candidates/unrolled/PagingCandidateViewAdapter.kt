@@ -103,7 +103,7 @@ open class PagingCandidateViewAdapter(
         val item = row.candidate
         val idx = row.index
         val highlighted = idx == highlightedIndex
-        holder.ui.update(item, highlighted)
+        holder.ui.update(item, highlighted, row.snapshot.isPrediction)
         holder.text = item.text
         holder.comment = item.comment
         holder.idx = idx

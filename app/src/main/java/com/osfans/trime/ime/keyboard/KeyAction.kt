@@ -138,7 +138,7 @@ class KeyAction(
         }
         if (keyboard.isOnlyShiftOn) {
             val asciiMode = rime.run { statusCached }.isAsciiMode
-            val composing = rime.run { statusCached }.isComposing
+            val composing = rime.run { statusCached }.isComposing && !rime.run { candidateSnapshotCached.isPrediction }
             if (!hookShiftNum && !composing && code in KeyEvent.KEYCODE_0..KeyEvent.KEYCODE_9) {
                 return adjustCase(shiftLabel, keyboard)
             }

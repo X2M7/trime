@@ -13,6 +13,7 @@ import android.text.SpannableStringBuilder
 import androidx.annotation.ColorInt
 import androidx.core.text.buildSpannedString
 import androidx.core.text.inSpans
+import com.osfans.trime.R
 import com.osfans.trime.core.CandidateProto
 import com.osfans.trime.data.prefs.AppPrefs
 import com.osfans.trime.data.theme.Theme
@@ -71,21 +72,23 @@ class LabeledCandidateItemUi(
     fun update(
         candidate: CandidateProto,
         highlighted: Boolean,
+        isPrediction: Boolean = false,
     ) {
         val labelFg = if (highlighted) highlightLabelColor else labelColor
         val textFg = if (highlighted) highlightCandidateTextColor else textColor
         val commentFg = if (highlighted) highlightCommentTextColor else commentColor
         content.text =
             buildSpannedString {
-                if (candidate.label.isNotEmpty()) {
-                    inSpanWith(labelFg, ctx.sp(labelSize), labelFont) { append(candidate.label) }
+                val label = if (isPrediction) ctx.getString(R.string.next_word_prediction_label) else candidate.label
+                if (label.isNotEmpty()) {
+                    inSpanWith(labelFg, ctx.sp(labelSize), labelFont) { append(label) }
                 }
                 append(" ")
                 if (candidate.text.isNotEmpty()) {
                     val font = if (highlighted) Typeface.create(textFont, Typeface.BOLD) else textFont
                     inSpanWith(textFg, ctx.sp(textSize), font) { append(candidate.text) }
                 }
-                if (AppPrefs.defaultInstance().candidates.showComments.getValue() && candidate.comment.isNotBlank()) {
+                if (!isPrediction && AppPrefs.defaultInstance().candidates.showComments.getValue() && candidate.comment.isNotBlank()) {
                     append(" ")
                     inSpanWith(commentFg, ctx.sp(commentSize), commentFont) { append(candidate.comment) }
                 }
@@ -100,5 +103,6 @@ class LabeledCandidateItemUi(
                 }
             }
         root.background = bg
+        root.contentDescription = if (isPrediction) "${candidate.text}, ${ctx.getString(R.string.next_word_prediction_label)}" else null
     }
 }

@@ -94,6 +94,9 @@ sealed interface Candidates {
     /** Assigned after the JNI snapshot; does not change native constructor signatures. */
     val snapshot: CandidateSnapshot
 
+    /** Filled in the same native snapshot; never inferred from an empty preedit. */
+    val isPrediction: Boolean
+
     /** Candidates of the current page */
     val candidates: Array<CandidateProto>
 
@@ -111,6 +114,9 @@ sealed interface Candidates {
         override val highlighted: Int = 0,
         override val candidates: Array<CandidateProto> = arrayOf(),
     ) : Candidates {
+        // Public setter is part of the JNI bridge: setPrediction(Z)V.
+        override var isPrediction: Boolean = false
+
         override var snapshot: CandidateSnapshot = CandidateSnapshot.EMPTY
             internal set
 
@@ -124,6 +130,7 @@ sealed interface Candidates {
             if (hasNextPage != other.hasNextPage) return false
             if (isHorizontalLayout != other.isHorizontalLayout) return false
             if (highlighted != other.highlighted) return false
+            if (isPrediction != other.isPrediction) return false
             if (!candidates.contentEquals(other.candidates)) return false
 
             return true
@@ -134,6 +141,7 @@ sealed interface Candidates {
             result = 31 * result + hasNextPage.hashCode()
             result = 31 * result + isHorizontalLayout.hashCode()
             result = 31 * result + highlighted
+            result = 31 * result + isPrediction.hashCode()
             result = 31 * result + candidates.contentHashCode()
             return result
         }
@@ -147,6 +155,9 @@ sealed interface Candidates {
         override val highlighted: Int = 0,
         override val candidates: Array<CandidateProto> = arrayOf(),
     ) : Candidates {
+        // Public setter is part of the JNI bridge: setPrediction(Z)V.
+        override var isPrediction: Boolean = false
+
         override var snapshot: CandidateSnapshot = CandidateSnapshot.EMPTY
             internal set
 
@@ -158,6 +169,7 @@ sealed interface Candidates {
 
             if (total != other.total) return false
             if (highlighted != other.highlighted) return false
+            if (isPrediction != other.isPrediction) return false
             if (!candidates.contentEquals(other.candidates)) return false
 
             return true
@@ -166,6 +178,7 @@ sealed interface Candidates {
         override fun hashCode(): Int {
             var result = total
             result = 31 * result + highlighted
+            result = 31 * result + isPrediction.hashCode()
             result = 31 * result + candidates.contentHashCode()
             return result
         }
