@@ -84,6 +84,7 @@ abstract class BaseInputView(
 
     private var candidateActionMenu: PopupMenu? = null
     private var candidateFullTextDialog: AlertDialog? = null
+    private var candidateFeedbackDialog: AlertDialog? = null
 
     fun resetEditorUi() {
         dismissCandidateActionMenu()
@@ -109,6 +110,7 @@ abstract class BaseInputView(
             ) {
                 return@launch
             }
+            dismissCandidateFeedback()
             InputFeedbackManager.keyPressVibrate(view, longPress = true)
             candidateActionMenu =
                 PopupMenu(themedContext, view).apply {
@@ -151,6 +153,8 @@ abstract class BaseInputView(
         @StringRes failure: Int,
         action: suspend RimeApi.() -> Boolean,
     ) {
+        if (!service.isCurrentEditor(editorToken) || !isAttachedToWindow) return
+        dismissCandidateFeedback()
         service.postRimeJob {
             if (!service.isCurrentEditor(editorToken)) return@postRimeJob
             val applied = try {
@@ -163,9 +167,34 @@ abstract class BaseInputView(
             }
             withContext(Dispatchers.Main.immediate) {
                 if (service.isCurrentEditor(editorToken) && isAttachedToWindow) {
-                    service.toast(if (applied) success else failure)
+                    if (applied) {
+                        service.toast(success)
+                    } else {
+                        showCandidateActionFailure(failure, editorToken)
+                    }
                 }
             }
+        }
+    }
+
+    private fun dismissCandidateFeedback() {
+        candidateFeedbackDialog?.dismiss()
+        candidateFeedbackDialog = null
+    }
+
+    private fun showCandidateActionFailure(@StringRes failure: Int, editorToken: Long) {
+        if (!service.isCurrentEditor(editorToken) || !isAttachedToWindow || windowToken == null) return
+        dismissCandidateFeedback()
+        val dialog = AlertDialog.Builder(themedContext)
+            .setMessage(failure)
+            .setPositiveButton(android.R.string.ok, null)
+            .create()
+        try {
+            service.showDialog(dialog)
+            candidateFeedbackDialog = dialog
+        } catch (_: WindowManager.BadTokenException) {
+            dialog.dismiss()
+            service.toast(failure)
         }
     }
 
@@ -232,6 +261,7 @@ abstract class BaseInputView(
         candidateActionMenu = null
         candidateFullTextDialog?.dismiss()
         candidateFullTextDialog = null
+        dismissCandidateFeedback()
     }
 
     override fun onAttachedToWindow() {
