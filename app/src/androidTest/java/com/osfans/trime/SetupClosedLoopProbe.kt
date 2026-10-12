@@ -9,6 +9,7 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
 import android.os.SystemClock
 import android.util.TypedValue
 import android.view.View
@@ -50,6 +51,7 @@ import org.kodein.di.direct
 import org.kodein.di.instance
 import java.util.UUID
 import java.util.concurrent.atomic.AtomicInteger
+import java.util.concurrent.atomic.AtomicReference
 
 /** Disposable-emulator UI/state regression. Real keyboard touch acceptance is a separate test. */
 object SetupClosedLoopProbe {
@@ -295,11 +297,42 @@ object SetupClosedLoopProbe {
         }
         fun fragment(activity: SetupActivity, page: SetupPage): SetupFragment = activity.supportFragmentManager.fragments
             .filterIsInstance<SetupFragment>().first { it.setupPage == page && it.view != null }
-        fun launch(): SetupActivity = (
-            instrumentation.startActivitySync(
-                Intent(context, SetupActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
-            ) as SetupActivity
-            ).also { activities += it }
+        fun launch(): SetupActivity {
+            val monitor = instrumentation.addMonitor(SetupActivity::class.java.name, null, false)
+            val handler = Handler(context.mainLooper)
+            val failure = AtomicReference<Throwable?>()
+            val start = Runnable {
+                runCatching {
+                    context.startActivity(
+                        Intent(context, SetupActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
+                    )
+                }.exceptionOrNull()?.let(failure::set)
+            }
+            try {
+                instrumentation.sendStatus(
+                    0,
+                    Bundle().apply {
+                        putString("debug_setup_launch_stage", if (activities.isEmpty()) "fresh" else "existing")
+                        putInt("debug_setup_launch_currentpid", android.os.Process.myPid())
+                    },
+                )
+                check(handler.post(start)) { "Unable to post the public Setup Activity launch" }
+                var created: SetupActivity? = null
+                await("The public Setup Activity launch did not create an Activity within 60 seconds") {
+                    failure.get()?.let { throw it }
+                    val seen = monitor.waitForActivityWithTimeout(100) as? SetupActivity
+                    if (seen != null) {
+                        activities += seen
+                        created = seen
+                    }
+                    created != null
+                }
+                return checkNotNull(created)
+            } finally {
+                handler.removeCallbacks(start)
+                instrumentation.removeMonitor(monitor)
+            }
+        }
         fun inputReady(activity: SetupActivity) {
             await("Input setup page did not finish reading the current scheme") {
                 main { activity.currentSetupPage == SetupPage.Input && !activity.changingInput && activity.inputState != null }
@@ -402,8 +435,8 @@ object SetupClosedLoopProbe {
                     val done = recreated.findViewById<Button>(R.id.next_button)
                     check(done.isShown && done.isEnabled && done.performClick())
                 }
-                await("The completed wizard did not exit after its Done button") {
-                    main { recreated.isFinishing || recreated.isDestroyed }
+                await("The completed wizard was not destroyed after its Done button") {
+                    main { recreated.isDestroyed }
                 }
                 check(!SetupPage.hasUndonePage())
                 check(runBlocking { session.runOnReady { inspectInputSetup() } } == applied)
