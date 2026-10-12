@@ -248,6 +248,16 @@ class AppPrefs(
                 } else if (restoreResult.journalRetained) {
                     Timber.w("Direct Boot preferences were restored, but their journal could not be cleared")
                 }
+                val existingRuntimeData = runCatching {
+                    // Read only; do not initialize DataManager or create a template to decide this.
+                    val parent = appContext.getExternalFilesDir(null) ?: return@runCatching true
+                    val userDirectory = java.io.File(parent, "rime")
+                    userDirectory.exists() &&
+                        (!userDirectory.isDirectory || userDirectory.list()?.isNotEmpty() != false)
+                }.getOrDefault(true)
+                if (!initializeDefaultStoragePreferences(sharedPreferences, existingRuntimeData)) {
+                    Timber.w("Unable to persist the initial storage preference")
+                }
             }
             val instance = AppPrefs(sharedPreferences, usingDeviceProtectedStorage)
             defaultInstance = instance
@@ -365,6 +375,7 @@ class AppPrefs(
             const val DOUBLE_TAP_TIMEOUT = "key_double_tap_timeout"
             const val SLIDE_STEP_SIZE = "key_slide_step_size"
             const val T9_KEY_HEIGHT = "t9_key_height"
+            const val KEYBOARD_HEIGHT = "keyboard_height_override"
             const val T9_ONE_HAND = "t9_one_hand"
             const val MANUAL_LANGUAGE_MODE = "manual_language_mode"
 
@@ -411,6 +422,16 @@ class AppPrefs(
             },
         ).also { it.register() }
         val t9KeyHeight = int(R.string.t9_key_height, T9_KEY_HEIGHT, 0, 0, 80, "dp", defaultLabel = R.string.system_default)
+        val keyboardHeight = int(
+            R.string.quick_settings_keyboard_height,
+            KEYBOARD_HEIGHT,
+            0,
+            200,
+            480,
+            "dp",
+            10,
+            R.string.quick_settings_theme_default,
+        )
 
         // Bit order is the T9Assist native protocol; every rule is opt-in.
         val t9AssistOptions = listOf(
@@ -614,12 +635,22 @@ class AppPrefs(
             const val LAYOUT = "candidates_layout"
             const val POSITION = "candidates_window_position"
             const val NEXT_WORD_PREDICTION = "next_word_prediction"
+            const val TEXT_SIZE = "candidate_text_size_override"
         }
 
         val mode = enum(R.string.show_candidates_window, MODE, PopupCandidatesMode.DISABLED)
         val layout = enum(R.string.candidates_layout, LAYOUT, PopupCandidatesLayout.AUTOMATIC)
         val position = enum(R.string.candidates_window_position, POSITION, PopupPosition.BOTTOM_LEFT)
         val showComments = switch(R.string.candidate_show_comments, "candidate_show_comments", true)
+        val textSize = int(
+            R.string.quick_settings_candidate_size,
+            TEXT_SIZE,
+            0,
+            12,
+            36,
+            "sp",
+            defaultLabel = R.string.quick_settings_theme_default,
+        )
         val compactCandidateScroll = switch(R.string.candidate_horizontal_scroll, "candidate_horizontal_scroll", false)
         val nextWordPrediction = switch(
             R.string.next_word_prediction,
@@ -645,9 +676,13 @@ class AppPrefs(
             const val LAST_BACKGROUND_SYNC_STATUS = "last_background_sync_status"
             const val LAST_BACKGROUND_SYNC_TIME = "last_background_sync_time"
             const val USER_DB_MIGRATED = "profile_user_db_migrated"
+            const val FRESH_INPUT_SETUP_PENDING = "profile_fresh_input_setup_pending"
         }
 
+        // initDefault persists APP_STORAGE for a proven fresh install before any provider is read.
+        // Retain the legacy fallback for uninitialized/invalid historical preferences.
         val dataStorageMode = enum(R.string.data_storage_mode, DATA_STORAGE_MODE, DataStorageMode.EXTERNAL_SYNC)
+        val freshInputSetupPending = bool(FRESH_INPUT_SETUP_PENDING, false)
         val externalRimeTreeUri = string(EXTERNAL_RIME_TREE_URI, "")
         val userDbMigrated = bool(USER_DB_MIGRATED, false)
         val periodicBackgroundSync = bool(PERIODIC_BACKGROUND_SYNC, false)

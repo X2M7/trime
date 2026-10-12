@@ -9,13 +9,20 @@ import android.content.Context
 import android.widget.Toast
 import androidx.lifecycle.LifecycleCoroutineScope
 import com.osfans.trime.R
-import com.osfans.trime.core.RimeMaintenanceMutex
+import com.osfans.trime.daemon.RimeDaemon
+import com.osfans.trime.data.sync.ConfigurationImportException
 import com.osfans.trime.data.sync.RimeDataSync
 import com.osfans.trime.data.theme.ThemeManager
 import com.osfans.trime.util.toast
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeout
+import java.util.UUID
+import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Duration.Companion.seconds
 
 object ThemePickerDialog {
     suspend fun build(
@@ -43,35 +50,37 @@ object ThemePickerDialog {
                         scope.launch {
                             afterConfirm?.invoke()
                             val newItem = allThemes[which]
-                            val imported = withContext(Dispatchers.IO) {
-                                RimeMaintenanceMutex.withLock {
-                                    if (RimeDataSync.usesExternalSync()) {
-                                        RimeDataSync.importThemeToLocal(newItem.configId).isSuccess
-                                    } else {
-                                        true
+                            try {
+                                if (RimeDataSync.usesExternalSync()) {
+                                    check(RimeDataSync.hasExternalAccess()) { "No access to the external theme directory" }
+                                    val sessionName = "ThemePicker-${UUID.randomUUID()}"
+                                    val session = RimeDaemon.createSession(sessionName)
+                                    val stats = try {
+                                        withTimeout(60.seconds) { session.runOnReady { Unit } }
+                                        withTimeout(5.minutes) { session.runOnReady { importThemeConfiguration(newItem.configId) } }
+                                    } finally {
+                                        RimeDaemon.destroySession(sessionName)
+                                    }
+                                    context.toast(context.getString(R.string.configuration_import_validated, stats.validatedConfigs, stats.copied), Toast.LENGTH_LONG)
+                                } else {
+                                    val resolvedThemeId = ThemeManager.selectTheme(newItem.configId)
+                                    if (resolvedThemeId != newItem.configId) {
+                                        // Chosen theme unavailable: report the one actually in effect.
+                                        val fallbackName = allThemes.firstOrNull { it.configId == resolvedThemeId }?.name ?: resolvedThemeId
+                                        context.toast(context.getString(R.string.theme_unavailable_fallback, newItem.name, fallbackName), Toast.LENGTH_LONG)
                                     }
                                 }
-                            }
-                            if (!imported) {
+                            } catch (failure: Exception) {
+                                if (failure is CancellationException && failure !is TimeoutCancellationException) throw failure
+                                val message = when {
+                                    failure is ConfigurationImportException && failure.previousConfigurationRestored -> context.getString(R.string.configuration_import_rejected)
+                                    failure is ConfigurationImportException && failure.recoveryDirectory != null -> context.getString(R.string.configuration_import_recovery_needed, failure.recoveryDirectory)
+                                    failure is ConfigurationImportException -> context.getString(R.string.configuration_import_recovery_failed)
+                                    else -> context.getString(R.string.setup__data_path_import_failed)
+                                }
+                                context.toast(message, Toast.LENGTH_LONG)
+                            } finally {
                                 dialog.dismiss()
-                                context.toast(R.string.setup__data_path_import_failed)
-                                return@launch
-                            }
-                            val resolvedThemeId = ThemeManager.selectTheme(newItem.configId)
-                            dialog.dismiss()
-                            if (resolvedThemeId != newItem.configId) {
-                                // Chosen theme unavailable: report the one actually in effect.
-                                val fallbackName =
-                                    allThemes.firstOrNull { it.configId == resolvedThemeId }?.name
-                                        ?: resolvedThemeId
-                                context.toast(
-                                    context.getString(
-                                        R.string.theme_unavailable_fallback,
-                                        newItem.name,
-                                        fallbackName,
-                                    ),
-                                    Toast.LENGTH_LONG,
-                                )
                             }
                         }
                     }

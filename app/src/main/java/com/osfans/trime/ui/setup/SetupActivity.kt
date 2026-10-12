@@ -14,6 +14,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.app.NotificationCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isGone
 import androidx.fragment.app.Fragment
@@ -23,12 +24,23 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.osfans.trime.R
 import com.osfans.trime.core.RimeMaintenanceMutex
+import com.osfans.trime.daemon.RimeDaemon
+import com.osfans.trime.daemon.RimeSession
 import com.osfans.trime.data.prefs.AppPrefs
+import com.osfans.trime.data.prefs.ChineseVariant
+import com.osfans.trime.data.prefs.InputLayout
+import com.osfans.trime.data.prefs.InputSetupException
+import com.osfans.trime.data.prefs.InputSetupFailure
+import com.osfans.trime.data.prefs.InputSetupSelection
+import com.osfans.trime.data.prefs.InputSetupState
+import com.osfans.trime.data.sync.ConfigurationImportException
 import com.osfans.trime.data.sync.DataStorageMode
 import com.osfans.trime.data.sync.RimeDataSync
 import com.osfans.trime.databinding.ActivitySetupBinding
 import com.osfans.trime.ui.main.MainActivity
+import com.osfans.trime.ui.main.NavigationRoute
 import com.osfans.trime.ui.setup.SetupPage.Companion.isLastPage
+import com.osfans.trime.util.InputMethodUtils
 import com.osfans.trime.util.appContext
 import com.osfans.trime.util.createNotificationChannel
 import com.osfans.trime.util.startActivity
@@ -37,10 +49,13 @@ import io.github.whiredplanck.storageaccess.StorageAccess
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeout
 import splitties.systemservices.notificationManager
 import timber.log.Timber
+import java.util.UUID
 
 class SetupActivity : FragmentActivity() {
     private lateinit var viewPager: ViewPager2
@@ -58,10 +73,150 @@ class SetupActivity : FragmentActivity() {
     var changingStorageMode = false
         private set
 
+    private val inputSessionName = "setup-input-${UUID.randomUUID()}"
+    private var inputSession: RimeSession? = null
+    private var inputJob: Job? = null
+    private var inputLoaded = false
+    private var draftEdited = false
+    var keepCurrentInput = true
+        private set
+    var inputChoice = InputSetupSelection(InputLayout.FULL_PINYIN, ChineseVariant.SIMPLIFIED)
+        private set
+    var inputState: InputSetupState? = null
+        private set
+    var inputStatus: String? = null
+        private set
+    var changingInput = false
+        private set
+    val currentSetupPage get() = SetupPage.entries[viewPager.currentItem]
+
     fun isPageDone(page: SetupPage) = page in completedPages
 
+    private fun rimeSession() = inputSession ?: RimeDaemon.createSession(inputSessionName).also {
+        inputSession = it
+    }
+
+    fun loadInputState() {
+        if (inputLoaded || changingInput || changingStorageMode || !isPageDone(SetupPage.Select)) return
+        changingInput = true
+        inputJob = lifecycleScope.launch {
+            inputStatus = getString(R.string.setup__input_loading)
+            renderStatus()
+            try {
+                val state = withTimeout(60_000) {
+                    rimeSession().runOnReady { inspectInputSetup() }
+                }
+                inputState = state
+                if (!draftEdited && keepCurrentInput) state.selection?.let { inputChoice = it }
+                inputStatus = getString(R.string.setup__input_current, state.schemaName.ifEmpty { state.schemaId })
+                inputLoaded = true
+            } catch (e: TimeoutCancellationException) {
+                inputStatus = getString(R.string.setup__input_failed)
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                Timber.w(e, "Unable to read the input setup")
+                inputStatus = getString(R.string.setup__input_failed)
+            } finally {
+                inputJob = null
+                changingInput = false
+                renderStatus()
+            }
+        }
+    }
+
+    fun chooseInput(keepCurrent: Boolean, layout: InputLayout, variant: ChineseVariant) {
+        val choice = InputSetupSelection(layout, variant)
+        if (changingInput || changingStorageMode || (keepCurrentInput == keepCurrent && inputChoice == choice)) return
+        keepCurrentInput = keepCurrent
+        inputChoice = choice
+        draftEdited = true
+        SetupProgress.confirmInput(false)
+        storageRevision++
+        completedPages = completedPages - SetupPage.Input - SetupPage.Try
+        renderStatus()
+    }
+
+    fun applyInputChoice() {
+        if (changingInput || changingStorageMode || !isPageDone(SetupPage.Select)) return
+        changingInput = true
+        inputJob = lifecycleScope.launch {
+            inputStatus = getString(R.string.setup__input_loading)
+            renderStatus()
+            try {
+                val state = withTimeout(60_000) {
+                    rimeSession().runOnReady {
+                        if (keepCurrentInput) {
+                            inspectInputSetup().also {
+                                check(it.schemaId.isNotEmpty() && it.schemaId != ".default")
+                            }
+                        } else {
+                            configureInput(inputChoice)
+                        }
+                    }
+                }
+                inputState = state
+                inputLoaded = true
+                SetupProgress.confirmInput(true)
+                AppPrefs.defaultInstance().profile.freshInputSetupPending.setValue(false)
+                inputStatus = getString(R.string.setup__input_applied, state.schemaName.ifEmpty { state.schemaId })
+            } catch (e: TimeoutCancellationException) {
+                inputStatus = getString(R.string.setup__input_failed)
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                Timber.w(e, "Unable to apply the input setup")
+                inputStatus = getString(
+                    when {
+                        (e as? InputSetupException)?.previousRestored == false -> R.string.setup__input_restore_failed
+                        (e as? InputSetupException)?.reason == InputSetupFailure.PENDING_INPUT -> R.string.setup__input_pending
+                        else -> R.string.setup__input_failed
+                    },
+                )
+            } finally {
+                inputJob = null
+                changingInput = false
+                storageRevision++
+                refreshCurrentFragment()
+            }
+        }
+    }
+
+    fun openTrial() {
+        if (!isPageDone(SetupPage.Input) || !isPageDone(SetupPage.Select)) return
+        val input = supportFragmentManager.fragments.filterIsInstance<SetupFragment>()
+            .firstOrNull { it.setupPage == SetupPage.Try }?.trialInput() ?: return
+        input.requestFocus()
+        WindowCompat.getInsetsController(window, input).show(WindowInsetsCompat.Type.ime())
+    }
+
+    fun recordChineseCommit() {
+        if (currentSetupPage != SetupPage.Try || !isPageDone(SetupPage.Input) ||
+            !InputMethodUtils.checkIsTrimeSelected()
+        ) {
+            return
+        }
+        SetupProgress.completeTrial()
+        storageRevision++
+        refreshCurrentFragment()
+    }
+
+    fun deferTrial() {
+        if (!isPageDone(SetupPage.Input)) return
+        SetupProgress.defer()
+        storageRevision++
+        refreshCurrentFragment()
+    }
+
+    fun openAdvancedSettings() {
+        startActivity(
+            Intent(this, MainActivity::class.java).setAction(Intent.ACTION_RUN)
+                .putExtra(MainActivity.EXTRA_SETTINGS_ROUTE, NavigationRoute.SchemaList),
+        )
+    }
+
     fun pickDataPath() {
-        if (changingStorageMode) return
+        if (changingStorageMode || changingInput) return
         changingStorageMode = true
         storageRevision++
         renderStatus()
@@ -69,23 +224,31 @@ class SetupActivity : FragmentActivity() {
             try {
                 val picked = storageAccess.pickDirectory() ?: return@launch
                 runCatching {
-                    withContext(Dispatchers.IO) {
-                        RimeMaintenanceMutex.withLock {
-                            RimeDataSync.persistTreeUri(picked.uri)
-                            RimeDataSync.importToLocal().getOrThrow()
-                        }
-                    }
+                    val stats = RimeDataSync.importConfigurationWithSession(rimeSession(), picked.uri.toString())
                     storageRevision++
+                    inputLoaded = false
+                    keepCurrentInput = true
+                    draftEdited = false
+                    SetupProgress.confirmInput(false)
                     refreshCurrentFragment()
-                    toast(R.string.setup__data_path_imported)
+                    toast(getString(R.string.configuration_import_validated, stats.validatedConfigs, stats.copied + stats.deleted))
                 }.onFailure {
                     if (it is CancellationException) throw it
                     Timber.w(it, "Unable to import selected data folder")
-                    // Keep the picked folder: a later deploy can retry, and the runtime
-                    // falls back to app-specific storage if the grant remains unusable.
                     storageRevision++
                     refreshCurrentFragment()
-                    toast(R.string.setup__data_path_import_failed)
+                    val failure = it as? ConfigurationImportException
+                    when {
+                        failure == null -> toast(R.string.setup__data_path_import_failed)
+
+                        failure.previousConfigurationRestored -> toast(R.string.configuration_import_rejected)
+
+                        failure.recoveryDirectory != null -> toast(
+                            getString(R.string.configuration_import_recovery_needed, failure.recoveryDirectory),
+                        )
+
+                        else -> toast(R.string.configuration_import_recovery_failed)
+                    }
                 }
             } catch (e: CancellationException) {
                 throw e
@@ -137,7 +300,7 @@ class SetupActivity : FragmentActivity() {
 
     fun changeStorageMode(mode: DataStorageMode) {
         val prefs = AppPrefs.defaultInstance().profile
-        if (changingStorageMode || prefs.dataStorageMode.getValue() == mode) return
+        if (changingStorageMode || changingInput || prefs.dataStorageMode.getValue() == mode) return
         changingStorageMode = true
         storageRevision++
         completedPages = completedPages - SetupPage.Mode
@@ -162,7 +325,8 @@ class SetupActivity : FragmentActivity() {
         }
     }
 
-    private fun completeSetup() {
+    private fun completeSetup(deferred: Boolean = false) {
+        if (deferred) SetupProgress.defer()
         startActivity<MainActivity>()
         finish()
     }
@@ -205,7 +369,7 @@ class SetupActivity : FragmentActivity() {
                     .Builder(this@SetupActivity)
                     .setMessage(R.string.setup__skip_hint)
                     .setPositiveButton(R.string.setup__skip_hint_yes) { _, _ ->
-                        completeSetup()
+                        completeSetup(deferred = true)
                     }.setNegativeButton(R.string.setup__skip_hint_no, null)
                     .show()
             }
@@ -218,6 +382,7 @@ class SetupActivity : FragmentActivity() {
         nextButton =
             binding.nextButton.apply {
                 setOnClickListener {
+                    if (!isPageDone(currentSetupPage)) return@setOnClickListener
                     if (viewPager.currentItem != SetupPage.entries.size - 1) {
                         viewPager.currentItem += 1
                     } else {
@@ -229,10 +394,21 @@ class SetupActivity : FragmentActivity() {
         viewPager.adapter = Adapter()
         viewPager.registerOnPageChangeCallback(
             object : ViewPager2.OnPageChangeCallback() {
-                override fun onPageSelected(position: Int) = updateButtons()
+                override fun onPageSelected(position: Int) {
+                    updateButtons()
+                    if (SetupPage.entries[position] == SetupPage.Input) loadInputState()
+                }
             },
         )
         selectInitialPage = savedInstanceState == null
+        keepCurrentInput = savedInstanceState?.getBoolean("keep_current_input")
+            ?: !AppPrefs.defaultInstance().profile.freshInputSetupPending.getValue()
+        draftEdited = savedInstanceState?.getBoolean("input_draft_edited") ?: false
+        inputChoice = InputSetupSelection(
+            savedInstanceState?.getString("input_layout")?.let { InputLayout.valueOf(it) } ?: InputLayout.FULL_PINYIN,
+            savedInstanceState?.getString("input_variant")?.let { ChineseVariant.valueOf(it) } ?: ChineseVariant.SIMPLIFIED,
+        )
+        SetupProgress.begin()
         updateButtons()
         refreshCurrentFragment()
         shown = true
@@ -248,13 +424,14 @@ class SetupActivity : FragmentActivity() {
         val isFirstPage = viewPager.currentItem == 0
         val isLastPage = viewPager.currentItem.isLastPage()
 
-        viewPager.isUserInputEnabled = modeSetupDone
+        // System steps and actual schema activation precede typing. Back remains available.
+        viewPager.isUserInputEnabled = false
 
         prevButton.isGone = isFirstPage
         skipButton.isGone = !modeSetupDone || allDone
         nextButton.text = getString(if (isLastPage) R.string.done else R.string.setup__next)
         nextButton.isGone = isLastPage && !allDone
-        nextButton.isEnabled = modeSetupDone
+        nextButton.isEnabled = modeSetupDone && isPageDone(currentSetupPage) && !changingInput
     }
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
@@ -288,6 +465,20 @@ class SetupActivity : FragmentActivity() {
     override fun onResume() {
         notificationManager.cancel(NOTIFY_ID)
         super.onResume()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        outState.putBoolean("keep_current_input", keepCurrentInput)
+        outState.putBoolean("input_draft_edited", draftEdited)
+        outState.putString("input_layout", inputChoice.layout.name)
+        outState.putString("input_variant", inputChoice.variant.name)
+        super.onSaveInstanceState(outState)
+    }
+
+    override fun onDestroy() {
+        inputJob?.cancel()
+        if (inputSession != null) RimeDaemon.destroySession(inputSessionName)
+        super.onDestroy()
     }
 
     private inner class Adapter : FragmentStateAdapter(this) {

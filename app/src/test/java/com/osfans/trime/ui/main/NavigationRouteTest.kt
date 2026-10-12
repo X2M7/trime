@@ -15,6 +15,7 @@ class NavigationRouteTest :
             val routes =
                 listOf(
                     NavigationRoute.Main,
+                    NavigationRoute.QuickSettings,
                     NavigationRoute.SchemaList,
                     NavigationRoute.UserDict,
                     NavigationRoute.Profile,
@@ -33,6 +34,7 @@ class NavigationRouteTest :
             routes.map(NavigationRoute::path) shouldBe
                 listOf(
                     "com.osfans.trime.ui.main.NavigationRoute.Main",
+                    "com.osfans.trime.ui.main.NavigationRoute.QuickSettings",
                     "com.osfans.trime.ui.main.NavigationRoute.SchemaList",
                     "com.osfans.trime.ui.main.NavigationRoute.UserDict",
                     "com.osfans.trime.ui.main.NavigationRoute.Profile",

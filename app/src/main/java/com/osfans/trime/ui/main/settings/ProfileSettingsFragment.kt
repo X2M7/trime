@@ -19,6 +19,7 @@ import com.osfans.trime.core.RimeMaintenanceMutex
 import com.osfans.trime.data.base.DataManager
 import com.osfans.trime.data.prefs.AppPrefs
 import com.osfans.trime.data.prefs.PreferenceDelegate
+import com.osfans.trime.data.sync.ConfigurationImportException
 import com.osfans.trime.data.sync.DataStorageMode
 import com.osfans.trime.data.sync.RimeDataSync
 import com.osfans.trime.ui.common.PaddingPreferenceFragment
@@ -161,33 +162,28 @@ class ProfileSettingsFragment : PaddingPreferenceFragment() {
                 return@launch
             }
             val ctx = requireContext()
-            val externalSyncSetup = pendingExternalSyncSetup
             pendingExternalSyncSetup = false
             runStorageChange {
                 withLoadingDialog(ctx) {
                     try {
-                        withContext(Dispatchers.IO) {
-                            RimeMaintenanceMutex.withLock {
-                                RimeDataSync.persistTreeUri(picked.uri)
-                                prefs.dataStorageMode.setValue(DataStorageMode.EXTERNAL_SYNC)
-                                RimeDataSync.importToLocal().getOrThrow()
-                            }
-                            viewModel.rime.runOnReady { deploy(skipImport = true) }
+                        val stats = withContext(Dispatchers.IO) {
+                            RimeDataSync.importConfigurationWithSession(viewModel.rime, picked.uri.toString())
                         }
                         updateDataPathSummary()
-                        ctx.toast(R.string.setup__data_path_imported)
+                        ctx.toast(ctx.getString(R.string.configuration_import_validated, stats.validatedConfigs, stats.copied + stats.deleted))
                     } catch (e: CancellationException) {
                         throw e
                     } catch (e: Exception) {
-                        Timber.w(e, "Unable to import selected data folder")
-                        if (externalSyncSetup) {
-                            applyAppStorageFallback(showDialog = true)
-                        } else {
-                            // Keep the picked folder: it stays the user's choice, and a folder
-                            // that keeps failing makes the deploy path fall back on its own.
-                            updateDataPathSummary()
-                            ctx.toast(R.string.setup__data_path_import_failed)
+                        Timber.w(e, "Unable to validate or activate selected data folder")
+                        updateDataPathSummary()
+                        val failure = e as? ConfigurationImportException
+                        val message = when {
+                            failure?.previousConfigurationRestored == true -> getString(R.string.configuration_import_rejected)
+                            failure?.recoveryDirectory != null -> getString(R.string.configuration_import_recovery_needed, failure.recoveryDirectory)
+                            failure != null -> getString(R.string.configuration_import_recovery_failed)
+                            else -> getString(R.string.setup__data_path_import_failed)
                         }
+                        AlertDialog.Builder(ctx).setMessage(message).setPositiveButton(android.R.string.ok, null).show()
                     }
                 }
             }
@@ -220,26 +216,11 @@ class ProfileSettingsFragment : PaddingPreferenceFragment() {
             }.show()
     }
 
-    /** Falls back to app-specific storage when the user gives up on choosing a folder. */
+    /** Cancelling the picker keeps the previously selected storage mode and directory. */
     private fun cancelExternalSyncSetup() {
-        runStorageChange { applyAppStorageFallback(showDialog = false) }
-    }
-
-    private suspend fun applyAppStorageFallback(showDialog: Boolean) {
-        withContext(Dispatchers.IO) {
-            RimeMaintenanceMutex.withLock {
-                prefs.dataStorageMode.setValue(DataStorageMode.APP_STORAGE)
-            }
-        }
+        pendingExternalSyncSetup = false
         updateStorageModeUi()
         updateDataPathSummary()
-        if (showDialog) {
-            AlertDialog
-                .Builder(requireContext())
-                .setMessage(R.string.external_sync_fallback_app_storage)
-                .setPositiveButton(android.R.string.ok, null)
-                .show()
-        }
     }
 
     override fun onCreatePreferences(
@@ -267,9 +248,10 @@ class ProfileSettingsFragment : PaddingPreferenceFragment() {
                             runStorageChange {
                                 val needsPicker = withContext(Dispatchers.IO) {
                                     RimeMaintenanceMutex.withLock {
-                                        prefs.dataStorageMode.setValue(mode)
-                                        mode == DataStorageMode.EXTERNAL_SYNC &&
+                                        val needsPicker = mode == DataStorageMode.EXTERNAL_SYNC &&
                                             !RimeDataSync.hasExternalAccess()
+                                        if (!needsPicker) prefs.dataStorageMode.setValue(mode)
+                                        needsPicker
                                     }
                                 }
                                 updateDataPathSummary()

@@ -16,6 +16,7 @@ import androidx.core.view.isVisible
 import com.osfans.trime.R
 import com.osfans.trime.core.CandidateProto
 import com.osfans.trime.data.prefs.AppPrefs
+import com.osfans.trime.data.prefs.candidateTextSize
 import com.osfans.trime.data.theme.Theme
 import com.osfans.trime.data.theme.ThemeScope
 import com.osfans.trime.data.theme.model.GeneralStyle
@@ -51,7 +52,7 @@ class CandidateItemUi(
     private val theme: Theme
         get() = scope.theme
 
-    private val textSize = theme.style.candidateTextSize
+    private val textSize = candidateTextSize(theme.style.candidateTextSize, AppPrefs.defaultInstance().candidates.textSize.getValue())
     private val commentSize = theme.style.commentTextSize
 
     // Read at use time so a scheme switch re-binds rows with the new colors.
@@ -157,7 +158,7 @@ class CandidateItemUi(
     override val root = view(::CandidateGestureFrame) {
         add(
             content,
-            lParams(wrapContent, dp(theme.style.candidateViewHeight)) {
+            lParams(wrapContent, dp(candidateRowHeight(ctx, theme))) {
                 gravity = gravityCenter
             },
         )

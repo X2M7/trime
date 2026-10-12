@@ -5,27 +5,46 @@
 
 package com.osfans.trime.core
 
+import android.net.Uri
 import com.osfans.trime.BuildConfig
 import com.osfans.trime.data.base.DataManager
 import com.osfans.trime.data.candidates.CandidatePin
 import com.osfans.trime.data.candidates.CandidatePinStore
 import com.osfans.trime.data.opencc.OpenCCDictManager
 import com.osfans.trime.data.prefs.AppPrefs
+import com.osfans.trime.data.prefs.InputSetupController
+import com.osfans.trime.data.prefs.InputSetupSelection
+import com.osfans.trime.data.prefs.InputSetupState
+import com.osfans.trime.data.prefs.RimeInputSetupEngine
+import com.osfans.trime.data.sync.ConfigImportValidator
+import com.osfans.trime.data.sync.ConfigurationImportException
 import com.osfans.trime.data.sync.RimeDataSync
+import com.osfans.trime.data.sync.SyncRelativePath
+import com.osfans.trime.data.theme.Theme
+import com.osfans.trime.data.theme.ThemeLoader
+import com.osfans.trime.data.theme.ThemeManager
+import com.osfans.trime.data.theme.ThemePrefs
+import com.osfans.trime.data.theme.ThemeYaml
+import com.osfans.trime.data.theme.withCompatibleKeyboards
 import com.osfans.trime.data.userdict.UserDictManager
 import com.osfans.trime.ime.core.InlinePreeditMode
 import com.osfans.trime.ime.core.PrivacyModeState
 import com.osfans.trime.ime.performance.InputLatencyLog
 import com.osfans.trime.ime.performance.InputRequest
+import com.osfans.trime.util.appContext
+import com.osfans.trime.util.mapping
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
+import kotlinx.serialization.decodeFromString
 import timber.log.Timber
+import java.io.File
 import java.util.concurrent.CopyOnWriteArrayList
 import kotlin.time.Duration.Companion.minutes
 
@@ -235,21 +254,253 @@ class Rime :
         getCurrentRimeSchema() == ".default" // 無方案
     }
 
-    override suspend fun deploy(skipImport: Boolean) = RimeMaintenanceMutex.withLock {
-        if (RimeDataSync.usesExternalSync()) {
-            if (!RimeDataSync.hasExternalAccess()) {
-                RimeDataSync.fallbackToAppStorage()
-            }
+    override suspend fun deploy(skipImport: Boolean) = withImportMaintenance { restoreTheme, acceptTheme ->
+        if (RimeDataSync.usesExternalSync() && !RimeDataSync.hasExternalAccess()) {
+            RimeDataSync.fallbackToAppStorage()
         }
+        var activated = false
         if (RimeDataSync.usesExternalSync() && !skipImport) {
-            val importResult =
-                RimeDataSync.importToLocal(keepNotificationUntilDeploySuccess = true)
-            if (importResult.isFailure) {
-                RimeDataSync.fallbackToAppStorage(importResult.exceptionOrNull())
+            var previous: ImportRuntime? = null
+            val result = RimeDataSync.importToLocal(
+                keepNotificationUntilDeploySuccess = true,
+                beforePublish = {
+                    previous = captureImportRuntimeConfined()
+                    activated = true
+                    stopRime()
+                },
+                beforeRollback = { if (activated) stopRime() },
+                afterRollback = {
+                    if (activated) {
+                        restoreImportRuntimeConfined(checkNotNull(previous))
+                        restoreTheme()
+                    }
+                },
+                activationContext = ::withImportActivation,
+            ) { stats ->
+                if (stats.configurationChanged) {
+                    acceptTheme(activateImportedNativeConfined())
+                } else if (stats.copied + stats.deleted > 0) {
+                    ThemeManager.loadedThemeForImport()?.let(acceptTheme)
+                }
+            }
+            if (result.isFailure) {
+                val failure = result.exceptionOrNull()!!
+                if (failure is ConfigurationImportException && !failure.previousConfigurationRestored) {
+                    dispatcher.fail(failure)
+                    throw failure
+                }
+                activated = false
+                RimeDataSync.fallbackToAppStorage(failure)
             } else {
-                Timber.i("Import finished: ${importResult.getOrNull()}")
+                Timber.i("Import finished: ${result.getOrNull()}")
             }
         }
+        // An explicit Deploy still runs maintenance when imported bytes were unchanged.
+        if (!activated) deployNativeLocked()
+    }
+
+    override suspend fun importConfiguration(treeUri: String): RimeDataSync.SyncStats = withImportMaintenance { restoreTheme, acceptTheme ->
+        var previous: ImportRuntime? = null
+        var activated = false
+        try {
+            RimeDataSync.importFromPickedTree(
+                Uri.parse(treeUri),
+                beforePublish = {
+                    previous = captureImportRuntimeConfined()
+                    activated = true
+                    stopRime()
+                },
+                beforeRollback = { if (activated) stopRime() },
+                afterRollback = {
+                    if (activated) {
+                        restoreImportRuntimeConfined(checkNotNull(previous))
+                        restoreTheme()
+                    }
+                },
+                activationContext = ::withImportActivation,
+            ) { stats ->
+                if (stats.configurationChanged) {
+                    acceptTheme(activateImportedNativeConfined())
+                } else if (stats.copied + stats.deleted > 0) {
+                    ThemeManager.loadedThemeForImport()?.let(acceptTheme)
+                }
+            }
+        } catch (failure: Throwable) {
+            if (failure is ConfigurationImportException && !failure.previousConfigurationRestored) dispatcher.fail(failure)
+            throw failure
+        }
+    }
+
+    override suspend fun importThemeConfiguration(configId: String): RimeDataSync.SyncStats = withImportMaintenance { restoreTheme, acceptTheme ->
+        SyncRelativePath.requireSafeName(configId)
+        var previousTheme = ThemeManager.prefs.selectedTheme.getValue()
+        var selectionWriteAttempted = false
+        var previous: ImportRuntime? = null
+        var activated = false
+        fun rememberTheme(id: String) {
+            check(
+                ThemeManager.prefs.selectedTheme.sharedPreferences.edit()
+                    .putString(ThemePrefs.SELECTED_THEME, id).commit(),
+            ) { "Cannot persist the verified theme selection" }
+        }
+        RimeDataSync.importThemeToLocal(
+            configId,
+            beforePublish = {
+                previousTheme = ThemeManager.prefs.selectedTheme.getValue()
+                previous = captureImportRuntimeConfined()
+                activated = true
+                stopRime()
+            },
+            beforeRollback = { if (activated) stopRime() },
+            afterRollback = {
+                if (activated) {
+                    restoreImportRuntimeConfined(checkNotNull(previous))
+                    restoreTheme()
+                }
+            },
+            activationContext = ::withImportActivation,
+            rememberSelection = {
+                check(ThemeManager.prefs.selectedTheme.getValue() == previousTheme) { "Theme selection changed during activation" }
+                selectionWriteAttempted = true
+                rememberTheme(configId)
+            },
+            restoreSelection = {
+                if (selectionWriteAttempted && ThemeManager.prefs.selectedTheme.getValue() == configId) rememberTheme(previousTheme)
+            },
+        ) {
+            // A theme selection does not require full schema maintenance.
+            startRime(false)
+            check(!usingExistingResources && hasUsableRimeDictionary()) { "Theme activation could not start the current input scheme" }
+            acceptTheme(decodeImportedThemeConfined(configId))
+        }
+    }
+
+    private suspend fun withImportActivation(block: () -> Unit) = withRimeContext {
+        configurationImportInProgress = true
+        try {
+            block()
+        } finally {
+            configurationImportInProgress = false
+        }
+    }
+
+    /** Apply verified theme objects after unlocking, without repeating native config deployment. */
+    private suspend fun <T> withImportMaintenance(
+        block: suspend (() -> Unit, (ThemeLoader.ThemeLoadResult.Success) -> Unit) -> T,
+    ): T {
+        var reloadTheme = false
+        var validatedTheme: ThemeLoader.ThemeLoadResult.Success? = null
+        var originalFailure: Throwable? = null
+        try {
+            return RimeMaintenanceMutex.withLock {
+                block(
+                    {
+                        reloadTheme = true
+                        validatedTheme = null
+                    },
+                    {
+                        validatedTheme = it
+                        reloadTheme = false
+                    },
+                )
+            }
+        } catch (failure: Throwable) {
+            originalFailure = failure
+            val incompleteRollback = (failure is ConfigurationImportException && !failure.previousConfigurationRestored) ||
+                failure.suppressed.any { it is ConfigurationImportException && !it.previousConfigurationRestored }
+            if (incompleteRollback) {
+                validatedTheme = null
+                dispatcher.fail(failure)
+            }
+            throw failure
+        } finally {
+            val verified = validatedTheme
+            if (reloadTheme || verified != null) {
+                withContext(NonCancellable) {
+                    runCatching {
+                        if (verified != null) {
+                            ThemeManager.applyImportedTheme(verified)
+                        } else {
+                            ThemeManager.selectTheme(ThemeManager.prefs.selectedTheme.getValue(), forceReload = true)
+                        }
+                    }.exceptionOrNull()?.let { error ->
+                        val failure = originalFailure
+                        if (failure != null) {
+                            if (failure is ConfigurationImportException) failure.previousConfigurationRestored = false
+                            failure.addSuppressed(error)
+                        } else {
+                            throw error
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    override suspend fun inspectInputSetup(): InputSetupState = RimeMaintenanceMutex.withLock {
+        withRimeContext { InputSetupController.inspect(RimeInputSetupEngine(this@Rime)) }
+    }
+
+    override suspend fun configureInput(selection: InputSetupSelection): InputSetupState = RimeMaintenanceMutex.withLock {
+        withRimeContext { InputSetupController.apply(RimeInputSetupEngine(this@Rime), selection) }
+    }
+
+    private data class ImportRuntime(val schema: String, val options: Map<String, Boolean>)
+
+    private fun captureImportRuntimeConfined(): ImportRuntime {
+        val options = (schemaCached.switches.flatMap { if (it.name.isEmpty()) it.options else listOf(it.name) } + "ascii_mode")
+            .filter { it.isNotEmpty() }.distinct().associateWith(::getRimeOption)
+        return ImportRuntime(getCurrentRimeSchema(), options)
+    }
+
+    /** JNI startup synchronously joins maintenance; this whole phase keeps input behind it. */
+    private fun activateImportedNativeConfined(): ThemeLoader.ThemeLoadResult.Success {
+        val outcome = java.util.concurrent.atomic.AtomicReference<RimeMessage.DeployMessage.State?>()
+        val handler: (RimeMessage<*>) -> Unit = { message ->
+            if (message is RimeMessage.DeployMessage && message.data != RimeMessage.DeployMessage.State.Start) outcome.set(message.data)
+        }
+        registerRimeMessageHandler(handler)
+        try {
+            startRime(true)
+            check(outcome.get() == RimeMessage.DeployMessage.State.Success) { "Imported configuration deployment did not succeed" }
+        } finally {
+            unregisterRimeMessageHandler(handler)
+        }
+        check(hasUsableRimeDictionary()) { "Imported configuration has no usable current dictionary" }
+        return decodeImportedThemeConfined(ThemeManager.prefs.selectedTheme.getValue())
+    }
+
+    /** Compile and decode the exact requested theme; ThemeManager's fallback does not authorize a commit. */
+    private fun decodeImportedThemeConfined(themeId: String): ThemeLoader.ThemeLoadResult.Success {
+        SyncRelativePath.requireSafeName(themeId)
+        check(deployRimeConfigFile(themeId, ThemeLoader.CONFIG_VERSION_KEY)) { "Selected theme could not be deployed" }
+        val file = File(DataManager.resolveDeployedResourcePath(themeId))
+        check(file.isFile && file.length() in 1..2L * 1024 * 1024) { "Selected theme artifact is unavailable or too large" }
+        ConfigImportValidator.validate(file, "$themeId.yaml")
+        val mapping = ThemeYaml.parser.parseToYamlNode(file.readText()).mapping
+            ?: error("Selected theme artifact is not a mapping")
+        return when (val result = ThemeLoader.decodeAndReport(themeId, mapping)) {
+            is ThemeLoader.ThemeLoadResult.Failure -> throw result.error
+
+            is ThemeLoader.ThemeLoadResult.Success -> {
+                val builtin = appContext.assets.open("shared/trime.yaml").bufferedReader().use {
+                    ThemeYaml.parser.decodeFromString<Theme>(it.readText())
+                }
+                result.copy(theme = result.theme.withCompatibleKeyboards(builtin))
+            }
+        }
+    }
+
+    private fun restoreImportRuntimeConfined(previous: ImportRuntime) {
+        restartNative(false)
+        if (previous.schema != ".default") check(selectRimeSchema(previous.schema)) { "Previous input schema could not be restored" }
+        check(hasUsableRimeDictionary()) { "Previous input dictionary could not be restored" }
+        previous.options.forEach { (name, enabled) -> setRimeOption(name, enabled) }
+        emitResponse()
+    }
+
+    /** Caller holds the non-reentrant maintenance mutex. */
+    private suspend fun deployNativeLocked() {
         val deployFinished = CompletableDeferred<Boolean>()
         val deployHandler: (RimeMessage<*>) -> Unit = { message ->
             if (message is RimeMessage.DeployMessage) {
@@ -898,6 +1149,8 @@ class Rime :
 
     companion object {
         @Volatile private var editorToken = 0L
+
+        @Volatile private var configurationImportInProgress = false
         private val messageBus = RimeMessageBus()
 
         private val rimeMessageHandlers = CopyOnWriteArrayList<(RimeMessage<*>) -> Unit>()
@@ -1060,6 +1313,7 @@ class Rime :
 
         private fun dispatchRimeMessage(message: RimeMessage<*>) {
             message.editorToken = editorToken
+            if (message is RimeMessage.DeployMessage) message.isConfigurationImport = configurationImportInProgress
             Timber.d("Handling ${message.javaClass.simpleName}")
             messageBus.publish(message) {
                 rimeMessageHandlers.forEach { it.invoke(message) }

@@ -5,6 +5,9 @@
 
 package com.osfans.trime.core
 
+import com.osfans.trime.data.prefs.InputSetupSelection
+import com.osfans.trime.data.prefs.InputSetupState
+import com.osfans.trime.data.sync.RimeDataSync
 import kotlinx.coroutines.flow.SharedFlow
 
 interface RimeApi {
@@ -47,6 +50,16 @@ interface RimeApi {
     suspend fun isEmpty(): Boolean
 
     suspend fun deploy(skipImport: Boolean = false)
+
+    /** Validate and activate a picked folder, retaining the previous working configuration on failure. */
+    suspend fun importConfiguration(treeUri: String): RimeDataSync.SyncStats
+
+    /** Import only the selected theme; a failed decode restores its source, caches and previous selection. */
+    suspend fun importThemeConfiguration(configId: String): RimeDataSync.SyncStats
+
+    suspend fun inspectInputSetup(): InputSetupState
+
+    suspend fun configureInput(selection: InputSetupSelection): InputSetupState
 
     suspend fun updateConfig()
 

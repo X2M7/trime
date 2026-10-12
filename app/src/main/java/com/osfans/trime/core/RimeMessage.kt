@@ -67,6 +67,10 @@ sealed class RimeMessage<T>(
     data class DeployMessage(
         override val data: State,
     ) : RimeMessage<DeployMessage.State>(data) {
+        /** A validated import applies its own theme after committing the configuration. */
+        var isConfigurationImport: Boolean = false
+            internal set
+
         override val messageType: MessageType
             get() = MessageType.Deploy
 

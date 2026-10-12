@@ -29,8 +29,8 @@ android {
         applicationId = "com.osfans.trime"
         minSdk = 21
         targetSdk = 37
-        versionCode = 20261119
-        versionName = "3.3.13-t9.14"
+        versionCode = 20261120
+        versionName = "3.3.13-t9.15"
         testInstrumentationRunner = "com.osfans.trime.StartupResponsivenessInstrumentation"
 
         multiDexEnabled = true
@@ -178,6 +178,8 @@ dependencies {
     implementation(libs.xxpermissions)
     implementation(libs.kodein.di)
     implementation(libs.kaml)
+    // Use KAML's existing parser events to reject oversized/deep imports before building a node tree.
+    implementation("it.krzeminski:snakeyaml-engine-kmp:4.0.1")
     implementation(libs.storageaccess)
     implementation(libs.splitties.bitflags)
     implementation(libs.splitties.systemservices)

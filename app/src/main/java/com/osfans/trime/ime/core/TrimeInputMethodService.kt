@@ -183,6 +183,8 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
         prefs.keyboard.hideInputBar,
         prefs.keyboard.t9OneHand,
         prefs.keyboard.t9KeyHeight,
+        prefs.keyboard.keyboardHeight,
+        prefs.candidates.textSize,
         prefs.advanced.ignoreSystemGestureInsets,
     )
 
@@ -636,7 +638,7 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
 
             is RimeMessage.DeployMessage -> {
                 if (!themeReady && it.data == RimeMessage.DeployMessage.State.Success) prepareTheme()
-                if (themeReady && it.data == RimeMessage.DeployMessage.State.Success) {
+                if (themeReady && it.data == RimeMessage.DeployMessage.State.Success && !it.isConfigurationImport) {
                     // The deployment may have refreshed the current theme's artifact.
                     val themeId = ThemeManager.prefs.selectedTheme.getValue()
                     lifecycleScope.launch {
@@ -661,7 +663,12 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
         setInputView(newInputView)
         inputDeviceManager.setInputView(newInputView)
         inputView = newInputView
-        if (editorActive) newInputView.startInput(currentInputEditorInfo, false)
+        if (editorActive) {
+            newInputView.startInput(currentInputEditorInfo, false)
+            // The replacement has no candidate history. Redraw the current snapshot
+            // without committing or clearing the unfinished native input.
+            postRimeJob { refreshT9Options() }
+        }
         return newInputView
     }
 

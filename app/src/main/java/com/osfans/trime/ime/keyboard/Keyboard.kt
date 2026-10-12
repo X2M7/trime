@@ -9,6 +9,7 @@ import android.content.Context
 import android.content.res.Configuration
 import android.view.KeyEvent
 import com.osfans.trime.data.prefs.AppPrefs
+import com.osfans.trime.data.prefs.keyboardHeightOverride
 import com.osfans.trime.data.theme.Theme
 import com.osfans.trime.data.theme.model.TextKeyboard
 import com.osfans.trime.data.theme.model.orAbsent
@@ -117,9 +118,15 @@ class Keyboard(
                 context.isLandscapeMode(),
             ),
         ) { context.dp(it) }.let { themedHeight ->
-            if (isT9Layout && themedHeight > 0) {
+            val display = context.resources.displayMetrics
+            val override = keyboardHeightOverride(
+                (display.heightPixels / display.density).toInt(),
+                AppPrefs.defaultInstance().keyboard.keyboardHeight.getValue(),
+            )
+            if (override > 0) {
+                context.dp(override)
+            } else if (isT9Layout && themedHeight > 0) {
                 val preferred = AppPrefs.defaultInstance().keyboard.t9KeyHeight.getValue()
-                val display = context.resources.displayMetrics
                 context.dp(T9LayoutPolicy.height((display.heightPixels / display.density).toInt(), (themedHeight / display.density).toInt(), preferred))
             } else {
                 themedHeight

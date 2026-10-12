@@ -9,6 +9,9 @@ import android.content.ContentResolver
 import android.net.Uri
 import android.provider.DocumentsContract
 import com.osfans.trime.TrimeApplication
+import com.osfans.trime.core.RimeMaintenanceMutex
+import com.osfans.trime.daemon.RimeDaemon
+import com.osfans.trime.daemon.RimeSession
 import com.osfans.trime.data.base.DataManager
 import com.osfans.trime.data.prefs.AppPrefs
 import com.osfans.trime.util.DeployNotification
@@ -21,10 +24,16 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.NonCancellable
+import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeout
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -39,6 +48,8 @@ import java.util.ArrayDeque
 import java.util.Collections
 import java.util.UUID
 import java.util.concurrent.ConcurrentHashMap
+import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Duration.Companion.seconds
 
 @Serializable
 internal data class SyncEntry(
@@ -143,6 +154,17 @@ object RimeDataSync {
     private val parallelism = Runtime.getRuntime().availableProcessors().coerceIn(4, 8)
 
     private val prefs get() = AppPrefs.defaultInstance().profile
+    private val pickerImportMutex = Mutex()
+
+    /** Both keys are one durable choice; a failed write must keep the import uncommitted. */
+    private fun rememberStorageChoice(mode: DataStorageMode, tree: String) {
+        check(
+            prefs.externalRimeTreeUri.sharedPreferences.edit()
+                .putString(AppPrefs.Profile.DATA_STORAGE_MODE, mode.name)
+                .putString(AppPrefs.Profile.EXTERNAL_RIME_TREE_URI, tree)
+                .commit(),
+        ) { "Cannot persist the validated data folder" }
+    }
 
     // region Storage mode and picked folder
 
@@ -239,82 +261,334 @@ object RimeDataSync {
 
     // region Sync entry points
 
+    /** Boot a local baseline for historical inaccessible SAF choices, without committing it. */
+    suspend fun importConfigurationWithSession(session: RimeSession, treeUri: String): SyncStats = pickerImportMutex.withLock {
+        val previousMode = prefs.dataStorageMode.getValue()
+        val previousTree = prefs.externalRimeTreeUri.getValue()
+        val temporaryLocal = previousMode == DataStorageMode.EXTERNAL_SYNC && !hasExternalAccess()
+        try {
+            if (temporaryLocal) RimeMaintenanceMutex.withLock { rememberStorageChoice(DataStorageMode.APP_STORAGE, previousTree) }
+            try {
+                withTimeout(60.seconds) {
+                    if (temporaryLocal) RimeDaemon.retryFailedStartup()
+                    session.runOnReady { Unit }
+                }
+            } catch (timeout: TimeoutCancellationException) {
+                throw IOException("Input engine did not become ready within 60 seconds", timeout)
+            }
+            try {
+                withTimeout(5.minutes) { session.runOnReady { importConfiguration(treeUri) } }
+            } catch (timeout: TimeoutCancellationException) {
+                throw IOException("Configuration import exceeded its five-minute limit", timeout)
+            }
+        } catch (failure: Throwable) {
+            withContext(NonCancellable) {
+                if (temporaryLocal && prefs.dataStorageMode.getValue() == DataStorageMode.APP_STORAGE) {
+                    runCatching {
+                        RimeMaintenanceMutex.withLock { rememberStorageChoice(previousMode, previousTree) }
+                    }.exceptionOrNull()?.let {
+                        if (failure is ConfigurationImportException) failure.previousConfigurationRestored = false
+                        failure.addSuppressed(it)
+                    }
+                }
+                if (treeUri != previousTree && prefs.externalRimeTreeUri.getValue() != treeUri) {
+                    runCatching { StorageAccess.releasePersistedPermission(Uri.parse(treeUri)) }
+                        .exceptionOrNull()?.let(failure::addSuppressed)
+                }
+            }
+            throw failure
+        }
+    }
+
     suspend fun importToLocal(
         keepNotificationUntilDeploySuccess: Boolean = false,
         showProgress: Boolean = true,
+        beforePublish: (() -> Unit)? = null,
+        beforeRollback: (() -> Unit)? = null,
+        afterRollback: (() -> Unit)? = null,
+        activationContext: (suspend (() -> Unit) -> Unit)? = null,
+        onCommitted: (() -> Unit)? = null,
+        activate: ((SyncStats) -> Unit)? = null,
     ): Result<SyncStats> {
-        if (!usesExternalSync()) {
-            return Result.success(SyncStats())
-        }
+        if (!usesExternalSync()) return Result.success(SyncStats())
         if (showProgress) DeployNotification.showProgress()
         var deferNotificationCleanup = false
         try {
             return withContext(Dispatchers.IO) {
                 runCatching {
-                    val treeUri = treeUri() ?: error("No data path selected")
+                    val tree = treeUri() ?: error("No data path selected")
                     check(hasExternalAccess()) { "No access to data path" }
-                    val destRoot = DataManager.userDataDir
-                    val index = loadIndex()
-                    // LevelDB files may be open in the engine. Runtime synchronization always
-                    // uses portable text dumps and never replaces a binary user database.
-                    val skipUserDb = true
-                    val ownId = SyncPathPolicy.readOwnInstallationId()
-                    val syncDir =
-                        SyncPathPolicy.treeRelativeSyncDir(
-                            SyncPathPolicy.readOwnSyncDir(),
-                            destRoot,
-                        )
-                    val skipPrefix =
-                        ownId?.takeIf { it.isNotEmpty() }?.let {
-                            runCatching { SyncPathPolicy.ownSyncPrefix(it, syncDir) }.getOrNull()
-                        }
-                    val entries = listExternalEntries(treeUri, skipUserDb, skipPrefix)
-                    val externalPaths = entries.map { it.relativePath }.toSet()
-                    val toCopy = entries.filter {
-                        !it.file.isDir && SyncPathPolicy.shouldImport(it.relativePath, ownId, syncDir)
-                    }
-                    val createdDirs = LocalDirectoryGate()
-                    val copyResults =
-                        mapParallel(toCopy) { entry ->
-                            importExternalFile(entry, destRoot, index, createdDirs)
-                        }
-                    val importStats = mergeStats(copyResults.map { it.result })
-                    val complete = importStats.failed == 0
-                    // A partial listing/copy must never be interpreted as proof that local
-                    // files disappeared from the external tree.
-                    val removeResult =
-                        if (complete) {
-                            removeLocalOrphans(
-                                root = destRoot,
-                                externalPaths = externalPaths,
-                                ownId = ownId,
-                                syncDir = syncDir,
-                                knownEntries = index.entries,
-                            )
-                        } else {
-                            CopyResult()
-                        }
-                    // Retire deletion history only after a complete import. This prevents a
-                    // later unrelated local file from inheriting an old tombstone.
-                    val history =
-                        if (complete) index.entries.filterKeys { it in externalPaths } else index.entries
-                    saveIndex(withCurrentTree(mergeIndexEntries(history, copyResults)))
-                    val stats = importStats + removeResult
-                    DeployNotification.notifyPartialCopyIfNeeded(
-                        stats.failed,
-                        "importToLocal",
+                    importValidatedTree(
+                        tree,
+                        activate = activate,
+                        beforePublish = beforePublish,
+                        beforeRollback = beforeRollback,
+                        afterRollback = afterRollback,
+                        activationContext = activationContext,
+                        onCommitted = onCommitted,
                     )
-                    check(stats.failed == 0) { "Failed to import ${stats.failed} file(s)" }
-                    stats
                 }.onFailure {
                     if (it is CancellationException) throw it
                     Timber.e(it, "importToLocal failed")
                 }
-            }.also { result ->
-                deferNotificationCleanup = keepNotificationUntilDeploySuccess && result.isSuccess
-            }
+            }.also { deferNotificationCleanup = keepNotificationUntilDeploySuccess && it.isSuccess }
         } finally {
             if (!deferNotificationCleanup) DeployNotification.cancel()
+        }
+    }
+
+    /** Caller holds RimeMaintenanceMutex; the old tree grant survives validation and activation. */
+    internal suspend fun importFromPickedTree(
+        tree: Uri,
+        beforePublish: (() -> Unit)? = null,
+        beforeRollback: (() -> Unit)? = null,
+        afterRollback: (() -> Unit)? = null,
+        activationContext: (suspend (() -> Unit) -> Unit)? = null,
+        onCommitted: (() -> Unit)? = null,
+        activate: (SyncStats) -> Unit,
+    ): SyncStats = withContext(Dispatchers.IO) {
+        check(!isDirectBootMode()) { "A SAF data folder cannot be selected during direct boot" }
+        check(StorageAccess.persistedPermissions().any { it.uri == tree && it.read && it.write }) {
+            "No access to selected data path"
+        }
+        val previousTree = prefs.externalRimeTreeUri.getValue()
+        val previousMode = prefs.dataStorageMode.getValue()
+        try {
+            val stats = importValidatedTree(
+                tree,
+                activate,
+                rememberTree = {
+                    rememberStorageChoice(DataStorageMode.EXTERNAL_SYNC, tree.toString())
+                },
+                beforePublish = beforePublish,
+                beforeRollback = beforeRollback,
+                afterRollback = afterRollback,
+                activationContext = activationContext,
+                onCommitted = onCommitted,
+            )
+            if (previousTree.isNotBlank() && previousTree != tree.toString()) {
+                runCatching { StorageAccess.releasePersistedPermission(Uri.parse(previousTree)) }
+                    .onFailure { Timber.w(it, "Unable to release the previous data folder") }
+            }
+            stats
+        } catch (failure: Throwable) {
+            withContext(NonCancellable) {
+                runCatching {
+                    rememberStorageChoice(previousMode, previousTree)
+                }.exceptionOrNull()?.let {
+                    if (failure is ConfigurationImportException) failure.previousConfigurationRestored = false
+                    failure.addSuppressed(it)
+                }
+                if (previousTree != tree.toString()) {
+                    runCatching { StorageAccess.releasePersistedPermission(tree) }
+                        .exceptionOrNull()?.let(failure::addSuppressed)
+                }
+            }
+            throw failure
+        }
+    }
+
+    private suspend fun importValidatedTree(
+        tree: Uri,
+        activate: ((SyncStats) -> Unit)?,
+        rememberTree: (() -> Unit)? = null,
+        beforePublish: (() -> Unit)? = null,
+        beforeRollback: (() -> Unit)? = null,
+        afterRollback: (() -> Unit)? = null,
+        activationContext: (suspend (() -> Unit) -> Unit)? = null,
+        onCommitted: (() -> Unit)? = null,
+        singleFileName: String? = null,
+        activateUnchanged: Boolean = false,
+        restorePreference: (() -> Unit)? = null,
+    ): SyncStats {
+        val root = DataManager.userDataDir
+        val storedIndex = indexFile.takeIf { it.isFile }?.readBytes()
+        val index = loadIndex(tree.toString())
+        val transaction = LocalImportTransaction(root)
+        val importContext = currentCoroutineContext()
+        var finalizationStarted = false
+        var committed = false
+        try {
+            val ownId = SyncPathPolicy.readOwnInstallationId()
+            val syncDir = SyncPathPolicy.treeRelativeSyncDir(SyncPathPolicy.readOwnSyncDir(), root)
+            val skipPrefix = ownId?.takeIf { it.isNotEmpty() }?.let {
+                runCatching { SyncPathPolicy.ownSyncPrefix(it, syncDir) }.getOrNull()
+            }
+            val entries = if (singleFileName == null) {
+                listExternalEntries(tree, skipUserDb = true, skipPrefix = skipPrefix)
+            } else {
+                uniqueChild(tree, singleFileName)?.let {
+                    check(!it.isDir) { "Selected theme is not a file" }
+                    listOf(StorageWalkEntry(it, singleFileName))
+                } ?: emptyList()
+            }
+            val externalPaths = entries.map { it.relativePath }.toSet()
+            val files = entries.filter { !it.file.isDir && SyncPathPolicy.shouldImport(it.relativePath, ownId, syncDir) }
+            val nextEntries = if (singleFileName == null) {
+                index.entries.filterKeys { it in externalPaths }.toMutableMap()
+            } else {
+                index.entries.toMutableMap()
+            }
+            val changed = mutableListOf<String>()
+            var totalBytes = 0L
+            var validated = 0
+            var skipped = 0
+            var copiedBytes = 0L
+            for (entry in files) {
+                currentCoroutineContext().ensureActive()
+                val path = entry.relativePath
+                val destination = SyncRelativePath.resolveContained(root, path)
+                check(!destination.exists() || destination.isFile) { "Import destination is not a file: $path" }
+                val old = index.entries[path]
+                val yaml = ConfigImportValidator.isConfiguration(path)
+                if (!yaml && !shouldCopy(path, entry.file.length, entry.file.lastModified, index) &&
+                    destination.isFile && destination.length() == entry.file.length &&
+                    destination.lastModified() >= entry.file.lastModified && old?.localSha256 != null &&
+                    SyncFingerprint.of(destination) == old.localSha256
+                ) {
+                    nextEntries[path] = checkNotNull(old)
+                    skipped++
+                    continue
+                }
+                val staged = transaction.stageFile(path)
+                val digest = MessageDigest.getInstance("SHA-256")
+                var bytes = 0L
+                StorageAccess.readFile(entry.file.uri) { input ->
+                    FileOutputStream(staged).use { output ->
+                        val buffer = ByteArray(DEFAULT_BUFFER_SIZE)
+                        while (true) {
+                            importContext.ensureActive()
+                            val count = input.read(buffer)
+                            if (count < 0) break
+                            if (count == 0) continue
+                            bytes += count
+                            totalBytes += count
+                            check(totalBytes <= LocalImportTransaction.MAX_STAGED_BYTES) { "Import exceeds its 512 MiB disk budget" }
+                            check(!yaml || path.endsWith(".dict.yaml", true) || bytes <= ConfigImportValidator.MAX_YAML_BYTES) {
+                                "Configuration exceeds 2 MiB: $path"
+                            }
+                            output.write(buffer, 0, count)
+                            digest.update(buffer, 0, count)
+                        }
+                        output.fd.sync()
+                    }
+                }
+                check(entry.file.length <= 0 || bytes == entry.file.length) { "Incomplete document: $path" }
+                if (ConfigImportValidator.validate(staged, path)) validated++
+                val sha = SyncFingerprint.hex(digest.digest())
+                val recordedSize = if (entry.file.length > 0 || bytes == 0L) entry.file.length else bytes
+                nextEntries[path] = SyncEntry(recordedSize, entry.file.lastModified, sha)
+                if (destination.isFile && destination.length() == bytes && SyncFingerprint.of(destination) == sha) {
+                    skipped++
+                } else {
+                    if (entry.file.lastModified > 0) staged.setLastModified(entry.file.lastModified)
+                    changed.add(path)
+                    copiedBytes += bytes
+                }
+            }
+            val orphans = if (singleFileName == null) trackedLocalOrphans(root, externalPaths, ownId, syncDir, index.entries) else emptyList()
+            val requiresDeployment = (changed + orphans).any { ConfigImportValidator.requiresDeployment(it) }
+            val stats = SyncStats(
+                copied = changed.size,
+                skipped = skipped,
+                deleted = orphans.size,
+                bytesCopied = copiedBytes,
+                validatedConfigs = validated,
+                configurationChanged = requiresDeployment,
+            )
+            val finish: () -> Unit = {
+                finalizationStarted = true
+                try {
+                    importContext.ensureActive()
+                    if (activate != null && (requiresDeployment || activateUnchanged)) {
+                        beforePublish?.invoke()
+                        transaction.snapshotRuntime()
+                    }
+                    changed.forEach(transaction::publish)
+                    orphans.forEach(transaction::delete)
+                    activate?.invoke(stats)
+                    importContext.ensureActive()
+                    // No suspension separates source/cache activation from index/tree commit.
+                    saveIndex(SyncIndexData(tree.toString(), nextEntries))
+                    rememberTree?.invoke()
+                    transaction.commit()
+                    committed = true
+                    onCommitted?.invoke()
+                } catch (failure: Throwable) {
+                    val stopped = runCatching { beforeRollback?.invoke() }.exceptionOrNull()?.let {
+                        failure.addSuppressed(it)
+                        false
+                    } ?: true
+                    var restored = if (stopped) {
+                        transaction.rollback(failure)
+                    } else {
+                        transaction.retainForRecovery(failure)
+                        false
+                    }
+                    runCatching {
+                        if (storedIndex == null) {
+                            check(!indexFile.exists() || indexFile.delete()) { "Cannot restore sync history" }
+                        } else {
+                            writeFromStream(indexFile) { it.write(storedIndex) }
+                        }
+                    }.exceptionOrNull()?.let {
+                        restored = false
+                        failure.addSuppressed(it)
+                    }
+                    runCatching { restorePreference?.invoke() }.exceptionOrNull()?.let {
+                        restored = false
+                        failure.addSuppressed(it)
+                    }
+                    if (restored) {
+                        runCatching { afterRollback?.invoke() }
+                            .exceptionOrNull()?.let {
+                                restored = false
+                                failure.addSuppressed(it)
+                            }
+                    }
+                    val recovery = transaction.recoveryDirectory.takeIf { File(it).isDirectory }
+                    if (failure is CancellationException) {
+                        if (!restored) {
+                            failure.addSuppressed(
+                                ConfigurationImportException(IOException("Cancelled import could not restore its runtime"), false, recovery),
+                            )
+                        }
+                        throw failure
+                    }
+                    throw ConfigurationImportException(failure, restored, recovery)
+                }
+            }
+            if (activationContext != null) activationContext(finish) else finish()
+            return stats
+        } catch (failure: Throwable) {
+            // Context rejection/cancellation before entering the confined phase touched no live files.
+            if (!finalizationStarted && !committed) {
+                val restored = transaction.rollback(failure)
+                if (failure !is CancellationException) {
+                    throw ConfigurationImportException(failure, restored, transaction.recoveryDirectory.takeIf { File(it).isDirectory })
+                }
+            }
+            throw failure
+        }
+    }
+
+    private fun trackedLocalOrphans(
+        root: File,
+        externalPaths: Set<String>,
+        ownId: String?,
+        syncDir: String,
+        knownEntries: Map<String, SyncEntry>,
+    ): List<String> = listLocalFiles(root).mapNotNull { file ->
+        val path = file.relativeTo(root).path.replace('\\', '/')
+        val old = knownEntries[path]
+        if (path !in externalPaths && !SyncPathPolicy.shouldPreserveLocal(path, ownId, syncDir) &&
+            old != null && old.size >= 0 && old.lastModified > 0 && old.localSha256 != null &&
+            file.length() == old.size && file.lastModified() == old.lastModified &&
+            SyncFingerprint.of(file) == old.localSha256
+        ) {
+            path
+        } else {
+            null
         }
     }
 
@@ -360,37 +634,31 @@ object RimeDataSync {
         }
     }
 
-    suspend fun importThemeToLocal(configId: String): Result<SyncStats> = withContext(Dispatchers.IO) {
-        runCatching {
-            if (!usesExternalSync() || !hasExternalAccess()) {
-                return@runCatching SyncStats()
-            }
-            val treeUri = treeUri() ?: return@runCatching SyncStats()
-            val themeFile = uniqueChild(treeUri, "$configId.yaml")
-            if (themeFile == null) {
-                Timber.d("Theme file '$configId.yaml' not found at external root, skip import")
-                return@runCatching SyncStats()
-            }
-            val index = loadIndex()
-            val copyResult =
-                importExternalFile(
-                    entry = StorageWalkEntry(themeFile, themeFile.name),
-                    destRoot = DataManager.userDataDir,
-                    index = index,
-                    createdDirs = LocalDirectoryGate(),
-                )
-            saveIndex(withCurrentTree(mergeIndexEntries(index.entries, listOf(copyResult))))
-            val stats = mergeStats(listOf(copyResult.result))
-            DeployNotification.notifyPartialCopyIfNeeded(
-                stats.failed,
-                "importThemeToLocal for '$configId'",
-            )
-            check(stats.failed == 0) { "Failed to import theme: $configId" }
-            stats
-        }.onFailure {
-            if (it is CancellationException) throw it
-            Timber.e(it, "importThemeToLocal failed for '$configId'")
-        }
+    /** The caller confines activation and keeps the previous selection until strict decoding succeeds. */
+    internal suspend fun importThemeToLocal(
+        configId: String,
+        beforePublish: () -> Unit,
+        beforeRollback: () -> Unit,
+        afterRollback: () -> Unit,
+        activationContext: suspend (() -> Unit) -> Unit,
+        rememberSelection: () -> Unit,
+        restoreSelection: () -> Unit,
+        activate: (SyncStats) -> Unit,
+    ): SyncStats = withContext(Dispatchers.IO) {
+        SyncRelativePath.requireSafeName(configId)
+        check(usesExternalSync() && hasExternalAccess()) { "No access to the external theme directory" }
+        importValidatedTree(
+            checkNotNull(treeUri()),
+            activate,
+            rememberTree = rememberSelection,
+            beforePublish = beforePublish,
+            beforeRollback = beforeRollback,
+            afterRollback = afterRollback,
+            activationContext = activationContext,
+            singleFileName = "$configId.yaml",
+            activateUnchanged = true,
+            restorePreference = restoreSelection,
+        )
     }
 
     suspend fun exportToExternal(): Result<SyncStats> = withContext(Dispatchers.IO) {
@@ -498,7 +766,7 @@ object RimeDataSync {
                     createdDirs.ensure(destRoot, SyncRelativePath.normalize(parentRelative))
                 }
             }
-            val copied = copyFromSaf(entry.file.uri, destFile, size)
+            val copied = copyFromSaf(entry.file.uri, destFile, size, relativePath)
             if (lastModified > 0) destFile.setLastModified(lastModified)
             // StorageAccess maps a provider's null COLUMN_SIZE to zero. Preserve the actual
             // byte count for deletion safety while still forcing a future copy when metadata
@@ -587,7 +855,9 @@ object RimeDataSync {
         name: String,
     ): StorageDocument? {
         SyncRelativePath.requireSafeName(name)
-        val matches = SafDirectoryListing.list(appContext.contentResolver, dirUri).filter { it.name == name }
+        val children = SafDirectoryListing.list(appContext.contentResolver, dirUri)
+        check(children.size <= MAX_EXTERNAL_ENTRIES) { "Remote directory exceeds $MAX_EXTERNAL_ENTRIES entries" }
+        val matches = children.filter { it.name == name }
         check(matches.size <= 1) { "Remote directory contains duplicate name: $name" }
         return matches.singleOrNull()
     }
@@ -602,9 +872,10 @@ object RimeDataSync {
         srcUri: Uri,
         destFile: File,
         expectedSize: Long,
+        relativePath: String,
     ): CopiedContent = StorageAccess.readFile(srcUri) { input ->
         val digest = MessageDigest.getInstance("SHA-256")
-        val bytes = writeFromStream(destFile) { output ->
+        val bytes = writeFromStream(destFile, validate = { ConfigImportValidator.validate(it, relativePath) }) { output ->
             val copied = input.copyTo(DigestOutputStream(output, digest))
             check(expectedSize <= 0 || copied == expectedSize) {
                 "Incomplete document: copied $copied bytes, expected $expectedSize"
@@ -683,7 +954,7 @@ object RimeDataSync {
             verifyExternalFile(operations, published, copiedBytes, sha256)
             committed = true
             return CopiedContent(copiedBytes, sha256)
-        } catch (failure: Exception) {
+        } catch (failure: Throwable) {
             withContext(NonCancellable) {
                 if (!committed) {
                     var publishedRemoved = true
@@ -777,6 +1048,7 @@ object RimeDataSync {
      */
     internal fun writeFromStream(
         destFile: File,
+        validate: (File) -> Unit = {},
         copy: (OutputStream) -> Unit,
     ): Long {
         val parent = destFile.parentFile ?: error("No parent for ${destFile.path}")
@@ -793,6 +1065,7 @@ object RimeDataSync {
             FileOutputStream(incoming).use { output ->
                 copy(output)
             }
+            validate(incoming)
             val expectedBytes = incoming.length()
 
             if (destFile.exists()) {
@@ -1071,6 +1344,7 @@ object RimeDataSync {
                     check(visitedDocumentIds.add(documentId)) {
                         "External tree contains repeated document ID: $documentId"
                     }
+                    check(visitedDocumentIds.size <= MAX_EXTERNAL_ENTRIES) { "External tree exceeds $MAX_EXTERNAL_ENTRIES entries" }
                     val name = it.getString(nameColumn)
                     SyncRelativePath.requireSafeName(name)
                     val mimeType = it.getString(mimeColumn)
@@ -1122,6 +1396,7 @@ object RimeDataSync {
      */
     private const val INDEX_FILE = "rime_sync_index.json"
     private const val MAX_EXTERNAL_DEPTH = 64
+    private const val MAX_EXTERNAL_ENTRIES = 10_000
 
     private val EXTERNAL_DOCUMENT_PROJECTION =
         arrayOf(
@@ -1143,14 +1418,13 @@ object RimeDataSync {
     private val indexFile: File
         get() = File(appContext.filesDir, INDEX_FILE)
 
-    private fun loadIndex(): SyncIndexData {
+    private fun loadIndex(currentTreeUri: String = treeUri()?.toString().orEmpty()): SyncIndexData {
         val stored =
             indexFile
                 .takeIf { it.exists() }
                 ?.readText()
                 ?.let { runCatching { indexJson.decodeFromString<SyncIndexData>(it) }.getOrNull() }
                 ?: SyncIndexData()
-        val currentTreeUri = treeUri()?.toString().orEmpty()
         if (stored.treeUri != currentTreeUri) {
             return SyncIndexData(treeUri = currentTreeUri)
         }
@@ -1238,5 +1512,7 @@ object RimeDataSync {
         val deleted: Int = 0,
         val failed: Int = 0,
         val bytesCopied: Long = 0,
+        val validatedConfigs: Int = 0,
+        val configurationChanged: Boolean = false,
     )
 }

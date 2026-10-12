@@ -32,6 +32,7 @@ import com.osfans.trime.ime.bar.ui.AlwaysUi
 import com.osfans.trime.ime.bar.ui.CandidateUi
 import com.osfans.trime.ime.bar.ui.TabUi
 import com.osfans.trime.ime.broadcast.InputBroadcastReceiver
+import com.osfans.trime.ime.candidates.candidateRowHeight
 import com.osfans.trime.ime.candidates.compact.CompactCandidateDelegate
 import com.osfans.trime.ime.candidates.unrolled.window.FlexboxUnrolledCandidateWindow
 import com.osfans.trime.ime.core.PrivacyModeState
@@ -73,7 +74,7 @@ class InputBarDelegate(override val di: DI) :
     private val rime: RimeSession by instance()
     private val keyboardWindow: KeyboardWindow by instance()
 
-    val themedHeight = theme.style.run { candidateViewHeight + commentHeight }
+    val themedHeight = candidateRowHeight(context, theme) + theme.style.commentHeight
 
     private val prefs = AppPrefs.defaultInstance()
 

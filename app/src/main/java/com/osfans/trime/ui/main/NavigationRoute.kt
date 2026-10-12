@@ -16,6 +16,7 @@ import com.osfans.trime.ui.main.settings.ClipboardSettingsFragment
 import com.osfans.trime.ui.main.settings.GeneralSettingsFragment
 import com.osfans.trime.ui.main.settings.KeyboardSettingsFragment
 import com.osfans.trime.ui.main.settings.ProfileSettingsFragment
+import com.osfans.trime.ui.main.settings.QuickSettingsFragment
 import com.osfans.trime.ui.main.settings.schema.SchemaListFragment
 import com.osfans.trime.ui.main.settings.theme.ThemeSettingsFragment
 import com.osfans.trime.ui.main.settings.userdict.UserDictionaryFragment
@@ -27,6 +28,8 @@ sealed class NavigationRoute(
 ) : Parcelable {
 
     data object Main : NavigationRoute("com.osfans.trime.ui.main.NavigationRoute.Main")
+
+    data object QuickSettings : NavigationRoute("com.osfans.trime.ui.main.NavigationRoute.QuickSettings")
 
     data object SchemaList : NavigationRoute("com.osfans.trime.ui.main.NavigationRoute.SchemaList")
 
@@ -58,6 +61,10 @@ sealed class NavigationRoute(
 
             fragment<MainFragment>(Main.path) {
                 label = ctx.getString(R.string.trime_app_name)
+            }
+
+            fragment<QuickSettingsFragment>(QuickSettings.path) {
+                label = ctx.getString(R.string.quick_settings)
             }
 
             fragment<SchemaListFragment>(SchemaList.path) {

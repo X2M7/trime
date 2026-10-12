@@ -51,6 +51,9 @@ class StartupResponsivenessInstrumentation : Instrumentation() {
     private var t09Baseline = true
     private var t09Schema = "luna_pinyin_t9"
     private var setupOnly = false
+    private var setupClosedLoopOnly = false
+    private var configImportOnly = false
+    private var configImportTree: String? = null
     private var shutdownOnly = false
     private var failureOnly = false
     private var lateStorageOnly = false
@@ -75,6 +78,9 @@ class StartupResponsivenessInstrumentation : Instrumentation() {
         t09Baseline = arguments?.getString("t09Baseline") != "false"
         t09Schema = arguments?.getString("t09Schema") ?: "luna_pinyin_t9"
         setupOnly = arguments?.getString("setup") == "true"
+        setupClosedLoopOnly = arguments?.getString("setup_closed_loop") == "true"
+        configImportOnly = arguments?.getString("config_import") == "true"
+        configImportTree = arguments?.getString("config_import_tree")
         shutdownOnly = arguments?.getString("shutdown") == "true"
         failureOnly = arguments?.getString("startupFailure") == "true"
         lateStorageOnly = arguments?.getString("lateStorage") == "true"
@@ -129,6 +135,14 @@ class StartupResponsivenessInstrumentation : Instrumentation() {
         }
         if (setupOnly) {
             SetupResponsivenessProbe.run(this)
+            return
+        }
+        if (setupClosedLoopOnly) {
+            SetupClosedLoopProbe.run(this)
+            return
+        }
+        if (configImportOnly) {
+            ConfigImportProbe.run(this, configImportTree)
             return
         }
         if (t02Only || t03Only || t05Only) {

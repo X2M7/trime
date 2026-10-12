@@ -169,6 +169,22 @@ object ThemeManager {
         }
     }
 
+    /** The import transaction already rebuilt and decoded this exact theme. */
+    internal suspend fun applyImportedTheme(result: ThemeLoader.ThemeLoadResult.Success) = withContext(Dispatchers.Main.immediate) {
+        loadMutex.withLock {
+            if (prefs.selectedTheme.getValue() == result.themeId) {
+                applyTheme(ResolvedTheme(result.themeId, result.theme, result.findings), forceReload = true)
+            }
+        }
+    }
+
+    /** Resource-only imports reuse the verified model, replacing its bitmap/font scopes. */
+    internal fun loadedThemeForImport(): ThemeLoader.ThemeLoadResult.Success? {
+        val theme = _activeTheme ?: return null
+        val id = activeConfigId ?: return null
+        return ThemeLoader.ThemeLoadResult.Success(id, theme, _activeFindings)
+    }
+
     @RequiresApi(Build.VERSION_CODES.N)
     fun syncToDeviceEncryptedStorage() {
         val ctx = appContext.createDeviceProtectedStorageContext()
