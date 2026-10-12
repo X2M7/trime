@@ -1,26 +1,26 @@
 /* SPDX-License-Identifier: GPL-3.0-or-later */
 package com.osfans.trime.ui.setup
 
-import org.junit.Assert.assertFalse
-import org.junit.Assert.assertTrue
-import org.junit.Test
+import io.kotest.core.spec.style.StringSpec
+import io.kotest.matchers.shouldBe
 
-class SetupFlowPolicyTest {
-    @Test fun upgradeDoesNotRequireRepeatingNewWizardSteps() {
-        assertFalse(needsInputSetup(false, false, false, false, false))
-    }
+class SetupFlowPolicyTest :
+    StringSpec({
+        "an upgrade does not require repeating the new wizard steps" {
+            needsInputSetup(false, false, false, false, false) shouldBe false
+        }
 
-    @Test fun freshInstallStillNeedsInputChoiceAfterSystemImeStepsAreFinished() {
-        assertTrue(needsInputSetup(false, true, false, false, false))
-    }
+        "a fresh install still needs input choice after system IME steps finish" {
+            needsInputSetup(false, true, false, false, false) shouldBe true
+        }
 
-    @Test fun interruptedSetupResumesItsUnfinishedTrial() {
-        assertTrue(needsInputSetup(true, false, true, false, false))
-        assertFalse(needsInputSetup(true, false, true, true, false))
-    }
+        "interrupted setup resumes its unfinished trial" {
+            needsInputSetup(true, false, true, false, false) shouldBe true
+            needsInputSetup(true, false, true, true, false) shouldBe false
+        }
 
-    @Test fun explicitlyDeferringTrialDoesNotOpenTheWizardAgain() {
-        assertFalse(needsInputSetup(true, true, false, false, true))
-        assertFalse(needsInputSetup(true, false, true, false, true))
-    }
-}
+        "explicitly deferring the trial does not open the wizard again" {
+            needsInputSetup(true, true, false, false, true) shouldBe false
+            needsInputSetup(true, false, true, false, true) shouldBe false
+        }
+    })

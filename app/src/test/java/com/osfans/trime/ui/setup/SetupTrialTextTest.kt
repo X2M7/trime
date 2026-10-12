@@ -5,25 +5,25 @@
 
 package com.osfans.trime.ui.setup
 
-import org.junit.Assert.assertFalse
-import org.junit.Assert.assertTrue
-import org.junit.Test
+import io.kotest.core.spec.style.StringSpec
+import io.kotest.matchers.shouldBe
 
-class SetupTrialTextTest {
-    @Test fun rejectsUnfinishedPinyinDigitsAndEmptyTrial() {
-        listOf(null, "", "nihao", "64426", "Android 16", "🙂").forEach {
-            assertFalse(containsCommittedChinese(it))
+class SetupTrialTextTest :
+    StringSpec({
+        "unfinished pinyin, digits and an empty trial are rejected" {
+            listOf(null, "", "nihao", "64426", "Android 16", "🙂").forEach {
+                containsCommittedChinese(it) shouldBe false
+            }
         }
-    }
 
-    @Test fun acceptsSimplifiedTraditionalAndSupplementaryHanCommit() {
-        listOf("你好", "汉字", "漢字", "B站", String(Character.toChars(0x20000))).forEach {
-            assertTrue(containsCommittedChinese(it))
+        "simplified, traditional and supplementary Han commits are accepted" {
+            listOf("你好", "汉字", "漢字", "B站", String(Character.toChars(0x20000))).forEach {
+                containsCommittedChinese(it) shouldBe true
+            }
         }
-    }
 
-    @Test fun findsHanAfterSupplementaryNonHanWithoutBreakingSurrogatePairs() {
-        assertTrue(containsCommittedChinese("🙂你好"))
-        assertFalse(containsCommittedChinese("🙂 Wi-Fi"))
-    }
-}
+        "Han after supplementary non-Han is found without breaking surrogate pairs" {
+            containsCommittedChinese("🙂你好") shouldBe true
+            containsCommittedChinese("🙂 Wi-Fi") shouldBe false
+        }
+    })
