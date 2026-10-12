@@ -392,19 +392,19 @@ class Rime :
     private suspend fun <T> withImportMaintenance(
         block: suspend (() -> Unit, (ThemeLoader.ThemeLoadResult.Success) -> Unit) -> T,
     ): T {
-        var reloadTheme = false
         var validatedTheme: ThemeLoader.ThemeLoadResult.Success? = null
         var originalFailure: Throwable? = null
         try {
             return RimeMaintenanceMutex.withLock {
+                val previousTheme = ThemeManager.loadedThemeForImport()
                 block(
                     {
-                        reloadTheme = true
-                        validatedTheme = null
+                        // Reloading from disk may deploy a theme again after its
+                        // artifact was restored. Keep the already verified model.
+                        validatedTheme = previousTheme
                     },
                     {
                         validatedTheme = it
-                        reloadTheme = false
                     },
                 )
             }
@@ -419,14 +419,10 @@ class Rime :
             throw failure
         } finally {
             val verified = validatedTheme
-            if (reloadTheme || verified != null) {
+            if (verified != null) {
                 withContext(NonCancellable) {
                     runCatching {
-                        if (verified != null) {
-                            ThemeManager.applyImportedTheme(verified)
-                        } else {
-                            ThemeManager.selectTheme(ThemeManager.prefs.selectedTheme.getValue(), forceReload = true)
-                        }
+                        ThemeManager.applyImportedTheme(verified)
                     }.exceptionOrNull()?.let { error ->
                         val failure = originalFailure
                         if (failure != null) {
@@ -449,12 +445,17 @@ class Rime :
         withRimeContext { InputSetupController.apply(RimeInputSetupEngine(this@Rime), selection) }
     }
 
-    private data class ImportRuntime(val schema: String, val options: Map<String, Boolean>)
+    private data class ImportRuntime(
+        val schema: String,
+        val options: Map<String, Boolean>,
+        val wasReady: Boolean,
+        val usingExistingResources: Boolean,
+    )
 
     private fun captureImportRuntimeConfined(): ImportRuntime {
         val options = (schemaCached.switches.flatMap { if (it.name.isEmpty()) it.options else listOf(it.name) } + "ascii_mode")
             .filter { it.isNotEmpty() }.distinct().associateWith(::getRimeOption)
-        return ImportRuntime(getCurrentRimeSchema(), options)
+        return ImportRuntime(getCurrentRimeSchema(), options, nativeInitialized && isReady, usingExistingResources)
     }
 
     /** JNI startup synchronously joins maintenance; this whole phase keeps input behind it. */
@@ -496,10 +497,15 @@ class Rime :
     }
 
     private fun restoreImportRuntimeConfined(previous: ImportRuntime) {
-        restartNative(false)
+        check(previous.wasReady) { "Previous input engine was not ready for runtime restoration" }
+        stopRime()
+        // false still asks librime to detect changes. Rollback itself changes
+        // directory timestamps, so that would redeploy the restored cache.
+        startRime(fullCheck = false, restoreOnly = true)
         if (previous.schema != ".default") check(selectRimeSchema(previous.schema)) { "Previous input schema could not be restored" }
         check(hasUsableRimeDictionary()) { "Previous input dictionary could not be restored" }
         previous.options.forEach { (name, enabled) -> setRimeOption(name, enabled) }
+        usingExistingResources = previous.usingExistingResources
         emitResponse()
     }
 
@@ -832,22 +838,28 @@ class Rime :
         emitResponse()
     }
 
-    private fun startRime(fullCheck: Boolean) {
+    private fun startRime(fullCheck: Boolean, restoreOnly: Boolean = false) {
         // Editor ownership outlives an in-place native restart/deployment.
         invalidateCandidates()
         usingExistingResources = false
         optionCache.clear()
         val mayRecover = DataManager.hasDeployedResources()
-        val resourceFailure = try {
-            DataManager.sync()
-            if (RimeDataSync.usesExternalSync() && !RimeDataSync.hasExternalAccess()) {
-                IllegalStateException("External sync folder permission is unavailable; using local resources")
-            } else {
-                null
+        val resourceFailure = if (restoreOnly) {
+            // Sources, compiled artifacts and native state were restored by
+            // the import transaction. Do not install or deploy anything here.
+            null
+        } else {
+            try {
+                DataManager.sync()
+                if (RimeDataSync.usesExternalSync() && !RimeDataSync.hasExternalAccess()) {
+                    IllegalStateException("External sync folder permission is unavailable; using local resources")
+                } else {
+                    null
+                }
+            } catch (failure: Exception) {
+                if (!mayRecover) throw failure
+                failure
             }
-        } catch (failure: Exception) {
-            if (!mayRecover) throw failure
-            failure
         }
         val sharedDataDir = DataManager.sharedDataDir.absolutePath
         val userDataDir = DataManager.userDataDir.absolutePath
@@ -857,6 +869,7 @@ class Rime :
             sharedDataDir: $sharedDataDir
             userDataDir: $userDataDir
             fullCheck: $fullCheck
+            restoreOnly: $restoreOnly
             """.trimIndent(),
         )
         val deployFailed = java.util.concurrent.atomic.AtomicBoolean(false)
@@ -868,8 +881,12 @@ class Rime :
         registerRimeMessageHandler(startupHandler)
         try {
             nativeInitialized = true
-            UserDictManager.recoverPendingMutation()
-            startupRime(sharedDataDir, userDataDir, BuildConfig.BUILD_VERSION_NAME, fullCheck)
+            if (restoreOnly) {
+                restoreRime(sharedDataDir, userDataDir, BuildConfig.BUILD_VERSION_NAME)
+            } else {
+                UserDictManager.recoverPendingMutation()
+                startupRime(sharedDataDir, userDataDir, BuildConfig.BUILD_VERSION_NAME, fullCheck)
+            }
             // Corrupt pin data must not disable ordinary input or be overwritten.
             try {
                 candidatePins.load()
@@ -1167,6 +1184,10 @@ class Rime :
             versionName: String,
             fullCheck: Boolean,
         )
+
+        /** Reopen only a successfully rolled-back, previously ready native context. */
+        @JvmStatic
+        private external fun restoreRime(sharedDir: String, userDir: String, versionName: String)
 
         @JvmStatic
         external fun exitRime()

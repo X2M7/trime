@@ -187,7 +187,13 @@ object ConfigImportProbe {
                                             "$label changed the original theme source; expected SHA $sourceBefore"
                                         }
                                         check(sharedSource.takeIf { it.isFile }?.let(::digest) == sharedBefore) { "$label changed the shared theme source; expected SHA $sharedBefore" }
-                                        check(buildDigests() == buildsBefore) { "$label changed compiled cache; original SHA evidence $buildsBefore" }
+                                        val buildsAfter = buildDigests()
+                                        check(buildsAfter == buildsBefore) {
+                                            val changed = (buildsBefore.keys + buildsAfter.keys)
+                                                .filter { buildsBefore[it] != buildsAfter[it] }
+                                                .sorted().associateWith { "${buildsBefore[it]} -> ${buildsAfter[it]}" }
+                                            "$label changed compiled cache; changed SHA evidence $changed; original SHA evidence $buildsBefore"
+                                        }
                                         check(digest(File(DataManager.resolveDeployedResourcePath(themeId))) == artifactBefore) { "$label changed active artifact; expected SHA $artifactBefore" }
                                         check(indexFile.takeIf { it.isFile }?.let(::digest) == indexBefore)
                                         check(ThemeManager.prefs.selectedTheme.getValue() == themeId)

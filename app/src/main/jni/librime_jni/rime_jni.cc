@@ -52,7 +52,8 @@ class Rime {
   }
 
   void startup(bool fullCheck,
-               const RimeNotificationHandler& notificationHandler) {
+               const RimeNotificationHandler& notificationHandler,
+               bool runMaintenance = true) {
     privacy_mode_ = false;
     trime::SetPrivacyModeEnabled(false);
     trime::SetPredictionRequested(false);
@@ -81,7 +82,9 @@ class Rime {
     std::call_once(setup_once, [&] { rime->setup(&trime_traits); });
     rime->initialize(&trime_traits);
     rime->set_notification_handler(notificationHandler, GlobalRef->jvm);
-    rime->start_maintenance(fullCheck);
+    // A rolled-back context must open its restored artifacts without running
+    // detect_modifications: restoring files itself updates directory mtimes.
+    if (runMaintenance) rime->start_maintenance(fullCheck);
     // Startup runs on RimeDispatcher, never the Android UI thread. Do not
     // publish READY or create a session while deployment is still writing data.
     rime->join_maintenance_thread();
@@ -596,9 +599,9 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM* jvm, void* reserved) {
   return JNI_VERSION_1_6;
 }
 
-extern "C" JNIEXPORT void JNICALL Java_com_osfans_trime_core_Rime_startupRime(
-    JNIEnv* env, jclass clazz, jstring shared_dir, jstring user_dir,
-    jstring version_name, jboolean full_check) {
+static void initializeRime(JNIEnv* env, jstring shared_dir, jstring user_dir,
+                           jstring version_name, bool full_check,
+                           bool run_maintenance) {
   jniCall(env, [&] {
     // for rime shared data dir
     setenv("RIME_SHARED_DATA_DIR", CString(env, shared_dir), 1);
@@ -625,8 +628,20 @@ extern "C" JNIEXPORT void JNICALL Java_com_osfans_trime_core_Rime_startupRime(
               GlobalRef->Rime, GlobalRef->HandleRimeMessage, type, *vararg);
         };
 
-    Rime::Instance().startup(full_check, notificationHandler);
+    Rime::Instance().startup(full_check, notificationHandler, run_maintenance);
   });
+}
+
+extern "C" JNIEXPORT void JNICALL Java_com_osfans_trime_core_Rime_startupRime(
+    JNIEnv* env, jclass /* clazz */, jstring shared_dir, jstring user_dir,
+    jstring version_name, jboolean full_check) {
+  initializeRime(env, shared_dir, user_dir, version_name, full_check, true);
+}
+
+extern "C" JNIEXPORT void JNICALL Java_com_osfans_trime_core_Rime_restoreRime(
+    JNIEnv* env, jclass /* clazz */, jstring shared_dir, jstring user_dir,
+    jstring version_name) {
+  initializeRime(env, shared_dir, user_dir, version_name, false, false);
 }
 
 extern "C" JNIEXPORT void JNICALL
