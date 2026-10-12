@@ -7,7 +7,11 @@ package com.osfans.trime.ui.setup
 
 import android.app.PendingIntent
 import android.content.Intent
+import android.database.ContentObserver
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.provider.Settings
 import android.widget.Button
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AlertDialog
@@ -70,6 +74,14 @@ class SetupActivity : FragmentActivity() {
     private var refreshPending = false
     private var storageRevision = 0
     private var selectInitialPage = false
+    private var observingInputMethods = false
+    private val inputMethodObserver = object : ContentObserver(Handler(Looper.getMainLooper())) {
+        override fun onChange(selfChange: Boolean) {
+            if (!observingInputMethods || isFinishing || isDestroyed) return
+            storageRevision++
+            refreshCurrentFragment()
+        }
+    }
     var changingStorageMode = false
         private set
 
@@ -434,6 +446,29 @@ class SetupActivity : FragmentActivity() {
         nextButton.isEnabled = modeSetupDone && isPageDone(currentSetupPage) && !changingInput
     }
 
+    override fun onStart() {
+        super.onStart()
+        // The system picker can restore focus before it saves the selected IME.
+        // Keep observing while the dialog covers this Activity; resumed pages also refresh.
+        contentResolver.registerContentObserver(
+            Settings.Secure.getUriFor(Settings.Secure.DEFAULT_INPUT_METHOD),
+            false,
+            inputMethodObserver,
+        )
+        contentResolver.registerContentObserver(
+            Settings.Secure.getUriFor(Settings.Secure.ENABLED_INPUT_METHODS),
+            false,
+            inputMethodObserver,
+        )
+        observingInputMethods = true
+    }
+
+    override fun onStop() {
+        observingInputMethods = false
+        contentResolver.unregisterContentObserver(inputMethodObserver)
+        super.onStop()
+    }
+
     override fun onWindowFocusChanged(hasFocus: Boolean) {
         super.onWindowFocusChanged(hasFocus)
         if (!hasFocus) return
@@ -465,6 +500,7 @@ class SetupActivity : FragmentActivity() {
     override fun onResume() {
         notificationManager.cancel(NOTIFY_ID)
         super.onResume()
+        refreshCurrentFragment()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
