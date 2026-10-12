@@ -312,6 +312,13 @@ object SetupClosedLoopProbe {
 
         try {
             check(Build.HARDWARE in setOf("ranchu", "goldfish"))
+            instrumentation.sendStatus(
+                0,
+                Bundle().apply { putInt("setup_ime_selection_waiting_pid", android.os.Process.myPid()) },
+            )
+            await("The disposable emulator did not actually enable and select this APK after the UI probe started") {
+                InputMethodUtils.checkIsTrimeEnabled() && InputMethodUtils.checkIsTrimeSelected()
+            }
             check(InputMethodUtils.checkIsTrimeEnabled() && InputMethodUtils.checkIsTrimeSelected()) {
                 "The disposable emulator must have this APK enabled and selected before the UI probe"
             }
