@@ -5,9 +5,11 @@
 
 package com.osfans.trime.data.sync
 
+import android.annotation.SuppressLint
 import android.content.ContentResolver
 import android.net.Uri
 import android.provider.DocumentsContract
+import androidx.core.net.toUri
 import com.osfans.trime.TrimeApplication
 import com.osfans.trime.core.RimeMaintenanceMutex
 import com.osfans.trime.daemon.RimeDaemon
@@ -157,6 +159,8 @@ object RimeDataSync {
     private val pickerImportMutex = Mutex()
 
     /** Both keys are one durable choice; a failed write must keep the import uncommitted. */
+    // KTX edit(commit = true) discards commit's Boolean; rollback requires checking it.
+    @SuppressLint("UseKtx")
     private fun rememberStorageChoice(mode: DataStorageMode, tree: String) {
         check(
             prefs.externalRimeTreeUri.sharedPreferences.edit()
@@ -292,7 +296,7 @@ object RimeDataSync {
                     }
                 }
                 if (treeUri != previousTree && prefs.externalRimeTreeUri.getValue() != treeUri) {
-                    runCatching { StorageAccess.releasePersistedPermission(Uri.parse(treeUri)) }
+                    runCatching { StorageAccess.releasePersistedPermission(treeUri.toUri()) }
                         .exceptionOrNull()?.let(failure::addSuppressed)
                 }
             }
@@ -367,7 +371,7 @@ object RimeDataSync {
                 onCommitted = onCommitted,
             )
             if (previousTree.isNotBlank() && previousTree != tree.toString()) {
-                runCatching { StorageAccess.releasePersistedPermission(Uri.parse(previousTree)) }
+                runCatching { StorageAccess.releasePersistedPermission(previousTree.toUri()) }
                     .onFailure { Timber.w(it, "Unable to release the previous data folder") }
             }
             stats

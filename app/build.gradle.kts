@@ -179,7 +179,7 @@ dependencies {
     implementation(libs.kodein.di)
     implementation(libs.kaml)
     // Use KAML's existing parser events to reject oversized/deep imports before building a node tree.
-    implementation("it.krzeminski:snakeyaml-engine-kmp:4.0.1")
+    implementation(libs.snakeyaml.engine.kmp)
     implementation(libs.storageaccess)
     implementation(libs.splitties.bitflags)
     implementation(libs.splitties.systemservices)

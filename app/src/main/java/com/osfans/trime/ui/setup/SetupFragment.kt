@@ -143,7 +143,6 @@ class SetupFragment : Fragment() {
             actionButton.text = page.getButtonText(requireContext())
             actionButton.setOnClickListener { page.getButtonAction(requireActivity()) }
             doneText.visibility = if (done) View.VISIBLE else View.GONE
-            doneIcon.visibility = if (done) View.VISIBLE else View.GONE
             doneRow.visibility = if (done) View.VISIBLE else View.GONE
         }
     }

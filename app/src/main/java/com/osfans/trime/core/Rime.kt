@@ -5,7 +5,8 @@
 
 package com.osfans.trime.core
 
-import android.net.Uri
+import android.annotation.SuppressLint
+import androidx.core.net.toUri
 import com.osfans.trime.BuildConfig
 import com.osfans.trime.data.base.DataManager
 import com.osfans.trime.data.candidates.CandidatePin
@@ -304,7 +305,7 @@ class Rime :
         var activated = false
         try {
             RimeDataSync.importFromPickedTree(
-                Uri.parse(treeUri),
+                treeUri.toUri(),
                 beforePublish = {
                     previous = captureImportRuntimeConfined()
                     activated = true
@@ -337,6 +338,9 @@ class Rime :
         var selectionWriteAttempted = false
         var previous: ImportRuntime? = null
         var activated = false
+
+        // KTX edit(commit = true) discards commit's Boolean; rollback requires checking it.
+        @SuppressLint("UseKtx")
         fun rememberTheme(id: String) {
             check(
                 ThemeManager.prefs.selectedTheme.sharedPreferences.edit()

@@ -40,6 +40,8 @@ community-material-typeface = { module = "com.mikepenz:community-material-typefa
 kodein-di = { module = "org.kodein.di:kodein-di", version = "7.33.0" }
 snakeyaml = { module = "org.yaml:snakeyaml", version = "2.7" }
 kaml = { module = "com.charleskorn.kaml:kaml", version = "0.104.0" }
+# Match KAML 0.104.0's runtime parser; a major parser upgrade needs a KAML compatibility review.
+snakeyaml-engine-kmp = { module = "it.krzeminski:snakeyaml-engine-kmp", version = { strictly = "4.0.1" } }
 storageaccess = { module = "com.github.WhiredPlanck:StorageAccess", version = "2.0.0" }
 splitties-bitflags = { module = "com.louiscad.splitties:splitties-bitflags", version.ref = "splitties" }
 splitties-systemservices = { module = "com.louiscad.splitties:splitties-systemservices", version.ref = "splitties" }

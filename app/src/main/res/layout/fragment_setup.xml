@@ -74,16 +74,15 @@
         </LinearLayout>
         <Button android:id="@+id/action_button" android:layout_width="wrap_content"
             android:layout_height="wrap_content" android:layout_marginTop="24dp" />
-        <LinearLayout android:id="@+id/done_row" android:layout_width="wrap_content"
-            android:layout_height="wrap_content" android:gravity="center_vertical"
+        <FrameLayout android:id="@+id/done_row" android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginTop="24dp">
-            <ImageView android:id="@+id/done_icon" android:layout_width="24dp"
-                android:layout_height="24dp" android:layout_marginEnd="8dp"
-                android:importantForAccessibility="no" android:src="@drawable/ic_baseline_check_circle_24" />
             <TextView android:id="@+id/done_text" android:layout_width="wrap_content"
                 android:layout_height="wrap_content" android:text="@string/done"
+                android:gravity="center_vertical" android:drawableStart="@drawable/ic_baseline_check_circle_24"
+                android:drawablePadding="8dp"
                 android:textColor="?android:attr/colorAccent" android:textSize="20sp" android:textStyle="bold" />
-        </LinearLayout>
+        </FrameLayout>
         <Button android:id="@+id/advanced_button" android:layout_width="wrap_content"
             android:layout_height="wrap_content" android:layout_marginTop="16dp"
             android:text="@string/setup__advanced" android:visibility="gone" />
