@@ -304,7 +304,7 @@ object SetupClosedLoopProbe {
             val start = Runnable {
                 runCatching {
                     context.startActivity(
-                        Intent(context, SetupActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
+                        Intent(context, SetupActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP),
                     )
                 }.exceptionOrNull()?.let(failure::set)
             }
