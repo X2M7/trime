@@ -2,6 +2,7 @@
 <!-- SPDX-FileCopyrightText: 2015 - 2026 Rime community
      SPDX-License-Identifier: GPL-3.0-or-later -->
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent" android:layout_height="match_parent"
     android:fillViewport="true">
     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
@@ -77,9 +78,9 @@
         <FrameLayout android:id="@+id/done_row" android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp">
-            <TextView android:id="@+id/done_text" android:layout_width="wrap_content"
+            <androidx.appcompat.widget.AppCompatTextView android:id="@+id/done_text" android:layout_width="wrap_content"
                 android:layout_height="wrap_content" android:text="@string/done"
-                android:gravity="center_vertical" android:drawableStart="@drawable/ic_baseline_check_circle_24"
+                android:gravity="center_vertical" app:drawableStartCompat="@drawable/ic_baseline_check_circle_24"
                 android:drawablePadding="8dp"
                 android:textColor="?android:attr/colorAccent" android:textSize="20sp" android:textStyle="bold" />
         </FrameLayout>
