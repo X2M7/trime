@@ -284,7 +284,7 @@ object NextWordPredictionProbe {
                                 beginEditor(firstEditor, nullInputType = false, privacyMode = false)
                                 setCandidatePagingMode(false)
                                 clearComposition()
-                                input.forEach { check(processKey(it.code)) }
+                                input.forEach { check(processKey(it.code, 0u, true)) }
                                 val snapshot = candidateSnapshotCached
                                 check(!snapshot.isPrediction && snapshot.isValid)
                                 val index = getCandidates(0, 32, snapshot).indexOfFirst { it.text == target }
@@ -304,7 +304,7 @@ object NextWordPredictionProbe {
 
                         suspend fun switchInternally(target: SchemaItem) {
                             rime.runOnReady {
-                                check(processKey(0xffc1)) { "Native F4 switcher did not open" }
+                                check(processKey(0xffc1, 0u, true)) { "Native F4 switcher did not open" }
                                 val menu = candidateSnapshotCached
                                 check(!menu.isPrediction && hasMenu)
                                 val rows = getCandidates(0, 128, menu)
@@ -341,7 +341,7 @@ object NextWordPredictionProbe {
                                 val rows = getCandidates(0, 16, predicted)
                                 check(rows.size == 5 && rows.first().text == "世界")
                                 check(observedCandidates.value == ObservedCandidates(predicted, true, false))
-                                check(!selectCandidate(0, true)) { "Unidentified theme selection committed a suggestion" }
+                                check(!selectCandidate(0, true, null)) { "Unidentified theme selection committed a suggestion" }
                             }
                             noCommit(beforeUnidentified)
                             val before = count()
@@ -355,7 +355,7 @@ object NextWordPredictionProbe {
                             val stale = hello()
                             val before = count()
                             val generation = rime.runOnReady {
-                                check(!processKey(key)) { "The ordinary editor key was swallowed" }
+                                check(!processKey(key, 0u, true)) { "The ordinary editor key was swallowed" }
                                 check(!candidateSnapshotCached.isPrediction)
                                 check(!selectCandidate(0, true, stale))
                                 candidateSnapshotCached.generation
@@ -371,7 +371,7 @@ object NextWordPredictionProbe {
                         val stalePunctuation = hello()
                         val beforePunctuation = count()
                         rime.runOnReady {
-                            check(processKey('.'.code))
+                            check(processKey('.'.code, 0u, true))
                             check(!candidateSnapshotCached.isPrediction)
                             check(!selectCandidate(0, true, stalePunctuation))
                         }
@@ -418,7 +418,7 @@ object NextWordPredictionProbe {
                         val staleT9 = hello("t9")
                         val beforeDigit = count()
                         rime.runOnReady {
-                            check(processKey('2'.code))
+                            check(processKey('2'.code, 0u, true))
                             check(getRawInput() == "2" && t9Cached.input == "2" && !candidateSnapshotCached.isPrediction)
                             check(!selectCandidate(0, true, staleT9))
                         }
@@ -437,7 +437,7 @@ object NextWordPredictionProbe {
                             setRuntimeOption("ascii_mode", false)
                             beginEditor(firstEditor, nullInputType = false, privacyMode = false)
                             clearComposition()
-                            "ni".forEach { check(processKey(it.code)) }
+                            "ni".forEach { check(processKey(it.code, 0u, true)) }
                         }
                         val baselineRanking = rime.runOnReady {
                             val snapshot = candidateSnapshotCached
@@ -490,7 +490,7 @@ object NextWordPredictionProbe {
                             beginEditor(secondEditor, nullInputType = false, privacyMode = false)
                             check(!hasMenu && getRawInput().isEmpty() && !candidateSnapshotCached.isPrediction)
                             check(!selectCandidate(0, true, oldEditor))
-                            check(processKey('n'.code))
+                            check(processKey('n'.code, 0u, true))
                             check(getRawInput() == "n")
                         }
                         noCommit(beforeBoundary)
