@@ -174,7 +174,9 @@ object ConfigImportProbe {
                                     delay(1_100)
                                     badTheme = checkNotNull(DocumentsContract.createDocument(cr, root, "application/x-yaml", themeName))
                                         .also { createdDocuments.add(it) }
-                                    val invalidTheme = "name: T12 invalid theme\nstyle: {candidate_text_size: not_a_number}\npreset_color_schemes: {t12_invalid: {name: Invalid}}\n"
+                                    // Keep this deliberately invalid source newer than the shared theme:
+                                    // native deployment must decode it instead of trashing an older copy.
+                                    val invalidTheme = "config_version: '999.0'\nname: T12 invalid theme\nstyle: {candidate_text_size: not_a_number}\npreset_color_schemes: {t12_invalid: {name: Invalid}}\n"
                                     write(checkNotNull(badTheme), invalidTheme)
                                     suspend fun assertRestored(label: String, failure: Throwable?, deploymentBefore: Int) {
                                         check(failure is ConfigurationImportException && failure.previousConfigurationRestored) {

@@ -430,6 +430,7 @@ object RimeDataSync {
                 index.entries.toMutableMap()
             }
             val changed = mutableListOf<String>()
+            val validatedSources = mutableMapOf<String, String>()
             var totalBytes = 0L
             var validated = 0
             var skipped = 0
@@ -474,8 +475,12 @@ object RimeDataSync {
                     }
                 }
                 check(entry.file.length <= 0 || bytes == entry.file.length) { "Incomplete document: $path" }
-                if (ConfigImportValidator.validate(staged, path)) validated++
                 val sha = SyncFingerprint.hex(digest.digest())
+                if (ConfigImportValidator.validate(staged, path)) {
+                    validated++
+                    // user.yaml is mutable native state, not an immutable scheme/theme source.
+                    if (path != DataManager.USER_CONFIG_FILE_NAME) validatedSources[path] = sha
+                }
                 val recordedSize = if (entry.file.length > 0 || bytes == 0L) entry.file.length else bytes
                 nextEntries[path] = SyncEntry(recordedSize, entry.file.lastModified, sha)
                 if (destination.isFile && destination.length() == bytes && SyncFingerprint.of(destination) == sha) {
@@ -502,11 +507,13 @@ object RimeDataSync {
                     importContext.ensureActive()
                     if (activate != null && (requiresDeployment || activateUnchanged)) {
                         beforePublish?.invoke()
-                        transaction.snapshotRuntime()
+                        // Native config deployment can move even an unchanged source to trash.
+                        transaction.snapshotRuntime(validatedSources.keys - changed.toSet())
                     }
                     changed.forEach(transaction::publish)
                     orphans.forEach(transaction::delete)
                     activate?.invoke(stats)
+                    transaction.verifySources(validatedSources)
                     importContext.ensureActive()
                     // No suspension separates source/cache activation from index/tree commit.
                     saveIndex(SyncIndexData(tree.toString(), nextEntries))

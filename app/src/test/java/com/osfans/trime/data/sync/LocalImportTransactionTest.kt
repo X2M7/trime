@@ -65,10 +65,17 @@ class LocalImportTransactionTest :
                 write(root, "user.yaml", "old schema choice")
                 write(root, "installation.yaml", "old installation")
                 write(root, "custom_phrase.txt", "retained dictionary")
+                write(root, "unchanged.trime.yaml", "original unchanged theme")
+                write(root, "trash/previous.yaml", "original retained trash")
                 val transaction = LocalImportTransaction(root)
                 transaction.stageFile("default.custom.yaml").writeText("new source")
                 transaction.stageFile("new.schema.yaml").writeText("new schema")
-                transaction.snapshotRuntime()
+                val expectedSources = linkedMapOf(
+                    "unchanged.trime.yaml" to SyncFingerprint.of(File(root, "unchanged.trime.yaml")),
+                    "default.custom.yaml" to SyncFingerprint.of(transaction.stageFile("default.custom.yaml")),
+                    "new.schema.yaml" to SyncFingerprint.of(transaction.stageFile("new.schema.yaml")),
+                )
+                transaction.snapshotRuntime(listOf("unchanged.trime.yaml"))
                 transaction.publish("default.custom.yaml")
                 transaction.publish("new.schema.yaml")
                 val failure = shouldThrowAny {
@@ -76,8 +83,12 @@ class LocalImportTransactionTest :
                     write(root, "build/failed.prism.bin", "failed binary")
                     write(root, "user.yaml", "failed schema choice")
                     write(root, "installation.yaml", "changed installation")
-                    throw IOException("activation failed")
+                    check(File(root, "new.schema.yaml").renameTo(File(root, "trash/new.schema.yaml")))
+                    check(File(root, "unchanged.trime.yaml").renameTo(File(root, "trash/unchanged.trime.yaml")))
+                    write(root, "trash/previous.yaml", "native replaced retained trash")
+                    transaction.verifySources(expectedSources)
                 }
+                failure.message shouldBe "Native activation changed validated configuration source: unchanged.trime.yaml"
                 transaction.rollback(failure) shouldBe true
                 File(root, "default.custom.yaml").readText() shouldBe "old source"
                 File(root, "new.schema.yaml").exists() shouldBe false
@@ -87,6 +98,10 @@ class LocalImportTransactionTest :
                 File(root, "user.yaml").readText() shouldBe "old schema choice"
                 File(root, "installation.yaml").readText() shouldBe "old installation"
                 File(root, "custom_phrase.txt").readText() shouldBe "retained dictionary"
+                File(root, "unchanged.trime.yaml").readText() shouldBe "original unchanged theme"
+                File(root, "trash/previous.yaml").readText() shouldBe "original retained trash"
+                File(root, "trash/new.schema.yaml").exists() shouldBe false
+                File(root, "trash/unchanged.trime.yaml").exists() shouldBe false
             } finally {
                 parent.deleteRecursively()
             }

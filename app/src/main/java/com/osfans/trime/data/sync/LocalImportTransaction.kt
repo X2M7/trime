@@ -65,12 +65,16 @@ internal class LocalImportTransaction(private val root: File) {
     }
 
     /** The engine can update these files during activation even when they were not imported. */
-    fun snapshotRuntime() {
+    fun snapshotRuntime(additionalSources: Collection<String> = emptyList()) {
         check(runtimeSnapshots.isEmpty())
         var bytes = 0L
         var files = 0
         val snapshots = mutableListOf<Pair<String, Boolean>>()
-        listOf("build", "opencc", "user.yaml", "installation.yaml").forEach { path ->
+        val runtimePaths = listOf("build", "opencc", "trash", "user.yaml", "installation.yaml")
+        val sourcePaths = additionalSources.distinct().filter { source ->
+            runtimePaths.none { source == it || source.startsWith("$it/") }
+        }
+        (runtimePaths + sourcePaths).forEach { path ->
             val source = resolve(root, path)
             val exists = source.exists()
             snapshots.add(path to exists)
@@ -83,6 +87,17 @@ internal class LocalImportTransaction(private val root: File) {
             }
         }
         runtimeSnapshots.addAll(snapshots)
+    }
+
+    /** Native deployment may not silently discard or rewrite validated source configuration. */
+    fun verifySources(expected: Map<String, String>) {
+        check(!closed)
+        expected.forEach { (path, expectedSha) ->
+            val source = resolve(root, path)
+            check(source.isFile && SyncFingerprint.of(source) == expectedSha) {
+                "Native activation changed validated configuration source: $path"
+            }
+        }
     }
 
     fun commit() {
