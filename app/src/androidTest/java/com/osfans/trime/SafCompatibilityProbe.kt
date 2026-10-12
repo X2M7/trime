@@ -21,6 +21,7 @@ import androidx.core.net.toUri
 import com.osfans.trime.core.RimeMaintenanceMutex
 import com.osfans.trime.data.base.DataManager
 import com.osfans.trime.data.prefs.AppPrefs
+import com.osfans.trime.data.sync.ConfigurationImportException
 import com.osfans.trime.data.sync.RimeDataSync
 import com.osfans.trime.data.sync.SafDirectoryListing
 import com.osfans.trime.data.sync.SyncEntry
@@ -238,7 +239,8 @@ object SafCompatibilityProbe {
             val cache = FixtureSafPathCache(FixtureSafTreeListing(emptyList(), mapOf("" to rootId)), rootId)
             try {
                 untracked.writeText("personal")
-                source.writeText("old")
+                val importedYaml = "value: old\n"
+                source.writeText(importedYaml)
                 migration.setValue(false)
                 val personalDb = File(DataManager.userDataDir, binaryNames.first())
                 check(personalDb.mkdir())
@@ -250,7 +252,7 @@ object SafCompatibilityProbe {
                 check(untracked.readText() == "personal")
                 check(File(personalDb, "LOG").readText() == "personal-learning")
                 check(!File(DataManager.userDataDir, binaryNames.last()).exists())
-                check(File(DataManager.userDataDir, portableName).readText() == "old")
+                check(File(DataManager.userDataDir, portableName).readText() == importedYaml)
                 val history = RimeDataSync.indexSnapshotForTesting().entries
                 check(names.all { history[it]?.localSha256?.length == 64 })
                 val edited = File(DataManager.userDataDir, names.first())
@@ -271,7 +273,26 @@ object SafCompatibilityProbe {
                     FixtureAtomicSafFileCopy.copyFromFile(cr, tree, cache, source, blockedName, "", blockedName)
                     check(blocked.mkdir())
                     check(RimeDataSync.importToLocal(showProgress = false).isFailure)
-                    check(RimeDataSync.importThemeToLocal(blockedName.removeSuffix(".yaml")).isFailure)
+                    var activationAttempted = false
+                    fun unexpectedActivation(): Nothing {
+                        activationAttempted = true
+                        error("Blocked import reached activation")
+                    }
+                    val themeFailure = runCatching {
+                        RimeDataSync.importThemeToLocal(
+                            blockedName.removeSuffix(".yaml"),
+                            beforePublish = { unexpectedActivation() },
+                            beforeRollback = { unexpectedActivation() },
+                            afterRollback = { unexpectedActivation() },
+                            activationContext = { unexpectedActivation() },
+                            rememberSelection = { unexpectedActivation() },
+                            restoreSelection = { unexpectedActivation() },
+                            activate = { unexpectedActivation() },
+                        )
+                    }.exceptionOrNull()
+                    check(themeFailure is ConfigurationImportException)
+                    check(themeFailure.previousConfigurationRestored && !activationAttempted)
+                    check(themeFailure.cause?.message == "Import destination is not a file: $blockedName")
                     check(blocked.isDirectory && untracked.readText() == "personal")
                     check(blockedName !in RimeDataSync.indexSnapshotForTesting().entries)
                 } finally {
