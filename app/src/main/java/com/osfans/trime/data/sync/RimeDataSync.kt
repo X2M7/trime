@@ -357,26 +357,9 @@ object RimeDataSync {
         }
         val previousTree = prefs.externalRimeTreeUri.getValue()
         val previousMode = prefs.dataStorageMode.getValue()
-        try {
-            val stats = importValidatedTree(
-                tree,
-                activate,
-                rememberTree = {
-                    rememberStorageChoice(DataStorageMode.EXTERNAL_SYNC, tree.toString())
-                },
-                beforePublish = beforePublish,
-                beforeRollback = beforeRollback,
-                afterRollback = afterRollback,
-                activationContext = activationContext,
-                onCommitted = onCommitted,
-            )
-            if (previousTree.isNotBlank() && previousTree != tree.toString()) {
-                runCatching { StorageAccess.releasePersistedPermission(previousTree.toUri()) }
-                    .onFailure { Timber.w(it, "Unable to release the previous data folder") }
-            }
-            stats
-        } catch (failure: Throwable) {
-            withContext(NonCancellable) {
+        val commitBoundary = ImportCommitBoundary()
+        commitBoundary.preserveChoice(
+            restorePreviousChoice = { failure ->
                 runCatching {
                     rememberStorageChoice(previousMode, previousTree)
                 }.exceptionOrNull()?.let {
@@ -387,8 +370,27 @@ object RimeDataSync {
                     runCatching { StorageAccess.releasePersistedPermission(tree) }
                         .exceptionOrNull()?.let(failure::addSuppressed)
                 }
-            }
-            throw failure
+            },
+            releasePreviousChoice = {
+                if (previousTree.isNotBlank() && previousTree != tree.toString()) {
+                    runCatching { StorageAccess.releasePersistedPermission(previousTree.toUri()) }
+                        .onFailure { Timber.w(it, "Unable to release the previous data folder") }
+                }
+            },
+        ) {
+            importValidatedTree(
+                tree,
+                activate,
+                rememberTree = {
+                    rememberStorageChoice(DataStorageMode.EXTERNAL_SYNC, tree.toString())
+                },
+                beforePublish = beforePublish,
+                beforeRollback = beforeRollback,
+                afterRollback = afterRollback,
+                activationContext = activationContext,
+                onCommitted = onCommitted,
+                commitBoundary = commitBoundary,
+            )
         }
     }
 
@@ -404,6 +406,7 @@ object RimeDataSync {
         singleFileName: String? = null,
         activateUnchanged: Boolean = false,
         restorePreference: (() -> Unit)? = null,
+        commitBoundary: ImportCommitBoundary? = null,
     ): SyncStats {
         val root = DataManager.userDataDir
         val storedIndex = indexFile.takeIf { it.isFile }?.readBytes()
@@ -524,8 +527,14 @@ object RimeDataSync {
                     rememberTree?.invoke()
                     transaction.commit()
                     committed = true
+                    commitBoundary?.markCommitted()
                     onCommitted?.invoke()
                 } catch (failure: Throwable) {
+                    if (transaction.isCommitted) {
+                        committed = true
+                        commitBoundary?.markCommitted()
+                        throw failure
+                    }
                     val stopped = runCatching { beforeRollback?.invoke() }.exceptionOrNull()?.let {
                         failure.addSuppressed(it)
                         false

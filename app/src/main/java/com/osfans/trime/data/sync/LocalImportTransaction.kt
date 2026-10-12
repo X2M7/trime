@@ -21,6 +21,8 @@ internal class LocalImportTransaction(private val root: File) {
     private val runtimeSnapshots = mutableListOf<Pair<String, Boolean>>()
     private val createdDirectories = mutableSetOf<File>()
     private var closed = false
+    var isCommitted = false
+        private set
 
     init {
         require(root.isDirectory && root.canonicalFile == root.absoluteFile) { "Import root is unavailable or indirect" }
@@ -103,6 +105,7 @@ internal class LocalImportTransaction(private val root: File) {
     fun commit() {
         check(!closed)
         closed = true
+        isCommitted = true
         // A failed cleanup never authorizes destroying the newly activated configuration.
         workspace.deleteRecursively()
     }
