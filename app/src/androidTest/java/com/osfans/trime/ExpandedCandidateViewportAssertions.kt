@@ -146,6 +146,9 @@ object ExpandedCandidateViewportAssertions {
 
         fun pixelOffset(window: FlexboxUnrolledCandidateWindow, recycler: RecyclerView, holder: CandidateViewHolder): Int = window.layoutManager.getDecoratedTop(holder.itemView) - recycler.paddingTop
 
+        fun settled(recycler: RecyclerView): Boolean = recycler.scrollState == RecyclerView.SCROLL_STATE_IDLE &&
+            recycler.isLaidOut && !recycler.isLayoutRequested && !recycler.isComputingLayout && !recycler.hasPendingAdapterUpdates()
+
         // Test-only diagnostics read live state on the main thread and never alter it.
         fun field(owner: Any, name: String): Any? {
             var type: Class<*>? = owner.javaClass
@@ -295,28 +298,32 @@ object ExpandedCandidateViewportAssertions {
                 initialList.stopScroll()
             }
             until("physical-scroll-idle", { viewport(initial, initialList, initialIndex) }) {
-                initialList.scrollState == RecyclerView.SCROLL_STATE_IDLE && !initialList.isLayoutRequested &&
+                settled(initialList) &&
                     compact.adapter.snapshot == snapshot && initial.adapter.snapshot == snapshot &&
                     first(initial, initialList)?.let { it.snapshot == snapshot && it.idx > initialIndex } == true
             }
+            var partialRowHeight = 0
             val partial = main {
                 val holder = checkNotNull(first(initial, initialList))
                 check(holder.itemView.height > 9)
-                // Reproduce the 80px row at -71px: only its bottom nine pixels remain visible.
+                partialRowHeight = holder.itemView.height
+                // Only the bottom nine pixels of this same row should remain visible.
                 val wantedOffset = 9 - holder.itemView.height
-                initialList.scrollBy(0, pixelOffset(initial, initialList, holder) - wantedOffset)
-                initialList.stopScroll()
                 CandidateIdentity(holder.snapshot, holder.idx) to wantedOffset
             }
+            val partialScrollHistory = ArrayList<JSONObject>(8)
             var capturedSelected: Triple<CandidateIdentity, Int, CandidateIdentity>? = null
             until(
                 "partial-leading-row",
-                { viewport(initial, initialList, partial.first.index, partial.second) },
+                {
+                    viewport(initial, initialList, partial.first.index, partial.second)
+                        .put("fixture_scroll_adjustments", JSONArray(partialScrollHistory))
+                },
                 onSatisfied = {
                     check(capturedSelected == null) { "Expanded candidate collapse was captured more than once" }
                     // Predicate, row sampling and collapse share one main-thread dispatch.
                     capturedSelected = run {
-                        check(initialList.scrollState == RecyclerView.SCROLL_STATE_IDLE && !initialList.isLayoutRequested)
+                        check(settled(initialList))
                         check(compact.adapter.snapshot == snapshot && initial.adapter.snapshot == snapshot)
                         val holder = checkNotNull(first(initial, initialList))
                         check(holder.snapshot == snapshot && holder.idx > initialIndex)
@@ -346,10 +353,41 @@ object ExpandedCandidateViewportAssertions {
                     }
                 },
             ) {
-                initialList.scrollState == RecyclerView.SCROLL_STATE_IDLE && !initialList.isLayoutRequested &&
-                    first(initial, initialList)?.let {
-                        CandidateIdentity(it.snapshot, it.idx) == partial.first && pixelOffset(initial, initialList, it) == partial.second
-                    } == true
+                if (!settled(initialList) || !manager.isAttached(initial) || !service.isCurrentEditor(snapshot.editorToken) ||
+                    compact.adapter.snapshot != snapshot || initial.adapter.snapshot != snapshot
+                ) {
+                    return@until false
+                }
+                val holder = first(initial, initialList) ?: return@until false
+                if (CandidateIdentity(holder.snapshot, holder.idx) != partial.first) return@until false
+                check(holder.itemView.height == partialRowHeight) { "Partial candidate row height changed" }
+                val beforeOffset = pixelOffset(initial, initialList, holder)
+                if (beforeOffset == partial.second) return@until true
+                check(partialScrollHistory.size < 8) { "Unable to prepare exact partial candidate viewport after eight scrolls" }
+                val requested = beforeOffset - partial.second
+                val beforeState = callbackState(initial, initialList, partial.first.index)
+                var consumed = 0
+                val observer = object : RecyclerView.OnScrollListener() {
+                    override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                        consumed += dy
+                    }
+                }
+                // scrollBy can consume pending layout work and only part of the requested
+                // distance. Prepare the fixture on settled frames; never relax its target.
+                initialList.addOnScrollListener(observer)
+                try {
+                    initialList.scrollBy(0, requested)
+                    initialList.stopScroll()
+                } finally {
+                    initialList.removeOnScrollListener(observer)
+                }
+                val diagnostic = JSONObject().put("attempt", partialScrollHistory.size + 1)
+                    .put("requested_dy", requested).put("on_scrolled_dy", consumed)
+                    .put("before", beforeState).put("after", callbackState(initial, initialList, partial.first.index))
+                partialScrollHistory.add(diagnostic)
+                phase("partial-leading-row-adjustment", "OBSERVED", diagnostic)
+                // Recheck identity and exact offset on the next settled frame before collapse.
+                false
             }
             val selected = checkNotNull(capturedSelected)
             checks++
