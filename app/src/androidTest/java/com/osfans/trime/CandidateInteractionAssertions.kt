@@ -3,6 +3,7 @@ package com.osfans.trime
 
 import android.app.Instrumentation
 import android.os.SystemClock
+import android.view.InputDevice
 import android.view.MotionEvent
 import com.osfans.trime.core.CandidateSnapshot
 import com.osfans.trime.data.prefs.AppPrefs
@@ -25,6 +26,7 @@ object CandidateInteractionAssertions {
             fun touch(action: Int) {
                 val now = SystemClock.uptimeMillis()
                 val event = MotionEvent.obtain(now, now, action, 20f, 20f, 0)
+                event.source = InputDevice.SOURCE_TOUCHSCREEN
                 try {
                     check(view.onTouchEvent(event))
                 } finally {

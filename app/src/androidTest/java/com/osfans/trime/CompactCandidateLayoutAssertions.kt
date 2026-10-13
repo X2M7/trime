@@ -7,6 +7,7 @@ import android.graphics.Canvas
 import android.graphics.drawable.ShapeDrawable
 import android.graphics.drawable.shapes.RectShape
 import android.os.SystemClock
+import android.view.InputDevice
 import android.view.MotionEvent
 import android.view.View
 import android.widget.FrameLayout
@@ -33,6 +34,7 @@ object CompactCandidateLayoutAssertions {
         val selected: CandidateIdentity,
         val expectedText: String,
         val legacyRelayoutResetObserved: Boolean,
+        val scrollDiagnostics: String,
     )
 
     fun verify(instrumentation: Instrumentation, candidates: Array<CandidateProto>, snapshot: CandidateSnapshot): Outcome {
@@ -87,6 +89,7 @@ object CompactCandidateLayoutAssertions {
 
                 fun event(view: RecyclerView, down: Long, action: Int, x: Float, y: Float) {
                     val event = MotionEvent.obtain(down, SystemClock.uptimeMillis(), action, x, y, 0)
+                    event.source = InputDevice.SOURCE_TOUCHSCREEN
                     try {
                         check(view.dispatchTouchEvent(event))
                     } finally {
@@ -123,9 +126,31 @@ object CompactCandidateLayoutAssertions {
                     val manager = CompactCandidateLayoutManagers.create(context, true)
                     check(manager is LinearLayoutManager && manager.orientation == LinearLayoutManager.HORIZONTAL)
                     val view = fixture(manager, true)
-                    swipe(view)
-                    val scrolled = anchor(view)
-                    check(scrolled.first > 0 && clicks.isEmpty()) { "Actual horizontal view did not scroll safely" }
+                    val initial = anchor(view)
+                    check(initial.first == 0) { "Horizontal fixture did not start at the first candidate: $initial" }
+                    val firstItemWidth = manager.getDecoratedMeasuredWidth(checkNotNull(manager.findViewByPosition(0)))
+                    val anchors = mutableListOf(initial)
+                    var scrolled = initial
+                    var swipes = 0
+                    fun scrollDiagnostics() = "width=$width height=$height firstItemWidth=$firstItemWidth anchors=$anchors swipes=$swipes density=${context.resources.displayMetrics.density} fontScale=${context.resources.configuration.fontScale} touchSource=${InputDevice.SOURCE_TOUCHSCREEN} clicks=$clicks"
+                    // A large candidate may need more than the fixed 192dp gesture to leave
+                    // the viewport. Every real swipe must move forward without selecting;
+                    // the original nonzero-index and later relayout/commit checks still apply.
+                    while (scrolled.first == 0 && swipes < 8) {
+                        val beforeSwipe = scrolled
+                        swipe(view)
+                        swipes++
+                        scrolled = anchor(view)
+                        anchors.add(scrolled)
+                        check(
+                            (
+                                scrolled.first > beforeSwipe.first ||
+                                    (scrolled.first == beforeSwipe.first && scrolled.second < beforeSwipe.second)
+                                ) &&
+                                clicks.isEmpty(),
+                        ) { "Actual horizontal gesture did not move forward safely: ${scrollDiagnostics()}" }
+                    }
+                    check(scrolled.first > 0 && clicks.isEmpty()) { "Actual horizontal view did not scroll safely: ${scrollDiagnostics()}" }
                     checks++
                     repeat(2) {
                         layout(view)
@@ -165,7 +190,7 @@ object CompactCandidateLayoutAssertions {
                     layout(view)
                     check((0 until view.childCount).all { view.getChildAt(it).layoutParams is RecyclerView.LayoutParams && view.getChildAt(it).layoutParams !is FlexboxLayoutManager.LayoutParams })
                     checks++
-                    Outcome(checks, expected, candidates[expected.index].text, legacyReset)
+                    Outcome(checks, expected, candidates[expected.index].text, legacyReset, scrollDiagnostics())
                 } finally {
                     fixtures.forEach {
                         it.stopScroll()

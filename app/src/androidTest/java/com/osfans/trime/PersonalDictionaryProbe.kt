@@ -307,7 +307,7 @@ object PersonalDictionaryProbe {
                             }
                         }
                     }
-                    phase("${layoutOutcome.checks} production candidate layout/touch checks preserve first-visible index and pixel offset through two relayouts, restore both parameter modes and select the real native index exactly once; legacy NOWRAP relayout reset observed=${layoutOutcome.legacyRelayoutResetObserved}; no screenshot claim")
+                    phase("${layoutOutcome.checks} production candidate layout/touch checks preserve first-visible index and pixel offset through two relayouts, restore both parameter modes and select the real native index exactly once; legacy NOWRAP relayout reset observed=${layoutOutcome.legacyRelayoutResetObserved}; ${layoutOutcome.scrollDiagnostics}; no screenshot claim")
                     current = query(rankSchema, "a")
                     val commitsBeforeInvalidIndices = synchronized(commits) { commits.size }
                     var invalidIndexChecks = 0

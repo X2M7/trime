@@ -7,6 +7,7 @@ import android.graphics.Rect
 import android.os.Bundle
 import android.os.SystemClock
 import android.util.TypedValue
+import android.view.InputDevice
 import android.view.KeyEvent
 import android.view.MotionEvent
 import android.view.View
@@ -228,6 +229,7 @@ class T9LayoutProbe(
 
     private fun touch(view: View, action: Int, down: Long, x: Float = view.width / 2f) = main {
         MotionEvent.obtain(down, SystemClock.uptimeMillis(), action, x, view.height / 2f, 0).let {
+            it.source = InputDevice.SOURCE_TOUCHSCREEN
             try {
                 view.dispatchTouchEvent(it)
             } finally {

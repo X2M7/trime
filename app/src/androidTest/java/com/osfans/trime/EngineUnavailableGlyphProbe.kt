@@ -12,6 +12,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.SystemClock
 import android.view.Gravity
+import android.view.InputDevice
 import android.view.KeyEvent
 import android.view.MotionEvent
 import android.view.View
@@ -307,6 +308,7 @@ object EngineUnavailableGlyphProbe {
                         val down = SystemClock.uptimeMillis()
                         for (action in listOf(MotionEvent.ACTION_DOWN, MotionEvent.ACTION_UP)) {
                             val event = MotionEvent.obtain(down, SystemClock.uptimeMillis(), action, point.first, point.second, 0)
+                            event.source = InputDevice.SOURCE_TOUCHSCREEN
                             try {
                                 instrumentation.sendPointerSync(event)
                             } finally {

@@ -1400,6 +1400,7 @@ object EditorLifecycleProbe {
                             val down = SystemClock.uptimeMillis()
                             for (action in listOf(MotionEvent.ACTION_DOWN, MotionEvent.ACTION_UP)) {
                                 val event = MotionEvent.obtain(down, SystemClock.uptimeMillis(), action, target.width / 2f, target.height / 2f, 0)
+                                event.source = InputDevice.SOURCE_TOUCHSCREEN
                                 try {
                                     check(target.dispatchTouchEvent(event)) { "Actual Shift gesture was not accepted" }
                                 } finally {
@@ -2609,6 +2610,7 @@ object EditorLifecycleProbe {
                     val down = SystemClock.uptimeMillis()
                     main {
                         MotionEvent.obtain(down, down, MotionEvent.ACTION_DOWN, heldKey.width / 2f, heldKey.height / 2f, 0).let {
+                            it.source = InputDevice.SOURCE_TOUCHSCREEN
                             heldKey.dispatchTouchEvent(it)
                             it.recycle()
                         }
@@ -2617,6 +2619,7 @@ object EditorLifecycleProbe {
                     focus(other)
                     main {
                         MotionEvent.obtain(down, SystemClock.uptimeMillis(), MotionEvent.ACTION_UP, heldKey.width / 2f, heldKey.height / 2f, 0).let {
+                            it.source = InputDevice.SOURCE_TOUCHSCREEN
                             heldKey.dispatchTouchEvent(it)
                             it.recycle()
                         }

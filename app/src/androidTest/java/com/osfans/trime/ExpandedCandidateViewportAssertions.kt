@@ -5,6 +5,7 @@ import android.app.Instrumentation
 import android.graphics.Rect
 import android.os.Bundle
 import android.os.SystemClock
+import android.view.InputDevice
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
@@ -100,6 +101,7 @@ object ExpandedCandidateViewportAssertions {
 
         fun event(view: View, down: Long, action: Int, x: Float, y: Float) {
             val motion = MotionEvent.obtain(down, SystemClock.uptimeMillis(), action, x, y, 0)
+            motion.source = InputDevice.SOURCE_TOUCHSCREEN
             try {
                 check(view.dispatchTouchEvent(motion))
             } finally {

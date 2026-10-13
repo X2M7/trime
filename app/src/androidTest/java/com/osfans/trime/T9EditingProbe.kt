@@ -8,6 +8,7 @@ import android.graphics.Bitmap
 import android.os.Build
 import android.os.Bundle
 import android.os.SystemClock
+import android.view.InputDevice
 import android.view.KeyEvent
 import android.view.MotionEvent
 import android.view.View
@@ -293,6 +294,7 @@ object T9EditingProbe {
                             }
                             fun touch(action: Int, down: Long) = main {
                                 val event = MotionEvent.obtain(down, SystemClock.uptimeMillis(), action, delete.width / 2f, delete.height / 2f, 0)
+                                event.source = InputDevice.SOURCE_TOUCHSCREEN
                                 try {
                                     delete.dispatchTouchEvent(event)
                                 } finally {
