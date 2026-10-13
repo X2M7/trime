@@ -6,7 +6,10 @@ do not authorize changing this minimum.
 
 The base audit checked published AAR manifests and POM dependencies on
 2026-10-07. Paging was re-audited on 2026-10-09: the official runtime AAR
-manifests declare minSdk 21 for 3.3.6 and minSdk 23 for 3.5.2.
+manifests declare minSdk 21 for 3.3.6 and minSdk 23 for 3.5.2. The 2026-10-14
+re-audit of both official runtime and runtime-ktx AARs confirms minSdk 21 for
+3.3.6 and minSdk 23 for the newly suggested 3.5.3. Keep the compatible version;
+update only the exact audited version-notification exception.
 
 | Dependency | Selected | Incompatible update | Reason |
 | --- | --- | --- | --- |
@@ -15,7 +18,7 @@ manifests declare minSdk 21 for 3.3.6 and minSdk 23 for 3.5.2.
 | AppCompat | 1.7.1 | 1.8.0 | minSdk 23 |
 | Navigation | 2.9.8 | 2.10.2 | runtime-android minSdk 24 |
 | Room | 2.7.2 | 2.8.5 | runtime-android minSdk 23 |
-| Paging | 3.3.6 | 3.5.2 | runtime minSdk 23 |
+| Paging | 3.3.6 | 3.5.3 | runtime and runtime-ktx minSdk 23 |
 | WorkManager | 2.10.5 | 2.12.0 | runtime minSdk 24 |
 
 The version catalog uses strict versions at these boundaries. Manifest merger
@@ -27,7 +30,7 @@ and versions only, never disable all dependency checks or create a general basel
 `app/lint.xml` exempts exactly 11 `GradleDependency` update notices using seven
 narrowly anchored patterns: Navigation has two coordinates, Room has four,
 and Activity, AppCompat, Core, Paging and WorkManager have one each. The Paging
-pattern now matches only the re-audited 3.3.6-to-3.5.2 notice. Room's build-time
+pattern now matches only the re-audited 3.3.6-to-3.5.3 notice. Room's build-time
 compiler is kept aligned with its API-21-compatible
 runtime; the compiler itself is not an Android runtime library. A change to a
 selected version or suggested update stops matching the exception. Lint warnings
@@ -52,6 +55,8 @@ Primary references:
 - [Paging releases](https://developer.android.com/jetpack/androidx/releases/paging)
 - [Paging 3.3.6 runtime AAR](https://dl.google.com/dl/android/maven2/androidx/paging/paging-runtime/3.3.6/paging-runtime-3.3.6.aar)
 - [Paging 3.5.2 runtime AAR](https://dl.google.com/dl/android/maven2/androidx/paging/paging-runtime/3.5.2/paging-runtime-3.5.2.aar)
+- [Paging 3.5.3 runtime AAR](https://dl.google.com/dl/android/maven2/androidx/paging/paging-runtime/3.5.3/paging-runtime-3.5.3.aar)
+- [Paging 3.5.3 runtime-ktx AAR](https://dl.google.com/dl/android/maven2/androidx/paging/paging-runtime-ktx/3.5.3/paging-runtime-ktx-3.5.3.aar)
 - [WorkManager releases](https://developer.android.com/jetpack/androidx/releases/work)
 - [Core 1.17 AAR](https://dl.google.com/dl/android/maven2/androidx/core/core/1.17.0/core-1.17.0.aar)
 - [Core 1.18 AAR](https://dl.google.com/dl/android/maven2/androidx/core/core/1.18.0/core-1.18.0.aar)
