@@ -417,7 +417,7 @@ object SetupClosedLoopProbe {
             val viewport = main {
                 var parent = advanced.parent
                 while (parent != null && parent !is ScrollView) parent = parent.parent
-                val scroll = checkNotNull(parent as? ScrollView)
+                val scroll = checkNotNull(parent)
                 val visible = Rect()
                 check(scroll.getGlobalVisibleRect(visible) && visible.height() > 64)
                 visible
