@@ -29,6 +29,8 @@ import android.widget.TextView
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.children
 import androidx.navigation.fragment.NavHostFragment
+import com.hjq.permissions.Permission
+import com.hjq.permissions.XXPermissions
 import com.osfans.trime.core.RimeApi
 import com.osfans.trime.core.RimeMessage
 import com.osfans.trime.daemon.RimeDaemon
@@ -269,8 +271,7 @@ object SetupClosedLoopProbe {
             instrumentation.runOnMainSync { outcome = runCatching(block) }
             return checkNotNull(outcome).getOrThrow()
         }
-        fun await(message: String, condition: () -> Boolean) {
-            val deadline = SystemClock.uptimeMillis() + 60_000
+        fun await(message: String, deadline: Long = SystemClock.uptimeMillis() + 60_000, condition: () -> Boolean) {
             while (!condition()) {
                 check(SystemClock.uptimeMillis() < deadline) { message }
                 SystemClock.sleep(50)
@@ -457,19 +458,30 @@ object SetupClosedLoopProbe {
                         .filterIsInstance<Toolbar>().any { it.menu.findItem(R.id.action_deploy) != null }
                 }
             }
-            // Menu installation and this title-specific app prompt occur in the same main callback.
-            val notificationRoot = main {
-                val matches = windowRoots().filter { root ->
-                    root.isShown && root.hasWindowFocus() && owner(root.context) === host &&
-                        descendants(root).filterIsInstance<TextView>()
-                            .any { it.isShown && it.text.toString() == activity.getString(R.string.notification_permission_title) }
-                }
-                check(matches.size <= 1) { "Ambiguous notification-permission prompt" }
-                matches.singleOrNull()
+            // Dialog.show() adds the prompt during menu installation, but its
+            // first layout and window focus arrive asynchronously. A prompt
+            // without focus yet must not be mistaken for an absent prompt.
+            val promptAndFocusDeadline = SystemClock.uptimeMillis() + 60_000
+            val expectsNotificationPrompt = main {
+                !XXPermissions.isGranted(checkNotNull(host), Permission.POST_NOTIFICATIONS)
             }
-            if (notificationRoot != null) {
+            if (expectsNotificationPrompt) {
+                var notificationRoot: View? = null
+                await("The required exact notification-permission prompt did not appear", promptAndFocusDeadline) {
+                    main {
+                        val matches = windowRoots().filter { root ->
+                            root.isShown && owner(root.context) === host &&
+                                descendants(root).filterIsInstance<TextView>()
+                                    .any { it.isShown && it.text.toString() == activity.getString(R.string.notification_permission_title) }
+                        }
+                        check(matches.size <= 1) { "Ambiguous notification-permission prompt" }
+                        notificationRoot = matches.singleOrNull()
+                        notificationRoot != null
+                    }
+                }
+                val prompt = checkNotNull(notificationRoot)
                 val cancel = main {
-                    val matches = descendants(notificationRoot).filterIsInstance<Button>()
+                    val matches = descendants(prompt).filterIsInstance<Button>()
                         .filter {
                             it.id == android.R.id.button2 && it.isShown && it.isEnabled &&
                                 it.text.toString().equals(activity.getString(android.R.string.cancel), ignoreCase = true)
@@ -478,10 +490,19 @@ object SetupClosedLoopProbe {
                     check(matches.size == 1) { "The exact notification-permission Cancel button is missing" }
                     matches.single()
                 }
+                await("The exact notification-permission Cancel button did not become focused and fully visible", promptAndFocusDeadline) {
+                    main {
+                        val full = bounds(cancel)
+                        val visible = Rect()
+                        prompt.isShown && prompt.hasWindowFocus() && cancel.isShown && cancel.isEnabled &&
+                            cancel.isLaidOut && !cancel.isLayoutRequested && full.width() > 0 && full.height() > 0 &&
+                            cancel.getGlobalVisibleRect(visible) && visible == full
+                    }
+                }
                 touch(cancel, "actual-notification-permission-cancel-centre-down-up")
                 notificationCancels++
             }
-            await("Schema settings did not own a focused window after the actual permission Cancel touch") {
+            await("Schema settings did not own a focused window after settling the notification prompt", promptAndFocusDeadline) {
                 main {
                     val current = checkNotNull(host)
                     route = (current.supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as? NavHostFragment)
