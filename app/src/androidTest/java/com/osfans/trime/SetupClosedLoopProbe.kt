@@ -18,6 +18,7 @@ import android.view.InputDevice
 import android.view.KeyEvent
 import android.view.MotionEvent
 import android.view.View
+import android.view.ViewConfiguration
 import android.view.ViewGroup
 import android.view.inputmethod.BaseInputConnection
 import android.view.inputmethod.EditorInfo
@@ -307,6 +308,9 @@ object SetupClosedLoopProbe {
         var lastAdvanced = Rect()
         var lastTapX = 0
         var lastTapY = 0
+        var lastScrollY = 0
+        var lastGestureDistance = 0
+        var settledSamples = 0
         var focusedOwner = ""
         var route = ""
         var checkpointEqual = false
@@ -322,6 +326,9 @@ object SetupClosedLoopProbe {
                     putString("setup_footer_touch_advanced_rect", lastAdvanced.flattenToString())
                     putInt("setup_footer_touch_tap_x", lastTapX)
                     putInt("setup_footer_touch_tap_y", lastTapY)
+                    putInt("setup_footer_touch_scroll_y", lastScrollY)
+                    putInt("setup_footer_touch_gesture_distance", lastGestureDistance)
+                    putInt("setup_footer_touch_settled_samples", settledSamples)
                     putInt("setup_footer_touch_swipes", scrolls)
                     putInt("setup_footer_touch_backs", backs)
                     putInt("setup_footer_touch_notification_cancel_touches", notificationCancels)
@@ -409,9 +416,52 @@ object SetupClosedLoopProbe {
             activity.supportFragmentManager.fragments.filterIsInstance<SetupFragment>()
                 .first { it.setupPage == SetupPage.Try }.requireView().findViewById<Button>(R.id.advanced_button)
         }
+        val scroll = main {
+            var parent = advanced.parent
+            while (parent != null && parent !is ScrollView) parent = parent.parent
+            check(parent is ScrollView)
+            parent
+        }
+        val touchSlop = main { ViewConfiguration.get(activity).scaledTouchSlop }
+        val advancedDeadline = SystemClock.uptimeMillis() + 60_000
+        fun settleScroll() {
+            settledSamples = 0
+            var previous: Pair<Int, Rect>? = null
+            while (settledSamples < 4) {
+                check(SystemClock.uptimeMillis() < advancedDeadline) { "Advanced scroll did not settle before its original deadline" }
+                val sample = AtomicReference<Result<Triple<Int, Rect, Boolean>>?>(null)
+                main {
+                    scroll.postOnAnimation {
+                        sample.set(
+                            runCatching {
+                                Triple(
+                                    scroll.scrollY,
+                                    bounds(advanced),
+                                    activity.hasWindowFocus() && scroll.isShown && scroll.isLaidOut && !scroll.isLayoutRequested &&
+                                        advanced.isShown && advanced.isLaidOut && !advanced.isLayoutRequested &&
+                                        !activity.window.decorView.isLayoutRequested,
+                                )
+                            },
+                        )
+                    }
+                }
+                await("Advanced scroll frame did not arrive", advancedDeadline) { sample.get() != null }
+                val observed = checkNotNull(sample.get()).getOrThrow()
+                lastScrollY = observed.first
+                lastAdvanced = observed.second
+                val current = lastScrollY to lastAdvanced
+                settledSamples = if (observed.third) {
+                    if (current == previous) settledSamples + 1 else 1
+                } else {
+                    0
+                }
+                previous = current
+            }
+            record("advanced-scroll-settled")
+        }
         var fullyVisible = false
         for (attempt in 0..8) {
-            instrumentation.waitForIdleSync()
+            settleScroll()
             fullyVisible = main {
                 lastAdvanced = bounds(advanced)
                 val visible = Rect()
@@ -422,33 +472,52 @@ object SetupClosedLoopProbe {
             if (fullyVisible) break
             check(attempt < 8) { "Advanced never became fully visible above the actual footer" }
             val viewport = main {
-                var parent = advanced.parent
-                while (parent != null && parent !is ScrollView) parent = parent.parent
-                val scroll = checkNotNull(parent)
                 val visible = Rect()
-                check(scroll.getGlobalVisibleRect(visible) && visible.height() > 64)
+                check(scroll.getGlobalVisibleRect(visible))
+                visible.top = maxOf(visible.top, lastPager.top)
+                visible.bottom = minOf(visible.bottom, lastPager.bottom, lastFooterTop)
+                check(visible.height() > 64)
                 visible
             }
+            // Cover only the clipped bottom plus drag slop and a small visible margin.
+            // A full-page swipe can overshoot this short ScrollView and leave its edge effect active.
+            val gap = (lastAdvanced.bottom - viewport.bottom).coerceAtLeast(0)
+            lastGestureDistance = (gap + touchSlop * 2).coerceAtMost((viewport.height() * 0.6f).toInt())
+            check(lastGestureDistance > touchSlop)
             val x = viewport.exactCenterX()
             val start = viewport.top + viewport.height() * 0.8f
-            val end = viewport.top + viewport.height() * 0.2f
+            val end = start - lastGestureDistance
             val down = SystemClock.uptimeMillis()
+            settledSamples = 0
             motion(down, MotionEvent.ACTION_DOWN, x, start)
             for (step in 1..10) {
                 SystemClock.sleep(35)
                 motion(down, MotionEvent.ACTION_MOVE, x, start + (end - start) * step / 10f)
             }
+            // Keep real stationary MOVE samples for at least 200 ms before releasing;
+            // lifting immediately after the last moving sample can start another fling.
+            val stationaryStart = SystemClock.uptimeMillis()
+            repeat(4) {
+                SystemClock.sleep(50)
+                motion(down, MotionEvent.ACTION_MOVE, x, end)
+            }
+            check(SystemClock.uptimeMillis() - stationaryStart >= 200)
             motion(down, MotionEvent.ACTION_UP, x, end)
             scrolls++
+            main {
+                lastScrollY = scroll.scrollY
+                lastAdvanced = bounds(advanced)
+            }
             record("actual-scroll-to-advanced")
         }
         check(fullyVisible)
+        check(SystemClock.uptimeMillis() < advancedDeadline) { "Advanced touch preparation exceeded its original deadline" }
         val monitor = instrumentation.addMonitor(SetupAdvancedSettingsActivity::class.java.name, null, false)
         var host: SetupAdvancedSettingsActivity? = null
         var returnedThroughBack = false
         try {
             touch(advanced, "actual-advanced-centre-down-up")
-            await("Advanced touch did not open the standard schema settings host and its real toolbar") {
+            await("Advanced touch did not open the standard schema settings host and its real toolbar", advancedDeadline) {
                 (monitor.waitForActivityWithTimeout(50) as? SetupAdvancedSettingsActivity)?.let { host = it }
                 main {
                     val seen = windowRoots().asSequence().filter { it.isShown }
