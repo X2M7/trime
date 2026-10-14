@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Trime 九键拼音 · v3.3.13-t9.14 稳定版</title>
+  <title>Trime 九键拼音 · v3.3.13-t9.15</title>
   <meta name="description" content="Trime for Android fork with Luna Pinyin T9 keyboard support.">
   <style>
     :root {
@@ -370,12 +370,11 @@
   <main>
     <div class="wrap hero">
       <div>
-        <p class="eyebrow">Android RIME 输入法 · v3.3.13-t9.14 稳定版</p>
+        <p class="eyebrow">Android RIME 输入法 · v3.3.13-t9.15</p>
         <h1>Trime 九键拼音</h1>
-        <p><strong>v3.3.13-t9.14 本轮稳定版验收通过，线上发布状态以 Release 为准。</strong>增加默认关闭的轻量离线下一词联想，可在候选设置中开启。随附全拼、简化字和九键方案提交汉字后显示建议，只有明确点击当前建议才提交；数字键开始新九键输入，回车、空格、删除、标点和切换输入框取消旧建议。关闭设置、ASCII 或隐私模式清理联想上下文。6,364 字节的 CC0 示例模型默认显示最多 5 项、连续点击 1 轮，硬上限 8 项／2 轮；模型缺失或损坏仍可基础输入，已有 custom 配置不覆盖。</p>
-        <p>默认全拼与九键共享学习库。个人词库可导入、导出和备份恢复；常用短语可编辑、导入导出，修改前自动备份供恢复。候选可按方案及输入置顶、恢复排序，提供可选横向滚动、注释和全文阅读，并拒绝刷新后的旧手势。</p>
-        <p>Rime portable 快照导入合并记录，精确文件备份恢复替换受保护文件。忘记此词请求移除已学习记录，未学习词可能提示无法忘记；不永久屏蔽系统词，也不删除置顶。操作失败时显示输入法提示框。失败提示可在通知权限被拒绝时显示，切换编辑器会清理旧提示。支持 Shift 双击锁定并保留自定义主题动作。</p>
-        <p>本轮 715 项新执行应用 JVM 测试、227 项新执行宿主测试和 384 项原生检查通过；同一原生二进制的独立 384 项复测不重复计数，17＋6 项缓存结果单列。Debug／Release Lint 0 问题，构建及双 ABI Release 签名警告 0。Android 5.0 和 Android 15 x86_64 模拟器完成 9.13→9.14 正式版覆盖升级、Release／Debug 各 30 项联想检查、正式版两主题实点及 T10／隐私／T08／编辑器回归，包含快速输入 40 轮和显示隐藏 100 次。3,903／8,198 条原始 W/E/F 及完整控制台诊断保留，平台警告与环境风险未全部消除；Android 15 一次性 Debug WebView Renderer 退出与测试销毁时序相关，因果关系未证明。真机 P95/PSS、物理 ARM64/OEM/16KiB 页、TTS 与 SAF 选择器未测。</p>
+        <p><strong>v3.3.13-t9.15 · 首次使用与常用设置。</strong>首次设置串起启用、选用输入法、选择九键／全拼及简繁和中文试打；常用设置集中候选字号、键高、触感、模糊音与词库入口。</p>
+        <p>导入配置先校验与暂存，成功后激活，失败恢复上一次可用配置。已有 custom 配置保留，外观调整不触发无关部署。</p>
+        <p>Build25：775 项新执行应用 JVM 测试、227 项新执行宿主检查通过；Lint、构建与双 ABI Release 签名警告 0。四组生产原生库有本轮编译／链接工作；历史 384 项检查按 31 项输入绑定复用，本轮未重跑。Android 5.0／15 均通过全 10 项功能阶段、19 项首次设置／常用设置／导入、两主题 6 项触摸联想、Debug 设置 14 项与导入回滚 7 项。本页冻结于发布前，在线状态以版本 Release 页面为准。</p>
 
         <p class="lead">
           基于 Trime 的 GPL 开源 fork，加入 <code>朙月拼音九键</code> 方案和九宫格键盘布局。
@@ -386,9 +385,9 @@
           <a class="button secondary" href="https://github.com/X2M7/trime">查看源码</a>
         </div>
         <div class="meta">
-          <span class="pill">v3.3.13-t9.14 · 本轮验收通过</span>
+          <span class="pill">v3.3.13-t9.15</span>
           <span class="pill">ABI：arm64-v8a / x86_64</span>
-          <span class="pill">Android 5.0+ · versionCode 20261119</span>
+          <span class="pill">Android 5.0+ · versionCode 20261120</span>
           <span class="pill">License：GPL-3.0-or-later</span>
         </div>
                       </div>
@@ -424,11 +423,11 @@
       <div class="wrap">
         <h2>安装与使用</h2>
         <ol class="steps">
-          <li>先备份配置与词库，再按设备架构选择 ARM64 或 x86_64 APK 覆盖安装。包名及签名延续旧预览版；默认及非中文语言环境显示 Trime，简体中文显示“同文输入法”，香港/台湾繁体中文显示“同文輸入法”。</li>
-          <li>打开任意输入框，切换方案到 <code>朙月拼音九键</code> / <code>luna_pinyin_t9</code>。</li>
-          <li>输入 <code>64426</code>，选择拼音 <code>ni</code> 后保留 <code>426</code>，再选择汉字候选提交。</li>
+          <li>先备份配置与词库，再按设备架构选择 ARM64 或 x86_64 APK。新版发布尚待确认，现有稳定版通过 Latest 下载。</li>
+          <li>首次使用按向导启用并选用输入法，选择九键／全拼和简繁，然后完成中文试打；新安装无需手工编辑 YAML。</li>
+          <li>已有用户可保留当前方案和自定义配置，在常用设置调整布局与外观；高级方案与词库设置仍可进入。</li>
         </ol>
-        <p>本轮 Release/R8 构建、既有包名／证书及双 ABI APK 签名检查已通过；两 API 均完成旧 9.13 正式版学习数据覆盖升级、三次便携备份及完整八阶段功能验收。GUI 验收前备份范围内的配置、文件元数据与输入法选择已恢复。手动附件仅两个 ABI APK 与含全部递归子模块的完整源码包；GitHub 自带 source zip/tar 保留。展开每页 48 项、预取距离 16、maxSize 目标 144 为 best-effort 预算。模拟器不代替真机 P95/PSS、物理 ARM64／16KiB 页或全部 OEM 验证。线上发布状态见<a href="https://github.com/X2M7/trime/releases/tag/v3.3.13-t9.14">版本 Release 页面</a>，详细范围和历史见<a href="https://github.com/X2M7/trime/blob/v3.3.13-t9.14/script/quality/VALIDATION-t9.14.md">验收报告</a>。</p>
+        <p>两系统 x86_64 本轮功能验收已闭合，Android 5.0／15 的 4,233／16,591 条原始运行警告保留；两系统均已逐类复核，在已测功能范围内接受，系统、观测与性能限制仍保留。发布流程会复核门禁与三个附件并同步 develop 和 tag。计划手动附件仅两个 Release APK 与含全部递归子模块、共 22 个仓库的完整源码包；GitHub 自动 source zip／tar 保留。模拟器不代替真机 P95／PSS、长期驻留、物理 ARM64／OEM／16 KiB 页或真实 TTS 验证。查看<a href="https://github.com/X2M7/trime/releases/latest">现有稳定版</a>与<a href="https://github.com/X2M7/trime/blob/develop/script/quality/VALIDATION-t9.15.md">本版验证记录</a>。</p>
       </div>
     </section>
   </main>
