@@ -49,7 +49,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import splitties.views.topPadding
 
-class MainActivity : AppCompatActivity() {
+open class MainActivity : AppCompatActivity() {
+    protected open val shouldCheckSetup: Boolean get() = true
+
     private val viewModel: MainViewModel by viewModels()
 
     private val uiMode by AppPrefs.defaultInstance().advanced.uiMode
@@ -91,7 +93,7 @@ class MainActivity : AppCompatActivity() {
             installStartupShell()
         }
         lifecycleScope.launch {
-            if (SetupActivity.shouldShowUp()) {
+            if (shouldCheckSetup && SetupActivity.shouldShowUp()) {
                 startActivity<SetupActivity>()
                 finish()
             } else if (!contentCreated) {
@@ -275,7 +277,7 @@ class MainActivity : AppCompatActivity() {
         val action = intent?.action ?: return
         when (action) {
             Intent.ACTION_MAIN -> lifecycleScope.launch {
-                if (SetupActivity.shouldShowUp()) startActivity<SetupActivity>()
+                if (shouldCheckSetup && SetupActivity.shouldShowUp()) startActivity<SetupActivity>()
             }
 
             Intent.ACTION_RUN -> {

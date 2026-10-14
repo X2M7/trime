@@ -222,7 +222,7 @@ class SetupActivity : FragmentActivity() {
 
     fun openAdvancedSettings() {
         startActivity(
-            Intent(this, MainActivity::class.java).setAction(Intent.ACTION_RUN)
+            Intent(this, SetupAdvancedSettingsActivity::class.java).setAction(Intent.ACTION_RUN)
                 .putExtra(MainActivity.EXTRA_SETTINGS_ROUTE, NavigationRoute.SchemaList),
         )
     }

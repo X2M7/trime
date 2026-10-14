@@ -5,13 +5,18 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Instrumentation
 import android.content.Context
+import android.content.ContextWrapper
 import android.content.Intent
 import android.content.SharedPreferences
+import android.graphics.Rect
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.SystemClock
 import android.util.TypedValue
+import android.view.InputDevice
+import android.view.KeyEvent
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.BaseInputConnection
@@ -19,8 +24,11 @@ import android.view.inputmethod.EditorInfo
 import android.view.inspector.WindowInspector
 import android.widget.Button
 import android.widget.RadioButton
+import android.widget.ScrollView
 import android.widget.TextView
+import androidx.appcompat.widget.Toolbar
 import androidx.core.view.children
+import androidx.navigation.fragment.NavHostFragment
 import com.osfans.trime.core.RimeApi
 import com.osfans.trime.core.RimeMessage
 import com.osfans.trime.daemon.RimeDaemon
@@ -35,7 +43,9 @@ import com.osfans.trime.ime.candidates.popup.PopupCandidatesMode
 import com.osfans.trime.ime.core.InputView
 import com.osfans.trime.ime.core.TrimeInputMethodService
 import com.osfans.trime.ime.keyboard.KeyboardWindow
+import com.osfans.trime.ui.main.NavigationRoute
 import com.osfans.trime.ui.setup.SetupActivity
+import com.osfans.trime.ui.setup.SetupAdvancedSettingsActivity
 import com.osfans.trime.ui.setup.SetupFragment
 import com.osfans.trime.ui.setup.SetupPage
 import com.osfans.trime.ui.setup.SetupTrialEditText
@@ -246,6 +256,299 @@ object SetupClosedLoopProbe {
         }
     }
 
+    /** Global system touch must reach Advanced, rather than a footer drawn over its centre. */
+    private fun verifyUnfinishedTrialFooterTouch(
+        instrumentation: Instrumentation,
+        activity: SetupActivity,
+        trial: SetupTrialEditText,
+        session: RimeSession,
+        passed: (String) -> Unit,
+    ): Bundle {
+        fun <T> main(block: () -> T): T {
+            var outcome: Result<T>? = null
+            instrumentation.runOnMainSync { outcome = runCatching(block) }
+            return checkNotNull(outcome).getOrThrow()
+        }
+        fun await(message: String, condition: () -> Boolean) {
+            val deadline = SystemClock.uptimeMillis() + 60_000
+            while (!condition()) {
+                check(SystemClock.uptimeMillis() < deadline) { message }
+                SystemClock.sleep(50)
+            }
+        }
+        fun bounds(view: View): Rect {
+            val location = IntArray(2)
+            view.getLocationOnScreen(location)
+            return Rect(location[0], location[1], location[0] + view.width, location[1] + view.height)
+        }
+        fun owner(context: Context): Activity? {
+            var current = context
+            val visited = mutableSetOf<Context>()
+            while (visited.add(current)) {
+                if (current is Activity) return current
+                current = (current as? ContextWrapper)?.baseContext ?: return null
+            }
+            return null
+        }
+        var scrolls = 0
+        var backs = 0
+        var notificationCancels = 0
+        var geometryChecks = 0
+        var lastPager = Rect()
+        var lastFooterTop = 0
+        var lastAdvanced = Rect()
+        var lastTapX = 0
+        var lastTapY = 0
+        var focusedOwner = ""
+        var route = ""
+        var checkpointEqual = false
+        var inputEqual = false
+        var trialEqual = false
+        fun record(stage: String) {
+            instrumentation.sendStatus(
+                0,
+                Bundle().apply {
+                    putString("setup_footer_touch_stage", stage)
+                    putString("setup_footer_touch_pager_rect", lastPager.flattenToString())
+                    putInt("setup_footer_touch_footer_top", lastFooterTop)
+                    putString("setup_footer_touch_advanced_rect", lastAdvanced.flattenToString())
+                    putInt("setup_footer_touch_tap_x", lastTapX)
+                    putInt("setup_footer_touch_tap_y", lastTapY)
+                    putInt("setup_footer_touch_swipes", scrolls)
+                    putInt("setup_footer_touch_backs", backs)
+                    putInt("setup_footer_touch_notification_cancel_touches", notificationCancels)
+                    putString("setup_footer_touch_focused_owner", focusedOwner)
+                    putString("setup_footer_touch_route", route)
+                    putBoolean("setup_footer_touch_checkpoint_equal", checkpointEqual)
+                    putBoolean("setup_footer_touch_input_equal", inputEqual)
+                    putBoolean("setup_footer_touch_trial_equal", trialEqual)
+                },
+            )
+        }
+        fun geometry(stage: String) {
+            await("Unfinished Try did not settle for $stage") {
+                main {
+                    val pager = activity.findViewById<View>(R.id.viewpager)
+                    !activity.isFinishing && !activity.isDestroyed && activity.hasWindowFocus() &&
+                        activity.currentSetupPage == SetupPage.Try && pager.isShown && pager.isLaidOut &&
+                        !pager.isLayoutRequested && !activity.window.decorView.isLayoutRequested
+                }
+            }
+            main {
+                check(!activity.isPageDone(SetupPage.Try) && activity.isPageDone(SetupPage.Input))
+                check(activity.findViewById<Button>(R.id.next_button).visibility == View.GONE)
+                val footer = listOf(R.id.prev_button, R.id.skip_button, R.id.next_button)
+                    .map { activity.findViewById<Button>(it) }
+                    .filter { it.visibility == View.VISIBLE && it.isShown }
+                check(footer.isNotEmpty())
+                check(activity.findViewById<Button>(R.id.prev_button).isShown)
+                check(activity.findViewById<Button>(R.id.skip_button).isShown)
+                lastPager = bounds(activity.findViewById(R.id.viewpager))
+                lastFooterTop = footer.minOf { bounds(it).top }
+                val visible = Rect()
+                check(activity.findViewById<View>(R.id.viewpager).getGlobalVisibleRect(visible))
+                check(lastPager.height() > 0 && lastPager.width() > 0 && visible == lastPager)
+                check(lastPager.bottom <= lastFooterTop) {
+                    "Unfinished Try content overlaps its visible footer: pager=$lastPager footerTop=$lastFooterTop"
+                }
+            }
+            geometryChecks++
+            record(stage)
+        }
+        fun motion(down: Long, action: Int, x: Float, y: Float) {
+            val event = MotionEvent.obtain(down, SystemClock.uptimeMillis(), action, x, y, 0)
+            event.source = InputDevice.SOURCE_TOUCHSCREEN
+            try {
+                instrumentation.sendPointerSync(event)
+            } finally {
+                event.recycle()
+            }
+        }
+        fun touch(view: View, stage: String) {
+            val position = main {
+                check(view.isShown && view.isEnabled && view.isClickable)
+                val full = bounds(view)
+                val visible = Rect()
+                check(view.getGlobalVisibleRect(visible) && visible == full && full.width() > 0 && full.height() > 0)
+                full.exactCenterX() to full.exactCenterY()
+            }
+            lastTapX = position.first.toInt()
+            lastTapY = position.second.toInt()
+            record(stage)
+            val down = SystemClock.uptimeMillis()
+            motion(down, MotionEvent.ACTION_DOWN, position.first, position.second)
+            SystemClock.sleep(60)
+            motion(down, MotionEvent.ACTION_UP, position.first, position.second)
+            instrumentation.waitForIdleSync()
+        }
+        val checkpoints = instrumentation.targetContext.getSharedPreferences("trime_setup", Context.MODE_PRIVATE)
+        val beforeCheckpoints = checkpoints.all.toMap()
+        val beforeFreshPending = AppPrefs.defaultInstance().profile.freshInputSetupPending.getValue()
+        val beforeInput = runBlocking { session.runOnReady { inspectInputSetup() } }
+        val beforeChoice = main { activity.inputChoice }
+        val beforeKeepCurrent = main { activity.keepCurrentInput }
+        val originalTrialText = main { trial.text.toString() }
+        check(originalTrialText.isEmpty()) { "The new Try fixture unexpectedly retained trial text" }
+        val fictionalTrialText = "t12 footer draft"
+        main {
+            trial.setText(fictionalTrialText)
+            check(!activity.isPageDone(SetupPage.Try)) { "Programmatic Latin text completed the trial" }
+        }
+        val beforeTrial = main { trial.text.toString().also { check(it == fictionalTrialText) } }
+        check(!checkpoints.getBoolean("trial_completed", false) && !checkpoints.getBoolean("deferred", false))
+        geometry("unfinished-try-before-advanced")
+        passed("unfinished Try keeps its real viewport above every visible navigation button when Next is gone")
+        val advanced = main {
+            activity.supportFragmentManager.fragments.filterIsInstance<SetupFragment>()
+                .first { it.setupPage == SetupPage.Try }.requireView().findViewById<Button>(R.id.advanced_button)
+        }
+        var fullyVisible = false
+        for (attempt in 0..8) {
+            instrumentation.waitForIdleSync()
+            fullyVisible = main {
+                lastAdvanced = bounds(advanced)
+                val visible = Rect()
+                advanced.isShown && advanced.isLaidOut && !advanced.isLayoutRequested &&
+                    advanced.getGlobalVisibleRect(visible) && visible == lastAdvanced &&
+                    lastPager.contains(lastAdvanced) && lastAdvanced.bottom <= lastFooterTop
+            }
+            if (fullyVisible) break
+            check(attempt < 8) { "Advanced never became fully visible above the actual footer" }
+            val viewport = main {
+                var parent = advanced.parent
+                while (parent != null && parent !is ScrollView) parent = parent.parent
+                val scroll = checkNotNull(parent as? ScrollView)
+                val visible = Rect()
+                check(scroll.getGlobalVisibleRect(visible) && visible.height() > 64)
+                visible
+            }
+            val x = viewport.exactCenterX()
+            val start = viewport.top + viewport.height() * 0.8f
+            val end = viewport.top + viewport.height() * 0.2f
+            val down = SystemClock.uptimeMillis()
+            motion(down, MotionEvent.ACTION_DOWN, x, start)
+            for (step in 1..10) {
+                SystemClock.sleep(35)
+                motion(down, MotionEvent.ACTION_MOVE, x, start + (end - start) * step / 10f)
+            }
+            motion(down, MotionEvent.ACTION_UP, x, end)
+            scrolls++
+            record("actual-scroll-to-advanced")
+        }
+        check(fullyVisible)
+        val monitor = instrumentation.addMonitor(SetupAdvancedSettingsActivity::class.java.name, null, false)
+        var host: SetupAdvancedSettingsActivity? = null
+        var returnedThroughBack = false
+        try {
+            touch(advanced, "actual-advanced-centre-down-up")
+            await("Advanced touch did not open the standard schema settings host and its real toolbar") {
+                (monitor.waitForActivityWithTimeout(50) as? SetupAdvancedSettingsActivity)?.let { host = it }
+                main {
+                    val seen = windowRoots().asSequence().filter { it.isShown }
+                        .mapNotNull { owner(it.context) }.filterIsInstance<SetupAdvancedSettingsActivity>().distinct().toList()
+                    check(seen.size <= 1) { "Ambiguous standard advanced settings Activity" }
+                    seen.singleOrNull()?.let { host = it }
+                    val current = host ?: return@main false
+                    check(current.javaClass == SetupAdvancedSettingsActivity::class.java)
+                    check(!activity.isFinishing && !activity.isDestroyed) { "Advanced launch discarded unfinished Setup" }
+                    route = (current.supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as? NavHostFragment)
+                        ?.navController?.currentDestination?.route.orEmpty()
+                    route == NavigationRoute.SchemaList.path && descendants(current.window.decorView)
+                        .filterIsInstance<Toolbar>().any { it.menu.findItem(R.id.action_deploy) != null }
+                }
+            }
+            // Menu installation and this title-specific app prompt occur in the same main callback.
+            val notificationRoot = main {
+                val matches = windowRoots().filter { root ->
+                    root.isShown && root.hasWindowFocus() && owner(root.context) === host &&
+                        descendants(root).filterIsInstance<TextView>()
+                            .any { it.isShown && it.text.toString() == activity.getString(R.string.notification_permission_title) }
+                }
+                check(matches.size <= 1) { "Ambiguous notification-permission prompt" }
+                matches.singleOrNull()
+            }
+            if (notificationRoot != null) {
+                val cancel = main {
+                    val matches = descendants(notificationRoot).filterIsInstance<Button>()
+                        .filter {
+                            it.id == android.R.id.button2 && it.isShown && it.isEnabled &&
+                                it.text.toString().equals(activity.getString(android.R.string.cancel), ignoreCase = true)
+                        }
+                        .toList()
+                    check(matches.size == 1) { "The exact notification-permission Cancel button is missing" }
+                    matches.single()
+                }
+                touch(cancel, "actual-notification-permission-cancel-centre-down-up")
+                notificationCancels++
+            }
+            await("Schema settings did not own a focused window after the actual permission Cancel touch") {
+                main {
+                    val current = checkNotNull(host)
+                    route = (current.supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as? NavHostFragment)
+                        ?.navController?.currentDestination?.route.orEmpty()
+                    !current.isFinishing && !current.isDestroyed && current.hasWindowFocus() &&
+                        current.window.decorView.hasWindowFocus() && route == NavigationRoute.SchemaList.path
+                }
+            }
+            focusedOwner = main { checkNotNull(host).javaClass.name }
+            record("actual-focused-standard-schema-settings")
+            for (attempt in 1..2) {
+                if (main { activity.hasWindowFocus() && !activity.isFinishing && !activity.isDestroyed }) break
+                instrumentation.sendKeyDownUpSync(KeyEvent.KEYCODE_BACK)
+                backs++
+                instrumentation.waitForIdleSync()
+                await("Actual Back did not settle the settings stack") {
+                    main {
+                        activity.hasWindowFocus() || host?.let { !it.isDestroyed && it.hasWindowFocus() } == true
+                    }
+                }
+                record("actual-back-$attempt")
+            }
+            await("Two actual Back keys did not return the same unfinished Setup Activity") {
+                main {
+                    !activity.isFinishing && !activity.isDestroyed && activity.hasWindowFocus() &&
+                        activity.window.decorView.hasWindowFocus() && activity.currentSetupPage == SetupPage.Try
+                }
+            }
+            checkpointEqual = checkpoints.all == beforeCheckpoints &&
+                AppPrefs.defaultInstance().profile.freshInputSetupPending.getValue() == beforeFreshPending
+            inputEqual = runBlocking { session.runOnReady { inspectInputSetup() } } == beforeInput &&
+                main { activity.inputChoice == beforeChoice && activity.keepCurrentInput == beforeKeepCurrent }
+            trialEqual = main { trial.text.toString() == beforeTrial }
+            check(checkpointEqual && inputEqual && trialEqual) { "Advanced/Back changed unfinished wizard state" }
+            check(!checkpoints.getBoolean("trial_completed", false) && !checkpoints.getBoolean("deferred", false))
+            geometry("unfinished-try-after-real-back")
+            main {
+                trial.setText(originalTrialText)
+                check(trial.text.isNullOrEmpty() && !activity.isPageDone(SetupPage.Try))
+            }
+            focusedOwner = main { activity.javaClass.name }
+            returnedThroughBack = true
+            record("actual-back-checkpoints-input-trial-equal")
+            passed("actual Advanced centre touch opens schema settings and real Back preserves unfinished Setup checkpoints, input and trial text")
+            return Bundle().apply {
+                putInt("setup_footer_touch_checks", 2)
+                putInt("setup_footer_touch_geometry_checks", geometryChecks)
+                putInt("setup_footer_touch_swipes", scrolls)
+                putInt("setup_footer_touch_backs", backs)
+                putInt("setup_footer_touch_notification_cancel_touches", notificationCancels)
+                putBoolean("setup_footer_touch_return_verified", returnedThroughBack)
+                putBoolean("setup_footer_touch_checkpoint_equal", checkpointEqual)
+                putBoolean("setup_footer_touch_input_equal", inputEqual)
+                putBoolean("setup_footer_touch_trial_equal", trialEqual)
+                putBoolean("setup_footer_touch_human_PNG_review", false)
+            }
+        } finally {
+            instrumentation.removeMonitor(monitor)
+            // Failed navigation cleanup cannot supply the required real-Back success.
+            if (!returnedThroughBack) {
+                main {
+                    host?.takeIf { !it.isFinishing && !it.isDestroyed }?.finish()
+                }
+            }
+        }
+    }
+
     private fun restore(preferences: SharedPreferences, values: Map<String, *>) {
         val editor = preferences.edit().clear()
         values.forEach { (key, value) ->
@@ -394,6 +697,7 @@ object SetupClosedLoopProbe {
                 main { fresh.currentSetupPage == SetupPage.Try && fragment(fresh, SetupPage.Try).trialInput()?.isShown == true }
             }
             val trial = main { fragment(fresh, SetupPage.Try).requireView().findViewById<SetupTrialEditText>(R.id.trial_input) }
+            result.putAll(verifyUnfinishedTrialFooterTouch(instrumentation, fresh, trial, session, ::passed))
             verifyAppearanceDuringComposition(instrumentation, fresh, trial, session, deployments, ::passed)
             main {
                 trial.setText("你好")
