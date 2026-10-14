@@ -282,6 +282,13 @@ object SetupClosedLoopProbe {
             view.getLocationOnScreen(location)
             return Rect(location[0], location[1], location[0] + view.width, location[1] + view.height)
         }
+        fun isFullyVisible(view: View): Boolean {
+            val visible = Rect()
+            // A dialog's root is offset from the screen origin. Compare local
+            // clipping with local bounds; pointer injection still uses screen bounds.
+            return view.width > 0 && view.height > 0 && view.getLocalVisibleRect(visible) &&
+                visible == Rect(0, 0, view.width, view.height)
+        }
         fun owner(context: Context): Activity? {
             var current = context
             val visited = mutableSetOf<Context>()
@@ -369,8 +376,7 @@ object SetupClosedLoopProbe {
             val position = main {
                 check(view.isShown && view.isEnabled && view.isClickable)
                 val full = bounds(view)
-                val visible = Rect()
-                check(view.getGlobalVisibleRect(visible) && visible == full && full.width() > 0 && full.height() > 0)
+                check(isFullyVisible(view))
                 full.exactCenterX() to full.exactCenterY()
             }
             lastTapX = position.first.toInt()
@@ -490,14 +496,28 @@ object SetupClosedLoopProbe {
                     check(matches.size == 1) { "The exact notification-permission Cancel button is missing" }
                     matches.single()
                 }
-                await("The exact notification-permission Cancel button did not become focused and fully visible", promptAndFocusDeadline) {
-                    main {
-                        val full = bounds(cancel)
-                        val visible = Rect()
-                        prompt.isShown && prompt.hasWindowFocus() && cancel.isShown && cancel.isEnabled &&
-                            cancel.isLaidOut && !cancel.isLayoutRequested && full.width() > 0 && full.height() > 0 &&
-                            cancel.getGlobalVisibleRect(visible) && visible == full
+                try {
+                    await("The exact notification-permission Cancel button did not become focused and fully visible", promptAndFocusDeadline) {
+                        main {
+                            prompt.isShown && prompt.hasWindowFocus() && cancel.isShown && cancel.isEnabled &&
+                                cancel.isLaidOut && !cancel.isLayoutRequested && isFullyVisible(cancel)
+                        }
                     }
+                } finally {
+                    val geometry = main {
+                        val local = Rect()
+                        val global = Rect()
+                        Bundle().apply {
+                            putBoolean("setup_notification_prompt_window_focus", prompt.hasWindowFocus())
+                            putBoolean("setup_notification_cancel_local_visible", cancel.getLocalVisibleRect(local))
+                            putBoolean("setup_notification_cancel_global_visible", cancel.getGlobalVisibleRect(global))
+                            putString("setup_notification_cancel_local_rect", local.flattenToString())
+                            putString("setup_notification_cancel_global_rect", global.flattenToString())
+                            putString("setup_notification_cancel_screen_rect", bounds(cancel).flattenToString())
+                            putString("setup_notification_root_screen_rect", bounds(prompt).flattenToString())
+                        }
+                    }
+                    instrumentation.sendStatus(0, geometry)
                 }
                 touch(cancel, "actual-notification-permission-cancel-centre-down-up")
                 notificationCancels++
