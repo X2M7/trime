@@ -4,13 +4,15 @@ package com.osfans.trime.ime.candidates
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
+import android.view.ContextThemeWrapper
 import android.view.accessibility.AccessibilityNodeInfo
-import android.widget.ImageButton
+import androidx.appcompat.widget.AppCompatImageButton
+import com.osfans.trime.R
 
-/** Retain the original ImageButton visuals while applying the bound node and action last. */
+/** Apply the bound node and action after the compatible image button initializes them. */
 @SuppressLint("ViewConstructor")
 internal class BoundActionImageButton(context: Context) :
-    ImageButton(context),
+    AppCompatImageButton(ContextThemeWrapper(context, R.style.Theme_TrimeAppTheme)),
     BoundActionOwner {
     override var clickBinding: VersionedClickBinding<*>? = null
 

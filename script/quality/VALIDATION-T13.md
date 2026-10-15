@@ -1,6 +1,6 @@
 # T13 无障碍、设备适配与运行警告验证
 
-状态：本地代码候选，尚未推送或发布；T13最终验收未闭合。已执行范围只对应check30 Debug：构建／保护／冻结0、最低3,511,604 KiB；812项JVM／84XML沿用check29（非本轮新执行），无当前Lint／Release结果。API21 runtime6完成setup7原14＋缓存7项、矩阵4组各31项及24图、编辑器40轮／100次显隐和privacy／t08／t10／t11／feedback五项串行回归，原native终态和宿主均0；设置精确恢复，Root正常STOP后controller／VM0、cleanup空、无残留，最低3,253,812 KiB。日志2177W／1320E，项目149W／92E；本轮ThemeUtils／旧Session fatal／am_crash／ANR／真实LMK及内核critical未匹配，只是有限范围，不关闭历史风险。当前已应用10处同文风配色调整及候选3.3.13-t9.16／20261121，尚未构建，不能沿用check30作为新候选通过。后续从最终APK完成两平台、实际深色／TalkBack／分屏／SAF及独立Lint／Release；用户无真机，优先模拟器，文件索引继续运行。旧失败和原件保留，已发布基线仍为`v3.3.13-t9.15`／`e0b2fc22`。
+状态（2026-10-15）：T13 本地候选尚未推送或发布，最终验收未完成。`9d94a1b8` 的 Debug／Release 分 JVM 构建通过，812 项应用 JVM 与 227 项宿主检查有新执行结果；后续 Debug2 的 84 份 XML 为字节一致的复用结果，单列统计。双 ABI Release 签名有效、证书与 9.15 一致，签名及构建日志警告 0。但独立 Debug Lint 实际退出 1，发现两个新增图标控件的 `AppCompatCustomView` 错误，故这些 APK 不作为最终发布候选。现改用带应用 AppCompat 主题的对应基类，保留节点角色、版本身份和动作守卫；待新构建、独立双 Lint 及两系统完整验收。当前没有模拟器运行，构建／模拟器继续串行，1 GiB 内存保护和文件索引保持。用户无真机，TalkBack 优先模拟器，不能扩展为真机验收；已发布基线仍为 `v3.3.13-t9.15`。
 
 ## 当前执行记录
 
@@ -266,3 +266,10 @@ check30实际构建／保护／冻结均退出0，`tracked_source_unchanged=true
 Root实际034cce写STOP后，[runtime6终态](../../build/t13/api21/runtime6/result.json)控制器79389／`7acee2`退出0、VM／logcat0、cleanup空、无残留；450样本最低3,253,812 KiB，保护未触发。五项串行回归session20051／`bbc23e`实际退出0。[完整警告扫描](../../build/t13/api21/runtime6-warning-review1/report.json)实际e0c8eb／子进程wait0，128MiB／nice10、VmHWM22,964 KiB，保留2177W／1320E／0F及项目149W／92E；本轮ThemeUtils、旧Session异常、fatal／am_crash／ANR、真实LMK及内核critical未匹配，不能删除或关闭runtime3 fatal、runtime5来源未知signal15和其他系统警告。[有限解释](../../build/t13/api21/runtime6-warning-review1/interpretation.json) SHA `10576036bcd8dc5b64fc2fddb5f163613da6f6252430506af390555196329894`保留剩余AudioTrack／GL／WAL等原文。
 
 以上只绑定check30 APK。Root其后已应用10处同文风功能键配色，并将候选身份设为`3.3.13-t9.16`／`20261121`；新候选尚未构建，不把既有check30或历史t9.15升级为它的验收。代码候选提交不等于PUB或发布；后续compile／JVM／package与fresh JVM Lint串行分开，最终两平台和实际深色／TalkBack／分屏／SAF仍待闭合。
+
+
+## 9.16 首轮候选及 Lint 兼容性修复
+
+`candidate-build1` 的 812 项 JVM／84 XML 新执行通过，随后同 JVM 的 Release R8 持续满堆 GC，由 Root 受控停止；整轮退出 1，原始停止与 GC 记录保留。随后用同一源码／版本时间戳分别执行 `candidate-release1` 和 `candidate-build2/debug`，均退出 0；后者 JVM 为 UP-TO-DATE，与前述 XML 全部一致。最低可用内存分别约 3.61／3.85 GiB。`candidate-build2/frozen` 的五份 APK、628 项 app 输入及另外 26 项 build-logic 输入已独立核对；两正式 APK 的实际签名检查 0 警告，证书与 9.15 相同。`candidate-host1` 的 227 项宿主检查新执行通过；384 项原生预测测试仅按 31 项一致输入绑定历史执行，未称本轮重跑。
+
+`candidate-lint-debug1` 实际退出 1（会话 50516，完成回执 f8dfab），最低可用内存 3,633,468 KiB，源码未变；完整 XML／HTML／SARIF／文本报告已冻结。两个错误分别为 `BoundActionImageButton` 和 `BoundActionImageView` 应继承 AppCompat 对应基类。修复同时给这两控件提供应用 AppCompat 主题，因为输入面板和测试宿主可能传入平台主题；不修改整个输入法的主题。原点击身份守卫、平台 Button 可访问角色及节点初始化后的语义覆盖保留。现有两主题节点、点击、几何和原图回归将用于新 APK 实测；未以抑制或新 baseline 绕过错误，Release Lint 与新设备验收尚未执行。
