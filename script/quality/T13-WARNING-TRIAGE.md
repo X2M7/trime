@@ -8,14 +8,14 @@
 | --- | --- | --- |
 | 音效测试 WAV 匹配 `STREAM_SYSTEM` 原生采样率 | Android 5.0 为 44,100 Hz／4,410 帧；旧反馈轮 105 条 `FAST denied by client`，本轮全日志 0 条。Android 15 为 48,000 Hz／4,800 帧。 | 两系统均保留 105 次计划播放调用、短 melody 切换、隐私和释放断言；没有删除播放或关闭日志。不证明所有用户音效或真实扬声器输出。 |
 | 固定 FD 后先检查已校准的顶层 `fdinfo ino` | API35 旧反馈 PID 的 22 条 SELinux `getattr` 拒绝，本轮反馈 PID2475 为 0；12 项边界、同文件 1→2→1→0、九个无关 FD 控制和 200 次扫描通过。 | 只排除 inode 明确不同的非测试文件；同 inode／缺字段仍执行精确 `fstat`。API21 的旧内核没有该字段，21 次快照全部走原 `fstat`，控制和扫描也通过。不修改 SELinux 策略。 |
-| FD 审计完整性 | API35 完整审计 66,245 字符，全局 FD 92→91；API21 26,674 字符，28→33，新增五个句柄具体对应 WorkManager 数据库。 | 音效测试文件句柄始终归零；全局 FD 数仅作诊断，不能把新增数据库句柄叫作音效泄漏，也不能由短测证明长期零泄漏。未见 `TransactionTooLarge` 或审计截断。 |
+| FD 审计完整性 | API35 完整审计 66,245 字符，全局 FD 92→91；API21 26,674 字符，28→33，新增五个句柄具体对应 WorkManager 数据库。 | 音效测试文件句柄在各次扫描结束及控制释放后归零；全局 FD 数仅作诊断，不能把新增数据库句柄叫作音效泄漏，也不能由短测证明长期零泄漏。未见 `TransactionTooLarge` 或审计截断。 |
 | WebView 正常／失败路径统一先移除父视图再 `destroy()` | API35 编辑器回归通过：真实 WebView 输入、两主题 40 轮显示和 100／100 次显隐。正常清理实际耗时 6.755326 ms。 | 正常成功没有执行失败分支。清理后仍有一条 renderer3005 `crash detected(code -1)`，随后 renderer clean exit 0，两条原文均保留；此问题没有被修复。 |
 | 隔离模拟器安装真实离线 TTS 引擎 | eSpeak 1.52.0／code22：先完成声库安装，版本及八个核心文件两次 SHA 一致。独立 Activity 通过唯一公开引擎、实际客户端／系统连接链、中文和英文 `onDone`、非静音 PCM 及正常 shutdown 检查，耗时 6,502 ms。 | 两个 WAV 分别 113,252／175,678 字节。模拟器使用 `-no-audio`，没有可听性或发音质量结论。第三方 APK 原有一项 META-INF 签名覆盖提示保留，未重签或修改。 |
 | 实际 TalkBack FOSS 启动观察 | 同一隔离环境中实际连接 eSpeak；结束后七个 secure 设置按原有值／不存在状态恢复，工具退出 0。 | 原图实际显示 FOSS 欢迎页，不能称完成 Settings 操作或重跑 Trime 无障碍任务。仍有一次 `Attempted to speak before TTS was initialized`，以及清理阶段一次 `Completed speech while already completed`；不宣称 FOSS 警告全部消除。 |
 
 测试包 `36fcb64dbc03f0597a7ef9684a431ab0e0ee254d859bd6a7f6b3c2825bbcafda` 对应本轮两处测试源码修改；`test-build3` 的 Spotless 检查及设备测试编译实际退出 0，无编译警告，最低可用内存 3,637,180 KiB。未在此短轮重跑 812 项 JVM／完整双 Lint 或生产 JNI；这些仍属 9.16 发布验收的历史结果。先前错误任务名的 build1 和继承旧版打包名的 build2 原件均保留，设备使用的是修正版本参数后的 build3。
 
-新 `api35-runtime1` 的反馈／编辑器阶段通过，但 TTS1 工具把 API35 系统代理连接误当作 Activity 回调，且声库尚未安装完，故该 TTS 诊断失败；失败不改判。修正工具后在另一干净 `api35-runtime2` 执行 TTS2：实际系统代理连接保留 `connected_engine=null`，由唯一可用服务、指定引擎、真实客户端 PID2526 与 system_server PID602 的五条连接事件共同核对，未伪造回调。正常解绑在原连接日志 L314，断连 W 在 L315，晚 4 ms；这是本次原文的时序解释，不是对任意断连的豁免。
+新 `api35-runtime1` 的反馈／编辑器阶段通过，但 TTS1 工具因不兼容 API35 系统代理连接的身份检查而失败；另查原图与日志，声库当时尚未安装完，合成请求尚未执行。失败不改判。修正工具后在另一干净 `api35-runtime2` 执行 TTS2：实际系统代理连接保留 `connected_engine=null`，由唯一可用服务、指定引擎、真实客户端 PID2526 与 system_server PID602 的五条连接事件共同核对，未伪造回调。正常解绑在原连接日志 L314，断连 W 在 L315，晚 4 ms；这是本次原文的时序解释，不是对任意断连的豁免。
 
 本轮构建与模拟器串行，保持文件索引运行及 1 GiB 可用内存下限。API35 runtime1、API21 runtime1、API35 runtime2 的模拟器／控制器均实际退出 0，无清理错误；控制器采样最低可用内存分别 2,054,512／3,782,536／2,257,796 KiB，TTS2 阶段另采到 2,152,392 KiB。没有以减少测试次数、过滤原日志、关闭动画或删除系统诊断来制造零警告。
 
