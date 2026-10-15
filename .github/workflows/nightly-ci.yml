@@ -1,18 +1,20 @@
-# SPDX-FileCopyrightText: 2015 - 2024 Rime community
+# SPDX-FileCopyrightText: 2015 - 2026 Rime community
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-name: Nightly
+name: Nightly validation
 on:
   workflow_dispatch:
   schedule:
     - cron: '0 16 * * *' # UTC 16:00 / GMT+8 0:00, daily
 
-env:
-  CI_NAME: Nightly CI
+permissions:
+  contents: read
+
+# The scheduled job is read-only; it does not replace a release or move a tag.
 jobs:
-  build:
-    if: ${{ github.repository == 'osfans/trime' && github.ref == 'refs/heads/develop' }}
+  validate:
+    if: ${{ github.repository == 'X2M7/trime' && github.ref == 'refs/heads/develop' }}
     runs-on: ubuntu-26.04
     steps:
       - name: Checkout
@@ -20,66 +22,10 @@ jobs:
         with:
           submodules: recursive
           fetch-depth: 0
+          persist-credentials: false
 
-      - name: Setup Java
-        uses: actions/setup-java@v6
-        with:
-          distribution: "temurin"
-          java-version: 17
-          # will restore cache of dependencies and wrappers
-          cache: 'gradle'
+      - name: Check release metadata and Pages
+        run: python3 script/release/release.py metadata --check-pages
 
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v4
-        with:
-          packages: 'platform-tools'
-
-      - name: Install Android NDK
-        run: |
-          sdkmanager --install "cmake;3.31.6"
-
-      - name: Calculate JNI cache hash
-        id: cache-hash
-        run: |
-            ./gradlew :app:calculateNativeCacheHash
-
-      - name: Fetch JNI cache
-        uses: actions/cache@v6
-        id: jni-cache
-        with:
-          path: "app/prebuilt"
-          key: ${{ runner.os }}-trime-jni-release-${{ steps.cache-hash.outputs.native-cache-hash }}
-
-      - name: Setup Keystore
-        run: |
-          cat << EOF > keystore.properties
-          keyBase64=${{ secrets.SIGNING_KEY }}
-          storePassword=${{ secrets.KEY_STORE_PASSWORD }}
-          keyAlias=${{ secrets.ALIAS }}
-          keyPassword=${{ secrets.KEY_PASSWORD }}
-          EOF
-
-      - name: Build Trime
-        run: make release
-
-      - name: Add JNI cache
-        if: ${{ !steps.jni-cache.outputs.cache-hit }}
-        run: cp -R app/build/intermediates/merged_native_libs/release/mergeReleaseNativeLibs/out/lib app/prebuilt
-
-      - name: Delete Previous Nightly Release
-        continue-on-error: true
-        run: |
-          gh release delete --yes --cleanup-tag nightly
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Create Nightly Release
-        uses: softprops/action-gh-release@v3
-        with:
-          name: "Nightly Build"
-          tag_name: nightly
-          target_commitish: ${{ github.sha }}
-          prerelease: true
-          working_directory: "app/build/outputs/apk/release/"
-          files: |
-            *.apk
+      - name: Test release checks
+        run: python3 -m unittest discover -s script/release -p 'test_*.py'

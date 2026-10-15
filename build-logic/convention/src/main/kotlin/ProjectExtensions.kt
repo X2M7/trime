@@ -39,24 +39,36 @@ val Project.ndkVersion
 val Project.buildAbiOverride
     get() = envOrPropOrNull("BUILD_ABI", "buildABI")
 
+val Project.buildAbis: List<String>
+    get() = resolveBuildAbis(buildAbiOverride, releaseMetadata.abis)
+
 val Project.builder
     get() =
         envOrProp("CI_NAME", "ciName") {
             runCmd("git config user.name", "N/A")
         }
 
+val Project.releaseMetadata: ReleaseMetadata
+    get() =
+        ReleaseMetadata.parse(
+            providers.fileContents(rootProject.layout.projectDirectory.file("release.properties")).asText.get(),
+        )
+
 val Project.buildGitRepo
     get() =
-        envOrProp("BUILD_GIT_REPO", "buildGitRepo") {
-            runCmd("git remote get-url origin", "https://github.com/osfans/trime")
-                .replace("git@([^:]+):(.+)/(.+)\\.git".toRegex(), "https://$1/$2/$3")
-        }
+        releaseIdentityValue(
+            releaseMetadata.repositoryUrl,
+            "BUILD_GIT_REPO" to providers.environmentVariable("BUILD_GIT_REPO").orNull,
+            "buildGitRepo" to providers.gradleProperty("buildGitRepo").orNull,
+        )
 
 val Project.buildVersionName
     get() =
-        envOrProp("BUILD_VERSION_NAME", "buildVersionName") {
-            runCmd("git describe --tags --long --always --exclude=nightly")
-        }
+        releaseIdentityValue(
+            releaseMetadata.versionName,
+            "BUILD_VERSION_NAME" to providers.environmentVariable("BUILD_VERSION_NAME").orNull,
+            "buildVersionName" to providers.gradleProperty("buildVersionName").orNull,
+        )
 
 val Project.buildCommitHash
     get() =

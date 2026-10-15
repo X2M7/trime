@@ -6,16 +6,21 @@ name: Pull Request
 
 on:
   pull_request:
+    branches: [develop]
     types:
       - opened
       - reopened
       # pull request's head branch was updated
       - synchronize
 
+permissions:
+  contents: read
+
 env:
   CI_NAME: Pull Request CI
 jobs:
   build:
+    if: ${{ github.repository == 'X2M7/trime' }}
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -33,6 +38,13 @@ jobs:
         with:
           submodules: recursive
           fetch-depth: 0
+          persist-credentials: false
+
+      - name: Check release metadata and Pages
+        run: python3 script/release/release.py metadata --check-pages
+
+      - name: Test release checks
+        run: python3 -m unittest discover -s script/release -p 'test_*.py'
 
       - name: Get branch name
         id: vars

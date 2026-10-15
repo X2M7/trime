@@ -1,19 +1,24 @@
-# SPDX-FileCopyrightText: 2015 - 2024 Rime community
+# SPDX-FileCopyrightText: 2015 - 2026 Rime community
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-name: Release
+name: Release validation
 on:
   workflow_dispatch:
   push:
     tags:
       - 'v*'
-env:
-  CI_NAME: Release CI
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+
+# Publication is a separate local operation after device acceptance. This job
+# checks the source record and cannot create, replace, or delete a release.
 jobs:
-  build:
-    # X2M7 publishes verified APKs and recursive source through the local release gate.
-    if: github.repository != 'X2M7/trime'
+  validate:
+    if: ${{ github.repository == 'X2M7/trime' && (github.event_name != 'workflow_dispatch' || github.ref == 'refs/heads/develop') }}
     runs-on: ubuntu-26.04
     steps:
       - name: Checkout
@@ -21,70 +26,10 @@ jobs:
         with:
           submodules: recursive
           fetch-depth: 0
+          persist-credentials: false
 
-      - name: Setup Java
-        uses: actions/setup-java@v6
-        with:
-          distribution: "temurin"
-          java-version: 17
-          # will restore cache of dependencies and wrappers
-          cache: 'gradle'
+      - name: Check release metadata and Pages
+        run: python3 script/release/release.py metadata --check-pages
 
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v4
-        with:
-          packages: 'platform-tools'
-
-      - name: Install Android NDK
-        run: |
-          sdkmanager --install "cmake;3.31.6"
-
-      - name: Calculate JNI cache hash
-        id: cache-hash
-        run: |
-            ./gradlew :app:calculateNativeCacheHash
-
-      - name: Fetch JNI cache
-        uses: actions/cache@v6
-        id: jni-cache
-        with:
-          path: "app/prebuilt"
-          key: ${{ runner.os }}-trime-jni-release-${{ steps.cache-hash.outputs.native-cache-hash }}
-
-      - name: Setup Keystore
-        run: |
-          cat << EOF > keystore.properties
-          keyBase64=${{ secrets.SIGNING_KEY }}
-          storePassword=${{ secrets.KEY_STORE_PASSWORD }}
-          keyAlias=${{ secrets.ALIAS }}
-          keyPassword=${{ secrets.KEY_PASSWORD }}
-          EOF
-
-      - name: Build Trime
-        run: make release
-
-      - name: Add JNI cache
-        if: ${{ !steps.jni-cache.outputs.cache-hit }}
-        run: cp -R app/build/intermediates/merged_native_libs/release/mergeReleaseNativeLibs/out/lib app/prebuilt
-
-      - name: Build changelog
-        id: build_changelog
-        uses: mikepenz/release-changelog-builder-action@v6
-        with:
-          commitMode: true
-          configurationJson: |
-            {
-              "template": "Change log from #{{FROM_TAG}} to #{{TO_TAG}}: #{{RELEASE_DIFF}}\n#{{UNCATEGORIZED}}",
-              "pr_template": "- [#{{MERGE_SHA}}] - #{{TITLE}}"
-            }
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Create Stable release
-        uses: softprops/action-gh-release@v3
-        with:
-          prerelease: ${{ contains(github.ref_name, 'alpha') || contains(github.ref_name, 'beta') }}
-          body: ${{ steps.build_changelog.outputs.changelog }}
-          working_directory: "app/build/outputs/apk/release/"
-          files: |
-            *.apk
+      - name: Test release checks
+        run: python3 -m unittest discover -s script/release -p 'test_*.py'

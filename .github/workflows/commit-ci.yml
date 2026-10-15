@@ -3,12 +3,18 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 name: Commit
-on: [push]
+on:
+  push:
+    branches: [develop]
+
+permissions:
+  contents: read
 
 env:
   CI_NAME: Commit CI
 jobs:
   build:
+    if: ${{ github.repository == 'X2M7/trime' }}
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -26,6 +32,13 @@ jobs:
         with:
           submodules: recursive
           fetch-depth: 0
+          persist-credentials: false
+
+      - name: Check release metadata and Pages
+        run: python3 script/release/release.py metadata --check-pages
+
+      - name: Test release checks
+        run: python3 -m unittest discover -s script/release -p 'test_*.py'
 
       - name: Get branch name
         id: vars

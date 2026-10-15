@@ -18,6 +18,8 @@ plugins {
     alias(libs.plugins.ksp)
 }
 
+val releaseIdentity = project.releaseMetadata
+
 android {
     namespace = "com.osfans.trime"
     compileSdk {
@@ -26,11 +28,11 @@ android {
     buildToolsVersion = "36.0.0"
 
     defaultConfig {
-        applicationId = "com.osfans.trime"
+        applicationId = releaseIdentity.applicationId
         minSdk = 21
         targetSdk = 37
-        versionCode = 20261121
-        versionName = "3.3.13-t9.16"
+        versionCode = releaseIdentity.versionCode
+        versionName = releaseIdentity.versionName
         testInstrumentationRunner = "com.osfans.trime.StartupResponsivenessInstrumentation"
 
         multiDexEnabled = true
@@ -59,16 +61,16 @@ android {
 
     buildTypes {
         release {
+            isDebuggable = false
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",
             )
-            // Keep the fork's existing public installation and certificate when explicitly requested.
-            // The default upstream release identity is unchanged; this remains a non-debuggable build.
+            // Keep the certificate of existing fork installations when explicitly requested.
+            // The release gate verifies the actual APK's signer and non-debuggable flag.
             if (providers.gradleProperty("trime.forkReleaseIdentity").map { it.toBooleanStrict() }.orElse(false).get()) {
-                applicationIdSuffix = ".debug"
                 signingConfig = signingConfigs.getByName("debug")
             } else {
                 signingConfig = project.signKeyFile?.let {
@@ -82,7 +84,8 @@ android {
             }
         }
         debug {
-            applicationIdSuffix = ".debug"
+            isDebuggable = true
+            versionNameSuffix = "-debug"
         }
         all {
             // remove META-INF/version-control-info.textproto

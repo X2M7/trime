@@ -41,7 +41,7 @@ open class NativeBaseConventionPlugin : Plugin<Project> {
                 isEnable = true
                 isUniversalApk = false
                 reset()
-                (target.buildAbiOverride?.split(",") ?: Versions.supportedAbis).forEach {
+                target.buildAbis.forEach {
                     include(it)
                 }
             }
