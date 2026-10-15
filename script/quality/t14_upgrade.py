@@ -144,6 +144,46 @@ def require_install_success(raw):
             "Actual package installer did not uniquely report success")
 
 
+def require_preserved_preferences(before, after):
+    left = {key: value for key, value in before.items() if key != VOLATILE_PREFERENCE}
+    right = {key: value for key, value in after.items() if key != VOLATILE_PREFERENCE}
+    require(left == right, "A nonvolatile preference changed across upgrade/restart")
+
+
+def bound_ime_state(raw, api):
+    """Recognize the real API21/35 manager and service dump, not its IME list."""
+    text = raw.decode("utf-8")
+    connection = "mHaveConnect" if api == 21 else "mHaveConnection"
+    current = re.findall(r"(?m)^\s*mCurMethodId=(\S+)\s*$", text)
+    bindings = re.findall(r"(?m)^\s*mCurId=(\S+) " + connection +
+                          r"=(true|false) mBoundToMethod=(true|false)(?=\s|$)", text)
+    services = re.findall(r"(?m)^Input method service state for " +
+                          re.escape("com.osfans.trime.ime.core.TrimeInputMethodService") +
+                          r"@([0-9a-f]+):\r?$", text)
+    if current != [IME] or bindings != [(IME, "true", "true")] or len(services) != 1:
+        return None
+    return dict(ime=IME, connection_field=connection, service_instance=services[0])
+
+
+def activation_sample(before_raw, after_raw, manager_raw, api, expected=None):
+    # A SharedPreferences disk write can be observed in progress. Retain each
+    # raw sample; only a complete XML map may become the upgrade baseline.
+    try:
+        before, after = preference_values(before_raw), preference_values(after_raw)
+    except ET.ParseError:
+        return None
+    if expected is not None:
+        # Never wait for a changed setting to be restored or whitelist theme.
+        require_preserved_preferences(expected, before)
+        require_preserved_preferences(expected, after)
+    require(all(before.get(key) == value and after.get(key) == value
+                for key, value in PREFERENCE_FIXTURE.items()), "Non-default preference lost during activation")
+    binding = bound_ime_state(manager_raw, api)
+    if binding is None or before_raw != after_raw or after.get("selected_theme") != ("string", "trime"):
+        return None
+    return dict(preferences_sha256=hashlib.sha256(after_raw).hexdigest(), values=after, binding=binding)
+
+
 def validate_artifacts(args):
     binding = bound(args.artifact_record)
     require(binding["sha256"] == args.artifact_record_sha256, "Artifact record SHA differs")
@@ -221,8 +261,8 @@ def run(args):
             stream.write(raw)
         return bound(path)
 
-    def read_remote(path, label):
-        raw = control.command(["exec-out", "cat", path], timeout=30)
+    def read_remote(path, label, timeout=30):
+        raw = control.command(["exec-out", "cat", path], timeout=timeout)
         require(len(raw) <= 2 * 1024 * 1024, "Fixture file exceeds 2 MiB")
         return raw, write(label, raw)
 
@@ -347,9 +387,44 @@ def run(args):
         return state
 
     def same_preferences(before, after):
-        left = {key: value for key, value in before["values"].items() if key != VOLATILE_PREFERENCE}
-        right = {key: value for key, value in after["values"].items() if key != VOLATILE_PREFERENCE}
-        require(left == right, "A nonvolatile preference changed across upgrade/restart")
+        require_preserved_preferences(before["values"], after["values"])
+
+    def await_activation(label, expected=None):
+        # ThemeManager.init persists selected_theme after Rime readiness and
+        # successful theme loading. Merely setting the IME does not await it.
+        # Two stable observations also require the real bound service dump.
+        limit = min(control.deadline, time.monotonic() + 60)
+        previous = None
+        observations = []
+        entry = dict(label=label, completed=False, timeout_seconds=60, observations=observations,
+                     scope="Bound IME, persisted theme and quiescent preferences; no public UI readiness claim")
+        report.setdefault("activation_waits", []).append(entry)
+
+        def remaining():
+            control.check()
+            left = limit - time.monotonic()
+            require(left > 0, "IME theme/binding/preferences did not stabilize: " + label)
+            return min(10, left)
+
+        try:
+            while True:
+                index = len(observations)
+                prefix = label + "-" + str(index).zfill(3)
+                row = dict(started=now(), command_index=len(control.commands))
+                observations.append(row)
+                first, row["before"] = read_remote(preference_path, prefix + "-before.xml", remaining())
+                manager = control.shell("dumpsys", "input_method", timeout=remaining())
+                row["input_method"] = write(prefix + "-input-method.txt", manager)
+                second, row["after"] = read_remote(preference_path, prefix + "-after.xml", remaining())
+                sample = activation_sample(first, second, manager, args.api, expected)
+                row.update(finished=now(), ready_sample=sample is not None)
+                if sample is not None and sample == previous:
+                    entry.update(completed=True, accepted_sample=sample, finished=now())
+                    return sample
+                previous = sample
+                time.sleep(min(.25, remaining()))
+        finally:
+            save(output / (label + "-activation.json"), entry)
 
     try:
         control.verify_guest()
@@ -435,15 +510,17 @@ def run(args):
         # until the post-install selection and retained-data assertions finish.
         control.shell("ime", "enable", IME)
         control.shell("ime", "set", IME)
-        time.sleep(.5)
+        old_activation = await_activation("old-ime")
         ime_before = ime_state("before-upgrade")
         require(ime_before["default_input_method"] == IME and
                 IME in {entry.split(";")[0] for entry in ime_before["enabled_input_methods"].split(":")},
                 "Old Trime is not actually enabled and selected")
         before = snapshot("before-upgrade", preference_path, configs)
+        require_preserved_preferences(old_activation["values"], before["values"])
         current = install("new")
         require((current["uid"], current["data_dir"]) == (baseline["uid"], baseline["data_dir"]),
                 "Ordinary upgrade changed UID/data directory")
+        await_activation("upgraded-ime", before["values"])
         ime_after = ime_state("after-upgrade")
         require(ime_after == ime_before, "Ordinary APK update changed selected/enabled IME or subtype")
         after = snapshot("after-upgrade", preference_path, configs)
@@ -464,7 +541,7 @@ def run(args):
         report["checks"]["new_native_stopped_bytes_full_t9_learning_counters_and_three_backups"] = True
         control.shell("test", "!", "-e", EXTERNAL + "t10-upgrade-state.json")
         control.shell("ime", "set", IME)
-        time.sleep(.5)
+        await_activation("final-ime", before["values"])
         final_ime = ime_state("final")
         require(final_ime == ime_before, "Final upgraded Trime selection differs")
         final_data = snapshot("final", preference_path, configs)

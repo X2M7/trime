@@ -11,6 +11,60 @@ import t14_upgrade as gate
 
 
 class UpgradeGateTest(unittest.TestCase):
+    def activation_fixture(self, api, theme=True):
+        # Minimal synthetic versions of fields observed in both platform dumps.
+        connection = "mHaveConnect" if api == 21 else "mHaveConnection"
+        manager = (f"Current Input Method Manager state:\n  mCurMethodId={gate.IME}\n"
+                   f"  mCurId={gate.IME} {connection}=true mBoundToMethod=true\n"
+                   "Input method service state for com.osfans.trime.ime.core.TrimeInputMethodService@123abc:\n").encode()
+        original = (b'<map><string name="selected_theme">trime</string></map>' if theme else b'<map/>')
+        return gate.seeded_preferences(original), manager
+
+    def test_activation_requires_persisted_theme_and_exact_stable_bytes(self):
+        for api in (21, 35):
+            raw, manager = self.activation_fixture(api)
+            pending, _ = self.activation_fixture(api, theme=False)
+            with self.subTest(api=api):
+                self.assertIsNone(gate.activation_sample(pending, pending, manager, api))
+                self.assertIsNone(gate.activation_sample(pending, raw, manager, api))
+                sample = gate.activation_sample(raw, raw, manager, api)
+                self.assertEqual(("string", "trime"), sample["values"]["selected_theme"])
+                self.assertEqual(gate.IME, sample["binding"]["ime"])
+                self.assertIsNone(gate.activation_sample(raw, raw + b"\n", manager, api))
+                self.assertIsNone(gate.activation_sample(b"<map>", raw, manager, api))
+
+    def test_ime_listing_wrong_or_duplicate_binding_cannot_signal_activation(self):
+        for api in (21, 35):
+            raw, manager = self.activation_fixture(api)
+            wrong = manager.replace(("mCurId=" + gate.IME).encode(), b"mCurId=other/.Ime")
+            for invalid in (wrong, manager.replace(b"mBoundToMethod=true", b"mBoundToMethod=false"),
+                            manager.split(b"Input method service state")[0], manager + manager,
+                            manager.replace(("mCurMethodId=" + gate.IME).encode(), b"mCurMethodId=other/.Ime")):
+                with self.subTest(api=api, invalid=invalid):
+                    self.assertIsNone(gate.activation_sample(raw, raw, invalid, api))
+            # A persisted theme alone is not evidence of a currently bound IME.
+            self.assertIsNone(gate.activation_sample(raw, raw, b"Input Methods: " + gate.IME.encode(), api))
+
+    def test_activation_does_not_wait_away_changed_or_removed_preferences(self):
+        raw, manager = self.activation_fixture(21)
+        expected = gate.preference_values(raw)
+        changed = raw.replace(b">trime<", b">tongwenfeng<")
+        missing, _ = self.activation_fixture(21, theme=False)
+        for value in (changed, missing, raw.replace(b"</map>", b'<string name="unexpected">added</string></map>')):
+            with self.subTest(value=value), self.assertRaisesRegex(RuntimeError, "nonvolatile preference"):
+                gate.activation_sample(value, value, manager, 21, expected)
+
+    def test_only_pid_is_exempt_from_full_preference_preservation(self):
+        raw, manager = self.activation_fixture(35)
+        before = gate.preference_values(raw)
+        with_pid = raw.replace(b"</map>", b'<int name="general__pid" value="123"/></map>')
+        self.assertIsNotNone(gate.activation_sample(with_pid, with_pid, manager, 35, before))
+        for key in before:
+            changed = dict(before)
+            changed.pop(key)
+            with self.subTest(key=key), self.assertRaises(RuntimeError):
+                gate.require_preserved_preferences(before, changed)
+
     def test_install_success_accepts_actual_push_and_streamed_line_endings(self):
         for raw in (b"Performing Push Install\n\tpkg: /data/local/tmp/old.apk\r\nSuccess\r\n",
                     b"Performing Streamed Install\nSuccess\n"):
