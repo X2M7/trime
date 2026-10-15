@@ -1,6 +1,38 @@
 # T13 运行警告分诊
 
-状态（2026-10-15，当前候选 `cc2d6bd6`）：已修复并复验可定位的应用主题、试打焦点、关闭会话访问与重复内置主题解码问题；不能宣称全部系统运行警告已修复。下表对应最终 API21 runtime7 与 API35 runtime17，历史轮次原件继续保留。
+## 2026-10-15 发布后的警告专项
+
+本轮修复了两个测试诱因，并补齐 WebView 失败清理路径；**所有系统运行警告尚未消除**。正式应用源码没有改变，验证目标仍为已发布 9.16 的 `cc2d6bd6` Debug APK。本轮不重发稳定 APK，不替换既有 Release 附件，也不把短轮结果代替原完整验收。
+
+| 修正／检查 | 新轮实际结果 | 范围与剩余问题 |
+| --- | --- | --- |
+| 音效测试 WAV 匹配 `STREAM_SYSTEM` 原生采样率 | Android 5.0 为 44,100 Hz／4,410 帧；旧反馈轮 105 条 `FAST denied by client`，本轮全日志 0 条。Android 15 为 48,000 Hz／4,800 帧。 | 两系统均保留 105 次计划播放调用、短 melody 切换、隐私和释放断言；没有删除播放或关闭日志。不证明所有用户音效或真实扬声器输出。 |
+| 固定 FD 后先检查已校准的顶层 `fdinfo ino` | API35 旧反馈 PID 的 22 条 SELinux `getattr` 拒绝，本轮反馈 PID2475 为 0；12 项边界、同文件 1→2→1→0、九个无关 FD 控制和 200 次扫描通过。 | 只排除 inode 明确不同的非测试文件；同 inode／缺字段仍执行精确 `fstat`。API21 的旧内核没有该字段，21 次快照全部走原 `fstat`，控制和扫描也通过。不修改 SELinux 策略。 |
+| FD 审计完整性 | API35 完整审计 66,245 字符，全局 FD 92→91；API21 26,674 字符，28→33，新增五个句柄具体对应 WorkManager 数据库。 | 音效测试文件句柄始终归零；全局 FD 数仅作诊断，不能把新增数据库句柄叫作音效泄漏，也不能由短测证明长期零泄漏。未见 `TransactionTooLarge` 或审计截断。 |
+| WebView 正常／失败路径统一先移除父视图再 `destroy()` | API35 编辑器回归通过：真实 WebView 输入、两主题 40 轮显示和 100／100 次显隐。正常清理实际耗时 6.755326 ms。 | 正常成功没有执行失败分支。清理后仍有一条 renderer3005 `crash detected(code -1)`，随后 renderer clean exit 0，两条原文均保留；此问题没有被修复。 |
+| 隔离模拟器安装真实离线 TTS 引擎 | eSpeak 1.52.0／code22：先完成声库安装，版本及八个核心文件两次 SHA 一致。独立 Activity 通过唯一公开引擎、实际客户端／系统连接链、中文和英文 `onDone`、非静音 PCM 及正常 shutdown 检查，耗时 6,502 ms。 | 两个 WAV 分别 113,252／175,678 字节。模拟器使用 `-no-audio`，没有可听性或发音质量结论。第三方 APK 原有一项 META-INF 签名覆盖提示保留，未重签或修改。 |
+| 实际 TalkBack FOSS 启动观察 | 同一隔离环境中实际连接 eSpeak；结束后七个 secure 设置按原有值／不存在状态恢复，工具退出 0。 | 原图实际显示 FOSS 欢迎页，不能称完成 Settings 操作或重跑 Trime 无障碍任务。仍有一次 `Attempted to speak before TTS was initialized`，以及清理阶段一次 `Completed speech while already completed`；不宣称 FOSS 警告全部消除。 |
+
+测试包 `36fcb64dbc03f0597a7ef9684a431ab0e0ee254d859bd6a7f6b3c2825bbcafda` 对应本轮两处测试源码修改；`test-build3` 的 Spotless 检查及设备测试编译实际退出 0，无编译警告，最低可用内存 3,637,180 KiB。未在此短轮重跑 812 项 JVM／完整双 Lint 或生产 JNI；这些仍属 9.16 发布验收的历史结果。先前错误任务名的 build1 和继承旧版打包名的 build2 原件均保留，设备使用的是修正版本参数后的 build3。
+
+新 `api35-runtime1` 的反馈／编辑器阶段通过，但 TTS1 工具把 API35 系统代理连接误当作 Activity 回调，且声库尚未安装完，故该 TTS 诊断失败；失败不改判。修正工具后在另一干净 `api35-runtime2` 执行 TTS2：实际系统代理连接保留 `connected_engine=null`，由唯一可用服务、指定引擎、真实客户端 PID2526 与 system_server PID602 的五条连接事件共同核对，未伪造回调。正常解绑在原连接日志 L314，断连 W 在 L315，晚 4 ms；这是本次原文的时序解释，不是对任意断连的豁免。
+
+本轮构建与模拟器串行，保持文件索引运行及 1 GiB 可用内存下限。API35 runtime1、API21 runtime1、API35 runtime2 的模拟器／控制器均实际退出 0，无清理错误；控制器采样最低可用内存分别 2,054,512／3,782,536／2,257,796 KiB，TTS2 阶段另采到 2,152,392 KiB。没有以减少测试次数、过滤原日志、关闭动画或删除系统诊断来制造零警告。
+
+仍需对应组件处理的项目包括 Android `system_server` 安装会话 AtomicFile、FrameTracker／Back／Binder 时序、图形驱动／HAL／ART、旧 SQLite JNI 的 WAL 恢复通知，以及上述 WebView／FOSS 问题。现有证据未证明这些类别均有可在 Trime 内修复的唯一原因。API35 runtime1 保留 **4,444 W／1,929 E**，API21 runtime1 保留 **1,574 W／578 E**；单独 TTS 环境的 API35 runtime2 保留 **3,476 W／1,824 E**，此轮未启动 Trime 主进程。三轮既定 fatal／ANR、实际 LMK、内核 critical 模式未匹配，runtime1 的 renderer 错误另列，不能据此声称全系统健康。
+
+本轮原件集中于 `build/t13/warning-fixes-20261015/`：
+
+- [构建及测试 APK 绑定](../../build/t13/warning-fixes-20261015/test-apk3/record.json)
+- [API35 反馈独立复核](../../build/t13/warning-fixes-20261015/api35-feedback1-independent-review1/independent-review.json)、[API35 编辑器及全日志复核](../../build/t13/warning-fixes-20261015/api35-runtime1-final-warning-review1/report.json)
+- [API21 反馈及全日志独立复核](../../build/t13/warning-fixes-20261015/api21-runtime1-feedback-independent-review1/report.json)
+- [TTS2 实际回执](../../build/t13/warning-fixes-20261015/api35-tts2/environment-result.json)、[独立 PCM 核算](../../build/t13/warning-fixes-20261015/api35-tts2/independent-pcm.json)
+- [TTS2 原件与 PCM 复核](../../build/t13/warning-fixes-20261015/api35-tts2/independent-reader-review.json)、[TTS 环境全日志及恢复复核](../../build/t13/warning-fixes-20261015/api35-runtime2-final-warning-review1/report.json)
+- [系统警告边界及官方源码证据](../../build/t13/warning-fixes-20261015/system-warning-boundaries-review1.json)
+
+## 9.16 发布时基线
+
+状态（2026-10-15，发布源码 `cc2d6bd6`）：已修复并复验可定位的应用主题、试打焦点、关闭会话访问与重复内置主题解码问题；不能宣称全部系统运行警告已修复。下表对应发布验收 API21 runtime7 与 API35 runtime17，历史轮次原件继续保留。
 
 | 当前范围 | 实际结果与结论边界 |
 | --- | --- |

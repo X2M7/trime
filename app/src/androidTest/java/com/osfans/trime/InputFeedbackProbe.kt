@@ -5,6 +5,8 @@ import android.app.Activity
 import android.app.Instrumentation
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.media.AudioManager
+import android.media.AudioTrack
 import android.os.Build
 import android.os.Bundle
 import android.os.ParcelFileDescriptor
@@ -29,6 +31,7 @@ import java.io.IOException
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.util.UUID
+import kotlin.math.roundToInt
 import kotlin.math.sin
 
 internal object InputFeedbackProbe {
@@ -42,29 +45,29 @@ internal object InputFeedbackProbe {
     private data class DescriptorHandle(
         val identity: SoundDescriptorIdentity?,
         val target: String,
-        val provenNonFixture: DeniedDescriptorProof? = null,
+        val provenNonFixture: NonFixtureDescriptorProof? = null,
     ) {
         init {
             check((identity == null) == (provenNonFixture != null))
         }
     }
 
-    private data class DeniedDescriptorProof(
+    private data class NonFixtureDescriptorProof(
         val copiedSlot: Int,
-        val errno: Int,
-        val rawFailure: String,
         val inode: Long,
         val rawFdInfo: String,
+        val deniedErrno: Int? = null,
+        val rawFstatFailure: String? = null,
     )
 
-    private data class DescriptorFallbackCalibration(
+    private data class DescriptorMetadataCalibration(
         val fixtureInodes: Set<Long>,
         val available: Boolean,
     )
 
     private data class DescriptorAuditContext(
         val soundIdentities: Set<SoundDescriptorIdentity>,
-        val fallbackCalibration: DescriptorFallbackCalibration,
+        val metadataCalibration: DescriptorMetadataCalibration,
         val audit: MutableList<String>,
         val result: Bundle,
     )
@@ -103,10 +106,33 @@ internal object InputFeedbackProbe {
         return checkNotNull(value.toLongOrNull()) { "Unrepresentable top-level fdinfo ino field: $raw" }
     }
 
-    private fun calibrateDescriptorFallback(
+    private fun provenNonFixtureInode(raw: String, calibration: DescriptorMetadataCalibration): Long? {
+        if (!calibration.available) return null
+        return topLevelFdInfoInode(raw)?.takeIf { it !in calibration.fixtureInodes }
+    }
+
+    private fun verifyDescriptorMetadataPolicy(): Int {
+        val calibration = DescriptorMetadataCalibration(setOf(7L, 11L), true)
+        check(provenNonFixtureInode("ino: 8\n", calibration) == 8L)
+        check(provenNonFixtureInode("ino: 7\n", calibration) == null)
+        check(provenNonFixtureInode("ino: 11\n", calibration) == null)
+        check(provenNonFixtureInode("pos: 0\n", calibration) == null)
+        check(provenNonFixtureInode("inotify wd:1 ino:8\n", calibration) == null)
+        check(provenNonFixtureInode("ino: 7\ninotify wd:1 ino:8\n", calibration) == null)
+        check(provenNonFixtureInode("ino: 7\n", calibration.copy(fixtureInodes = setOf(8L))) == 7L)
+        check(provenNonFixtureInode("ino: 8\n", calibration.copy(available = false)) == null)
+        for (invalid in listOf("ino: 8\nino: 9\n", "ino: -8\n", "ino: not-a-number\n", "ino: 999999999999999999999\n")) {
+            check(runCatching { provenNonFixtureInode(invalid, calibration) }.exceptionOrNull() is IllegalStateException) {
+                "Malformed copied fdinfo must fail, not prove a non-fixture descriptor"
+            }
+        }
+        return 12
+    }
+
+    private fun calibrateDescriptorMetadata(
         fixtures: Map<File, SoundDescriptorIdentity>,
         audit: MutableList<String>,
-    ): DescriptorFallbackCalibration {
+    ): DescriptorMetadataCalibration {
         var available = true
         for ((file, expected) in fixtures) {
             val pathIdentity = descriptorIdentity(file)
@@ -132,7 +158,7 @@ internal object InputFeedbackProbe {
                 }
             }
         }
-        return DescriptorFallbackCalibration(fixtures.values.map { it.inode }.toSet(), available)
+        return DescriptorMetadataCalibration(fixtures.values.map { it.inode }.toSet(), available)
     }
 
     private fun recordDescriptorFailure(context: DescriptorAuditContext, detail: String) {
@@ -148,6 +174,7 @@ internal object InputFeedbackProbe {
         }
         val handles = linkedMapOf<String, DescriptorHandle>()
         val disappeared = mutableListOf<String>()
+        var metadataExcluded = 0
         for (slot in slots) {
             val originalFd = checkNotNull(slot.name.toIntOrNull()) { "Invalid descriptor slot: ${slot.name}" }
             check(originalFd >= 0)
@@ -174,32 +201,56 @@ internal object InputFeedbackProbe {
                 copy.use {
                     copiedSlot = copy.fd
                     var target: String? = null
-                    var proof: DeniedDescriptorProof? = null
-                    val identity = try {
-                        Os.fstat(copy.fileDescriptor).let { SoundDescriptorIdentity(it.st_dev, it.st_ino) }
-                    } catch (failure: ErrnoException) {
-                        val detail = "$stage original_slot=${slot.name} copied_slot=${copy.fd} " +
-                            "phase=pinned-fstat errno=${failure.errno} raw_failure=$failure"
-                        // Save the first denied raw slot before any further
-                        // metadata operation can fail and replace its exception.
-                        if (!context.result.containsKey("sound_descriptor_first_fstat_denial")) {
-                            context.result.putString("sound_descriptor_first_fstat_denial", detail)
+                    // An owned duplicate pins the object. A calibrated, different
+                    // top-level inode already excludes every fixture on every
+                    // device; avoid asking SELinux for unnecessary getattr access.
+                    val rawMetadata = if (context.metadataCalibration.available) copiedFdInfo(copy) else null
+                    var proof = rawMetadata?.let { raw ->
+                        provenNonFixtureInode(raw, context.metadataCalibration)?.let { inode ->
+                            NonFixtureDescriptorProof(copy.fd, inode, raw)
                         }
-                        context.audit += detail
-                        if (failure.errno != OsConstants.EACCES) throw failure
-                        target = Os.readlink("/proc/self/fd/${copy.fd}")
-                        val raw = copiedFdInfo(copy)
-                        context.audit += "$detail target=$target raw_fdinfo=$raw"
-                        if (!context.result.containsKey("sound_descriptor_first_eacces_metadata")) {
-                            context.result.putString("sound_descriptor_first_eacces_metadata", "$detail target=$target raw_fdinfo=$raw")
+                    }
+                    if (proof != null) {
+                        metadataExcluded++
+                        if (!context.result.containsKey("sound_descriptor_first_fdinfo_proof")) {
+                            context.result.putString(
+                                "sound_descriptor_first_fdinfo_proof",
+                                "$stage original_slot=${slot.name} copied_slot=${copy.fd} " +
+                                    "phase=calibrated-fdinfo non_fixture_inode=${proof.inode} fstat_skipped=true raw_fdinfo=$rawMetadata",
+                            )
                         }
-                        check(context.fallbackCalibration.available) { "EACCES fallback unavailable after all-fixture calibration: $detail" }
-                        val inode = checkNotNull(topLevelFdInfoInode(raw)) { "Missing top-level fdinfo ino after EACCES: $detail raw=$raw" }
-                        check(inode !in context.fallbackCalibration.fixtureInodes) {
-                            "EACCES descriptor inode is ambiguous with a fixture: $detail ino=$inode raw=$raw"
-                        }
-                        proof = DeniedDescriptorProof(copy.fd, failure.errno, failure.toString(), inode, raw)
+                    }
+                    val identity = if (proof != null) {
                         null
+                    } else {
+                        try {
+                            // A matching inode is not enough: retain exact device+ino
+                            // fstat matching, also used when old kernels omit ino.
+                            Os.fstat(copy.fileDescriptor).let { SoundDescriptorIdentity(it.st_dev, it.st_ino) }
+                        } catch (failure: ErrnoException) {
+                            val detail = "$stage original_slot=${slot.name} copied_slot=${copy.fd} " +
+                                "phase=pinned-fstat errno=${failure.errno} raw_failure=$failure"
+                            // Save the first denied raw slot before any further
+                            // metadata operation can fail and replace its exception.
+                            if (!context.result.containsKey("sound_descriptor_first_fstat_denial")) {
+                                context.result.putString("sound_descriptor_first_fstat_denial", detail)
+                            }
+                            context.audit += detail
+                            if (failure.errno != OsConstants.EACCES) throw failure
+                            target = Os.readlink("/proc/self/fd/${copy.fd}")
+                            val raw = copiedFdInfo(copy)
+                            context.audit += "$detail target=$target raw_fdinfo=$raw"
+                            if (!context.result.containsKey("sound_descriptor_first_eacces_metadata")) {
+                                context.result.putString("sound_descriptor_first_eacces_metadata", "$detail target=$target raw_fdinfo=$raw")
+                            }
+                            check(context.metadataCalibration.available) { "EACCES fallback unavailable after all-fixture calibration: $detail" }
+                            val inode = checkNotNull(topLevelFdInfoInode(raw)) { "Missing top-level fdinfo ino after EACCES: $detail raw=$raw" }
+                            check(inode !in context.metadataCalibration.fixtureInodes) {
+                                "EACCES descriptor inode is ambiguous with a fixture: $detail ino=$inode raw=$raw"
+                            }
+                            proof = NonFixtureDescriptorProof(copy.fd, inode, raw, failure.errno, failure.toString())
+                            null
+                        }
                     }
                     val observedTarget = target ?: Os.readlink("/proc/self/fd/${copy.fd}")
                     check(handles.put(slot.name, DescriptorHandle(identity, observedTarget, proof)) == null) {
@@ -211,6 +262,8 @@ internal object InputFeedbackProbe {
                 throw failure
             }
         }
+        context.audit += "$stage calibrated_fdinfo_non_fixture_count=$metadataExcluded " +
+            "exact_fstat_count=${handles.size - metadataExcluded}"
         return DescriptorSnapshot(slots.size, handles, disappeared)
     }
 
@@ -247,6 +300,7 @@ internal object InputFeedbackProbe {
         try {
             check(Build.HARDWARE in setOf("ranchu", "goldfish"))
             check(RimeDaemon.getFirstSessionOrNull() == null) { "Feedback probe requires an idle installation" }
+            result.putInt("sound_descriptor_metadata_policy_checks", verifyDescriptorMetadataPolicy())
             val prefs = AppPrefs.defaultInstance().keyboard
             val booleans = listOf(prefs.soundOnKeyPress, prefs.useCustomSoundEffect, prefs.speakOnKeyPress, prefs.speakOnCommit)
             val previous = booleans.map { it.getValue() }
@@ -258,11 +312,22 @@ internal object InputFeedbackProbe {
             check(folder.mkdirs())
             val descriptors = listOf(File(root, "$id-long.sound.yaml"), File(root, "$id-short.sound.yaml"))
             try {
-                val audio = ByteBuffer.allocate(44 + 1600).order(ByteOrder.LITTLE_ENDIAN)
-                audio.put("RIFF".toByteArray()).putInt(1636).put("WAVEfmt ".toByteArray())
-                    .putInt(16).putShort(1).putShort(1).putInt(8000).putInt(16000)
-                    .putShort(2).putShort(16).put("data".toByteArray()).putInt(1600)
-                repeat(800) { audio.putShort((sin(it * 2.0 * Math.PI * 240 / 8000) * 3000).toInt().toShort()) }
+                // This fixture tests lifecycle/FD ownership, not resampling.
+                // SoundPool requests FAST for shared PCM on API21; matching its
+                // sonification stream avoids forcing a slow resampling path.
+                val sampleRate = AudioTrack.getNativeOutputSampleRate(AudioManager.STREAM_SYSTEM)
+                check(sampleRate in 8000..48000) { "Unsupported native fixture sample rate: $sampleRate" }
+                val frameCount = (sampleRate / 10.0).roundToInt()
+                val dataBytes = frameCount * 2
+                result.putInt("sound_fixture_native_rate_hz", sampleRate)
+                result.putInt("sound_fixture_frame_count", frameCount)
+                result.putInt("sound_fixture_tone_hz", 240)
+                result.putInt("sound_fixture_planned_play_calls", 105)
+                val audio = ByteBuffer.allocate(44 + dataBytes).order(ByteOrder.LITTLE_ENDIAN)
+                audio.put("RIFF".toByteArray()).putInt(36 + dataBytes).put("WAVEfmt ".toByteArray())
+                    .putInt(16).putShort(1).putShort(1).putInt(sampleRate).putInt(sampleRate * 2)
+                    .putShort(2).putShort(16).put("data".toByteArray()).putInt(dataBytes)
+                repeat(frameCount) { audio.putShort((sin(it * 2.0 * Math.PI * 240 / sampleRate) * 3000).toInt().toShort()) }
                 File(folder, "key.wav").writeBytes(audio.array())
                 descriptors.forEachIndexed { index, file ->
                     check(!file.exists())
@@ -312,7 +377,7 @@ internal object InputFeedbackProbe {
                         check(soundIdentities.size == 2) { "Expected two distinct sound descriptor fixture identities" }
                         var descriptorContext = DescriptorAuditContext(
                             soundIdentities,
-                            calibrateDescriptorFallback(soundFixtures, descriptorAudit),
+                            calibrateDescriptorMetadata(soundFixtures, descriptorAudit),
                             descriptorAudit,
                             result,
                         )
@@ -332,7 +397,7 @@ internal object InputFeedbackProbe {
                         val unrelatedIdentity = descriptorIdentity(unrelated)
                         check(unrelatedIdentity !in soundIdentities)
                         descriptorContext = descriptorContext.copy(
-                            fallbackCalibration = calibrateDescriptorFallback(soundFixtures + (unrelated to unrelatedIdentity), descriptorAudit),
+                            metadataCalibration = calibrateDescriptorMetadata(soundFixtures + (unrelated to unrelatedIdentity), descriptorAudit),
                         )
                         val unrelatedBefore = descriptorSnapshot(descriptorContext, "before-unrelated-control")
                         withOpenReaders(unrelated, 9) {

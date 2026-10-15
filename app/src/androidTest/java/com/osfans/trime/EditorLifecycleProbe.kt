@@ -1544,6 +1544,29 @@ object EditorLifecycleProbe {
             instrumentation.runOnMainSync { value = runCatching(block) }
             return checkNotNull(value).getOrThrow()
         }
+        fun destroyWebFixture(required: Boolean = false) = main {
+            if (required) checkNotNull(web)
+            val view = web ?: return@main
+            val cleanupStarted = SystemClock.elapsedRealtimeNanos()
+            val cleanupIdentity = System.identityHashCode(view)
+            Log.i(
+                "TrimeProbe",
+                "WEBVIEW_CLEANUP run=$touchRegionRunId stage=remove_destroy_start monotonic_ns=$cleanupStarted " +
+                    "pid=${android.os.Process.myPid()} web_identity=$cleanupIdentity",
+            )
+            // WebView requires detaching before destroy, including cleanup after
+            // an assertion or timeout, when the normal teardown was never reached.
+            (view.parent as? ViewGroup)?.removeView(view)
+            check(view.parent == null) { "WebView fixture must be detached before destroy" }
+            view.destroy()
+            web = null
+            val cleanupFinished = SystemClock.elapsedRealtimeNanos()
+            Log.i(
+                "TrimeProbe",
+                "WEBVIEW_CLEANUP run=$touchRegionRunId stage=remove_destroy_end monotonic_ns=$cleanupFinished " +
+                    "duration_ns=${cleanupFinished - cleanupStarted} pid=${android.os.Process.myPid()} web_identity=$cleanupIdentity",
+            )
+        }
         fun phase(text: String) = instrumentation.sendStatus(0, Bundle().apply { putString("stream", "$text\n") })
         fun restoreManualLanguage() {
             if (!manualLanguageBaselineStarted) return
@@ -2792,24 +2815,7 @@ object EditorLifecycleProbe {
                     check(webValue.await() == "\"12\"")
                     focus(chat)
                     api { check(!statusCached.isAsciiMode) }
-                    main {
-                        val cleanupStarted = SystemClock.elapsedRealtimeNanos()
-                        val cleanupIdentity = System.identityHashCode(checkNotNull(web))
-                        Log.i(
-                            "TrimeProbe",
-                            "WEBVIEW_CLEANUP run=$touchRegionRunId stage=remove_destroy_start monotonic_ns=$cleanupStarted " +
-                                "pid=${android.os.Process.myPid()} web_identity=$cleanupIdentity",
-                        )
-                        container.removeView(web)
-                        web?.destroy()
-                        web = null
-                        val cleanupFinished = SystemClock.elapsedRealtimeNanos()
-                        Log.i(
-                            "TrimeProbe",
-                            "WEBVIEW_CLEANUP run=$touchRegionRunId stage=remove_destroy_end monotonic_ns=$cleanupFinished " +
-                                "duration_ns=${cleanupFinished - cleanupStarted} pid=${android.os.Process.myPid()} web_identity=$cleanupIdentity",
-                        )
-                    }
+                    destroyWebFixture(required = true)
 
                     val baseline = main { chat.text.toString() }
                     val imm = editor.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
@@ -2929,7 +2935,7 @@ object EditorLifecycleProbe {
                 main {
                     candidatesMode.setValue(originalCandidatesMode)
                     manualPrivacyMode.setValue(originalManualPrivacyMode)
-                    web?.destroy()
+                    destroyWebFixture()
                     activity?.finish()
                 }
                 runBlocking {
