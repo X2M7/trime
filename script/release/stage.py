@@ -21,6 +21,26 @@ def read_bound(row):
     return json.loads(Path(row['path']).read_text())
 
 
+def validate_apk_history(history, meta):
+    """Validate the original per-APK audit without rewriting its signer arrays."""
+    require(isinstance(history, list) and history and
+            all(isinstance(row, dict) and row.get('passed') is True for row in history),
+            'Published APK identity audit incomplete')
+    for row in history:
+        certificates = row.get('signer_certificate_sha256')
+        require(isinstance(certificates, list) and len(certificates) == 1 and
+                isinstance(certificates[0], str) and re.fullmatch(r'[0-9a-f]{64}', certificates[0]),
+                'Published APK must have exactly one audited signing certificate')
+        require(type(row.get('version_code')) is int and 0 < row['version_code'] <= 2100000000,
+                'Published APK versionCode is invalid')
+    same = [row for row in history if row.get('package_name') == meta['applicationId']]
+    require(same, 'No audited APK has the release applicationId')
+    require(max(row['version_code'] for row in same) == meta['previousVersionCode'],
+            'Published maximum versionCode differs')
+    require(all(row['signer_certificate_sha256'] == [meta['certificateSha256']] for row in same),
+            'Published signing certificate differs')
+
+
 def qualification(path):
     q = json.loads(path.read_text())
     require(q.get('format_version') == 1 and q.get('task') == 'T14', 'Unknown qualification format')
@@ -76,10 +96,7 @@ def qualification(path):
         require(r['passed'] is True and r['candidate_commit'] == code and r['new_apk'] == expected and
                 r.get('stopped_reason') is None, 'Upgrade did not pass with this APK')
     history = read_bound(q['published_history'])
-    same = [a for a in history if a['package_name'] == meta['applicationId']]
-    require(same and all(a['passed'] for a in history), 'Published APK identity audit incomplete')
-    require(max(a['version_code'] for a in same) == meta['previousVersionCode'] and
-            all(a['signer_certificate_sha256'] == meta['certificateSha256'] for a in same), 'Published version/signing history differs')
+    validate_apk_history(history, meta)
     require(q['limitations'] and isinstance(q['limitations'], list) and all(isinstance(s, str) for s in q['limitations']), 'Validation limits must be stated')
     pages(check=True)
     return q, record
