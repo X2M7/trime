@@ -14,17 +14,29 @@ SPDX-License-Identifier: GPL-3.0-or-later
 
 [English](README.md) | 简体中文 | [繁體中文](README_tc.md)
 
-## v3.3.13-t9.16 — 无障碍与设备适配
+## v3.3.13-t9.17 — 版本与覆盖升级一致性
+
+应用版本、APK 名称、发布工具与 Pages 统一读取版本元数据。`versionCode 20261122` 高于全部 26 个已核对历史 APK 的最高值 `20261121`。继续沿用历史包名 `com.osfans.trime.debug` 和原证书，正式 APK 实际为不可调试的 Release 构建。升级前把配置与词库备份复制到独立位置，再覆盖安装，不卸载、不清除数据。
+
+本版构建的 812 项应用 JVM 测试和 268 项宿主检查新执行通过，34 项构建逻辑测试为缓存结果，双 Lint 均为 0 问题。
+
+Android 5.0 与 Android 15 x86_64 模拟器从 v3.3.13-t9.16 正式 APK 覆盖升级到本版，各通过全部九项检查，覆盖配置、偏好、UID、已选及已启用输入法和真实原生用户词库保留。检查使用专用测试环境与内部空编辑器，不代表公开界面输入或跨包名迁移验收。
+
+范围与线上状态见 [T14 验证报告](script/quality/VALIDATION-T14.md)、[升级说明](script/release/README.md)和[版本 Release](https://github.com/X2M7/trime/releases/tag/v3.3.13-t9.17)。计划附件仅两个正式 APK 与完整递归源码。实物 ARM64 手机、OEM、16 KiB 页、可听 TTS、P95／PSS 与长期驻留仍未验收，运行警告、先前失败尝试及独立辅助程序的未决警告继续保留。
+
+下方 v3.3.13-t9.16 内容保留为该版本的历史证据。
+
+## 历史 v3.3.13-t9.16 — 无障碍与设备适配
 
 按键、候选、九键拼音筛选和预编辑控件补齐可访问名称、角色、选中状态与操作。动态回车键名称随发送、搜索等动作更新；候选刷新后的旧操作会被输入身份检查拦截。改善大字体、横屏与窗口边界适配，短屏可通过垂直滚动访问内容。
 
-当前候选的 812 项应用 JVM 测试与 227 项宿主检查新执行通过。独立 Debug／Release Lint 0 问题，构建和双 ABI 正式 APK 签名检查无警告。384 项原生检查按 31 项一致输入绑定复用历史结果，本轮未重跑；生产 JNI 任务为 UP-TO-DATE，不声称全部重新编译。
+v3.3.13-t9.16 构建的 812 项应用 JVM 测试与 227 项宿主检查新执行通过。独立 Debug／Release Lint 0 问题，构建和双 ABI 正式 APK 签名检查无警告。384 项原生检查按 31 项一致输入绑定复用历史结果，本轮未重跑；生产 JNI 任务为 UP-TO-DATE，不声称全部重新编译。
 
 已测模拟器范围包括 Android 5.0 四组配置、Android 15 八组配置及额外一组 Steam 深色配色检查。夜间模式矩阵仍用浅色配色，深色像素依据来自独立 Steam 原图。Android 15 正式 APK 上，实际 TalkBack FOSS 探索与双击完成九键输入、筛拼音、选词和发送。常规与两倍字体、上下两个分屏位置的 TalkBack 输入均通过；整轮运行警告的分类与限制见验证报告。
 
-本记录冻结于发布前，线上状态以[版本 Release 页面](https://github.com/X2M7/trime/releases/tag/v3.3.13-t9.16)为准。系统／模拟器运行警告及历史失败全部保留，不表示所有警告或风险已经消除。[9.16 验证范围](script/quality/VALIDATION-t9.16.md) · [历史 9.15 验证](script/quality/VALIDATION-t9.15.md)。
+本历史记录冻结于该版本发布前，线上状态以[版本 Release 页面](https://github.com/X2M7/trime/releases/tag/v3.3.13-t9.16)为准。系统／模拟器运行警告及历史失败全部保留，不表示所有警告或风险已经消除。[9.16 验证范围](script/quality/VALIDATION-t9.16.md) · [历史 9.15 验证](script/quality/VALIDATION-t9.15.md)。
 
-保留 Android 5.0+、ARM64／x86_64 构建支持。实物手机、OEM、16 KiB 页、真实语音／TTS、候选 P95／PSS 与长期驻留仍未验收。计划手动附件仅两个正式 APK 与包含主仓库及全部 21 个递归子模块的完整源码包；GitHub 自动 source zip／tar 保留。
+保留 Android 5.0+、ARM64／x86_64 构建支持。实物手机、OEM、16 KiB 页、真实语音／TTS、候选 P95／PSS 与长期驻留仍未验收。v3.3.13-t9.16 当时计划的手动附件仅两个正式 APK 与包含主仓库及全部 21 个递归子模块的完整源码包；GitHub 自动 source zip／tar 保留。
 
 ## 关于
 

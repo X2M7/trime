@@ -437,11 +437,11 @@
       <div class="wrap">
         <h2>安装与使用</h2>
         <ol class="steps">
-          <li>先备份配置与词库，再按设备架构选择 ARM64 或 x86_64 APK。请在版本 Release 页面核对版本与附件，Latest 指向线上稳定版。</li>
+          <li>先把配置与词库备份复制到独立位置，再按设备架构选择 ARM64 或 x86_64 APK。请在版本 Release 页面核对版本与附件，Latest 指向线上稳定版。</li>
           <li>首次使用按向导启用并选用输入法，选择九键／全拼和简繁，然后完成中文试打；新安装无需手工编辑 YAML。</li>
           <li>已有用户可保留当前方案和自定义配置，在常用设置调整布局与外观；高级方案与词库设置仍可进入。</li>
         </ol>
-        <p>本页列出的版本是当前源码的目标版本。下载入口始终指向线上 Latest；当前目标的<a href="https://github.com/X2M7/trime/releases/tag/v3.3.13-t9.17">版本 Release 页面</a>在发布后可用。发布附件仅包括正式 APK 和完整源码包，GitHub 自动生成的 source zip／tar 也会保留。</p>
+        <p>本页列出的版本是当前源码的目标版本。下载入口始终指向线上 Latest；当前目标的<a href="https://github.com/X2M7/trime/releases/tag/v3.3.13-t9.17">版本 Release 页面</a>在发布后可用。计划附件仅包括 ARM64 与 x86_64 两个正式 APK，以及包含主仓库和全部 21 个递归子模块的完整源码包；GitHub 自动生成的 source zip／tar 也会保留。</p>
         <details class="identity">
           <summary>安装身份与覆盖升级核对</summary>
           <p>版本：<code>3.3.13-t9.17</code>；版本号：<code>20261122</code>。</p>
@@ -449,7 +449,8 @@
           <p>签名证书 SHA-256：<code>c6fb875b1959f56fc6b3992d603b86e2dcd793677d32aba83687b34ef6937dd2</code>。</p>
           <p>请先备份配置与词库，再覆盖安装相同包名和签名的正式 APK。若系统提示签名不兼容，保留原安装并核对下载来源；卸载会清除应用私有数据。</p>
         </details>
-        <p>历史验收与当前版本的发布状态分开记录。查看<a href="https://github.com/X2M7/trime/blob/develop/script/quality/VALIDATION-t9.16.md">9.16 验证范围</a>与<a href="https://github.com/X2M7/trime/blob/develop/script/quality/VALIDATION-t9.15.md">9.15 验证范围</a>；它们不代表当前目标版本已经通过验收。模拟器不能代替实物手机、OEM、16 KiB 页、候选 P95／PSS 与长期驻留验证。</p>
+        <p>本版在 Android 5.0 与 Android 15 x86_64 模拟器上各通过九项同包名覆盖升级检查，覆盖配置、偏好、UID、输入法选择与真实原生用户词库保留。检查使用专用测试环境与内部空编辑器，不代表公开界面输入或跨包名迁移验收。完整范围见<a href="https://github.com/X2M7/trime/blob/develop/script/quality/VALIDATION-T14.md">T14 验证报告</a>；线上状态以对应 Release 为准。</p>
+        <p>运行警告与先前失败尝试继续记录。实物 ARM64 手机、OEM、16 KiB 页、可听 TTS、候选 P95／PSS 与长期驻留仍未验收。历史证据保留在<a href="https://github.com/X2M7/trime/blob/develop/script/quality/VALIDATION-t9.16.md">9.16 验证报告</a>与<a href="https://github.com/X2M7/trime/blob/develop/script/quality/VALIDATION-t9.15.md">9.15 验证报告</a>。</p>
       </div>
     </section>
   </main>

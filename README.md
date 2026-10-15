@@ -16,17 +16,29 @@ Rime IME for Android
 
 English | [简体中文](README_sc.md) | [繁體中文](README_tc.md)
 
-## v3.3.13-t9.16 — Accessibility and device adaptation
+## v3.3.13-t9.17 — Version and upgrade consistency
+
+One metadata file now supplies the app version, APK names, release tools and Pages. VersionCode `20261122` exceeds the maximum `20261121` found in all 26 audited public APKs. The historical package `com.osfans.trime.debug` and signing certificate remain; official APKs are non-debuggable Release builds. Back up configuration and dictionaries to a separate location, then install over the existing app without uninstalling or clearing its data.
+
+This build passed 812 newly executed app JVM tests and 268 host checks; 34 build-logic tests used cached results. Both Lint variants reported zero issues.
+
+Android 5.0 and Android 15 x86_64 emulators each passed all nine checks when upgrading the normal v3.3.13-t9.16 Release APK to this Release. The checks cover retained configuration, preferences, UID, selected/enabled IME and the real native user dictionary. They use a dedicated fixture and an internal empty editor; public UI input and cross-package migration remain outside this scope.
+
+See the [T14 validation report](script/quality/VALIDATION-T14.md), [upgrade guide](script/release/README.md) and [version Release](https://github.com/X2M7/trime/releases/tag/v3.3.13-t9.17) for scope and online status. The planned attachments are two Release APKs and complete recursive source. Physical ARM64 devices, OEM behavior, 16 KiB pages, audible TTS, P95/PSS and long-term residency remain unverified; runtime warnings, earlier failed attempts and the separate helper’s unresolved warning remain documented.
+
+The v3.3.13-t9.16 section below is historical evidence for that version.
+
+## Historical v3.3.13-t9.16 — Accessibility and device adaptation
 
 Keys, candidates, T9 pinyin filters and preedit controls now expose accessible names, roles, selection state and actions. The Enter key’s accessible name reflects its current action, such as Send or Search. Candidate actions reject stale input identities after a refresh. Large text, landscape layouts and window insets receive improved handling; short screens provide vertical scrolling to reach content.
 
-The current candidate passed 812 fresh application JVM tests and 227 fresh host checks. Separate Debug/Release Lint runs reported no issues; build and both normal Release APK signature checks reported no warnings. The historical 384 native checks are reused after verifying 31 unchanged inputs; they were not rerun. Production JNI tasks were up-to-date, not all freshly compiled.
+The v3.3.13-t9.16 build passed 812 fresh application JVM tests and 227 fresh host checks. Separate Debug/Release Lint runs reported no issues; build and both normal Release APK signature checks reported no warnings. The historical 384 native checks are reused after verifying 31 unchanged inputs; they were not rerun. Production JNI tasks were up-to-date, not all freshly compiled.
 
 The tested emulator scope includes four Android 5.0 configurations, eight Android 15 configurations and one additional Steam dark-palette check. The night-mode matrix retained a light palette; the separate Steam screenshots provide the dark-palette evidence. On the normal Android 15 Release APK, actual TalkBack FOSS exploration and double-tap activation completed T9 input, pinyin filtering, candidate selection and Send. TalkBack input also passed at font scales 1 and 2 in both split-screen positions; the complete runtime warning review is recorded in the validation report.
 
-This record is frozen before publication; see the [version release page](https://github.com/X2M7/trime/releases/tag/v3.3.13-t9.16) for online status. Runtime system/emulator warnings and earlier failed attempts remain preserved; this is not a claim that all warnings or risks have been eliminated. [9.16 validation scope](script/quality/VALIDATION-t9.16.md) · [Historical 9.15 validation](script/quality/VALIDATION-t9.15.md).
+This historical record was frozen before its publication; see the [version release page](https://github.com/X2M7/trime/releases/tag/v3.3.13-t9.16) for online status. Runtime system/emulator warnings and earlier failed attempts remain preserved; this is not a claim that all warnings or risks have been eliminated. [9.16 validation scope](script/quality/VALIDATION-t9.16.md) · [Historical 9.15 validation](script/quality/VALIDATION-t9.15.md).
 
-Android 5.0+ and ARM64/x86_64 build support remain. Physical phones, OEM behavior, 16 KiB pages, real speech/TTS, candidate P95/PSS and long-term residency remain unverified. Planned manual assets are two normal Release APKs and one complete source archive containing the main repository and all 21 recursive submodules; GitHub's automatic source zip/tar archives remain available.
+Android 5.0+ and ARM64/x86_64 build support remain. Physical phones, OEM behavior, 16 KiB pages, real speech/TTS, candidate P95/PSS and long-term residency remain unverified. The manual assets planned for v3.3.13-t9.16 were two normal Release APKs and one complete source archive containing the main repository and all 21 recursive submodules; GitHub's automatic source zip/tar archives remain available.
 
 ## About
 
