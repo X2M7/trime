@@ -1,5 +1,39 @@
 # T13 运行警告分诊
 
+## 已确认范围内的继续处理（2026-10-15）
+
+用户已确认：排除有证据的模拟器／Android 系统自身警告，处理其余由 Trime、依赖或测试代码造成的警告。本轮已修复下列可定位问题，但**尚未达到限定范围全部消除**。eSpeak 进程仍有一类 ART finalizer 诊断，具体 Reference 对象未知；没有将它自动归为系统原因，也没有关闭日志或强制 GC。以下结果不覆盖真机、可听语音、长期驻留或全部历史事件。
+
+| 已处理项目 | 实际验证与边界 |
+| --- | --- |
+| eSpeak 参数与资源关闭 | 从官方 1.52.0 源码重建独立辅助 APK，新旧引擎对照轮各 12 次标点设置／12 次合成均保留；内部参数错误及 CloseGuard 资源未关闭警告新轮为 0。中英文非静音 PCM 与原引擎逐字节相同。实际 FileUtils 类的 128 次读取／16 次异常检查，Linux／JDK 17 遗留目标 FD 由 144 降至 0，借用流所有权保持；二进制读取尚未作 Android 路径覆盖。 |
+| TalkBack FOSS 生命周期 | 修复权限接收器注销、重复语音完成／开始状态、教程重复绑定与尚未连接时请求、独立构建的 SplitCompat 路径，以及 DEVICE_PROVISIONED 的正确 Settings.Global 读取。正常初始化排队保留并按普通排队记录，真实初始化失败仍报告错误；16 个提取自实际生产方法的宿主状态场景通过，不等于完整 Android 类验收。实际辅助 APK 合成成功，停服后进程仍存活时接收器由 8 个降为 0，没有原泄漏错误。 |
+| FOSS 标签数据库地址 | 第一轮仍发现 CustomLabelManager 的第二处旧 authority，失败原件保留。补齐后所有客户端统一为 LabelProvider.AUTHORITY，新轮旧地址错误为 0；使用 shell UID 2000 的公开接口实际新增／读取／修改／删除虚构标签，并严格核对原有行恢复。provider 原有访问权限未变。 |
+| 安装脚本的增量安装诱因 | 使用同一个已验真 FOSS APK 作对照：默认增量安装实际位于 incremental-fs，改用明确的 --no-incremental 后包路径、挂载与服务快照保留，原 incremental_prop／proc_filesystems 拒绝未再出现。APK 拉回 SHA、中英文 PCM、七项 secure 设置的值与存在状态检查均保留。随后只移除三个已验真临时辅助应用，再验证修复标签地址的新版。 |
+| 目录触摸脚本 | 旧脚本点开工具栏菜单后继续向已销毁窗口滑动。现在核对可见窗口和实际目录区域，真实 Back 关菜单，检查连续原日志中的实际触摸目标及双向行位移。新轮六个锚点分别 −546／+539 px，两个手势区间注入失败为 0，保留 109 W／2 E 原文；不算列表视图切换、完整 SAF 导入或精确位置恢复验收。原解析失败、第二次手势误要求新 target 日志、首次清理 Back 只到父目录的失败均保留；第二次正常 Back 后仅 rmdir 清理 31 个空目录。 |
+| 独立音效路径 | 未安装 Trime 的公开 SoundPool 程序实际完成原生采样率 PCM 加载、非零播放、停止／释放及 FD 关闭；首轮文件路径别名比较失败发生在 load 前，修正后成功。三条 Codec2 参数提示各复现一次，官方源码确认是可选参数查询，可限定归为平台诊断。原始 FD 全记录保存在拉回文件中，超出单条 logcat 长度的副本不当作完整证据。 |
+| 输入法与 WebView 对照 | 系统 LatinIME 和冻结 9.16 APK 均通过相同独立编辑器的真实触摸、光标弹窗、20 次显隐、42 个稳定检查点及末尾观察。正常清理改为实际 Back 后，两种输入法原各 2 条死亡 Binder 目标错误均为 0；原 100 次压力测试未被替代。未安装 Trime 的 WebView 124 对照捕获正常 Cleanup 原生 trace，结合 Chromium 修复可解释该次 clean exit 被误报为 crash；没有用新 trace 补作旧事件的唯一归因。 |
+
+确认的平台排除范围另有：旧 doDie／maybeSendAppStartTimes 的约 4 秒锁环与 [AOSP b056f98c 修复](https://android.googlesource.com/platform/frameworks/base/+/b056f98cc6a6195357172fa27642d7d66ba5df2a) 精确对应；特定 finishComposingTextFromImm／ImeBack 异步生命周期、ResourcesImpl 弱引用缓存、普通返回回调注销、Java 测试包的 ABI 元数据、Android 5 WAL NOTICE 的错误等级映射及模拟图形能力提示均有逐项源码证据。FrameTracker、窗口令牌等存在系统输入法对照；这些结论不把全部丢帧或每一条历史记录自动列为无害，也没有修改系统镜像、关闭诊断、扩大权限或削弱业务断言。
+
+可提交修复为[辅助程序补丁及复验说明](external-helper-patches/README.md)、[实际使用的目录手势检查](directory_gesture_guard.py)及[10 项宿主测试](test_directory_gesture_guard.py)。FOSS 最新辅助构建全部 257 个任务实际执行，APK 的 4 份 x86_64 原生库与签名已核对，最低可用内存约 3.31 GiB；其 114 条 AAPT／native／Java／SDK 构建诊断保留。eSpeak 辅助构建保留 100 条编译器诊断（达到默认输出上限），均不冒充 Trime 零警告发布构建。两个新模拟器控制器及 VM 均退出 0、无残留；各控制器最低可用内存约 2.19／1.99 GiB，1 GiB 保护未触发，索引保持运行。VM 断开后的 logcat 退出 255 单列保留。 两轮完整连续日志分别保留 4,477 W／1,960 E 和 4,321 W／2,045 E（F 均为 0）；指定致命／ANR／LMK／内核严重事件模式未匹配，不覆盖保留的审计丢失、最终化和锁等待记录。
+
+**本轮未改 Trime 正式应用源码，稳定版仍为 9.16；不重新发布 APK，不增加 Release 附件。** 原始失败、完整系统日志和有限范围声明均保留。eSpeak 的最终化记录只是 ART 引用处理诊断，不等于已经证明资源泄漏：已核实际 DEX 无自定义 finalize、JNI 无弱全局引用、资源关闭和真实 TTS shutdown；但缺具体对象身份，仍列未决。
+
+证据位于 `build/t13/nonplatform-warnings-20261015/`：
+
+- [eSpeak 实际运行](../../build/t13/nonplatform-warnings-20261015/tts-patched1/environment-result.json)、[FileUtils 资源检查](../../build/t13/nonplatform-warnings-20261015/espeak-file-resource-check1/result.json)、[finalizer 限定调查](../../build/t13/nonplatform-warnings-20261015/espeak-finalizer-review2/review.json)
+- [FOSS 源码与构建复核](../../build/t13/nonplatform-warnings-20261015/foss-build3-independent-review1/review.json)、[最新实际运行](../../build/t13/nonplatform-warnings-20261015/tts-label-fixed1/environment-result.json)、[公开标签 CRUD](../../build/t13/nonplatform-warnings-20261015/foss-label-crud1/result.json)
+- [新版语音与设置独立复核](../../build/t13/nonplatform-warnings-20261015/tts-label-fixed1-independent-review1/review.json)、[标签 CRUD 独立复核](../../build/t13/nonplatform-warnings-20261015/foss-label-crud1-independent-review1/review.json)
+- [同 APK 安装方式对照](../../build/t13/nonplatform-warnings-20261015/tts-no-incremental1/environment-result.json)、[三个临时应用清理](../../build/t13/nonplatform-warnings-20261015/tts-no-incremental-cleanup1/result.json)、[IncFS 官方调用链](../../build/t13/nonplatform-warnings-20261015/foss-incfs-source1/review.json)
+- [目录新轮独立复核](../../build/t13/nonplatform-warnings-20261015/directory-menu-scroll2-independent-review1/report.json)、[SoundPool 独立复核](../../build/t13/nonplatform-warnings-20261015/soundpool-stock2-independent-review1/review.json)
+- [WebView 对照](../../build/t13/nonplatform-warnings-20261015/webview-stock1-independent-review1/review.json)、[正常退出对照](../../build/t13/nonplatform-warnings-20261015/ime-stock-trime-graceful-independent-comparison1/report.json)、[旧锁环的官方修复归因](../../build/t13/nonplatform-warnings-20261015/popup-stall-scope1/report.json)
+
+- [runtime3 全日志与退出汇总](../../build/t13/nonplatform-warnings-20261015/api35-runtime3-independent-summary1/report.json)、[runtime4 全日志与退出汇总](../../build/t13/nonplatform-warnings-20261015/api35-runtime4-independent-summary1/report.json)
+
+下列发布后早期和历史轮次保留其当时结论；不能用后续新证据改写原失败或扩大旧轮通过范围。
+
+
 ## 2026-10-15 发布后的警告专项
 
 本轮修复了两个测试诱因，并补齐 WebView 失败清理路径；**所有系统运行警告尚未消除**。正式应用源码没有改变，验证目标仍为已发布 9.16 的 `cc2d6bd6` Debug APK。本轮不重发稳定 APK，不替换既有 Release 附件，也不把短轮结果代替原完整验收。
