@@ -37,6 +37,8 @@ Pages 是静态生成文件；模板、元数据或生成结果不一致会使 C
 
 `build.py` 串行运行 Debug／Release／独立 Lint，单 worker、896 MiB 堆、640 MiB Metaspace；≥4 GiB 可用内存才启动，低于 1 GiB 停止。它保存实际命令、日志、Git/submodule SHA、生成的 BuildConfig、冻结 APK 和内存／退出记录。正式签名沿用既有证书必须显式启用 `trime.forkReleaseIdentity=true`；其他签名会被发布验签拒绝。
 
+三个阶段可传入相同的 `--build-timestamp <毫秒时间戳>`，表示本轮候选开始构建的实际时刻。共享该值可避免 Lint 因时间字段变化而重新编译 Kotlin；每个阶段的实际起止时间仍独立记录，缓存命中不能计为新执行测试。
+
 `release.py record` 绑定真实 Release 构建结果，检查 Manifest、单一 native ABI/ELF machine、v1/v2 签名、证书和 ZIP 对齐，并记录全部 APK 数据资源摘要、词典版本／摘要、主仓库及递归子模块提交。静态对齐检查不等于物理设备页大小验收。
 
 `stage.py` 需要同一源码的构建、单元测试、宿主检查、双 Lint、Android 5.0／15 实际升级报告及原始已发布 APK 身份审计。它只打包两份 Release APK 和完整离线源码。`publish.py plan` 不读取凭据；`publish` 只针对 `X2M7/trime`，先创建草稿，再下载校验全部附件，最后发布稳定版 Latest，并再次下载比对。实验版本不能走此稳定发布路径，必须标为 prerelease 且不替换 Latest。CI 不自动发布或移动标签。已有标签和产物不会被覆盖。

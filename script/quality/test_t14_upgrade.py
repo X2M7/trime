@@ -11,6 +11,18 @@ import t14_upgrade as gate
 
 
 class UpgradeGateTest(unittest.TestCase):
+    def test_install_success_accepts_actual_push_and_streamed_line_endings(self):
+        for raw in (b"Performing Push Install\n\tpkg: /data/local/tmp/old.apk\r\nSuccess\r\n",
+                    b"Performing Streamed Install\nSuccess\n"):
+            with self.subTest(raw=raw):
+                gate.require_install_success(raw)
+
+    def test_install_success_rejects_missing_ambiguous_or_failed_results(self):
+        for raw in (b"", b"NotSuccess\n", b"Success extra\n", b"Success\r\nSuccess\n",
+                    b"Success\nFailure [INSTALL_FAILED_UPDATE_INCOMPATIBLE]\r\n"):
+            with self.subTest(raw=raw), self.assertRaises(RuntimeError):
+                gate.require_install_success(raw)
+
     def test_preference_seed_preserves_unrelated_values_and_types(self):
         original = b'<map><string name="empty"/><set name="choices"><string>b</string><string>a</string></set><long name="count" value="17"/><boolean name="candidate_show_comments" value="true"/></map>'
         before = gate.preference_values(original)

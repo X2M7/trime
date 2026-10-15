@@ -137,6 +137,13 @@ def seeded_preferences(raw):
     return result
 
 
+def require_install_success(raw):
+    # adb push installs on API 21 retain CRLF from PackageManager. Capture the
+    # token, not its optional line ending; preserve the original stdout receipt.
+    require(re.findall(rb"(?m)^(Success)\r?$", raw) == [b"Success"] and b"Failure [" not in raw,
+            "Actual package installer did not uniquely report success")
+
+
 def validate_artifacts(args):
     binding = bound(args.artifact_record)
     require(binding["sha256"] == args.artifact_record_sha256, "Artifact record SHA differs")
@@ -221,9 +228,9 @@ def run(args):
 
     def optional_remote(path, label):
         kind = control.shell("sh", "-c",
-                             'if [ -L "$1" ]; then printf symlink; '
-                             'elif [ -f "$1" ]; then printf file; '
-                             'elif [ -e "$1" ]; then printf other; else printf absent; fi',
+                             'if [ -L "$1" ]; then echo symlink; '
+                             'elif [ -f "$1" ]; then echo file; '
+                             'elif [ -e "$1" ]; then echo other; else echo absent; fi',
                              "t14-path", path)
         require(kind in (b"file", b"absent"), "Expected regular configuration or absent path")
         if kind == b"file":
@@ -260,8 +267,7 @@ def run(args):
         arguments.append(record["apks"][kind]["path"])
         require("-d" not in arguments and "uninstall" not in arguments, "Unsafe install option")
         raw = control.command(arguments, timeout=120)
-        require(re.findall(rb"(?m)^Success\r?$", raw) == [b"Success"] and b"Failure [" not in raw,
-                "Actual package installer did not uniquely report success")
+        require_install_success(raw)
         return installed(kind + "-installed", kind)
 
     def ime_state(label):

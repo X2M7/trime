@@ -31,7 +31,12 @@ def main():
     parser.add_argument('--sdk', type=Path, required=True)
     parser.add_argument('--jdk', type=Path, required=True)
     parser.add_argument('--output', type=Path, required=True)
+    parser.add_argument('--build-timestamp', type=int,
+                        help='Shared candidate build time in milliseconds for all three phases')
     args = parser.parse_args()
+    build_timestamp = args.build_timestamp if args.build_timestamp is not None else int(time.time() * 1000)
+    require(10**12 <= build_timestamp <= int(time.time() * 1000),
+            'Build timestamp must be a past or current millisecond epoch, not seconds')
     meta = metadata()
     require(available() >= 4 * 1024 * 1024, 'Wait for at least 4 GiB available')
     for path in Path('/proc').iterdir():
@@ -51,7 +56,7 @@ def main():
                ANDROID_SDK_ROOT=str(args.sdk.resolve()), BUILD_ABI=','.join(meta['abis']),
                CMAKE_BUILD_PARALLEL_LEVEL='1', BUILD_GIT_REPO='https://github.com/' + meta['repository'],
                BUILD_VERSION_NAME=meta['versionName'], BUILD_COMMIT_HASH=sources[''],
-               BUILD_TIMESTAMP=str(int(time.time() * 1000)), CI_NAME='X2M7')
+               BUILD_TIMESTAMP=str(build_timestamp), CI_NAME='X2M7')
     phases = {
         'debug': [':spotlessCheck', ':build-logic:convention:test', ':build-logic:compatibility:test',
                   ':app:compileDebugKotlin', ':app:compileDebugAndroidTestKotlin',
