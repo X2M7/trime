@@ -23,6 +23,12 @@ ROOT = Path(__file__).resolve().parents[2]
 FIELDS = {"formatVersion", "versionName", "versionCode", "previousVersionCode",
           "repository", "branch", "applicationId", "certificateSha256", "abis"}
 MACHINES = {"arm64-v8a": (2, 183), "x86_64": (2, 62), "armeabi-v7a": (1, 40), "x86": (1, 3)}
+GENERATED_LINKS = {
+    "app/src/main/jni/librime/plugins/librime-lua": "app/src/main/jni/librime-lua",
+    "app/src/main/jni/librime/plugins/librime-octagram": "app/src/main/jni/librime-octagram",
+    "app/src/main/jni/librime/plugins/librime-predict": "app/src/main/jni/librime-predict",
+    "app/src/main/jni/librime-lua/thirdparty": "app/src/main/jni/librime-lua-deps",
+}
 
 
 def require(condition, message):
@@ -101,7 +107,16 @@ def repositories(root=ROOT):
     """Traverse gitlinks at each pinned commit, including nested modules."""
     result = {}
     def visit(folder, prefix):
-        require(not git("status", "--porcelain", "--untracked-files=normal", cwd=folder), "Uncommitted source: " + prefix)
+        for row in git("status", "--porcelain", "-z", "--untracked-files=normal", cwd=folder).split(b'\0'):
+            if not row:
+                continue
+            local = row[3:].decode()
+            full = (prefix + '/' if prefix else '') + local
+            expected = GENERATED_LINKS.get(full)
+            # Rime.cmake recreates exactly these four plugin links. Their target
+            # repositories are audited separately; arbitrary untracked input is refused.
+            require(row[:3] == b'?? ' and expected is not None and (folder / local).is_symlink() and
+                    (folder / local).resolve() == (root / expected).resolve(), 'Uncommitted source: ' + full)
         sha = git("rev-parse", "HEAD", cwd=folder).decode().strip()
         result[prefix] = sha
         for line in git("ls-tree", "-rz", "HEAD", cwd=folder).split(b"\0"):
