@@ -1,5 +1,24 @@
 # T13 运行警告分诊
 
+状态（2026-10-15，当前候选 `cc2d6bd6`）：已修复并复验可定位的应用主题、试打焦点、关闭会话访问与重复内置主题解码问题；不能宣称全部系统运行警告已修复。下表对应最终 API21 runtime7 与 API35 runtime17，历史轮次原件继续保留。
+
+| 当前范围 | 实际结果与结论边界 |
+| --- | --- |
+| 构建／Lint／签名 | 最终候选无构建警告，Debug／Release Lint 0 问题，双 ABI 正式 APK 签名警告 0；与运行日志零警告不是同一结论。 |
+| 原目标问题 | 全日志未复现 ThemeUtils、PhoneWindow 焦点警告、Ripple 软件 Canvas 警告、旧 Session 异常或 WrappedRunnable 超阈值等待。设置重建、缓存关闭边界与实际导入检查通过；无等待告警不能推导 P95 或唯一性能原因。 |
+| Android 5.0 留存日志 | 2,234 W／1,631 E，共 3,865 条；项目 154 W／104 E。40 条 SQLite code 283 属 NOTICE_RECOVER_WAL，旧平台 JNI 把通知映射为 E；保留原级别，不称词库损坏，也不推断数据库全面健康。AudioTrack FAST、GL／旧 WebView 和失效 InputConnection 仍保留。 |
+| Android 15 留存日志 | 19,802 W／7,313 E，共 27,115 条；项目 811 W／101 E。包括 FrameTracker 61 E／163 W、Binder 29 E；系统安装 AtomicFile rename 27 E、audit 丢失／限流 10 条等均保留。按原进程启动与阶段绑定，旧 9.15 升级准备时段单列。 |
+| WebView renderer | 原 L65199–65201，PID7338 的 remove／destroy 实际 6.863726 ms，结束后 8 ms 出现 renderer7428 crash detected(code -1)，随后系统回收。它是保留的一条真实 E；不在原 critical 正则内，不得被零匹配隐藏，也不宣称已证明唯一原因或无损退出。 |
+| 系统目录注入 | 249 条 InputManager W 均在 UI20 的一次系统目录 `input swipe`，早于首次 TalkBack 启动；该归因是时序关联，未单独捕获 injector 执行文件身份，命令退出 0 不代表该次滑动全部成功。后续真实目录授权与取消有独立截图、偏好字节及授权证据，不能借此抹掉注入警告。 |
+| TalkBack 语音 | 249 条 FOSS SpeechControllerImpl E 为 TTS 尚未初始化，和目录的 249 W 不是同组事件。真实探索、筛选、激活及编辑器结果通过；语音朗读没有通过结论；另有 61 条无障碍窗口等待超时及 1 条 SplitCompat 错误保留，不能宣称完整子系统正常。 |
+| 日志／资源限制 | 两系统既有 fatal／ANR、LMK、内核 critical 检查未匹配；API35 上述 renderer E 仍在。日志从 rooted adbd 后采集，audit 丢失和正常关机时 logcat255 均保留，不能推断所有底层事件均被无损观察。无真机性能或长期驻留验收。 |
+
+原件与当前复核分别在 `build/t13/api21/candidate-runtime7-warning-review1/` 和 `build/t13/api35/candidate-runtime17-warning-review1/`；精确发布绑定以最终 qualification 为准。所有历史警告和失败保留，没有更改日志等级或过滤掉错误来制造通过。
+
+## 历史分诊与修复过程
+
+以下状态为各旧轮当时的结论，最终范围以上表和 [9.16 报告](VALIDATION-t9.16.md) 为准。
+
 状态：本地代码候选，尚未推送或发布。最新API21 runtime6保留2177W／1320E／0F、项目149W／92E；本轮ThemeUtils、旧Session fatal、am_crash／ANR、真实LMK和内核critical未匹配，仅是check30 Debug的有限观察，旧fatal及系统警告均保留。11个已闭合probe阶段各有原native true／完成码−1和宿主0，Root正常STOP后controller／VM0；不代表新候选或警告全部消除。10处配色和3.3.13-t9.16／20261121身份已写入，未构建；当前独立Lint／Release及最终两平台仍待验。
 
 基线是 `d6199c86e7ad358158eec105d8ec46e1b27cdeff` / Build25：API21 runtime27 捕获 4,233 条 W/E/F，API35 runtime11 捕获 16,591 条。两轮 critical、LMK、kernel critical 均为 0，但 `raw_warning_free=false`。Root 原批准只覆盖实测 T12 功能，不表示系统持久化、资源释放或性能问题已经修复。

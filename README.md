@@ -16,15 +16,17 @@ Rime IME for Android
 
 English | [简体中文](README_sc.md) | [繁體中文](README_tc.md)
 
-## v3.3.13-t9.15 — First-use setup and common settings
+## v3.3.13-t9.16 — Accessibility and device adaptation
 
-The first-use flow now covers enabling and selecting Trime, full pinyin or T9, simplified or traditional Chinese, and a real typing trial. Common settings group layout, candidate text size, keyboard height, haptics, fuzzy pinyin and dictionary options. Configuration import validates and stages files before activation; a failed import restores the last usable configuration. Existing custom settings are preserved.
+Keys, candidates, T9 pinyin filters and preedit controls now expose accessible names, roles, selection state and actions. The Enter key’s accessible name reflects its current action, such as Send or Search. Candidate actions reject stale input identities after a refresh. Large text, landscape layouts and window insets receive improved handling; short screens provide vertical scrolling to reach content.
 
-Build25 passed 775 fresh application JVM tests and 227 fresh host checks. Debug/Release Lint, build warnings and both Release APK signature warnings were zero. Four production native library groups performed current compile/link work; the historical 384 native checks are reused only after binding their 31 inputs, and were not rerun in Build25.
+The current candidate passed 812 fresh application JVM tests and 227 fresh host checks. Separate Debug/Release Lint runs reported no issues; build and both normal Release APK signature checks reported no warnings. The historical 384 native checks are reused after verifying 31 unchanged inputs; they were not rerun. Production JNI tasks were up-to-date, not all freshly compiled.
 
-Android 5.0 and Android 15 each passed all 10 functional stages, 19 first-use/settings/import checks, six touch prediction checks across both themes, 14 Debug setup checks and seven import/rollback checks. Their original runtime warnings remain preserved: 4,233 on Android 5.0 and 16,591 on Android 15. Both systems’ warnings have been reviewed by category for the tested functionality; platform, measurement and performance limitations remain. This record is frozen before publication; the release process will verify the gate and three assets, then synchronize develop and the tag. See the [version release page](https://github.com/X2M7/trime/releases/tag/v3.3.13-t9.15) for online status. [Current validation and retained failures](script/quality/VALIDATION-t9.15.md).
+The tested emulator scope includes four Android 5.0 configurations, eight Android 15 configurations and one additional Steam dark-palette check. The night-mode matrix retained a light palette; the separate Steam screenshots provide the dark-palette evidence. On the normal Android 15 Release APK, actual TalkBack FOSS exploration and double-tap activation completed T9 input, pinyin filtering, candidate selection and Send. TalkBack input also passed at font scales 1 and 2 in both split-screen positions; the complete runtime warning review is recorded in the validation report.
 
-Supports Android 5.0+ and builds ARM64/x86_64 APKs. Emulator checks do not establish physical-device candidate P95/PSS, long-term residency, ARM64/OEM behavior, 16 KiB pages or real TTS results. Planned manual assets are two Release APKs and one complete source archive containing the main repository and all 21 recursive submodules.
+This record is frozen before publication; see the [version release page](https://github.com/X2M7/trime/releases/tag/v3.3.13-t9.16) for online status. Runtime system/emulator warnings and earlier failed attempts remain preserved; this is not a claim that all warnings or risks have been eliminated. [9.16 validation scope](script/quality/VALIDATION-t9.16.md) · [Historical 9.15 validation](script/quality/VALIDATION-t9.15.md).
+
+Android 5.0+ and ARM64/x86_64 build support remain. Physical phones, OEM behavior, 16 KiB pages, real speech/TTS, candidate P95/PSS and long-term residency remain unverified. Planned manual assets are two normal Release APKs and one complete source archive containing the main repository and all 21 recursive submodules; GitHub's automatic source zip/tar archives remain available.
 
 ## About
 
