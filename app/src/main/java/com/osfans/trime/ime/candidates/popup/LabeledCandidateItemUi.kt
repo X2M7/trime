@@ -10,6 +10,7 @@ import android.graphics.Color
 import android.graphics.Typeface
 import android.graphics.drawable.GradientDrawable
 import android.text.SpannableStringBuilder
+import android.view.View
 import androidx.annotation.ColorInt
 import androidx.core.text.buildSpannedString
 import androidx.core.text.inSpans
@@ -53,6 +54,7 @@ class LabeledCandidateItemUi(
 
     private val content =
         textView {
+            importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
             val v = dp(theme.window.itemPadding.vertical)
             val h = dp(theme.window.itemPadding.horizontal)
             setPadding(h, v, h, v)
@@ -103,6 +105,7 @@ class LabeledCandidateItemUi(
                 }
             }
         root.background = bg
-        root.contentDescription = if (isPrediction) "${candidate.text}, ${ctx.getString(R.string.next_word_prediction_label)}" else null
+        root.isSelected = highlighted
+        root.contentDescription = content.text
     }
 }

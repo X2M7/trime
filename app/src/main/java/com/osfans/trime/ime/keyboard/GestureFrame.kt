@@ -9,6 +9,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.os.SystemClock
 import android.view.MotionEvent
+import android.view.accessibility.AccessibilityEvent
 import android.widget.FrameLayout
 import androidx.lifecycle.findViewTreeLifecycleOwner
 import androidx.lifecycle.lifecycleScope
@@ -36,6 +37,10 @@ open class GestureFrame(context: Context) : FrameLayout(context) {
     private var repeatJob: Job? = null
     private var doubleTapJob: Job? = null
     private var touchActive = false
+    private val accessibilityActivation = GestureAccessibilityActivation()
+
+    internal val hasPendingTouchGesture: Boolean
+        get() = touchActive || doubleTapJob?.isActive == true
 
     private var lastTapTime = 0L
     private var lastSwipeBehavior: KeyBehavior = KeyBehavior.CLICK
@@ -289,6 +294,30 @@ open class GestureFrame(context: Context) : FrameLayout(context) {
             KeyBehavior.SWIPE_UP -> onSwipeUp?.invoke()
             KeyBehavior.SWIPE_DOWN -> onSwipeDown?.invoke()
             else -> {}
+        }
+    }
+
+    /** Use the same callbacks once, without fabricating touch events or starting repeat timers. */
+    protected fun performAccessibilityBehavior(behavior: KeyBehavior): Boolean {
+        if (onRelease == null || (behavior == KeyBehavior.LONG_CLICK && (hasPopup || !hasLongPress || isRepeatable))) return false
+        if (!accessibilityActivation.begin(isEnabled, touchActive, doubleTapJob?.isActive == true)) return false
+        try {
+            lastTapTime = 0L
+            onPress?.invoke()
+            if (behavior == KeyBehavior.LONG_CLICK) onLongClick?.invoke()
+            dispatchBehavior(behavior, behavior == KeyBehavior.LONG_CLICK)
+            if (behavior != KeyBehavior.CLICK) {
+                sendAccessibilityEvent(
+                    if (behavior == KeyBehavior.LONG_CLICK) AccessibilityEvent.TYPE_VIEW_LONG_CLICKED else AccessibilityEvent.TYPE_VIEW_CLICKED,
+                )
+            }
+            return true
+        } catch (failure: Throwable) {
+            onCancel?.invoke()
+            throw failure
+        } finally {
+            isPressed = false
+            accessibilityActivation.finish()
         }
     }
 

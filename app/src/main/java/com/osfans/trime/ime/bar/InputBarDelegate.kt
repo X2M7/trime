@@ -245,6 +245,7 @@ class InputBarDelegate(override val di: DI) :
             windowManager.attachWindow(FlexboxUnrolledCandidateWindow(di))
         }
         candidateUi.unrollButton.setIcon(R.drawable.ic_baseline_expand_more_24)
+        candidateUi.unrollButton.accessibilityLabel = service.getString(R.string.a11y_expand_candidates)
     }
 
     private fun setUnrollButtonToDetach() {
@@ -252,6 +253,7 @@ class InputBarDelegate(override val di: DI) :
             windowManager.attachWindow(KeyboardWindow)
         }
         candidateUi.unrollButton.setIcon(R.drawable.ic_baseline_expand_less_24)
+        candidateUi.unrollButton.accessibilityLabel = service.getString(R.string.a11y_collapse_candidates)
     }
 
     private fun setUnrollButtonEnabled(enabled: Boolean) {

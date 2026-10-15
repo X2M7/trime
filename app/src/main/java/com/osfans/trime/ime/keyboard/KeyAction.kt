@@ -60,7 +60,7 @@ class KeyAction(
                 "click" -> true
 
                 // 点击锁定
-                "ascii_long" -> !rime.run { statusCached }.isAsciiMode
+                "ascii_long" -> RimeDaemon.readCached { statusCached.isAsciiMode } == false
 
                 // 英文长按锁定，中文点击锁定
                 else -> false
@@ -86,15 +86,13 @@ class KeyAction(
         AppPrefs.defaultInstance().keyboard.hookShiftSymbol
     }
 
-    private val rime get() = RimeDaemon.getFirstSessionOrNull()!!
-
     // 获取空格键的schemaName，处理初始化时可能为空的情况
-    private fun getSpaceKeySchemaName(): String = rime.run {
+    private fun getSpaceKeySchemaName(): String = RimeDaemon.readCached {
         statusCached.schemaName.ifEmpty {
             // 如果schemaName为空，尝试使用schemaId作为显示名称
             schemaCached.schemaId.takeIf { it.isNotEmpty() && it != ".default" } ?: ""
         }
-    }
+    }.orEmpty()
 
     /**
      * Fills in the display label of a key that declared none, deriving it
@@ -123,8 +121,8 @@ class KeyAction(
         str: String,
         keyboard: Keyboard,
     ): String {
-        val status = rime.run { statusCached }
-        return if (str.length == 1 && (keyboard.isShifted || (!status.isAsciiMode && keyboard.isLabelUppercase))) {
+        val asciiMode = RimeDaemon.readCached { statusCached.isAsciiMode } ?: true
+        return if (str.length == 1 && (keyboard.isShifted || (!asciiMode && keyboard.isLabelUppercase))) {
             str.uppercase()
         } else {
             str
@@ -134,11 +132,13 @@ class KeyAction(
     fun getLabel(keyboard: Keyboard): String {
         ensureLabels()
         if (states.isNotEmpty() && toggle.isNotEmpty()) {
-            return states.getOrElse(if (rime.run { getRuntimeOptionCached(toggle) }) 1 else 0) { states.first() }
+            val checked = RimeDaemon.readCached { getRuntimeOptionCached(toggle) } == true
+            return states.getOrElse(if (checked) 1 else 0) { states.first() }
         }
         if (keyboard.isOnlyShiftOn) {
-            val asciiMode = rime.run { statusCached }.isAsciiMode
-            val composing = rime.run { statusCached }.isComposing && !rime.run { candidateSnapshotCached.isPrediction }
+            val state = RimeDaemon.readCached { statusCached to candidateSnapshotCached.isPrediction }
+            val asciiMode = state?.first?.isAsciiMode ?: true
+            val composing = state?.let { it.first.isComposing && !it.second } == true
             if (!hookShiftNum && !composing && code in KeyEvent.KEYCODE_0..KeyEvent.KEYCODE_9) {
                 return adjustCase(shiftLabel, keyboard)
             }
@@ -164,7 +164,7 @@ class KeyAction(
         return if (text.isNotEmpty()) {
             adjustCase(text, keyboard)
         } else if (keyboard.isShifted && code in KeyEvent.KEYCODE_A..KeyEvent.KEYCODE_Z && modifier == 0) {
-            if (rime.run { statusCached.isAsciiMode }) "" else adjustCase(label, keyboard)
+            if (RimeDaemon.readCached { statusCached.isAsciiMode } != false) "" else adjustCase(label, keyboard)
         } else {
             text
         }

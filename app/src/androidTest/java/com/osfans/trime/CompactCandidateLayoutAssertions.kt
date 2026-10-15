@@ -4,13 +4,16 @@ package com.osfans.trime
 import android.app.Instrumentation
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.graphics.RenderNode
 import android.graphics.drawable.ShapeDrawable
 import android.graphics.drawable.shapes.RectShape
+import android.os.Build
 import android.os.SystemClock
 import android.view.InputDevice
 import android.view.MotionEvent
 import android.view.View
 import android.widget.FrameLayout
+import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.flexbox.FlexDirection
@@ -29,6 +32,29 @@ import com.osfans.trime.ime.candidates.unrolled.decoration.FlexboxVerticalDecora
 
 /** Actual production adapter/views/managers; the caller verifies the resulting native commit. */
 object CompactCandidateLayoutAssertions {
+    @RequiresApi(Build.VERSION_CODES.Q)
+    private fun recordLayout(parent: FrameLayout, width: Int, height: Int) {
+        // This fixture checks layout and dispatch, not pixels. Patterned ripples require
+        // a hardware canvas even when a completed gesture is first drawn offscreen.
+        val node = RenderNode("owned-compact-layout")
+        try {
+            val canvas = node.beginRecording(width, height)
+            try {
+                check(canvas.isHardwareAccelerated)
+                parent.draw(canvas)
+            } finally {
+                node.endRecording()
+            }
+        } finally {
+            try {
+                // draw() can consume a pending ripple entry left by the completed gesture.
+                parent.jumpDrawablesToCurrentState()
+            } finally {
+                node.discardDisplayList()
+            }
+        }
+    }
+
     data class Outcome(
         val checks: Int,
         val selected: CandidateIdentity,
@@ -48,8 +74,8 @@ object CompactCandidateLayoutAssertions {
                 }
                 val width = (context.resources.displayMetrics.density * 320).toInt()
                 val height = (context.resources.displayMetrics.density * 40).toInt()
-                val pixels = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
-                val canvas = Canvas(pixels)
+                val pixels = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888) else null
+                val canvas = pixels?.let { Canvas(it) }
                 val fixtures = mutableListOf<RecyclerView>()
                 var checks = 0
                 val clicks = mutableListOf<CandidateIdentity>()
@@ -60,7 +86,13 @@ object CompactCandidateLayoutAssertions {
                     parent.requestLayout()
                     parent.measure(View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY), View.MeasureSpec.makeMeasureSpec(height, View.MeasureSpec.EXACTLY))
                     parent.layout(0, 0, width, height)
-                    parent.draw(canvas)
+                    // Every gesture has ended before this offscreen draw.
+                    parent.jumpDrawablesToCurrentState()
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                        recordLayout(parent, width, height)
+                    } else {
+                        parent.draw(checkNotNull(canvas))
+                    }
                     check(view.childCount > 0)
                 }
 
@@ -198,7 +230,7 @@ object CompactCandidateLayoutAssertions {
                         it.layoutManager = null
                         (it.parent as FrameLayout).removeView(it)
                     }
-                    pixels.recycle()
+                    pixels?.recycle()
                 }
             }
         }

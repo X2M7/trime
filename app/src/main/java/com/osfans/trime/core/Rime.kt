@@ -21,18 +21,15 @@ import com.osfans.trime.data.sync.ConfigImportValidator
 import com.osfans.trime.data.sync.ConfigurationImportException
 import com.osfans.trime.data.sync.RimeDataSync
 import com.osfans.trime.data.sync.SyncRelativePath
-import com.osfans.trime.data.theme.Theme
 import com.osfans.trime.data.theme.ThemeLoader
 import com.osfans.trime.data.theme.ThemeManager
 import com.osfans.trime.data.theme.ThemePrefs
 import com.osfans.trime.data.theme.ThemeYaml
-import com.osfans.trime.data.theme.withCompatibleKeyboards
 import com.osfans.trime.data.userdict.UserDictManager
 import com.osfans.trime.ime.core.InlinePreeditMode
 import com.osfans.trime.ime.core.PrivacyModeState
 import com.osfans.trime.ime.performance.InputLatencyLog
 import com.osfans.trime.ime.performance.InputRequest
-import com.osfans.trime.util.appContext
 import com.osfans.trime.util.mapping
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
@@ -43,7 +40,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
-import kotlinx.serialization.decodeFromString
 import timber.log.Timber
 import java.io.File
 import java.util.concurrent.CopyOnWriteArrayList
@@ -486,13 +482,7 @@ class Rime :
             ?: error("Selected theme artifact is not a mapping")
         return when (val result = ThemeLoader.decodeAndReport(themeId, mapping)) {
             is ThemeLoader.ThemeLoadResult.Failure -> throw result.error
-
-            is ThemeLoader.ThemeLoadResult.Success -> {
-                val builtin = appContext.assets.open("shared/trime.yaml").bufferedReader().use {
-                    ThemeYaml.parser.decodeFromString<Theme>(it.readText())
-                }
-                result.copy(theme = result.theme.withCompatibleKeyboards(builtin))
-            }
+            is ThemeLoader.ThemeLoadResult.Success -> ThemeLoader.withCompatibleKeyboards(result)
         }
     }
 

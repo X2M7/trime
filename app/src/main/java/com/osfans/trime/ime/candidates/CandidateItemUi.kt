@@ -89,6 +89,7 @@ class CandidateItemUi(
         }
 
     private val content = constraintLayout {
+        importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS
         horizontalPadding = dp(theme.style.candidatePadding)
         when (commentPosition) {
             GeneralStyle.CommentPosition.RIGHT -> {
@@ -184,6 +185,7 @@ class CandidateItemUi(
         comment.text = commentText
         comment.setTextColor(cColor)
         comment.isVisible = isPrediction || (AppPrefs.defaultInstance().candidates.showComments.getValue() && commentText.isNotEmpty())
-        root.contentDescription = if (isPrediction) "${item.text}, $commentText" else null
+        root.isSelected = highlighted
+        root.contentDescription = if (comment.isVisible) "${item.text}, $commentText" else item.text
     }
 }

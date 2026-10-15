@@ -49,6 +49,7 @@ class TabUi(
         } else {
             ToolButton(ctx, R.drawable.ic_baseline_arrow_back_24, scope)
         }
+        backButton.accessibilityLabel = ctx.getString(R.string.a11y_back_to_keyboard)
     }
 
     private val titleText = textView {

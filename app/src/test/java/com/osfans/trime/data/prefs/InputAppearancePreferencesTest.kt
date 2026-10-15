@@ -46,16 +46,23 @@ class InputAppearancePreferencesTest :
             // Font metrics in dp can exceed nominal SP under accessibility scaling/custom fonts.
             val candidate = 64f
             val annotation = 28f
-            val row = candidateRowHeight(28, 36, candidate, annotation, commentsAbove = true)
+            val row = candidateRowHeight(28, candidate, annotation, commentsAbove = true)
             (row * 0.6f >= candidate) shouldBe true
             (row * 0.4f >= annotation) shouldBe true
             (row >= 28) shouldBe true
         }
 
-        "default geometry and taller custom themes are preserved" {
-            candidateRowHeight(28, 0, 64f, 28f, commentsAbove = true) shouldBe 28
-            candidateRowHeight(160, 36, 64f, 28f, commentsAbove = true) shouldBe 160
-            val row = candidateRowHeight(28, 36, 64f, 28f, commentsAbove = false)
+        "default theme fonts also grow with system font scaling while taller themes are preserved" {
+            // A zero user override selects the themed SP size, not an unscaled row height.
+            candidateTextSize(17f, 0) shouldBe 17f
+            candidateRowHeight(28, 64f, 28f, commentsAbove = true) shouldBe 107
+            candidateRowHeight(160, 64f, 28f, commentsAbove = true) shouldBe 160
+            val row = candidateRowHeight(28, 64f, 28f, commentsAbove = false)
             (row >= 64) shouldBe true
+        }
+
+        "unscaled metrics that fit keep the theme height and overlay uses the taller label" {
+            candidateRowHeight(48, 24f, 16f, commentsAbove = true) shouldBe 48
+            candidateRowHeight(48, 24f, 56f, commentsAbove = false) shouldBe 56
         }
     })

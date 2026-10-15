@@ -26,6 +26,7 @@ class Keyboard(
     private val theme: Theme,
     private val allowedWidth: Int,
     selfConfig: TextKeyboard? = null,
+    heightBudgetPx: Int = 0,
 ) {
 
     /** 按鍵默認水平間距  */
@@ -103,7 +104,7 @@ class Keyboard(
     val isLock = selfConfig?.lock ?: false // 切換程序時記憶鍵盤
     val asciiKeyboard: String? = selfConfig?.asciiKeyboard // 英文鍵盤
 
-    val keyboardHeight: Int =
+    val requestedKeyboardHeight: Int =
         resolvePositive(
             selfConfig?.let {
                 pickLandscape(
@@ -132,6 +133,13 @@ class Keyboard(
                 themedHeight
             }
         }
+
+    // Keep the four real 48dp rows. A smaller viewport scrolls this full model.
+    val keyboardHeight: Int = if (isT9Layout && heightBudgetPx > 0) {
+        T9LayoutPolicy.modelHeight(requestedKeyboardHeight, heightBudgetPx, context.dp(192))
+    } else {
+        requestedKeyboardHeight
+    }
 
     private val expandKeypressArea: Boolean by AppPrefs.defaultInstance().keyboard.expandKeypressArea
 

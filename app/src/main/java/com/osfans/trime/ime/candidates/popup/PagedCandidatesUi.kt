@@ -111,9 +111,7 @@ class PagedCandidatesUi(
                     is UiHolder.Pagination -> {
                         val page = candidates
                         holder.snapshot = page.snapshot
-                        holder.ui.update(page)
-                        holder.ui.prevIcon.setOnClickListener { onPrevPage.invoke(page.snapshot) }
-                        holder.ui.nextIcon.setOnClickListener { onNextPage.invoke(page.snapshot) }
+                        holder.ui.update(page, { onPrevPage.invoke(page.snapshot) }, { onNextPage.invoke(page.snapshot) })
                         holder.ui.root.updateLayoutParams<FlexboxLayoutManager.LayoutParams> {
                             flexGrow = 1f
                             width = if (isHorizontal) WRAP_CONTENT else MATCH_PARENT

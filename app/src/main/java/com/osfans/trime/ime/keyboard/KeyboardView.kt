@@ -62,9 +62,6 @@ class KeyboardView(
         val totalWidth = key.width + key.extraWidthLeft + key.extraWidthRight
         layoutParams = LayoutParams(totalWidth, key.height)
 
-        translationX = (key.x - key.extraWidthLeft).toFloat()
-        translationY = key.y.toFloat()
-
         setPadding(
             keyboard.horizontalGap / 2 + key.extraWidthLeft,
             keyboard.verticalGap / 2,
@@ -84,6 +81,21 @@ class KeyboardView(
 
         measureChildren(widthMeasureSpec, heightMeasureSpec)
         setMeasuredDimension(measuredWidth, fullHeight)
+    }
+
+    override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
+        // Model coordinates are absolute keyboard positions, independent of RTL.
+        // Physical bounds must match the drawn keys: requestRectangleOnScreen
+        // walks parent offsets without applying a child's translation.
+        keys.forEachIndexed { index, key ->
+            getChildAt(index)?.let { child ->
+                if (child.visibility != GONE) {
+                    val keyLeft = paddingLeft + key.x - key.extraWidthLeft
+                    val keyTop = paddingTop + key.y
+                    child.layout(keyLeft, keyTop, keyLeft + child.measuredWidth, keyTop + child.measuredHeight)
+                }
+            }
+        }
     }
 
     override fun onDraw(canvas: Canvas) {

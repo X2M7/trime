@@ -72,7 +72,9 @@ class AlwaysUi(
 
     val inlineSuggestionsUi = InlineSuggestionsUi(ctx)
 
-    val hideKeyboardButton = ToolButton(ctx, R.drawable.ic_baseline_arrow_drop_down_24, scope)
+    val hideKeyboardButton = ToolButton(ctx, R.drawable.ic_baseline_arrow_drop_down_24, scope).apply {
+        accessibilityLabel = ctx.getString(R.string.a11y_hide_keyboard)
+    }
     private val rightMostButton =
         ViewAnimator(ctx).apply {
             add(hideKeyboardButton, lParams(matchParent, matchParent))
@@ -82,7 +84,11 @@ class AlwaysUi(
     private val leftMostButton = toolButton(
         theme.toolBar.primaryButton,
         R.drawable.ic_baseline_more_horiz_24,
-    )
+    ).apply {
+        if (theme.toolBar.primaryButton == null) {
+            accessibilityLabel = ctx.getString(R.string.a11y_keyboard_options)
+        }
+    }
 
     private val animator =
         ViewAnimator(ctx).apply {

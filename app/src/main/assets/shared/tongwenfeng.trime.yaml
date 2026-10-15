@@ -169,24 +169,24 @@ preset_color_schemes:
     back_color: *color2 #候选区背景状态栏
     candidate_separator_color: *color2 #候选分割背景
     candidate_text_color: *color1 #候选文本
-    comment_text_color: *color3 #提示
+    comment_text_color: 0xff5f6368 #提示
     hilited_back_color: *color2 #高亮编码背景
     hilited_candidate_back_color: *color6 #高亮候选背景
     hilited_candidate_text_color: *color2 #高亮候选文本
-    hilited_comment_text_color: *color1 #高亮提示
+    hilited_comment_text_color: *color2 #高亮提示
     hilited_key_back_color: *color6 #高亮按键背景
     hilited_key_symbol_color: *color2 #高亮按键符号
-    hilited_key_text_color: *color1 #高亮按键文本
+    hilited_key_text_color: *color2 #高亮按键文本
     hilited_off_key_back_color: *color2 #高亮按键关闭状态背景
     hilited_off_key_text_color: *color1 #高亮按键关闭状态文本
     hilited_text_color: *color1 #高亮编码
     key_back_color: *color2 #按键背景
-    key_symbol_color: *color8 #按键符号
+    key_symbol_color: *color5 #按键符号
     key_text_color: *color1 #按键文本
     keyboard_back_color: *color3 #键盘背景
     label_color: *color6 #标签
     off_key_back_color: *color4  #按键关闭状态背景
-    off_key_text_color: *color8 #按键关闭状态文本
+    off_key_text_color: *color5 #按键关闭状态文本
     preview_back_color: *color4 #按键提示背景
     preview_text_color: *color6 #按键提示文本
     text_color: *color6 #编码
@@ -196,9 +196,9 @@ preset_color_schemes:
     benter: *color6 #回车键背景色
     tenter: *color2 #回车键文字颜色
     bgn: *color4 #功能键背景色
-    tgn: *color2 #功能键文字颜色
+    tgn: *color1 #功能键文字颜色
     bbs: *color4 #退格键背景色
-    tbs: *color2 #退格键文字颜色
+    tbs: *color1 #退格键文字颜色
     baoe: *color2 #aoeiu背景色
     taoe: *color6 #aoeiu文字颜色
     bh1: *color2 #第一行背景色
@@ -1120,7 +1120,7 @@ preset_keyboards:
       - {click: space, long_click: Mode_switch, swipe_left: "Left", swipe_right: "Right", swipe_up: Schema_switchcn, width: 30, key_back_color: bkg, key_text_color: tkg}
       - {click: '.', label: '。', long_click: clipboard_window, key_back_color: bh4, key_text_color: th4}
       - {click: '/', long_click: liquid_keyboard_switch , key_text_size: "18", key_back_color: bh4, key_text_color: th4}
-      - {click: Return, label_symbol: "wiki", popup: ["TrimeWiki", "Settings"], composing: Return1, swipe_up: Escape, width: 15, key_back_color: benter, key_text_color: tenter}
+      - {click: Return, label_symbol: "wiki", popup: ["TrimeWiki", "Settings"], composing: Return1, swipe_up: Escape, width: 15, key_back_color: benter, key_text_color: tenter, key_symbol_color: tenter}
 
   letter:
     author: "暖暖"
@@ -1237,7 +1237,7 @@ preset_keyboards:
       - {click: ., long_click: Keyboard_bqrw, key_back_color: bgn, key_text_color: tgn}
       - {click: 0, long_click: cut}
       - {click: '=', long_click: '≠', key_back_color: bgn, key_text_color: tgn}
-      - {click: Return, long_click: Menu, key_back_color: benter, key_text_color: tenter}
+      - {click: Return, long_click: Menu, key_back_color: benter, key_text_color: tenter, key_symbol_color: tenter}
       
   editor:
     ascii_mode: 1
@@ -1281,7 +1281,7 @@ preset_keyboards:
     height: *jpgd5
     ascii_mode: 0
     keys:
-      - {label: '🙂', click: Keyboard_bqrw1, height: 26, width: 10, key_back_color: bgn, key_text_color: tgn}
+      - {label: '表情', click: Keyboard_bqrw1, height: 26, width: 10, key_back_color: bgn, key_text_color: tgn}
       - {label: '🌼', click: Keyboard_bqhc1, width: 10, key_back_color: bgn, key_text_color: tgn}
       - {label: '🎂', click: Keyboard_bqpt1, width: 10, key_back_color: bgn, key_text_color: tgn}
       - {label: '🚖', click: Keyboard_bqlx1, width: 10, key_back_color: bgn, key_text_color: tgn}
@@ -1325,7 +1325,7 @@ preset_keyboards:
       - {click: 罗马, long_click: 罗马大写, key_text_size: "16", symbol_text_size: '8'}
       - {click: 俄语, long_click: 俄语大写, key_text_size: "16", symbol_text_size: '8'}
       - {click: '备用', composing: Right, width: 16, key_back_color: bgn, key_text_color: tgn}
-      - {click: Return, long_click: Menu, width: 16, key_back_color: benter, key_text_color: tenter}
+      - {click: Return, long_click: Menu, width: 16, key_back_color: benter, key_text_color: tenter, key_symbol_color: tenter}
 
   bqrw1:
     author: "风花絮"
@@ -1334,7 +1334,7 @@ preset_keyboards:
     width: 10
     height: *jpgd1
     keys:
-    - {label: '🙂', click: Keyboard_bqrw1, height: 26, key_back_color: benter, key_text_color: tenter}
+    - {label: '表情', click: Keyboard_bqrw1, height: 26, key_back_color: benter, key_text_color: tenter}
     - {label: '🌼', click: Keyboard_bqhc1, key_back_color: bgn, key_text_color: tgn}
     - {label: '🎂', click: Keyboard_bqpt1, key_back_color: bgn, key_text_color: tgn}
     - {label: '🚖', click: Keyboard_bqlx1, key_back_color: bgn, key_text_color: tgn}
@@ -1398,7 +1398,7 @@ preset_keyboards:
     width: 10
     height: *jpgd1
     keys:
-    - {label: '🙂', click: Keyboard_bqrw1, height: 26, key_back_color: benter, key_text_color: tenter}
+    - {label: '表情', click: Keyboard_bqrw1, height: 26, key_back_color: benter, key_text_color: tenter}
     - {label: '🌼', click: Keyboard_bqhc1, key_back_color: bgn, key_text_color: tgn}
     - {label: '🎂', click: Keyboard_bqpt1, key_back_color: bgn, key_text_color: tgn}
     - {label: '🚖', click: Keyboard_bqlx1, key_back_color: bgn, key_text_color: tgn}
@@ -1462,7 +1462,7 @@ preset_keyboards:
     width: 10
     height: *jpgd1
     keys:
-    - {label: '🙂', click: Keyboard_bqrw1, height: 26, key_back_color: benter, key_text_color: tenter}
+    - {label: '表情', click: Keyboard_bqrw1, height: 26, key_back_color: benter, key_text_color: tenter}
     - {label: '🌼', click: Keyboard_bqhc1, key_back_color: bgn, key_text_color: tgn}
     - {label: '🎂', click: Keyboard_bqpt1, key_back_color: bgn, key_text_color: tgn}
     - {label: '🚖', click: Keyboard_bqlx1, key_back_color: bgn, key_text_color: tgn}
@@ -1526,7 +1526,7 @@ preset_keyboards:
     width: 10
     height: *jpgd1
     keys:
-    - {label: '🙂', click: Keyboard_bqrw1, height: 26, key_back_color: benter, key_text_color: tenter}
+    - {label: '表情', click: Keyboard_bqrw1, height: 26, key_back_color: benter, key_text_color: tenter}
     - {label: '🌼', click: Keyboard_bqhc1, key_back_color: bgn, key_text_color: tgn}
     - {label: '🎂', click: Keyboard_bqpt1, key_back_color: bgn, key_text_color: tgn}
     - {label: '🚖', click: Keyboard_bqlx1, key_back_color: bgn, key_text_color: tgn}
@@ -1590,7 +1590,7 @@ preset_keyboards:
     width: 10
     height: *jpgd1
     keys:
-    - {label: '🙂', click: Keyboard_bqrw1, height: 26, key_back_color: benter, key_text_color: tenter}
+    - {label: '表情', click: Keyboard_bqrw1, height: 26, key_back_color: benter, key_text_color: tenter}
     - {label: '🌼', click: Keyboard_bqhc1, key_back_color: bgn, key_text_color: tgn}
     - {label: '🎂', click: Keyboard_bqpt1, key_back_color: bgn, key_text_color: tgn}
     - {label: '🚖', click: Keyboard_bqlx1, key_back_color: bgn, key_text_color: tgn}
@@ -1654,7 +1654,7 @@ preset_keyboards:
     width: 10
     height: *jpgd1
     keys:
-    - {label: '🙂', click: Keyboard_bqrw1, height: 26, key_back_color: benter, key_text_color: tenter}
+    - {label: '表情', click: Keyboard_bqrw1, height: 26, key_back_color: benter, key_text_color: tenter}
     - {label: '🌼', click: Keyboard_bqhc1, key_back_color: bgn, key_text_color: tgn}
     - {label: '🎂', click: Keyboard_bqpt1, key_back_color: bgn, key_text_color: tgn}
     - {label: '🚖', click: Keyboard_bqlx1, key_back_color: bgn, key_text_color: tgn}
@@ -1718,7 +1718,7 @@ preset_keyboards:
     width: 10
     height: *jpgd1
     keys:
-    - {label: '🙂', click: Keyboard_bqrw1, height: 26, key_back_color: bgn, key_text_color: tgn}
+    - {label: '表情', click: Keyboard_bqrw1, height: 26, key_back_color: bgn, key_text_color: tgn}
     - {label: '🌼', click: Keyboard_bqhc1, key_back_color: bgn, key_text_color: tgn}
     - {label: '🎂', click: Keyboard_bqpt1, key_back_color: bgn, key_text_color: tgn}
     - {label: '🚖', click: Keyboard_bqlx1, key_back_color: bgn, key_text_color: tgn}
@@ -1782,7 +1782,7 @@ preset_keyboards:
     width: 10
     height: *jpgd1
     keys:
-    - {label: '🙂', click: Keyboard_bqrw1, height: 26, key_back_color: bgn, key_text_color: tgn}
+    - {label: '表情', click: Keyboard_bqrw1, height: 26, key_back_color: bgn, key_text_color: tgn}
     - {label: '🌼', click: Keyboard_bqhc1, key_back_color: bgn, key_text_color: tgn}
     - {label: '🎂', click: Keyboard_bqpt1, key_back_color: bgn, key_text_color: tgn}
     - {label: '🚖', click: Keyboard_bqlx1, key_back_color: bgn, key_text_color: tgn}
@@ -1846,7 +1846,7 @@ preset_keyboards:
     width: 10
     height: *jpgd1
     keys:
-    - {label: '🙂', click: Keyboard_bqrw1, height: 26, key_back_color: bgn, key_text_color: tgn}
+    - {label: '表情', click: Keyboard_bqrw1, height: 26, key_back_color: bgn, key_text_color: tgn}
     - {label: '🌼', click: Keyboard_bqhc1, key_back_color: bgn, key_text_color: tgn}
     - {label: '🎂', click: Keyboard_bqpt1, key_back_color: bgn, key_text_color: tgn}
     - {label: '🚖', click: Keyboard_bqlx1, key_back_color: bgn, key_text_color: tgn}
@@ -1910,7 +1910,7 @@ preset_keyboards:
     width: 10
     height: *jpgd1
     keys:
-    - {label: '🙂', click: Keyboard_bqrw1, height: 26, key_back_color: bgn, key_text_color: tgn}
+    - {label: '表情', click: Keyboard_bqrw1, height: 26, key_back_color: bgn, key_text_color: tgn}
     - {label: '🌼', click: Keyboard_bqhc1, key_back_color: bgn, key_text_color: tgn}
     - {label: '🎂', click: Keyboard_bqpt1, key_back_color: bgn, key_text_color: tgn}
     - {label: '🚖', click: Keyboard_bqlx1, key_back_color: bgn, key_text_color: tgn}
@@ -1974,7 +1974,7 @@ preset_keyboards:
     width: 10
     height: *jpgd1
     keys:
-    - {label: '🙂', click: Keyboard_bqrw1, height: 26, key_back_color: bgn, key_text_color: tgn}
+    - {label: '表情', click: Keyboard_bqrw1, height: 26, key_back_color: bgn, key_text_color: tgn}
     - {label: '🌼', click: Keyboard_bqhc1, key_back_color: bgn, key_text_color: tgn}
     - {label: '🎂', click: Keyboard_bqpt1, key_back_color: bgn, key_text_color: tgn}
     - {label: '🚖', click: Keyboard_bqlx1, key_back_color: bgn, key_text_color: tgn}
@@ -2038,7 +2038,7 @@ preset_keyboards:
     width: 10
     height: *jpgd1
     keys:
-    - {label: '🙂', click: Keyboard_bqrw1, height: 26, key_back_color: bgn, key_text_color: tgn}
+    - {label: '表情', click: Keyboard_bqrw1, height: 26, key_back_color: bgn, key_text_color: tgn}
     - {label: '🌼', click: Keyboard_bqhc1, key_back_color: bgn, key_text_color: tgn}
     - {label: '🎂', click: Keyboard_bqpt1, key_back_color: bgn, key_text_color: tgn}
     - {label: '🚖', click: Keyboard_bqlx1, key_back_color: bgn, key_text_color: tgn}
@@ -2102,7 +2102,7 @@ preset_keyboards:
     width: 10
     height: *jpgd1
     keys:
-    - {label: '🙂', click: Keyboard_bqrw1, height: 26, key_back_color: bgn, key_text_color: tgn}
+    - {label: '表情', click: Keyboard_bqrw1, height: 26, key_back_color: bgn, key_text_color: tgn}
     - {label: '🌼', click: Keyboard_bqhc1, key_back_color: bgn, key_text_color: tgn}
     - {label: '🎂', click: Keyboard_bqpt1, key_back_color: bgn, key_text_color: tgn}
     - {label: '🚖', click: Keyboard_bqlx1, key_back_color: bgn, key_text_color: tgn}
@@ -2166,7 +2166,7 @@ preset_keyboards:
     width: 10
     height: *jpgd1
     keys:
-    - {label: '🙂', click: Keyboard_bqrw1, height: 26, key_back_color: bgn, key_text_color: tgn}
+    - {label: '表情', click: Keyboard_bqrw1, height: 26, key_back_color: bgn, key_text_color: tgn}
     - {label: '🌼', click: Keyboard_bqhc1, key_back_color: bgn, key_text_color: tgn}
     - {label: '🎂', click: Keyboard_bqpt1, key_back_color: bgn, key_text_color: tgn}
     - {label: '🚖', click: Keyboard_bqlx1, key_back_color: bgn, key_text_color: tgn}
@@ -2230,7 +2230,7 @@ preset_keyboards:
     width: 10
     height: *jpgd1
     keys:
-    - {label: '🙂', click: Keyboard_bqrw1, height: 26, key_back_color: bgn, key_text_color: tgn}
+    - {label: '表情', click: Keyboard_bqrw1, height: 26, key_back_color: bgn, key_text_color: tgn}
     - {label: '🌼', click: Keyboard_bqhc1, key_back_color: bgn, key_text_color: tgn}
     - {label: '🎂', click: Keyboard_bqpt1, key_back_color: bgn, key_text_color: tgn}
     - {label: '🚖', click: Keyboard_bqlx1, key_back_color: bgn, key_text_color: tgn}
@@ -2294,7 +2294,7 @@ preset_keyboards:
     width: 10
     height: *jpgd1
     keys:
-    - {label: '🙂', click: Keyboard_bqrw1, height: 26, key_back_color: bgn, key_text_color: tgn}
+    - {label: '表情', click: Keyboard_bqrw1, height: 26, key_back_color: bgn, key_text_color: tgn}
     - {label: '🌼', click: Keyboard_bqhc1, key_back_color: bgn, key_text_color: tgn}
     - {label: '🎂', click: Keyboard_bqpt1, key_back_color: bgn, key_text_color: tgn}
     - {label: '🚖', click: Keyboard_bqlx1, key_back_color: bgn, key_text_color: tgn}
@@ -2358,7 +2358,7 @@ preset_keyboards:
     width: 10
     height: *jpgd1
     keys:
-    - {label: '🙂', click: Keyboard_bqrw1, height: 26, key_back_color: bgn, key_text_color: tgn}
+    - {label: '表情', click: Keyboard_bqrw1, height: 26, key_back_color: bgn, key_text_color: tgn}
     - {label: '🌼', click: Keyboard_bqhc1, key_back_color: bgn, key_text_color: tgn}
     - {label: '🎂', click: Keyboard_bqpt1, key_back_color: benter, key_text_color: tenter}
     - {label: '🚖', click: Keyboard_bqlx1, key_back_color: bgn, key_text_color: tgn}
@@ -2422,7 +2422,7 @@ preset_keyboards:
     width: 10
     height: *jpgd1
     keys:
-    - {label: '🙂', click: Keyboard_bqrw1, height: 26, key_back_color: bgn, key_text_color: tgn}
+    - {label: '表情', click: Keyboard_bqrw1, height: 26, key_back_color: bgn, key_text_color: tgn}
     - {label: '🌼', click: Keyboard_bqhc1, key_back_color: bgn, key_text_color: tgn}
     - {label: '🎂', click: Keyboard_bqpt1, key_back_color: benter, key_text_color: tenter}
     - {label: '🚖', click: Keyboard_bqlx1, key_back_color: bgn, key_text_color: tgn}
@@ -2486,7 +2486,7 @@ preset_keyboards:
     width: 10
     height: *jpgd1
     keys:
-    - {label: '🙂', click: Keyboard_bqrw1, height: 26, key_back_color: bgn, key_text_color: tgn}
+    - {label: '表情', click: Keyboard_bqrw1, height: 26, key_back_color: bgn, key_text_color: tgn}
     - {label: '🌼', click: Keyboard_bqhc1, key_back_color: bgn, key_text_color: tgn}
     - {label: '🎂', click: Keyboard_bqpt1, key_back_color: bgn, key_text_color: tgn}
     - {label: '🚖', click: Keyboard_bqlx1, key_back_color: bgn, key_text_color: tgn}
@@ -2550,7 +2550,7 @@ preset_keyboards:
     width: 10
     height: *jpgd1
     keys:
-    - {label: '🙂', click: Keyboard_bqrw1, height: 26, key_back_color: bgn, key_text_color: tgn}
+    - {label: '表情', click: Keyboard_bqrw1, height: 26, key_back_color: bgn, key_text_color: tgn}
     - {label: '🌼', click: Keyboard_bqhc1, key_back_color: bgn, key_text_color: tgn}
     - {label: '🎂', click: Keyboard_bqpt1, key_back_color: bgn, key_text_color: tgn}
     - {label: '🚖', click: Keyboard_bqlx1, key_back_color: bgn, key_text_color: tgn}
@@ -2614,7 +2614,7 @@ preset_keyboards:
     width: 10
     height: *jpgd1
     keys:
-    - {label: '🙂', click: Keyboard_bqrw1, height: 26, key_back_color: bgn, key_text_color: tgn}
+    - {label: '表情', click: Keyboard_bqrw1, height: 26, key_back_color: bgn, key_text_color: tgn}
     - {label: '🌼', click: Keyboard_bqhc1, key_back_color: benter, key_text_color: tenter}
     - {label: '🎂', click: Keyboard_bqpt1, key_back_color: bgn, key_text_color: tgn}
     - {label: '🚖', click: Keyboard_bqlx1, key_back_color: bgn, key_text_color: tgn}
@@ -2678,7 +2678,7 @@ preset_keyboards:
     width: 10
     height: *jpgd1
     keys:
-    - {label: '🙂', click: Keyboard_bqrw1, height: 26, key_back_color: bgn, key_text_color: tgn}
+    - {label: '表情', click: Keyboard_bqrw1, height: 26, key_back_color: bgn, key_text_color: tgn}
     - {label: '🌼', click: Keyboard_bqhc1, key_back_color: benter, key_text_color: tenter}
     - {label: '🎂', click: Keyboard_bqpt1, key_back_color: bgn, key_text_color: tgn}
     - {label: '🚖', click: Keyboard_bqlx1, key_back_color: bgn, key_text_color: tgn}
@@ -2742,7 +2742,7 @@ preset_keyboards:
     width: 10
     height: *jpgd1
     keys:
-    - {label: '🙂', click: Keyboard_bqrw1, height: 26, key_back_color: bgn, key_text_color: tgn}
+    - {label: '表情', click: Keyboard_bqrw1, height: 26, key_back_color: bgn, key_text_color: tgn}
     - {label: '🌼', click: Keyboard_bqhc1, key_back_color: benter, key_text_color: tenter}
     - {label: '🎂', click: Keyboard_bqpt1, key_back_color: bgn, key_text_color: tgn}
     - {label: '🚖', click: Keyboard_bqlx1, key_back_color: bgn, key_text_color: tgn}
@@ -2806,7 +2806,7 @@ preset_keyboards:
     width: 10
     height: *jpgd1
     keys:
-    - {label: '🙂', click: Keyboard_bqrw1, height: 26, key_back_color: bgn, key_text_color: tgn}
+    - {label: '表情', click: Keyboard_bqrw1, height: 26, key_back_color: bgn, key_text_color: tgn}
     - {label: '🌼', click: Keyboard_bqhc1, key_back_color: bgn, key_text_color: tgn}
     - {label: '🎂', click: Keyboard_bqpt1, key_back_color: bgn, key_text_color: tgn}
     - {label: '🚖', click: Keyboard_bqlx1, key_back_color: benter, key_text_color: tenter}
@@ -2870,7 +2870,7 @@ preset_keyboards:
     width: 10
     height: *jpgd1
     keys:
-    - {label: '🙂', click: Keyboard_bqrw1, height: 26, key_back_color: bgn, key_text_color: tgn}
+    - {label: '表情', click: Keyboard_bqrw1, height: 26, key_back_color: bgn, key_text_color: tgn}
     - {label: '🌼', click: Keyboard_bqhc1, key_back_color: bgn, key_text_color: tgn}
     - {label: '🎂', click: Keyboard_bqpt1, key_back_color: bgn, key_text_color: tgn}
     - {label: '🚖', click: Keyboard_bqlx1, key_back_color: benter, key_text_color: tenter}
@@ -2934,7 +2934,7 @@ preset_keyboards:
     width: 10
     height: *jpgd1
     keys:
-    - {label: '🙂', click: Keyboard_bqrw1, height: 26, key_back_color: bgn, key_text_color: tgn}
+    - {label: '表情', click: Keyboard_bqrw1, height: 26, key_back_color: bgn, key_text_color: tgn}
     - {label: '🌼', click: Keyboard_bqhc1, key_back_color: bgn, key_text_color: tgn}
     - {label: '🎂', click: Keyboard_bqpt1, key_back_color: bgn, key_text_color: tgn}
     - {label: '🚖', click: Keyboard_bqlx1, key_back_color: benter, key_text_color: tenter}
@@ -2998,7 +2998,7 @@ preset_keyboards:
     width: 10
     height: *jpgd1
     keys:
-    - {label: '🙂', click: Keyboard_bqrw1, height: 26, key_back_color: bgn, key_text_color: tgn}
+    - {label: '表情', click: Keyboard_bqrw1, height: 26, key_back_color: bgn, key_text_color: tgn}
     - {label: '🌼', click: Keyboard_bqhc1, key_back_color: bgn, key_text_color: tgn}
     - {label: '🎂', click: Keyboard_bqpt1, key_back_color: bgn, key_text_color: tgn}
     - {label: '🚖', click: Keyboard_bqlx1, key_back_color: benter, key_text_color: tenter}
@@ -3062,7 +3062,7 @@ preset_keyboards:
     width: 10
     height: *jpgd1
     keys:
-    - {label: '🙂', click: Keyboard_bqrw1, height: 26, key_back_color: bgn, key_text_color: tgn}
+    - {label: '表情', click: Keyboard_bqrw1, height: 26, key_back_color: bgn, key_text_color: tgn}
     - {label: '🌼', click: Keyboard_bqhc1, key_back_color: bgn, key_text_color: tgn}
     - {label: '🎂', click: Keyboard_bqpt1, key_back_color: bgn, key_text_color: tgn}
     - {label: '🚖', click: Keyboard_bqlx1, key_back_color: benter, key_text_color: tenter}
@@ -3126,7 +3126,7 @@ preset_keyboards:
     width: 10
     height: *jpgd1
     keys:
-    - {label: '🙂', click: Keyboard_bqrw1, height: 26, key_back_color: bgn, key_text_color: tgn}
+    - {label: '表情', click: Keyboard_bqrw1, height: 26, key_back_color: bgn, key_text_color: tgn}
     - {label: '🌼', click: Keyboard_bqhc1, key_back_color: bgn, key_text_color: tgn}
     - {label: '🎂', click: Keyboard_bqpt1, key_back_color: bgn, key_text_color: tgn}
     - {label: '🚖', click: Keyboard_bqlx1, key_back_color: benter, key_text_color: tenter}
@@ -3190,7 +3190,7 @@ preset_keyboards:
     width: 10
     height: *jpgd1
     keys:
-    - {label: '🙂', click: Keyboard_bqrw1, height: 26, key_back_color: bgn, key_text_color: tgn}
+    - {label: '表情', click: Keyboard_bqrw1, height: 26, key_back_color: bgn, key_text_color: tgn}
     - {label: '🌼', click: Keyboard_bqhc1, key_back_color: bgn, key_text_color: tgn}
     - {label: '🎂', click: Keyboard_bqpt1, key_back_color: bgn, key_text_color: tgn}
     - {label: '🚖', click: Keyboard_bqlx1, key_back_color: bgn, key_text_color: tgn}
@@ -3254,7 +3254,7 @@ preset_keyboards:
     width: 10
     height: *jpgd1
     keys:
-    - {label: '🙂', click: Keyboard_bqrw1, height: 34, key_back_color: bgn, key_text_color: tgn}
+    - {label: '表情', click: Keyboard_bqrw1, height: 34, key_back_color: bgn, key_text_color: tgn}
     - {label: '🌼', click: Keyboard_bqhc1, key_back_color: bgn, key_text_color: tgn}
     - {label: '🎂', click: Keyboard_bqpt1, key_back_color: bgn, key_text_color: tgn}
     - {label: '🚖', click: Keyboard_bqlx1, key_back_color: bgn, key_text_color: tgn}
@@ -3318,7 +3318,7 @@ preset_keyboards:
     width: 10
     height: *jpgd1
     keys:
-    - {label: '🙂', click: Keyboard_bqrw1, height: 26, key_back_color: bgn, key_text_color: tgn}
+    - {label: '表情', click: Keyboard_bqrw1, height: 26, key_back_color: bgn, key_text_color: tgn}
     - {label: '🌼', click: Keyboard_bqhc1, key_back_color: bgn, key_text_color: tgn}
     - {label: '🎂', click: Keyboard_bqpt1, key_back_color: bgn, key_text_color: tgn}
     - {label: '🚖', click: Keyboard_bqlx1, key_back_color: bgn, key_text_color: tgn}
@@ -3382,7 +3382,7 @@ preset_keyboards:
     width: 10
     height: *jpgd1
     keys:
-    - {label: '🙂', click: Keyboard_bqrw1, height: 26, key_back_color: bgn, key_text_color: tgn}
+    - {label: '表情', click: Keyboard_bqrw1, height: 26, key_back_color: bgn, key_text_color: tgn}
     - {label: '🌼', click: Keyboard_bqhc1, key_back_color: bgn, key_text_color: tgn}
     - {label: '🎂', click: Keyboard_bqpt1, key_back_color: bgn, key_text_color: tgn}
     - {label: '🚖', click: Keyboard_bqlx1, key_back_color: bgn, key_text_color: tgn}
@@ -3446,7 +3446,7 @@ preset_keyboards:
     width: 10
     height: *jpgd1
     keys:
-    - {label: '🙂', click: Keyboard_bqrw1, height: 26, key_back_color: bgn, key_text_color: tgn}
+    - {label: '表情', click: Keyboard_bqrw1, height: 26, key_back_color: bgn, key_text_color: tgn}
     - {label: '🌼', click: Keyboard_bqhc1, key_back_color: bgn, key_text_color: tgn}
     - {label: '🎂', click: Keyboard_bqpt1, key_back_color: bgn, key_text_color: tgn}
     - {label: '🚖', click: Keyboard_bqlx1, key_back_color: bgn, key_text_color: tgn}
@@ -3949,7 +3949,7 @@ preset_keyboards:
     - {label: '______', click: space1, long_click: space_R, swipe_up: Keyboard_defaulten, width: 23, round_corner: *round1, key_back_color: bkg, key_text_color: tkg}
     - {label: '丿', click: Keyboard_r2, long_click: Tab, composing: Keyboard_h, ascii: 'h', combo: h, width: 11.5, key_text_size: "19", key_back_color: bh4, key_text_color: th4}
     - {label: '丶', click: space_R1, long_click: Zcj, composing: Keyboard_r, ascii: 'r', combo: r, width: 11.5, key_text_size: "18", key_back_color: bgn, key_text_color: tgn}
-    - {label: 'Enter', long_click: Return, click: Return, swipe_up: Escape, composing: Keyboard_e0, width: 15.5, round_corner: *round3, key_back_color: benter, key_text_color: tenter}
+    - {label: 'Enter', long_click: Return, click: Return, swipe_up: Escape, composing: Keyboard_e0, width: 15.5, round_corner: *round3, key_back_color: benter, key_text_color: tenter, key_symbol_color: tenter}
 
   fbjzj:
     name: 风22并击助记
@@ -3990,7 +3990,7 @@ preset_keyboards:
     - {label: '______', click: space1, long_click: space_R, swipe_up: Keyboard_defaulten, round_corner: *round1, width: 23, key_back_color: bkg, key_text_color: tkg}
     - {label: '丿', click: Keyboard_r2, long_click: Tab, composing: Keyboard_h, ascii: 'h', combo: h, width: 11.5, key_back_color: bh4, key_text_color: th4}
     - {label: '丶', click: space_R1, long_click: Zcj, composing: Keyboard_r, ascii: 'r', combo: r, width: 11.5, key_text_size: "18", key_back_color: bgn, key_text_color: tgn}
-    - {label: 'Enter', long_click: Return, click: Return, swipe_up: Escape, composing: Keyboard_e0, width: 15.5, round_corner: *round3, key_back_color: benter, key_text_color: tenter}
+    - {label: 'Enter', long_click: Return, click: Return, swipe_up: Escape, composing: Keyboard_e0, width: 15.5, round_corner: *round3, key_back_color: benter, key_text_color: tenter, key_symbol_color: tenter}
 
 
 preset_keys:
@@ -4086,7 +4086,7 @@ preset_keys:
   liquid_keyboard_exit: {label: 返回, send: FUNCTION, command: liquid_keyboard, option: "-1"}  #退出liquidkeyboard
   liquid_keyboard_switch: { label: 更多, send: FUNCTION, command: liquid_keyboard, option: "特殊" }
   liquid_keyboard_tabs: { label: 更多, send: FUNCTION, command: liquid_keyboard, option: "更多" }
-  liquid_keyboard_emoji: { label: 🙂, send: FUNCTION, command: liquid_keyboard, option: "emoji" }
+  liquid_keyboard_emoji: { label: 表情, send: FUNCTION, command: liquid_keyboard, option: "emoji" }
   menu_keyboard: { label: 菜单, send: FUNCTION, command: menu_keyboard }
   clipboard_window: { label: "剪贴", send: FUNCTION, command: "clipboard_window", option: '0' } #0剪贴板，1收藏夹
   # rime状态
@@ -4163,7 +4163,7 @@ preset_keys:
    # 表情键自定义
   Keyboard_bqfh: {label: ⌘, functional: true, send: Eisu_toggle, select: bqfh1}
   Keyboard_bqrw: {label: ⌘, functional: false, send: Eisu_toggle, select: bqfh1}
-  Keyboard_bqrw1: {label: '🙂', functional: false, send: Eisu_toggle, select: bqrw1}
+  Keyboard_bqrw1: {label: '表情', functional: false, send: Eisu_toggle, select: bqrw1}
   Keyboard_bqrw2: {label: 人物2,functional: false, send: Eisu_toggle, select: bqrw2}
   Keyboard_bqrw3: {label: 人物3, functional: false, send: Eisu_toggle, select: bqrw3}
   Keyboard_bqrw4: {label: 人物4, functional: false, send: Eisu_toggle, select: bqrw4}

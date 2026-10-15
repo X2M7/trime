@@ -199,6 +199,8 @@ object SetupClosedLoopProbe {
             val raw = runBlocking { api { getRawInput().also { check(it == "hanyu") } } }
             val expected = main { checkNotNull(candidate(checkNotNull(input()))).text }
             checkUncommitted(raw, expected)
+            instrumentation.sendStatus(0, SetupTrialFocusProbe.verify(instrumentation, activity, trial, service))
+            checkUncommitted(raw, expected)
             val beforeFont = main { checkNotNull(input()) }
             main { prefs.candidates.textSize.setValue(36) }
             await("The rebuilt input view did not restore its real 36sp compact candidate") {
@@ -685,6 +687,8 @@ object SetupClosedLoopProbe {
         val checkpointBackup = checkpoints.all
         val profile = AppPrefs.defaultInstance().profile
         val freshBackup = profile.freshInputSetupPending.getValue()
+        val cacheEntryHadNoSession = RimeDaemon.readCached { true } == null
+        var cachedKeyboard: RimeCachedReadTeardownAssertions.CachedKeyboard? = null
         val owner = "setup-closed-loop-${UUID.randomUUID()}"
         val session = RimeDaemon.createSession(owner)
         var originalSchema: String? = null
@@ -832,6 +836,52 @@ object SetupClosedLoopProbe {
 
             val monitor = instrumentation.addMonitor(SetupActivity::class.java.name, null, false)
             try {
+                var lastFocusState: List<Any?>? = null
+                var focusDiagnostics = 0
+                fun reportTrialFocus(stage: String, activity: SetupActivity) {
+                    val input = activity.supportFragmentManager.fragments.filterIsInstance<SetupFragment>()
+                        .firstOrNull { it.setupPage == SetupPage.Try }?.trialInput()
+                    val focused = activity.currentFocus
+                    val state = listOf(
+                        stage,
+                        activity.isTrialFocusRestorationPending,
+                        activity.currentSetupPage.name,
+                        activity.lifecycle.currentState.name,
+                        activity.hasWindowFocus(),
+                        input?.isAttachedToWindow,
+                        input?.isShown,
+                        input?.isEnabled,
+                        input?.isLaidOut,
+                        input?.isLayoutRequested,
+                        input?.hasFocus(),
+                        focused?.id,
+                        focused?.javaClass?.name,
+                    )
+                    if (state == lastFocusState || focusDiagnostics >= 16) return
+                    lastFocusState = state
+                    focusDiagnostics++
+                    val diagnostic = Bundle().apply {
+                        putString("setup_trial_focus_stage", stage)
+                        putBoolean("setup_trial_focus_restore_pending", activity.isTrialFocusRestorationPending)
+                        putString("setup_trial_focus_page", activity.currentSetupPage.name)
+                        putString("setup_trial_focus_lifecycle", activity.lifecycle.currentState.name)
+                        putBoolean("setup_trial_focus_window_focused", activity.hasWindowFocus())
+                        putBoolean("setup_trial_focus_input_present", input != null)
+                        putBoolean("setup_trial_focus_attached", input?.isAttachedToWindow == true)
+                        putBoolean("setup_trial_focus_shown", input?.isShown == true)
+                        putBoolean("setup_trial_focus_enabled", input?.isEnabled == true)
+                        putBoolean("setup_trial_focus_laid_out", input?.isLaidOut == true)
+                        putBoolean("setup_trial_focus_layout_requested", input?.isLayoutRequested == true)
+                        putBoolean("setup_trial_focus_actual", input?.hasFocus() == true)
+                        putInt("setup_trial_focus_owner_id", focused?.id ?: View.NO_ID)
+                        putString("setup_trial_focus_owner_class", focused?.javaClass?.name.orEmpty())
+                        putInt("setup_trial_focus_diagnostic_count", focusDiagnostics)
+                    }
+                    result.putAll(diagnostic)
+                    instrumentation.sendStatus(0, diagnostic)
+                }
+                main { reportTrialFocus("before-recreate", fresh) }
+                val restoreTrialFocus = main { trial.hasFocus() }
                 main { fresh.recreate() }
                 var replacement: SetupActivity? = null
                 await("Setup recreation did not produce a replacement Activity") {
@@ -844,6 +894,15 @@ object SetupClosedLoopProbe {
                     main { fresh.isDestroyed && recreated.currentSetupPage == SetupPage.Try && recreated.isPageDone(SetupPage.Try) }
                 }
                 main { check(fragment(recreated, SetupPage.Try).trialInput()?.text.isNullOrEmpty()) }
+                if (restoreTrialFocus) {
+                    await("The recreated trial did not recover its actual view focus after the Fragment attached") {
+                        main {
+                            reportTrialFocus("recreated-focus-wait", recreated)
+                            recreated.hasWindowFocus() && fragment(recreated, SetupPage.Try).trialInput()?.hasFocus() == true
+                        }
+                    }
+                }
+                result.putBoolean("setup_trial_focus_recreation_restored", restoreTrialFocus)
                 passed("recreation keeps completion checkpoints without restoring trial text")
                 main {
                     val done = recreated.findViewById<Button>(R.id.next_button)
@@ -883,6 +942,10 @@ object SetupClosedLoopProbe {
             passed("trying later is explicit, does not fake a successful trial, and does not reopen completed system steps")
             check(deployments.get() == 0) { "Layout/charset selection unexpectedly started deployment" }
             passed("wizard schema and charset choices do not trigger unrelated deployment")
+            cachedKeyboard = main {
+                val input = windowRoots().asSequence().flatMap(::descendants).filterIsInstance<InputView>().first()
+                RimeCachedReadTeardownAssertions.capture(input)
+            }
             passed = true
             result.putString("stream", "PASS: $checks setup UI/state checks; real keyboard touch acceptance is separate\n")
         } catch (error: Throwable) {
@@ -906,6 +969,14 @@ object SetupClosedLoopProbe {
                 result.putString("stream", result.getString("stream", "") + "FAIL cleanup: ${it.stackTraceToString()}\n")
             }
             RimeDaemon.destroySession(owner)
+        }
+        if (passed) {
+            runCatching {
+                RimeCachedReadTeardownAssertions.verify(instrumentation, checkNotNull(cachedKeyboard), cacheEntryHadNoSession)
+            }.onSuccess(result::putAll).onFailure {
+                passed = false
+                result.putString("stream", result.getString("stream", "") + "FAIL cached read teardown: ${it.stackTraceToString()}\n")
+            }
         }
         result.putBoolean("passed", passed)
         result.putInt("setup_closed_loop_checks", checks)

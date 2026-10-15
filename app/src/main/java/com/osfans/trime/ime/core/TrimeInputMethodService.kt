@@ -914,7 +914,9 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
 
     override fun onComputeInsets(outInsets: Insets) {
         if (inputDeviceManager.useVirtualKeyboard || !themeReady) {
-            val visibleView = inputView?.keyboardView ?: loadingPanel
+            // The panel content moves inside its viewport when the whole panel scrolls.
+            // Only the stable viewport defines the editor and touchable-area boundary.
+            val visibleView = inputView?.keyboardViewport ?: loadingPanel
             if (visibleView == null) {
                 inputViewLocation[1] = decorView.height
             } else {

@@ -96,6 +96,8 @@ open class PagingCandidateViewAdapter(
         val row = peek(position)
         if (row == null) {
             holder.ui.root.identity = null
+            holder.ui.root.contentDescription = null
+            holder.ui.root.isSelected = false
             holder.idx = -1
             holder.snapshot = CandidateSnapshot.EMPTY
             return
@@ -103,11 +105,11 @@ open class PagingCandidateViewAdapter(
         val item = row.candidate
         val idx = row.index
         val highlighted = idx == highlightedIndex
-        holder.ui.update(item, highlighted, row.snapshot.isPrediction)
         holder.text = item.text
         holder.comment = item.comment
         holder.idx = idx
         holder.snapshot = row.snapshot
         holder.ui.root.identity = CandidateIdentity(row.snapshot, idx)
+        holder.ui.update(item, highlighted, row.snapshot.isPrediction)
     }
 }

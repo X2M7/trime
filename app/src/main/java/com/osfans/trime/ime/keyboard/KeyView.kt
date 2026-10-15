@@ -13,7 +13,14 @@ import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
 import android.graphics.Rect
 import android.graphics.drawable.GradientDrawable
+import android.os.Bundle
 import android.view.KeyEvent
+import android.view.MotionEvent
+import android.view.accessibility.AccessibilityEvent
+import android.view.accessibility.AccessibilityNodeInfo
+import android.widget.Button
+import androidx.core.view.ViewCompat
+import androidx.core.view.children
 import com.mikepenz.iconics.IconicsDrawable
 import com.mikepenz.iconics.utils.sizeDp
 import com.osfans.trime.R
@@ -24,6 +31,7 @@ import com.osfans.trime.ime.core.TrimeInputMethodService
 import com.osfans.trime.ime.performance.InputLatencyLog
 import com.osfans.trime.ime.popup.PopupAction
 import com.osfans.trime.ime.popup.PopupDelegate
+import com.osfans.trime.util.setCheckedState
 import com.osfans.trime.util.sp
 import kotlinx.coroutines.Job
 import splitties.dimensions.dp
@@ -44,8 +52,6 @@ class KeyView(
 
     private val popup: PopupDelegate
         get() = keyboardView.popup
-
-    private val rime get() = RimeDaemon.getFirstSessionOrNull()!!
 
     private val deletedTextBuffer = ArrayDeque<String>()
     private var pendingRepeat: Job? = null
@@ -68,17 +74,15 @@ class KeyView(
 
     private val cachedLocation = intArrayOf(0, 0)
     private val cachedBounds = Rect()
-    private var boundsValid = false
-
     val bounds: Rect
         get() = cachedBounds.also {
-            if (!boundsValid) updateBounds()
+            // Ancestor scrolling moves the key without laying it out again.
+            updateBounds()
         }
 
     fun updateBounds() {
         val (x, y) = cachedLocation.also { getLocationInWindow(it) }
         cachedBounds.set(x + key.extraWidthLeft, y, x + width - key.extraWidthRight, y + height)
-        boundsValid = true
     }
 
     init {
@@ -91,6 +95,8 @@ class KeyView(
         hasDouble = key.hasAction(KeyBehavior.DOUBLE_CLICK) || (key.isShift && !key.hasAction(KeyBehavior.LAZY_DOUBLE_CLICK))
         hasLazyDouble = key.hasAction(KeyBehavior.LAZY_DOUBLE_CLICK)
         hasPopup = key.popup.isNotEmpty()
+        isClickable = key.click != null
+        importantForAccessibility = if (isClickable) IMPORTANT_FOR_ACCESSIBILITY_YES else IMPORTANT_FOR_ACCESSIBILITY_NO
         updateAccessibilityDescription()
 
         onPress = {
@@ -160,7 +166,7 @@ class KeyView(
                     dispatchInput { keyboardActionListener.onAction(theme.resolveAction(if (delta > 0) "Right" else "Left")) }
                 }
             } else if (isSlideDelete) {
-                if (rime.run { statusCached.isComposing }) {
+                if (RimeDaemon.readCached { statusCached.isComposing } == true) {
                     when {
                         delta < 0 -> dispatchInput { keyboardActionListener.onKey(KeyEvent.KEYCODE_DEL, 0) }
 
@@ -303,17 +309,139 @@ class KeyView(
         )
     }
 
-    /** Cached key views must describe the same current labels that onDraw renders. */
+    private fun accessibilityAction(): KeyAction? = key.getAction(KeyBehavior.CLICK)
+
+    private fun accessibilityChecked(action: KeyAction?): Boolean = when {
+        key.isShift -> keyboard.isShifted
+        action?.isModifierKey == true -> keyboard.modifier and action.modifierKeyOnMask != 0 || key.isOn
+        !action?.toggle.isNullOrEmpty() -> RimeDaemon.readCached { getRuntimeOptionCached(checkNotNull(action).toggle) } ?: key.isOn
+        else -> key.isOn
+    }
+
+    private fun canAccessibilityLockShift(): Boolean = key.isShift && keyboardView.hookShiftLock &&
+        !key.hasAction(KeyBehavior.DOUBLE_CLICK) && !key.hasAction(KeyBehavior.LAZY_DOUBLE_CLICK)
+
+    private fun canAccessibilityLongPress(): Boolean = hasLongPress && !hasPopup && !isRepeatable
+
+    private fun accessibilityActivationAllowed(): Boolean = isShown && isAttachedToWindow &&
+        RimeDaemon.readCached { isReady } == true && keyboard.firstPressedKeyIndex == -1 &&
+        keyboard.keys.none { it.isPressed } &&
+        keyboardView.children.none { (it as? GestureFrame)?.hasPendingTouchGesture == true }
+
+    /** Cached key views describe current visible captions without reading editor content. */
     private fun updateAccessibilityDescription() {
-        if (!keyboard.isT9Layout) return
-        val description = when (key.click?.code) {
-            KeyEvent.KEYCODE_DEL -> context.getString(R.string.delete)
+        if (!isClickable) {
+            contentDescription = null
+            ViewCompat.setStateDescription(this, null)
+            return
+        }
+        val action = accessibilityAction()
+        val functional = when (action?.code) {
+            KeyEvent.KEYCODE_DEL, KeyEvent.KEYCODE_FORWARD_DEL -> context.getString(R.string.delete)
             KeyEvent.KEYCODE_ENTER -> keyboardView.labelEnter
             KeyEvent.KEYCODE_SPACE -> context.getString(R.string.t9_space)
-            KeyEvent.KEYCODE_APOSTROPHE -> context.getString(R.string.t9_separator)
-            else -> listOf(key.hint, key.getLabel()).filter { it.isNotEmpty() }.joinToString(" ")
+            KeyEvent.KEYCODE_APOSTROPHE -> if (keyboard.isT9Layout) context.getString(R.string.t9_separator) else null
+            KeyEvent.KEYCODE_SHIFT_LEFT, KeyEvent.KEYCODE_SHIFT_RIGHT -> context.getString(R.string.t13_key_shift)
+            KeyEvent.KEYCODE_CTRL_LEFT, KeyEvent.KEYCODE_CTRL_RIGHT -> context.getString(R.string.t13_key_control)
+            KeyEvent.KEYCODE_ALT_LEFT, KeyEvent.KEYCODE_ALT_RIGHT -> context.getString(R.string.t13_key_alt)
+            KeyEvent.KEYCODE_META_LEFT, KeyEvent.KEYCODE_META_RIGHT -> context.getString(R.string.t13_key_meta)
+            KeyEvent.KEYCODE_SYM -> context.getString(R.string.t13_key_symbols)
+            KeyEvent.KEYCODE_SWITCH_CHARSET, KeyEvent.KEYCODE_LANGUAGE_SWITCH -> context.getString(R.string.t13_key_switch_language)
+            KeyEvent.KEYCODE_EISU -> context.getString(R.string.t13_key_switch_keyboard)
+            KeyEvent.KEYCODE_ESCAPE -> context.getString(R.string.t13_key_escape)
+            KeyEvent.KEYCODE_TAB -> context.getString(R.string.t13_key_tab)
+            KeyEvent.KEYCODE_DPAD_LEFT -> context.getString(R.string.t13_key_left)
+            KeyEvent.KEYCODE_DPAD_RIGHT -> context.getString(R.string.t13_key_right)
+            KeyEvent.KEYCODE_DPAD_UP -> context.getString(R.string.t13_key_up)
+            KeyEvent.KEYCODE_DPAD_DOWN -> context.getString(R.string.t13_key_down)
+            KeyEvent.KEYCODE_MOVE_HOME -> context.getString(R.string.t13_key_home)
+            KeyEvent.KEYCODE_MOVE_END -> context.getString(R.string.t13_key_end)
+            KeyEvent.KEYCODE_PAGE_UP -> context.getString(R.string.t13_key_page_up)
+            KeyEvent.KEYCODE_PAGE_DOWN -> context.getString(R.string.t13_key_page_down)
+            else -> null
         }
+        val description = KeyAccessibilityLabelPolicy.label(
+            key.getLabel(),
+            key.hint.takeUnless { keyboardView.hideKeyHint }.orEmpty(),
+            if (!keyboardView.hideKeySymbol) key.symbolLabel else "",
+            functional,
+            context.getString(R.string.t13_key_action),
+            preferDisplay = action?.code == KeyEvent.KEYCODE_EISU ||
+                action?.code == KeyEvent.KEYCODE_SWITCH_CHARSET || action?.code == KeyEvent.KEYCODE_LANGUAGE_SWITCH,
+        )
         if (contentDescription != description) contentDescription = description
+        ViewCompat.setStateDescription(
+            this,
+            if (key.isShift) {
+                context.getString(
+                    when {
+                        keyboardView.isCapsOn -> R.string.t13_key_caps_locked
+                        keyboard.isShifted -> R.string.t13_key_shift_on
+                        else -> R.string.t13_key_shift_off
+                    },
+                )
+            } else {
+                null
+            },
+        )
+    }
+
+    override fun onInitializeAccessibilityNodeInfo(info: AccessibilityNodeInfo) {
+        updateAccessibilityDescription()
+        super.onInitializeAccessibilityNodeInfo(info)
+        val action = accessibilityAction()
+        info.className = Button::class.java.name
+        info.contentDescription = contentDescription
+        info.isCheckable = action?.isModifierKey == true || !action?.toggle.isNullOrEmpty() || action?.isSticky == true
+        info.setCheckedState(info.isCheckable && accessibilityChecked(action))
+        info.isClickable = isEnabled && isClickable
+        info.isLongClickable = isEnabled && canAccessibilityLongPress()
+        if (!info.isClickable) info.removeAction(AccessibilityNodeInfo.AccessibilityAction.ACTION_CLICK)
+        info.removeAction(AccessibilityNodeInfo.AccessibilityAction.ACTION_LONG_CLICK)
+        if (info.isLongClickable) {
+            info.addAction(AccessibilityNodeInfo.AccessibilityAction(AccessibilityNodeInfo.ACTION_LONG_CLICK, context.getString(R.string.t13_key_long_press)))
+        }
+        if (!isEnabled) return
+        for ((behavior, id, label) in accessibilitySwipeActions) {
+            if (key.hasAction(behavior)) info.addAction(AccessibilityNodeInfo.AccessibilityAction(id, context.getString(label)))
+        }
+        if (canAccessibilityLockShift()) {
+            info.addAction(AccessibilityNodeInfo.AccessibilityAction(R.id.t13_key_action_lock_shift, context.getString(R.string.t13_key_lock_shift)))
+        }
+    }
+
+    override fun onInitializeAccessibilityEvent(event: AccessibilityEvent) {
+        updateAccessibilityDescription()
+        super.onInitializeAccessibilityEvent(event)
+        event.className = Button::class.java.name
+        event.isChecked = accessibilityChecked(accessibilityAction())
+    }
+
+    override fun onHoverEvent(event: MotionEvent): Boolean {
+        updateAccessibilityDescription()
+        // View's hover events drive touch exploration; they must never press or commit a key.
+        return super.onHoverEvent(event)
+    }
+
+    override fun performAccessibilityAction(action: Int, arguments: Bundle?): Boolean = when (action) {
+        AccessibilityNodeInfo.ACTION_CLICK -> accessibilityActivationAllowed() && isClickable && performAccessibilityBehavior(KeyBehavior.CLICK)
+
+        AccessibilityNodeInfo.ACTION_LONG_CLICK -> accessibilityActivationAllowed() && canAccessibilityLongPress() && performAccessibilityBehavior(KeyBehavior.LONG_CLICK)
+
+        R.id.t13_key_action_lock_shift -> accessibilityActivationAllowed() && canAccessibilityLockShift() && performAccessibilityBehavior(KeyBehavior.DOUBLE_CLICK)
+
+        else -> accessibilitySwipeActions.firstOrNull { it.second == action }?.let { (behavior, _, _) ->
+            accessibilityActivationAllowed() && key.hasAction(behavior) && performAccessibilityBehavior(behavior)
+        } ?: super.performAccessibilityAction(action, arguments)
+    }
+
+    private companion object {
+        val accessibilitySwipeActions = listOf(
+            Triple(KeyBehavior.SWIPE_UP, R.id.t13_key_action_swipe_up, R.string.t13_key_swipe_up),
+            Triple(KeyBehavior.SWIPE_DOWN, R.id.t13_key_action_swipe_down, R.string.t13_key_swipe_down),
+            Triple(KeyBehavior.SWIPE_LEFT, R.id.t13_key_action_swipe_left, R.string.t13_key_swipe_left),
+            Triple(KeyBehavior.SWIPE_RIGHT, R.id.t13_key_action_swipe_right, R.string.t13_key_swipe_right),
+        )
     }
 
     fun refreshAppearance() {
@@ -337,32 +465,27 @@ class KeyView(
         )
     }
 
-    override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
-        super.onLayout(changed, left, top, right, bottom)
-        boundsValid = false
-    }
-
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 
         drawBackground(canvas, key)
 
-        val label = key.getLabel().let {
-            if (it == "enter_labels") keyboardView.labelEnter else it
-        }
-
-        if (label.isNotEmpty()) {
-            drawLabel(canvas, label)
-        }
-
-        val symbol = key.symbolLabel
-        if (symbol.isNotEmpty() && (!keyboard.isT9Layout || symbol != key.hint)) {
-            drawSymbol(canvas, symbol)
-        }
-
-        val hint = key.hint
-        if (hint.isNotEmpty()) {
-            drawSymbol(canvas, hint, isTop = false)
+        visualContentLayout().forEach { content ->
+            val color = if (content.isMain) key.getTextColor() else key.getSymbolColor()
+            if (content.icon) {
+                drawIcon(canvas, content.original, content.bounds, color)
+            } else {
+                val paint = if (content.isMain) textPaint else symbolPaint
+                paint.color = color
+                paint.textSize = content.text.size
+                paint.typeface = if (content.isMain) theme.fonts.key else theme.fonts.symbol
+                paint.textAlign = Paint.Align.CENTER
+                paint.clearShadowLayer()
+                val centerX = (content.bounds.left + content.bounds.right) / 2f
+                content.text.lines.forEachIndexed { index, line ->
+                    canvas.drawText(line, centerX, content.bounds.top - content.text.top + content.text.lineHeight * index, paint)
+                }
+            }
         }
     }
 
@@ -383,119 +506,91 @@ class KeyView(
         bg.draw(canvas)
     }
 
-    private fun drawLabel(canvas: Canvas, label: String) {
-        val textColor = key.getTextColor()
-        val textSize = sp(key.keyTextSize.takeIf { it > 0 } ?: if (label.length > 1 && !label.isIconFont) keyboardView.keyLongTextSize else keyboardView.keyTextSize)
-        val topHint = keyboard.isT9Layout && !keyboardView.hideKeySymbol && key.symbolLabel.let { it.isNotEmpty() && it != key.hint }
-        val bottomHint = keyboard.isT9Layout && !keyboardView.hideKeyHint && key.hint.isNotEmpty()
+    internal data class VisualContent(
+        val original: String,
+        val isMain: Boolean,
+        val icon: Boolean,
+        val area: KeyContentLayout.Box,
+        val bounds: KeyContentLayout.Box,
+        val text: KeyContentLayout.Text,
+    )
 
-        if (label.isIconFont) {
-            val size = if (keyboard.isT9Layout) minOf(textSize.toInt(), dp(26)) else textSize.toInt()
-            drawIcon(canvas, label, size, textColor, key.keyTextOffsetX, key.keyTextOffsetY)
-        } else {
-            textPaint.apply {
-                color = textColor
-                this.textSize = textSize
-                typeface = theme.fonts.key
-                clearShadowLayer()
+    /** The same finite plan drives Canvas drawing and the attached-view layout regression. */
+    internal fun visualContentLayout(): List<VisualContent> {
+        val label = key.getLabel().let { if (it == "enter_labels") keyboardView.labelEnter else it }
+        val symbol = key.symbolLabel.takeUnless {
+            keyboardView.hideKeySymbol || (keyboard.isT9Layout && it == key.hint)
+        }.orEmpty()
+        val hint = key.hint.takeUnless { keyboardView.hideKeyHint }.orEmpty()
+        val horizontalInset = minOf(dp(4).toFloat(), (width - paddingLeft - paddingRight).coerceAtLeast(0) / 4f)
+        val verticalInset = minOf(dp(2).toFloat(), (height - paddingTop - paddingBottom).coerceAtLeast(0) / 4f)
+        val content = KeyContentLayout.Box(
+            paddingLeft + horizontalInset,
+            paddingTop + verticalInset,
+            (width - paddingRight - horizontalInset).coerceAtLeast(paddingLeft + horizontalInset),
+            (height - paddingBottom - verticalInset).coerceAtLeast(paddingTop + verticalInset),
+        )
+        val bands = KeyContentLayout.bands(content, symbol.isNotEmpty(), hint.isNotEmpty(), dp(14).toFloat(), dp(1).toFloat())
+        val result = ArrayList<VisualContent>(3)
+        fun add(text: String, main: Boolean, area: KeyContentLayout.Box?, offsetX: Float, offsetY: Float) {
+            if (text.isEmpty() || area == null || area.width <= 0f || area.height <= 0f) return
+            val preferred = if (main) {
+                sp(key.keyTextSize.takeIf { it > 0 } ?: if (text.length > 1 && !text.isIconFont) keyboardView.keyLongTextSize else keyboardView.keyTextSize)
+            } else {
+                minOf(sp(key.symbolTextSize.takeIf { it > 0f } ?: keyboardView.symbolTextSize), dp(12).toFloat())
             }
-
-            if (keyboard.isT9Layout) {
-                val availableWidth = (width - paddingLeft - paddingRight - dp(8)).coerceAtLeast(1)
-                val reserved = 8 + (if (topHint) 14 else 0) + (if (bottomHint) 14 else 0)
-                val availableHeight = (height - paddingTop - paddingBottom - dp(reserved)).coerceAtLeast(1)
-                val metrics = textPaint.fontMetrics
-                val scale = minOf(1f, availableWidth / textPaint.measureText(label).coerceAtLeast(1f), availableHeight / (metrics.descent - metrics.ascent))
-                textPaint.textSize *= scale
+            val icon = text.isIconFont
+            val layout = if (icon) {
+                val size = minOf(preferred, area.width, area.height, if (main && keyboard.isT9Layout) dp(26).toFloat() else preferred)
+                KeyContentLayout.Text(emptyList(), size, size, 0f, size)
+            } else {
+                val paint = if (main) textPaint else symbolPaint
+                paint.typeface = if (main) theme.fonts.key else theme.fonts.symbol
+                paint.textAlign = Paint.Align.LEFT
+                val ink = Rect()
+                KeyContentLayout.text(text, preferred, dp(if (main) 12 else 8).toFloat(), area, 2) { line, size ->
+                    paint.textSize = size
+                    val advance = paint.measureText(line)
+                    ink.setEmpty()
+                    paint.getTextBounds(line, 0, line.length, ink)
+                    val metrics = paint.fontMetrics
+                    // Include italic/fallback-glyph overhang, not only the logical advance width.
+                    val halfWidth = maxOf(advance / 2f, kotlin.math.abs(ink.left - advance / 2f), kotlin.math.abs(ink.right - advance / 2f))
+                    KeyContentLayout.Metrics(halfWidth * 2f, minOf(metrics.top, ink.top.toFloat()), maxOf(metrics.bottom, ink.bottom.toFloat()))
+                }
             }
-
-            val centerX = (width - paddingLeft - paddingRight) / 2f + paddingLeft
-            val centerY = (height - paddingTop - paddingBottom) / 2f + paddingTop +
-                (if (topHint) dp(6) else 0) - (if (bottomHint) dp(6) else 0)
-            val fontMetrics = textPaint.fontMetrics
-            val adjustmentY = -(fontMetrics.ascent + fontMetrics.descent) / 2f
-
-            canvas.drawText(label, centerX + sp(key.keyTextOffsetX), centerY + adjustmentY + sp(key.keyTextOffsetY), textPaint)
+            val drawingHeight = if (icon) layout.size else layout.height
+            result.add(
+                VisualContent(
+                    text,
+                    main,
+                    icon,
+                    area,
+                    KeyContentLayout.place(area, layout.width, drawingHeight, sp(offsetX), sp(offsetY)),
+                    layout,
+                ),
+            )
         }
+        add(label, true, bands.main, key.keyTextOffsetX, key.keyTextOffsetY)
+        add(symbol, false, bands.top, key.keySymbolOffsetX, key.keySymbolOffsetY)
+        add(hint, false, bands.bottom, key.keyHintOffsetX, key.keyHintOffsetY)
+        return result
     }
 
-    private fun drawIcon(
-        canvas: Canvas,
-        iconName: String,
-        size: Int,
-        color: Int,
-        offsetX: Float = 0f,
-        offsetY: Float = 0f,
-        isTop: Boolean? = null,
-    ) {
-        val halfSize = size / 2
-
+    private fun drawIcon(canvas: Canvas, iconName: String, bounds: KeyContentLayout.Box, color: Int) {
         val cmdName = iconName.toIconName()
         val icon = if (cachedIconName == cmdName) {
             cachedIcon!!
         } else {
             IconicsDrawable(context, cmdName).apply {
-                sizeDp = size
+                sizeDp = bounds.width.toInt().coerceAtLeast(1)
             }.also {
                 cachedIcon = it
                 cachedIconName = cmdName
             }
         }
-
         icon.colorFilter = PorterDuffColorFilter(color, PorterDuff.Mode.SRC_IN)
-
-        val centerX = (width - paddingLeft - paddingRight) / 2f + paddingLeft + sp(offsetX)
-
-        val centerY = when (isTop) {
-            true -> paddingTop + halfSize + sp(offsetY)
-            false -> height - paddingBottom - size + sp(offsetY)
-            null -> (height - paddingTop - paddingBottom) / 2f + paddingTop + sp(offsetY)
-        }
-
-        icon.setBounds(
-            (centerX - halfSize).toInt(),
-            (centerY - halfSize).toInt(),
-            (centerX + halfSize).toInt(),
-            (centerY + halfSize).toInt(),
-        )
+        icon.setBounds(kotlin.math.ceil(bounds.left).toInt(), kotlin.math.ceil(bounds.top).toInt(), bounds.right.toInt(), bounds.bottom.toInt())
         icon.draw(canvas)
-    }
-
-    private fun drawSymbol(canvas: Canvas, text: String, isTop: Boolean = true) {
-        if (isTop && keyboardView.hideKeySymbol) return
-        if (!isTop && keyboardView.hideKeyHint) return
-
-        val textColor = key.getSymbolColor()
-        val preferredSize = sp(key.symbolTextSize.takeIf { it > 0f } ?: keyboardView.symbolTextSize)
-        val textSize = if (keyboard.isT9Layout) minOf(preferredSize, dp(12).toFloat()) else preferredSize
-        val offsetX = if (isTop) key.keySymbolOffsetX else key.keyHintOffsetX
-        val offsetY = if (isTop) key.keySymbolOffsetY else key.keyHintOffsetY
-
-        if (text.isIconFont) {
-            drawIcon(canvas, text, textSize.toInt(), textColor, offsetX, offsetY, isTop)
-        } else {
-            symbolPaint.apply {
-                color = textColor
-                this.textSize = textSize
-                typeface = theme.fonts.symbol
-            }
-
-            val lines = text.split("\n")
-            val fontMetrics = symbolPaint.fontMetrics
-            val lineHeight = fontMetrics.descent - fontMetrics.ascent
-            val totalHeight = lineHeight * lines.size
-
-            val centerX = (width - paddingLeft - paddingRight) / 2f + paddingLeft + sp(offsetX)
-            val startY = if (isTop) {
-                paddingTop - fontMetrics.top + sp(offsetY) - (totalHeight - lineHeight) / 2
-            } else {
-                height - paddingBottom - fontMetrics.bottom + sp(offsetY) - (totalHeight - lineHeight) / 2
-            }
-
-            for (i in lines.indices) {
-                val lineY = startY + lineHeight * i
-                canvas.drawText(lines[i], centerX, lineY, symbolPaint)
-            }
-        }
     }
 }

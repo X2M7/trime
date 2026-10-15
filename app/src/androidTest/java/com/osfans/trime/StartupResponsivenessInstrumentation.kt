@@ -48,6 +48,7 @@ class StartupResponsivenessInstrumentation : Instrumentation() {
     private var t09Only = false
     private var t10Only = false
     private var t11Only = false
+    private var t13Only = false
     private var t09Baseline = true
     private var t09Schema = "luna_pinyin_t9"
     private var setupOnly = false
@@ -75,6 +76,7 @@ class StartupResponsivenessInstrumentation : Instrumentation() {
         t09Only = arguments?.getString("t09") == "true"
         t10Only = arguments?.getString("t10") == "true"
         t11Only = arguments?.getString("t11") == "true"
+        t13Only = arguments?.getString("t13") == "true"
         t09Baseline = arguments?.getString("t09Baseline") != "false"
         t09Schema = arguments?.getString("t09Schema") ?: "luna_pinyin_t9"
         setupOnly = arguments?.getString("setup") == "true"
@@ -97,6 +99,10 @@ class StartupResponsivenessInstrumentation : Instrumentation() {
         val applicationWait = SystemClock.uptimeMillis()
         waitForIdleSync()
         sendStatus(0, Bundle().apply { putLong("application_ready_wait_ms", SystemClock.uptimeMillis() - applicationWait) })
+        if (t13Only) {
+            T13AccessibilityProbe.run(this)
+            return
+        }
         if (t11Only) {
             NextWordPredictionProbe.run(this)
             return

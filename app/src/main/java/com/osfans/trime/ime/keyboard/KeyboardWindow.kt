@@ -11,6 +11,7 @@ import android.view.View
 import android.view.WindowInsets
 import android.view.inputmethod.EditorInfo
 import android.widget.FrameLayout
+import androidx.core.view.children
 import androidx.lifecycle.lifecycleScope
 import com.osfans.trime.R
 import com.osfans.trime.core.RimeApi
@@ -21,6 +22,7 @@ import com.osfans.trime.data.theme.Theme
 import com.osfans.trime.data.theme.model.TextKeyboard
 import com.osfans.trime.ime.broadcast.EnterKeyDisplayDelegate
 import com.osfans.trime.ime.broadcast.InputBroadcastReceiver
+import com.osfans.trime.ime.broadcast.InputBroadcaster
 import com.osfans.trime.ime.core.EditorKeyboard
 import com.osfans.trime.ime.core.EditorModeOverride
 import com.osfans.trime.ime.core.EditorPolicy
@@ -67,6 +69,7 @@ class KeyboardWindow(di: DI) :
     private val commonKeyboardActionListener: CommonKeyboardActionListener by instance()
     private val popup: PopupDelegate by instance()
     private val enterKeyDisplay: EnterKeyDisplayDelegate by instance()
+    private val broadcaster: InputBroadcaster by instance()
 
     private val cursorCapsMode: Int
         get() =
@@ -119,16 +122,72 @@ class KeyboardWindow(di: DI) :
     private var lastIsPortrait: Boolean? = null
     private var containerWidth: Int = 0
     private var allowedWidth: Int = 0
+    private var t9HeightBudgetPx = 0
+    private var heightRefreshPending = false
+    val usesT9CompositionPanel: Boolean
+        get() {
+            if (!::currentKeyboard.isInitialized) return false
+            val origin = auxiliaryReturn
+            return T9LayoutPolicy.usesCompositionPanel(
+                currentKeyboard.isT9Layout,
+                currentKeyboardId == evalKeyboard("symbols"),
+                restrictedEditor,
+                origin?.let { selectKeyboardConfig(it.keyboardId)?.t9Layout } == true,
+                origin?.schemaId == rime.run { statusCached.schemaId },
+            )
+        }
+    val usesScrollableT9Fallback get() = usesT9CompositionPanel && t9HeightBudgetPx > 0 &&
+        currentKeyboard.keyboardHeight > t9HeightBudgetPx
+    val hasPendingInputGesture get() = ::currentKeyboard.isInitialized &&
+        (
+            currentKeyboard.firstPressedKeyIndex != -1 || currentKeyboard.keys.any { it.isPressed } ||
+                currentKeyboardView?.children?.any { (it as? GestureFrame)?.hasPendingTouchGesture == true } == true
+            )
+
+    fun setT9HeightBudget(maximum: Int) {
+        if (t9HeightBudgetPx == maximum) return
+        t9HeightBudgetPx = maximum
+        if (!::currentKeyboard.isInitialized || !usesT9CompositionPanel || !::keyboardView.isInitialized) return
+        // Auxiliary pages keep their existing theme model; one parent viewport scrolls
+        // all controls and keys when that complete model cannot fit.
+        val modelHeight = if (currentKeyboard.isT9Layout) {
+            T9LayoutPolicy.modelHeight(currentKeyboard.requestedKeyboardHeight, maximum, context.dp(192))
+        } else {
+            currentKeyboard.requestedKeyboardHeight
+        }
+        if (currentKeyboard.keyboardHeight == modelHeight) return
+        requestKeyboardRefresh()
+    }
+
+    private fun requestKeyboardRefresh() {
+        if (heightRefreshPending) return
+        heightRefreshPending = true
+        val refresh = object : Runnable {
+            override fun run() {
+                if (!keyboardView.isAttachedToWindow) {
+                    heightRefreshPending = false
+                    return
+                }
+                if (hasPendingInputGesture) {
+                    keyboardView.postOnAnimation(this)
+                    return
+                }
+                heightRefreshPending = false
+                refreshKeyboards(isAll = true)
+            }
+        }
+        keyboardView.postOnAnimation(refresh)
+    }
 
     private val onKeyboardViewLayoutChangeListener =
-        View.OnLayoutChangeListener { v, left, _, right, _, _, _, _, _ ->
+        View.OnLayoutChangeListener { _, left, _, right, _, _, _, _, _ ->
             val width = right - left
             if (width > 0 && allowedWidth != width) {
                 val isPortrait = !context.resources.configuration.isLandscape()
                 lastIsPortrait = isPortrait
                 containerWidth = width
                 allowedWidth = width
-                v.post { refreshKeyboards(isAll = true) }
+                requestKeyboardRefresh()
             }
         }
 
@@ -142,7 +201,7 @@ class KeyboardWindow(di: DI) :
     private fun detachCurrentView() {
         currentKeyboardView?.also {
             it.onDetach()
-            keyboardView.removeView(it)
+            keyboardView.removeAllViews()
         }
         activeKeyboard?.takeUnless { restrictedEditor }?.let { keyboard ->
             if (!isAuxiliaryKeyboard(currentKeyboardId)) {
@@ -164,13 +223,13 @@ class KeyboardWindow(di: DI) :
         }
 
         val safeWidth = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            val windowMetrics = context.windowManager.maximumWindowMetrics
+            val windowMetrics = context.windowManager.currentWindowMetrics
             val insets = windowMetrics.windowInsets.getInsetsIgnoringVisibility(
                 WindowInsets.Type.systemBars() or WindowInsets.Type.displayCutout(),
             )
             val displayWidth = context.resources.displayMetrics.widthPixels
             val windowWidth = windowMetrics.bounds.width() - insets.left - insets.right
-            if (windowWidth < displayWidth - context.dp(1)) displayWidth else windowWidth
+            minOf(displayWidth, windowWidth).coerceAtLeast(1)
         } else {
             @Suppress("DEPRECATION")
             val size = Point()
@@ -179,7 +238,7 @@ class KeyboardWindow(di: DI) :
             size.x
         }
 
-        val width = safeWidth - 2 * context.dp(padding)
+        val width = (safeWidth - 2 * context.dp(padding)).coerceAtLeast(1)
         allowedWidth = width
         return width
     }
@@ -192,11 +251,16 @@ class KeyboardWindow(di: DI) :
     }
 
     private fun attachKeyboard(target: String, updateMode: Boolean = true) {
+        val layoutChanged = currentKeyboardId != target
         currentKeyboardId = target
         if (!restrictedEditor && !isAuxiliaryKeyboard(target)) lastKeyboardId = target
 
         val config = selectKeyboardConfig(target)
-        val keyboard = activeKeyboard ?: Keyboard(context, theme, computeAllowedWidth(), config)
+        activeKeyboard?.takeIf { it.isT9Layout }?.let { cached ->
+            val expected = T9LayoutPolicy.modelHeight(cached.requestedKeyboardHeight, t9HeightBudgetPx, context.dp(192))
+            if (cached.keyboardHeight != expected) cachedKeyboards.remove(target)
+        }
+        val keyboard = activeKeyboard ?: Keyboard(context, theme, computeAllowedWidth(), config, t9HeightBudgetPx)
         val view = currentKeyboardView ?: KeyboardView(context, theme, keyboard, popup, service, keyboardActionListener, enterKeyDisplay)
 
         if (activeKeyboard == null) {
@@ -241,6 +305,7 @@ class KeyboardWindow(di: DI) :
                 add(it, lParams(matchParent, matchParent))
             }
         }
+        if (layoutChanged) broadcaster.onKeyboardLayoutChanged()
     }
 
     private fun smartMatchKeyboard(): String {

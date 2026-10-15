@@ -12,12 +12,10 @@ internal fun keyboardHeightOverride(availableDp: Int, preferredDp: Int): Int = i
 /** TOP reserves 60% for the candidate and 40% for its annotation in CandidateItemUi. */
 internal fun candidateRowHeight(
     themed: Int,
-    preferred: Int,
     textHeightDp: Float,
     commentHeightDp: Float,
     commentsAbove: Boolean,
 ): Int {
-    if (preferred <= 0) return themed
     val required = if (commentsAbove) {
         maxOf(textHeightDp / 0.6f, commentHeightDp / 0.4f)
     } else {

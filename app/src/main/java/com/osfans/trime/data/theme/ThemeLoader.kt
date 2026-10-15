@@ -108,13 +108,16 @@ object ThemeLoader {
         val result = loadFromSource(themeId) ?: loadDeployedTheme(themeId)
         if (result !is ThemeLoadResult.Success) return result
         return try {
-            result.copy(theme = result.theme.withCompatibleKeyboards(builtin))
+            withCompatibleKeyboards(result)
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
             ThemeLoadResult.Failure(themeId, ThemeLoadError.InvalidStructure(themeId, "Compatible keyboard fallback failed", e))
         }
     }
+
+    /** Reuse the immutable APK theme; callers retain their own failure handling. */
+    internal fun withCompatibleKeyboards(result: ThemeLoadResult.Success): ThemeLoadResult.Success = result.copy(theme = result.theme.withCompatibleKeyboards(builtin))
 
     /**
      * Reads [themeId] and its dependencies from source files, expands the
@@ -339,8 +342,8 @@ object ThemeLoader {
     /** Loads only a successfully rebuilt theme artifact; a failed rebuild must not use stale data. */
     private suspend fun loadDeployedTheme(themeId: String): ThemeLoadResult {
         // A failed rebuild must not be disguised by a stale deployed artifact.
-        val session = checkNotNull(RimeDaemon.getFirstSessionOrNull()) { "Theme loading requires a Rime session" }
         val deployed = try {
+            val session = checkNotNull(RimeDaemon.getFirstSessionOrNull()) { "Theme loading requires a Rime session" }
             session.runOnReady { deployConfigFile(themeId, CONFIG_VERSION_KEY) }
         } catch (e: CancellationException) {
             throw e

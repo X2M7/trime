@@ -14,7 +14,6 @@ import com.osfans.trime.data.theme.model.GeneralStyle
 /** Read actual font bounds, including system SP scaling, when the view is constructed. */
 internal fun candidateRowHeight(context: Context, theme: Theme): Int {
     val preferred = AppPrefs.defaultInstance().candidates.textSize.getValue()
-    if (preferred <= 0) return theme.style.candidateViewHeight
     val metrics = context.resources.displayMetrics
     fun height(size: Float, font: Typeface): Float {
         val paint = TextPaint().apply {
@@ -26,7 +25,6 @@ internal fun candidateRowHeight(context: Context, theme: Theme): Int {
     }
     return candidateRowHeight(
         theme.style.candidateViewHeight,
-        preferred,
         height(candidateTextSize(theme.style.candidateTextSize, preferred), theme.fonts.candidate),
         height(theme.style.commentTextSize, theme.fonts.comment),
         theme.style.commentPosition == GeneralStyle.CommentPosition.TOP,

@@ -12,6 +12,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.provider.Settings
+import android.view.ViewGroup
 import android.widget.Button
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AlertDialog
@@ -20,9 +21,11 @@ import androidx.core.os.bundleOf
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.doOnPreDraw
 import androidx.core.view.isGone
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
@@ -90,6 +93,9 @@ class SetupActivity : FragmentActivity() {
     private var inputJob: Job? = null
     private var inputLoaded = false
     private var draftEdited = false
+    private var restoreTrialFocus = false
+    private var trialFocusFrame: SetupTrialEditText? = null
+    internal val isTrialFocusRestorationPending get() = restoreTrialFocus
     var keepCurrentInput = true
         private set
     var inputChoice = InputSetupSelection(InputLayout.FULL_PINYIN, ChineseVariant.SIMPLIFIED)
@@ -202,6 +208,29 @@ class SetupActivity : FragmentActivity() {
         WindowCompat.getInsetsController(window, input).show(WindowInsetsCompat.Type.ime())
     }
 
+    /** Fragment pages attach after Window restores its hierarchy, so restore their focus here. */
+    internal fun restoreTrialFocusIfReady() {
+        if (!restoreTrialFocus || !::viewPager.isInitialized || currentSetupPage != SetupPage.Try ||
+            !lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED) || !hasWindowFocus() || isFinishing || isDestroyed
+        ) {
+            return
+        }
+        val input = supportFragmentManager.fragments.filterIsInstance<SetupFragment>()
+            .firstOrNull { it.setupPage == SetupPage.Try }?.trialInput() ?: return
+        if (!input.isAttachedToWindow || !input.isShown || !input.isEnabled) return
+        if (!input.isLaidOut || input.isLayoutRequested) {
+            if (trialFocusFrame === input) return
+            trialFocusFrame = input
+            input.doOnPreDraw {
+                if (trialFocusFrame === input) trialFocusFrame = null
+                restoreTrialFocusIfReady()
+            }
+            return
+        }
+        // Requesting view focus does not explicitly show the IME or change trial checkpoints.
+        if (input.requestFocus()) restoreTrialFocus = false
+    }
+
     fun recordChineseCommit() {
         if (currentSetupPage != SetupPage.Try || !isPageDone(SetupPage.Input) ||
             !InputMethodUtils.checkIsTrimeSelected()
@@ -308,6 +337,8 @@ class SetupActivity : FragmentActivity() {
     private fun renderStatus() {
         supportFragmentManager.fragments.forEach { (it as? SetupFragment)?.sync() }
         updateButtons()
+        // The async checkpoint read can enable this editor after the initial focus callbacks.
+        restoreTrialFocusIfReady()
     }
 
     fun changeStorageMode(mode: DataStorageMode) {
@@ -409,6 +440,11 @@ class SetupActivity : FragmentActivity() {
                 override fun onPageSelected(position: Int) {
                     updateButtons()
                     if (SetupPage.entries[position] == SetupPage.Input) loadInputState()
+                    if (SetupPage.entries[position] == SetupPage.Try) {
+                        restoreTrialFocusIfReady()
+                    } else if (lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)) {
+                        restoreTrialFocus = false
+                    }
                 }
             },
         )
@@ -416,6 +452,7 @@ class SetupActivity : FragmentActivity() {
         keepCurrentInput = savedInstanceState?.getBoolean("keep_current_input")
             ?: !AppPrefs.defaultInstance().profile.freshInputSetupPending.getValue()
         draftEdited = savedInstanceState?.getBoolean("input_draft_edited") ?: false
+        restoreTrialFocus = savedInstanceState?.getBoolean("restore_trial_focus") ?: false
         inputChoice = InputSetupSelection(
             savedInstanceState?.getString("input_layout")?.let { InputLayout.valueOf(it) } ?: InputLayout.FULL_PINYIN,
             savedInstanceState?.getString("input_variant")?.let { ChineseVariant.valueOf(it) } ?: ChineseVariant.SIMPLIFIED,
@@ -473,6 +510,7 @@ class SetupActivity : FragmentActivity() {
         super.onWindowFocusChanged(hasFocus)
         if (!hasFocus) return
         refreshCurrentFragment()
+        restoreTrialFocusIfReady()
     }
 
     override fun onPause() {
@@ -503,15 +541,60 @@ class SetupActivity : FragmentActivity() {
         refreshCurrentFragment()
     }
 
+    override fun onPostResume() {
+        super.onPostResume()
+        restoreTrialFocusIfReady()
+    }
+
     override fun onSaveInstanceState(outState: Bundle) {
         outState.putBoolean("keep_current_input", keepCurrentInput)
         outState.putBoolean("input_draft_edited", draftEdited)
         outState.putString("input_layout", inputChoice.layout.name)
         outState.putString("input_variant", inputChoice.variant.name)
-        super.onSaveInstanceState(outState)
+        saveWithTrialFocusOwner {
+            outState.putBoolean("restore_trial_focus", restoreTrialFocus)
+            super.onSaveInstanceState(outState)
+        }
+    }
+
+    /** Keep the Window snapshot on a stable focus owner without exposing another editor. */
+    internal fun <T> saveWithTrialFocusOwner(save: () -> T): T {
+        val input = if (currentSetupPage == SetupPage.Try) {
+            supportFragmentManager.fragments.filterIsInstance<SetupFragment>()
+                .firstOrNull { it.setupPage == SetupPage.Try }?.trialInput()?.takeIf { it.hasFocus() }
+        } else {
+            null
+        }
+        restoreTrialFocus = restoreTrialFocus || input != null
+        // Window's immediate focused-ID restoration cannot reach an asynchronously attached page.
+        // Preserve that intent ourselves. Restore this same view in the same main-thread call so
+        // an ordinary save does not expose another editor or an IME visibility change to a frame.
+        val focusable = viewPager.isFocusable
+        val focusableInTouchMode = viewPager.isFocusableInTouchMode
+        val descendantFocusability = viewPager.descendantFocusability
+        try {
+            if (input != null) {
+                // clearFocus alone can immediately refocus the only touch-focusable child.
+                // The stable pager exists before its Fragment pages are attached on restore.
+                viewPager.descendantFocusability = ViewGroup.FOCUS_BLOCK_DESCENDANTS
+                viewPager.isFocusableInTouchMode = true
+                viewPager.requestFocus()
+            }
+            return save()
+        } finally {
+            viewPager.descendantFocusability = descendantFocusability
+            viewPager.isFocusableInTouchMode = focusableInTouchMode
+            viewPager.isFocusable = focusable
+            if (input != null && hasWindowFocus() && !isFinishing && !isDestroyed &&
+                currentSetupPage == SetupPage.Try && input.isAttachedToWindow && input.isShown && input.isEnabled
+            ) {
+                if (input.requestFocus()) restoreTrialFocus = false
+            }
+        }
     }
 
     override fun onDestroy() {
+        trialFocusFrame = null
         inputJob?.cancel()
         if (inputSession != null) RimeDaemon.destroySession(inputSessionName)
         super.onDestroy()

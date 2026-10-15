@@ -24,8 +24,6 @@ class Key(
     private val theme: Theme,
     private val keyDef: TextKeyboard.TextKey? = null,
 ) {
-    private val rime get() = RimeDaemon.getFirstSessionOrNull()!!
-
     var index: Int = -1
 
     val keyActions: Map<KeyBehavior, KeyAction> = buildMap {
@@ -270,13 +268,9 @@ class Key(
 
     fun getAction(behavior: KeyBehavior): KeyAction? = keyActions[behavior]?.takeIf { behavior != KeyBehavior.CLICK } ?: checkKeyAction(sendBindings) ?: click
 
-    private fun checkKeyAction(): KeyAction? {
-        val rime = rime
-        val asciiMode = rime.run { statusCached }.isAsciiMode
-        val paging = rime.run { paging }
-        val hasMenu = rime.run { hasMenu }
-        val composing = rime.run { statusCached }.isComposing
-        return resolveKeyStateBinding(keyActions, asciiMode, composing, hasMenu, paging, rime.run { candidateSnapshotCached.isPrediction })
+    private fun checkKeyAction(): KeyAction? = RimeDaemon.readCached {
+        val status = statusCached
+        resolveKeyStateBinding(keyActions, status.isAsciiMode, status.isComposing, hasMenu, paging, candidateSnapshotCached.isPrediction)
     }
 
     private fun checkKeyAction(sendBindings: Boolean): KeyAction? = checkKeyAction().takeIf { sendBindings }
@@ -286,13 +280,13 @@ class Key(
 
     fun getCode(behavior: KeyBehavior): Int = getAction(behavior)!!.code
 
-    fun getLabel(): String = when {
-        label.isNotEmpty() &&
-            keyAction == click &&
-            !keyActions.containsKey(KeyBehavior.ASCII) &&
-            !rime.run { statusCached }.let { it.isAsciiMode || it.isAsciiPunct } -> label
-
-        else -> keyAction!!.getLabel(parent) // 中文狀態顯示標籤
+    fun getLabel(): String {
+        val action = keyAction
+        val ascii = RimeDaemon.readCached { statusCached.let { it.isAsciiMode || it.isAsciiPunct } } ?: true
+        return when {
+            label.isNotEmpty() && action == click && !keyActions.containsKey(KeyBehavior.ASCII) && !ascii -> label
+            else -> action?.getLabel(parent).orEmpty() // 中文狀態顯示標籤
+        }
     }
 
     fun getPreviewText(behavior: KeyBehavior): String = when (behavior) {

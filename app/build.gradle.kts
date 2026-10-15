@@ -29,8 +29,8 @@ android {
         applicationId = "com.osfans.trime"
         minSdk = 21
         targetSdk = 37
-        versionCode = 20261120
-        versionName = "3.3.13-t9.15"
+        versionCode = 20261121
+        versionName = "3.3.13-t9.16"
         testInstrumentationRunner = "com.osfans.trime.StartupResponsivenessInstrumentation"
 
         multiDexEnabled = true

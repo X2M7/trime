@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.doOnAttach
 import androidx.fragment.app.Fragment
 import com.osfans.trime.R
 import com.osfans.trime.data.prefs.AppPrefs
@@ -152,6 +153,15 @@ class SetupFragment : Fragment() {
         sync()
         val activity = requireActivity() as SetupActivity
         if (page == SetupPage.Input && activity.currentSetupPage == page) activity.loadInputState()
+    }
+
+    override fun onViewStateRestored(savedInstanceState: Bundle?) {
+        super.onViewStateRestored(savedInstanceState)
+        if (page == SetupPage.Try) {
+            (requireActivity() as SetupActivity).restoreTrialFocusIfReady()
+            // Fragment state is restored before ViewPager2 necessarily attaches this page.
+            view?.doOnAttach { (activity as? SetupActivity)?.restoreTrialFocusIfReady() }
+        }
     }
 
     fun trialInput() = if (::binding.isInitialized && view != null) binding.trialInput else null

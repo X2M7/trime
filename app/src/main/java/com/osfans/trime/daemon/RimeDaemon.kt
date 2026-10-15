@@ -47,7 +47,8 @@ import kotlin.concurrent.withLock
  *
  * To use rime, client should call [createSession] to obtain a [RimeSession],
  * and call [destroySession] on client destroyed. Client should not leak the instance of [RimeApi],
- * and must use [RimeSession] to access rime functionalities.
+ * and must use [RimeSession] to access rime functionalities. Cached UI presentation
+ * may use [readCached] without borrowing another client's session.
  *
  * The instance of [Rime] always exists,but whether the dispatcher runs and callback works depend on clients, i.e.
  * if no clients are connected, the engine will be shut down on the lifecycle worker.
@@ -107,7 +108,7 @@ object RimeDaemon {
         private inline fun <T> ensureEstablished(block: () -> T) = if (isEstablished()) {
             block()
         } else {
-            throw IllegalStateException("Session $name is not established")
+            throw RimeSessionClosedException(name)
         }
 
         override fun <T> run(block: suspend RimeApi.() -> T): T = ensureEstablished {
@@ -297,6 +298,17 @@ object RimeDaemon {
     fun getFirstSessionOrNull(): RimeSession? = lock.withLock {
         sessions.firstNotNullOfOrNull { it.value }
             ?: ProcessExitSession.takeIf { processExitRequested }
+    }
+
+    /**
+     * Read presentation caches without borrowing a session that another client can close.
+     * Keep [block] short: cached getters only, no waiting, native work, callbacks,
+     * or escaping RimeApi/flows. Return immutable values for calculation outside the lock.
+     * This synchronizes with client teardown, not with updates on the Rime dispatcher;
+     * it does not make different caches a single response snapshot.
+     */
+    internal fun <T> readCached(block: RimeApi.() -> T): T? = lock.withLock {
+        if (sessions.isEmpty() || processExitRequested) null else block(rimeImpl)
     }
 
     /**

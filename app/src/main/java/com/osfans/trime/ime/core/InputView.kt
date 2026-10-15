@@ -7,18 +7,25 @@ package com.osfans.trime.ime.core
 
 import android.annotation.SuppressLint
 import android.os.Build
+import android.text.TextPaint
+import android.util.TypedValue
 import android.view.ContextThemeWrapper
+import android.view.MotionEvent
 import android.view.View
 import android.view.WindowInsets
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InlineSuggestionsResponse
+import android.widget.FrameLayout
 import android.widget.ImageView
+import android.widget.ScrollView
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.lifecycle.lifecycleScope
+import com.osfans.trime.R
 import com.osfans.trime.core.CompositionProto
 import com.osfans.trime.core.RimeMessage
 import com.osfans.trime.core.T9StateProto
@@ -71,6 +78,8 @@ import splitties.views.dsl.core.matchParent
 import splitties.views.dsl.core.view
 import splitties.views.dsl.core.wrapContent
 import splitties.views.imageDrawable
+import kotlin.math.ceil
+import splitties.systemservices.windowManager as systemWindowManager
 
 /**
  * Successor of the old InputRoot
@@ -85,24 +94,28 @@ class InputView(
     private val keyboardBackground =
         imageView {
             scaleType = ImageView.ScaleType.CENTER_CROP
+            importantForAccessibility = IMPORTANT_FOR_ACCESSIBILITY_NO
         }
     private val placeholderListener = OnClickListener { }
 
     private val leftPaddingSpace =
         view(::View) {
             isFocusable = false
+            importantForAccessibility = IMPORTANT_FOR_ACCESSIBILITY_NO
             setOnClickListener(placeholderListener)
         }
 
     private val rightPaddingSpace =
         view(::View) {
             isFocusable = false
+            importantForAccessibility = IMPORTANT_FOR_ACCESSIBILITY_NO
             setOnClickListener(placeholderListener)
         }
 
     private val bottomPaddingSpace =
         view(::View) {
             isFocusable = false
+            importantForAccessibility = IMPORTANT_FOR_ACCESSIBILITY_NO
             setOnClickListener(placeholderListener)
         }
 
@@ -149,6 +162,19 @@ class InputView(
     private val keyboardBottomPadding = theme.style.keyboardPaddingBottom
     private val keyboardBottomPaddingLandscape = theme.style.keyboardPaddingLandBottom
 
+    private var windowSafeLeft = 0
+    private var windowSafeRight = 0
+    private var windowNavBottom = 0
+    private var windowSystemBottom = 0
+    private var panelTouchActive = false
+    private var sizeUpdatePending = false
+    private val windowLocation = IntArray(2)
+
+    private fun horizontalSafeInsets(): ImeHorizontalInsets {
+        getLocationInWindow(windowLocation)
+        return ImeHorizontalInsets.remaining(rootView.width, windowLocation[0], width, windowSafeLeft, windowSafeRight)
+    }
+
     private val keyboardSidePaddingPx: Int
         get() {
             val value =
@@ -178,6 +204,7 @@ class InputView(
         }
 
     val keyboardView: View
+    internal val keyboardViewport: ScrollView
 
     /** Restyles colors after a scheme switch without rebuilding the view tree. */
     fun refreshColors() {
@@ -266,6 +293,31 @@ class InputView(
                 )
             }
 
+        // One stable parent scrolls the complete panel only when it cannot fit.
+        // Keep it in place so entering fallback never reparents a held key.
+        keyboardViewport =
+            object : ScrollView(themedContext) {
+                override fun dispatchTouchEvent(event: MotionEvent): Boolean {
+                    when (event.actionMasked) {
+                        MotionEvent.ACTION_DOWN -> panelTouchActive = true
+                        MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> panelTouchActive = false
+                    }
+                    return super.dispatchTouchEvent(event)
+                }
+            }.apply {
+                id = R.id.keyboard_viewport
+                isFillViewport = false
+                isFocusable = false
+                // Retain the scroll container in the accessibility tree without
+                // taking keyboard focus away from the editor.
+                importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_YES
+                layoutParams = LayoutParams(matchParent, wrapContent).apply {
+                    centerHorizontally()
+                    bottomOfParent()
+                }
+                addView(keyboardView, FrameLayout.LayoutParams(matchParent, wrapContent))
+            }
+
         updateWindowViewHeightJob =
             service.lifecycleScope.launch {
                 keyboardWindow.currentKeyboardHeight.collect {
@@ -281,6 +333,14 @@ class InputView(
             override fun onWindowAttached(window: BoardWindow) {
                 updateKeyboardSize()
             }
+
+            override fun onKeyboardLayoutChanged() {
+                // A symbol-page scroll must not clip candidates on return to T9.
+                // Same-page size refreshes do not send this event.
+                keyboardViewport.scrollTo(0, 0)
+                // Replace or abort any old-page fling/accessibility scroll too.
+                keyboardViewport.smoothScrollTo(0, 0)
+            }
         })
         keyboardView.addOnLayoutChangeListener { _, left, _, right, _, oldLeft, _, oldRight, _ ->
             if (right - left != oldRight - oldLeft) {
@@ -289,22 +349,27 @@ class InputView(
                 }
             }
         }
+        addOnLayoutChangeListener { _, left, _, right, _, oldLeft, _, oldRight, _ ->
+            if (left != oldLeft || right != oldRight) {
+                post { if (isAttachedToWindow) updateKeyboardSize() }
+            }
+        }
         t9.update(rime.run { t9Cached })
+        preedit.ui.root.addOnLayoutChangeListener { _, _, top, _, bottom, _, oldTop, _, oldBottom ->
+            if (bottom - top != oldBottom - oldTop) scheduleKeyboardSizeUpdate()
+        }
 
         add(
             preedit.ui.root,
             lParams(wrapContent, wrapContent) {
-                above(keyboardView)
+                above(keyboardViewport)
                 startOfParent()
             },
         )
 
         add(
-            keyboardView,
-            lParams(matchParent, wrapContent) {
-                centerHorizontally()
-                bottomOfParent()
-            },
+            keyboardViewport,
+            checkNotNull(keyboardViewport.layoutParams),
         )
 
         add(
@@ -315,34 +380,93 @@ class InputView(
         )
     }
 
+    private fun scheduleKeyboardSizeUpdate() {
+        if (sizeUpdatePending) return
+        sizeUpdatePending = true
+        postOnAnimation {
+            sizeUpdatePending = false
+            if (isAttachedToWindow) updateKeyboardSize()
+        }
+    }
+
     private fun updateKeyboardSize() {
+        if (panelTouchActive || keyboardWindow.hasPendingInputGesture) {
+            scheduleKeyboardSizeUpdate()
+            return
+        }
         bottomPaddingSpace.updateLayoutParams {
             height = keyboardBottomPaddingPx
         }
-        val active = windowManager.isAttached(keyboardWindow) && keyboardWindow.currentKeyboard.isT9Layout
+        val keyboardAttached = windowManager.isAttached(keyboardWindow)
+        val active = keyboardAttached && keyboardWindow.currentKeyboard.isT9Layout
+        val compositionPanel = keyboardAttached && keyboardWindow.usesT9CompositionPanel
         val sidePadding = keyboardSidePaddingPx
+        val safe = horizontalSafeInsets()
         val density = resources.displayMetrics.density
-        val width = keyboardView.width.takeIf { it > 0 } ?: resources.displayMetrics.widthPixels
+        val availableHeight = if (Build.VERSION.SDK_INT >= 30) {
+            val metrics = context.systemWindowManager.currentWindowMetrics
+            val bars = metrics.windowInsets.getInsetsIgnoringVisibility(android.view.WindowInsets.Type.systemBars() or android.view.WindowInsets.Type.displayCutout())
+            metrics.bounds.height() - bars.top - maxOf(bars.bottom, windowNavBottom)
+        } else {
+            // screenHeightDp already excludes the legacy system-bar area.
+            dp(resources.configuration.screenHeightDp) - (windowNavBottom - windowSystemBottom).coerceAtLeast(0)
+        }
+        val width = ((keyboardView.width.takeIf { it > 0 } ?: resources.displayMetrics.widthPixels) - safe.left - safe.right).coerceAtLeast(1)
         val hand = AppPrefs.defaultInstance().keyboard.t9OneHand.getValue()
-        val sizes = if (active) {
+        val sizes = if (compositionPanel) {
             T9LayoutPolicy.widths(
                 (width / density).toInt(),
                 (sidePadding / density).toInt(),
                 resources.configuration.fontScale,
                 hand.ordinal,
-                (resources.displayMetrics.heightPixels / density).toInt(),
+                (availableHeight / density).toInt(),
             )
         } else {
             T9LayoutPolicy.Widths((sidePadding / density).toInt(), (sidePadding / density).toInt(), 0)
         }
-        val left = if (active) dp(sizes.left) else sidePadding
-        val right = if (active) dp(sizes.right) else sidePadding
+        val left = safe.left + if (compositionPanel) dp(sizes.left) else sidePadding
+        val right = safe.right + if (compositionPanel) dp(sizes.right) else sidePadding
         val choiceWidth = dp(sizes.choices)
-        t9.setKeyboardLayout(active, choiceWidth > 0)
+        val compactSidebar = compositionPanel && resources.configuration.orientation == android.content.res.Configuration.ORIENTATION_LANDSCAPE &&
+            availableHeight / density <= 480 && choiceWidth > 0
+        t9.setKeyboardLayout(active, choiceWidth > 0, compactSidebar, compositionPanel)
+        var panelMaximum = 0
+        if (compositionPanel) {
+            val editorFont = TextPaint().apply {
+                textSize = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 16f, resources.displayMetrics)
+            }.fontMetricsInt
+            // Preserve space for the app, whose actual editor may be taller than
+            // our font estimate. Short screens scroll the panel instead of
+            // allowing it to occupy almost the entire available window.
+            val editorReserve = T9LayoutPolicy.editorReserve(
+                availableHeight,
+                maxOf(dp(48), editorFont.bottom - editorFont.top + dp(16)),
+            )
+            val budget = T9LayoutPolicy.heightBudget(
+                ((availableHeight - if (preedit.ui.visible) preedit.ui.root.height else 0) / density).toInt(),
+                ceil(maxOf(inputBar.view.height, dp(inputBar.themedHeight)) / density).toInt(),
+                ceil(t9.maximumTopControlsHeight / density).toInt(),
+                ceil(keyboardBottomPaddingPx / density).toInt(),
+                ceil(editorReserve / density).toInt(),
+            )
+            keyboardWindow.setT9HeightBudget(dp(budget.maximum))
+            panelMaximum = dp(budget.panelMaximum)
+        } else {
+            keyboardWindow.setT9HeightBudget(0)
+        }
+        val scrollPanel = compositionPanel && keyboardWindow.usesScrollableT9Fallback
+        keyboardViewport.updateLayoutParams<LayoutParams> {
+            height = if (scrollPanel) panelMaximum else wrapContent
+            // Navigation stays outside the scrolling content in fallback.
+            bottomMargin = if (scrollPanel) windowNavBottom else 0
+        }
+        bottomPaddingSpace.updateLayoutParams<LayoutParams> {
+            bottomMargin = if (scrollPanel) 0 else windowNavBottom
+        }
         val unset = LayoutParams.UNSET
         leftPaddingSpace.updateLayoutParams { this.width = left }
         rightPaddingSpace.updateLayoutParams { this.width = right }
-        val choicesOnRight = active && hand == AppPrefs.Keyboard.OneHandMode.LEFT && choiceWidth > 0
+        val choicesOnRight = compositionPanel && hand == AppPrefs.Keyboard.OneHandMode.LEFT && choiceWidth > 0
         t9.sidebar.updateLayoutParams<LayoutParams> {
             this.width = choiceWidth
             startToEndOf(if (choicesOnRight) windowManager.view else leftPaddingSpace)
@@ -360,9 +484,13 @@ class InputView(
     }
 
     override fun onApplyWindowInsets(insets: WindowInsets): WindowInsets {
-        bottomPaddingSpace.updateLayoutParams<LayoutParams> {
-            bottomMargin = getNavBarBottomInset(insets)
-        }
+        val compat = WindowInsetsCompat.toWindowInsetsCompat(insets, this)
+        val safe = compat.getInsets(WindowInsetsCompat.Type.navigationBars() or WindowInsetsCompat.Type.displayCutout())
+        windowSafeLeft = safe.left
+        windowSafeRight = safe.right
+        windowSystemBottom = compat.getInsets(WindowInsetsCompat.Type.systemBars()).bottom
+        windowNavBottom = getNavBarBottomInset(insets)
+        updateKeyboardSize()
         return insets
     }
 
@@ -436,7 +564,7 @@ class InputView(
             }
 
             is RimeMessage.CompositionMessage -> {
-                val data = if (candidatesMode == PopupCandidatesMode.ALWAYS_SHOW || t9.isVisible) {
+                val data = if (candidatesMode == PopupCandidatesMode.ALWAYS_SHOW || t9.managesComposition) {
                     CompositionProto()
                 } else {
                     it.data

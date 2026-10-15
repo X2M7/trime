@@ -75,7 +75,7 @@ open class CompactCandidateViewAdapter(
     ): CandidateViewHolder {
         val ui = CandidateItemUi(context, scope)
         ui.root.apply {
-            minimumWidth = dp(40)
+            minimumWidth = dp(48)
             layoutParams = if (horizontalScroll) RecyclerView.LayoutParams(wrapContent, matchParent) else FlexboxLayoutManager.LayoutParams(wrapContent, matchParent)
         }
         return CandidateViewHolder(ui)
@@ -88,12 +88,12 @@ open class CompactCandidateViewAdapter(
     ) {
         item ?: return
         val isHighlighted = position == highlightedIdx
-        holder.ui.update(item.candidate, isHighlighted, item.snapshot.isPrediction)
         holder.text = item.candidate.text
         holder.comment = item.candidate.comment
         holder.idx = item.index
         holder.snapshot = item.snapshot
         holder.ui.root.identity = CandidateIdentity(item.snapshot, item.index)
+        holder.ui.update(item.candidate, isHighlighted, item.snapshot.isPrediction)
         val root = holder.ui.root
         if (horizontalScroll) {
             if (root.layoutParams is FlexboxLayoutManager.LayoutParams) root.layoutParams = RecyclerView.LayoutParams(root.layoutParams)
