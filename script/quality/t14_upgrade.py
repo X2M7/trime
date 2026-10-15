@@ -31,6 +31,7 @@ import xml.etree.ElementTree as ET
 
 PACKAGE = "com.osfans.trime.debug"
 IME = PACKAGE + "/com.osfans.trime.ime.core.TrimeInputMethodService"
+EDITOR = PACKAGE + "/com.osfans.trime.ui.main.ClipEditActivity"
 NATIVE_ENTRY = PACKAGE + ".test/com.osfans.trime.UserDictionaryUpgradeInstrumentation"
 EXTERNAL = "/sdcard/Android/data/" + PACKAGE + "/files/"
 PREFERENCE_FIXTURE = {
@@ -150,6 +151,41 @@ def require_preserved_preferences(before, after):
     require(left == right, "A nonvolatile preference changed across upgrade/restart")
 
 
+def focused_window(raw):
+    """Read current window focus, never an activity listing or an IME target."""
+    fields = re.findall(r"(?m)^\s*mCurrentFocus=([^\r\n]+)\r?$", raw.decode("utf-8"))
+    if len(fields) != 1:
+        return None
+    match = re.fullmatch(r"Window\{([0-9a-f]+) u([0-9]+) ([^{}]+)\}", fields[0])
+    if match is None:
+        return None
+    return dict(window=match[1], user=int(match[2]), title=match[3])
+
+
+def require_no_ui_error(window_raw, processes_raw=b""):
+    focus = focused_window(window_raw)
+    if focus is not None:
+        require(not re.match(r"(?:Application Not Responding|Application Error):(?:\s|$)", focus["title"]),
+                "Foreground Android ANR/application error dialog: " + focus["title"])
+    # These are current process flags from dumpsys activity processes, not
+    # historical ANR descriptions or arbitrary occurrences of the word ANR.
+    # API21 starts this record with debugging=; API35 starts with mCrashing=.
+    # The ANR flag follows other fields on the same line on both platforms.
+    records = re.findall(r"(?m)^\s*(?:debugging|mCrashing)=(?:true|false)\b[^\r\n]*",
+                         processes_raw.decode("utf-8"))
+    require(not any(re.search(r"(?<!\S)(?:mCrashing|mNotResponding|crashing|notResponding)=true(?=\s|$)",
+                              line.lstrip()) for line in records),
+            "Android process is in an active crash/ANR state")
+    return focus
+
+
+def focused_editor_window(raw):
+    focus = require_no_ui_error(raw)
+    if focus is None or focus["user"] != 0 or focus["title"] != EDITOR:
+        return None
+    return focus
+
+
 def bound_ime_state(raw, api):
     """Recognize the real API21/35 manager and service dump, not its IME list."""
     text = raw.decode("utf-8")
@@ -248,6 +284,7 @@ def run(args):
                   controlled_downgrade=False, uninstall_or_clear=False, cross_package_migration=False,
                   full_device_acceptance=False, public_ui_input_verified=False,
                   fixture_scope="Dedicated sandbox host-written preferences/configuration; real APK JNI learning",
+                  activation_scope="Root-launched private empty editor; no clipboard record extras, input or save; no public UI acceptance",
                   scope="Same-package APK update, retained configuration/preferences/UID/IME and native dictionary")
     nonce = uuid.uuid4().hex
     marker = "T14_UPGRADE_" + nonce
@@ -389,6 +426,42 @@ def run(args):
     def same_preferences(before, after):
         require_preserved_preferences(before["values"], after["values"])
 
+    def capture_ui_health(label, enforce=True):
+        entry = dict(label=label, started=now(), enforced=enforce, observations={}, failures={},
+                     scope="Current window focus and process error flags; activity/power diagnostic receipts")
+        report.setdefault("ui_health", []).append(entry)
+        captured = {}
+        for name, arguments in (("window", ("window",)), ("activities", ("activity", "activities")),
+                                ("processes", ("activity", "processes")), ("power", ("power",))):
+            try:
+                raw = control.shell("dumpsys", *arguments, timeout=10)
+                captured[name] = raw
+                entry["observations"][name] = write(label + "-" + name + ".txt", raw)
+            except Exception:
+                entry["failures"][name] = traceback.format_exc()
+        entry["finished"] = now()
+        if enforce:
+            require(not entry["failures"], "UI health capture incomplete: " + label)
+            focus = require_no_ui_error(captured["window"], captured["processes"])
+            require(focus is not None and focus["user"] == 0 and
+                    re.fullmatch(r"[\w.]+/[\w.$]+", focus["title"]),
+                    "No unambiguous foreground application window: " + label)
+            entry["focused_window"] = focus
+            entry["passed"] = True
+        return entry
+
+    def start_empty_editor(label):
+        try:
+            capture_ui_health(label + "-before-editor")
+            raw = control.shell("am", "start", "-W", "-n", EDITOR, timeout=30)
+            receipt = write(label + "-editor-start.stdout", raw)
+            report.setdefault("editor_starts", []).append(dict(label=label, component=EDITOR, receipt=receipt))
+            require(re.findall(rb"(?m)^Status: (\S+)\r?$", raw) == [b"ok"] and
+                    not re.search(rb"(?m)^Error:", raw), "Private empty editor did not start: " + label)
+        except BaseException:
+            capture_ui_health(label + "-editor-start-failure", enforce=False)
+            raise
+
     def await_activation(label, expected=None):
         # ThemeManager.init persists selected_theme after Rime readiness and
         # successful theme loading. Merely setting the IME does not await it.
@@ -397,7 +470,7 @@ def run(args):
         previous = None
         observations = []
         entry = dict(label=label, completed=False, timeout_seconds=60, observations=observations,
-                     scope="Bound IME, persisted theme and quiescent preferences; no public UI readiness claim")
+                     scope="Focused private empty editor, bound IME, persisted theme and quiescent preferences; no public UI readiness claim")
         report.setdefault("activation_waits", []).append(entry)
 
         def remaining():
@@ -417,17 +490,28 @@ def run(args):
                 row["input_method"] = write(prefix + "-input-method.txt", manager)
                 second, row["after"] = read_remote(preference_path, prefix + "-after.xml", remaining())
                 sample = activation_sample(first, second, manager, args.api, expected)
+                windows = control.shell("dumpsys", "window", timeout=remaining())
+                row["window"] = write(prefix + "-window.txt", windows)
+                focus = focused_editor_window(windows)
+                if sample is not None and focus is not None:
+                    sample["focused_editor"] = focus
+                else:
+                    sample = None
                 row.update(finished=now(), ready_sample=sample is not None)
                 if sample is not None and sample == previous:
                     entry.update(completed=True, accepted_sample=sample, finished=now())
                     return sample
                 previous = sample
                 time.sleep(min(.25, remaining()))
+        except BaseException:
+            capture_ui_health(label + "-activation-failure", enforce=False)
+            raise
         finally:
             save(output / (label + "-activation.json"), entry)
 
     try:
         control.verify_guest()
+        capture_ui_health("before-fixture")
         packages = control.shell("pm", "list", "packages").decode().splitlines()
         require("package:" + PACKAGE not in packages and "package:" + PACKAGE + ".test" not in packages,
                 "Fresh dedicated target required; existing installs are never uninstalled or cleared")
@@ -510,6 +594,7 @@ def run(args):
         # until the post-install selection and retained-data assertions finish.
         control.shell("ime", "enable", IME)
         control.shell("ime", "set", IME)
+        start_empty_editor("old-ime")
         old_activation = await_activation("old-ime")
         ime_before = ime_state("before-upgrade")
         require(ime_before["default_input_method"] == IME and
@@ -520,7 +605,10 @@ def run(args):
         current = install("new")
         require((current["uid"], current["data_dir"]) == (baseline["uid"], baseline["data_dir"]),
                 "Ordinary upgrade changed UID/data directory")
-        await_activation("upgraded-ime", before["values"])
+        # Package replacement stops the old service. An idle launcher need not
+        # bind the new IME until the next input request. First compare retained
+        # selection and data without causing activation; the final explicit
+        # reselection below must still bind and initialize the upgraded service.
         ime_after = ime_state("after-upgrade")
         require(ime_after == ime_before, "Ordinary APK update changed selected/enabled IME or subtype")
         after = snapshot("after-upgrade", preference_path, configs)
@@ -541,6 +629,7 @@ def run(args):
         report["checks"]["new_native_stopped_bytes_full_t9_learning_counters_and_three_backups"] = True
         control.shell("test", "!", "-e", EXTERNAL + "t10-upgrade-state.json")
         control.shell("ime", "set", IME)
+        start_empty_editor("final-ime")
         await_activation("final-ime", before["values"])
         final_ime = ime_state("final")
         require(final_ime == ime_before, "Final upgraded Trime selection differs")

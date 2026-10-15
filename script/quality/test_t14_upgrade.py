@@ -11,6 +11,61 @@ import t14_upgrade as gate
 
 
 class UpgradeGateTest(unittest.TestCase):
+    def window_fixture(self, title=gate.EDITOR, user=0, ending="\n"):
+        # Full dumpsys window includes this current-focus record on API21/35;
+        # the narrower API35 'window windows' listing can omit it.
+        return ("WINDOW MANAGER DISPLAY CONTENTS" + ending +
+                f"  mCurrentFocus=Window{{7888ec1 u{user} {title}}}" + ending).encode()
+
+    def test_focused_editor_accepts_exact_current_window_lf_and_crlf(self):
+        for ending in ("\n", "\r\n"):
+            with self.subTest(ending=ending):
+                self.assertEqual(dict(window="7888ec1", user=0, title=gate.EDITOR),
+                                 gate.focused_editor_window(self.window_fixture(ending=ending)))
+
+    def test_editor_listing_resumed_activity_or_ime_target_is_not_focus(self):
+        for raw in (f"  Window #0 Window{{7888ec1 u0 {gate.EDITOR}}}:\n",
+                    f"  mFocusedApp=ActivityRecord{{7888ec1 u0 {gate.EDITOR} t8}}\n",
+                    f"  topResumedActivity=ActivityRecord{{7888ec1 u0 {gate.EDITOR} t8}}\n",
+                    f"  imeInputTarget in display# 0 Window{{7888ec1 u0 {gate.EDITOR}}}\n",
+                    f"  previous mCurrentFocus=Window{{7888ec1 u0 {gate.EDITOR}}}\n"):
+            with self.subTest(raw=raw):
+                self.assertIsNone(gate.focused_editor_window(raw.encode()))
+
+    def test_null_duplicate_wrong_user_and_wrong_editor_cannot_pass(self):
+        correct = self.window_fixture()
+        for raw in (b"  mCurrentFocus=null\n", correct + correct,
+                    correct + b"  mCurrentFocus=null\n", self.window_fixture(user=10),
+                    self.window_fixture(title=gate.EDITOR + "Extra"),
+                    self.window_fixture(title=gate.PACKAGE + "/.ui.main.OtherActivity"),
+                    self.window_fixture(title="com.android.launcher3/com.android.launcher3.uioverrides.QuickstepLauncher")):
+            with self.subTest(raw=raw):
+                self.assertIsNone(gate.focused_editor_window(raw))
+
+    def test_foreground_anr_and_application_error_fail_without_matching_history(self):
+        for title in ("Application Not Responding: com.android.systemui", "Application Error: example.app"):
+            with self.subTest(title=title), self.assertRaisesRegex(RuntimeError, "Foreground Android"):
+                gate.focused_editor_window(self.window_fixture(title=title))
+        raw = self.window_fixture() + b"  Last ANR: Application Not Responding: example.app\n"
+        raw += b"  Window #2 Window{abcdef u0 Application Error: example.app}:\n"
+        self.assertIsNotNone(gate.focused_editor_window(raw))
+
+    def test_current_process_error_flags_include_later_fields_on_both_platforms(self):
+        for raw in (b"  debugging=false crashing=false null notResponding=true AppNotRespondingDialog{1} bad=false\n",
+                    b"  debugging=false crashing=true AppErrorDialog{1} notResponding=false null bad=false\n",
+                    b"  mCrashing=false null mNotResponding=true [AppNotRespondingDialog{1}] bad=false\r\n",
+                    b"  mCrashing=true [AppErrorDialog{1}] mNotResponding=false null bad=false\n"):
+            with self.subTest(raw=raw), self.assertRaisesRegex(RuntimeError, "active crash/ANR"):
+                gate.require_no_ui_error(self.window_fixture(), raw)
+
+    def test_process_error_parser_ignores_false_flags_and_unstructured_history(self):
+        raw = (b"  debugging=false crashing=false null notResponding=false null bad=false\n"
+               b"  mCrashing=false null mNotResponding=false null bad=false\n"
+               b"  Last ANR: mCrashing=false mNotResponding=true\n"
+               b"  reason=debugging=false crashing=true\n"
+               b"  mCrashing=false previous_mNotResponding=true notResponding=trueish\n")
+        self.assertEqual(gate.EDITOR, gate.require_no_ui_error(self.window_fixture(), raw)["title"])
+
     def activation_fixture(self, api, theme=True):
         # Minimal synthetic versions of fields observed in both platform dumps.
         connection = "mHaveConnect" if api == 21 else "mHaveConnection"
