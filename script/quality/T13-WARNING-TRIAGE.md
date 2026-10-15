@@ -11,7 +11,7 @@
 | FOSS 标签数据库地址 | 第一轮仍发现 CustomLabelManager 的第二处旧 authority，失败原件保留。补齐后所有客户端统一为 LabelProvider.AUTHORITY，新轮旧地址错误为 0；使用 shell UID 2000 的公开接口实际新增／读取／修改／删除虚构标签，并严格核对原有行恢复。provider 原有访问权限未变。 |
 | 安装脚本的增量安装诱因 | 使用同一个已验真 FOSS APK 作对照：默认增量安装实际位于 incremental-fs，改用明确的 --no-incremental 后包路径、挂载与服务快照保留，原 incremental_prop／proc_filesystems 拒绝未再出现。APK 拉回 SHA、中英文 PCM、七项 secure 设置的值与存在状态检查均保留。随后只移除三个已验真临时辅助应用，再验证修复标签地址的新版。 |
 | 目录触摸脚本 | 旧脚本点开工具栏菜单后继续向已销毁窗口滑动。现在核对可见窗口和实际目录区域，真实 Back 关菜单，检查连续原日志中的实际触摸目标及双向行位移。新轮六个锚点分别 −546／+539 px，两个手势区间注入失败为 0，保留 109 W／2 E 原文；不算列表视图切换、完整 SAF 导入或精确位置恢复验收。原解析失败、第二次手势误要求新 target 日志、首次清理 Back 只到父目录的失败均保留；第二次正常 Back 后仅 rmdir 清理 31 个空目录。 |
-| 独立音效路径 | 未安装 Trime 的公开 SoundPool 程序实际完成原生采样率 PCM 加载、非零播放、停止／释放及 FD 关闭；首轮文件路径别名比较失败发生在 load 前，修正后成功。三条 Codec2 参数提示各复现一次，官方源码确认是可选参数查询，可限定归为平台诊断。原始 FD 全记录保存在拉回文件中，超出单条 logcat 长度的副本不当作完整证据。 |
+| 独立音效路径 | 未安装 Trime 的公开 SoundPool 程序实际完成原生采样率 PCM 加载、非零播放、停止／释放及 FD 关闭；首轮文件路径匹配断言失败发生在 load 前；补记 canonical 路径后的新轮成功，旧轮未记录的具体别名不补作唯一原因。三条 Codec2 参数提示各复现一次，官方源码确认是可选参数查询，可限定归为平台诊断。原始 FD 全记录保存在拉回文件中，超出单条 logcat 长度的副本不当作完整证据。 |
 | 输入法与 WebView 对照 | 系统 LatinIME 和冻结 9.16 APK 均通过相同独立编辑器的真实触摸、光标弹窗、20 次显隐、42 个稳定检查点及末尾观察。正常清理改为实际 Back 后，两种输入法原各 2 条死亡 Binder 目标错误均为 0；原 100 次压力测试未被替代。未安装 Trime 的 WebView 124 对照捕获正常 Cleanup 原生 trace，结合 Chromium 修复可解释该次 clean exit 被误报为 crash；没有用新 trace 补作旧事件的唯一归因。 |
 
 确认的平台排除范围另有：旧 doDie／maybeSendAppStartTimes 的约 4 秒锁环与 [AOSP b056f98c 修复](https://android.googlesource.com/platform/frameworks/base/+/b056f98cc6a6195357172fa27642d7d66ba5df2a) 精确对应；特定 finishComposingTextFromImm／ImeBack 异步生命周期、ResourcesImpl 弱引用缓存、普通返回回调注销、Java 测试包的 ABI 元数据、Android 5 WAL NOTICE 的错误等级映射及模拟图形能力提示均有逐项源码证据。FrameTracker、窗口令牌等存在系统输入法对照；这些结论不把全部丢帧或每一条历史记录自动列为无害，也没有修改系统镜像、关闭诊断、扩大权限或削弱业务断言。
