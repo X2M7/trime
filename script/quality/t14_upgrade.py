@@ -365,6 +365,25 @@ def run(args):
             r"/data/(?:data|user/0)/" + re.escape(PACKAGE), baseline["data_dir"]), "Unexpected sandbox identity")
         install("test")
         report["checks"]["fresh_actual_old_and_test_install"] = True
+        # A partially initialized preference file must not make an old version
+        # fall back to EXTERNAL_SYNC without a grant. This is the minimal fresh
+        # profile state, before any old APK application/native initialization.
+        preference_path = baseline["data_dir"] + "/shared_prefs/" + PACKAGE + "_preferences.xml"
+        control.shell("test", "!", "-e", preference_path)
+        control.shell("test", "!", "-L", preference_path)
+        initial_preferences = (b'<map><string name="profile_data_storage_mode">APP_STORAGE</string>'
+                               b'<boolean name="profile_fresh_input_setup_pending" value="true"/></map>\n')
+        initial_binding = write("initial-storage-preferences.xml", initial_preferences)
+        preference_directory = preference_path.rsplit("/", 1)[0]
+        control.shell("mkdir", "-p", preference_directory)
+        control.command(["push", initial_binding["path"], preference_path])
+        control.shell("chown", str(baseline["uid"]) + ":" + str(baseline["uid"]),
+                      preference_directory, preference_path)
+        control.shell("chmod", "700", preference_directory)
+        control.shell("chmod", "600", preference_path)
+        require(control.command(["exec-out", "cat", preference_path]) == initial_preferences,
+                "Minimal initial APP_STORAGE preferences differ")
+        report["initial_storage_preferences"] = initial_binding
         control.shell("mkdir", "-p", EXTERNAL.rstrip("/"))
         dedicated = output / "runtime-audit-dedicated"
         dedicated.write_text(marker + "\n", encoding="utf-8")
@@ -380,8 +399,9 @@ def run(args):
                 state["application_data_dir"] == baseline["data_dir"], "Actual old native learning state incomplete")
         report["old_native_state"] = state_binding
         control.shell("am", "force-stop", PACKAGE)
-        preference_path = baseline["data_dir"] + "/shared_prefs/" + PACKAGE + "_preferences.xml"
         original, report["old_original_preferences"] = read_remote(preference_path, "old-original-preferences.xml")
+        require(preference_values(original).get("profile_data_storage_mode") == ("string", "APP_STORAGE"),
+                "Old native preparation changed the explicit APP_STORAGE mode")
         preferences = seeded_preferences(original)
         seed_binding = write("seeded-preferences.xml", preferences)
         control.command(["push", seed_binding["path"], preference_path])
