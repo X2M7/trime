@@ -111,9 +111,8 @@ fun releaseIdentityValue(
 fun resolveBuildAbis(
     abiOverride: String?,
     defaults: List<String>,
-): List<String> =
-    (abiOverride?.split(',') ?: defaults).also { abis ->
-        require(abis.isNotEmpty() && abis.distinct().size == abis.size && abis.all { it in Versions.supportedAbis }) {
-            "BUILD_ABI/buildABI must contain distinct supported ABI names"
-        }
+): List<String> = (abiOverride?.split(',') ?: defaults).also { abis ->
+    require(abis.isNotEmpty() && abis.distinct().size == abis.size && abis.all { it in Versions.supportedAbis }) {
+        "BUILD_ABI/buildABI must contain distinct supported ABI names"
     }
+}

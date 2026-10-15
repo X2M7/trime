@@ -53,7 +53,8 @@ def main():
                BUILD_VERSION_NAME=meta['versionName'], BUILD_COMMIT_HASH=sources[''],
                BUILD_TIMESTAMP=str(int(time.time() * 1000)), CI_NAME='X2M7')
     phases = {
-        'debug': [':spotlessCheck', ':app:compileDebugKotlin', ':app:compileDebugAndroidTestKotlin',
+        'debug': [':spotlessCheck', ':build-logic:convention:test', ':build-logic:compatibility:test',
+                  ':app:compileDebugKotlin', ':app:compileDebugAndroidTestKotlin',
                   ':app:testDebugUnitTest', ':app:assembleDebug', ':app:assembleDebugAndroidTest'],
         'release': [':app:assembleRelease', '-x', ':app:lintVitalAnalyzeRelease',
                     '-x', ':app:lintVitalReportRelease', '-x', ':app:lintVitalRelease'],
@@ -153,6 +154,12 @@ def main():
                 if src.exists():
                     shutil.copytree(src, args.output / 'unit-tests', ignore=shutil.ignore_patterns('binary'))
                     result['unit_tests'] = [binding(p) for p in sorted((args.output / 'unit-tests').glob('*.xml'))]
+                result['build_logic_tests'] = []
+                for module in ('convention', 'compatibility'):
+                    source = ROOT / 'build-logic' / module / 'build/test-results/test'
+                    destination = args.output / (module + '-tests')
+                    shutil.copytree(source, destination, ignore=shutil.ignore_patterns('binary'))
+                    result['build_logic_tests'].extend(binding(p) for p in sorted(destination.glob('*.xml')))
             else:
                 for name in ('lint-results-debug.xml', 'lint-results-release.xml'):
                     shutil.copyfile(ROOT / 'app/build/reports' / name, args.output / name)

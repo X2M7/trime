@@ -310,7 +310,7 @@ def page_data(meta):
             "application_id": meta["applicationId"], "certificate_sha256": meta["certificateSha256"],
             "abis": meta["abis"], "release_url": f"https://github.com/{meta['repository']}/releases/tag/{meta['tag']}",
             "source_url": f"https://github.com/{meta['repository']}/tree/{meta['branch']}",
-            "status": "候选版本；是否已发布及验收范围以对应 Release 为准"}
+            "status": "版本信息来自固定发布元数据；线上发布状态与验收范围见对应 Release。"}
 
 
 def pages(check=False):

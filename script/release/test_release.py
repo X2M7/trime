@@ -303,6 +303,48 @@ class SourceArchiveTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             release.repositories(self.root)
 
+    def test_only_exact_generated_plugin_links_are_allowed(self):
+        # Match the real gitlink layout and .gitmodules dirty-ignore settings:
+        # repositories() must still inspect each child and reject other dirt.
+        modules = ("librime", "librime-lua", "librime-lua-deps",
+                   "librime-octagram", "librime-predict")
+        for name in modules:
+            child = self.base / name
+            initialize(child)
+            (child / "source.txt").write_text(name + "\n")
+            if name == "librime":
+                (child / "plugins").mkdir()
+                (child / "plugins/README.md").write_text("Generated plugin links\n")
+            commit(child)
+            relative = "app/src/main/jni/" + name
+            git(self.root, "submodule", "add", "-q", str(child), relative)
+            if name in ("librime", "librime-lua"):
+                git(self.root, "config", "-f", ".gitmodules", "submodule." + relative + ".ignore", "dirty")
+        commit(self.root)
+        before = release.repositories(self.root)
+        for relative, target in release.GENERATED_LINKS.items():
+            (self.root / relative).symlink_to(self.root / target, target_is_directory=True)
+        self.assertEqual(len(release.GENERATED_LINKS), 4)
+        self.assertEqual(release.repositories(self.root), before)
+        for relative, target in release.GENERATED_LINKS.items():
+            link = self.root / relative
+            with self.subTest(path=relative, mutation="wrong target"):
+                link.unlink()
+                link.symlink_to(self.root / "app.txt")
+                with self.assertRaises(ValueError):
+                    release.repositories(self.root)
+            with self.subTest(path=relative, mutation="regular file"):
+                link.unlink()
+                link.write_text("Not a generated symlink\n")
+                with self.assertRaises(ValueError):
+                    release.repositories(self.root)
+            link.unlink()
+            link.symlink_to(self.root / target, target_is_directory=True)
+        extra = self.root / "app/src/main/jni/librime/plugins/unreviewed-plugin"
+        extra.symlink_to(self.root / "app/src/main/jni/librime-predict", target_is_directory=True)
+        with self.assertRaises(ValueError):
+            release.repositories(self.root)
+
     def test_changed_application_source_after_freeze_rejected(self):
         record = self.record()
         (self.root / "app.txt").write_text("new implementation\n")
@@ -449,13 +491,14 @@ class PagesTests(unittest.TestCase):
             '<a href="@@RELEASE_URL@@">@@TAG@@</a><p>@@RELEASE_STATUS@@</p>'
         )
 
-    def test_generated_page_is_candidate_and_uses_fixed_fork_release(self):
+    def test_generated_page_uses_fixed_fork_release_without_claiming_publication(self):
         with patch.object(release, "ROOT", self.root):
             release.pages()
             release.pages(check=True)
         data = json.loads((self.root / "docs/release.json").read_text())
         self.assertEqual(data["release_url"], "https://github.com/X2M7/trime/releases/tag/v3.3.13-t9.17")
-        self.assertIn("候选", data["status"])
+        self.assertIn("线上发布状态", data["status"])
+        self.assertNotIn("已发布", data["status"])
 
     def test_stale_generated_page_or_unknown_template_token_is_rejected(self):
         with patch.object(release, "ROOT", self.root):

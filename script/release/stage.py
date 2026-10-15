@@ -49,6 +49,12 @@ def qualification(path):
     tests = 0
     require(q['unit_tests'] == phases['debug']['unit_tests'] and q['lint'] == phases['lint']['lint'],
             'Test/Lint XML must be the actual frozen build results')
+    require(phases['debug']['build_logic_tests'], 'Build-logic test results missing')
+    for row in phases['debug']['build_logic_tests']:
+        verify_binding(row)
+        suite = ET.parse(row['path']).getroot()
+        require(suite.tag == 'testsuite' and all(int(suite.get(k, '0')) == 0 for k in ('errors', 'failures', 'skipped')),
+                'Build-logic tests failed or skipped')
     require(q['unit_tests'], 'No JVM test results')
     for row in q['unit_tests']:
         verify_binding(row)
