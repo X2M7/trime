@@ -63,6 +63,9 @@ class StartupResponsivenessInstrumentation : Instrumentation() {
     private var editorsAnimationCallbacks = true
     private var logResourcesOnly = false
     private var privacyOnly = false
+    private var publicWindowPilotOnly = false
+    private var publicWindowPilotDisposable = false
+    private var publicWindowPilotCopyShare = false
     override fun onCreate(arguments: Bundle?) {
         super.onCreate(arguments)
         safOnly = arguments?.getString("saf") == "true"
@@ -93,6 +96,9 @@ class StartupResponsivenessInstrumentation : Instrumentation() {
         editorsAnimationCallbacks = arguments?.getString("editorsAnimationCallbacks") != "false"
         logResourcesOnly = arguments?.getString("log_resources") == "true"
         privacyOnly = arguments?.getString("privacy") == "true"
+        publicWindowPilotOnly = arguments?.getString("public_window_pilot") == "true"
+        publicWindowPilotDisposable = arguments?.getString("public_window_pilot_disposable") == "true"
+        publicWindowPilotCopyShare = arguments?.getString("public_window_pilot_copy_share") == "true"
         start()
     }
 
@@ -103,6 +109,10 @@ class StartupResponsivenessInstrumentation : Instrumentation() {
         val applicationWait = SystemClock.uptimeMillis()
         waitForIdleSync()
         sendStatus(0, Bundle().apply { putLong("application_ready_wait_ms", SystemClock.uptimeMillis() - applicationWait) })
+        if (publicWindowPilotOnly) {
+            PublicWindowPilotProbe.run(this, publicWindowPilotDisposable, publicWindowPilotCopyShare)
+            return
+        }
         if (t13Only) {
             T13AccessibilityProbe.run(this)
             return
