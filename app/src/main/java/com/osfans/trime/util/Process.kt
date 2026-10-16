@@ -13,7 +13,7 @@ import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -92,12 +92,12 @@ internal suspend fun Process.releaseProcess() {
 }
 
 /** A single consumer owns the process once collection begins. */
-fun Process.asFlow(): Flow<String> = flow {
+fun Process.asFlow(): Flow<String> = channelFlow {
     consumeOutput { reader ->
         while (true) {
             currentCoroutineContext().ensureActive()
             val line = reader.readLine() ?: break
-            emit(line)
+            send(line)
         }
     }
 }.flowOn(Dispatchers.IO)
