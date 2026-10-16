@@ -469,14 +469,11 @@ object UserDataManager {
                 val destination = SyncRelativePath.resolveContained(root, path)
                 check(!destination.exists() || destination.isFile) { "Import destination is not a file: $path" }
                 val old = index.entries[path]
-                // Validation and staged-byte comparison can both need this content hash.
-                // Reuse one read while the transaction still leaves the destination untouched.
-                val destinationSha256 by lazy(LazyThreadSafetyMode.NONE) { SyncFingerprint.of(destination) }
                 val yaml = ConfigImportValidator.isConfiguration(path)
                 if (!yaml && !shouldCopy(path, entry.file.length, entry.file.lastModified, index) &&
                     destination.isFile && destination.length() == entry.file.length &&
                     destination.lastModified() >= entry.file.lastModified && old?.localSha256 != null &&
-                    destinationSha256 == old.localSha256
+                    SyncFingerprint.of(destination) == old.localSha256
                 ) {
                     nextEntries[path] = checkNotNull(old)
                     skipped++
@@ -514,7 +511,9 @@ object UserDataManager {
                 }
                 val recordedSize = if (entry.file.length > 0 || bytes == 0L) entry.file.length else bytes
                 nextEntries[path] = SyncEntry(recordedSize, entry.file.lastModified, sha)
-                if (destination.isFile && destination.length() == bytes && destinationSha256 == sha) {
+                // Read the current destination again after the suspending SAF read. An external
+                // writer can change it while bytes are staged; a cached earlier hash is stale.
+                if (destination.isFile && destination.length() == bytes && SyncFingerprint.of(destination) == sha) {
                     skipped++
                 } else {
                     if (entry.file.lastModified > 0) staged.setLastModified(entry.file.lastModified)
