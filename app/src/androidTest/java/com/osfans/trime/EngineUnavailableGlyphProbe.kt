@@ -208,6 +208,43 @@ object EngineUnavailableGlyphProbe {
         val failures = mutableListOf<String>()
         var restored = false
         var overlay: FrameLayout? = null
+        fun restoreAndWriteReport() {
+            try {
+                restored = main(instrumentation) {
+                    overlay?.let(parent::removeView)
+                    inputField.set(service, original)
+                    panelField.set(service, originalPanel)
+                    original.visibility = originalVisibility
+                    original.requestApplyInsets()
+                    editor.setText(originalText)
+                    editor.setSelection(selection.first.coerceIn(0, originalText.length), selection.second.coerceIn(0, originalText.length))
+                    original.parent === parent && original.isAttachedToWindow && original.isShown &&
+                        inputField.get(service) === original && panelField.get(service) === originalPanel &&
+                        original.context === originalContext && service.resources.configuration.fontScale == originalFontScale &&
+                        editor.text.toString() == originalText && editor.selectionStart == selection.first &&
+                        editor.selectionEnd == selection.second && overlay?.parent == null
+                }
+            } finally {
+                if (!restored) failures.add("original_view_or_editor_not_restored")
+                ownedNames.filter { it != "report.json" }.forEach { name ->
+                    File(directory, name).takeIf { it.isFile }?.let { attachments.put(name, sha256(it)) }
+                }
+                val report = JSONObject().apply {
+                    put("format_version", 1)
+                    put("run_id", runId)
+                    put("api", Build.VERSION.SDK_INT)
+                    put("scope", "Actual production fallback widget in the IME window with per-widget font contexts; native failure/retry is tested separately")
+                    put("original_view_restored", restored)
+                    put("original_font_scale", originalFontScale)
+                    put("cases", cases)
+                    put("attachments", attachments)
+                    put("passed", failures.isEmpty() && restored && cases.length() == 4 && attachments.length() == 8)
+                    put("failures", JSONArray(failures))
+                }
+                File(directory, "report.json").writeText(report.toString(2) + "\n")
+            }
+        }
+
         try {
             val panel = main(instrumentation) {
                 check(service.isCurrentEditor(token) && service.currentInputEditorInfo?.fieldId == editor.id)
@@ -352,40 +389,7 @@ object EngineUnavailableGlyphProbe {
                 }
             }
         } finally {
-            try {
-                restored = main(instrumentation) {
-                    overlay?.let(parent::removeView)
-                    inputField.set(service, original)
-                    panelField.set(service, originalPanel)
-                    original.visibility = originalVisibility
-                    original.requestApplyInsets()
-                    editor.setText(originalText)
-                    editor.setSelection(selection.first.coerceIn(0, originalText.length), selection.second.coerceIn(0, originalText.length))
-                    original.parent === parent && original.isAttachedToWindow && original.isShown &&
-                        inputField.get(service) === original && panelField.get(service) === originalPanel &&
-                        original.context === originalContext && service.resources.configuration.fontScale == originalFontScale &&
-                        editor.text.toString() == originalText && editor.selectionStart == selection.first &&
-                        editor.selectionEnd == selection.second && overlay?.parent == null
-                }
-            } finally {
-                if (!restored) failures.add("original_view_or_editor_not_restored")
-                ownedNames.filter { it != "report.json" }.forEach { name ->
-                    File(directory, name).takeIf { it.isFile }?.let { attachments.put(name, sha256(it)) }
-                }
-                val report = JSONObject().apply {
-                    put("format_version", 1)
-                    put("run_id", runId)
-                    put("api", Build.VERSION.SDK_INT)
-                    put("scope", "Actual production fallback widget in the IME window with per-widget font contexts; native failure/retry is tested separately")
-                    put("original_view_restored", restored)
-                    put("original_font_scale", originalFontScale)
-                    put("cases", cases)
-                    put("attachments", attachments)
-                    put("passed", failures.isEmpty() && restored && cases.length() == 4 && attachments.length() == 8)
-                    put("failures", JSONArray(failures))
-                }
-                File(directory, "report.json").writeText(report.toString(2) + "\n")
-            }
+            restoreAndWriteReport()
         }
         check(failures.isEmpty() && cases.length() == 4 && attachments.length() == 8) { "Fallback glyph/real-touch checks failed: $failures; run_id=$runId" }
         instrumentation.sendStatus(0, Bundle().apply { putString("stream", "PASS: fallback Preparing/Failed at font1/font2: 52 rendered glyphs and four real dot commits; original view restored\n") })

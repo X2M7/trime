@@ -212,6 +212,26 @@ object ConfigImportProbe {
                                     val fixtureAssetBefore = checkNotNull(cr.openInputStream(asset)).bufferedReader().use { it.readText() }
                                     var badTheme: Uri? = null
                                     var semanticFailure: Throwable? = null
+                                    fun cleanupSemanticFixtures() {
+                                        // Only dedicated-tree fixtures are cleaned up; original local files are never rewritten by this probe.
+                                        val cleanupErrors = mutableListOf<Throwable>()
+                                        fun cleanSemanticFixture(block: () -> Unit) {
+                                            runCatching(block).exceptionOrNull()?.let(cleanupErrors::add)
+                                        }
+                                        badTheme?.let { document ->
+                                            cleanSemanticFixture {
+                                                check(DocumentsContract.deleteDocument(cr, document))
+                                                createdDocuments.remove(document)
+                                            }
+                                        }
+                                        cleanSemanticFixture { write(config, fixtureConfigBefore) }
+                                        cleanSemanticFixture { write(asset, fixtureAssetBefore) }
+                                        if (cleanupErrors.isNotEmpty()) {
+                                            val failure = semanticFailure ?: IllegalStateException("Semantic import fixture cleanup failed")
+                                            cleanupErrors.forEach(failure::addSuppressed)
+                                            if (semanticFailure == null) throw failure
+                                        }
+                                    }
                                     try {
                                         // Restore the earlier fixture so this rejection reaches real native activation.
                                         write(config, "fixture:\n  value: accepted\n")
@@ -267,24 +287,7 @@ object ConfigImportProbe {
                                         semanticFailure = failure
                                         throw failure
                                     } finally {
-                                        // Only dedicated-tree fixtures are cleaned up; original local files are never rewritten by this probe.
-                                        val cleanupErrors = mutableListOf<Throwable>()
-                                        fun cleanSemanticFixture(block: () -> Unit) {
-                                            runCatching(block).exceptionOrNull()?.let(cleanupErrors::add)
-                                        }
-                                        badTheme?.let { document ->
-                                            cleanSemanticFixture {
-                                                check(DocumentsContract.deleteDocument(cr, document))
-                                                createdDocuments.remove(document)
-                                            }
-                                        }
-                                        cleanSemanticFixture { write(config, fixtureConfigBefore) }
-                                        cleanSemanticFixture { write(asset, fixtureAssetBefore) }
-                                        if (cleanupErrors.isNotEmpty()) {
-                                            val failure = semanticFailure ?: IllegalStateException("Semantic import fixture cleanup failed")
-                                            cleanupErrors.forEach(failure::addSuppressed)
-                                            if (semanticFailure == null) throw failure
-                                        }
+                                        cleanupSemanticFixtures()
                                     }
                                 }
                                 verifySemanticThemeRollback()

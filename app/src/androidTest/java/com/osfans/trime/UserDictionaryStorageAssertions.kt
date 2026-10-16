@@ -122,6 +122,72 @@ internal object UserDictionaryStorageAssertions {
             exportedRecords(output.toByteArray())
         }
 
+        suspend fun restoreOwnedState() {
+            val cleanup = runCatching {
+                withContext(NonCancellable) {
+                    withTimeout(120_000) {
+                        if (originalSchema.isNotEmpty()) {
+                            session.runOnReady {
+                                check(selectSchema(originalSchema))
+                                setRuntimeOption("ascii_mode", originalAscii)
+                                clearComposition()
+                            }
+                        }
+                        suspend fun restoreOwnedStorageFiles() {
+                            maintained {
+                                if (replacementOwned) {
+                                    check(!phraseFile.exists() || (phraseFile.isFile && phraseFile.canonicalFile == phraseFile.absoluteFile && phraseFile.delete()))
+                                    if (phraseMoved) {
+                                        check(heldPhrase.renameTo(phraseFile))
+                                        phraseMoved = false
+                                    }
+                                    if (backups.exists()) {
+                                        check(backups.canonicalFile == backups.absoluteFile)
+                                        checkNotNull(backups.listFiles()).filter(File::isDirectory).forEach { directory ->
+                                            val metadata = File(directory, "metadata")
+                                            check(metadata.isFile)
+                                            val value = Properties().apply { metadata.inputStream().use(::load) }
+                                            check(value.getProperty("target") in setOf(CustomPhraseStore.FILE_NAME, "$dictionaryName.userdb"))
+                                        }
+                                        check(backups.deleteRecursively())
+                                    }
+                                    if (backupsMoved) {
+                                        check(heldBackups.renameTo(backups))
+                                        backupsMoved = false
+                                    }
+                                } else {
+                                    if (phraseMoved) {
+                                        check(heldPhrase.renameTo(phraseFile))
+                                        phraseMoved = false
+                                    }
+                                    if (backupsMoved) {
+                                        check(heldBackups.renameTo(backups))
+                                        backupsMoved = false
+                                    }
+                                }
+                                if (snapshotFile?.exists() == true) check(checkNotNull(snapshotFile).delete())
+                                checkNotNull(root.listFiles()).filter { it.name.startsWith(owned) }.forEach { file ->
+                                    inventory(file)
+                                    check(file.deleteRecursively())
+                                }
+                                if (journalBackups.exists()) {
+                                    inventory(journalBackups)
+                                    check(journalBackups.deleteRecursively())
+                                }
+                                check(inventory(phraseFile) == originalPhrase)
+                                check(inventory(backups) == originalBackups)
+                            }
+                        }
+                        restoreOwnedStorageFiles()
+                    }
+                }
+            }.exceptionOrNull()
+            if (cleanup != null) {
+                val primaryFailure = failure
+                if (primaryFailure != null) primaryFailure.addSuppressed(cleanup) else throw cleanup
+            }
+        }
+
         try {
             session.runOnReady {
                 originalSchema = selectedSchemaId()
@@ -318,68 +384,7 @@ internal object UserDictionaryStorageAssertions {
             failure = error
             throw error
         } finally {
-            val cleanup = runCatching {
-                withContext(NonCancellable) {
-                    withTimeout(120_000) {
-                        if (originalSchema.isNotEmpty()) {
-                            session.runOnReady {
-                                check(selectSchema(originalSchema))
-                                setRuntimeOption("ascii_mode", originalAscii)
-                                clearComposition()
-                            }
-                        }
-                        suspend fun restoreOwnedStorageFiles() {
-                            maintained {
-                                if (replacementOwned) {
-                                    check(!phraseFile.exists() || (phraseFile.isFile && phraseFile.canonicalFile == phraseFile.absoluteFile && phraseFile.delete()))
-                                    if (phraseMoved) {
-                                        check(heldPhrase.renameTo(phraseFile))
-                                        phraseMoved = false
-                                    }
-                                    if (backups.exists()) {
-                                        check(backups.canonicalFile == backups.absoluteFile)
-                                        checkNotNull(backups.listFiles()).filter(File::isDirectory).forEach { directory ->
-                                            val metadata = File(directory, "metadata")
-                                            check(metadata.isFile)
-                                            val value = Properties().apply { metadata.inputStream().use(::load) }
-                                            check(value.getProperty("target") in setOf(CustomPhraseStore.FILE_NAME, "$dictionaryName.userdb"))
-                                        }
-                                        check(backups.deleteRecursively())
-                                    }
-                                    if (backupsMoved) {
-                                        check(heldBackups.renameTo(backups))
-                                        backupsMoved = false
-                                    }
-                                } else {
-                                    if (phraseMoved) {
-                                        check(heldPhrase.renameTo(phraseFile))
-                                        phraseMoved = false
-                                    }
-                                    if (backupsMoved) {
-                                        check(heldBackups.renameTo(backups))
-                                        backupsMoved = false
-                                    }
-                                }
-                                if (snapshotFile?.exists() == true) check(checkNotNull(snapshotFile).delete())
-                                checkNotNull(root.listFiles()).filter { it.name.startsWith(owned) }.forEach { file ->
-                                    inventory(file)
-                                    check(file.deleteRecursively())
-                                }
-                                if (journalBackups.exists()) {
-                                    inventory(journalBackups)
-                                    check(journalBackups.deleteRecursively())
-                                }
-                                check(inventory(phraseFile) == originalPhrase)
-                                check(inventory(backups) == originalBackups)
-                            }
-                        }
-                        restoreOwnedStorageFiles()
-                    }
-                }
-            }.exceptionOrNull()
-            if (cleanup != null) {
-                if (failure != null) failure.addSuppressed(cleanup) else throw cleanup
-            }
+            restoreOwnedState()
         }
         check(!phraseMoved && !backupsMoved && !heldPhrase.exists() && !heldBackups.exists())
         checks++
