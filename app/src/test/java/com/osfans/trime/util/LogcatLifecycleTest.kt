@@ -93,7 +93,7 @@ class LogcatLifecycleTest :
                 val logged = AtomicReference<Throwable?>()
                 val tree = object : Timber.Tree() {
                     override fun log(priority: Int, tag: String?, message: String, t: Throwable?) {
-                        if (t === readFailure || t === closeFailure) logged.set(t)
+                        if (message.startsWith("Unable to read logcat")) logged.set(t)
                     }
                 }
                 val logcat = Logcat(null, 35) { process }
@@ -102,7 +102,10 @@ class LogcatLifecycleTest :
                     val stream = logcat.initLogFlow()
                     try {
                         withTimeout(5_000L) { stream.join() }
-                        logged.get() shouldBe readFailure
+                        // Coroutine stack recovery can copy an exception across this boundary.
+                        // Its original cause must still be the read failure, never cleanup.
+                        generateSequence(checkNotNull(logged.get())) { it.cause }
+                            .firstOrNull { it === readFailure || it === closeFailure } shouldBe readFailure
                         readFailure.suppressed.any { it === closeFailure } shouldBe true
                         process.assertReleased()
                     } finally {
