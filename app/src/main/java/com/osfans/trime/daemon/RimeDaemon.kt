@@ -20,6 +20,7 @@ import com.osfans.trime.core.whenReady
 import com.osfans.trime.ui.main.LogActivity
 import com.osfans.trime.util.DeployNotification
 import com.osfans.trime.util.appContext
+import com.osfans.trime.util.consumeOutput
 import com.osfans.trime.util.subprocess
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
@@ -578,12 +579,10 @@ object RimeDaemon {
                     val log = withContext(Dispatchers.IO) {
                         try {
                             val process = subprocess("logcat", "-v", "brief", "-d", "-t", "2000", "*:W")
-                            try {
-                                process.inputStream.bufferedReader().use { it.readText() }
-                            } finally {
-                                process.errorStream.close()
-                                process.outputStream.close()
-                                process.destroy()
+                            process.consumeOutput { reader ->
+                                val text = reader.readText()
+                                if (process.waitFor() != 0) throw IOException("Deployment log command failed")
+                                text
                             }
                         } catch (e: IOException) {
                             "Unable to collect deployment log: ${e.stackTraceToString()}"

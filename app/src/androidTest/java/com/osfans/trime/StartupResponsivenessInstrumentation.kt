@@ -60,6 +60,8 @@ class StartupResponsivenessInstrumentation : Instrumentation() {
     private var lateStorageOnly = false
     private var feedbackOnly = false
     private var editorsOnly = false
+    private var editorsAnimationCallbacks = true
+    private var logResourcesOnly = false
     private var privacyOnly = false
     override fun onCreate(arguments: Bundle?) {
         super.onCreate(arguments)
@@ -88,6 +90,8 @@ class StartupResponsivenessInstrumentation : Instrumentation() {
         lateStorageOnly = arguments?.getString("lateStorage") == "true"
         feedbackOnly = arguments?.getString("feedback") == "true"
         editorsOnly = arguments?.getString("editors") == "true"
+        editorsAnimationCallbacks = arguments?.getString("editorsAnimationCallbacks") != "false"
+        logResourcesOnly = arguments?.getString("log_resources") == "true"
         privacyOnly = arguments?.getString("privacy") == "true"
         start()
     }
@@ -120,7 +124,11 @@ class StartupResponsivenessInstrumentation : Instrumentation() {
             return
         }
         if (editorsOnly) {
-            EditorLifecycleProbe.run(this)
+            EditorLifecycleProbe.run(this, editorsAnimationCallbacks)
+            return
+        }
+        if (logResourcesOnly) {
+            LogcatResourcesProbe.run(this)
             return
         }
         if (privacyOnly) {

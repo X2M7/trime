@@ -1,0 +1,44 @@
+--- a/observer9_session_client_v1.py
++++ b/observer9_session_client_v1.py
+@@ -182,8 +182,16 @@
+             except BaseException as failure:
+                 row["error"] = repr(failure)
+ 
++    def private_test(self, operator, remote):
++        require(operator in {"-e", "-f"}, "Only file-existence predicates are supported")
++        if self.gui.args.api >= 23:
++            # Execute the real predicate as the application UID without starting
++            # an app-domain shell that probes inherited adbd sockets as a TTY.
++            return self.gui.shell("run-as", OBSERVER, "/system/bin/toybox", "test", operator, remote, check=False)
++        return self.gui.shell("run-as", OBSERVER, "sh", "-c", "test " + operator + " " + shlex.quote(remote), check=False)
++
+     def exists(self, remote):
+-        output = self.gui.shell("run-as", OBSERVER, "sh", "-c", "test -f " + shlex.quote(remote), check=False)
++        output = self.private_test("-f", remote)
+         row = self.gui.report["commands"][-1]
+         require(output == "" and row.get("remote_returncode") in (0, 1), "Actual observer file presence command differs")
+         return row["remote_returncode"] == 0
+@@ -263,7 +271,7 @@
+         rows = [line.split() for line in processes.splitlines() if line.strip()]
+         require(rows and "PID" in rows[0] and not any(row[-1] == OBSERVER for row in rows[1:]),
+                 "A pre-existing observer process must not be replaced by this session")
+-        require(self.gui.shell("run-as", OBSERVER, "sh", "-c", "test -e " + shlex.quote(self.cache), check=False) == "" and
++        require(self.private_test("-e", self.cache) == "" and
+                 self.gui.report["commands"][-1]["remote_returncode"] == 1, "Fresh private session path already exists")
+         require(self.gui.shell("test", "-e", self.stage, check=False) == "" and
+                 self.gui.report["commands"][-1]["remote_returncode"] == 1, "Fresh request staging path already exists")
+@@ -348,12 +356,12 @@
+         remote = self.cache + "/requests/" + str(sequence).zfill(5) + ".json"
+         require(self.gui.shell("test", "-e", temporary, check=False) == "" and
+                 self.gui.report["commands"][-1]["remote_returncode"] == 1, "Fresh staging request already exists")
+-        require(self.gui.shell("run-as", OBSERVER, "sh", "-c", "test -e " + shlex.quote(remote), check=False) == "" and
++        require(self.private_test("-e", remote) == "" and
+                 self.gui.report["commands"][-1]["remote_returncode"] == 1, "Fresh private request already exists")
+         self.gui.run("push", path, temporary)
+         self.gui.shell("chmod", "644", temporary)
+         private_tmp = remote + ".tmp"
+-        require(self.gui.shell("run-as", OBSERVER, "sh", "-c", "test -e " + shlex.quote(private_tmp), check=False) == "" and
++        require(self.private_test("-e", private_tmp) == "" and
+                 self.gui.report["commands"][-1]["remote_returncode"] == 1, "Private temporary request already exists")
+         self.gui.shell("run-as", OBSERVER, "cp", temporary, private_tmp)
+         self.gui.shell("run-as", OBSERVER, "mv", private_tmp, remote)

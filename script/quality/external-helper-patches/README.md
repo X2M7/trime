@@ -29,3 +29,13 @@
 目录手势工具的实际模块已保存为 `../directory_gesture_guard.py`，需要调用方提供有进程身份、截止时间和内存保护的 `Probe`。它保留原图、窗口、完整连续日志及触摸目标，不是独立的导入验收命令。可用 `python3 -m unittest discover -s script/quality -p test_directory_gesture_guard.py` 运行 10 项宿主语义检查；合成日志用于异常边界，不能替代模拟器实测。
 
 完整版本、来源、构建与运行边界见 [运行警告报告](../T13-WARNING-TRIAGE.md)。本地 APK 不作为 Trime Release 附件发布。
+
+## Observer9 主机文件检查
+
+`observer9-direct-predicates.patch` 用于冻结的 `observer9_session_client_v1.py`，原文件 SHA-256 为 `e5d6c12b781bf228ab2554ee8b6c4695ec4c6528a367b86f33f13f7fa18495fc`。在它的独立副本目录执行 `patch --dry-run -p1 -i <补丁绝对路径>`，通过后去掉 `--dry-run` 应用；结果文件 SHA-256 应为 `190a86e1fa6f4ae84d163c010fb711da4948bc81f20eab506b79881e41ec915d`。历史采集脚本和日志保持原件。
+
+API23 以上用应用 UID 直接执行 `/system/bin/toybox test`，避免额外启动 shell 时对继承的 adbd socket 进行 TTY 探测；API21 保留兼容路径。四处文件存在性检查的退出码、唯一会话身份、请求大小、截止时间和正常停止要求保持不变，没有修改 SELinux、权限或日志级别。
+
+API35 同一启动会话和辅助应用 UID 下，新旧写法各执行 60 个真实只读谓词，120 项退出码断言通过。旧写法产生 120 条对应的 W 级 TCGETS 拒绝，新写法为 0；I/W 两份原始输出合计 240 行，按 audit ID 计为 120 个事件。连续日志两个完整区间未发现审计丢失标记；不保证未被观察的底层事件为零。新传输随后完成真实目录授权并正常停止，配置与持久化读写授权已核对。首轮错误统计假定 `untrusted_app` 和固定空格，原件保留，以上结果来自按实际 `runas_app` 和空白匹配的第二次复核。
+
+证据见 `build/t13/warnings19-api35-observer-command1/comparison-root-review-v2.json`、`build/t13/warnings19-api35-tree2/` 及 `build/warnings19/observer-patch-check1/result.json`。这项修复不表示其他运行警告已经消除。

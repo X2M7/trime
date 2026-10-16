@@ -116,8 +116,8 @@ object EditorLifecycleProbe {
         fun isEnabled(context: Context): Boolean? = context.getSystemService(AutofillManager::class.java)?.isEnabled
     }
 
-    /** Observes the disposable host without consuming insets or changing animation settings. */
-    private class ImeAnimationProbe {
+    /** A callback host changes Android's animation dispatch path; also test without it. */
+    private class ImeAnimationProbe(private val requested: Boolean) {
         private val running = mutableSetOf<WindowInsetsAnimationCompat>()
         private var host: View? = null
         var generation = 0
@@ -131,7 +131,7 @@ object EditorLifecycleProbe {
         val isIdle: Boolean get() = running.isEmpty()
 
         fun install(view: View) {
-            if (Build.VERSION.SDK_INT < 30) return
+            if (!requested || Build.VERSION.SDK_INT < 30) return
             check(host == null)
             host = view
             ViewCompat.setWindowInsetsAnimationCallback(
@@ -170,7 +170,16 @@ object EditorLifecycleProbe {
         }
 
         fun snapshot(): JSONObject = JSONObject().apply {
+            put("callback_requested", requested)
             put("callback_installed", host != null)
+            put(
+                "settle_gate",
+                when {
+                    host != null -> "callback_end_and_stable_insets"
+                    Build.VERSION.SDK_INT >= 30 -> "stable_insets_without_animation_callback"
+                    else -> "legacy_service_and_stable_geometry"
+                },
+            )
             put("ime_prepare_count", prepares)
             put("ime_end_count", ends)
             put("running_ime_animations", running.size)
@@ -1586,7 +1595,7 @@ object EditorLifecycleProbe {
         checkNotNull(outcome).getOrThrow()
     }
 
-    fun run(instrumentation: Instrumentation) {
+    fun run(instrumentation: Instrumentation, observeImeAnimations: Boolean = true) {
         val context = instrumentation.targetContext
         val result = Bundle()
         var activity: Activity? = null
@@ -1611,7 +1620,7 @@ object EditorLifecycleProbe {
         val touchRegionRunId = UUID.randomUUID().toString()
         val touchRegionMeasurements = JSONArray()
         val imeVisibilityWaits = JSONArray()
-        val imeAnimations = ImeAnimationProbe()
+        val imeAnimations = ImeAnimationProbe(observeImeAnimations)
         val webFixtureEnvironment = JSONObject().apply { put("captured", false) }
         fun touchStage(stage: String, theme: String, round: Int = -1, elapsedMs: Long = -1) {
             val marker = "TOUCH_REGION run=$touchRegionRunId stage=$stage theme=$theme round=$round elapsed_ms=$elapsedMs uptime_ms=${SystemClock.uptimeMillis()}"
@@ -3005,9 +3014,9 @@ object EditorLifecycleProbe {
                             "IME ${if (visible) "show" else "hide"} did not settle at cycle $index: $finalState"
                         }
                     }
-                    // A shown service can precede the end of the platform show animation.
-                    // Wait for both directions so the next request cannot cancel the prior
-                    // transition merely because this test starts another cycle too early.
+                    // Wait in both directions. Callback hosts additionally observe onEnd;
+                    // ordinary hosts preserve Android's default animation path and require
+                    // stable real insets. Stable geometry alone does not prove an onEnd event.
                     awaitPlatformImeSettled(0, visible = true)
                     repeat(100) { index ->
                         main { imm.hideSoftInputFromWindow(chat.windowToken, 0) }
