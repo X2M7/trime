@@ -16,6 +16,7 @@ import com.osfans.trime.R
 import com.osfans.trime.data.db.ClipboardHelper
 import com.osfans.trime.data.db.CollectionHelper
 import com.osfans.trime.data.db.DatabaseBean
+import com.osfans.trime.data.db.TextUpdateResult
 import com.osfans.trime.databinding.ActivityClipEditBinding
 import com.osfans.trime.util.appContext
 import com.osfans.trime.util.toast
@@ -74,10 +75,15 @@ class ClipEditActivity : Activity() {
             val result = write.await()
             if (version != requestVersion) return@launch
             saving = false
-            if (result.isSuccess) {
-                finish()
-            } else {
-                updateControls()
+            when (result.getOrNull()) {
+                TextUpdateResult.SAVED -> finish()
+
+                TextUpdateResult.NOT_FOUND -> {
+                    updateControls()
+                    editText.error = getString(R.string.clipboard_entry_removed)
+                }
+
+                null -> updateControls()
             }
         }
     }
@@ -90,6 +96,7 @@ class ClipEditActivity : Activity() {
 
     private fun setBean(bean: DatabaseBean) {
         beanId = bean.id
+        editText.error = null
         editText.setText(bean.text)
     }
 
@@ -115,8 +122,12 @@ class ClipEditActivity : Activity() {
                     FROM_CLIPBOARD -> ClipboardHelper.get(id)
                     else -> CollectionHelper.get(id)
                 }
-                checkNotNull(bean) { "Clipboard entry no longer exists" }
                 if (version != requestVersion) return@launch
+                if (bean == null) {
+                    toast(R.string.clipboard_entry_removed)
+                    finish()
+                    return@launch
+                }
                 clipType = type
                 setBean(bean)
                 loading = false
@@ -129,6 +140,7 @@ class ClipEditActivity : Activity() {
                 throw failure
             } catch (failure: Exception) {
                 Timber.e(failure, "Unable to open clipboard entry")
+                if (version != requestVersion) return@launch
                 toast(R.string.clipboard_load_failed)
                 finish()
             }
@@ -155,11 +167,11 @@ class ClipEditActivity : Activity() {
         // Capture only immutable values so a destroyed Activity is not retained.
         private fun persistEdit(type: String, id: Int, text: String) = (if (type == FROM_CLIPBOARD) ClipboardHelper else CollectionHelper).async(Dispatchers.Main.immediate) {
             try {
-                when (type) {
+                val outcome = when (type) {
                     FROM_CLIPBOARD -> ClipboardHelper.updateText(id, text)
                     else -> CollectionHelper.updateText(id, text)
                 }
-                Result.success(Unit)
+                Result.success(outcome)
             } catch (failure: CancellationException) {
                 throw failure
             } catch (failure: Exception) {

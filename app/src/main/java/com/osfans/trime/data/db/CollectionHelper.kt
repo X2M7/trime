@@ -62,24 +62,32 @@ object CollectionHelper : CoroutineScope by CoroutineScope(SupervisorJob() + Dis
         }
     }
 
+    /** Missing rows are a normal edit outcome; only a committed single-row update is published. */
     suspend fun updateText(
         id: Int,
         text: String,
-    ) {
+    ): TextUpdateResult {
         val permit = clipboardPersistenceGate.acquire(isSensitive = false)
             ?: throw PersistencePermitExpiredException()
         try {
-            mutex.withLock {
-                val existing = checkNotNull(cltDao.get(id)) { "Collection entry no longer exists" }
+            return mutex.withLock {
+                val existing = cltDao.get(id) ?: return@withLock TextUpdateResult.NOT_FOUND
                 val updated = existing.copy(text = text)
-                cltDb.withTransaction {
+                val outcome = cltDb.withTransaction {
                     clipboardPersistenceGate.guardTransaction(permit) {
-                        check(cltDao.updateText(id, text) == 1) { "Collection entry no longer exists" }
+                        when (val affected = cltDao.updateText(id, text)) {
+                            0 -> TextUpdateResult.NOT_FOUND
+                            1 -> TextUpdateResult.SAVED
+                            else -> error("Unexpected edited row count: $affected")
+                        }
                     }
                 }
-                PrivacyModeState.publishIfOrdinary(permit) {
-                    if (lastBean?.id == id) lastBean = updated
+                if (outcome == TextUpdateResult.SAVED) {
+                    PrivacyModeState.publishIfOrdinary(permit) {
+                        if (lastBean?.id == id) lastBean = updated
+                    }
                 }
+                outcome
             }
         } finally {
             clipboardPersistenceGate.release(permit)

@@ -211,24 +211,32 @@ object ClipboardHelper :
 
     suspend fun unpin(id: Int) = clbDao.updatePinned(id, false)
 
+    /** Missing rows are a normal edit outcome; only a committed single-row update is published. */
     suspend fun updateText(
         id: Int,
         text: String,
-    ) {
+    ): TextUpdateResult {
         val permit = clipboardPersistenceGate.acquire(isSensitive = false)
             ?: throw PersistencePermitExpiredException()
         try {
-            mutex.withLock {
-                val existing = checkNotNull(clbDao.get(id)) { "Clipboard entry no longer exists" }
+            return mutex.withLock {
+                val existing = clbDao.get(id) ?: return@withLock TextUpdateResult.NOT_FOUND
                 val updated = existing.copy(text = text)
-                clbDb.withTransaction {
+                val outcome = clbDb.withTransaction {
                     clipboardPersistenceGate.guardTransaction(permit) {
-                        check(clbDao.updateText(id, text) == 1) { "Clipboard entry no longer exists" }
+                        when (val affected = clbDao.updateText(id, text)) {
+                            0 -> TextUpdateResult.NOT_FOUND
+                            1 -> TextUpdateResult.SAVED
+                            else -> error("Unexpected edited row count: $affected")
+                        }
                     }
                 }
-                PrivacyModeState.publishIfOrdinary(permit) {
-                    if (lastBean?.id == id) updateLastBean(updated)
+                if (outcome == TextUpdateResult.SAVED) {
+                    PrivacyModeState.publishIfOrdinary(permit) {
+                        if (lastBean?.id == id) updateLastBean(updated)
+                    }
                 }
+                outcome
             }
         } finally {
             clipboardPersistenceGate.release(permit)

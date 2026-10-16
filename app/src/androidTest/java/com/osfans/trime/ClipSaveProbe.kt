@@ -7,6 +7,7 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
+import android.util.Log
 import android.view.View
 import android.widget.EditText
 import androidx.room.withTransaction
@@ -24,7 +25,10 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
+import timber.log.Timber
 import java.util.UUID
+import java.util.concurrent.atomic.AtomicBoolean
+import java.util.concurrent.atomic.AtomicInteger
 
 /** Real Room writes and dialog lifecycle; only newly inserted UUID-tagged rows are removed. */
 internal object ClipSaveProbe {
@@ -32,6 +36,17 @@ internal object ClipSaveProbe {
         val result = Bundle()
         var passed = false
         var checks = 0
+        val editErrors = AtomicInteger()
+        val errorObserver = object : Timber.Tree() {
+            override fun log(priority: Int, tag: String?, message: String, t: Throwable?) {
+                if (priority >= Log.ERROR &&
+                    (message.startsWith("Unable to save clipboard entry") || message.startsWith("Unable to open clipboard entry"))
+                ) {
+                    editErrors.incrementAndGet()
+                }
+            }
+        }
+        Timber.plant(errorObserver)
         fun <T> main(block: () -> T): T {
             var outcome: Result<T>? = null
             instrumentation.runOnMainSync { outcome = runCatching(block) }
@@ -140,6 +155,7 @@ internal object ClipSaveProbe {
                                 }
                                 eventually { main { ok.isEnabled && !failed.isFinishing } }
                                 check(main { field.text.toString() == "unsaved edit" })
+                                check(main { field.error?.toString() == failed.getString(R.string.clipboard_entry_removed) })
                                 check(main { cached.get(helper) == missing }) { "Failed write changed the cache" }
                                 check(dao.get(missing.id) == null)
                                 main { failed.findViewById<View>(R.id.clip_edit_cancel).performClick() }
@@ -148,6 +164,54 @@ internal object ClipSaveProbe {
                                 checkPassed("$type: removed-row failure retains editor text and cache")
                             }
                             verifyRemovedRowFailure()
+
+                            suspend fun verifyRemovedBetweenReadAndUpdate() {
+                                val missing = insert("update-race-${UUID.randomUUID()}")
+                                main { cached.set(helper, missing) }
+                                val activity = editor(type, missing.id).also { active = it }
+                                val field = main { activity.findViewById<EditText>(R.id.clip_edit_text) }
+                                val ok = main { activity.findViewById<View>(R.id.clip_edit_ok) }
+                                eventually { main { field.text.toString() == missing.text && ok.isEnabled } }
+                                val readExisting = AtomicBoolean()
+                                val affectedRows = AtomicInteger(-1)
+                                daoField.set(
+                                    helper,
+                                    object : DatabaseDao by dao {
+                                        override suspend fun get(id: Int): DatabaseBean? = dao.get(id).also {
+                                            if (id == missing.id && it != null) readExisting.set(true)
+                                        }
+
+                                        override suspend fun updateText(id: Int, newText: String?): Int {
+                                            if (id == missing.id) {
+                                                check(readExisting.get()) { "The save did not read the existing row before the deletion race" }
+                                                dao.delete(id)
+                                            }
+                                            return dao.updateText(id, newText).also {
+                                                if (id == missing.id) affectedRows.set(it)
+                                            }
+                                        }
+                                    },
+                                )
+                                try {
+                                    main {
+                                        field.setText("unsaved raced edit")
+                                        ok.performClick()
+                                    }
+                                    eventually { main { ok.isEnabled && !activity.isFinishing && field.error != null } }
+                                    check(readExisting.get() && affectedRows.get() == 0) { "The real DAO did not return zero rows after a successful read" }
+                                    check(main { field.text.toString() == "unsaved raced edit" })
+                                    check(main { field.error?.toString() == activity.getString(R.string.clipboard_entry_removed) })
+                                    check(main { cached.get(helper) == missing }) { "A zero-row update published edited text into the cache" }
+                                    check(dao.get(missing.id) == null)
+                                    main { activity.findViewById<View>(R.id.clip_edit_cancel).performClick() }
+                                    eventually { main { activity.isDestroyed } }
+                                    active = null
+                                    checkPassed("$type: deletion after get returns zero-row NotFound without losing draft or cache")
+                                } finally {
+                                    daoField.set(helper, dao)
+                                }
+                            }
+                            verifyRemovedBetweenReadAndUpdate()
 
                             suspend fun verifySupersededLoad() {
                                 val first = insert("first-${UUID.randomUUID()}")
@@ -196,6 +260,70 @@ internal object ClipSaveProbe {
                                 }
                             }
                             verifySupersededLoad()
+
+                            suspend fun verifySupersededMissingLoad() {
+                                val first = insert("stale-missing-${UUID.randomUUID()}")
+                                val second = insert("current-${UUID.randomUUID()}")
+                                main { cached.set(helper, second) }
+                                val reading = CompletableDeferred<Unit>()
+                                val releaseRead = CompletableDeferred<Unit>()
+                                val readReturned = CompletableDeferred<Unit>()
+                                val delayedFirst = AtomicBoolean()
+                                daoField.set(
+                                    helper,
+                                    object : DatabaseDao by dao {
+                                        override suspend fun get(id: Int): DatabaseBean? {
+                                            if (id == first.id && delayedFirst.compareAndSet(false, true)) {
+                                                reading.complete(Unit)
+                                                val value = withContext(NonCancellable) {
+                                                    releaseRead.await()
+                                                    dao.delete(id)
+                                                    dao.get(id)
+                                                }
+                                                readReturned.complete(Unit)
+                                                return value
+                                            }
+                                            return dao.get(id)
+                                        }
+                                    },
+                                )
+                                try {
+                                    val activity = editor(type, first.id).also { active = it }
+                                    reading.await()
+                                    main {
+                                        instrumentation.callActivityOnNewIntent(
+                                            activity,
+                                            Intent().putExtra(ClipEditActivity.CLIP_TYPE, type)
+                                                .putExtra(ClipEditActivity.BEAN_ID, second.id),
+                                        )
+                                    }
+                                    val field = main { activity.findViewById<EditText>(R.id.clip_edit_text) }
+                                    val ok = main { activity.findViewById<View>(R.id.clip_edit_ok) }
+                                    eventually { main { field.text.toString() == second.text && ok.isEnabled } }
+                                    main { field.setText("current draft must survive stale NotFound") }
+                                    releaseRead.complete(Unit)
+                                    readReturned.await()
+                                    delay(200)
+                                    check(main { !activity.isFinishing && ok.isEnabled && field.text.toString() == "current draft must survive stale NotFound" })
+                                    check(main { field.error == null && cached.get(helper) == second })
+                                    check(dao.get(first.id) == null && dao.get(second.id)?.text == second.text)
+                                    main {
+                                        instrumentation.callActivityOnNewIntent(
+                                            activity,
+                                            Intent().putExtra(ClipEditActivity.CLIP_TYPE, type)
+                                                .putExtra(ClipEditActivity.BEAN_ID, first.id),
+                                        )
+                                    }
+                                    eventually { main { activity.isDestroyed } }
+                                    active = null
+                                    check(main { cached.get(helper) == second })
+                                    checkPassed("$type: stale missing read cannot close the new draft, while a current missing read exits normally")
+                                } finally {
+                                    releaseRead.complete(Unit)
+                                    daoField.set(helper, dao)
+                                }
+                            }
+                            verifySupersededMissingLoad()
                         } finally {
                             withContext(NonCancellable) {
                                 active?.let { activity ->
@@ -210,11 +338,15 @@ internal object ClipSaveProbe {
                     }
                 }
             }
+            check(editErrors.get() == 0) { "A normal clipboard edit outcome emitted an error log" }
             passed = true
             result.putString("stream", "PASS: $checks real clipboard/collection save and lifecycle checks; only owned rows removed\n")
         } catch (failure: Throwable) {
             result.putString("stream", "FAIL: ${failure.stackTraceToString()}\n")
+        } finally {
+            Timber.uproot(errorObserver)
         }
+        result.putInt("clip_edit_error_count", editErrors.get())
         result.putBoolean("passed", passed)
         result.putInt("checks", checks)
         instrumentation.finish(if (passed) Activity.RESULT_OK else Activity.RESULT_CANCELED, result)
