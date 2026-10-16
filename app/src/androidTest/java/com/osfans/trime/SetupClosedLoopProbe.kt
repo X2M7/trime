@@ -761,187 +761,199 @@ object SetupClosedLoopProbe {
         }
 
         try {
-            check(Build.HARDWARE in setOf("ranchu", "goldfish"))
-            instrumentation.sendStatus(
-                0,
-                Bundle().apply { putInt("setup_ime_selection_waiting_pid", android.os.Process.myPid()) },
-            )
-            await("The disposable emulator did not actually enable and select this APK after the UI probe started") {
-                InputMethodUtils.checkIsTrimeEnabled() && InputMethodUtils.checkIsTrimeSelected()
-            }
-            check(InputMethodUtils.checkIsTrimeEnabled() && InputMethodUtils.checkIsTrimeSelected()) {
-                "The disposable emulator must have this APK enabled and selected before the UI probe"
-            }
-            runBlocking {
-                session.runOnReady {
-                    originalSchema = selectedSchemaId()
-                    originalOptions = currentSchema().switches.filter { it.name.isNotEmpty() && it.name != "prediction" }
-                        .associate { it.name to getRuntimeOption(it.name) }
-                    clearComposition()
+            fun verifySelectedInputAndObserveDeployments() {
+                check(Build.HARDWARE in setOf("ranchu", "goldfish"))
+                instrumentation.sendStatus(
+                    0,
+                    Bundle().apply { putInt("setup_ime_selection_waiting_pid", android.os.Process.myPid()) },
+                )
+                await("The disposable emulator did not actually enable and select this APK after the UI probe started") {
+                    InputMethodUtils.checkIsTrimeEnabled() && InputMethodUtils.checkIsTrimeSelected()
                 }
-            }
-            observer = session.lifecycleScope.launch(Dispatchers.Default, start = CoroutineStart.UNDISPATCHED) {
-                session.run { messageFlow }.collect {
-                    if (it is RimeMessage.DeployMessage && it.data == RimeMessage.DeployMessage.State.Start) deployments.incrementAndGet()
+                check(InputMethodUtils.checkIsTrimeEnabled() && InputMethodUtils.checkIsTrimeSelected()) {
+                    "The disposable emulator must have this APK enabled and selected before the UI probe"
                 }
-            }
-            check(checkpoints.edit().clear().commit())
-            profile.freshInputSetupPending.setValue(true)
-            val fresh = launch()
-            inputReady(fresh)
-            main {
-                val view = fragment(fresh, SetupPage.Input).requireView()
-                check(view.findViewById<RadioButton>(R.id.full_pinyin_option).isChecked)
-                check(view.findViewById<RadioButton>(R.id.simplified_option).isChecked)
-                check(!fresh.isPageDone(SetupPage.Input))
-                check(!fresh.findViewById<Button>(R.id.next_button).isEnabled)
-            }
-            passed("fresh wizard recommends full pinyin and simplified Chinese without pretending activation finished")
-            check(runBlocking { session.runOnReady { selectedSchemaId() } } == originalSchema)
-            passed("reading a recommendation does not change the current Rime schema")
-
-            confirmInput(fresh)
-            val applied = runBlocking { session.runOnReady { inspectInputSetup() } }
-            check(applied.schemaId == "luna_pinyin_simp")
-            check(applied.selection == InputSetupSelection(InputLayout.FULL_PINYIN, ChineseVariant.SIMPLIFIED))
-            check(!profile.freshInputSetupPending.getValue())
-            passed("applying the actual wizard button confirms the shared simplified full-pinyin configuration")
-            main { check(fresh.findViewById<Button>(R.id.next_button).performClick()) }
-            await("The actual trial editor was not shown") {
-                main { fresh.currentSetupPage == SetupPage.Try && fragment(fresh, SetupPage.Try).trialInput()?.isShown == true }
-            }
-            val trial = main { fragment(fresh, SetupPage.Try).requireView().findViewById<SetupTrialEditText>(R.id.trial_input) }
-            result.putAll(verifyUnfinishedTrialFooterTouch(instrumentation, fresh, trial, session, ::passed))
-            verifyAppearanceDuringComposition(instrumentation, fresh, trial, session, deployments, ::passed)
-            main {
-                trial.setText("你好")
-                check(!fresh.isPageDone(SetupPage.Try))
-                trial.text?.clear()
-                val connection = checkNotNull(trial.onCreateInputConnection(EditorInfo()))
-                check(connection.commitText("nihao", 1))
-                check(connection.setComposingText("你好", 1))
-                check(connection.finishComposingText())
-            }
-            SystemClock.sleep(150)
-            main { check(!fresh.isPageDone(SetupPage.Try)) }
-            check(!checkpoints.getBoolean("trial_completed", false))
-            passed("programmatic text, Latin commits and unfinished composition cannot pass the trial")
-            main {
-                trial.text?.clear()
-                check(checkNotNull(trial.onCreateInputConnection(EditorInfo())).commitText("你好", 1))
-            }
-            await("A successful committed Han result did not complete the trial") { main { fresh.isPageDone(SetupPage.Try) } }
-            check(checkpoints.all.values.none { it is String && it.contains("你好") })
-            passed("successful Chinese commit completes the trial while wizard preferences keep no trial text")
-
-            val monitor = instrumentation.addMonitor(SetupActivity::class.java.name, null, false)
-            try {
-                var lastFocusState: List<Any?>? = null
-                var focusDiagnostics = 0
-                fun reportTrialFocus(stage: String, activity: SetupActivity) {
-                    val input = activity.supportFragmentManager.fragments.filterIsInstance<SetupFragment>()
-                        .firstOrNull { it.setupPage == SetupPage.Try }?.trialInput()
-                    val focused = activity.currentFocus
-                    val state = listOf(
-                        stage,
-                        activity.isTrialFocusRestorationPending,
-                        activity.currentSetupPage.name,
-                        activity.lifecycle.currentState.name,
-                        activity.hasWindowFocus(),
-                        input?.isAttachedToWindow,
-                        input?.isShown,
-                        input?.isEnabled,
-                        input?.isLaidOut,
-                        input?.isLayoutRequested,
-                        input?.hasFocus(),
-                        focused?.id,
-                        focused?.javaClass?.name,
-                    )
-                    if (state == lastFocusState || focusDiagnostics >= 16) return
-                    lastFocusState = state
-                    focusDiagnostics++
-                    val diagnostic = Bundle().apply {
-                        putString("setup_trial_focus_stage", stage)
-                        putBoolean("setup_trial_focus_restore_pending", activity.isTrialFocusRestorationPending)
-                        putString("setup_trial_focus_page", activity.currentSetupPage.name)
-                        putString("setup_trial_focus_lifecycle", activity.lifecycle.currentState.name)
-                        putBoolean("setup_trial_focus_window_focused", activity.hasWindowFocus())
-                        putBoolean("setup_trial_focus_input_present", input != null)
-                        putBoolean("setup_trial_focus_attached", input?.isAttachedToWindow == true)
-                        putBoolean("setup_trial_focus_shown", input?.isShown == true)
-                        putBoolean("setup_trial_focus_enabled", input?.isEnabled == true)
-                        putBoolean("setup_trial_focus_laid_out", input?.isLaidOut == true)
-                        putBoolean("setup_trial_focus_layout_requested", input?.isLayoutRequested == true)
-                        putBoolean("setup_trial_focus_actual", input?.hasFocus() == true)
-                        putInt("setup_trial_focus_owner_id", focused?.id ?: View.NO_ID)
-                        putString("setup_trial_focus_owner_class", focused?.javaClass?.name.orEmpty())
-                        putInt("setup_trial_focus_diagnostic_count", focusDiagnostics)
+                runBlocking {
+                    session.runOnReady {
+                        originalSchema = selectedSchemaId()
+                        originalOptions = currentSchema().switches.filter { it.name.isNotEmpty() && it.name != "prediction" }
+                            .associate { it.name to getRuntimeOption(it.name) }
+                        clearComposition()
                     }
-                    result.putAll(diagnostic)
-                    instrumentation.sendStatus(0, diagnostic)
                 }
-                main { reportTrialFocus("before-recreate", fresh) }
-                val restoreTrialFocus = main { trial.hasFocus() }
-                main { fresh.recreate() }
-                var replacement: SetupActivity? = null
-                await("Setup recreation did not produce a replacement Activity") {
-                    val seen = monitor.waitForActivityWithTimeout(100) as? SetupActivity
-                    if (seen != null && seen !== fresh && main { !seen.isDestroyed && !seen.isFinishing }) replacement = seen
-                    replacement != null
+                observer = session.lifecycleScope.launch(Dispatchers.Default, start = CoroutineStart.UNDISPATCHED) {
+                    session.run { messageFlow }.collect {
+                        if (it is RimeMessage.DeployMessage && it.data == RimeMessage.DeployMessage.State.Start) deployments.incrementAndGet()
+                    }
                 }
-                val recreated = checkNotNull(replacement).also { activities += it }
-                await("Completed trial state was lost after recreation") {
-                    main { fresh.isDestroyed && recreated.currentSetupPage == SetupPage.Try && recreated.isPageDone(SetupPage.Try) }
+            }
+            verifySelectedInputAndObserveDeployments()
+            fun verifyFreshWizardRecommendation(): SetupActivity {
+                check(checkpoints.edit().clear().commit())
+                profile.freshInputSetupPending.setValue(true)
+                val fresh = launch()
+                inputReady(fresh)
+                main {
+                    val view = fragment(fresh, SetupPage.Input).requireView()
+                    check(view.findViewById<RadioButton>(R.id.full_pinyin_option).isChecked)
+                    check(view.findViewById<RadioButton>(R.id.simplified_option).isChecked)
+                    check(!fresh.isPageDone(SetupPage.Input))
+                    check(!fresh.findViewById<Button>(R.id.next_button).isEnabled)
                 }
-                main { check(fragment(recreated, SetupPage.Try).trialInput()?.text.isNullOrEmpty()) }
-                if (restoreTrialFocus) {
-                    await("The recreated trial did not recover its actual view focus after the Fragment attached") {
-                        main {
-                            reportTrialFocus("recreated-focus-wait", recreated)
-                            recreated.hasWindowFocus() && fragment(recreated, SetupPage.Try).trialInput()?.hasFocus() == true
+                passed("fresh wizard recommends full pinyin and simplified Chinese without pretending activation finished")
+                check(runBlocking { session.runOnReady { selectedSchemaId() } } == originalSchema)
+                passed("reading a recommendation does not change the current Rime schema")
+
+                return fresh
+            }
+            val fresh = verifyFreshWizardRecommendation()
+            fun verifyFreshTrialAndRecreation(fresh: SetupActivity) {
+                confirmInput(fresh)
+                val applied = runBlocking { session.runOnReady { inspectInputSetup() } }
+                check(applied.schemaId == "luna_pinyin_simp")
+                check(applied.selection == InputSetupSelection(InputLayout.FULL_PINYIN, ChineseVariant.SIMPLIFIED))
+                check(!profile.freshInputSetupPending.getValue())
+                passed("applying the actual wizard button confirms the shared simplified full-pinyin configuration")
+                main { check(fresh.findViewById<Button>(R.id.next_button).performClick()) }
+                await("The actual trial editor was not shown") {
+                    main { fresh.currentSetupPage == SetupPage.Try && fragment(fresh, SetupPage.Try).trialInput()?.isShown == true }
+                }
+                val trial = main { fragment(fresh, SetupPage.Try).requireView().findViewById<SetupTrialEditText>(R.id.trial_input) }
+                result.putAll(verifyUnfinishedTrialFooterTouch(instrumentation, fresh, trial, session, ::passed))
+                verifyAppearanceDuringComposition(instrumentation, fresh, trial, session, deployments, ::passed)
+                main {
+                    trial.setText("你好")
+                    check(!fresh.isPageDone(SetupPage.Try))
+                    trial.text?.clear()
+                    val connection = checkNotNull(trial.onCreateInputConnection(EditorInfo()))
+                    check(connection.commitText("nihao", 1))
+                    check(connection.setComposingText("你好", 1))
+                    check(connection.finishComposingText())
+                }
+                SystemClock.sleep(150)
+                main { check(!fresh.isPageDone(SetupPage.Try)) }
+                check(!checkpoints.getBoolean("trial_completed", false))
+                passed("programmatic text, Latin commits and unfinished composition cannot pass the trial")
+                main {
+                    trial.text?.clear()
+                    check(checkNotNull(trial.onCreateInputConnection(EditorInfo())).commitText("你好", 1))
+                }
+                await("A successful committed Han result did not complete the trial") { main { fresh.isPageDone(SetupPage.Try) } }
+                check(checkpoints.all.values.none { it is String && it.contains("你好") })
+                passed("successful Chinese commit completes the trial while wizard preferences keep no trial text")
+
+                val monitor = instrumentation.addMonitor(SetupActivity::class.java.name, null, false)
+                try {
+                    var lastFocusState: List<Any?>? = null
+                    var focusDiagnostics = 0
+                    fun reportTrialFocus(stage: String, activity: SetupActivity) {
+                        val input = activity.supportFragmentManager.fragments.filterIsInstance<SetupFragment>()
+                            .firstOrNull { it.setupPage == SetupPage.Try }?.trialInput()
+                        val focused = activity.currentFocus
+                        val state = listOf(
+                            stage,
+                            activity.isTrialFocusRestorationPending,
+                            activity.currentSetupPage.name,
+                            activity.lifecycle.currentState.name,
+                            activity.hasWindowFocus(),
+                            input?.isAttachedToWindow,
+                            input?.isShown,
+                            input?.isEnabled,
+                            input?.isLaidOut,
+                            input?.isLayoutRequested,
+                            input?.hasFocus(),
+                            focused?.id,
+                            focused?.javaClass?.name,
+                        )
+                        if (state == lastFocusState || focusDiagnostics >= 16) return
+                        lastFocusState = state
+                        focusDiagnostics++
+                        val diagnostic = Bundle().apply {
+                            putString("setup_trial_focus_stage", stage)
+                            putBoolean("setup_trial_focus_restore_pending", activity.isTrialFocusRestorationPending)
+                            putString("setup_trial_focus_page", activity.currentSetupPage.name)
+                            putString("setup_trial_focus_lifecycle", activity.lifecycle.currentState.name)
+                            putBoolean("setup_trial_focus_window_focused", activity.hasWindowFocus())
+                            putBoolean("setup_trial_focus_input_present", input != null)
+                            putBoolean("setup_trial_focus_attached", input?.isAttachedToWindow == true)
+                            putBoolean("setup_trial_focus_shown", input?.isShown == true)
+                            putBoolean("setup_trial_focus_enabled", input?.isEnabled == true)
+                            putBoolean("setup_trial_focus_laid_out", input?.isLaidOut == true)
+                            putBoolean("setup_trial_focus_layout_requested", input?.isLayoutRequested == true)
+                            putBoolean("setup_trial_focus_actual", input?.hasFocus() == true)
+                            putInt("setup_trial_focus_owner_id", focused?.id ?: View.NO_ID)
+                            putString("setup_trial_focus_owner_class", focused?.javaClass?.name.orEmpty())
+                            putInt("setup_trial_focus_diagnostic_count", focusDiagnostics)
+                        }
+                        result.putAll(diagnostic)
+                        instrumentation.sendStatus(0, diagnostic)
+                    }
+                    main { reportTrialFocus("before-recreate", fresh) }
+                    val restoreTrialFocus = main { trial.hasFocus() }
+                    main { fresh.recreate() }
+                    var replacement: SetupActivity? = null
+                    await("Setup recreation did not produce a replacement Activity") {
+                        val seen = monitor.waitForActivityWithTimeout(100) as? SetupActivity
+                        if (seen != null && seen !== fresh && main { !seen.isDestroyed && !seen.isFinishing }) replacement = seen
+                        replacement != null
+                    }
+                    val recreated = checkNotNull(replacement).also { activities += it }
+                    await("Completed trial state was lost after recreation") {
+                        main { fresh.isDestroyed && recreated.currentSetupPage == SetupPage.Try && recreated.isPageDone(SetupPage.Try) }
+                    }
+                    main { check(fragment(recreated, SetupPage.Try).trialInput()?.text.isNullOrEmpty()) }
+                    if (restoreTrialFocus) {
+                        await("The recreated trial did not recover its actual view focus after the Fragment attached") {
+                            main {
+                                reportTrialFocus("recreated-focus-wait", recreated)
+                                recreated.hasWindowFocus() && fragment(recreated, SetupPage.Try).trialInput()?.hasFocus() == true
+                            }
                         }
                     }
+                    result.putBoolean("setup_trial_focus_recreation_restored", restoreTrialFocus)
+                    passed("recreation keeps completion checkpoints without restoring trial text")
+                    main {
+                        val done = recreated.findViewById<Button>(R.id.next_button)
+                        check(done.isShown && done.isEnabled && done.performClick())
+                    }
+                    await("The completed wizard was not destroyed after its Done button") {
+                        main { recreated.isDestroyed }
+                    }
+                    check(!SetupPage.hasUndonePage())
+                    check(runBlocking { session.runOnReady { inspectInputSetup() } } == applied)
+                    passed("the real Done button exits the completed wizard and preserves the applied input selection")
+                } finally {
+                    instrumentation.removeMonitor(monitor)
                 }
-                result.putBoolean("setup_trial_focus_recreation_restored", restoreTrialFocus)
-                passed("recreation keeps completion checkpoints without restoring trial text")
-                main {
-                    val done = recreated.findViewById<Button>(R.id.next_button)
-                    check(done.isShown && done.isEnabled && done.performClick())
+            }
+            verifyFreshTrialAndRecreation(fresh)
+            fun verifyExistingInputAndDeferredTrial() {
+                runBlocking {
+                    session.runOnReady {
+                        configureInput(InputSetupSelection(InputLayout.T9, ChineseVariant.TRADITIONAL))
+                    }
                 }
-                await("The completed wizard was not destroyed after its Done button") {
-                    main { recreated.isDestroyed }
-                }
+                check(checkpoints.edit().clear().commit())
+                profile.freshInputSetupPending.setValue(false)
+                val previous = runBlocking { session.runOnReady { inspectInputSetup() } }
+                val existing = launch()
+                inputReady(existing)
+                main { check(fragment(existing, SetupPage.Input).requireView().findViewById<RadioButton>(R.id.keep_current_input_option).isChecked) }
+                confirmInput(existing)
+                val retained = runBlocking { session.runOnReady { inspectInputSetup() } }
+                check(retained.schemaId == previous.schemaId && retained.selection == previous.selection)
+                passed("existing traditional nine-key input stays unchanged when keeping the current scheme")
+                main { check(existing.findViewById<Button>(R.id.next_button).performClick()) }
+                await("Existing user could not open the trial page") { main { existing.currentSetupPage == SetupPage.Try } }
+                main { check(fragment(existing, SetupPage.Try).requireView().findViewById<Button>(R.id.trial_later_button).performClick()) }
+                await("Explicitly deferring the trial was not accepted") { main { existing.isPageDone(SetupPage.Try) } }
+                check(checkpoints.getBoolean("deferred", false) && !checkpoints.getBoolean("trial_completed", false))
                 check(!SetupPage.hasUndonePage())
-                check(runBlocking { session.runOnReady { inspectInputSetup() } } == applied)
-                passed("the real Done button exits the completed wizard and preserves the applied input selection")
-            } finally {
-                instrumentation.removeMonitor(monitor)
+                passed("trying later is explicit, does not fake a successful trial, and does not reopen completed system steps")
+                check(deployments.get() == 0) { "Layout/charset selection unexpectedly started deployment" }
+                passed("wizard schema and charset choices do not trigger unrelated deployment")
             }
-
-            runBlocking {
-                session.runOnReady {
-                    configureInput(InputSetupSelection(InputLayout.T9, ChineseVariant.TRADITIONAL))
-                }
-            }
-            check(checkpoints.edit().clear().commit())
-            profile.freshInputSetupPending.setValue(false)
-            val previous = runBlocking { session.runOnReady { inspectInputSetup() } }
-            val existing = launch()
-            inputReady(existing)
-            main { check(fragment(existing, SetupPage.Input).requireView().findViewById<RadioButton>(R.id.keep_current_input_option).isChecked) }
-            confirmInput(existing)
-            val retained = runBlocking { session.runOnReady { inspectInputSetup() } }
-            check(retained.schemaId == previous.schemaId && retained.selection == previous.selection)
-            passed("existing traditional nine-key input stays unchanged when keeping the current scheme")
-            main { check(existing.findViewById<Button>(R.id.next_button).performClick()) }
-            await("Existing user could not open the trial page") { main { existing.currentSetupPage == SetupPage.Try } }
-            main { check(fragment(existing, SetupPage.Try).requireView().findViewById<Button>(R.id.trial_later_button).performClick()) }
-            await("Explicitly deferring the trial was not accepted") { main { existing.isPageDone(SetupPage.Try) } }
-            check(checkpoints.getBoolean("deferred", false) && !checkpoints.getBoolean("trial_completed", false))
-            check(!SetupPage.hasUndonePage())
-            passed("trying later is explicit, does not fake a successful trial, and does not reopen completed system steps")
-            check(deployments.get() == 0) { "Layout/charset selection unexpectedly started deployment" }
-            passed("wizard schema and charset choices do not trigger unrelated deployment")
+            verifyExistingInputAndDeferredTrial()
             cachedKeyboard = main {
                 val input = windowRoots().asSequence().flatMap(::descendants).filterIsInstance<InputView>().first()
                 RimeCachedReadTeardownAssertions.capture(input)
