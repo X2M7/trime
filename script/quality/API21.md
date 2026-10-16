@@ -48,6 +48,15 @@ Iconics 5.6.0 and its Compose runtime 1.9.3 dependency both declare minSdk 21.
 Do not infer a library's minimum solely from its release date or the general
 AndroidX policy; inspect the actual AAR and resolved dependency graph.
 
+The 2026-10-16 audit of AboutLibraries 15.3.0 confirms that its Android runtime
+AAR still declares minSdk 21 and minCompileSdk 37, matching 15.2.0. Its Kotlin
+2.4.21 and serialization 1.11.0 dependencies match the catalog. The Gradle plugin
+requires JDK 17 and was published with Gradle 9.8.1, matching this build. Kotest
+6.2.6 is used only by JVM tests; its JVM artifacts remain compatible with JDK 17.
+These versions address the four new `NewerVersionAvailable` notices through
+actual upgrades, without adding notification exceptions. Build, resolved-graph,
+Lint and Android runtime results must still be recorded for the new candidate.
+
 Primary references:
 
 - [AndroidX minimum SDK policy](https://developer.android.com/jetpack/androidx/versions)
@@ -70,6 +79,9 @@ Primary references:
 - [Iconics 5.6 dependency POM](https://repo.maven.apache.org/maven2/com/mikepenz/iconics-core/5.6.0/iconics-core-5.6.0.pom)
 - [Gradle 9.8.1 security fixes](https://docs.gradle.org/9.8.1/release-notes.html)
 - [Gradle 9.8.1 binary distribution SHA256](https://services.gradle.org/distributions/gradle-9.8.1-bin.zip.sha256)
+- [AboutLibraries 15.3.0 release](https://github.com/mikepenz/AboutLibraries/releases/tag/15.3.0)
+- [AboutLibraries 15.3.0 Android AAR](https://repo.maven.apache.org/maven2/com/mikepenz/aboutlibraries-core-android/15.3.0/aboutlibraries-core-android-15.3.0.aar)
+- [Kotest 6.2.6 release](https://github.com/kotest/kotest/releases/tag/v6.2.6)
 
 Runtime test coverage, APK fingerprints and any remaining limitations belong in
 the build-specific regression report. An API 21 manifest alone is not evidence
