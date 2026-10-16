@@ -1898,306 +1898,322 @@ object EditorLifecycleProbe {
                             check(!insets.touchableRegion.contains(decor.width - 1, bounds.centerY())) { "Blank app space beside preedit must remain touch-through" }
                             checkNoTouchPopup()
                         }
-                        val hostPointerActions = mutableListOf<Int>()
-                        val hostContent = main { editor.findViewById<FrameLayout>(android.R.id.content) }
-                        fun hostGapGeometry(): Pair<Rect, String> {
-                            val decor = checkNotNull(service.window.window).decorView
-                            val preeditBounds = visibleWindowBounds(root)
-                            val decorScreen = IntArray(2).also(decor::getLocationOnScreen)
-                            val decorWindow = IntArray(2).also(decor::getLocationInWindow)
-                            val hostScreen = IntArray(2).also(hostContent::getLocationOnScreen)
-                            val hostVisible = Rect()
-                            val hostIsVisible = hostContent.isShown && hostContent.getLocalVisibleRect(hostVisible)
-                            hostVisible.offset(hostScreen[0] - hostContent.scrollX, hostScreen[1] - hostContent.scrollY)
-                            val windowScreenX = decorScreen[0] - decorWindow[0]
-                            val windowScreenY = decorScreen[1] - decorWindow[1]
-                            val preeditScreen = Rect(preeditBounds).apply { offset(windowScreenX, windowScreenY) }
-                            val available = Rect(preeditScreen.right, preeditScreen.top, windowScreenX + decor.width, preeditScreen.bottom)
-                            val targetScreen = Rect()
-                            val targetWindow = Rect()
-                            val insets = touchInsets()
-                            if (!preeditBounds.isEmpty && hostIsVisible && available.intersect(hostVisible) && available.width() >= 32 && available.height() >= 32) {
-                                targetScreen.set(available.centerX() - 16, available.centerY() - 16, available.centerX() + 16, available.centerY() + 16)
-                                targetWindow.set(targetScreen)
-                                targetWindow.offset(-windowScreenX, -windowScreenY)
-                                if (!Region(targetWindow).apply { op(insets.touchableRegion, Region.Op.INTERSECT) }.isEmpty) targetScreen.setEmpty()
-                            }
-                            return targetScreen to "hostVisible=$hostVisible hostScreen=${hostScreen.contentToString()} " +
-                                "hostSize=${hostContent.width}x${hostContent.height} hostScroll=${hostContent.scrollX},${hostContent.scrollY} " +
-                                "hostPadding=${hostContent.paddingLeft},${hostContent.paddingTop},${hostContent.paddingRight},${hostContent.paddingBottom} " +
-                                "decorScreen=${decorScreen.contentToString()} decorWindow=${decorWindow.contentToString()} decorSize=${decor.width}x${decor.height} " +
-                                "preeditWindow=$preeditBounds preeditScreen=$preeditScreen intersection=$available targetScreen=$targetScreen targetWindow=$targetWindow " +
-                                "touchRegion=${insets.touchableRegion}"
-                        }
-                        var hostGeometryDiagnostic = "Host geometry has not been sampled"
-                        try {
-                            until("$theme actual host content can fit a pointer target beside preedit") {
-                                val (target, diagnostic) = hostGapGeometry()
-                                hostGeometryDiagnostic = diagnostic
-                                !target.isEmpty
-                            }
-                        } catch (failure: TimeoutCancellationException) {
-                            throw IllegalStateException("$theme host pointer target geometry did not become reachable: $hostGeometryDiagnostic", failure)
-                        }
-                        var expectedHostTargetScreen = Rect()
-                        val hostTarget = main {
-                            val (targetScreen, diagnostic) = hostGapGeometry()
-                            check(!targetScreen.isEmpty) { "$theme host pointer target geometry changed: $diagnostic" }
-                            expectedHostTargetScreen = Rect(targetScreen)
-                            val hostScreen = IntArray(2).also(hostContent::getLocationOnScreen)
-                            val left = targetScreen.left - hostScreen[0] + hostContent.scrollX - hostContent.paddingLeft
-                            val top = targetScreen.top - hostScreen[1] + hostContent.scrollY - hostContent.paddingTop
-                            check(left >= 0 && top >= 0 && left + 32 <= hostContent.width && top + 32 <= hostContent.height) {
-                                "$theme host pointer local placement is outside content: left=$left top=$top $diagnostic"
-                            }
-                            phase("HOST_POINTER_GEOMETRY: $theme left=$left top=$top $diagnostic")
-                            object : EditText(editor) {
-                                @SuppressLint("ClickableViewAccessibility")
-                                override fun onTouchEvent(event: MotionEvent): Boolean {
-                                    hostPointerActions.add(event.actionMasked)
-                                    return true
-                                }
-                            }.apply {
-                                minimumHeight = 0
-                                minimumWidth = 0
-                                setPadding(0, 0, 0, 0)
-                                isFocusable = false
-                                hostContent.addView(
-                                    this,
-                                    FrameLayout.LayoutParams(32, 32).apply {
-                                        leftMargin = left
-                                        topMargin = top
-                                    },
-                                )
-                            }
-                        }
-                        try {
-                            until("$theme host editor target is visible in the empty preedit gap") { hostTarget.isShown && hostTarget.isLaidOut }
-                            delay(150)
-                            touchStage("before_host_gap_pointer", theme)
-                            main {
-                                val actualScreen = Rect()
-                                check(hostTarget.getLocalVisibleRect(actualScreen)) { "$theme host pointer target is clipped: ${hostGapGeometry().second}" }
-                                val targetLocalVisible = Rect(actualScreen)
-                                val targetLocation = IntArray(2).also(hostTarget::getLocationOnScreen)
-                                actualScreen.offset(targetLocation[0] - hostTarget.scrollX, targetLocation[1] - hostTarget.scrollY)
-                                check(actualScreen == expectedHostTargetScreen) {
-                                    "$theme host pointer target moved or was clipped: expected=$expectedHostTargetScreen actual=$actualScreen " +
-                                        "localVisible=$targetLocalVisible location=${targetLocation.contentToString()} scroll=${hostTarget.scrollX},${hostTarget.scrollY} ${hostGapGeometry().second}"
-                                }
-                                phase("HOST_POINTER_ACTUAL: $theme screen=$actualScreen localVisible=$targetLocalVisible location=${targetLocation.contentToString()} scroll=${hostTarget.scrollX},${hostTarget.scrollY}")
-                            }
-                            tapActualView(hostTarget, imeTarget = false)
-                            check(
-                                main {
-                                    hostPointerActions.filter { it == MotionEvent.ACTION_DOWN || it == MotionEvent.ACTION_UP } ==
-                                        listOf(MotionEvent.ACTION_DOWN, MotionEvent.ACTION_UP)
-                                },
-                            ) { "Empty space beside preedit intercepted the host editor pointer" }
-                            touchStage("after_host_gap_pointer", theme)
-                            phase("PASS: $theme empty preedit gap routes a real pointer to the host editor")
-                        } finally {
-                            main { (hostTarget.parent as? ViewGroup)?.removeView(hostTarget) }
-                        }
-                        fun verifyHiddenTouchRegion(target: View, label: String) {
-                            main {
-                                val originalVisibility = target.visibility
-                                val bounds = visibleWindowBounds(root)
-                                val beforeInsets = touchInsets()
+                        suspend fun verifyHostGapPointer() {
+                            val hostPointerActions = mutableListOf<Int>()
+                            val hostContent = main { editor.findViewById<FrameLayout>(android.R.id.content) }
+                            fun hostGapGeometry(): Pair<Rect, String> {
                                 val decor = checkNotNull(service.window.window).decorView
-                                val keyboardRegion = Region(0, beforeInsets.visibleTopInsets.coerceIn(0, decor.height), decor.width, decor.height)
-                                val exposedRegion = Region(bounds).apply { op(keyboardRegion, Region.Op.DIFFERENCE) }
-                                val diagnostic = JSONObject().apply {
-                                    put("theme", theme)
-                                    put("check", label)
-                                    put("target", if (target === root) "preedit" else "input_view")
-                                    put("original_visibility", originalVisibility)
-                                    put("requested_visibility", View.INVISIBLE)
-                                    put("visible_bounds_before", bounds.toShortString())
-                                    put("keyboard_region_before", keyboardRegion.toString())
-                                    put("exposed_region_before", exposedRegion.toString())
-                                    put("touch_region_before", beforeInsets.touchableRegion.toString())
-                                    put("passed", false)
+                                val preeditBounds = visibleWindowBounds(root)
+                                val decorScreen = IntArray(2).also(decor::getLocationOnScreen)
+                                val decorWindow = IntArray(2).also(decor::getLocationInWindow)
+                                val hostScreen = IntArray(2).also(hostContent::getLocationOnScreen)
+                                val hostVisible = Rect()
+                                val hostIsVisible = hostContent.isShown && hostContent.getLocalVisibleRect(hostVisible)
+                                hostVisible.offset(hostScreen[0] - hostContent.scrollX, hostScreen[1] - hostContent.scrollY)
+                                val windowScreenX = decorScreen[0] - decorWindow[0]
+                                val windowScreenY = decorScreen[1] - decorWindow[1]
+                                val preeditScreen = Rect(preeditBounds).apply { offset(windowScreenX, windowScreenY) }
+                                val available = Rect(preeditScreen.right, preeditScreen.top, windowScreenX + decor.width, preeditScreen.bottom)
+                                val targetScreen = Rect()
+                                val targetWindow = Rect()
+                                val insets = touchInsets()
+                                if (!preeditBounds.isEmpty && hostIsVisible && available.intersect(hostVisible) && available.width() >= 32 && available.height() >= 32) {
+                                    targetScreen.set(available.centerX() - 16, available.centerY() - 16, available.centerX() + 16, available.centerY() + 16)
+                                    targetWindow.set(targetScreen)
+                                    targetWindow.offset(-windowScreenX, -windowScreenY)
+                                    if (!Region(targetWindow).apply { op(insets.touchableRegion, Region.Op.INTERSECT) }.isEmpty) targetScreen.setEmpty()
                                 }
-                                touchRegionLifecycleChecks.put(diagnostic)
-                                check(originalVisibility == View.VISIBLE && root.isShown && regionCovers(root)) { "$label needs a visible, touchable preedit: $diagnostic" }
-                                check(!exposedRegion.isEmpty) { "$label needs preedit pixels outside the keyboard baseline: $diagnostic" }
-                                roots().asSequence().flatMap(::descendants).filterIsInstance<CandidatesView>().forEach { candidates ->
-                                    if (candidates.windowToken == root.windowToken) {
-                                        val overlap = Region(visibleWindowBounds(candidates)).apply { op(exposedRegion, Region.Op.INTERSECT) }
-                                        check(overlap.isEmpty) { "$label overlaps another visible candidate surface: $overlap $diagnostic" }
-                                    }
-                                }
-                                // Composition updates may legitimately show the preedit again. Keep
-                                // this artificial hidden state and its inset computation in one main
-                                // callback, and check the previous physical region as well as visibility.
-                                try {
-                                    target.visibility = View.INVISIBLE
-                                    val afterInsets = touchInsets()
-                                    val residual = Region(exposedRegion).apply { op(afterInsets.touchableRegion, Region.Op.INTERSECT) }
-                                    diagnostic.apply {
-                                        put("observed_visibility", target.visibility)
-                                        put("root_visibility", root.visibility)
-                                        put("root_shown", root.isShown)
-                                        put("root_attached", root.isAttachedToWindow)
-                                        put("root_window_visibility", root.windowVisibility)
-                                        put("touch_region_hidden", afterInsets.touchableRegion.toString())
-                                        put("residual_region", residual.toString())
-                                    }
-                                    check(target.visibility == View.INVISIBLE && !root.isShown) { "$label did not establish its hidden-state precondition: $diagnostic" }
-                                    check(!regionCovers(root)) { "$label still covers the hidden preedit: $diagnostic" }
-                                    check(afterInsets.visibleTopInsets == beforeInsets.visibleTopInsets) { "$label unexpectedly moved the keyboard baseline: $diagnostic" }
-                                    check(residual.isEmpty) { "$label retained the previous preedit touch region: $diagnostic" }
-                                    diagnostic.put("passed", true)
-                                } finally {
-                                    target.visibility = originalVisibility
-                                    diagnostic.put("restored_visibility", target.visibility)
-                                }
+                                return targetScreen to "hostVisible=$hostVisible hostScreen=${hostScreen.contentToString()} " +
+                                    "hostSize=${hostContent.width}x${hostContent.height} hostScroll=${hostContent.scrollX},${hostContent.scrollY} " +
+                                    "hostPadding=${hostContent.paddingLeft},${hostContent.paddingTop},${hostContent.paddingRight},${hostContent.paddingBottom} " +
+                                    "decorScreen=${decorScreen.contentToString()} decorWindow=${decorWindow.contentToString()} decorSize=${decor.width}x${decor.height} " +
+                                    "preeditWindow=$preeditBounds preeditScreen=$preeditScreen intersection=$available targetScreen=$targetScreen targetWindow=$targetWindow " +
+                                    "touchRegion=${insets.touchableRegion}"
                             }
-                            phase("PASS: $label")
-                        }
-                        verifyHiddenTouchRegion(root, "$theme invisible preedit leaves the IME touch region")
-                        until("$theme visible preedit resumes the IME touch region") { regionCovers(root) }
-                        verifyHiddenTouchRegion(iv, "$theme invisible preedit ancestor leaves the IME touch region")
-                        until("$theme visible preedit ancestor resumes the IME touch region") { regionCovers(root) }
-                        val originalScroll = main { root.scrollX to root.scrollY }
-                        val unscrolledBounds = main { visibleWindowBounds(root) }
-                        try {
-                            main { root.scrollTo(originalScroll.first + 11, originalScroll.second + 7) }
-                            until("$theme own content scrolling preserves the physical preedit touch region") {
-                                visibleWindowBounds(root) == unscrolledBounds && regionCovers(root) &&
-                                    !touchInsets().touchableRegion.contains(checkNotNull(service.window.window).decorView.width - 1, unscrolledBounds.centerY())
-                            }
-                        } finally {
-                            main { root.scrollTo(originalScroll.first, originalScroll.second) }
-                        }
-                        until("$theme restored preedit scroll preserves its physical touch region") { visibleWindowBounds(root) == unscrolledBounds && regionCovers(root) }
-                        main {
-                            val parent = root.parent as ViewGroup
-                            val params = root.layoutParams
-                            parent.removeView(root)
+                            var hostGeometryDiagnostic = "Host geometry has not been sampled"
                             try {
-                                check(!regionCovers(root)) { "Detached preedit must not retain a touch region" }
+                                until("$theme actual host content can fit a pointer target beside preedit") {
+                                    val (target, diagnostic) = hostGapGeometry()
+                                    hostGeometryDiagnostic = diagnostic
+                                    !target.isEmpty
+                                }
+                            } catch (failure: TimeoutCancellationException) {
+                                throw IllegalStateException("$theme host pointer target geometry did not become reachable: $hostGeometryDiagnostic", failure)
+                            }
+                            var expectedHostTargetScreen = Rect()
+                            val hostTarget = main {
+                                val (targetScreen, diagnostic) = hostGapGeometry()
+                                check(!targetScreen.isEmpty) { "$theme host pointer target geometry changed: $diagnostic" }
+                                expectedHostTargetScreen = Rect(targetScreen)
+                                val hostScreen = IntArray(2).also(hostContent::getLocationOnScreen)
+                                val left = targetScreen.left - hostScreen[0] + hostContent.scrollX - hostContent.paddingLeft
+                                val top = targetScreen.top - hostScreen[1] + hostContent.scrollY - hostContent.paddingTop
+                                check(left >= 0 && top >= 0 && left + 32 <= hostContent.width && top + 32 <= hostContent.height) {
+                                    "$theme host pointer local placement is outside content: left=$left top=$top $diagnostic"
+                                }
+                                phase("HOST_POINTER_GEOMETRY: $theme left=$left top=$top $diagnostic")
+                                object : EditText(editor) {
+                                    @SuppressLint("ClickableViewAccessibility")
+                                    override fun onTouchEvent(event: MotionEvent): Boolean {
+                                        hostPointerActions.add(event.actionMasked)
+                                        return true
+                                    }
+                                }.apply {
+                                    minimumHeight = 0
+                                    minimumWidth = 0
+                                    setPadding(0, 0, 0, 0)
+                                    isFocusable = false
+                                    hostContent.addView(
+                                        this,
+                                        FrameLayout.LayoutParams(32, 32).apply {
+                                            leftMargin = left
+                                            topMargin = top
+                                        },
+                                    )
+                                }
+                            }
+                            try {
+                                until("$theme host editor target is visible in the empty preedit gap") { hostTarget.isShown && hostTarget.isLaidOut }
+                                delay(150)
+                                touchStage("before_host_gap_pointer", theme)
+                                main {
+                                    val actualScreen = Rect()
+                                    check(hostTarget.getLocalVisibleRect(actualScreen)) { "$theme host pointer target is clipped: ${hostGapGeometry().second}" }
+                                    val targetLocalVisible = Rect(actualScreen)
+                                    val targetLocation = IntArray(2).also(hostTarget::getLocationOnScreen)
+                                    actualScreen.offset(targetLocation[0] - hostTarget.scrollX, targetLocation[1] - hostTarget.scrollY)
+                                    check(actualScreen == expectedHostTargetScreen) {
+                                        "$theme host pointer target moved or was clipped: expected=$expectedHostTargetScreen actual=$actualScreen " +
+                                            "localVisible=$targetLocalVisible location=${targetLocation.contentToString()} scroll=${hostTarget.scrollX},${hostTarget.scrollY} ${hostGapGeometry().second}"
+                                    }
+                                    phase("HOST_POINTER_ACTUAL: $theme screen=$actualScreen localVisible=$targetLocalVisible location=${targetLocation.contentToString()} scroll=${hostTarget.scrollX},${hostTarget.scrollY}")
+                                }
+                                tapActualView(hostTarget, imeTarget = false)
+                                check(
+                                    main {
+                                        hostPointerActions.filter { it == MotionEvent.ACTION_DOWN || it == MotionEvent.ACTION_UP } ==
+                                            listOf(MotionEvent.ACTION_DOWN, MotionEvent.ACTION_UP)
+                                    },
+                                ) { "Empty space beside preedit intercepted the host editor pointer" }
+                                touchStage("after_host_gap_pointer", theme)
+                                phase("PASS: $theme empty preedit gap routes a real pointer to the host editor")
                             } finally {
-                                parent.addView(root, params)
+                                main { (hostTarget.parent as? ViewGroup)?.removeView(hostTarget) }
                             }
                         }
-                        until("$theme reattached preedit restores only its visible touch region") { regionCovers(root) }
-                        // Preserve the historical host protocol label for the replaced overlay path.
-                        phase("PASS: detached touch overlay cannot crash or leak across reattachment")
-                        delay(150)
-                        check(main { iv.rime.run { compositionCached.cursorPos > 0 } }) { "Preedit pointer needs a nonzero native caret before the tap" }
-                        touchStage("before_preedit_pointer", theme)
-                        tapActualView(preedit.preedit, leadingText = true)
-                        until("$theme real preedit pointer changes the native caret without committing") {
-                            iv.rime.run { compositionCached.cursorPos == 0 && compositionCached.length > 0 } && chat.text.toString() == pendingBefore
-                        }
-                        api {
-                            check(getRawInput() == "ni")
-                            clearComposition()
-                        }
-                        touchStage("after_preedit_pointer", theme)
-                        repeat(20) { round ->
-                            touchStage("before_rapid_show", theme, round)
-                            val showStart = SystemClock.elapsedRealtimeNanos()
-                            type("ni")
-                            api { check(getRawInput() == "ni") }
-                            until("$theme rapid $round preedit included") { preedit.preedit.isShown && regionCovers(preedit.preedit) }
-                            val showMs = (SystemClock.elapsedRealtimeNanos() - showStart) / 1_000_000
-                            touchStage("before_rapid_clear", theme, round)
-                            val clearStart = SystemClock.elapsedRealtimeNanos()
-                            api { clearComposition() }
-                            until("$theme rapid $round cleared preedit excluded") { !preedit.preedit.isShown && !regionCovers(preedit.preedit) }
-                            val clearMs = (SystemClock.elapsedRealtimeNanos() - clearStart) / 1_000_000
-                            main { checkNoTouchPopup() }
-                            touchRegionMeasurements.put(
-                                JSONObject().apply {
-                                    put("theme", theme)
-                                    put("round", round)
-                                    put("show_ms", showMs)
-                                    put("clear_ms", clearMs)
-                                },
-                            )
-                            touchStage("after_rapid_clear", theme, round, clearMs)
-                            check(showMs < 2_000 && clearMs < 2_000) { "Rapid preedit operation exceeded the 2s stall regression limit: show=$showMs clear=$clearMs" }
-                            check(main { chat.text.toString() == before }) { "Showing/clearing preedit unexpectedly committed editor text" }
-                        }
-                        val previousMode = main { candidatesMode.getValue() }
-                        try {
-                            main { candidatesMode.setValue(PopupCandidatesMode.INPUT_DEVICE) }
-                            touchStage("before_hardware_candidate", theme)
-                            instrumentation.sendKeyDownUpSync(KeyEvent.KEYCODE_N)
-                            instrumentation.sendKeyDownUpSync(KeyEvent.KEYCODE_I)
-                            fun floatingCandidates() = roots().asSequence().flatMap(::descendants).filterIsInstance<CandidatesView>().firstOrNull { it.isShown }
-                            until("$theme hardware candidates own their main-window touch region") {
-                                service.isInputViewShown && input() == null && floatingCandidates()?.let(::regionCovers) == true
+                        verifyHostGapPointer()
+
+                        suspend fun verifyPreeditLifecycleAndPointer() {
+                            fun verifyHiddenTouchRegion(target: View, label: String) {
+                                main {
+                                    val originalVisibility = target.visibility
+                                    val bounds = visibleWindowBounds(root)
+                                    val beforeInsets = touchInsets()
+                                    val decor = checkNotNull(service.window.window).decorView
+                                    val keyboardRegion = Region(0, beforeInsets.visibleTopInsets.coerceIn(0, decor.height), decor.width, decor.height)
+                                    val exposedRegion = Region(bounds).apply { op(keyboardRegion, Region.Op.DIFFERENCE) }
+                                    val diagnostic = JSONObject().apply {
+                                        put("theme", theme)
+                                        put("check", label)
+                                        put("target", if (target === root) "preedit" else "input_view")
+                                        put("original_visibility", originalVisibility)
+                                        put("requested_visibility", View.INVISIBLE)
+                                        put("visible_bounds_before", bounds.toShortString())
+                                        put("keyboard_region_before", keyboardRegion.toString())
+                                        put("exposed_region_before", exposedRegion.toString())
+                                        put("touch_region_before", beforeInsets.touchableRegion.toString())
+                                        put("passed", false)
+                                    }
+                                    touchRegionLifecycleChecks.put(diagnostic)
+                                    check(originalVisibility == View.VISIBLE && root.isShown && regionCovers(root)) { "$label needs a visible, touchable preedit: $diagnostic" }
+                                    check(!exposedRegion.isEmpty) { "$label needs preedit pixels outside the keyboard baseline: $diagnostic" }
+                                    roots().asSequence().flatMap(::descendants).filterIsInstance<CandidatesView>().forEach { candidates ->
+                                        if (candidates.windowToken == root.windowToken) {
+                                            val overlap = Region(visibleWindowBounds(candidates)).apply { op(exposedRegion, Region.Op.INTERSECT) }
+                                            check(overlap.isEmpty) { "$label overlaps another visible candidate surface: $overlap $diagnostic" }
+                                        }
+                                    }
+                                    // Composition updates may legitimately show the preedit again. Keep
+                                    // this artificial hidden state and its inset computation in one main
+                                    // callback, and check the previous physical region as well as visibility.
+                                    try {
+                                        target.visibility = View.INVISIBLE
+                                        val afterInsets = touchInsets()
+                                        val residual = Region(exposedRegion).apply { op(afterInsets.touchableRegion, Region.Op.INTERSECT) }
+                                        diagnostic.apply {
+                                            put("observed_visibility", target.visibility)
+                                            put("root_visibility", root.visibility)
+                                            put("root_shown", root.isShown)
+                                            put("root_attached", root.isAttachedToWindow)
+                                            put("root_window_visibility", root.windowVisibility)
+                                            put("touch_region_hidden", afterInsets.touchableRegion.toString())
+                                            put("residual_region", residual.toString())
+                                        }
+                                        check(target.visibility == View.INVISIBLE && !root.isShown) { "$label did not establish its hidden-state precondition: $diagnostic" }
+                                        check(!regionCovers(root)) { "$label still covers the hidden preedit: $diagnostic" }
+                                        check(afterInsets.visibleTopInsets == beforeInsets.visibleTopInsets) { "$label unexpectedly moved the keyboard baseline: $diagnostic" }
+                                        check(residual.isEmpty) { "$label retained the previous preedit touch region: $diagnostic" }
+                                        diagnostic.put("passed", true)
+                                    } finally {
+                                        target.visibility = originalVisibility
+                                        diagnostic.put("restored_visibility", target.visibility)
+                                    }
+                                }
+                                phase("PASS: $label")
                             }
-                            val cv = main { checkNotNull(floatingCandidates()) }
-                            val recycler = main { descendants(cv).filterIsInstance<RecyclerView>().first() }
-                            until("$theme hardware first candidate has a current native snapshot") {
-                                val holder = recycler.findViewHolderForAdapterPosition(0) as? PagedCandidatesUi.UiHolder.Candidate
-                                holder != null && holder.ui.root.isShown && holder.snapshot == iv.rime.run { candidateSnapshotCached }
+                            verifyHiddenTouchRegion(root, "$theme invisible preedit leaves the IME touch region")
+                            until("$theme visible preedit resumes the IME touch region") { regionCovers(root) }
+                            verifyHiddenTouchRegion(iv, "$theme invisible preedit ancestor leaves the IME touch region")
+                            until("$theme visible preedit ancestor resumes the IME touch region") { regionCovers(root) }
+                            val originalScroll = main { root.scrollX to root.scrollY }
+                            val unscrolledBounds = main { visibleWindowBounds(root) }
+                            try {
+                                main { root.scrollTo(originalScroll.first + 11, originalScroll.second + 7) }
+                                until("$theme own content scrolling preserves the physical preedit touch region") {
+                                    visibleWindowBounds(root) == unscrolledBounds && regionCovers(root) &&
+                                        !touchInsets().touchableRegion.contains(checkNotNull(service.window.window).decorView.width - 1, unscrolledBounds.centerY())
+                                }
+                            } finally {
+                                main { root.scrollTo(originalScroll.first, originalScroll.second) }
                             }
-                            val holder = main { recycler.findViewHolderForAdapterPosition(0) as PagedCandidatesUi.UiHolder.Candidate }
-                            var expected = ""
+                            until("$theme restored preedit scroll preserves its physical touch region") { visibleWindowBounds(root) == unscrolledBounds && regionCovers(root) }
+                            main {
+                                val parent = root.parent as ViewGroup
+                                val params = root.layoutParams
+                                parent.removeView(root)
+                                try {
+                                    check(!regionCovers(root)) { "Detached preedit must not retain a touch region" }
+                                } finally {
+                                    parent.addView(root, params)
+                                }
+                            }
+                            until("$theme reattached preedit restores only its visible touch region") { regionCovers(root) }
+                            // Preserve the historical host protocol label for the replaced overlay path.
+                            phase("PASS: detached touch overlay cannot crash or leak across reattachment")
+                            delay(150)
+                            check(main { iv.rime.run { compositionCached.cursorPos > 0 } }) { "Preedit pointer needs a nonzero native caret before the tap" }
+                            touchStage("before_preedit_pointer", theme)
+                            tapActualView(preedit.preedit, leadingText = true)
+                            until("$theme real preedit pointer changes the native caret without committing") {
+                                iv.rime.run { compositionCached.cursorPos == 0 && compositionCached.length > 0 } && chat.text.toString() == pendingBefore
+                            }
                             api {
                                 check(getRawInput() == "ni")
-                                expected = getCandidates(0, 1, holder.snapshot).single().text
+                                clearComposition()
                             }
-                            check(expected.isNotEmpty() && main { descendants(holder.ui.root).filterIsInstance<TextView>().any { it.isShown && it.text.toString().contains(expected) } })
-                            delay(150)
-                            tapActualView(holder.ui.root)
-                            until("$theme real floating candidate pointer commits its native text exactly once") { chat.text.toString() == before + expected }
-                            api { check(getRawInput().isEmpty()) }
-                            delay(400)
-                            check(main { chat.text.toString() == before + expected }) { "Floating candidate commit repeated after its snapshot changed" }
-                            main { checkNoTouchPopup() }
-                            touchStage("after_hardware_candidate", theme)
-                        } finally {
-                            // Return through Android's real editor click while its connection
-                            // is still active. setText can invalidate it and queue restartInput;
-                            // calling the service directly after that races the old monitor.
-                            main { candidatesMode.setValue(previousMode) }
-                            touchStage("before_host_virtual_return", theme)
-                            val hostTouches = mutableListOf<Pair<Int, Int>>()
+                            touchStage("after_preedit_pointer", theme)
+                        }
+                        verifyPreeditLifecycleAndPointer()
 
-                            @SuppressLint("ClickableViewAccessibility")
-                            fun observeHostTouches() {
-                                // Return false so the real EditText handles focus, click and IME
-                                // callbacks. Record the delivered events, not just injected bytes.
-                                chat.setOnTouchListener { _, event ->
-                                    hostTouches.add(event.actionMasked to event.getToolType(0))
-                                    false
-                                }
-                            }
-                            main { observeHostTouches() }
-                            try {
-                                tapActualView(chat, imeTarget = false)
-                                until("$theme real host editor receives finger down/up") {
-                                    listOf(MotionEvent.ACTION_DOWN, MotionEvent.ACTION_UP).all { action ->
-                                        action to MotionEvent.TOOL_TYPE_FINGER in hostTouches
-                                    }
-                                }
-                            } finally {
-                                main { chat.setOnTouchListener(null) }
-                            }
-                            until("$theme real host editor pointer restores the virtual keyboard before resetting text") {
-                                inputManager.isActive(chat) && input() != null && !keyboard().isT9Layout
-                            }
-                            touchStage("after_host_virtual_return", theme)
-                            val resetEditorToken = main {
-                                val token = service.editorToken
-                                chat.setText(before)
-                                chat.setSelection(chat.text.length)
-                                inputManager.showSoftInput(chat, 0)
-                                token
-                            }
-                            until("$theme reset text belongs to the restarted host editor connection") {
-                                service.editorToken != resetEditorToken && service.isCurrentEditor(service.editorToken) &&
-                                    service.currentInputEditorInfo?.fieldId == chat.id && inputManager.isActive(chat) &&
-                                    input() != null && !keyboard().isT9Layout
+                        suspend fun verifyRapidPreeditRounds() {
+                            repeat(20) { round ->
+                                touchStage("before_rapid_show", theme, round)
+                                val showStart = SystemClock.elapsedRealtimeNanos()
+                                type("ni")
+                                api { check(getRawInput() == "ni") }
+                                until("$theme rapid $round preedit included") { preedit.preedit.isShown && regionCovers(preedit.preedit) }
+                                val showMs = (SystemClock.elapsedRealtimeNanos() - showStart) / 1_000_000
+                                touchStage("before_rapid_clear", theme, round)
+                                val clearStart = SystemClock.elapsedRealtimeNanos()
+                                api { clearComposition() }
+                                until("$theme rapid $round cleared preedit excluded") { !preedit.preedit.isShown && !regionCovers(preedit.preedit) }
+                                val clearMs = (SystemClock.elapsedRealtimeNanos() - clearStart) / 1_000_000
+                                main { checkNoTouchPopup() }
+                                touchRegionMeasurements.put(
+                                    JSONObject().apply {
+                                        put("theme", theme)
+                                        put("round", round)
+                                        put("show_ms", showMs)
+                                        put("clear_ms", clearMs)
+                                    },
+                                )
+                                touchStage("after_rapid_clear", theme, round, clearMs)
+                                check(showMs < 2_000 && clearMs < 2_000) { "Rapid preedit operation exceeded the 2s stall regression limit: show=$showMs clear=$clearMs" }
+                                check(main { chat.text.toString() == before }) { "Showing/clearing preedit unexpectedly committed editor text" }
                             }
                         }
+                        verifyRapidPreeditRounds()
+
+                        suspend fun verifyFloatingCandidatePointer() {
+                            val previousMode = main { candidatesMode.getValue() }
+                            try {
+                                main { candidatesMode.setValue(PopupCandidatesMode.INPUT_DEVICE) }
+                                touchStage("before_hardware_candidate", theme)
+                                instrumentation.sendKeyDownUpSync(KeyEvent.KEYCODE_N)
+                                instrumentation.sendKeyDownUpSync(KeyEvent.KEYCODE_I)
+                                fun floatingCandidates() = roots().asSequence().flatMap(::descendants).filterIsInstance<CandidatesView>().firstOrNull { it.isShown }
+                                until("$theme hardware candidates own their main-window touch region") {
+                                    service.isInputViewShown && input() == null && floatingCandidates()?.let(::regionCovers) == true
+                                }
+                                val cv = main { checkNotNull(floatingCandidates()) }
+                                val recycler = main { descendants(cv).filterIsInstance<RecyclerView>().first() }
+                                until("$theme hardware first candidate has a current native snapshot") {
+                                    val holder = recycler.findViewHolderForAdapterPosition(0) as? PagedCandidatesUi.UiHolder.Candidate
+                                    holder != null && holder.ui.root.isShown && holder.snapshot == iv.rime.run { candidateSnapshotCached }
+                                }
+                                val holder = main { recycler.findViewHolderForAdapterPosition(0) as PagedCandidatesUi.UiHolder.Candidate }
+                                var expected = ""
+                                api {
+                                    check(getRawInput() == "ni")
+                                    expected = getCandidates(0, 1, holder.snapshot).single().text
+                                }
+                                check(expected.isNotEmpty() && main { descendants(holder.ui.root).filterIsInstance<TextView>().any { it.isShown && it.text.toString().contains(expected) } })
+                                delay(150)
+                                tapActualView(holder.ui.root)
+                                until("$theme real floating candidate pointer commits its native text exactly once") { chat.text.toString() == before + expected }
+                                api { check(getRawInput().isEmpty()) }
+                                delay(400)
+                                check(main { chat.text.toString() == before + expected }) { "Floating candidate commit repeated after its snapshot changed" }
+                                main { checkNoTouchPopup() }
+                                touchStage("after_hardware_candidate", theme)
+                            } finally {
+                                // Return through Android's real editor click while its connection
+                                // is still active. setText can invalidate it and queue restartInput;
+                                // calling the service directly after that races the old monitor.
+                                main { candidatesMode.setValue(previousMode) }
+                                touchStage("before_host_virtual_return", theme)
+                                val hostTouches = mutableListOf<Pair<Int, Int>>()
+
+                                @SuppressLint("ClickableViewAccessibility")
+                                fun observeHostTouches() {
+                                    // Return false so the real EditText handles focus, click and IME
+                                    // callbacks. Record the delivered events, not just injected bytes.
+                                    chat.setOnTouchListener { _, event ->
+                                        hostTouches.add(event.actionMasked to event.getToolType(0))
+                                        false
+                                    }
+                                }
+                                main { observeHostTouches() }
+                                try {
+                                    tapActualView(chat, imeTarget = false)
+                                    until("$theme real host editor receives finger down/up") {
+                                        listOf(MotionEvent.ACTION_DOWN, MotionEvent.ACTION_UP).all { action ->
+                                            action to MotionEvent.TOOL_TYPE_FINGER in hostTouches
+                                        }
+                                    }
+                                } finally {
+                                    main { chat.setOnTouchListener(null) }
+                                }
+                                until("$theme real host editor pointer restores the virtual keyboard before resetting text") {
+                                    inputManager.isActive(chat) && input() != null && !keyboard().isT9Layout
+                                }
+                                touchStage("after_host_virtual_return", theme)
+                                val resetEditorToken = main {
+                                    val token = service.editorToken
+                                    chat.setText(before)
+                                    chat.setSelection(chat.text.length)
+                                    inputManager.showSoftInput(chat, 0)
+                                    token
+                                }
+                                until("$theme reset text belongs to the restarted host editor connection") {
+                                    service.editorToken != resetEditorToken && service.isCurrentEditor(service.editorToken) &&
+                                        service.currentInputEditorInfo?.fieldId == chat.id && inputManager.isActive(chat) &&
+                                        input() != null && !keyboard().isT9Layout
+                                }
+                            }
+                        }
+                        verifyFloatingCandidatePointer()
+
                         until("$theme virtual full-pinyin returns after real floating candidate touch") { input() != null && !keyboard().isT9Layout }
                         type("ni")
                         api { check(getRawInput() == "ni") }
@@ -2300,647 +2316,669 @@ object EditorLifecycleProbe {
                         }
                         until("$theme rebuilt T9 accessibility refreshes native labels without replacing views") { descriptionsMatch(false, rebuilt) }
                     }
-                    for (theme in listOf("trime", "tongwenfeng.trime")) {
-                        ThemeManager.selectTheme(theme)
-                        until("$theme T9 before schema switch") { input() != null && keyboard().isT9Layout }
-                        verifyT9Accessibility(theme)
-                        if (theme == "trime") {
-                            ResidentWindowColorRegression.verify(instrumentation, main { checkNotNull(input()) })
-                        }
-                        api {
-                            check(selectSchema("luna_pinyin_simp"))
-                            setRuntimeOption("ascii_mode", false)
-                        }
-                        until("$theme full pinyin replaces locked T9") { input() != null && !keyboard().isT9Layout }
-                        val touchCommittedBefore = main { chat.text.toString() }
-                        type("ni")
-                        api { check(getRawInput() == "ni") }
-                        val preeditView = main { checkNotNull(input()).di.direct.instance<PreeditDelegate>().ui.preedit }
-                        until("$theme full-pinyin preedit overlay is visible") { preeditView.isShown && regionCovers(preeditView) }
-                        verifyTouchRegion(theme, touchCommittedBefore)
-                        val imm = editor.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
-                        touchStage("before_hide", theme)
-                        main { imm.hideSoftInputFromWindow(chat.windowToken, 0) }
-                        until("$theme hiding input dismisses the preedit overlay") { !service.isInputViewShown && !regionCovers(preeditView) }
-                        touchStage("before_show", theme)
-                        main { imm.showSoftInput(chat, 0) }
-                        until("$theme showing input restores the preedit overlay") { service.isInputViewShown && regionCovers(preeditView) }
-                        api {
-                            check(getRawInput() == "ni")
-                            clearComposition()
-                        }
-                        touchStage("after_hide_show_clear", theme)
-                        main {
-                            other.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS
-                        }
-                        focus(other)
-                        focus(chat)
-                        api {
-                            check(selectedSchemaId() == "luna_pinyin_simp" && !statusCached.isAsciiMode)
-                        }
-                        check(main { !keyboard().isT9Layout }) { "$theme restored an old schema's T9 lock after email" }
-                        api {
-                            check(selectSchema("luna_pinyin_t9"))
-                            setRuntimeOption("ascii_mode", false)
-                        }
-                        until("$theme T9 returns after full pinyin") { input() != null && keyboard().isT9Layout }
-                        type("64")
-                        api { check(getRawInput() == "64") }
-                        until("$theme native Hanzi row is laid out") {
-                            input()?.di?.direct?.instance<CompactCandidateDelegate>()?.view
-                                ?.findViewHolderForAdapterPosition(0)?.itemView
-                                ?.let { it.isShown && it.isLaidOut && !it.isLayoutRequested } == true
-                        }
-                        instrumentation.waitForIdleSync()
-                        delay(150)
-                        verifyCandidateGlyphs(instrumentation, service, theme)
-                        val expandedChecks = ExpandedCandidateViewportAssertions.verify(instrumentation, main { checkNotNull(input()) }, service, chat)
-                        phase("PASS: $theme $expandedChecks actual expanded-window recreation/relayout checks preserve the global index and commit its native text exactly once")
-                        api { clearComposition() }
-                        // A narrow numeric SPACE key must show its purpose without clipping
-                        // the longer current schema name. Check both shipped themes, not
-                        // arbitrary user-defined labels or typography.
-                        for (numericType in listOf(InputType.TYPE_CLASS_PHONE, InputType.TYPE_CLASS_NUMBER)) {
+                    suspend fun verifyThemeLayoutAndCandidates() {
+                        for (theme in listOf("trime", "tongwenfeng.trime")) {
+                            ThemeManager.selectTheme(theme)
+                            until("$theme T9 before schema switch") { input() != null && keyboard().isT9Layout }
+                            verifyT9Accessibility(theme)
+                            if (theme == "trime") {
+                                ResidentWindowColorRegression.verify(instrumentation, main { checkNotNull(input()) })
+                            }
+                            api {
+                                check(selectSchema("luna_pinyin_simp"))
+                                setRuntimeOption("ascii_mode", false)
+                            }
+                            until("$theme full pinyin replaces locked T9") { input() != null && !keyboard().isT9Layout }
+                            val touchCommittedBefore = main { chat.text.toString() }
+                            type("ni")
+                            api { check(getRawInput() == "ni") }
+                            val preeditView = main { checkNotNull(input()).di.direct.instance<PreeditDelegate>().ui.preedit }
+                            until("$theme full-pinyin preedit overlay is visible") { preeditView.isShown && regionCovers(preeditView) }
+                            verifyTouchRegion(theme, touchCommittedBefore)
+                            val imm = editor.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+                            touchStage("before_hide", theme)
+                            main { imm.hideSoftInputFromWindow(chat.windowToken, 0) }
+                            until("$theme hiding input dismisses the preedit overlay") { !service.isInputViewShown && !regionCovers(preeditView) }
+                            touchStage("before_show", theme)
+                            main { imm.showSoftInput(chat, 0) }
+                            until("$theme showing input restores the preedit overlay") { service.isInputViewShown && regionCovers(preeditView) }
+                            api {
+                                check(getRawInput() == "ni")
+                                clearComposition()
+                            }
+                            touchStage("after_hide_show_clear", theme)
                             main {
-                                other.hint = "$theme numeric space"
-                                other.inputType = numericType
-                                other.imeOptions = EditorInfo.IME_ACTION_DONE
-                                other.setImeActionLabel(null, 0)
-                                other.setText("")
+                                other.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS
                             }
                             focus(other)
-                            until("$theme numeric space key is laid out") {
-                                val activeInput = input() ?: return@until false
-                                val window = activeInput.di.direct.instance<KeyboardWindow>()
-                                val selectedId = KeyboardWindow::class.java.getDeclaredField("currentKeyboardId").apply { isAccessible = true }.get(window)
-                                if (selectedId != "number" || window.currentKeyboard.isT9Layout) return@until false
-                                val keys = window.currentKeyboard.keys
-                                val space = keys.singleOrNull { it.code == KeyEvent.KEYCODE_SPACE } ?: return@until false
-                                descendants(activeInput).filterIsInstance<KeyView>()
-                                    .singleOrNull { it.id == keys.indexOf(space) }
-                                    ?.let { it.isShown && it.width > 0 && it.height > 0 } == true
-                            }
-                            main {
-                                val keys = keyboard().keys
-                                val space = keys.single { it.code == KeyEvent.KEYCODE_SPACE }
-                                check(space.getCode(KeyBehavior.CLICK) == KeyEvent.KEYCODE_SPACE) { "$theme space lost its action" }
-                                val view = descendants(checkNotNull(input())).filterIsInstance<KeyView>()
-                                    .single { it.id == keys.indexOf(space) }
-                                val visible = Rect()
-                                check(view.getLocalVisibleRect(visible) && visible == Rect(0, 0, view.width, view.height)) {
-                                    "$theme numeric space key is clipped: $visible"
-                                }
-                                val bitmap = Bitmap.createBitmap(view.width, view.height, Bitmap.Config.ARGB_8888)
-                                try {
-                                    // Render the actual KeyView before reading its final text paint;
-                                    // nominal theme size alone would miss drawing-time fitting.
-                                    view.draw(Canvas(bitmap))
-                                    val paint = KeyView::class.java.getDeclaredField("textPaint").apply { isAccessible = true }.get(view) as Paint
-                                    check(paint.textAlign == Paint.Align.CENTER) { "Numeric space bounds require the actual centered text paint" }
-                                    val label = space.getLabel()
-                                    val glyphs = Rect()
-                                    paint.getTextBounds(label, 0, label.length, glyphs)
-                                    val centerX = (view.width - view.paddingLeft - view.paddingRight) / 2f + view.paddingLeft + view.sp(space.keyTextOffsetX)
-                                    val left = centerX - paint.measureText(label) / 2f + glyphs.left
-                                    val right = centerX - paint.measureText(label) / 2f + glyphs.right
-                                    check(!glyphs.isEmpty && left >= view.paddingLeft && right <= view.width - view.paddingRight) {
-                                        "$theme numeric space label '$label' is horizontally clipped: $left..$right in ${view.paddingLeft}..${view.width - view.paddingRight}"
-                                    }
-                                    val metrics = paint.fontMetrics
-                                    val baseline = (view.height - view.paddingTop - view.paddingBottom) / 2f + view.paddingTop -
-                                        (metrics.ascent + metrics.descent) / 2f + view.sp(space.keyTextOffsetY)
-                                    check(baseline + glyphs.top >= view.paddingTop && baseline + glyphs.bottom <= view.height - view.paddingBottom) {
-                                        "$theme numeric space label '$label' is vertically clipped"
-                                    }
-                                    check(label == "空格") { "$theme numeric space must identify the space action" }
-                                } finally {
-                                    bitmap.recycle()
-                                }
-                            }
-                            phase("PASS: $theme numeric space action and rendered label fit its visible key")
                             focus(chat)
-                            until("$theme T9 returns after numeric space check") { input() != null && keyboard().isT9Layout }
+                            api {
+                                check(selectedSchemaId() == "luna_pinyin_simp" && !statusCached.isAsciiMode)
+                            }
+                            check(main { !keyboard().isT9Layout }) { "$theme restored an old schema's T9 lock after email" }
+                            api {
+                                check(selectSchema("luna_pinyin_t9"))
+                                setRuntimeOption("ascii_mode", false)
+                            }
+                            until("$theme T9 returns after full pinyin") { input() != null && keyboard().isT9Layout }
+                            type("64")
+                            api { check(getRawInput() == "64") }
+                            until("$theme native Hanzi row is laid out") {
+                                input()?.di?.direct?.instance<CompactCandidateDelegate>()?.view
+                                    ?.findViewHolderForAdapterPosition(0)?.itemView
+                                    ?.let { it.isShown && it.isLaidOut && !it.isLayoutRequested } == true
+                            }
+                            instrumentation.waitForIdleSync()
+                            delay(150)
+                            verifyCandidateGlyphs(instrumentation, service, theme)
+                            val expandedChecks = ExpandedCandidateViewportAssertions.verify(instrumentation, main { checkNotNull(input()) }, service, chat)
+                            phase("PASS: $theme $expandedChecks actual expanded-window recreation/relayout checks preserve the global index and commit its native text exactly once")
+                            api { clearComposition() }
+                            // A narrow numeric SPACE key must show its purpose without clipping
+                            // the longer current schema name. Check both shipped themes, not
+                            // arbitrary user-defined labels or typography.
+                            for (numericType in listOf(InputType.TYPE_CLASS_PHONE, InputType.TYPE_CLASS_NUMBER)) {
+                                main {
+                                    other.hint = "$theme numeric space"
+                                    other.inputType = numericType
+                                    other.imeOptions = EditorInfo.IME_ACTION_DONE
+                                    other.setImeActionLabel(null, 0)
+                                    other.setText("")
+                                }
+                                focus(other)
+                                until("$theme numeric space key is laid out") {
+                                    val activeInput = input() ?: return@until false
+                                    val window = activeInput.di.direct.instance<KeyboardWindow>()
+                                    val selectedId = KeyboardWindow::class.java.getDeclaredField("currentKeyboardId").apply { isAccessible = true }.get(window)
+                                    if (selectedId != "number" || window.currentKeyboard.isT9Layout) return@until false
+                                    val keys = window.currentKeyboard.keys
+                                    val space = keys.singleOrNull { it.code == KeyEvent.KEYCODE_SPACE } ?: return@until false
+                                    descendants(activeInput).filterIsInstance<KeyView>()
+                                        .singleOrNull { it.id == keys.indexOf(space) }
+                                        ?.let { it.isShown && it.width > 0 && it.height > 0 } == true
+                                }
+                                main {
+                                    val keys = keyboard().keys
+                                    val space = keys.single { it.code == KeyEvent.KEYCODE_SPACE }
+                                    check(space.getCode(KeyBehavior.CLICK) == KeyEvent.KEYCODE_SPACE) { "$theme space lost its action" }
+                                    val view = descendants(checkNotNull(input())).filterIsInstance<KeyView>()
+                                        .single { it.id == keys.indexOf(space) }
+                                    val visible = Rect()
+                                    check(view.getLocalVisibleRect(visible) && visible == Rect(0, 0, view.width, view.height)) {
+                                        "$theme numeric space key is clipped: $visible"
+                                    }
+                                    val bitmap = Bitmap.createBitmap(view.width, view.height, Bitmap.Config.ARGB_8888)
+                                    try {
+                                        // Render the actual KeyView before reading its final text paint;
+                                        // nominal theme size alone would miss drawing-time fitting.
+                                        view.draw(Canvas(bitmap))
+                                        val paint = KeyView::class.java.getDeclaredField("textPaint").apply { isAccessible = true }.get(view) as Paint
+                                        check(paint.textAlign == Paint.Align.CENTER) { "Numeric space bounds require the actual centered text paint" }
+                                        val label = space.getLabel()
+                                        val glyphs = Rect()
+                                        paint.getTextBounds(label, 0, label.length, glyphs)
+                                        val centerX = (view.width - view.paddingLeft - view.paddingRight) / 2f + view.paddingLeft + view.sp(space.keyTextOffsetX)
+                                        val left = centerX - paint.measureText(label) / 2f + glyphs.left
+                                        val right = centerX - paint.measureText(label) / 2f + glyphs.right
+                                        check(!glyphs.isEmpty && left >= view.paddingLeft && right <= view.width - view.paddingRight) {
+                                            "$theme numeric space label '$label' is horizontally clipped: $left..$right in ${view.paddingLeft}..${view.width - view.paddingRight}"
+                                        }
+                                        val metrics = paint.fontMetrics
+                                        val baseline = (view.height - view.paddingTop - view.paddingBottom) / 2f + view.paddingTop -
+                                            (metrics.ascent + metrics.descent) / 2f + view.sp(space.keyTextOffsetY)
+                                        check(baseline + glyphs.top >= view.paddingTop && baseline + glyphs.bottom <= view.height - view.paddingBottom) {
+                                            "$theme numeric space label '$label' is vertically clipped"
+                                        }
+                                        check(label == "空格") { "$theme numeric space must identify the space action" }
+                                    } finally {
+                                        bitmap.recycle()
+                                    }
+                                }
+                                phase("PASS: $theme numeric space action and rendered label fit its visible key")
+                                focus(chat)
+                                until("$theme T9 returns after numeric space check") { input() != null && keyboard().isT9Layout }
+                            }
                         }
+                        ThemeManager.selectTheme(originalTheme)
+                        until("original theme retains selected T9") { input() != null && keyboard().isT9Layout }
                     }
-                    ThemeManager.selectTheme(originalTheme)
-                    until("original theme retains selected T9") { input() != null && keyboard().isT9Layout }
-                    val cases = listOf(
-                        Triple("email", InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS, EditorInfo.IME_ACTION_NEXT),
-                        Triple("web-email", InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_WEB_EMAIL_ADDRESS, EditorInfo.IME_ACTION_NEXT),
-                        Triple("password", InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD, EditorInfo.IME_ACTION_DONE),
-                        Triple("web-password", InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_WEB_PASSWORD, EditorInfo.IME_ACTION_DONE),
-                        Triple("visible-password", InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD, EditorInfo.IME_ACTION_DONE),
-                        Triple("address", InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_URI, EditorInfo.IME_ACTION_GO),
-                        Triple("phone", InputType.TYPE_CLASS_PHONE, EditorInfo.IME_ACTION_DONE),
-                        Triple("integer", InputType.TYPE_CLASS_NUMBER, EditorInfo.IME_ACTION_DONE),
-                        Triple("numeric-password", InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_VARIATION_PASSWORD, EditorInfo.IME_ACTION_DONE),
-                        Triple("decimal", InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL or InputType.TYPE_NUMBER_FLAG_SIGNED, EditorInfo.IME_ACTION_DONE),
-                        Triple("search", InputType.TYPE_CLASS_TEXT, EditorInfo.IME_ACTION_SEARCH),
-                        Triple("multiline", InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_MULTI_LINE, EditorInfo.IME_ACTION_NONE or EditorInfo.IME_FLAG_NO_ENTER_ACTION),
-                    )
-                    for ((name, inputType, options) in cases) {
+                    verifyThemeLayoutAndCandidates()
+
+                    suspend fun verifyEditorInputTypes() {
+                        val cases = listOf(
+                            Triple("email", InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS, EditorInfo.IME_ACTION_NEXT),
+                            Triple("web-email", InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_WEB_EMAIL_ADDRESS, EditorInfo.IME_ACTION_NEXT),
+                            Triple("password", InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD, EditorInfo.IME_ACTION_DONE),
+                            Triple("web-password", InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_WEB_PASSWORD, EditorInfo.IME_ACTION_DONE),
+                            Triple("visible-password", InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD, EditorInfo.IME_ACTION_DONE),
+                            Triple("address", InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_URI, EditorInfo.IME_ACTION_GO),
+                            Triple("phone", InputType.TYPE_CLASS_PHONE, EditorInfo.IME_ACTION_DONE),
+                            Triple("integer", InputType.TYPE_CLASS_NUMBER, EditorInfo.IME_ACTION_DONE),
+                            Triple("numeric-password", InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_VARIATION_PASSWORD, EditorInfo.IME_ACTION_DONE),
+                            Triple("decimal", InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL or InputType.TYPE_NUMBER_FLAG_SIGNED, EditorInfo.IME_ACTION_DONE),
+                            Triple("search", InputType.TYPE_CLASS_TEXT, EditorInfo.IME_ACTION_SEARCH),
+                            Triple("multiline", InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_MULTI_LINE, EditorInfo.IME_ACTION_NONE or EditorInfo.IME_FLAG_NO_ENTER_ACTION),
+                        )
+                        for ((name, inputType, options) in cases) {
+                            main {
+                                other.hint = name
+                                other.inputType = inputType
+                                other.imeOptions = options
+                                other.setText("")
+                                actions.clear()
+                            }
+                            focus(other)
+                            val expectedPrivate = "password" in name
+                            check(service.isPrivacyModeActive == expectedPrivate) { "$name privacy state mismatch" }
+                            check(PrivacyModeState.active == expectedPrivate) { "$name process privacy state mismatch" }
+                            check(speechAllowed() != expectedPrivate) { "$name speech privacy state mismatch" }
+                            api {
+                                check(Rime.isRimePrivacyGuardEnabledForTesting() == expectedPrivate) {
+                                    "$name native privacy state mismatch"
+                                }
+                            }
+                            val restricted = name !in setOf("search", "multiline")
+                            api { check(statusCached.isAsciiMode == restricted) { "$name ASCII state mismatch" } }
+                            check(main { keyboard().isT9Layout } != restricted) { "$name layout mismatch" }
+                            if (restricted) {
+                                type(if (name == "decimal") "12.3" else "12")
+                                api { }
+                                until("$name direct text") { other.text.toString() == if (name == "decimal") "12.3" else "12" }
+                            }
+                            val label = main { checkNotNull(input()).di.direct.instance<EnterKeyDisplayDelegate>().keyLabel }
+                            check(label.isNotEmpty() && label != "null")
+                            enter()
+                            api { }
+                            if (name != "multiline") {
+                                until("$name editor action matches label '$label'") { actions.lastOrNull() == options and EditorInfo.IME_MASK_ACTION }
+                            } else {
+                                until("multiline gets newline") { other.text.toString().endsWith('\n') }
+                            }
+                            focus(chat)
+                            api {
+                                check(!statusCached.isAsciiMode)
+                                check(selectedSchemaId() == "luna_pinyin_t9")
+                            }
+                            check(main { keyboard().isT9Layout }) { "$name did not restore T9" }
+                        }
                         main {
-                            other.hint = name
-                            other.inputType = inputType
-                            other.imeOptions = options
-                            other.setText("")
+                            other.hint = "no-personalized-learning"
+                            other.inputType = InputType.TYPE_CLASS_TEXT
+                            other.imeOptions = EditorInfo.IME_ACTION_DONE or EditorPolicy.NO_PERSONALIZED_LEARNING_FLAG
+                        }
+                        focus(other)
+                        check(service.isPrivacyModeActive && PrivacyModeState.active)
+                        check(!speechAllowed())
+                        check(main { keyboard().isT9Layout }) { "No-learning flag must not force an unrelated keyboard layout" }
+                        api { check(Rime.isRimePrivacyGuardEnabledForTesting()) }
+                        focus(chat)
+                        check(!service.isPrivacyModeActive && !PrivacyModeState.active)
+                        api { check(!Rime.isRimePrivacyGuardEnabledForTesting()) }
+                        phase("PASS: no-personalized-learning flag controls privacy without replacing T9")
+                    }
+                    verifyEditorInputTypes()
+
+                    suspend fun verifyPrivacyAndEditorActions() {
+                        verifyTransientKeyboardAcrossPrivacyChange(instrumentation, service)
+
+                        main { manualPrivacyMode.setValue(true) }
+                        until("manual privacy reaches the active editor") {
+                            service.isPrivacyModeActive && PrivacyModeState.active && !speechAllowed()
+                        }
+                        api { check(Rime.isRimePrivacyGuardEnabledForTesting()) }
+                        val privateUndoSuffix = "x"
+                        val privateUndoPrefix = "virtual-password-"
+                        val slideDelete = main {
+                            descendants(checkNotNull(input()))
+                                .filterIsInstance<KeyView>()
+                                .first { it.isSlideDelete }
+                        }
+                        val deletedTextBuffer = KeyView::class.java
+                            .getDeclaredField("deletedTextBuffer")
+                            .apply { isAccessible = true }
+                        api { clearComposition() }
+                        main {
+                            check(chat.text.isEmpty()) { "Private slide-delete fixture requires an empty editor" }
+                            check(checkNotNull(service.currentInputConnection).commitText(privateUndoPrefix + privateUndoSuffix, 1))
+                        }
+                        until("private slide-delete fixture reaches the active connection") {
+                            chat.text.toString() == privateUndoPrefix + privateUndoSuffix
+                        }
+                        main { checkNotNull(slideDelete.onSlide).invoke(-1, 0f, 0f) }
+                        until("private slide-delete stages the virtual suffix") {
+                            chat.text.toString() == privateUndoPrefix
+                        }
+                        main {
+                            @Suppress("UNCHECKED_CAST")
+                            val buffered = deletedTextBuffer.get(slideDelete) as Collection<String>
+                            check(buffered.toList() == listOf(privateUndoSuffix)) {
+                                "Private slide-delete buffer did not retain only the virtual suffix"
+                            }
+                        }
+                        main { manualPrivacyMode.setValue(false) }
+                        until("manual privacy restores the active editor") {
+                            !service.isPrivacyModeActive && !PrivacyModeState.active && speechAllowed()
+                        }
+                        api { check(!Rime.isRimePrivacyGuardEnabledForTesting()) }
+                        main {
+                            @Suppress("UNCHECKED_CAST")
+                            val buffered = deletedTextBuffer.get(slideDelete) as Collection<String>
+                            check(buffered.isEmpty()) { "Private slide-delete buffer survived the privacy boundary" }
+                            checkNotNull(slideDelete.onSlide).invoke(1, 0f, 0f)
+                        }
+                        instrumentation.waitForIdleSync()
+                        delay(250)
+                        main {
+                            check(chat.text.toString() == privateUndoPrefix) {
+                                "Private slide-delete undo survived the privacy boundary"
+                            }
+                            check(checkNotNull(service.currentInputConnection).deleteSurroundingText(privateUndoPrefix.length, 0))
+                        }
+                        until("private slide-delete fixture is cleared") { chat.text.isEmpty() }
+                        phase("PASS: manual privacy atomically gates speech and native learning, then restores normal input")
+                        PrivacyTriggerSinkProbe.verify(
+                            instrumentation,
+                            PrivacyTriggerSinkProbe.Harness(
+                                service = service,
+                                chat = chat,
+                                target = other,
+                                focus = ::focus,
+                                runApi = ::api,
+                                inputTextContains = { token ->
+                                    input()?.let { activeInput ->
+                                        descendants(activeInput)
+                                            .filterIsInstance<TextView>()
+                                            .any { it.text.toString().contains(token) }
+                                    } == true
+                                },
+                                speechAllowed = ::speechAllowed,
+                                phase = ::phase,
+                            ),
+                        )
+                        main {
+                            other.inputType = InputType.TYPE_CLASS_TEXT
+                            other.imeOptions = EditorInfo.IME_ACTION_SEARCH
+                            other.setImeActionLabel("Continue", 731)
                             actions.clear()
                         }
                         focus(other)
-                        val expectedPrivate = "password" in name
-                        check(service.isPrivacyModeActive == expectedPrivate) { "$name privacy state mismatch" }
-                        check(PrivacyModeState.active == expectedPrivate) { "$name process privacy state mismatch" }
-                        check(speechAllowed() != expectedPrivate) { "$name speech privacy state mismatch" }
-                        api {
-                            check(Rime.isRimePrivacyGuardEnabledForTesting() == expectedPrivate) {
-                                "$name native privacy state mismatch"
-                            }
-                        }
-                        val restricted = name !in setOf("search", "multiline")
-                        api { check(statusCached.isAsciiMode == restricted) { "$name ASCII state mismatch" } }
-                        check(main { keyboard().isT9Layout } != restricted) { "$name layout mismatch" }
-                        if (restricted) {
-                            type(if (name == "decimal") "12.3" else "12")
-                            api { }
-                            until("$name direct text") { other.text.toString() == if (name == "decimal") "12.3" else "12" }
-                        }
-                        val label = main { checkNotNull(input()).di.direct.instance<EnterKeyDisplayDelegate>().keyLabel }
-                        check(label.isNotEmpty() && label != "null")
+                        check(main { checkNotNull(input()).di.direct.instance<EnterKeyDisplayDelegate>().keyLabel } == "Continue")
                         enter()
                         api { }
-                        if (name != "multiline") {
-                            until("$name editor action matches label '$label'") { actions.lastOrNull() == options and EditorInfo.IME_MASK_ACTION }
-                        } else {
-                            until("multiline gets newline") { other.text.toString().endsWith('\n') }
-                        }
+                        until("custom action uses ID 731") { actions.lastOrNull() == 731 }
                         focus(chat)
-                        api {
-                            check(!statusCached.isAsciiMode)
-                            check(selectedSchemaId() == "luna_pinyin_t9")
-                        }
-                        check(main { keyboard().isT9Layout }) { "$name did not restore T9" }
-                    }
-                    main {
-                        other.hint = "no-personalized-learning"
-                        other.inputType = InputType.TYPE_CLASS_TEXT
-                        other.imeOptions = EditorInfo.IME_ACTION_DONE or EditorPolicy.NO_PERSONALIZED_LEARNING_FLAG
-                    }
-                    focus(other)
-                    check(service.isPrivacyModeActive && PrivacyModeState.active)
-                    check(!speechAllowed())
-                    check(main { keyboard().isT9Layout }) { "No-learning flag must not force an unrelated keyboard layout" }
-                    api { check(Rime.isRimePrivacyGuardEnabledForTesting()) }
-                    focus(chat)
-                    check(!service.isPrivacyModeActive && !PrivacyModeState.active)
-                    api { check(!Rime.isRimePrivacyGuardEnabledForTesting()) }
-                    phase("PASS: no-personalized-learning flag controls privacy without replacing T9")
 
-                    verifyTransientKeyboardAcrossPrivacyChange(instrumentation, service)
-
-                    main { manualPrivacyMode.setValue(true) }
-                    until("manual privacy reaches the active editor") {
-                        service.isPrivacyModeActive && PrivacyModeState.active && !speechAllowed()
-                    }
-                    api { check(Rime.isRimePrivacyGuardEnabledForTesting()) }
-                    val privateUndoSuffix = "x"
-                    val privateUndoPrefix = "virtual-password-"
-                    val slideDelete = main {
-                        descendants(checkNotNull(input()))
-                            .filterIsInstance<KeyView>()
-                            .first { it.isSlideDelete }
-                    }
-                    val deletedTextBuffer = KeyView::class.java
-                        .getDeclaredField("deletedTextBuffer")
-                        .apply { isAccessible = true }
-                    api { clearComposition() }
-                    main {
-                        check(chat.text.isEmpty()) { "Private slide-delete fixture requires an empty editor" }
-                        check(checkNotNull(service.currentInputConnection).commitText(privateUndoPrefix + privateUndoSuffix, 1))
-                    }
-                    until("private slide-delete fixture reaches the active connection") {
-                        chat.text.toString() == privateUndoPrefix + privateUndoSuffix
-                    }
-                    main { checkNotNull(slideDelete.onSlide).invoke(-1, 0f, 0f) }
-                    until("private slide-delete stages the virtual suffix") {
-                        chat.text.toString() == privateUndoPrefix
-                    }
-                    main {
-                        @Suppress("UNCHECKED_CAST")
-                        val buffered = deletedTextBuffer.get(slideDelete) as Collection<String>
-                        check(buffered.toList() == listOf(privateUndoSuffix)) {
-                            "Private slide-delete buffer did not retain only the virtual suffix"
-                        }
-                    }
-                    main { manualPrivacyMode.setValue(false) }
-                    until("manual privacy restores the active editor") {
-                        !service.isPrivacyModeActive && !PrivacyModeState.active && speechAllowed()
-                    }
-                    api { check(!Rime.isRimePrivacyGuardEnabledForTesting()) }
-                    main {
-                        @Suppress("UNCHECKED_CAST")
-                        val buffered = deletedTextBuffer.get(slideDelete) as Collection<String>
-                        check(buffered.isEmpty()) { "Private slide-delete buffer survived the privacy boundary" }
-                        checkNotNull(slideDelete.onSlide).invoke(1, 0f, 0f)
-                    }
-                    instrumentation.waitForIdleSync()
-                    delay(250)
-                    main {
-                        check(chat.text.toString() == privateUndoPrefix) {
-                            "Private slide-delete undo survived the privacy boundary"
-                        }
-                        check(checkNotNull(service.currentInputConnection).deleteSurroundingText(privateUndoPrefix.length, 0))
-                    }
-                    until("private slide-delete fixture is cleared") { chat.text.isEmpty() }
-                    phase("PASS: manual privacy atomically gates speech and native learning, then restores normal input")
-                    PrivacyTriggerSinkProbe.verify(
-                        instrumentation,
-                        PrivacyTriggerSinkProbe.Harness(
-                            service = service,
-                            chat = chat,
-                            target = other,
+                        ModifiedReturnRegression.verify(
+                            instrumentation,
+                            service,
+                            editor,
+                            container,
+                            chat,
                             focus = ::focus,
                             runApi = ::api,
-                            inputTextContains = { token ->
-                                input()?.let { activeInput ->
-                                    descendants(activeInput)
-                                        .filterIsInstance<TextView>()
-                                        .any { it.text.toString().contains(token) }
-                                } == true
-                            },
-                            speechAllowed = ::speechAllowed,
-                            phase = ::phase,
-                        ),
-                    )
-                    main {
-                        other.inputType = InputType.TYPE_CLASS_TEXT
-                        other.imeOptions = EditorInfo.IME_ACTION_SEARCH
-                        other.setImeActionLabel("Continue", 731)
-                        actions.clear()
-                    }
-                    focus(other)
-                    check(main { checkNotNull(input()).di.direct.instance<EnterKeyDisplayDelegate>().keyLabel } == "Continue")
-                    enter()
-                    api { }
-                    until("custom action uses ID 731") { actions.lastOrNull() == 731 }
-                    focus(chat)
-
-                    ModifiedReturnRegression.verify(
-                        instrumentation,
-                        service,
-                        editor,
-                        container,
-                        chat,
-                        focus = ::focus,
-                        runApi = ::api,
-                        dispatch = { modifiers -> checkNotNull(input()).di.direct.instance<CommonKeyboardActionListener>().listener.onKey(KeyEvent.KEYCODE_ENTER, modifiers) },
-                    )
-
-                    api { setRuntimeOption("ascii_mode", true) }
-                    main {
-                        other.inputType = InputType.TYPE_CLASS_NUMBER
-                        other.setImeActionLabel(null, 0)
-                    }
-                    focus(other)
-                    focus(chat)
-                    api { check(statusCached.isAsciiMode) { "Temporary number mode lost the preceding native ASCII mode" } }
-                    api { setRuntimeOption("ascii_mode", false) }
-
-                    main {
-                        other.inputType = InputType.TYPE_CLASS_TEXT
-                        other.imeOptions = EditorInfo.IME_ACTION_SEARCH
-                        other.setImeActionLabel("Unusable action", 0)
-                    }
-                    focus(other)
-                    check(main { checkNotNull(input()).di.direct.instance<EnterKeyDisplayDelegate>().keyLabel } != "Unusable action")
-                    focus(chat)
-
-                    verifyHardwareEditorPolicies(instrumentation, service, editor, chat, other)
-
-                    val queueEntered = CompletableDeferred<Unit>()
-                    val queueRelease = CompletableDeferred<Unit>()
-                    var overtook = false
-                    main {
-                        service.postRimeJob {
-                            queueEntered.complete(Unit)
-                            queueRelease.await()
-                        }
-                    }
-                    queueEntered.await()
-                    val following = main { service.postRimeJob { overtook = true } }
-                    val waiting = async { following.join() }
-                    delay(150)
-                    check(!overtook) { "Joining a queued job bypassed the serial executor" }
-                    queueRelease.complete(Unit)
-                    waiting.await()
-                    check(overtook)
-                    phase("PASS: joining an engine job preserves queue order")
-
-                    // A real suspend builder must retain the editor that requested its dialog.
-                    // Reflection keeps this deterministic fault gate out of the production API.
-                    main {
-                        other.inputType = InputType.TYPE_CLASS_TEXT
-                        other.imeOptions = EditorInfo.IME_ACTION_SEARCH
-                        other.setImeActionLabel(null, 0)
-                    }
-                    val switchWindow = main { SwitchOptionWindow(checkNotNull(input()).di) }
-                    val dialogEntered = CompletableDeferred<Unit>()
-                    val dialogRelease = CompletableDeferred<Unit>()
-                    val dialogReturned = CompletableDeferred<Unit>()
-                    val delayedDialog = main { AlertDialog.Builder(service).setTitle("Editor-owned dialog audit").create() }
-                    val delayedBuilder: suspend (RimeApi) -> Dialog = {
-                        dialogEntered.complete(Unit)
-                        dialogRelease.await()
-                        dialogReturned.complete(Unit)
-                        delayedDialog
-                    }
-                    main {
-                        SwitchOptionWindow::class.java.declaredMethods.single { it.name == "showDialog" }.apply {
-                            isAccessible = true
-                        }.invoke(switchWindow, delayedBuilder)
-                    }
-                    try {
-                        withTimeout(5000) { dialogEntered.await() }
-                        main {
-                            other.setText("fresh target")
-                            other.requestFocus()
-                        }
-                        until("new editor replaces a pending switch-window dialog") { service.currentInputEditorInfo?.fieldId == other.id }
-                        dialogRelease.complete(Unit)
-                        withTimeout(5000) { dialogReturned.await() }
-                        api { }
-                        main {
-                            check(!delayedDialog.isShowing) { "Old editor dialog appeared over the new editor" }
-                            check(other.text.toString() == "fresh target") { "Old dialog changed the new editor text" }
-                        }
-                    } finally {
-                        dialogRelease.complete(Unit)
-                        main { delayedDialog.dismiss() }
-                    }
-                    focus(chat)
-
-                    val switchAdapter = main {
-                        // setAdapter invokes onAttachedToRecyclerView, which supplies the
-                        // adapter's context for its real popup-menu action below.
-                        switchWindow.onCreateView()
-                        checkNotNull(switchWindow.view.adapter) as SwitchOptionAdapter
-                    }
-                    val queuedOption = "_editor_audit_queued_option"
-                    api { setRuntimeOption(queuedOption, false) }
-                    val optionEntered = CompletableDeferred<Unit>()
-                    val optionRelease = CompletableDeferred<Unit>()
-                    main {
-                        service.postRimeJob {
-                            optionEntered.complete(Unit)
-                            optionRelease.await()
-                        }
-                    }
-                    withTimeout(5000) { optionEntered.await() }
-                    try {
-                        main {
-                            switchAdapter.onItemClick(
-                                checkNotNull(input()),
-                                SwitchOptionEntry.Custom(RimeSchema.Switch(name = queuedOption, states = listOf("Off", "On")), "Audit option", 0),
-                            )
-                        }
-                        delay(150)
-                        checkNotNull(session).runOnReady {
-                            check(!getRuntimeOption(queuedOption)) { "Switch-window option bypassed the editor queue" }
-                        }
-                        main {
-                            other.setText("")
-                            other.requestFocus()
-                        }
-                        until("editor changes with a queued switch-window option") { service.currentInputEditorInfo?.fieldId == other.id }
-                    } finally {
-                        optionRelease.complete(Unit)
-                    }
-                    api {
-                        check(!getRuntimeOption(queuedOption)) { "Old switch-window option changed the new editor" }
-                        check(getRawInput().isEmpty())
-                    }
-                    check(main { other.text.isEmpty() }) { "Queued switch-window option committed into the new editor" }
-                    focus(chat)
-
-                    // A dismissed popup's retained callback must use the menu's original token,
-                    // even when Android delivers its click after the next editor has bound.
-                    val menuOptions = listOf("_editor_audit_menu_first", "_editor_audit_menu_second")
-                    api { menuOptions.forEach { setRuntimeOption(it, false) } }
-                    val oldMenu = main {
-                        switchAdapter.onItemClick(
-                            checkNotNull(input()),
-                            SwitchOptionEntry.Custom(RimeSchema.Switch(options = menuOptions, states = listOf("First", "Second")), "Audit menu", 0),
+                            dispatch = { modifiers -> checkNotNull(input()).di.direct.instance<CommonKeyboardActionListener>().listener.onKey(KeyEvent.KEYCODE_ENTER, modifiers) },
                         )
-                        checkNotNull(switchWindow.popupMenu).menu.also { switchWindow.onDetached() }
-                    }
-                    focus(other)
-                    main { check(oldMenu.performIdentifierAction(0, 0)) { "Retained option menu callback did not execute" } }
-                    delay(150)
-                    api {
-                        check(menuOptions.none { getRuntimeOption(it) }) { "Old option popup changed the new editor" }
-                        check(getRawInput().isEmpty())
-                    }
-                    check(main { other.text.isEmpty() }) { "Old option popup committed into the new editor" }
-                    focus(chat)
-                    phase("PASS: delayed switch dialogs, queued options and stale popup callbacks remain editor-owned")
 
-                    type("64")
-                    api { check(getRawInput() == "64") }
-                    until("compact Hanzi candidate is clickable") {
-                        input()?.di?.direct?.instance<CompactCandidateDelegate>()?.view?.findViewHolderForAdapterPosition(0)?.itemView?.isShown == true
-                    }
-                    val beforeCandidate = main { chat.text.toString() }
-                    val candidateEntered = CompletableDeferred<Unit>()
-                    val candidateRelease = CompletableDeferred<Unit>()
-                    main {
-                        service.postRimeJob {
-                            candidateEntered.complete(Unit)
-                            candidateRelease.await()
-                        }
-                    }
-                    candidateEntered.await()
-                    try {
+                        api { setRuntimeOption("ascii_mode", true) }
                         main {
-                            checkNotNull(input()).di.direct.instance<CompactCandidateDelegate>().view
-                                .findViewHolderForAdapterPosition(0)!!.itemView.performClick()
-                        }
-                        delay(150)
-                        check(main { chat.text.toString() } == beforeCandidate) { "Candidate selection bypassed the serial queue" }
-                        main {
-                            other.setText("")
-                            other.requestFocus()
-                        }
-                        until("focus changes while a candidate click is queued") { service.currentInputEditorInfo?.fieldId == other.id }
-                    } finally {
-                        candidateRelease.complete(Unit)
-                    }
-                    api { check(getRawInput().isEmpty()) }
-                    check(main { other.text.isEmpty() && chat.text.toString() == beforeCandidate }) { "Queued candidate leaked across editors" }
-                    focus(chat)
-
-                    val entered = CompletableDeferred<Unit>()
-                    val release = CompletableDeferred<Unit>()
-                    main {
-                        service.postRimeJob {
-                            entered.complete(Unit)
-                            release.await()
-                            simulateKeySequence("STALE{Return}")
-                        }
-                    }
-                    entered.await()
-                    main {
-                        other.setText("")
-                        other.requestFocus()
-                    }
-                    until("focus changes while an old engine operation is suspended") { service.currentInputEditorInfo?.fieldId == other.id }
-                    release.complete(Unit)
-                    api { }
-                    check(main { other.text.isEmpty() }) { "Old editor output leaked to the new editor" }
-                    focus(chat)
-                    api { check(getRawInput().isEmpty()) }
-
-                    val heldKey = main { descendants(checkNotNull(input())).filterIsInstance<KeyView>().first() }
-                    val down = SystemClock.uptimeMillis()
-                    main {
-                        MotionEvent.obtain(down, down, MotionEvent.ACTION_DOWN, heldKey.width / 2f, heldKey.height / 2f, 0).let {
-                            it.source = InputDevice.SOURCE_TOUCHSCREEN
-                            heldKey.dispatchTouchEvent(it)
-                            it.recycle()
-                        }
-                        other.setText("")
-                    }
-                    focus(other)
-                    main {
-                        MotionEvent.obtain(down, SystemClock.uptimeMillis(), MotionEvent.ACTION_UP, heldKey.width / 2f, heldKey.height / 2f, 0).let {
-                            it.source = InputDevice.SOURCE_TOUCHSCREEN
-                            heldKey.dispatchTouchEvent(it)
-                            it.recycle()
-                        }
-                    }
-                    api { }
-                    check(main { other.text.isEmpty() }) { "Cancelled gesture clicked into the next editor" }
-                    focus(chat)
-
-                    // Rime's own include/patch resolver creates a real third-party theme without T9.
-                    val id = "editor-audit-${android.os.Process.myPid()}.trime"
-                    fixture = File(DataManager.userDataDir, "$id.yaml").also {
-                        check(it.createNewFile())
-                        it.writeText(
-                            """
-                            config_version: '1'
-                            __include: trime:/
-                            __patch:
-                              name: Editor audit without nine-key layout
-                              preset_keyboards/luna_pinyin_t9: null
-                              preset_keyboards/number: null
-                              preset_keyboards/letter: null
-                              preset_keyboards/bopomofo/ascii_keyboard: default
-                            """.trimIndent(),
-                        )
-                    }
-                    ThemeManager.selectTheme(id)
-                    check(ThemeManager.prefs.selectedTheme.getValue() == id)
-                    check("luna_pinyin_t9" !in ThemeManager.activeTheme.presetKeyboards)
-                    until("third-party theme uses compatible T9") { input() != null && keyboard().isT9Layout }
-                    val beforeRestart = main {
-                        val token = service.editorToken
-                        chat.setText("")
-                        (editor.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager).restartInput(chat)
-                        token
-                    }
-                    until("editor-owned reset has restarted the connection") { service.editorToken != beforeRestart && service.currentInputEditorInfo?.fieldId == chat.id }
-                    api { }
-                    type("64")
-                    api {
-                        check(getRawInput() == "64") { "Compatible T9 raw='${getRawInput()}', ASCII=${statusCached.isAsciiMode}, schema=${selectedSchemaId()}" }
-                        check(t9Cached.enabled)
-                        selectCandidate(0, false)
-                    }
-                    until("compatible T9 produces Hanzi") { chat.text.any { it.code > 127 } }
-                    val beforeRedeploy = main { chat.text.toString() }
-                    val inputViewBeforeRedeploy = main { checkNotNull(input()) }
-                    val tipsPreference = AppPrefs.defaultInstance().general.asciiSwitchTips
-                    val previousTipsPreference = tipsPreference.getValue()
-                    // Observe the real timer without exposing a production test API.
-                    val realRime = RimeDaemon::class.java.getDeclaredMethod("getRealRime").apply {
-                        isAccessible = true
-                    }.invoke(RimeDaemon) as Rime
-                    val tipJobField = Rime::class.java.getDeclaredField("asciiSwitchTipsJob").apply {
-                        isAccessible = true
-                    }
-                    try {
-                        main { tipsPreference.setValue(true) }
-                        var editorTip: Job? = null
-                        val previousTipOwner = main { service.editorToken }
-                        api {
-                            setRuntimeOption("ascii_mode", true)
-                            setRuntimeOption("ascii_mode", false)
-                            editorTip = checkNotNull(tipJobField.get(realRime) as Job?)
-                            check(checkNotNull(editorTip).isActive) { "No pending ASCII tip before real editor change" }
+                            other.inputType = InputType.TYPE_CLASS_NUMBER
+                            other.setImeActionLabel(null, 0)
                         }
                         focus(other)
-                        until("ASCII-tip owner changes with real focus") {
-                            service.editorToken != previousTipOwner && service.currentInputEditorInfo?.fieldId == other.id
+                        focus(chat)
+                        api { check(statusCached.isAsciiMode) { "Temporary number mode lost the preceding native ASCII mode" } }
+                        api { setRuntimeOption("ascii_mode", false) }
+
+                        main {
+                            other.inputType = InputType.TYPE_CLASS_TEXT
+                            other.imeOptions = EditorInfo.IME_ACTION_SEARCH
+                            other.setImeActionLabel("Unusable action", 0)
                         }
-                        api {
-                            check(checkNotNull(editorTip).isCancelled) { "Old editor's ASCII tip survived focus change" }
-                            check(tipJobField.get(realRime) !== editorTip) { "Next editor retained the old ASCII-tip job" }
+                        focus(other)
+                        check(main { checkNotNull(input()).di.direct.instance<EnterKeyDisplayDelegate>().keyLabel } != "Unusable action")
+                        focus(chat)
+
+                        verifyHardwareEditorPolicies(instrumentation, service, editor, chat, other)
+                    }
+                    verifyPrivacyAndEditorActions()
+
+                    suspend fun verifyQueuedEngineJoin() {
+                        val queueEntered = CompletableDeferred<Unit>()
+                        val queueRelease = CompletableDeferred<Unit>()
+                        var overtook = false
+                        main {
+                            service.postRimeJob {
+                                queueEntered.complete(Unit)
+                                queueRelease.await()
+                            }
+                        }
+                        queueEntered.await()
+                        val following = main { service.postRimeJob { overtook = true } }
+                        val waiting = async { following.join() }
+                        delay(150)
+                        check(!overtook) { "Joining a queued job bypassed the serial executor" }
+                        queueRelease.complete(Unit)
+                        waiting.await()
+                        check(overtook)
+                        phase("PASS: joining an engine job preserves queue order")
+                    }
+                    verifyQueuedEngineJoin()
+
+                    suspend fun verifyDelayedSwitchCallbacks() {
+                        // A real suspend builder must retain the editor that requested its dialog.
+                        // Reflection keeps this deterministic fault gate out of the production API.
+                        main {
+                            other.inputType = InputType.TYPE_CLASS_TEXT
+                            other.imeOptions = EditorInfo.IME_ACTION_SEARCH
+                            other.setImeActionLabel(null, 0)
+                        }
+                        val switchWindow = main { SwitchOptionWindow(checkNotNull(input()).di) }
+                        val dialogEntered = CompletableDeferred<Unit>()
+                        val dialogRelease = CompletableDeferred<Unit>()
+                        val dialogReturned = CompletableDeferred<Unit>()
+                        val delayedDialog = main { AlertDialog.Builder(service).setTitle("Editor-owned dialog audit").create() }
+                        val delayedBuilder: suspend (RimeApi) -> Dialog = {
+                            dialogEntered.complete(Unit)
+                            dialogRelease.await()
+                            dialogReturned.complete(Unit)
+                            delayedDialog
+                        }
+                        main {
+                            SwitchOptionWindow::class.java.declaredMethods.single { it.name == "showDialog" }.apply {
+                                isAccessible = true
+                            }.invoke(switchWindow, delayedBuilder)
+                        }
+                        try {
+                            withTimeout(5000) { dialogEntered.await() }
+                            main {
+                                other.setText("fresh target")
+                                other.requestFocus()
+                            }
+                            until("new editor replaces a pending switch-window dialog") { service.currentInputEditorInfo?.fieldId == other.id }
+                            dialogRelease.complete(Unit)
+                            withTimeout(5000) { dialogReturned.await() }
+                            api { }
+                            main {
+                                check(!delayedDialog.isShowing) { "Old editor dialog appeared over the new editor" }
+                                check(other.text.toString() == "fresh target") { "Old dialog changed the new editor text" }
+                            }
+                        } finally {
+                            dialogRelease.complete(Unit)
+                            main { delayedDialog.dismiss() }
                         }
                         focus(chat)
-                        phase("PASS: real editor focus change cancels the previous editor's ASCII tip")
-                        api {
-                            setRuntimeOption("ascii_mode", true)
-                            setRuntimeOption("ascii_mode", false)
-                            val previousTip = checkNotNull(tipJobField.get(realRime) as Job?)
-                            check(previousTip.isActive) { "No pending ASCII tip before redeploy" }
-                            updateConfig()
-                            check(previousTip.isCancelled) { "Old native context's ASCII tip survived redeploy" }
-                            val currentTip = checkNotNull(tipJobField.get(realRime) as Job?)
-                            check(currentTip !== previousTip) { "Redeploy reused the old ASCII-tip timer" }
-                            withTimeout(5000) { currentTip.join() }
-                            check(currentTip.isCompleted && !currentTip.isCancelled) { "New engine's ASCII tip did not clear normally" }
-                            // startRime() publishes a fresh tip for the active editor's empty
-                            // composition. Assert the complete transient-state boundary after that new
-                            // timer restores the native engine's empty composition.
-                            checkTransientEditorStateCleared("successful native restart after ASCII tip")
-                        }
-                        phase("PASS: redeploy cancels the old ASCII tip and the new engine clears its own tip")
-                    } finally {
-                        main { tipsPreference.setValue(previousTipsPreference) }
-                    }
-                    until("deployment reloads the active theme and preserves compatible T9") {
-                        input()?.let { it !== inputViewBeforeRedeploy && keyboard().isT9Layout } == true
-                    }
-                    api {
-                        check(!statusCached.isAsciiMode) { "Theme reload lost the active editor's Chinese mode" }
-                    }
-                    type("64")
-                    api {
-                        check(getRawInput() == "64")
-                        selectCandidate(0, false)
-                    }
-                    until("in-place redeploy retains editor ownership") { chat.text.length > beforeRedeploy.length }
-                    main {
-                        other.inputType = InputType.TYPE_CLASS_NUMBER
-                        other.setImeActionLabel(null, 0)
-                    }
-                    focus(other)
-                    // currentInputEditorInfo is published by onStartInput before the separate
-                    // onStartInputView callback applies KeyboardWindow's editor policy. The
-                    // visible layout change is the main-thread completion boundary for that
-                    // callback; the following queued API read then observes its mode update.
-                    until("redeployed number editor applies its ASCII layout") {
-                        input() != null && !keyboard().isT9Layout
-                    }
-                    api { check(statusCached.isAsciiMode) { "Number editor did not enter ASCII mode" } }
 
-                    verifyQueuedModeRestoreAcrossThemeReload(instrumentation, service, inputManager, chat, id)
-                    verifyQueuedModeRestoreAcrossPrivacyChange(
-                        instrumentation,
-                        service,
-                        inputManager,
-                        other,
-                        chat,
-                    )
+                        val switchAdapter = main {
+                            // setAdapter invokes onAttachedToRecyclerView, which supplies the
+                            // adapter's context for its real popup-menu action below.
+                            switchWindow.onCreateView()
+                            checkNotNull(switchWindow.view.adapter) as SwitchOptionAdapter
+                        }
+                        val queuedOption = "_editor_audit_queued_option"
+                        api { setRuntimeOption(queuedOption, false) }
+                        val optionEntered = CompletableDeferred<Unit>()
+                        val optionRelease = CompletableDeferred<Unit>()
+                        main {
+                            service.postRimeJob {
+                                optionEntered.complete(Unit)
+                                optionRelease.await()
+                            }
+                        }
+                        withTimeout(5000) { optionEntered.await() }
+                        try {
+                            main {
+                                switchAdapter.onItemClick(
+                                    checkNotNull(input()),
+                                    SwitchOptionEntry.Custom(RimeSchema.Switch(name = queuedOption, states = listOf("Off", "On")), "Audit option", 0),
+                                )
+                            }
+                            delay(150)
+                            checkNotNull(session).runOnReady {
+                                check(!getRuntimeOption(queuedOption)) { "Switch-window option bypassed the editor queue" }
+                            }
+                            main {
+                                other.setText("")
+                                other.requestFocus()
+                            }
+                            until("editor changes with a queued switch-window option") { service.currentInputEditorInfo?.fieldId == other.id }
+                        } finally {
+                            optionRelease.complete(Unit)
+                        }
+                        api {
+                            check(!getRuntimeOption(queuedOption)) { "Old switch-window option changed the new editor" }
+                            check(getRawInput().isEmpty())
+                        }
+                        check(main { other.text.isEmpty() }) { "Queued switch-window option committed into the new editor" }
+                        focus(chat)
+
+                        // A dismissed popup's retained callback must use the menu's original token,
+                        // even when Android delivers its click after the next editor has bound.
+                        val menuOptions = listOf("_editor_audit_menu_first", "_editor_audit_menu_second")
+                        api { menuOptions.forEach { setRuntimeOption(it, false) } }
+                        val oldMenu = main {
+                            switchAdapter.onItemClick(
+                                checkNotNull(input()),
+                                SwitchOptionEntry.Custom(RimeSchema.Switch(options = menuOptions, states = listOf("First", "Second")), "Audit menu", 0),
+                            )
+                            checkNotNull(switchWindow.popupMenu).menu.also { switchWindow.onDetached() }
+                        }
+                        focus(other)
+                        main { check(oldMenu.performIdentifierAction(0, 0)) { "Retained option menu callback did not execute" } }
+                        delay(150)
+                        api {
+                            check(menuOptions.none { getRuntimeOption(it) }) { "Old option popup changed the new editor" }
+                            check(getRawInput().isEmpty())
+                        }
+                        check(main { other.text.isEmpty() }) { "Old option popup committed into the new editor" }
+                        focus(chat)
+                        phase("PASS: delayed switch dialogs, queued options and stale popup callbacks remain editor-owned")
+                    }
+                    verifyDelayedSwitchCallbacks()
+
+                    suspend fun verifyStaleEditorInputs() {
+                        type("64")
+                        api { check(getRawInput() == "64") }
+                        until("compact Hanzi candidate is clickable") {
+                            input()?.di?.direct?.instance<CompactCandidateDelegate>()?.view?.findViewHolderForAdapterPosition(0)?.itemView?.isShown == true
+                        }
+                        val beforeCandidate = main { chat.text.toString() }
+                        val candidateEntered = CompletableDeferred<Unit>()
+                        val candidateRelease = CompletableDeferred<Unit>()
+                        main {
+                            service.postRimeJob {
+                                candidateEntered.complete(Unit)
+                                candidateRelease.await()
+                            }
+                        }
+                        candidateEntered.await()
+                        try {
+                            main {
+                                checkNotNull(input()).di.direct.instance<CompactCandidateDelegate>().view
+                                    .findViewHolderForAdapterPosition(0)!!.itemView.performClick()
+                            }
+                            delay(150)
+                            check(main { chat.text.toString() } == beforeCandidate) { "Candidate selection bypassed the serial queue" }
+                            main {
+                                other.setText("")
+                                other.requestFocus()
+                            }
+                            until("focus changes while a candidate click is queued") { service.currentInputEditorInfo?.fieldId == other.id }
+                        } finally {
+                            candidateRelease.complete(Unit)
+                        }
+                        api { check(getRawInput().isEmpty()) }
+                        check(main { other.text.isEmpty() && chat.text.toString() == beforeCandidate }) { "Queued candidate leaked across editors" }
+                        focus(chat)
+
+                        val entered = CompletableDeferred<Unit>()
+                        val release = CompletableDeferred<Unit>()
+                        main {
+                            service.postRimeJob {
+                                entered.complete(Unit)
+                                release.await()
+                                simulateKeySequence("STALE{Return}")
+                            }
+                        }
+                        entered.await()
+                        main {
+                            other.setText("")
+                            other.requestFocus()
+                        }
+                        until("focus changes while an old engine operation is suspended") { service.currentInputEditorInfo?.fieldId == other.id }
+                        release.complete(Unit)
+                        api { }
+                        check(main { other.text.isEmpty() }) { "Old editor output leaked to the new editor" }
+                        focus(chat)
+                        api { check(getRawInput().isEmpty()) }
+
+                        val heldKey = main { descendants(checkNotNull(input())).filterIsInstance<KeyView>().first() }
+                        val down = SystemClock.uptimeMillis()
+                        main {
+                            MotionEvent.obtain(down, down, MotionEvent.ACTION_DOWN, heldKey.width / 2f, heldKey.height / 2f, 0).let {
+                                it.source = InputDevice.SOURCE_TOUCHSCREEN
+                                heldKey.dispatchTouchEvent(it)
+                                it.recycle()
+                            }
+                            other.setText("")
+                        }
+                        focus(other)
+                        main {
+                            MotionEvent.obtain(down, SystemClock.uptimeMillis(), MotionEvent.ACTION_UP, heldKey.width / 2f, heldKey.height / 2f, 0).let {
+                                it.source = InputDevice.SOURCE_TOUCHSCREEN
+                                heldKey.dispatchTouchEvent(it)
+                                it.recycle()
+                            }
+                        }
+                        api { }
+                        check(main { other.text.isEmpty() }) { "Cancelled gesture clicked into the next editor" }
+                        focus(chat)
+                    }
+                    verifyStaleEditorInputs()
+
+                    suspend fun verifyThemeFallbackAndTipOwnership() {
+                        // Rime's own include/patch resolver creates a real third-party theme without T9.
+                        val id = "editor-audit-${android.os.Process.myPid()}.trime"
+                        fixture = File(DataManager.userDataDir, "$id.yaml").also {
+                            check(it.createNewFile())
+                            it.writeText(
+                                """
+                                config_version: '1'
+                                __include: trime:/
+                                __patch:
+                                  name: Editor audit without nine-key layout
+                                  preset_keyboards/luna_pinyin_t9: null
+                                  preset_keyboards/number: null
+                                  preset_keyboards/letter: null
+                                  preset_keyboards/bopomofo/ascii_keyboard: default
+                                """.trimIndent(),
+                            )
+                        }
+                        ThemeManager.selectTheme(id)
+                        check(ThemeManager.prefs.selectedTheme.getValue() == id)
+                        check("luna_pinyin_t9" !in ThemeManager.activeTheme.presetKeyboards)
+                        until("third-party theme uses compatible T9") { input() != null && keyboard().isT9Layout }
+                        val beforeRestart = main {
+                            val token = service.editorToken
+                            chat.setText("")
+                            (editor.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager).restartInput(chat)
+                            token
+                        }
+                        until("editor-owned reset has restarted the connection") { service.editorToken != beforeRestart && service.currentInputEditorInfo?.fieldId == chat.id }
+                        api { }
+                        type("64")
+                        api {
+                            check(getRawInput() == "64") { "Compatible T9 raw='${getRawInput()}', ASCII=${statusCached.isAsciiMode}, schema=${selectedSchemaId()}" }
+                            check(t9Cached.enabled)
+                            selectCandidate(0, false)
+                        }
+                        until("compatible T9 produces Hanzi") { chat.text.any { it.code > 127 } }
+                        val beforeRedeploy = main { chat.text.toString() }
+                        val inputViewBeforeRedeploy = main { checkNotNull(input()) }
+                        val tipsPreference = AppPrefs.defaultInstance().general.asciiSwitchTips
+                        val previousTipsPreference = tipsPreference.getValue()
+                        // Observe the real timer without exposing a production test API.
+                        val realRime = RimeDaemon::class.java.getDeclaredMethod("getRealRime").apply {
+                            isAccessible = true
+                        }.invoke(RimeDaemon) as Rime
+                        val tipJobField = Rime::class.java.getDeclaredField("asciiSwitchTipsJob").apply {
+                            isAccessible = true
+                        }
+                        try {
+                            main { tipsPreference.setValue(true) }
+                            var editorTip: Job? = null
+                            val previousTipOwner = main { service.editorToken }
+                            api {
+                                setRuntimeOption("ascii_mode", true)
+                                setRuntimeOption("ascii_mode", false)
+                                editorTip = checkNotNull(tipJobField.get(realRime) as Job?)
+                                check(checkNotNull(editorTip).isActive) { "No pending ASCII tip before real editor change" }
+                            }
+                            focus(other)
+                            until("ASCII-tip owner changes with real focus") {
+                                service.editorToken != previousTipOwner && service.currentInputEditorInfo?.fieldId == other.id
+                            }
+                            api {
+                                check(checkNotNull(editorTip).isCancelled) { "Old editor's ASCII tip survived focus change" }
+                                check(tipJobField.get(realRime) !== editorTip) { "Next editor retained the old ASCII-tip job" }
+                            }
+                            focus(chat)
+                            phase("PASS: real editor focus change cancels the previous editor's ASCII tip")
+                            api {
+                                setRuntimeOption("ascii_mode", true)
+                                setRuntimeOption("ascii_mode", false)
+                                val previousTip = checkNotNull(tipJobField.get(realRime) as Job?)
+                                check(previousTip.isActive) { "No pending ASCII tip before redeploy" }
+                                updateConfig()
+                                check(previousTip.isCancelled) { "Old native context's ASCII tip survived redeploy" }
+                                val currentTip = checkNotNull(tipJobField.get(realRime) as Job?)
+                                check(currentTip !== previousTip) { "Redeploy reused the old ASCII-tip timer" }
+                                withTimeout(5000) { currentTip.join() }
+                                check(currentTip.isCompleted && !currentTip.isCancelled) { "New engine's ASCII tip did not clear normally" }
+                                // startRime() publishes a fresh tip for the active editor's empty
+                                // composition. Assert the complete transient-state boundary after that new
+                                // timer restores the native engine's empty composition.
+                                checkTransientEditorStateCleared("successful native restart after ASCII tip")
+                            }
+                            phase("PASS: redeploy cancels the old ASCII tip and the new engine clears its own tip")
+                        } finally {
+                            main { tipsPreference.setValue(previousTipsPreference) }
+                        }
+                        until("deployment reloads the active theme and preserves compatible T9") {
+                            input()?.let { it !== inputViewBeforeRedeploy && keyboard().isT9Layout } == true
+                        }
+                        api {
+                            check(!statusCached.isAsciiMode) { "Theme reload lost the active editor's Chinese mode" }
+                        }
+                        type("64")
+                        api {
+                            check(getRawInput() == "64")
+                            selectCandidate(0, false)
+                        }
+                        until("in-place redeploy retains editor ownership") { chat.text.length > beforeRedeploy.length }
+                        main {
+                            other.inputType = InputType.TYPE_CLASS_NUMBER
+                            other.setImeActionLabel(null, 0)
+                        }
+                        focus(other)
+                        // currentInputEditorInfo is published by onStartInput before the separate
+                        // onStartInputView callback applies KeyboardWindow's editor policy. The
+                        // visible layout change is the main-thread completion boundary for that
+                        // callback; the following queued API read then observes its mode update.
+                        until("redeployed number editor applies its ASCII layout") {
+                            input() != null && !keyboard().isT9Layout
+                        }
+                        api { check(statusCached.isAsciiMode) { "Number editor did not enter ASCII mode" } }
+
+                        verifyQueuedModeRestoreAcrossThemeReload(instrumentation, service, inputManager, chat, id)
+                        verifyQueuedModeRestoreAcrossPrivacyChange(
+                            instrumentation,
+                            service,
+                            inputManager,
+                            other,
+                            chat,
+                        )
+                    }
+                    verifyThemeFallbackAndTipOwnership()
 
                     suspend fun verifyWebEditor() {
                         val webReady = CompletableDeferred<Unit>()

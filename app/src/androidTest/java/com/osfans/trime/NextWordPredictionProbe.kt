@@ -317,261 +317,282 @@ object NextWordPredictionProbe {
                             barrier()
                         }
 
-                        preference(false)
-                        check(!hello().isPrediction)
-                        rime.runOnReady { check(!hasMenu && getRawInput().isEmpty()) }
-                        phase("disabled prediction still commits the ordinary Chinese greeting once")
+                        suspend fun verifyPredictionMenus() {
+                            preference(false)
+                            check(!hello().isPrediction)
+                            rime.runOnReady { check(!hasMenu && getRawInput().isEmpty()) }
+                            phase("disabled prediction still commits the ordinary Chinese greeting once")
 
-                        preference(true)
-                        for (mode in InlinePreeditMode.entries) {
-                            instrumentation.runOnMainSync { preeditPreference.setValue(mode) }
-                            for (suffix in listOf("full", "t9")) {
+                            preference(true)
+                            for (mode in InlinePreeditMode.entries) {
+                                instrumentation.runOnMainSync { preeditPreference.setValue(mode) }
+                                for (suffix in listOf("full", "t9")) {
+                                    val predicted = hello(suffix)
+                                    check(predicted.isPrediction)
+                                    check(observedInline.value == (predicted to InlinePreeditProto("")))
+                                    check(observedComposition.value == (predicted to CompositionProto()))
+                                }
+                                phase("$mode keeps full-pinyin and T9 predictions out of editor preedit and commit preview")
+                            }
+                            for (suffix in listOf("full", "t9", "zero")) {
                                 val predicted = hello(suffix)
-                                check(predicted.isPrediction)
-                                check(observedInline.value == (predicted to InlinePreeditProto("")))
-                                check(observedComposition.value == (predicted to CompositionProto()))
+                                val beforeUnidentified = count()
+                                rime.runOnReady {
+                                    check(predicted.isPrediction && predicted.isValid && getRawInput().isEmpty())
+                                    val rows = getCandidates(0, 16, predicted)
+                                    check(rows.size == 5 && rows.first().text == "世界")
+                                    check(observedCandidates.value == ObservedCandidates(predicted, true, false))
+                                    check(!selectCandidate(0, true, null)) { "Unidentified theme selection committed a suggestion" }
+                                }
+                                noCommit(beforeUnidentified)
+                                val before = count()
+                                rime.runOnReady { check(selectCandidate(0, true, predicted)) }
+                                exactCommit(before, "世界")
+                                rime.runOnReady { check(!hasMenu && !candidateSnapshotCached.isPrediction) }
+                                phase("$suffix exact five next-word suggestions; only a current candidate click commits; one-round chain stops")
                             }
-                            phase("$mode keeps full-pinyin and T9 predictions out of editor preedit and commit preview")
                         }
-                        for (suffix in listOf("full", "t9", "zero")) {
-                            val predicted = hello(suffix)
-                            val beforeUnidentified = count()
+                        verifyPredictionMenus()
+
+                        suspend fun verifyOrdinaryKeys() {
+                            for (key in listOf(RETURN, ' '.code, BACKSPACE)) {
+                                val stale = hello()
+                                val before = count()
+                                val generation = rime.runOnReady {
+                                    check(!processKey(key, 0u, true)) { "The ordinary editor key was swallowed" }
+                                    check(!candidateSnapshotCached.isPrediction)
+                                    check(!selectCandidate(0, true, stale))
+                                    candidateSnapshotCached.generation
+                                }
+                                noCommit(before)
+                                withTimeout(10_000) {
+                                    while (synchronized(keys) { keys.count { it == (generation to key) } } == 0) delay(10)
+                                }
+                                check(synchronized(keys) { keys.count { it == (generation to key) } } == 1)
+                                phase("key $key cancels prediction without committing it or accepting its stale row")
+                            }
+
+                            val stalePunctuation = hello()
+                            val beforePunctuation = count()
                             rime.runOnReady {
-                                check(predicted.isPrediction && predicted.isValid && getRawInput().isEmpty())
-                                val rows = getCandidates(0, 16, predicted)
-                                check(rows.size == 5 && rows.first().text == "世界")
-                                check(observedCandidates.value == ObservedCandidates(predicted, true, false))
-                                check(!selectCandidate(0, true, null)) { "Unidentified theme selection committed a suggestion" }
-                            }
-                            noCommit(beforeUnidentified)
-                            val before = count()
-                            rime.runOnReady { check(selectCandidate(0, true, predicted)) }
-                            exactCommit(before, "世界")
-                            rime.runOnReady { check(!hasMenu && !candidateSnapshotCached.isPrediction) }
-                            phase("$suffix exact five next-word suggestions; only a current candidate click commits; one-round chain stops")
-                        }
-
-                        for (key in listOf(RETURN, ' '.code, BACKSPACE)) {
-                            val stale = hello()
-                            val before = count()
-                            val generation = rime.runOnReady {
-                                check(!processKey(key, 0u, true)) { "The ordinary editor key was swallowed" }
+                                check(processKey('.'.code, 0u, true))
                                 check(!candidateSnapshotCached.isPrediction)
-                                check(!selectCandidate(0, true, stale))
-                                candidateSnapshotCached.generation
+                                check(!selectCandidate(0, true, stalePunctuation))
                             }
-                            noCommit(before)
-                            withTimeout(10_000) {
-                                while (synchronized(keys) { keys.count { it == (generation to key) } } == 0) delay(10)
-                            }
-                            check(synchronized(keys) { keys.count { it == (generation to key) } } == 1)
-                            phase("key $key cancels prediction without committing it or accepting its stale row")
-                        }
+                            exactCommit(beforePunctuation, "。")
+                            phase("punctuation clears prediction and commits only the configured Chinese full stop")
 
-                        val stalePunctuation = hello()
-                        val beforePunctuation = count()
-                        rime.runOnReady {
-                            check(processKey('.'.code, 0u, true))
-                            check(!candidateSnapshotCached.isPrediction)
-                            check(!selectCandidate(0, true, stalePunctuation))
-                        }
-                        exactCommit(beforePunctuation, "。")
-                        phase("punctuation clears prediction and commits only the configured Chinese full stop")
-
-                        val staleShift = hello()
-                        val beforeShift = count()
-                        rime.runOnReady {
-                            processKey(0xffe2, 0u, isVirtual = false)
-                            processKey(0xffe2, 1u shl 30, isVirtual = false)
-                            check(getRuntimeOption("ascii_mode")) { "Physical right Shift lost its normal ASCII toggle" }
-                            check(!candidateSnapshotCached.isPrediction && getRawInput().isEmpty())
-                            check(!selectCandidate(0, true, staleShift))
-                        }
-                        noCommit(beforeShift)
-                        phase("physical right Shift press and release preserve ASCII switching without committing a suggestion")
-
-                        for (macro in listOf("{Return}", "{Shift_R}{Release+Shift_R}")) {
-                            val stale = hello()
-                            val before = count()
+                            val staleShift = hello()
+                            val beforeShift = count()
                             rime.runOnReady {
-                                simulateKeySequence(macro)
-                                check(!candidateSnapshotCached.isPrediction)
-                                check(!selectCandidate(0, true, stale))
+                                processKey(0xffe2, 0u, isVirtual = false)
+                                processKey(0xffe2, 1u shl 30, isVirtual = false)
+                                check(getRuntimeOption("ascii_mode")) { "Physical right Shift lost its normal ASCII toggle" }
+                                check(!candidateSnapshotCached.isPrediction && getRawInput().isEmpty())
+                                check(!selectCandidate(0, true, staleShift))
                             }
-                            noCommit(before)
-                            phase("control macro $macro clears prediction without committing a suggestion or its command source")
-                        }
+                            noCommit(beforeShift)
+                            phase("physical right Shift press and release preserve ASCII switching without committing a suggestion")
 
-                        hello()
-                        val pagedSnapshot = rime.runOnReady {
-                            setCandidatePagingMode(true)
-                            candidateSnapshotCached
+                            for (macro in listOf("{Return}", "{Shift_R}{Release+Shift_R}")) {
+                                val stale = hello()
+                                val before = count()
+                                rime.runOnReady {
+                                    simulateKeySequence(macro)
+                                    check(!candidateSnapshotCached.isPrediction)
+                                    check(!selectCandidate(0, true, stale))
+                                }
+                                noCommit(before)
+                                phase("control macro $macro clears prediction without committing a suggestion or its command source")
+                            }
                         }
-                        barrier()
-                        check(pagedSnapshot.isPrediction && observedCandidates.value == ObservedCandidates(pagedSnapshot, true, true))
-                        val beforePaged = count()
-                        rime.runOnReady { check(selectCandidate(0, true, pagedSnapshot)) }
-                        exactCommit(beforePaged, "世界")
-                        rime.runOnReady { setCandidatePagingMode(false) }
-                        phase("Paged JNI snapshot marks suggestions and a current row commits exactly once")
+                        verifyOrdinaryKeys()
 
-                        val staleT9 = hello("t9")
-                        val beforeDigit = count()
-                        rime.runOnReady {
-                            check(processKey('2'.code, 0u, true))
-                            check(getRawInput() == "2" && t9Cached.input == "2" && !candidateSnapshotCached.isPrediction)
-                            check(!selectCandidate(0, true, staleT9))
-                        }
-                        noCommit(beforeDigit)
-                        phase("digit immediately starts real native T9 input and rejects the old suggestion")
+                        suspend fun verifyPagingAndNewT9() {
+                            hello()
+                            val pagedSnapshot = rime.runOnReady {
+                                setCandidatePagingMode(true)
+                                candidateSnapshotCached
+                            }
+                            barrier()
+                            check(pagedSnapshot.isPrediction && observedCandidates.value == ObservedCandidates(pagedSnapshot, true, true))
+                            val beforePaged = count()
+                            rime.runOnReady { check(selectCandidate(0, true, pagedSnapshot)) }
+                            exactCommit(beforePaged, "世界")
+                            rime.runOnReady { setCandidatePagingMode(false) }
+                            phase("Paged JNI snapshot marks suggestions and a current row commits exactly once")
 
-                        preference(false)
-                        rime.runOnReady { check(getRawInput() == "2" && t9Cached.input == "2") }
-                        preference(true)
-                        rime.runOnReady { check(getRawInput() == "2" && t9Cached.input == "2" && !candidateSnapshotCached.isPrediction) }
-                        noCommit(beforeDigit)
-                        phase("disabling and re-enabling suggestions preserves the unfinished T9 input")
+                            val staleT9 = hello("t9")
+                            val beforeDigit = count()
+                            rime.runOnReady {
+                                check(processKey('2'.code, 0u, true))
+                                check(getRawInput() == "2" && t9Cached.input == "2" && !candidateSnapshotCached.isPrediction)
+                                check(!selectCandidate(0, true, staleT9))
+                            }
+                            noCommit(beforeDigit)
+                            phase("digit immediately starts real native T9 input and rejects the old suggestion")
 
-                        rime.runOnReady {
-                            check(selectSchema("${prefix}_full"))
-                            setRuntimeOption("ascii_mode", false)
-                            beginEditor(firstEditor, nullInputType = false, privacyMode = false)
-                            clearComposition()
-                            "ni".forEach { check(processKey(it.code, 0u, true)) }
+                            preference(false)
+                            rime.runOnReady { check(getRawInput() == "2" && t9Cached.input == "2") }
+                            preference(true)
+                            rime.runOnReady { check(getRawInput() == "2" && t9Cached.input == "2" && !candidateSnapshotCached.isPrediction) }
+                            noCommit(beforeDigit)
+                            phase("disabling and re-enabling suggestions preserves the unfinished T9 input")
                         }
-                        val baselineRanking = rime.runOnReady {
-                            val snapshot = candidateSnapshotCached
-                            check(!snapshot.isPrediction && getRawInput() == "ni")
-                            getCandidates(0, 32, snapshot).map { it.text }
-                        }
-                        check(baselineRanking.size == 3 && baselineRanking.toSet() == setOf("你", "妮", "泥"))
-                        val pinnedText = baselineRanking.last()
-                        val pinnedRanking = listOf(pinnedText) + baselineRanking.dropLast(1)
-                        val beforeRanking = count()
-                        for (togglePreference in listOf(false, true)) {
-                            rime.runOnReady { check(pinCandidate(2, true, candidateSnapshotCached)) }
-                            repeat(100) {
-                                if (togglePreference) {
-                                    preference(false)
-                                    preference(true)
-                                } else {
-                                    rime.runOnReady { clearPredictionContext() }
+                        verifyPagingAndNewT9()
+
+                        suspend fun verifyRankingIsolation() {
+                            rime.runOnReady {
+                                check(selectSchema("${prefix}_full"))
+                                setRuntimeOption("ascii_mode", false)
+                                beginEditor(firstEditor, nullInputType = false, privacyMode = false)
+                                clearComposition()
+                                "ni".forEach { check(processKey(it.code, 0u, true)) }
+                            }
+                            val baselineRanking = rime.runOnReady {
+                                val snapshot = candidateSnapshotCached
+                                check(!snapshot.isPrediction && getRawInput() == "ni")
+                                getCandidates(0, 32, snapshot).map { it.text }
+                            }
+                            check(baselineRanking.size == 3 && baselineRanking.toSet() == setOf("你", "妮", "泥"))
+                            val pinnedText = baselineRanking.last()
+                            val pinnedRanking = listOf(pinnedText) + baselineRanking.dropLast(1)
+                            val beforeRanking = count()
+                            for (togglePreference in listOf(false, true)) {
+                                rime.runOnReady { check(pinCandidate(2, true, candidateSnapshotCached)) }
+                                repeat(100) {
+                                    if (togglePreference) {
+                                        preference(false)
+                                        preference(true)
+                                    } else {
+                                        rime.runOnReady { clearPredictionContext() }
+                                    }
+                                    rime.runOnReady {
+                                        val snapshot = candidateSnapshotCached
+                                        check(!snapshot.isPrediction && getRawInput() == "ni")
+                                        check(getCandidates(0, 32, snapshot).map { it.text } == pinnedRanking)
+                                    }
                                 }
                                 rime.runOnReady {
+                                    check(resetCandidateRanking(candidateSnapshotCached))
                                     val snapshot = candidateSnapshotCached
-                                    check(!snapshot.isPrediction && getRawInput() == "ni")
-                                    check(getCandidates(0, 32, snapshot).map { it.text } == pinnedRanking)
+                                    check(getRawInput() == "ni" && !snapshot.isPrediction)
+                                    check(getCandidates(0, 32, snapshot).map { it.text } == baselineRanking) {
+                                        "Prediction cleanup left a nested pinned menu after ranking reset"
+                                    }
                                 }
+                                noCommit(beforeRanking)
+                                phase(
+                                    if (togglePreference) {
+                                        "100 prediction preference cycles preserve unfinished input and restore ordinary candidate ranking"
+                                    } else {
+                                        "100 prediction context clears preserve unfinished input and restore ordinary candidate ranking"
+                                    },
+                                )
                             }
+                            rime.runOnReady { check(selectCandidate(1, true, candidateSnapshotCached)) }
+                            exactCommit(beforeRanking, baselineRanking[1])
+                            phase("ordinary candidate selection commits the displayed text exactly once after prediction cleanup and ranking reset")
+                        }
+                        verifyRankingIsolation()
+
+                        suspend fun verifyEditorPrivacyPreferences() {
+                            val oldEditor = hello()
+                            val beforeBoundary = count()
                             rime.runOnReady {
-                                check(resetCandidateRanking(candidateSnapshotCached))
-                                val snapshot = candidateSnapshotCached
-                                check(getRawInput() == "ni" && !snapshot.isPrediction)
-                                check(getCandidates(0, 32, snapshot).map { it.text } == baselineRanking) {
-                                    "Prediction cleanup left a nested pinned menu after ranking reset"
-                                }
+                                beginEditor(secondEditor, nullInputType = false, privacyMode = false)
+                                check(!hasMenu && getRawInput().isEmpty() && !candidateSnapshotCached.isPrediction)
+                                check(!selectCandidate(0, true, oldEditor))
+                                check(processKey('n'.code, 0u, true))
+                                check(getRawInput() == "n")
                             }
-                            noCommit(beforeRanking)
-                            phase(
-                                if (togglePreference) {
-                                    "100 prediction preference cycles preserve unfinished input and restore ordinary candidate ranking"
-                                } else {
-                                    "100 prediction context clears preserve unfinished input and restore ordinary candidate ranking"
-                                },
-                            )
-                        }
-                        rime.runOnReady { check(selectCandidate(1, true, candidateSnapshotCached)) }
-                        exactCommit(beforeRanking, baselineRanking[1])
-                        phase("ordinary candidate selection commits the displayed text exactly once after prediction cleanup and ranking reset")
+                            noCommit(beforeBoundary)
+                            phase("editor replacement drops prediction context and preserves the new editor input")
 
-                        val oldEditor = hello()
-                        val beforeBoundary = count()
-                        rime.runOnReady {
-                            beginEditor(secondEditor, nullInputType = false, privacyMode = false)
-                            check(!hasMenu && getRawInput().isEmpty() && !candidateSnapshotCached.isPrediction)
-                            check(!selectCandidate(0, true, oldEditor))
-                            check(processKey('n'.code, 0u, true))
-                            check(getRawInput() == "n")
-                        }
-                        noCommit(beforeBoundary)
-                        phase("editor replacement drops prediction context and preserves the new editor input")
+                            val oldPrivacy = hello()
+                            rime.runOnReady {
+                                beginEditor(firstEditor, nullInputType = false, privacyMode = true)
+                                check(!hasMenu && !candidateSnapshotCached.isPrediction)
+                                check(!selectCandidate(0, true, oldPrivacy))
+                            }
+                            preference(true)
+                            rime.runOnReady { check(!hasMenu && !getRuntimeOption("prediction")) }
+                            phase("privacy overrides the enabled preference and cannot restore an old prediction")
 
-                        val oldPrivacy = hello()
-                        rime.runOnReady {
-                            beginEditor(firstEditor, nullInputType = false, privacyMode = true)
-                            check(!hasMenu && !candidateSnapshotCached.isPrediction)
-                            check(!selectCandidate(0, true, oldPrivacy))
-                        }
-                        preference(true)
-                        rime.runOnReady { check(!hasMenu && !getRuntimeOption("prediction")) }
-                        phase("privacy overrides the enabled preference and cannot restore an old prediction")
-
-                        hello()
-                        preference(false)
-                        rime.runOnReady { check(!hasMenu && !candidateSnapshotCached.isPrediction) }
-                        preference(true)
-                        rime.runOnReady { check(!hasMenu) }
-                        phase("turning prediction off clears it; re-enabling does not reuse the old commit")
-
-                        for (suffix in listOf("missing", "corrupt")) {
-                            check(!hello(suffix).isPrediction)
+                            hello()
+                            preference(false)
+                            rime.runOnReady { check(!hasMenu && !candidateSnapshotCached.isPrediction) }
+                            preference(true)
                             rime.runOnReady { check(!hasMenu) }
-                            phase("$suffix model preserves ordinary Chinese input and exact commit")
+                            phase("turning prediction off clears it; re-enabling does not reuse the old commit")
                         }
+                        verifyEditorPrivacyPreferences()
 
-                        val capped = hello("cap")
-                        rime.runOnReady {
-                            check(capped.isPrediction)
-                            check(getCandidates(0, 32, capped).size == 8) { "Unbounded config exceeded the hard candidate budget" }
-                        }
-                        phase("oversized schema configuration respects the hard eight-candidate budget")
-                        for ((index, target) in listOf("世界", "你好").withIndex()) {
-                            val before = count()
+                        suspend fun verifyModelLimitsAndFiltering() {
+                            for (suffix in listOf("missing", "corrupt")) {
+                                check(!hello(suffix).isPrediction)
+                                rime.runOnReady { check(!hasMenu) }
+                                phase("$suffix model preserves ordinary Chinese input and exact commit")
+                            }
+
+                            val capped = hello("cap")
                             rime.runOnReady {
-                                val snapshot = candidateSnapshotCached
-                                check(snapshot.isPrediction)
-                                val row = getCandidates(0, 16, snapshot).indexOfFirst { it.text == target }
-                                check(row >= 0 && selectCandidate(row, true, snapshot))
+                                check(capped.isPrediction)
+                                check(getCandidates(0, 32, capped).size == 8) { "Unbounded config exceeded the hard candidate budget" }
                             }
-                            exactCommit(before, target)
-                            if (index == 1) rime.runOnReady { check(!hasMenu && !candidateSnapshotCached.isPrediction) }
-                        }
-                        phase("oversized iteration configuration stops after two clicks despite a valid third-round model entry")
-
-                        val filtered = word("filtered", "shou'dao", "收到")
-                        rime.runOnReady {
-                            check(filtered.isPrediction)
-                            check(getCandidates(0, 16, filtered).map { it.text } == listOf("谢谢", "稍后回复")) {
-                                "Real simplifier and uniquifier did not convert and merge the model rows"
+                            phase("oversized schema configuration respects the hard eight-candidate budget")
+                            for ((index, target) in listOf("世界", "你好").withIndex()) {
+                                val before = count()
+                                rime.runOnReady {
+                                    val snapshot = candidateSnapshotCached
+                                    check(snapshot.isPrediction)
+                                    val row = getCandidates(0, 16, snapshot).indexOfFirst { it.text == target }
+                                    check(row >= 0 && selectCandidate(row, true, snapshot))
+                                }
+                                exactCommit(before, target)
+                                if (index == 1) rime.runOnReady { check(!hasMenu && !candidateSnapshotCached.isPrediction) }
                             }
-                        }
-                        val beforeFiltered = count()
-                        rime.runOnReady { check(selectCandidate(0, true, filtered)) }
-                        exactCommit(beforeFiltered, "谢谢")
-                        rime.runOnReady { check(!hasMenu && !candidateSnapshotCached.isPrediction) }
-                        phase("real simplification and deduplication preserve the one-round cap despite a matching follow-up model entry")
+                            phase("oversized iteration configuration stops after two clicks despite a valid third-round model entry")
 
-                        val beforeSwitcher = hello()
-                        val targetSchema = rime.runOnReady {
-                            selectedSchemata().firstOrNull { it.id in setOf("luna_pinyin", "luna_pinyin_simp", "luna_pinyin_t9") }
+                            val filtered = word("filtered", "shou'dao", "收到")
+                            rime.runOnReady {
+                                check(filtered.isPrediction)
+                                check(getCandidates(0, 16, filtered).map { it.text } == listOf("谢谢", "稍后回复")) {
+                                    "Real simplifier and uniquifier did not convert and merge the model rows"
+                                }
+                            }
+                            val beforeFiltered = count()
+                            rime.runOnReady { check(selectCandidate(0, true, filtered)) }
+                            exactCommit(beforeFiltered, "谢谢")
+                            rime.runOnReady { check(!hasMenu && !candidateSnapshotCached.isPrediction) }
+                            phase("real simplification and deduplication preserve the one-round cap despite a matching follow-up model entry")
                         }
-                        checkNotNull(targetSchema) { "No deployed bundled prediction schema is available" }
-                        val beforeInternal = count()
-                        switchInternally(targetSchema)
-                        rime.runOnReady {
-                            check(getRuntimeOption("prediction")) { "Internal schema switching lost the enabled user preference" }
-                            check(!selectCandidate(0, true, beforeSwitcher))
-                        }
-                        noCommit(beforeInternal)
-                        phase("real native F4 switcher clears the old suggestion and restores the enabled preference after schema reset")
+                        verifyModelLimitsAndFiltering()
 
-                        hello()
-                        preference(false)
-                        val beforeDisabledSwitcher = count()
-                        switchInternally(targetSchema)
-                        rime.runOnReady { check(!getRuntimeOption("prediction") && !hasMenu) }
-                        noCommit(beforeDisabledSwitcher)
-                        phase("real native internal schema switching preserves the disabled preference without replaying a commit")
+                        suspend fun verifyInternalSchemaSwitching() {
+                            val beforeSwitcher = hello()
+                            val targetSchema = rime.runOnReady {
+                                selectedSchemata().firstOrNull { it.id in setOf("luna_pinyin", "luna_pinyin_simp", "luna_pinyin_t9") }
+                            }
+                            checkNotNull(targetSchema) { "No deployed bundled prediction schema is available" }
+                            val beforeInternal = count()
+                            switchInternally(targetSchema)
+                            rime.runOnReady {
+                                check(getRuntimeOption("prediction")) { "Internal schema switching lost the enabled user preference" }
+                                check(!selectCandidate(0, true, beforeSwitcher))
+                            }
+                            noCommit(beforeInternal)
+                            phase("real native F4 switcher clears the old suggestion and restores the enabled preference after schema reset")
+
+                            hello()
+                            preference(false)
+                            val beforeDisabledSwitcher = count()
+                            switchInternally(targetSchema)
+                            rime.runOnReady { check(!getRuntimeOption("prediction") && !hasMenu) }
+                            noCommit(beforeDisabledSwitcher)
+                            phase("real native internal schema switching preserves the disabled preference without replaying a commit")
+                        }
+                        verifyInternalSchemaSwitching()
                     } finally {
                         observer.cancelAndJoin()
                     }

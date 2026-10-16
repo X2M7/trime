@@ -277,261 +277,282 @@ object ExpandedCandidateViewportAssertions {
         }
 
         try {
-            val initial = main {
-                FlexboxUnrolledCandidateWindow(input.di).also {
-                    active = it
-                    manager.attachWindow(it)
-                }
-            }
-            until("initial-window", { viewport(initial) }) {
-                manager.isAttached(initial) && initial.adapter.snapshot == snapshot &&
-                    list().isShown && list().isLaidOut && !list().isLayoutRequested && first(initial, list())?.snapshot == snapshot
-            }
-            val initialList = main { list() }
-            val initialIndex = main { checkNotNull(first(initial, initialList)).idx }
-            main {
-                val down = SystemClock.uptimeMillis()
-                val x = initialList.width / 2f
-                event(initialList, down, MotionEvent.ACTION_DOWN, x, initialList.height * 0.85f)
-                for (step in 1..6) event(initialList, down, MotionEvent.ACTION_MOVE, x, initialList.height * (0.85f - step * 0.1f))
-                event(initialList, down, MotionEvent.ACTION_UP, x, initialList.height * 0.25f)
-                initialList.stopScroll()
-            }
-            until("physical-scroll-idle", { viewport(initial, initialList, initialIndex) }) {
-                settled(initialList) &&
-                    compact.adapter.snapshot == snapshot && initial.adapter.snapshot == snapshot &&
-                    first(initial, initialList)?.let { it.snapshot == snapshot && it.idx > initialIndex } == true
-            }
-            var partialRowHeight = 0
-            val partial = main {
-                val holder = checkNotNull(first(initial, initialList))
-                check(holder.itemView.height > 9)
-                partialRowHeight = holder.itemView.height
-                // Only the bottom nine pixels of this same row should remain visible.
-                val wantedOffset = 9 - holder.itemView.height
-                CandidateIdentity(holder.snapshot, holder.idx) to wantedOffset
-            }
-            val partialScrollHistory = ArrayList<JSONObject>(8)
-            var capturedSelected: Triple<CandidateIdentity, Int, CandidateIdentity>? = null
-            until(
-                "partial-leading-row",
-                {
-                    viewport(initial, initialList, partial.first.index, partial.second)
-                        .put("fixture_scroll_adjustments", JSONArray(partialScrollHistory))
-                },
-                onSatisfied = {
-                    check(capturedSelected == null) { "Expanded candidate collapse was captured more than once" }
-                    // Predicate, row sampling and collapse share one main-thread dispatch.
-                    capturedSelected = run {
-                        check(settled(initialList))
-                        check(compact.adapter.snapshot == snapshot && initial.adapter.snapshot == snapshot)
-                        val holder = checkNotNull(first(initial, initialList))
-                        check(holder.snapshot == snapshot && holder.idx > initialIndex)
-                        val identity = CandidateIdentity(holder.snapshot, holder.idx)
-                        val savedOffset = pixelOffset(initial, initialList, holder)
-                        check(identity == partial.first && savedOffset == partial.second && savedOffset < 0)
-                        val leadingLabel = label(holder)
-                        val leadingVisible = Rect()
-                        check(!leadingLabel.getGlobalVisibleRect(leadingVisible) || leadingVisible.height() < leadingLabel.height) {
-                            "Partial leading row exposes a fully readable candidate label"
-                        }
-                        val readable = checkNotNull(firstReadable(initialList))
-                        check(readable.snapshot == snapshot && readable.idx > holder.idx)
-                        val readableIdentity = CandidateIdentity(readable.snapshot, readable.idx)
-                        check(editor.text.toString() == originalEditor) { "Expanded scrolling committed editor text" }
-                        // Read the row immediately before onDetached captures it, without an intervening frame.
-                        manager.attachWindow(KeyboardWindow)
-                        check(!manager.isAttached(initial)) { "Collapsed expanded window remains the current window" }
-                        val restored = compact.expandedViewportAnchor.restore(snapshot, initial.adapter.offset)
-                        check(restored == identity.index) {
-                            "Collapsed anchor differs: expected=${identity.index}, actual=$restored, offset=${initial.adapter.offset}, snapshot=$snapshot"
-                        }
-                        check(compact.expandedViewportAnchor.restoreOffset(snapshot, initial.adapter.offset) == savedOffset) {
-                            "Collapsed anchor lost its signed pixel offset: expected=$savedOffset"
-                        }
-                        Triple(identity, savedOffset, readableIdentity)
-                    }
-                },
-            ) {
-                if (!settled(initialList) || !manager.isAttached(initial) || !service.isCurrentEditor(snapshot.editorToken) ||
-                    compact.adapter.snapshot != snapshot || initial.adapter.snapshot != snapshot
-                ) {
-                    return@until false
-                }
-                val holder = first(initial, initialList) ?: return@until false
-                if (CandidateIdentity(holder.snapshot, holder.idx) != partial.first) return@until false
-                check(holder.itemView.height == partialRowHeight) { "Partial candidate row height changed" }
-                val beforeOffset = pixelOffset(initial, initialList, holder)
-                if (beforeOffset == partial.second) return@until true
-                check(partialScrollHistory.size < 8) { "Unable to prepare exact partial candidate viewport after eight scrolls" }
-                val requested = beforeOffset - partial.second
-                val beforeState = callbackState(initial, initialList, partial.first.index)
-                var consumed = 0
-                val observer = object : RecyclerView.OnScrollListener() {
-                    override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                        consumed += dy
+            suspend fun prepareScrolledWindow(): Triple<FlexboxUnrolledCandidateWindow, RecyclerView, Int> {
+                val initial = main {
+                    FlexboxUnrolledCandidateWindow(input.di).also {
+                        active = it
+                        manager.attachWindow(it)
                     }
                 }
-                // scrollBy can consume pending layout work and only part of the requested
-                // distance. Prepare the fixture on settled frames; never relax its target.
-                initialList.addOnScrollListener(observer)
-                try {
-                    initialList.scrollBy(0, requested)
+                until("initial-window", { viewport(initial) }) {
+                    manager.isAttached(initial) && initial.adapter.snapshot == snapshot &&
+                        list().isShown && list().isLaidOut && !list().isLayoutRequested && first(initial, list())?.snapshot == snapshot
+                }
+                val initialList = main { list() }
+                val initialIndex = main { checkNotNull(first(initial, initialList)).idx }
+                main {
+                    val down = SystemClock.uptimeMillis()
+                    val x = initialList.width / 2f
+                    event(initialList, down, MotionEvent.ACTION_DOWN, x, initialList.height * 0.85f)
+                    for (step in 1..6) event(initialList, down, MotionEvent.ACTION_MOVE, x, initialList.height * (0.85f - step * 0.1f))
+                    event(initialList, down, MotionEvent.ACTION_UP, x, initialList.height * 0.25f)
                     initialList.stopScroll()
-                } finally {
-                    initialList.removeOnScrollListener(observer)
                 }
-                val diagnostic = JSONObject().put("attempt", partialScrollHistory.size + 1)
-                    .put("requested_dy", requested).put("on_scrolled_dy", consumed)
-                    .put("before", beforeState).put("after", callbackState(initial, initialList, partial.first.index))
-                partialScrollHistory.add(diagnostic)
-                phase("partial-leading-row-adjustment", "OBSERVED", diagnostic)
-                // Recheck identity and exact offset on the next settled frame before collapse.
-                false
-            }
-            val selected = checkNotNull(capturedSelected)
-            checks++
-            // The normal 100ms exit Slide temporarily reparents the removed root into an overlay.
-            until("old-window-overlay-removed", { viewport(initial, initialList, selected.first.index, selected.second, selected.third.index) }) {
-                !manager.view.isLayoutRequested && initialList.parent?.parent == null
-            }
-            main {
-                check(!manager.isAttached(initial)) { "Destroyed expanded window became current again" }
-                val restored = compact.expandedViewportAnchor.restore(snapshot, initial.adapter.offset)
-                check(restored == selected.first.index) {
-                    "Destroyed anchor differs: expected=${selected.first.index}, actual=$restored, offset=${initial.adapter.offset}, snapshot=$snapshot"
+                until("physical-scroll-idle", { viewport(initial, initialList, initialIndex) }) {
+                    settled(initialList) &&
+                        compact.adapter.snapshot == snapshot && initial.adapter.snapshot == snapshot &&
+                        first(initial, initialList)?.let { it.snapshot == snapshot && it.idx > initialIndex } == true
                 }
-                check(compact.expandedViewportAnchor.restoreOffset(snapshot, initial.adapter.offset) == selected.second)
+                return Triple(initial, initialList, initialIndex)
             }
-            checks++
-
-            val reopened = main {
-                FlexboxUnrolledCandidateWindow(input.di).also {
-                    active = it
-                    manager.attachWindow(it)
-                    val window = it
-                    val layout = field(window, "candidateLayout") as UnrolledCandidateLayout
-                    val originalCallback = checkNotNull(layout.onCandidatesLaidOut)
-                    observedLayoutWindowIdentity = System.identityHashCode(window)
-                    layout.onCandidatesLaidOut = {
-                        val before = runCatching {
-                            callbackState(window, layout.recyclerView, selected.first.index)
+            val (initial, initialList, initialIndex) = prepareScrolledWindow()
+            suspend fun verifyPartialRowCollapse(): Triple<CandidateIdentity, Int, CandidateIdentity> {
+                var partialRowHeight = 0
+                val partial = main {
+                    val holder = checkNotNull(first(initial, initialList))
+                    check(holder.itemView.height > 9)
+                    partialRowHeight = holder.itemView.height
+                    // Only the bottom nine pixels of this same row should remain visible.
+                    val wantedOffset = 9 - holder.itemView.height
+                    CandidateIdentity(holder.snapshot, holder.idx) to wantedOffset
+                }
+                val partialScrollHistory = ArrayList<JSONObject>(8)
+                var capturedSelected: Triple<CandidateIdentity, Int, CandidateIdentity>? = null
+                until(
+                    "partial-leading-row",
+                    {
+                        viewport(initial, initialList, partial.first.index, partial.second)
+                            .put("fixture_scroll_adjustments", JSONArray(partialScrollHistory))
+                    },
+                    onSatisfied = {
+                        check(capturedSelected == null) { "Expanded candidate collapse was captured more than once" }
+                        // Predicate, row sampling and collapse share one main-thread dispatch.
+                        capturedSelected = run {
+                            check(settled(initialList))
+                            check(compact.adapter.snapshot == snapshot && initial.adapter.snapshot == snapshot)
+                            val holder = checkNotNull(first(initial, initialList))
+                            check(holder.snapshot == snapshot && holder.idx > initialIndex)
+                            val identity = CandidateIdentity(holder.snapshot, holder.idx)
+                            val savedOffset = pixelOffset(initial, initialList, holder)
+                            check(identity == partial.first && savedOffset == partial.second && savedOffset < 0)
+                            val leadingLabel = label(holder)
+                            val leadingVisible = Rect()
+                            check(!leadingLabel.getGlobalVisibleRect(leadingVisible) || leadingVisible.height() < leadingLabel.height) {
+                                "Partial leading row exposes a fully readable candidate label"
+                            }
+                            val readable = checkNotNull(firstReadable(initialList))
+                            check(readable.snapshot == snapshot && readable.idx > holder.idx)
+                            val readableIdentity = CandidateIdentity(readable.snapshot, readable.idx)
+                            check(editor.text.toString() == originalEditor) { "Expanded scrolling committed editor text" }
+                            // Read the row immediately before onDetached captures it, without an intervening frame.
+                            manager.attachWindow(KeyboardWindow)
+                            check(!manager.isAttached(initial)) { "Collapsed expanded window remains the current window" }
+                            val restored = compact.expandedViewportAnchor.restore(snapshot, initial.adapter.offset)
+                            check(restored == identity.index) {
+                                "Collapsed anchor differs: expected=${identity.index}, actual=$restored, offset=${initial.adapter.offset}, snapshot=$snapshot"
+                            }
+                            check(compact.expandedViewportAnchor.restoreOffset(snapshot, initial.adapter.offset) == savedOffset) {
+                                "Collapsed anchor lost its signed pixel offset: expected=$savedOffset"
+                            }
+                            Triple(identity, savedOffset, readableIdentity)
                         }
-                        try {
-                            originalCallback()
-                        } finally {
-                            if (layoutCallbackCount < Int.MAX_VALUE) layoutCallbackCount++
-                            runCatching {
-                                val after = runCatching {
-                                    callbackState(window, layout.recyclerView, selected.first.index)
-                                }
-                                fun state(observed: Result<JSONObject>): JSONObject = observed.getOrElse { error ->
-                                    JSONObject().put("diagnostic_error", error.javaClass.name)
-                                }
-                                val record = JSONObject().put("before", state(before)).put("after", state(after))
-                                    .put("callback_number", layoutCallbackCount)
-                                if (layoutCallbackHistory.size == 8) layoutCallbackHistory.removeAt(0)
-                                layoutCallbackHistory.add(record)
-                            }.onFailure { error -> layoutCallbackDiagnosticError = error.javaClass.name }
+                    },
+                ) {
+                    if (!settled(initialList) || !manager.isAttached(initial) || !service.isCurrentEditor(snapshot.editorToken) ||
+                        compact.adapter.snapshot != snapshot || initial.adapter.snapshot != snapshot
+                    ) {
+                        return@until false
+                    }
+                    val holder = first(initial, initialList) ?: return@until false
+                    if (CandidateIdentity(holder.snapshot, holder.idx) != partial.first) return@until false
+                    check(holder.itemView.height == partialRowHeight) { "Partial candidate row height changed" }
+                    val beforeOffset = pixelOffset(initial, initialList, holder)
+                    if (beforeOffset == partial.second) return@until true
+                    check(partialScrollHistory.size < 8) { "Unable to prepare exact partial candidate viewport after eight scrolls" }
+                    val requested = beforeOffset - partial.second
+                    val beforeState = callbackState(initial, initialList, partial.first.index)
+                    var consumed = 0
+                    val observer = object : RecyclerView.OnScrollListener() {
+                        override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                            consumed += dy
                         }
                     }
+                    // scrollBy can consume pending layout work and only part of the requested
+                    // distance. Prepare the fixture on settled frames; never relax its target.
+                    initialList.addOnScrollListener(observer)
+                    try {
+                        initialList.scrollBy(0, requested)
+                        initialList.stopScroll()
+                    } finally {
+                        initialList.removeOnScrollListener(observer)
+                    }
+                    val diagnostic = JSONObject().put("attempt", partialScrollHistory.size + 1)
+                        .put("requested_dy", requested).put("on_scrolled_dy", consumed)
+                        .put("before", beforeState).put("after", callbackState(initial, initialList, partial.first.index))
+                    partialScrollHistory.add(diagnostic)
+                    phase("partial-leading-row-adjustment", "OBSERVED", diagnostic)
+                    // Recheck identity and exact offset on the next settled frame before collapse.
+                    false
                 }
+                val selected = checkNotNull(capturedSelected)
+                checks++
+                return selected
             }
-            check(reopened !== initial && reopened.adapter !== initial.adapter && reopened.layoutManager !== initial.layoutManager)
-            until("reopened-viewport", { viewport(reopened, expectedIndex = selected.first.index, expectedPixel = selected.second, expectedReadable = selected.third.index) }) {
-                manager.isAttached(reopened) && reopened.adapter.snapshot == snapshot &&
-                    list().isShown && !list().isLayoutRequested && first(reopened, list())?.let {
-                        CandidateIdentity(it.snapshot, it.idx) == selected.first && pixelOffset(reopened, list(), it) == selected.second
-                    } == true && firstReadable(list())?.let { CandidateIdentity(it.snapshot, it.idx) == selected.third } == true
-            }
-            val reopenedList = main { list() }
-            check(reopenedList !== initialList)
-            checks++
-            repeat(2) { round ->
-                main { reopenedList.requestLayout() }
-                until("ordinary-relayout-${round + 1}", { viewport(reopened, reopenedList, selected.first.index, selected.second, selected.third.index) }) {
-                    !reopenedList.isLayoutRequested && first(reopened, reopenedList)?.let {
-                        CandidateIdentity(it.snapshot, it.idx) == selected.first && pixelOffset(reopened, reopenedList, it) == selected.second
-                    } == true && firstReadable(reopenedList)?.let { CandidateIdentity(it.snapshot, it.idx) == selected.third } == true
+            val selected = verifyPartialRowCollapse()
+            suspend fun verifyCollapsedOverlayRemoval() {
+                // The normal 100ms exit Slide temporarily reparents the removed root into an overlay.
+                until("old-window-overlay-removed", { viewport(initial, initialList, selected.first.index, selected.second, selected.third.index) }) {
+                    !manager.view.isLayoutRequested && initialList.parent?.parent == null
                 }
-                check(main { editor.text.toString() == originalEditor }) { "Reopening or relayout committed editor text" }
+                main {
+                    check(!manager.isAttached(initial)) { "Destroyed expanded window became current again" }
+                    val restored = compact.expandedViewportAnchor.restore(snapshot, initial.adapter.offset)
+                    check(restored == selected.first.index) {
+                        "Destroyed anchor differs: expected=${selected.first.index}, actual=$restored, offset=${initial.adapter.offset}, snapshot=$snapshot"
+                    }
+                    check(compact.expandedViewportAnchor.restoreOffset(snapshot, initial.adapter.offset) == selected.second)
+                }
                 checks++
             }
-            val expected = native { getCandidates(selected.third.index, 1, snapshot).single().text }
-            var commitStart = -1
-            var committedBaseline = ""
-            val expectedEditor = main {
-                val value = editor.text
-                val start = BaseInputConnection.getComposingSpanStart(value)
-                val end = BaseInputConnection.getComposingSpanEnd(value)
-                if (start >= 0 && end >= start) {
-                    commitStart = start
-                    committedBaseline = value.toString().substring(0, start) + value.toString().substring(end)
-                    value.toString().substring(0, start) + expected + value.toString().substring(end)
-                } else {
-                    check(editor.selectionStart == editor.selectionEnd && editor.selectionStart >= 0)
-                    val caret = editor.selectionStart
-                    commitStart = caret
-                    committedBaseline = value.toString()
-                    value.toString().substring(0, caret) + expected + value.toString().substring(caret)
-                }
-            }
-            main {
-                val holder = checkNotNull(firstReadable(reopenedList))
-                check(CandidateIdentity(holder.snapshot, holder.idx) == selected.third && holder.text == expected) {
-                    val observed = viewport(reopened, reopenedList, selected.first.index, selected.second, selected.third.index)
-                        .put("identity_matches", CandidateIdentity(holder.snapshot, holder.idx) == selected.third)
-                        .put("native_text_matches", holder.text == expected)
-                        .put("checked_holder_index", holder.idx)
-                        .put("checked_holder_snapshot", holder.snapshot.toString())
-                        .put("expected_pointer_index", selected.third.index)
-                        .put("expected_pointer_snapshot", selected.third.snapshot.toString())
-                    phase("restored-pointer-target", "FAILED", observed)
-                    "Check failed."
-                }
-                val child = holder.itemView
-                val left = maxOf(0, child.left)
-                val right = minOf(reopenedList.width, child.right)
-                val top = maxOf(0, child.top)
-                val bottom = minOf(reopenedList.height, child.bottom)
-                check(left < right && top < bottom)
-                val down = SystemClock.uptimeMillis()
-                event(reopenedList, down, MotionEvent.ACTION_DOWN, (left + right) / 2f, (top + bottom) / 2f)
-                event(reopenedList, down, MotionEvent.ACTION_UP, (left + right) / 2f, (top + bottom) / 2f)
-            }
-            until("native-exact-editor-commit", { viewport(reopened, reopenedList, selected.first.index, selected.second, selected.third.index) }) {
-                editor.text.toString() == expectedEditor
-            }
-            native { check(getRawInput().isEmpty()) }
-            instrumentation.waitForIdleSync()
-            check(main { editor.text.toString() == expectedEditor }) { "Restored candidate committed more than once or selected another entry" }
-            checks++
-            // Remove only this test's verified native commit; later fixtures own the same editor.
-            main {
-                check(service.isCurrentEditor(snapshot.editorToken) && service.currentInputEditorInfo?.fieldId == editor.id)
-                check(editor.text.toString() == expectedEditor && commitStart >= 0)
-                check(BaseInputConnection.getComposingSpanStart(editor.text) < 0 && BaseInputConnection.getComposingSpanEnd(editor.text) < 0)
-                val commitEnd = commitStart + expected.length
-                check(commitEnd <= editor.text.length && editor.text.substring(commitStart, commitEnd) == expected)
-                val connection = checkNotNull(service.currentInputConnection)
-                check(connection.setSelection(commitEnd, commitEnd))
-                check(connection.deleteSurroundingText(expected.length, 0))
-            }
-            withTimeout(30_000) {
-                while (!main {
-                        check(service.isCurrentEditor(snapshot.editorToken) && service.currentInputEditorInfo?.fieldId == editor.id)
-                        editor.text.toString() == committedBaseline
+            verifyCollapsedOverlayRemoval()
+
+            suspend fun verifyReopenedViewport(): Pair<FlexboxUnrolledCandidateWindow, RecyclerView> {
+                val reopened = main {
+                    FlexboxUnrolledCandidateWindow(input.di).also {
+                        active = it
+                        manager.attachWindow(it)
+                        val window = it
+                        val layout = field(window, "candidateLayout") as UnrolledCandidateLayout
+                        val originalCallback = checkNotNull(layout.onCandidatesLaidOut)
+                        observedLayoutWindowIdentity = System.identityHashCode(window)
+                        layout.onCandidatesLaidOut = {
+                            val before = runCatching {
+                                callbackState(window, layout.recyclerView, selected.first.index)
+                            }
+                            try {
+                                originalCallback()
+                            } finally {
+                                if (layoutCallbackCount < Int.MAX_VALUE) layoutCallbackCount++
+                                runCatching {
+                                    val after = runCatching {
+                                        callbackState(window, layout.recyclerView, selected.first.index)
+                                    }
+                                    fun state(observed: Result<JSONObject>): JSONObject = observed.getOrElse { error ->
+                                        JSONObject().put("diagnostic_error", error.javaClass.name)
+                                    }
+                                    val record = JSONObject().put("before", state(before)).put("after", state(after))
+                                        .put("callback_number", layoutCallbackCount)
+                                    if (layoutCallbackHistory.size == 8) layoutCallbackHistory.removeAt(0)
+                                    layoutCallbackHistory.add(record)
+                                }.onFailure { error -> layoutCallbackDiagnosticError = error.javaClass.name }
+                            }
+                        }
                     }
-                ) {
-                    delay(40)
+                }
+                check(reopened !== initial && reopened.adapter !== initial.adapter && reopened.layoutManager !== initial.layoutManager)
+                until("reopened-viewport", { viewport(reopened, expectedIndex = selected.first.index, expectedPixel = selected.second, expectedReadable = selected.third.index) }) {
+                    manager.isAttached(reopened) && reopened.adapter.snapshot == snapshot &&
+                        list().isShown && !list().isLayoutRequested && first(reopened, list())?.let {
+                            CandidateIdentity(it.snapshot, it.idx) == selected.first && pixelOffset(reopened, list(), it) == selected.second
+                        } == true && firstReadable(list())?.let { CandidateIdentity(it.snapshot, it.idx) == selected.third } == true
+                }
+                val reopenedList = main { list() }
+                check(reopenedList !== initialList)
+                checks++
+                return reopened to reopenedList
+            }
+            val (reopened, reopenedList) = verifyReopenedViewport()
+            suspend fun verifyRepeatedRelayout() {
+                repeat(2) { round ->
+                    main { reopenedList.requestLayout() }
+                    until("ordinary-relayout-${round + 1}", { viewport(reopened, reopenedList, selected.first.index, selected.second, selected.third.index) }) {
+                        !reopenedList.isLayoutRequested && first(reopened, reopenedList)?.let {
+                            CandidateIdentity(it.snapshot, it.idx) == selected.first && pixelOffset(reopened, reopenedList, it) == selected.second
+                        } == true && firstReadable(reopenedList)?.let { CandidateIdentity(it.snapshot, it.idx) == selected.third } == true
+                    }
+                    check(main { editor.text.toString() == originalEditor }) { "Reopening or relayout committed editor text" }
+                    checks++
                 }
             }
-            native { check(getRawInput().isEmpty()) }
-            instrumentation.waitForIdleSync()
-            main {
-                check(service.isCurrentEditor(snapshot.editorToken) && service.currentInputEditorInfo?.fieldId == editor.id)
-                check(editor.text.toString() == committedBaseline) { "Expanded candidate fixture changed pre-existing editor text" }
+            verifyRepeatedRelayout()
+            suspend fun verifyRestoredPointerCommit() {
+                val expected = native { getCandidates(selected.third.index, 1, snapshot).single().text }
+                var commitStart = -1
+                var committedBaseline = ""
+                val expectedEditor = main {
+                    val value = editor.text
+                    val start = BaseInputConnection.getComposingSpanStart(value)
+                    val end = BaseInputConnection.getComposingSpanEnd(value)
+                    if (start >= 0 && end >= start) {
+                        commitStart = start
+                        committedBaseline = value.toString().substring(0, start) + value.toString().substring(end)
+                        value.toString().substring(0, start) + expected + value.toString().substring(end)
+                    } else {
+                        check(editor.selectionStart == editor.selectionEnd && editor.selectionStart >= 0)
+                        val caret = editor.selectionStart
+                        commitStart = caret
+                        committedBaseline = value.toString()
+                        value.toString().substring(0, caret) + expected + value.toString().substring(caret)
+                    }
+                }
+                main {
+                    val holder = checkNotNull(firstReadable(reopenedList))
+                    check(CandidateIdentity(holder.snapshot, holder.idx) == selected.third && holder.text == expected) {
+                        val observed = viewport(reopened, reopenedList, selected.first.index, selected.second, selected.third.index)
+                            .put("identity_matches", CandidateIdentity(holder.snapshot, holder.idx) == selected.third)
+                            .put("native_text_matches", holder.text == expected)
+                            .put("checked_holder_index", holder.idx)
+                            .put("checked_holder_snapshot", holder.snapshot.toString())
+                            .put("expected_pointer_index", selected.third.index)
+                            .put("expected_pointer_snapshot", selected.third.snapshot.toString())
+                        phase("restored-pointer-target", "FAILED", observed)
+                        "Check failed."
+                    }
+                    val child = holder.itemView
+                    val left = maxOf(0, child.left)
+                    val right = minOf(reopenedList.width, child.right)
+                    val top = maxOf(0, child.top)
+                    val bottom = minOf(reopenedList.height, child.bottom)
+                    check(left < right && top < bottom)
+                    val down = SystemClock.uptimeMillis()
+                    event(reopenedList, down, MotionEvent.ACTION_DOWN, (left + right) / 2f, (top + bottom) / 2f)
+                    event(reopenedList, down, MotionEvent.ACTION_UP, (left + right) / 2f, (top + bottom) / 2f)
+                }
+                until("native-exact-editor-commit", { viewport(reopened, reopenedList, selected.first.index, selected.second, selected.third.index) }) {
+                    editor.text.toString() == expectedEditor
+                }
+                native { check(getRawInput().isEmpty()) }
+                instrumentation.waitForIdleSync()
+                check(main { editor.text.toString() == expectedEditor }) { "Restored candidate committed more than once or selected another entry" }
+                checks++
+                // Remove only this test's verified native commit; later fixtures own the same editor.
+                main {
+                    check(service.isCurrentEditor(snapshot.editorToken) && service.currentInputEditorInfo?.fieldId == editor.id)
+                    check(editor.text.toString() == expectedEditor && commitStart >= 0)
+                    check(BaseInputConnection.getComposingSpanStart(editor.text) < 0 && BaseInputConnection.getComposingSpanEnd(editor.text) < 0)
+                    val commitEnd = commitStart + expected.length
+                    check(commitEnd <= editor.text.length && editor.text.substring(commitStart, commitEnd) == expected)
+                    val connection = checkNotNull(service.currentInputConnection)
+                    check(connection.setSelection(commitEnd, commitEnd))
+                    check(connection.deleteSurroundingText(expected.length, 0))
+                }
+                withTimeout(30_000) {
+                    while (!main {
+                            check(service.isCurrentEditor(snapshot.editorToken) && service.currentInputEditorInfo?.fieldId == editor.id)
+                            editor.text.toString() == committedBaseline
+                        }
+                    ) {
+                        delay(40)
+                    }
+                }
+                native { check(getRawInput().isEmpty()) }
+                instrumentation.waitForIdleSync()
+                main {
+                    check(service.isCurrentEditor(snapshot.editorToken) && service.currentInputEditorInfo?.fieldId == editor.id)
+                    check(editor.text.toString() == committedBaseline) { "Expanded candidate fixture changed pre-existing editor text" }
+                }
             }
+            verifyRestoredPointerCommit()
         } finally {
             main { if (active?.let(manager::isAttached) == true) manager.attachWindow(KeyboardWindow) }
         }

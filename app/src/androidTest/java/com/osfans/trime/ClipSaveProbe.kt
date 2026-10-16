@@ -76,117 +76,126 @@ internal object ClipSaveProbe {
                             return checkNotNull(dao.get(row)).also { owned += it.id }
                         }
                         try {
-                            for (background in listOf(false, true)) {
-                                val token = UUID.randomUUID().toString()
-                                val bean = insert("initial-$token")
-                                val expected = "saved-$token-\u4f60\u597d-\uD842\uDFB7"
-                                main { cached.set(helper, bean) }
-                                val activity = editor(type, bean.id).also { active = it }
-                                val field = main { activity.findViewById<EditText>(R.id.clip_edit_text) }
-                                val ok = main { activity.findViewById<View>(R.id.clip_edit_ok) }
-                                eventually { main { field.text.toString() == bean.text && ok.isEnabled } }
-                                val entered = CompletableDeferred<Unit>()
-                                val release = CompletableDeferred<Unit>()
-                                val blocked = launch(Dispatchers.Default) {
-                                    db.withTransaction {
-                                        entered.complete(Unit)
-                                        release.await()
-                                    }
-                                }
-                                try {
-                                    entered.await()
-                                    main {
-                                        field.setText(expected)
-                                        ok.performClick()
-                                        field.setText("duplicate-$token")
-                                        ok.performClick()
-                                    }
-                                    delay(300)
-                                    check(main { !activity.isFinishing }) { "Editor closed before its database write completed" }
-                                    check(main { !ok.isEnabled }) { "Duplicate save was not disabled" }
-                                    check(main { (cached.get(helper) as DatabaseBean).text == bean.text }) { "Uncommitted text reached the cache" }
-                                    if (background) {
-                                        main { activity.finish() }
-                                        eventually { main { activity.isDestroyed } }
-                                    }
-                                } finally {
-                                    withContext(NonCancellable) {
-                                        release.complete(Unit)
-                                        blocked.join()
-                                        db.withTransaction { }
-                                    }
-                                }
-                                eventually { dao.get(bean.id)?.text == expected }
-                                eventually { main { (cached.get(helper) as DatabaseBean).text == expected } }
-                                eventually { main { activity.isDestroyed } }
-                                checkPassed("$type: ${if (background) "save survives dialog destruction" else "save awaits commit and ignores duplicate click"}")
-                                active = null
-                            }
-
-                            val missing = insert("missing-${UUID.randomUUID()}")
-                            main { cached.set(helper, missing) }
-                            val failed = editor(type, missing.id).also { active = it }
-                            val field = main { failed.findViewById<EditText>(R.id.clip_edit_text) }
-                            val ok = main { failed.findViewById<View>(R.id.clip_edit_ok) }
-                            eventually { main { field.text.toString() == missing.text && ok.isEnabled } }
-                            dao.delete(missing.id)
-                            main {
-                                field.setText("unsaved edit")
-                                ok.performClick()
-                            }
-                            eventually { main { ok.isEnabled && !failed.isFinishing } }
-                            check(main { field.text.toString() == "unsaved edit" })
-                            check(main { cached.get(helper) == missing }) { "Failed write changed the cache" }
-                            check(dao.get(missing.id) == null)
-                            main { failed.findViewById<View>(R.id.clip_edit_cancel).performClick() }
-                            eventually { main { failed.isDestroyed } }
-                            active = null
-                            checkPassed("$type: removed-row failure retains editor text and cache")
-
-                            val first = insert("first-${UUID.randomUUID()}")
-                            val second = insert("second-${UUID.randomUUID()}")
-                            val reading = CompletableDeferred<Unit>()
-                            val releaseRead = CompletableDeferred<Unit>()
-                            daoField.set(
-                                helper,
-                                object : DatabaseDao by dao {
-                                    override suspend fun get(id: Int): DatabaseBean? {
-                                        if (id == first.id) {
-                                            reading.complete(Unit)
-                                            releaseRead.await()
+                            suspend fun verifySuccessfulSaves() {
+                                for (background in listOf(false, true)) {
+                                    val token = UUID.randomUUID().toString()
+                                    val bean = insert("initial-$token")
+                                    val expected = "saved-$token-\u4f60\u597d-\uD842\uDFB7"
+                                    main { cached.set(helper, bean) }
+                                    val activity = editor(type, bean.id).also { active = it }
+                                    val field = main { activity.findViewById<EditText>(R.id.clip_edit_text) }
+                                    val ok = main { activity.findViewById<View>(R.id.clip_edit_ok) }
+                                    eventually { main { field.text.toString() == bean.text && ok.isEnabled } }
+                                    val entered = CompletableDeferred<Unit>()
+                                    val release = CompletableDeferred<Unit>()
+                                    val blocked = launch(Dispatchers.Default) {
+                                        db.withTransaction {
+                                            entered.complete(Unit)
+                                            release.await()
                                         }
-                                        return dao.get(id)
                                     }
-                                },
-                            )
-                            try {
-                                val loading = editor(type, first.id).also { active = it }
-                                reading.await()
-                                check(main { !loading.findViewById<View>(R.id.clip_edit_ok).isEnabled })
-                                check(main { !loading.findViewById<View>(R.id.clip_edit_text).isEnabled })
-                                main {
-                                    instrumentation.callActivityOnNewIntent(
-                                        loading,
-                                        Intent().putExtra(ClipEditActivity.CLIP_TYPE, type)
-                                            .putExtra(ClipEditActivity.BEAN_ID, second.id),
-                                    )
+                                    try {
+                                        entered.await()
+                                        main {
+                                            field.setText(expected)
+                                            ok.performClick()
+                                            field.setText("duplicate-$token")
+                                            ok.performClick()
+                                        }
+                                        delay(300)
+                                        check(main { !activity.isFinishing }) { "Editor closed before its database write completed" }
+                                        check(main { !ok.isEnabled }) { "Duplicate save was not disabled" }
+                                        check(main { (cached.get(helper) as DatabaseBean).text == bean.text }) { "Uncommitted text reached the cache" }
+                                        if (background) {
+                                            main { activity.finish() }
+                                            eventually { main { activity.isDestroyed } }
+                                        }
+                                    } finally {
+                                        withContext(NonCancellable) {
+                                            release.complete(Unit)
+                                            blocked.join()
+                                            db.withTransaction { }
+                                        }
+                                    }
+                                    eventually { dao.get(bean.id)?.text == expected }
+                                    eventually { main { (cached.get(helper) as DatabaseBean).text == expected } }
+                                    eventually { main { activity.isDestroyed } }
+                                    checkPassed("$type: ${if (background) "save survives dialog destruction" else "save awaits commit and ignores duplicate click"}")
+                                    active = null
                                 }
-                                eventually { main { loading.findViewById<EditText>(R.id.clip_edit_text).text.toString() == second.text } }
-                                releaseRead.complete(Unit)
-                                delay(200)
-                                check(main { loading.findViewById<EditText>(R.id.clip_edit_text).text.toString() == second.text })
-                                main {
-                                    loading.findViewById<EditText>(R.id.clip_edit_text).setText("cancelled edit")
-                                    loading.findViewById<View>(R.id.clip_edit_cancel).performClick()
-                                }
-                                eventually { main { loading.isDestroyed } }
-                                active = null
-                                check(dao.get(first.id)?.text == first.text && dao.get(second.id)?.text == second.text)
-                                checkPassed("$type: loading disables edits, new intent supersedes old read, cancel preserves both rows")
-                            } finally {
-                                releaseRead.complete(Unit)
-                                daoField.set(helper, dao)
                             }
+                            verifySuccessfulSaves()
+
+                            suspend fun verifyRemovedRowFailure() {
+                                val missing = insert("missing-${UUID.randomUUID()}")
+                                main { cached.set(helper, missing) }
+                                val failed = editor(type, missing.id).also { active = it }
+                                val field = main { failed.findViewById<EditText>(R.id.clip_edit_text) }
+                                val ok = main { failed.findViewById<View>(R.id.clip_edit_ok) }
+                                eventually { main { field.text.toString() == missing.text && ok.isEnabled } }
+                                dao.delete(missing.id)
+                                main {
+                                    field.setText("unsaved edit")
+                                    ok.performClick()
+                                }
+                                eventually { main { ok.isEnabled && !failed.isFinishing } }
+                                check(main { field.text.toString() == "unsaved edit" })
+                                check(main { cached.get(helper) == missing }) { "Failed write changed the cache" }
+                                check(dao.get(missing.id) == null)
+                                main { failed.findViewById<View>(R.id.clip_edit_cancel).performClick() }
+                                eventually { main { failed.isDestroyed } }
+                                active = null
+                                checkPassed("$type: removed-row failure retains editor text and cache")
+                            }
+                            verifyRemovedRowFailure()
+
+                            suspend fun verifySupersededLoad() {
+                                val first = insert("first-${UUID.randomUUID()}")
+                                val second = insert("second-${UUID.randomUUID()}")
+                                val reading = CompletableDeferred<Unit>()
+                                val releaseRead = CompletableDeferred<Unit>()
+                                daoField.set(
+                                    helper,
+                                    object : DatabaseDao by dao {
+                                        override suspend fun get(id: Int): DatabaseBean? {
+                                            if (id == first.id) {
+                                                reading.complete(Unit)
+                                                releaseRead.await()
+                                            }
+                                            return dao.get(id)
+                                        }
+                                    },
+                                )
+                                try {
+                                    val loading = editor(type, first.id).also { active = it }
+                                    reading.await()
+                                    check(main { !loading.findViewById<View>(R.id.clip_edit_ok).isEnabled })
+                                    check(main { !loading.findViewById<View>(R.id.clip_edit_text).isEnabled })
+                                    main {
+                                        instrumentation.callActivityOnNewIntent(
+                                            loading,
+                                            Intent().putExtra(ClipEditActivity.CLIP_TYPE, type)
+                                                .putExtra(ClipEditActivity.BEAN_ID, second.id),
+                                        )
+                                    }
+                                    eventually { main { loading.findViewById<EditText>(R.id.clip_edit_text).text.toString() == second.text } }
+                                    releaseRead.complete(Unit)
+                                    delay(200)
+                                    check(main { loading.findViewById<EditText>(R.id.clip_edit_text).text.toString() == second.text })
+                                    main {
+                                        loading.findViewById<EditText>(R.id.clip_edit_text).setText("cancelled edit")
+                                        loading.findViewById<View>(R.id.clip_edit_cancel).performClick()
+                                    }
+                                    eventually { main { loading.isDestroyed } }
+                                    active = null
+                                    check(dao.get(first.id)?.text == first.text && dao.get(second.id)?.text == second.text)
+                                    checkPassed("$type: loading disables edits, new intent supersedes old read, cancel preserves both rows")
+                                } finally {
+                                    releaseRead.complete(Unit)
+                                    daoField.set(helper, dao)
+                                }
+                            }
+                            verifySupersededLoad()
                         } finally {
                             withContext(NonCancellable) {
                                 active?.let { activity ->

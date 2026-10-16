@@ -243,93 +243,100 @@ object EngineUnavailableGlyphProbe {
                     var committed = false
                     var keysChecked = 0
                     try {
-                        val widget = main(instrumentation) {
-                            val configuration = Configuration(service.resources.configuration).apply { this.fontScale = fontScale }
-                            val context = service.createConfigurationContext(configuration)
-                            context.theme.setTo(service.theme)
-                            EngineUnavailableView(
-                                context,
-                                failed,
-                                retry = {},
-                                commit = { if (service.isCurrentEditor(token)) service.commitText(it) },
-                                delete = { service.sendDownUpKeyEvents(KeyEvent.KEYCODE_DEL) },
-                                enter = { service.sendDownUpKeyEvents(KeyEvent.KEYCODE_ENTER) },
-                            ).also {
-                                panel.removeAllViews()
-                                panel.addView(it, FrameLayout.LayoutParams(-1, -2))
+                        suspend fun verifyGlyphRendering(): List<Button> {
+                            val widget = main(instrumentation) {
+                                val configuration = Configuration(service.resources.configuration).apply { this.fontScale = fontScale }
+                                val context = service.createConfigurationContext(configuration)
+                                context.theme.setTo(service.theme)
+                                EngineUnavailableView(
+                                    context,
+                                    failed,
+                                    retry = {},
+                                    commit = { if (service.isCurrentEditor(token)) service.commitText(it) },
+                                    delete = { service.sendDownUpKeyEvents(KeyEvent.KEYCODE_DEL) },
+                                    enter = { service.sendDownUpKeyEvents(KeyEvent.KEYCODE_ENTER) },
+                                ).also {
+                                    panel.removeAllViews()
+                                    panel.addView(it, FrameLayout.LayoutParams(-1, -2))
+                                }
                             }
-                        }
-                        withTimeout(10_000) {
-                            while (!main(instrumentation) { widget.isShown && widget.width > 0 && widget.height > 0 }) delay(50)
-                        }
-                        val drawn = CompletableDeferred<Unit>()
-                        main(instrumentation) { widget.postOnAnimation { widget.postOnAnimation { drawn.complete(Unit) } } }
-                        withTimeout(10_000) { drawn.await() }
-                        val buttons = main(instrumentation) {
-                            widget.children.drop(1).flatMap { (it as android.view.ViewGroup).children }.filterIsInstance<Button>().toList()
-                        }
-                        val keyRecords = main(instrumentation) {
-                            check(buttons.map { it.text.toString() }.toSet() == labels && buttons.size == 13)
-                            check(widget.resources.configuration.fontScale == fontScale)
-                            val header = widget.getChildAt(0) as android.view.ViewGroup
-                            val heading = header.children.filterIsInstance<TextView>().single().text.toString()
-                            val retryEnabled = header.children.filterIsInstance<ImageButton>().first().isEnabled
-                            val stateVerified = heading == widget.context.getString(if (failed) R.string.ime_unavailable else R.string.ime_preparing) && retryEnabled == failed
-                            record.put("header_text", heading)
-                            record.put("retry_enabled", retryEnabled)
-                            record.put("state_verified", stateVerified)
-                            if (!stateVerified) errors.add("fallback widget state does not match the requested case")
-                            record.put("actual_font_scale", widget.resources.configuration.fontScale)
-                            record.put("density", widget.resources.displayMetrics.density)
-                            buttons.map { glyph(it) }
-                        }
-                        keysChecked = keyRecords.size
-                        glyphsPassed = keyRecords.all { it.getBoolean("glyph_passed") }
-                        record.put("keys", JSONArray(keyRecords))
-                        if (!glyphsPassed) errors.add("one or more fallback glyphs are clipped or invisible")
-                        val screenshot = checkNotNull(instrumentation.uiAutomation.takeScreenshot())
-                        try {
-                            File(directory, "$name.png").outputStream().use { check(screenshot.compress(Bitmap.CompressFormat.PNG, 100, it)) }
-                        } finally {
-                            screenshot.recycle()
-                        }
-                        val before = main(instrumentation) {
-                            check(service.isCurrentEditor(token) && service.currentInputEditorInfo?.fieldId == editor.id)
-                            checkNotNull(service.currentInputConnection)
-                            editor.setSelection(editor.text.length)
-                            editor.text.toString()
-                        }
-                        val point = main(instrumentation) {
-                            val dot = buttons.single { it.text.toString() == "." }
-                            val position = IntArray(2)
-                            dot.getLocationOnScreen(position)
-                            (position[0] + dot.width / 2f) to (position[1] + dot.height / 2f)
-                        }
-                        val down = SystemClock.uptimeMillis()
-                        for (action in listOf(MotionEvent.ACTION_DOWN, MotionEvent.ACTION_UP)) {
-                            val event = MotionEvent.obtain(down, SystemClock.uptimeMillis(), action, point.first, point.second, 0)
-                            event.source = InputDevice.SOURCE_TOUCHSCREEN
+                            withTimeout(10_000) {
+                                while (!main(instrumentation) { widget.isShown && widget.width > 0 && widget.height > 0 }) delay(50)
+                            }
+                            val drawn = CompletableDeferred<Unit>()
+                            main(instrumentation) { widget.postOnAnimation { widget.postOnAnimation { drawn.complete(Unit) } } }
+                            withTimeout(10_000) { drawn.await() }
+                            val buttons = main(instrumentation) {
+                                widget.children.drop(1).flatMap { (it as android.view.ViewGroup).children }.filterIsInstance<Button>().toList()
+                            }
+                            val keyRecords = main(instrumentation) {
+                                check(buttons.map { it.text.toString() }.toSet() == labels && buttons.size == 13)
+                                check(widget.resources.configuration.fontScale == fontScale)
+                                val header = widget.getChildAt(0) as android.view.ViewGroup
+                                val heading = header.children.filterIsInstance<TextView>().single().text.toString()
+                                val retryEnabled = header.children.filterIsInstance<ImageButton>().first().isEnabled
+                                val stateVerified = heading == widget.context.getString(if (failed) R.string.ime_unavailable else R.string.ime_preparing) && retryEnabled == failed
+                                record.put("header_text", heading)
+                                record.put("retry_enabled", retryEnabled)
+                                record.put("state_verified", stateVerified)
+                                if (!stateVerified) errors.add("fallback widget state does not match the requested case")
+                                record.put("actual_font_scale", widget.resources.configuration.fontScale)
+                                record.put("density", widget.resources.displayMetrics.density)
+                                buttons.map { glyph(it) }
+                            }
+                            keysChecked = keyRecords.size
+                            glyphsPassed = keyRecords.all { it.getBoolean("glyph_passed") }
+                            record.put("keys", JSONArray(keyRecords))
+                            if (!glyphsPassed) errors.add("one or more fallback glyphs are clipped or invisible")
+                            val screenshot = checkNotNull(instrumentation.uiAutomation.takeScreenshot())
                             try {
-                                instrumentation.sendPointerSync(event)
+                                File(directory, "$name.png").outputStream().use { check(screenshot.compress(Bitmap.CompressFormat.PNG, 100, it)) }
                             } finally {
-                                event.recycle()
+                                screenshot.recycle()
                             }
+                            return buttons
                         }
-                        withTimeout(10_000) {
-                            while (!main(instrumentation) { editor.text.toString() == "$before." }) delay(50)
+                        val buttons = verifyGlyphRendering()
+                        suspend fun verifyRealDotTouch() {
+                            val before = main(instrumentation) {
+                                check(service.isCurrentEditor(token) && service.currentInputEditorInfo?.fieldId == editor.id)
+                                checkNotNull(service.currentInputConnection)
+                                editor.setSelection(editor.text.length)
+                                editor.text.toString()
+                            }
+                            val point = main(instrumentation) {
+                                val dot = buttons.single { it.text.toString() == "." }
+                                val position = IntArray(2)
+                                dot.getLocationOnScreen(position)
+                                (position[0] + dot.width / 2f) to (position[1] + dot.height / 2f)
+                            }
+                            val down = SystemClock.uptimeMillis()
+                            for (action in listOf(MotionEvent.ACTION_DOWN, MotionEvent.ACTION_UP)) {
+                                val event = MotionEvent.obtain(down, SystemClock.uptimeMillis(), action, point.first, point.second, 0)
+                                event.source = InputDevice.SOURCE_TOUCHSCREEN
+                                try {
+                                    instrumentation.sendPointerSync(event)
+                                } finally {
+                                    event.recycle()
+                                }
+                            }
+                            withTimeout(10_000) {
+                                while (!main(instrumentation) { editor.text.toString() == "$before." }) delay(50)
+                            }
+                            committed = main(instrumentation) { service.isCurrentEditor(token) && service.currentInputEditorInfo?.fieldId == editor.id && editor.text.toString() == "$before." }
+                            record.put(
+                                "dot_touch",
+                                JSONObject().apply {
+                                    put("x", point.first)
+                                    put("y", point.second)
+                                    put("field_id", editor.id)
+                                    put("before", before)
+                                    put("after", main(instrumentation) { editor.text.toString() })
+                                    put("committed", committed)
+                                },
+                            )
                         }
-                        committed = main(instrumentation) { service.isCurrentEditor(token) && service.currentInputEditorInfo?.fieldId == editor.id && editor.text.toString() == "$before." }
-                        record.put(
-                            "dot_touch",
-                            JSONObject().apply {
-                                put("x", point.first)
-                                put("y", point.second)
-                                put("field_id", editor.id)
-                                put("before", before)
-                                put("after", main(instrumentation) { editor.text.toString() })
-                                put("committed", committed)
-                            },
-                        )
+                        verifyRealDotTouch()
                     } catch (failure: Exception) {
                         errors.add(failure.stackTraceToString())
                     } finally {
