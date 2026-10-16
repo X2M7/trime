@@ -330,13 +330,18 @@ object CandidateSnapshotProbe {
     }
 
     fun run(instrumentation: Instrumentation) {
-        val result = Bundle()
+        val result = Bundle().apply {
+            putBoolean("ascii_tips_snapshot_captured", false)
+            putBoolean("ascii_tips_restore_attempted", false)
+            putBoolean("ascii_tips_restore_verified", false)
+        }
         val sessionName = "${CandidateSnapshotProbe::class.java.name}-${android.os.Process.myPid()}"
         val prefix = "__t08_candidates_${UUID.randomUUID().toString().replace("-", "")}"
         val firstEditor = SystemClock.elapsedRealtimeNanos().coerceAtLeast(1L)
         val secondEditor = firstEditor + 1
         val tips = AppPrefs.defaultInstance().general.asciiSwitchTips
-        val previousTips = tips.getValue()
+        var previousTips = false
+        var previousTipsPresent = false
         val userConfig = File(DataManager.userDataDir, "user.yaml")
         var previousUserConfig: ByteArray? = null
         var userConfigCaptured = false
@@ -374,8 +379,26 @@ object CandidateSnapshotProbe {
             previousUserConfig = userConfig.takeIf(File::exists)?.readBytes()
             userConfigCaptured = true
             instrumentation.runOnMainSync {
-                tips.setValue(false)
+                val previousRawTips = tips.sharedPreferences.all
+                previousTipsPresent = previousRawTips.containsKey(tips.key)
+                val previousRawValue = previousRawTips[tips.key] as? Boolean
+                check(!previousTipsPresent || previousRawValue != null) { "ASCII-tip preference is not a Boolean" }
+                previousTips = previousRawValue ?: tips.defaultValue
+                result.putString("ascii_tips_key", tips.key)
+                result.putBoolean("ascii_tips_snapshot_captured", true)
+                result.putBoolean("ascii_tips_before_present", previousTipsPresent)
+                result.putBoolean("ascii_tips_before_effective", previousTips)
+                if (previousTipsPresent) result.putBoolean("ascii_tips_before_raw_boolean", previousTips)
                 preferencesChanged = true
+                val overrideCommitted = tips.sharedPreferences.edit().putBoolean(tips.key, false).commit()
+                result.putBoolean("ascii_tips_override_commit", overrideCommitted)
+                val overridden = tips.sharedPreferences.all
+                result.putBoolean("ascii_tips_override_present", overridden.containsKey(tips.key))
+                val overrideValue = overridden[tips.key]
+                if (overrideValue is Boolean) result.putBoolean("ascii_tips_override_raw_boolean", overrideValue)
+                check(overrideCommitted && overridden.containsKey(tips.key) && overrideValue == false && !tips.getValue()) {
+                    "Could not persist the dedicated probe's temporary ASCII-tip preference"
+                }
                 session = RimeDaemon.createSession(sessionName)
             }
             val rime = checkNotNull(session)
@@ -486,7 +509,32 @@ object CandidateSnapshotProbe {
                     }
                 }
             }
-            if (preferencesChanged) clean { instrumentation.runOnMainSync { tips.setValue(previousTips) } }
+            if (preferencesChanged) {
+                clean {
+                    instrumentation.runOnMainSync {
+                        result.putBoolean("ascii_tips_restore_attempted", true)
+                        val editor = tips.sharedPreferences.edit()
+                        if (previousTipsPresent) editor.putBoolean(tips.key, previousTips) else editor.remove(tips.key)
+                        val restoreCommitted = editor.commit()
+                        result.putBoolean("ascii_tips_restore_commit", restoreCommitted)
+                        val restored = tips.sharedPreferences.all
+                        val restoredPresent = restored.containsKey(tips.key)
+                        val restoredRawValue = restored[tips.key]
+                        result.putBoolean("ascii_tips_after_present", restoredPresent)
+                        if (restoredRawValue is Boolean) result.putBoolean("ascii_tips_after_raw_boolean", restoredRawValue)
+                        val restoredEffective = when {
+                            !restoredPresent -> tips.defaultValue
+                            restoredRawValue is Boolean -> restoredRawValue
+                            else -> null
+                        }
+                        if (restoredEffective != null) result.putBoolean("ascii_tips_after_effective", restoredEffective)
+                        val restoredExactly = restoreCommitted && restoredPresent == previousTipsPresent &&
+                            (!previousTipsPresent || restoredRawValue == previousTips) && restoredEffective == previousTips && tips.getValue() == previousTips
+                        result.putBoolean("ascii_tips_restore_verified", restoredExactly)
+                        check(restoredExactly) { "ASCII-tip preference presence/value was not durably restored" }
+                    }
+                }
+            }
         }
         result.putBoolean("passed", passed)
         result.putInt("checks", checks)
