@@ -600,7 +600,7 @@ internal object PublicWindowPilotProbe {
             val parentCount = main { created.count { it is MainActivity } }
             activity = launch(existingParent)
             val upLease = lease(activity)
-            main { check(!NavUtils.shouldUpRecreateTask(activity, checkNotNull(NavUtils.getParentActivityIntent(activity)))) }
+            main { check(!activity.shouldUpRecreateTask(checkNotNull(NavUtils.getParentActivityIntent(activity)))) }
             capture(activity, "before-existing-parent-up")
             val navigation = main { descendants(activity.findViewById<Toolbar>(R.id.toolbar)).single { it.isClickable && it.contentDescription?.toString() == activity.getString(R.string.public_window_navigate_up) } }
             touch(navigation)
