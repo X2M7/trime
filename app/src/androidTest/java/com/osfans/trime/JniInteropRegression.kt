@@ -6,7 +6,7 @@ import android.system.Os
 import android.system.OsConstants
 import android.util.Log
 import com.osfans.trime.core.RimeConfig
-import com.osfans.trime.data.base.DataManager
+import com.osfans.trime.core.data.DataManager
 import com.osfans.trime.data.opencc.OpenCCDictManager
 import org.json.JSONArray
 import org.json.JSONObject

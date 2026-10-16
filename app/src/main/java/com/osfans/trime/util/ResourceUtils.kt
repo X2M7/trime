@@ -4,7 +4,7 @@
 
 package com.osfans.trime.util
 
-import com.osfans.trime.data.sync.RimeDataSync
+import com.osfans.trime.core.data.UserDataManager
 import timber.log.Timber
 import java.io.File
 
@@ -21,7 +21,7 @@ object ResourceUtils {
             }
         } else {
             appContext.assets.open(path).use { i ->
-                RimeDataSync.writeFromStream(File(dest)) { output -> i.copyTo(output) }
+                UserDataManager.writeFromStream(File(dest)) { output -> i.copyTo(output) }
             }
         }
     }.onFailure { Timber.e(it, "Caught a error in copying assets") }

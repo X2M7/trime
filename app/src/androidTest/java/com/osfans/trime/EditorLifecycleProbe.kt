@@ -48,7 +48,7 @@ import com.osfans.trime.core.RimeApi
 import com.osfans.trime.core.RimeSchema
 import com.osfans.trime.daemon.RimeDaemon
 import com.osfans.trime.daemon.RimeSession
-import com.osfans.trime.data.base.DataManager
+import com.osfans.trime.core.data.DataManager
 import com.osfans.trime.data.prefs.AppPrefs
 import com.osfans.trime.data.theme.Theme
 import com.osfans.trime.data.theme.ThemeManager
@@ -1142,7 +1142,7 @@ object EditorLifecycleProbe {
         val originalTheme = com.osfans.trime.data.theme.ThemeManager.activeTheme
         val originalFonts = originalTheme.fonts
         val originalScope = com.osfans.trime.data.theme.ColorManager.currentScope()
-        val root = com.osfans.trime.data.base.DataManager.userDataDir.canonicalFile
+        val root = com.osfans.trime.core.data.DataManager.userDataDir.canonicalFile
         val directory = java.io.File(root, "fonts")
         val createdDirectory = !directory.exists()
         if (createdDirectory) check(directory.mkdir())
@@ -2444,6 +2444,17 @@ object EditorLifecycleProbe {
                     api { }
                     until("custom action uses ID 731") { actions.lastOrNull() == 731 }
                     focus(chat)
+
+                    ModifiedReturnRegression.verify(
+                        instrumentation,
+                        service,
+                        editor,
+                        container,
+                        chat,
+                        focus = ::focus,
+                        runApi = ::api,
+                        dispatch = { modifiers -> checkNotNull(input()).di.direct.instance<CommonKeyboardActionListener>().listener.onKey(KeyEvent.KEYCODE_ENTER, modifiers) },
+                    )
 
                     api { setRuntimeOption("ascii_mode", true) }
                     main {

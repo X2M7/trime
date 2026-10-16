@@ -8,9 +8,9 @@ import android.os.Bundle
 import com.osfans.trime.core.RimeLifecycle
 import com.osfans.trime.core.RimeUnavailableException
 import com.osfans.trime.daemon.RimeDaemon
-import com.osfans.trime.data.base.DataManager
+import com.osfans.trime.core.data.DataManager
 import com.osfans.trime.data.prefs.AppPrefs
-import com.osfans.trime.data.sync.DataStorageMode
+import com.osfans.trime.core.data.DataStorageMode
 import com.osfans.trime.data.theme.ThemeLoader
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking

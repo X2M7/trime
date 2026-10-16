@@ -16,12 +16,12 @@ import androidx.preference.Preference
 import androidx.preference.SwitchPreferenceCompat
 import com.osfans.trime.R
 import com.osfans.trime.core.RimeMaintenanceMutex
-import com.osfans.trime.data.base.DataManager
+import com.osfans.trime.core.data.DataManager
 import com.osfans.trime.data.prefs.AppPrefs
 import com.osfans.trime.data.prefs.PreferenceDelegate
-import com.osfans.trime.data.sync.ConfigurationImportException
-import com.osfans.trime.data.sync.DataStorageMode
-import com.osfans.trime.data.sync.RimeDataSync
+import com.osfans.trime.core.data.ConfigurationImportException
+import com.osfans.trime.core.data.DataStorageMode
+import com.osfans.trime.core.data.UserDataManager
 import com.osfans.trime.ui.common.PaddingPreferenceFragment
 import com.osfans.trime.ui.common.withLoadingDialog
 import com.osfans.trime.ui.main.MainViewModel
@@ -167,7 +167,7 @@ class ProfileSettingsFragment : PaddingPreferenceFragment() {
                 withLoadingDialog(ctx) {
                     try {
                         val stats = withContext(Dispatchers.IO) {
-                            RimeDataSync.importConfigurationWithSession(viewModel.rime, picked.uri.toString())
+                            UserDataManager.importConfigurationWithSession(viewModel.rime, picked.uri.toString())
                         }
                         updateDataPathSummary()
                         ctx.toast(ctx.getString(R.string.configuration_import_validated, stats.validatedConfigs, stats.copied + stats.deleted))
@@ -249,7 +249,7 @@ class ProfileSettingsFragment : PaddingPreferenceFragment() {
                                 val needsPicker = withContext(Dispatchers.IO) {
                                     RimeMaintenanceMutex.withLock {
                                         val needsPicker = mode == DataStorageMode.EXTERNAL_SYNC &&
-                                            !RimeDataSync.hasExternalAccess()
+                                            !UserDataManager.hasExternalAccess()
                                         if (!needsPicker) prefs.dataStorageMode.setValue(mode)
                                         needsPicker
                                     }
@@ -287,7 +287,7 @@ class ProfileSettingsFragment : PaddingPreferenceFragment() {
                                     when {
                                         !success -> R.string.sync_user_data_failure
 
-                                        RimeDataSync.usesExternalSync() ->
+                                        UserDataManager.usesExternalSync() ->
                                             R.string.sync_user_data_success_external
 
                                         else -> R.string.sync_user_data_success
@@ -400,9 +400,9 @@ class ProfileSettingsFragment : PaddingPreferenceFragment() {
         updateStorageModeUi()
         val ctx = requireContext()
         if (
-            RimeDataSync.usesExternalSync() &&
+            UserDataManager.usesExternalSync() &&
             prefs.externalRimeTreeUri.getValue().isNotBlank() &&
-            !RimeDataSync.hasExternalAccess()
+            !UserDataManager.hasExternalAccess()
         ) {
             ctx.toast(R.string.data_path_permission_revoked)
         }

@@ -10,7 +10,7 @@ import com.osfans.trime.TrimeApplication
 import com.osfans.trime.core.RimeMaintenanceMutex
 import com.osfans.trime.core.SchemaItem
 import com.osfans.trime.daemon.RimeDaemon
-import com.osfans.trime.data.sync.RimeDataSync
+import com.osfans.trime.core.data.UserDataManager
 import com.osfans.trime.ui.common.OnItemChangedListener
 import com.osfans.trime.ui.main.settings.ProgressFragment
 import com.osfans.trime.util.NaiveDustman
@@ -109,8 +109,8 @@ class SchemaListFragment :
                             deploy(skipImport = true)
                         }
                         RimeMaintenanceMutex.withLock {
-                            if (RimeDataSync.usesExternalSync()) {
-                                RimeDataSync.exportConfigFilesToExternal().getOrThrow()
+                            if (UserDataManager.usesExternalSync()) {
+                                UserDataManager.exportConfigFilesToExternal().getOrThrow()
                             }
                         }
                     } finally {

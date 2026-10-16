@@ -10,7 +10,7 @@ import com.charleskorn.kaml.YamlList
 import com.charleskorn.kaml.YamlMap
 import com.charleskorn.kaml.YamlNode
 import com.osfans.trime.daemon.RimeDaemon
-import com.osfans.trime.data.base.DataManager
+import com.osfans.trime.core.data.DataManager
 import com.osfans.trime.util.appContext
 import com.osfans.trime.util.isNull
 import com.osfans.trime.util.mapping

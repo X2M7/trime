@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: GPL-3.0-or-later */
 package com.osfans.trime.data.prefs
 
-import com.osfans.trime.data.sync.DataStorageMode
+import com.osfans.trime.core.data.DataStorageMode
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 

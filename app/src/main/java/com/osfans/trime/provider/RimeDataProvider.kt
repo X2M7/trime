@@ -16,7 +16,7 @@ import android.provider.DocumentsContract.Root
 import android.provider.DocumentsProvider
 import android.webkit.MimeTypeMap
 import com.osfans.trime.R
-import com.osfans.trime.data.sync.SyncRelativePath
+import com.osfans.trime.core.data.SyncRelativePath
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.IOException

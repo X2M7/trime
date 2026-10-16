@@ -25,10 +25,11 @@
     public java.lang.Object run(kotlin.jvm.functions.Function2);
     public java.lang.Object runOnReady(kotlin.jvm.functions.Function2, kotlin.coroutines.Continuation);
 }
--keepclassmembers class com.osfans.trime.data.base.DataManager {
-    public static final com.osfans.trime.data.base.DataManager INSTANCE;
+-keepclassmembers class com.osfans.trime.core.data.DataManager {
+    public static final com.osfans.trime.core.data.DataManager INSTANCE;
     public java.io.File getUserDataDir();
     public java.io.File getSharedDataDir();
+    public void sync();
 }
 -keepclassmembers class com.osfans.trime.data.prefs.AppPrefs {
     public static final com.osfans.trime.data.prefs.AppPrefs$Companion Companion;

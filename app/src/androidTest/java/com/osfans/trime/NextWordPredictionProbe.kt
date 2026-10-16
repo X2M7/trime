@@ -19,7 +19,7 @@ import com.osfans.trime.core.RimeMessage
 import com.osfans.trime.core.SchemaItem
 import com.osfans.trime.daemon.RimeDaemon
 import com.osfans.trime.daemon.RimeSession
-import com.osfans.trime.data.base.DataManager
+import com.osfans.trime.core.data.DataManager
 import com.osfans.trime.data.prefs.AppPrefs
 import com.osfans.trime.ime.core.InlinePreeditMode
 import kotlinx.coroutines.CoroutineStart

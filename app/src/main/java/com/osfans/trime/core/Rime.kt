@@ -8,7 +8,7 @@ package com.osfans.trime.core
 import android.annotation.SuppressLint
 import androidx.core.net.toUri
 import com.osfans.trime.BuildConfig
-import com.osfans.trime.data.base.DataManager
+import com.osfans.trime.core.data.DataManager
 import com.osfans.trime.data.candidates.CandidatePin
 import com.osfans.trime.data.candidates.CandidatePinStore
 import com.osfans.trime.data.opencc.OpenCCDictManager
@@ -17,10 +17,10 @@ import com.osfans.trime.data.prefs.InputSetupController
 import com.osfans.trime.data.prefs.InputSetupSelection
 import com.osfans.trime.data.prefs.InputSetupState
 import com.osfans.trime.data.prefs.RimeInputSetupEngine
-import com.osfans.trime.data.sync.ConfigImportValidator
-import com.osfans.trime.data.sync.ConfigurationImportException
-import com.osfans.trime.data.sync.RimeDataSync
-import com.osfans.trime.data.sync.SyncRelativePath
+import com.osfans.trime.core.data.ConfigImportValidator
+import com.osfans.trime.core.data.ConfigurationImportException
+import com.osfans.trime.core.data.UserDataManager
+import com.osfans.trime.core.data.SyncRelativePath
 import com.osfans.trime.data.theme.ThemeLoader
 import com.osfans.trime.data.theme.ThemeManager
 import com.osfans.trime.data.theme.ThemePrefs
@@ -252,13 +252,13 @@ class Rime :
     }
 
     override suspend fun deploy(skipImport: Boolean) = withImportMaintenance { restoreTheme, acceptTheme ->
-        if (RimeDataSync.usesExternalSync() && !RimeDataSync.hasExternalAccess()) {
-            RimeDataSync.fallbackToAppStorage()
+        if (UserDataManager.usesExternalSync() && !UserDataManager.hasExternalAccess()) {
+            UserDataManager.fallbackToAppStorage()
         }
         var activated = false
-        if (RimeDataSync.usesExternalSync() && !skipImport) {
+        if (UserDataManager.usesExternalSync() && !skipImport) {
             var previous: ImportRuntime? = null
-            val result = RimeDataSync.importToLocal(
+            val result = UserDataManager.importToLocal(
                 keepNotificationUntilDeploySuccess = true,
                 beforePublish = {
                     previous = captureImportRuntimeConfined()
@@ -287,7 +287,7 @@ class Rime :
                     throw failure
                 }
                 activated = false
-                RimeDataSync.fallbackToAppStorage(failure)
+                UserDataManager.fallbackToAppStorage(failure)
             } else {
                 Timber.i("Import finished: ${result.getOrNull()}")
             }
@@ -296,11 +296,11 @@ class Rime :
         if (!activated) deployNativeLocked()
     }
 
-    override suspend fun importConfiguration(treeUri: String): RimeDataSync.SyncStats = withImportMaintenance { restoreTheme, acceptTheme ->
+    override suspend fun importConfiguration(treeUri: String): UserDataManager.SyncStats = withImportMaintenance { restoreTheme, acceptTheme ->
         var previous: ImportRuntime? = null
         var activated = false
         try {
-            RimeDataSync.importFromPickedTree(
+            UserDataManager.importFromPickedTree(
                 treeUri.toUri(),
                 beforePublish = {
                     previous = captureImportRuntimeConfined()
@@ -328,7 +328,7 @@ class Rime :
         }
     }
 
-    override suspend fun importThemeConfiguration(configId: String): RimeDataSync.SyncStats = withImportMaintenance { restoreTheme, acceptTheme ->
+    override suspend fun importThemeConfiguration(configId: String): UserDataManager.SyncStats = withImportMaintenance { restoreTheme, acceptTheme ->
         SyncRelativePath.requireSafeName(configId)
         var previousTheme = ThemeManager.prefs.selectedTheme.getValue()
         var selectionWriteAttempted = false
@@ -343,7 +343,7 @@ class Rime :
                     .putString(ThemePrefs.SELECTED_THEME, id).commit(),
             ) { "Cannot persist the verified theme selection" }
         }
-        RimeDataSync.importThemeToLocal(
+        UserDataManager.importThemeToLocal(
             configId,
             beforePublish = {
                 previousTheme = ThemeManager.prefs.selectedTheme.getValue()
@@ -546,8 +546,8 @@ class Rime :
         // Import configurations and portable text dumps before native merging.
         // Never replace open binary user databases with a file-by-file SAF copy.
         // Suppress import progress so synchronization does not show deployment UI.
-        if (RimeDataSync.usesExternalSync() && RimeDataSync.hasExternalAccess()) {
-            if (RimeDataSync.importToLocal(showProgress = false).isFailure) return@withLock false
+        if (UserDataManager.usesExternalSync() && UserDataManager.hasExternalAccess()) {
+            if (UserDataManager.importToLocal(showProgress = false).isFailure) return@withLock false
         }
         // RimeSyncUserData schedules maintenance asynchronously and returns once the
         // worker is started. Wait for DeployMessage so callers (e.g. export) only
@@ -579,12 +579,12 @@ class Rime :
                 unregisterRimeMessageHandler(syncHandler)
             }
         if (!syncOk) return@withLock false
-        if (!RimeDataSync.usesExternalSync()) return@withLock true
-        if (!RimeDataSync.hasExternalAccess()) {
+        if (!UserDataManager.usesExternalSync()) return@withLock true
+        if (!UserDataManager.hasExternalAccess()) {
             Timber.w("Export skipped: no data path selected")
             return@withLock false
         }
-        RimeDataSync.exportToExternal().isSuccess
+        UserDataManager.exportToExternal().isSuccess
     }
 
     override suspend fun processKey(
@@ -841,7 +841,7 @@ class Rime :
         } else {
             try {
                 DataManager.sync()
-                if (RimeDataSync.usesExternalSync() && !RimeDataSync.hasExternalAccess()) {
+                if (UserDataManager.usesExternalSync() && !UserDataManager.hasExternalAccess()) {
                     IllegalStateException("External sync folder permission is unavailable; using local resources")
                 } else {
                     null
@@ -1128,8 +1128,8 @@ class Rime :
     }
 
     /** The storage predicate shared by startup and the daemon's bounded late-media poll. */
-    internal fun isStorageReadyForStartup(): Boolean = RimeDataSync.isStorageAvailable() ||
-        (RimeDataSync.isRuntimeReady() && DataManager.hasDeployedResources())
+    internal fun isStorageReadyForStartup(): Boolean = UserDataManager.isStorageAvailable() ||
+        (UserDataManager.isRuntimeReady() && DataManager.hasDeployedResources())
 
     /** Publish a bounded late-storage failure so callers can offer an explicit retry. */
     internal fun failStartup(error: Throwable): Boolean = if (lifecycle.currentState in setOf(RimeLifecycle.State.STOPPED, RimeLifecycle.State.FAILED)) {

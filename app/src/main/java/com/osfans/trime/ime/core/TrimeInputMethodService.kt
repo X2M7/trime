@@ -595,7 +595,20 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
                             return@msg
                         }
                         when (it.value.value) {
-                            RimeKeyMapping.RimeKey_Return -> handleReturnKey()
+                            RimeKeyMapping.RimeKey_Return ->
+                                if (it.modifiers.isReturnChord()) {
+                                    sendDownUpKeyEvent(
+                                        it.value.keyCode,
+                                        it.modifiers.metaState or meta(
+                                            alt = it.modifiers.alt,
+                                            shift = it.modifiers.shift,
+                                            ctrl = it.modifiers.ctrl,
+                                            meta = it.modifiers.meta,
+                                        ),
+                                    )
+                                } else {
+                                    handleReturnKey()
+                                }
 
                             else -> {
                                 if (keyCode != KeyEvent.KEYCODE_UNKNOWN) {
@@ -1674,3 +1687,9 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
         showingDialog = dialog
     }
 }
+
+/**
+ * A virtual Return carrying shift, control, alt, or meta is a key chord and is
+ * forwarded with the modifier keys. Caps Lock or Num Lock alone is not.
+ */
+internal fun KeyModifiers.isReturnChord(): Boolean = shift || ctrl || alt || meta

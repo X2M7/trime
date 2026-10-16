@@ -3,7 +3,7 @@
 
 package com.osfans.trime.data.userdict
 
-import com.osfans.trime.data.base.DataManager
+import com.osfans.trime.core.data.DataManager
 import com.osfans.trime.util.appContext
 import java.io.File
 import java.io.FileOutputStream

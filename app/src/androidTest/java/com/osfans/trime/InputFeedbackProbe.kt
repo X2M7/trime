@@ -17,7 +17,7 @@ import android.system.Os
 import android.system.OsConstants
 import android.view.KeyEvent
 import com.osfans.trime.daemon.RimeDaemon
-import com.osfans.trime.data.base.DataManager
+import com.osfans.trime.core.data.DataManager
 import com.osfans.trime.data.prefs.AppPrefs
 import com.osfans.trime.data.soundeffect.SoundEffectManager
 import com.osfans.trime.ime.keyboard.InputFeedbackManager

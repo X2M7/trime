@@ -75,7 +75,14 @@ public final class UserDictionaryNativeUpgradeProbe {
 
     private static Object production(String owner, String name, Class<?>[] parameters, Object... arguments)
             throws Exception {
-        Class<?> type = Class.forName("com.osfans.trime." + owner);
+        Class<?> type;
+        try {
+            type = Class.forName("com.osfans.trime." + owner);
+        } catch (ClassNotFoundException missing) {
+            // The same instrumentation verifies the published APK before the package move.
+            if (!owner.equals("core.data.DataManager")) throw missing;
+            type = Class.forName("com.osfans.trime.data.base.DataManager");
+        }
         Method method = type.getDeclaredMethod(name, parameters);
         method.setAccessible(true);
         Object receiver = Modifier.isStatic(method.getModifiers()) ? null : type.getDeclaredField("INSTANCE").get(null);
@@ -410,7 +417,7 @@ public final class UserDictionaryNativeUpgradeProbe {
             check(external != null && new File(external, "runtime-audit-dedicated").isFile(), "Dedicated marker missing");
             check(!receiptFile.exists(), "Never overwrite an earlier upgrade receipt");
             idleDaemon();
-            user = ((File) production("data.base.DataManager", "getUserDataDir")).getCanonicalFile();
+            user = ((File) production("core.data.DataManager", "getUserDataDir")).getCanonicalFile();
             File config = new File(user, "user.yaml");
             PackageInfo info = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
             if ("prepare".equals(phase)) {
@@ -437,8 +444,8 @@ public final class UserDictionaryNativeUpgradeProbe {
             stateValidated = true;
             // Invoke the real resource deployment used by production, not a
             // copied/stub dictionary. Its exact old Release method is audited.
-            production("data.base.DataManager", "sync");
-            File shared = (File) production("data.base.DataManager", "getSharedDataDir");
+            production("core.data.DataManager", "sync");
+            File shared = (File) production("core.data.DataManager", "getSharedDataDir");
             check(shared.isDirectory() && user.isDirectory(), "Production resource deployment failed");
             System.loadLibrary("rime_jni");
             idleDaemon();

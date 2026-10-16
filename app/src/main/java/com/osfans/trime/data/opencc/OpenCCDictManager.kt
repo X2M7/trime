@@ -4,7 +4,7 @@
 
 package com.osfans.trime.data.opencc
 
-import com.osfans.trime.data.base.DataManager
+import com.osfans.trime.core.data.DataManager
 import com.osfans.trime.data.opencc.dict.Dictionary
 import com.osfans.trime.data.opencc.dict.OpenCCDictionary
 import com.osfans.trime.data.opencc.dict.TextDictionary

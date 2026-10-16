@@ -13,7 +13,7 @@ import androidx.annotation.Keep
 import androidx.annotation.RequiresApi
 import androidx.preference.PreferenceManager
 import com.osfans.trime.R
-import com.osfans.trime.data.sync.DataStorageMode
+import com.osfans.trime.core.data.DataStorageMode
 import com.osfans.trime.ime.candidates.compact.CompactCandidateMode
 import com.osfans.trime.ime.candidates.popup.PopupCandidatesLayout
 import com.osfans.trime.ime.candidates.popup.PopupCandidatesMode

@@ -3,7 +3,7 @@ package com.osfans.trime.data.prefs
 
 import android.annotation.SuppressLint
 import android.content.SharedPreferences
-import com.osfans.trime.data.sync.DataStorageMode
+import com.osfans.trime.core.data.DataStorageMode
 
 /** Run before recording this process's PID or creating the first Rime configuration. */
 @SuppressLint("ApplySharedPref", "UseKtx")

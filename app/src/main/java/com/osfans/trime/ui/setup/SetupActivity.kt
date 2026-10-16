@@ -40,9 +40,9 @@ import com.osfans.trime.data.prefs.InputSetupException
 import com.osfans.trime.data.prefs.InputSetupFailure
 import com.osfans.trime.data.prefs.InputSetupSelection
 import com.osfans.trime.data.prefs.InputSetupState
-import com.osfans.trime.data.sync.ConfigurationImportException
-import com.osfans.trime.data.sync.DataStorageMode
-import com.osfans.trime.data.sync.RimeDataSync
+import com.osfans.trime.core.data.ConfigurationImportException
+import com.osfans.trime.core.data.DataStorageMode
+import com.osfans.trime.core.data.UserDataManager
 import com.osfans.trime.databinding.ActivitySetupBinding
 import com.osfans.trime.ui.main.MainActivity
 import com.osfans.trime.ui.main.NavigationRoute
@@ -265,7 +265,7 @@ class SetupActivity : FragmentActivity() {
             try {
                 val picked = storageAccess.pickDirectory() ?: return@launch
                 runCatching {
-                    val stats = RimeDataSync.importConfigurationWithSession(rimeSession(), picked.uri.toString())
+                    val stats = UserDataManager.importConfigurationWithSession(rimeSession(), picked.uri.toString())
                     storageRevision++
                     inputLoaded = false
                     keepCurrentInput = true

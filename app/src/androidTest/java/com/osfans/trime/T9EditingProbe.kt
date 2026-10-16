@@ -22,7 +22,7 @@ import com.osfans.trime.core.T9Action
 import com.osfans.trime.daemon.RimeDaemon
 import com.osfans.trime.daemon.RimeSession
 import com.osfans.trime.data.prefs.AppPrefs
-import com.osfans.trime.data.sync.RimeDataSync
+import com.osfans.trime.core.data.UserDataManager
 import com.osfans.trime.data.theme.ThemeManager
 import com.osfans.trime.data.theme.model.KeyActionToken
 import com.osfans.trime.ime.composition.T9DisambiguationView
@@ -72,7 +72,7 @@ object T9EditingProbe {
         fun phase(text: String) = instrumentation.sendStatus(0, Bundle().apply { putString("stream", "$text\n") })
         try {
             check(Build.HARDWARE in setOf("ranchu", "goldfish") && Build.VERSION.SDK_INT >= 29) { "API 29+ emulator only" }
-            if (assistOnly) check(RimeDataSync.isStorageAvailable()) { "Complete Trime storage setup before the T05 probe" }
+            if (assistOnly) check(UserDataManager.isStorageAvailable()) { "Complete Trime storage setup before the T05 probe" }
             preference.setValue(InlinePreeditMode.COMMIT_TEXT_PREVIEW)
             undoPreference.setValue(true)
             session = main { RimeDaemon.createSession(javaClass.name) }

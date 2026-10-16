@@ -2,7 +2,7 @@
 package com.osfans.trime.data.candidates
 
 import android.util.AtomicFile
-import com.osfans.trime.data.base.DataManager
+import com.osfans.trime.core.data.DataManager
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json

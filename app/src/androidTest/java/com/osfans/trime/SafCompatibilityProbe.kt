@@ -19,17 +19,17 @@ import android.provider.DocumentsProvider
 import androidx.annotation.RequiresApi
 import androidx.core.net.toUri
 import com.osfans.trime.core.RimeMaintenanceMutex
-import com.osfans.trime.data.base.DataManager
+import com.osfans.trime.core.data.DataManager
 import com.osfans.trime.data.prefs.AppPrefs
-import com.osfans.trime.data.sync.ConfigurationImportException
-import com.osfans.trime.data.sync.RimeDataSync
-import com.osfans.trime.data.sync.SafDirectoryListing
-import com.osfans.trime.data.sync.SyncEntry
-import com.osfans.trime.data.sync.SyncFingerprint
-import com.osfans.trime.data.sync.fixture.FixtureAtomicSafFileCopy
-import com.osfans.trime.data.sync.fixture.FixtureSafPathCache
-import com.osfans.trime.data.sync.fixture.FixtureSafTreeListing
-import com.osfans.trime.data.sync.fixture.FixtureSafTreeWalker
+import com.osfans.trime.core.data.ConfigurationImportException
+import com.osfans.trime.core.data.UserDataManager
+import com.osfans.trime.core.data.SafDirectoryListing
+import com.osfans.trime.core.data.SyncEntry
+import com.osfans.trime.core.data.SyncFingerprint
+import com.osfans.trime.core.data.fixture.FixtureAtomicSafFileCopy
+import com.osfans.trime.core.data.fixture.FixtureSafPathCache
+import com.osfans.trime.core.data.fixture.FixtureSafTreeListing
+import com.osfans.trime.core.data.fixture.FixtureSafTreeWalker
 import com.osfans.trime.provider.RimeDataProvider
 import io.github.whiredplanck.storageaccess.StorageAccess
 import io.github.whiredplanck.storageaccess.StorageDocument
@@ -45,7 +45,7 @@ import kotlin.concurrent.thread
  * Uses Android cursors, pipes and DocumentsContract, with only UUID-scoped fixtures.
  *
  * The isolated resolver cases below validate the hostile-provider fixture contract. Production
- * StorageAccess/RimeDataSync is exercised by [verifyExternalTree] and [verifyImportHistory]
+ * StorageAccess/UserDataManager is exercised by [verifyExternalTree] and [verifyImportHistory]
  * against a picker-granted system-provider tree.
  */
 object SafCompatibilityProbe {
@@ -88,7 +88,7 @@ object SafCompatibilityProbe {
     /** Runs the production replacement algorithm against an isolated hostile provider. */
     private class ResolverExternalFileOperations(
         private val resolver: ContentResolver,
-    ) : RimeDataSync.ExternalFileOperations {
+    ) : UserDataManager.ExternalFileOperations {
         private val projection =
             arrayOf(
                 Document.COLUMN_DOCUMENT_ID,
@@ -205,7 +205,7 @@ object SafCompatibilityProbe {
                 for (payload in listOf("initial data", "replacement\n".repeat(1024))) {
                     source.writeText(payload)
                     RimeMaintenanceMutex.withLock {
-                        RimeDataSync.replaceExternalFileForTesting(source, directory, "config.yaml")
+                        UserDataManager.replaceExternalFileForTesting(source, directory, "config.yaml")
                     }
                     val document = checkNotNull(StorageAccess.child(directory, "config.yaml"))
                     val actual = StorageAccess.readFile(document.uri) { it.bufferedReader().readText() }
@@ -226,7 +226,7 @@ object SafCompatibilityProbe {
     private fun verifyImportHistory(instrumentation: Instrumentation, tree: android.net.Uri, rootId: String) = runBlocking {
         RimeMaintenanceMutex.withLock {
             val context = instrumentation.targetContext
-            check(RimeDataSync.usesExternalSync() && RimeDataSync.treeUri() == tree)
+            check(UserDataManager.usesExternalSync() && UserDataManager.treeUri() == tree)
             val cr = context.contentResolver
             val id = "__saf_history_${UUID.randomUUID()}"
             val names = listOf("$id-edited.yaml", "$id-unchanged.yaml")
@@ -248,12 +248,12 @@ object SafCompatibilityProbe {
                 binaryNames.forEach { name -> FixtureAtomicSafFileCopy.copyFromFile(cr, tree, cache, source, "$name/LOG", name, "LOG") }
                 FixtureAtomicSafFileCopy.copyFromFile(cr, tree, cache, source, portableName, "", portableName)
                 names.forEach { name -> FixtureAtomicSafFileCopy.copyFromFile(cr, tree, cache, source, name, "", name) }
-                RimeDataSync.importToLocal(showProgress = false).getOrThrow()
+                UserDataManager.importToLocal(showProgress = false).getOrThrow()
                 check(untracked.readText() == "personal")
                 check(File(personalDb, "LOG").readText() == "personal-learning")
                 check(!File(DataManager.userDataDir, binaryNames.last()).exists())
                 check(File(DataManager.userDataDir, portableName).readText() == importedYaml)
-                val history = RimeDataSync.indexSnapshotForTesting().entries
+                val history = UserDataManager.indexSnapshotForTesting().entries
                 check(names.all { history[it]?.localSha256?.length == 64 })
                 val edited = File(DataManager.userDataDir, names.first())
                 val timestamp = edited.lastModified()
@@ -262,24 +262,24 @@ object SafCompatibilityProbe {
                 FixtureSafTreeWalker.listFiles(cr, tree, rootId).filter { it.relativePath in names }.forEach { entry ->
                     check(DocumentsContract.deleteDocument(cr, DocumentsContract.buildDocumentUriUsingTree(tree, entry.documentId)))
                 }
-                RimeDataSync.importToLocal(showProgress = false).getOrThrow()
+                UserDataManager.importToLocal(showProgress = false).getOrThrow()
                 check(edited.readText() == "new")
                 check(!File(DataManager.userDataDir, names.last()).exists())
                 check(untracked.readText() == "personal")
-                check(names.none { it in RimeDataSync.indexSnapshotForTesting().entries })
+                check(names.none { it in UserDataManager.indexSnapshotForTesting().entries })
                 val blockedName = "$id-blocked.yaml"
                 val blocked = File(DataManager.userDataDir, blockedName)
                 try {
                     FixtureAtomicSafFileCopy.copyFromFile(cr, tree, cache, source, blockedName, "", blockedName)
                     check(blocked.mkdir())
-                    check(RimeDataSync.importToLocal(showProgress = false).isFailure)
+                    check(UserDataManager.importToLocal(showProgress = false).isFailure)
                     var activationAttempted = false
                     fun unexpectedActivation(): Nothing {
                         activationAttempted = true
                         error("Blocked import reached activation")
                     }
                     val themeFailure = runCatching {
-                        RimeDataSync.importThemeToLocal(
+                        UserDataManager.importThemeToLocal(
                             blockedName.removeSuffix(".yaml"),
                             beforePublish = { unexpectedActivation() },
                             beforeRollback = { unexpectedActivation() },
@@ -294,7 +294,7 @@ object SafCompatibilityProbe {
                     check(themeFailure.previousConfigurationRestored && !activationAttempted)
                     check(themeFailure.cause?.message == "Import destination is not a file: $blockedName")
                     check(blocked.isDirectory && untracked.readText() == "personal")
-                    check(blockedName !in RimeDataSync.indexSnapshotForTesting().entries)
+                    check(blockedName !in UserDataManager.indexSnapshotForTesting().entries)
                 } finally {
                     FixtureSafTreeWalker.listFiles(cr, tree, rootId).filter { it.relativePath == blockedName }.forEach { entry ->
                         check(DocumentsContract.deleteDocument(cr, DocumentsContract.buildDocumentUriUsingTree(tree, entry.documentId)))
@@ -358,7 +358,7 @@ object SafCompatibilityProbe {
         fun productionCopy(cr: ContentResolver, source: File, name: String = "sample.yaml") {
             val root = DocumentsContract.buildDocumentUriUsingTree(tree, "root")
             runBlocking {
-                RimeDataSync.replaceExternalFileForTesting(
+                UserDataManager.replaceExternalFileForTesting(
                     source,
                     root,
                     name,
@@ -369,7 +369,7 @@ object SafCompatibilityProbe {
         fun expectFailure(block: () -> Unit) {
             check(runCatching(block).isFailure) { "Failure was not reported" }
         }
-        fun productionListing(cr: ContentResolver) = runBlocking { RimeDataSync.listExternalEntriesForTesting(cr, tree) }
+        fun productionListing(cr: ContentResolver) = runBlocking { UserDataManager.listExternalEntriesForTesting(cr, tree) }
         fun expectRejectedListingPreservesTrackedLocal(cr: ContentResolver): Throwable {
             val localRoot = File(sandbox, "listing-orphan-${UUID.randomUUID()}").apply { mkdir() }
             val sentinel = File(localRoot, "tracked.yaml").apply { writeText("must survive") }
@@ -386,7 +386,7 @@ object SafCompatibilityProbe {
                 val result =
                     runCatching {
                         val externalPaths = productionListing(cr).map { it.relativePath }.toSet()
-                        RimeDataSync.removeLocalOrphans(localRoot, externalPaths, knownEntries = known)
+                        UserDataManager.removeLocalOrphans(localRoot, externalPaths, knownEntries = known)
                     }
                 check(result.isFailure) { "Unsafe provider listing was accepted" }
                 check(sentinel.readText() == "must survive") {
@@ -436,7 +436,7 @@ object SafCompatibilityProbe {
                 val descriptor = checkNotNull(cr.openFileDescriptor(uri, "r"))
                 ParcelFileDescriptor.AutoCloseInputStream(descriptor).use { input ->
                     check(descriptor.canDetectErrors())
-                    RimeDataSync.writeFromStream(local) { output ->
+                    UserDataManager.writeFromStream(local) { output ->
                         input.copyTo(output)
                         descriptor.checkError()
                     }

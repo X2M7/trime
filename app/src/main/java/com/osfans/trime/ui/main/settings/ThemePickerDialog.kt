@@ -10,8 +10,8 @@ import android.widget.Toast
 import androidx.lifecycle.LifecycleCoroutineScope
 import com.osfans.trime.R
 import com.osfans.trime.daemon.RimeDaemon
-import com.osfans.trime.data.sync.ConfigurationImportException
-import com.osfans.trime.data.sync.RimeDataSync
+import com.osfans.trime.core.data.ConfigurationImportException
+import com.osfans.trime.core.data.UserDataManager
 import com.osfans.trime.data.theme.ThemeManager
 import com.osfans.trime.util.toast
 import kotlinx.coroutines.CancellationException
@@ -51,8 +51,8 @@ object ThemePickerDialog {
                             afterConfirm?.invoke()
                             val newItem = allThemes[which]
                             try {
-                                if (RimeDataSync.usesExternalSync()) {
-                                    check(RimeDataSync.hasExternalAccess()) { "No access to the external theme directory" }
+                                if (UserDataManager.usesExternalSync()) {
+                                    check(UserDataManager.hasExternalAccess()) { "No access to the external theme directory" }
                                     val sessionName = "ThemePicker-${UUID.randomUUID()}"
                                     val session = RimeDaemon.createSession(sessionName)
                                     val stats = try {

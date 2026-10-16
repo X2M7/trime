@@ -18,7 +18,7 @@ import com.osfans.trime.TrimeApplication
 import com.osfans.trime.core.RimeMaintenanceMutex
 import com.osfans.trime.daemon.RimeDaemon
 import com.osfans.trime.data.prefs.AppPrefs
-import com.osfans.trime.data.sync.RimeDataSync
+import com.osfans.trime.core.data.UserDataManager
 import kotlinx.coroutines.CancellationException
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
@@ -56,12 +56,12 @@ class BackgroundSyncWork(
             return Result.failure()
         }
         val available = RimeMaintenanceMutex.withLock {
-            if (RimeDataSync.usesExternalSync() &&
-                !RimeDataSync.hasExternalAccess()
+            if (UserDataManager.usesExternalSync() &&
+                !UserDataManager.hasExternalAccess()
             ) {
-                RimeDataSync.fallbackToAppStorage()
+                UserDataManager.fallbackToAppStorage()
             }
-            RimeDataSync.isStorageAvailable()
+            UserDataManager.isStorageAvailable()
         }
         if (!available) {
             Timber.w("Background sync skipped: storage not available")
