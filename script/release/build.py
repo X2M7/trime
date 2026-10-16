@@ -33,12 +33,16 @@ def main():
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--build-timestamp', type=int,
                         help='Shared candidate build time in milliseconds for all three phases')
+    parser.add_argument('--compact-memory', action='store_true',
+                        help='Use a 768 MiB heap and 3.75 GiB start guard; retain 640 MiB Metaspace and 1 GiB runtime floor')
     args = parser.parse_args()
     build_timestamp = args.build_timestamp if args.build_timestamp is not None else int(time.time() * 1000)
     require(10**12 <= build_timestamp <= int(time.time() * 1000),
             'Build timestamp must be a past or current millisecond epoch, not seconds')
     meta = metadata()
-    require(available() >= 4 * 1024 * 1024, 'Wait for at least 4 GiB available')
+    heap_mib = 768 if args.compact_memory else 896
+    start_kib = 3840 * 1024 if args.compact_memory else 4 * 1024 * 1024
+    require(available() >= start_kib, f'Wait for at least {start_kib / 1024 / 1024:g} GiB available')
     for path in Path('/proc').iterdir():
         if not path.name.isdecimal():
             continue
@@ -67,7 +71,7 @@ def main():
         'format': [':spotlessApply'],
     }
     argv = ['./gradlew', '--no-daemon', '--console=plain', '--max-workers=1', '--warning-mode=fail',
-            '-Dorg.gradle.jvmargs=-Xmx896m -XX:MaxMetaspaceSize=640m -XX:ActiveProcessorCount=1',
+            f'-Dorg.gradle.jvmargs=-Xmx{heap_mib}m -XX:MaxMetaspaceSize=640m -XX:ActiveProcessorCount=1',
             '-Pkotlin.compiler.execution.strategy=in-process', '-Ptrime.performanceTrace=false',
             '-Ptrime.forkReleaseIdentity=true', *phases[args.phase]]
     write_json(args.output / 'environment.json', env)
@@ -135,6 +139,8 @@ def main():
     except ValueError:
         unchanged = False
     result = dict(phase=args.phase, started=started, finished=time.time(), exit_code=code,
+                  memory_profile='compact' if args.compact_memory else 'standard',
+                  heap_mib=heap_mib, metaspace_mib=640, minimum_start_available_kib=start_kib,
                   stopped_reason=reason, minimum_available_kib=minimum, source_unchanged=unchanged,
                   build_git_sha=sources[''], environment=binding(args.output / 'environment.json'),
                   command=binding(args.output / 'command.json'), log=binding(args.output / 'command.log'),

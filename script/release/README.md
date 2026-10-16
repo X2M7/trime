@@ -37,6 +37,8 @@ Pages 是静态生成文件；模板、元数据或生成结果不一致会使 C
 
 `build.py` 串行运行 Debug／Release／独立 Lint，单 worker、896 MiB 堆、640 MiB Metaspace；≥4 GiB 可用内存才启动，低于 1 GiB 停止。它保存实际命令、日志、Git/submodule SHA、生成的 BuildConfig、冻结 APK 和内存／退出记录。正式签名沿用既有证书必须显式启用 `trime.forkReleaseIdentity=true`；其他签名会被发布验签拒绝。
 
+低内存主机可显式追加 `--compact-memory`：JVM 堆限制为 768 MiB，Metaspace 仍为 640 MiB，构建启动至少需要 3.75 GiB 可用内存；单 worker、1 GiB 运行停止下限及实际退出／内存记录均保留。默认配置仍为 896 MiB 堆与 4 GiB 启动门槛。模拟器启动门槛独立保持 4 GiB。
+
 三个阶段可传入相同的 `--build-timestamp <毫秒时间戳>`，表示本轮候选开始构建的实际时刻。共享该值可避免 Lint 因时间字段变化而重新编译 Kotlin；每个阶段的实际起止时间仍独立记录，缓存命中不能计为新执行测试。
 
 `release.py record` 绑定真实 Release 构建结果，检查 Manifest、单一 native ABI/ELF machine、v1/v2 签名、证书和 ZIP 对齐，并记录全部 APK 数据资源摘要、词典版本／摘要、主仓库及递归子模块提交。静态对齐检查不等于物理设备页大小验收。
