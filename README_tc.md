@@ -14,7 +14,21 @@ SPDX-License-Identifier: GPL-3.0-or-later
 
 [English](README.md) | [简体中文](README_sc.md) | 繁體中文
 
-## v3.3.13-t9.17 — 版本與覆蓋升級一致性
+## v3.3.13-t9.18 — 上游整合
+
+本候選合入上游 develop 截至 `c7f32b6c` 的六項提交，修復帶修飾鍵的 Return，並將資料管理整合至 `core.data.UserDataManager`。保留本專案已校驗的交易式匯入、復原、取消、原同步索引及 Direct Boot 行為；預設設定僅在缺失時建立，不覆寫使用者檔案。摘要緩衝增至 32 KiB，SAF 掛起讀取後重新核對本機內容。Gradle 9.8.1 在合併前已經具備。
+
+`versionCode 20261123` 高於已實物核對 28 個公開 APK 的最高值 `20261122`。正式套件沿用 `com.osfans.trime.debug` 及原憑證，本候選實際 Release／不可偵錯身分、minSdk21、原憑證與每份 APK 的單一 native ABI 檢查已通過，簽章檢查無警告。升級前把詞庫與設定備份複製至獨立位置，再覆蓋安裝。
+
+Debug／Release 實際建置通過，建置及正式 APK 簽章檢查警告為 0。820 項應用 JVM 測試（86 份 XML）、Spotless 和 268 項宿主檢查新執行通過；34 項建置邏輯結果為快取（28 + 6），單列。雙 Lint 均通過、0 問題，正式 APK 身分／簽章／ABI 檢查通過。Android 5.0 與 Android 15 各通過九項正式套件覆蓋升級、原 Debug 編輯器回歸及五種 Return、真實系統目錄授權和七項嚴格匯入；各完成兩主題 40 輪顯示與 100 次顯隱，未解除安裝或清除 Trime 資料。兩平台控制器和模擬器均正常結束。
+
+Android 5.0／15 的 3,024／8,126 條 W／E 全部保留，部分診斷根因仍未知，不能歸為無害系統雜訊。這是限定範圍的模擬器驗收，不表示所有執行警告已經消除或真機驗收通過。
+
+範圍見[驗證報告](script/quality/VALIDATION-UPSTREAM18.md)、[升級說明](script/release/README.md)及[版本 Release](https://github.com/X2M7/trime/releases/tag/v3.3.13-t9.18)。手動附件限定兩個正式 APK 與完整遞迴原始碼；線上發布狀態以版本 Release 為準。先前未定位的 ART finalizer 診斷也出現在舊版及新版 Trime 服務中，不能宣稱所有執行警告已消除。實體 ARM64／OEM／16 KiB 頁、真機 TalkBack／TTS、P95／PSS 與長期駐留仍未驗收。
+
+下方 v3.3.13-t9.17 內容保留為該版本的歷史證據。
+
+## 歷史 v3.3.13-t9.17 — 版本與覆蓋升級一致性
 
 應用程式版本、APK 名稱、發布工具及 Pages 統一讀取版本中繼資料。`versionCode 20261122` 高於全部 26 個已核對歷史 APK 的最高值 `20261121`。繼續沿用歷史套件名稱 `com.osfans.trime.debug` 及原憑證，正式 APK 實際為不可偵錯的 Release 建置。升級前把設定與詞庫備份複製到獨立位置，再覆蓋安裝，不解除安裝、不清除資料。
 

@@ -449,8 +449,8 @@
           <p>签名证书 SHA-256：<code>@@CERTIFICATE_SHA256@@</code>。</p>
           <p>请先备份配置与词库，再覆盖安装相同包名和签名的正式 APK。若系统提示签名不兼容，保留原安装并核对下载来源；卸载会清除应用私有数据。</p>
         </details>
-        <p>本版在 Android 5.0 与 Android 15 x86_64 模拟器上各通过九项同包名覆盖升级检查，覆盖配置、偏好、UID、输入法选择与真实原生用户词库保留。检查使用专用测试环境与内部空编辑器，不代表公开界面输入或跨包名迁移验收。完整范围见<a href="https://github.com/X2M7/trime/blob/develop/script/quality/VALIDATION-T14.md">T14 验证报告</a>；线上状态以对应 Release 为准。</p>
-        <p>运行警告与先前失败尝试继续记录。实物 ARM64 手机、OEM、16 KiB 页、可听 TTS、候选 P95／PSS 与长期驻留仍未验收。历史证据保留在<a href="https://github.com/X2M7/trime/blob/develop/script/quality/VALIDATION-t9.16.md">9.16 验证报告</a>与<a href="https://github.com/X2M7/trime/blob/develop/script/quality/VALIDATION-t9.15.md">9.15 验证报告</a>。</p>
+        <p>本版合入上游 develop 的六项提交。在 Android 5.0 与 Android 15 x86_64 模拟器上，各通过 9.17→9.18 的九项同包名覆盖升级检查，以及 Debug 编辑器与五种 Return、实际系统目录授权和七项严格导入回归；各完成两主题 40 轮显示与 100 次显隐。升级保留词库、配置、偏好、UID 与输入法选择，未卸载或清数据。限定范围见<a href="https://github.com/X2M7/trime/blob/develop/script/quality/VALIDATION-UPSTREAM18.md">9.18 上游整合验证报告</a>；线上状态以对应 Release 为准。</p>
+        <p>两系统的 3,024／8,126 条运行 W／E 与先前失败尝试全部保留；ART 等未定位诊断和导入维护期间 5.85 秒任务等待不属于已消除的问题。实物 ARM64 手机、OEM、16 KiB 页、可听 TTS、候选 P95／PSS 与长期驻留仍未验收。历史证据保留在<a href="https://github.com/X2M7/trime/blob/develop/script/quality/VALIDATION-t9.16.md">9.16 验证报告</a>与<a href="https://github.com/X2M7/trime/blob/develop/script/quality/VALIDATION-t9.15.md">9.15 验证报告</a>。</p>
       </div>
     </section>
   </main>

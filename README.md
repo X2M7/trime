@@ -16,7 +16,21 @@ Rime IME for Android
 
 English | [简体中文](README_sc.md) | [繁體中文](README_tc.md)
 
-## v3.3.13-t9.17 — Version and upgrade consistency
+## v3.3.13-t9.18 — Upstream integration
+
+This candidate merges the six upstream develop commits through `c7f32b6c`. It forwards modified Return as a key chord and consolidates data management under `core.data.UserDataManager`, while preserving this fork's validated transactional imports, rollback, cancellation, existing sync history and Direct Boot behavior. A missing default configuration is bootstrapped without overwriting user files. Hash buffers are 32 KiB; local content is checked again after suspending SAF reads. Gradle 9.8.1 was already present before this merge.
+
+VersionCode `20261123` exceeds `20261122`, the maximum across 28 audited public APKs. Official builds retain package `com.osfans.trime.debug` and the original certificate; this candidate passed inspection of actual Release identity, debuggable=false, minSdk21, the original signer and each APK's single native ABI, with zero signing warnings. Back up dictionaries and configuration to a separate location before installing over the existing app.
+
+Debug and Release builds exited successfully with zero build warnings. This candidate freshly passed 820 app JVM tests (86 XML reports), Spotless and 268 host checks; 34 build-logic results were cached (28 convention + 6 compatibility). Both Lint variants passed with zero issues, and both Release APKs passed actual identity, signature and ABI inspection with zero signing warnings. Android 5.0 and Android 15 each passed nine ordinary Release upgrade checks, the original Debug editor regression plus five Return cases, real system-folder authorization and seven strict import checks. Each also passed 40 display rounds across two themes and 100 show/hide cycles, without uninstalling or clearing Trime data. Both controllers and emulators stopped normally.
+
+Android 5.0/15 logs retain all 3,024/8,126 W/E lines; unresolved diagnostics are not classified as harmless platform noise. These are bounded emulator checks, not an all-runtime-warnings-fixed or physical-device claim.
+
+See the [validation report](script/quality/VALIDATION-UPSTREAM18.md), [upgrade guide](script/release/README.md) and [version Release](https://github.com/X2M7/trime/releases/tag/v3.3.13-t9.18). Manual assets are limited to two Release APKs and complete recursive source; use the version Release page to confirm public availability. Earlier unresolved ART finalizer diagnostics include old and new Trime services; this is not an all-runtime-warnings-fixed claim. Physical ARM64/OEM/16 KiB devices, real-device TalkBack/TTS, P95/PSS and long-term residency remain unverified.
+
+The v3.3.13-t9.17 section below is historical evidence for that version.
+
+## Historical v3.3.13-t9.17 — Version and upgrade consistency
 
 One metadata file now supplies the app version, APK names, release tools and Pages. VersionCode `20261122` exceeds the maximum `20261121` found in all 26 audited public APKs. The historical package `com.osfans.trime.debug` and signing certificate remain; official APKs are non-debuggable Release builds. Back up configuration and dictionaries to a separate location, then install over the existing app without uninstalling or clearing its data.
 

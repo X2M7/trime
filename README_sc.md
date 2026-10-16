@@ -14,7 +14,21 @@ SPDX-License-Identifier: GPL-3.0-or-later
 
 [English](README.md) | 简体中文 | [繁體中文](README_tc.md)
 
-## v3.3.13-t9.17 — 版本与覆盖升级一致性
+## v3.3.13-t9.18 — 上游整合
+
+本候选合入上游 develop 截至 `c7f32b6c` 的六项提交，修复带修饰键的 Return，并将数据管理整合到 `core.data.UserDataManager`。保留本项目已校验的事务导入、回滚、取消、原同步索引和 Direct Boot 行为；默认配置仅在缺失时创建，不覆盖用户文件。摘要缓冲增至 32 KiB，SAF 挂起读取后重新核对本地内容。Gradle 9.8.1 在合并前已经具备。
+
+`versionCode 20261123` 高于已实物核对 28 个公开 APK 的最高值 `20261122`。正式包沿用 `com.osfans.trime.debug` 和原证书，本候选实际 Release／不可调试身份、minSdk21、原证书和每份 APK 的单一 native ABI 检查已通过，签名检查无警告。升级前把词库和配置备份复制到独立位置，再覆盖安装。
+
+Debug／Release 构建实际通过，构建及正式 APK 签名检查警告为 0。820 项应用 JVM 测试（86 份 XML）、Spotless 和 268 项宿主检查新执行通过；34 项构建逻辑结果为缓存（28 + 6），单列。双 Lint 均通过、0 问题，正式 APK 身份／签名／ABI 检查通过。Android 5.0 与 Android 15 各通过九项正式包覆盖升级、原 Debug 编辑器回归及五种 Return、真实系统目录授权和七项严格导入；各完成两主题 40 轮显示与 100 次显隐，未卸载或清除 Trime 数据。两平台控制器和模拟器均正常退出。
+
+Android 5.0／15 的 3,024／8,126 条 W／E 全部保留，部分诊断根因仍未知，不能归为无害系统噪声。这是限定范围的模拟器验收，不表示所有运行警告已经消除或真机验收通过。
+
+范围见[验证报告](script/quality/VALIDATION-UPSTREAM18.md)、[升级说明](script/release/README.md)和[版本 Release](https://github.com/X2M7/trime/releases/tag/v3.3.13-t9.18)。手动附件限定两个正式 APK 与完整递归源码；线上发布状态以版本 Release 为准。此前未定位的 ART finalizer 诊断也出现在旧版和新版 Trime 服务中，不能宣称所有运行警告已消除。实物 ARM64／OEM／16 KiB 页、真机 TalkBack／TTS、P95／PSS 与长期驻留仍未验收。
+
+下方 v3.3.13-t9.17 内容保留为该版本的历史证据。
+
+## 历史 v3.3.13-t9.17 — 版本与覆盖升级一致性
 
 应用版本、APK 名称、发布工具与 Pages 统一读取版本元数据。`versionCode 20261122` 高于全部 26 个已核对历史 APK 的最高值 `20261121`。继续沿用历史包名 `com.osfans.trime.debug` 和原证书，正式 APK 实际为不可调试的 Release 构建。升级前把配置与词库备份复制到独立位置，再覆盖安装，不卸载、不清除数据。
 
