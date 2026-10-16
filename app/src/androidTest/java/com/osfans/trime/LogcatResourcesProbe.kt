@@ -9,11 +9,13 @@ import android.os.Process
 import android.util.Log
 import com.osfans.trime.util.Logcat
 import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.async
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
 import java.util.UUID
 
@@ -27,6 +29,14 @@ internal object LogcatResourcesProbe {
             val token = "TRIME_LOG_RESOURCES_${UUID.randomUUID()}"
             val logcat = Logcat(Process.myPid())
             runBlocking {
+                suspend fun snapshot(reader: Logcat): List<String> {
+                    val pending = reader.getLogAsync()
+                    return try {
+                        pending.await().getOrThrow()
+                    } finally {
+                        withContext(NonCancellable) { pending.cancelAndJoin() }
+                    }
+                }
                 withTimeout(60_000) {
                     repeat(3) { cycle ->
                         val marker = "${token}_$cycle"
@@ -43,15 +53,20 @@ internal object LogcatResourcesProbe {
                             }
                             check(observed.await().contains(marker))
                         } finally {
-                            observed.cancelAndJoin()
-                            logcat.shutdownLogFlow()
-                            withTimeout(5_000) { stream.join() }
+                            withContext(NonCancellable) {
+                                try {
+                                    observed.cancelAndJoin()
+                                } finally {
+                                    logcat.shutdownLogFlow()
+                                    withTimeout(5_000) { stream.join() }
+                                }
+                            }
                         }
                         check(stream.isCancelled) { "Live logcat stream was not cancelled" }
                     }
-                    check(logcat.getLogAsync().await().getOrThrow().any { it.contains(token) })
-                    check(Logcat(null).getLogAsync().await().getOrThrow().any { it.contains(token) })
-                    check(Logcat(Int.MAX_VALUE).getLogAsync().await().getOrThrow().isEmpty())
+                    check(snapshot(logcat).any { it.contains(token) })
+                    check(snapshot(Logcat(null)).any { it.contains(token) })
+                    check(snapshot(Logcat(Int.MAX_VALUE)).isEmpty())
                 }
             }
             result.putInt("stream_restart_cycles", 3)

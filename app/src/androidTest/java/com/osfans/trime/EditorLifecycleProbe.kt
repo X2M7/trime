@@ -120,6 +120,7 @@ object EditorLifecycleProbe {
     private class ImeAnimationProbe(private val requested: Boolean) {
         private val running = mutableSetOf<WindowInsetsAnimationCompat>()
         private var host: View? = null
+        private var wasInstalled = false
         var generation = 0
             private set
         var prepares = 0
@@ -167,15 +168,17 @@ object EditorLifecycleProbe {
                     }
                 },
             )
+            wasInstalled = true
         }
 
         fun snapshot(): JSONObject = JSONObject().apply {
             put("callback_requested", requested)
             put("callback_installed", host != null)
+            put("callback_ever_installed", wasInstalled)
             put(
                 "settle_gate",
                 when {
-                    host != null -> "callback_end_and_stable_insets"
+                    wasInstalled -> "callback_end_and_stable_insets"
                     Build.VERSION.SDK_INT >= 30 -> "stable_insets_without_animation_callback"
                     else -> "legacy_service_and_stable_geometry"
                 },
