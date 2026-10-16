@@ -67,7 +67,7 @@ internal suspend fun Process.releaseProcess() {
                 if (failure == null) {
                     failure = error
                 } else if (failure !== error) {
-                    failure!!.addSuppressed(error)
+                    failure.addSuppressed(error)
                 }
             }
         }
