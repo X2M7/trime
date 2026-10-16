@@ -2942,183 +2942,189 @@ object EditorLifecycleProbe {
                         chat,
                     )
 
-                    val webReady = CompletableDeferred<Unit>()
-                    web = main {
-                        WebView(editor).apply webFixture@{
-                            fun describeContext(value: Context): JSONObject = JSONObject().apply {
-                                put("class", value.javaClass.name)
-                                put("identity", System.identityHashCode(value))
-                                put("is_activity", value is Activity)
-                                put("application_context_class", value.applicationContext?.javaClass?.name ?: JSONObject.NULL)
-                                put("autofill_feature", value.packageManager.hasSystemFeature("android.software.autofill"))
-                                put("autofill_service_class", value.getSystemService("autofill")?.javaClass?.name ?: JSONObject.NULL)
-                                put("autofill_enabled_api_supported", Build.VERSION.SDK_INT >= 26)
-                                put("autofill_enabled", if (Build.VERSION.SDK_INT >= 26) AutofillServiceApi26.isEnabled(value) ?: JSONObject.NULL else JSONObject.NULL)
-                            }
-                            // Observe the actual View context and platform service without
-                            // changing Autofill, media permissions, or provider configuration.
-                            webFixtureEnvironment.apply {
-                                put("captured", true)
-                                put("api", Build.VERSION.SDK_INT)
-                                put("pid", android.os.Process.myPid())
-                                put("web_identity", System.identityHashCode(this@webFixture))
-                                put("constructor_context", describeContext(editor))
-                                put("actual_view_context", describeContext(this@webFixture.context))
-                            }
-                            webViewClient = object : WebViewClient() {
-                                override fun onPageFinished(view: WebView, url: String) {
-                                    webReady.complete(Unit)
+                    suspend fun verifyWebEditor() {
+                        val webReady = CompletableDeferred<Unit>()
+                        web = main {
+                            WebView(editor).apply webFixture@{
+                                fun describeContext(value: Context): JSONObject = JSONObject().apply {
+                                    put("class", value.javaClass.name)
+                                    put("identity", System.identityHashCode(value))
+                                    put("is_activity", value is Activity)
+                                    put("application_context_class", value.applicationContext?.javaClass?.name ?: JSONObject.NULL)
+                                    put("autofill_feature", value.packageManager.hasSystemFeature("android.software.autofill"))
+                                    put("autofill_service_class", value.getSystemService("autofill")?.javaClass?.name ?: JSONObject.NULL)
+                                    put("autofill_enabled_api_supported", Build.VERSION.SDK_INT >= 26)
+                                    put("autofill_enabled", if (Build.VERSION.SDK_INT >= 26) AutofillServiceApi26.isEnabled(value) ?: JSONObject.NULL else JSONObject.NULL)
                                 }
+                                // Observe the actual View context and platform service without
+                                // changing Autofill, media permissions, or provider configuration.
+                                webFixtureEnvironment.apply {
+                                    put("captured", true)
+                                    put("api", Build.VERSION.SDK_INT)
+                                    put("pid", android.os.Process.myPid())
+                                    put("web_identity", System.identityHashCode(this@webFixture))
+                                    put("constructor_context", describeContext(editor))
+                                    put("actual_view_context", describeContext(this@webFixture.context))
+                                }
+                                webViewClient = object : WebViewClient() {
+                                    override fun onPageFinished(view: WebView, url: String) {
+                                        webReady.complete(Unit)
+                                    }
+                                }
+                                @SuppressLint("SetJavaScriptEnabled")
+                                settings.javaScriptEnabled = true
+                                container.addView(this, LinearLayout.LayoutParams(-1, 150))
+                                loadDataWithBaseURL("https://example.invalid/", "<html><head><meta name='viewport' content='width=device-width,initial-scale=1'></head><body><input id='field' type='email' style='width:200px;height:32px'></body></html>", "text/html", "UTF-8", null)
                             }
-                            @SuppressLint("SetJavaScriptEnabled")
-                            settings.javaScriptEnabled = true
-                            container.addView(this, LinearLayout.LayoutParams(-1, 150))
-                            loadDataWithBaseURL("https://example.invalid/", "<html><head><meta name='viewport' content='width=device-width,initial-scale=1'></head><body><input id='field' type='email' style='width:200px;height:32px'></body></html>", "text/html", "UTF-8", null)
                         }
-                    }
-                    webReady.await()
-                    main {
-                        checkNotNull(web).requestFocus()
-                        checkNotNull(web).evaluateJavascript("document.getElementById('field').focus()", null)
-                    }
-                    val webPoint = main {
-                        val location = IntArray(2)
-                        checkNotNull(web).getLocationOnScreen(location)
-                        val density = editor.resources.displayMetrics.density
-                        (location[0] + 30 * density) to (location[1] + 20 * density)
-                    }
-                    val webDown = SystemClock.uptimeMillis()
-                    for (action in listOf(MotionEvent.ACTION_DOWN, MotionEvent.ACTION_UP)) {
-                        fingerEvent(webDown, action, webPoint.first, webPoint.second).let {
-                            instrumentation.sendPointerSync(it)
-                            it.recycle()
+                        webReady.await()
+                        main {
+                            checkNotNull(web).requestFocus()
+                            checkNotNull(web).evaluateJavascript("document.getElementById('field').focus()", null)
                         }
+                        val webPoint = main {
+                            val location = IntArray(2)
+                            checkNotNull(web).getLocationOnScreen(location)
+                            val density = editor.resources.displayMetrics.density
+                            (location[0] + 30 * density) to (location[1] + 20 * density)
+                        }
+                        val webDown = SystemClock.uptimeMillis()
+                        for (action in listOf(MotionEvent.ACTION_DOWN, MotionEvent.ACTION_UP)) {
+                            fingerEvent(webDown, action, webPoint.first, webPoint.second).let {
+                                instrumentation.sendPointerSync(it)
+                                it.recycle()
+                            }
+                        }
+                        until("real WebView email InputConnection") { service.currentInputEditorInfo?.inputType?.and(InputType.TYPE_MASK_VARIATION) in setOf(InputType.TYPE_TEXT_VARIATION_WEB_EMAIL_ADDRESS, InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS) }
+                        api { check(statusCached.isAsciiMode) }
+                        type("12")
+                        api { }
+                        val webValue = CompletableDeferred<String>()
+                        main { checkNotNull(web).evaluateJavascript("document.getElementById('field').value") { webValue.complete(it) } }
+                        check(webValue.await() == "\"12\"")
+                        focus(chat)
+                        api { check(!statusCached.isAsciiMode) }
+                        destroyWebFixture(required = true)
                     }
-                    until("real WebView email InputConnection") { service.currentInputEditorInfo?.inputType?.and(InputType.TYPE_MASK_VARIATION) in setOf(InputType.TYPE_TEXT_VARIATION_WEB_EMAIL_ADDRESS, InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS) }
-                    api { check(statusCached.isAsciiMode) }
-                    type("12")
-                    api { }
-                    val webValue = CompletableDeferred<String>()
-                    main { checkNotNull(web).evaluateJavascript("document.getElementById('field').value") { webValue.complete(it) } }
-                    check(webValue.await() == "\"12\"")
-                    focus(chat)
-                    api { check(!statusCached.isAsciiMode) }
-                    destroyWebFixture(required = true)
+                    verifyWebEditor()
 
-                    val baseline = main { chat.text.toString() }
-                    val imm = editor.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
-                    suspend fun awaitPlatformImeSettled(index: Int, visible: Boolean) {
-                        val startedAt = SystemClock.uptimeMillis()
-                        var finalState = JSONObject()
-                        val completed = kotlinx.coroutines.withTimeoutOrNull(10_000) {
-                            var stableSince = 0L
-                            var previousGeometry: Pair<Int, Int>? = null
-                            while (true) {
-                                val settled = main {
-                                    val insets = ViewCompat.getRootWindowInsets(chat)
-                                    val platformVisible = insets?.isVisible(WindowInsetsCompat.Type.ime())
-                                    val bottom = insets?.getInsets(WindowInsetsCompat.Type.ime())?.bottom
-                                    val expectedService = service.isInputViewShown == visible
-                                    val expectedLayout = !visible || (input() != null && keyboard().isT9Layout && chat.hasFocus())
-                                    val expectedPlatform = if (Build.VERSION.SDK_INT < 30) {
-                                        true
+                    suspend fun verifyRepeatedImeVisibility() {
+                        val baseline = main { chat.text.toString() }
+                        val imm = editor.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+                        suspend fun awaitPlatformImeSettled(index: Int, visible: Boolean) {
+                            val startedAt = SystemClock.uptimeMillis()
+                            var finalState = JSONObject()
+                            val completed = kotlinx.coroutines.withTimeoutOrNull(10_000) {
+                                var stableSince = 0L
+                                var previousGeometry: Pair<Int, Int>? = null
+                                while (true) {
+                                    val settled = main {
+                                        val insets = ViewCompat.getRootWindowInsets(chat)
+                                        val platformVisible = insets?.isVisible(WindowInsetsCompat.Type.ime())
+                                        val bottom = insets?.getInsets(WindowInsetsCompat.Type.ime())?.bottom
+                                        val expectedService = service.isInputViewShown == visible
+                                        val expectedLayout = !visible || (input() != null && keyboard().isT9Layout && chat.hasFocus())
+                                        val expectedPlatform = if (Build.VERSION.SDK_INT < 30) {
+                                            true
+                                        } else {
+                                            platformVisible == visible && bottom != null &&
+                                                (if (visible) bottom > 0 else bottom == 0) &&
+                                                imeAnimations.isIdle
+                                        }
+                                        val geometry = (bottom ?: -1) to imeAnimations.generation
+                                        val unchanged = previousGeometry == geometry
+                                        previousGeometry = geometry
+                                        finalState = imeAnimations.snapshot().apply {
+                                            put("service_visible", service.isInputViewShown)
+                                            put("insets_visible", platformVisible ?: JSONObject.NULL)
+                                            put("insets_bottom", bottom ?: JSONObject.NULL)
+                                            put("editor_focused", chat.hasFocus())
+                                            put("geometry_unchanged", unchanged)
+                                        }
+                                        expectedService && expectedLayout && expectedPlatform && unchanged
+                                    }
+                                    val now = SystemClock.uptimeMillis()
+                                    if (settled) {
+                                        if (stableSince == 0L) stableSince = now
+                                        if (now - stableSince >= 700L) break
                                     } else {
-                                        platformVisible == visible && bottom != null &&
-                                            (if (visible) bottom > 0 else bottom == 0) &&
-                                            imeAnimations.isIdle
+                                        stableSince = 0L
                                     }
-                                    val geometry = (bottom ?: -1) to imeAnimations.generation
-                                    val unchanged = previousGeometry == geometry
-                                    previousGeometry = geometry
-                                    finalState = imeAnimations.snapshot().apply {
-                                        put("service_visible", service.isInputViewShown)
-                                        put("insets_visible", platformVisible ?: JSONObject.NULL)
-                                        put("insets_bottom", bottom ?: JSONObject.NULL)
-                                        put("editor_focused", chat.hasFocus())
-                                        put("geometry_unchanged", unchanged)
-                                    }
-                                    expectedService && expectedLayout && expectedPlatform && unchanged
+                                    delay(40)
                                 }
-                                val now = SystemClock.uptimeMillis()
-                                if (settled) {
-                                    if (stableSince == 0L) stableSince = now
-                                    if (now - stableSince >= 700L) break
-                                } else {
-                                    stableSince = 0L
-                                }
-                                delay(40)
+                                true
+                            } == true
+                            imeVisibilityWaits.put(
+                                finalState.apply {
+                                    put("cycle", index)
+                                    put("expected_visible", visible)
+                                    put("passed", completed)
+                                    put("elapsed_ms", SystemClock.uptimeMillis() - startedAt)
+                                    put("stable_window_ms", 700)
+                                },
+                            )
+                            check(completed) {
+                                "IME ${if (visible) "show" else "hide"} did not settle at cycle $index: $finalState"
                             }
-                            true
-                        } == true
-                        imeVisibilityWaits.put(
-                            finalState.apply {
-                                put("cycle", index)
-                                put("expected_visible", visible)
-                                put("passed", completed)
-                                put("elapsed_ms", SystemClock.uptimeMillis() - startedAt)
-                                put("stable_window_ms", 700)
-                            },
-                        )
-                        check(completed) {
-                            "IME ${if (visible) "show" else "hide"} did not settle at cycle $index: $finalState"
                         }
-                    }
-                    // Wait in both directions. Callback hosts additionally observe onEnd;
-                    // ordinary hosts preserve Android's default animation path and require
-                    // stable real insets. Stable geometry alone does not prove an onEnd event.
-                    awaitPlatformImeSettled(0, visible = true)
-                    repeat(100) { index ->
+                        // Wait in both directions. Callback hosts additionally observe onEnd;
+                        // ordinary hosts preserve Android's default animation path and require
+                        // stable real insets. Stable geometry alone does not prove an onEnd event.
+                        awaitPlatformImeSettled(0, visible = true)
+                        repeat(100) { index ->
+                            main { imm.hideSoftInputFromWindow(chat.windowToken, 0) }
+                            awaitPlatformImeSettled(index + 1, visible = false)
+                            main {
+                                chat.requestFocus()
+                                check(chat.hasFocus()) { "Editor lost focus before show cycle ${index + 1}" }
+                                check(imm.showSoftInput(chat, 0)) { "IME show request rejected at cycle ${index + 1}" }
+                            }
+                            awaitPlatformImeSettled(index + 1, visible = true)
+                            api {
+                                check(!statusCached.isAsciiMode)
+                                check(getRawInput().isEmpty())
+                            }
+                            check(main { chat.text.toString() } == baseline)
+                            if ((index + 1) % 10 == 0) phase("PASS: ${index + 1}/100 show-hide cycles, T9 and editor text retained")
+                        }
+                        type("64426")
+                        api { check(getRawInput() == "64426") }
+                        until("pinyin choices still update after 100 visibility cycles") {
+                            input()?.let { view ->
+                                descendants(view).filterIsInstance<T9DisambiguationView>().flatMap(::descendants)
+                                    .filterIsInstance<TextView>().any { it.text.toString() == "ni" && it.isShown }
+                            } == true
+                        }
+                        main {
+                            descendants(checkNotNull(input())).filterIsInstance<T9DisambiguationView>().flatMap(::descendants)
+                                .filterIsInstance<TextView>().first { it.text.toString() == "ni" && it.isShown }.performClick()
+                        }
+                        api {
+                            check(getRawInput() == "64426")
+                            check(t9Cached.segments.any { it.locked && it.spelling == "ni" })
+                        }
                         main { imm.hideSoftInputFromWindow(chat.windowToken, 0) }
-                        awaitPlatformImeSettled(index + 1, visible = false)
+                        awaitPlatformImeSettled(101, visible = false)
                         main {
                             chat.requestFocus()
-                            check(chat.hasFocus()) { "Editor lost focus before show cycle ${index + 1}" }
-                            check(imm.showSoftInput(chat, 0)) { "IME show request rejected at cycle ${index + 1}" }
+                            check(imm.showSoftInput(chat, 0)) { "IME show request rejected after locked composition" }
                         }
-                        awaitPlatformImeSettled(index + 1, visible = true)
+                        until("locked composition survives hide and show") { service.isInputViewShown && input() != null }
+                        awaitPlatformImeSettled(101, visible = true)
                         api {
-                            check(!statusCached.isAsciiMode)
-                            check(getRawInput().isEmpty())
+                            check(getRawInput() == "64426")
+                            check(t9Cached.segments.any { it.locked && it.spelling == "ni" })
+                            clearComposition()
                         }
-                        check(main { chat.text.toString() } == baseline)
-                        if ((index + 1) % 10 == 0) phase("PASS: ${index + 1}/100 show-hide cycles, T9 and editor text retained")
+                        until("cancelling after 100 cycles preserves committed text") { chat.text.toString() == baseline }
+                        val screenshot = checkNotNull(instrumentation.uiAutomation.takeScreenshot())
+                        try {
+                            File(context.cacheDir, "editor-lifecycle.png").outputStream().use { screenshot.compress(Bitmap.CompressFormat.PNG, 100, it) }
+                        } finally {
+                            screenshot.recycle()
+                        }
                     }
-                    type("64426")
-                    api { check(getRawInput() == "64426") }
-                    until("pinyin choices still update after 100 visibility cycles") {
-                        input()?.let { view ->
-                            descendants(view).filterIsInstance<T9DisambiguationView>().flatMap(::descendants)
-                                .filterIsInstance<TextView>().any { it.text.toString() == "ni" && it.isShown }
-                        } == true
-                    }
-                    main {
-                        descendants(checkNotNull(input())).filterIsInstance<T9DisambiguationView>().flatMap(::descendants)
-                            .filterIsInstance<TextView>().first { it.text.toString() == "ni" && it.isShown }.performClick()
-                    }
-                    api {
-                        check(getRawInput() == "64426")
-                        check(t9Cached.segments.any { it.locked && it.spelling == "ni" })
-                    }
-                    main { imm.hideSoftInputFromWindow(chat.windowToken, 0) }
-                    awaitPlatformImeSettled(101, visible = false)
-                    main {
-                        chat.requestFocus()
-                        check(imm.showSoftInput(chat, 0)) { "IME show request rejected after locked composition" }
-                    }
-                    until("locked composition survives hide and show") { service.isInputViewShown && input() != null }
-                    awaitPlatformImeSettled(101, visible = true)
-                    api {
-                        check(getRawInput() == "64426")
-                        check(t9Cached.segments.any { it.locked && it.spelling == "ni" })
-                        clearComposition()
-                    }
-                    until("cancelling after 100 cycles preserves committed text") { chat.text.toString() == baseline }
-                    val screenshot = checkNotNull(instrumentation.uiAutomation.takeScreenshot())
-                    try {
-                        File(context.cacheDir, "editor-lifecycle.png").outputStream().use { screenshot.compress(Bitmap.CompressFormat.PNG, 100, it) }
-                    } finally {
-                        screenshot.recycle()
-                    }
+                    verifyRepeatedImeVisibility()
                 }
             }
             verifyResidentWindowIdempotency(instrumentation, editor)

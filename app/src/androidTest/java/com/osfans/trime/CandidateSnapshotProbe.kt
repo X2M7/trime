@@ -123,6 +123,212 @@ object CandidateSnapshotProbe {
     private fun page(result: PagingSource.LoadResult<Int, CandidateRow>): PagingSource.LoadResult.Page<Int, CandidateRow> = result as? PagingSource.LoadResult.Page<Int, CandidateRow>
         ?: error("Expected an actual native candidate page, got ${result.javaClass.simpleName}")
 
+    private class NativeProbeProgress {
+        var fifoKeys = 0
+    }
+
+    private data class InitialCandidateState(
+        val snapshot: CandidateSnapshot,
+        val source: CandidatesPagingSource,
+    )
+
+    private class NativeCandidateProbeContext(
+        private val rime: RimeSession,
+        private val dispatcher: RimeDispatcher,
+        private val messages: ArrayDeque<RimeMessage<*>>,
+        private val firstEditor: Long,
+        private val secondEditor: Long,
+        private val progress: NativeProbeProgress,
+        private val phase: (String) -> Unit,
+    ) {
+        suspend fun verify(): Int {
+            val initial = verifyInitialAndPaging()
+            val newer = verifyGenerationRejection(initial)
+            verifyEditorOwnership(newer)
+            verifyNativeFifo()
+            verifyFinalSelection()
+            verifyFinishAndRebind()
+            return progress.fifoKeys
+        }
+
+        private suspend fun fresh(editor: Long): CandidateSnapshot = rime.runOnReady {
+            clearComposition()
+            check(processKey('a'.code))
+            check(getRawInput() == "a")
+            candidateSnapshotCached.also {
+                check(it.isValid && it.editorToken == editor) { "Candidate snapshot has the wrong owner" }
+            }
+        }
+
+        private suspend fun snapshotMessages(snapshot: CandidateSnapshot): List<RimeMessage<*>> = withTimeout(10_000) {
+            var found: List<RimeMessage<*>>
+            do {
+                found = synchronized(messages) { messages.filter { it.snapshot == snapshot } }
+                if (found.none { it is RimeMessage.T9Message }) delay(10)
+            } while (found.none { it is RimeMessage.T9Message })
+            found
+        }
+
+        private suspend fun response(snapshot: CandidateSnapshot): Candidates.Bulk {
+            val matching = snapshotMessages(snapshot)
+            check(matching.all { it.editorToken == snapshot.editorToken })
+            check(matching.count { it is RimeMessage.CommitTextMessage } == 1)
+            check(matching.count { it is RimeMessage.CompositionMessage } == 1)
+            check(matching.count { it is RimeMessage.StatusMessage } == 1)
+            val bulk = matching.filterIsInstance<RimeMessage.BulkCandidatesMessage>().single().data
+            check(bulk.snapshot == snapshot)
+            check(bulk.candidates.size == 16 && bulk.total == -1) { "JNI bulk response read beyond its initial bounded window" }
+            check(bulk.candidates.map { it.text } == candidateTexts.take(16)) { "Native fixture candidate order changed" }
+            return bulk
+        }
+
+        private suspend fun reject(snapshot: CandidateSnapshot, source: CandidatesPagingSource) {
+            val before = rime.runOnReady { getRawInput() to candidateSnapshotCached }
+            rime.runOnReady {
+                check(!selectCandidate(0, true, snapshot)) { "Stale selection entered the native engine" }
+                check(!deleteCandidate(0, true, snapshot)) { "Stale deletion entered the native engine" }
+                check(!changeCandidatePage(false, snapshot)) { "Stale page change entered the native engine" }
+                val rejected = runCatching { getCandidates(0, 48, snapshot) }.exceptionOrNull()
+                check(rejected is StaleCandidateSnapshotException) { "Stale native candidate read was accepted" }
+            }
+            check(source.load(PagingSource.LoadParams.Refresh(null, 48, false)) is PagingSource.LoadResult.Invalid<*, *>)
+            check(source.load(PagingSource.LoadParams.Append(48, 48, false)) is PagingSource.LoadResult.Invalid<*, *>)
+            check(rime.runOnReady { getRawInput() to candidateSnapshotCached } == before) {
+                "Rejected asynchronous candidates changed the current input or generation"
+            }
+        }
+
+        private suspend fun verifyInitialAndPaging(): InitialCandidateState {
+            val initial = fresh(firstEditor)
+            response(initial)
+            phase("one native response associates commit, composition, candidates and status with a bounded 16-row snapshot")
+
+            val known = CandidatesPagingSource(rime, TOTAL, 0, initial)
+            // A large refresh must still perform one bounded 48-row native read.
+            val first = page(known.load(PagingSource.LoadParams.Refresh(null, 144, false)))
+            check(first.data.size == 48 && first.prevKey == null && first.nextKey == 48)
+            check(first.data.map { it.candidate.text } == candidateTexts.take(48))
+            check(first.data.map { it.index } == (0 until 48).toList())
+            check(first.data.all { it.snapshot == initial })
+            val last = page(known.load(PagingSource.LoadParams.Append(checkNotNull(first.nextKey), 48, false)))
+            check(last.data.single().index == 48 && last.nextKey == null)
+            check(last.data.single().candidate.text == candidateTexts.last() && last.data.single().snapshot == initial)
+            phase("known 49-candidate native menu loads all 48 + 1 rows, including the final row")
+
+            val unknown = CandidatesPagingSource(rime, -1, 0, initial)
+            val unknownFirst = page(unknown.load(PagingSource.LoadParams.Refresh(null, 48, false)))
+            val unknownLast = page(unknown.load(PagingSource.LoadParams.Append(checkNotNull(unknownFirst.nextKey), 48, false)))
+            check(unknownFirst.data == first.data && unknownFirst.nextKey == 48)
+            check(unknownLast.data == last.data && unknownLast.nextKey == null)
+            val offset = page(CandidatesPagingSource(rime, TOTAL, 48, initial).load(PagingSource.LoadParams.Refresh(null, 48, false)))
+            check(offset.data == last.data && offset.nextKey == null)
+            val empty = page(unknown.load(PagingSource.LoadParams.Append(TOTAL, 48, false)))
+            check(empty.data.isEmpty() && empty.nextKey == null)
+            phase("unknown totals, tail offsets and an empty native tail terminate paging without duplicate rows")
+            return InitialCandidateState(initial, known)
+        }
+
+        private suspend fun verifyGenerationRejection(state: InitialCandidateState): CandidateSnapshot {
+            val initial = state.snapshot
+            val known = state.source
+            rime.runOnReady { check(processKey('b'.code)) }
+            reject(initial, known)
+            val newer = fresh(firstEditor)
+            check(newer.generation > initial.generation)
+            response(newer)
+            phase("older generations reject select/delete/page/read and return PagingSource.Invalid without altering newer input")
+            return newer
+        }
+
+        private suspend fun verifyEditorOwnership(newer: CandidateSnapshot) {
+            val oldEditorSource = CandidatesPagingSource(rime, TOTAL, 0, newer)
+            rime.runOnReady {
+                beginEditor(secondEditor, nullInputType = false, privacyMode = false)
+                check(getRawInput().isEmpty()) { "Input crossed the editor boundary" }
+            }
+            val second = fresh(secondEditor)
+            check(second.generation > newer.generation)
+            response(second)
+            reject(newer, oldEditorSource)
+            rime.runOnReady {
+                finishEditor(firstEditor)
+                check(candidateSnapshotCached == second && getRawInput() == "a") { "An old editor teardown erased the current input" }
+                val current = getCandidates(0, 16, second)
+                check(current.map { it.text } == candidateTexts.take(16))
+            }
+            phase("a new editor invalidates old asynchronous pages and actions while old teardown leaves current candidates intact")
+        }
+
+        private suspend fun verifyNativeFifo(): Int {
+            rime.runOnReady { clearComposition() }
+            val keys = "abcd".map { it.code } + BACKSPACE + 'e'.code + List(4) { BACKSPACE }
+            var lastGeneration = rime.runOnReady { candidateSnapshotCached.generation }
+            repeat(8) {
+                var expected = ""
+                val input = List(4) { keys }.flatten().map { key ->
+                    expected = if (key == BACKSPACE) expected.dropLast(1) else expected + key.toChar()
+                    key to expected
+                }
+                // UNDISPATCHED runs each caller up to its first dispatcher suspension;
+                // awaitAll occurs only after the entire 40-operation burst is submitted.
+                // Nested API calls remain on the same worker, making each observation
+                // atomic with respect to subsequent queued keys.
+                val observed = mutableListOf<Int>()
+                coroutineScope {
+                    input.mapIndexed { index, (key, raw) ->
+                        async(start = CoroutineStart.UNDISPATCHED) {
+                            dispatcher.runConfined {
+                                rime.runOnReady {
+                                    check(processKey(key)) { "The native engine dropped a queued key" }
+                                    check(getRawInput() == raw) { "Native FIFO input differs at queued position $index" }
+                                    val snapshot = candidateSnapshotCached
+                                    check(snapshot.editorToken == secondEditor && snapshot.generation > lastGeneration)
+                                    lastGeneration = snapshot.generation
+                                    observed.add(index)
+                                }
+                            }
+                        }
+                    }.awaitAll()
+                }
+                check(observed == input.indices.toList()) { "Queued native keys completed out of order" }
+                progress.fifoKeys += input.size
+                check(rime.runOnReady { getRawInput().isEmpty() }) { "A FIFO burst lost a backspace or left residual input" }
+            }
+            check(progress.fifoKeys == 320)
+            phase("320 real native letter/backspace operations in eight concurrent bursts retain every key and FIFO state")
+            return progress.fifoKeys
+        }
+
+        private suspend fun verifyFinalSelection() {
+            val selectable = fresh(secondEditor)
+            rime.runOnReady {
+                check(selectCandidate(TOTAL - 1, true, selectable)) { "The last valid native candidate could not be selected" }
+                check(getRawInput().isEmpty()) { "Valid candidate selection did not finish the native composition" }
+            }
+            val committed = rime.runOnReady { candidateSnapshotCached }
+            val commitMessages = snapshotMessages(committed).filterIsInstance<RimeMessage.CommitTextMessage>()
+            check(committed.editorToken == secondEditor && committed.generation > selectable.generation)
+            check(commitMessages.single().data.text == candidateTexts.last()) { "Native candidate selection committed the wrong or duplicate text" }
+            phase("the final native candidate selects once with the current editor and a new commit snapshot")
+        }
+
+        private suspend fun verifyFinishAndRebind() {
+            val beforeFinish = fresh(secondEditor)
+            val finishSource = CandidatesPagingSource(rime, TOTAL, 0, beforeFinish)
+            rime.runOnReady {
+                finishOwnedEditors(longArrayOf(firstEditor, secondEditor))
+                check(!candidateSnapshotCached.isValid && getRawInput().isEmpty())
+            }
+            reject(beforeFinish, finishSource)
+            rime.runOnReady { beginEditor(secondEditor, nullInputType = false, privacyMode = false) }
+            val rebound = fresh(secondEditor)
+            check(rebound.generation > beforeFinish.generation)
+            response(rebound)
+            reject(beforeFinish, finishSource)
+            phase("finish and same-token rebind invalidate former native pages without reusing a generation")
+        }
+    }
+
     fun run(instrumentation: Instrumentation) {
         val result = Bundle()
         val sessionName = "${CandidateSnapshotProbe::class.java.name}-${android.os.Process.myPid()}"
@@ -144,7 +350,7 @@ object CandidateSnapshotProbe {
         var passed = false
         var failure: Throwable? = null
         var checks = 0
-        var fifoKeys = 0
+        val progress = NativeProbeProgress()
 
         fun phase(description: String) {
             checks++
@@ -214,165 +420,15 @@ object CandidateSnapshotProbe {
                             }
                         }
 
-                        suspend fun fresh(editor: Long): CandidateSnapshot = rime.runOnReady {
-                            clearComposition()
-                            check(processKey('a'.code))
-                            check(getRawInput() == "a")
-                            candidateSnapshotCached.also {
-                                check(it.isValid && it.editorToken == editor) { "Candidate snapshot has the wrong owner" }
-                            }
-                        }
-
-                        suspend fun snapshotMessages(snapshot: CandidateSnapshot): List<RimeMessage<*>> = withTimeout(10_000) {
-                            var found: List<RimeMessage<*>>
-                            do {
-                                found = synchronized(messages) { messages.filter { it.snapshot == snapshot } }
-                                if (found.none { it is RimeMessage.T9Message }) delay(10)
-                            } while (found.none { it is RimeMessage.T9Message })
-                            found
-                        }
-
-                        suspend fun response(snapshot: CandidateSnapshot): Candidates.Bulk {
-                            val matching = snapshotMessages(snapshot)
-                            check(matching.all { it.editorToken == snapshot.editorToken })
-                            check(matching.count { it is RimeMessage.CommitTextMessage } == 1)
-                            check(matching.count { it is RimeMessage.CompositionMessage } == 1)
-                            check(matching.count { it is RimeMessage.StatusMessage } == 1)
-                            val bulk = matching.filterIsInstance<RimeMessage.BulkCandidatesMessage>().single().data
-                            check(bulk.snapshot == snapshot)
-                            check(bulk.candidates.size == 16 && bulk.total == -1) { "JNI bulk response read beyond its initial bounded window" }
-                            check(bulk.candidates.map { it.text } == candidateTexts.take(16)) { "Native fixture candidate order changed" }
-                            return bulk
-                        }
-
-                        val initial = fresh(firstEditor)
-                        response(initial)
-                        phase("one native response associates commit, composition, candidates and status with a bounded 16-row snapshot")
-
-                        val known = CandidatesPagingSource(rime, TOTAL, 0, initial)
-                        // A large refresh must still perform one bounded 48-row native read.
-                        val first = page(known.load(PagingSource.LoadParams.Refresh(null, 144, false)))
-                        check(first.data.size == 48 && first.prevKey == null && first.nextKey == 48)
-                        check(first.data.map { it.candidate.text } == candidateTexts.take(48))
-                        check(first.data.map { it.index } == (0 until 48).toList())
-                        check(first.data.all { it.snapshot == initial })
-                        val last = page(known.load(PagingSource.LoadParams.Append(checkNotNull(first.nextKey), 48, false)))
-                        check(last.data.single().index == 48 && last.nextKey == null)
-                        check(last.data.single().candidate.text == candidateTexts.last() && last.data.single().snapshot == initial)
-                        phase("known 49-candidate native menu loads all 48 + 1 rows, including the final row")
-
-                        val unknown = CandidatesPagingSource(rime, -1, 0, initial)
-                        val unknownFirst = page(unknown.load(PagingSource.LoadParams.Refresh(null, 48, false)))
-                        val unknownLast = page(unknown.load(PagingSource.LoadParams.Append(checkNotNull(unknownFirst.nextKey), 48, false)))
-                        check(unknownFirst.data == first.data && unknownFirst.nextKey == 48)
-                        check(unknownLast.data == last.data && unknownLast.nextKey == null)
-                        val offset = page(CandidatesPagingSource(rime, TOTAL, 48, initial).load(PagingSource.LoadParams.Refresh(null, 48, false)))
-                        check(offset.data == last.data && offset.nextKey == null)
-                        val empty = page(unknown.load(PagingSource.LoadParams.Append(TOTAL, 48, false)))
-                        check(empty.data.isEmpty() && empty.nextKey == null)
-                        phase("unknown totals, tail offsets and an empty native tail terminate paging without duplicate rows")
-
-                        suspend fun reject(snapshot: CandidateSnapshot, source: CandidatesPagingSource) {
-                            val before = rime.runOnReady { getRawInput() to candidateSnapshotCached }
-                            rime.runOnReady {
-                                check(!selectCandidate(0, true, snapshot)) { "Stale selection entered the native engine" }
-                                check(!deleteCandidate(0, true, snapshot)) { "Stale deletion entered the native engine" }
-                                check(!changeCandidatePage(false, snapshot)) { "Stale page change entered the native engine" }
-                                val rejected = runCatching { getCandidates(0, 48, snapshot) }.exceptionOrNull()
-                                check(rejected is StaleCandidateSnapshotException) { "Stale native candidate read was accepted" }
-                            }
-                            check(source.load(PagingSource.LoadParams.Refresh(null, 48, false)) is PagingSource.LoadResult.Invalid<*, *>)
-                            check(source.load(PagingSource.LoadParams.Append(48, 48, false)) is PagingSource.LoadResult.Invalid<*, *>)
-                            check(rime.runOnReady { getRawInput() to candidateSnapshotCached } == before) {
-                                "Rejected asynchronous candidates changed the current input or generation"
-                            }
-                        }
-
-                        rime.runOnReady { check(processKey('b'.code)) }
-                        reject(initial, known)
-                        val newer = fresh(firstEditor)
-                        check(newer.generation > initial.generation)
-                        response(newer)
-                        phase("older generations reject select/delete/page/read and return PagingSource.Invalid without altering newer input")
-
-                        val oldEditorSource = CandidatesPagingSource(rime, TOTAL, 0, newer)
-                        rime.runOnReady {
-                            beginEditor(secondEditor, nullInputType = false, privacyMode = false)
-                            check(getRawInput().isEmpty()) { "Input crossed the editor boundary" }
-                        }
-                        val second = fresh(secondEditor)
-                        check(second.generation > newer.generation)
-                        response(second)
-                        reject(newer, oldEditorSource)
-                        rime.runOnReady {
-                            finishEditor(firstEditor)
-                            check(candidateSnapshotCached == second && getRawInput() == "a") { "An old editor teardown erased the current input" }
-                            val current = getCandidates(0, 16, second)
-                            check(current.map { it.text } == candidateTexts.take(16))
-                        }
-                        phase("a new editor invalidates old asynchronous pages and actions while old teardown leaves current candidates intact")
-
-                        rime.runOnReady { clearComposition() }
-                        val keys = "abcd".map { it.code } + BACKSPACE + 'e'.code + List(4) { BACKSPACE }
-                        var lastGeneration = rime.runOnReady { candidateSnapshotCached.generation }
-                        repeat(8) {
-                            var expected = ""
-                            val input = List(4) { keys }.flatten().map { key ->
-                                expected = if (key == BACKSPACE) expected.dropLast(1) else expected + key.toChar()
-                                key to expected
-                            }
-                            // UNDISPATCHED runs each caller up to its first dispatcher suspension;
-                            // awaitAll occurs only after the entire 40-operation burst is submitted.
-                            // Nested API calls remain on the same worker, making each observation
-                            // atomic with respect to subsequent queued keys.
-                            val observed = mutableListOf<Int>()
-                            coroutineScope {
-                                input.mapIndexed { index, (key, raw) ->
-                                    async(start = CoroutineStart.UNDISPATCHED) {
-                                        dispatcher.runConfined {
-                                            rime.runOnReady {
-                                                check(processKey(key)) { "The native engine dropped a queued key" }
-                                                check(getRawInput() == raw) { "Native FIFO input differs at queued position $index" }
-                                                val snapshot = candidateSnapshotCached
-                                                check(snapshot.editorToken == secondEditor && snapshot.generation > lastGeneration)
-                                                lastGeneration = snapshot.generation
-                                                observed.add(index)
-                                            }
-                                        }
-                                    }
-                                }.awaitAll()
-                            }
-                            check(observed == input.indices.toList()) { "Queued native keys completed out of order" }
-                            fifoKeys += input.size
-                            check(rime.runOnReady { getRawInput().isEmpty() }) { "A FIFO burst lost a backspace or left residual input" }
-                        }
-                        check(fifoKeys == 320)
-                        phase("320 real native letter/backspace operations in eight concurrent bursts retain every key and FIFO state")
-
-                        val selectable = fresh(secondEditor)
-                        rime.runOnReady {
-                            check(selectCandidate(TOTAL - 1, true, selectable)) { "The last valid native candidate could not be selected" }
-                            check(getRawInput().isEmpty()) { "Valid candidate selection did not finish the native composition" }
-                        }
-                        val committed = rime.runOnReady { candidateSnapshotCached }
-                        val commitMessages = snapshotMessages(committed).filterIsInstance<RimeMessage.CommitTextMessage>()
-                        check(committed.editorToken == secondEditor && committed.generation > selectable.generation)
-                        check(commitMessages.single().data.text == candidateTexts.last()) { "Native candidate selection committed the wrong or duplicate text" }
-                        phase("the final native candidate selects once with the current editor and a new commit snapshot")
-
-                        val beforeFinish = fresh(secondEditor)
-                        val finishSource = CandidatesPagingSource(rime, TOTAL, 0, beforeFinish)
-                        rime.runOnReady {
-                            finishOwnedEditors(longArrayOf(firstEditor, secondEditor))
-                            check(!candidateSnapshotCached.isValid && getRawInput().isEmpty())
-                        }
-                        reject(beforeFinish, finishSource)
-                        rime.runOnReady { beginEditor(secondEditor, nullInputType = false, privacyMode = false) }
-                        val rebound = fresh(secondEditor)
-                        check(rebound.generation > beforeFinish.generation)
-                        response(rebound)
-                        reject(beforeFinish, finishSource)
-                        phase("finish and same-token rebind invalidate former native pages without reusing a generation")
+                        NativeCandidateProbeContext(
+                            rime,
+                            dispatcher,
+                            messages,
+                            firstEditor,
+                            secondEditor,
+                            progress,
+                            ::phase,
+                        ).verify()
                     } finally {
                         observer.cancelAndJoin()
                     }
@@ -434,12 +490,12 @@ object CandidateSnapshotProbe {
         }
         result.putBoolean("passed", passed)
         result.putInt("checks", checks)
-        result.putInt("native_fifo_keys", fifoKeys)
+        result.putInt("native_fifo_keys", progress.fifoKeys)
         result.putInt("fixture_candidates", TOTAL)
         result.putString(
             "stream",
             failure?.let { "FAIL: ${it.stackTraceToString()}\n" }
-                ?: "PASS: T08 $checks native snapshot/paging checks, $fifoKeys FIFO keys; no UI drawing or physical performance claim\n",
+                ?: "PASS: T08 $checks native snapshot/paging checks, ${progress.fifoKeys} FIFO keys; no UI drawing or physical performance claim\n",
         )
         instrumentation.finish(if (passed) Activity.RESULT_OK else Activity.RESULT_CANCELED, result)
     }
