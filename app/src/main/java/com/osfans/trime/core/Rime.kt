@@ -8,7 +8,11 @@ package com.osfans.trime.core
 import android.annotation.SuppressLint
 import androidx.core.net.toUri
 import com.osfans.trime.BuildConfig
+import com.osfans.trime.core.data.ConfigImportValidator
+import com.osfans.trime.core.data.ConfigurationImportException
 import com.osfans.trime.core.data.DataManager
+import com.osfans.trime.core.data.SyncRelativePath
+import com.osfans.trime.core.data.UserDataManager
 import com.osfans.trime.data.candidates.CandidatePin
 import com.osfans.trime.data.candidates.CandidatePinStore
 import com.osfans.trime.data.opencc.OpenCCDictManager
@@ -17,10 +21,6 @@ import com.osfans.trime.data.prefs.InputSetupController
 import com.osfans.trime.data.prefs.InputSetupSelection
 import com.osfans.trime.data.prefs.InputSetupState
 import com.osfans.trime.data.prefs.RimeInputSetupEngine
-import com.osfans.trime.core.data.ConfigImportValidator
-import com.osfans.trime.core.data.ConfigurationImportException
-import com.osfans.trime.core.data.UserDataManager
-import com.osfans.trime.core.data.SyncRelativePath
 import com.osfans.trime.data.theme.ThemeLoader
 import com.osfans.trime.data.theme.ThemeManager
 import com.osfans.trime.data.theme.ThemePrefs

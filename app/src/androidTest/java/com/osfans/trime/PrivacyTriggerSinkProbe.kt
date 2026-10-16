@@ -12,8 +12,8 @@ import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import com.osfans.trime.core.Rime
 import com.osfans.trime.core.RimeApi
-import com.osfans.trime.data.SymbolHistory
 import com.osfans.trime.core.data.DataManager
+import com.osfans.trime.data.SymbolHistory
 import com.osfans.trime.data.db.ClipboardHelper
 import com.osfans.trime.data.db.Database
 import com.osfans.trime.data.prefs.AppPrefs

@@ -12,8 +12,7 @@ class UpstreamUserDataIntegrationTest :
         "larger sync hash buffers retain content across boundaries and short reads" {
             val content = ByteArray(32 * 1024 * 3 + 17) { (it * 31 + 127).toByte() }
             val shortReads = object : ByteArrayInputStream(content) {
-                override fun read(buffer: ByteArray, offset: Int, length: Int): Int =
-                    super.read(buffer, offset, minOf(length, 7))
+                override fun read(buffer: ByteArray, offset: Int, length: Int): Int = super.read(buffer, offset, minOf(length, 7))
             }
             SyncFingerprint.digest(shortReads).toList() shouldBe
                 MessageDigest.getInstance("SHA-256").digest(content).toList()

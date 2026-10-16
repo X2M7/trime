@@ -35,10 +35,10 @@ import com.hjq.permissions.XXPermissions
 import com.osfans.trime.BuildConfig
 import com.osfans.trime.R
 import com.osfans.trime.TrimeApplication
+import com.osfans.trime.core.data.UserDataManager
 import com.osfans.trime.daemon.RimeDaemon
 import com.osfans.trime.data.prefs.AppPrefs
 import com.osfans.trime.data.soundeffect.SoundEffectManager
-import com.osfans.trime.core.data.UserDataManager
 import com.osfans.trime.databinding.ActivityMainBinding
 import com.osfans.trime.ui.setup.SetupActivity
 import com.osfans.trime.util.item

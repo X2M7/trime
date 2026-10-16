@@ -12,10 +12,10 @@ import android.view.ViewGroup
 import androidx.core.view.doOnAttach
 import androidx.fragment.app.Fragment
 import com.osfans.trime.R
+import com.osfans.trime.core.data.DataStorageMode
 import com.osfans.trime.data.prefs.AppPrefs
 import com.osfans.trime.data.prefs.ChineseVariant
 import com.osfans.trime.data.prefs.InputLayout
-import com.osfans.trime.core.data.DataStorageMode
 import com.osfans.trime.databinding.FragmentSetupBinding
 import com.osfans.trime.util.serializable
 

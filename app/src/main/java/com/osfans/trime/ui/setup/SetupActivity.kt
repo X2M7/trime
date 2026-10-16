@@ -31,6 +31,9 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.osfans.trime.R
 import com.osfans.trime.core.RimeMaintenanceMutex
+import com.osfans.trime.core.data.ConfigurationImportException
+import com.osfans.trime.core.data.DataStorageMode
+import com.osfans.trime.core.data.UserDataManager
 import com.osfans.trime.daemon.RimeDaemon
 import com.osfans.trime.daemon.RimeSession
 import com.osfans.trime.data.prefs.AppPrefs
@@ -40,9 +43,6 @@ import com.osfans.trime.data.prefs.InputSetupException
 import com.osfans.trime.data.prefs.InputSetupFailure
 import com.osfans.trime.data.prefs.InputSetupSelection
 import com.osfans.trime.data.prefs.InputSetupState
-import com.osfans.trime.core.data.ConfigurationImportException
-import com.osfans.trime.core.data.DataStorageMode
-import com.osfans.trime.core.data.UserDataManager
 import com.osfans.trime.databinding.ActivitySetupBinding
 import com.osfans.trime.ui.main.MainActivity
 import com.osfans.trime.ui.main.NavigationRoute

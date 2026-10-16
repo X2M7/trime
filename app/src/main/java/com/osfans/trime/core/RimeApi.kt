@@ -5,9 +5,9 @@
 
 package com.osfans.trime.core
 
+import com.osfans.trime.core.data.UserDataManager
 import com.osfans.trime.data.prefs.InputSetupSelection
 import com.osfans.trime.data.prefs.InputSetupState
-import com.osfans.trime.core.data.UserDataManager
 import kotlinx.coroutines.flow.SharedFlow
 
 interface RimeApi {

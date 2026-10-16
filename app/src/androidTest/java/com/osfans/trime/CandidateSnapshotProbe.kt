@@ -14,9 +14,9 @@ import com.osfans.trime.core.RimeDispatcher
 import com.osfans.trime.core.RimeLifecycle
 import com.osfans.trime.core.RimeMessage
 import com.osfans.trime.core.StaleCandidateSnapshotException
+import com.osfans.trime.core.data.DataManager
 import com.osfans.trime.daemon.RimeDaemon
 import com.osfans.trime.daemon.RimeSession
-import com.osfans.trime.core.data.DataManager
 import com.osfans.trime.data.prefs.AppPrefs
 import com.osfans.trime.ime.candidates.CandidateRow
 import com.osfans.trime.ime.candidates.unrolled.CandidatesPagingSource

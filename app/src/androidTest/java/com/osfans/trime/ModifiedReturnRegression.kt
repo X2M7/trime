@@ -151,24 +151,28 @@ object ModifiedReturnRegression {
                     val actionCalls = synchronized(field.actions) { field.actions.toList() }
                     val sent = synchronized(field.sent) { field.sent.toList() }
                     val received = synchronized(field.received) { field.received.toList() }
-                    records.put(JSONObject().apply {
-                        put("key", name)
-                        put("expected_modifier", expectedModifier)
-                        put("actions", JSONArray(actionCalls))
-                        put("sent", JSONArray(sent.map { it.json() }))
-                        put("received", JSONArray(received.map { it.json() }))
-                    })
+                    records.put(
+                        JSONObject().apply {
+                            put("key", name)
+                            put("expected_modifier", expectedModifier)
+                            put("actions", JSONArray(actionCalls))
+                            put("sent", JSONArray(sent.map { it.json() }))
+                            put("received", JSONArray(received.map { it.json() }))
+                        },
+                    )
                     if (modifierKey == null) {
                         check(actionCalls == listOf(customAction)) { "Plain Return did not perform the editor's custom action exactly once: $actionCalls" }
                         check(sent.isEmpty() && received.isEmpty()) { "Plain Return also sent a key event" }
                     } else {
                         check(actionCalls.isEmpty()) { "$name was incorrectly converted to an editor action: $actionCalls" }
-                        check(sent.map { it.action to it.code } == listOf(
-                            KeyEvent.ACTION_DOWN to modifierKey,
-                            KeyEvent.ACTION_DOWN to KeyEvent.KEYCODE_ENTER,
-                            KeyEvent.ACTION_UP to KeyEvent.KEYCODE_ENTER,
-                            KeyEvent.ACTION_UP to modifierKey,
-                        )) { "$name did not send exactly one bracketed modifier/Enter down-up sequence: $sent" }
+                        check(
+                            sent.map { it.action to it.code } == listOf(
+                                KeyEvent.ACTION_DOWN to modifierKey,
+                                KeyEvent.ACTION_DOWN to KeyEvent.KEYCODE_ENTER,
+                                KeyEvent.ACTION_UP to KeyEvent.KEYCODE_ENTER,
+                                KeyEvent.ACTION_UP to modifierKey,
+                            ),
+                        ) { "$name did not send exactly one bracketed modifier/Enter down-up sequence: $sent" }
                         val enterSent = sent.filter { it.code == KeyEvent.KEYCODE_ENTER }
                         val enterReceived = received.filter { it.code == KeyEvent.KEYCODE_ENTER }
                         check(enterSent.all { it.modifiers and chordMask == expectedModifier }) { "$name lost or added a modifier: $enterSent" }

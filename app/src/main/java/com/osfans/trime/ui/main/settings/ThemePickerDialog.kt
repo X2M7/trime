@@ -9,9 +9,9 @@ import android.content.Context
 import android.widget.Toast
 import androidx.lifecycle.LifecycleCoroutineScope
 import com.osfans.trime.R
-import com.osfans.trime.daemon.RimeDaemon
 import com.osfans.trime.core.data.ConfigurationImportException
 import com.osfans.trime.core.data.UserDataManager
+import com.osfans.trime.daemon.RimeDaemon
 import com.osfans.trime.data.theme.ThemeManager
 import com.osfans.trime.util.toast
 import kotlinx.coroutines.CancellationException

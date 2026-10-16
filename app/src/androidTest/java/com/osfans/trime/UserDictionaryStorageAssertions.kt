@@ -7,8 +7,8 @@ import android.os.Build
 import com.osfans.trime.core.Rime
 import com.osfans.trime.core.RimeConfig
 import com.osfans.trime.core.RimeDispatcher
-import com.osfans.trime.daemon.RimeSession
 import com.osfans.trime.core.data.DataManager
+import com.osfans.trime.daemon.RimeSession
 import com.osfans.trime.data.userdict.CustomPhraseStore
 import com.osfans.trime.data.userdict.DictionaryFileStore
 import com.osfans.trime.data.userdict.DictionaryTextFormats

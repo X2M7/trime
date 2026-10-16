@@ -19,10 +19,10 @@ import android.widget.TextView
 import androidx.core.view.children
 import com.osfans.trime.core.RimeApi
 import com.osfans.trime.core.T9Action
+import com.osfans.trime.core.data.UserDataManager
 import com.osfans.trime.daemon.RimeDaemon
 import com.osfans.trime.daemon.RimeSession
 import com.osfans.trime.data.prefs.AppPrefs
-import com.osfans.trime.core.data.UserDataManager
 import com.osfans.trime.data.theme.ThemeManager
 import com.osfans.trime.data.theme.model.KeyActionToken
 import com.osfans.trime.ime.composition.T9DisambiguationView
