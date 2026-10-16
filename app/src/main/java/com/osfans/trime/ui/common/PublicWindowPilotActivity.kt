@@ -52,7 +52,7 @@ abstract class PublicWindowPilotActivity : FragmentActivity() {
     /** Match the existing AppCompat parent-task policy, rather than treating Up as Back. */
     protected fun navigateToManifestParent() {
         val parent = NavUtils.getParentActivityIntent(this) ?: return
-        if (NavUtils.shouldUpRecreateTask(this, parent)) {
+        if (shouldUpRecreateTask(parent)) {
             TaskStackBuilder.create(this).addNextIntentWithParentStack(parent).startActivities()
             try {
                 finishAffinity()
@@ -60,7 +60,7 @@ abstract class PublicWindowPilotActivity : FragmentActivity() {
                 finish()
             }
         } else {
-            NavUtils.navigateUpTo(this, parent)
+            navigateUpTo(parent)
         }
     }
 
