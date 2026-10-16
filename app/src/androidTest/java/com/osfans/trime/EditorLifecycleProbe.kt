@@ -1622,6 +1622,7 @@ object EditorLifecycleProbe {
         var fixture: File? = null
         val touchRegionRunId = UUID.randomUUID().toString()
         val touchRegionMeasurements = JSONArray()
+        val touchRegionLifecycleChecks = JSONArray()
         val imeVisibilityWaits = JSONArray()
         val imeAnimations = ImeAnimationProbe(observeImeAnimations)
         val webFixtureEnvironment = JSONObject().apply { put("captured", false) }
@@ -1998,21 +1999,66 @@ object EditorLifecycleProbe {
                         } finally {
                             main { (hostTarget.parent as? ViewGroup)?.removeView(hostTarget) }
                         }
-                        val originalVisibility = main { root.visibility }
-                        try {
-                            main { root.visibility = View.INVISIBLE }
-                            until("$theme invisible preedit leaves the IME touch region") { !regionCovers(root) }
-                        } finally {
-                            main { root.visibility = originalVisibility }
+                        fun verifyHiddenTouchRegion(target: View, label: String) {
+                            main {
+                                val originalVisibility = target.visibility
+                                val bounds = visibleWindowBounds(root)
+                                val beforeInsets = touchInsets()
+                                val decor = checkNotNull(service.window.window).decorView
+                                val keyboardRegion = Region(0, beforeInsets.visibleTopInsets.coerceIn(0, decor.height), decor.width, decor.height)
+                                val exposedRegion = Region(bounds).apply { op(keyboardRegion, Region.Op.DIFFERENCE) }
+                                val diagnostic = JSONObject().apply {
+                                    put("theme", theme)
+                                    put("check", label)
+                                    put("target", if (target === root) "preedit" else "input_view")
+                                    put("original_visibility", originalVisibility)
+                                    put("requested_visibility", View.INVISIBLE)
+                                    put("visible_bounds_before", bounds.toShortString())
+                                    put("keyboard_region_before", keyboardRegion.toString())
+                                    put("exposed_region_before", exposedRegion.toString())
+                                    put("touch_region_before", beforeInsets.touchableRegion.toString())
+                                    put("passed", false)
+                                }
+                                touchRegionLifecycleChecks.put(diagnostic)
+                                check(originalVisibility == View.VISIBLE && root.isShown && regionCovers(root)) { "$label needs a visible, touchable preedit: $diagnostic" }
+                                check(!exposedRegion.isEmpty) { "$label needs preedit pixels outside the keyboard baseline: $diagnostic" }
+                                roots().asSequence().flatMap(::descendants).filterIsInstance<CandidatesView>().forEach { candidates ->
+                                    if (candidates.windowToken == root.windowToken) {
+                                        val overlap = Region(visibleWindowBounds(candidates)).apply { op(exposedRegion, Region.Op.INTERSECT) }
+                                        check(overlap.isEmpty) { "$label overlaps another visible candidate surface: $overlap $diagnostic" }
+                                    }
+                                }
+                                // Composition updates may legitimately show the preedit again. Keep
+                                // this artificial hidden state and its inset computation in one main
+                                // callback, and check the previous physical region as well as visibility.
+                                try {
+                                    target.visibility = View.INVISIBLE
+                                    val afterInsets = touchInsets()
+                                    val residual = Region(exposedRegion).apply { op(afterInsets.touchableRegion, Region.Op.INTERSECT) }
+                                    diagnostic.apply {
+                                        put("observed_visibility", target.visibility)
+                                        put("root_visibility", root.visibility)
+                                        put("root_shown", root.isShown)
+                                        put("root_attached", root.isAttachedToWindow)
+                                        put("root_window_visibility", root.windowVisibility)
+                                        put("touch_region_hidden", afterInsets.touchableRegion.toString())
+                                        put("residual_region", residual.toString())
+                                    }
+                                    check(target.visibility == View.INVISIBLE && !root.isShown) { "$label did not establish its hidden-state precondition: $diagnostic" }
+                                    check(!regionCovers(root)) { "$label still covers the hidden preedit: $diagnostic" }
+                                    check(afterInsets.visibleTopInsets == beforeInsets.visibleTopInsets) { "$label unexpectedly moved the keyboard baseline: $diagnostic" }
+                                    check(residual.isEmpty) { "$label retained the previous preedit touch region: $diagnostic" }
+                                    diagnostic.put("passed", true)
+                                } finally {
+                                    target.visibility = originalVisibility
+                                    diagnostic.put("restored_visibility", target.visibility)
+                                }
+                            }
+                            phase("PASS: $label")
                         }
+                        verifyHiddenTouchRegion(root, "$theme invisible preedit leaves the IME touch region")
                         until("$theme visible preedit resumes the IME touch region") { regionCovers(root) }
-                        val inputVisibility = main { iv.visibility }
-                        try {
-                            main { iv.visibility = View.INVISIBLE }
-                            until("$theme invisible preedit ancestor leaves the IME touch region") { !regionCovers(root) }
-                        } finally {
-                            main { iv.visibility = inputVisibility }
-                        }
+                        verifyHiddenTouchRegion(iv, "$theme invisible preedit ancestor leaves the IME touch region")
                         until("$theme visible preedit ancestor resumes the IME touch region") { regionCovers(root) }
                         val originalScroll = main { root.scrollX to root.scrollY }
                         val unscrolledBounds = main { visibleWindowBounds(root) }
@@ -3124,6 +3170,7 @@ object EditorLifecycleProbe {
             put("measurement", "instrumentation wall time including Rime queue, main-thread dispatch and visible-state polling; not candidate latency/P95")
             put("rapid_stall_limit_ms", 2_000)
             put("rapid_rounds", touchRegionMeasurements)
+            put("touch_region_lifecycle_checks", touchRegionLifecycleChecks)
             put("ime_visibility_waits", imeVisibilityWaits)
             put("ime_animation_callbacks", main { imeAnimations.snapshot() })
             put("web_fixture_environment", webFixtureEnvironment)
