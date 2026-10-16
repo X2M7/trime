@@ -97,12 +97,14 @@ class Logcat internal constructor(
             try {
                 currentCoroutineContext().ensureActive()
                 val process = startProcess(command("-v", "time"))
-                try {
-                    // A stop can race with process creation; cleanup still owns the returned child.
-                    currentCoroutineContext().ensureActive()
-                    process.asFlow().collect { if (includesLine(it)) flow.emit(it) }
-                } finally {
-                    process.releaseProcess()
+                // Ownership begins immediately after creation, including cancellation before
+                // the IO reader starts. One cleanup preserves the original read failure.
+                process.consumeOutput { reader ->
+                    while (true) {
+                        currentCoroutineContext().ensureActive()
+                        val line = reader.readLine() ?: break
+                        if (includesLine(line)) flow.emit(line)
+                    }
                 }
             } catch (cancelled: CancellationException) {
                 throw cancelled
