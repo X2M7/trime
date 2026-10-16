@@ -1,5 +1,21 @@
 # T13 运行警告分诊
 
+## 当前专项状态（2026-10-16）
+
+**限定范围警告尚未全部消除，本轮未推送或发布，稳定版仍为 `v3.3.13-t9.18`。** 本地已提交 Setup 阶段拆分 `a6ad1c9a` 和剪贴板业务结果修复 `979abb46`，均待新轮编译及设备验证，不能写成已验收。见 [Setup 审阅](../../build/warnings19/setup-probe-extraction1/root-review1.json)、[剪贴板审阅](../../build/warnings19/clipboard-edit-outcome-independent-review1/report.json)。
+
+[Debug11](../../build/warnings19/debug11/result.json) 对应源码 `6aa99a15`，837 项 JVM 测试通过、编译警告为 0；这些结果不覆盖新 HEAD 或尚未应用的候选。最终双 Lint 尚待执行；旧 Lint4 受控终止，实际退出 143，不能计为通过。
+
+Android 5.0 runtime4 的已执行限定检查实际退出均为 0：日志流三次取消／重启与三次快照，T08／T10／T11、剪贴板原八项，以及编辑器两主题 40 轮、203 条显隐状态记录、四项原子隐藏检查和 100 次显隐。SAF 真实目录选择保留 16 帧，Root 复核四张原始 PNG；[严格导入](../../build/t13/warnings19-api21-import3/phase-report.json)七项及九条 ASCII 提示检查通过。上述结果不等于整轮警告验收或升级保留验收。
+
+[本轮退出复核](../../build/warnings19/api21-runtime4-final-review1/final-state.json)确认控制器、模拟器、logcat 均正常退出 0，无所属进程残留；最低可用内存 2,693,448 KiB。构建与单模拟器继续串行，保持文件索引运行及 1 GiB 内存下限。
+
+[独立 WebView control2](../../build/warnings19/api21-webview-control2-independent-review1.json)在未安装 Trime、无 Trime 进程的环境完成两次正常清理，各复现两条 IRT 和一条 inactive InputConnection；只支持这些有限签名的独立复现，不豁免全部历史记录。[control1](../../build/warnings19/api21-control1-setting-claims-rejected1.json)因系统不支持 `settings list` 实际失败、完成零轮；错误的“恢复成功”声明已拒收，原件保留。
+
+剪贴板修复以明确的“已保存／记录不存在”结果区分业务缺失和真实异常：记录不存在时保留草稿及缓存，数据库异常继续记录错误，取消继续传播。原八项检查不删，新增读取后删行导致更新零行、旧请求返回空值两类竞争验证，预计十二项；新检查尚未执行。
+
+仍须处理：剪贴板故意删行后的两组业务 E、Setup 探针 125.439 ms 慢验证 W；Binder invalid／bad handle 的归因及 AppCompat 依赖警告的修复均未闭合。[本轮完整库存](../../build/warnings19/api21-runtime4-final-review1/report.json)保留全部 3,107 条 W／E，其中 Trime 进程 169 条；内核六条 invalid ref 与一条未绑定 PID 的 bad handle 仍未决。全原件致命事件／ANR／OOM／真实低内存回收扫描为 0，两条 CloseGuard 仅绑定到 Trime 安装前的系统进程；不把有限归因推广至全部同类。新 Setup 与剪贴板修改仍须重新编译、双 Lint，以及 Android 5.0／15 实测，方可判断修复效果；不以试验通过替代正式发布门槛。本节只追加当前状态，旧轮失败、原始日志与当时结论均不改写；后续通过也不能补作旧轮凭证。下列旧轮记录保留各自时间与范围。
+
 ## 已确认范围内的继续处理（2026-10-15）
 
 用户已确认：排除有证据的模拟器／Android 系统自身警告，处理其余由 Trime、依赖或测试代码造成的警告。本轮已修复下列可定位问题，但**尚未达到限定范围全部消除**。eSpeak 进程仍有一类 ART finalizer 诊断，具体 Reference 对象未知；没有将它自动归为系统原因，也没有关闭日志或强制 GC。以下结果不覆盖真机、可听语音、长期驻留或全部历史事件。
