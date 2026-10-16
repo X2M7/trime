@@ -1,6 +1,22 @@
 # T13 运行警告分诊
 
-## 当前专项状态（2026-10-16）
+## 当前专项状态（2026-10-17）
+
+**限定范围警告尚未全部消除，本轮未推送或发布；稳定版仍为 `v3.3.13-t9.18`。** 下列设备结果只绑定 `0f0c4b97`／Debug12，不能替代正在准备的新代码候选验收。
+
+[Debug12](../../build/warnings19/debug12/result.json)实际新执行 837 项应用 JVM 测试通过，88 份 XML 已保存，编译警告为 0；[宿主检查](../../build/warnings19/host-debug12-1/result.json)268 项通过。[Lint5](../../build/warnings19/lint5/result.json)的 Debug／Release 报告均为 0 问题，23 个任务实际执行。构建、检查及进程清理的实际退出均为 0。
+
+Android 5.0 [runtime6 全量复核](../../build/warnings19/api21-runtime6-final-review1/report.json)绑定剪贴板十二项（业务错误计数 0）、首次设置十四项与缓存关闭七项、日志三次重启／三次快照、T08／T10／T11、编辑器两主题四十轮与一百次显隐、真实系统目录授权、严格导入七项和 ASCII 提示九项；这些限定检查通过。隐私十六项仅引用上一 runtime5 的同一 APK，未冒称在 runtime6 重跑。完整原件保留 3,027 条 W／E，其中真实 Trime PID 内 120 条；慢验证为 0，但六条内核 Binder invalid-refcount 仍未归因。控制器、VM、日志采集退出均为 0，无残留，最低可用内存 2,583,568 KiB。
+
+Android 15 [runtime2 全量复核](../../build/warnings19/api35-runtime2-final-review1/report.json)绑定九个实际通过的阶段：隐私、剪贴板、首次设置、日志资源、T08／T10／T11，以及动画回调关闭／开启两组编辑器回归；每组各两主题四十轮、一百次显隐，开启组实际 prepare／end 各 207 次。真实目录选择保留十三帧，Root 实际查看四张原始 PNG。但[严格导入 import2](../../build/t13/warnings19-api35-import2/phase-report.json)在业务检查前因 ASCII 提示为 false 返回 native false／完成码 0、宿主退出 1；零项导入检查完成，ASCII 九项也未执行，不计完整通过。未重置或复用失败档案。控制器与 VM 退出 0、无残留，日志客户端实际退出 255；该退出在关机等待之后被观察到，没有证据补作唯一断开原因。控制器与导入单项最低可用内存分别为 1,134,172／1,124,892 KiB，1 GiB 保护未触发。
+
+上述 Android 15 原件共保留 11,317 条 W／E，其中真实 Trime PID 内 2,109 条；AppCompat 隐藏调用两条，以及 FrameTracker、Binder 和审计限流原文均保留，未因功能通过自动豁免。既定致命事件／ANR／OOM／真实 LMK 与精确内核严重事件模式未匹配，不表示所有系统风险消除。
+
+新本地候选只先迁移主题诊断页到公开 Window API，保留工具栏、返回、字体、深浅色和 Rime 会话生命周期，并增加限定窗口测试。其 Main 路由测试要求独立、明确标记的已完成状态虚构档案；不把该档案当作首次设置验收。另补强 T08／T10 探针的 ASCII 提示恢复：保留原键的存在状态与布尔值，以同步提交和实际读回确认临时修改及恢复。旧探针仅异步写回，缺少持久化成功检查；现有记录不足以唯一追认 import2 的偏好来源。原八／十四项业务断言及清理顺序保留。这些新改动仍待编译、Lint 和双平台验证。
+
+独立 WorkManager 诊断的[第五轮构建](../../build/warnings19/api21-workmanager-control-build5/build-result.json)实际执行 34 个任务，进入 R8 后被原 SPI 证明门槛拒绝：DEX 仍引用 ServiceLoader；另保留 debuggable 与 minify 同开的真实 AGP 警告，没有关闭警告或删除证明。没有可验收 APK 或签名结果。后续将该独立优化诊断明确设为非 debuggable 并核对真实产物；它始终不等同未优化的 Trime Debug 包。Binder 及其余 AppCompat 窗口仍未闭合。构建与单模拟器继续串行，文件索引保持运行，旧失败原件均保留。
+
+## 上一轮专项记录（2026-10-16）
 
 **限定范围警告尚未全部消除，本轮未推送或发布，稳定版仍为 `v3.3.13-t9.18`。** 本地已提交 Setup 阶段拆分 `a6ad1c9a` 和剪贴板业务结果修复 `979abb46`，均待新轮编译及设备验证，不能写成已验收。见 [Setup 审阅](../../build/warnings19/setup-probe-extraction1/root-review1.json)、[剪贴板审阅](../../build/warnings19/clipboard-edit-outcome-independent-review1/report.json)。
 
