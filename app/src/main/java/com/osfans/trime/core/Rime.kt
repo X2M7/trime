@@ -138,6 +138,8 @@ class Rime :
         if (editorChanged || this.privacyMode != privacyMode) {
             setRimePrivacyMode(privacyMode)
         }
+        // Native cleanup above may emit option callbacks for the old owner.
+        if (editorChanged || this.privacyMode != privacyMode || isNullInputType != nullInputType) cancelAsciiSwitchTips()
         editorToken = token
         this.privacyMode = privacyMode
         isNullInputType = nullInputType
@@ -219,6 +221,8 @@ class Rime :
     private val showAsciiSwitchTips by AppPrefs.defaultInstance().general.asciiSwitchTips
 
     private var asciiSwitchTipsJob: Job? = null
+
+    @Volatile private var asciiSwitchTipsGeneration = 0L
     private var startupFullCheck = false
     private var nativeInitialized = false
     private var isNullInputType = true
@@ -376,6 +380,7 @@ class Rime :
     }
 
     private suspend fun withImportActivation(block: () -> Unit) = withRimeContext {
+        cancelAsciiSwitchTips()
         configurationImportInProgress = true
         try {
             block()
@@ -688,8 +693,6 @@ class Rime :
             val schemaId = getCurrentRimeSchema()
             val options = (schemaCached.switches.flatMap { if (it.name.isEmpty()) it.options else listOf(it.name) } + "ascii_mode")
                 .distinct().associateWith(::getRimeOption)
-            asciiSwitchTipsJob?.cancel()
-            asciiSwitchTipsJob = null
             clearTransientEditorState()
             suspendRimeUserDictionarySession()
             var operationFailure: Throwable? = null
@@ -808,6 +811,7 @@ class Rime :
     }
 
     override suspend fun setNullInputType(value: Boolean) = withRimeContext {
+        if (isNullInputType != value) cancelAsciiSwitchTips()
         isNullInputType = value
         applyPredictionOptions()
     }
@@ -905,8 +909,6 @@ class Rime :
         clearTransientEditorState()
         // A delayed tip belongs to the native context that displayed it. It must
         // not queue a context read behind maintenance or clear the new engine's tip.
-        asciiSwitchTipsJob?.cancel()
-        asciiSwitchTipsJob = null
         lastAsciiTipsText = ""
         if (!nativeInitialized) return
         try {
@@ -918,6 +920,7 @@ class Rime :
 
     /** Clear process-global snapshots that can contain editor-owned text. */
     private fun clearTransientEditorState() {
+        cancelAsciiSwitchTips()
         invalidateCandidates()
         compositionCached = CompositionProto()
         t9Cached = T9StateProto()
@@ -1079,18 +1082,26 @@ class Rime :
     }
 
     private fun showAsciiSwitchTips(status: StatusProto) {
-        if (!showAsciiSwitchTips || candidateSnapshotCached.isPrediction) return
+        // Startup/maintenance emits the same option/status messages as typing. Without an
+        // editable owner, a timer can only enqueue a pointless context read behind deployment.
+        if (!showAsciiSwitchTips || candidateSnapshotCached.isPrediction || !canShowAsciiSwitchTips()) return
         val tipsText = asciiTipsText(status)
         if (tipsText.isEmpty()) return
 
         lastAsciiTipsText = tipsText
 
+        cancelAsciiSwitchTips()
+        val generation = asciiSwitchTipsGeneration
+        val owner = editorToken
         val tips = CompositionProto(tipsText)
         handleRimeMessage(6, arrayOf(tips))
-        asciiSwitchTipsJob?.cancel()
         asciiSwitchTipsJob = lifecycleScope.launch {
             delay(1000L)
+            // A finished editor, native restart or import invalidates this transient UI work.
+            // Check before dispatch as well as before JNI so it cannot add maintenance backlog.
+            if (generation != asciiSwitchTipsGeneration || owner != editorToken) return@launch
             withRimeContext {
+                if (generation != asciiSwitchTipsGeneration || owner != editorToken || !canShowAsciiSwitchTips()) return@withRimeContext
                 val ctx = getRimeContext()
                 val snapshot = candidateSnapshotCached
                 val mode = if (isNullInputType) InlinePreeditMode.DISABLE else inlinePreeditMode
@@ -1098,6 +1109,14 @@ class Rime :
                 publishSnapshotMessage(6, arrayOf(response.composition), snapshot)
             }
         }
+    }
+
+    private fun canShowAsciiSwitchTips(): Boolean = editorToken != 0L && !isNullInputType && !configurationImportInProgress
+
+    private fun cancelAsciiSwitchTips() {
+        asciiSwitchTipsGeneration++
+        asciiSwitchTipsJob?.cancel()
+        asciiSwitchTipsJob = null
     }
 
     /**

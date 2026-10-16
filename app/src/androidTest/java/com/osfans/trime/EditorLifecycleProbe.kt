@@ -6,6 +6,7 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.app.Dialog
 import android.app.Instrumentation
+import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Canvas
@@ -27,6 +28,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.view.autofill.AutofillManager
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.view.inspector.WindowInspector
@@ -36,7 +38,9 @@ import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.annotation.RequiresApi
 import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsAnimationCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.children
 import androidx.lifecycle.findViewTreeLifecycleOwner
@@ -107,6 +111,79 @@ import java.util.UUID
 
 /** Real InputConnections in an unsaved, disposable editor. Never resets learned words. */
 object EditorLifecycleProbe {
+    @RequiresApi(26)
+    private object AutofillServiceApi26 {
+        fun isEnabled(context: Context): Boolean? = context.getSystemService(AutofillManager::class.java)?.isEnabled
+    }
+
+    /** Observes the disposable host without consuming insets or changing animation settings. */
+    private class ImeAnimationProbe {
+        private val running = mutableSetOf<WindowInsetsAnimationCompat>()
+        private var host: View? = null
+        var generation = 0
+            private set
+        var prepares = 0
+            private set
+        var ends = 0
+            private set
+        var lastTransitionUptimeMs = 0L
+            private set
+        val isIdle: Boolean get() = running.isEmpty()
+
+        fun install(view: View) {
+            if (Build.VERSION.SDK_INT < 30) return
+            check(host == null)
+            host = view
+            ViewCompat.setWindowInsetsAnimationCallback(
+                view,
+                object : WindowInsetsAnimationCompat.Callback(DISPATCH_MODE_CONTINUE_ON_SUBTREE) {
+                    override fun onPrepare(animation: WindowInsetsAnimationCompat) {
+                        if (animation.typeMask and WindowInsetsCompat.Type.ime() == 0) return
+                        running.add(animation)
+                        prepares++
+                        generation++
+                        lastTransitionUptimeMs = SystemClock.uptimeMillis()
+                    }
+
+                    override fun onProgress(
+                        insets: WindowInsetsCompat,
+                        runningAnimations: List<WindowInsetsAnimationCompat?>,
+                    ): WindowInsetsCompat {
+                        runningAnimations.filterNotNull().forEach { animation ->
+                            if (animation.typeMask and WindowInsetsCompat.Type.ime() != 0) {
+                                running.add(animation)
+                                lastTransitionUptimeMs = SystemClock.uptimeMillis()
+                            }
+                        }
+                        return insets
+                    }
+
+                    override fun onEnd(animation: WindowInsetsAnimationCompat) {
+                        if (animation.typeMask and WindowInsetsCompat.Type.ime() == 0) return
+                        running.remove(animation)
+                        ends++
+                        generation++
+                        lastTransitionUptimeMs = SystemClock.uptimeMillis()
+                    }
+                },
+            )
+        }
+
+        fun snapshot(): JSONObject = JSONObject().apply {
+            put("callback_installed", host != null)
+            put("ime_prepare_count", prepares)
+            put("ime_end_count", ends)
+            put("running_ime_animations", running.size)
+            put("generation", generation)
+            put("last_transition_uptime_ms", lastTransitionUptimeMs)
+        }
+
+        fun detach() {
+            host?.let { ViewCompat.setWindowInsetsAnimationCallback(it, null) }
+            host = null
+        }
+    }
+
     private fun descendants(view: View): Sequence<View> = sequence {
         yield(view)
         if (view is ViewGroup) view.children.forEach { yieldAll(descendants(it)) }
@@ -1533,6 +1610,9 @@ object EditorLifecycleProbe {
         var fixture: File? = null
         val touchRegionRunId = UUID.randomUUID().toString()
         val touchRegionMeasurements = JSONArray()
+        val imeVisibilityWaits = JSONArray()
+        val imeAnimations = ImeAnimationProbe()
+        val webFixtureEnvironment = JSONObject().apply { put("captured", false) }
         fun touchStage(stage: String, theme: String, round: Int = -1, elapsedMs: Long = -1) {
             val marker = "TOUCH_REGION run=$touchRegionRunId stage=$stage theme=$theme round=$round elapsed_ms=$elapsedMs uptime_ms=${SystemClock.uptimeMillis()}"
             Log.i("TrimeProbe", marker)
@@ -1607,6 +1687,7 @@ object EditorLifecycleProbe {
             }
             val editor = instrumentation.startActivitySync(Intent(context, EditorProbeActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
             activity = editor
+            main { imeAnimations.install(editor.window.decorView) }
             val actions = mutableListOf<Int>()
             val fields = main {
                 val row = LinearLayout(editor).apply { orientation = LinearLayout.VERTICAL }
@@ -2730,6 +2811,24 @@ object EditorLifecycleProbe {
                     }
                     try {
                         main { tipsPreference.setValue(true) }
+                        var editorTip: Job? = null
+                        val previousTipOwner = main { service.editorToken }
+                        api {
+                            setRuntimeOption("ascii_mode", true)
+                            setRuntimeOption("ascii_mode", false)
+                            editorTip = checkNotNull(tipJobField.get(realRime) as Job?)
+                            check(checkNotNull(editorTip).isActive) { "No pending ASCII tip before real editor change" }
+                        }
+                        focus(other)
+                        until("ASCII-tip owner changes with real focus") {
+                            service.editorToken != previousTipOwner && service.currentInputEditorInfo?.fieldId == other.id
+                        }
+                        api {
+                            check(checkNotNull(editorTip).isCancelled) { "Old editor's ASCII tip survived focus change" }
+                            check(tipJobField.get(realRime) !== editorTip) { "Next editor retained the old ASCII-tip job" }
+                        }
+                        focus(chat)
+                        phase("PASS: real editor focus change cancels the previous editor's ASCII tip")
                         api {
                             setRuntimeOption("ascii_mode", true)
                             setRuntimeOption("ascii_mode", false)
@@ -2741,8 +2840,8 @@ object EditorLifecycleProbe {
                             check(currentTip !== previousTip) { "Redeploy reused the old ASCII-tip timer" }
                             withTimeout(5000) { currentTip.join() }
                             check(currentTip.isCompleted && !currentTip.isCancelled) { "New engine's ASCII tip did not clear normally" }
-                            // startRime() intentionally publishes a fresh, non-editor ASCII/schema
-                            // tip. Assert the complete transient-state boundary after that new
+                            // startRime() publishes a fresh tip for the active editor's empty
+                            // composition. Assert the complete transient-state boundary after that new
                             // timer restores the native engine's empty composition.
                             checkTransientEditorStateCleared("successful native restart after ASCII tip")
                         }
@@ -2787,7 +2886,27 @@ object EditorLifecycleProbe {
 
                     val webReady = CompletableDeferred<Unit>()
                     web = main {
-                        WebView(editor).apply {
+                        WebView(editor).apply webFixture@{
+                            fun describeContext(value: Context): JSONObject = JSONObject().apply {
+                                put("class", value.javaClass.name)
+                                put("identity", System.identityHashCode(value))
+                                put("is_activity", value is Activity)
+                                put("application_context_class", value.applicationContext?.javaClass?.name ?: JSONObject.NULL)
+                                put("autofill_feature", value.packageManager.hasSystemFeature("android.software.autofill"))
+                                put("autofill_service_class", value.getSystemService("autofill")?.javaClass?.name ?: JSONObject.NULL)
+                                put("autofill_enabled_api_supported", Build.VERSION.SDK_INT >= 26)
+                                put("autofill_enabled", if (Build.VERSION.SDK_INT >= 26) AutofillServiceApi26.isEnabled(value) ?: JSONObject.NULL else JSONObject.NULL)
+                            }
+                            // Observe the actual View context and platform service without
+                            // changing Autofill, media permissions, or provider configuration.
+                            webFixtureEnvironment.apply {
+                                put("captured", true)
+                                put("api", Build.VERSION.SDK_INT)
+                                put("pid", android.os.Process.myPid())
+                                put("web_identity", System.identityHashCode(this@webFixture))
+                                put("constructor_context", describeContext(editor))
+                                put("actual_view_context", describeContext(this@webFixture.context))
+                            }
                             webViewClient = object : WebViewClient() {
                                 override fun onPageFinished(view: WebView, url: String) {
                                     webReady.complete(Unit)
@@ -2830,23 +2949,40 @@ object EditorLifecycleProbe {
 
                     val baseline = main { chat.text.toString() }
                     val imm = editor.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
-                    suspend fun awaitPlatformImeHidden(index: Int) {
+                    suspend fun awaitPlatformImeSettled(index: Int, visible: Boolean) {
+                        val startedAt = SystemClock.uptimeMillis()
+                        var finalState = JSONObject()
                         val completed = kotlinx.coroutines.withTimeoutOrNull(10_000) {
                             var stableSince = 0L
+                            var previousGeometry: Pair<Int, Int>? = null
                             while (true) {
-                                val hidden = main {
-                                    if (Build.VERSION.SDK_INT < 30) {
-                                        !service.isInputViewShown
+                                val settled = main {
+                                    val insets = ViewCompat.getRootWindowInsets(chat)
+                                    val platformVisible = insets?.isVisible(WindowInsetsCompat.Type.ime())
+                                    val bottom = insets?.getInsets(WindowInsetsCompat.Type.ime())?.bottom
+                                    val expectedService = service.isInputViewShown == visible
+                                    val expectedLayout = !visible || (input() != null && keyboard().isT9Layout && chat.hasFocus())
+                                    val expectedPlatform = if (Build.VERSION.SDK_INT < 30) {
+                                        true
                                     } else {
-                                        val insets = ViewCompat.getRootWindowInsets(chat)
-                                        !service.isInputViewShown &&
-                                            insets != null &&
-                                            !insets.isVisible(WindowInsetsCompat.Type.ime()) &&
-                                            insets.getInsets(WindowInsetsCompat.Type.ime()).bottom == 0
+                                        platformVisible == visible && bottom != null &&
+                                            (if (visible) bottom > 0 else bottom == 0) &&
+                                            imeAnimations.isIdle
                                     }
+                                    val geometry = (bottom ?: -1) to imeAnimations.generation
+                                    val unchanged = previousGeometry == geometry
+                                    previousGeometry = geometry
+                                    finalState = imeAnimations.snapshot().apply {
+                                        put("service_visible", service.isInputViewShown)
+                                        put("insets_visible", platformVisible ?: JSONObject.NULL)
+                                        put("insets_bottom", bottom ?: JSONObject.NULL)
+                                        put("editor_focused", chat.hasFocus())
+                                        put("geometry_unchanged", unchanged)
+                                    }
+                                    expectedService && expectedLayout && expectedPlatform && unchanged
                                 }
                                 val now = SystemClock.uptimeMillis()
-                                if (hidden) {
+                                if (settled) {
                                     if (stableSince == 0L) stableSince = now
                                     if (now - stableSince >= 700L) break
                                 } else {
@@ -2856,35 +2992,32 @@ object EditorLifecycleProbe {
                             }
                             true
                         } == true
+                        imeVisibilityWaits.put(
+                            finalState.apply {
+                                put("cycle", index)
+                                put("expected_visible", visible)
+                                put("passed", completed)
+                                put("elapsed_ms", SystemClock.uptimeMillis() - startedAt)
+                                put("stable_window_ms", 700)
+                            },
+                        )
                         check(completed) {
-                            "IME hide did not settle at cycle $index: " +
-                                main {
-                                    "viewShown=${service.isInputViewShown}, " +
-                                        "insetsVisible=${ViewCompat.getRootWindowInsets(chat)?.isVisible(WindowInsetsCompat.Type.ime())}, " +
-                                        "editorFocused=${chat.hasFocus()}"
-                                }
+                            "IME ${if (visible) "show" else "hide"} did not settle at cycle $index: $finalState"
                         }
                     }
+                    // A shown service can precede the end of the platform show animation.
+                    // Wait for both directions so the next request cannot cancel the prior
+                    // transition merely because this test starts another cycle too early.
+                    awaitPlatformImeSettled(0, visible = true)
                     repeat(100) { index ->
                         main { imm.hideSoftInputFromWindow(chat.windowToken, 0) }
-                        awaitPlatformImeHidden(index + 1)
+                        awaitPlatformImeSettled(index + 1, visible = false)
                         main {
                             chat.requestFocus()
                             check(chat.hasFocus()) { "Editor lost focus before show cycle ${index + 1}" }
                             check(imm.showSoftInput(chat, 0)) { "IME show request rejected at cycle ${index + 1}" }
                         }
-                        val shown = kotlinx.coroutines.withTimeoutOrNull(10_000) {
-                            while (!main { service.isInputViewShown && input() != null && keyboard().isT9Layout }) delay(40)
-                            true
-                        } == true
-                        check(shown) {
-                            "IME did not show at cycle ${index + 1}: " +
-                                main {
-                                    "viewShown=${service.isInputViewShown}, " +
-                                        "insetsVisible=${ViewCompat.getRootWindowInsets(chat)?.isVisible(WindowInsetsCompat.Type.ime())}, " +
-                                        "editorFocused=${chat.hasFocus()}"
-                                }
-                        }
+                        awaitPlatformImeSettled(index + 1, visible = true)
                         api {
                             check(!statusCached.isAsciiMode)
                             check(getRawInput().isEmpty())
@@ -2909,12 +3042,13 @@ object EditorLifecycleProbe {
                         check(t9Cached.segments.any { it.locked && it.spelling == "ni" })
                     }
                     main { imm.hideSoftInputFromWindow(chat.windowToken, 0) }
-                    awaitPlatformImeHidden(101)
+                    awaitPlatformImeSettled(101, visible = false)
                     main {
                         chat.requestFocus()
                         check(imm.showSoftInput(chat, 0)) { "IME show request rejected after locked composition" }
                     }
                     until("locked composition survives hide and show") { service.isInputViewShown && input() != null }
+                    awaitPlatformImeSettled(101, visible = true)
                     api {
                         check(getRawInput() == "64426")
                         check(t9Cached.segments.any { it.locked && it.spelling == "ni" })
@@ -2947,6 +3081,7 @@ object EditorLifecycleProbe {
                     candidatesMode.setValue(originalCandidatesMode)
                     manualPrivacyMode.setValue(originalManualPrivacyMode)
                     destroyWebFixture()
+                    imeAnimations.detach()
                     activity?.finish()
                 }
                 runBlocking {
@@ -2977,6 +3112,9 @@ object EditorLifecycleProbe {
             put("measurement", "instrumentation wall time including Rime queue, main-thread dispatch and visible-state polling; not candidate latency/P95")
             put("rapid_stall_limit_ms", 2_000)
             put("rapid_rounds", touchRegionMeasurements)
+            put("ime_visibility_waits", imeVisibilityWaits)
+            put("ime_animation_callbacks", main { imeAnimations.snapshot() })
+            put("web_fixture_environment", webFixtureEnvironment)
             put("editor_probe_passed", passed)
         }
         result.putString("touch_region_metrics", touchReport.toString())

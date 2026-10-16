@@ -7,6 +7,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.DocumentsContract
+import com.osfans.trime.core.Rime
 import com.osfans.trime.core.RimeMessage
 import com.osfans.trime.core.data.ConfigurationImportException
 import com.osfans.trime.core.data.DataManager
@@ -80,6 +81,7 @@ object ConfigImportProbe {
             val custom = File(DataManager.userDataDir, "default.custom.yaml")
             val customBefore = custom.takeIf { it.isFile }?.let(::digest)
             val checks = mutableListOf<String>()
+            val asciiTipChecks = mutableListOf<String>()
             try {
                 val config = checkNotNull(DocumentsContract.createDocument(cr, root, "application/x-yaml", configName))
                     .also { createdDocuments.add(it) }
@@ -90,6 +92,31 @@ object ConfigImportProbe {
                     withTimeout(300_000) {
                         checkNotNull(session).runOnReady {
                             val beforeSchema = selectedSchemaId()
+                            check(AppPrefs.defaultInstance().general.asciiSwitchTips.getValue()) {
+                                "Enable ASCII switch tips in this dedicated profile before running the inactive-editor regression"
+                            }
+                            val realRime = RimeDaemon::class.java.getDeclaredMethod("getRealRime").apply {
+                                isAccessible = true
+                            }.invoke(RimeDaemon) as Rime
+                            val editorTokenField = Rime::class.java.getDeclaredField("editorToken").apply { isAccessible = true }
+                            val tipJobField = Rime::class.java.getDeclaredField("asciiSwitchTipsJob").apply { isAccessible = true }
+                            suspend fun assertNoInactiveEditorTip(label: String) {
+                                check(editorTokenField.getLong(null) == 0L) { "$label unexpectedly has an active editor" }
+                                // This real engine read also places the inspection after pending native work.
+                                check(getRawInput().isEmpty()) { "$label retained raw input" }
+                                check(tipJobField.get(realRime) == null) { "$label scheduled an ownerless ASCII-tip context read" }
+                                checkTransientEditorStateCleared(label)
+                                asciiTipChecks.add(label)
+                            }
+                            assertNoInactiveEditorTip("startup without an editor")
+                            val beforeAscii = getRuntimeOption("ascii_mode")
+                            try {
+                                setRuntimeOption("ascii_mode", true)
+                                setRuntimeOption("ascii_mode", false)
+                                assertNoInactiveEditorTip("explicit ASCII option changes without an editor")
+                            } finally {
+                                setRuntimeOption("ascii_mode", beforeAscii)
+                            }
                             val starts = AtomicInteger()
                             val observer = async(start = CoroutineStart.UNDISPATCHED) {
                                 messageFlow.collect { message ->
@@ -104,6 +131,7 @@ object ConfigImportProbe {
                                 check(!localConfig.exists() && !localAsset.exists())
                                 check(prefs.dataStorageMode.getValue() == previousMode && prefs.externalRimeTreeUri.getValue() == previousTree)
                                 check(starts.get() == 0 && selectedSchemaId() == beforeSchema)
+                                assertNoInactiveEditorTip("malformed configuration rejection")
                                 checks.add("malformed YAML rejects the entire batch before publishing files, changing preferences, or starting deployment")
 
                                 write(config, "fixture:\n  value: accepted\n")
@@ -114,16 +142,19 @@ object ConfigImportProbe {
                                 check(localConfig.readText() == "fixture:\n  value: accepted\n" && localAsset.readText() == "initial asset")
                                 check(prefs.externalRimeTreeUri.getValue() == tree.toString() && prefs.dataStorageMode.getValue() == DataStorageMode.EXTERNAL_SYNC)
                                 check(isReady && starts.get() > 0 && selectedSchemaId() == beforeSchema)
+                                assertNoInactiveEditorTip("valid native configuration activation")
                                 checks.add("valid configuration activates through native deployment before the selected folder is remembered")
 
                                 val deploymentCount = starts.get()
                                 val repeated = importConfiguration(tree.toString())
                                 check(!repeated.configurationChanged && repeated.copied == 0 && starts.get() == deploymentCount)
+                                assertNoInactiveEditorTip("identical configuration import")
                                 checks.add("re-importing identical validated configuration starts no deployment")
 
                                 write(asset, "changed asset")
                                 val resourceOnly = importConfiguration(tree.toString())
                                 check(!resourceOnly.configurationChanged && localAsset.readText() == "changed asset" && starts.get() == deploymentCount)
+                                assertNoInactiveEditorTip("resource-only configuration import")
                                 checks.add("a non-configuration resource change starts no unrelated deployment")
 
                                 val oldConfig = digest(localConfig)
@@ -134,6 +165,7 @@ object ConfigImportProbe {
                                 check(prefs.externalRimeTreeUri.getValue() == tree.toString() && starts.get() == deploymentCount && isReady)
                                 check(custom.takeIf { it.isFile }?.let(::digest) == customBefore)
                                 check(cr.persistedUriPermissions.any { it.uri == tree && it.isReadPermission && it.isWritePermission })
+                                assertNoInactiveEditorTip("failed replacement rollback")
                                 checks.add("failed replacement preserves the accepted files, user template, native readiness, and previous folder grant")
 
                                 val themeId = ThemeManager.prefs.selectedTheme.getValue()
@@ -204,6 +236,7 @@ object ConfigImportProbe {
                                         check(custom.takeIf { it.isFile }?.let(::digest) == customBefore)
                                         check(digest(localConfig) == oldConfig && localAsset.readText() == "changed asset")
                                         check(cr.persistedUriPermissions.any { it.uri == tree && it.isReadPermission && it.isWritePermission })
+                                        assertNoInactiveEditorTip(label)
                                     }
                                     val directoryDeploymentBefore = starts.get()
                                     val directoryFailure = runCatching { importConfiguration(tree.toString()) }.exceptionOrNull()
@@ -265,6 +298,8 @@ object ConfigImportProbe {
                 }
             }
             result.putInt("checks", checks.size)
+            result.putInt("asciiTipChecks", asciiTipChecks.size)
+            result.putString("asciiTipChecksDetails", asciiTipChecks.joinToString("\n"))
             result.putString("stream", "PASS: ${checks.size} production configuration-import checks\n${checks.joinToString("\n")}\n")
             passed = true
         } catch (failure: Throwable) {
