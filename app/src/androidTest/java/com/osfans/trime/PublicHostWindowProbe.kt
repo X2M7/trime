@@ -37,24 +37,24 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.children
 import androidx.lifecycle.Lifecycle
 import androidx.navigation.fragment.NavHostFragment
-import androidx.preference.Preference
 import androidx.preference.ListPreference
+import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceGroup
+import com.mikepenz.aboutlibraries.Libs
 import com.osfans.trime.core.RimeLifecycle
 import com.osfans.trime.core.data.DataManager
 import com.osfans.trime.core.data.DataStorageMode
 import com.osfans.trime.core.data.UserDataManager
-import com.mikepenz.aboutlibraries.Libs
 import com.osfans.trime.daemon.RimeDaemon
 import com.osfans.trime.data.prefs.AppPrefs
 import com.osfans.trime.ui.common.PublicWindowPilotActivity
 import com.osfans.trime.ui.common.PublicWindowPilotConfiguration
+import com.osfans.trime.ui.main.LicenseFragment
 import com.osfans.trime.ui.main.LogActivity
 import com.osfans.trime.ui.main.MainActivity
 import com.osfans.trime.ui.main.MainViewModel
 import com.osfans.trime.ui.main.NavigationRoute
-import com.osfans.trime.ui.main.LicenseFragment
 import com.osfans.trime.ui.main.settings.ProfileSettingsFragment
 import com.osfans.trime.ui.setup.SetupActivity
 import com.osfans.trime.ui.setup.SetupAdvancedSettingsActivity
@@ -112,10 +112,18 @@ internal object PublicHostWindowProbe {
             .put("human_png_reviewed", false)
 
         private val callbacks = object : Application.ActivityLifecycleCallbacks {
-            override fun onActivityCreated(activity: Activity, state: Bundle?) { created += activity }
-            override fun onActivityResumed(activity: Activity) { resumed += activity }
-            override fun onActivityPaused(activity: Activity) { resumed -= activity }
-            override fun onActivityDestroyed(activity: Activity) { resumed -= activity }
+            override fun onActivityCreated(activity: Activity, state: Bundle?) {
+                created += activity
+            }
+            override fun onActivityResumed(activity: Activity) {
+                resumed += activity
+            }
+            override fun onActivityPaused(activity: Activity) {
+                resumed -= activity
+            }
+            override fun onActivityDestroyed(activity: Activity) {
+                resumed -= activity
+            }
             override fun onActivityStarted(activity: Activity) = Unit
             override fun onActivityStopped(activity: Activity) = Unit
             override fun onActivitySaveInstanceState(activity: Activity, state: Bundle) = Unit
@@ -132,7 +140,9 @@ internal object PublicHostWindowProbe {
             instrumentation.runOnMainSync { outcome = runCatching(block) }
             val observed = checkNotNull(outcome)
             val businessFailure = observed.exceptionOrNull()
-            try { checkTime() } catch (deadlineFailure: Throwable) {
+            try {
+                checkTime()
+            } catch (deadlineFailure: Throwable) {
                 if (businessFailure != null) {
                     if (businessFailure !== deadlineFailure) businessFailure.addSuppressed(deadlineFailure)
                     throw businessFailure
@@ -167,8 +177,11 @@ internal object PublicHostWindowProbe {
         }
 
         private fun binding(file: File): JSONObject = JSONObject().put("path", file.absolutePath)
-            .put("bytes", file.length()).put("sha256", MessageDigest.getInstance("SHA-256")
-                .digest(file.readBytes()).joinToString("") { "%02x".format(it) })
+            .put("bytes", file.length()).put(
+                "sha256",
+                MessageDigest.getInstance("SHA-256")
+                    .digest(file.readBytes()).joinToString("") { "%02x".format(it) },
+            )
 
         private fun descendants(root: View): Sequence<View> = sequence {
             yield(root)
@@ -214,7 +227,9 @@ internal object PublicHostWindowProbe {
                 val entry = if (it.moveToFirst()) {
                     check(it.getString(it.getColumnIndexOrThrow("name")) == key)
                     true to it.getString(it.getColumnIndexOrThrow("value"))
-                } else false to null
+                } else {
+                    false to null
+                }
                 check(entry.second == Settings.Secure.getString(context.contentResolver, key))
                 entry
             }
@@ -223,11 +238,10 @@ internal object PublicHostWindowProbe {
         private fun active(activity: Activity): Boolean = !activity.isFinishing && !activity.isDestroyed && activity in resumed
 
         // Only observes a field in our own Activity; no Android/AppCompat private Window API.
-        private fun notification(activity: MainActivity): AlertDialog? =
-            MainActivity::class.java.getDeclaredField("notificationDialog").run {
-                isAccessible = true
-                get(activity) as AlertDialog?
-            }
+        private fun notification(activity: MainActivity): AlertDialog? = MainActivity::class.java.getDeclaredField("notificationDialog").run {
+            isAccessible = true
+            get(activity) as AlertDialog?
+        }
 
         private fun touch(view: View) {
             val position = main {
@@ -252,7 +266,9 @@ internal object PublicHostWindowProbe {
         }
 
         @Suppress("DEPRECATION") // API21 node pooling cleanup; does not change UI or logging.
-        private fun recycle(node: AccessibilityNodeInfo) { node.recycle() }
+        private fun recycle(node: AccessibilityNodeInfo) {
+            node.recycle()
+        }
 
         private fun awaitVisibleText(text: String) {
             await("Visible action '$text' was not found") {
@@ -260,9 +276,14 @@ internal object PublicHostWindowProbe {
                 try {
                     if (root.packageName?.toString() != context.packageName) return@await false
                     val matches = root.findAccessibilityNodeInfosByText(text)
-                    try { matches.count { it.text?.toString() == text && it.isVisibleToUser && it.isEnabled } == 1 }
-                    finally { matches.forEach(::recycle) }
-                } finally { recycle(root) }
+                    try {
+                        matches.count { it.text?.toString() == text && it.isVisibleToUser && it.isEnabled } == 1
+                    } finally {
+                        matches.forEach(::recycle)
+                    }
+                } finally {
+                    recycle(root)
+                }
             }
         }
 
@@ -284,20 +305,27 @@ internal object PublicHostWindowProbe {
                         }
                         check(node.isClickable && node.isVisibleToUser && node.isEnabled)
                         check(node.performAction(AccessibilityNodeInfo.ACTION_CLICK)) { "Actual visible menu action was rejected" }
-                    } finally { parents.forEach(::recycle) }
-                } finally { matches.forEach(::recycle) }
-            } finally { recycle(root) }
+                    } finally {
+                        parents.forEach(::recycle)
+                    }
+                } finally {
+                    matches.forEach(::recycle)
+                }
+            } finally {
+                recycle(root)
+            }
             checkTime()
         }
 
         private fun toolbar(activity: Activity): Toolbar = checkNotNull(activity.findViewById(R.id.toolbar))
 
-        private fun route(activity: MainActivity): String? =
-            (activity.supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as? NavHostFragment)?.navController?.currentDestination?.route
+        private fun route(activity: MainActivity): String? = (activity.supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as? NavHostFragment)?.navController?.currentDestination?.route
 
         private fun clickMenu(activity: MainActivity, id: Int) {
             val actual = main { activity.findViewById<View>(id)?.takeIf { it.isShown && it.isEnabled } }
-            if (actual != null) touch(actual) else {
+            if (actual != null) {
+                touch(actual)
+            } else {
                 val text = main {
                     val bar = toolbar(activity)
                     val item = checkNotNull(bar.menu.findItem(id))
@@ -342,7 +370,9 @@ internal object PublicHostWindowProbe {
                 val intent = if (advanced) {
                     Intent(context, SetupAdvancedSettingsActivity::class.java).setAction(Intent.ACTION_RUN)
                         .putExtra(MainActivity.EXTRA_SETTINGS_ROUTE, NavigationRoute.SchemaList)
-                } else Intent(context, MainActivity::class.java).setAction(Intent.ACTION_MAIN)
+                } else {
+                    Intent(context, MainActivity::class.java).setAction(Intent.ACTION_MAIN)
+                }
                 context.startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
             }
             var found: MainActivity? = null
@@ -362,7 +392,9 @@ internal object PublicHostWindowProbe {
                 val file = File(directory, "$label.png")
                 file.outputStream().use { check(original.first.compress(Bitmap.CompressFormat.PNG, 100, it)) }
                 screenshots.put(binding(file).put("barrier", original.second).put("human_reviewed", false))
-            } finally { original.first.recycle() }
+            } finally {
+                original.first.recycle()
+            }
             checkTime()
         }
 
@@ -384,20 +416,24 @@ internal object PublicHostWindowProbe {
             check(margins.bottomMargin == expectedBottom)
             val toolbarTop = if (activity is MainActivity) {
                 activity.findViewById<View>(R.id.mainToolbar).paddingTop
-            } else (bar.layoutParams as ViewGroup.MarginLayoutParams).topMargin
+            } else {
+                (bar.layoutParams as ViewGroup.MarginLayoutParams).topMargin
+            }
             check(toolbarTop == bars.top)
             val expected = PublicWindowPilotConfiguration.wrap(context, AppPrefs.defaultInstance().advanced.uiMode.getValue())
             check(ContextCompat.getColor(activity, R.color.colorPrimary) == ContextCompat.getColor(expected, R.color.colorPrimary))
             val c = activity.resources.configuration
-            windows.put(JSONObject().put("label", label).put("activity", activity.javaClass.name).put("activity_identity", System.identityHashCode(activity)).put("task_id", activity.taskId)
-                .put("title", bar.title.toString()).put("subtitle", bar.subtitle?.toString()).put("up", up)
-                .put("font_scale", c.fontScale.toDouble()).put("locales", ConfigurationCompat.getLocales(c).toLanguageTags())
-                .put("density_dpi", c.densityDpi).put("orientation", c.orientation).put("ui_mode", c.uiMode)
-                .put("width_dp", c.screenWidthDp).put("height_dp", c.screenHeightDp).put("smallest_width_dp", c.smallestScreenWidthDp)
-                .put("root_left_margin", margins.leftMargin).put("root_right_margin", margins.rightMargin)
-                .put("root_bottom_margin", margins.bottomMargin).put("toolbar_top", toolbarTop)
-                .put("system_bars", JSONArray(listOf(bars.left, bars.top, bars.right, bars.bottom)))
-                .put("ime_bottom", ime.bottom).put("window_identity", System.identityHashCode(activity.window)))
+            windows.put(
+                JSONObject().put("label", label).put("activity", activity.javaClass.name).put("activity_identity", System.identityHashCode(activity)).put("task_id", activity.taskId)
+                    .put("title", bar.title.toString()).put("subtitle", bar.subtitle?.toString()).put("up", up)
+                    .put("font_scale", c.fontScale.toDouble()).put("locales", ConfigurationCompat.getLocales(c).toLanguageTags())
+                    .put("density_dpi", c.densityDpi).put("orientation", c.orientation).put("ui_mode", c.uiMode)
+                    .put("width_dp", c.screenWidthDp).put("height_dp", c.screenHeightDp).put("smallest_width_dp", c.smallestScreenWidthDp)
+                    .put("root_left_margin", margins.leftMargin).put("root_right_margin", margins.rightMargin)
+                    .put("root_bottom_margin", margins.bottomMargin).put("toolbar_top", toolbarTop)
+                    .put("system_bars", JSONArray(listOf(bars.left, bars.top, bars.right, bars.bottom)))
+                    .put("ime_bottom", ime.bottom).put("window_identity", System.identityHashCode(activity.window)),
+            )
         }
 
         private fun verifyMainMenu(activity: MainActivity, visible: Boolean) = main {
@@ -458,8 +494,10 @@ internal object PublicHostWindowProbe {
         private fun warmRouteAndRecreate(activity: MainActivity) {
             val before = main { created.size }
             main {
-                context.startActivity(Intent(context, MainActivity::class.java).setAction(Intent.ACTION_RUN)
-                    .putExtra(MainActivity.EXTRA_SETTINGS_ROUTE, NavigationRoute.Profile).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+                context.startActivity(
+                    Intent(context, MainActivity::class.java).setAction(Intent.ACTION_RUN)
+                        .putExtra(MainActivity.EXTRA_SETTINGS_ROUTE, NavigationRoute.Profile).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
+                )
             }
             await("Warm ACTION_RUN did not consume its one-shot route") {
                 main { route(activity) == NavigationRoute.Profile.path && activity.intent.action == null && !activity.intent.hasExtra(MainActivity.EXTRA_SETTINGS_ROUTE) }
@@ -544,7 +582,11 @@ internal object PublicHostWindowProbe {
                 }
                 await("Log window did not regain actual focus") { main { active(log) && log.hasWindowFocus() } }
                 logButtons(log, kind)
-                val title = when (kind) { "normal" -> R.string.real_time_logs; "deploy" -> R.string.deploy_failure; else -> R.string.crash_logs }
+                val title = when (kind) {
+                    "normal" -> R.string.real_time_logs
+                    "deploy" -> R.string.deploy_failure
+                    else -> R.string.crash_logs
+                }
                 window(log, "log_$kind", title, kind == "normal")
                 screenshot(log, "log-$kind")
                 if (kind == "normal") {
@@ -575,14 +617,19 @@ internal object PublicHostWindowProbe {
                     val nodes = found.filter { it.text?.toString() == text && it.isVisibleToUser && it.isEnabled }
                     check(nodes.size <= 1) { "Ambiguous actual dialog text: $text" }
                     nodes.singleOrNull()?.let { node ->
-                        val bounds = Rect(); node.getBoundsInScreen(bounds)
+                        val bounds = Rect()
+                        node.getBoundsInScreen(bounds)
                         JSONObject().put("text", text).put("accessibility_class_name", node.className?.toString())
                             .put("window_id", node.windowId).put("bounds", bounds.flattenToString())
                             .put("checkable", node.isCheckable).put("checked", node.isChecked)
                             .put("instance_class_observed", false)
                     }
-                } finally { found.forEach(::recycle) }
-            } finally { recycle(root) }
+                } finally {
+                    found.forEach(::recycle)
+                }
+            } finally {
+                recycle(root)
+            }
         }
 
         private fun dialogScreen(label: String, texts: List<String>): JSONObject {
@@ -597,7 +644,9 @@ internal object PublicHostWindowProbe {
                     .put("capture_kind", "actual UiAutomation screen; no owned View draw barrier available")
                 screenshots.put(image)
                 observed.put("screenshot", image)
-            } finally { bitmap.recycle() }
+            } finally {
+                bitmap.recycle()
+            }
             checkTime()
             return observed
         }
@@ -618,9 +667,11 @@ internal object PublicHostWindowProbe {
         private fun clickPreference(activity: MainActivity, title: String, key: String? = null) {
             val owner = currentPreferences(activity)
             await("Actual preference row did not become enabled: $title") {
-                main { owner.preferenceScreen?.let { screen ->
-                    preferenceTitles(screen).count { it.title?.toString() == title && (key == null || it.key == key) && it.isEnabled } == 1
-                } == true }
+                main {
+                    owner.preferenceScreen?.let { screen ->
+                        preferenceTitles(screen).count { it.title?.toString() == title && (key == null || it.key == key) && it.isEnabled } == 1
+                    } == true
+                }
             }
             main {
                 val matches = preferenceTitles(checkNotNull(owner.preferenceScreen)).filter {
@@ -635,7 +686,10 @@ internal object PublicHostWindowProbe {
         private fun monitorExternalIntents() {
             check(externalIntentMonitors.isEmpty())
             val filters = listOf(
-                IntentFilter(Intent.ACTION_VIEW).apply { addDataScheme("http"); addDataScheme("https") },
+                IntentFilter(Intent.ACTION_VIEW).apply {
+                    addDataScheme("http")
+                    addDataScheme("https")
+                },
                 IntentFilter(Intent.ACTION_OPEN_DOCUMENT_TREE),
                 IntentFilter(Intent.ACTION_GET_CONTENT).apply { addDataType("*/*") },
             )
@@ -658,7 +712,10 @@ internal object PublicHostWindowProbe {
         }
 
         private fun profileFlag(fragment: ProfileSettingsFragment, name: String): Boolean = main {
-            ProfileSettingsFragment::class.java.getDeclaredField(name).run { isAccessible = true; getBoolean(fragment) }
+            ProfileSettingsFragment::class.java.getDeclaredField(name).run {
+                isAccessible = true
+                getBoolean(fragment)
+            }
         }
 
         private fun profilePromptCancel(activity: MainActivity, fragment: ProfileSettingsFragment) {
@@ -710,26 +767,32 @@ internal object PublicHostWindowProbe {
                 selected.walkTopDown().onFail { _, error -> throw error }.forEach { file ->
                     checkTime()
                     val stat = Os.lstat(file.absolutePath)
-                    check(!OsConstants.S_ISLNK(stat.st_mode) &&
-                        (file.canonicalPath == base.canonicalPath || file.canonicalPath.startsWith(base.canonicalPath + File.separator)))
+                    check(
+                        !OsConstants.S_ISLNK(stat.st_mode) &&
+                            (file.canonicalPath == base.canonicalPath || file.canonicalPath.startsWith(base.canonicalPath + File.separator)),
+                    )
                     check(++count <= 1000)
                     val row = JSONObject().put("path", file.relativeTo(base).path)
                     when {
                         OsConstants.S_ISDIR(stat.st_mode) -> row.put("type", "directory")
+
                         OsConstants.S_ISREG(stat.st_mode) -> {
-                            total += stat.st_size; check(total <= 64L * 1024 * 1024)
+                            total += stat.st_size
+                            check(total <= 64L * 1024 * 1024)
                             val digest = MessageDigest.getInstance("SHA-256")
                             file.inputStream().use { input ->
                                 val buffer = ByteArray(8192)
                                 while (true) {
                                     val size = input.read(buffer)
                                     if (size < 0) break
-                                    digest.update(buffer, 0, size); checkTime()
+                                    digest.update(buffer, 0, size)
+                                    checkTime()
                                 }
                             }
                             row.put("type", "file").put("bytes", stat.st_size)
                                 .put("sha256", digest.digest().joinToString("") { "%02x".format(it) })
                         }
+
                         else -> error("Unsupported selected asset entry")
                     }
                     entries.put(row)
@@ -757,8 +820,10 @@ internal object PublicHostWindowProbe {
                     val bytes = file.readBytes()
                     check(bytes.size.toLong() == length)
                     total += bytes.size
-                    rows.put(JSONObject().put("root", name).put("path", file.relativeTo(base).path).put("bytes", bytes.size)
-                        .put("sha256", MessageDigest.getInstance("SHA-256").digest(bytes).joinToString("") { "%02x".format(it) }))
+                    rows.put(
+                        JSONObject().put("root", name).put("path", file.relativeTo(base).path).put("bytes", bytes.size)
+                            .put("sha256", MessageDigest.getInstance("SHA-256").digest(bytes).joinToString("") { "%02x".format(it) }),
+                    )
                 }
             }
             check(count > 0) { "No real configuration bytes available to protect" }
@@ -820,17 +885,29 @@ internal object PublicHostWindowProbe {
             val original = File(directory, "installed-aboutlibraries.json").apply { writeBytes(raw) }
             val libraries = Libs.Builder().withJson(raw.toString(Charsets.UTF_8)).build().libraries
             val inventory = JSONArray()
-            libraries.forEach { library -> inventory.put(JSONObject().put("unique_id", library.uniqueId)
-                .put("artifact_version", library.artifactVersion).put("licenses", JSONArray(library.licenses.map {
-                    JSONObject().put("name", it.spdxId ?: it.name).put("url", it.url ?: JSONObject.NULL)
-                }))) }
+            libraries.forEach { library ->
+                inventory.put(
+                    JSONObject().put("unique_id", library.uniqueId)
+                        .put("artifact_version", library.artifactVersion).put(
+                            "licenses",
+                            JSONArray(
+                                library.licenses.map {
+                                    JSONObject().put("name", it.spdxId ?: it.name).put("url", it.url ?: JSONObject.NULL)
+                                },
+                            ),
+                        ),
+                )
+            }
             report.put("installed_license_metadata", binding(original)).put("installed_license_inventory", inventory)
             val candidate = libraries.sortedBy { if (it.tag == "native") it.uniqueId.uppercase() else it.uniqueId.lowercase() }
                 .firstOrNull { it.licenses.size > 1 }
             check(candidate != null) { "UNSATISFIED: installed metadata contains no genuine multi-license library; no substitute selector" }
-            check(candidate.licenses.all { license -> license.url.isNullOrBlank() ||
-                license.url?.let { android.net.Uri.parse(it).scheme in setOf("http", "https") } == true
-            }) { "UNSATISFIED: installed candidate URL scheme is outside the explicit nonblocking browser monitor" }
+            check(
+                candidate.licenses.all { license ->
+                    license.url.isNullOrBlank() ||
+                        license.url?.let { android.net.Uri.parse(it).scheme in setOf("http", "https") } == true
+                },
+            ) { "UNSATISFIED: installed candidate URL scheme is outside the explicit nonblocking browser monitor" }
             val title = "${candidate.uniqueId}:${candidate.artifactVersion}"
             val names = candidate.licenses.map { it.spdxId ?: it.name }
             clickMenu(activity, R.id.action_about)
@@ -862,7 +939,13 @@ internal object PublicHostWindowProbe {
             val progress = JSONObject()
             report.put("user_dictionary_dialogs", progress)
             PublicUserDictionaryDialogStage.verify(
-                instrumentation, activity, token, workDeadline, directory, progress, ::passed,
+                instrumentation,
+                activity,
+                token,
+                workDeadline,
+                directory,
+                progress,
+                ::passed,
             )
             check(checks.length() == 4)
             report.put("dictionary_dialog_validation_cancel_tested", true)
@@ -873,7 +956,13 @@ internal object PublicHostWindowProbe {
             val progress = JSONObject()
             report.put("user_dictionary_import_error", progress)
             PublicUserDictionaryDialogStage.verifyImportFailure(
-                instrumentation, activity, token, workDeadline, directory, progress, ::passed,
+                instrumentation,
+                activity,
+                token,
+                workDeadline,
+                directory,
+                progress,
+                ::passed,
             ) { message ->
                 awaitVisibleText(activity.getString(R.string.import_error))
                 awaitVisibleText(message)
@@ -881,7 +970,9 @@ internal object PublicHostWindowProbe {
                 val file = File(directory, "userdict-shared-import-error.png")
                 try {
                     file.outputStream().use { check(bitmap.compress(Bitmap.CompressFormat.PNG, 100, it)) }
-                } finally { bitmap.recycle() }
+                } finally {
+                    bitmap.recycle()
+                }
                 check(file.length() in 1L..8_388_608L)
                 val screenshot = binding(file)
                 clickVisibleText(activity.getString(android.R.string.ok))
@@ -898,7 +989,12 @@ internal object PublicHostWindowProbe {
             report.put("async_owner_boundary", progress)
             marker("async_owner_boundary_begin")
             PublicDialogOwnerBoundaryStage.verify(
-                instrumentation, activity, token, workDeadline, progress, ::passed,
+                instrumentation,
+                activity,
+                token,
+                workDeadline,
+                progress,
+                ::passed,
             )
             await("The real finishing boundary owner did not reach onDestroy") {
                 main { activity.isDestroyed }
@@ -912,6 +1008,17 @@ internal object PublicHostWindowProbe {
             check(mode in setOf("hosts_main", "hosts_advanced", "hosts_log", "dialogs_userdict_cancel", "dialogs_profile_cancel", "dialogs_license_cancel", "dialogs_owner_boundary", "dialogs_userdict_import_error"))
             check(File(context.getExternalFilesDir(null), "runtime-audit-dedicated").let { it.isFile && it.length() == 0L })
             check(!directory.exists() && directory.mkdirs())
+            await("The selected IME did not bind before host windows") {
+                main {
+                    val observed = sessions()
+                    val state = RimeDaemon.engineState.value
+                    report.put("sessions_preflight_observed", JSONArray(observed.sorted()))
+                        .put("engine_preflight_observed", state.name)
+                    observed.size == 1 &&
+                        observed.single().startsWith("com.osfans.trime.ime.core.TrimeInputMethodService#") &&
+                        state == RimeLifecycle.State.READY
+                }
+            }
             val initialOwners = main { sessions() }
             check(initialOwners.none { it == MainViewModel::class.java.name }) { "Existing Main owner must not be reused" }
             check(initialOwners.isNotEmpty() && initialOwners.all { it.startsWith("com.osfans.trime.ime.core.TrimeInputMethodService#") }) {
@@ -929,7 +1036,10 @@ internal object PublicHostWindowProbe {
                 .put("sessions_before", JSONArray(checkNotNull(originalSessions).sorted()))
                 .put("preferences_before", snapshotPreferences("preferences-before", checkNotNull(originalPreferences)))
             stateCaptured = true
-            main { application.registerActivityLifecycleCallbacks(callbacks); registered = true }
+            main {
+                application.registerActivityLifecycleCallbacks(callbacks)
+                registered = true
+            }
             marker("phase_begin")
         }
 
@@ -937,10 +1047,18 @@ internal object PublicHostWindowProbe {
             cleaning = true
             cleanupDeadline = minOf(totalDeadline, SystemClock.uptimeMillis() + 60_000L)
             fun clean(block: () -> Unit) {
-                try { checkTime(); block(); checkTime() } catch (error: Throwable) {
+                try {
+                    checkTime()
+                    block()
+                    checkTime()
+                } catch (error: Throwable) {
                     cleanupErrors.put(error.stackTraceToString())
                     val first = failure
-                    if (first == null) failure = error else if (first !== error) first.addSuppressed(error)
+                    if (first == null) {
+                        failure = error
+                    } else if (first !== error) {
+                        first.addSuppressed(error)
+                    }
                 }
             }
             clean { marker("cleanup_begin") }
@@ -971,22 +1089,36 @@ internal object PublicHostWindowProbe {
                     check(after == originalPreferences) { "Host navigation changed persistent preferences" }
                 }
             }
-            if (registered) clean { main { application.unregisterActivityLifecycleCallbacks(callbacks); registered = false } }
+            if (registered) {
+                clean {
+                    main {
+                        application.unregisterActivityLifecycleCallbacks(callbacks)
+                        registered = false
+                    }
+                }
+            }
             clean {
                 main {
                     check(created.all { it.isDestroyed }) { "An owned Activity survived final cleanup" }
-                    report.put("owned_activities", JSONArray(created.map { activity ->
-                        JSONObject().put("class", activity.javaClass.name).put("identity", System.identityHashCode(activity))
-                            .put("destroyed", activity.isDestroyed)
-                    }))
+                    report.put(
+                        "owned_activities",
+                        JSONArray(
+                            created.map { activity ->
+                                JSONObject().put("class", activity.javaClass.name).put("identity", System.identityHashCode(activity))
+                                    .put("destroyed", activity.isDestroyed)
+                            },
+                        ),
+                    )
                     created.clear()
                     resumed.clear()
                 }
             }
-            if (externalIntentMonitors.isNotEmpty()) clean {
-                externalIntentMonitors.forEach(instrumentation::removeMonitor)
-                externalIntentMonitors.clear()
-                report.put("external_intent_monitors_removed", true)
+            if (externalIntentMonitors.isNotEmpty()) {
+                clean {
+                    externalIntentMonitors.forEach(instrumentation::removeMonitor)
+                    externalIntentMonitors.clear()
+                    report.put("external_intent_monitors_removed", true)
+                }
             }
             clean { marker("cleanup_end") }
         }

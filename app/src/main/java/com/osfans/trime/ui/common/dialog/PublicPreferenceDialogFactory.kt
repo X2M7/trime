@@ -44,8 +44,11 @@ internal object PublicPreferenceDialogFactory {
     fun showIfSupported(owner: PaddingPreferenceFragment, preference: Preference): Boolean {
         val dialog = when (preference) {
             is PublicBoundEditTextPreference -> PublicEditTextPreferenceDialogFragment()
+
             is ListPreference -> PublicListPreferenceDialogFragment()
+
             is MultiSelectListPreference -> PublicMultiSelectPreferenceDialogFragment()
+
             // An arbitrary EditTextPreference may own a package-private binding callback.
             // Preserve its original public behavior; it is not a migrated window.
             else -> return false
@@ -67,19 +70,25 @@ internal object PublicPreferenceDialogFactory {
         while (fragment != null) {
             if ((fragment as? PreferenceFragmentCompat.OnPreferenceDisplayDialogCallback)
                     ?.onPreferenceDisplayDialog(owner, preference) == true
-            ) return true
+            ) {
+                return true
+            }
             fragment = fragment.parentFragment
         }
         if ((owner.context as? PreferenceFragmentCompat.OnPreferenceDisplayDialogCallback)
                 ?.onPreferenceDisplayDialog(owner, preference) == true
-        ) return true
+        ) {
+            return true
+        }
         return (owner.activity as? PreferenceFragmentCompat.OnPreferenceDisplayDialogCallback)
             ?.onPreferenceDisplayDialog(owner, preference) == true
     }
 }
 
 /** Platform Window, with public FragmentManager identity rather than deprecated target fragments. */
-abstract class PublicPreferenceDialogFragment : DialogFragment(), DialogInterface.OnClickListener {
+abstract class PublicPreferenceDialogFragment :
+    DialogFragment(),
+    DialogInterface.OnClickListener {
     private var dialogTitle: CharSequence? = null
     private var positiveText: CharSequence? = null
     private var negativeText: CharSequence? = null

@@ -27,8 +27,11 @@ internal class PublicPreferenceProbeUi(private val c: PublicPreferenceProbeConte
             check(field.inputType and InputType.TYPE_MASK_CLASS == InputType.TYPE_CLASS_NUMBER)
             check(field.keyListener != null)
         }
-        c.report.put("last_actual_editor", JSONObject().put("class", field.javaClass.name)
-            .put("input_type", field.inputType).put("selection_start", field.selectionStart).put("selection_end", field.selectionEnd))
+        c.report.put(
+            "last_actual_editor",
+            JSONObject().put("class", field.javaClass.name)
+                .put("input_type", field.inputType).put("selection_start", field.selectionStart).put("selection_end", field.selectionEnd),
+        )
     }
     fun button(which: Int) {
         c.main {

@@ -459,10 +459,13 @@ object SetupClosedLoopProbe {
             skipNoBounds(instrumentation, activity).also { noBounds = it } != null
         }
         val actualNoBounds = checkNotNull(noBounds)
-        instrumentation.sendStatus(0, Bundle().apply {
-            putString("setup_skip_no_stage", "actual-no-centre-down-up")
-            putString("setup_skip_no_actual_button_rect", actualNoBounds.flattenToString())
-        })
+        instrumentation.sendStatus(
+            0,
+            Bundle().apply {
+                putString("setup_skip_no_stage", "actual-no-centre-down-up")
+                putString("setup_skip_no_actual_button_rect", actualNoBounds.flattenToString())
+            },
+        )
         val skipDown = SystemClock.uptimeMillis()
         motion(skipDown, MotionEvent.ACTION_DOWN, actualNoBounds.exactCenterX(), actualNoBounds.exactCenterY())
         SystemClock.sleep(60)
@@ -478,8 +481,10 @@ object SetupClosedLoopProbe {
             "Skip No changed preference key presence, runtime types or values"
         }
         check(runBlocking { session.runOnReady { inspectInputSetup() } } == beforeInput) { "Skip No changed the active input configuration" }
-        check(main { activity.inputChoice == beforeChoice && activity.keepCurrentInput == beforeKeepCurrent } &&
-            AppPrefs.defaultInstance().profile.freshInputSetupPending.getValue() == beforeFreshPending) {
+        check(
+            main { activity.inputChoice == beforeChoice && activity.keepCurrentInput == beforeKeepCurrent } &&
+                AppPrefs.defaultInstance().profile.freshInputSetupPending.getValue() == beforeFreshPending,
+        ) {
             "Skip No changed input choices or fresh-setup state"
         }
         instrumentation.sendStatus(0, Bundle().apply { putString("setup_skip_no_stage", "draft-checkpoints-input-page-preserved") })

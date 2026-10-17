@@ -10,8 +10,8 @@ import androidx.preference.EditTextPreference
 import androidx.preference.ListPreference
 import androidx.preference.Preference
 import androidx.preference.SwitchPreference
-import com.osfans.trime.ui.main.settings.DialogSeekBarPreference
 import com.osfans.trime.ui.common.dialog.PublicBoundEditTextPreference
+import com.osfans.trime.ui.main.settings.DialogSeekBarPreference
 import com.osfans.trime.ui.main.settings.EditTextIntPreference
 
 abstract class PreferenceDelegateUi<T : Preference>(

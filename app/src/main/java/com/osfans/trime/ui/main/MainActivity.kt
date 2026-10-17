@@ -234,13 +234,11 @@ open class MainActivity : PublicWindowPilotActivity() {
 
     // API21+ already applies android:theme. These are the exact AppCompat1.7.1 widget-only
     // inflater switches for our minSdk; no AppCompatDelegate or Window factory is installed.
-    override fun onCreateView(parent: View?, name: String, context: Context, attrs: AttributeSet): View? =
-        compatViewInflater.createView(parent, name, context, attrs, false, false, true, false)
-            ?: super.onCreateView(parent, name, context, attrs)
+    override fun onCreateView(parent: View?, name: String, context: Context, attrs: AttributeSet): View? = compatViewInflater.createView(parent, name, context, attrs, false, false, true, false)
+        ?: super.onCreateView(parent, name, context, attrs)
 
-    override fun onCreateView(name: String, context: Context, attrs: AttributeSet): View? =
-        compatViewInflater.createView(null, name, context, attrs, false, false, true, false)
-            ?: super.onCreateView(name, context, attrs)
+    override fun onCreateView(name: String, context: Context, attrs: AttributeSet): View? = compatViewInflater.createView(null, name, context, attrs, false, false, true, false)
+        ?: super.onCreateView(name, context, attrs)
 
     private fun navigateToActivityParent(): Boolean {
         if (NavUtils.getParentActivityIntent(this) == null) return false

@@ -154,9 +154,20 @@ internal class PublicPreferenceProbeContext(val instrumentation: Instrumentation
         check(baselineIme?.second?.startsWith("${context.packageName}/") == true)
         baselineMode = AppPrefs.defaultInstance().advanced.uiMode.let { it.sharedPreferences.contains(it.key) to it.sharedPreferences.all[it.key] }
         val rawMode = baselineMode?.second
-        check(rawMode == null || rawMode is String && AppPrefs.Advanced.UiMode.entries.any { it.name == rawMode.uppercase() })
+        check(rawMode == null || (rawMode is String && AppPrefs.Advanced.UiMode.entries.any { it.name == rawMode.uppercase() }))
         baselineEditorPreferences = editorPreferences()
         baselineGrants = grants()
+        await("The selected IME did not bind before preference windows") {
+            main {
+                val observed = sessionNames()
+                val state = RimeDaemon.engineState.value
+                report.put("sessions_preflight_observed", JSONArray(observed.sorted()))
+                    .put("engine_preflight_observed", state.name)
+                observed.size == 1 &&
+                    observed.single().startsWith("com.osfans.trime.ime.core.TrimeInputMethodService#") &&
+                    state == RimeLifecycle.State.READY
+            }
+        }
         baselineSessions = main { sessionNames() }
         check(checkNotNull(baselineSessions).none { it == MainViewModel::class.java.name }) { "Existing Main owner must not be reused" }
         check(checkNotNull(baselineSessions).size == 1 && checkNotNull(baselineSessions).all {

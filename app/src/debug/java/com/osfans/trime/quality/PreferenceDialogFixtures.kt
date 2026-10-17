@@ -102,19 +102,28 @@ object PreferenceProbeFixtures {
             val text = if (legacy) EditTextPreference(context) else PublicBoundEditTextPreference(context)
             text.setOnBindEditTextListener(state::bind)
             add("string", text)
-            add("int", EditTextIntPreference(context).apply {
-                min = 15
-                max = 60
-                setDefaultValue(30)
-            })
-            add("list", ListPreference(context).apply {
-                entries = arrayOf("First", "Second", "Third")
-                entryValues = arrayOf("a", "b", "c")
-            })
-            add("multi", MultiSelectListPreference(context).apply {
-                entries = arrayOf("First", "Second", "Third")
-                entryValues = arrayOf("a", "b", "c")
-            })
+            add(
+                "int",
+                EditTextIntPreference(context).apply {
+                    min = 15
+                    max = 60
+                    setDefaultValue(30)
+                },
+            )
+            add(
+                "list",
+                ListPreference(context).apply {
+                    entries = arrayOf("First", "Second", "Third")
+                    entryValues = arrayOf("a", "b", "c")
+                },
+            )
+            add(
+                "multi",
+                MultiSelectListPreference(context).apply {
+                    entries = arrayOf("First", "Second", "Third")
+                    entryValues = arrayOf("a", "b", "c")
+                },
+            )
         }
     }
 }

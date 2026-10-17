@@ -60,7 +60,14 @@ internal object PublicUserDictionaryDialogStage {
         onPassed: (String) -> Unit,
         onActualImportError: (String) -> JSONObject,
     ): JSONObject = Runner(
-        instrumentation, activity, token, workDeadline, directory, progress, onPassed, onActualImportError,
+        instrumentation,
+        activity,
+        token,
+        workDeadline,
+        directory,
+        progress,
+        onPassed,
+        onActualImportError,
     ).runImportFailure()
 
     private class Runner(
@@ -84,14 +91,18 @@ internal object PublicUserDictionaryDialogStage {
         private val backupRoot = File(activity.filesDir, "userdict-backups")
         private lateinit var beforeTree: Map<String, String>
 
-        private fun time() { check(SystemClock.uptimeMillis() <= workDeadline) { "U dialog stage exceeded caller work deadline" } }
+        private fun time() {
+            check(SystemClock.uptimeMillis() <= workDeadline) { "U dialog stage exceeded caller work deadline" }
+        }
         private fun <T> main(block: () -> T): T {
             time()
             var result: Result<T>? = null
             instrumentation.runOnMainSync { result = runCatching(block) }
             val observed = checkNotNull(result)
             val businessFailure = observed.exceptionOrNull()
-            try { time() } catch (deadlineFailure: Throwable) {
+            try {
+                time()
+            } catch (deadlineFailure: Throwable) {
                 if (businessFailure != null) {
                     if (businessFailure !== deadlineFailure) businessFailure.addSuppressed(deadlineFailure)
                     throw businessFailure
@@ -102,7 +113,10 @@ internal object PublicUserDictionaryDialogStage {
         }
         private fun await(label: String, test: () -> Boolean) {
             val limit = minOf(workDeadline, SystemClock.uptimeMillis() + 30_000L)
-            while (!test()) { check(SystemClock.uptimeMillis() < limit) { label }; SystemClock.sleep(50) }
+            while (!test()) {
+                check(SystemClock.uptimeMillis() < limit) { label }
+                SystemClock.sleep(50)
+            }
             check(SystemClock.uptimeMillis() <= limit) { "$label (late)" }
         }
         private fun marker(label: String) {
@@ -112,7 +126,11 @@ internal object PublicUserDictionaryDialogStage {
             android.util.Log.i("TrimePublicHostAudit", value)
             instrumentation.sendStatus(0, android.os.Bundle().apply { putString("public_host_marker", value) })
         }
-        private fun passed(label: String) { time(); checks.put(label); onPassed(label) }
+        private fun passed(label: String) {
+            time()
+            checks.put(label)
+            onPassed(label)
+        }
         private fun descendants(view: View): Sequence<View> = sequence {
             yield(view)
             if (view is ViewGroup) view.children.forEach { yieldAll(descendants(it)) }
@@ -144,27 +162,36 @@ internal object PublicUserDictionaryDialogStage {
             check(contextOwner(dialog.context) === activity)
             val config = dialog.context.resources.configuration
             check(config.fontScale == activity.resources.configuration.fontScale)
-            check((config.uiMode and Configuration.UI_MODE_NIGHT_MASK) ==
-                (activity.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK))
+            check(
+                (config.uiMode and Configuration.UI_MODE_NIGHT_MASK) ==
+                    (activity.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK),
+            )
             check(ConfigurationCompat.getLocales(config) == ConfigurationCompat.getLocales(activity.resources.configuration))
-            windows.put(JSONObject().put("label", label).put("dialog_class", dialog.javaClass.name)
-                .put("window_identity", System.identityHashCode(dialog.window)).put("owner_identity", System.identityHashCode(activity))
-                .put("font_scale", config.fontScale.toDouble()).put("ui_mode", config.uiMode)
-                .put("locales", ConfigurationCompat.getLocales(config).toLanguageTags()))
+            windows.put(
+                JSONObject().put("label", label).put("dialog_class", dialog.javaClass.name)
+                    .put("window_identity", System.identityHashCode(dialog.window)).put("owner_identity", System.identityHashCode(activity))
+                    .put("font_scale", config.fontScale.toDouble()).put("ui_mode", config.uiMode)
+                    .put("locales", ConfigurationCompat.getLocales(config).toLanguageTags()),
+            )
         }
         private fun touch(view: View) {
             val point = main {
                 val visible = Rect()
                 check(view.isShown && view.isEnabled && view.width > 0 && view.height > 0 && view.getLocalVisibleRect(visible))
                 check(visible == Rect(0, 0, view.width, view.height))
-                val xy = IntArray(2); view.getLocationOnScreen(xy)
+                val xy = IntArray(2)
+                view.getLocationOnScreen(xy)
                 xy[0] + view.width / 2f to xy[1] + view.height / 2f
             }
             val down = SystemClock.uptimeMillis()
             for (action in intArrayOf(MotionEvent.ACTION_DOWN, MotionEvent.ACTION_UP)) {
                 val event = MotionEvent.obtain(down, SystemClock.uptimeMillis(), action, point.first, point.second, 0)
-                try { event.source = InputDevice.SOURCE_TOUCHSCREEN; instrumentation.sendPointerSync(event) }
-                finally { event.recycle() }
+                try {
+                    event.source = InputDevice.SOURCE_TOUCHSCREEN
+                    instrumentation.sendPointerSync(event)
+                } finally {
+                    event.recycle()
+                }
                 if (action == MotionEvent.ACTION_DOWN) SystemClock.sleep(40)
             }
             time()
@@ -186,14 +213,21 @@ internal object PublicUserDictionaryDialogStage {
                 val file = File(directory, "userdict-$label.png")
                 file.outputStream().use { check(rendered.first.compress(Bitmap.CompressFormat.PNG, 100, it)) }
                 images.put(binding(file).put("barrier", rendered.second).put("human_reviewed", false))
-            } finally { rendered.first.recycle() }
+            } finally {
+                rendered.first.recycle()
+            }
             time()
         }
         private fun digest(file: File): String {
             val sha = MessageDigest.getInstance("SHA-256")
             val buffer = ByteArray(32 * 1024)
             file.inputStream().use { input ->
-                while (true) { val n = input.read(buffer); if (n < 0) break; sha.update(buffer, 0, n); time() }
+                while (true) {
+                    val n = input.read(buffer)
+                    if (n < 0) break
+                    sha.update(buffer, 0, n)
+                    time()
+                }
             }
             return sha.digest().joinToString("") { "%02x".format(it) }
         }
@@ -205,22 +239,30 @@ internal object PublicUserDictionaryDialogStage {
                 time()
                 val stat = Os.lstat(file.absolutePath)
                 check(!OsConstants.S_ISLNK(stat.st_mode)) { "Unexpected symbolic link in dedicated U fixture" }
-                if (file.isDirectory) result[key] = "directory" else {
+                if (file.isDirectory) {
+                    result[key] = "directory"
+                } else {
                     check(file.isFile)
-                    total += file.length(); check(total <= 16L * 1024 * 1024)
+                    total += file.length()
+                    check(total <= 16L * 1024 * 1024)
                     result[key] = "${file.length()}:${digest(file)}"
                 }
                 check(result.size <= 256)
             }
             fun existsNoFollow(file: File): Boolean = try {
-                Os.lstat(file.absolutePath); true
+                Os.lstat(file.absolutePath)
+                true
             } catch (failure: ErrnoException) {
                 if (failure.errno == OsConstants.ENOENT) false else throw failure
             }
             if (existsNoFollow(phraseFile)) add(phraseFile, "phrase") else result["phrase"] = "absent"
-            if (!existsNoFollow(backupRoot)) result["backups"] = "absent" else {
+            if (!existsNoFollow(backupRoot)) {
+                result["backups"] = "absent"
+            } else {
                 backupRoot.walkTopDown().onEnter { dir ->
-                    val stat = Os.lstat(dir.absolutePath); check(!OsConstants.S_ISLNK(stat.st_mode)); true
+                    val stat = Os.lstat(dir.absolutePath)
+                    check(!OsConstants.S_ISLNK(stat.st_mode))
+                    true
                 }.forEach { add(it, "backups/${it.relativeTo(backupRoot).invariantSeparatorsPath}") }
             }
             return result
@@ -239,7 +281,12 @@ internal object PublicUserDictionaryDialogStage {
             marker("actions_show_begin")
             touch(phraseButton())
             var result: AlertDialog? = null
-            await("Actual U actions window did not show") { main { result = liveAuxiliary(); result?.let(::laidOut) == true } }
+            await("Actual U actions window did not show") {
+                main {
+                    result = liveAuxiliary()
+                    result?.let(::laidOut) == true
+                }
+            }
             return checkNotNull(result).also {
                 window(it, "phrase_actions", R.string.userdict_phrases)
                 marker("actions_show_ready")
@@ -266,7 +313,12 @@ internal object PublicUserDictionaryDialogStage {
             marker("add_phrase_show_begin")
             button(checkNotNull(parentDialog), DialogInterface.BUTTON_NEUTRAL)
             var child: AlertDialog? = null
-            await("Actual Add phrase child did not show") { main { child = liveAuxiliary(); child?.let(::laidOut) == true } }
+            await("Actual Add phrase child did not show") {
+                main {
+                    child = liveAuxiliary()
+                    child?.let(::laidOut) == true
+                }
+            }
             return checkNotNull(child).also {
                 window(it, "add_phrase", R.string.userdict_add_phrase)
                 marker("add_phrase_show_ready")
@@ -286,16 +338,20 @@ internal object PublicUserDictionaryDialogStage {
             marker("route_begin")
             main {
                 check(!activity.isFinishing && !activity.isDestroyed && activity.hasWindowFocus())
-                activity.startActivity(Intent(activity, MainActivity::class.java).setAction(Intent.ACTION_RUN)
-                    .putExtra(MainActivity.EXTRA_SETTINGS_ROUTE, NavigationRoute.UserDict))
+                activity.startActivity(
+                    Intent(activity, MainActivity::class.java).setAction(Intent.ACTION_RUN)
+                        .putExtra(MainActivity.EXTRA_SETTINGS_ROUTE, NavigationRoute.UserDict),
+                )
             }
             await("Product UserDict route and phrase button were not ready") {
                 main {
                     val nav = activity.supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as? NavHostFragment
                     fragment = nav?.childFragmentManager?.primaryNavigationFragment as? UserDictionaryFragment
-                    fragment?.view?.let { root -> descendants(root).filterIsInstance<Button>().any {
-                        it.text.toString() == activity.getString(R.string.userdict_phrases) && it.isShown && it.isEnabled
-                    } } == true
+                    fragment?.view?.let { root ->
+                        descendants(root).filterIsInstance<Button>().any {
+                            it.text.toString() == activity.getString(R.string.userdict_phrases) && it.isShown && it.isEnabled
+                        }
+                    } == true
                 }
             }
             main { check(editorDialog() == null && auxiliary().isEmpty()) }
@@ -308,7 +364,10 @@ internal object PublicUserDictionaryDialogStage {
             val child = addPhrase()
             val fields = childFields(child)
             for (invalid in listOf("", "bad\tphrase", "bad\nphrase", "#invalid")) {
-                main { fields.first.setText(invalid); fields.second.setText("virtual-code") }
+                main {
+                    fields.first.setText(invalid)
+                    fields.second.setText("virtual-code")
+                }
                 button(child, DialogInterface.BUTTON_POSITIVE)
                 await("U invalid phrase did not keep its real child/draft and field error") {
                     main {
@@ -321,7 +380,10 @@ internal object PublicUserDictionaryDialogStage {
             capture(child, "invalid-child")
             val phrase = "虚构短语${token.take(8)}"
             val code = "probe${token.take(6)}"
-            main { fields.first.setText(phrase); fields.second.setText(code) }
+            main {
+                fields.first.setText(phrase)
+                fields.second.setText(code)
+            }
             button(child, DialogInterface.BUTTON_POSITIVE)
             val expected = ownedDraft + "\n$phrase\t$code\t1\n"
             await("Valid U child did not append exactly to the uncommitted parent draft") {
@@ -333,14 +395,19 @@ internal object PublicUserDictionaryDialogStage {
         }
         private fun childAndParentCancel() {
             val beforeDraft = main { checkNotNull(parentEditor).text.toString() }
-            val child = addPhrase(); val fields = childFields(child)
-            main { fields.first.setText("取消虚构词"); fields.second.setText("cancel") }
+            val child = addPhrase()
+            val fields = childFields(child)
+            main {
+                fields.first.setText("取消虚构词")
+                fields.second.setText("cancel")
+            }
             button(child, DialogInterface.BUTTON_NEGATIVE)
             await("U child Cancel changed draft or did not close") { main { !child.isShowing && checkNotNull(parentEditor).text.toString() == beforeDraft } }
             val parent = checkNotNull(parentDialog)
             button(parent, DialogInterface.BUTTON_NEGATIVE)
             await("U parent Cancel did not release its owned editor reference") { main { !parent.isShowing && editorDialog() == null && auxiliary().isEmpty() } }
-            parentDialog = null; parentEditor = null
+            parentDialog = null
+            parentEditor = null
             check(tree() == beforeTree)
             passed("real U child and parent negative callbacks preserve phrase and backup bytes")
         }
@@ -348,7 +415,12 @@ internal object PublicUserDictionaryDialogStage {
             marker("recovery_show_begin")
             item(actions(), R.string.userdict_recover_backup)
             var dialog: AlertDialog? = null
-            await("Actual U recovery confirmation did not show") { main { dialog = liveAuxiliary(); dialog?.let(::laidOut) == true } }
+            await("Actual U recovery confirmation did not show") {
+                main {
+                    dialog = liveAuxiliary()
+                    dialog?.let(::laidOut) == true
+                }
+            }
             val recovery = checkNotNull(dialog)
             window(recovery, "recovery_confirmation", R.string.userdict_recover_backup)
             marker("recovery_show_ready")
@@ -360,8 +432,12 @@ internal object PublicUserDictionaryDialogStage {
         private fun ownerTeardown() {
             openEditor()
             val parent = checkNotNull(parentDialog)
-            val child = addPhrase(); val fields = childFields(child)
-            main { fields.first.setText("终止虚构草稿"); fields.second.setText("teardown") }
+            val child = addPhrase()
+            val fields = childFields(child)
+            main {
+                fields.first.setText("终止虚构草稿")
+                fields.second.setText("teardown")
+            }
             marker("owner_teardown_begin")
             // Caller owns this fresh Main; normal public Activity finish drives real onDestroyView.
             main { activity.finish() }
@@ -377,12 +453,12 @@ internal object PublicUserDictionaryDialogStage {
             val files = checkNotNull(root.listFiles()).filter { it.name.startsWith(".custom-phrase-") }
             check(files.size <= 32)
             return files.sortedBy { it.name }.associate { file ->
-                    time()
-                    val stat = Os.lstat(file.absolutePath)
-                    check(OsConstants.S_ISREG(stat.st_mode) && !OsConstants.S_ISLNK(stat.st_mode))
-                    check(file.length() <= 256L * 1024)
-                    file.name to "${file.length()}:${digest(file)}"
-                }
+                time()
+                val stat = Os.lstat(file.absolutePath)
+                check(OsConstants.S_ISREG(stat.st_mode) && !OsConstants.S_ISLNK(stat.st_mode))
+                check(file.length() <= 256L * 1024)
+                file.name to "${file.length()}:${digest(file)}"
+            }
         }
 
         private fun invalidParentSave() {
@@ -390,7 +466,10 @@ internal object PublicUserDictionaryDialogStage {
             val parent = checkNotNull(parentDialog)
             val editor = checkNotNull(parentEditor)
             val invalid = "__public_invalid_phrase_${token}__" // Exactly one non-comment line, without TAB.
-            main { editor.setText(invalid); editor.setSelection(4, 11) }
+            main {
+                editor.setText(invalid)
+                editor.setSelection(4, 11)
+            }
             val selection = main { editor.selectionStart to editor.selectionEnd }
             val beforeTemporary = phraseTemporaryFiles()
             marker("invalid_parent_save_begin")
@@ -424,7 +503,8 @@ internal object PublicUserDictionaryDialogStage {
             await("Failed U parent Cancel did not release its real editor or restore controls") {
                 main { !parent.isShowing && editorDialog() == null && auxiliary().isEmpty() && readyPhraseButton.isEnabled }
             }
-            parentDialog = null; parentEditor = null
+            parentDialog = null
+            parentEditor = null
             check(tree() == beforeTree && phraseTemporaryFiles() == beforeTemporary)
             marker("invalid_parent_save_cancel_terminal")
             passed("real shared error OK then parent Cancel leaves phrase backup and temporary bytes unchanged")
@@ -450,7 +530,9 @@ internal object PublicUserDictionaryDialogStage {
                 throw failure
             } finally {
                 // Existing host finally still owns normal Activity/session cleanup on failure.
-                parentEditor = null; parentDialog = null; fragment = null
+                parentEditor = null
+                parentDialog = null
+                fragment = null
             }
         }
 
@@ -476,7 +558,9 @@ internal object PublicUserDictionaryDialogStage {
             } finally {
                 // Caller finally owns normal Activity cleanup even when a stage fails. Release only
                 // local audit references; never delete/restore production dictionary files on failure.
-                parentEditor = null; parentDialog = null; fragment = null
+                parentEditor = null
+                parentDialog = null
+                fragment = null
             }
         }
     }

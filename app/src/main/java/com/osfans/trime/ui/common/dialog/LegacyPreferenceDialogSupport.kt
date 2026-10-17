@@ -124,7 +124,9 @@ internal class LegacyPreferenceDialogWindow(
         val owner = currentLegacyOwner()
         if (owner == null || owner !== ownerAtCreate ||
             !owner.lifecycle.currentState.isAtLeast(Lifecycle.State.CREATED)
-        ) return LegacyPreferenceDialogClose(false, null)
+        ) {
+            return LegacyPreferenceDialogClose(false, null)
+        }
         val key = fragment.requireArguments().getString("key") ?: return LegacyPreferenceDialogClose(false, null)
         val current = (owner as DialogPreference.TargetFragment).findPreference<Preference>(key)
         if (current !is DialogPreference || !matchesKind(current)) return LegacyPreferenceDialogClose(false, null)

@@ -44,9 +44,9 @@ import com.osfans.trime.data.db.ClipboardHelper
 import com.osfans.trime.data.prefs.AppPrefs
 import com.osfans.trime.data.theme.ThemeDiagnostics
 import com.osfans.trime.data.theme.ThemeManager
+import com.osfans.trime.ime.core.TrimeInputMethodService
 import com.osfans.trime.ui.common.PublicWindowPilotConfiguration
 import com.osfans.trime.ui.common.PublicWindowPilotConfigurationAssertions
-import com.osfans.trime.ime.core.TrimeInputMethodService
 import com.osfans.trime.ui.main.MainActivity
 import com.osfans.trime.ui.main.settings.theme.ThemeDiagnosticsActivity
 import com.osfans.trime.ui.setup.SetupActivity
@@ -505,8 +505,10 @@ internal object PublicWindowPilotProbe {
             }
             beforeSessions = main {
                 val observed = sessions()
-                check(observed.size == 1 && observed.single().startsWith(imeOwnerPrefix) &&
-                    RimeDaemon.engineState.value == RimeLifecycle.State.READY)
+                check(
+                    observed.size == 1 && observed.single().startsWith(imeOwnerPrefix) &&
+                        RimeDaemon.engineState.value == RimeLifecycle.State.READY,
+                )
                 observed
             }
             report.put("session_owners_before", JSONArray(checkNotNull(beforeSessions).sorted()))

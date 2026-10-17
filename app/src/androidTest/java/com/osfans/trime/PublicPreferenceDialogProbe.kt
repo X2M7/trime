@@ -57,57 +57,103 @@ internal object PublicPreferenceDialogProbe {
         c.main { check(c.memory.bindCalls == before + 1) }
         c.capture("fresh-string-restored")
         ui.positive()
-        c.main { check(c.memory.value("string") == value); c.memory.veto += "string" }
+        c.main {
+            check(c.memory.value("string") == value)
+            c.memory.veto += "string"
+        }
         val vetoBefore = c.main { c.memory.attempts.size }
-        c.show("string", cls); ui.text("veto-${c.token}"); ui.positive()
+        c.show("string", cls)
+        ui.text("veto-${c.token}")
+        ui.positive()
         c.main {
             check(c.memory.value("string") == value && c.memory.attempts.size == vetoBefore + 1)
-            check(c.memory.attempts.last() == ("string" to "veto-${c.token}")); c.memory.veto -= "string"
+            check(c.memory.attempts.last() == ("string" to "veto-${c.token}"))
+            c.memory.veto -= "string"
         }
         val negativeBefore = c.main { c.memory.attempts.size }
-        c.show("string", cls); ui.text("cancel-${c.token}"); ui.negative()
+        c.show("string", cls)
+        ui.text("cancel-${c.token}")
+        ui.negative()
         c.main { check(c.memory.value("string") == value && c.memory.attempts.size == negativeBefore) }
         c.passed("fresh String actual short-tag widget opaque binder draft selection recreate positive veto and negative")
     }
     private fun freshInteger(c: PublicPreferenceProbeContext, ui: PublicPreferenceProbeUi) {
         val cls = NEW + "EditTextPreferenceDialogFragment"
-        c.show("int", cls); ui.text("42", 0, 1); c.recreate(cls)
-        ui.editor("42", 0, 1, opaque = false); ui.positive()
+        c.show("int", cls)
+        ui.text("42", 0, 1)
+        c.recreate(cls)
+        ui.editor("42", 0, 1, opaque = false)
+        ui.positive()
         c.main { check(c.memory.value("int") == 42 && c.memory.attempts.last() == ("int" to 42)) }
-        c.show("int", cls); ui.text("7", 0, 1); ui.positive()
-        c.main { check(c.memory.value("int") == 15 && c.memory.attempts.last() == ("int" to 15)); c.memory.veto += "int" }
+        c.show("int", cls)
+        ui.text("7", 0, 1)
+        ui.positive()
+        c.main {
+            check(c.memory.value("int") == 15 && c.memory.attempts.last() == ("int" to 15))
+            c.memory.veto += "int"
+        }
         val vetoBefore = c.main { c.memory.attempts.size }
-        c.show("int", cls); ui.text("55", 0, 1); ui.positive()
-        c.main { check(c.memory.value("int") == 15 && c.memory.attempts.size == vetoBefore + 1 && c.memory.attempts.last() == ("int" to 55)); c.memory.veto -= "int" }
+        c.show("int", cls)
+        ui.text("55", 0, 1)
+        ui.positive()
+        c.main {
+            check(c.memory.value("int") == 15 && c.memory.attempts.size == vetoBefore + 1 && c.memory.attempts.last() == ("int" to 55))
+            c.memory.veto -= "int"
+        }
         val negativeBefore = c.main { c.memory.attempts.size }
-        c.show("int", cls); ui.text("60", 0, 1); ui.negative()
+        c.show("int", cls)
+        ui.text("60", 0, 1)
+        ui.negative()
         c.main { check(c.memory.value("int") == 15 && c.memory.attempts.size == negativeBefore) }
         c.passed("fresh production Int binder raw Integer draft recreate clamp Int-valued veto and negative")
     }
     private fun freshList(c: PublicPreferenceProbeContext, ui: PublicPreferenceProbeUi) {
         val cls = NEW + "ListPreferenceDialogFragment"
-        c.show("list", cls); c.recreate(cls); ui.choices(setOf(0), noPositiveButton = true)
+        c.show("list", cls)
+        c.recreate(cls)
+        ui.choices(setOf(0), noPositiveButton = true)
         ui.item(1, dismisses = true)
-        c.main { check(c.memory.value("list") == "b"); c.memory.veto += "list" }
+        c.main {
+            check(c.memory.value("list") == "b")
+            c.memory.veto += "list"
+        }
         val vetoBefore = c.main { c.memory.attempts.size }
-        c.show("list", cls); ui.item(2, dismisses = true)
-        c.main { check(c.memory.value("list") == "b" && c.memory.attempts.size == vetoBefore + 1 && c.memory.attempts.last() == ("list" to "c")); c.memory.veto -= "list" }
+        c.show("list", cls)
+        ui.item(2, dismisses = true)
+        c.main {
+            check(c.memory.value("list") == "b" && c.memory.attempts.size == vetoBefore + 1 && c.memory.attempts.last() == ("list" to "c"))
+            c.memory.veto -= "list"
+        }
         val negativeBefore = c.main { c.memory.attempts.size }
-        c.show("list", cls); ui.negative()
+        c.show("list", cls)
+        ui.negative()
         c.main { check(c.memory.value("list") == "b" && c.memory.attempts.size == negativeBefore) }
         c.passed("fresh List saved index entryValues auto-positive noOK veto and negative")
     }
     private fun freshMulti(c: PublicPreferenceProbeContext, ui: PublicPreferenceProbeUi) {
         val cls = NEW + "MultiSelectPreferenceDialogFragment"
-        c.show("multi", cls); ui.item(1, dismisses = false); c.recreate(cls)
-        ui.choices(setOf(0, 1)); ui.positive()
-        c.main { check(c.memory.value("multi") == setOf("a", "b")); c.memory.veto += "multi" }
+        c.show("multi", cls)
+        ui.item(1, dismisses = false)
+        c.recreate(cls)
+        ui.choices(setOf(0, 1))
+        ui.positive()
+        c.main {
+            check(c.memory.value("multi") == setOf("a", "b"))
+            c.memory.veto += "multi"
+        }
         c.show("multi", cls)
         val before = c.main { c.memory.attempts.size }
-        ui.item(2, dismisses = false); ui.item(2, dismisses = false); ui.positive()
-        c.main { check(c.memory.attempts.size == before + 1 && c.memory.value("multi") == setOf("a", "b")); c.memory.veto -= "multi" }
+        ui.item(2, dismisses = false)
+        ui.item(2, dismisses = false)
+        ui.positive()
+        c.main {
+            check(c.memory.attempts.size == before + 1 && c.memory.value("multi") == setOf("a", "b"))
+            c.memory.veto -= "multi"
+        }
         val negativeBefore = c.main { c.memory.attempts.size }
-        c.show("multi", cls); ui.item(2, dismisses = false); ui.negative()
+        c.show("multi", cls)
+        ui.item(2, dismisses = false)
+        ui.negative()
         c.main { check(c.memory.value("multi") == setOf("a", "b") && c.memory.attempts.size == negativeBefore) }
         c.passed("fresh synthetic MultiSelect working-state recreate toggle-back dirty veto and negative")
     }
@@ -117,7 +163,8 @@ internal object PublicPreferenceDialogProbe {
         c.marker("legacy_edit_old_baseline_begin")
         c.show("string", OLD + "EditTextPreferenceDialogFragmentCompat")
         val value = "legacy-draft-${c.token}"
-        ui.text(value); ui.actualOldEditor(value, 1, 3)
+        ui.text(value)
+        ui.actualOldEditor(value, 1, 3)
         val before = c.main { c.memory.bindCalls }
         c.capture("legacy-string-original")
         c.marker("legacy_edit_old_baseline_end_before_transition")
@@ -132,7 +179,8 @@ internal object PublicPreferenceDialogProbe {
         ui.text("cancel-${c.token}")
         c.marker("legacy_edit_cancel_old_baseline_end_before_transition")
         val negativeBefore = c.main { c.memory.attempts.size }
-        c.recreate(restored); ui.negative()
+        c.recreate(restored)
+        ui.negative()
         c.main { check(c.memory.value("string") == value && c.memory.attempts.size == negativeBefore) }
         c.passed("genuine old Edit -> same-APK Main recreate -> legacy adapter preserves opaque bind draft selection positive and negative")
     }
@@ -142,26 +190,36 @@ internal object PublicPreferenceDialogProbe {
         ui.text("7", 0, 1)
         c.marker("legacy_int_old_baseline_end_before_transition")
         c.recreate(LEGACY + "EditTextPreferenceDialogFragment")
-        ui.editor("7", 0, 1, opaque = false); ui.positive()
-        c.main { check(c.memory.value("int") == 15 && c.memory.attempts.last() == ("int" to 15)); c.memory.veto += "int" }
+        ui.editor("7", 0, 1, opaque = false)
+        ui.positive()
+        c.main {
+            check(c.memory.value("int") == 15 && c.memory.attempts.last() == ("int" to 15))
+            c.memory.veto += "int"
+        }
         // Opening from this original owner intentionally creates another genuine old baseline.
         c.marker("legacy_int_veto_old_baseline_begin")
         c.show("int", OLD + "EditTextPreferenceDialogFragmentCompat")
         ui.text("55", 0, 1)
         c.marker("legacy_int_veto_old_baseline_end_before_transition")
         val vetoBefore = c.main { c.memory.attempts.size }
-        c.recreate(LEGACY + "EditTextPreferenceDialogFragment"); ui.positive()
-        c.main { check(c.memory.value("int") == 15 && c.memory.attempts.size == vetoBefore + 1 && c.memory.attempts.last() == ("int" to 55)); c.memory.veto -= "int" }
+        c.recreate(LEGACY + "EditTextPreferenceDialogFragment")
+        ui.positive()
+        c.main {
+            check(c.memory.value("int") == 15 && c.memory.attempts.size == vetoBefore + 1 && c.memory.attempts.last() == ("int" to 55))
+            c.memory.veto -= "int"
+        }
         c.passed("genuine old production Int -> adapter retains String-to-Int clamp and original Int-valued veto")
     }
     private fun legacyList(c: PublicPreferenceProbeContext, ui: PublicPreferenceProbeUi) {
         c.marker("legacy_list_old_baseline_begin")
-        c.show("list", OLD + "ListPreferenceDialogFragmentCompat"); ui.oldChoices(setOf(0))
+        c.show("list", OLD + "ListPreferenceDialogFragmentCompat")
+        ui.oldChoices(setOf(0))
         c.capture("legacy-list-original")
         c.marker("legacy_list_old_baseline_end_before_transition")
         c.recreate(LEGACY + "ListPreferenceDialogFragment")
         ui.choices(setOf(0), noPositiveButton = true)
-        c.capture("legacy-list-adapter"); ui.item(2, dismisses = true)
+        c.capture("legacy-list-adapter")
+        ui.item(2, dismisses = true)
         c.main { check(c.memory.value("list") == "c") }
         c.passed("genuine old List initial saved index -> adapter entryValues auto-positive and noOK; no invented pending click")
     }
@@ -169,11 +227,15 @@ internal object PublicPreferenceDialogProbe {
         val cls = LEGACY + "MultiSelectPreferenceDialogFragment"
         c.marker("legacy_multi_old_baseline_begin")
         c.show("multi", OLD + "MultiSelectListPreferenceDialogFragmentCompat")
-        ui.oldItem(1); ui.oldChoices(setOf(0, 1)); c.capture("legacy-multi-original")
+        ui.oldItem(1)
+        ui.oldChoices(setOf(0, 1))
+        c.capture("legacy-multi-original")
         c.marker("legacy_multi_old_baseline_end_before_transition")
-        c.recreate(cls); ui.choices(setOf(0, 1))
+        c.recreate(cls)
+        ui.choices(setOf(0, 1))
         ui.item(2, dismisses = false)
-        c.recreate(cls); ui.choices(setOf(0, 1, 2))
+        c.recreate(cls)
+        ui.choices(setOf(0, 1, 2))
         c.capture("legacy-multi-adapter-second-restore")
         ui.positive()
         c.main { check(c.memory.value("multi") == setOf("a", "b", "c")) }
