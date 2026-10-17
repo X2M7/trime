@@ -124,7 +124,8 @@ def main():
               NATIVE / "librime_jni/trime_prediction_guard.h", MODEL]
     inputs += [JNI, PRIVACY_CMAKE, NATIVE / "librime_jni/candidate_ranking.h",
                Path(__file__).with_name("ranking_boundary_test.h"),
-               generated / "ranking_boundary_bridge.h"]
+               generated / "ranking_boundary_bridge.h",
+               NATIVE / "librime/deps/opencc/deps/darts-clone-0.32h/include/darts.h"]
     before = [digest(path) for path in inputs]
     boost = [f"-isystem{path}" for path in sorted((NATIVE / "boost/libs").glob("*/include"))
              if path.is_dir()]
@@ -135,7 +136,7 @@ def main():
                f"-I{out / 'include'}", f"-I{generated}", f"-I{NATIVE / 'librime_jni'}",
                f"-isystem{NATIVE / 'librime/src'}", f"-isystem{NATIVE / 'librime/include'}",
                f"-isystem{NATIVE / 'librime-predict/src'}",
-               f"-isystem{NATIVE / 'librime/deps/opencc/deps/darts-clone-0.32'}",
+               f"-isystem{NATIVE / 'librime/deps/opencc/deps/darts-clone-0.32h/include'}",
                *boost, *map(str, sources), "-lrime", "-lmarisa", "-lglog", "-ldl", "-o", str(binary)]
     summary = {"started_at": time.time(), "model": model,
                "compile_command": command, "inputs_before": before,

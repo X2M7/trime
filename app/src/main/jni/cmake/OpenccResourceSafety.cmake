@@ -26,14 +26,14 @@ function(trime_adapt_opencc_resources source)
 
 #include "Dict.hpp"]=])
   trime_replace_dependency_cmake("${source}/SerializableDict.hpp"
-    [=[    FILE* fp = fopen(fileName.c_str(), "wb");
+    [=[    FILE* fp = OpenSerializableFileUtf8(fileName, "wb");
     if (fp == NULL) {
       throw FileNotWritable(fileName);
     }
     SerializeToFile(fp);
     fclose(fp);]=]
     [=[    std::unique_ptr<FILE, decltype(&fclose)> output(
-        fopen(fileName.c_str(), "wb"), fclose);
+        OpenSerializableFileUtf8(fileName, "wb"), fclose);
     if (!output) {
       throw FileNotWritable(fileName);
     }

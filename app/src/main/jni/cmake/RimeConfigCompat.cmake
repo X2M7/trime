@@ -21,8 +21,8 @@ function(trime_adapt_rime_config)
     "bool ConfigData::LoadFromFile(const path& file_path, ConfigCompiler* compiler) {"
     "bool ConfigData::LoadFromFile(const path& file_path, ConfigCompiler* compiler) {\n  return LoadFromFile(file_path, compiler, false);\n}\n\nbool ConfigData::LoadFromFile(const path& file_path, ConfigCompiler* compiler, bool optional) {")
   trime_replace_dependency_cmake("${root}/rime/config/config_data.cc"
-    "    if (!boost::ends_with(file_path.u8string(), \".custom.yaml\"))"
-    "    if (!optional && !boost::ends_with(file_path.u8string(), \".custom.yaml\"))")
+    "    if (!boost::ends_with(file_path.to_utf8_string(), \".custom.yaml\"))"
+    "    if (!optional && !boost::ends_with(file_path.to_utf8_string(), \".custom.yaml\"))")
 
   trime_replace_dependency_cmake("${root}/rime/config/config_compiler.h"
     "  an<ConfigResource> Compile(const string& file_name);"

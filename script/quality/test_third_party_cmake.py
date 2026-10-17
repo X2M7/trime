@@ -26,8 +26,8 @@ class ThirdPartyCmakeTest(unittest.TestCase):
             f'include("{ADAPTER.as_posix()}")\n'
             'trime_add_dependency(vendor/snappy snappy 3.1)\n'
             'trime_add_dependency(vendor/leveldb librime/deps/leveldb 3.9)\n'
-            'trime_add_dependency(vendor/OpenCC OpenCC 3.5)\n', encoding="utf-8")
-        for name, version in (("snappy", "3.1"), ("leveldb", "3.9"), ("OpenCC", "3.5")):
+            'trime_add_dependency(vendor/OpenCC OpenCC 3.12)\n', encoding="utf-8")
+        for name, version in (("snappy", "3.1"), ("leveldb", "3.9"), ("OpenCC", "3.12")):
             directory = self.source / "vendor" / name
             directory.mkdir(parents=True)
             (directory / "CMakeLists.txt").write_text(
@@ -41,8 +41,8 @@ class ThirdPartyCmakeTest(unittest.TestCase):
         data = self.source / "vendor/OpenCC/data"
         data.mkdir()
         (data / "CMakeLists.txt").write_text(
-            'find_package(PythonInterp REQUIRED)\n'
-            'execute_process(COMMAND "${PYTHON_EXECUTABLE}" -c '
+            'find_package(Python3 REQUIRED COMPONENTS Interpreter)\n'
+            'execute_process(COMMAND "${Python3_EXECUTABLE}" -c '
             '"import sys; assert sys.version_info.major == 3" RESULT_VARIABLE result)\n'
             'if(NOT result EQUAL 0)\nmessage(FATAL_ERROR "Host Python failed")\nendif()\n',
             encoding="utf-8")
@@ -66,11 +66,14 @@ class ThirdPartyCmakeTest(unittest.TestCase):
         self.configure()
         self.assertEqual(before, {p.relative_to(self.source): p.read_bytes()
                                   for p in self.source.rglob("*") if p.is_file()})
-        for name in ("snappy", "librime/deps/leveldb", "OpenCC"):
+        for name in ("snappy", "librime/deps/leveldb"):
             self.assertIn("...3.10)", (self.build / "trime-deps" / name / "CMakeLists.txt").read_text())
+        self.assertEqual((self.source / "vendor/OpenCC/CMakeLists.txt").read_bytes(),
+                         (self.build / "trime-deps/OpenCC/CMakeLists.txt").read_bytes())
         data = self.build / "trime-deps/OpenCC/data/CMakeLists.txt"
         self.assertNotIn("find_package(PythonInterp", data.read_text())
         self.assertIn("find_package(Python3 REQUIRED COMPONENTS Interpreter)", data.read_text())
+        self.assertEqual(data.read_bytes(), (self.source / "vendor/OpenCC/data/CMakeLists.txt").read_bytes())
         patched = self.build / "trime-deps/OpenCC/src"
         marisa = (patched / "MarisaDict.cpp").read_text()
         serializable = (patched / "SerializableDict.hpp").read_text()
@@ -79,6 +82,9 @@ class ThirdPartyCmakeTest(unittest.TestCase):
         self.assertIn("Invalid OpenCC dictionary header", marisa)
         self.assertIn("std::unique_ptr<FILE, decltype(&fclose)> input", serializable)
         self.assertIn("std::unique_ptr<FILE, decltype(&fclose)> output", serializable)
+        self.assertIn('OpenSerializableFileUtf8(fileName, "wb"), fclose)', serializable)
+        self.assertIn('OpenSerializableFileUtf8(fileName, "rb")', serializable)
+        self.assertNotIn('fopen(fileName.c_str()', serializable)
         resource_outputs = {name: (patched / name).read_bytes()
                             for name in ("MarisaDict.cpp", "SerializableDict.hpp")}
         added = self.source / "vendor/snappy/added.txt"
@@ -100,9 +106,40 @@ class ThirdPartyCmakeTest(unittest.TestCase):
         path.write_text(path.read_text().replace("VERSION 3.1", "VERSION 3.12"), encoding="utf-8")
         self.configure(success=False)
 
+    def test_current_pinned_opencc_cmake_interface(self):
+        script = self.root / "validate-opencc.cmake"
+        script.write_text(f'include("{ADAPTER.as_posix()}")\n'
+                          f'trime_validate_opencc_cmake("{OPENCC.parent.as_posix()}")\n',
+                          encoding="utf-8")
+        result = subprocess.run([CMAKE, "-Werror=dev", "-Werror=deprecated", "-P", str(script)],
+                                capture_output=True, text=True, timeout=60)
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertNotIn("Warning", result.stdout + result.stderr)
+
     def test_python_find_drift_requires_reaudit(self):
         path = self.source / "vendor/OpenCC/data/CMakeLists.txt"
-        path.write_text(path.read_text().replace("PythonInterp", "Python"), encoding="utf-8")
+        path.write_text(path.read_text().replace("find_package(Python3", "find_package(Python"), encoding="utf-8")
+        self.configure(success=False)
+
+    def test_opencc_minimum_version_drift_requires_reaudit(self):
+        path = self.source / "vendor/OpenCC/CMakeLists.txt"
+        path.write_text(path.read_text().replace("VERSION 3.12", "VERSION 3.13"), encoding="utf-8")
+        self.configure(success=False)
+
+    def test_opencc_declared_minimum_must_match_audited_version(self):
+        path = self.source / "CMakeLists.txt"
+        path.write_text(path.read_text().replace("OpenCC OpenCC 3.12", "OpenCC OpenCC 3.5"), encoding="utf-8")
+        self.configure(success=False)
+
+    def test_duplicate_opencc_python_find_requires_reaudit(self):
+        path = self.source / "vendor/OpenCC/data/CMakeLists.txt"
+        path.write_text(path.read_text() + 'find_package(Python3 REQUIRED COMPONENTS Interpreter)\n', encoding="utf-8")
+        self.configure(success=False)
+
+    def test_opencc_unicode_writer_drift_requires_reaudit(self):
+        path = self.source / "vendor/OpenCC/src/SerializableDict.hpp"
+        path.write_text(path.read_text().replace('OpenSerializableFileUtf8(fileName, "wb")',
+                                                'fopen(fileName.c_str(), "wb")'), encoding="utf-8")
         self.configure(success=False)
 
     def test_opencc_resource_drift_requires_reaudit(self):

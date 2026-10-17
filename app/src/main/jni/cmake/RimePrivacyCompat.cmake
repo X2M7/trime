@@ -16,6 +16,8 @@ function(trime_adapt_rime_privacy)
       rime/gear/ascii_composer.h
       rime/gear/ascii_composer.cc
       rime/gear/chord_composer.cc
+      rime/gear/streaming_chord_processor.h
+      rime/gear/streaming_chord_processor.cc
       rime/gear/key_binder.h
       rime/gear/key_binder.cc
       rime/gear/navigator.h
@@ -79,10 +81,13 @@ function(trime_adapt_rime_privacy)
     "  context_->commit_output_notifier().connect(\n      [this](Context* ctx) { OnCommit(ctx); });")
   trime_replace_dependency_cmake("${root}/rime/engine.cc"
     [=[  // record unhandled keys, eg. spaces, numbers, bksp's.
-  context_->commit_history().Push(key_event);]=]
-    [=[  // Private keys must not become context for history, prediction or
-  // phrase encoding.
-  if (!trime::IsPrivacyModeEnabled()) {
+  // skip internal synthetic key events which won't reach the client app.
+  if (!synthetic) {
+    context_->commit_history().Push(key_event);
+  }]=]
+    [=[  // Neither private input nor internal synthetic keys may become
+  // learning, prediction or phrase-encoding history.
+  if (!synthetic && !trime::IsPrivacyModeEnabled()) {
     context_->commit_history().Push(key_event);
   }]=])
   trime_replace_dependency_cmake("${root}/rime/engine.cc"
@@ -235,56 +240,62 @@ void Session::ApplySchema(Schema* schema) {]=])
     "  void OnContextUpdate(Context* ctx);"
     "  void OnContextUpdate(Context* ctx);\n  void OnPrivacyContextUpdate(Context* ctx);")
   trime_replace_dependency_cmake("${root}/rime/gear/ascii_composer.h"
-    "  connection connection_;"
-    "  connection connection_;\n  connection privacy_connection_;")
+    "  connection commit_connection_;"
+    "  connection commit_connection_;\n  connection privacy_connection_;")
   trime_replace_dependency_cmake("${root}/rime/gear/ascii_composer.cc"
     "#include <rime/gear/ascii_composer.h>"
     "#include <rime/gear/ascii_composer.h>\n\n#include \"trime_privacy_guard.h\"")
   trime_replace_dependency_cmake("${root}/rime/gear/ascii_composer.cc"
-    [=[AsciiComposer::AsciiComposer(const Ticket& ticket) : Processor(ticket) {
-  LoadConfig(ticket.schema);
-}]=]
-    [=[AsciiComposer::AsciiComposer(const Ticket& ticket) : Processor(ticket) {
+    [=[      KeyBindingProcessor<AsciiComposer>(action_definitions) {
+  LoadConfig(ticket.schema);]=]
+    [=[      KeyBindingProcessor<AsciiComposer>(action_definitions) {
   LoadConfig(ticket.schema);
   privacy_connection_ = engine_->context()->update_notifier().connect(
-      [this](Context* ctx) { OnPrivacyContextUpdate(ctx); });
-}]=])
+      [this](Context* ctx) { OnPrivacyContextUpdate(ctx); });]=])
+  # OnCommit only clears this processor's transient physical-key ledger. It
+  # must still run on private commits, unlike learning/plugin observers.
+  trime_replace_dependency_cmake("${root}/rime/gear/ascii_composer.cc"
+    "ctx->commit_notifier().connect([this](Context* ctx) { OnCommit(ctx); });"
+    "ctx->commit_output_notifier().connect([this](Context* ctx) { OnCommit(ctx); });")
   trime_replace_dependency_cmake("${root}/rime/gear/ascii_composer.cc"
     [=[AsciiComposer::~AsciiComposer() {
-  connection_.disconnect();
+  update_connection_.disconnect();
+  commit_connection_.disconnect();
 }]=]
     [=[AsciiComposer::~AsciiComposer() {
-  connection_.disconnect();
+  update_connection_.disconnect();
+  commit_connection_.disconnect();
   privacy_connection_.disconnect();
 }]=])
   trime_replace_dependency_cmake("${root}/rime/gear/ascii_composer.cc"
-    [=[void AsciiComposer::OnContextUpdate(Context* ctx) {
-  if (!ctx->IsComposing()) {
-    connection_.disconnect();
-    // quit temporary ascii mode
-    ctx->set_option("ascii_mode", false);
-  }
+    [=[void AsciiComposer::OnCommit(Context* ctx) {
+  // 上屏結算時，物理賬本歸零
+  raw_keys_.clear();
+  cached_input_.clear();
+  cached_raw_keys_.clear();
 }]=]
-    [=[void AsciiComposer::OnContextUpdate(Context* ctx) {
-  if (!ctx->IsComposing()) {
-    connection_.disconnect();
-    // quit temporary ascii mode
-    ctx->set_option("ascii_mode", false);
-  }
+    [=[void AsciiComposer::OnCommit(Context* ctx) {
+  // 上屏結算時，物理賬本歸零
+  raw_keys_.clear();
+  cached_input_.clear();
+  cached_raw_keys_.clear();
 }
 
 void AsciiComposer::OnPrivacyContextUpdate(Context* ctx) {
   if (!trime::IsPrivacyTransitionBoundary()) {
     return;
   }
-  if (connection_.connected()) {
-    connection_.disconnect();
+  const bool had_inline_ascii = is_inline_ascii_;
+  is_inline_ascii_ = false;
+  raw_keys_.clear();
+  cached_input_.clear();
+  cached_raw_keys_.clear();
+  if (had_inline_ascii) {
     ctx->set_option("ascii_mode", false);
   }
   toggle_with_caps_ = false;
-  shift_key_pressed_ = ctrl_key_pressed_ = alt_key_pressed_ =
-      super_key_pressed_ = false;
-  toggle_expired_ = TimePoint{};
+  ResetModifierState();
+  toggle_expired_ = std::chrono::steady_clock::time_point{};
 }]=])
 
   # ChordComposer retains printable keys even when they are not handled. The
@@ -310,7 +321,59 @@ void AsciiComposer::OnPrivacyContextUpdate(Context* ctx) {
   }
   if (ctx->IsComposing()) {]=])
 
-  # ReinterpretPagingKey remembers the preceding printable key. Clear it and
+  # New streaming chords retain pending physical keys even with an empty
+  # composition. Clear only transient state at an editor/privacy boundary;
+  # do not replay a key, commit text or change configured mappings/timing.
+  trime_replace_dependency_cmake("${root}/rime/gear/streaming_chord_processor.h"
+    "class Projection;"
+    "class Context;\nclass Projection;")
+  trime_replace_dependency_cmake("${root}/rime/gear/streaming_chord_processor.h"
+    "  StreamingChordProcessor(const Ticket& ticket);"
+    "  StreamingChordProcessor(const Ticket& ticket);\n  ~StreamingChordProcessor() override;")
+  trime_replace_dependency_cmake("${root}/rime/gear/streaming_chord_processor.h"
+    "  void ResetTracking();"
+    "  void ResetTracking();\n  void OnPrivacyContextUpdate(Context* ctx);")
+  trime_replace_dependency_cmake("${root}/rime/gear/streaming_chord_processor.h"
+    "  bool is_replaying_ = false;"
+    "  bool is_replaying_ = false;\n  connection privacy_connection_;")
+  trime_replace_dependency_cmake("${root}/rime/gear/streaming_chord_processor.cc"
+    [=[#include "streaming_chord_processor.h"]=]
+    [=[#include "streaming_chord_processor.h"
+#include "trime_privacy_guard.h"]=])
+  trime_replace_dependency_cmake("${root}/rime/gear/streaming_chord_processor.cc"
+    [=[StreamingChordProcessor::StreamingChordProcessor(const Ticket& ticket)
+    : Processor(ticket) {
+  Config* config = engine_->schema()->config();]=]
+    [=[StreamingChordProcessor::StreamingChordProcessor(const Ticket& ticket)
+    : Processor(ticket) {
+  privacy_connection_ = engine_->context()->update_notifier().connect(
+      [this](Context* ctx) { OnPrivacyContextUpdate(ctx); });
+  Config* config = engine_->schema()->config();]=])
+  trime_replace_dependency_cmake("${root}/rime/gear/streaming_chord_processor.cc"
+    [=[void StreamingChordProcessor::ResetTracking() {
+  ClearPendingPrompt();]=]
+    [=[StreamingChordProcessor::~StreamingChordProcessor() {
+  privacy_connection_.disconnect();
+}
+
+void StreamingChordProcessor::OnPrivacyContextUpdate(Context*) {
+  if (!trime::IsPrivacyTransitionBoundary()) {
+    return;
+  }
+  // Session::ResetPrivacyContexts already clears the Context. Do not call
+  // ResetTracking/ClearPendingPrompt here: those can recursively clear it.
+  last_key_event_ = {};
+  pending_solo_key_ = {};
+  pressed_chord_keys_.clear();
+  current_chord_start_ = 0;
+  is_chord_open_ = false;
+  is_replaying_ = false;
+}
+
+void StreamingChordProcessor::ResetTracking() {
+  ClearPendingPrompt();]=])
+
+  # ReinterpretPagingKey retains the actual paging key/count. Clear both and
   # the recursion flag at both editor boundaries.
   trime_replace_dependency_cmake("${root}/rime/gear/key_binder.h"
     "namespace rime {\n\nstruct KeyBinding;"
@@ -322,16 +385,18 @@ void AsciiComposer::OnPrivacyContextUpdate(Context* ctx) {
     "  void PerformKeyBinding(const KeyBinding& binding);"
     "  void PerformKeyBinding(const KeyBinding& binding);\n  void OnContextUpdate(Context* ctx);")
   trime_replace_dependency_cmake("${root}/rime/gear/key_binder.h"
-    "  int last_key_;"
-    "  int last_key_;\n  connection update_connection_;")
+    "  int paging_keystroke_count_ = 0;"
+    "  int paging_keystroke_count_ = 0;\n  connection update_connection_;")
   trime_replace_dependency_cmake("${root}/rime/gear/key_binder.cc"
     "#include <rime/gear/key_binder.h>"
     "#include <rime/gear/key_binder.h>\n\n#include \"trime_privacy_guard.h\"")
   trime_replace_dependency_cmake("${root}/rime/gear/key_binder.cc"
-    [=[      last_key_(0) {
+    [=[KeyBinder::KeyBinder(const Ticket& ticket)
+    : Processor(ticket), key_bindings_(new KeyBindings) {
   LoadConfig();
 }]=]
-    [=[      last_key_(0) {
+    [=[KeyBinder::KeyBinder(const Ticket& ticket)
+    : Processor(ticket), key_bindings_(new KeyBindings) {
   LoadConfig();
   update_connection_ = engine_->context()->update_notifier().connect(
       [this](Context* ctx) { OnContextUpdate(ctx); });
@@ -344,7 +409,8 @@ KeyBinder::~KeyBinder() {
 void KeyBinder::OnContextUpdate(Context*) {
   if (trime::IsPrivacyTransitionBoundary()) {
     redirecting_ = false;
-    last_key_ = 0;
+    last_paging_key_ = 0;
+    paging_keystroke_count_ = 0;
   }
 }]=])
   # Navigator caches the complete input string and its derived spans.

@@ -12,17 +12,22 @@ make cmake-format
 ## Pinned Dependency Adaptations
 
 `ThirdPartyCmake.cmake` creates private build-tree copies of snappy, leveldb and
-OpenCC. Only four CMake declarations are changed; submodule files and commits
-stay untouched. The copies retain upstream licenses and are refreshed on
-reconfiguration, including when source files are added or removed.
+OpenCC. Submodule files and commits stay untouched. The copies retain upstream
+licenses and are refreshed on reconfiguration, including when source files are
+added or removed.
 
-- Preserve each dependency's minimum CMake version, but declare policy
+- Preserve snappy and leveldb's minimum CMake versions, but declare policy
   compatibility through 3.10 with a version range. This resolves CMake 3.31's
   deprecated pre-3.10 policy compatibility without disabling diagnostics.
-- Replace OpenCC data generation's `FindPythonInterp` call with
-  `FindPython3 COMPONENTS Interpreter`. Keep the local `PYTHON_EXECUTABLE`
-  variable expected by its existing commands. Only a host interpreter is needed;
-  no Python runtime or development libraries are linked into Android.
+- OpenCC 1.4.2 already requires CMake 3.12 and uses
+  `FindPython3 COMPONENTS Interpreter`. Validate those declarations exactly
+  once and keep them unchanged; the old pre-3.10 policy and `FindPythonInterp`
+  replacements no longer apply. Only a host interpreter is required; no Python
+  runtime or development libraries are linked into Android.
+- Keep the OpenCC exception-path buffer and file-handle ownership guards in the
+  owned copy. Its UTF-8-aware `OpenSerializableFileUtf8` opener is retained for
+  both reads and writes, with RAII closing files even when parsing or writing
+  throws.
 
 Each expected declaration must occur exactly once. If a pinned dependency is
 updated and the declaration no longer matches, configuration fails with a
@@ -43,5 +48,6 @@ CMAKE_EXECUTABLE="$ANDROID_HOME/cmake/3.31.6/bin/cmake" \
 ```
 
 The tests promote developer and deprecation warnings to errors and cover all
-four adaptations, host Python execution, unchanged originals, refresh/deletion,
+legacy policy adaptations and modern OpenCC validation, host Python execution,
+unchanged originals, UTF-8 opener retention, refresh/deletion,
 and rejection of changed or ambiguous patch targets.

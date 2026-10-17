@@ -158,7 +158,7 @@ def compile_native(builder: Path, compiler: str) -> None:
     command = [compiler, "-std=c++17", "-O0", "-g0", "-DNDEBUG", "-DGLOG_USE_GLOG_EXPORT", "-Wl,--build-id=none",
                f"-I{include.parent}", f"-I{native / 'librime/src'}", f"-I{native / 'librime/include'}",
                f"-I{native / 'librime-predict/src'}",
-               f"-I{native / 'librime/deps/opencc/deps/darts-clone-0.32'}",
+               f"-I{native / 'librime/deps/opencc/deps/darts-clone-0.32h/include'}",
                *boost_includes,
                str(HERE / "build_predict_db.cc"), str(native / "librime-predict/src/predict_db.cc"),
                "-lrime", "-lmarisa", "-lglog", "-o", str(builder)]

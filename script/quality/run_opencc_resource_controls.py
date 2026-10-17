@@ -3,7 +3,7 @@
 
 Usage: python3 script/quality/run_opencc_resource_controls.py build/opencc-resources
 
-Builds two isolated copies with at most two compiler workers. The original
+Builds two isolated copies with one compiler worker by default (at most two). The original
 must expose the known header allocation and file-handle failures; the patched
 copy must reject the same malformed inputs without retaining resources and
 complete every valid retry. Original failing logs are preserved. This does
@@ -21,6 +21,8 @@ ROOT=Path(__file__).resolve().parents[2]
 DRAFT=Path(__file__).resolve().parent
 parser=argparse.ArgumentParser(description=__doc__)
 parser.add_argument("output",type=Path,help="New directory for both native builds, original failures and patched controls")
+parser.add_argument("--workers",type=int,choices=(1,2),default=1,
+                    help="Compiler workers for each serial native control build (default: 1)")
 args=parser.parse_args()
 OUT=args.output.resolve();OUT.mkdir(parents=True,exist_ok=False)
 SOURCE=ROOT/'app/src/main/jni/OpenCC'
@@ -28,7 +30,7 @@ THIRD=ROOT/'app/src/main/jni/cmake/ThirdPartyCmake.cmake'
 SAFETY=ROOT/'app/src/main/jni/cmake/OpenccResourceSafety.cmake'
 def sha(p):return hashlib.sha256(p.read_bytes()).hexdigest()
 def write(p,value):p.write_text(json.dumps(value,indent=2)+'\n')
-report={'status':'running','control_passed':False,'purpose':'Native host diagnostic controls of actual bundled OpenCC/Marisa; not Android runtime or final release acceptance','inputs':{str(p):sha(p) for p in [Path(__file__),DRAFT/'opencc_resource_control.cpp',THIRD,SAFETY]},'variants':{},'steps':[]}
+report={'status':'running','control_passed':False,'purpose':'Native host diagnostic controls of actual bundled OpenCC/Marisa; not Android runtime or final release acceptance','compiler_workers':args.workers,'inputs':{str(p):sha(p) for p in [Path(__file__),DRAFT/'opencc_resource_control.cpp',THIRD,SAFETY]},'variants':{},'steps':[]}
 write(OUT/'report.json',report)
 compiler=shutil.which('clang++');cmake=shutil.which('cmake');ninja=shutil.which('ninja');assert compiler and cmake and ninja
 write(OUT/'tools.json',{name:{'path':path,'sha256':sha(Path(path).resolve()),'version':subprocess.check_output([path,'--version'],text=True).splitlines()[0]} for name,path in [('compiler',compiler),('cmake',cmake),('ninja',ninja)]})
@@ -53,12 +55,12 @@ try:
   source_before={str(p.relative_to(copy)):sha(p) for p in copy.rglob('*') if p.is_file()};write(folder/'source-before.json',source_before)
   assert source_before==source_baseline, 'Copied OpenCC source differs from the immutable baseline'
   adapt=folder/'adapt.cmake'
-  # Write the Python3 adaptation using a CMake bracket argument to avoid nested quote ambiguity.
-  data_before='find_package(PythonInterp REQUIRED)';data_after='find_package(Python3 REQUIRED COMPONENTS Interpreter)\nset(PYTHON_EXECUTABLE "${Python3_EXECUTABLE}")'
-  adapt.write_text(f'include("{THIRD}")\ninclude("{SAFETY}")\ntrime_replace_dependency_cmake("{copy}/CMakeLists.txt" "cmake_minimum_required(VERSION 3.5)" "cmake_minimum_required(VERSION 3.5...3.10)")\ntrime_replace_dependency_cmake("{copy}/data/CMakeLists.txt" [=[{data_before}]=] [=[{data_after}]=])\n'+(f'trime_adapt_opencc_resources("{copy}/src")\n' if variant=='patched' else ''))
+  # OpenCC 1.4.2 already uses CMake 3.12 and host FindPython3; validate both
+  # without rewriting upstream's current declarations or generation commands.
+  adapt.write_text(f'include("{THIRD}")\ninclude("{SAFETY}")\ntrime_validate_opencc_cmake("{copy}")\n'+(f'trime_adapt_opencc_resources("{copy}/src")\n' if variant=='patched' else ''))
   assert run([cmake,'-P',str(adapt)],folder/'adapt.log',timeout=60)==0
   source_after={str(p.relative_to(copy)):sha(p) for p in copy.rglob('*') if p.is_file()};write(folder/'source-after.json',source_after)
-  changed=[p for p in source_after if source_before[p]!=source_after[p]];assert set(changed)==({'CMakeLists.txt','data/CMakeLists.txt'}|({'src/MarisaDict.cpp','src/SerializableDict.hpp'} if variant=='patched' else set()))
+  changed=[p for p in source_after if source_before[p]!=source_after[p]];assert set(changed)==({'src/MarisaDict.cpp','src/SerializableDict.hpp'} if variant=='patched' else set())
   shutil.copy2(DRAFT/'opencc_resource_control.cpp',folder/'resource_control.cpp')
   (folder/'CMakeLists.txt').write_text(f'''cmake_minimum_required(VERSION 3.10...3.31)
 project(trime_opencc_resource_control LANGUAGES CXX)
@@ -80,7 +82,7 @@ target_link_libraries(resource_control PRIVATE libopencc)
 ''')
   build=folder/'build'
   assert run([cmake,'-S',str(folder),'-B',str(build),'-G','Ninja','-DCMAKE_BUILD_TYPE=RelWithDebInfo','-DCMAKE_CXX_COMPILER='+compiler],folder/'configure.log',timeout=180)==0
-  assert run([cmake,'--build',str(build),'--target','resource_control','--parallel','2'],folder/'build.log',timeout=1200)==0
+  assert run([cmake,'--build',str(build),'--target','resource_control','--parallel',str(args.workers)],folder/'build.log',timeout=1200)==0
   exe=build/'resource_control';variant_report={'source_changes':changed,'source_map_before_sha256':sha(folder/'source-before.json'),'source_map_after_sha256':sha(folder/'source-after.json'),'executable_sha256':sha(exe),'scenarios':{}};report['variants'][variant]=variant_report
   env=dict(os.environ);env['ASAN_OPTIONS']='detect_leaks=1:halt_on_error=1:exitcode=86';env['LSAN_OPTIONS']='exitcode=87:report_objects=1'
   for scenario in ['direct-header','config-header','config-text','writer']:

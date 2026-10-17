@@ -22,6 +22,8 @@ RIME_FILES = [
     "rime/gear/ascii_composer.h",
     "rime/gear/ascii_composer.cc",
     "rime/gear/chord_composer.cc",
+    "rime/gear/streaming_chord_processor.h",
+    "rime/gear/streaming_chord_processor.cc",
     "rime/gear/key_binder.h",
     "rime/gear/key_binder.cc",
     "rime/gear/navigator.h",
@@ -148,8 +150,8 @@ class RimePrivacyCmakeTest(unittest.TestCase):
 
         self.assertEqual(originals, {path: path.read_bytes() for path in originals})
         core = (self.root / "build/core.txt").read_text().split(";")
-        self.assertEqual(len(core), 14)
-        self.assertEqual(sum("/trime-rime-privacy/" in path for path in core), 11)
+        self.assertEqual(len(core), 15)
+        self.assertEqual(sum("/trime-rime-privacy/" in path for path in core), 12)
         self.assertEqual(sum(path.endswith("/trime_privacy_guard.cc") for path in core), 1)
         self.assertIn("untouched.cc", core)
         self.assertEqual(sum(path.endswith("/trime_prediction_guard.cc") for path in core), 1)
@@ -171,6 +173,8 @@ class RimePrivacyCmakeTest(unittest.TestCase):
         ascii_header = (overlay / "rime/gear/ascii_composer.h").read_text()
         ascii_composer = (overlay / "rime/gear/ascii_composer.cc").read_text()
         chord = (overlay / "rime/gear/chord_composer.cc").read_text()
+        streaming_header = (overlay / "rime/gear/streaming_chord_processor.h").read_text()
+        streaming = (overlay / "rime/gear/streaming_chord_processor.cc").read_text()
         key_binder_header = (overlay / "rime/gear/key_binder.h").read_text()
         key_binder = (overlay / "rime/gear/key_binder.cc").read_text()
         navigator_header = (overlay / "rime/gear/navigator.h").read_text()
@@ -183,7 +187,9 @@ class RimePrivacyCmakeTest(unittest.TestCase):
         self.assertIn("unhandled_key_output_notifier()", context_header)
         self.assertIn("KeyEventNotifier unhandled_key_output_notifier_;", context_header)
         self.assertIn("context_->unhandled_key_output_notifier()", engine)
-        self.assertEqual(engine.count("if (!trime::IsPrivacyModeEnabled())"), 4)
+        self.assertIn("if (!synthetic && !trime::IsPrivacyModeEnabled())", engine)
+        self.assertEqual(engine.count("if (!trime::IsPrivacyModeEnabled())"), 3)
+        self.assertEqual(engine.count("if (!synthetic && !trime::IsPrivacyModeEnabled())"), 1)
         self.assertIn('context_->set_option("prediction", trime::IsPredictionRequested() &&', engine)
         self.assertIn('!context_->get_option("ascii_mode"));', engine)
         self.assertIn("void ResetPrivacyContexts(bool enabled);", service_header)
@@ -199,9 +205,15 @@ class RimePrivacyCmakeTest(unittest.TestCase):
         self.assertIn("void OnPrivacyContextUpdate(Context* ctx);", ascii_header)
         self.assertIn("connection privacy_connection_;", ascii_header)
         self.assertEqual(ascii_composer.count("trime::IsPrivacyTransitionBoundary()"), 1)
-        self.assertIn("if (connection_.connected())", ascii_composer)
+        self.assertIn("if (had_inline_ascii)", ascii_composer)
         self.assertIn('ctx->set_option("ascii_mode", false)', ascii_composer)
-        self.assertIn("toggle_expired_ = TimePoint{}", ascii_composer)
+        self.assertIn("toggle_expired_ = std::chrono::steady_clock::time_point{}", ascii_composer)
+        self.assertIn("ctx->commit_output_notifier().connect(", ascii_composer)
+        self.assertNotIn("ctx->commit_notifier().connect(", ascii_composer)
+        ascii_boundary = ascii_composer.split("void AsciiComposer::OnPrivacyContextUpdate", 1)[1]
+        for state in ["raw_keys_.clear()", "cached_input_.clear()", "cached_raw_keys_.clear()",
+                      "is_inline_ascii_ = false", "ResetModifierState()"]:
+            self.assertIn(state, ascii_boundary)
         self.assertEqual(chord.count("trime::IsPrivacyTransitionBoundary()"), 1)
         self.assertGreaterEqual(chord.count("raw_sequence_.clear()"), 5)
         self.assertGreaterEqual(chord.count("state_.Clear()"), 3)
@@ -212,9 +224,20 @@ class RimePrivacyCmakeTest(unittest.TestCase):
             "  if (trime::IsPrivacyModeEnabled())",
             chord,
         )
+        self.assertIn("~StreamingChordProcessor() override;", streaming_header)
+        self.assertIn("privacy_connection_.disconnect()", streaming)
+        self.assertEqual(streaming.count("trime::IsPrivacyTransitionBoundary()"), 1)
+        streaming_boundary = streaming.split("void StreamingChordProcessor::OnPrivacyContextUpdate", 1)[1].split(
+            "void StreamingChordProcessor::ResetTracking", 1)[0]
+        for state in ["last_key_event_ = {}", "pending_solo_key_ = {}", "pressed_chord_keys_.clear()",
+                      "current_chord_start_ = 0", "is_chord_open_ = false", "is_replaying_ = false"]:
+            self.assertIn(state, streaming_boundary)
+        self.assertNotIn("ReplayPendingKey()", streaming_boundary)
+        self.assertNotIn("ProcessSyntheticKey(", streaming_boundary)
         self.assertIn("virtual ~KeyBinder();", key_binder_header)
         self.assertIn("class Context;", key_binder_header)
-        self.assertGreaterEqual(key_binder.count("last_key_ = 0"), 2)
+        self.assertGreaterEqual(key_binder.count("last_paging_key_ = 0"), 2)
+        self.assertIn("paging_keystroke_count_ = 0", key_binder)
         self.assertNotIn("trime::IsPrivacyModeEnabled()", key_binder)
         self.assertEqual(key_binder.count("trime::IsPrivacyTransitionBoundary()"), 1)
         self.assertIn("update_connection_.disconnect()", key_binder)
@@ -348,6 +371,16 @@ class RimePrivacyCmakeTest(unittest.TestCase):
             )
         )
         result = self.configure(build="build-punctuator-drift")
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("Re-audit", result.stderr)
+
+    def test_streaming_chord_drift_is_not_silently_ignored(self):
+        source = self.root / "librime/src/rime/gear/streaming_chord_processor.cc"
+        source.write_text(source.read_text().replace(
+            "void StreamingChordProcessor::ResetTracking() {",
+            "void StreamingChordProcessor::ResetTracking(bool force) {",
+        ))
+        result = self.configure(build="build-streaming-drift")
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("Re-audit", result.stderr)
 
