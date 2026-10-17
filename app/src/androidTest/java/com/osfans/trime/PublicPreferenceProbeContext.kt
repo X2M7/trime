@@ -19,8 +19,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.DialogFragment
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
-import com.osfans.trime.daemon.RimeDaemon
 import com.osfans.trime.core.RimeLifecycle
+import com.osfans.trime.daemon.RimeDaemon
 import com.osfans.trime.data.prefs.AppPrefs
 import com.osfans.trime.ime.core.EditorPolicy
 import com.osfans.trime.quality.MigratedPreferenceDialogFixture
@@ -76,10 +76,18 @@ internal class PublicPreferenceProbeContext(val instrumentation: Instrumentation
     val memory: PreferenceProbeMemory get() = PreferenceProbeFixtures.require(checkNotNull(fixtureToken))
     var failure: Throwable? = null
     private val callbacks = object : Application.ActivityLifecycleCallbacks {
-        override fun onActivityCreated(activity: Activity, state: Bundle?) { created += activity }
-        override fun onActivityResumed(activity: Activity) { resumed += activity }
-        override fun onActivityPaused(activity: Activity) { resumed -= activity }
-        override fun onActivityDestroyed(activity: Activity) { resumed -= activity }
+        override fun onActivityCreated(activity: Activity, state: Bundle?) {
+            created += activity
+        }
+        override fun onActivityResumed(activity: Activity) {
+            resumed += activity
+        }
+        override fun onActivityPaused(activity: Activity) {
+            resumed -= activity
+        }
+        override fun onActivityDestroyed(activity: Activity) {
+            resumed -= activity
+        }
         override fun onActivityStarted(activity: Activity) = Unit
         override fun onActivityStopped(activity: Activity) = Unit
         override fun onActivitySaveInstanceState(activity: Activity, state: Bundle) = Unit
@@ -117,7 +125,9 @@ internal class PublicPreferenceProbeContext(val instrumentation: Instrumentation
             val result = if (it.moveToFirst()) {
                 check(it.getString(it.getColumnIndexOrThrow("name")) == key)
                 true to it.getString(it.getColumnIndexOrThrow("value"))
-            } else false to null
+            } else {
+                false to null
+            }
             check(result.second == Settings.Secure.getString(context.contentResolver, key))
             result
         }
@@ -130,14 +140,23 @@ internal class PublicPreferenceProbeContext(val instrumentation: Instrumentation
         val store = prefs.advanced.uiMode.sharedPreferences
         val values = store.all
         // Only the four explicit keys are an equality gate; never rewrite or normalize them.
-        return listOf(prefs.advanced.uiMode.key, prefs.keyboard.manualLanguageMode.key,
-            prefs.general.manualPrivacyMode.key, prefs.general.asciiSwitchTips.key).associateWith { key ->
+        return listOf(
+            prefs.advanced.uiMode.key,
+            prefs.keyboard.manualLanguageMode.key,
+            prefs.general.manualPrivacyMode.key,
+            prefs.general.asciiSwitchTips.key,
+        ).associateWith { key ->
             store.contains(key) to values[key]
         }
     }
     private fun editorPreferencesJson(values: Map<String, Pair<Boolean, Any?>>): JSONObject = JSONObject().apply {
-        values.forEach { (key, state) -> put(key, JSONObject().put("exists", state.first)
-            .put("type", state.second?.javaClass?.name ?: JSONObject.NULL).put("value", state.second ?: JSONObject.NULL)) }
+        values.forEach { (key, state) ->
+            put(
+                key,
+                JSONObject().put("exists", state.first)
+                    .put("type", state.second?.javaClass?.name ?: JSONObject.NULL).put("value", state.second ?: JSONObject.NULL),
+            )
+        }
     }
     private fun fragmentShape(): List<String> = checkNotNull(activity).supportFragmentManager.fragments
         .filter { it.tag != fixtureTag && it.tag != DIALOG_TAG }
@@ -170,12 +189,17 @@ internal class PublicPreferenceProbeContext(val instrumentation: Instrumentation
         }
         baselineSessions = main { sessionNames() }
         check(checkNotNull(baselineSessions).none { it == MainViewModel::class.java.name }) { "Existing Main owner must not be reused" }
-        check(checkNotNull(baselineSessions).size == 1 && checkNotNull(baselineSessions).all {
-            it.startsWith("com.osfans.trime.ime.core.TrimeInputMethodService#")
-        }) { "Exactly one already-bound selected IME owner and no unknown owners required" }
+        check(
+            checkNotNull(baselineSessions).size == 1 && checkNotNull(baselineSessions).all {
+                it.startsWith("com.osfans.trime.ime.core.TrimeInputMethodService#")
+            },
+        ) { "Exactly one already-bound selected IME owner and no unknown owners required" }
         await("The already-bound IME did not become READY before preference windows") { RimeDaemon.engineState.value == RimeLifecycle.State.READY }
         check(!directory.exists() && directory.mkdirs())
-        main { (context.applicationContext as Application).registerActivityLifecycleCallbacks(callbacks); registered = true }
+        main {
+            (context.applicationContext as Application).registerActivityLifecycleCallbacks(callbacks)
+            registered = true
+        }
         report.put("api", Build.VERSION.SDK_INT).put("pid", android.os.Process.myPid()).put("code_sha", expectedCode)
         report.put("default_ime_before", JSONObject().put("exists", baselineIme!!.first).put("value", baselineIme!!.second))
             .put("sessions_before", JSONArray(checkNotNull(baselineSessions).sorted()))
@@ -196,7 +220,10 @@ internal class PublicPreferenceProbeContext(val instrumentation: Instrumentation
                 activity?.let(::ready) == true
             }
         }
-        main { check(created.none { it is AppCompatActivity }); baselineFragments = fragmentShape() }
+        main {
+            check(created.none { it is AppCompatActivity })
+            baselineFragments = fragmentShape()
+        }
     }
     fun newOwner(legacy: Boolean) {
         removeOwner()
@@ -227,13 +254,15 @@ internal class PublicPreferenceProbeContext(val instrumentation: Instrumentation
         val rawPrivacy = privacyPreference.sharedPreferences.all[privacyPreference.key]
         check(rawPrivacy == null || rawPrivacy is Boolean) { "Malformed manual privacy policy; never normalize the saved preference" }
         val manualPrivacy = rawPrivacy as? Boolean ?: privacyPreference.defaultValue
-        windows.put(JSONObject().put("label", label).put("fragment_class", dialogFragment()!!.javaClass.name)
-            .put("dialog_class", dialog().javaClass.name).put("owner_class", owner().javaClass.name)
-            .put("main_instance", System.identityHashCode(activity)).put("same_process_pid", android.os.Process.myPid())
-            .put("actual_editor_class", editor?.javaClass?.name ?: JSONObject.NULL)
-            .put("editor_input_type", editor?.inputType ?: JSONObject.NULL).put("editor_ime_options", editor?.imeOptions ?: JSONObject.NULL)
-            .put("computed_editor_keyboard_policy", editor?.let { EditorPolicy.keyboard(it.inputType, it.imeOptions).name } ?: JSONObject.NULL)
-            .put("computed_editor_privacy_active", editor?.let { EditorPolicy.privacy(it.inputType, it.imeOptions, manualPrivacy).active } ?: JSONObject.NULL))
+        windows.put(
+            JSONObject().put("label", label).put("fragment_class", dialogFragment()!!.javaClass.name)
+                .put("dialog_class", dialog().javaClass.name).put("owner_class", owner().javaClass.name)
+                .put("main_instance", System.identityHashCode(activity)).put("same_process_pid", android.os.Process.myPid())
+                .put("actual_editor_class", editor?.javaClass?.name ?: JSONObject.NULL)
+                .put("editor_input_type", editor?.inputType ?: JSONObject.NULL).put("editor_ime_options", editor?.imeOptions ?: JSONObject.NULL)
+                .put("computed_editor_keyboard_policy", editor?.let { EditorPolicy.keyboard(it.inputType, it.imeOptions).name } ?: JSONObject.NULL)
+                .put("computed_editor_privacy_active", editor?.let { EditorPolicy.privacy(it.inputType, it.imeOptions, manualPrivacy).active } ?: JSONObject.NULL),
+        )
     }
     fun show(kind: String, expectedClass: String) {
         marker("${kind}_show_begin")
@@ -257,7 +286,11 @@ internal class PublicPreferenceProbeContext(val instrumentation: Instrumentation
                     visibleDialog(expectedClass)
             }
         }
-        main { check(fragmentShape() == baselineFragments); check(owner().isAdded); recordWindow("restored") }
+        main {
+            check(fragmentShape() == baselineFragments)
+            check(owner().isAdded)
+            recordWindow("restored")
+        }
         marker("restore_transition_end")
     }
     fun awaitDismissed() = await("Owned dialog was not normally removed") { main { dialogFragment() == null } }
@@ -288,7 +321,9 @@ internal class PublicPreferenceProbeContext(val instrumentation: Instrumentation
             val file = File(directory, "$label.png")
             file.outputStream().use { check(pair.first.compress(Bitmap.CompressFormat.PNG, 100, it)) }
             images.put(binding(file).put("draw_barrier", pair.second).put("human_reviewed", false))
-        } finally { pair.first.recycle() }
+        } finally {
+            pair.first.recycle()
+        }
     }
     fun passed(label: String) {
         check(SystemClock.uptimeMillis() <= workDeadline) { "Logical group completed after work deadline" }
@@ -298,11 +333,18 @@ internal class PublicPreferenceProbeContext(val instrumentation: Instrumentation
     private fun binding(file: File): JSONObject = JSONObject().put("path", file.absolutePath).put("bytes", file.length()).put("sha256", MessageDigest.getInstance("SHA-256").digest(file.readBytes()).joinToString("") { "%02x".format(it) })
 
     private fun clean(block: () -> Unit) {
-        try { check(SystemClock.uptimeMillis() <= deadline); block(); check(SystemClock.uptimeMillis() <= deadline) }
-        catch (error: Throwable) {
+        try {
+            check(SystemClock.uptimeMillis() <= deadline)
+            block()
+            check(SystemClock.uptimeMillis() <= deadline)
+        } catch (error: Throwable) {
             cleanupErrors.put(error.stackTraceToString())
             val primary = failure
-            if (primary == null) failure = error else if (primary !== error) primary.addSuppressed(error)
+            if (primary == null) {
+                failure = error
+            } else if (primary !== error) {
+                primary.addSuppressed(error)
+            }
         }
     }
     fun cleanupAndReport(): Bundle {
@@ -317,27 +359,59 @@ internal class PublicPreferenceProbeContext(val instrumentation: Instrumentation
             fixtureToken = null
             fixtureTag = null
         }
-        baselineSessions?.let { initial -> clean {
-            await("Rime owner set and READY state did not restore") { main { sessionNames() == initial } && RimeDaemon.engineState.value == RimeLifecycle.State.READY }
-            sessionsAfter = main { sessionNames().sorted() }
-            sessionsRestored = true
-        } }
-        baselineIme?.let { initial -> clean { check(ime() == initial); imeRestored = true } }
-        baselineMode?.let { initial -> clean { val p = AppPrefs.defaultInstance().advanced.uiMode; check((p.sharedPreferences.contains(p.key) to p.sharedPreferences.all[p.key]) == initial); modeRestored = true } }
-        baselineEditorPreferences?.let { initial -> clean {
-            val after = editorPreferences()
-            report.put("editor_preferences_after", editorPreferencesJson(after))
-            check(after == initial) { "A protected editor policy/tips preference changed; probe never restores or normalizes it" }
-            editorPreferencesUnchanged = true
-        } }
-        baselineGrants?.let { initial -> clean { check(grants() == initial); grantsRestored = true } }
-        if (registered) clean { main { (context.applicationContext as Application).unregisterActivityLifecycleCallbacks(callbacks) }; registered = false }
+        baselineSessions?.let { initial ->
+            clean {
+                await("Rime owner set and READY state did not restore") { main { sessionNames() == initial } && RimeDaemon.engineState.value == RimeLifecycle.State.READY }
+                sessionsAfter = main { sessionNames().sorted() }
+                sessionsRestored = true
+            }
+        }
+        baselineIme?.let { initial ->
+            clean {
+                check(ime() == initial)
+                imeRestored = true
+            }
+        }
+        baselineMode?.let { initial ->
+            clean {
+                val p = AppPrefs.defaultInstance().advanced.uiMode
+                check((p.sharedPreferences.contains(p.key) to p.sharedPreferences.all[p.key]) == initial)
+                modeRestored = true
+            }
+        }
+        baselineEditorPreferences?.let { initial ->
+            clean {
+                val after = editorPreferences()
+                report.put("editor_preferences_after", editorPreferencesJson(after))
+                check(after == initial) { "A protected editor policy/tips preference changed; probe never restores or normalizes it" }
+                editorPreferencesUnchanged = true
+            }
+        }
+        baselineGrants?.let { initial ->
+            clean {
+                check(grants() == initial)
+                grantsRestored = true
+            }
+        }
+        if (registered) {
+            clean {
+                main { (context.applicationContext as Application).unregisterActivityLifecycleCallbacks(callbacks) }
+                registered = false
+            }
+        }
         clean {
             main {
                 // Assert true destruction BEFORE releasing strong references, never hide a live window.
                 check(!registered && created.all { it.isDestroyed } && (activity == null || checkNotNull(activity).isDestroyed))
-                report.put("owned_activities_at_release", JSONArray(created.map { owned -> JSONObject()
-                    .put("class", owned.javaClass.name).put("identity", System.identityHashCode(owned)).put("destroyed", owned.isDestroyed) }))
+                report.put(
+                    "owned_activities_at_release",
+                    JSONArray(
+                        created.map { owned ->
+                            JSONObject()
+                                .put("class", owned.javaClass.name).put("identity", System.identityHashCode(owned)).put("destroyed", owned.isDestroyed)
+                        },
+                    ),
+                )
                 created.clear()
                 resumed.clear()
                 activity = null
@@ -361,7 +435,12 @@ internal class PublicPreferenceProbeContext(val instrumentation: Instrumentation
     }
     private fun parcelSize(result: Bundle): Int {
         val parcel = Parcel.obtain()
-        return try { result.writeToParcel(parcel, 0); parcel.dataSize() } finally { parcel.recycle() }
+        return try {
+            result.writeToParcel(parcel, 0)
+            parcel.dataSize()
+        } finally {
+            parcel.recycle()
+        }
     }
     private fun bundleFor(payload: JSONObject, file: File): Bundle = Bundle().apply {
         val json = payload.toString()
@@ -380,9 +459,12 @@ internal class PublicPreferenceProbeContext(val instrumentation: Instrumentation
         if (SystemClock.uptimeMillis() > deadline && failure == null) failure = IllegalStateException("Total/cleanup budget exceeded")
         report.put("cleanup_complete", cleanupErrors.length() == 0).put("passed", failure == null).put("automatic_reuse_allowed", failure == null)
         failure?.let { report.put("error", it.stackTraceToString()) }
-        if (!directory.isDirectory) return Bundle().apply {
-            putBoolean("passed", false); putBoolean("automatic_reuse_allowed", false)
-            putString("error", "Preflight refused before report directory creation")
+        if (!directory.isDirectory) {
+            return Bundle().apply {
+                putBoolean("passed", false)
+                putBoolean("automatic_reuse_allowed", false)
+                putString("error", "Preflight refused before report directory creation")
+            }
         }
         val file = File(directory, "report.json")
         var result = bundleFor(report, file)
@@ -414,5 +496,7 @@ internal class PublicPreferenceProbeContext(val instrumentation: Instrumentation
         }
         return result
     }
-    companion object { const val DIALOG_TAG = "androidx.preference.PreferenceFragment.DIALOG" }
+    companion object {
+        const val DIALOG_TAG = "androidx.preference.PreferenceFragment.DIALOG"
+    }
 }
