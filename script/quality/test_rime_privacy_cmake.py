@@ -238,6 +238,9 @@ class RimePrivacyCmakeTest(unittest.TestCase):
         self.assertIn("class Context;", key_binder_header)
         self.assertGreaterEqual(key_binder.count("last_paging_key_ = 0"), 2)
         self.assertIn("paging_keystroke_count_ = 0", key_binder)
+        self.assertNotIn("std::isalpha(ch)", key_binder)
+        self.assertIn("(ch >= 'a' && ch <= 'z')", key_binder)
+        self.assertIn("(ch >= 'A' && ch <= 'Z')", key_binder)
         self.assertNotIn("trime::IsPrivacyModeEnabled()", key_binder)
         self.assertEqual(key_binder.count("trime::IsPrivacyTransitionBoundary()"), 1)
         self.assertIn("update_connection_.disconnect()", key_binder)
@@ -381,6 +384,15 @@ class RimePrivacyCmakeTest(unittest.TestCase):
             "void StreamingChordProcessor::ResetTracking(bool force) {",
         ))
         result = self.configure(build="build-streaming-drift")
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("Re-audit", result.stderr)
+
+    def test_paging_ctype_source_drift_is_not_silently_ignored(self):
+        source = self.root / "librime/src/rime/gear/key_binder.cc"
+        source.write_text(source.read_text().replace(
+            "std::isalpha(ch)", "std::isalpha(static_cast<unsigned char>(ch))",
+        ))
+        result = self.configure(build="build-paging-ctype-drift")
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("Re-audit", result.stderr)
 

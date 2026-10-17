@@ -390,6 +390,8 @@ void StreamingChordProcessor::ResetTracking() {
   trime_replace_dependency_cmake("${root}/rime/gear/key_binder.cc"
     "#include <rime/gear/key_binder.h>"
     "#include <rime/gear/key_binder.h>\n\n#include \"trime_privacy_guard.h\"")
+  include("${CMAKE_CURRENT_FUNCTION_LIST_DIR}/RimeKeyBinderCompat.cmake")
+  trime_adapt_key_binder_ascii("${root}/rime/gear/key_binder.cc")
   trime_replace_dependency_cmake("${root}/rime/gear/key_binder.cc"
     [=[KeyBinder::KeyBinder(const Ticket& ticket)
     : Processor(ticket), key_bindings_(new KeyBindings) {
