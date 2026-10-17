@@ -180,9 +180,12 @@ class OpenCCDataPlugin : Plugin<Project> {
                 val source = dictionary.resolve("$name.txt")
                 when {
                     generated != null -> generate(name, generated, dictionary)
+
                     source.isFile -> source.copyTo(output.resolve("$name.txt"), overwrite = true)
+
                     name == "STPhrases_GeneratedFromRegionalPhrases" ->
                         regionalPhrasesFile.get().asFile.copyTo(output.resolve("$name.txt"), overwrite = true)
+
                     else -> unpackaged += name
                 }
             }
