@@ -18,7 +18,7 @@ from release import (ROOT, binding, git, metadata, pages, repositories, require,
 
 def read_bound(row):
     verify_binding(row)
-    return json.loads(Path(row['path']).read_text())
+    return json.loads(Path(row['path']).read_text(encoding="utf-8"))
 
 
 def validate_apk_history(history, meta):
@@ -42,7 +42,7 @@ def validate_apk_history(history, meta):
 
 
 def qualification(path):
-    q = json.loads(path.read_text())
+    q = json.loads(path.read_text(encoding="utf-8"))
     require(q.get('format_version') == 1 and q.get('task') == 'T14', 'Unknown qualification format')
     record = read_bound(q['build_record'])
     meta = metadata()
@@ -64,7 +64,7 @@ def qualification(path):
                 not phase.get('freeze_error'), 'Incomplete or mismatched build')
         for key in ('environment', 'command', 'log'):
             verify_binding(phase[key])
-        require(not re.search(r'(?im)^(?:w:|warning:|.*\bWARNING\b)', Path(phase['log']['path']).read_text()), 'Unresolved build warning')
+        require(not re.search(r'(?im)^(?:w:|warning:|.*\bWARNING\b)', Path(phase['log']['path']).read_text(encoding="utf-8")), 'Unresolved build warning')
     require(record['build_result'] in q['build_results'], 'Inspected Release differs from qualified build')
     tests = 0
     require(q['unit_tests'] == phases['debug']['unit_tests'] and q['lint'] == phases['lint']['lint'],
@@ -147,7 +147,7 @@ def stage(args):
 
 
 def load_manifest(path):
-    m = json.loads(path.read_text())
+    m = json.loads(path.read_text(encoding="utf-8"))
     meta = metadata()
     require(m['format_version'] == 1 and m['tag'] == meta['tag'] and m['repository'] == 'X2M7/trime' and m['stable'] is True,
             'Only qualified stable X2M7/trime releases are supported; experiments need a separate prerelease')

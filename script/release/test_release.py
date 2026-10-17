@@ -495,10 +495,37 @@ class PagesTests(unittest.TestCase):
         with patch.object(release, "ROOT", self.root):
             release.pages()
             release.pages(check=True)
-        data = json.loads((self.root / "docs/release.json").read_text())
+        data = json.loads((self.root / "docs/release.json").read_text(encoding="utf-8"))
         self.assertEqual(data["release_url"], "https://github.com/X2M7/trime/releases/tag/v3.3.13-t9.17")
         self.assertIn("线上发布状态", data["status"])
         self.assertNotIn("已发布", data["status"])
+
+    def test_utf8_pages_round_trip_with_windows_legacy_text_defaults(self):
+        template = "<p>“虚构中文版本”\u2014@@VERSION_NAME@@</p><p>@@RELEASE_STATUS@@</p>"
+        (self.root / "docs/index.template.html").write_bytes(template.encode("utf-8"))
+        real_read, real_write = Path.read_text, Path.write_text
+
+        def legacy_read(path, *args, **kwargs):
+            if not args and "encoding" not in kwargs:
+                kwargs["encoding"] = "cp1252"
+            return real_read(path, *args, **kwargs)
+
+        def legacy_write(path, data, *args, **kwargs):
+            if not args and "encoding" not in kwargs:
+                kwargs["encoding"] = "cp1252"
+            return real_write(path, data, *args, **kwargs)
+
+        with patch.object(release, "ROOT", self.root), \
+                patch.object(Path, "read_text", new=legacy_read), \
+                patch.object(Path, "write_text", new=legacy_write):
+            release.pages()
+            release.pages(check=True)
+
+        page = (self.root / "docs/index.html").read_bytes().decode("utf-8")
+        data = json.loads((self.root / "docs/release.json").read_bytes())
+        self.assertIn("“虚构中文版本”\u20143.3.13-t9.17", page)
+        self.assertIn(release.page_data(release.metadata(self.root / "release.properties"))["status"], page)
+        self.assertEqual(data, release.page_data(release.metadata(self.root / "release.properties")))
 
     def test_stale_generated_page_or_unknown_template_token_is_rejected(self):
         with patch.object(release, "ROOT", self.root):

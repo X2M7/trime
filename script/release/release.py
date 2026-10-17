@@ -38,7 +38,7 @@ def require(condition, message):
 
 def metadata(path=None):
     values = {}
-    for line in (path or ROOT / "release.properties").read_text().splitlines():
+    for line in (path or ROOT / "release.properties").read_text(encoding="utf-8").splitlines():
         if not line.strip() or line.lstrip().startswith("#"):
             continue
         require(re.fullmatch(r"[A-Za-z][A-Za-z0-9]*=[A-Za-z0-9.,/_-]+", line), "Use plain key=value metadata")
@@ -185,17 +185,17 @@ def build_record(args):
     args.output.mkdir(parents=True)
     source = repositories()
     build_binding = binding(args.build_result)
-    build = json.loads(args.build_result.read_text())
+    build = json.loads(args.build_result.read_text(encoding="utf-8"))
     require(binding(args.build_result) == build_binding, "Build result changed while reading")
     require(build["phase"] == "release" and build["exit_code"] == 0 and build["stopped_reason"] is None and
             build["source_unchanged"] and build["build_git_sha"] == source[""] and not build.get("freeze_error"), "APK build does not match current source")
     for key in ("environment", "command", "log", "build_config", "source", "metadata"):
         verify_binding(build[key])
-    require(json.loads(Path(build["source"]["path"]).read_text()) == source and
+    require(json.loads(Path(build["source"]["path"]).read_text(encoding="utf-8")) == source and
             build["metadata"] == binding(ROOT / "release.properties"), "Recorded build inputs differ")
-    env = json.loads(Path(build["environment"]["path"]).read_text())
+    env = json.loads(Path(build["environment"]["path"]).read_text(encoding="utf-8"))
     require(env["BUILD_COMMIT_HASH"] == source[""] and env["BUILD_VERSION_NAME"] == meta["versionName"], "Build identity differs")
-    config = Path(build["build_config"]["path"]).read_text()
+    config = Path(build["build_config"]["path"]).read_text(encoding="utf-8")
     require(f'BUILD_COMMIT_HASH = "{source[""]}";' in config and
             f'VERSION_NAME = "{meta["versionName"]}";' in config and 'DEBUG = false;' in config,
             "Generated Release BuildConfig differs")
@@ -212,7 +212,7 @@ def build_record(args):
         for name in git("ls-files", "-z", cwd=folder).decode().split("\0"):
             if name.endswith(".dict.yaml") and (folder / name).is_file():
                 p = folder / name
-                declared = re.search(r"(?m)^version:\s*(.+)$", p.read_text())
+                declared = re.search(r"(?m)^version:\s*(.+)$", p.read_text(encoding="utf-8"))
                 dictionaries.append(dict(path=str(p.relative_to(ROOT)), sha256=digest(p),
                                          declared_version=declared.group(1) if declared else None))
     require(source == repositories(), "Source changed while recording")
@@ -225,7 +225,7 @@ def build_record(args):
 
 
 def source_archive(record_path, destination, root=ROOT):
-    record = json.loads(record_path.read_text())
+    record = json.loads(record_path.read_text(encoding="utf-8"))
     require(record["inspection_passed"] is True and record["metadata"] == metadata(root / "release.properties"), "Invalid build record")
     current = repositories(root)
     build = record["build_git_sha"]
@@ -320,7 +320,7 @@ def pages(check=False):
               "APPLICATION_ID": meta["applicationId"], "CERTIFICATE_SHA256": meta["certificateSha256"],
               "ABI_LIST": " / ".join(meta["abis"]), "SOURCE_URL": data["source_url"],
               "RELEASE_URL": data["release_url"], "RELEASE_STATUS": data["status"]}
-    page = (ROOT / "docs/index.template.html").read_text()
+    page = (ROOT / "docs/index.template.html").read_text(encoding="utf-8")
     for key, value in tokens.items():
         page = page.replace("@@" + key + "@@", html.escape(value, quote=True))
     require(not re.search(r"@@[A-Z_]+@@", page), "Unresolved Pages template token")
@@ -328,9 +328,9 @@ def pages(check=False):
     for name, content in (("index.html", page), ("release.json", rendered_data)):
         target = ROOT / "docs" / name
         if check:
-            require(target.exists() and target.read_text() == content, "Regenerate Pages from release.properties: " + name)
+            require(target.exists() and target.read_text(encoding="utf-8") == content, "Regenerate Pages from release.properties: " + name)
         else:
-            target.write_text(content)
+            target.write_text(content, encoding="utf-8")
 
 
 def main():
