@@ -100,9 +100,11 @@ class OpenCCDataPlugin : Plugin<Project> {
             execOperations.exec {
                 commandLine(
                     cmake, "-S", sourceDir.get().asFile.absolutePath, "-B", output.absolutePath,
-                    "-DCMAKE_BUILD_TYPE=Release", "-DBUILD_SHARED_LIBS=OFF", "-DBUILD_TESTING=OFF",
+                    "-DCMAKE_BUILD_TYPE=Release", "-DBUILD_SHARED_LIBS=OFF", "-DENABLE_GTEST=OFF",
                     "-DBUILD_DOCUMENTATION=OFF", "-DOPENCC_ENABLE_INSTALL=OFF",
                     "-DBUILD_OPENCC_JIEBA_PLUGIN=OFF", "-DOPENCC_DICT_FORMAT=text",
+                    // Match the public pointer-iterator API already used by Android's OpenCC.
+                    "-DCMAKE_CXX_FLAGS=-DRAPIDJSON_NOMEMBERITERATORCLASS",
                 )
             }.assertNormalExitValue()
             execOperations.exec {
