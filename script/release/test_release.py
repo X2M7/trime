@@ -293,13 +293,13 @@ class SourceArchiveTests(unittest.TestCase):
     def test_recursive_submodule_files_present_and_dirty_checkout_rejected(self):
         child = self.base / "child"
         initialize(child)
-        (child / "native.c").write_text("int native_value = 7;\n")
+        (child / "native.c").write_bytes(b"int native_value = 7;\n")
         commit(child)
         git(self.root, "submodule", "add", "-q", str(child), "deps/native")
         commit(self.root)
         _, _, content = self.archive()
         self.assertEqual(content["deps/native/native.c"], b"int native_value = 7;\n")
-        (self.root / "deps/native/native.c").write_text("int native_value = 8;\n")
+        (self.root / "deps/native/native.c").write_bytes(b"int native_value = 8;\n")
         with self.assertRaises(ValueError):
             release.repositories(self.root)
 
