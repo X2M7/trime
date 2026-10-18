@@ -165,3 +165,8 @@ jobs:
           path: app/build/intermediates/merged_native_libs/debug/mergeDebugNativeLibs/out/lib/*
           # keep 90 days
           retention-days: 90
+
+      # setup-java saves Gradle caches in its post step; release Windows file locks first.
+      - name: Stop Gradle daemons before cache save
+        if: ${{ always() && runner.os == 'Windows' }}
+        run: ./gradlew --stop

@@ -149,3 +149,8 @@ jobs:
           path: app/build/outputs/apk/debug/
           # keep 30 days
           retention-days: 30
+
+      # setup-java saves Gradle caches in its post step; release Windows file locks first.
+      - name: Stop Gradle daemons before cache save
+        if: ${{ always() && runner.os == 'Windows' }}
+        run: ./gradlew --stop
