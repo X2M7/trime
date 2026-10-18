@@ -10,7 +10,7 @@ import unittest
 ROOT = Path(__file__).resolve().parents[2]
 CMAKE = os.environ.get("CMAKE_EXECUTABLE", "cmake")
 ADAPTER = ROOT / "app/src/main/jni/cmake/ThirdPartyCmake.cmake"
-OPENCC = ROOT / "app/src/main/jni/OpenCC/src"
+OPENCC = ROOT / "app/src/main/jni/librime/deps/opencc/src"
 
 
 class ThirdPartyCmakeTest(unittest.TestCase):

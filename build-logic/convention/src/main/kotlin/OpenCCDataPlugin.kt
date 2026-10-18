@@ -51,7 +51,7 @@ class OpenCCDataPlugin : Plugin<Project> {
     }
 
     private val Project.dataBaseDir
-        get() = file("src/main/jni/OpenCC/data")
+        get() = file("src/main/jni/librime/deps/opencc/data")
 
     private val Project.dataInstallDir
         get() = assetsDir.resolve("shared/opencc")
@@ -63,7 +63,7 @@ class OpenCCDataPlugin : Plugin<Project> {
 
     private fun registerInstallTask(project: Project) {
         val regionalPhrases = project.tasks.register<GenerateRegionalPhrasesTask>("generateOpenCCRegionalPhrases") {
-            sourceDir.set(project.layout.projectDirectory.dir("src/main/jni/OpenCC"))
+            sourceDir.set(project.layout.projectDirectory.dir("src/main/jni/librime/deps/opencc"))
             adaptationDir.set(project.layout.projectDirectory.dir("src/main/jni/cmake"))
             outputDir.set(project.layout.buildDirectory.dir("opencc-host"))
             cmakeExecutable.set(
