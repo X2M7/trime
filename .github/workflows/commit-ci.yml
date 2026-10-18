@@ -26,6 +26,12 @@ jobs:
           - windows-2025
     env:
       BUILD_ABI: armeabi-v7a,arm64-v8a,x86,x86_64
+      # Keep audited source bytes unchanged in the checkout and all submodules.
+      GIT_CONFIG_COUNT: '2'
+      GIT_CONFIG_KEY_0: core.autocrlf
+      GIT_CONFIG_VALUE_0: 'false'
+      GIT_CONFIG_KEY_1: core.eol
+      GIT_CONFIG_VALUE_1: lf
     steps:
       - name: Fetch source code
         uses: actions/checkout@v7
@@ -38,6 +44,9 @@ jobs:
         uses: actions/setup-python@v6
         with:
           python-version: '3.12'
+
+      - name: Verify pinned prediction source bytes
+        run: python3 -B script/ci/check_predict_source_pins.py
 
       - name: Check release metadata and Pages
         run: python3 script/release/release.py metadata --check-pages
