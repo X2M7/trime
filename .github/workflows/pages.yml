@@ -1,0 +1,59 @@
+# SPDX-FileCopyrightText: 2026 Rime community
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: Pages
+
+on:
+  push:
+    branches: [develop]
+    paths:
+      - 'docs/**'
+      - '.github/workflows/pages.yml'
+      - 'script/ci/deploy_pages.py'
+      - 'script/ci/test_deploy_pages.py'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    if: ${{ github.repository == 'X2M7/trime' && github.ref == 'refs/heads/develop' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      actions: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout published source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Test Pages deployment boundaries
+        run: python3 -B -m unittest discover -s script/ci -p 'test_deploy_pages.py' -v
+
+      - name: Upload unchanged static site
+        id: upload
+        uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
+        with:
+          path: docs
+          include-hidden-files: true
+
+      # Use the supported Pages REST/OIDC protocol without the deprecated
+      # Node dependency in deploy-pages. No personal access token is required.
+      - name: Deploy to GitHub Pages
+        id: deployment
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          PAGES_ARTIFACT_ID: ${{ steps.upload.outputs.artifact_id }}
+        run: python3 -B script/ci/deploy_pages.py
