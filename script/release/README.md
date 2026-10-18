@@ -35,7 +35,9 @@ Pages 是静态生成文件；模板、元数据或生成结果不一致会使 C
 
 ## 构建记录与发布门槛
 
-`build.py` 串行运行 Debug／Release／独立 Lint，单 worker、896 MiB 堆、640 MiB Metaspace；≥4 GiB 可用内存才启动，低于 1 GiB 停止。它保存实际命令、日志、Git/submodule SHA、生成的 BuildConfig、冻结 APK 和内存／退出记录。正式签名沿用既有证书必须显式启用 `trime.forkReleaseIdentity=true`；其他签名会被发布验签拒绝。
+`build.py` 串行运行 Debug／Release／独立 Lint，单 worker、896 MiB 堆、640 MiB Metaspace、384 MiB CodeCache；≥4 GiB 可用内存才启动，低于 1 GiB 停止。它保存实际命令、日志、Git/submodule SHA、生成的 BuildConfig、冻结 APK 和内存／退出记录。正式签名沿用既有证书必须显式启用 `trime.forkReleaseIdentity=true`；其他签名会被发布验签拒绝。
+
+JVM 默认使用一个处理器；可用 `--processors N` 显式选择 1 到主机 CPU 数与 16 中较小的值，Gradle worker 和 CMake 并行度仍为 1。结果记录实际堆、Metaspace、CodeCache 和处理器数。Gradle 包装进程退出后，控制器最多等待 60 秒，让已识别的子进程自然退出；清理后核对残留也最多等待 60 秒。需要发出终止信号或仍有残留的构建继续判为失败，不能用于发布。
 
 低内存主机可显式追加 `--compact-memory`：JVM 堆限制为 768 MiB，Metaspace 仍为 640 MiB，构建启动至少需要 3.75 GiB 可用内存；单 worker、1 GiB 运行停止下限及实际退出／内存记录均保留。默认配置仍为 896 MiB 堆与 4 GiB 启动门槛。模拟器启动门槛独立保持 4 GiB。
 

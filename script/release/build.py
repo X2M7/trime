@@ -13,6 +13,10 @@ import time
 from release import ROOT, binding, metadata, repositories, require, write_json
 
 
+CODE_CACHE_MIB = 384
+NATURAL_EXIT_WAIT_SECONDS = 60
+
+
 def available():
     return int(next(x.split()[1] for x in Path('/proc/meminfo').read_text().splitlines() if x.startswith('MemAvailable:')))
 
@@ -25,7 +29,18 @@ def identity(pid):
         return None
 
 
-def main():
+def processor_count(value):
+    try:
+        count = int(value)
+    except ValueError as error:
+        raise argparse.ArgumentTypeError('Processors must be an integer') from error
+    maximum = min(16, os.cpu_count() or 1)
+    if not 1 <= count <= maximum:
+        raise argparse.ArgumentTypeError(f'Processors must be between 1 and {maximum}')
+    return count
+
+
+def arguments(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('phase', choices=('debug', 'release', 'lint', 'format'))
     parser.add_argument('--sdk', type=Path, required=True)
@@ -39,7 +54,42 @@ def main():
                         help='Explicit heap size; retain one worker, 640 MiB Metaspace and the 1 GiB runtime floor')
     parser.add_argument('--minimum-start-available-kib', type=int,
                         help='Explicit startup headroom override; runtime 1 GiB floor and JVM limits remain unchanged')
-    args = parser.parse_args()
+    parser.add_argument('--processors', type=processor_count, default=1,
+                        help='Active JVM processors, from 1 through min(16, host CPUs); Gradle and CMake remain single-worker')
+    return parser.parse_args(argv)
+
+
+def build_command(phase, heap_mib, processors):
+    phases = {
+        'debug': [':spotlessCheck', ':build-logic:convention:test', ':build-logic:compatibility:test',
+                  ':app:compileDebugKotlin', ':app:compileDebugAndroidTestKotlin',
+                  ':app:testDebugUnitTest', ':app:assembleDebug', ':app:assembleDebugAndroidTest'],
+        'release': [':app:assembleRelease', '-x', ':app:lintVitalAnalyzeRelease',
+                    '-x', ':app:lintVitalReportRelease', '-x', ':app:lintVitalRelease'],
+        'lint': [':app:lintDebug', ':app:lintRelease'],
+        'format': [':spotlessApply'],
+    }
+    return ['./gradlew', '--no-daemon', '--console=plain', '--max-workers=1', '--warning-mode=fail',
+            f'-Dorg.gradle.jvmargs=-Xmx{heap_mib}m -XX:MaxMetaspaceSize=640m '
+            f'-XX:ActiveProcessorCount={processors} -XX:ReservedCodeCacheSize={CODE_CACHE_MIB}m',
+            '-Pkotlin.compiler.execution.strategy=in-process', '-Ptrime.performanceTrace=false',
+            '-Ptrime.forkReleaseIdentity=true', *phases[phase]]
+
+
+def wait_for_children(live_children):
+    deadline = time.monotonic() + NATURAL_EXIT_WAIT_SECONDS
+    pending = live_children()
+    while pending:
+        remaining = deadline - time.monotonic()
+        if remaining <= 0:
+            break
+        time.sleep(min(.2, remaining))
+        pending = live_children()
+    return pending
+
+
+def main():
+    args = arguments()
     build_timestamp = args.build_timestamp if args.build_timestamp is not None else int(time.time() * 1000)
     require(10**12 <= build_timestamp <= int(time.time() * 1000),
             'Build timestamp must be a past or current millisecond epoch, not seconds')
@@ -75,19 +125,7 @@ def main():
                CMAKE_BUILD_PARALLEL_LEVEL='1', BUILD_GIT_REPO='https://github.com/' + meta['repository'],
                BUILD_VERSION_NAME=meta['versionName'], BUILD_COMMIT_HASH=sources[''],
                BUILD_TIMESTAMP=str(build_timestamp), CI_NAME='X2M7')
-    phases = {
-        'debug': [':spotlessCheck', ':build-logic:convention:test', ':build-logic:compatibility:test',
-                  ':app:compileDebugKotlin', ':app:compileDebugAndroidTestKotlin',
-                  ':app:testDebugUnitTest', ':app:assembleDebug', ':app:assembleDebugAndroidTest'],
-        'release': [':app:assembleRelease', '-x', ':app:lintVitalAnalyzeRelease',
-                    '-x', ':app:lintVitalReportRelease', '-x', ':app:lintVitalRelease'],
-        'lint': [':app:lintDebug', ':app:lintRelease'],
-        'format': [':spotlessApply'],
-    }
-    argv = ['./gradlew', '--no-daemon', '--console=plain', '--max-workers=1', '--warning-mode=fail',
-            f'-Dorg.gradle.jvmargs=-Xmx{heap_mib}m -XX:MaxMetaspaceSize=640m -XX:ActiveProcessorCount=1',
-            '-Pkotlin.compiler.execution.strategy=in-process', '-Ptrime.performanceTrace=false',
-            '-Ptrime.forkReleaseIdentity=true', *phases[args.phase]]
+    argv = build_command(args.phase, heap_mib, args.processors)
     write_json(args.output / 'environment.json', env)
     write_json(args.output / 'source.json', sources)
     write_json(args.output / 'command.json', argv)
@@ -126,9 +164,7 @@ def main():
                         result.append(pid)
                 return result
             if reason is None:
-                wait_until = time.monotonic() + 10
-                while live_children() and time.monotonic() < wait_until:
-                    time.sleep(.2)
+                wait_for_children(live_children)
             # Only descendants identified during this owned build are terminated.
             for sig in (signal.SIGTERM, signal.SIGKILL):
                 for pid, row in owned.items():
@@ -142,10 +178,7 @@ def main():
                 if sig == signal.SIGTERM and any(identity(pid) == row for pid, row in owned.items()):
                     time.sleep(2)
             code = process.wait()
-            wait_until = time.monotonic() + 10
-            while live_children() and time.monotonic() < wait_until:
-                time.sleep(.2)
-            residual = live_children()
+            residual = wait_for_children(live_children)
             if signals or residual:
                 reason = reason or 'Build descendants required termination or remain alive'
     try:
@@ -154,7 +187,9 @@ def main():
         unchanged = False
     result = dict(phase=args.phase, started=started, finished=time.time(), exit_code=code,
                   memory_profile='custom' if args.heap_mib is not None else ('compact' if args.compact_memory else 'standard'),
-                  heap_mib=heap_mib, metaspace_mib=640, minimum_start_available_kib=start_kib,
+                  heap_mib=heap_mib, metaspace_mib=640, code_cache_mib=CODE_CACHE_MIB,
+                  active_processor_count=args.processors, natural_exit_wait_seconds=NATURAL_EXIT_WAIT_SECONDS,
+                  minimum_start_available_kib=start_kib,
                   startup_guard_override=args.minimum_start_available_kib is not None,
                   stopped_reason=reason, minimum_available_kib=minimum, source_unchanged=unchanged,
                   build_git_sha=sources[''], environment=binding(args.output / 'environment.json'),
