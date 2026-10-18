@@ -101,7 +101,7 @@ jobs:
       - name: Calculate JNI cache hash
         id: cache-hash
         run: |
-            ./gradlew :app:calculateNativeCacheHash
+            ./gradlew --warning-mode=fail :app:calculateNativeCacheHash
 
       - name: Fetch JNI cache
         uses: actions/cache@v6
