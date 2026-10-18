@@ -63,7 +63,7 @@ class FakeService:
             if self.cancel_error:
                 raise pages.DeploymentError("HTTP request timed out.")
             return {}
-        if method == "GET" and url == CREATED["status_url"]:
+        if method == "GET" and url.startswith(pages.API + "/pages/deployments/"):
             return {"status": next(self.statuses)}
         raise AssertionError("Unexpected fake request")
 
@@ -99,11 +99,20 @@ class DeploymentTests(unittest.TestCase):
             self.assertEqual(service.now, 10)
             self.assertFalse(any(call[1].endswith("/cancel") for call in service.calls))
 
-    def test_inconsistent_or_missing_deployment_identity_is_rejected(self):
+    def test_explicit_id_is_primary_and_unused_status_url_is_never_requested(self):
+        for status_url in (CREATED["status_url"], "https://evil.example/steal"):
+            service = FakeService(["succeed"])
+            service.created = {**CREATED, "id": 789, "status_url": status_url}
+            with self.subTest(status_url=status_url):
+                self.assertEqual(service.deployer().deploy(), pages.PAGE_URL)
+            self.assertEqual(service.calls[-1][1], pages.API + "/pages/deployments/789")
+            self.assertFalse(any(call[1] == status_url for call in service.calls))
+
+    def test_invalid_or_missing_deployment_identity_is_rejected(self):
         for created in ({"page_url": pages.PAGE_URL},
                         {"status_url": "https://evil.example/deployments/" + SHA,
                          "page_url": pages.PAGE_URL},
-                        {**CREATED, "id": "b" * 40}, {**CREATED, "id": True}):
+                        {**CREATED, "id": "../invalid"}, {**CREATED, "id": True}):
             service = FakeService(["succeed"])
             service.created = created
             with self.subTest(created=created), self.assertRaises(pages.DeploymentError):
@@ -155,15 +164,23 @@ class DeploymentTests(unittest.TestCase):
                 service.deployer().deploy()
             self.assertEqual(len(service.calls), 2)
 
-    def test_terminal_and_unknown_states_fail_and_attempt_cancellation(self):
-        for status in (*pages.FAILED, "new_unknown_state", None, []):
+    def test_terminal_and_nonstring_states_fail_and_attempt_cancellation(self):
+        for status in (*pages.FAILED, None, []):
             service = FakeService([status])
             with self.subTest(status=status), self.assertRaises(pages.DeploymentError):
                 service.deployer().deploy()
             self.assertTrue(service.calls[-1][1].endswith("/cancel"))
 
-    def test_timeout_is_not_masked_by_failed_cancellation_and_all_requests_are_bounded(self):
-        service = FakeService(["deployment_in_progress"] * 4)
+    def test_undocumented_and_empty_string_states_wait_until_explicit_success(self):
+        for status in ("new_unknown_state", ""):
+            service = FakeService([status, "succeed"])
+            with self.subTest(status=status):
+                self.assertEqual(service.deployer().deploy(), pages.PAGE_URL)
+            self.assertEqual(service.now, 5)
+            self.assertFalse(any(call[1].endswith("/cancel") for call in service.calls))
+
+    def test_perpetual_unknown_state_times_out_and_failed_cancellation_does_not_mask_it(self):
+        service = FakeService(["new_unknown_state"] * 4)
         service.cancel_error = True
         deployer = service.deployer()
         deployer.deadline = 6
@@ -177,8 +194,7 @@ class DeploymentTests(unittest.TestCase):
         self.assertNotIn("secret", diagnostic.getvalue())
 
     def test_untrusted_returned_urls_are_not_followed_and_deployment_is_cancelled(self):
-        for changes in ({"status_url": "https://evil.example/steal"},
-                        {"page_url": "https://x2m7.github.io/trime/\nother=output"},
+        for changes in ({"page_url": "https://x2m7.github.io/trime/\nother=output"},
                         {"page_url": "https://evil.example/"}):
             service = FakeService()
             service.created.update(changes)

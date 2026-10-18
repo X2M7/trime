@@ -30,10 +30,6 @@ TOTAL_SECONDS = 480
 REQUEST_SECONDS = 20
 CANCEL_SECONDS = 10
 MAX_RESPONSE_BYTES = 1024 * 1024
-PENDING = frozenset({
-    "deployment_in_progress", "syncing_files", "finished_file_sync",
-    "updating_pages", "purging_cdn", "deployment_attempt_error", "unknown_status", "not_found",
-})
 FAILED = frozenset({
     "deployment_cancelled", "deployment_failed", "deployment_content_failed",
     "deployment_lost",
@@ -229,22 +225,25 @@ class Deployer:
         explicit_id = deployment.get("id")
         if type(explicit_id) is int and explicit_id > 0:
             explicit_id = str(explicit_id)
-        if not isinstance(explicit_id, str) or not re.fullmatch(id_pattern, explicit_id):
-            explicit_id = None
-        status_url = deployment.get("status_url")
-        status_match = None
-        if isinstance(status_url, str):
-            status_match = re.fullmatch(re.escape(API + "/pages/deployments/") +
-                                       "(" + id_pattern + r")(?:/status)?", status_url)
-        url_id = status_match.group(1) if status_match else None
-        deployment_id = explicit_id or url_id
+        if explicit_id is not None and (not isinstance(explicit_id, str) or
+                                        not re.fullmatch(id_pattern, explicit_id)):
+            raise DeploymentError("GitHub returned an invalid Pages deployment ID.")
+        deployment_id = explicit_id
+        if deployment_id is None:
+            # An omitted ID can be recovered from this repository's endpoint.
+            # When ID is present, status_url may legitimately use a SHA alias;
+            # ignore that unused URL and construct the request path ourselves.
+            status_url = deployment.get("status_url")
+            status_match = None
+            if isinstance(status_url, str):
+                status_match = re.fullmatch(re.escape(API + "/pages/deployments/") +
+                                           "(" + id_pattern + r")(?:/status)?", status_url)
+            deployment_id = status_match.group(1) if status_match else None
         if deployment_id is None:
             raise DeploymentError("GitHub returned an invalid Pages deployment ID.")
         path = "/pages/deployments/" + deployment_id
         try:
             # Do not follow server-supplied URLs with an Authorization header.
-            if url_id != deployment_id or ("id" in deployment and explicit_id != url_id):
-                raise DeploymentError("GitHub returned an unexpected Pages status endpoint.")
             if deployment.get("page_url") not in {
                     PAGE_URL, PAGE_URL.rstrip("/"), PAGE_URL.removeprefix("https://"),
                     PAGE_URL.removeprefix("https://").rstrip("/")}:
@@ -256,11 +255,12 @@ class Deployer:
                 if status == "succeed":
                     return PAGE_URL
                 if not isinstance(status, str):
-                    raise DeploymentError("Pages deployment reported an unknown status.")
+                    raise DeploymentError("Pages deployment returned a non-string status.")
                 if status in FAILED:
                     raise DeploymentError("Pages deployment reported a terminal failure.")
-                if status not in PENDING:
-                    raise DeploymentError("Pages deployment reported an unknown status.")
+                # GitHub can expose undocumented intermediate string states.
+                # Only explicit success is accepted; all others remain bounded
+                # by the same deployment deadline without logging server text.
                 self.sleep(max(0, min(5, self.deadline - self.clock())))
         except DeploymentError:
             try:
