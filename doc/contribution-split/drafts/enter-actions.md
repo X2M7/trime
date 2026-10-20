@@ -8,7 +8,7 @@ Validation:
 
 - Twelve focused policy tests passed with strict helper/test Kotlin compilation; focused formatting passed for all six changed files.
 - The exact-source [complete application JVM run](https://github.com/X2M7/trime/actions/runs/39448942546) passed all 317 cases: the 301 baseline, 12 policy cases and 4 real delegate/broadcast cases. No failures/errors/skips or new source compiler diagnostics were found.
-- [Four-platform Debug/native builds](https://github.com/X2M7/trime/actions/runs/39448874294) are in progress; the Ubuntu full-project style check passed.
+- [Fork four-platform Debug builds](https://github.com/X2M7/trime/actions/runs/39448874294) and [upstream PR builds](https://github.com/osfans/trime/actions/runs/39450035724) passed all eight build jobs and both Ubuntu full-project style checks. Existing dependency, build-logic and toolchain warnings remain.
 
 This remains Draft for actual Android EditorInfo/InputConnection dispatch and on-screen repaint after restartInput or switching cached layouts. The four delegate tests use the real Theme, Kodein, display delegate and broadcaster, but do not construct Android views or exercise the service. Lint and Release checks remain unverified; existing dependency/toolchain warnings are retained.
 
