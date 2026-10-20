@@ -12,16 +12,33 @@
 
 | 分支与差异 | 单一问题 | 范围 | 已做检查 | 尚待完成 |
 | --- | --- | --- | --- | --- |
-| [split-setup-footer](https://github.com/X2M7/trime/compare/f5008260...contrib/split-setup-footer) | 向导内容占到导航按钮区域 | `activity_setup.xml`：ViewPager 约束到可见底部按钮顶部的 Barrier | XML 解析、按钮显示状态源码复核、AAPT2 资源编译、diff 检查 | 上游完整构建；小屏、大字体及三页实际布局 |
-| [split-clipboard-editor-height](https://github.com/X2M7/trime/compare/f5008260...contrib/split-clipboard-editor-height) | 长剪贴板内容的 wrap_content 高度不遵守已有下边界 | `activity_clip_edit.xml`：一个 constrainedHeight 属性 | XML 解析、单行差异复核、AAPT2 资源编译、diff 检查 | 上游完整构建；长文本、小屏及软键盘实际布局 |
+| [split-setup-footer](https://github.com/X2M7/trime/compare/f5008260...contrib/split-setup-footer) | 向导内容占到导航按钮区域 | `activity_setup.xml`：ViewPager 约束到可见底部按钮顶部的 Barrier | XML 解析、按钮显示状态源码复核、AAPT2 资源编译、diff 检查 | Release/Lint/完整应用测试；小屏、大字体及三页实际布局 |
+| [split-clipboard-editor-height](https://github.com/X2M7/trime/compare/f5008260...contrib/split-clipboard-editor-height) | 长剪贴板内容的 wrap_content 高度不遵守已有下边界 | `activity_clip_edit.xml`：一个 constrainedHeight 属性 | XML 解析、单行差异复核、AAPT2 资源编译、diff 检查 | Release/Lint/完整应用测试；长文本、小屏及软键盘实际布局 |
 | [split-native-license-versions](https://github.com/X2M7/trime/compare/f5008260...contrib/split-native-license-versions) | 许可证信息中的 librime/OpenCC 版本落后于已固定源码 | 两个 JSON 的版本字段 | JSON 解析、其他字段不变、递归源码 pin 与实际版本核对、diff 检查 | 许可证页面集成检查；不涉及依赖升级 |
-| [split-jni-local-refs](https://github.com/X2M7/trime/compare/f5008260...contrib/split-jni-local-refs) | 字符串数组转换积累 JNI 局部引用 | `objconv.h`：复用现有 JRef，每轮释放数组元素引用 | 真实生产头文件的聚焦宿主回归及修复前对照，详见验证记录 | 上游完整构建、Android CheckJNI/设备验证 |
+| [split-jni-local-refs](https://github.com/X2M7/trime/compare/f5008260...contrib/split-jni-local-refs) | 字符串数组转换积累 JNI 局部引用 | `objconv.h`：复用现有 JRef，每轮释放数组元素引用 | 真实生产头文件的聚焦宿主回归及修复前对照，详见验证记录 | Release/Lint/完整应用测试、Android CheckJNI/设备验证 |
 
 精确提交、改动文件与验证范围见 [branches.json](branches.json)。两个 XML 的 AAPT2 编译均退出 0，无输出诊断；这仅验证资源编译，不等于 APK 链接、布局测量或真机验收。宿主 mock 也不替代 Android 运行时。
 
 JNI 聚焦测试在同一 mock 调用环境转换 2,048 个元素四次：原实现留下 8,192 个局部引用，修复后剩余 0、峰值 1，同时验证字符串顺序及先释放 UTF 字符再删除引用。真实 JNI 在 native 方法返回时会回收局部引用，本修复针对返回前的引用积累，不能据此声称发生跨调用的永久泄漏。宿主严格 `-Werror` 编译在两版都遇到相同四条已有 `pessimizing-move` / `sign-compare` 诊断；仅将这两类降为警告后运行对照，未顺带修改上游代码。因此这不是“完整构建零警告”的证明。[聚焦测试源码](checks/jni_local_refs.cc) 与复现命令见 [检查说明](checks/README.md)，保留在本 fork 索引，不把整套验收工具塞进两行修复。
 
-原大分支的 APK、Lint、模拟器或历史测试结果不能直接算作这些新基准分支的通过凭证。本批没有构建或发布新 APK，不宣称全测试、全部警告或设备验收完成。上游 [PR 模板](../../.github/pull-request-template.md) 的构建、手测及 CI 项目前不应勾选；[贡献指南](../../CONTRIBUTING.md) 要求的完整测试仍须在正式送审前完成。
+首批四个分支的 GitHub CI 已通过：共 16/16 个 OS job 成功，每个分支在 Ubuntu、两种 macOS 和 Windows 实际执行 Debug 编译/打包及四 ABI 原生构建任务，JNI cache 均未命中；四个 Ubuntu Spotless 实际通过。[CI 审计摘要](checks/first-batch-ci.json) 绑定了精确提交与 run 链接。CI 未执行测试或 Lint，也没有下载审计 APK，因此不能写完整应用测试、Release 或设备验收通过。
+
+原有共同诊断仍保留，包括 SHOW_IMPLICIT/srcDirs 弃用、原生依赖 CMake/constexpr/32 位窄化、SDK/JNA/Gradle，以及 Windows 缓存归档失败。四个分支按 OS 比较的诊断候选多重集合完全相同，相关源码/依赖 pin 与上游基准一致；这不是零警告。原大分支的历史验收不能替代这些新分支的验证。[贡献指南](../../CONTRIBUTING.md) 和 [PR 模板](../../.github/pull-request-template.md) 要求的完整测试及手测仍未完成，不能全部勾选。本次不发布新的稳定版。
+
+## 第二批：反馈资源与日志进程
+
+同样直接基于 `f5008260`，两个分支互不依赖，均只有一个主题提交：
+
+| 分支 | 实现范围 | 已执行验证 | 限制与待验收 |
+| --- | --- | --- | --- |
+| [split-lazy-feedback](https://github.com/X2M7/trime/compare/f5008260...contrib/split-lazy-feedback) | 保留 `init(context)`；实际启用时才创建 TTS/自定义 SoundPool；就绪后使用；销毁后的旧回调不能激活新资源；必要的 TTS package query | 实际生产 FeedbackResource 辅助类的 8 项 Kotest；主线程/回调身份与 Manager 调用路径独立源码审阅；Manifest XML 解析；Spotless/ktlint | helper 测试不能替代 Android Manager 集成和真实播放；初始化失败须 destroy/init 后再试；音效未加载前的按键不补播；未测内存收益 |
+| [split-logcat-lifecycle](https://github.com/X2M7/trime/compare/f5008260...contrib/split-logcat-lifecycle) | Process/Logcat 终止与三流清理、取消阻塞读、错误保留、停止/重启及旧 Job 隔离 | 两个生产文件的 17 项 Kotest，包括真实 JVM 子进程取消、读取失败同时发生两次 destroy 失败、正常 EOF 的 destroy 失败；Spotless/ktlint | Android/Windows/macOS 实际运行待验证；原 logcat 命令选项不改，API21 的 PID/clear 兼容另拆；同步 destroy/close 不受退出轮询的 1 秒窗口限制 |
+
+第二批合计 25 项测试均实际执行，失败/错误/跳过均为 0。使用上游固定的 Kotlin 2.3.21、Kotest 6.0.7、coroutines 1.10.2，JVM 目标 11，编译启用 `allWarningsAsErrors`，没有 Kotlin 编译警告。宿主工程由 Gradle 9.8.1 在 JDK17 上执行；保留 Gradle 弃用汇总；额外以 warning-mode all 强制执行格式检查时，观察到 Spotless 任务使用的 Configuration.setVisible(boolean) 将在 Gradle11 移除的诊断，原件保留。未因此混入工具链升级，也不宣称整个工具链无警告。其源码绑定、测试 XML 哈希和详细范围见 [第二批宿主验证记录](checks/second-batch-host.json)。该验证工程没有带入功能分支，也不是完整 Android 应用测试：日志宿主编译仅替换资源编号及本地化错误构造，反馈仅编译/执行纯资源所有者，Manager 另做源码/格式检查。
+
+独立审阅发现并在推送前修复了两项边界：SoundPool 创建失败后每键重复文件访问；取消 watcher 销毁失败抢先覆盖原始读取异常。后者将 watcher 错误保存到单次调用的槽，等待结构化子任务完成后与最终清理错误合并，原读取/取消异常保留为主异常。
+
+第二批的完整 Android CI、Lint、Release 与设备验收仍以各分支后续的精确 SHA 证据为准；没有用首批或原汇总分支的通过结果代替。
 
 ## 后续拆分顺序
 
@@ -31,8 +48,8 @@ JNI 聚焦测试在同一 mock 调用环境转换 2,048 个元素四次：原实
 
 | 主题 | 边界 | 验证重点 |
 | --- | --- | --- |
-| 禁用反馈时不创建 TTS/SoundPool | 反馈管理器与必要初始化调用；隐私钩子后续补 | 默认关闭时无资源创建，开启后可用，销毁和重新启用正常 |
-| 日志子进程的生命周期 | Process/Logcat 与精简测试；不带窗口框架 | 取消、退出及重复采集不泄漏子进程 |
+| 反馈资源后续设备验收 | 独立实现已见第二批；隐私钩子留给隐私补丁 | 实际 TTS/音效及 Android 生命周期；不重复提交第二批代码 |
+| 旧 Android logcat 命令兼容 | 子进程生命周期已见第二批；另提 PID 过滤与 clear 选项 | API21 实际命令、完整 PID 匹配、不把日志正文当 PID |
 | 图标字体启动开销 | Compact CommunityMaterial、固定字形表、来源/许可证与生成器 | 名称/字符/字体与原依赖一致；冷启动实际测量；独立回归，移除整套 T13 探针依赖 |
 | 离线生成许可证 | AboutLibraries 离线数据与缺失条目 | 无 GitHub 请求、内容完整；不顺带升级插件 |
 | 回车标签与动作一致 | 单独提取 EditorPolicy 回车规则及 delegate/service 窄改动 | custom actionId、NO_ENTER_ACTION、多行、搜索/发送等动作 |
@@ -108,7 +125,7 @@ JNI 聚焦测试在同一 mock 调用环境转换 2,048 个元素四次：原实
 
 ## 查漏与操作规则
 
-[paths.tsv](paths.tsv) 保留原比较的全部 660 个路径、增删行数及初步审阅归属。归属是粗分类，不是已验证的可执行补丁划分；尤其 122 个共享集成路径仍需逐块拆解。首批 5 个改动路径另列实际分支，未提取的其余代码不会因归类而被当作完成。
+[paths.tsv](paths.tsv) 保留原比较的全部 660 个路径、增删行数及初步审阅归属。归属是粗分类，不是已验证的可执行补丁划分；尤其 122 个共享集成路径仍需逐块拆解。目前 11 个原路径有主题代码已提取，另外增加了 2 个重建后的聚焦辅助类/测试文件；未涉及的 649 个原路径仍仅作归类。触及某个路径不表示其中全部功能已提取，例如 Manifest 只取 TTS query、反馈管理器不取隐私钩子、Logcat 不取旧系统命令兼容。
 
 1. 每个新分支从当时核实的上游 `develop` 开始，独立问题无相互依赖；必须依赖的功能明确写出父补丁，等待父补丁合入后整理，不把累积差异冒充单个 PR。
 2. 每个修复说明一个具体触发场景、前后行为及对应验证；同一共享文件内无关的 import、偏好、字符串和格式修改都留到所属补丁。

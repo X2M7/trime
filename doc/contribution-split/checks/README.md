@@ -1,6 +1,6 @@
 # Focused checks for the split branches
 
-These checks support the fork's patch-preparation index. They are not the upstream test suite, a new application test framework, an Android build, or device acceptance. The four source branches remain independent of this documentation branch.
+These checks support the fork's patch-preparation index. They are not the upstream test suite, a new application test framework, an Android build, or device acceptance. The source branches remain independent of this documentation branch.
 
 ## JNI array local references
 

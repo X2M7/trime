@@ -7,8 +7,8 @@ ci-portability	30	6	.github/workflows/release-ci.yml	routing-only-not-extracted	
 shared-integration	65	9	app/build.gradle.kts	routing-only-not-extracted	-
 compact-icon-font	44	0	app/licenses/CommunityMaterialGlyphs.NOTICE	routing-only-not-extracted	-
 offline-licenses	1	1	app/licenses/libraries/boost.json	routing-only-not-extracted	-
-offline-licenses	1	1	app/licenses/libraries/librime.json	first-batch-extracted	contrib/split-native-license-versions
-opencc-correctness	1	1	app/licenses/libraries/opencc.json	first-batch-extracted	contrib/split-native-license-versions
+offline-licenses	1	1	app/licenses/libraries/librime.json	topic-hunks-extracted	contrib/split-native-license-versions
+opencc-correctness	1	1	app/licenses/libraries/opencc.json	topic-hunks-extracted	contrib/split-native-license-versions
 offline-licenses	10	0	app/licenses/libraries/storageaccess.json	routing-only-not-extracted	-
 offline-licenses	7	0	app/licenses/licenses/Apache-2.0.json	routing-only-not-extracted	-
 offline-licenses	7	0	app/licenses/licenses/BSD-2-Clause.json	routing-only-not-extracted	-
@@ -83,7 +83,7 @@ quarantine-harness	73	0	app/src/debug/java/com/osfans/trime/util/DebugCoroutineS
 quarantine-policy	5	0	app/src/debug/res/values-zh-rCN/app_name.xml	routing-only-not-extracted	-
 quarantine-policy	5	0	app/src/debug/res/values-zh-rTW/app_name.xml	routing-only-not-extracted	-
 quarantine-policy	7	0	app/src/debug/res/values/app_name.xml	routing-only-not-extracted	-
-shared-integration	29	3	app/src/main/AndroidManifest.xml	routing-only-not-extracted	-
+shared-integration	29	3	app/src/main/AndroidManifest.xml	topic-hunks-extracted	contrib/split-lazy-feedback
 shared-integration	12	0	app/src/main/assets/shared/luna_pinyin.custom.yaml	routing-only-not-extracted	-
 shared-integration	6	0	app/src/main/assets/shared/luna_pinyin_simp.custom.yaml	routing-only-not-extracted	-
 t9-core	138	0	app/src/main/assets/shared/luna_pinyin_t9.schema.yaml	routing-only-not-extracted	-
@@ -221,7 +221,7 @@ editor-ownership	40	0	app/src/main/java/com/osfans/trime/ime/core/VirtualKeyText
 shared-integration	7	1	app/src/main/java/com/osfans/trime/ime/dialog/EnabledSchemaPickerDialog.kt	routing-only-not-extracted	-
 shared-integration	134	59	app/src/main/java/com/osfans/trime/ime/keyboard/CommonKeyboardActionListener.kt	routing-only-not-extracted	-
 shared-integration	80	28	app/src/main/java/com/osfans/trime/ime/keyboard/GestureFrame.kt	routing-only-not-extracted	-
-lazy-feedback	138	31	app/src/main/java/com/osfans/trime/ime/keyboard/InputFeedbackManager.kt	routing-only-not-extracted	-
+lazy-feedback	138	31	app/src/main/java/com/osfans/trime/ime/keyboard/InputFeedbackManager.kt	topic-hunks-extracted	contrib/split-lazy-feedback
 shared-integration	29	21	app/src/main/java/com/osfans/trime/ime/keyboard/Key.kt	routing-only-not-extracted	-
 keyboard-accessibility	32	0	app/src/main/java/com/osfans/trime/ime/keyboard/KeyAccessibilityPolicy.kt	routing-only-not-extracted	-
 shared-integration	18	13	app/src/main/java/com/osfans/trime/ime/keyboard/KeyAction.kt	routing-only-not-extracted	-
@@ -304,12 +304,12 @@ quarantine-policy	3	3	app/src/main/java/com/osfans/trime/util/Drawable.kt	routin
 shared-integration	3	2	app/src/main/java/com/osfans/trime/util/ErrorDialog.kt	routing-only-not-extracted	-
 quarantine-policy	1	1	app/src/main/java/com/osfans/trime/util/InputMethodUtils.kt	routing-only-not-extracted	-
 quarantine-policy	2	2	app/src/main/java/com/osfans/trime/util/Intent.kt	routing-only-not-extracted	-
-process-logcat	91	30	app/src/main/java/com/osfans/trime/util/Logcat.kt	routing-only-not-extracted	-
+process-logcat	91	30	app/src/main/java/com/osfans/trime/util/Logcat.kt	topic-hunks-extracted	contrib/split-logcat-lifecycle
 shared-integration	5	2	app/src/main/java/com/osfans/trime/util/Menu.kt	routing-only-not-extracted	-
 onboarding	3	2	app/src/main/java/com/osfans/trime/util/NavController.kt	routing-only-not-extracted	-
 quarantine-policy	3	2	app/src/main/java/com/osfans/trime/util/NinePatchBitmapFactory.kt	routing-only-not-extracted	-
 saf-sync	31	2	app/src/main/java/com/osfans/trime/util/Notifications.kt	routing-only-not-extracted	-
-process-logcat	90	13	app/src/main/java/com/osfans/trime/util/Process.kt	routing-only-not-extracted	-
+process-logcat	90	13	app/src/main/java/com/osfans/trime/util/Process.kt	topic-hunks-extracted	contrib/split-logcat-lifecycle
 quarantine-policy	3	5	app/src/main/java/com/osfans/trime/util/ResourceUtils.kt	routing-only-not-extracted	-
 quarantine-policy	8	2	app/src/main/java/com/osfans/trime/util/Yaml.kt	routing-only-not-extracted	-
 saf-sync	56	4	app/src/main/java/com/osfans/trime/worker/BackgroundSyncWork.kt	routing-only-not-extracted	-
@@ -338,7 +338,7 @@ shared-integration	1	1	app/src/main/jni/librime_jni/config.cc	routing-only-not-e
 jni-safety	4	1	app/src/main/jni/librime_jni/helper-types.h	routing-only-not-extracted	-
 jni-safety	109	19	app/src/main/jni/librime_jni/jni-utils.h	routing-only-not-extracted	-
 shared-integration	183	13	app/src/main/jni/librime_jni/levers.cc	routing-only-not-extracted	-
-jni-safety	6	1	app/src/main/jni/librime_jni/objconv.h	first-batch-extracted	contrib/split-jni-local-refs
+jni-safety	6	1	app/src/main/jni/librime_jni/objconv.h	topic-hunks-extracted	contrib/split-jni-local-refs
 opencc-correctness	70	17	app/src/main/jni/librime_jni/opencc.cc	routing-only-not-extracted	-
 next-word	28	0	app/src/main/jni/librime_jni/predict/LICENSE	routing-only-not-extracted	-
 next-word	81	0	app/src/main/jni/librime_jni/predict/model_integrity.h	routing-only-not-extracted	-
@@ -365,9 +365,9 @@ shared-integration	0	14	app/src/main/res/drawable/ic_baseline_email_24.xml	routi
 shared-integration	0	14	app/src/main/res/drawable/ic_baseline_link_24.xml	routing-only-not-extracted	-
 shared-integration	0	14	app/src/main/res/drawable/ic_baseline_phone_24.xml	routing-only-not-extracted	-
 quarantine-policy	1	2	app/src/main/res/drawable/ic_trime_status.xml	routing-only-not-extracted	-
-dictionary-io	1	0	app/src/main/res/layout/activity_clip_edit.xml	first-batch-extracted	contrib/split-clipboard-editor-height
+dictionary-io	1	0	app/src/main/res/layout/activity_clip_edit.xml	topic-hunks-extracted	contrib/split-clipboard-editor-height
 shared-integration	4	4	app/src/main/res/layout/activity_log.xml	routing-only-not-extracted	-
-onboarding	10	2	app/src/main/res/layout/activity_setup.xml	first-batch-extracted	contrib/split-setup-footer
+onboarding	10	2	app/src/main/res/layout/activity_setup.xml	topic-hunks-extracted	contrib/split-setup-footer
 shared-integration	3	3	app/src/main/res/layout/activity_theme_diagnostics.xml	routing-only-not-extracted	-
 onboarding	88	135	app/src/main/res/layout/fragment_setup.xml	routing-only-not-extracted	-
 quarantine-policy	None	None	app/src/main/res/mipmap-hdpi/ic_app_icon_round.png	routing-only-not-extracted	-
@@ -494,9 +494,9 @@ onboarding	52	0	app/src/test/java/com/osfans/trime/ui/main/NavigationRouteTest.k
 onboarding	26	0	app/src/test/java/com/osfans/trime/ui/setup/SetupFlowPolicyTest.kt	routing-only-not-extracted	-
 onboarding	29	0	app/src/test/java/com/osfans/trime/ui/setup/SetupTrialTextTest.kt	routing-only-not-extracted	-
 direct-boot	209	0	app/src/test/java/com/osfans/trime/util/DirectBootProcessHandoffTest.kt	routing-only-not-extracted	-
-process-logcat	195	0	app/src/test/java/com/osfans/trime/util/LogcatLifecycleTest.kt	routing-only-not-extracted	-
+process-logcat	195	0	app/src/test/java/com/osfans/trime/util/LogcatLifecycleTest.kt	topic-hunks-extracted	contrib/split-logcat-lifecycle
 shared-integration	47	0	app/src/test/java/com/osfans/trime/util/MenuTest.kt	routing-only-not-extracted	-
-process-logcat	213	0	app/src/test/java/com/osfans/trime/util/ProcessLifecycleTest.kt	routing-only-not-extracted	-
+process-logcat	213	0	app/src/test/java/com/osfans/trime/util/ProcessLifecycleTest.kt	topic-hunks-extracted	contrib/split-logcat-lifecycle
 quarantine-policy	3	0	app/src/test/java/com/osfans/trime/util/YamlTest.kt	routing-only-not-extracted	-
 shared-integration	41	0	app/src/test/java/com/osfans/trime/worker/BackgroundSyncInitializationTest.kt	routing-only-not-extracted	-
 quarantine-harness	134	0	app/src/testDebug/java/com/osfans/trime/util/DebugCoroutineServicesTest.kt	routing-only-not-extracted	-

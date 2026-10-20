@@ -1,0 +1,118 @@
+{
+  "schema": "trime-second-batch-focused-test/v1",
+  "exit_code": 0,
+  "compiler": "Kotlin 2.3.21, JVM target 11, allWarningsAsErrors=true",
+  "framework": "Kotest 6.0.7, coroutines 1.10.2",
+  "tool_runtime": "Gradle 9.8.1 on Temurin JDK17.0.19",
+  "tests": [
+    {
+      "suite": "com.osfans.trime.ime.keyboard.FeedbackResourceTest",
+      "tests": 8,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "xml": {
+        "name": "TEST-com.osfans.trime.ime.keyboard.FeedbackResourceTest.xml",
+        "bytes": 1692,
+        "sha256": "45c2ce4e217b086f757075b6e970b15cd22be07ac2d13bccf0a485881e85ec87"
+      }
+    },
+    {
+      "suite": "com.osfans.trime.util.LogcatLifecycleTest",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "xml": {
+        "name": "TEST-com.osfans.trime.util.LogcatLifecycleTest.xml",
+        "bytes": 1248,
+        "sha256": "b9cb493a34636ab0ef99499d2c05cd698d97c7100d5d12d2005767d0fe53ca5e"
+      }
+    },
+    {
+      "suite": "com.osfans.trime.util.ProcessLifecycleTest",
+      "tests": 11,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "xml": {
+        "name": "TEST-com.osfans.trime.util.ProcessLifecycleTest.xml",
+        "bytes": 2029,
+        "sha256": "250a5a58823e9407e1eff6415ec82c7df705408eea290056c31dbdff3ea8e3e2"
+      }
+    }
+  ],
+  "source_inputs": [
+    {
+      "module": "logcat-lifecycle",
+      "head": "f5909dcb024997cef8eefe437ee810038118f3c1",
+      "path": "app/src/main/java/com/osfans/trime/util/Process.kt",
+      "bytes": 4406,
+      "sha256": "6364c2c344837add713b23ae685562defa557a26b803b759f23a775773212188"
+    },
+    {
+      "module": "logcat-lifecycle",
+      "head": "f5909dcb024997cef8eefe437ee810038118f3c1",
+      "path": "app/src/main/java/com/osfans/trime/util/Logcat.kt",
+      "bytes": 4734,
+      "sha256": "7ef6c20b62ab3f4baa35d64ef2a2807d33b7679a40f0221b731b4b8af8a47072"
+    },
+    {
+      "module": "logcat-lifecycle",
+      "head": "f5909dcb024997cef8eefe437ee810038118f3c1",
+      "path": "app/src/test/java/com/osfans/trime/util/ProcessLifecycleTest.kt",
+      "bytes": 11071,
+      "sha256": "e2106c7aec511ad54c7384000f90e38cfdaf78b0182e8353e5a7c4602e836cbe"
+    },
+    {
+      "module": "logcat-lifecycle",
+      "head": "f5909dcb024997cef8eefe437ee810038118f3c1",
+      "path": "app/src/test/java/com/osfans/trime/util/LogcatLifecycleTest.kt",
+      "bytes": 5997,
+      "sha256": "fcada6ffd742612576bb7042d3cb67478e8cf0ea7c0a7bc30b93a0472b9a38ee"
+    },
+    {
+      "module": "lazy-feedback",
+      "head": "3912fb23aced49da94cee6e3c59b3a9585da779b",
+      "path": "app/src/main/java/com/osfans/trime/ime/keyboard/FeedbackResource.kt",
+      "bytes": 2685,
+      "sha256": "04a76a74f1c69bc1a290df793acb3f3f462ff6034eada9f52a1102fb89de9ad2"
+    },
+    {
+      "module": "lazy-feedback",
+      "head": "3912fb23aced49da94cee6e3c59b3a9585da779b",
+      "path": "app/src/test/java/com/osfans/trime/ime/keyboard/FeedbackResourceTest.kt",
+      "bytes": 8891,
+      "sha256": "b5e720f6895b2c1c512f850f8b21025365174bfc707e093e0f7c73ff60fd4661"
+    },
+    {
+      "module": "lazy-feedback",
+      "head": "3912fb23aced49da94cee6e3c59b3a9585da779b",
+      "path": "app/src/main/java/com/osfans/trime/ime/keyboard/InputFeedbackManager.kt",
+      "bytes": 10438,
+      "sha256": "6cc99b67e1aa43098a52f9eb9dcc2b6e386c89f31c28178826a9b895a8b1219c"
+    }
+  ],
+  "style": "Spotless8.10.2/ktlint1.8.0 applied and check result satisfied for all7copied Kotlin files",
+  "compiler_warning_lines": [],
+  "gradle_deprecation_summary_retained": true,
+  "limits": [
+    "Not a full Android app build or device test",
+    "Only FeedbackResource helper is compiled/executed for feedback, Manager gets style/source review only",
+    "Logcat host compilation substitutes R.string id and errorState localization; Android platform jar and real Timber bytecode are used",
+    "Real child JVM cancellation executed on Linux only; Windows/macOS test execution unverified"
+  ],
+  "log": {
+    "name": "focused-test3.log",
+    "bytes": 3952,
+    "sha256": "10a183f6303022f61c1aab00a72ba8dd49c4b537876c45b36c7df5c3b344eb5d"
+  },
+  "style_check": {
+    "tool": "Spotless8.10.2/ktlint1.8.0",
+    "exit_code": 0,
+    "forced_task_execution": true,
+    "log_sha256": "c361c5ebd0c0f810100195a7e5197179bfe27f36a4dc7ecf4c7bd05ffc8f3be3",
+    "retained_gradle_diagnostic": "Configuration.setVisible(boolean) deprecated for Gradle11; observed during spotlessKotlin task",
+    "not_a_kotlin_source_warning": true
+  }
+}

@@ -1,0 +1,100 @@
+{
+  "schema": "trime-split-ci-summary/v1",
+  "all_exact_head_checks_passed": true,
+  "runs": [
+    {
+      "module": "setup",
+      "branch": "contrib/split-setup-footer",
+      "head_sha": "8e373f34400655a6aa871315531a8b25142d9233",
+      "run_id": 39386297207,
+      "url": "https://github.com/X2M7/trime/actions/runs/39386297207",
+      "actual_success_jobs": 4,
+      "oses": [
+        "macos-26",
+        "macos-26-intel",
+        "ubuntu-26.04",
+        "windows-2025"
+      ],
+      "dedicated_test_report_artifact": false,
+      "artifact_metadata_count": 12
+    },
+    {
+      "module": "clip",
+      "branch": "contrib/split-clipboard-editor-height",
+      "head_sha": "70af58cf2712de59e611b3ca4f2d272175f5707e",
+      "run_id": 39386297433,
+      "url": "https://github.com/X2M7/trime/actions/runs/39386297433",
+      "actual_success_jobs": 4,
+      "oses": [
+        "macos-26-intel",
+        "macos-26",
+        "windows-2025",
+        "ubuntu-26.04"
+      ],
+      "dedicated_test_report_artifact": false,
+      "artifact_metadata_count": 12
+    },
+    {
+      "module": "license",
+      "branch": "contrib/split-native-license-versions",
+      "head_sha": "f34ee4fca9fd544aa2a20b80cacbc6e3570771bf",
+      "run_id": 39386296682,
+      "url": "https://github.com/X2M7/trime/actions/runs/39386296682",
+      "actual_success_jobs": 4,
+      "oses": [
+        "windows-2025",
+        "macos-26-intel",
+        "ubuntu-26.04",
+        "macos-26"
+      ],
+      "dedicated_test_report_artifact": false,
+      "artifact_metadata_count": 12
+    },
+    {
+      "module": "jni",
+      "branch": "contrib/split-jni-local-refs",
+      "head_sha": "9e296c1e29dd1f896400d71946fa2cd76d101b9a",
+      "run_id": 39386297302,
+      "url": "https://github.com/X2M7/trime/actions/runs/39386297302",
+      "actual_success_jobs": 4,
+      "oses": [
+        "windows-2025",
+        "macos-26",
+        "ubuntu-26.04",
+        "macos-26-intel"
+      ],
+      "dedicated_test_report_artifact": false,
+      "artifact_metadata_count": 12
+    }
+  ],
+  "verified_scope": [
+    "Four OS Debug assembly/compilation and four ABI native build tasks per branch; JNI caches missed.",
+    "Ubuntu Spotless checks executed."
+  ],
+  "test_execution_proven": false,
+  "lint_execution_proven": false,
+  "runtime_acceptance_proven": false,
+  "apk_binary_audit_performed": false,
+  "warning_free": false,
+  "warning_candidates_per_branch": 349,
+  "per_os_warning_multisets_identical_across_four_heads": true,
+  "retained_diagnostic_categories": [
+    "Existing app SHOW_IMPLICIT deprecation",
+    "Existing build-logic srcDirs deprecation",
+    "Pinned Snappy and LevelDB CMake compatibility",
+    "Pinned yaml-cpp constexpr/C++ standard warnings",
+    "Pinned Lua limit narrowing on 32-bit ABIs",
+    "SDK CLI deprecation and SDK JNA/JDK native-access warnings",
+    "Gradle aggregate deprecation summaries; individual causes not fully printed",
+    "Windows post-job Gradle cache archive fails due to locked files (tar exit 2)"
+  ],
+  "local_complete_evidence": {
+    "report_path": "/home/xumin/Public/Trime/build/upstream-split-20261020/ci-first-batch1/audit-report.json",
+    "report_sha256": "0b1b990377971d2c9e08524a2298bb37120620c94910c4058657f4ec02c3f856",
+    "raw_job_log_count": 16,
+    "raw_job_log_bytes": 4823479,
+    "raw_candidate_rows": 1396,
+    "unclassified_candidate_rows": 0,
+    "complete_raw_files_kept_local": true
+  }
+}

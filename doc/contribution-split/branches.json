@@ -32,10 +32,11 @@
         "XML parse",
         "Upstream navigation button visibility reviewed",
         "AAPT2 compile 0 without diagnostics",
-        "git diff --check"
+        "git diff --check",
+        "4-OS Debug CI and Ubuntu Spotless, exact SHA verified"
       ],
       "pending": [
-        "Full upstream build and tests",
+        "Release/Lint/full application tests",
         "Small-screen/large-font runtime layout"
       ],
       "upstream_pr_created": false,
@@ -54,6 +55,15 @@
         "stderr_bytes": 0,
         "tool": "AAPT2 36.0.0",
         "tool_sha256": "1a6a396b9cd071f7040071fdd108718cb98c3c9f4960044f373b288993d19eb7"
+      },
+      "ci": {
+        "run_id": 39386297207,
+        "url": "https://github.com/X2M7/trime/actions/runs/39386297207",
+        "debug_build_jobs_success": 4,
+        "style_on_ubuntu_passed": true,
+        "tests_executed": false,
+        "lint_executed": false,
+        "warning_free": false
       }
     },
     {
@@ -70,10 +80,11 @@
         "XML parse",
         "Exact one-attribute change; existing constraints and scrolling preserved",
         "AAPT2 compile 0 without diagnostics",
-        "git diff --check"
+        "git diff --check",
+        "4-OS Debug CI and Ubuntu Spotless, exact SHA verified"
       ],
       "pending": [
-        "Full upstream build and tests",
+        "Release/Lint/full application tests",
         "Long-content/small-screen/IME layout; adjustPan remains unchanged"
       ],
       "upstream_pr_created": false,
@@ -92,6 +103,15 @@
         "stderr_bytes": 0,
         "tool": "AAPT2 36.0.0",
         "tool_sha256": "1a6a396b9cd071f7040071fdd108718cb98c3c9f4960044f373b288993d19eb7"
+      },
+      "ci": {
+        "run_id": 39386297433,
+        "url": "https://github.com/X2M7/trime/actions/runs/39386297433",
+        "debug_build_jobs_success": 4,
+        "style_on_ubuntu_passed": true,
+        "tests_executed": false,
+        "lint_executed": false,
+        "warning_free": false
       }
     },
     {
@@ -109,14 +129,24 @@
         "JSON parse; only artifactVersion changed",
         "Pinned librime 7bc3fb00 CMake rime_version=1.17.0",
         "Pinned OpenCC 025f371d at exact tag ver.1.4.2",
-        "git diff --check"
+        "git diff --check",
+        "4-OS Debug CI and Ubuntu Spotless, exact SHA verified"
       ],
       "pending": [
-        "Full upstream build and tests",
+        "Release/Lint/full application tests",
         "License-page integration check"
       ],
       "upstream_pr_created": false,
-      "app_or_device_acceptance_complete": false
+      "app_or_device_acceptance_complete": false,
+      "ci": {
+        "run_id": 39386296682,
+        "url": "https://github.com/X2M7/trime/actions/runs/39386296682",
+        "debug_build_jobs_success": 4,
+        "style_on_ubuntu_passed": true,
+        "tests_executed": false,
+        "lint_executed": false,
+        "warning_free": false
+      }
     },
     {
       "branch": "contrib/split-jni-local-refs",
@@ -132,10 +162,11 @@
         "Production-header host JNI table mock: baseline fails, fixed passes",
         "2048 elements x4; empty input; output ordering; cleanup order",
         "Portable reproduction runner executed",
-        "git diff --check"
+        "git diff --check",
+        "4-OS Debug CI and Ubuntu Spotless, exact SHA verified"
       ],
       "pending": [
-        "Full upstream build and tests",
+        "Release/Lint/full application tests",
         "Android CheckJNI and device run",
         "Native exception/allocation failure boundaries unchanged and outside this fix"
       ],
@@ -187,21 +218,112 @@
         "test_source_sha256": "182d3491379712adb964a78346bc5936bbc7c146119b5d8ae2b03b8272da621d",
         "reproduction_runner_sha256": "32bbfb331e46fb2fb4e93c223d2bd1da82d9cb67ebb76d50cafa6d17cccc5bdd",
         "reproduction_runner_exit_code": 0
+      },
+      "ci": {
+        "run_id": 39386297302,
+        "url": "https://github.com/X2M7/trime/actions/runs/39386297302",
+        "debug_build_jobs_success": 4,
+        "style_on_ubuntu_passed": true,
+        "tests_executed": false,
+        "lint_executed": false,
+        "warning_free": false
+      }
+    },
+    {
+      "branch": "contrib/split-lazy-feedback",
+      "commit": "3912fb23aced49da94cee6e3c59b3a9585da779b",
+      "parent": "f5008260dc1e71b05e8e5508c6cfbf8ebf2507a0",
+      "depends_on": [],
+      "commit_title": "perf: initialize input feedback resources only when enabled",
+      "compare_url": "https://github.com/X2M7/trime/compare/f5008260...contrib/split-lazy-feedback",
+      "files": [
+        "app/src/main/AndroidManifest.xml",
+        "app/src/main/java/com/osfans/trime/ime/keyboard/FeedbackResource.kt",
+        "app/src/main/java/com/osfans/trime/ime/keyboard/InputFeedbackManager.kt",
+        "app/src/test/java/com/osfans/trime/ime/keyboard/FeedbackResourceTest.kt"
+      ],
+      "completed_checks": [
+        "8 focused Kotest tests actually executed with no failures/errors/skips",
+        "Kotlin2.3.21 allWarningsAsErrors, no compiler warnings",
+        "Spotless8.10.2/ktlint1.8.0",
+        "Independent source review",
+        "git diff --check"
+      ],
+      "focused_test_scope": "Pure feedback resource owner tests; Manager source/style review only",
+      "pending": [
+        "Android Manager integration and real TTS/SoundPool playback",
+        "Full Android CI/Lint/Release/device acceptance",
+        "Memory/latency gain not measured",
+        "Failed initialization retries only after destroy/init; no delayed replay of pre-load sounds"
+      ],
+      "upstream_pr_created": false,
+      "app_or_device_acceptance_complete": false,
+      "host_evidence": "checks/second-batch-host.json",
+      "ci": {
+        "status": "in_progress",
+        "tests_executed_by_ci": false,
+        "run_id": 39397825740,
+        "url": "https://github.com/X2M7/trime/actions/runs/39397825740",
+        "scope_verified_from_finished_logs": false
+      }
+    },
+    {
+      "branch": "contrib/split-logcat-lifecycle",
+      "commit": "f5909dcb024997cef8eefe437ee810038118f3c1",
+      "parent": "f5008260dc1e71b05e8e5508c6cfbf8ebf2507a0",
+      "depends_on": [],
+      "commit_title": "fix: own logcat child processes through cancellation and restart",
+      "compare_url": "https://github.com/X2M7/trime/compare/f5008260...contrib/split-logcat-lifecycle",
+      "files": [
+        "app/src/main/java/com/osfans/trime/util/Logcat.kt",
+        "app/src/main/java/com/osfans/trime/util/Process.kt",
+        "app/src/test/java/com/osfans/trime/util/LogcatLifecycleTest.kt",
+        "app/src/test/java/com/osfans/trime/util/ProcessLifecycleTest.kt"
+      ],
+      "completed_checks": [
+        "17 focused Kotest tests actually executed with no failures/errors/skips",
+        "Kotlin2.3.21 allWarningsAsErrors, no compiler warnings",
+        "Spotless8.10.2/ktlint1.8.0",
+        "Independent source review",
+        "git diff --check"
+      ],
+      "focused_test_scope": "Production Process.kt and Logcat.kt compiled/tested; host R/errorState localization fixture",
+      "pending": [
+        "Android/Windows/macOS runtime execution",
+        "Full Android CI/Lint/Release/device acceptance",
+        "API21 logcat command flags/filtering deferred",
+        "Synchronous destroy/close not bounded by the 1 second exit polling timeout"
+      ],
+      "upstream_pr_created": false,
+      "app_or_device_acceptance_complete": false,
+      "host_evidence": "checks/second-batch-host.json",
+      "ci": {
+        "status": "in_progress",
+        "tests_executed_by_ci": false,
+        "run_id": 39397825962,
+        "url": "https://github.com/X2M7/trime/actions/runs/39397825962",
+        "scope_verified_from_finished_logs": false
       }
     }
   ],
   "inventory": {
     "path": "paths.tsv",
-    "sha256": "02f75380a08428ebd474a396fd4f7052c0a19a410aa6ffe4b5c58836c7a2ef10",
+    "sha256": "17d30e4cf568f6fe7f96714e6153a25cfd26b8e667e99477985aa903bbcc8dfc",
     "non_numeric_line_counts": "None marks binary numstat entries, excluded from line totals",
     "routing_is_not_executable_partition": true,
-    "first_batch_extracted_paths": 5,
-    "remaining_paths_not_claimed_extracted": 655
+    "original_paths_with_extracted_topic_hunks": 11,
+    "untouched_original_paths": 649,
+    "touched_path_does_not_mean_all_features_extracted": true,
+    "new_focused_companion_paths": [
+      "app/src/main/java/com/osfans/trime/ime/keyboard/FeedbackResource.kt",
+      "app/src/test/java/com/osfans/trime/ime/keyboard/FeedbackResourceTest.kt"
+    ]
   },
   "limits": [
-    "No new APK or release for this delivery",
-    "Per-branch complete upstream builds, full suites and device acceptance pending",
+    "Per-branch Lint/Release/full application tests and device acceptance pending",
     "No claim of complete warning elimination",
-    "Historical aggregate acceptance does not qualify split branches"
+    "Historical aggregate acceptance does not qualify split branches",
+    "First batch Debug APKs were built by CI, but not downloaded/audited in this check",
+    "No new stable release; CI did not execute application tests or Lint"
   ]
 }
