@@ -1,0 +1,142 @@
+{
+  "schema": "clipboard-height-focused-android-execution-review/v1",
+  "passed": true,
+  "baseline_head": "144f6111d0498da85e0ffa250245f18955179ed3",
+  "fixed_head": "8344231de57790bbe83262cca7fb8adf0d99e829",
+  "source_input_binding_verified": true,
+  "only_resource_difference_is_constrained_height": true,
+  "actual_device_result": {
+    "path": "/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr2/device-measure1/probe-result.stdout",
+    "bytes": 27843,
+    "sha256": "3c13f55c574bc635f6c4757569736ce9c661e427d62e67f8261ca4c17284cab3"
+  },
+  "root_execution_receipt": {
+    "path": "/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr2/device-measure1/probe-execution.json",
+    "bytes": 475,
+    "sha256": "8892e370480924e182c5a76a02c8ce27578968afe2d08d9a58dd95163c5b61c9"
+  },
+  "launch_output": {
+    "path": "/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr2/device-measure1/probe-launch.stdout",
+    "bytes": 204,
+    "sha256": "6c9dd73bd62a9f29d7608ada7ff8b9e86e4b8fb101f04069aec2e0ff4f88d451"
+  },
+  "local_apk": {
+    "path": "/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr2/clipboard-editor-height/probe1/out/clipboard-height-probe.apk",
+    "bytes": 855265,
+    "sha256": "f0ba7771261ec3d6c2c5c8ce84766bafc0d30407c7e8eb0ce71fbbb67ba7d599"
+  },
+  "device_apk_identity_receipt": {
+    "path": "/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr2/device-measure1/probe-device-apk-binding.json",
+    "bytes": 455,
+    "sha256": "04d24b86bd8f735d343b677f9e12a9a905ef3fa7264b837aa06677c3fba69aa3"
+  },
+  "root_device_readback_identity_matches_local_apk": true,
+  "device_serial": "emulator-5580",
+  "device_boot_id": "679ec3a3-760d-4f49-b48b-ee85d4ede947",
+  "device_sdk": 21,
+  "device_model": "Android SDK built for x86_64",
+  "test_width_dp": 360,
+  "height_limits_dp": [
+    160,
+    240,
+    600
+  ],
+  "font_scales": [
+    1,
+    2
+  ],
+  "recomputed_summary": {
+    "pairs": 12,
+    "baseline_geometry_failures": 7,
+    "fixed_geometry_failures": 0,
+    "fixed_passes": 12,
+    "text_unchanged_sides": 24,
+    "roomy_600dp_controls_identical": 4,
+    "scroll_y_all_sides": 0
+  },
+  "specific_160dp_long_text_example": {
+    "fontScale": 1,
+    "widthDp": 360,
+    "heightLimitDp": 160,
+    "longContent": true,
+    "baseline": {
+      "geometry_invariant_recomputed": false,
+      "editor_rect": [
+        10,
+        -28,
+        350,
+        131
+      ],
+      "cancel_rect": [
+        207,
+        102,
+        284,
+        156
+      ],
+      "ok_rect": [
+        284,
+        102,
+        348,
+        156
+      ],
+      "root_rect": [
+        0,
+        0,
+        360,
+        160
+      ],
+      "editor_row_overlap_px": 29
+    },
+    "fixed": {
+      "geometry_invariant_recomputed": true,
+      "editor_rect": [
+        10,
+        0,
+        350,
+        102
+      ],
+      "cancel_rect": [
+        207,
+        102,
+        284,
+        156
+      ],
+      "ok_rect": [
+        284,
+        102,
+        348,
+        156
+      ],
+      "root_rect": [
+        0,
+        0,
+        360,
+        160
+      ],
+      "editor_row_overlap_px": 0
+    }
+  },
+  "scope": "Real Android API 21 LayoutInflater plus unattached view measure/layout on the main thread, with predeclared finite-height specs. Supports the constrained-height geometry fix in this focused configuration.",
+  "dependency_scope": {
+    "constraintlayout": "2.2.1 exact",
+    "constraintlayout_core": "1.1.1 exact",
+    "probe_androidx_core": "1.3.2",
+    "baseline_catalog_core_ktx": "1.16.0",
+    "baseline_catalog_appcompat": "1.7.1",
+    "complete_application_resolved_dependency_graph_verified": false
+  },
+  "limitations": [
+    "This does not launch the real ClipEditActivity or reproduce the full Trime dependency graph.",
+    "It does not verify actual IME occlusion, adjustPan, window insets, floating-window positioning, touch, scrolling activation or OEM behavior.",
+    "The probe used a framework DeviceDefault.Light.Dialog themed Context; its roots were not attached to the activity content hierarchy.",
+    "Text preservation is verified; scrollY remained zero and no last-line scrolling interaction was performed.",
+    "Six D8 missing-unused-class hierarchy warnings and the first failed signer JVM-option invocation remain recorded; this probe is not warning-free.",
+    "The Root device readback receipt records the installed APK size/SHA-256 as identical to the bound local APK. This review checks that receipt against the local bytes; it does not itself repeat ADB or independently rehash a separately saved device APK."
+  ],
+  "claim_for_pr": "On an API 21 Android layout probe, the 160 dp-high/360 dp-wide long-text baseline editor occupied (10,-28)-(350,131) while both buttons began at y=102, a 29 px overlap. The constrained-height version occupied (10,0)-(350,102), with unchanged button rectangles. All 12 fixed geometry cases passed; seven baseline cases failed. This is focused inflate/measure validation, not full window/IME or scrolling acceptance.",
+  "full_review": {
+    "path": "build/upstream-split-20261020/next-pr2/clipboard-editor-height/probe1/executed-review.json",
+    "bytes": 19314,
+    "sha256": "0bed678700c9969f1a6f8472462fecb7383300dc4d897ea134d8a0b84b04349f"
+  }
+}

@@ -4,7 +4,7 @@
 
 上游基准是 `osfans/trime:develop` 的 `f5008260dc1e71b05e8e5508c6cfbf8ebf2507a0`；保留的原始贡献分支是 `contrib/complete-input-improvements`，快照为 `df12d0f4f62d7952a181e0ff7cf3cfd3e0077b7c`。两者之间有 67 个提交、660 个改动路径、90,665 行新增、3,388 行删除。最初一个提交就修改了 577 个文件，不能靠逐个 cherry-pick 达到“一件事一个 PR”。
 
-维护者要求[拆成单一主题的小 PR 并清理补丁](https://github.com/osfans/trime/pull/2170#issuecomment-6279805216)。此前按用户选择先推送 fork 分支与清单；本轮在核验 32/32 个原分支 OS 构建通过后，先创建两项独立 Draft PR。原 [#2170](https://github.com/osfans/trime/pull/2170) 仍保持 Draft，原贡献分支、八个已验分支与 fork 的 `develop` 不改写。
+维护者要求[拆成单一主题的小 PR 并清理补丁](https://github.com/osfans/trime/pull/2170#issuecomment-6279805216)。按用户选择先推送 fork 分支与清单，核验 32/32 个原分支 OS 构建后，先创建的两项小 PR 已由维护者合入；[合入与上游八项 CI 回执](checks/upstream-merges-20261020.json)保留精确 SHA。原 [#2170](https://github.com/osfans/trime/pull/2170) 已于 2026-10-20 被维护者关闭，保持关闭状态。原贡献分支、八个已验分支与 fork 的 `develop` 不改写。原八个分支基于 `f5008260`，下面新增布局提交则分别直接基于已合入两项修复的 `144f6111`。
 
 ## 第一批独立分支
 
@@ -71,20 +71,33 @@ JNI 聚焦测试在同一 mock 调用环境转换 2,048 个元素四次：原实
 
 每个 scope 都保留同一条上游已有的 `ClipEditActivity.SHOW_IMPLICIT` Kotlin 弃用警告，Gradle/SDK/原生依赖等诊断也保留；不是零警告。完整应用编译意味着 Manager、service/delegate 已在这些 Android 工程中编译，但 JVM 测试仍不能证明真实 TTS、编辑器动作、布局、CheckJNI、Lint、Release 或设备行为通过。本次不发布 APK。
 
-## 已提交的两个独立 Draft PR
+## 首批两项已合入上游
 
-八个原拆分分支的 **32/32 个 OS 构建**均完成并核对，应用 JVM 测试也均通过。[最终构建清单](checks/all-split-builds.json)绑定精确 SHA；原分支没有被新提交覆盖。现有上游编译/依赖/工具警告保留，不宣称零警告。`SHOW_IMPLICIT` 另有上游 [PR #2173](https://github.com/osfans/trime/pull/2173)，本轮不重复提交。
+八个原拆分分支的 **32/32 个 OS 构建**均完成并核对，应用 JVM 测试也均通过。[最终构建清单](checks/all-split-builds.json)绑定精确 SHA。两项提交分支随后在 fork 和上游分别完成 8/8 个成功 OS job；[最新上游合入回执](checks/upstream-merges-20261020.json)记录每个 job 的实际结果。现有上游编译、依赖及 Windows 缓存归档警告保留，不宣称零警告。`SHOW_IMPLICIT` 已由上游 [#2173](https://github.com/osfans/trime/pull/2173) 单独修复。
 
 | 上游 PR | 提交分支与 SHA | 范围 | 当前状态 |
 | --- | --- | --- | --- |
-| [#2174](https://github.com/osfans/trime/pull/2174) | `contrib/pr-native-license-versions`，`77774753` | 两个许可证版本字段 | Draft；许可证 UI 未实测 |
-| [#2175](https://github.com/osfans/trime/pull/2175) | `contrib/pr-jni-local-refs`，`a83583b8` | JNI 元素引用所有权两行 | Draft；Android CheckJNI 未运行 |
+| [#2174](https://github.com/osfans/trime/pull/2174) | `contrib/pr-native-license-versions`，`77774753` | 两个许可证版本字段 | 维护者于 2026-10-20 合入 `7609c8ba` |
+| [#2175](https://github.com/osfans/trime/pull/2175) | `contrib/pr-jni-local-refs`，`a83583b8` | JNI 元素引用所有权两行 | 维护者于 2026-10-20 合入 `144f6111` |
 
-上游规范要求非 docs 提交包含正文，原始拆分提交只有标题。因此为这两个 PR 新建说明完整的单提交分支；Git tree 和相对 `f5008260` 的 patch 均与原已验 `f34ee4fc`／`9e296c1e` 完全相同，原分支与原测试证据保留。新 SHA 的 [许可证 CI](https://github.com/X2M7/trime/actions/runs/39406744329)和 [JNI CI](https://github.com/X2M7/trime/actions/runs/39406744423)正在运行，不能将旧 SHA 的构建绿勾直接写成新 SHA 已通过。提交目标均已实际核对为 `osfans/trime:develop`，每 PR 只有一个提交，无文本冲突；[提交回执与等价证明](checks/upstream-submissions.json)保留目标、源码、状态和正文哈希。手测项未勾选，未标为 Ready。
+这两个提交为原补丁补齐了符合贡献规范的英文正文；Git tree 和相对 `f5008260` 的 patch 均与原已验 `f34ee4fc`／`9e296c1e` 相同。原分支与原测试证据保留。[原创建回执与等价证明](checks/upstream-submissions.json)是创建时快照，当前状态以合入回执为准。它们最初以 Draft 提交，未勾选未执行的手测；随后由维护者批准、转 Ready 并合入。合入不补充 Android CheckJNI、许可证页面 UI、Lint 或 Release 的验收结论。
 
-许可证原 CI x86_64 Debug APK 已实际下载并检查 `res/raw/aboutlibraries.json`：`rime/librime=1.17.0`、`BYVoid/OpenCC=1.4.2` 与源码相同，官方附件 ZIP 大小与 SHA-256 一致。[打包数据核验](checks/license-apk-package.json)不等于安装、运行或许可证页面 UI 通过，也不等于 Release 验收。
+许可证原 CI x86_64 Debug APK 已实际下载并检查 `res/raw/aboutlibraries.json`：`rime/librime=1.17.0`、`BYVoid/OpenCC=1.4.2` 与源码相同，官方附件 ZIP 大小与 SHA-256 一致。[打包数据核验](checks/license-apk-package.json)不等于安装、运行或许可证页面 UI 通过。
 
-[8 份英文说明](drafts/README.md)继续保留；上述两篇已同步实际提交正文。其余六个模块先完成各自的针对性验收，再逐项推进；没有同时创建八个新 PR。
+## 下一批：两个独立布局分支
+
+两个新提交分别直接建立在最新上游 `144f6111`，各只有一个提交、一个 XML 文件，相互没有依赖。与原分支的补丁逐字节相同；目标 XML 在新旧基准上也相同。旧分支没有重写，新分支需要重新绑定验证结果。
+
+| fork 分支 | 新 SHA | 单一范围 | 新提交 CI |
+| --- | --- | --- | --- |
+| [pr-setup-footer](https://github.com/X2M7/trime/tree/contrib/pr-setup-footer) | `560b5b99` | pager 的底部约束到可见导航按钮的 TOP Barrier | [四系统构建](https://github.com/X2M7/trime/actions/runs/39417654338) |
+| [pr-clipboard-editor-height](https://github.com/X2M7/trime/tree/contrib/pr-clipboard-editor-height) | `8344231d` | wrap_content 编辑框遵守已有的高度约束 | [四系统构建](https://github.com/X2M7/trime/actions/runs/39417654398) |
+
+独立的 fork 控制提交 `ededa40b` 为上游基准与这两个精确 SHA 执行完整应用 JVM 测试，见[第三轮控制运行](https://github.com/X2M7/trime/actions/runs/39417689930)。第一轮基准与剪贴板各 301 项实际通过、0 失败/错误/跳过，与历史 301 用例多重集一致；工具警告保留。向导在 AAPT2 下载超时后未执行测试，该次整轮失败原件保留于[首轮检查](checks/layout-jvm-attempt1.json)；仅对该失败任务请求同源码重试，其余两项不会记作重新执行。
+
+[剪贴板聚焦 Android 测量](checks/clipboard-height-probe/README.md)实际比较 12 对布局：原版 7 项几何失败，修复后 12 项通过，文本均未改变；宽裕高度的四组控制前后完全相同。这只是精确 XML 的独立 inflate/measure，依赖范围与完整应用不同，不含真实 Activity、IME、滚动、触摸或保存/取消。`constrainedHeight` 不改变既有 `adjustPan`。向导的原分支实际 APK 几何正在单独对照，其内部页面本身不可滚动，不能据此保证所有小屏和大字体内容可见。四平台完整构建仍以各运行的最终结果为准；待验收项不勾选，也不发布 APK。
+
+[8 份英文说明](drafts/README.md)与原八个分支继续保留。其余模块按各自问题和验收逐项推进，不同时提交全部补丁。
 
 ## 关联 issue 的审慎匹配
 
@@ -184,7 +197,7 @@ Shift 的主题动作回归与 `Keyboard.refreshModifier` 内 `result || setModi
 1. 每个新分支从当时核实的上游 `develop` 开始，独立问题无相互依赖；必须依赖的功能明确写出父补丁，等待父补丁合入后整理，不把累积差异冒充单个 PR。
 2. 每个修复说明一个具体触发场景、前后行为及对应验证；同一共享文件内无关的 import、偏好、字符串和格式修改都留到所属补丁。
 3. 送审前核对相关 issue/PR，补齐上游构建、全测试和真实复现；不把“源文件少”当作验证豁免。
-4. 每次只向维护者提交少数单主题 PR，收到反馈后再推进下一组；本轮仅先提交上述两个 Draft，未验收项如实保留。
+4. 每次只向维护者提交少数单主题 PR，收到反馈后再推进下一组；前两项已经合入；新布局分支分别验证，未验收项如实保留。
 5. 原聚合分支、旧提交和发布产物继续保留，今后可通过这个索引追踪哪些行为已迁入独立分支。未取得新的明确指示，不关闭、重开或标 Ready 原 PR。
 
 需要在本地继续某一分支时，可以递归克隆 fork，然后选择该分支：

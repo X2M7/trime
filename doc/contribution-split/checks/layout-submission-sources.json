@@ -1,0 +1,32 @@
+{
+  "observed_utc": "2026-10-20T11:48:31.867141+00:00",
+  "repository": "X2M7/trime",
+  "base_repository": "osfans/trime",
+  "base_sha": "144f6111d0498da85e0ffa250245f18955179ed3",
+  "records": [
+    {
+      "branch": "contrib/pr-setup-footer",
+      "head": "560b5b99a46eafe8494d8576c9316426a7d88bdf",
+      "parent": "144f6111d0498da85e0ffa250245f18955179ed3",
+      "original_source": "8e373f34400655a6aa871315531a8b25142d9233",
+      "original_source_preserved": true,
+      "path": "app/src/main/res/layout/activity_setup.xml",
+      "tree": "44e02966570a7538c10f7cd424f3ac6df609ddcc",
+      "patch_identical_to_original": true,
+      "patch_sha256": "b683ff38958db1dc639318d0cfedafc3d320976b1b45b1073236d7a428f5345e",
+      "message": "fix: keep setup pages above visible navigation buttons\n\nConstrain the pager to the top of the visible navigation buttons instead of\nletting its content extend behind them. Use a top barrier that ignores gone\nbuttons so the bound follows the Next, Previous and Skip visibility changes.\n\nRelated: #2170\n"
+    },
+    {
+      "branch": "contrib/pr-clipboard-editor-height",
+      "head": "8344231de57790bbe83262cca7fb8adf0d99e829",
+      "parent": "144f6111d0498da85e0ffa250245f18955179ed3",
+      "original_source": "70af58cf2712de59e611b3ca4f2d272175f5707e",
+      "original_source_preserved": true,
+      "path": "app/src/main/res/layout/activity_clip_edit.xml",
+      "tree": "434871f4f82ee35030aef15ee23ec9581445e87a",
+      "patch_identical_to_original": true,
+      "patch_sha256": "ba92fe4d153e71ed39cbd5d4d02bfa3551b94f2f29330d2d8d4085c92819db39",
+      "message": "fix: constrain clipboard editor height above action buttons\n\nLet the wrap-content editor respect its existing top and bottom constraints\nwhen vertical space is limited. Keep the action row below the editor and\npreserve the editor's existing internal scrolling and line limits.\n\nRelated: #2170\n"
+    }
+  ]
+}
