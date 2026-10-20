@@ -1,0 +1,292 @@
+{
+  "schema": "next-pr5-feedback-platform-ci-completed-review/v1",
+  "source_head": "e7e63932683dfcc985cc88601f995968b8fc50b4",
+  "baseline_head": "144f6111d0498da85e0ffa250245f18955179ed3",
+  "baseline_run": 39417000822,
+  "head_filtered_runs": [
+    39435037065,
+    39436199322
+  ],
+  "all_eight_build_jobs_success": true,
+  "completed_job_logs_assessed": 8,
+  "new_feedback_source_diagnostic_count": 0,
+  "unclassified_count": 0,
+  "warning_free": false,
+  "limits": [
+    "Successful Debug build jobs and Ubuntu style checks only. Actual application unit tests are recorded separately, not inferred from these jobs.",
+    "The upstream Pull Request workflow is compared with the existing four-OS Commit baseline; workflow/environment/cache differences remain explicit in raw candidate deltas.",
+    "Native cache hits or executed CMake tasks do not prove fresh native compilation; observed individual compile/link record counts are reported without asserting a full rebuild.",
+    "Pinned dependency, build-logic and tooling warnings are retained. Missing warnings after cache reuse do not prove a fix.",
+    "No APK byte/ABI/signature, installation, Android runtime, TTS playback or complete warning-elimination acceptance is claimed."
+  ],
+  "jobs": [
+    {
+      "repository": "X2M7/trime",
+      "run": 39435037065,
+      "job_id": 118669707451,
+      "os": "macos-26",
+      "conclusion": "success",
+      "jni_cache": "miss",
+      "native_individual_compile_or_link_record_count": 0,
+      "debug_compile_package_assemble": {
+        ":app:compileDebugKotlin": "executed",
+        ":app:packageDebug": "executed",
+        ":app:assembleDebug": "executed"
+      },
+      "ubuntu_spotless": "not_observed",
+      "warning_category_counts": {
+        "git_default_branch_advice": 1,
+        "android_sdk_cli_deprecation": 3,
+        "existing_build_logic_srcdirs_deprecation": 1,
+        "gradle_deprecation_summary_not_individual_diagnosis": 2,
+        "gradle_deprecation_advice": 4,
+        "pinned_snappy_cmake_compatibility": 4,
+        "pinned_leveldb_cmake_compatibility": 4,
+        "pinned_yaml_cpp_cpp_standard_warning": 48,
+        "compiler_warning_count_summary": 6,
+        "pinned_lua_32bit_limit_narrowing": 2,
+        "artifact_action_configuration_not_warning": 3
+      },
+      "candidate_multiset_equal_after_existing_precise_windows_length_normalization": true,
+      "feedback_source_diagnostics": [],
+      "raw_log": {
+        "path": "/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr5/feedback-platform-ci/joblogs/X2M7-118669707451.log",
+        "bytes": 328369,
+        "sha256": "3de79bb35ca506cab3b7705ecf4c848e0f395b42db58b32bb0a801824fe0eb31"
+      }
+    },
+    {
+      "repository": "X2M7/trime",
+      "run": 39435037065,
+      "job_id": 118669707731,
+      "os": "macos-26-intel",
+      "conclusion": "success",
+      "jni_cache": "miss",
+      "native_individual_compile_or_link_record_count": 0,
+      "debug_compile_package_assemble": {
+        ":app:compileDebugKotlin": "executed",
+        ":app:packageDebug": "executed",
+        ":app:assembleDebug": "executed"
+      },
+      "ubuntu_spotless": "not_observed",
+      "warning_category_counts": {
+        "git_default_branch_advice": 1,
+        "android_sdk_cli_deprecation": 3,
+        "sdk_cli_jna_jdk_native_access": 12,
+        "existing_build_logic_srcdirs_deprecation": 1,
+        "gradle_deprecation_summary_not_individual_diagnosis": 2,
+        "gradle_deprecation_advice": 4,
+        "pinned_snappy_cmake_compatibility": 4,
+        "pinned_leveldb_cmake_compatibility": 4,
+        "pinned_yaml_cpp_cpp_standard_warning": 48,
+        "compiler_warning_count_summary": 6,
+        "pinned_lua_32bit_limit_narrowing": 2,
+        "artifact_action_configuration_not_warning": 3
+      },
+      "candidate_multiset_equal_after_existing_precise_windows_length_normalization": true,
+      "feedback_source_diagnostics": [],
+      "raw_log": {
+        "path": "/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr5/feedback-platform-ci/joblogs/X2M7-118669707731.log",
+        "bytes": 329709,
+        "sha256": "c921b53dc957d21b6989fc45e329e45e4a7852c44eb691f6ad8620224cb70111"
+      }
+    },
+    {
+      "repository": "X2M7/trime",
+      "run": 39435037065,
+      "job_id": 118669707856,
+      "os": "windows-2025",
+      "conclusion": "success",
+      "jni_cache": "miss",
+      "native_individual_compile_or_link_record_count": 0,
+      "debug_compile_package_assemble": {
+        ":app:compileDebugKotlin": "executed",
+        ":app:packageDebug": "executed",
+        ":app:assembleDebug": "executed"
+      },
+      "ubuntu_spotless": "not_observed",
+      "warning_category_counts": {
+        "android_sdk_cli_deprecation": 3,
+        "sdk_cli_jna_jdk_native_access": 12,
+        "existing_build_logic_srcdirs_deprecation": 1,
+        "gradle_deprecation_summary_not_individual_diagnosis": 2,
+        "gradle_deprecation_advice": 4,
+        "pinned_snappy_cmake_compatibility": 4,
+        "pinned_leveldb_cmake_compatibility": 4,
+        "pinned_yaml_cpp_cpp_standard_warning": 48,
+        "compiler_warning_count_summary": 6,
+        "pinned_lua_32bit_limit_narrowing": 2,
+        "artifact_action_configuration_not_warning": 3,
+        "windows_post_job_gradle_cache_locked_file_error": 6,
+        "windows_post_job_gradle_cache_save_failure": 1
+      },
+      "candidate_multiset_equal_after_existing_precise_windows_length_normalization": true,
+      "feedback_source_diagnostics": [],
+      "raw_log": {
+        "path": "/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr5/feedback-platform-ci/joblogs/X2M7-118669707856.log",
+        "bytes": 227205,
+        "sha256": "b224e04e63a040a8035d35543907024104e97526084cb30aba419f4395336ec6"
+      }
+    },
+    {
+      "repository": "X2M7/trime",
+      "run": 39435037065,
+      "job_id": 118669707879,
+      "os": "ubuntu-26.04",
+      "conclusion": "success",
+      "jni_cache": "miss",
+      "native_individual_compile_or_link_record_count": 0,
+      "debug_compile_package_assemble": {
+        ":app:compileDebugKotlin": "executed",
+        ":app:packageDebug": "executed",
+        ":app:assembleDebug": "executed"
+      },
+      "ubuntu_spotless": "executed",
+      "warning_category_counts": {
+        "git_default_branch_advice": 1,
+        "android_sdk_cli_deprecation": 3,
+        "existing_build_logic_srcdirs_deprecation": 1,
+        "gradle_deprecation_summary_not_individual_diagnosis": 3,
+        "gradle_deprecation_advice": 6,
+        "pinned_snappy_cmake_compatibility": 4,
+        "pinned_leveldb_cmake_compatibility": 4,
+        "pinned_yaml_cpp_cpp_standard_warning": 48,
+        "compiler_warning_count_summary": 6,
+        "pinned_lua_32bit_limit_narrowing": 2,
+        "artifact_action_configuration_not_warning": 3
+      },
+      "candidate_multiset_equal_after_existing_precise_windows_length_normalization": true,
+      "feedback_source_diagnostics": [],
+      "raw_log": {
+        "path": "/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr5/feedback-platform-ci/joblogs/X2M7-118669707879.log",
+        "bytes": 326664,
+        "sha256": "f84d74220ebc6994bc2603848de44c5f04493bed396548e55cd895be859ae4c6"
+      }
+    },
+    {
+      "repository": "osfans/trime",
+      "run": 39436199322,
+      "job_id": 118673746503,
+      "os": "macos-26-intel",
+      "conclusion": "success",
+      "jni_cache": "hit",
+      "native_individual_compile_or_link_record_count": 0,
+      "debug_compile_package_assemble": {
+        ":app:compileDebugKotlin": "executed",
+        ":app:packageDebug": "executed",
+        ":app:assembleDebug": "executed"
+      },
+      "ubuntu_spotless": "not_observed",
+      "warning_category_counts": {
+        "git_default_branch_advice": 1,
+        "android_sdk_cli_deprecation": 3,
+        "sdk_cli_jna_jdk_native_access": 12,
+        "existing_build_logic_srcdirs_deprecation": 1,
+        "gradle_deprecation_summary_not_individual_diagnosis": 2,
+        "gradle_deprecation_advice": 4,
+        "artifact_action_configuration_not_warning": 1
+      },
+      "candidate_multiset_equal_after_existing_precise_windows_length_normalization": false,
+      "feedback_source_diagnostics": [],
+      "raw_log": {
+        "path": "/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr5/feedback-platform-ci/joblogs/osfans-118673746503.log",
+        "bytes": 285329,
+        "sha256": "1e01a18b7632b4215c5d8655744a661a6d23002b6236426b3a962b32cb18db1b"
+      }
+    },
+    {
+      "repository": "osfans/trime",
+      "run": 39436199322,
+      "job_id": 118673746565,
+      "os": "windows-2025",
+      "conclusion": "success",
+      "jni_cache": "hit",
+      "native_individual_compile_or_link_record_count": 0,
+      "debug_compile_package_assemble": {
+        ":app:compileDebugKotlin": "executed",
+        ":app:packageDebug": "executed",
+        ":app:assembleDebug": "executed"
+      },
+      "ubuntu_spotless": "not_observed",
+      "warning_category_counts": {
+        "android_sdk_cli_deprecation": 3,
+        "sdk_cli_jna_jdk_native_access": 12,
+        "existing_build_logic_srcdirs_deprecation": 1,
+        "gradle_deprecation_summary_not_individual_diagnosis": 2,
+        "gradle_deprecation_advice": 4,
+        "artifact_action_configuration_not_warning": 1,
+        "windows_post_job_gradle_cache_locked_file_error": 6,
+        "windows_post_job_gradle_cache_save_failure": 1
+      },
+      "candidate_multiset_equal_after_existing_precise_windows_length_normalization": false,
+      "feedback_source_diagnostics": [],
+      "raw_log": {
+        "path": "/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr5/feedback-platform-ci/joblogs/osfans-118673746565.log",
+        "bytes": 184379,
+        "sha256": "8c6767230de92d0a492426757e2f638836ecd241896cef44588a0d22bc2a1974"
+      }
+    },
+    {
+      "repository": "osfans/trime",
+      "run": 39436199322,
+      "job_id": 118673746996,
+      "os": "ubuntu-26.04",
+      "conclusion": "success",
+      "jni_cache": "hit",
+      "native_individual_compile_or_link_record_count": 0,
+      "debug_compile_package_assemble": {
+        ":app:compileDebugKotlin": "executed",
+        ":app:packageDebug": "executed",
+        ":app:assembleDebug": "executed"
+      },
+      "ubuntu_spotless": "executed",
+      "warning_category_counts": {
+        "git_default_branch_advice": 1,
+        "android_sdk_cli_deprecation": 3,
+        "existing_build_logic_srcdirs_deprecation": 1,
+        "gradle_deprecation_summary_not_individual_diagnosis": 3,
+        "gradle_deprecation_advice": 6,
+        "artifact_action_configuration_not_warning": 1
+      },
+      "candidate_multiset_equal_after_existing_precise_windows_length_normalization": false,
+      "feedback_source_diagnostics": [],
+      "raw_log": {
+        "path": "/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr5/feedback-platform-ci/joblogs/osfans-118673746996.log",
+        "bytes": 284254,
+        "sha256": "9636b760e4656731dac05decbf99a03908b1c21dc3334834681fd46ea320904e"
+      }
+    },
+    {
+      "repository": "osfans/trime",
+      "run": 39436199322,
+      "job_id": 118673747487,
+      "os": "macos-26",
+      "conclusion": "success",
+      "jni_cache": "hit",
+      "native_individual_compile_or_link_record_count": 0,
+      "debug_compile_package_assemble": {
+        ":app:compileDebugKotlin": "executed",
+        ":app:packageDebug": "executed",
+        ":app:assembleDebug": "executed"
+      },
+      "ubuntu_spotless": "not_observed",
+      "warning_category_counts": {
+        "git_default_branch_advice": 1,
+        "android_sdk_cli_deprecation": 3,
+        "existing_build_logic_srcdirs_deprecation": 1,
+        "gradle_deprecation_summary_not_individual_diagnosis": 2,
+        "gradle_deprecation_advice": 4,
+        "artifact_action_configuration_not_warning": 1
+      },
+      "candidate_multiset_equal_after_existing_precise_windows_length_normalization": false,
+      "feedback_source_diagnostics": [],
+      "raw_log": {
+        "path": "/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr5/feedback-platform-ci/joblogs/osfans-118673747487.log",
+        "bytes": 284798,
+        "sha256": "748b7efa24e489535ff569117ade3b1dfa4f38ae179f582de4b62365e66ba2d7"
+      }
+    }
+  ],
+  "original_compact_report_sha256": "822b3b8bf3240863a18867de37682e47af59f9e7bd3a07dc5c308500cce44230",
+  "detailed_report_sha256": "82c169a9c0a680442f1c5a73ff48bd207db44c79573899b6b726e94ca3a7b700"
+}

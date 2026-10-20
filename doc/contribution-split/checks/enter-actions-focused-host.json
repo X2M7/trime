@@ -1,0 +1,88 @@
+{
+  "schema": "enter-actions-focused-host/v1",
+  "passed": true,
+  "process_exit_code": 0,
+  "source_bindings": [
+    {
+      "source": "app/src/main/java/com/osfans/trime/ime/core/EditorEnterAction.kt",
+      "copy": "src/main/kotlin/com/osfans/trime/ime/core/EditorEnterAction.kt",
+      "sha256": "068def0827884288531e5a4e299f90745e2e54781d1c188ee23875b412c7262f",
+      "compiled_in_focused_host": true
+    },
+    {
+      "source": "app/src/test/java/com/osfans/trime/ime/core/EditorEnterActionTest.kt",
+      "copy": "src/test/kotlin/com/osfans/trime/ime/core/EditorEnterActionTest.kt",
+      "sha256": "e91eb923d1b646f8aa5df51716a9982d1e0e13f28399f184594721bd6e827df8",
+      "compiled_in_focused_host": true
+    },
+    {
+      "source": "app/src/main/java/com/osfans/trime/ime/broadcast/EnterKeyDisplayDelegate.kt",
+      "copy": "style-only/EnterKeyDisplayDelegate.kt",
+      "sha256": "75a0d643f4dc515cec767f86fa5de3ed1c87272c98bed7304f861460646264a4",
+      "compiled_in_focused_host": false
+    },
+    {
+      "source": "app/src/main/java/com/osfans/trime/ime/core/TrimeInputMethodService.kt",
+      "copy": "style-only/TrimeInputMethodService.kt",
+      "sha256": "113f1db8725e5cba8491a505533ea1a145fd4e9f85c73c18f284ddca00199cc4",
+      "compiled_in_focused_host": false
+    },
+    {
+      "source": "app/src/main/java/com/osfans/trime/ime/keyboard/KeyboardWindow.kt",
+      "copy": "style-only/KeyboardWindow.kt",
+      "sha256": "d10e4b1cfc78195f141fa5e14f0aebc629c7e66f6383cff5ccd09dc47e3ccc0f",
+      "compiled_in_focused_host": false
+    },
+    {
+      "source": "app/src/test/java/com/osfans/trime/ime/broadcast/EnterKeyDisplayDelegateTest.kt",
+      "copy": "style-only/EnterKeyDisplayDelegateTest.kt",
+      "sha256": "f7a6c4721c9e7106086446213451e2b6bf7e966055d60396923bc413573d6027",
+      "compiled_in_focused_host": false
+    }
+  ],
+  "totals": {
+    "tests": 12,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "suites": [
+    {
+      "path": "build/test-results/test/TEST-com.osfans.trime.ime.core.EditorEnterActionTest.xml",
+      "sha256": "fec8e0a47c730f10b6e8fc20d069a2fe747988048812d4d101ca5915f087f538",
+      "tests": 12,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        "standard actions use their matching theme labels after unrelated option flags are masked",
+        "NONE and UNSPECIFIED send a Return key and show the default instead of an app label",
+        "a labeled nonstandard custom ID wins over the search option for both action and label",
+        "a custom ID in the standard action set uses that action's theme label",
+        "a missing custom label does not make actionId override the standard option",
+        "an unspecified custom ID retains the editor's standard action",
+        "NO_ENTER_ACTION suppresses both standard and custom actions regardless of label mode",
+        "TYPE_NULL always sends a Return key even when an app supplies an action",
+        "a multiline flag alone does not discard an explicit Send action",
+        "app-only labels never show null while app-preferred mode falls back to the theme action",
+        "invalid theme modes retain the existing never-use-app-label fallback",
+        "a labeled actionId equal to NONE preserves the existing explicit custom-ID dispatch"
+      ]
+    }
+  ],
+  "actual_test_task_executed": true,
+  "strict_helper_and_test_kotlin_warnings_as_errors": true,
+  "kotlin": "2.3.21",
+  "jvm_target": 11,
+  "jdk": 17,
+  "kotest": "6.0.7",
+  "spotless_ktlint": "1.8.0",
+  "manager_delegate_window_service_and_new_delegate_test": "format checked only; new four delegate tests must run in the complete application JVM job",
+  "original_twelve_helper_cases_retained": true,
+  "raw_log_sha256": "406c03bd88ac53f742d77548f70561836a4c150c57698ce02d17c7a9581ab015",
+  "known_tool_diagnostics": [
+    "Spotless Configuration.setVisible Gradle deprecation retained"
+  ],
+  "android_runtime_accepted": false,
+  "all_tools_warning_free": false
+}

@@ -18,9 +18,12 @@ is based directly on `144f6111`, at `e7e63932` on
 `contrib/pr-feedback-resources`. It fixes worker-thread speech ownership before
 submission. Its 315 complete application JVM cases and 14 focused helper cases
 passed; the initial new test diagnostic is fixed and its historical run retained.
-The new four-platform builds and actual Android playback remain pending. The
-logcat and Return topics remain unsubmitted; logcat cancellation limits are
-recorded in its draft. Original source refs and test records remain intact.
+The feedback fork/upstream builds have since passed all eight OS jobs; actual
+Android playback remains pending. The next Return submission is based on `144f6111`
+at `5879c1eb`, with 317 complete application JVM cases passed (including four real
+display-delegate/broadcast cases). Its platform builds and Android dispatch/rendering
+checks remain pending. Only the original logcat topic remains unsubmitted; its
+cancellation limits are recorded in the draft. Original source refs and test records remain intact.
 
 - [setup-footer](setup-footer.md)
 - [clipboard-editor-height](clipboard-editor-height.md)

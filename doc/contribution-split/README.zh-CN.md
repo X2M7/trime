@@ -129,9 +129,19 @@ JNI 聚焦测试在同一 mock 调用环境转换 2,048 个元素四次：原实
 
 初提交 `b8988c57` 的[315 项完整应用测试实际通过](checks/lazy-feedback-application-jvm-initial.json)，但云端为新增测试的 `poll()` 可空调用报告一条编译警告，因此没有提交 PR。已改用 `checkNotNull` 保留必须执行回调的断言，最终一提交 `e7e63932` 的其余五个文件均与初提交一致；旧源码分支和所有失败验收原件保留，既不抑制诊断也不把首轮测试通过记成警告已消除。修正后的宿主相同 14 项再次执行通过，不累加为 28 个独立用例。宿主 JDK17 与云端 JDK25 等构建上下文不同，不能以轻量结果代替最终应用构建。
 
-最终精确提交的[315 项完整应用 JVM 验证](checks/lazy-feedback-application-jvm-final.json)实际通过，21 组 XML 的失败／错误／跳过均为 0；301 项基准完整保留，新增 14 项与最终源码标签一致。官方附件的大小／SHA／CRC、源码与控制提交身份、20 个递归 pin 及实际非缓存任务均已独立核对。新增空值调用诊断已消失，结构化 build-logic `srcDirs` 与既有工具警告仍与基准相同，不是整个工程零警告。[四系统 Debug 构建](https://github.com/X2M7/trime/actions/runs/39435037065)与上游 [PR 构建](https://github.com/osfans/trime/actions/runs/39436199322)仍在运行；[14:08:07 UTC 快照](checks/lazy-feedback-platform-ci-pending.json)中 fork 四项尚未完成，因此不写四平台通过或 APK 构建已完成。Android Looper、真实 TTS／SoundPool 播放、Lint、Release 和内存收益仍未验收；初始化失败的恢复仍需 destroy/init，未加载的按键音不补播，关闭偏好也不新增即时资源回收承诺。[创建及读回回执](checks/lazy-feedback-upstream-submission.json)确认源 SHA、目标、正文及一提交六文件范围。第一次创建返回 502，确认对应 head 无 PR 后重试成功，没有重复创建。真实播放验收未完成，保持 Draft；本轮不发布 APK。
+最终精确提交的[315 项完整应用 JVM 验证](checks/lazy-feedback-application-jvm-final.json)实际通过，21 组 XML 的失败／错误／跳过均为 0；301 项基准完整保留，新增 14 项与最终源码标签一致。官方附件的大小／SHA／CRC、源码与控制提交身份、20 个递归 pin 及实际非缓存任务均已独立核对。新增空值调用诊断已消失，结构化 build-logic `srcDirs` 与既有工具警告仍与基准相同，不是整个工程零警告。反馈资源的 fork 与上游共 [8/8 项四系统 Debug 构建已实际通过](checks/lazy-feedback-platform-ci-final.json)，八份终态原始日志已按 `144f6111` 的同 OS 基线分类，未发现新增反馈源码诊断或未分类项；已知工具与固定依赖警告保留。fork 的 JNI cache 均 miss，上游均 hit，但没有独立 Building/Linking 命令记录，因此不声称全部原生库重新编译。上一轮 [14:08:07 UTC 进行中快照](checks/lazy-feedback-platform-ci-pending.json)按原范围保留，不能代替终态结果。Android Looper、真实 TTS／SoundPool 播放、Lint、Release 和内存收益仍未验收；初始化失败的恢复仍需 destroy/init，未加载的按键音不补播，关闭偏好也不新增即时资源回收承诺。[创建及读回回执](checks/lazy-feedback-upstream-submission.json)确认源 SHA、目标、正文及一提交六文件范围。第一次创建返回 502，确认对应 head 无 PR 后重试成功，没有重复创建。真实播放验收未完成，保持 Draft；本轮不发布 APK。
 
 日志进程候选的再次审阅还在受控 JVM fixture 中复现了 destroy 抛错而 stdout 继续阻塞、以及 IO 池被占满时 watcher 延后两项边界；没有据此认定 Android 应用已经发生无限挂起。它仍未提交上游，不能把退出轮询的一秒窗口写成整个取消过程的硬上限，后续先补闭环再推进。
+
+## 下一项：回车标签与实际动作一致
+
+[现有四个 Draft 的最新复核](checks/current-pr-build-feedback-next5.json)确认 #2176–#2179 仍无评论、审阅或未解决讨论，源 SHA 未变，fork／上游合计 32/32 个构建 job 通过。#2179 的[说明更新及读回](checks/lazy-feedback-validation-refresh.json)已只将构建进度改为八系统任务成功，保留原始提交回执和真实播放限制。
+
+已推送 [contrib/pr-enter-actions](https://github.com/X2M7/trime/tree/contrib/pr-enter-actions)，新提交 `5879c1eb` 直接基于 `144f6111`，一个提交、六个文件，[源码绑定](checks/enter-actions-submission-source.json)记录精确范围。原 `bcb47b1a` 分支不改写，其 helper、十二项原测试与 service 派发代码全字节不变；新提交补齐标签委托的内部标量入口、全部缓存键面的标签变化通知及四项真实委托／广播测试。
+
+具体修复包括：带非零 custom actionId 的已命名动作不再错误采用 imeOptions 对应的标签；TYPE_NULL／NO_ENTER_ACTION 采用原始回车的默认标签；app-only 缺省不再显示字面量 null。Mode 2 在缺少 app label 时新增实际标准动作的主题标签回退，随后才回退主题默认。原键盘没有接收标签变化通知，同缓存布局早退可能继续依赖无关事件触发绘制；现已监听广播并使全部缓存的子按键失效，不重建布局、不触发 Rime 或部署。这个源码闭环不是已完成 Android 像素验收的声明。
+
+[本轮聚焦检查](checks/enter-actions-focused-host.json)实际重新执行 12 项纯 policy 测试通过，严格 Kotlin helper／test 编译无警告；其余四个文件在该宿主工程仅格式检查。精确提交的[完整应用 JVM 验证](checks/enter-actions-application-jvm.json)已实际通过：317 项／21 组，失败／错误／跳过均为 0；301 项基准完整保留，新增 16 项准确匹配最终源码，其中 4 项实际 Theme／Kodein／delegate／InputBroadcaster 测试已运行。官方 ZIP 大小／digest／CRC、源码／控制身份、20 个递归 pin、真实非缓存任务与原 XML／HTML 均已核对；没有新增源码编译诊断，既有 build-logic 和工具警告仍在。[四系统 Debug 构建](https://github.com/X2M7/trime/actions/runs/39448874294)亦在运行；[15:34 UTC 快照](checks/enter-actions-platform-ci-pending.json)中全部四项尚未结束，Ubuntu 全仓库样式检查已通过，不能提前写完整构建或 APK 通过。Android 实际 EditorInfo 构造、service 提交、屏幕重画／缓存来回切换、Lint 和 Release 仍未验收，既有工具告警保留；本轮不发布 APK。
 
 ## 关联 issue 的审慎匹配
 

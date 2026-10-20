@@ -1,11 +1,15 @@
-# fix: show the Return label for the action sent to the editor
+# fix: keep Return labels consistent with editor actions
 
-An editor can supply a labeled custom actionId while imeOptions names Search. Return currently dispatches that custom ID but can still display the Search label. App-label-only mode can also display the literal null when no label is supplied.
+An editor can provide a labeled custom action ID while `imeOptions` names Search. Return already sends the custom ID, but the key can still display the Search label. App-label-only mode can also display the literal `null`. Share the existing dispatch decision with the display delegate, following the [EditorInfo action contract](https://developer.android.com/reference/android/view/inputmethod/EditorInfo#actionId).
 
-Use the same action resolution policy in the display delegate and the service. Preserve raw Return for TYPE_NULL or NO_ENTER_ACTION, custom-ID precedence, and the theme's four label preferences. App-preferred mode falls back to the matching theme action label; app-only mode falls back to the default instead of null. Multiline editors can still request an explicit action.
+Keep raw Return for TYPE_NULL or NO_ENTER_ACTION and retain custom-ID precedence and the theme's four label modes. App-preferred mode now falls back to the theme label for the resolved standard action when the app label is absent; app-only mode falls back to the theme default. Handle label-change broadcasts by invalidating keys in every cached keyboard, so a same-layout editor restart has a repaint path.
 
-**Validation:** Twelve helper tests passed with strict Kotlin compilation. A separate exact-SHA Android application JVM run compiled the actual service/delegate and passed all 313 tests, preserving the 301 baseline cases, without skips. The original exact-SHA four-OS Debug/native CI and Ubuntu Spotless passed.
+Validation:
 
-**Remaining:** Verify actual EditorInfo values, theme rendering and performEditorAction on Android. Application JVM tests cover the shared rule, not real editor dispatch or rendered labels. Lint, Release and device checks remain pending; inherited compiler/tooling diagnostics remain.
+- Twelve focused policy tests passed with strict helper/test Kotlin compilation; focused formatting passed for all six changed files.
+- The exact-source [complete application JVM run](https://github.com/X2M7/trime/actions/runs/39448942546) passed all 317 cases: the 301 baseline, 12 policy cases and 4 real delegate/broadcast cases. No failures/errors/skips or new source compiler diagnostics were found.
+- [Four-platform Debug/native builds](https://github.com/X2M7/trime/actions/runs/39448874294) are in progress; the Ubuntu full-project style check passed.
 
-Source: `contrib/split-enter-actions` at `bcb47b1a81eb211e7c0ede447c1b3263dcf80746`.
+This remains Draft for actual Android EditorInfo/InputConnection dispatch and on-screen repaint after restartInput or switching cached layouts. The four delegate tests use the real Theme, Kodein, display delegate and broadcaster, but do not construct Android views or exercise the service. Lint and Release checks remain unverified; existing dependency/toolchain warnings are retained.
+
+Source: `contrib/pr-enter-actions` at `5879c1eb5a80011a1b1a9eaf3db16750cf01205d`.

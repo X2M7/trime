@@ -1,0 +1,135 @@
+{
+  "schema": "trime-enter-final-platform-ci-audit/v1",
+  "source_sha": "5879c1eb5a80011a1b1a9eaf3db16750cf01205d",
+  "base_sha": "144f6111d0498da85e0ffa250245f18955179ed3",
+  "source_run_id": 39448874294,
+  "baseline_run_id": 39417000822,
+  "read_only": true,
+  "observation": {
+    "time_utc": "2026-10-20T15:34:12.979067+00:00",
+    "poll": 4,
+    "run_status": "queued",
+    "run_conclusion": null,
+    "jobs": [
+      {
+        "id": 118718026192,
+        "os": "windows-2025",
+        "status": "in_progress",
+        "conclusion": null
+      },
+      {
+        "id": 118718026765,
+        "os": "macos-26",
+        "status": "queued",
+        "conclusion": null
+      },
+      {
+        "id": 118718026768,
+        "os": "macos-26-intel",
+        "status": "in_progress",
+        "conclusion": null
+      },
+      {
+        "id": 118718027406,
+        "os": "ubuntu-26.04",
+        "status": "in_progress",
+        "conclusion": null
+      }
+    ]
+  },
+  "all_jobs_completed_success": false,
+  "passed_job_count": 0,
+  "pending_job_count": 4,
+  "failed_job_count": 0,
+  "warning_free": false,
+  "completed_job_logs_assessed": 0,
+  "diagnostic_count_scope": "Only downloaded completed source-job logs; pending jobs are unassessed.",
+  "new_branch_source_diagnostic_count": null,
+  "unclassified_count": null,
+  "limits": [
+    "Commit workflow is Debug assembly plus Ubuntu Spotless. No unit-test, Lint, instrumentation or Android runtime result is inferred. Application317 cases are audited separately and not counted here.",
+    "Native cache hits use prebuilt libraries and do not prove fresh native compilation. Even cache misses/native tasks do not prove individual compile/link commands unless actual command records exist.",
+    "All raw logs remain. Toolchain, pinned dependency and Gradle warnings already present at upstream144f are not removed, and disappearance through cache reuse does not prove they were fixed.",
+    "Only artifact upload steps and remote metadata are checked. APK byte manifest, native ELF ABI, signatures, installation and actual playback are not audited.",
+    "Precise Windows cache-lock byte-count normalization applies only to tar Read error at byte0 diagnostics; raw differences and all stderr are retained."
+  ],
+  "full_report": {
+    "path": "/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr5/enter-platform-ci/audit-summary.json",
+    "bytes": 557648,
+    "sha256": "75e4e2da5c7443ad227acf5fc2539b3b7290e307c230b29530926480b9c1ca44"
+  },
+  "jobs": [
+    {
+      "job_id": 118718026192,
+      "os": "windows-2025",
+      "status": "in_progress",
+      "conclusion": null,
+      "raw_log_pending": true,
+      "active_steps": [
+        "Calculate JNI cache hash"
+      ],
+      "completed_relevant_steps": [
+        {
+          "name": "Check code style",
+          "conclusion": "skipped"
+        }
+      ]
+    },
+    {
+      "job_id": 118718026765,
+      "os": "macos-26",
+      "status": "queued",
+      "conclusion": null,
+      "raw_log_pending": true,
+      "active_steps": [],
+      "completed_relevant_steps": []
+    },
+    {
+      "job_id": 118718026768,
+      "os": "macos-26-intel",
+      "status": "in_progress",
+      "conclusion": null,
+      "raw_log_pending": true,
+      "active_steps": [
+        "Calculate JNI cache hash"
+      ],
+      "completed_relevant_steps": [
+        {
+          "name": "Check code style",
+          "conclusion": "skipped"
+        }
+      ]
+    },
+    {
+      "job_id": 118718027406,
+      "os": "ubuntu-26.04",
+      "status": "in_progress",
+      "conclusion": null,
+      "raw_log_pending": true,
+      "active_steps": [
+        "Build debug Trime"
+      ],
+      "completed_relevant_steps": [
+        {
+          "name": "Check code style",
+          "conclusion": "success"
+        },
+        {
+          "name": "Calculate JNI cache hash",
+          "conclusion": "success"
+        },
+        {
+          "name": "Fetch JNI cache",
+          "conclusion": "success"
+        }
+      ]
+    }
+  ],
+  "local_monitor_stopped": true,
+  "local_monitor_exit_scope": "Intentional local SIGTERM at parent request; not a GitHub CI failure or cancellation.",
+  "local_monitor_actual_exit_code": 143,
+  "github_final_runs_left_running": true,
+  "snapshot_frozen_at_parent_request": true,
+  "no_completed_source_jobs_to_audit": true,
+  "baseline_raw_logs_directory": "/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr4/final-platform-ci/baseline144f"
+}

@@ -8,7 +8,7 @@ Validation:
 
 - 14 focused resource/worker-dispatch tests passed; strict helper/test Kotlin compilation and focused Spotless passed.
 - The exact-source [complete application JVM run](https://github.com/X2M7/trime/actions/runs/39435068756) passed all 315 cases (301 baseline + 14 new), with no failures/errors/skips. The new test compiler diagnostic is gone; existing build-logic/tool warnings remain.
-- [Four-platform Debug/native builds](https://github.com/X2M7/trime/actions/runs/39435037065) are in progress.
+- [Fork four-platform Debug/native builds](https://github.com/X2M7/trime/actions/runs/39435037065) and [upstream PR builds](https://github.com/osfans/trime/actions/runs/39436199322) passed all eight OS jobs; Ubuntu Spotless passed. Existing dependency/toolchain diagnostics remain. These builds do not establish Android playback acceptance.
 
 This remains Draft for Android playback/lifecycle checks: toggling feedback, initialization completing after finish/destroy, and loading custom samples. The pure helper tests do not exercise Android playback. Lint, Release validation and measured memory savings remain unverified; existing toolchain diagnostics are retained.
 

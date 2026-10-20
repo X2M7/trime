@@ -79,3 +79,21 @@ The original [315-test run with one new compiler diagnostic](lazy-feedback-appli
 is retained as a blocked submission attempt; passing tests alone was insufficient.
 The final new diagnostic is gone. Existing build-logic/tool warnings remain.
 Neither helper nor full JVM tests establish actual Android TTS/SoundPool playback.
+
+## Return labels and cached keyboard redraw
+
+[enter-actions-focused-host.json](enter-actions-focused-host.json) binds the 12
+policy cases executed in the strict Kotlin host fixture; the four other changed
+files were format-checked only there. [The exact-source application run](enter-actions-application-jvm.json)
+separately passes all 317 JVM cases at `5879c1eb`: all 301 baseline cases, the 12
+policy cases and four real Theme/Kodein/display-delegate/InputBroadcaster cases.
+The latter exercise state-before-broadcast and repeated/changed metadata; they
+do not construct Android EditorInfo or KeyboardWindow views, perform service
+commits, or prove on-screen redraw. New source diagnostics are absent in that
+run; existing build-logic/toolchain warnings remain.
+
+[The previous feedback module's completed platform review](lazy-feedback-platform-ci-final.json)
+now closes all eight fork/upstream OS jobs without new feedback source diagnostics.
+Its original pending snapshots and creation receipt retain their capture-time
+state. [The validation-only PR body refresh](lazy-feedback-validation-refresh.json)
+does not promote the Draft or add playback/device acceptance.
