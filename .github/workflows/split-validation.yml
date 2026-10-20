@@ -1,0 +1,218 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Fork-only control branch: this workflow is not part of any application patch.
+name: Split application unit tests
+
+on:
+  push:
+    branches:
+      - contrib/split-validation
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  application-tests:
+    if: github.repository == 'X2M7/trime'
+    name: Unit tests (${{ matrix.scope }})
+    runs-on: ubuntu-26.04
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - scope: upstream-base
+            sha: f5008260dc1e71b05e8e5508c6cfbf8ebf2507a0
+          - scope: lazy-feedback
+            sha: 3912fb23aced49da94cee6e3c59b3a9585da779b
+          - scope: logcat-lifecycle
+            sha: f5909dcb024997cef8eefe437ee810038118f3c1
+    env:
+      CI_NAME: Split validation CI
+      BUILD_ABI: x86_64
+      CMAKE_BUILD_PARALLEL_LEVEL: '2'
+      VALIDATION_SCOPE: ${{ matrix.scope }}
+      EXPECTED_SHA: ${{ matrix.sha }}
+    steps:
+      - name: Initialize evidence directory
+        shell: bash
+        run: |
+          set -euo pipefail
+          evidence="$RUNNER_TEMP/split-validation/$VALIDATION_SCOPE"
+          mkdir -p "$evidence"
+          python3 - "$evidence" <<'PY'
+          import json
+          import os
+          from pathlib import Path
+          import sys
+
+          metadata = {
+              "scope": os.environ["VALIDATION_SCOPE"],
+              "expected_sha": os.environ["EXPECTED_SHA"],
+              "repository": os.environ["GITHUB_REPOSITORY"],
+              "workflow_ref": os.environ["GITHUB_WORKFLOW_REF"],
+              "workflow_sha": os.environ["GITHUB_WORKFLOW_SHA"],
+              "run_id": os.environ["GITHUB_RUN_ID"],
+              "run_attempt": os.environ["GITHUB_RUN_ATTEMPT"],
+          }
+          (Path(sys.argv[1]) / "request.json").write_text(
+              json.dumps(metadata, indent=2) + "\n", encoding="utf-8",
+          )
+          PY
+
+      - name: Fetch exact source and recursive submodules
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ matrix.sha }}
+          submodules: recursive
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Verify checked-out identity
+        shell: bash
+        run: |
+          set -euo pipefail
+          evidence="$RUNNER_TEMP/split-validation/$VALIDATION_SCOPE"
+          git rev-parse HEAD > "$evidence/head.txt"
+          git submodule status --recursive > "$evidence/submodules.txt"
+          python3 - "$evidence" <<'PY'
+          import json
+          import os
+          from pathlib import Path
+          import sys
+
+          evidence = Path(sys.argv[1])
+          actual = (evidence / "head.txt").read_text().strip()
+          expected = os.environ["EXPECTED_SHA"]
+          submodules = (evidence / "submodules.txt").read_text().splitlines()
+          wrong_submodules = [line for line in submodules if not line.startswith(" ")]
+          metadata = {
+              "expected_sha": expected,
+              "actual_sha": actual,
+              "head_matches": actual == expected,
+              "recursive_submodule_count": len(submodules),
+              "uninitialized_or_mismatched_submodules": wrong_submodules,
+          }
+          (evidence / "identity.json").write_text(
+              json.dumps(metadata, indent=2) + "\n", encoding="utf-8",
+          )
+          if actual != expected or not submodules or wrong_submodules:
+              raise SystemExit("Source or recursive submodule identity check failed")
+          PY
+
+      - name: Set up Java
+        uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: 25
+          cache: gradle
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v4
+        with:
+          packages: platform-tools
+
+      - name: Install CMake
+        shell: bash
+        run: |
+          set -euo pipefail
+          sdkmanager --install 'cmake;3.31.6' 2>&1 | tee "$RUNNER_TEMP/split-validation/$VALIDATION_SCOPE/sdk-setup.log"
+
+      - name: Run the complete application unit test task
+        id: application_tests
+        timeout-minutes: 50
+        shell: bash
+        run: |
+          set -euo pipefail
+          evidence="$RUNNER_TEMP/split-validation/$VALIDATION_SCOPE"
+          java -version 2>&1 | tee "$evidence/java-version.log"
+          ./gradlew --no-daemon --max-workers=1 --rerun-tasks \
+            --stacktrace --console=plain --warning-mode=all \
+            '-Dorg.gradle.jvmargs=-Xmx2g -XX:MaxMetaspaceSize=1g -Dfile.encoding=UTF-8' \
+            -Dorg.gradle.parallel=false \
+            -Pkotlin.compiler.execution.strategy=in-process \
+            :app:testDebugUnitTest 2>&1 | tee "$evidence/gradle-test.log"
+
+      - name: Summarize actual JUnit reports
+        if: always()
+        shell: bash
+        env:
+          TEST_STEP_OUTCOME: ${{ steps.application_tests.outcome }}
+        run: |
+          set -euo pipefail
+          evidence="$RUNNER_TEMP/split-validation/$VALIDATION_SCOPE"
+          mkdir -p "$evidence"
+          python3 - "$evidence" <<'PY'
+          import hashlib
+          import json
+          import os
+          from pathlib import Path
+          import sys
+          import xml.etree.ElementTree as ET
+
+          evidence = Path(sys.argv[1])
+          reports = sorted(Path("app/build/test-results/testDebugUnitTest").glob("TEST-*.xml"))
+          totals = dict(tests=0, failures=0, errors=0, skipped=0)
+          suites = []
+          problems = []
+          for report in reports:
+              raw = report.read_bytes()
+              try:
+                  root = ET.fromstring(raw)
+                  if root.tag != "testsuite":
+                      raise ValueError("Expected a JUnit testsuite")
+                  counts = {key: int(root.attrib[key]) for key in totals}
+                  if any(value < 0 for value in counts.values()):
+                      raise ValueError("Negative JUnit count")
+                  if len(root.findall("testcase")) != counts["tests"]:
+                      raise ValueError("JUnit testcase count does not match suite metadata")
+                  for key, value in counts.items():
+                      totals[key] += value
+                  suites.append({
+                      "name": root.attrib.get("name"),
+                      "path": str(report),
+                      "bytes": len(raw),
+                      "sha256": hashlib.sha256(raw).hexdigest(),
+                      **counts,
+                  })
+              except (ET.ParseError, KeyError, ValueError) as error:
+                  problems.append({"path": str(report), "error": str(error)})
+          executed = totals["tests"] - totals["skipped"]
+          passed = (
+              os.environ["TEST_STEP_OUTCOME"] == "success"
+              and bool(suites)
+              and not problems
+              and executed > 0
+              and totals["failures"] == 0
+              and totals["errors"] == 0
+          )
+          summary = {
+              "scope": os.environ["VALIDATION_SCOPE"],
+              "expected_sha": os.environ["EXPECTED_SHA"],
+              "gradle_test_step_outcome": os.environ["TEST_STEP_OUTCOME"],
+              "passed": passed,
+              "executed_tests": executed,
+              "totals": totals,
+              "suites": suites,
+              "report_problems": problems,
+              "limits": ["Application JVM unit tests only; no Lint, Release, or device acceptance"],
+          }
+          (evidence / "test-summary.json").write_text(
+              json.dumps(summary, indent=2) + "\n", encoding="utf-8",
+          )
+          print(json.dumps(summary, indent=2))
+          if not passed:
+              raise SystemExit("Application unit test execution was not successful")
+          PY
+
+      - name: Upload original test reports and execution evidence
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: split-unit-tests-${{ matrix.scope }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/split-validation/${{ matrix.scope }}/
+            app/build/test-results/testDebugUnitTest/
+            app/build/reports/tests/testDebugUnitTest/
+          if-no-files-found: error
+          retention-days: 14
