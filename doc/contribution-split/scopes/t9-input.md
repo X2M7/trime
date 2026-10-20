@@ -44,4 +44,4 @@
 
 下一步核对四系统构建，并进行真实 Android 操作验收。Android 仍须实测数字输入、拼音筛选/锁定/撤销/取消、汉字选词、字面数字与符号往返、Unicode 光标、切换/重启编辑器以及旧操作拒绝。未验证前保持 Draft，不承诺零警告或无剩余缺陷。
 
-英文提案见 [PR 草稿](../drafts/t9-input.md)。当前尚未创建本模块的上游 PR。
+英文提案见 [PR 草稿](../drafts/t9-input.md)。已创建并独立读回 [#2183 Draft](https://github.com/osfans/trime/pull/2183)，[提交回执](../checks/t9-input-upstream-submission.json)核对了目标、正文、两个提交和全部 52 个 Git blob。

@@ -305,3 +305,5 @@ git submodule update --init --recursive
 [最终精确提交的云端应用 JVM 验证](checks/t9-input-application-jvm.json)已核验通过 328 项／25 组，0 失败／错误／跳过，27 项新增与源码一致，原回归仅有一项精确标题重命名；没有新增应用源码诊断，既有工具警告保留。[原生宿主实测](checks/t9-input-native-host.json)重新编译未修改的固定引擎，四个进程共执行 743 条断言全部通过，单列于 JVM 用例之外，并验证重开用户词库后的规范拼写记录。JNI 的六条基准诊断、宿主 CMake 诊断及 Modified UTF-8 传输边界保留；不能称整个工程或全部运行日志零警告。
 
 [四系统 Debug/native CI](https://github.com/X2M7/trime/actions/runs/39467034017)仍在运行。实际 Android 布局、触摸、编辑器和 Unicode JNI 传输、Lint／Release 尚未验收。本轮只推送核心源码与清单，不发布 APK或将其记为稳定版；后续按完整功能继续，不回到逐行拆分。
+
+已创建上游 [#2183 Draft](https://github.com/osfans/trime/pull/2183)，[创建及独立读回](checks/t9-input-upstream-submission.json)确认目标 `osfans:develop`、源 `X2M7:contrib/pr-t9-input` 的 `649c0755`、全部 52 个 Git blob、两个提交和正文一致，未重复创建 PR。它是一个完整九键模块，保留 APK／Android 待验收状态；原 #2170 不重开。

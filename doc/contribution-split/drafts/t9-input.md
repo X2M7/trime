@@ -33,7 +33,7 @@ release configuration are outside this patch.
   identity and all 20 recursive pins independently checked. The existing 301 cases
   remain after one explicit theme-test title rename; 27 new cases match the source.
 - [x] [Pinned-engine native host checks](https://github.com/X2M7/trime/blob/a0f95841/doc/contribution-split/checks/t9-input-native-host.json):
-  freshly build unmodified librime; four native processes execute 743 assertion
+  freshly built, unmodified librime; four native processes execute 743 assertion
   checks, including two process-restart learning checks. These are separate from
   the JVM test count. New T9 sources also compile with strict warnings as errors.
 - [x] SpotlessCheck, clang-format 22 checks and Conventional Commits.
@@ -50,3 +50,5 @@ ranking, touch/TalkBack behavior and device performance are unverified.
 Keep this PR Draft while build and Android acceptance remain incomplete.
 Source: `649c07559cfbc1e494835465e71277fe8dc8051c` (two commits, 52 files), based on
 `osfans:develop` at `144f6111d0498da85e0ffa250245f18955179ed3`.
+
+Actual upstream submission: [#2183 Draft](https://github.com/osfans/trime/pull/2183).
