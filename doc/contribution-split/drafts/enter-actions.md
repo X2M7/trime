@@ -4,7 +4,7 @@ An editor can supply a labeled custom actionId while imeOptions names Search. Re
 
 Use the same action resolution policy in the display delegate and the service. Preserve raw Return for TYPE_NULL or NO_ENTER_ACTION, custom-ID precedence, and the theme's four label preferences. App-preferred mode falls back to the matching theme action label; app-only mode falls back to the default instead of null. Multiline editors can still request an explicit action.
 
-**Validation:** Twelve helper tests passed with strict Kotlin compilation. A separate exact-SHA Android application JVM run compiled the actual service/delegate and passed all 313 tests, preserving the 301 baseline cases, without skips. Four-OS Debug/native CI review is pending.
+**Validation:** Twelve helper tests passed with strict Kotlin compilation. A separate exact-SHA Android application JVM run compiled the actual service/delegate and passed all 313 tests, preserving the 301 baseline cases, without skips. The original exact-SHA four-OS Debug/native CI and Ubuntu Spotless passed.
 
 **Remaining:** Verify actual EditorInfo values, theme rendering and performEditorAction on Android. Application JVM tests cover the shared rule, not real editor dispatch or rendered labels. Lint, Release and device checks remain pending; inherited compiler/tooling diagnostics remain.
 

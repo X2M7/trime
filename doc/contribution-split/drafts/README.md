@@ -1,6 +1,6 @@
-# Review drafts, not submitted PRs
+# Small PR descriptions and drafts
 
-Each draft describes one independent branch based on `f5008260`. Read the exact-SHA CI and runtime limitations before submitting. No new upstream PR was created.
+Every topic remains independent and based on `f5008260`. Two descriptions now match actual Draft PR submissions: [licenses #2174](https://github.com/osfans/trime/pull/2174) and [JNI references #2175](https://github.com/osfans/trime/pull/2175). Their new heads add the required commit bodies while preserving the tested source trees; exact new-head CI is running. The other six have not been submitted. Runtime limitations remain explicit.
 
 - [setup-footer](setup-footer.md)
 - [clipboard-editor-height](clipboard-editor-height.md)

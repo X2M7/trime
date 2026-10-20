@@ -1,0 +1,77 @@
+{
+  "created_prs": [
+    {
+      "number": 2174,
+      "url": "https://github.com/osfans/trime/pull/2174",
+      "state": "open",
+      "draft": true,
+      "base": "osfans/trime:develop",
+      "head": "X2M7:contrib/pr-native-license-versions",
+      "head_sha": "77774753293cf9b5c7f8c8bf9b85c322efac5b04",
+      "original_tested_commit": "f34ee4fca9fd544aa2a20b80cacbc6e3570771bf",
+      "source_tree_identical": true,
+      "new_head_ci_run": 39406744329,
+      "body_sha256": "88b9097c98017fb7d89993d99ef9362a73aad90bffd6ba10ec606891e5ff6fc2",
+      "create_exit": 0,
+      "mergeable": true,
+      "mergeable_state": "unstable",
+      "commits": 1,
+      "files": [
+        "app/licenses/libraries/librime.json",
+        "app/licenses/libraries/opencc.json"
+      ],
+      "body_verified": true
+    },
+    {
+      "number": 2175,
+      "url": "https://github.com/osfans/trime/pull/2175",
+      "state": "open",
+      "draft": true,
+      "base": "osfans/trime:develop",
+      "head": "X2M7:contrib/pr-jni-local-refs",
+      "head_sha": "a83583b89c4f37755ce542f8b41c891fa46c1275",
+      "original_tested_commit": "9e296c1e29dd1f896400d71946fa2cd76d101b9a",
+      "source_tree_identical": true,
+      "new_head_ci_run": 39406744423,
+      "body_sha256": "50914df833f3f56cd46144e052426a976aba70a45343a26b49c80126b4fb323a",
+      "create_exit": 0,
+      "mergeable": true,
+      "mergeable_state": "unstable",
+      "commits": 1,
+      "files": [
+        "app/src/main/jni/librime_jni/objconv.h"
+      ],
+      "body_verified": true
+    }
+  ],
+  "source_tree_equivalence": [
+    {
+      "branch": "contrib/pr-native-license-versions",
+      "head": "77774753293cf9b5c7f8c8bf9b85c322efac5b04",
+      "parent": "f5008260dc1e71b05e8e5508c6cfbf8ebf2507a0",
+      "original_tested_commit": "f34ee4fca9fd544aa2a20b80cacbc6e3570771bf",
+      "tree": "b7941819c651a6fcb457bc64ecd705cce741f549",
+      "identical_tree_and_patch": true,
+      "original_refs_unchanged": true,
+      "message_only_reconstruction": true,
+      "message": "fix: match native library license versions to pinned sources\n\nMatch the library metadata to the versions reported by the pinned librime\nand OpenCC sources. Keep dependency revisions and all other license fields\nunchanged so the displayed versions describe the libraries being built.\n\nRelated: #2170\n",
+      "patch_sha256": "a3054ec1bb0bc2e4bb2054741b5fa97d6d49f45850ee02486b382be9e053f896"
+    },
+    {
+      "branch": "contrib/pr-jni-local-refs",
+      "head": "a83583b89c4f37755ce542f8b41c891fa46c1275",
+      "parent": "f5008260dc1e71b05e8e5508c6cfbf8ebf2507a0",
+      "original_tested_commit": "9e296c1e29dd1f896400d71946fa2cd76d101b9a",
+      "tree": "58d860e40780863b9fae702fb33cec75347989c9",
+      "identical_tree_and_patch": true,
+      "original_refs_unchanged": true,
+      "message_only_reconstruction": true,
+      "message": "fix: release JNI local references while converting string arrays\n\nRelease each array element's local JNI reference at the end of its iteration.\nKeep CString alive inside the JRef scope so UTF characters are released\nbefore the element reference is deleted. Preserve converted values and order\nwhile bounding reference accumulation within the native call.\n\nRelated: #2170\n",
+      "patch_sha256": "cb2cba69740848ce0ca94260246b317157a9fbc52013078ea0f16316dfd9eed0"
+    }
+  ],
+  "original_2170_preserved_open_draft": true,
+  "new_submission_head_builds_pending": true,
+  "original_eight_branch_os_jobs_success": 32,
+  "manual_runtime_checks_complete": false
+}

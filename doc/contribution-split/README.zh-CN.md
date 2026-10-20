@@ -4,7 +4,7 @@
 
 上游基准是 `osfans/trime:develop` 的 `f5008260dc1e71b05e8e5508c6cfbf8ebf2507a0`；保留的原始贡献分支是 `contrib/complete-input-improvements`，快照为 `df12d0f4f62d7952a181e0ff7cf3cfd3e0077b7c`。两者之间有 67 个提交、660 个改动路径、90,665 行新增、3,388 行删除。最初一个提交就修改了 577 个文件，不能靠逐个 cherry-pick 达到“一件事一个 PR”。
 
-维护者要求[拆成单一主题的小 PR 并清理补丁](https://github.com/osfans/trime/pull/2170#issuecomment-6279805216)。按照本次用户选择，先推送 fork 分支与清单，暂不创建新的上游 PR；[#2170](https://github.com/osfans/trime/pull/2170) 保持 Draft，原贡献分支与 fork 的 `develop` 不改写。
+维护者要求[拆成单一主题的小 PR 并清理补丁](https://github.com/osfans/trime/pull/2170#issuecomment-6279805216)。此前按用户选择先推送 fork 分支与清单；本轮在核验 32/32 个原分支 OS 构建通过后，先创建两项独立 Draft PR。原 [#2170](https://github.com/osfans/trime/pull/2170) 仍保持 Draft，原贡献分支、八个已验分支与 fork 的 `develop` 不改写。
 
 ## 第一批独立分支
 
@@ -40,11 +40,11 @@ JNI 聚焦测试在同一 mock 调用环境转换 2,048 个元素四次：原实
 
 第二批的完整 Android CI、Lint、Release 与设备验收仍以各分支后续的精确 SHA 证据为准；没有用首批或原汇总分支的通过结果代替。
 
-第二批 Commit CI 的日志分支已完成四系统 Debug/native 编译与 Ubuntu Spotless。首次 Ubuntu job 在执行任何 Gradle task 前无法解析两个 Kotlin 2.4.10 依赖，原件见[失败范围记录](checks/second-batch-ci-pending.json)；保持源码 `f5909dcb` 不变后的重试实际通过。重试界面的另外三个成功 job 沿用原运行，不算重新编译。反馈分支已有三系统通过，Intel macOS 仍在运行；[当前实际日志记录](checks/second-batch-ci.json)不把 pending 判为成功。全部已审成功 job 的诊断与首批同 OS 一致，既有警告保留。上述 Commit CI 均未运行测试或 Lint；完整应用 JVM 结果见下方单独控制验证。
+第二批 Commit CI 的日志分支已完成四系统 Debug/native 编译与 Ubuntu Spotless。首次 Ubuntu job 在执行任何 Gradle task 前无法解析两个 Kotlin 2.4.10 依赖，原件见[失败范围记录](checks/second-batch-ci-pending.json)；保持源码 `f5909dcb` 不变后的重试实际通过。重试界面的另外三个成功 job 沿用原运行，不算重新编译。反馈分支最后的 Intel macOS 已通过并核对原始日志；[最终日志记录](checks/second-batch-ci.json)闭合第二批 8/8 个独立成功执行。全部已审成功 job 的诊断与首批同 OS 一致，既有警告保留。上述 Commit CI 均未运行测试或 Lint；完整应用 JVM 结果见下方单独控制验证。
 
 ## 第三批：回车动作与 JNI 线程归属
 
-本批两个分支均已推送 fork，直接基于 `f5008260`、各只有一个提交，无相互依赖。JNI 线程分支四系统 Debug/native 构建与 Ubuntu Spotless 已通过；回车分支 Ubuntu、ARM macOS 与 Windows 已通过，Intel macOS 尚在运行。[实际日志审计](checks/third-batch-ci.json) 保留精确 SHA 与待定范围。Enter Windows 的既有缓存锁归档警告读取长度由 38 变为 37 字节，原文差异保留；仅对这一动态长度做规范化后与同 OS 基准比较，未发现新增源码诊断，不能声称原始警告逐字全同。
+本批两个分支均已推送 fork，直接基于 `f5008260`、各只有一个提交，无相互依赖。JNI 线程分支四系统 Debug/native 构建与 Ubuntu Spotless 已通过；回车分支最后的 Intel macOS 也已通过并核对原始日志，第三批现为 8/8 个独立成功执行。[实际日志审计](checks/third-batch-ci.json) 保留精确 SHA 与验证范围。Enter Windows 的既有缓存锁归档警告读取长度由 38 变为 37 字节，原文差异保留；仅对这一动态长度做规范化后与同 OS 基准比较，未发现新增源码诊断，不能声称原始警告逐字全同。
 
 | 分支 | 单一问题与范围 | 已执行验证 | 限制与待验收 |
 | --- | --- | --- | --- |
@@ -71,9 +71,20 @@ JNI 聚焦测试在同一 mock 调用环境转换 2,048 个元素四次：原实
 
 每个 scope 都保留同一条上游已有的 `ClipEditActivity.SHOW_IMPLICIT` Kotlin 弃用警告，Gradle/SDK/原生依赖等诊断也保留；不是零警告。完整应用编译意味着 Manager、service/delegate 已在这些 Android 工程中编译，但 JVM 测试仍不能证明真实 TTS、编辑器动作、布局、CheckJNI、Lint、Release 或设备行为通过。本次不发布 APK。
 
-## 小 PR 草稿与提交顺序
+## 已提交的两个独立 Draft PR
 
-[8 份英文草稿](drafts/README.md)逐项说明触发、行为、验证和剩余检查，均绑定各自源码 SHA，仅供审阅，未创建 PR。建议先送许可证元数据、向导底部约束这类边界明确的少数补丁；JNI 与交互改动补足对应设备复现后再逐项提交。不要一次向维护者提交 8 个尚缺手测的 PR。
+八个原拆分分支的 **32/32 个 OS 构建**均完成并核对，应用 JVM 测试也均通过。[最终构建清单](checks/all-split-builds.json)绑定精确 SHA；原分支没有被新提交覆盖。现有上游编译/依赖/工具警告保留，不宣称零警告。`SHOW_IMPLICIT` 另有上游 [PR #2173](https://github.com/osfans/trime/pull/2173)，本轮不重复提交。
+
+| 上游 PR | 提交分支与 SHA | 范围 | 当前状态 |
+| --- | --- | --- | --- |
+| [#2174](https://github.com/osfans/trime/pull/2174) | `contrib/pr-native-license-versions`，`77774753` | 两个许可证版本字段 | Draft；许可证 UI 未实测 |
+| [#2175](https://github.com/osfans/trime/pull/2175) | `contrib/pr-jni-local-refs`，`a83583b8` | JNI 元素引用所有权两行 | Draft；Android CheckJNI 未运行 |
+
+上游规范要求非 docs 提交包含正文，原始拆分提交只有标题。因此为这两个 PR 新建说明完整的单提交分支；Git tree 和相对 `f5008260` 的 patch 均与原已验 `f34ee4fc`／`9e296c1e` 完全相同，原分支与原测试证据保留。新 SHA 的 [许可证 CI](https://github.com/X2M7/trime/actions/runs/39406744329)和 [JNI CI](https://github.com/X2M7/trime/actions/runs/39406744423)正在运行，不能将旧 SHA 的构建绿勾直接写成新 SHA 已通过。提交目标均已实际核对为 `osfans/trime:develop`，每 PR 只有一个提交，无文本冲突；[提交回执与等价证明](checks/upstream-submissions.json)保留目标、源码、状态和正文哈希。手测项未勾选，未标为 Ready。
+
+许可证原 CI x86_64 Debug APK 已实际下载并检查 `res/raw/aboutlibraries.json`：`rime/librime=1.17.0`、`BYVoid/OpenCC=1.4.2` 与源码相同，官方附件 ZIP 大小与 SHA-256 一致。[打包数据核验](checks/license-apk-package.json)不等于安装、运行或许可证页面 UI 通过，也不等于 Release 验收。
+
+[8 份英文说明](drafts/README.md)继续保留；上述两篇已同步实际提交正文。其余六个模块先完成各自的针对性验收，再逐项推进；没有同时创建八个新 PR。
 
 ## 关联 issue 的审慎匹配
 
@@ -173,7 +184,7 @@ Shift 的主题动作回归与 `Keyboard.refreshModifier` 内 `result || setModi
 1. 每个新分支从当时核实的上游 `develop` 开始，独立问题无相互依赖；必须依赖的功能明确写出父补丁，等待父补丁合入后整理，不把累积差异冒充单个 PR。
 2. 每个修复说明一个具体触发场景、前后行为及对应验证；同一共享文件内无关的 import、偏好、字符串和格式修改都留到所属补丁。
 3. 送审前核对相关 issue/PR，补齐上游构建、全测试和真实复现；不把“源文件少”当作验证豁免。
-4. 每次只向维护者提交少数完整小 PR，收到反馈后再推进下一组；本次仅推送 fork。
+4. 每次只向维护者提交少数单主题 PR，收到反馈后再推进下一组；本轮仅先提交上述两个 Draft，未验收项如实保留。
 5. 原聚合分支、旧提交和发布产物继续保留，今后可通过这个索引追踪哪些行为已迁入独立分支。未取得新的明确指示，不关闭、重开或标 Ready 原 PR。
 
 需要在本地继续某一分支时，可以递归克隆 fork，然后选择该分支：

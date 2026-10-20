@@ -12,10 +12,12 @@
   "delivery_scope": "Eight independent source patches in three batches plus a fork-only validation control branch; the aggregate is not fully extracted",
   "actions": {
     "push_target": "X2M7/trime",
-    "create_new_upstream_prs": false,
+    "create_new_upstream_prs": true,
     "existing_pr": 2170,
     "keep_existing_pr_draft": true,
-    "rewrite_original_branches": false
+    "rewrite_original_branches": false,
+    "new_pr_repository": "osfans/trime",
+    "new_draft_prs_in_this_round": 2
   },
   "split_branches": [
     {
@@ -64,7 +66,11 @@
         "style_on_ubuntu_passed": true,
         "tests_executed": false,
         "lint_executed": false,
-        "warning_free": false
+        "warning_free": false,
+        "status": "success",
+        "pending_jobs": [],
+        "scope_verified_from_finished_logs": true,
+        "completed_jobs_scope_verified": true
       },
       "application_jvm_tests": {
         "run_id": 39402432371,
@@ -125,7 +131,11 @@
         "style_on_ubuntu_passed": true,
         "tests_executed": false,
         "lint_executed": false,
-        "warning_free": false
+        "warning_free": false,
+        "status": "success",
+        "pending_jobs": [],
+        "scope_verified_from_finished_logs": true,
+        "completed_jobs_scope_verified": true
       },
       "application_jvm_tests": {
         "run_id": 39402432371,
@@ -157,13 +167,14 @@
         "Pinned OpenCC 025f371d at exact tag ver.1.4.2",
         "git diff --check",
         "4-OS Debug CI and Ubuntu Spotless, exact SHA verified",
-        "Complete application JVM task at exact SHA: 301 tests, no failures/errors/skips; original reports reviewed"
+        "Complete application JVM task at exact SHA: 301 tests, no failures/errors/skips; original reports reviewed",
+        "Original CI x86_64 Debug APK inspected: packaged AboutLibraries versions match source; official ZIP size/SHA verified"
       ],
       "pending": [
         "Release/Lint",
         "License-page integration check"
       ],
-      "upstream_pr_created": false,
+      "upstream_pr_created": true,
       "app_or_device_acceptance_complete": false,
       "ci": {
         "run_id": 39386296682,
@@ -172,7 +183,11 @@
         "style_on_ubuntu_passed": true,
         "tests_executed": false,
         "lint_executed": false,
-        "warning_free": false
+        "warning_free": false,
+        "status": "success",
+        "pending_jobs": [],
+        "scope_verified_from_finished_logs": true,
+        "completed_jobs_scope_verified": true
       },
       "application_jvm_tests": {
         "run_id": 39402432371,
@@ -185,7 +200,33 @@
         "skipped": 0,
         "actual_task_execution": true,
         "all_original_baseline_cases_preserved": true
-      }
+      },
+      "upstream_submission": {
+        "number": 2174,
+        "url": "https://github.com/osfans/trime/pull/2174",
+        "state": "open",
+        "draft": true,
+        "base": "osfans/trime:develop",
+        "head": "X2M7:contrib/pr-native-license-versions",
+        "head_sha": "77774753293cf9b5c7f8c8bf9b85c322efac5b04",
+        "original_tested_commit": "f34ee4fca9fd544aa2a20b80cacbc6e3570771bf",
+        "source_tree_identical": true,
+        "new_head_ci_run": 39406744329,
+        "body_sha256": "88b9097c98017fb7d89993d99ef9362a73aad90bffd6ba10ec606891e5ff6fc2",
+        "create_exit": 0,
+        "mergeable": true,
+        "mergeable_state": "unstable",
+        "commits": 1,
+        "files": [
+          "app/licenses/libraries/librime.json",
+          "app/licenses/libraries/opencc.json"
+        ],
+        "body_verified": true,
+        "new_head_ci_status": "in_progress_at_submission",
+        "same_tree_as_this_source_branch": true,
+        "evidence": "checks/upstream-submissions.json"
+      },
+      "packaged_metadata_evidence": "checks/license-apk-package.json"
     },
     {
       "branch": "contrib/split-jni-local-refs",
@@ -210,7 +251,7 @@
         "Android CheckJNI and device run",
         "Native exception/allocation failure boundaries unchanged and outside this fix"
       ],
-      "upstream_pr_created": false,
+      "upstream_pr_created": true,
       "app_or_device_acceptance_complete": false,
       "host_mock_check": {
         "original_report_sha256": "a45c5efc3b12f252fb4c9e40e3a5fe06fbb0fe78f3b35ddaf143271d57978272",
@@ -266,7 +307,11 @@
         "style_on_ubuntu_passed": true,
         "tests_executed": false,
         "lint_executed": false,
-        "warning_free": false
+        "warning_free": false,
+        "status": "success",
+        "pending_jobs": [],
+        "scope_verified_from_finished_logs": true,
+        "completed_jobs_scope_verified": true
       },
       "application_jvm_tests": {
         "run_id": 39402432371,
@@ -279,6 +324,30 @@
         "skipped": 0,
         "actual_task_execution": true,
         "all_original_baseline_cases_preserved": true
+      },
+      "upstream_submission": {
+        "number": 2175,
+        "url": "https://github.com/osfans/trime/pull/2175",
+        "state": "open",
+        "draft": true,
+        "base": "osfans/trime:develop",
+        "head": "X2M7:contrib/pr-jni-local-refs",
+        "head_sha": "a83583b89c4f37755ce542f8b41c891fa46c1275",
+        "original_tested_commit": "9e296c1e29dd1f896400d71946fa2cd76d101b9a",
+        "source_tree_identical": true,
+        "new_head_ci_run": 39406744423,
+        "body_sha256": "50914df833f3f56cd46144e052426a976aba70a45343a26b49c80126b4fb323a",
+        "create_exit": 0,
+        "mergeable": true,
+        "mergeable_state": "unstable",
+        "commits": 1,
+        "files": [
+          "app/src/main/jni/librime_jni/objconv.h"
+        ],
+        "body_verified": true,
+        "new_head_ci_status": "in_progress_at_submission",
+        "same_tree_as_this_source_branch": true,
+        "evidence": "checks/upstream-submissions.json"
       }
     },
     {
@@ -300,12 +369,13 @@
         "Spotless8.10.2/ktlint1.8.0",
         "Independent source review",
         "git diff --check",
-        "Complete application JVM task at exact SHA: 309 tests, no failures/errors/skips; original reports reviewed"
+        "Complete application JVM task at exact SHA: 309 tests, no failures/errors/skips; original reports reviewed",
+        "Final Intel macOS job completed; full 4-OS source CI and original logs reviewed"
       ],
       "focused_test_scope": "Pure feedback resource owner tests; Manager source/style review only",
       "pending": [
         "Android Manager integration and real TTS/SoundPool playback",
-        "Remaining Commit CI/Lint/Release/device acceptance",
+        "Lint/Release/device acceptance",
         "Memory/latency gain not measured",
         "Failed initialization retries only after destroy/init; no delayed replay of pre-load sounds"
       ],
@@ -313,20 +383,15 @@
       "app_or_device_acceptance_complete": false,
       "host_evidence": "checks/second-batch-host.json",
       "ci": {
-        "status": "in_progress",
+        "status": "success",
         "tests_executed_by_ci": false,
         "run_id": 39397825740,
         "url": "https://github.com/X2M7/trime/actions/runs/39397825740",
-        "scope_verified_from_finished_logs": false,
+        "scope_verified_from_finished_logs": true,
         "latest_evidence": "checks/second-batch-ci.json",
-        "debug_build_jobs_success": 3,
+        "debug_build_jobs_success": 4,
         "completed_jobs_scope_verified": true,
-        "pending_jobs": [
-          {
-            "job_id": 118544835532,
-            "os": "macos-26-intel"
-          }
-        ],
+        "pending_jobs": [],
         "warning_free": false
       },
       "application_jvm_tests": {
@@ -388,7 +453,9 @@
         "style_on_ubuntu_passed": true,
         "accepted_attempt": 2,
         "latest_evidence": "checks/second-batch-ci.json",
-        "warning_free": false
+        "warning_free": false,
+        "pending_jobs": [],
+        "completed_jobs_scope_verified": true
       },
       "application_jvm_tests": {
         "run_id": 39401035244,
@@ -419,20 +486,15 @@
       "upstream_pr_created": false,
       "app_or_device_acceptance_complete": false,
       "ci": {
-        "status": "in_progress",
-        "scope_verified_from_finished_logs": false,
+        "status": "success",
+        "scope_verified_from_finished_logs": true,
         "tests_executed_by_ci": false,
         "run_id": 39401152628,
         "url": "https://github.com/X2M7/trime/actions/runs/39401152628",
         "latest_evidence": "checks/third-batch-ci.json",
-        "debug_build_jobs_success": 3,
+        "debug_build_jobs_success": 4,
         "completed_jobs_scope_verified": true,
-        "pending_jobs": [
-          {
-            "job_id": 118555900527,
-            "os": "macos-26-intel"
-          }
-        ],
+        "pending_jobs": [],
         "warning_free": false
       },
       "issue_match": "No automatic Fixes/Closes reference; see checks/issue-match.json",
@@ -442,7 +504,8 @@
         "Four final source inputs bound to the actual record",
         "Helper/test formatting; Service/Delegate formatting only",
         "git diff --check",
-        "Complete application JVM task at exact SHA: 313 tests, no failures/errors/skips; original reports reviewed"
+        "Complete application JVM task at exact SHA: 313 tests, no failures/errors/skips; original reports reviewed",
+        "Final Intel macOS job completed; full 4-OS source CI and original logs reviewed"
       ],
       "focused_test_scope": "Pure EditorEnterAction helper only; Service/Delegate not compiled by this host harness",
       "host_evidence": "checks/third-batch-enter-host.json",
@@ -491,7 +554,9 @@
         "debug_build_jobs_success": 4,
         "style_on_ubuntu_passed": true,
         "latest_evidence": "checks/third-batch-ci.json",
-        "warning_free": false
+        "warning_free": false,
+        "pending_jobs": [],
+        "completed_jobs_scope_verified": true
       },
       "issue_match": "No automatic Fixes/Closes reference; see checks/issue-match.json",
       "completed_checks": [
@@ -511,7 +576,7 @@
         "Tests preserve existing failure behavior: a failed GetEnv/Attach may yield a null environment; callers must not dereference it. No new exception handling was added.",
         "DetachCurrentThread is requested only for a successful owned attachment; its failure status remains unhandled.",
         "Ownership is lexical and thread-local; manual outside detach/re-attach or Java frames spanning owner destruction are outside this helper contract.",
-        "Full Android build/tests, native callback/CheckJNI and device acceptance"
+        "Release/Lint, native callback/CheckJNI and device acceptance"
       ],
       "fork_push": {
         "target": "X2M7/trime",
@@ -651,13 +716,21 @@
       "branch": "contrib/split-native-license-versions",
       "source_sha": "f34ee4fca9fd544aa2a20b80cacbc6e3570771bf",
       "path": "drafts/native-license-versions.md",
-      "submitted": false
+      "submitted": true,
+      "pr": 2174,
+      "url": "https://github.com/osfans/trime/pull/2174",
+      "submission_head_sha": "77774753293cf9b5c7f8c8bf9b85c322efac5b04",
+      "submission_branch": "contrib/pr-native-license-versions"
     },
     {
       "branch": "contrib/split-jni-local-refs",
       "source_sha": "9e296c1e29dd1f896400d71946fa2cd76d101b9a",
       "path": "drafts/jni-local-refs.md",
-      "submitted": false
+      "submitted": true,
+      "pr": 2175,
+      "url": "https://github.com/osfans/trime/pull/2175",
+      "submission_head_sha": "a83583b89c4f37755ce542f8b41c891fa46c1275",
+      "submission_branch": "contrib/pr-jni-local-refs"
     },
     {
       "branch": "contrib/split-lazy-feedback",
@@ -698,14 +771,59 @@
     "source_branches_pushed": 8,
     "index_and_review_drafts_pushed": true,
     "complete_application_jvm_branches_passed": 8,
-    "source_commit_os_jobs_reviewed_success": 30,
-    "source_commit_os_jobs_pending_review": 2,
-    "pending_jobs": [
-      118544835532,
-      118555900527
-    ],
+    "source_commit_os_jobs_reviewed_success": 32,
+    "source_commit_os_jobs_pending_review": 0,
+    "pending_jobs": [],
     "pending_is_not_counted_as_pass": true,
     "zero_warning_claim": false,
-    "new_upstream_prs_created": false
-  }
+    "new_upstream_prs_created": true,
+    "new_upstream_pr_count": 2,
+    "new_upstream_prs_draft": true,
+    "new_submission_heads_ci_pending": true
+  },
+  "upstream_submissions": [
+    {
+      "number": 2174,
+      "url": "https://github.com/osfans/trime/pull/2174",
+      "state": "open",
+      "draft": true,
+      "base": "osfans/trime:develop",
+      "head": "X2M7:contrib/pr-native-license-versions",
+      "head_sha": "77774753293cf9b5c7f8c8bf9b85c322efac5b04",
+      "original_tested_commit": "f34ee4fca9fd544aa2a20b80cacbc6e3570771bf",
+      "source_tree_identical": true,
+      "new_head_ci_run": 39406744329,
+      "body_sha256": "88b9097c98017fb7d89993d99ef9362a73aad90bffd6ba10ec606891e5ff6fc2",
+      "create_exit": 0,
+      "mergeable": true,
+      "mergeable_state": "unstable",
+      "commits": 1,
+      "files": [
+        "app/licenses/libraries/librime.json",
+        "app/licenses/libraries/opencc.json"
+      ],
+      "body_verified": true
+    },
+    {
+      "number": 2175,
+      "url": "https://github.com/osfans/trime/pull/2175",
+      "state": "open",
+      "draft": true,
+      "base": "osfans/trime:develop",
+      "head": "X2M7:contrib/pr-jni-local-refs",
+      "head_sha": "a83583b89c4f37755ce542f8b41c891fa46c1275",
+      "original_tested_commit": "9e296c1e29dd1f896400d71946fa2cd76d101b9a",
+      "source_tree_identical": true,
+      "new_head_ci_run": 39406744423,
+      "body_sha256": "50914df833f3f56cd46144e052426a976aba70a45343a26b49c80126b4fb323a",
+      "create_exit": 0,
+      "mergeable": true,
+      "mergeable_state": "unstable",
+      "commits": 1,
+      "files": [
+        "app/src/main/jni/librime_jni/objconv.h"
+      ],
+      "body_verified": true
+    }
+  ]
 }

@@ -1,25 +1,18 @@
 {
-  "source_report_sha256": "72e10497fc80189b29198b13aadeeaf51289e81ec907f3353ad2b005217317d8",
+  "source_report_sha256": "8094490563f50214a63c30b44fea72b75348ba3eb479a6df21eb357d559bcdc5",
   "metadata_and_completed_log_audit_passed": true,
-  "all_current_ci_runs_passed": false,
+  "all_current_ci_runs_passed": true,
   "warning_free": false,
   "runs": {
     "lazy": {
       "run_id": 39397825740,
       "sha": "3912fb23aced49da94cee6e3c59b3a9585da779b",
       "branch": "contrib/split-lazy-feedback",
-      "status": "in_progress",
-      "conclusion": null,
+      "status": "completed",
+      "conclusion": "success",
       "latest_attempt": 1,
-      "pending_jobs": [
-        {
-          "id": 118544835532,
-          "os": "macos-26-intel",
-          "attempt": 1,
-          "status": "in_progress"
-        }
-      ],
-      "unique_completed_success_executions": 3,
+      "pending_jobs": [],
+      "unique_completed_success_executions": 4,
       "unique_completed_failed_executions": 0,
       "url": "https://github.com/X2M7/trime/actions/runs/39397825740",
       "jobs": [
@@ -86,6 +79,41 @@
             "artifact_action_configuration_not_warning": 3,
             "windows_post_job_gradle_cache_locked_file_error": 6,
             "windows_post_job_gradle_cache_save_failure": 1
+          },
+          "test_lint_tasks": [],
+          "debug_compile_package_and_four_abi_native_tasks": "executed",
+          "jni_cache": "miss",
+          "ubuntu_spotless": "skipped",
+          "warning_candidates_equal_first_batch_same_os": true
+        },
+        {
+          "id": 118544835532,
+          "os": "macos-26-intel",
+          "attempt": 1,
+          "conclusion": "success",
+          "started_at": "2026-10-20T09:03:08Z",
+          "completed_at": "2026-10-20T10:09:43Z",
+          "original_log": {
+            "path": "/home/xumin/Public/Trime/build/upstream-split-20261020/ci-second-batch-audit1/job-logs/118544835532.log",
+            "bytes": 328153,
+            "sha256": "ebf4e4891fb2cbe5e3d6b7d8f95093403d786bb04bf507fe57fbd3a22d99eba9"
+          },
+          "carried_forward_from_job": null,
+          "fresh_execution": true,
+          "warning_category_counts": {
+            "git_default_branch_advice": 1,
+            "android_sdk_cli_deprecation": 3,
+            "sdk_cli_jna_jdk_native_access": 12,
+            "existing_build_logic_srcdirs_deprecation": 1,
+            "gradle_deprecation_summary_not_individual_diagnosis": 2,
+            "gradle_deprecation_advice": 4,
+            "pinned_snappy_cmake_compatibility": 4,
+            "pinned_leveldb_cmake_compatibility": 4,
+            "pinned_yaml_cpp_cpp_standard_warning": 48,
+            "compiler_warning_count_summary": 6,
+            "existing_app_show_implicit_deprecation": 1,
+            "pinned_lua_32bit_limit_narrowing": 2,
+            "artifact_action_configuration_not_warning": 3
           },
           "test_lint_tasks": [],
           "debug_compile_package_and_four_abi_native_tasks": "executed",

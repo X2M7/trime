@@ -38,7 +38,7 @@ This new shell reproducer was independently executed successfully after the orig
 
 ## CI and issue-search boundaries
 
-[second-batch-ci-pending.json](second-batch-ci-pending.json) records the known first-attempt Ubuntu failure before formatter execution: Gradle could not resolve two Kotlin 2.4.10 artifacts. A later local HTTP 200 probe does not establish availability on a new GitHub runner. No same-SHA retry success is asserted by that record.
+[second-batch-ci-pending.json](second-batch-ci-pending.json) records the known first-attempt Ubuntu failure before formatter execution: Gradle could not resolve two Kotlin 2.4.10 artifacts. A later local HTTP 200 probe does not establish availability on a new GitHub runner. That historical failure record does not assert a retry outcome; the final same-SHA successful retry and all remaining jobs are in [second-batch-ci.json](second-batch-ci.json).
 
 [issue-match.json](issue-match.json) preserves conservative issue/PR matching context. Nearby or historical discussions are not assigned `Fixes`/`Closes`; keyword search does not prove the absence of an issue. The fork-only validation control branch is listed separately in [branches.json](../branches.json), not as an application module or a passed test result.
 
@@ -47,3 +47,9 @@ This new shell reproducer was independently executed successfully after the orig
 ## Complete application JVM tests
 
 [First matrix](application-jvm-first.json) and [second matrix](application-jvm-second.json) bind the fixed source heads, actual XML test counts, uncached application test task, and original evidence hashes. Every source branch preserves all 301 upstream baseline cases. Feedback adds 8, logcat adds 17, and Return adds 12. No test failed, errored or skipped. The same pre-existing SHOW_IMPLICIT compiler warning remains in all scopes; these results do not include Lint, Release, or device acceptance.
+
+## Upstream submissions
+
+[All original source builds](all-split-builds.json) now verify 32/32 OS slots successful. [Submission receipts](upstream-submissions.json) distinguish the two new message-complete PR commits from their identical-tree original tested commits. Their new-head CI is still running; the prior successful CI is not relabeled as new-head execution. [License APK data](license-apk-package.json) was actually inspected, without installation or UI acceptance. Both upstream PRs remain Draft.
+
+[remote-preservation.json](remote-preservation.json) is the historical pre-submission snapshot. Its no-new-PR value is preserved for that time only; [upstream-submissions.json](upstream-submissions.json) records the two subsequent Draft PRs and is the current submission status.

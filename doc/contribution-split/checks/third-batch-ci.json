@@ -1,8 +1,8 @@
 {
   "schema": "trime-split-third-batch-commit-ci-audit/v1",
-  "snapshot": 2,
+  "snapshot": 3,
   "metadata_and_completed_log_audit_passed": true,
-  "all_current_ci_runs_passed": false,
+  "all_current_ci_runs_passed": true,
   "base": "f5008260dc1e71b05e8e5508c6cfbf8ebf2507a0",
   "runs": {
     "jni-thread": {
@@ -13,7 +13,7 @@
       "run_conclusion": "success",
       "latest_attempt": 1,
       "metadata": {
-        "path": "/home/xumin/Public/Trime/build/upstream-split-20261020/ci-third-batch-audit1/snapshot2/jni-thread/jobs.json",
+        "path": "/home/xumin/Public/Trime/build/upstream-split-20261020/ci-third-batch-audit1/snapshot3/jni-thread/jobs.json",
         "bytes": 15718,
         "sha256": "c06d2541891ebb105498816aedacddf7638fd762704ae98ed6691816540983c7"
       },
@@ -196,13 +196,13 @@
       "run_id": 39401152628,
       "sha": "bcb47b1a81eb211e7c0ede447c1b3263dcf80746",
       "branch": "contrib/split-enter-actions",
-      "run_status": "in_progress",
-      "run_conclusion": null,
+      "run_status": "completed",
+      "run_conclusion": "success",
       "latest_attempt": 1,
       "metadata": {
-        "path": "/home/xumin/Public/Trime/build/upstream-split-20261020/ci-third-batch-audit1/snapshot2/enter/jobs.json",
-        "bytes": 15189,
-        "sha256": "b7902d149adf1b03ed9fe0b8bc23bd68f5e5a5987032278ef62e4b2da72338b2"
+        "path": "/home/xumin/Public/Trime/build/upstream-split-20261020/ci-third-batch-audit1/snapshot3/enter/jobs.json",
+        "bytes": 15686,
+        "sha256": "73fe040e8990598eb1ac9eb896bdd4d28e14846bbe0880ec21ceab7fee0ef7c7"
       },
       "jobs": [
         {
@@ -288,6 +288,48 @@
           }
         },
         {
+          "job_id": 118555900527,
+          "os": "macos-26-intel",
+          "attempt": 1,
+          "conclusion": "success",
+          "started_at": "2026-10-20T09:30:26Z",
+          "completed_at": "2026-10-20T10:05:10Z",
+          "raw_log": {
+            "path": "/home/xumin/Public/Trime/build/upstream-split-20261020/ci-third-batch-audit1/job-logs/118555900527.log",
+            "bytes": 327874,
+            "sha256": "9690044cc8bf88f965472b83f130c3421dbea8bf2bab654f2bf981607396ca4e"
+          },
+          "matches_root_download": null,
+          "debug_compile_package_assemble": "executed",
+          "four_abi_configure_build_tasks_and_ninja_invocations": "executed",
+          "jni_cache": "miss",
+          "from_cache_task_count": 0,
+          "ubuntu_spotless": "skipped",
+          "test_lint_tasks": [],
+          "link_command_records": 0,
+          "warning_text_multiset_exactly_equal_first_batch_same_os": true,
+          "warning_text_differences": {
+            "extra": {},
+            "missing": {}
+          },
+          "warning_multiset_equal_after_dynamic_windows_lock_size_normalization": true,
+          "warning_category_counts": {
+            "git_default_branch_advice": 1,
+            "android_sdk_cli_deprecation": 3,
+            "sdk_cli_jna_jdk_native_access": 12,
+            "existing_build_logic_srcdirs_deprecation": 1,
+            "gradle_deprecation_summary_not_individual_diagnosis": 2,
+            "gradle_deprecation_advice": 4,
+            "pinned_snappy_cmake_compatibility": 4,
+            "pinned_leveldb_cmake_compatibility": 4,
+            "pinned_yaml_cpp_cpp_standard_warning": 48,
+            "compiler_warning_count_summary": 6,
+            "existing_app_show_implicit_deprecation": 1,
+            "pinned_lua_32bit_limit_narrowing": 2,
+            "artifact_action_configuration_not_warning": 3
+          }
+        },
+        {
           "job_id": 118555900557,
           "os": "windows-2025",
           "attempt": 1,
@@ -345,21 +387,14 @@
           }
         }
       ],
-      "pending": [
-        {
-          "job_id": 118555900527,
-          "os": "macos-26-intel",
-          "status": "in_progress",
-          "attempt": 1
-        }
-      ],
+      "pending": [],
       "changed_files": [
         "app/src/main/java/com/osfans/trime/ime/broadcast/EnterKeyDisplayDelegate.kt",
         "app/src/main/java/com/osfans/trime/ime/core/EditorEnterAction.kt",
         "app/src/main/java/com/osfans/trime/ime/core/TrimeInputMethodService.kt",
         "app/src/test/java/com/osfans/trime/ime/core/EditorEnterActionTest.kt"
       ],
-      "unique_completed_success_executions": 3
+      "unique_completed_success_executions": 4
     }
   },
   "warning_free": false,
@@ -423,14 +458,14 @@
   "native_link_command_records_proven": false,
   "apk_binary_audit_performed": false,
   "detailed_warning_contexts": {
-    "path": "/home/xumin/Public/Trime/build/upstream-split-20261020/ci-third-batch-audit1/snapshot2/warning-rows.json",
-    "bytes": 725336,
-    "sha256": "830285f408f77acbb1ccc361147b64c522bd4e8662d8edf853a799ebd940b5c2"
+    "path": "/home/xumin/Public/Trime/build/upstream-split-20261020/ci-third-batch-audit1/snapshot3/warning-rows.json",
+    "bytes": 833857,
+    "sha256": "d92e4ba5680657e4d2a7c8d573ae50789b034081282a5edcee0c20864ddcf055"
   },
   "detailed_task_evidence": {
-    "path": "/home/xumin/Public/Trime/build/upstream-split-20261020/ci-third-batch-audit1/snapshot2/task-evidence.json",
-    "bytes": 68663,
-    "sha256": "8071a03e3630a2e967ca7ff72878865aff0fc6286bcd9f0f53f37d38fb458534"
+    "path": "/home/xumin/Public/Trime/build/upstream-split-20261020/ci-third-batch-audit1/snapshot3/task-evidence.json",
+    "bytes": 78187,
+    "sha256": "10838856491d2dd0ee0a023a41f6a63fa8a28b3af958c1a497d8b1925fe5a871"
   },
   "limitations": [
     "Only completed Commit CI jobs are audited; pending jobs are not passed.",
