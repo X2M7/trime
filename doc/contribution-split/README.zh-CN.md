@@ -44,7 +44,7 @@ JNI 聚焦测试在同一 mock 调用环境转换 2,048 个元素四次：原实
 
 ## 第三批：回车动作与 JNI 线程归属
 
-本批两个分支均已推送 fork，直接基于 `f5008260`、各只有一个提交，无相互依赖。JNI 线程分支四系统 Debug/native 构建与 Ubuntu Spotless 已通过；回车分支 Ubuntu 与 ARM macOS 已通过，Intel macOS、Windows 尚在运行。[实际日志审计](checks/third-batch-ci.json) 保留精确 SHA 与待定范围。
+本批两个分支均已推送 fork，直接基于 `f5008260`、各只有一个提交，无相互依赖。JNI 线程分支四系统 Debug/native 构建与 Ubuntu Spotless 已通过；回车分支 Ubuntu、ARM macOS 与 Windows 已通过，Intel macOS 尚在运行。[实际日志审计](checks/third-batch-ci.json) 保留精确 SHA 与待定范围。Enter Windows 的既有缓存锁归档警告读取长度由 38 变为 37 字节，原文差异保留；仅对这一动态长度做规范化后与同 OS 基准比较，未发现新增源码诊断，不能声称原始警告逐字全同。
 
 | 分支 | 单一问题与范围 | 已执行验证 | 限制与待验收 |
 | --- | --- | --- | --- |
