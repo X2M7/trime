@@ -1,0 +1,142 @@
+{
+  "schema": "trime-upstream-split-issue-map/v1",
+  "repository": "osfans/trime",
+  "maintainer_guidance": "https://github.com/osfans/trime/pull/2170#issuecomment-6279805216",
+  "method": "Read-only GitHub issue/PR search, full returned bodies, and selected full comment threads; no comments, issue, PR or repository writes.",
+  "result": "六个模块均未发现可确认直接关闭的精确开放 issue。历史或相近讨论仅作上下文；不填写 Fixes/Closes。",
+  "search_limitations": "这是关键词检索下的保守未找到结论，并非全库不存在证明。license 与 JNI 宽查询只保留前100项；其余列出的窄查询结果完整。未查看外部附件图像或在设备复现。",
+  "topics": [
+    {
+      "module": "setup-footer",
+      "exact_open_issue_found": false,
+      "finding": "未找到当前 ViewPager 内容区与可见底部导航按钮重叠的精确开放报告。",
+      "references": [
+        {
+          "url": "https://github.com/osfans/trime/pull/666#issuecomment-1009926147",
+          "relation": "context_only",
+          "reason": "已读原文及全部评论。维护者历史上报告增加 Skip 后 Next/Done 越界；后续评论明确当时已修好。仅同类布局历史，不证明当前补丁关闭或重开该问题。",
+          "use_fixes_or_closes": false
+        },
+        {
+          "url": "https://github.com/osfans/trime/pull/716",
+          "relation": "nearby_but_different_bug",
+          "reason": "正文针对修改包名后引导页无法识别已选择输入法，不是 footer 几何或触摸重叠。",
+          "use_fixes_or_closes": false
+        }
+      ]
+    },
+    {
+      "module": "clipboard-editor-height",
+      "exact_open_issue_found": false,
+      "finding": "未找到 ClipEditActivity 多行编辑框挤压底部 Cancel/OK 的精确开放报告。",
+      "references": [
+        {
+          "url": "https://github.com/osfans/trime/issues/2151",
+          "relation": "nearby_but_different_bug",
+          "reason": "已读正文及评论。正文指剪贴板提示工具栏的取消按钮；报告者随后说明是“说点啥”的话筒遮挡、原版无此问题。不是编辑 Activity 的按钮。",
+          "use_fixes_or_closes": false
+        },
+        {
+          "url": "https://github.com/osfans/trime/issues/1618",
+          "relation": "nearby_but_different_bug",
+          "reason": "已读正文。长文本在剪贴板列表显示异常、滑动恢复；不涉及编辑页或 Cancel/OK。且已关闭。",
+          "use_fixes_or_closes": false
+        },
+        {
+          "url": "https://github.com/osfans/trime/issues/1573",
+          "relation": "nearby_but_different_bug",
+          "reason": "已读正文及评论。新条目出现在列表可见顶部之外，维护者说明主分支已修；不是编辑框约束。",
+          "use_fixes_or_closes": false
+        }
+      ]
+    },
+    {
+      "module": "native-license-versions",
+      "exact_open_issue_found": false,
+      "finding": "未找到专门报告许可证页原生版本过期的开放 issue；已有升级 PR 可解释固定版本的历史。",
+      "references": [
+        {
+          "url": "https://github.com/osfans/trime/pull/2026",
+          "relation": "context_only",
+          "reason": "已读正文，明确升级 librime 至 1.17.0；可作为版本沿革上下文，不是待关闭报告。",
+          "use_fixes_or_closes": false
+        },
+        {
+          "url": "https://github.com/osfans/trime/pull/2039",
+          "relation": "context_only",
+          "reason": "已读正文，明确提出 OpenCC 1.4.2 升级；该 PR 已关闭，不能当待修 issue。当前版本仍应以实际固定子模块为准。",
+          "use_fixes_or_closes": false
+        },
+        {
+          "url": "https://github.com/osfans/trime/pull/971",
+          "relation": "context_only",
+          "reason": "已读正文及评论，介绍添加 native licenses 的工具迁移；没有报告当前版本过期。",
+          "use_fixes_or_closes": false
+        }
+      ]
+    },
+    {
+      "module": "jni-local-refs",
+      "exact_open_issue_found": false,
+      "finding": "精确短语 local reference 的仓库搜索返回 0；JNI 宽搜索中的改进/崩溃讨论未给出该数组转换泄漏的匹配证据。",
+      "references": []
+    },
+    {
+      "module": "lazy-feedback",
+      "exact_open_issue_found": false,
+      "finding": "未找到“反馈关闭仍创建 TTS/SoundPool”或该 lazy 生命周期问题的精确开放报告。",
+      "references": [
+        {
+          "url": "https://github.com/osfans/trime/issues/636",
+          "relation": "context_only",
+          "reason": "已读正文及评论。历史音效包设计明确提出初始化时加载全部音效，是设计沿革；不是当前 lazy 性能 bug。",
+          "use_fixes_or_closes": false
+        },
+        {
+          "url": "https://github.com/osfans/trime/issues/829",
+          "relation": "nearby_but_different_bug",
+          "reason": "已读正文及评论。请求按键/上屏朗读，后有发音正确性反馈；不是禁用时分配资源问题。",
+          "use_fixes_or_closes": false
+        },
+        {
+          "url": "https://github.com/osfans/trime/issues/713",
+          "relation": "nearby_but_different_bug",
+          "reason": "已读正文及全部评论。讨论主要是 Rime/主题初始化和 process_key 卡顿；日志提及 InputFeedbackManager 但未归因 TTS/SoundPool。不可声称本补丁解决这些性能问题。",
+          "use_fixes_or_closes": false
+        }
+      ]
+    },
+    {
+      "module": "logcat-lifecycle",
+      "exact_open_issue_found": false,
+      "finding": "未找到报告 Logcat 子进程/管道在取消或重启后遗留的精确开放 issue。",
+      "references": [
+        {
+          "url": "https://github.com/osfans/trime/pull/1546",
+          "relation": "context_only",
+          "reason": "已读正文，明确引入 logcat 命令 DSL/Flow 扩展，可作相关代码历史；正文没有报告此取消/资源生命周期 bug。",
+          "use_fixes_or_closes": false
+        },
+        {
+          "url": "https://github.com/osfans/trime/issues/646",
+          "relation": "nearby_but_different_bug",
+          "reason": "已读正文，用户要求更易采集和保存错误日志；不涉及进程取消、FD 清理或新旧 Job 身份。",
+          "use_fixes_or_closes": false
+        }
+      ]
+    }
+  ],
+  "source_sha256": "192cded91d9dcc98d8a0956004bc2d21bb83f91181cf494f4760f6a654d1cdde",
+  "additional_topics": [
+    {
+      "module": "enter-actions",
+      "exact_open_issue_confirmed": false,
+      "scope": "Two narrow open-issue searches: actionLabel query returned 0, Return/label Chinese query returned three nearby titles; no matching issue is assigned. Keyword searches do not prove absence."
+    },
+    {
+      "module": "jni-thread-attachment",
+      "exact_open_issue_confirmed": false,
+      "scope": "No dedicated exact issue match is asserted for this newly extracted topic; issue design/reproduction discussion is still required."
+    }
+  ]
+}

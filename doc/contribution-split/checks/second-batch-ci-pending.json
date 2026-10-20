@@ -1,0 +1,24 @@
+{
+  "schema": "trime-second-batch-ci-failure-snapshot/v1",
+  "overall_accepted": false,
+  "original_evidence_sha256": "30809faf66e764864c3a19844c1ae3723b728115e509cf28926ceb9b304d8ec5",
+  "run_id": 39397825962,
+  "head": "f5909dcb024997cef8eefe437ee810038118f3c1",
+  "attempt": 1,
+  "failed_job_id": 118544836305,
+  "failed_step_label": "Check code style",
+  "actual_stage": "Gradle plugin/build-logic dependency configuration, before format task execution",
+  "missing_artifacts": [
+    "org.jetbrains.kotlin:kotlin-stdlib:2.4.10",
+    "org.jetbrains.kotlin:kotlin-gradle-plugins-bom:2.4.10"
+  ],
+  "log_bytes": 266870,
+  "log_sha256": "9fcf505d1fe5c49214b00b79f55005820963d66e13a7fab722027cf05dbca173",
+  "local_official_url_probe": "The exact Maven Central/Plugin Portal POM URLs returned HTTP 200 locally after the failure. This does not prove availability on a new GitHub runner; exact-SHA retry required.",
+  "rerun_gate": "GitHub API HTTP403: workflow containing this job is already running; watcher will retry only this known failed job after workflow completion.",
+  "no_source_change_for_retry": true,
+  "limits": [
+    "Snapshot of the known failed first attempt; no same-SHA retry success is claimed.",
+    "This failure happened before formatter/test execution; host25 tests remain a separate record."
+  ]
+}

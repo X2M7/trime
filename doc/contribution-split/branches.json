@@ -9,7 +9,7 @@
     "additions": 90665,
     "deletions": 3388
   },
-  "delivery_scope": "First independent patches plus a staged reconstruction plan; not all aggregate functionality extracted",
+  "delivery_scope": "Eight independent source patches in three batches plus a fork-only validation control branch; the aggregate is not fully extracted",
   "actions": {
     "push_target": "X2M7/trime",
     "create_new_upstream_prs": false,
@@ -298,32 +298,151 @@
       "app_or_device_acceptance_complete": false,
       "host_evidence": "checks/second-batch-host.json",
       "ci": {
-        "status": "in_progress",
+        "status": "first_attempt_dependency_failure_same_sha_retry_pending",
         "tests_executed_by_ci": false,
         "run_id": 39397825962,
         "url": "https://github.com/X2M7/trime/actions/runs/39397825962",
-        "scope_verified_from_finished_logs": false
+        "scope_verified_from_finished_logs": false,
+        "failed_attempt": 1,
+        "failed_job_id": 118544836305,
+        "formatter_executed_in_failed_job": false,
+        "failure_evidence": "checks/second-batch-ci-pending.json"
+      }
+    },
+    {
+      "branch": "contrib/split-enter-actions",
+      "commit": "bcb47b1a81eb211e7c0ede447c1b3263dcf80746",
+      "parent": "f5008260dc1e71b05e8e5508c6cfbf8ebf2507a0",
+      "depends_on": [],
+      "commit_title": "fix: derive Return labels from the dispatched editor action",
+      "compare_url": "https://github.com/X2M7/trime/compare/f5008260...contrib/split-enter-actions",
+      "files": [
+        "app/src/main/java/com/osfans/trime/ime/broadcast/EnterKeyDisplayDelegate.kt",
+        "app/src/main/java/com/osfans/trime/ime/core/EditorEnterAction.kt",
+        "app/src/main/java/com/osfans/trime/ime/core/TrimeInputMethodService.kt",
+        "app/src/test/java/com/osfans/trime/ime/core/EditorEnterActionTest.kt"
+      ],
+      "upstream_pr_created": false,
+      "app_or_device_acceptance_complete": false,
+      "ci": {
+        "status": "pending",
+        "scope_verified_from_finished_logs": false,
+        "tests_executed_by_ci": false
+      },
+      "issue_match": "No automatic Fixes/Closes reference; see checks/issue-match.json",
+      "completed_checks": [
+        "12 pure EditorEnterAction Kotest tests actually executed; no failures/errors/skips",
+        "Kotlin2.3.21 allWarningsAsErrors; no compiler warnings",
+        "Four final source inputs bound to the actual record",
+        "Helper/test formatting; Service/Delegate formatting only",
+        "git diff --check"
+      ],
+      "focused_test_scope": "Pure EditorEnterAction helper only; Service/Delegate not compiled by this host harness",
+      "host_evidence": "checks/third-batch-enter-host.json",
+      "pending": [
+        "Full application compile/tests, Android EditorInfo/theme/performEditorAction integration",
+        "Lint/Release and device acceptance",
+        "Gradle tooling deprecation remains; no full warning-free claim"
+      ],
+      "fork_push": {
+        "target": "X2M7/trime",
+        "exit_code": 0,
+        "remote_ref_verified": true,
+        "receipt_sha256": "be1c6e042e6cdac7d130d531cbe49bc0c0cb5c9c6aa433238655330fec4ee62c"
+      }
+    },
+    {
+      "branch": "contrib/split-jni-thread-attachment",
+      "commit": "3e990b2dae202d5deed9a1b36ccc5f1048e3524c",
+      "parent": "f5008260dc1e71b05e8e5508c6cfbf8ebf2507a0",
+      "depends_on": [],
+      "commit_title": "fix: detach JNI threads owned by the environment guard",
+      "compare_url": "https://github.com/X2M7/trime/compare/f5008260...contrib/split-jni-thread-attachment",
+      "files": [
+        "app/src/main/jni/librime_jni/jni-utils.h"
+      ],
+      "upstream_pr_created": false,
+      "app_or_device_acceptance_complete": false,
+      "ci": {
+        "status": "pending",
+        "scope_verified_from_finished_logs": false,
+        "tests_executed_by_ci": false
+      },
+      "issue_match": "No automatic Fixes/Closes reference; see checks/issue-match.json",
+      "completed_checks": [
+        "Seven production JEnv/AttachEnv host JNI-table cases pass; baseline has four failed cases",
+        "Baseline unique-ownership compile-time assertions fail; fixed assertions pass",
+        "C++17 -fno-elide-constructors -Wall -Wextra -Werror; both ordinary compiles have no diagnostics",
+        "Tested production header SHA matches final commit",
+        "git diff --check"
+      ],
+      "focused_test_scope": "Exact production header/factory with a mocked JNI function table; no JVM/ART/Rime callback",
+      "host_evidence": "checks/third-batch-jni-thread.json",
+      "pending": [
+        "The exact production header and factory execute against a mocked JNI function table; no ART/JVM or Rime callback ran.",
+        "Tests preserve existing failure behavior: a failed GetEnv/Attach may yield a null environment; callers must not dereference it. No new exception handling was added.",
+        "DetachCurrentThread is requested only for a successful owned attachment; its failure status remains unhandled.",
+        "Ownership is lexical and thread-local; manual outside detach/re-attach or Java frames spanning owner destruction are outside this helper contract.",
+        "Full Android build/tests, native callback/CheckJNI and device acceptance"
+      ],
+      "fork_push": {
+        "target": "X2M7/trime",
+        "exit_code": 0,
+        "remote_ref_verified": true,
+        "receipt_sha256": "be1c6e042e6cdac7d130d531cbe49bc0c0cb5c9c6aa433238655330fec4ee62c"
       }
     }
   ],
   "inventory": {
     "path": "paths.tsv",
-    "sha256": "17d30e4cf568f6fe7f96714e6153a25cfd26b8e667e99477985aa903bbcc8dfc",
+    "sha256": "2814625dea62c6ec476a8c0a6845d06c1ce10aa85782772639ef960f265b8af3",
     "non_numeric_line_counts": "None marks binary numstat entries, excluded from line totals",
     "routing_is_not_executable_partition": true,
-    "original_paths_with_extracted_topic_hunks": 11,
-    "untouched_original_paths": 649,
+    "original_paths_with_extracted_topic_hunks": 14,
+    "untouched_original_paths": 646,
     "touched_path_does_not_mean_all_features_extracted": true,
     "new_focused_companion_paths": [
+      "app/src/main/java/com/osfans/trime/ime/core/EditorEnterAction.kt",
       "app/src/main/java/com/osfans/trime/ime/keyboard/FeedbackResource.kt",
+      "app/src/test/java/com/osfans/trime/ime/core/EditorEnterActionTest.kt",
       "app/src/test/java/com/osfans/trime/ime/keyboard/FeedbackResourceTest.kt"
     ]
   },
   "limits": [
-    "Per-branch Lint/Release/full application tests and device acceptance pending",
+    "Per-branch Lint/Release/full application tests and device acceptance remain pending until exact-SHA evidence is reviewed",
     "No claim of complete warning elimination",
     "Historical aggregate acceptance does not qualify split branches",
     "First batch Debug APKs were built by CI, but not downloaded/audited in this check",
-    "No new stable release; CI did not execute application tests or Lint"
-  ]
+    "No new stable release; source-branch Commit CI does not execute application tests or Lint",
+    "The separate three-job validation control run is pending and does not cover the new third batch"
+  ],
+  "validation_control": {
+    "branch": "contrib/split-validation",
+    "commit": "cc126ed9b92ad76e01123a6fc2850d85c757ff14",
+    "is_application_module": false,
+    "run_id": 39401035244,
+    "url": "https://github.com/X2M7/trime/actions/runs/39401035244",
+    "status": "triggered_results_pending",
+    "app_test_task": ":app:testDebugUnitTest --rerun-tasks",
+    "matrix": {
+      "upstream-base": "f5008260dc1e71b05e8e5508c6cfbf8ebf2507a0",
+      "lazy-feedback": "3912fb23aced49da94cee6e3c59b3a9585da779b",
+      "logcat-lifecycle": "f5909dcb024997cef8eefe437ee810038118f3c1"
+    },
+    "scope": "Three fixed-SHA Ubuntu jobs; actual full application JVM test task. The current control run does not include the third batch.",
+    "accepted_test_result": false,
+    "limits": [
+      "No control-run success or test count is claimed before actual reports are reviewed.",
+      "No APK publication, Release, Lint, or device acceptance."
+    ]
+  },
+  "patch_composition": {
+    "evidence": "checks/patch-composition.json",
+    "original_report_sha256": "649e6a472fd3cae2a83873e72d63ab62ca6d150f71d5edb613bf817efa023f86",
+    "independent_patch_checks": 8,
+    "ordered_composition_passed": true,
+    "composed_tree": "2f8317b32873ed1bcb5694462494755bb5f9dc2c",
+    "compiled_or_executed": false,
+    "is_integration_acceptance": false
+  }
 }

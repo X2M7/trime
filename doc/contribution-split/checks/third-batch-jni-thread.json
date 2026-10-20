@@ -1,0 +1,200 @@
+{
+  "schema": "trime-split-jni-thread-host/v1",
+  "head": "3e990b2dae202d5deed9a1b36ccc5f1048e3524c",
+  "base": "f5008260dc1e71b05e8e5508c6cfbf8ebf2507a0",
+  "worktree_clean": true,
+  "only_changed_path": "app/src/main/jni/librime_jni/jni-utils.h",
+  "actual_tested_header_matches_commit": true,
+  "source": {
+    "path": "app/src/main/jni/librime_jni/jni-utils.h",
+    "bytes": 6630,
+    "sha256": "0c0b563bb3137982f3131340eb2e35f3685bef671934573d51c4db35c5d5add4"
+  },
+  "report_sha256": "526fbdd9ad254a29ce0d8a5cb2710b7c2dc64b0d34e64b48b109f0af9d904d68",
+  "passed": true,
+  "compile_options": [
+    "C++17",
+    "-fno-elide-constructors",
+    "-Wall",
+    "-Wextra",
+    "-Werror"
+  ],
+  "production_compile_warning_rows": 0,
+  "cases_passed": 7,
+  "baseline_failed_cases": 4,
+  "ownership_static_assert_fixed_passed": true,
+  "ownership_static_assert_baseline_failed": true,
+  "scope": "Production header and factory with host JNI function-table mock; no JVM, ART, Gradle, Android build or runtime acceptance.",
+  "test_source": {
+    "path": "jni_thread_attachment.cc",
+    "bytes": 6935,
+    "sha256": "7db1c38740254edee7af15dc7beeb1adbf717621ba605b5a33c73c141c442da9"
+  },
+  "baseline_cases": [
+    {
+      "case": "already-attached",
+      "passed": true,
+      "GetEnv": 1,
+      "attach": 0,
+      "detach": 0
+    },
+    {
+      "case": "owned-attachment",
+      "passed": false,
+      "error": "successful owned attach was not detached exactly once",
+      "GetEnv": 1,
+      "attach": 1,
+      "detach": 0
+    },
+    {
+      "case": "failed-attachment",
+      "passed": true,
+      "GetEnv": 1,
+      "attach": 1,
+      "detach": 0
+    },
+    {
+      "case": "failed-GetEnv",
+      "passed": true,
+      "GetEnv": 1,
+      "attach": 0,
+      "detach": 0
+    },
+    {
+      "case": "nested-owners",
+      "passed": false,
+      "error": "nested owners failed to detach once",
+      "GetEnv": 2,
+      "attach": 1,
+      "detach": 0
+    },
+    {
+      "case": "repeated-factories",
+      "passed": false,
+      "error": "factory return ownership leaked or duplicated",
+      "GetEnv": 128,
+      "attach": 1,
+      "detach": 0
+    },
+    {
+      "case": "unique-ownership",
+      "passed": false,
+      "error": "thread attachment owner remains copyable or movable",
+      "GetEnv": 0,
+      "attach": 0,
+      "detach": 0
+    },
+    {
+      "passed": false,
+      "cases": 7,
+      "failed_cases": 4
+    }
+  ],
+  "fixed_cases": [
+    {
+      "case": "already-attached",
+      "passed": true,
+      "GetEnv": 1,
+      "attach": 0,
+      "detach": 0
+    },
+    {
+      "case": "owned-attachment",
+      "passed": true,
+      "GetEnv": 1,
+      "attach": 1,
+      "detach": 1
+    },
+    {
+      "case": "failed-attachment",
+      "passed": true,
+      "GetEnv": 1,
+      "attach": 1,
+      "detach": 0
+    },
+    {
+      "case": "failed-GetEnv",
+      "passed": true,
+      "GetEnv": 1,
+      "attach": 0,
+      "detach": 0
+    },
+    {
+      "case": "nested-owners",
+      "passed": true,
+      "GetEnv": 2,
+      "attach": 1,
+      "detach": 1
+    },
+    {
+      "case": "repeated-factories",
+      "passed": true,
+      "GetEnv": 128,
+      "attach": 128,
+      "detach": 128
+    },
+    {
+      "case": "unique-ownership",
+      "passed": true,
+      "GetEnv": 0,
+      "attach": 0,
+      "detach": 0
+    },
+    {
+      "passed": true,
+      "cases": 7,
+      "failed_cases": 0
+    }
+  ],
+  "actual_original_command_exits": [
+    {
+      "argv0": "clang++",
+      "actual_exit": 0,
+      "expected_exit": 0
+    },
+    {
+      "argv0": "clang++",
+      "actual_exit": 0,
+      "expected_exit": 0
+    },
+    {
+      "argv0": "baseline-check",
+      "actual_exit": 1,
+      "expected_exit": 1
+    },
+    {
+      "argv0": "clang++",
+      "actual_exit": 1,
+      "expected_exit": 1
+    },
+    {
+      "argv0": "clang++",
+      "actual_exit": 0,
+      "expected_exit": 0
+    },
+    {
+      "argv0": "fixed-check",
+      "actual_exit": 0,
+      "expected_exit": 0
+    },
+    {
+      "argv0": "clang++",
+      "actual_exit": 0,
+      "expected_exit": 0
+    }
+  ],
+  "limits": [
+    "The exact production header and factory execute against a mocked JNI function table; no ART/JVM or Rime callback ran.",
+    "Tests preserve existing failure behavior: a failed GetEnv/Attach may yield a null environment; callers must not dereference it. No new exception handling was added.",
+    "DetachCurrentThread is requested only for a successful owned attachment; its failure status remains unhandled.",
+    "Ownership is lexical and thread-local; manual outside detach/re-attach or Java frames spanning owner destruction are outside this helper contract."
+  ],
+  "reproducer_note": "The fork-only shell reproducer is newly prepared and syntax-checked; this record binds the original local commands, not an execution of that new script.",
+  "reproducer": {
+    "path": "check_jni_thread_attachment.sh",
+    "bytes": 2411,
+    "sha256": "7633b649b5d8cb6623751606a83019dad9c8c56d5a6b2f38653b47ae1b47fe30",
+    "syntax_checked": true,
+    "executed": false
+  }
+}

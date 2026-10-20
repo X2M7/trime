@@ -21,3 +21,25 @@ The source has existing `pessimizing-move` and `sign-compare` diagnostics in bot
 Both changed layout files were parsed and compiled separately with AAPT2 36.0.0 (`aapt2 compile <layout.xml> -o <existing-output-directory>`). Both commands exited 0 with empty stdout/stderr. This does not link the application or measure layout geometry.
 
 License JSON parsing and field comparison confirm only `artifactVersion` changed. The existing upstream librime gitlink is `7bc3fb0005a03aff1c086611e4d52bb7f6444fdd`; its CMake project reports version `1.17.0` (not an assertion that this commit is the exact release tag). Its pinned OpenCC is `025f371dc76b598d77384fbdab90c937471844d8`, exactly at `ver.1.4.2`.
+
+## Return action helper and JNI thread ownership
+
+[third-batch-enter-host.json](third-batch-enter-host.json) binds the actual 12-test `EditorEnterActionTest` XML and four final source inputs to `bcb47b1a81eb211e7c0ede447c1b3263dcf80746`. Only the pure helper and its test were compiled in that host harness. `EnterKeyDisplayDelegate` and `TrimeInputMethodService` received formatting/source checks, not Android compilation or editor-action execution. The earlier 25 tests remain independently recorded in [second-batch-host.json](second-batch-host.json).
+
+[jni_thread_attachment.cc](jni_thread_attachment.cc) executes the production `JEnv` and `GlobalRefSingleton.AttachEnv` against a mocked NDK JNI function table. The original commands in [third-batch-jni-thread.json](third-batch-jni-thread.json) cover seven cases: an already attached thread, successful owned attachment, failed attachment, failed `GetEnv`, nested ownership, repeated factory returns, and noncopyable/nonmovable ownership. The baseline fails four runtime cases and its ownership static assertions; the fixed header passes all seven cases and the static assertions. Both ordinary compilations used C++17, `-fno-elide-constructors`, `-Wall -Wextra -Werror` without diagnostics. This is not ART, a Java VM, or a real Rime callback.
+
+The following fork-only reproducer reads the two pinned headers from Git, so it does not require the repository worktree to be at either checkpoint. It creates a new output directory and requires Linux host Clang, Python 3, and an Android NDK:
+
+```sh
+sh check_jni_thread_attachment.sh /path/to/trime /path/to/android-ndk /path/to/new-output-directory
+```
+
+This new shell reproducer has been syntax-checked, not executed as part of the indexed original run. The original command outputs remain the execution evidence. A failed attach may still yield a null environment; callers must not dereference it. Detach return status, external manual detach/reattach, Java frames spanning owner destruction, Android CheckJNI, and actual native callback behavior remain outside this mock's coverage.
+
+## CI and issue-search boundaries
+
+[second-batch-ci-pending.json](second-batch-ci-pending.json) records the known first-attempt Ubuntu failure before formatter execution: Gradle could not resolve two Kotlin 2.4.10 artifacts. A later local HTTP 200 probe does not establish availability on a new GitHub runner. No same-SHA retry success is asserted by that record.
+
+[issue-match.json](issue-match.json) preserves conservative issue/PR matching context. Nearby or historical discussions are not assigned `Fixes`/`Closes`; keyword search does not prove the absence of an issue. The fork-only validation control branch is listed separately in [branches.json](../branches.json), not as an application module or a passed test result.
+
+[patch-composition.json](patch-composition.json) records successful independent `git apply --cached --check` checks for all eight patches and their ordered application to a temporary index. The composed tree was not compiled or run. A corrected audit path rule accepts the two license JSON files; that correction did not change any source patch or real worktree.

@@ -40,6 +40,31 @@ JNI 聚焦测试在同一 mock 调用环境转换 2,048 个元素四次：原实
 
 第二批的完整 Android CI、Lint、Release 与设备验收仍以各分支后续的精确 SHA 证据为准；没有用首批或原汇总分支的通过结果代替。
 
+第二批普通 Commit CI 尚未验收。日志分支 `f5909dcb` 的第一轮 Ubuntu job 在 Gradle 插件/构建逻辑依赖配置时无法解析两个 Kotlin 2.4.10 条目，尚未执行格式检查任务，不能称为格式失败或通过；其他 job 的状态也不能代替整轮通过。保持源码不变，等待同 SHA 重试。[失败范围记录](checks/second-batch-ci-pending.json) 保留原日志哈希；稍后的本地官方 POM URL 返回 HTTP 200，不证明 GitHub runner 已恢复。这与上述 25 项宿主测试是不同证据。
+
+## 第三批：回车动作与 JNI 线程归属
+
+本批两个分支均已推送 fork，直接基于 `f5008260`、各只有一个提交，无相互依赖。普通分支 CI 结果仍待核验。
+
+| 分支 | 单一问题与范围 | 已执行验证 | 限制与待验收 |
+| --- | --- | --- | --- |
+| [split-enter-actions](https://github.com/X2M7/trime/compare/f5008260...contrib/split-enter-actions) | 让回车显示与实际派发使用同一 `EditorEnterAction` 规则；只改 Enter delegate、service 的回车逻辑及纯辅助类/测试 | 实际 12 项 Kotest 全通过，0 失败/错误/跳过；四个最终源码 SHA 与记录核对；helper/test 编译，delegate/service 仅格式与源码复核 | Android 应用编译、真实 EditorInfo/主题标签及 `performEditorAction` 行为待验收；Gradle 弃用诊断保留 |
+| [split-jni-thread-attachment](https://github.com/X2M7/trime/compare/f5008260...contrib/split-jni-thread-attachment) | `JEnv` 只 detach 自己成功 attach 的线程，禁止所有权复制/移动；仅一个生产头文件 | 真实生产头文件/工厂配合 JNI 函数表 mock：7 个案例通过，原版 4 个案例失败；独占所有权静态断言前失败后通过；两版普通 C++17 严格编译无诊断 | 无 ART/JVM/Rime 回调执行；失败 attach 的 null 环境、detach 返回值与外部线程操作边界保留；Android 构建/CheckJNI/设备待验收 |
+
+验证原件绑定见[第三批回车宿主记录](checks/third-batch-enter-host.json)与[第三批 JNI 记录](checks/third-batch-jni-thread.json)，最小复现源码和新复现命令见[检查说明](checks/README.md)。本批 12 项辅助类测试与此前 25 项宿主测试分开记录，不将格式检查等同于 service/delegate 集成测试。新 JNI shell 复现器仅完成语法检查；执行证据来自原始 7 案例命令。
+
+[补丁机械检查](checks/patch-composition.json) 已逐一在临时 index 上验证 8 份补丁相对基准可应用，并按记录顺序成功组合，得到 tree `2f8317b32873ed1bcb5694462494755bb5f9dc2c`；真实工作树与分支未改动。这个组合 tree 未编译或运行，只证明文本补丁没有应用冲突，不是集成验收通过。
+
+## 独立的完整应用测试控制分支
+
+[contrib/split-validation](https://github.com/X2M7/trime/tree/contrib/split-validation) 是 fork 专用 CI 控制分支，提交为 `cc126ed9b92ad76e01123a6fc2850d85c757ff14`，不计入上述 8 个应用模块，也不带进这些功能分支或上游 PR。它仅注册三组固定 SHA 的 Ubuntu job：上游基准 `f5008260`、反馈 `3912fb23`、日志 `f5909dcb`；执行真实 `:app:testDebugUnitTest --rerun-tasks`，按实际 XML 统计测试，并保留日志、HTML/XML 与源码身份。
+
+[控制验证 run 39401035244](https://github.com/X2M7/trime/actions/runs/39401035244) 已触发，结果尚待核验；第三批两个分支不在这一固定矩阵中。不能把工作流写好、job 启动或原有聚焦测试当作完整应用测试通过。本分支没有 APK 发布、Lint、Release 或设备验收操作。
+
+## 关联 issue 的审慎匹配
+
+[匹配记录](checks/issue-match.json) 保留六个原主题的只读检索结论与相近讨论，以及新主题的范围说明；未确认可直接关闭的精确开放 issue，不填写虚假的 `Fixes`/`Closes`。这是关键词和部分历史讨论的有限检索，不是全库不存在问题的证明；新的 JNI 线程主题也不冒用其他 JNI 崩溃报告。
+
 ## 后续拆分顺序
 
 下面是重建路线，不表示这些功能已经提取、推送或通过。依赖指实际行为契约，不是必须提前提交的大型“公共基础设施”补丁。每项只从共享文件摘取所需代码与最小回归；若摘取时发现新的依赖，先更新清单，再决定合并同一功能或调整顺序。
@@ -52,17 +77,21 @@ JNI 聚焦测试在同一 mock 调用环境转换 2,048 个元素四次：原实
 | 旧 Android logcat 命令兼容 | 子进程生命周期已见第二批；另提 PID 过滤与 clear 选项 | API21 实际命令、完整 PID 匹配、不把日志正文当 PID |
 | 图标字体启动开销 | Compact CommunityMaterial、固定字形表、来源/许可证与生成器 | 名称/字符/字体与原依赖一致；冷启动实际测量；独立回归，移除整套 T13 探针依赖 |
 | 离线生成许可证 | AboutLibraries 离线数据与缺失条目 | 无 GitHub 请求、内容完整；不顺带升级插件 |
-| 回车标签与动作一致 | 单独提取 EditorPolicy 回车规则及 delegate/service 窄改动 | custom actionId、NO_ENTER_ACTION、多行、搜索/发送等动作 |
-| Shift 双击尊重主题动作 | KeyView/Keyboard 的 modifier 逻辑 | 自定义动作不被固定切换覆盖；默认 Shift 行为保持 |
-| 系统敏感剪贴板过滤 | 仅敏感标记兼容与入库前过滤；手动隐私许可另补 | 不进入历史和建议；普通内容正常；API 版本分支 |
+| 回车动作后续集成验收 | 独立实现已见第三批；只验证回车契约，不并入全部 EditorPolicy | custom actionId、NO_ENTER_ACTION、多行、搜索/发送及真实主题标签 |
+| Shift 双击尊重主题动作 | KeyView/Keyboard 的 modifier 逻辑，属于上游已有双击 Shift 的回归修复 | 上游 `8545278b` 已有基础双击；自定义主题动作不被固定切换覆盖，不作为新增 CapsLock |
+| 系统敏感剪贴板过滤 | 新建只读 SensitiveClipboardCompat；ClipboardHelper 在去重和异步入库之前拒绝 marked clip，两个生产文件与一个聚焦测试 | marked 文本不写入历史，也不生成新建议；普通内容及 API 分支保持；不清除既存普通建议/历史，不宣称完整 T07 |
 | 格式检查跳过生成目录 | Spotless fileTree 一处 | 源码仍被检查，build/.cxx/.gradle 不被遍历；不改 ktlint 版本 |
 | 原生构建并行度 | CMake Ninja job pool 独立代码块 | 未设置、有效及非法并行度；不带第三方覆盖层 |
 | 构建时间戳单位 | timestamp 解析器、getter、聚焦测试 | 秒/毫秒及非法值；不改展示版本或发布策略 |
 | ABI 参数校验 | ABI 解析器与 NativeBase 窄调用 | 默认值、合法覆盖、重复/空/非法值 |
-| JNI 线程附加归属 | JEnv 仅 detach 自己 attach 的线程 | 已附加、未附加、附加失败、嵌套调用；不把未捕获 C++ 异常引入通知回调 |
+| JNI 线程归属后续设备验收 | 独立实现已见第三批；保持既有错误返回约定 | 真实 native 回调/CheckJNI；不重复提交头文件或新增通知回调异常 |
 | 预编辑浮层触摸与窗口 token | PreeditDelegate、删除额外触摸 PopupWindow，保留 InputView/service 的真实触摸区域 | API21 BadToken、浮层可点击、显隐及编辑器切换；不能只删除窗口而丢失触摸范围 |
 
 这一组也不一次性创建全部 PR。先挑维护者认可且复现充分的 2–3 项，完成完整构建与针对性验收，再提交下一批。没有核实匹配的问题，不填虚假的 `Fixes #…`。
+
+Shift 的主题动作回归与 `Keyboard.refreshModifier` 内 `result || setModifier` 短路造成的后续修饰键未更新是两项独立问题。原探针同时依赖后者，不能把整份探针或两个修复作为一项双击功能搬入；分别准备最小复现与补丁。
+
+敏感剪贴板补丁先限制新内容进入现有唯一的入库/建议发布入口。若另外要求清除旧建议，应单独处理 nullable listener、InputBar 和旧的普通内容异步回调时序；不把这些行为默认算作“读取敏感标记”已经覆盖。
 
 ### B. 核心正确性与候选交互
 
@@ -125,7 +154,7 @@ JNI 聚焦测试在同一 mock 调用环境转换 2,048 个元素四次：原实
 
 ## 查漏与操作规则
 
-[paths.tsv](paths.tsv) 保留原比较的全部 660 个路径、增删行数及初步审阅归属。归属是粗分类，不是已验证的可执行补丁划分；尤其 122 个共享集成路径仍需逐块拆解。目前 11 个原路径有主题代码已提取，另外增加了 2 个重建后的聚焦辅助类/测试文件；未涉及的 649 个原路径仍仅作归类。触及某个路径不表示其中全部功能已提取，例如 Manifest 只取 TTS query、反馈管理器不取隐私钩子、Logcat 不取旧系统命令兼容。
+[paths.tsv](paths.tsv) 保留原比较的全部 660 个路径、增删行数及初步审阅归属。归属是粗分类，不是已验证的可执行补丁划分；尤其 122 个共享集成路径仍需逐块拆解。目前 14 个原路径有主题代码已提取，另外增加了 4 个重建后的聚焦辅助类/测试文件；未涉及的 646 个原路径仍仅作归类。触及某个路径不表示其中全部功能已提取，例如 Manifest 只取 TTS query、反馈管理器不取隐私钩子、Logcat 不取旧系统命令兼容。CI 控制分支不计入这个应用模块提取数量。
 
 1. 每个新分支从当时核实的上游 `develop` 开始，独立问题无相互依赖；必须依赖的功能明确写出父补丁，等待父补丁合入后整理，不把累积差异冒充单个 PR。
 2. 每个修复说明一个具体触发场景、前后行为及对应验证；同一共享文件内无关的 import、偏好、字符串和格式修改都留到所属补丁。
