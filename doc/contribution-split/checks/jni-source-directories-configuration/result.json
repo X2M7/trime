@@ -1,0 +1,176 @@
+{
+  "scope": "ignored standalone real Gradle ProjectBuilder and real AGP9.3 source-set API semantics fixture; no SDK/native/variant/APK tasks",
+  "baseline": "144f6111d0498da85e0ffa250245f18955179ed3",
+  "production_head": "dfcc87dfc9e0efa6650b29baf83852e57224020e",
+  "production_change_is_exact_single_line_api_replacement": true,
+  "production_file": {
+    "path": "/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr6/srcdirs-review/final-production-NativeBaseConventionPlugin.kt",
+    "bytes": 2085,
+    "sha256": "be1ba76dc1b9a2e7a3e5be5d149010e7a33eca7817d8d9dfc3386213f0f916ca"
+  },
+  "final_execution": {
+    "exit_code": 0,
+    "gradle_build_result": "BUILD SUCCESSFUL in 31s",
+    "assertion_count": 21,
+    "project_teardowns": 2,
+    "hard_deadline_seconds": 120,
+    "hard_deadline_triggered": false,
+    "tasks_actually_executed": [
+      "compileJava",
+      "verifyDirectories"
+    ],
+    "log": {
+      "path": "/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr6/srcdirs-review/fixture1/run5.log",
+      "bytes": 2501,
+      "sha256": "a42de6b354efe0081babde2a829a57a4f461b9ca98cbd7ec6cf8d148a319189a"
+    },
+    "assertions": [
+      "direct fixtures start without late delegates",
+      "same raw entries and insertion order",
+      "default source is retained",
+      "custom source is retained",
+      "relative prebuilt string appended unchanged",
+      "same resolved directory sets",
+      "same pinned-implementation resolved order",
+      "resolved paths stay relative to project with spaces",
+      "same actual source file set",
+      "default/custom/prebuilt files remain present",
+      "duplicate additions preserve existing old/new behavior",
+      "real Android plugin uses examined AGP implementation",
+      "actual Android plugin early apply phase has no late delegates",
+      "real Android main default JNI directory exists before addition",
+      "actual plugin fixture meets unchanged prebuilt existence condition",
+      "fixture restores identical early source state",
+      "old and new additions match in actual early Android DSL",
+      "actual plugin resolved directories and order agree",
+      "actual plugin source files agree",
+      "actual plugin retains default/custom/prebuilt files",
+      "addition itself does not finalize or create variants"
+    ],
+    "working_directory": "/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr6/srcdirs-review/fixture1",
+    "command_argv": [
+      "timeout",
+      "--signal=TERM",
+      "--kill-after=5s",
+      "120s",
+      "env",
+      "JAVA_HOME=/home/xumin/Public/android-toolchain/jdk-17.0.19+10",
+      "/home/xumin/.gradle/wrapper/dists/gradle-9.8.1-bin/a2l6ltp3k1vth6lwipzm5p2jp/gradle-9.8.1/bin/gradle",
+      "--offline",
+      "--no-daemon",
+      "--max-workers=1",
+      "--console=plain",
+      "verifyDirectories"
+    ],
+    "shell_output_redirection": "> run5.log 2>&1"
+  },
+  "process_exit_contract": "Success path performs all assertions, then finally ProjectBuilderImpl.stop for both roots, then System.exit(0) to close standalone JVM despite global background executor threads. No success exit is reached if assertions or teardown throw.",
+  "prior_attempts": [
+    {
+      "attempt": 1,
+      "exit_code": 1,
+      "reason": "offline missing exact transitive kotlin-gradle-plugin-api2.2.10; no assertions run",
+      "log": {
+        "path": "/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr6/srcdirs-review/fixture1/run1.log",
+        "bytes": 1304,
+        "sha256": "4f8869cab65bb888c0602689dd622217b215be88ff644b8fe604174dcffc9047"
+      }
+    },
+    {
+      "attempt": 2,
+      "exit_code": 1,
+      "reason": "ordinary source-set assertions passed, but attempted Provider precondition not enabled by ProjectBuilder extra property; AGP rejects Provider; not a product regression or Provider preservation acceptance",
+      "log": {
+        "path": "/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr6/srcdirs-review/fixture1/run2.log",
+        "bytes": 2974,
+        "sha256": "118997cb7cbe3af5dad9b2fd028098ccef74b13dab248c1c9267ec41d8b272e3"
+      },
+      "input_source": {
+        "path": "/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr6/srcdirs-review/fixture1/run2-SourceDirectoryComparison.java",
+        "bytes": 7639,
+        "sha256": "4ad3066a366dcfb5d9746c3e85db4ed8c95a3a31c71346be6fc5882109fa720b"
+      }
+    },
+    {
+      "attempt": 3,
+      "exit_code": 1,
+      "reason": "assertions printed but standalone JVM retained by background threads; exact JavaExec process identity checked then SIGTERM; not a passing execution",
+      "log": {
+        "path": "/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr6/srcdirs-review/fixture1/run3.log",
+        "bytes": 2623,
+        "sha256": "6a0fe77254199563393bb94486bd203f395621faafb1b1146df1ae5c7a741036"
+      },
+      "input_source": {
+        "path": "/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr6/srcdirs-review/fixture1/run3-SourceDirectoryComparison.java",
+        "bytes": 7562,
+        "sha256": "f059ed1d9907b1e0c4ac0fe4a20c21489450d16b188e54512a0a4e9e43c8e1cd"
+      },
+      "stop_record": {
+        "path": "/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr6/srcdirs-review/fixture1/run3-controlled-stop.json",
+        "bytes": 304,
+        "sha256": "319818e076305f339757251525c1e198f92469c2a9fa109da151ff76f2adbe2a"
+      }
+    },
+    {
+      "attempt": 4,
+      "exit_code": 1,
+      "reason": "all21 assertions and both per-project teardowns returned, but global threads retained JVM; exact JavaExec identity checked then SIGTERM; not a passing execution",
+      "log": {
+        "path": "/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr6/srcdirs-review/fixture1/run4.log",
+        "bytes": 3137,
+        "sha256": "8e7ac07d3955bc372f667ba255c1225ff07753bac68c3c69c8e24df7908db1e6"
+      },
+      "input_source": {
+        "path": "/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr6/srcdirs-review/fixture1/run4-SourceDirectoryComparison.java",
+        "bytes": 7622,
+        "sha256": "bb84eee4bbbb535ea20dbc50e8c6b44c06091c8df8fcae4805c4521879c29f56"
+      },
+      "stop_record": {
+        "path": "/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr6/srcdirs-review/fixture1/run4-controlled-stop.json",
+        "bytes": 426,
+        "sha256": "30116e8ec27381313a81bf3828353bbf4bc81b85555861b2e3a4c08eb3b4258e"
+      }
+    }
+  ],
+  "final_inputs": [
+    {
+      "path": "/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr6/srcdirs-review/fixture1/settings.gradle",
+      "bytes": 54,
+      "sha256": "9b973fedef78936eb06e37bd7ae6ac6a08e990d1cb0c596f6763bcfe5f4bcf52"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr6/srcdirs-review/fixture1/build.gradle",
+      "bytes": 613,
+      "sha256": "720a89438496a37c71b4f8897a2ff67272d55a93c16269aaa361972419bbc645"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr6/srcdirs-review/fixture1/gradle.properties",
+      "bytes": 162,
+      "sha256": "c7cf9a5fc35cc74abe15fee4cd4900ed8a6bb4ce09d7f9d2dcfffc5dc57fbbff"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr6/srcdirs-review/fixture1/src/main/java/SourceDirectoryComparison.java",
+      "bytes": 7850,
+      "sha256": "d7630a82bc9bdeca8d09af846a84bc846f59a3176646dbaa8207aa062fb85dac"
+    }
+  ],
+  "environment": {
+    "gradle": "9.8.1",
+    "agp": "9.3.0",
+    "java_home": "/home/xumin/Public/android-toolchain/jdk-17.0.19+10",
+    "gradle_heap_mib": 384,
+    "gradle_metaspace_mib": 256,
+    "javaexec_heap_mib": 256,
+    "javaexec_metaspace_mib": 192,
+    "max_workers": 1
+  },
+  "remaining_fixture_javaexec_processes": [],
+  "limits": [
+    "Provider group not accepted or rerun after its precondition failed; no Provider preservation runtime claim",
+    "no variant finalization or late-source mutation equivalence tested",
+    "no CMake, ABI/native binary validation, APK packaging or device acceptance",
+    "marker .so files contain only fixture bytes, not loadable native libraries",
+    "fixed production convention Kotlin compilation is separate cloud validation owned by parent",
+    "early real Android plugin apply phase tested; full NativeBaseConventionPlugin itself was not applied by this fixture"
+  ]
+}

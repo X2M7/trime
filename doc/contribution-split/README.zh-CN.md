@@ -143,6 +143,18 @@ JNI 聚焦测试在同一 mock 调用环境转换 2,048 个元素四次：原实
 
 [本轮聚焦检查](checks/enter-actions-focused-host.json)实际重新执行 12 项纯 policy 测试通过，严格 Kotlin helper／test 编译无警告；其余四个文件在该宿主工程仅格式检查。精确提交的[完整应用 JVM 验证](checks/enter-actions-application-jvm.json)已实际通过：317 项／21 组，失败／错误／跳过均为 0；301 项基准完整保留，新增 16 项准确匹配最终源码，其中 4 项实际 Theme／Kodein／delegate／InputBroadcaster 测试已运行。官方 ZIP 大小／digest／CRC、源码／控制身份、20 个递归 pin、真实非缓存任务与原 XML／HTML 均已核对；没有新增源码编译诊断，既有 build-logic 和工具警告仍在。[fork／上游八项 Debug 构建终态](checks/enter-actions-platform-ci-final.json)已全部通过，两项 Ubuntu 全仓库样式检查亦通过；八份日志按同 OS 基线复核，未发现新增源码诊断，固定依赖与工具警告保留。[15:34 UTC 进行中快照](checks/enter-actions-platform-ci-pending.json)作为历史原件保留。[实际提交及读回回执](checks/enter-actions-upstream-submission.json)已核对目标、源 SHA、正文及一提交六文件，未报告文本合并冲突并保持 Draft；[PR 正文进度及读回](checks/enter-actions-validation-refresh.json)已同步八项构建终态，保留 Draft 和原验收限制。Android 实际 EditorInfo 构造、service 提交、屏幕重画／缓存来回切换、Lint 和 Release 仍未验收，既有工具告警保留；本轮不发布 APK。
 
+## 下一项：预编译 JNI 目录弃用调用
+
+[五个现有 PR 的本轮复核](checks/current-pr-build-feedback-next6.json)确认 #2176–#2180 的 fork／上游 40 个构建 job 均通过，未见新增维护者反馈；这不补充其 Android 实际运行验收。
+
+已推送 [contrib/pr-prebuilt-jni-directories](https://github.com/X2M7/trime/tree/contrib/pr-prebuilt-jni-directories)，新提交 `dfcc87df` 直接基于 `144f6111`，仅将 `NativeBaseConventionPlugin.kt` 的一行 `jniLibs.srcDirs(setOf("prebuilt"))` 改为 `jniLibs.directories.add("prebuilt")`。[源码绑定](checks/jni-source-directories-submission-source.json)确认一个提交、一个文件、增加／删除各一行；原条件、CMake 回退、ABI 与打包配置不变。最初仅提交正文超出贡献规范行宽的 `e612d66a` 分支和原运行保留，新提交 tree 与之相同；初轮构建已取消，不当作最终源码验收。
+
+[精确源码的完整应用 JVM 验证](checks/jni-source-directories-application-jvm.json)实际通过 301 项／19 组，失败／错误／跳过均为 0，完整保留基准用例多重集。官方附件大小／digest／CRC、源码及控制身份与 20 个递归 pin 已核对。实际非缓存执行 `:build-logic:convention:compileKotlin`，原结构化 `srcDirs` 警告已消失，没有新增源码诊断；其余 98 条广义工具警告候选保留，不是全工程零警告。
+
+[AGP API 与调用时机审阅](checks/jni-source-directories-api-review.json)以及[可复现配置对照](checks/jni-source-directories-configuration/README.md)核对了当前早期追加路径。独立 harness 使用真实 AGP 9.3、Gradle 9.8.1，在两个场景中通过 21 个断言：默认／自定义／prebuilt 目录和标记文件均保留，带空格的相对路径与顺序一致，真实 Android 插件早期的 late delegates 为 0。最终实际退出 0、两个 ProjectBuilder teardown 完成；成功路径随后显式结束独立 JVM，旧轮离线解析、Provider 前置失败与后台线程受控终止均保留，不记作通过。未验证 Provider、变体定稿后的动态添加、真实 native 文件或 APK 打包。
+
+[四系统构建的 16:19 UTC 快照](checks/jni-source-directories-platform-ci-pending.json)仍为四项运行中、无失败，不能提前记为通过。[英文 PR 说明](drafts/jni-source-directories.md)保留此限制；Lint、Release 与预编译库实际 APK 内容仍未验收。复现工具和报告仅在 fork 索引，不带入上游的一行补丁。本轮不发布 APK。
+
 ## 关联 issue 的审慎匹配
 
 [匹配记录](checks/issue-match.json) 保留六个原主题的只读检索结论与相近讨论，以及新主题的范围说明；未确认可直接关闭的精确开放 issue，不填写虚假的 `Fixes`/`Closes`。这是关键词和部分历史讨论的有限检索，不是全库不存在问题的证明；新的 JNI 线程主题也不冒用其他 JNI 崩溃报告。

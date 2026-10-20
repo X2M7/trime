@@ -1,0 +1,50 @@
+{
+  "agp_version": "9.3.0",
+  "source_head": "dfcc87dfc9e0efa6650b29baf83852e57224020e",
+  "verdict": "The one-line migration is appropriate for this early plugin-application callsite; the separate fixture and exact-source CI records bind executed validation.",
+  "api": {
+    "owner": "com.android.build.api.dsl.AndroidSourceDirectorySet from pinned AGP9.3.0; not Gradle core org.gradle.api.file.SourceDirectorySet.",
+    "new_property_type": "val directories: MutableSet<String>; public JVM getter is java.util.Set<String>.",
+    "old_method": "srcDirs(vararg Any) is explicitly deprecated in the exact9.3.0 API with directories mutable-set replacement guidance.",
+    "official_source_downloads": {
+      "path": "/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr6/srcdirs-independent-review/source-downloads.json",
+      "bytes": 2144,
+      "sha256": "4c102b43929d7453f61b85236184099956be14de2ad2196b2e7f96ad0c9cd797"
+    },
+    "actual_cached_binary_disassembly": {
+      "path": "/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr6/srcdirs-independent-review/binary-api-review.json",
+      "bytes": 3887,
+      "sha256": "04a6c7ea35d7af8ee303a3fbecad8e4420816f37194aaa2a2280f5fbe8379d20"
+    },
+    "disassembly_scope": "Three javap reads of exact cached9.3.0 API/implementation jars, each64MiB maximum JVM, exit0 and empty stderr. These are not compiler or application test executions."
+  },
+  "semantics": [
+    "The old vararg method receives a single Set<String>, forwards it to srcDir, expands the Iterable, then appends the prebuilt String to its internal source list. The new live mutable-set add appends that same String to the same list.",
+    "No clear/set/replace operation occurs. Existing default src/main/jniLibs and custom directories remain. AGP DefaultAndroidSourceSet constructs its root at src/<name> and initializes jniLibs beneath that root.",
+    "The current call adds a literal relative String, so both paths defer its resolution to the same project-backed file collection when source directories/files are consumed. Neither alternative introduces a Provider, absolute-path conversion or eager read of existing inputs.",
+    "Calling add on the live collection does not iterate/stringify/copy existing source inputs, so it preserves any existing raw objects/providers in the backing list. The narrower public API accepts only String for new additions; this does not change this literal-only call.",
+    "Both implementations can retain a duplicate raw entry; the resolved srcDirs Set<File> deduplicates files. Do not claim the migration newly deduplicates raw directory entries or use mutable-set size as a regression oracle.",
+    "The target.file(\"prebuilt\").exists() condition and the absent-prebuilt CMake branch stay byte-for-byte unchanged. No ABI, packaging, cache-key or default source-set selection change is proposed."
+  ],
+  "late_addition_boundary": {
+    "finding": "Legacy srcDir also notifies lateAdditionsDelegates once variants have consumed the source set. The9.3.0 directories.add implementation appends directly and does not send that late notification.",
+    "callsite_resolution": "This source call runs synchronously in NativeBaseConventionPlugin.apply. App plugins apply the Android convention before the native convention in the plugins block, before the app android DSL body and variant finalization. Existing defaults are therefore present and the normal source-read/finalization stage has not run.",
+    "scope_limit": "This is not a blanket proof that migrating arbitrary srcDirs calls after variant/source finalization is equivalent. Keep the patch confined to the current early plugin call; do not silently migrate other dynamic/provider-based callsites."
+  },
+  "references": [
+    {
+      "url": "https://dl.google.com/android/maven2/com/android/tools/build/gradle-api/9.3.0/gradle-api-9.3.0-sources.jar",
+      "supports": "Exact public API type/deprecation, HTTP200 and SHA-bound source jar."
+    },
+    {
+      "url": "https://dl.google.com/android/maven2/com/android/tools/build/gradle/9.3.0/gradle-9.3.0-sources.jar",
+      "supports": "Exact live collection, old append path, default-root setup and late-addition implementation."
+    },
+    {
+      "url": "https://developer.android.com/reference/tools/gradle-api/9.3/com/android/build/api/dsl/AndroidSourceDirectorySet",
+      "supports": "Versioned official API location; exact source jar and binary are the primary semantic evidence."
+    }
+  ],
+  "independent_report_sha256": "70a2d76b744ba357314cc5e969b97835365a502b3503503b3dc8b7f9c53acde2",
+  "late_addition_timing_report_sha256": "a96bc067e40c1a34e305b5d558baac6685e70314c1e34a9cad2c09aba0e62424"
+}

@@ -1,0 +1,14 @@
+plugins { id 'java' }
+repositories { google(); mavenCentral() }
+dependencies {
+    implementation gradleApi()
+    implementation files("${gradle.gradleHomeDir}/lib/plugins/gradle-unit-test-fixtures-${gradle.gradleVersion}.jar")
+    implementation 'com.android.tools.build:gradle:9.3.0'
+}
+tasks.register('verifyDirectories', JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'SourceDirectoryComparison'
+    maxHeapSize = '256m'
+    jvmArgs '--add-opens=java.base/java.lang=ALL-UNNAMED', '-XX:MaxMetaspaceSize=192m'
+    args layout.buildDirectory.dir('cases').get().asFile.absolutePath
+}
