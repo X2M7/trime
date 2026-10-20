@@ -12,4 +12,8 @@ Validation:
 
 This remains Draft for Android playback/lifecycle checks: toggling feedback, initialization completing after finish/destroy, and loading custom samples. The pure helper tests do not exercise Android playback. Lint, Release validation and measured memory savings remain unverified; existing toolchain diagnostics are retained.
 
+[Source and validation scope](https://github.com/X2M7/trime/blob/60aac317e22d640526c0fc1f65b7a4fd3ae21f89/doc/contribution-split/checks/lazy-feedback-submission-source.json).
+
 Source: `contrib/pr-feedback-resources` at `e7e63932683dfcc985cc88601f995968b8fc50b4`.
+
+Submitted as [#2179 Draft](https://github.com/osfans/trime/pull/2179).

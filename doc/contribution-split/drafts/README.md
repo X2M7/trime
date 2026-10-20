@@ -13,7 +13,8 @@ passed 301 application JVM cases, and all fork/upstream platform jobs for #2176,
 #2177 and JNI ownership [#2178](https://github.com/osfans/trime/pull/2178) have now
 passed. Android/manual acceptance remains separate.
 
-The next feedback submission is based directly on `144f6111`, at `e7e63932` on
+The next feedback submission, [#2179 Draft](https://github.com/osfans/trime/pull/2179),
+is based directly on `144f6111`, at `e7e63932` on
 `contrib/pr-feedback-resources`. It fixes worker-thread speech ownership before
 submission. Its 315 complete application JVM cases and 14 focused helper cases
 passed; the initial new test diagnostic is fixed and its historical run retained.
