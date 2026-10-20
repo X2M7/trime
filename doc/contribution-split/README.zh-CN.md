@@ -90,12 +90,14 @@ JNI 聚焦测试在同一 mock 调用环境转换 2,048 个元素四次：原实
 
 | fork 分支 | 新 SHA | 单一范围 | 新提交 CI |
 | --- | --- | --- | --- |
-| [pr-setup-footer](https://github.com/X2M7/trime/tree/contrib/pr-setup-footer) | `560b5b99` | pager 的底部约束到可见导航按钮的 TOP Barrier | [四系统构建](https://github.com/X2M7/trime/actions/runs/39417654338) |
-| [pr-clipboard-editor-height](https://github.com/X2M7/trime/tree/contrib/pr-clipboard-editor-height) | `8344231d` | wrap_content 编辑框遵守已有的高度约束 | [四系统构建](https://github.com/X2M7/trime/actions/runs/39417654398) |
+| [pr-setup-footer](https://github.com/X2M7/trime/tree/contrib/pr-setup-footer)／[#2176 Draft](https://github.com/osfans/trime/pull/2176) | `560b5b99` | pager 的底部约束到可见导航按钮的 TOP Barrier | [四系统构建](https://github.com/X2M7/trime/actions/runs/39417654338) |
+| [pr-clipboard-editor-height](https://github.com/X2M7/trime/tree/contrib/pr-clipboard-editor-height)／[#2177 Draft](https://github.com/osfans/trime/pull/2177) | `8344231d` | wrap_content 编辑框遵守已有的高度约束 | [四系统构建](https://github.com/X2M7/trime/actions/runs/39417654398) |
 
-独立的 fork 控制提交 `ededa40b` 为上游基准与这两个精确 SHA 执行完整应用 JVM 测试，见[第三轮控制运行](https://github.com/X2M7/trime/actions/runs/39417689930)。第一轮基准与剪贴板各 301 项实际通过、0 失败/错误/跳过，与历史 301 用例多重集一致；工具警告保留。向导在 AAPT2 下载超时后未执行测试，该次整轮失败原件保留于[首轮检查](checks/layout-jvm-attempt1.json)；仅对该失败任务请求同源码重试，其余两项不会记作重新执行。
+独立的 fork 控制提交 `ededa40b` 为上游基准与这两个精确 SHA 执行完整应用 JVM 测试，见[第三轮控制运行](https://github.com/X2M7/trime/actions/runs/39417689930)。第一轮基准与剪贴板各 301 项实际通过、0 失败/错误/跳过，与历史 301 用例多重集一致；工具警告保留。向导在 AAPT2 下载超时后未执行测试，该次整轮失败原件保留于[首轮检查](checks/layout-jvm-attempt1.json)；仅对该失败任务请求同源码重试，重试后的向导 301 项真实通过；其余两项沿用首轮成功结果，未记作重新执行。[完整第三轮审计](checks/layout-jvm-final.json)核对了三范围的源码、20 个递归 pin、原 XML/HTML、官方附件哈希与同一组 301 用例。应用的 `SHOW_IMPLICIT` 诊断已被上游移除，build-logic 的 `srcDirs` Kotlin 弃用及其他工具警告仍存在，不能把空的应用 `w:` 前缀列表解读为全工程零警告。
 
-[剪贴板聚焦 Android 测量](checks/clipboard-height-probe/README.md)实际比较 12 对布局：原版 7 项几何失败，修复后 12 项通过，文本均未改变；宽裕高度的四组控制前后完全相同。这只是精确 XML 的独立 inflate/measure，依赖范围与完整应用不同，不含真实 Activity、IME、滚动、触摸或保存/取消。`constrainedHeight` 不改变既有 `adjustPan`。向导的原分支实际 APK 几何正在单独对照，其内部页面本身不可滚动，不能据此保证所有小屏和大字体内容可见。四平台完整构建仍以各运行的最终结果为准；待验收项不勾选，也不发布 APK。
+[剪贴板聚焦 Android 测量](checks/clipboard-height-probe/README.md)实际比较 12 对布局：原版 7 项几何失败，修复后 12 项通过，文本均未改变；宽裕高度的四组控制前后完全相同。这只是精确 XML 的独立 inflate/measure，依赖范围与完整应用不同，不含真实 Activity、IME、滚动、触摸或保存/取消。`constrainedHeight` 不改变既有 `adjustPan`。[向导原分支实际 APK 对照](checks/setup-layout-diagnostic/README.md)已观察到 pager 底部从逻辑 y=492 移到 footer 顶部 y=444，并实际导航到 Next 隐藏的 Select 页；它不是新提交整包验收，也未证实按钮点击矩形相交。原页面仍不可滚动，Done 节点可能超出短 pager；截图未证实字形裁切，大字体实际变更亦未验收，均作为限制保留。四平台完整构建仍以各运行的最终结果为准；待验收项不勾选，也不发布 APK。
+
+两项均已实际创建为上游 Draft，每个 PR 一个提交、一个 XML；[创建及读回回执](checks/layout-upstream-submissions.json)确认目标、源 SHA、补丁范围和正文。未标 Ready。隔离模拟器已按请求正常退出 0，无设备残留。
 
 [8 份英文说明](drafts/README.md)与原八个分支继续保留。其余模块按各自问题和验收逐项推进，不同时提交全部补丁。
 

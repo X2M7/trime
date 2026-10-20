@@ -1,6 +1,17 @@
 # Small PR descriptions and drafts
 
-Every topic remains independent and based on `f5008260`. Two descriptions now match actual Draft PR submissions: [licenses #2174](https://github.com/osfans/trime/pull/2174) and [JNI references #2175](https://github.com/osfans/trime/pull/2175). Their new heads add the required commit bodies while preserving the tested source trees; exact new-head CI is running. The other six have not been submitted. Runtime limitations remain explicit.
+The original eight source branches remain independent and based on `f5008260`.
+The first two submissions, [licenses #2174](https://github.com/osfans/trime/pull/2174)
+and [JNI references #2175](https://github.com/osfans/trime/pull/2175), were merged
+by the maintainer after upstream CI passed.
+
+The next two independent submissions are based directly on `144f6111`:
+[setup footer #2176](https://github.com/osfans/trime/pull/2176) and
+[clipboard editor height #2177](https://github.com/osfans/trime/pull/2177).
+Their descriptions below match the actual Draft submissions. Each new head
+passed 301 application JVM cases; complete platform builds and manual runtime
+acceptance remain pending. The other four topics have not been submitted.
+Original source refs and test records remain intact.
 
 - [setup-footer](setup-footer.md)
 - [clipboard-editor-height](clipboard-editor-height.md)

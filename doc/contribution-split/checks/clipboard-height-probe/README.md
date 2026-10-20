@@ -17,7 +17,7 @@ Do not describe this fixture build as warning-free.
 For each layout the activity runs `LayoutInflater.inflate`, then two actual
 Android `measure`/`layout` passes: width EXACTLY 360 dp, height AT_MOST
 160/240/600 dp; fontScale 1/2; short and 40-line synthetic content. It does not
-attach the layouts to a window. Check that the editor starts at or below zero,
+attach the layouts to a window. Check that the editor top is nonnegative,
 ends above both buttons, both buttons remain inside the parent, and all text
 is unchanged. The original CRLF output is `result-api21.json` (stored without Git text normalization); `review.json`
 independently recomputes the geometric checks from the recorded coordinates.
