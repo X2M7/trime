@@ -307,3 +307,5 @@ git submodule update --init --recursive
 [四系统 Debug/native CI](https://github.com/X2M7/trime/actions/runs/39467034017)仍在运行。实际 Android 布局、触摸、编辑器和 Unicode JNI 传输、Lint／Release 尚未验收。本轮只推送核心源码与清单，不发布 APK或将其记为稳定版；后续按完整功能继续，不回到逐行拆分。
 
 已创建上游 [#2183 Draft](https://github.com/osfans/trime/pull/2183)，[创建及独立读回](checks/t9-input-upstream-submission.json)确认目标 `osfans:develop`、源 `X2M7:contrib/pr-t9-input` 的 `649c0755`、全部 52 个 Git blob、两个提交和正文一致，未重复创建 PR。它是一个完整九键模块，保留 APK／Android 待验收状态；原 #2170 不重开。
+
+[17:43 UTC 两端构建快照](checks/t9-input-platform-ci-current.json)：fork 的 [39467034017](https://github.com/X2M7/trime/actions/runs/39467034017) 与上游 PR 的 [39468304588](https://github.com/osfans/trime/actions/runs/39468304588) 均绑定 `649c0755`，八个 OS job 尚待完成，当前无已完成失败。这不是八项通过；没有重跑、改为 Ready 或发布 APK。
