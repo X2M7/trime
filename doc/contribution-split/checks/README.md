@@ -50,6 +50,19 @@ This new shell reproducer was independently executed successfully after the orig
 
 ## Upstream submissions
 
-[All original source builds](all-split-builds.json) now verify 32/32 OS slots successful. [Submission receipts](upstream-submissions.json) distinguish the two new message-complete PR commits from their identical-tree original tested commits. Their new-head CI is still running; the prior successful CI is not relabeled as new-head execution. [License APK data](license-apk-package.json) was actually inspected, without installation or UI acceptance. Both upstream PRs remain Draft.
+[All original source builds](all-split-builds.json) verify 32/32 successful OS slots.
+The original creation receipts are historical snapshots. [The first two PRs
+were merged](upstream-merges-20261020.json); [two layout Drafts were submitted](layout-upstream-submissions.json)
+and their [eight fork platform jobs subsequently passed](layout-pr-current-check.json).
+Their manual/runtime limits remain; no zero-warning, Lint or Release conclusion follows.
 
-[remote-preservation.json](remote-preservation.json) is the historical pre-submission snapshot. Its no-new-PR value is preserved for that time only; [upstream-submissions.json](upstream-submissions.json) records the two subsequent Draft PRs and is the current submission status.
+[The next JNI attachment source](jni-attachment-submission-source.json) is a one-header
+submission based on `144f6111`. Its [complete application JVM run](jni-attachment-application-jvm.json)
+passed the same 301 cases; this does not execute JEnv. [Real HotSpot tests and a
+parameterized reproducer](jni-thread-host-vm/README.md) separately exercise actual
+attachment, nested borrowing and destruction, including `-Xcheck:jni`. They do not
+execute Android ART or Rime callbacks. Baseline and fixed outputs remain distinct.
+
+`remote-preservation.json` and `upstream-submissions.json` retain their original
+capture-time state. Current status is in the main contribution index and later
+receipts linked above; old snapshots are not rewritten as present outcomes.

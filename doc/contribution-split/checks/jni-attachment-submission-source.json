@@ -1,0 +1,14 @@
+{
+  "branch": "contrib/pr-jni-thread-attachment",
+  "head": "2283878e8751305de9daa3e64a6c5448381e9b94",
+  "base": "144f6111d0498da85e0ffa250245f18955179ed3",
+  "original": "3e990b2dae202d5deed9a1b36ccc5f1048e3524c",
+  "path": "app/src/main/jni/librime_jni/jni-utils.h",
+  "tree": "655e5ccf5ab40c9983f0cb0e517f150b600ee027",
+  "patch_identical": true,
+  "header_identical_to_original_split": true,
+  "patch_sha256": "f2dee0aa484acdab178f17f78edd8ef6527d9638e3c6799a82706df39b57a7b4",
+  "message": "fix: detach only JNI thread attachments owned by the guard\n\nRemember when JEnv successfully attaches a detached native thread and detach\nthat attachment on scope exit. Leave Java-owned and already-attached threads\nalone. Disable ownership copying and moving to avoid duplicate detachment;\nthe existing factory retains mandatory C++17 return-value elision.\n\nRelated: #2170\n",
+  "utc": "2026-10-20T12:35:29.303527+00:00",
+  "old_ref_preserved": true
+}

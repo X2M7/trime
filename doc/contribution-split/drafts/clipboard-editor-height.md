@@ -10,7 +10,7 @@ A focused API 21 [Android probe and raw results](https://github.com/X2M7/trime/b
 
 - [x] Twelve pairs executed: heights 160/240/600 dp, font scales 1/2, short/long text. Seven baseline geometry checks failed; all fixed cases passed. Text was preserved; four roomy controls were identical.
 - [x] All 301 application JVM cases passed at `8344231d`, without failures/errors/skips ([first-attempt results](https://github.com/X2M7/trime/actions/runs/39417689930/attempts/1)).
-- [x] New-head Ubuntu style/build steps passed; other [platform builds](https://github.com/X2M7/trime/actions/runs/39417654398) are still running.
+- [x] New-head [four-platform Debug/native builds](https://github.com/X2M7/trime/actions/runs/39417654398) and Ubuntu style checks passed.
 - [ ] Real Activity-window, IME/insets, scrolling and save/cancel touch acceptance.
 
 This is a Draft. The probe measures unattached layouts and uses AndroidX Core 1.3.2 rather than the complete application dependency graph. It does not verify the actual window or change `adjustPan`. Existing build/tool warnings remain; Lint/Release acceptance is not claimed.

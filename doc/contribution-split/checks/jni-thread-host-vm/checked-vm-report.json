@@ -1,0 +1,259 @@
+{
+  "schema": "jenv-actual-host-vm-check/v1",
+  "passed": true,
+  "scope": "One native std::thread plus borrowed/nested main-thread guards in actual HotSpot; no Android/ART/Rime/GlobalRefSingleton.",
+  "same_cases_as_non_check_jni_run": true,
+  "vm_heap_mib": 128,
+  "vm_option": "-Xcheck:jni",
+  "commands": [
+    {
+      "argv": [
+        "/usr/bin/clang++",
+        "-std=c++17",
+        "-fno-elide-constructors",
+        "-O0",
+        "-g0",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-pthread",
+        "-I",
+        "/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr3/jni-thread-review/host-vm-check-jni1/jni-headers",
+        "-I",
+        "/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr3/jni-thread-review/host-vm-check-jni1/baseline",
+        "/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr3/jni-thread-review/host-vm-check-jni1/check.cc",
+        "-L",
+        "/home/xumin/Public/android-toolchain/jdk-17.0.19+10/lib/server",
+        "-Wl,-rpath,/home/xumin/Public/android-toolchain/jdk-17.0.19+10/lib/server",
+        "-ljvm",
+        "-o",
+        "/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr3/jni-thread-review/host-vm-check-jni1/baseline-check"
+      ],
+      "exit": 0,
+      "expected_exit": 0,
+      "stdout": {
+        "path": "/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr3/jni-thread-review/host-vm-check-jni1/baseline-compile.stdout",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "path": "/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr3/jni-thread-review/host-vm-check-jni1/baseline-compile.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "argv": [
+        "/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr3/jni-thread-review/host-vm-check-jni1/baseline-check"
+      ],
+      "exit": 1,
+      "expected_exit": 1,
+      "stdout": {
+        "path": "/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr3/jni-thread-review/host-vm-check-jni1/baseline-run.stdout",
+        "bytes": 293,
+        "sha256": "63ae189fd13c8e5819183573d6f3ac36de28f099681fe6292fb9d575e4d93afb"
+      },
+      "stderr": {
+        "path": "/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr3/jni-thread-review/host-vm-check-jni1/baseline-run.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/clang++",
+        "-std=c++17",
+        "-fno-elide-constructors",
+        "-O0",
+        "-g0",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-pthread",
+        "-I",
+        "/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr3/jni-thread-review/host-vm-check-jni1/jni-headers",
+        "-I",
+        "/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr3/jni-thread-review/host-vm-check-jni1/fixed",
+        "/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr3/jni-thread-review/host-vm-check-jni1/check.cc",
+        "-L",
+        "/home/xumin/Public/android-toolchain/jdk-17.0.19+10/lib/server",
+        "-Wl,-rpath,/home/xumin/Public/android-toolchain/jdk-17.0.19+10/lib/server",
+        "-ljvm",
+        "-o",
+        "/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr3/jni-thread-review/host-vm-check-jni1/fixed-check"
+      ],
+      "exit": 0,
+      "expected_exit": 0,
+      "stdout": {
+        "path": "/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr3/jni-thread-review/host-vm-check-jni1/fixed-compile.stdout",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "path": "/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr3/jni-thread-review/host-vm-check-jni1/fixed-compile.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "argv": [
+        "/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr3/jni-thread-review/host-vm-check-jni1/fixed-check"
+      ],
+      "exit": 0,
+      "expected_exit": 0,
+      "stdout": {
+        "path": "/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr3/jni-thread-review/host-vm-check-jni1/fixed-run.stdout",
+        "bytes": 293,
+        "sha256": "f4b480661affad620e08fbf92f04476a6a23730aa326a31abbeeef8db6ad2614"
+      },
+      "stderr": {
+        "path": "/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr3/jni-thread-review/host-vm-check-jni1/fixed-run.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  ],
+  "base": "144f6111d0498da85e0ffa250245f18955179ed3",
+  "head": "2283878e8751305de9daa3e64a6c5448381e9b94",
+  "inputs_before": [
+    {
+      "path": "/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr3/jni-thread-review/reproduce-host-vm.py",
+      "bytes": 4818,
+      "sha256": "94e820efe1b1cda3f194614a919edfa06a949c68395ad90323dc59c63bfa4fb7"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr3/jni-thread-review/host-vm-check.cc",
+      "bytes": 4900,
+      "sha256": "0e3cd5534358b13e0d10b9d42263147adf0e018380ec0123e35a4e503d231c56"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr3/jni-thread-review/host-vm-check-jni1/check.cc",
+      "bytes": 4900,
+      "sha256": "0e3cd5534358b13e0d10b9d42263147adf0e018380ec0123e35a4e503d231c56"
+    },
+    {
+      "path": "/home/xumin/Public/android-toolchain/android-sdk/ndk/27.0.12077973/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/jni.h",
+      "bytes": 52236,
+      "sha256": "5df9074457c041b372f2c68ff646d6e8600cd673a223885e8df21c44c94ec667"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr3/jni-thread-review/host-vm-check-jni1/jni-headers/jni.h",
+      "bytes": 52236,
+      "sha256": "5df9074457c041b372f2c68ff646d6e8600cd673a223885e8df21c44c94ec667"
+    },
+    {
+      "path": "/home/xumin/Public/android-toolchain/jdk-17.0.19+10/lib/server/libjvm.so",
+      "bytes": 24028816,
+      "sha256": "7d064a0dbf29c8cad232644b3fb1d52a559b3935039794422d25cb9762da509a"
+    },
+    {
+      "path": "/usr/bin/clang++",
+      "bytes": 178384,
+      "sha256": "b621028947ed7d2b0c0d8cdae1cbfb886ac8371fd47f8d25162568812eb9ccfe"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr3/jni-thread-review/host-vm-check-jni1/baseline/jni-utils.h",
+      "bytes": 6356,
+      "sha256": "bb47aa29ba2a5154055e4b54b6ca29ea2feeb9e92e6f550cdf2d9c03835c2f23"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr3/jni-thread-review/host-vm-check-jni1/fixed/jni-utils.h",
+      "bytes": 6630,
+      "sha256": "0c0b563bb3137982f3131340eb2e35f3685bef671934573d51c4db35c5d5add4"
+    }
+  ],
+  "baseline": [
+    {
+      "case": "main-thread-borrow-and-nesting",
+      "passed": true,
+      "stillAttached": true
+    },
+    {
+      "case": "native-worker-lifetime",
+      "passed": false,
+      "before": -2,
+      "inside": 0,
+      "afterNested": 0,
+      "after": 0,
+      "cleanup": 0,
+      "stringUsable": true,
+      "nestedSameEnvironment": true,
+      "baselineLeakObserved": true
+    },
+    {
+      "destroy": 0,
+      "passed": false
+    }
+  ],
+  "fixed": [
+    {
+      "case": "main-thread-borrow-and-nesting",
+      "passed": true,
+      "stillAttached": true
+    },
+    {
+      "case": "native-worker-lifetime",
+      "passed": true,
+      "before": -2,
+      "inside": 0,
+      "afterNested": 0,
+      "after": -2,
+      "cleanup": 0,
+      "stringUsable": true,
+      "nestedSameEnvironment": true,
+      "baselineLeakObserved": false
+    },
+    {
+      "destroy": 0,
+      "passed": true
+    }
+  ],
+  "inputs_after": [
+    {
+      "path": "/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr3/jni-thread-review/reproduce-host-vm.py",
+      "bytes": 4818,
+      "sha256": "94e820efe1b1cda3f194614a919edfa06a949c68395ad90323dc59c63bfa4fb7"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr3/jni-thread-review/host-vm-check.cc",
+      "bytes": 4900,
+      "sha256": "0e3cd5534358b13e0d10b9d42263147adf0e018380ec0123e35a4e503d231c56"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr3/jni-thread-review/host-vm-check-jni1/check.cc",
+      "bytes": 4900,
+      "sha256": "0e3cd5534358b13e0d10b9d42263147adf0e018380ec0123e35a4e503d231c56"
+    },
+    {
+      "path": "/home/xumin/Public/android-toolchain/android-sdk/ndk/27.0.12077973/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/jni.h",
+      "bytes": 52236,
+      "sha256": "5df9074457c041b372f2c68ff646d6e8600cd673a223885e8df21c44c94ec667"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr3/jni-thread-review/host-vm-check-jni1/jni-headers/jni.h",
+      "bytes": 52236,
+      "sha256": "5df9074457c041b372f2c68ff646d6e8600cd673a223885e8df21c44c94ec667"
+    },
+    {
+      "path": "/home/xumin/Public/android-toolchain/jdk-17.0.19+10/lib/server/libjvm.so",
+      "bytes": 24028816,
+      "sha256": "7d064a0dbf29c8cad232644b3fb1d52a559b3935039794422d25cb9762da509a"
+    },
+    {
+      "path": "/usr/bin/clang++",
+      "bytes": 178384,
+      "sha256": "b621028947ed7d2b0c0d8cdae1cbfb886ac8371fd47f8d25162568812eb9ccfe"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr3/jni-thread-review/host-vm-check-jni1/baseline/jni-utils.h",
+      "bytes": 6356,
+      "sha256": "bb47aa29ba2a5154055e4b54b6ca29ea2feeb9e92e6f550cdf2d9c03835c2f23"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr3/jni-thread-review/host-vm-check-jni1/fixed/jni-utils.h",
+      "bytes": 6630,
+      "sha256": "0c0b563bb3137982f3131340eb2e35f3685bef671934573d51c4db35c5d5add4"
+    }
+  ],
+  "checked_jni_diagnostics_observed": false
+}

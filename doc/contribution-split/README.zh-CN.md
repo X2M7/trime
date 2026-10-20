@@ -97,9 +97,23 @@ JNI 聚焦测试在同一 mock 调用环境转换 2,048 个元素四次：原实
 
 [剪贴板聚焦 Android 测量](checks/clipboard-height-probe/README.md)实际比较 12 对布局：原版 7 项几何失败，修复后 12 项通过，文本均未改变；宽裕高度的四组控制前后完全相同。这只是精确 XML 的独立 inflate/measure，依赖范围与完整应用不同，不含真实 Activity、IME、滚动、触摸或保存/取消。`constrainedHeight` 不改变既有 `adjustPan`。[向导原分支实际 APK 对照](checks/setup-layout-diagnostic/README.md)已观察到 pager 底部从逻辑 y=492 移到 footer 顶部 y=444，并实际导航到 Next 隐藏的 Select 页；它不是新提交整包验收，也未证实按钮点击矩形相交。原页面仍不可滚动，Done 节点可能超出短 pager；截图未证实字形裁切，大字体实际变更亦未验收，均作为限制保留。四平台完整构建仍以各运行的最终结果为准；待验收项不勾选，也不发布 APK。
 
+[后续只读检查](checks/layout-pr-current-check.json)确认两项 fork 的 8/8 个 OS job 均成功，未发现新的失败步骤或维护者问题反馈；上游 PR 构建仍有任务运行，不能据此宣称没有运行时问题。[PR 构建状态说明已更新](checks/layout-pr-build-status-refresh.json)，手测限制及 Draft 状态保持。
+
 两项均已实际创建为上游 Draft，每个 PR 一个提交、一个 XML；[创建及读回回执](checks/layout-upstream-submissions.json)确认目标、源 SHA、补丁范围和正文。未标 Ready。隔离模拟器已按请求正常退出 0，无设备残留。
 
 [8 份英文说明](drafts/README.md)与原八个分支继续保留。其余模块按各自问题和验收逐项推进，不同时提交全部补丁。
+
+## 下一项：JNI 线程连接归属
+
+已推送 [contrib/pr-jni-thread-attachment](https://github.com/X2M7/trime/tree/contrib/pr-jni-thread-attachment)，新提交 `2283878e` 直接基于 `144f6111`，只有 `jni-utils.h` 一个文件。它与原 `3e990b2d` 补丁逐字节一致，原分支保留；[源码绑定](checks/jni-attachment-submission-source.json)记录精确父提交与补丁哈希。
+
+新提交的 [301 项完整应用 JVM 用例](checks/jni-attachment-application-jvm.json)已实际执行通过、0 失败/错误/跳过，与已验 `144f6111` 基准的用例多重集完全一致；基准本轮没有重复执行。20 个递归 pin、官方测试附件及原 XML/HTML 均已核对。既有 build-logic Kotlin 弃用与其他工具警告保留。[四系统 Debug/native CI](https://github.com/X2M7/trime/actions/runs/39423511285)仍在运行。
+
+[真实宿主 JVM 对照与复现工具](checks/jni-thread-host-vm/README.md)直接编译生产头文件，在 HotSpot 17 中创建一个 native 线程：基线作用域结束仍 attached，修复后返回 detached；借用的 Java 主线程及嵌套 guard 仍 attached，真实 JNI 字符串调用可用，两个 JVM 均正常销毁。相同案例已启用 `-Xcheck:jni` 再执行，编译及 JVM 无诊断；重复执行不增加案例数量。原 7 项失败注入 mock 也重新通过，基线 4 项失败。
+
+当前唯一调用点是返回 void 的 Rime 通知 lambda：guard 先于局部引用声明，Java 调用返回且局部引用析构后才 detach，未发现局部引用逃逸或错误线程 detach。宿主 HotSpot 不替代 Android ART、真实 Rime 回调、Lint 或 Release 验收；保留既有错误处理边界，只作为单主题 Draft 推进。
+
+备用回车模块的动作决策未发现新增问题，但同编辑器 `restartInput` 后的键面标签重绘仍需实际复现；本轮不提交回车模块，也不把纯 helper 单测当作动态 UI 验收。
 
 ## 关联 issue 的审慎匹配
 
