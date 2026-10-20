@@ -302,4 +302,6 @@ git submodule update --init --recursive
 
 [本地完整应用 JVM 测试](checks/t9-input-local-application-jvm.json)已实际通过 328 项／25 组，0 失败／错误／跳过，主 Kotlin／Java 与 SpotlessCheck 通过。它使用空 prebuilt 目录跳过本地 native，任务开始时的 BuildConfig 指向初提交；实测源文件与最终提交一致，但不能替代精确 SHA 的干净云构建。初轮 Metaspace 警告受控停止、控件颜色属性遮蔽导致的编译失败和初轮取消 CI 原件保留，不作成功验收。
 
-最终源码的[应用 JVM 云验证](https://github.com/X2M7/trime/actions/runs/39467124333)、[四系统 Debug/native CI](https://github.com/X2M7/trime/actions/runs/39467034017)及原生宿主运行检查仍在进行；实际 Android 布局、触摸、编辑器和 Unicode JNI 传输尚未验收，既有 JNI 与工具警告仍保留。本轮仅推送核心源码与清单，不发布 APK，也不把当前状态记为稳定版或全部警告已消除。
+[最终精确提交的云端应用 JVM 验证](checks/t9-input-application-jvm.json)已核验通过 328 项／25 组，0 失败／错误／跳过，27 项新增与源码一致，原回归仅有一项精确标题重命名；没有新增应用源码诊断，既有工具警告保留。[原生宿主实测](checks/t9-input-native-host.json)重新编译未修改的固定引擎，四个进程共执行 743 条断言全部通过，单列于 JVM 用例之外，并验证重开用户词库后的规范拼写记录。JNI 的六条基准诊断、宿主 CMake 诊断及 Modified UTF-8 传输边界保留；不能称整个工程或全部运行日志零警告。
+
+[四系统 Debug/native CI](https://github.com/X2M7/trime/actions/runs/39467034017)仍在运行。实际 Android 布局、触摸、编辑器和 Unicode JNI 传输、Lint／Release 尚未验收。本轮只推送核心源码与清单，不发布 APK或将其记为稳定版；后续按完整功能继续，不回到逐行拆分。

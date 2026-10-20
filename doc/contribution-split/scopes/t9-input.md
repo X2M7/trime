@@ -36,8 +36,12 @@
 
 [本地完整应用 JVM 检查](../checks/t9-input-local-application-jvm.json)实际通过 328 项／25 组，失败、错误、跳过均为 0，主 Kotlin／Java 编译与 SpotlessCheck 通过。该任务启动于初 SHA 加未提交的颜色名修正，后续提交的全部源文件与实测输入全字节一致；生成的 BuildConfig 最初仍绑定 `fa46e4c4`，因此它不能冒充最终提交的干净云构建。空的 ignored `app/prebuilt` 仅用于跳过本地原生配置，不证明 APK 或 JNI 可用。初轮 Metaspace 容量警告后的受控停止和第二轮真实编译失败均保留，不作为通过。
 
-精确 `649c0755` 的[应用测试云运行](https://github.com/X2M7/trime/actions/runs/39467124333)与[四系统 Debug/native 构建](https://github.com/X2M7/trime/actions/runs/39467034017)已启动，当前不提前记通过。真实原生宿主回归仍在进行；JNI 对照中六条既有 signedness／pessimizing-move 诊断保留，工具链弃用提示保留，不声称全工程零警告。
+[最终精确源码的云端完整应用 JVM 验证](../checks/t9-input-application-jvm.json)已经独立核验通过：328 项／25 组，0 失败／错误／跳过。官方附件大小／SHA／CRC、原 XML、实际非缓存测试任务、源码身份和 20 个递归 pin 均核对。原 301 项仅有一处源证实的 ThemeGolden 名称变更（50→53），应用该明确重命名后没有缺失；新增 27 项与六个测试类匹配。没有新增应用源码诊断，已有 build-logic `srcDirs` 与 101 条宽口径工具诊断候选保留，不能称整个工程零警告。
 
-下一步收尾原生宿主测试，并核对精确源码云构建和完整应用测试集。Android 仍须实测数字输入、拼音筛选/锁定/撤销/取消、汉字选词、字面数字与符号往返、Unicode 光标、切换/重启编辑器以及旧操作拒绝。未验证前保持 Draft，不承诺零警告或无剩余缺陷。
+[原生宿主检查](../checks/t9-input-native-host.json)也已实际通过：重新编译并链接未修改的固定 `7bc3fb` 引擎，不加载预测或隐私补丁；四个原生进程共执行 743 条断言检查（376／5／359／3），全部退出 0，包含各自第二进程重开用户词库的规范学习记录检查。这不是 743 个 JVM 用例，也不能证明正式词库排名。生产 `t9.cc` 和 `t9_assist.cc` 严格 Werror 编译无诊断；完整 JNI 对照仍有与基准相同的六条 signedness／pessimizing-move 诊断，没有扩大本功能清理范围。宿主 UTF-16 计数检查不代表实际 JNI 字符串传输：既有 `JString` 的 Modified UTF-8 边界保留。宿主原生运行设置了测试日志阈值，因此也不能将断言通过写成所有运行警告消除。原配置失败、并发调整和内存保护中断原件保留；最终自有构建／测试进程全部退出，临时空 prebuilt 目录已移除。
+
+[四系统 Debug/native 构建](https://github.com/X2M7/trime/actions/runs/39467034017)仍在运行，当前不提前记通过。JNI/ART、真实输入连接、界面、Lint、Release 和物理设备性能验收仍未完成。
+
+下一步核对四系统构建，并进行真实 Android 操作验收。Android 仍须实测数字输入、拼音筛选/锁定/撤销/取消、汉字选词、字面数字与符号往返、Unicode 光标、切换/重启编辑器以及旧操作拒绝。未验证前保持 Draft，不承诺零警告或无剩余缺陷。
 
 英文提案见 [PR 草稿](../drafts/t9-input.md)。当前尚未创建本模块的上游 PR。

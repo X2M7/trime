@@ -1,0 +1,266 @@
+{
+  "schema": "split-t9-native-host-runtime/v1",
+  "source_sha": "649c07559cfbc1e494835465e71277fe8dc8051c",
+  "worktree_clean_at_runtime": true,
+  "passed": true,
+  "production_librime_gitlink": "7bc3fb0005a03aff1c086611e4d52bb7f6444fdd",
+  "librime_source_tracked_clean": true,
+  "librime_static_archive_sha256": "31076e8e7dfc6c2a901ac68b8e592502ea50025bf0e95421449948f5a0968a00",
+  "pristine_engine_recompiled_and_linked": true,
+  "plugins": "none; no prediction/privacy overlays",
+  "native_process_count": 4,
+  "checks_executed": 743,
+  "jvm_cases_included": false,
+  "processes": [
+    {
+      "case": "controller",
+      "process": "initial",
+      "checks": 376,
+      "exit_code": 0,
+      "log_sha256": "ab6d30879574acebd78d76e2cb5583c5f6c87ba050701930eda403e509145a77"
+    },
+    {
+      "case": "controller",
+      "process": "reopened-user-dictionary",
+      "checks": 5,
+      "exit_code": 0,
+      "log_sha256": "ecb8f0fa45dc52900d3e81ab63743619089b621c9202a615cfd2ee3d6a6db12e"
+    },
+    {
+      "case": "assist",
+      "process": "initial",
+      "checks": 359,
+      "exit_code": 0,
+      "log_sha256": "9dc28d36f04a3d7092a5f26b8d8a198c36a70ad700f296213e53335015b5782a"
+    },
+    {
+      "case": "assist",
+      "process": "reopened-user-dictionary",
+      "checks": 3,
+      "exit_code": 0,
+      "log_sha256": "992481322454b3ea4b21259b9a69d9ddb6c8399214cf4a4e331a782019377b8c"
+    }
+  ],
+  "compile_and_runtime_commands": [
+    {
+      "argv": [
+        "/usr/bin/c++",
+        "-DBOOST_DLL_USE_STD_FS",
+        "-DGLOG_DEPRECATED=__attribute__((deprecated))",
+        "-DGLOG_EXPORT=__attribute__((visibility(\"default\")))",
+        "-DGLOG_NO_EXPORT=__attribute__((visibility(\"default\")))",
+        "-DRIME_EXTRA_MODULES=",
+        "-DRIME_VERSION=\"1.17.0\"",
+        "-I/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr8/core-native-inventory/host-native1/boost-headers",
+        "-I/home/xumin/Public/Trime-upstream-pr/app/src/main/jni/librime/include",
+        "-I/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr8/core-native-inventory/host-native1/engine3/src",
+        "-I/home/xumin/Public/Trime-upstream-pr/app/src/main/jni/librime/src",
+        "-std=c++17",
+        "-O1",
+        "-DNDEBUG",
+        "-std=gnu++17",
+        "-I/home/xumin/Public/Trime-pr-t9-input/app/src/main/jni/librime_jni",
+        "/home/xumin/Public/Trime-pr-t9-input/app/src/test/native/t9/controller_test.cc",
+        "/home/xumin/Public/Trime-pr-t9-input/app/src/main/jni/librime_jni/t9.cc",
+        "/home/xumin/Public/Trime-pr-t9-input/app/src/main/jni/librime_jni/t9_assist.cc",
+        "/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr8/core-native-inventory/host-native1/engine3/lib/librime.a",
+        "/usr/lib/libboost_regex.so.1.92.0",
+        "/usr/lib/libglog.so",
+        "/usr/lib/libyaml-cpp.so",
+        "/usr/lib/libleveldb.so",
+        "/usr/lib/libmarisa.so",
+        "/usr/lib/libopencc.so",
+        "/usr/lib/libgflags.so",
+        "-pthread",
+        "-o",
+        "/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr8/core-native-inventory/host-native1/runtime1/controller/test"
+      ],
+      "log": "/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr8/core-native-inventory/host-native1/runtime1/controller/compile.log",
+      "timeout_seconds": 180,
+      "exit_code": 0,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr8/core-native-inventory/host-native1/runtime1/controller/test",
+        "/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr8/core-native-inventory/host-native1/runtime1/controller/shared",
+        "/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr8/core-native-inventory/host-native1/runtime1/controller/user"
+      ],
+      "log": "/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr8/core-native-inventory/host-native1/runtime1/controller/run.log",
+      "timeout_seconds": 180,
+      "exit_code": 0,
+      "log_sha256": "ab6d30879574acebd78d76e2cb5583c5f6c87ba050701930eda403e509145a77"
+    },
+    {
+      "argv": [
+        "/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr8/core-native-inventory/host-native1/runtime1/controller/test",
+        "/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr8/core-native-inventory/host-native1/runtime1/controller/shared",
+        "/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr8/core-native-inventory/host-native1/runtime1/controller/user",
+        "verify-learning"
+      ],
+      "log": "/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr8/core-native-inventory/host-native1/runtime1/controller/verify-learning.log",
+      "timeout_seconds": 180,
+      "exit_code": 0,
+      "log_sha256": "ecb8f0fa45dc52900d3e81ab63743619089b621c9202a615cfd2ee3d6a6db12e"
+    },
+    {
+      "argv": [
+        "/usr/bin/c++",
+        "-DBOOST_DLL_USE_STD_FS",
+        "-DGLOG_DEPRECATED=__attribute__((deprecated))",
+        "-DGLOG_EXPORT=__attribute__((visibility(\"default\")))",
+        "-DGLOG_NO_EXPORT=__attribute__((visibility(\"default\")))",
+        "-DRIME_EXTRA_MODULES=",
+        "-DRIME_VERSION=\"1.17.0\"",
+        "-I/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr8/core-native-inventory/host-native1/boost-headers",
+        "-I/home/xumin/Public/Trime-upstream-pr/app/src/main/jni/librime/include",
+        "-I/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr8/core-native-inventory/host-native1/engine3/src",
+        "-I/home/xumin/Public/Trime-upstream-pr/app/src/main/jni/librime/src",
+        "-std=c++17",
+        "-O1",
+        "-DNDEBUG",
+        "-std=gnu++17",
+        "-I/home/xumin/Public/Trime-pr-t9-input/app/src/main/jni/librime_jni",
+        "/home/xumin/Public/Trime-pr-t9-input/app/src/test/native/t9/assist_test.cc",
+        "/home/xumin/Public/Trime-pr-t9-input/app/src/main/jni/librime_jni/t9.cc",
+        "/home/xumin/Public/Trime-pr-t9-input/app/src/main/jni/librime_jni/t9_assist.cc",
+        "/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr8/core-native-inventory/host-native1/engine3/lib/librime.a",
+        "/usr/lib/libboost_regex.so.1.92.0",
+        "/usr/lib/libglog.so",
+        "/usr/lib/libyaml-cpp.so",
+        "/usr/lib/libleveldb.so",
+        "/usr/lib/libmarisa.so",
+        "/usr/lib/libopencc.so",
+        "/usr/lib/libgflags.so",
+        "-pthread",
+        "-o",
+        "/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr8/core-native-inventory/host-native1/runtime1/assist/test"
+      ],
+      "log": "/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr8/core-native-inventory/host-native1/runtime1/assist/compile.log",
+      "timeout_seconds": 180,
+      "exit_code": 0,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr8/core-native-inventory/host-native1/runtime1/assist/test",
+        "/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr8/core-native-inventory/host-native1/runtime1/assist/shared",
+        "/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr8/core-native-inventory/host-native1/runtime1/assist/user"
+      ],
+      "log": "/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr8/core-native-inventory/host-native1/runtime1/assist/run.log",
+      "timeout_seconds": 180,
+      "exit_code": 0,
+      "log_sha256": "9dc28d36f04a3d7092a5f26b8d8a198c36a70ad700f296213e53335015b5782a"
+    },
+    {
+      "argv": [
+        "/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr8/core-native-inventory/host-native1/runtime1/assist/test",
+        "/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr8/core-native-inventory/host-native1/runtime1/assist/shared",
+        "/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr8/core-native-inventory/host-native1/runtime1/assist/user",
+        "verify-learning"
+      ],
+      "log": "/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr8/core-native-inventory/host-native1/runtime1/assist/verify-learning.log",
+      "timeout_seconds": 180,
+      "exit_code": 0,
+      "log_sha256": "992481322454b3ea4b21259b9a69d9ddb6c8399214cf4a4e331a782019377b8c"
+    }
+  ],
+  "source_and_fixture_inputs": {
+    "controller": {
+      "/home/xumin/Public/Trime-pr-t9-input/app/src/test/native/t9/controller_test.cc": "48749157968f1825c6b3afad095254141ed91aa8644d3fb09ae76fca4a57efa4",
+      "/home/xumin/Public/Trime-pr-t9-input/app/src/main/jni/librime_jni/t9.cc": "af98c65673df53c7ed24bdac1576b89b1c674e2a32fc52a84ab9681635a71725",
+      "/home/xumin/Public/Trime-pr-t9-input/app/src/main/jni/librime_jni/t9.h": "718a46338d5047a31830e0b818f5f39566751001b8325557d6f7dbf71ea27f78",
+      "/home/xumin/Public/Trime-pr-t9-input/app/src/main/jni/librime_jni/t9_assist.cc": "6a4fc0f4af754f0dd4c099e3b60a867ffcc7d94b59be8bb5c077c56d76952fc4",
+      "/home/xumin/Public/Trime-pr-t9-input/app/src/main/jni/librime_jni/t9_assist.h": "aaf2d49b85771fddf5167460e6c4dc6667a39841ee57f4e8674224ce40002229",
+      "/home/xumin/Public/Trime-pr-t9-input/app/src/main/jni/librime_jni/helper-types.h": "f8c3769549e1444c7001df3afdc8a6ca215c790d143659c22b443f0925114d96",
+      "/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr8/core-native-inventory/host-native1/runtime1/controller/shared/t9_test.dict.yaml": "a849b29ba772f06d8c4c79e62928ba2788c9b973f732b120d89981b2e157dbcc",
+      "/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr8/core-native-inventory/host-native1/runtime1/controller/shared/luna_pinyin.schema.yaml": "df48caa2901ca04d79978af926c79b118b3e6e5b5cf97b9d8c9b9d67d748a744",
+      "/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr8/core-native-inventory/host-native1/runtime1/controller/shared/pinyin.yaml": "22915339d6505d8911edd929b055145235eb4f66ee6d4dbdedb832e31be40c35",
+      "/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr8/core-native-inventory/host-native1/runtime1/controller/shared/double_pinyin.schema.yaml": "763430a99d0cd693805766b49d60b9092bc2af0ca26eb107f1d044566ce765d3",
+      "/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr8/core-native-inventory/host-native1/runtime1/controller/shared/default.yaml": "921424069bf931f00c38dcd9e38c43d314e8f39a5026e64dfd1ccfc419b2ac40",
+      "/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr8/core-native-inventory/host-native1/runtime1/controller/shared/luna_pinyin_t9.schema.yaml": "097aa2d0ed6eec040f2a4810b218fd237d71c570a89332cf67b7b77041e7dc18",
+      "/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr8/core-native-inventory/host-native1/runtime1/controller/shared/luna_pinyin_t9.custom.yaml": "420f3ead3279d6ec892647ab0d720f8966525c908d0dda68e6194f498c29fbb1",
+      "/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr8/core-native-inventory/host-native1/runtime1/controller/shared/symbols.yaml": "f2d366c82120d46a4790ed37ca93b687f3c9001c555986a549ddeefb81038c55",
+      "/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr8/core-native-inventory/host-native1/runtime1/controller/shared/double_pinyin.custom.yaml": "5667b741c5d0c0ec240e9836139f20aa188a8cc5f17fcc30ff3645107985ce4b",
+      "/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr8/core-native-inventory/host-native1/runtime1/controller/shared/luna_pinyin.custom.yaml": "290b8e68e643721a7bef2ddce5bf85ad3097b86ceeec53e564b6c9af711b718b"
+    },
+    "assist": {
+      "/home/xumin/Public/Trime-pr-t9-input/app/src/test/native/t9/assist_test.cc": "1752b47ce17208776ea19b349ba8e0bf6ff38009a7e5442d347829b233124674",
+      "/home/xumin/Public/Trime-pr-t9-input/app/src/main/jni/librime_jni/t9.cc": "af98c65673df53c7ed24bdac1576b89b1c674e2a32fc52a84ab9681635a71725",
+      "/home/xumin/Public/Trime-pr-t9-input/app/src/main/jni/librime_jni/t9.h": "718a46338d5047a31830e0b818f5f39566751001b8325557d6f7dbf71ea27f78",
+      "/home/xumin/Public/Trime-pr-t9-input/app/src/main/jni/librime_jni/t9_assist.cc": "6a4fc0f4af754f0dd4c099e3b60a867ffcc7d94b59be8bb5c077c56d76952fc4",
+      "/home/xumin/Public/Trime-pr-t9-input/app/src/main/jni/librime_jni/t9_assist.h": "aaf2d49b85771fddf5167460e6c4dc6667a39841ee57f4e8674224ce40002229",
+      "/home/xumin/Public/Trime-pr-t9-input/app/src/main/jni/librime_jni/helper-types.h": "f8c3769549e1444c7001df3afdc8a6ca215c790d143659c22b443f0925114d96",
+      "/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr8/core-native-inventory/host-native1/runtime1/assist/shared/t9_test.dict.yaml": "e804c46faecd4ddb811c85b2b2f0a4b8cfa44dd1707bea2f1c3a8065bab7e2c5",
+      "/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr8/core-native-inventory/host-native1/runtime1/assist/shared/luna_pinyin.schema.yaml": "df48caa2901ca04d79978af926c79b118b3e6e5b5cf97b9d8c9b9d67d748a744",
+      "/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr8/core-native-inventory/host-native1/runtime1/assist/shared/pinyin.yaml": "22915339d6505d8911edd929b055145235eb4f66ee6d4dbdedb832e31be40c35",
+      "/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr8/core-native-inventory/host-native1/runtime1/assist/shared/double_pinyin.schema.yaml": "763430a99d0cd693805766b49d60b9092bc2af0ca26eb107f1d044566ce765d3",
+      "/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr8/core-native-inventory/host-native1/runtime1/assist/shared/default.yaml": "921424069bf931f00c38dcd9e38c43d314e8f39a5026e64dfd1ccfc419b2ac40",
+      "/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr8/core-native-inventory/host-native1/runtime1/assist/shared/luna_pinyin_t9.schema.yaml": "097aa2d0ed6eec040f2a4810b218fd237d71c570a89332cf67b7b77041e7dc18",
+      "/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr8/core-native-inventory/host-native1/runtime1/assist/shared/luna_pinyin_t9.custom.yaml": "15f2ba5b9143d13fad75f30a5e762b9778167896e7e8655796d480ddab2bacdb",
+      "/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr8/core-native-inventory/host-native1/runtime1/assist/shared/symbols.yaml": "f2d366c82120d46a4790ed37ca93b687f3c9001c555986a549ddeefb81038c55",
+      "/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr8/core-native-inventory/host-native1/runtime1/assist/shared/double_pinyin.custom.yaml": "5667b741c5d0c0ec240e9836139f20aa188a8cc5f17fcc30ff3645107985ce4b",
+      "/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr8/core-native-inventory/host-native1/runtime1/assist/shared/luna_pinyin.custom.yaml": "290b8e68e643721a7bef2ddce5bf85ad3097b86ceeec53e564b6c9af711b718b"
+    }
+  },
+  "host_dependencies": {
+    "/usr/lib/libboost_regex.so.1.92.0": "eda622bccfa34cebf253c4a75855f922ac97fae374932855f21600eb357f3d9d",
+    "/usr/lib/libglog.so": "9b707fbef25040f461e6b60bf769d5b0c1b644be95ee19d8cfb0e84859d1ed89",
+    "/usr/lib/libyaml-cpp.so": "1f0fb255597e1c9a2e49551e062a9e552d9cc1f151fd0f3629987d296cc48552",
+    "/usr/lib/libleveldb.so": "35f1343850352c54bfb220882ee61791226c3ee4314b608f8e4c99b72df4b1ab",
+    "/usr/lib/libmarisa.so": "f3f463708283355aca09a6abc6c63c2209df98687677a709f5e3025403c0fde2",
+    "/usr/lib/libopencc.so": "fed28f894cb6a3ad5e84d927ddba5eb3e8d9482d0775cc222f956a1f16877c71",
+    "/usr/lib/libgflags.so": "aa44adf6abdc3e84a414efba826d6954cf1c65ae3ab7a4a67ff9246cb2b6850d"
+  },
+  "result_sha256": "595290d3696e499b982c51ca4ca867e86b459f630ef5c18d10b81ad1b061eab5",
+  "engine_final_resume_exit_code": 0,
+  "engine_final_resume_memory_samples": 16,
+  "engine_final_resume_minimum_available_kib": 3840716,
+  "engine_execution_record_sha256": "8e97de54d520a5d1f5ea69ea461ba1c7bbcea26361cc9e32f9a7937ae4217e78",
+  "existing_batched_response_proof": {
+    "base": "144f6111d0498da85e0ffa250245f18955179ed3",
+    "method": "Java_com_osfans_trime_core_Rime_getRimeResponse",
+    "proof": "Final source suffix is byte-for-byte equal to clang-format22 formatted base suffix under repository style. No prediction/pin/layout constructor change in the existing four-object JNI response.",
+    "formatted_base_function_sha256": "49babe38071e0cdd981a36ddd6f5502fe92576fd52bbab5aefacc93b164dae95",
+    "final_function_sha256": "49babe38071e0cdd981a36ddd6f5502fe92576fd52bbab5aefacc93b164dae95",
+    "bytes": 1636
+  },
+  "limits": [
+    "These are 743 assertion executions in four native processes, not 743 unique JVM test cases.",
+    "Small isolated dictionaries and production spelling rules; not production dictionary ranking acceptance.",
+    "Controller tests exercise real pinned host librime and production T9 sources, not Android ART/JNI/UI/editor installation.",
+    "Non-BMP host tests verify UTF-16 length/offset counting only; unchanged upstream JString uses Modified UTF-8 and does not prove Unicode JNI transport.",
+    "Runtime fixtures intentionally set their native log threshold; this pass is not proof that every runtime warning was absent.",
+    "Strict production T9 and assistance compilation had zero diagnostics; the complete JNI translation unit retains six baseline signedness/pessimizing-move diagnostics.",
+    "Interrupted configuration/compiler trials and memory-guarded stops remain preserved and are not passing runs."
+  ],
+  "native_owner_summary_sha256": "9145c14f3ef76a4b99a11cd7587a966854615b951c97033765943812ba1b2a6c",
+  "production_translation_units": {
+    "strict_actual_commands": "/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr8/core-native-inventory/host-native1/production-compilation2.json",
+    "strict_t9_and_assist_exit_zero_no_diagnostics": true,
+    "strict_rime_jni_werror": "Fails on the same inherited diagnostics; preserved, not called passed.",
+    "normal_wall_wextra_baseline_and_fixed": "/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr8/core-native-inventory/host-native1/jni-baseline-compilation.json",
+    "normal_wall_wextra_both_exit_zero": true,
+    "base_and_fixed_diagnostic_messages_equal": true,
+    "inherited_diagnostics": {
+      "comparison of integer expressions of different signedness: ‘int’ and ‘const size_t’ {aka ‘const long unsigned int’} [-Wsign-compare]": 1,
+      "moving a local object in a return statement prevents copy elision [-Wpessimizing-move]": 4,
+      "comparison of integer expressions of different signedness: ‘int’ and ‘long unsigned int’ [-Wsign-compare]": 1
+    },
+    "diagnostic_count_each": 6,
+    "added_diagnostic_messages": [],
+    "existing_response_jni_unchanged": "/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr8/core-native-inventory/native-response-unchanged.json"
+  },
+  "source_bindings_sha256": "e96c660ebb08cb3967389bedea4ad15cf02cc4122cdb47f10149beb7338b9d57",
+  "utf16_baseline_control": {
+    "result": "/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr8/core-native-inventory/host-native1/utf16-offset-baseline1/result.json",
+    "scope": "Actual baseline helper returns scalar length6/caret1, fixed returns UTF16 length7/caret2 for supplementary Hanzi. This is a host offset conversion counterexample, not JNI transport.",
+    "baseline_exit": 1,
+    "fixed_exit": 0
+  },
+  "owned_process_cleanup": {
+    "remaining_owned_compiler_cmake_ninja_java": 0,
+    "receipt": "/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr8/core-native-inventory/host-native1/final-owned-process-check.json"
+  },
+  "temporary_local_prebuilt_directory_removed": true
+}

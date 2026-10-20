@@ -1,0 +1,200 @@
+{
+  "schema": "split-next-pr8-t9-input-application-jvm/v1",
+  "run": 39467124333,
+  "url": "https://github.com/X2M7/trime/actions/runs/39467124333",
+  "workflow_sha": "64afd0516b63142dc7eb4bf02d30aa949a7a3d38",
+  "source_scope": "pr-t9-input",
+  "source_head": "649c07559cfbc1e494835465e71277fe8dc8051c",
+  "run_attempt": 1,
+  "job_id": 118781305329,
+  "conclusion": "success",
+  "independent_review_passed": true,
+  "tests": 328,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "actual_junit_suites": 25,
+  "task_actually_executed_not_cached": true,
+  "actual_task_lines": [
+    "> Task :app:testDebugUnitTest"
+  ],
+  "official_zip_size_digest_crc_verified": true,
+  "identity_verified": true,
+  "recursive_source_pin_count": 20,
+  "recursive_pins_equal_source_graph": true,
+  "baseline": {
+    "source_head": "144f6111d0498da85e0ffa250245f18955179ed3",
+    "run": 39417689930,
+    "run_attempt": 1,
+    "job_id": 118610608878,
+    "actual_counts": {
+      "tests": 301,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "reexecuted_this_run": false,
+    "original_summary_sha256": "f66d61db8056f722a6c91ab8fa3980ec3f27cd7c6c5ae57a8f9df025c021d860",
+    "original_zip_sha256": "869f43c4164152c65b36dfff362f8870c9b3323deed3e7e312a4664a99701582"
+  },
+  "baseline_case_multiset_missing_before_allowed_renames": 1,
+  "baseline_case_multiset_added_before_allowed_renames": 28,
+  "allowed_baseline_case_renames": [
+    {
+      "class": "com.osfans.trime.data.theme.ThemeGoldenTest",
+      "before": "Then: all 50 preset keyboards are decoded",
+      "after": "Then: all 53 preset keyboards are decoded",
+      "multiplicity": 1
+    }
+  ],
+  "baseline_case_multiset_missing_after_allowed_renames": 0,
+  "new_test_cases_after_allowed_renames": 27,
+  "golden_fixture_changes_bound_to_final_source": {
+    "path": "app/src/test/java/com/osfans/trime/data/theme/ThemeGoldenTest.kt",
+    "before_sha256": "d82d03b4ae06825bc4bcc9a78b9d598ddf4943251edaea4491d8aa8d5dca647c",
+    "after_sha256": "6bdecc23db47455ff8e979d37da79903fb4ba30754c09b43607cc296e5412d15",
+    "only_exact_allowed_changes": true,
+    "asset_count_adjustments": [
+      "50 to 53 preset keyboards",
+      "18 to 21 plain keyboards",
+      "106 to 123 preset keys"
+    ],
+    "notes": [
+      "Actual final source renames one Then test; all 18 plain keyboards title remains unchanged while its assertion now checks 21. The Given description change is not part of the JUnit short testcase name.",
+      "Every other baseline fixture assertion is byte-equivalent after the explicitly listed replacements."
+    ]
+  },
+  "expected_added_test_classes": [
+    {
+      "class": "com.osfans.trime.core.EditorPreeditResponseTest",
+      "case_count": 6,
+      "source_sha256": "a4d418e13badb043a026889456951082f646ccb3217d6958340da7809972dabe"
+    },
+    {
+      "class": "com.osfans.trime.core.T9ProtocolTest",
+      "case_count": 6,
+      "source_sha256": "16e06b7bbc21fa5cafd497563e77307ce871d19e6fb65b77e9b5c414bd7f0e9c"
+    },
+    {
+      "class": "com.osfans.trime.core.KeySequenceFallbackTest",
+      "case_count": 2,
+      "source_sha256": "7d50238ce581513b0363f5508619571a12157bee58b28f5e6ffb17f3f520110c"
+    },
+    {
+      "class": "com.osfans.trime.ime.composition.PreeditCursorTest",
+      "case_count": 3,
+      "source_sha256": "c7c57a1b8a805512265c5c5ddaa034e5bb65872308f80d46f5499d49f181152c"
+    },
+    {
+      "class": "com.osfans.trime.ime.composition.T9ActionBindingTest",
+      "case_count": 6,
+      "source_sha256": "2a8674f9e569e68eff66ef4afb0388f6c78686aa53a86d5ad9caa7f43903a049"
+    },
+    {
+      "class": "com.osfans.trime.data.theme.T9KeyboardAssetTest",
+      "case_count": 4,
+      "source_sha256": "140f097ea193afd6ad3c6579b6d570b5e43b960a9a82c3e346995c1e139a5ac6"
+    }
+  ],
+  "additional_cases_match_final_test_sources": true,
+  "w_prefix_application_diagnostics": [],
+  "w_prefix_diagnostic_multiset_matches_baseline": true,
+  "structured_kotlin_warning_records": [
+    {
+      "message": "'fun srcDirs(vararg srcDirs: Any): Any' is deprecated. Use `directories` mutable set instead.",
+      "location": "Location: /home/runner/work/trime/trime/build-logic/convention/src/main/kotlin/NativeBaseConventionPlugin.kt:30",
+      "marker": "Problem found: Kotlin compiler warning (id: kotlin:compiler:warning:compiler-warning)"
+    }
+  ],
+  "structured_kotlin_warnings_equal_baseline": true,
+  "tool_warning_candidate_line_count": 101,
+  "tool_warning_candidate_multiset_matches_baseline": true,
+  "additional_warning_candidates": [],
+  "missing_warning_candidates": [],
+  "warning_free": false,
+  "automated_reruns": 0,
+  "tests_passed": true,
+  "new_source_warning": false,
+  "new_application_diagnostic_count": 0,
+  "original_xml_sha256": {
+    "TEST-com.osfans.trime.core.EditorPreeditResponseTest.xml": "1713389f1bd50439291698a4c75f25c564995ffc95abe7acddf7badfe5c497f8",
+    "TEST-com.osfans.trime.core.KeySequenceFallbackTest.xml": "dc33215569de00d49cd365d3696c2820d3878f56568e4c4e1a8608fa4b365c29",
+    "TEST-com.osfans.trime.core.T9ProtocolTest.xml": "b568893a942a8b6c0e5b744cb636f1721458a4a007fcd79559a36899d5828fde",
+    "TEST-com.osfans.trime.data.theme.ColorKeyTest.xml": "685497fd6341bc45017e79df6eeace42ccd2d71f33c1b605bd00bc09cbe893d9",
+    "TEST-com.osfans.trime.data.theme.ColorSchemeResolverTest.xml": "4dc4c89b38ddc56a24ba8d864cce9275334595155303bef94d6d34d22947c125",
+    "TEST-com.osfans.trime.data.theme.ColorTableTest.xml": "39ea19ceb8829309a770bd7ccc46a90fce8f22389ed031dac427d79f75b790e5",
+    "TEST-com.osfans.trime.data.theme.GeneralStyleTest.xml": "6f7b5366ae8ef91d5c8bfc6a3e811401b859a4c5fd8fbd23a80b3c22e1eda291",
+    "TEST-com.osfans.trime.data.theme.KeyActionManagerTest.xml": "cac1158df406d3b9c621359b2ec3a701408b128790015f5736179d84436a7d4b",
+    "TEST-com.osfans.trime.data.theme.LiquidKeyboardTest.xml": "62b621ffa2282cae388957655422559b34074478925474417eeb1da0742faac1",
+    "TEST-com.osfans.trime.data.theme.T9KeyboardAssetTest.xml": "7e9e9b753a290c47d7b021d5aeddcd65f0ab2978158ba922d30cb231aca531dc",
+    "TEST-com.osfans.trime.data.theme.TextKeyboardTest.xml": "9567d6ee2cafd268659ce56048b7b884b2cf91f3fbc3c91f6e8b3a86ee992e3d",
+    "TEST-com.osfans.trime.data.theme.ThemeColorsTest.xml": "4383908532c3b93fcbfb2625b640ead10b0cd3114e9765ede1aca711e7c254d6",
+    "TEST-com.osfans.trime.data.theme.ThemeDiagnosticsTest.xml": "1ac923a97a2adb1eddef22da10ef17782b7aea1cae8cb85b73be0c29f09ee28a",
+    "TEST-com.osfans.trime.data.theme.ThemeDslExpanderTest.xml": "d3c6c3b95350e668b3a10848244511b88a896b0e30b9b5d04a1cf056d8f2a403",
+    "TEST-com.osfans.trime.data.theme.ThemeGoldenTest.xml": "036c0ab2bd60700a4548dd64f86eff590826f1a587b280624534d777b4ad4fca",
+    "TEST-com.osfans.trime.data.theme.ThemeLoaderTest.xml": "ffd4545762b065c558da3f735db4a47217806d69d00f84a880fb20b510ec18ad",
+    "TEST-com.osfans.trime.data.theme.ThemeScopeTest.xml": "43729924bcd420cacd010370c5a8fe2c4a4f75bd589836a4326fc90c96848879",
+    "TEST-com.osfans.trime.ime.composition.PreeditCursorTest.xml": "e6fdc1d0373f620e1681dd557984cdb18b67915bbffe6ae60f172fd15be96710",
+    "TEST-com.osfans.trime.ime.composition.T9ActionBindingTest.xml": "db191faa3ba99258ebb7293c11a7e354e374be6cf9fc8d1cb93f217ec4ef6710",
+    "TEST-com.osfans.trime.ime.core.VirtualReturnDispatchTest.xml": "ef6a95ff38ca33e9b05c2a501c5e84d1c0ccd467f24c0c39291557ddf7d8d7bf",
+    "TEST-com.osfans.trime.ime.keyboard.KeyActionTest.xml": "fbfe64140e0017770025127d5ef293bae4f9a1bf9c3c43a435f2f4f4346f14ed",
+    "TEST-com.osfans.trime.ime.keyboard.KeyboardResolveTest.xml": "e96bc9bd292bb9a7dc4597f977078d5310f3a196e74ec55cf885fe09b020edf0",
+    "TEST-com.osfans.trime.provider.DocumentsBaseDirTest.xml": "42211e30b1538b5c9f8cfa41242e55bd83ed511a82103ea75ce7148cbbd7bba2",
+    "TEST-com.osfans.trime.util.WeakHashSetTest.xml": "3fc050a849da3c53d3ee51cf4e706f0dd7eff3d5d6840fa0754798817311327c",
+    "TEST-com.osfans.trime.util.YamlTest.xml": "bf076dc8aa9945b0f0b37446dd4b8b7aff50b23d02358d018002e3267200127a"
+  },
+  "html_index_sha256": "dbcb626c3bedd34f22e4f0a4457618a462b87eae8d926efb603f0f01c34a3b3a",
+  "original_gradle_log_sha256": "95edc980056b2d62d8969221a912785a51c39bd8dedd761a0a85886554ba6430",
+  "evidence": {
+    "monitor.json": {
+      "bytes": 22306,
+      "sha256": "3aac6b2b127341a756ba1aa8032df634e0c8eaa9a33c45a9a23ad9c720728cda"
+    },
+    "artifacts.json": {
+      "bytes": 730,
+      "sha256": "832fc581adf79e69e61c55d576e02d5b3ff95e7d74d2e3d85f99cc0b9bc5ea18"
+    },
+    "download-report.json": {
+      "bytes": 66137,
+      "sha256": "cef4e72514040767b39a4c549cdd9828b88c34ba90e30a10e897dbff4a4cb121"
+    },
+    "recursive-source-pins.json": {
+      "bytes": 1697,
+      "sha256": "adcc814924c04d027b4396ec01d633375778c35323869a35579e863ee7be6c46"
+    },
+    "detailed-review.json": {
+      "bytes": 160603,
+      "sha256": "ae8a465aeb23df89f08f2dcd88905c32d26d03c7dd860ff9b15b310aa1916326"
+    },
+    "expected-added-tests.json": {
+      "bytes": 8671,
+      "sha256": "feb1ea70dc3e7e553f52bbbe994354ad8fa219ec157b99368f567511ae7b0627"
+    }
+  },
+  "limits": [
+    "Complete application JVM task at this precise source head. The 27 added cases exercise preedit mode/cursor values, JNI-facing protocol constructor signatures and callback dispatch, literal command fallback, Unicode offset helpers, action-binding state and both stock-theme assets. These host cases do not load the Android IME or native Rime library.",
+    "The ThemeGolden suite retains its assertions with the three explicit asset count changes (50 to 53, 18 to 21, 106 to 123), one Then-label rename and one Given-description clarification. The raw baseline tuple difference is retained and the one final-source-proved rename is applied before checking missing cases.",
+    "No Lint, Release, Android UI, JNI/native execution or device memory/latency acceptance is claimed from this JVM task. Native checks and actual project/native builds are separate evidence. A single current spelling-state snapshot does not imply a fixed 32-item cap on exact/completion choices or an accepted latency budget.",
+    "The existing 144f6111 baseline was reused from its bound official first-attempt artifacts, not rerun in this one-scope workflow.",
+    "Empty w_prefix_application_diagnostics does not mean zero Kotlin warnings: structured build-logic srcDirs and Gradle tooling deprecations remain.",
+    "Broad warning-candidate lines include duplicate deprecation stacks and do not count distinct defects."
+  ],
+  "compiler_context": {
+    "cloud_java_version_log": [
+      "openjdk version \"25.0.4.1\" 2026-08-18 LTS",
+      "OpenJDK Runtime Environment Temurin-25.0.4.1+1 (build 25.0.4.1+1-LTS)",
+      "OpenJDK 64-Bit Server VM Temurin-25.0.4.1+1 (build 25.0.4.1+1-LTS, mixed mode, sharing)"
+    ],
+    "cloud_java_version_log_sha256": "26355c87ae9a607a1852964702be1846ff2c75a313f8bcbfb5f2e039a1a543c1",
+    "source_catalog_kotlin": "2.3.21",
+    "source_catalog_agp": "9.3.0",
+    "source_catalog_sha256": "1d9ede4ec8f39a4042136df0546a9a4b64a95da64d257b8daba132cff283c54a",
+    "actual_cloud_kotlin_compiler_version": null,
+    "compiler_version_observed_in_cloud_log": false,
+    "limits": "Source catalog is declared configuration, not proof of the resolved compiler runtime version."
+  },
+  "additional_structured_kotlin_warning_records": [],
+  "known_srcdirs_build_logic_warning_present": true,
+  "source_warning_acceptance_passed": true,
+  "submission_blocked_by_new_diagnostic": false
+}
