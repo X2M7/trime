@@ -14,4 +14,8 @@ Validation:
 
 The change spans four implementation/caller files and two test files. Existing dependency/toolchain warnings remain. Actual Android UI/logcat, Lint and Release checks have not been verified here, so this remains Draft. Synchronous platform destroy/close calls do not have a universal hard deadline; stderr is not drained concurrently. Detach stops collection; this does not add automatic replay/resume when the same view is reattached.
 
+[Source and validation scope](https://github.com/X2M7/trime/blob/f3c5b9c0483b9ce117082cd2dcf91870a30ec40a/doc/contribution-split/checks/logcat-reliability-submission-source.json); [focused checks and limits](https://github.com/X2M7/trime/blob/f3c5b9c0483b9ce117082cd2dcf91870a30ec40a/doc/contribution-split/checks/logcat-reliability-focused-jvm.json).
+
 Source: `contrib/pr-logcat-reliability` at `6e4f2e59acce6cff0d097ff47a8d635940a6aa69`.
+
+Submitted as [#2182 Draft](https://github.com/osfans/trime/pull/2182).
