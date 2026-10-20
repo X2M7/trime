@@ -12,4 +12,8 @@ Validation:
 
 Existing dependency and toolchain warnings remain; this addresses only the project's deprecated source-directory call. APK packaging with prebuilt libraries, Lint and Release checks have not been verified in this branch.
 
+[Source and validation scope](https://github.com/X2M7/trime/blob/714b3dfa492cbcb221f512f41ecdfb69b089a2e1/doc/contribution-split/checks/jni-source-directories-submission-source.json); [reproducible AGP configuration comparison](https://github.com/X2M7/trime/tree/714b3dfa492cbcb221f512f41ecdfb69b089a2e1/doc/contribution-split/checks/jni-source-directories-configuration).
+
 Source: `contrib/pr-prebuilt-jni-directories` at `dfcc87dfc9e0efa6650b29baf83852e57224020e`.
+
+Submitted as [#2181 Draft](https://github.com/osfans/trime/pull/2181).

@@ -147,13 +147,13 @@ JNI 聚焦测试在同一 mock 调用环境转换 2,048 个元素四次：原实
 
 [五个现有 PR 的本轮复核](checks/current-pr-build-feedback-next6.json)确认 #2176–#2180 的 fork／上游 40 个构建 job 均通过，未见新增维护者反馈；这不补充其 Android 实际运行验收。
 
-已推送 [contrib/pr-prebuilt-jni-directories](https://github.com/X2M7/trime/tree/contrib/pr-prebuilt-jni-directories)，新提交 `dfcc87df` 直接基于 `144f6111`，仅将 `NativeBaseConventionPlugin.kt` 的一行 `jniLibs.srcDirs(setOf("prebuilt"))` 改为 `jniLibs.directories.add("prebuilt")`。[源码绑定](checks/jni-source-directories-submission-source.json)确认一个提交、一个文件、增加／删除各一行；原条件、CMake 回退、ABI 与打包配置不变。最初仅提交正文超出贡献规范行宽的 `e612d66a` 分支和原运行保留，新提交 tree 与之相同；初轮构建已取消，不当作最终源码验收。
+已推送 [contrib/pr-prebuilt-jni-directories](https://github.com/X2M7/trime/tree/contrib/pr-prebuilt-jni-directories)，并创建上游 [#2181 Draft](https://github.com/osfans/trime/pull/2181)。新提交 `dfcc87df` 直接基于 `144f6111`，仅将 `NativeBaseConventionPlugin.kt` 的一行 `jniLibs.srcDirs(setOf("prebuilt"))` 改为 `jniLibs.directories.add("prebuilt")`。[源码绑定](checks/jni-source-directories-submission-source.json)确认一个提交、一个文件、增加／删除各一行；原条件、CMake 回退、ABI 与打包配置不变。最初仅提交正文超出贡献规范行宽的 `e612d66a` 分支和原运行保留，新提交 tree 与之相同；初轮构建已取消，不当作最终源码验收。
 
 [精确源码的完整应用 JVM 验证](checks/jni-source-directories-application-jvm.json)实际通过 301 项／19 组，失败／错误／跳过均为 0，完整保留基准用例多重集。官方附件大小／digest／CRC、源码及控制身份与 20 个递归 pin 已核对。实际非缓存执行 `:build-logic:convention:compileKotlin`，原结构化 `srcDirs` 警告已消失，没有新增源码诊断；其余 98 条广义工具警告候选保留，不是全工程零警告。
 
 [AGP API 与调用时机审阅](checks/jni-source-directories-api-review.json)以及[可复现配置对照](checks/jni-source-directories-configuration/README.md)核对了当前早期追加路径。独立 harness 使用真实 AGP 9.3、Gradle 9.8.1，在两个场景中通过 21 个断言：默认／自定义／prebuilt 目录和标记文件均保留，带空格的相对路径与顺序一致，真实 Android 插件早期的 late delegates 为 0。最终实际退出 0、两个 ProjectBuilder teardown 完成；成功路径随后显式结束独立 JVM，旧轮离线解析、Provider 前置失败与后台线程受控终止均保留，不记作通过。未验证 Provider、变体定稿后的动态添加、真实 native 文件或 APK 打包。
 
-[四系统构建的 16:19 UTC 快照](checks/jni-source-directories-platform-ci-pending.json)仍为四项运行中、无失败，不能提前记为通过。[英文 PR 说明](drafts/jni-source-directories.md)保留此限制；Lint、Release 与预编译库实际 APK 内容仍未验收。复现工具和报告仅在 fork 索引，不带入上游的一行补丁。本轮不发布 APK。
+[四系统构建的 16:19 UTC 快照](checks/jni-source-directories-platform-ci-pending.json)仍为四项运行中、无失败，不能提前记为通过。[英文 PR 说明](drafts/jni-source-directories.md)保留此限制；[创建及独立读回](checks/jni-source-directories-upstream-submission.json)确认目标、精确 SHA、正文和一提交一文件范围，未报告文本合并冲突。Lint、Release 与预编译库实际 APK 内容仍未验收。复现工具和报告仅在 fork 索引，不带入上游的一行补丁。本轮不发布 APK。
 
 ## 关联 issue 的审慎匹配
 
