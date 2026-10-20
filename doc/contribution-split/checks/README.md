@@ -14,7 +14,7 @@ sh check_jni_local_refs.sh /path/to/patched-trime /path/to/android-ndk /path/to/
 
 The runner verifies the patch and librime pins, reads the baseline header from Git, and only writes to a new output directory. No APK, JVM, Android VM, or Rime engine is launched. It makes an unmodified copy of NDK `jni.h` to avoid placing the Android system-header directory in a host compiler's normal include path.
 
-The source has existing `pessimizing-move` and `sign-compare` diagnostics in both versions. The focused runner preserves those warnings while allowing compilation; it does not prove warning-free builds. The original stricter invocation and its failed diagnostics were retained locally during preparation. Android CheckJNI, native exception/allocation failure cases, full application builds, and device checks remain pending.
+The source has existing `pessimizing-move` and `sign-compare` diagnostics in both versions. The focused runner preserves those warnings while allowing compilation; it does not prove warning-free builds. The original stricter invocation and its failed diagnostics were retained locally during preparation. Android CheckJNI, native exception/allocation failure cases, Release builds, and device checks remain pending.
 
 ## Layouts and license metadata
 
@@ -34,7 +34,7 @@ The following fork-only reproducer reads the two pinned headers from Git, so it 
 sh check_jni_thread_attachment.sh /path/to/trime /path/to/android-ndk /path/to/new-output-directory
 ```
 
-This new shell reproducer has been syntax-checked, not executed as part of the indexed original run. The original command outputs remain the execution evidence. A failed attach may still yield a null environment; callers must not dereference it. Detach return status, external manual detach/reattach, Java frames spanning owner destruction, Android CheckJNI, and actual native callback behavior remain outside this mock's coverage.
+This new shell reproducer was independently executed successfully after the original run; [jni-thread-reproduction.json](jni-thread-reproduction.json) binds its input hashes and actual result. These are repeated executions of the same seven mock cases, not fourteen distinct cases. The original command outputs remain preserved. A failed attach may still yield a null environment; callers must not dereference it. Detach return status, external manual detach/reattach, Java frames spanning owner destruction, Android CheckJNI, and actual native callback behavior remain outside this mock's coverage.
 
 ## CI and issue-search boundaries
 
@@ -43,3 +43,7 @@ This new shell reproducer has been syntax-checked, not executed as part of the i
 [issue-match.json](issue-match.json) preserves conservative issue/PR matching context. Nearby or historical discussions are not assigned `Fixes`/`Closes`; keyword search does not prove the absence of an issue. The fork-only validation control branch is listed separately in [branches.json](../branches.json), not as an application module or a passed test result.
 
 [patch-composition.json](patch-composition.json) records successful independent `git apply --cached --check` checks for all eight patches and their ordered application to a temporary index. The composed tree was not compiled or run. A corrected audit path rule accepts the two license JSON files; that correction did not change any source patch or real worktree.
+
+## Complete application JVM tests
+
+[First matrix](application-jvm-first.json) and [second matrix](application-jvm-second.json) bind the fixed source heads, actual XML test counts, uncached application test task, and original evidence hashes. Every source branch preserves all 301 upstream baseline cases. Feedback adds 8, logcat adds 17, and Return adds 12. No test failed, errored or skipped. The same pre-existing SHOW_IMPLICIT compiler warning remains in all scopes; these results do not include Lint, Release, or device acceptance.

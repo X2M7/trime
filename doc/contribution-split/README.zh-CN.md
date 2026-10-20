@@ -12,10 +12,10 @@
 
 | 分支与差异 | 单一问题 | 范围 | 已做检查 | 尚待完成 |
 | --- | --- | --- | --- | --- |
-| [split-setup-footer](https://github.com/X2M7/trime/compare/f5008260...contrib/split-setup-footer) | 向导内容占到导航按钮区域 | `activity_setup.xml`：ViewPager 约束到可见底部按钮顶部的 Barrier | XML 解析、按钮显示状态源码复核、AAPT2 资源编译、diff 检查 | Release/Lint/完整应用测试；小屏、大字体及三页实际布局 |
-| [split-clipboard-editor-height](https://github.com/X2M7/trime/compare/f5008260...contrib/split-clipboard-editor-height) | 长剪贴板内容的 wrap_content 高度不遵守已有下边界 | `activity_clip_edit.xml`：一个 constrainedHeight 属性 | XML 解析、单行差异复核、AAPT2 资源编译、diff 检查 | Release/Lint/完整应用测试；长文本、小屏及软键盘实际布局 |
+| [split-setup-footer](https://github.com/X2M7/trime/compare/f5008260...contrib/split-setup-footer) | 向导内容占到导航按钮区域 | `activity_setup.xml`：ViewPager 约束到可见底部按钮顶部的 Barrier | XML 解析、按钮显示状态源码复核、AAPT2 资源编译、diff 检查 | Release/Lint；小屏、大字体及三页实际布局 |
+| [split-clipboard-editor-height](https://github.com/X2M7/trime/compare/f5008260...contrib/split-clipboard-editor-height) | 长剪贴板内容的 wrap_content 高度不遵守已有下边界 | `activity_clip_edit.xml`：一个 constrainedHeight 属性 | XML 解析、单行差异复核、AAPT2 资源编译、diff 检查 | Release/Lint；长文本、小屏及软键盘实际布局 |
 | [split-native-license-versions](https://github.com/X2M7/trime/compare/f5008260...contrib/split-native-license-versions) | 许可证信息中的 librime/OpenCC 版本落后于已固定源码 | 两个 JSON 的版本字段 | JSON 解析、其他字段不变、递归源码 pin 与实际版本核对、diff 检查 | 许可证页面集成检查；不涉及依赖升级 |
-| [split-jni-local-refs](https://github.com/X2M7/trime/compare/f5008260...contrib/split-jni-local-refs) | 字符串数组转换积累 JNI 局部引用 | `objconv.h`：复用现有 JRef，每轮释放数组元素引用 | 真实生产头文件的聚焦宿主回归及修复前对照，详见验证记录 | Release/Lint/完整应用测试、Android CheckJNI/设备验证 |
+| [split-jni-local-refs](https://github.com/X2M7/trime/compare/f5008260...contrib/split-jni-local-refs) | 字符串数组转换积累 JNI 局部引用 | `objconv.h`：复用现有 JRef，每轮释放数组元素引用 | 真实生产头文件的聚焦宿主回归及修复前对照，详见验证记录 | Release/Lint、Android CheckJNI/设备验证 |
 
 精确提交、改动文件与验证范围见 [branches.json](branches.json)。两个 XML 的 AAPT2 编译均退出 0，无输出诊断；这仅验证资源编译，不等于 APK 链接、布局测量或真机验收。宿主 mock 也不替代 Android 运行时。
 
@@ -23,7 +23,7 @@ JNI 聚焦测试在同一 mock 调用环境转换 2,048 个元素四次：原实
 
 首批四个分支的 GitHub CI 已通过：共 16/16 个 OS job 成功，每个分支在 Ubuntu、两种 macOS 和 Windows 实际执行 Debug 编译/打包及四 ABI 原生构建任务，JNI cache 均未命中；四个 Ubuntu Spotless 实际通过。[CI 审计摘要](checks/first-batch-ci.json) 绑定了精确提交与 run 链接。CI 未执行测试或 Lint，也没有下载审计 APK，因此不能写完整应用测试、Release 或设备验收通过。
 
-原有共同诊断仍保留，包括 SHOW_IMPLICIT/srcDirs 弃用、原生依赖 CMake/constexpr/32 位窄化、SDK/JNA/Gradle，以及 Windows 缓存归档失败。四个分支按 OS 比较的诊断候选多重集合完全相同，相关源码/依赖 pin 与上游基准一致；这不是零警告。原大分支的历史验收不能替代这些新分支的验证。[贡献指南](../../CONTRIBUTING.md) 和 [PR 模板](../../.github/pull-request-template.md) 要求的完整测试及手测仍未完成，不能全部勾选。本次不发布新的稳定版。
+原有共同诊断仍保留，包括 SHOW_IMPLICIT/srcDirs 弃用、原生依赖 CMake/constexpr/32 位窄化、SDK/JNA/Gradle，以及 Windows 缓存归档失败。四个分支按 OS 比较的诊断候选多重集合完全相同，相关源码/依赖 pin 与上游基准一致；这不是零警告。原大分支的历史验收不能替代这些新分支的验证。[贡献指南](../../CONTRIBUTING.md) 和 [PR 模板](../../.github/pull-request-template.md) 的相关验收项不能全部勾选；本次 Android Lint、Release 和手测仍未完成。本次不发布新的稳定版。
 
 ## 第二批：反馈资源与日志进程
 
@@ -40,26 +40,40 @@ JNI 聚焦测试在同一 mock 调用环境转换 2,048 个元素四次：原实
 
 第二批的完整 Android CI、Lint、Release 与设备验收仍以各分支后续的精确 SHA 证据为准；没有用首批或原汇总分支的通过结果代替。
 
-第二批普通 Commit CI 尚未验收。日志分支 `f5909dcb` 的第一轮 Ubuntu job 在 Gradle 插件/构建逻辑依赖配置时无法解析两个 Kotlin 2.4.10 条目，尚未执行格式检查任务，不能称为格式失败或通过；其他 job 的状态也不能代替整轮通过。保持源码不变，等待同 SHA 重试。[失败范围记录](checks/second-batch-ci-pending.json) 保留原日志哈希；稍后的本地官方 POM URL 返回 HTTP 200，不证明 GitHub runner 已恢复。这与上述 25 项宿主测试是不同证据。
+第二批 Commit CI 的日志分支已完成四系统 Debug/native 编译与 Ubuntu Spotless。首次 Ubuntu job 在执行任何 Gradle task 前无法解析两个 Kotlin 2.4.10 依赖，原件见[失败范围记录](checks/second-batch-ci-pending.json)；保持源码 `f5909dcb` 不变后的重试实际通过。重试界面的另外三个成功 job 沿用原运行，不算重新编译。反馈分支已有三系统通过，Intel macOS 仍在运行；[当前实际日志记录](checks/second-batch-ci.json)不把 pending 判为成功。全部已审成功 job 的诊断与首批同 OS 一致，既有警告保留。上述 Commit CI 均未运行测试或 Lint；完整应用 JVM 结果见下方单独控制验证。
 
 ## 第三批：回车动作与 JNI 线程归属
 
-本批两个分支均已推送 fork，直接基于 `f5008260`、各只有一个提交，无相互依赖。普通分支 CI 结果仍待核验。
+本批两个分支均已推送 fork，直接基于 `f5008260`、各只有一个提交，无相互依赖。JNI 线程分支四系统 Debug/native 构建与 Ubuntu Spotless 已通过；回车分支 Ubuntu 与 ARM macOS 已通过，Intel macOS、Windows 尚在运行。[实际日志审计](checks/third-batch-ci.json) 保留精确 SHA 与待定范围。
 
 | 分支 | 单一问题与范围 | 已执行验证 | 限制与待验收 |
 | --- | --- | --- | --- |
-| [split-enter-actions](https://github.com/X2M7/trime/compare/f5008260...contrib/split-enter-actions) | 让回车显示与实际派发使用同一 `EditorEnterAction` 规则；只改 Enter delegate、service 的回车逻辑及纯辅助类/测试 | 实际 12 项 Kotest 全通过，0 失败/错误/跳过；四个最终源码 SHA 与记录核对；helper/test 编译，delegate/service 仅格式与源码复核 | Android 应用编译、真实 EditorInfo/主题标签及 `performEditorAction` 行为待验收；Gradle 弃用诊断保留 |
-| [split-jni-thread-attachment](https://github.com/X2M7/trime/compare/f5008260...contrib/split-jni-thread-attachment) | `JEnv` 只 detach 自己成功 attach 的线程，禁止所有权复制/移动；仅一个生产头文件 | 真实生产头文件/工厂配合 JNI 函数表 mock：7 个案例通过，原版 4 个案例失败；独占所有权静态断言前失败后通过；两版普通 C++17 严格编译无诊断 | 无 ART/JVM/Rime 回调执行；失败 attach 的 null 环境、detach 返回值与外部线程操作边界保留；Android 构建/CheckJNI/设备待验收 |
+| [split-enter-actions](https://github.com/X2M7/trime/compare/f5008260...contrib/split-enter-actions) | 让回车显示与实际派发使用同一 `EditorEnterAction` 规则；只改 Enter delegate、service 的回车逻辑及纯辅助类/测试 | 实际 12 项 Kotest 全通过，0 失败/错误/跳过；四个最终源码 SHA 与记录核对；helper/test 编译，delegate/service 仅格式与源码复核 | 完整应用编译/单元测试已见下方控制验证；真实 EditorInfo/主题标签及 `performEditorAction` 行为待验收；Gradle 弃用诊断保留 |
+| [split-jni-thread-attachment](https://github.com/X2M7/trime/compare/f5008260...contrib/split-jni-thread-attachment) | `JEnv` 只 detach 自己成功 attach 的线程，禁止所有权复制/移动；仅一个生产头文件 | 真实生产头文件/工厂配合 JNI 函数表 mock：7 个案例通过，原版 4 个案例失败；独占所有权静态断言前失败后通过；两版普通 C++17 严格编译无诊断 | 无 ART/JVM/Rime 回调执行；失败 attach 的 null 环境、detach 返回值与外部线程操作边界保留；四系统 Android Debug 构建已通过；CheckJNI/设备待验收 |
 
-验证原件绑定见[第三批回车宿主记录](checks/third-batch-enter-host.json)与[第三批 JNI 记录](checks/third-batch-jni-thread.json)，最小复现源码和新复现命令见[检查说明](checks/README.md)。本批 12 项辅助类测试与此前 25 项宿主测试分开记录，不将格式检查等同于 service/delegate 集成测试。新 JNI shell 复现器仅完成语法检查；执行证据来自原始 7 案例命令。
+验证原件绑定见[第三批回车宿主记录](checks/third-batch-enter-host.json)与[第三批 JNI 记录](checks/third-batch-jni-thread.json)，最小复现源码和新复现命令见[检查说明](checks/README.md)。本批 12 项辅助类测试与此前 25 项宿主测试分开记录，不将格式检查等同于 service/delegate 集成测试。新 JNI shell 复现器也已实际执行通过：修复版 7 个案例通过，原版 4 个失败；严格编译无诊断，见[复现结果](checks/jni-thread-reproduction.json)。它与原执行属于同一组 7 个案例的两次运行，不累加成新的测试案例。
 
 [补丁机械检查](checks/patch-composition.json) 已逐一在临时 index 上验证 8 份补丁相对基准可应用，并按记录顺序成功组合，得到 tree `2f8317b32873ed1bcb5694462494755bb5f9dc2c`；真实工作树与分支未改动。这个组合 tree 未编译或运行，只证明文本补丁没有应用冲突，不是集成验收通过。
 
 ## 独立的完整应用测试控制分支
 
-[contrib/split-validation](https://github.com/X2M7/trime/tree/contrib/split-validation) 是 fork 专用 CI 控制分支，提交为 `cc126ed9b92ad76e01123a6fc2850d85c757ff14`，不计入上述 8 个应用模块，也不带进这些功能分支或上游 PR。它仅注册三组固定 SHA 的 Ubuntu job：上游基准 `f5008260`、反馈 `3912fb23`、日志 `f5909dcb`；执行真实 `:app:testDebugUnitTest --rerun-tasks`，按实际 XML 统计测试，并保留日志、HTML/XML 与源码身份。
+[contrib/split-validation](https://github.com/X2M7/trime/tree/contrib/split-validation) 是 fork 专用控制分支，不计入 8 个源码模块，也不带进功能分支或上游 PR。第一轮工作流提交 `cc126ed9`，第二轮仅更换固定源码矩阵、正常前进到 `c519e3e9`；原运行与提交均保留。两轮真实执行 `:app:testDebugUnitTest --rerun-tasks`，原 XML/HTML、完整日志、20 个递归子模块身份和官方附件校验均已复核。
 
-[控制验证 run 39401035244](https://github.com/X2M7/trime/actions/runs/39401035244) 已触发，结果尚待核验；第三批两个分支不在这一固定矩阵中。不能把工作流写好、job 启动或原有聚焦测试当作完整应用测试通过。本分支没有 APK 发布、Lint、Release 或设备验收操作。
+| 精确源码范围 | 实际应用 JVM 测试 | 运行 |
+| --- | --- | --- |
+| 上游基准 `f5008260` | 301 项 | [第一轮](https://github.com/X2M7/trime/actions/runs/39401035244) |
+| 反馈 `3912fb23` | 309 项，新增 8 项 | 第一轮 |
+| 日志 `f5909dcb` | 318 项，新增 17 项 | 第一轮 |
+| 首批四个分支，以及 JNI 线程 `3e990b2d` | 每分支各 301 项 | [第二轮](https://github.com/X2M7/trime/actions/runs/39402432371) |
+| 回车 `bcb47b1a` | 313 项，新增 12 项 | 第二轮 |
+
+所有 scope 均 0 失败、错误和跳过；任务实际执行，没有把缓存结果记作重跑。按 `(classname, name)` 多重集比较，每支保留全部 301 项基准用例；Kotest 不同上下文中的同名短名称保留，不按唯一名称错误去重。重复执行的基准用例不累加为新测试案例。[第一轮摘要](checks/application-jvm-first.json)与[第二轮摘要](checks/application-jvm-second.json)绑定精确源码及原始记录哈希。
+
+每个 scope 都保留同一条上游已有的 `ClipEditActivity.SHOW_IMPLICIT` Kotlin 弃用警告，Gradle/SDK/原生依赖等诊断也保留；不是零警告。完整应用编译意味着 Manager、service/delegate 已在这些 Android 工程中编译，但 JVM 测试仍不能证明真实 TTS、编辑器动作、布局、CheckJNI、Lint、Release 或设备行为通过。本次不发布 APK。
+
+## 小 PR 草稿与提交顺序
+
+[8 份英文草稿](drafts/README.md)逐项说明触发、行为、验证和剩余检查，均绑定各自源码 SHA，仅供审阅，未创建 PR。建议先送许可证元数据、向导底部约束这类边界明确的少数补丁；JNI 与交互改动补足对应设备复现后再逐项提交。不要一次向维护者提交 8 个尚缺手测的 PR。
 
 ## 关联 issue 的审慎匹配
 
@@ -97,7 +111,7 @@ Shift 的主题动作回归与 `Keyboard.refreshModifier` 内 `result || setModi
 
 | 主题 | 先决行为 | 单独验证 |
 | --- | --- | --- |
-| Rime 队列及失败处理 | 无 | 单线程顺序、失败拒绝与取消；不混入输入功能 |
+| Rime 队列及失败处理 | [四文件最小闭环范围设计](scopes/rime-startup-failure.md)，尚未实现 | FAILED/ready 等待、原生幂等清理和 runConfined 必须一起接通；FIFO 只描述准入 Runnable，不等于跨挂起事务或消息输出无丢失 |
 | 引擎异步启动与失败重试 | 队列契约 | 首次启动、部署失败、降级输入与重试 |
 | 解锁后 Direct Boot 状态交接 | 队列/偏好生命周期 | 与上游已合入的 Direct Boot 修复去重 |
 | 编辑器会话隔离 | 队列契约 | 切应用、服务重建、延迟响应及旧提交不会串框 |
