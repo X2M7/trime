@@ -1,0 +1,125 @@
+{
+  "reviewed_utc": "2026-10-20T12:04:04.147602+00:00",
+  "recommendation": "Draft only; do not mark Ready or claim complete setup-layout acceptance.",
+  "scope": "Independent read-only review of Root-captured API21 setup UI diagnostics using historical UI-source-equivalent Debug APKs f34ee4fc and 8e373f34. No ADB actions, product changes or remote writes by this reviewer. Not whole-APK acceptance of current head 560b5b99.",
+  "configuration": {
+    "api": 21,
+    "small_logical_display_pixels": [
+      480,
+      540
+    ],
+    "density_dpi": 160,
+    "font_scale_db_for_small_frames": "1.0",
+    "normal_logical_display_pixels": [
+      480,
+      800
+    ],
+    "rotation_observed": 0,
+    "screenshot_caution": "Small-display PNG remains 480x800 and shows centered 130-pixel black bars above/below logical 480x540 content. XML coordinates describe logical display; do not directly overlay them on PNG without accounting for letterboxing."
+  },
+  "frames": [
+    {
+      "state": "baseline_normal",
+      "png": "setup-baseline-frame1.png",
+      "xml": "setup-baseline-ui2.xml",
+      "png_sha256": "b4b40f78efd422151346f7e3205a8dd2e6368025c2301684ca3d17906dd294a1",
+      "xml_sha256": "afe96e87646f333464e652b4c00ac9a70c8e248a013b2d0a11bf664b2c979444",
+      "png_actually_viewed": true,
+      "node_bounds": {
+        "viewpager": "[0, 25, 480, 752]",
+        "action_button": "[105, 545, 376, 593]",
+        "next_button": "[392, 704, 480, 752]"
+      }
+    },
+    {
+      "state": "baseline_small_external",
+      "png": "setup-baseline-small.png",
+      "xml": "setup-baseline-small.xml",
+      "png_sha256": "8985cb455e7c89a14f56d04b6bbd2379f1529d792568adb1e9c4b8ce81b05c23",
+      "xml_sha256": "5e009c9dce60c90e1c572e69c32d961fb1a5eeb61f0a17c45548c5f9abea4b79",
+      "png_actually_viewed": true,
+      "node_bounds": {
+        "viewpager": "[0, 25, 480, 492]",
+        "action_button": "[105, 415, 376, 463]",
+        "next_button": "[392, 444, 480, 492]"
+      }
+    },
+    {
+      "state": "fixed_small_external",
+      "png": "setup-fixed-small.png",
+      "xml": "setup-fixed-small.xml",
+      "png_sha256": "b6b374ff9c4133873c463c174e8c5464e96af831b3242460813ce876fe4dc41a",
+      "xml_sha256": "a43539ade765169114117e386ecfec8b0ca7a3cefd2cbac363486f9f02d41e20",
+      "png_actually_viewed": true,
+      "node_bounds": {
+        "viewpager": "[0, 25, 480, 444]",
+        "action_button": "[105, 391, 376, 439]",
+        "next_button": "[392, 444, 480, 492]"
+      }
+    },
+    {
+      "state": "fixed_small_app_storage",
+      "png": "setup-fixed-mode-selected.png",
+      "xml": "setup-fixed-mode-selected.xml",
+      "png_sha256": "ca95e9e6e6662f6fac9588a55b622073d8e7c5f3941f01a2d4635aac5380715b",
+      "xml_sha256": "b1f7f67b62cacdce5e30c2dcf42d2d8d191bd9ab9760d196d47eb4435b08c43b",
+      "png_actually_viewed": true,
+      "node_bounds": {
+        "viewpager": "[0, 25, 480, 444]",
+        "done_icon": "[201, 424, 225, 448]",
+        "done_text": "[233, 422, 279, 450]",
+        "skip_button": "[196, 444, 284, 492]",
+        "next_button": "[392, 444, 480, 492]"
+      }
+    },
+    {
+      "state": "fixed_small_enable",
+      "png": "setup-fixed-enable.png",
+      "xml": "setup-fixed-enable.xml",
+      "png_sha256": "ad6be2caba611acee9c57f7c2409ce8bcca22675fedd05179a794cf011078559",
+      "xml_sha256": "4078782ca8798335500fba16d58296f5a428f387626141b1ecfee30164055417",
+      "png_actually_viewed": true,
+      "node_bounds": {
+        "viewpager": "[0, 25, 480, 444]",
+        "action_button": "[150, 294, 331, 342]",
+        "prev_button": "[0, 444, 88, 492]",
+        "skip_button": "[196, 444, 284, 492]",
+        "next_button": "[392, 444, 480, 492]"
+      }
+    },
+    {
+      "state": "fixed_small_select",
+      "png": "setup-fixed-select.png",
+      "xml": "setup-fixed-select.xml",
+      "png_sha256": "3eadebb9316af7bd56dde284079657b65c817633a44e1fa28bda6eb468f89f5a",
+      "xml_sha256": "07fa7f905fca03b75890f22e048e5b1c793a7dd39b9a366087e998d7984da6bb",
+      "png_actually_viewed": true,
+      "node_bounds": {
+        "viewpager": "[0, 25, 480, 444]",
+        "action_button": "[151, 294, 330, 342]",
+        "prev_button": "[0, 444, 88, 492]",
+        "skip_button": "[196, 444, 284, 492]"
+      }
+    }
+  ],
+  "findings": [
+    "Normal baseline: pager y25..752, Next y704..752; Mode content and disabled Next are readable. No fixed normal counterpart captured.",
+    "Small external mode: baseline pager y25..492 includes footer band y444..492; fixed pager y25..444 ends at footer top. Action moves y415..463 to y391..439, above that band.",
+    "Action x105..376 and Next x392..480 do not intersect horizontally in either small external frame. No actual clickable-node intersection or mis-tap was reproduced.",
+    "Fixed app-storage-selected: Done text y422..450/icon y424..448 extend beyond pager bottom444. Done/Skip node rectangles intersect46x6 pixels. PNG Done is legible; glyph clipping/touch failure is not established. Matching baseline state absent: new versus pre-existing is undetermined.",
+    "Fixed Enable has readable Step2/action y294..342 and Prev/Skip/Next footer. Fixed Select has readable Setup3/action, Prev/Skip footer, Next absent. A visible Barrier reference remains.",
+    "Observed page/radio state progression does not establish IME enable/selection, directory action, completed setup, every callback, or zero runtime warnings."
+  ],
+  "excluded_font_attempt": {
+    "settings_db_value": "1.5 was written/read in the separate baseline font15 attempt",
+    "all_recorded_resource_node_bounds_same_as_normal": true,
+    "conclusion": "No actual enlarged-font rendering acceptance; a settings database value alone does not establish Activity resource/scaledDensity change."
+  },
+  "remaining": [
+    "Capture baseline app-storage-selected at the identical small configuration to classify the Done/pager overflow.",
+    "Confirm actual resource fontScale/scaledDensity and enlarged-font rendering, then landscape/shorter display and translated text.",
+    "Retain the remaining non-scrollable page-content limitation in any PR; do not call the single Barrier patch a complete responsive setup fix.",
+    "Fresh head560b CI/JVM results and any later device checks must retain their own commit/source identity."
+  ],
+  "pr_wording": "Describe the verified change as reserving footer space by bounding the pager above visible controls. Report the 480x540 API21 constraint geometry and unresolved Done-node overflow. Avoid claiming actual action/Next hit-rectangle overlap, font enlargement, full setup flow, Ready status or zero runtime warnings."
+}
