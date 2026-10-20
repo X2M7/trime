@@ -21,12 +21,18 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - scope: upstream-base
-            sha: f5008260dc1e71b05e8e5508c6cfbf8ebf2507a0
-          - scope: lazy-feedback
-            sha: 3912fb23aced49da94cee6e3c59b3a9585da779b
-          - scope: logcat-lifecycle
-            sha: f5909dcb024997cef8eefe437ee810038118f3c1
+          - scope: split-setup-footer
+            sha: 8e373f34400655a6aa871315531a8b25142d9233
+          - scope: split-clipboard-editor-height
+            sha: 70af58cf2712de59e611b3ca4f2d272175f5707e
+          - scope: split-native-license-versions
+            sha: f34ee4fca9fd544aa2a20b80cacbc6e3570771bf
+          - scope: split-jni-local-refs
+            sha: 9e296c1e29dd1f896400d71946fa2cd76d101b9a
+          - scope: split-enter-actions
+            sha: bcb47b1a81eb211e7c0ede447c1b3263dcf80746
+          - scope: split-jni-thread-attachment
+            sha: 3e990b2dae202d5deed9a1b36ccc5f1048e3524c
     env:
       CI_NAME: Split validation CI
       BUILD_ABI: x86_64
