@@ -1,0 +1,207 @@
+{
+  "schema": "trime-contribution-split-index/v1",
+  "date": "2026-10-20",
+  "upstream_base": "f5008260dc1e71b05e8e5508c6cfbf8ebf2507a0",
+  "preserved_aggregate": "df12d0f4f62d7952a181e0ff7cf3cfd3e0077b7c",
+  "aggregate_scope": {
+    "commits": 67,
+    "paths": 660,
+    "additions": 90665,
+    "deletions": 3388
+  },
+  "delivery_scope": "First independent patches plus a staged reconstruction plan; not all aggregate functionality extracted",
+  "actions": {
+    "push_target": "X2M7/trime",
+    "create_new_upstream_prs": false,
+    "existing_pr": 2170,
+    "keep_existing_pr_draft": true,
+    "rewrite_original_branches": false
+  },
+  "split_branches": [
+    {
+      "branch": "contrib/split-setup-footer",
+      "commit": "8e373f34400655a6aa871315531a8b25142d9233",
+      "parent": "f5008260dc1e71b05e8e5508c6cfbf8ebf2507a0",
+      "depends_on": [],
+      "commit_title": "fix: keep setup pages above visible navigation buttons",
+      "compare_url": "https://github.com/X2M7/trime/compare/f5008260...contrib/split-setup-footer",
+      "files": [
+        "app/src/main/res/layout/activity_setup.xml"
+      ],
+      "completed_checks": [
+        "XML parse",
+        "Upstream navigation button visibility reviewed",
+        "AAPT2 compile 0 without diagnostics",
+        "git diff --check"
+      ],
+      "pending": [
+        "Full upstream build and tests",
+        "Small-screen/large-font runtime layout"
+      ],
+      "upstream_pr_created": false,
+      "app_or_device_acceptance_complete": false,
+      "resource_check": {
+        "source_sha256": "b784ec4b5a23f98b6f72b873d33c9d257ac89c669cf87777bb08ad8e6c56e002",
+        "exit_code": 0,
+        "outputs": [
+          {
+            "name": "layout_activity_setup.xml.flat",
+            "bytes": 3608,
+            "sha256": "c83ce621fb5eb42bfadec9ea8226f66980d749a9f4dccadb2eb704bc1ecfb95d"
+          }
+        ],
+        "stdout_bytes": 0,
+        "stderr_bytes": 0,
+        "tool": "AAPT2 36.0.0",
+        "tool_sha256": "1a6a396b9cd071f7040071fdd108718cb98c3c9f4960044f373b288993d19eb7"
+      }
+    },
+    {
+      "branch": "contrib/split-clipboard-editor-height",
+      "commit": "70af58cf2712de59e611b3ca4f2d272175f5707e",
+      "parent": "f5008260dc1e71b05e8e5508c6cfbf8ebf2507a0",
+      "depends_on": [],
+      "commit_title": "fix: constrain clipboard editor height above action buttons",
+      "compare_url": "https://github.com/X2M7/trime/compare/f5008260...contrib/split-clipboard-editor-height",
+      "files": [
+        "app/src/main/res/layout/activity_clip_edit.xml"
+      ],
+      "completed_checks": [
+        "XML parse",
+        "Exact one-attribute change; existing constraints and scrolling preserved",
+        "AAPT2 compile 0 without diagnostics",
+        "git diff --check"
+      ],
+      "pending": [
+        "Full upstream build and tests",
+        "Long-content/small-screen/IME layout; adjustPan remains unchanged"
+      ],
+      "upstream_pr_created": false,
+      "app_or_device_acceptance_complete": false,
+      "resource_check": {
+        "source_sha256": "198c78f194d0a75d4fb26c45f5a3639a0e343d627077b34f695fe38dcafa0fa4",
+        "exit_code": 0,
+        "outputs": [
+          {
+            "name": "layout_activity_clip_edit.xml.flat",
+            "bytes": 3664,
+            "sha256": "55cfa1ed5a0c6db40d18320005b89314560e063c0a1e2b1a50cdda2ed8d4a06b"
+          }
+        ],
+        "stdout_bytes": 0,
+        "stderr_bytes": 0,
+        "tool": "AAPT2 36.0.0",
+        "tool_sha256": "1a6a396b9cd071f7040071fdd108718cb98c3c9f4960044f373b288993d19eb7"
+      }
+    },
+    {
+      "branch": "contrib/split-native-license-versions",
+      "commit": "f34ee4fca9fd544aa2a20b80cacbc6e3570771bf",
+      "parent": "f5008260dc1e71b05e8e5508c6cfbf8ebf2507a0",
+      "depends_on": [],
+      "commit_title": "fix: match native library license versions to pinned sources",
+      "compare_url": "https://github.com/X2M7/trime/compare/f5008260...contrib/split-native-license-versions",
+      "files": [
+        "app/licenses/libraries/librime.json",
+        "app/licenses/libraries/opencc.json"
+      ],
+      "completed_checks": [
+        "JSON parse; only artifactVersion changed",
+        "Pinned librime 7bc3fb00 CMake rime_version=1.17.0",
+        "Pinned OpenCC 025f371d at exact tag ver.1.4.2",
+        "git diff --check"
+      ],
+      "pending": [
+        "Full upstream build and tests",
+        "License-page integration check"
+      ],
+      "upstream_pr_created": false,
+      "app_or_device_acceptance_complete": false
+    },
+    {
+      "branch": "contrib/split-jni-local-refs",
+      "commit": "9e296c1e29dd1f896400d71946fa2cd76d101b9a",
+      "parent": "f5008260dc1e71b05e8e5508c6cfbf8ebf2507a0",
+      "depends_on": [],
+      "commit_title": "fix: release JNI local references while converting string arrays",
+      "compare_url": "https://github.com/X2M7/trime/compare/f5008260...contrib/split-jni-local-refs",
+      "files": [
+        "app/src/main/jni/librime_jni/objconv.h"
+      ],
+      "completed_checks": [
+        "Production-header host JNI table mock: baseline fails, fixed passes",
+        "2048 elements x4; empty input; output ordering; cleanup order",
+        "Portable reproduction runner executed",
+        "git diff --check"
+      ],
+      "pending": [
+        "Full upstream build and tests",
+        "Android CheckJNI and device run",
+        "Native exception/allocation failure boundaries unchanged and outside this fix"
+      ],
+      "upstream_pr_created": false,
+      "app_or_device_acceptance_complete": false,
+      "host_mock_check": {
+        "original_report_sha256": "a45c5efc3b12f252fb4c9e40e3a5fe06fbb0fe78f3b35ddaf143271d57978272",
+        "baseline": {
+          "passed": false,
+          "elements_per_call": 2048,
+          "repetitions": 4,
+          "live_local_refs": 8192,
+          "peak_local_refs": 8192,
+          "GetStringUTFChars": 8192,
+          "ReleaseStringUTFChars": 8192,
+          "DeleteLocalRef": 0,
+          "violations": 8195
+        },
+        "fixed": {
+          "passed": true,
+          "elements_per_call": 2048,
+          "repetitions": 4,
+          "live_local_refs": 0,
+          "peak_local_refs": 1,
+          "GetStringUTFChars": 8192,
+          "ReleaseStringUTFChars": 8192,
+          "DeleteLocalRef": 8192,
+          "violations": 0
+        },
+        "strict_compile_passed": false,
+        "preexisting_diagnostics": {
+          "baseline": [
+            "-Wpessimizing-move",
+            "-Wsign-compare"
+          ],
+          "fixed": [
+            "-Wpessimizing-move",
+            "-Wsign-compare"
+          ]
+        },
+        "focused_flags": [
+          "-Wall",
+          "-Wextra",
+          "-Werror",
+          "-Wno-error=pessimizing-move",
+          "-Wno-error=sign-compare"
+        ],
+        "runtime": "Mocked JNI function table on host; not ART/JVM/Rime",
+        "test_source_sha256": "182d3491379712adb964a78346bc5936bbc7c146119b5d8ae2b03b8272da621d",
+        "reproduction_runner_sha256": "32bbfb331e46fb2fb4e93c223d2bd1da82d9cb67ebb76d50cafa6d17cccc5bdd",
+        "reproduction_runner_exit_code": 0
+      }
+    }
+  ],
+  "inventory": {
+    "path": "paths.tsv",
+    "sha256": "02f75380a08428ebd474a396fd4f7052c0a19a410aa6ffe4b5c58836c7a2ef10",
+    "non_numeric_line_counts": "None marks binary numstat entries, excluded from line totals",
+    "routing_is_not_executable_partition": true,
+    "first_batch_extracted_paths": 5,
+    "remaining_paths_not_claimed_extracted": 655
+  },
+  "limits": [
+    "No new APK or release for this delivery",
+    "Per-branch complete upstream builds, full suites and device acceptance pending",
+    "No claim of complete warning elimination",
+    "Historical aggregate acceptance does not qualify split branches"
+  ]
+}
