@@ -19,7 +19,8 @@ is based directly on `144f6111`, at `e7e63932` on
 submission. Its 315 complete application JVM cases and 14 focused helper cases
 passed; the initial new test diagnostic is fixed and its historical run retained.
 The feedback fork/upstream builds have since passed all eight OS jobs; actual
-Android playback remains pending. The next Return submission is based on `144f6111`
+Android playback remains pending. The next Return submission, [#2180 Draft](https://github.com/osfans/trime/pull/2180),
+is based on `144f6111`
 at `5879c1eb`, with 317 complete application JVM cases passed (including four real
 display-delegate/broadcast cases). Its platform builds and Android dispatch/rendering
 checks remain pending. Only the original logcat topic remains unsubmitted; its

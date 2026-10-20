@@ -12,4 +12,8 @@ Validation:
 
 This remains Draft for actual Android EditorInfo/InputConnection dispatch and on-screen repaint after restartInput or switching cached layouts. The four delegate tests use the real Theme, Kodein, display delegate and broadcaster, but do not construct Android views or exercise the service. Lint and Release checks remain unverified; existing dependency/toolchain warnings are retained.
 
+[Source and validation scope](https://github.com/X2M7/trime/blob/e4e32680d3c7a4417bd509168f2f706d89c98c9d/doc/contribution-split/checks/enter-actions-submission-source.json).
+
 Source: `contrib/pr-enter-actions` at `5879c1eb5a80011a1b1a9eaf3db16750cf01205d`.
+
+Submitted as [#2180 Draft](https://github.com/osfans/trime/pull/2180).
