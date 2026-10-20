@@ -173,6 +173,16 @@ JNI 聚焦测试在同一 mock 调用环境转换 2,048 个元素四次：原实
 
 [四系统构建的 16:19 UTC 快照](checks/jni-source-directories-platform-ci-pending.json)仍为四项运行中、无失败，不能提前记为通过。[英文 PR 说明](drafts/jni-source-directories.md)保留此限制；[创建及独立读回](checks/jni-source-directories-upstream-submission.json)确认目标、精确 SHA、正文和一提交一文件范围，未报告文本合并冲突。Lint、Release 与预编译库实际 APK 内容仍未验收。复现工具和报告仅在 fork 索引，不带入上游的一行补丁。本轮不发布 APK。
 
+## 日志采集可靠性：按完整行为提交
+
+已推送 [contrib/pr-logcat-reliability](https://github.com/X2M7/trime/tree/contrib/pr-logcat-reliability)，源码 `6e4f2e59`，直接基于 `144f6111`。按本轮新的分组原则，一次提交覆盖整个日志采集链路：[六文件范围](checks/logcat-reliability-submission-source.json)包含 Process、Logcat、部署日志调用方和日志 View，以及两个回归测试文件。原 `f5909dcb` 分支与失败原件保留，未把它原先存在边界的 17 项通过结果当作当前模块验收。
+
+当前实现一起处理：阻塞读取消、销毁失败仍尝试关闭三流、正常 IO 池耗尽时独立调度清理、原始取消节点上的错误保留、停止后重开和旧 Job 隔离；API21–23 短参数、threadtime 的完整 PID 列及仅 LF 分帧；API24+ 原生 PID 参数；短行/两种格式着色、先订阅后读取以及 View 替换/脱离时停止；部署清理/快照的 IO 创建、可合作等待及失败后保留通知流程。辅助类、UI 调用方、兼容处理和测试一起进入这个 PR，不再分成数个微小 PR。
+
+[聚焦 JVM 验证](checks/logcat-reliability-focused-jvm.json)已实际通过 32 项（Logcat 17、Process 15），失败/错误/跳过均为 0，严格 Kotlin 编译无源码警告，六文件格式通过。新的取消诊断回归先在 32 项中失败一项；实际异常图确认错误只附在协程恢复的副本，随后将其保留在原始取消节点，完整 cause/suppressed 图继续要求原错误对象可达。没有放宽为字符串检查，失败与诊断原件保留。独立 JVM 的 IO=1 用例和真实 Java 子进程取消均执行；宿主资源编号/本地化错误适配与 Android 调用方仅格式/源码审阅的范围单列。
+
+[独立复核](checks/logcat-reliability-independent-review.json)将最终六个 Git blob、工作树和宿主输入逐字节绑定；[官方选项/调度依据](checks/logcat-reliability-api-review.json)另列。宿主 Spotless 的既有 Gradle 弃用提示保留。[精确源码的完整应用 JVM 验证](checks/logcat-reliability-application-jvm.json)实际通过 333 项／21 组：301 项基准完整保留，32 项新增标签与最终源码一致，失败／错误／跳过均为 0；官方附件大小／digest／CRC、身份与 20 个递归 pin 均核对。没有新增源码诊断，独立基线仍有原 srcDirs 警告，101 条工具候选与基线相同，不是全工程零警告。四系统构建仍在运行；[英文 PR 说明](drafts/logcat-reliability.md)保留该状态。Android UI/实际 logcat、Lint、Release 未验收。同步平台销毁/关闭没有通用硬时限，未新增并行 stderr 排空；脱离 View 后仍需重新绑定，不新增同一 View 的自动重放。本轮不发布 APK。
+
 ## 关联 issue 的审慎匹配
 
 [匹配记录](checks/issue-match.json) 保留六个原主题的只读检索结论与相近讨论，以及新主题的范围说明；未确认可直接关闭的精确开放 issue，不填写虚假的 `Fixes`/`Closes`。这是关键词和部分历史讨论的有限检索，不是全库不存在问题的证明；新的 JNI 线程主题也不冒用其他 JNI 崩溃报告。

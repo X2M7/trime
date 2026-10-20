@@ -1,0 +1,48 @@
+{
+  "feature": "Reliable logcat collection from child process creation to viewer/deployment consumption",
+  "source_repository": "X2M7/trime",
+  "source_branch": "contrib/pr-logcat-reliability",
+  "head": "6e4f2e59acce6cff0d097ff47a8d635940a6aa69",
+  "base": "144f6111d0498da85e0ffa250245f18955179ed3",
+  "commits": 1,
+  "changed_files": [
+    {
+      "path": "app/src/main/java/com/osfans/trime/daemon/RimeDaemon.kt",
+      "sha256": "053dc58c2622175e2e02da1d1dbff9b912c00c62e82b915a6f643eacd3cfb656"
+    },
+    {
+      "path": "app/src/main/java/com/osfans/trime/ui/main/log/LogView.kt",
+      "sha256": "fb5733f039cd9f21d45361cd2264c94893bc5bd6a433822fc63fdcc2a1800562"
+    },
+    {
+      "path": "app/src/main/java/com/osfans/trime/util/Logcat.kt",
+      "sha256": "675da61a06b8c923690f4fb40d2a4953986d2837317c2f9ea998dd6e9a70952c"
+    },
+    {
+      "path": "app/src/main/java/com/osfans/trime/util/Process.kt",
+      "sha256": "82d6de5eca68df42401ef1b424e9c3f332db5a1c05010fe07a95ecdbcbde40c7"
+    },
+    {
+      "path": "app/src/test/java/com/osfans/trime/util/LogcatLifecycleTest.kt",
+      "sha256": "eba0efae3b197f25a697d9b74824de37aa8cfb5f02335f4ba196a47f2589ee6a"
+    },
+    {
+      "path": "app/src/test/java/com/osfans/trime/util/ProcessLifecycleTest.kt",
+      "sha256": "400cd6154a5d210b5c41138d17b96c2f89b3604a40a2496a3c7656f046f0e537"
+    }
+  ],
+  "numstat": [
+    "30\t8\tapp/src/main/java/com/osfans/trime/daemon/RimeDaemon.kt",
+    "25\t8\tapp/src/main/java/com/osfans/trime/ui/main/log/LogView.kt",
+    "155\t30\tapp/src/main/java/com/osfans/trime/util/Logcat.kt",
+    "127\t12\tapp/src/main/java/com/osfans/trime/util/Process.kt",
+    "331\t0\tapp/src/test/java/com/osfans/trime/util/LogcatLifecycleTest.kt",
+    "461\t0\tapp/src/test/java/com/osfans/trime/util/ProcessLifecycleTest.kt"
+  ],
+  "patch_sha256": "a35ca617d74aa31e31c42b7235ed9c149df0c9fe078b71a76839c45a7da82af5",
+  "commit_message_max_line_length": 96,
+  "original_logcat_branch_preserved": "f5909dcb024997cef8eefe437ee810038118f3c1",
+  "new_test_cases": 32,
+  "application_baseline_cases": 301,
+  "scope": "Callers, compatibility, child ownership, cancellation, viewer subscription and their regressions stay in one behavior-focused patch. No fork publication or release configuration."
+}

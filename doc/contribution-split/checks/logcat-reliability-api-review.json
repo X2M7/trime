@@ -1,0 +1,27 @@
+{
+  "scope": "Primary-source review for the unchanged dependency versions and logcat API guards",
+  "coroutines_io_view": [
+    {
+      "url": "https://raw.githubusercontent.com/Kotlin/kotlinx.coroutines/1.10.2/kotlinx-coroutines-core/jvm/src/Dispatchers.kt",
+      "bytes": 5099,
+      "sha256": "cd675f544baefa12abdf7c38f16f96d7246d326373107b05f1de4e4e5ea952ef"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/Kotlin/kotlinx.coroutines/1.10.2/kotlinx-coroutines-core/jvm/src/scheduling/Dispatcher.kt",
+      "bytes": 5391,
+      "sha256": "ab6c1c9b93be4c528c70939c49ba117caa602f11b7270c5477b1b47fcef1275a"
+    }
+  ],
+  "findings": [
+    "API21/22/23 use short logcat options; API24 introduces the long PID and clear options. Use -c throughout and --pid only from API24.",
+    "API21 threadtime places numeric PID/TID before arbitrary tag and payload. Filter the PID column and frame on LF; bare CR remains payload.",
+    "The pinned coroutines1.10.2 IO limitedParallelism view is independent of the normal IO parallelism limit, but still shares the underlying scheduler. Synchronous platform destroy/close calls have no universal deadline."
+  ],
+  "aosp_options_record_sha256": "8d41685ec1926b2b7594e041265eebf564d5531b8a8cde0075bd8b825f7822c7",
+  "aosp_options_sources": [
+    "https://android.googlesource.com/platform/system/core/+/android-5.0.2_r3/logcat/logcat.cpp",
+    "https://android.googlesource.com/platform/system/core/+/android-6.0.1_r81/logcat/logcat.cpp",
+    "https://android.googlesource.com/platform/system/core/+/android-7.0.0_r1/logcat/logcat.cpp",
+    "https://android.googlesource.com/platform/system/core/+/android-5.0.2_r3/liblog/logprint.c"
+  ]
+}

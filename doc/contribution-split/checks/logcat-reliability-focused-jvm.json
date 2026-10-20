@@ -1,0 +1,82 @@
+{
+  "scope": "Focused JVM Process/Logcat production sources and their actual two test classes; Daemon and LogView only formatted/source reviewed here.",
+  "tests": 32,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "exit_code": 0,
+  "run_log_sha256": "fd53b944b41c2c2f2238bc3f98044a88f498c8aab9bc216c44cdccfd7638f444",
+  "compiler_warnings_as_errors": true,
+  "style_passed_for_six_changed_files": true,
+  "files": [
+    {
+      "source": "app/src/main/java/com/osfans/trime/util/Process.kt",
+      "host": "src/main/kotlin/com/osfans/trime/util/Process.kt",
+      "sha256": "82d6de5eca68df42401ef1b424e9c3f332db5a1c05010fe07a95ecdbcbde40c7",
+      "compiled": true
+    },
+    {
+      "source": "app/src/test/java/com/osfans/trime/util/ProcessLifecycleTest.kt",
+      "host": "src/test/kotlin/com/osfans/trime/util/ProcessLifecycleTest.kt",
+      "sha256": "400cd6154a5d210b5c41138d17b96c2f89b3604a40a2496a3c7656f046f0e537",
+      "compiled": true
+    },
+    {
+      "source": "app/src/main/java/com/osfans/trime/util/Logcat.kt",
+      "host": "src/main/kotlin/com/osfans/trime/util/Logcat.kt",
+      "sha256": "675da61a06b8c923690f4fb40d2a4953986d2837317c2f9ea998dd6e9a70952c",
+      "compiled": true
+    },
+    {
+      "source": "app/src/test/java/com/osfans/trime/util/LogcatLifecycleTest.kt",
+      "host": "src/test/kotlin/com/osfans/trime/util/LogcatLifecycleTest.kt",
+      "sha256": "eba0efae3b197f25a697d9b74824de37aa8cfb5f02335f4ba196a47f2589ee6a",
+      "compiled": true
+    },
+    {
+      "source": "app/src/main/java/com/osfans/trime/daemon/RimeDaemon.kt",
+      "host": "style-only/RimeDaemon.kt",
+      "sha256": "053dc58c2622175e2e02da1d1dbff9b912c00c62e82b915a6f643eacd3cfb656",
+      "compiled": false
+    },
+    {
+      "source": "app/src/main/java/com/osfans/trime/ui/main/log/LogView.kt",
+      "host": "style-only/LogView.kt",
+      "sha256": "fb5733f039cd9f21d45361cd2264c94893bc5bd6a433822fc63fdcc2a1800562",
+      "compiled": false
+    }
+  ],
+  "junit": [
+    {
+      "suite": "com.osfans.trime.util.LogcatLifecycleTest",
+      "tests": 17,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "c5054bb11b375525613204b7d1ae343fee5008c8dba5082ca41163d0a8f1f821"
+    },
+    {
+      "suite": "com.osfans.trime.util.ProcessLifecycleTest",
+      "tests": 15,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "1d51ba0092ec123d9223c1bc973339585d9a78aaf5ed7431e785e963d8b5d516"
+    }
+  ],
+  "old_attempts_preserved": [
+    "run1.log: generated stub class naming, no tests",
+    "run2.log: 31 of32 passed; cancellation suppressed error missing",
+    "diagnostic1.log: failed graph diagnosis, host-only instrumentation",
+    "run3.log:32passed before identity-set refinement"
+  ],
+  "remaining_diagnostics": [
+    "Spotless Configuration.setVisible Gradle deprecation; existing toolchain issue"
+  ],
+  "limits": [
+    "Resource id and localized error helper adapters used in host; complete Android application compilation and unit suite are separate.",
+    "No Android UI, actual device logcat, Lint or Release verification.",
+    "No total hard deadline for arbitrary synchronous destroy/close, no parallel stderr drain.",
+    "Detaching cancels the view binding; automatic replay/resume on the same detached view is not introduced."
+  ]
+}
