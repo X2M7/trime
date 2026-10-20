@@ -103,9 +103,11 @@ JNI 聚焦测试在同一 mock 调用环境转换 2,048 个元素四次：原实
 
 [8 份英文说明](drafts/README.md)与原八个分支继续保留。其余模块按各自问题和验收逐项推进，不同时提交全部补丁。
 
+[本轮最终反馈检查](checks/layout-feedback-latest.json)仍未发现新增维护者问题；[上游 CI 最新快照](checks/layout-upstream-ci-latest.json)中 #2177 已四系统通过，#2176 仅 Intel macOS 仍在运行，无失败步骤。Draft 与运行时验收限制保持，不据此改为 Ready。
+
 ## 下一项：JNI 线程连接归属
 
-已推送 [contrib/pr-jni-thread-attachment](https://github.com/X2M7/trime/tree/contrib/pr-jni-thread-attachment)，新提交 `2283878e` 直接基于 `144f6111`，只有 `jni-utils.h` 一个文件。它与原 `3e990b2d` 补丁逐字节一致，原分支保留；[源码绑定](checks/jni-attachment-submission-source.json)记录精确父提交与补丁哈希。
+已推送 [contrib/pr-jni-thread-attachment](https://github.com/X2M7/trime/tree/contrib/pr-jni-thread-attachment)，并创建上游 [#2178 Draft](https://github.com/osfans/trime/pull/2178)。新提交 `2283878e` 直接基于 `144f6111`，只有 `jni-utils.h` 一个文件、一个提交，新增 13 行／删除 2 行。[提交及读回回执](checks/jni-attachment-upstream-submission.json)核对了实际目标、源 SHA、单文件范围和正文。它与原 `3e990b2d` 补丁逐字节一致，原分支保留；[源码绑定](checks/jni-attachment-submission-source.json)记录精确父提交与补丁哈希。
 
 新提交的 [301 项完整应用 JVM 用例](checks/jni-attachment-application-jvm.json)已实际执行通过、0 失败/错误/跳过，与已验 `144f6111` 基准的用例多重集完全一致；基准本轮没有重复执行。20 个递归 pin、官方测试附件及原 XML/HTML 均已核对。既有 build-logic Kotlin 弃用与其他工具警告保留。[四系统 Debug/native CI](https://github.com/X2M7/trime/actions/runs/39423511285)仍在运行。
 
