@@ -1,0 +1,397 @@
+{
+  "schema": "trime-current-pr-build-feedback-compact/v1",
+  "observed_utc": "2026-10-20T13:29:21.132388+00:00",
+  "snapshot_scope": "Exact-head PR metadata, feedback and completed build-job conclusions only",
+  "upstream_develop": {
+    "sha": "144f6111d0498da85e0ffa250245f18955179ed3",
+    "message": "fix: release JNI local references while converting string arrays\n\nRelease each array element's local JNI reference at the end of its iteration.\nKeep CString alive inside the JRef scope so UTF characters are released\nbefore the element reference is deleted. Preserve converted values and order\nwhile bounding reference accumulation within the native call.\n\nRelated: #2170"
+  },
+  "source_evidence": {
+    "name": "next-pr4/current-pr-check/summary.json",
+    "bytes": 33324,
+    "sha256": "c7acddf1a561d799c5ed7e31027f48f4067ae28891de5f5693fcdb217e025caf",
+    "complete_raw_api_retained": true
+  },
+  "pull_requests": [
+    {
+      "number": 2176,
+      "url": "https://github.com/osfans/trime/pull/2176",
+      "state": "open",
+      "draft": true,
+      "merged": false,
+      "base": {
+        "repo": "osfans/trime",
+        "ref": "develop",
+        "sha": "144f6111d0498da85e0ffa250245f18955179ed3"
+      },
+      "head": {
+        "repo": "X2M7/trime",
+        "ref": "contrib/pr-setup-footer",
+        "sha": "560b5b99a46eafe8494d8576c9316426a7d88bdf"
+      },
+      "feedback": {
+        "comments": [],
+        "reviews": [],
+        "inline_comments": [],
+        "comment_count": 0,
+        "review_count": 0,
+        "inline_comment_count": 0
+      },
+      "ci": [
+        {
+          "repository": "X2M7/trime",
+          "run_id": 39417654338,
+          "url": "https://github.com/X2M7/trime/actions/runs/39417654338",
+          "head_sha": "560b5b99a46eafe8494d8576c9316426a7d88bdf",
+          "event": "push",
+          "status": "completed",
+          "conclusion": "success",
+          "run_attempt": 1,
+          "jobs": [
+            {
+              "id": 118610489536,
+              "name": "build (windows-2025)",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-10-20T11:49:02Z",
+              "completed_at": "2026-10-20T12:22:42Z",
+              "failed_step_count": 0
+            },
+            {
+              "id": 118610489941,
+              "name": "build (macos-26)",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-10-20T11:49:11Z",
+              "completed_at": "2026-10-20T12:15:23Z",
+              "failed_step_count": 0
+            },
+            {
+              "id": 118610490180,
+              "name": "build (ubuntu-26.04)",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-10-20T11:49:03Z",
+              "completed_at": "2026-10-20T12:06:12Z",
+              "failed_step_count": 0
+            },
+            {
+              "id": 118610490185,
+              "name": "build (macos-26-intel)",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-10-20T11:49:05Z",
+              "completed_at": "2026-10-20T12:20:46Z",
+              "failed_step_count": 0
+            }
+          ]
+        },
+        {
+          "repository": "osfans/trime",
+          "run_id": 39419902485,
+          "url": "https://github.com/osfans/trime/actions/runs/39419902485",
+          "head_sha": "560b5b99a46eafe8494d8576c9316426a7d88bdf",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "run_attempt": 1,
+          "jobs": [
+            {
+              "id": 118617952152,
+              "name": "build (macos-26-intel)",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-10-20T12:07:37Z",
+              "completed_at": "2026-10-20T12:45:59Z",
+              "failed_step_count": 0
+            },
+            {
+              "id": 118617952471,
+              "name": "build (windows-2025)",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-10-20T12:07:33Z",
+              "completed_at": "2026-10-20T12:25:37Z",
+              "failed_step_count": 0
+            },
+            {
+              "id": 118617952602,
+              "name": "build (ubuntu-26.04)",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-10-20T12:07:34Z",
+              "completed_at": "2026-10-20T12:11:04Z",
+              "failed_step_count": 0
+            },
+            {
+              "id": 118617952704,
+              "name": "build (macos-26)",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-10-20T12:07:40Z",
+              "completed_at": "2026-10-20T12:12:38Z",
+              "failed_step_count": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 2177,
+      "url": "https://github.com/osfans/trime/pull/2177",
+      "state": "open",
+      "draft": true,
+      "merged": false,
+      "base": {
+        "repo": "osfans/trime",
+        "ref": "develop",
+        "sha": "144f6111d0498da85e0ffa250245f18955179ed3"
+      },
+      "head": {
+        "repo": "X2M7/trime",
+        "ref": "contrib/pr-clipboard-editor-height",
+        "sha": "8344231de57790bbe83262cca7fb8adf0d99e829"
+      },
+      "feedback": {
+        "comments": [],
+        "reviews": [],
+        "inline_comments": [],
+        "comment_count": 0,
+        "review_count": 0,
+        "inline_comment_count": 0
+      },
+      "ci": [
+        {
+          "repository": "X2M7/trime",
+          "run_id": 39417654398,
+          "url": "https://github.com/X2M7/trime/actions/runs/39417654398",
+          "head_sha": "8344231de57790bbe83262cca7fb8adf0d99e829",
+          "event": "push",
+          "status": "completed",
+          "conclusion": "success",
+          "run_attempt": 1,
+          "jobs": [
+            {
+              "id": 118610489704,
+              "name": "build (windows-2025)",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-10-20T11:49:02Z",
+              "completed_at": "2026-10-20T12:19:53Z",
+              "failed_step_count": 0
+            },
+            {
+              "id": 118610490049,
+              "name": "build (macos-26-intel)",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-10-20T11:49:03Z",
+              "completed_at": "2026-10-20T12:30:35Z",
+              "failed_step_count": 0
+            },
+            {
+              "id": 118610490168,
+              "name": "build (ubuntu-26.04)",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-10-20T11:49:03Z",
+              "completed_at": "2026-10-20T12:00:22Z",
+              "failed_step_count": 0
+            },
+            {
+              "id": 118610490202,
+              "name": "build (macos-26)",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-10-20T11:49:09Z",
+              "completed_at": "2026-10-20T12:10:25Z",
+              "failed_step_count": 0
+            }
+          ]
+        },
+        {
+          "repository": "osfans/trime",
+          "run_id": 39419912412,
+          "url": "https://github.com/osfans/trime/actions/runs/39419912412",
+          "head_sha": "8344231de57790bbe83262cca7fb8adf0d99e829",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "run_attempt": 1,
+          "jobs": [
+            {
+              "id": 118617985901,
+              "name": "build (macos-26)",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-10-20T12:07:46Z",
+              "completed_at": "2026-10-20T12:12:34Z",
+              "failed_step_count": 0
+            },
+            {
+              "id": 118617986250,
+              "name": "build (macos-26-intel)",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-10-20T12:07:41Z",
+              "completed_at": "2026-10-20T12:38:38Z",
+              "failed_step_count": 0
+            },
+            {
+              "id": 118617986262,
+              "name": "build (ubuntu-26.04)",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-10-20T12:07:39Z",
+              "completed_at": "2026-10-20T12:11:13Z",
+              "failed_step_count": 0
+            },
+            {
+              "id": 118617986690,
+              "name": "build (windows-2025)",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-10-20T12:07:39Z",
+              "completed_at": "2026-10-20T12:37:31Z",
+              "failed_step_count": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 2178,
+      "url": "https://github.com/osfans/trime/pull/2178",
+      "state": "open",
+      "draft": true,
+      "merged": false,
+      "base": {
+        "repo": "osfans/trime",
+        "ref": "develop",
+        "sha": "144f6111d0498da85e0ffa250245f18955179ed3"
+      },
+      "head": {
+        "repo": "X2M7/trime",
+        "ref": "contrib/pr-jni-thread-attachment",
+        "sha": "2283878e8751305de9daa3e64a6c5448381e9b94"
+      },
+      "feedback": {
+        "comments": [],
+        "reviews": [],
+        "inline_comments": [],
+        "comment_count": 0,
+        "review_count": 0,
+        "inline_comment_count": 0
+      },
+      "ci": [
+        {
+          "repository": "X2M7/trime",
+          "run_id": 39423511285,
+          "url": "https://github.com/X2M7/trime/actions/runs/39423511285",
+          "head_sha": "2283878e8751305de9daa3e64a6c5448381e9b94",
+          "event": "push",
+          "status": "completed",
+          "conclusion": "success",
+          "run_attempt": 1,
+          "jobs": [
+            {
+              "id": 118630138904,
+              "name": "build (macos-26)",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-10-20T12:36:08Z",
+              "completed_at": "2026-10-20T12:57:15Z",
+              "failed_step_count": 0
+            },
+            {
+              "id": 118630139166,
+              "name": "build (macos-26-intel)",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-10-20T12:36:04Z",
+              "completed_at": "2026-10-20T13:08:28Z",
+              "failed_step_count": 0
+            },
+            {
+              "id": 118630139234,
+              "name": "build (ubuntu-26.04)",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-10-20T12:36:05Z",
+              "completed_at": "2026-10-20T12:52:24Z",
+              "failed_step_count": 0
+            },
+            {
+              "id": 118630139335,
+              "name": "build (windows-2025)",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-10-20T12:36:03Z",
+              "completed_at": "2026-10-20T13:06:17Z",
+              "failed_step_count": 0
+            }
+          ]
+        },
+        {
+          "repository": "osfans/trime",
+          "run_id": 39424416131,
+          "url": "https://github.com/osfans/trime/actions/runs/39424416131",
+          "head_sha": "2283878e8751305de9daa3e64a6c5448381e9b94",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "run_attempt": 1,
+          "jobs": [
+            {
+              "id": 118633209642,
+              "name": "build (macos-26-intel)",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-10-20T12:42:58Z",
+              "completed_at": "2026-10-20T13:07:32Z",
+              "failed_step_count": 0
+            },
+            {
+              "id": 118633210097,
+              "name": "build (macos-26)",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-10-20T12:43:01Z",
+              "completed_at": "2026-10-20T12:52:56Z",
+              "failed_step_count": 0
+            },
+            {
+              "id": 118633210264,
+              "name": "build (ubuntu-26.04)",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-10-20T12:42:57Z",
+              "completed_at": "2026-10-20T12:52:06Z",
+              "failed_step_count": 0
+            },
+            {
+              "id": 118633210612,
+              "name": "build (windows-2025)",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-10-20T12:42:58Z",
+              "completed_at": "2026-10-20T13:13:09Z",
+              "failed_step_count": 0
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "successful_build_jobs": 24,
+  "all_recorded_build_jobs_success": true,
+  "test_jobs_verified_by_snapshot": false,
+  "zero_warnings_verified": false,
+  "runtime_acceptance": false,
+  "limits": [
+    "24/24 counts build jobs across the fork and upstream for three exact source heads; it is not a count of passed test jobs.",
+    "This snapshot did not inspect full warning logs, execute tests, or perform runtime/device acceptance. Successful job conclusions do not prove zero warnings or absence of bugs.",
+    "No review comments at the snapshot time does not mean maintainer approval. Draft status remains explicit.",
+    "Original complete API responses and source summary remain retained separately; no remote state was changed."
+  ]
+}

@@ -9,3 +9,10 @@ Give each consumption its own child ownership. Cancellation requests destruction
 **Remaining:** Android, Windows and macOS process runtime checks, Lint and Release acceptance remain pending. Existing command flags are unchanged. The one-second exit-poll window does not bound synchronous destroy/close calls. Upstream compiler and dependency diagnostics remain.
 
 Source: `contrib/split-logcat-lifecycle` at `f5909dcb024997cef8eefe437ee810038118f3c1`.
+
+Further pre-submission review found two controlled JVM limits: if the cancellation
+watcher throws from destroy while stdout remains blocked, final stream cleanup
+cannot run until the read is externally unblocked; a saturated IO dispatcher can
+also delay the watcher. These are fixture observations, not an Android app hang
+reproduction. The one-second exit polling window does not bound total cancellation.
+This topic remains unsubmitted while those boundaries are resolved.

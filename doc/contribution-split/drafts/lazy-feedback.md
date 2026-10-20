@@ -1,11 +1,15 @@
-# perf: create speech and custom sound resources on demand
+# perf: initialize input feedback resources on demand
 
-Starting the input method currently constructs TextToSpeech and SoundPool even when both feedback features are disabled. It can also attempt playback before an asynchronously initialized resource is ready.
+Starting the IME currently constructs TextToSpeech and SoundPool even when their feedback is disabled. Retain the application context and create each backend when enabled feedback needs it. Wait for TTS initialization and custom sample loading before playback, release resources on destruction, and ignore callbacks from previous resources. Add the TTS service visibility query described in the [Android API documentation](https://developer.android.com/reference/android/speech/tts/TextToSpeech).
 
-Keep init(context), retain only the application context, and create speech or custom sound resources when enabled feedback needs them. Use them after readiness, release them on destruction, and reject callbacks belonging to a previous resource. Add the TTS service visibility query required on newer Android versions. Failed creation also stops repeated sound-path work on every key.
+Speech commits can arrive from Rime worker jobs. Dispatch both speech entry points to main before reading preferences or touching pending/resource state, and invalidate queued requests when input starts, ends, or the manager is initialized/destroyed. Initialization failures are retried after destroy/init rather than on every key; custom key sounds received before loading completes are not replayed.
 
-**Validation:** Eight focused production-helper tests passed with strict Kotlin compilation. The separate exact-SHA Android application JVM run compiled the manager and passed all 309 tests, including the 301 upstream cases, without skips. The original exact-SHA four-OS Commit CI and Ubuntu Spotless passed.
+Validation:
 
-**Remaining:** Exercise the Android manager and actual TTS/SoundPool playback. Initialization failures retry after destroy/init; pre-load key sounds are not replayed. Memory gains, Lint, Release and device acceptance remain unverified. Existing upstream compiler/tooling diagnostics remain.
+- 14 focused resource/worker-dispatch tests passed; strict helper/test Kotlin compilation and focused Spotless passed.
+- The exact-source [complete application JVM run](https://github.com/X2M7/trime/actions/runs/39435068756) passed all 315 cases (301 baseline + 14 new), with no failures/errors/skips. The new test compiler diagnostic is gone; existing build-logic/tool warnings remain.
+- [Four-platform Debug/native builds](https://github.com/X2M7/trime/actions/runs/39435037065) are in progress.
 
-Source: `contrib/split-lazy-feedback` at `3912fb23aced49da94cee6e3c59b3a9585da779b`.
+This remains Draft for Android playback/lifecycle checks: toggling feedback, initialization completing after finish/destroy, and loading custom samples. The pure helper tests do not exercise Android playback. Lint, Release validation and measured memory savings remain unverified; existing toolchain diagnostics are retained.
+
+Source: `contrib/pr-feedback-resources` at `e7e63932683dfcc985cc88601f995968b8fc50b4`.

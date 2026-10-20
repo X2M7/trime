@@ -1,0 +1,75 @@
+{
+  "head": "e7e63932683dfcc985cc88601f995968b8fc50b4",
+  "base": "144f6111d0498da85e0ffa250245f18955179ed3",
+  "branch": "contrib/pr-feedback-resources",
+  "repo": "X2M7/trime",
+  "one_commit": true,
+  "files": [
+    "app/src/main/AndroidManifest.xml",
+    "app/src/main/java/com/osfans/trime/ime/keyboard/FeedbackRequestDispatcher.kt",
+    "app/src/main/java/com/osfans/trime/ime/keyboard/FeedbackResource.kt",
+    "app/src/main/java/com/osfans/trime/ime/keyboard/InputFeedbackManager.kt",
+    "app/src/test/java/com/osfans/trime/ime/keyboard/FeedbackRequestDispatcherTest.kt",
+    "app/src/test/java/com/osfans/trime/ime/keyboard/FeedbackResourceTest.kt"
+  ],
+  "diff_numstat": "6\t0\tapp/src/main/AndroidManifest.xml\n29\t0\tapp/src/main/java/com/osfans/trime/ime/keyboard/FeedbackRequestDispatcher.kt\n84\t0\tapp/src/main/java/com/osfans/trime/ime/keyboard/FeedbackResource.kt\n116\t25\tapp/src/main/java/com/osfans/trime/ime/keyboard/InputFeedbackManager.kt\n190\t0\tapp/src/test/java/com/osfans/trime/ime/keyboard/FeedbackRequestDispatcherTest.kt\n212\t0\tapp/src/test/java/com/osfans/trime/ime/keyboard/FeedbackResourceTest.kt",
+  "patch_sha256": "48d53ce08699be808bc2d25c6b1f0ade0d644deac1631a320cfdc00594067910",
+  "source_files": {
+    "app/src/main/AndroidManifest.xml": "d7db3e48f4aceb346b8577ca5e2d6734b46bb34ce0abdc857dc7b4471c0f91fb",
+    "app/src/main/java/com/osfans/trime/ime/keyboard/FeedbackRequestDispatcher.kt": "a6a3eb4ca70bf36fb74569d9ddcaa0141cc85a6dbde78190ecb46fd242fe1773",
+    "app/src/main/java/com/osfans/trime/ime/keyboard/FeedbackResource.kt": "04a76a74f1c69bc1a290df793acb3f3f462ff6034eada9f52a1102fb89de9ad2",
+    "app/src/main/java/com/osfans/trime/ime/keyboard/InputFeedbackManager.kt": "fcf4c120e90ef54fbbd92428500c18ae933ca3b5028d7c7e52caad4eb3a24beb",
+    "app/src/test/java/com/osfans/trime/ime/keyboard/FeedbackRequestDispatcherTest.kt": "6de6186dbb050dc03ad8f07f01d43e59de2e5f8813f52a21661556f0832c03f3",
+    "app/src/test/java/com/osfans/trime/ime/keyboard/FeedbackResourceTest.kt": "b5e720f6895b2c1c512f850f8b21025365174bfc707e093e0f7c73ff60fd4661"
+  },
+  "old_resource_helper_and_eight_tests_unchanged": true,
+  "reviewed_source": true,
+  "focused_host_tests": 14,
+  "android_runtime_accepted": false,
+  "observed_utc": "2026-10-20T13:58:09.322875+00:00",
+  "previous_unsubmitted_head": "b8988c576c356f340511bde5b4e03e221a2021e4",
+  "previous_unsubmitted_branch_preserved": "contrib/pr-lazy-feedback",
+  "previous_source_warning_fixed_without_suppression": true,
+  "original_split_head": "3912fb23aced49da94cee6e3c59b3a9585da779b",
+  "original_split_preserved": true,
+  "delta_since_original_split": "Add main-thread speech dispatch and lifecycle generation invalidation; retain the original resource helper, its eight tests and the TTS manifest query unchanged.",
+  "old_feedback_review_issue": {
+    "trigger": "CommonKeyboardActionListener.onText posts non-ASCII/action commits to the Rime lifecycle Default dispatcher, reaching InputFeedbackManager.textCommitSpeak from a worker.",
+    "failure": "The original lazy owner assumed only one thread. A worker still creating the resource lets a concurrent UI acquire return null and clear pending speech.",
+    "reproduction_scope": "A controlled JVM fixture uses the production FeedbackResource and an explicit model of the Manager null-resource branch; not an Android engine reproduction.",
+    "fix": "Both speech entry points dispatch before preference reads or text conversion; pending and resource ownership stay on main. Generation checks reject feedback queued before init/start/finish/destroy.",
+    "limit": "Does not associate existing service commit jobs with editor sessions; only the new feedback dispatch queue is invalidated."
+  },
+  "verified_remote_sha": "e7e63932683dfcc985cc88601f995968b8fc50b4",
+  "fork_commit_ci_run": 39435037065,
+  "application_unit_run": 39435068756,
+  "control_source_sha": "904ec5235deb36757f8a842ef46c7f91248d31dd",
+  "independent_review": {
+    "initial_source_report_sha256": "0018522c0687d0a4ec7ea3f8f51e99b06440b3d019f06fe956ef637f4492d1ea",
+    "initial_source_head": "b8988c576c356f340511bde5b4e03e221a2021e4",
+    "five_other_source_files_unchanged": true,
+    "single_test_line_delta_reviewed": true,
+    "delta": "Explicit checkNotNull(requests.poll()) before invoking the one queued callback",
+    "old_test_sha256": "96b8990153774da572608bd6b5519e1c9b01a696146bfeb5746ce7dc944600f7",
+    "new_test_sha256": "6de6186dbb050dc03ad8f07f01d43e59de2e5f8813f52a21661556f0832c03f3",
+    "actual_android_playback_accepted": false
+  },
+  "prior_submission_blocked": {
+    "source_head": "b8988c576c356f340511bde5b4e03e221a2021e4",
+    "branch_preserved": "contrib/pr-lazy-feedback",
+    "application_unit_run": 39433948230,
+    "tests_passed": 315,
+    "new_test_compiler_warning": 1,
+    "pr_created": false,
+    "native_ci_superseded_cancel_requested": true
+  },
+  "pending_validation": [
+    "Four-OS Commit build results",
+    "Android Looper/TTS/SoundPool playback",
+    "Lint and Release validation",
+    "Measured memory savings"
+  ],
+  "application_tests_verified": 315,
+  "application_new_w_prefix_diagnostic_count": 0,
+  "global_warning_free": false
+}

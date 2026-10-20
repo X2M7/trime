@@ -66,3 +66,16 @@ execute Android ART or Rime callbacks. Baseline and fixed outputs remain distinc
 `remote-preservation.json` and `upstream-submissions.json` retain their original
 capture-time state. Current status is in the main contribution index and later
 receipts linked above; old snapshots are not rewritten as present outcomes.
+
+## Feedback resource submission
+
+[lazy-feedback-focused-host.json](lazy-feedback-focused-host.json) records 14
+production-helper cases (the same cases rerun after the nullability correction),
+strict helper/test Kotlin compilation and focused formatting. The Manager is only
+style-checked in that fixture. [The final exact-source application run](lazy-feedback-application-jvm-final.json)
+separately compiles the application and passes all 315 JVM cases at `e7e63932`.
+Its 301 baseline cases are preserved and the 14 added labels match source.
+The original [315-test run with one new compiler diagnostic](lazy-feedback-application-jvm-initial.json)
+is retained as a blocked submission attempt; passing tests alone was insufficient.
+The final new diagnostic is gone. Existing build-logic/tool warnings remain.
+Neither helper nor full JVM tests establish actual Android TTS/SoundPool playback.

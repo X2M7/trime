@@ -1,0 +1,92 @@
+{
+  "schema": "lazy-feedback-focused-host/v1",
+  "passed": true,
+  "process_exit_code": 0,
+  "actual_executed_tasks": 6,
+  "actual_totals": {
+    "tests": 14,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "suites": [
+    {
+      "path": "build/test-results/test/TEST-com.osfans.trime.ime.keyboard.FeedbackRequestDispatcherTest.xml",
+      "sha256": "f1d35b2bf291a26db99d3f28492f1eef6e0e0118a9439a11bc9505f93189a577",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        "a request already on the owner runs immediately without posting",
+        "a real worker queues feedback without touching its owner state",
+        "a lifecycle change drops old queued work while accepting a new request",
+        "invalidation also rejects a worker delayed before its post reaches the queue",
+        "worker speech requests retain the latest text until their resource becomes ready",
+        "a queued old request cannot allocate a resource after destruction and reinitialization"
+      ]
+    },
+    {
+      "path": "build/test-results/test/TEST-com.osfans.trime.ime.keyboard.FeedbackResourceTest.xml",
+      "sha256": "8ff08e7e9f7eac1cbb62611583835686d2c9ac02856818dd4ac39e9c8a20e671",
+      "tests": 8,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        "disabled feedback and initialization alone allocate no resources",
+        "the first enabled request creates once and waits for readiness",
+        "an immediate callback is delivered only after the factory returns its resource",
+        "callbacks from a destroyed pending resource cannot ready its replacement",
+        "a failed initialization releases once and does not retry on every key",
+        "factory exceptions do not strand an attempt or trigger an automatic retry loop",
+        "an immediate initialization failure releases only after the factory returns",
+        "destroying during creation releases the returned resource without publishing it"
+      ]
+    }
+  ],
+  "source_bindings": [
+    {
+      "source": "app/src/main/java/com/osfans/trime/ime/keyboard/FeedbackResource.kt",
+      "copied_to": "src/main/kotlin/com/osfans/trime/ime/keyboard/FeedbackResource.kt",
+      "sha256": "04a76a74f1c69bc1a290df793acb3f3f462ff6034eada9f52a1102fb89de9ad2"
+    },
+    {
+      "source": "app/src/main/java/com/osfans/trime/ime/keyboard/FeedbackRequestDispatcher.kt",
+      "copied_to": "src/main/kotlin/com/osfans/trime/ime/keyboard/FeedbackRequestDispatcher.kt",
+      "sha256": "a6a3eb4ca70bf36fb74569d9ddcaa0141cc85a6dbde78190ecb46fd242fe1773"
+    },
+    {
+      "source": "app/src/test/java/com/osfans/trime/ime/keyboard/FeedbackResourceTest.kt",
+      "copied_to": "src/test/kotlin/com/osfans/trime/ime/keyboard/FeedbackResourceTest.kt",
+      "sha256": "b5e720f6895b2c1c512f850f8b21025365174bfc707e093e0f7c73ff60fd4661"
+    },
+    {
+      "source": "app/src/test/java/com/osfans/trime/ime/keyboard/FeedbackRequestDispatcherTest.kt",
+      "copied_to": "src/test/kotlin/com/osfans/trime/ime/keyboard/FeedbackRequestDispatcherTest.kt",
+      "sha256": "6de6186dbb050dc03ad8f07f01d43e59de2e5f8813f52a21661556f0832c03f3"
+    },
+    {
+      "source": "app/src/main/java/com/osfans/trime/ime/keyboard/InputFeedbackManager.kt",
+      "copied_to": "style-only/InputFeedbackManager.kt",
+      "sha256": "fcf4c120e90ef54fbbd92428500c18ae933ca3b5028d7c7e52caad4eb3a24beb"
+    }
+  ],
+  "strict_kotlin_all_warnings_as_errors": true,
+  "spotless_ktlint": "1.8.0",
+  "kotlin": "2.3.21",
+  "kotest": "6.0.7",
+  "jdk": 17,
+  "jvm_target": 11,
+  "editorconfig_matches_submission": true,
+  "original_eight_resource_tests_preserved": true,
+  "manager": "style-only in this fixture; application compilation is separate",
+  "known_tool_diagnostics": [
+    "Gradle Configuration.setVisible(boolean) deprecation from Spotless retained"
+  ],
+  "raw_log_sha256": "c4ef6ae7b97d24b21f5774d515766ca56dd49f1e4d90f1bf321be91251a4308c",
+  "android_looper_tts_soundpool_runtime_acceptance": false,
+  "raw_log": "checks2.log",
+  "source_warning_fix": "Explicit checkNotNull on the single queued task returned by poll; prior host and cloud records retained.",
+  "repeat_of_same_fourteen_cases_not_additional_cases": true
+}

@@ -117,6 +117,22 @@ JNI 聚焦测试在同一 mock 调用环境转换 2,048 个元素四次：原实
 
 备用回车模块的动作决策未发现新增问题，但同编辑器 `restartInput` 后的键面标签重绘仍需实际复现；本轮不提交回车模块，也不把纯 helper 单测当作动态 UI 验收。
 
+## 当前复核与下一项反馈资源
+
+[三项现有 PR 的只读快照](checks/current-pr-build-feedback-20261020.json)确认 #2176／#2177／#2178 仍为 Open Draft，没有新增 review、评论或内联问题；对应 fork 与上游共 24/24 个 OS 构建 job 均成功。这是构建和反馈状态复核，不是新增手测，也不是零警告证明；上面原有运行中快照保留其历史范围。
+
+新的 [contrib/pr-feedback-resources](https://github.com/X2M7/trime/tree/contrib/pr-feedback-resources) 提交为 `e7e63932`，直接基于 `144f6111`，一个提交、六个文件，仅涉及按需反馈资源、线程与生命周期以及相应测试。原 `3912fb23` 分支继续保留；其资源 helper、原八项测试与 Manifest query 全字节未变。[源码与审阅绑定](checks/lazy-feedback-submission-source.json)记录了精确 SHA 和单主题范围。
+
+提交前复核发现，`onText` 的非 ASCII／action 提交可能从 Rime 的后台作用域进入朗读，而原 lazy owner 假定主线程访问。受控宿主模型复现了创建尚未返回时 UI 请求清空 pending 的交错；它不是 Android TTS 设备复现。新实现让两个朗读入口在读取偏好和转换内容之前分发到主线程，并在 init／start／finish／destroy 时淘汰此前排队的反馈请求。它只隔离新反馈队列，没有顺带改造 service 的历史提交任务或编辑器会话。
+
+[本轮聚焦检查](checks/lazy-feedback-focused-host.json)实际执行了原 8 项资源测试与新增 6 项真实 worker／受控队列测试，14/14 通过、0 失败／错误／跳过。纯 helper／测试的 Kotlin 严格编译无警告，Manager 在该宿主工程只做格式检查；独立源码复核未发现阻止本项 Draft 的问题。Spotless 的 `Configuration.setVisible(boolean)` 工具弃用提示保留，不能称完整工具链无警告。
+
+初提交 `b8988c57` 的[315 项完整应用测试实际通过](checks/lazy-feedback-application-jvm-initial.json)，但云端为新增测试的 `poll()` 可空调用报告一条编译警告，因此没有提交 PR。已改用 `checkNotNull` 保留必须执行回调的断言，最终一提交 `e7e63932` 的其余五个文件均与初提交一致；旧源码分支和所有失败验收原件保留，既不抑制诊断也不把首轮测试通过记成警告已消除。修正后的宿主相同 14 项再次执行通过，不累加为 28 个独立用例。宿主 JDK17 与云端 JDK25 等构建上下文不同，不能以轻量结果代替最终应用构建。
+
+最终精确提交的[315 项完整应用 JVM 验证](checks/lazy-feedback-application-jvm-final.json)实际通过，21 组 XML 的失败／错误／跳过均为 0；301 项基准完整保留，新增 14 项与最终源码标签一致。官方附件的大小／SHA／CRC、源码与控制提交身份、20 个递归 pin 及实际非缓存任务均已独立核对。新增空值调用诊断已消失，结构化 build-logic `srcDirs` 与既有工具警告仍与基准相同，不是整个工程零警告。[四系统 Debug 构建](https://github.com/X2M7/trime/actions/runs/39435037065)仍在运行。Android Looper、真实 TTS／SoundPool 播放、Lint、Release 和内存收益仍未验收；初始化失败的恢复仍需 destroy/init，未加载的按键音不补播，关闭偏好也不新增即时资源回收承诺。本轮不发布 APK。
+
+日志进程候选的再次审阅还在受控 JVM fixture 中复现了 destroy 抛错而 stdout 继续阻塞、以及 IO 池被占满时 watcher 延后两项边界；没有据此认定 Android 应用已经发生无限挂起。它仍未提交上游，不能把退出轮询的一秒窗口写成整个取消过程的硬上限，后续先补闭环再推进。
+
 ## 关联 issue 的审慎匹配
 
 [匹配记录](checks/issue-match.json) 保留六个原主题的只读检索结论与相近讨论，以及新主题的范围说明；未确认可直接关闭的精确开放 issue，不填写虚假的 `Fixes`/`Closes`。这是关键词和部分历史讨论的有限检索，不是全库不存在问题的证明；新的 JNI 线程主题也不冒用其他 JNI 崩溃报告。
