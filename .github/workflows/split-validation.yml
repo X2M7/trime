@@ -21,8 +21,8 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - scope: pr-t9-input
-            sha: 117468018fd757d3abddb2d3f8e055759e01152f
+          - scope: pr-logcat-reliability
+            sha: 7da03b4ba5df97ac7a422ac9dc4947f1e40c2cc6
     env:
       CI_NAME: Split validation CI
       BUILD_ABI: x86_64
@@ -202,6 +202,7 @@ jobs:
           PY
 
       - name: Check production JNI Unicode transport in a real host VM
+        if: matrix.scope == 'pr-t9-input'
         shell: bash
         run: |
           set -euo pipefail
