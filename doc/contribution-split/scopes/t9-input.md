@@ -1,6 +1,8 @@
 # 九键拼音输入：一个可用的功能闭环
 
-状态：核心实现已推送 [contrib/pr-t9-input](https://github.com/X2M7/trime/tree/contrib/pr-t9-input)，最终源码 `649c07559cfbc1e494835465e71277fe8dc8051c`，直接基于上游 `144f6111`。累计两个提交、52 个文件，新增 3,536 行、删除 74 行；这是一个九键功能，相关实现、调用方、资产和测试一起提交。初提交的控件颜色名被 Android `View.foreground` 遮蔽而编译失败，已用后续提交修正，失败原件与已取消的初轮 CI 保留。[源码及排除范围](../checks/t9-input-submission-source.json)绑定完整文件和 20 个未改动的递归子模块。本文只属于 fork 拆分索引，不进入应用补丁。
+状态（2026-10-21）：核心分支 [contrib/pr-t9-input](https://github.com/X2M7/trime/tree/contrib/pr-t9-input) 已更新至 `5b6d1df4dc1a553fbe513c729aade7e9b3e4cdc7`，上游 [#2183](https://github.com/osfans/trime/pull/2183) 保持 Draft。当前直接基于上游 `144f6111`，累计三个提交；61 files changed, 4029 insertions(+), 138 deletions(-)。本轮修复了生僻字／表情经 JNI 传输损坏及由此产生的预编辑长度不一致，并清理桥接代码的 signedness、return-move 和结构体初始化诊断。只整合一个九键功能及其直接字符串传输依赖，未加入 fork 发布配置。
+
+[本轮检查记录](../checks/t9-input-unicode-warning-repair.json)逐项绑定最终 Git blob；旧 `649c0755` 和更早轮次的失败／通过记录保留，不能作为新提交已经完成全部 Android 验收的证明。
 
 ## 这一项解决什么
 
@@ -34,14 +36,14 @@
 
 ## 当前验收边界
 
-[本地完整应用 JVM 检查](../checks/t9-input-local-application-jvm.json)实际通过 328 项／25 组，失败、错误、跳过均为 0，主 Kotlin／Java 编译与 SpotlessCheck 通过。该任务启动于初 SHA 加未提交的颜色名修正，后续提交的全部源文件与实测输入全字节一致；生成的 BuildConfig 最初仍绑定 `fa46e4c4`，因此它不能冒充最终提交的干净云构建。空的 ignored `app/prebuilt` 仅用于跳过本地原生配置，不证明 APK 或 JNI 可用。初轮 Metaspace 容量警告后的受控停止和第二轮真实编译失败均保留，不作为通过。
+- 8 个 JNI 翻译单元在 NDK 28、x86_64／API21 的严格编译中均退出 0、日志 0 字节；依赖头按系统头处理，不把它表述为修复依赖本身的警告。编译时的冻结文件均与最终提交 Git blob 相同。
+- 实际 HotSpot17、`-Xcheck:jni`、128 MiB 堆的生产字符串／数组检查通过 115 条断言；原版本对照在补充平面汉字处确定失败。覆盖非法 UTF-8、孤代理项、合法前后缀、嵌入 NUL、空值、异常文本和原异常身份。真实固定 Rime 引擎提交前缀“𠮷 426”的 Java 文本与 UTF-16 长度也核对正确。测试附于应用补丁，可独立复跑。
+- 最终干净提交重新执行九键宿主测试：四进程 376／5／359／3，共 743 条断言通过，六个编译／运行命令退出 0。沿用上轮未修改的 `7bc3fb` 宿主引擎库，不称本轮重新构建引擎，不把断言数混作 JVM 用例数。
+- 上轮精确 `649c0755` 的 [328 项／25 组应用 JVM 检查](../checks/t9-input-application-jvm.json)仍为历史实测；本轮 Kotlin／Java、资源、既有测试和构建配置的 Git 树全相同。新精确提交的[云任务已核验通过](../checks/t9-input-fixed-source-ci.json)：328 项／25 组应用 JVM 用例及 JDK25 实际 VM 的 115 条 JNI 断言通过；两者单列，官方附件 SHA／CRC、原 XML、非缓存任务、20 个 pin 及原失败对照均已核对。
+- 上一源码两端共六个 Debug 平台任务成功，两项分别因 ARM runner 容量不足及 NDK 准备阶段超时未完成。新源码的四平台 Debug/native CI 重新触发，尚不记作全部通过。
 
-[最终精确源码的云端完整应用 JVM 验证](../checks/t9-input-application-jvm.json)已经独立核验通过：328 项／25 组，0 失败／错误／跳过。官方附件大小／SHA／CRC、原 XML、实际非缓存测试任务、源码身份和 20 个递归 pin 均核对。原 301 项仅有一处源证实的 ThemeGolden 名称变更（50→53），应用该明确重命名后没有缺失；新增 27 项与六个测试类匹配。没有新增应用源码诊断，已有 build-logic `srcDirs` 与 101 条宽口径工具诊断候选保留，不能称整个工程零警告。
+现有构建工具／依赖警告仍须按各自修复范围处理；上面的零诊断仅限记录的 JNI 编译和真实 VM 检查。ART／JNI 完整快照、真实输入连接、界面、Lint、Release、物理设备和性能验收仍未完成。既有输出分配失败与一般 native OOM 异常链未在本轮重构，不能宣称所有运行风险消除。
 
-[原生宿主检查](../checks/t9-input-native-host.json)也已实际通过：重新编译并链接未修改的固定 `7bc3fb` 引擎，不加载预测或隐私补丁；四个原生进程共执行 743 条断言检查（376／5／359／3），全部退出 0，包含各自第二进程重开用户词库的规范学习记录检查。这不是 743 个 JVM 用例，也不能证明正式词库排名。生产 `t9.cc` 和 `t9_assist.cc` 严格 Werror 编译无诊断；完整 JNI 对照仍有与基准相同的六条 signedness／pessimizing-move 诊断，没有扩大本功能清理范围。宿主 UTF-16 计数检查不代表实际 JNI 字符串传输：既有 `JString` 的 Modified UTF-8 边界保留。宿主原生运行设置了测试日志阈值，因此也不能将断言通过写成所有运行警告消除。原配置失败、并发调整和内存保护中断原件保留；最终自有构建／测试进程全部退出，临时空 prebuilt 目录已移除。
+Android 仍须实测数字输入、拼音筛选／锁定／撤销／取消、汉字选词、字面数字与符号往返、Unicode 光标、切换／重启编辑器以及旧操作拒绝。未验证前保持 Draft。
 
-[四系统 Debug/native 构建](https://github.com/X2M7/trime/actions/runs/39467034017)仍在运行，当前不提前记通过。JNI/ART、真实输入连接、界面、Lint、Release 和物理设备性能验收仍未完成。
-
-下一步核对四系统构建，并进行真实 Android 操作验收。Android 仍须实测数字输入、拼音筛选/锁定/撤销/取消、汉字选词、字面数字与符号往返、Unicode 光标、切换/重启编辑器以及旧操作拒绝。未验证前保持 Draft，不承诺零警告或无剩余缺陷。
-
-英文提案见 [PR 草稿](../drafts/t9-input.md)。已创建并独立读回 [#2183 Draft](https://github.com/osfans/trime/pull/2183)，[提交回执](../checks/t9-input-upstream-submission.json)核对了目标、正文、两个提交和全部 52 个 Git blob。
+英文提案见 [PR 草稿](../drafts/t9-input.md)，实际上游提案为 [#2183](https://github.com/osfans/trime/pull/2183)。

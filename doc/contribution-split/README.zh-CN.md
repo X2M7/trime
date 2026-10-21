@@ -298,14 +298,10 @@ git submodule update --init --recursive
 
 ## 核心模块：九键拼音输入
 
-已推送 [contrib/pr-t9-input](https://github.com/X2M7/trime/tree/contrib/pr-t9-input)，最终源码 `649c0755`，基于上游 `144f6111`。这次按完整输入行为组织：九键方案、两套主题布局、原生拼音锁定与撤销、筛选控件、预编辑光标、数字／符号页及相关测试一起提交，共 52 个文件、两个提交。没有继续把核心功能拆成单个 helper PR；预测、隐私、词库管理和 fork 发布配置仍是独立范围。[完整模块边界与验证说明](scopes/t9-input.md)及[精确源码清单](checks/t9-input-submission-source.json)可供审阅。
+核心分支 [contrib/pr-t9-input](https://github.com/X2M7/trime/tree/contrib/pr-t9-input) 已更新到 `5b6d1df4`，累计三个提交、61 个文件；上游 [#2183](https://github.com/osfans/trime/pull/2183) 保持 Draft。这是一个完整九键模块：方案、两套主题、原生拼音筛选／锁定／撤销、预编辑光标和数字／符号页一起交付，不继续按 helper 细拆。预测、隐私、词库管理和 fork 发布配置保持独立范围。
 
-[本地完整应用 JVM 测试](checks/t9-input-local-application-jvm.json)已实际通过 328 项／25 组，0 失败／错误／跳过，主 Kotlin／Java 与 SpotlessCheck 通过。它使用空 prebuilt 目录跳过本地 native，任务开始时的 BuildConfig 指向初提交；实测源文件与最终提交一致，但不能替代精确 SHA 的干净云构建。初轮 Metaspace 警告受控停止、控件颜色属性遮蔽导致的编译失败和初轮取消 CI 原件保留，不作成功验收。
+本轮修复标准 UTF-8 与 JNI Modified UTF-8 混用造成的生僻字／表情损坏与预编辑长度不一致，以及字符串转换失败后的 native 副作用；清理 JNI 的 signedness、return-move 和 aggregate-init 诊断。[完整模块边界](scopes/t9-input.md)及[本轮结果与 Git blob 绑定](checks/t9-input-unicode-warning-repair.json)明确对应最终提交。
 
-[最终精确提交的云端应用 JVM 验证](checks/t9-input-application-jvm.json)已核验通过 328 项／25 组，0 失败／错误／跳过，27 项新增与源码一致，原回归仅有一项精确标题重命名；没有新增应用源码诊断，既有工具警告保留。[原生宿主实测](checks/t9-input-native-host.json)重新编译未修改的固定引擎，四个进程共执行 743 条断言全部通过，单列于 JVM 用例之外，并验证重开用户词库后的规范拼写记录。JNI 的六条基准诊断、宿主 CMake 诊断及 Modified UTF-8 传输边界保留；不能称整个工程或全部运行日志零警告。
+8 个 JNI 翻译单元的 NDK28 x86_64/API21 严格编译无诊断；真实 HotSpot17 checked-JNI 的 115 条检查通过，原版本对照确定失败。最终干净提交另重跑四个原生进程、共 743 条断言通过，复用此前未修改的固定引擎库，未把它写成本轮重建引擎。上轮精确 `649c0755` 的 328 项应用 JVM 结果保留，源码／资源和既有 JVM 测试树未变；[新精确源码云端检查](checks/t9-input-fixed-source-ci.json)也已核验通过：328 项应用 JVM 用例／25 组及 JDK25 的 115 条 JNI 断言通过，官方附件、原 XML、实际执行任务、源码和 20 个 pin 均已核对。
 
-[四系统 Debug/native CI](https://github.com/X2M7/trime/actions/runs/39467034017)仍在运行。实际 Android 布局、触摸、编辑器和 Unicode JNI 传输、Lint／Release 尚未验收。本轮只推送核心源码与清单，不发布 APK或将其记为稳定版；后续按完整功能继续，不回到逐行拆分。
-
-已创建上游 [#2183 Draft](https://github.com/osfans/trime/pull/2183)，[创建及独立读回](checks/t9-input-upstream-submission.json)确认目标 `osfans:develop`、源 `X2M7:contrib/pr-t9-input` 的 `649c0755`、全部 52 个 Git blob、两个提交和正文一致，未重复创建 PR。它是一个完整九键模块，保留 APK／Android 待验收状态；原 #2170 不重开。
-
-[17:43 UTC 两端构建快照](checks/t9-input-platform-ci-current.json)：fork 的 [39467034017](https://github.com/X2M7/trime/actions/runs/39467034017) 与上游 PR 的 [39468304588](https://github.com/osfans/trime/actions/runs/39468304588) 均绑定 `649c0755`，八个 OS job 尚待完成，当前无已完成失败。这不是八项通过；没有重跑、改为 Ready 或发布 APK。
+新 [fork Debug/native](https://github.com/X2M7/trime/actions/runs/39526931659)、[上游 PR Debug/native](https://github.com/osfans/trime/actions/runs/39526937528) 仍在运行；[完整应用 JVM／真实 VM](https://github.com/X2M7/trime/actions/runs/39526955308)已通过，分别核对新原件，不将未完成的 Debug 平台记为通过。既有构建工具／依赖警告、一般 OOM 异常链及 Android ART／界面／输入连接／Lint／Release 验收限制保留。原 #2170 不重开，本轮不发布 APK 或稳定版。

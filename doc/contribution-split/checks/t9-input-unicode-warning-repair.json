@@ -1,0 +1,866 @@
+{
+  "schema": "split-t9-unicode-warning-repair/v1",
+  "recorded_utc": "2026-10-21T01:23:34.140850+00:00",
+  "source_sha": "5b6d1df4dc1a553fbe513c729aade7e9b3e4cdc7",
+  "previous_sha": "649c07559cfbc1e494835465e71277fe8dc8051c",
+  "source_worktree_clean": true,
+  "scope": "Nine-key PR #2183; Unicode bridge and direct callers, without fork release policy or unrelated features.",
+  "repairs": [
+    "Standard UTF-8/UTF-16 JNI transport for supplementary Hanzi and emoji",
+    "Malformed sequence replacement retaining valid prefix/suffix",
+    "Input conversion failures return before native side effects and preserve Java exceptions",
+    "Two signed comparisons, six pessimizing return moves and four aggregate initializer sites"
+  ],
+  "source_diff_from_upstream": "61 files changed, 4029 insertions(+), 138 deletions(-)",
+  "strict_compilation": {
+    "actual_compilation_passed": true,
+    "all_eight_units_actual_exit_zero": true,
+    "all_eight_compiler_logs_empty": true,
+    "strict_flags": [
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-Wno-unused-parameter"
+    ],
+    "target": "x86_64-none-linux-android21",
+    "units": [
+      {
+        "unit": "config.cc",
+        "exit_code": 0,
+        "source_sha256": "5f629dcd42bbe47f025f9bb2fa3f0531bf56d5e46f9289057ddcf82e00211c98",
+        "object_sha256": "f73a0f376d48caee6dd22d45b0c394b9ff431da2b7328ebe2bc9f3b7485fe10d",
+        "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "log_bytes": 0
+      },
+      {
+        "unit": "frontend.cc",
+        "exit_code": 0,
+        "source_sha256": "4b0a6f76b7e59098fe4929ba8982b7ca15d00c0a0d21189ddaf3c798172e5882",
+        "object_sha256": "a31918ffe9934e2461d5db08d3dc83c242670e3697afdff9dc0cead85071a03a",
+        "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "log_bytes": 0
+      },
+      {
+        "unit": "key.cc",
+        "exit_code": 0,
+        "source_sha256": "e7d5e8c5a6fd205c8a399abd954b17efc2be87ce71f557b701d4971e8ae6aeff",
+        "object_sha256": "dd5717bb43db8b2e6d8bfbdb6bf38672a2b0422579dcbf4ed71bfeda8427a4aa",
+        "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "log_bytes": 0
+      },
+      {
+        "unit": "levers.cc",
+        "exit_code": 0,
+        "source_sha256": "10b47921575f89214126a0803a50d525d3eebe66e507f6904991de93e5543eb7",
+        "object_sha256": "759382b923c834024227eef59595010c9617dd902e1459cf9c6e141be359924d",
+        "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "log_bytes": 0
+      },
+      {
+        "unit": "opencc.cc",
+        "exit_code": 0,
+        "source_sha256": "f9a8bcfd34e223181bc9756ed39211948199f502dc323a498910d214ac4765a0",
+        "object_sha256": "a210df6134efe44205799aa83597ad662bacbbed35cf729c69e4cf624939fcdf",
+        "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "log_bytes": 0
+      },
+      {
+        "unit": "rime_jni.cc",
+        "exit_code": 0,
+        "source_sha256": "8698012656ee6664eb3fbc9c9a54375449e7f21dfa96c83fd84294b9c4fa384d",
+        "object_sha256": "ac099dbdac9b752a317bd347af6a93115f8727347763223ba0ecb88dad9cd2c8",
+        "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "log_bytes": 0
+      },
+      {
+        "unit": "t9.cc",
+        "exit_code": 0,
+        "source_sha256": "af98c65673df53c7ed24bdac1576b89b1c674e2a32fc52a84ab9681635a71725",
+        "object_sha256": "a3ccddb937379f40f4ad1bf95ec59b3e0bcb6e46ac3abf19a6684bc1b2adffae",
+        "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "log_bytes": 0
+      },
+      {
+        "unit": "t9_assist.cc",
+        "exit_code": 0,
+        "source_sha256": "6a4fc0f4af754f0dd4c099e3b60a867ffcc7d94b59be8bb5c077c56d76952fc4",
+        "object_sha256": "97ba99f604df2c857c31864b4e074bd6b930a61060268028d3049e482a37e279",
+        "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "log_bytes": 0
+      }
+    ]
+  },
+  "strict_input_binding": {
+    "source_report": "jni-strict/attempt3/result.json",
+    "source_report_sha256": "243dc7f60f3825ba73fb7371aae0e969d359a5e0da39ab0bcd32b235b2080a2d",
+    "original_report_source_head": "649c07559cfbc1e494835465e71277fe8dc8051c",
+    "original_worktree_dirty": true,
+    "all_15_inputs_match_commit": true,
+    "bindings": [
+      {
+        "path": "app/src/main/jni/librime_jni/config.cc",
+        "git_blob_oid": "8750efaa01fc0955faf4541bd0c23f23bbf6c60f",
+        "bytes": 4410,
+        "sha256": "5f629dcd42bbe47f025f9bb2fa3f0531bf56d5e46f9289057ddcf82e00211c98",
+        "recorded_sha256": "5f629dcd42bbe47f025f9bb2fa3f0531bf56d5e46f9289057ddcf82e00211c98",
+        "matches_recorded_input": true
+      },
+      {
+        "path": "app/src/main/jni/librime_jni/frontend.cc",
+        "git_blob_oid": "e2cfbdf04c74b36c867f0aa2a0b5634371b38bdd",
+        "bytes": 413,
+        "sha256": "4b0a6f76b7e59098fe4929ba8982b7ca15d00c0a0d21189ddaf3c798172e5882",
+        "recorded_sha256": "4b0a6f76b7e59098fe4929ba8982b7ca15d00c0a0d21189ddaf3c798172e5882",
+        "matches_recorded_input": true
+      },
+      {
+        "path": "app/src/main/jni/librime_jni/frontend.h",
+        "git_blob_oid": "e56ae524533b7e2205c9ca0a1d5a62a57a6a61c8",
+        "bytes": 177,
+        "sha256": "730b45d08afbbfe7b2d31f89e0bf5673b87a9131e92ce6d636786d2e803ec277",
+        "recorded_sha256": "730b45d08afbbfe7b2d31f89e0bf5673b87a9131e92ce6d636786d2e803ec277",
+        "matches_recorded_input": true
+      },
+      {
+        "path": "app/src/main/jni/librime_jni/helper-types.h",
+        "git_blob_oid": "34c30eb242957c1362eca78439a4fa0b63d80415",
+        "bytes": 4595,
+        "sha256": "a3b5cc0ff5aa795af583edf7eb619a279d1f8a544621d74ef5ccd4a62989bc15",
+        "recorded_sha256": "a3b5cc0ff5aa795af583edf7eb619a279d1f8a544621d74ef5ccd4a62989bc15",
+        "matches_recorded_input": true
+      },
+      {
+        "path": "app/src/main/jni/librime_jni/jni-utils.h",
+        "git_blob_oid": "48010ed43bc11e20c91ee6721e957ec511c0fb64",
+        "bytes": 8970,
+        "sha256": "3c82d877bd5ac0d8fce43d76730af20218f774bd5aa4de863cf54eaf79131fd0",
+        "recorded_sha256": "3c82d877bd5ac0d8fce43d76730af20218f774bd5aa4de863cf54eaf79131fd0",
+        "matches_recorded_input": true
+      },
+      {
+        "path": "app/src/main/jni/librime_jni/key.cc",
+        "git_blob_oid": "6954a280b34a45878c206f895225ee935f73794c",
+        "bytes": 1428,
+        "sha256": "e7d5e8c5a6fd205c8a399abd954b17efc2be87ce71f557b701d4971e8ae6aeff",
+        "recorded_sha256": "e7d5e8c5a6fd205c8a399abd954b17efc2be87ce71f557b701d4971e8ae6aeff",
+        "matches_recorded_input": true
+      },
+      {
+        "path": "app/src/main/jni/librime_jni/levers.cc",
+        "git_blob_oid": "fbc26abe4a8249f2b3ff6fd4e479164d6f0ee4fe",
+        "bytes": 5348,
+        "sha256": "10b47921575f89214126a0803a50d525d3eebe66e507f6904991de93e5543eb7",
+        "recorded_sha256": "10b47921575f89214126a0803a50d525d3eebe66e507f6904991de93e5543eb7",
+        "matches_recorded_input": true
+      },
+      {
+        "path": "app/src/main/jni/librime_jni/objconv.h",
+        "git_blob_oid": "6d796ee02229ba73bcbd02d49f6315a74670abfa",
+        "bytes": 5571,
+        "sha256": "25aa29e27e20a90e60def6f11b0977482bca1cc6ec9f60c485ce7c7aa39b482f",
+        "recorded_sha256": "25aa29e27e20a90e60def6f11b0977482bca1cc6ec9f60c485ce7c7aa39b482f",
+        "matches_recorded_input": true
+      },
+      {
+        "path": "app/src/main/jni/librime_jni/opencc.cc",
+        "git_blob_oid": "aab915b3e7b5a47120e465d7fd83e99740dafed1",
+        "bytes": 1519,
+        "sha256": "f9a8bcfd34e223181bc9756ed39211948199f502dc323a498910d214ac4765a0",
+        "recorded_sha256": "f9a8bcfd34e223181bc9756ed39211948199f502dc323a498910d214ac4765a0",
+        "matches_recorded_input": true
+      },
+      {
+        "path": "app/src/main/jni/librime_jni/rime_jni.cc",
+        "git_blob_oid": "d879b79746ce9d6854d6aeb9d953e69a01e799bc",
+        "bytes": 22416,
+        "sha256": "8698012656ee6664eb3fbc9c9a54375449e7f21dfa96c83fd84294b9c4fa384d",
+        "recorded_sha256": "8698012656ee6664eb3fbc9c9a54375449e7f21dfa96c83fd84294b9c4fa384d",
+        "matches_recorded_input": true
+      },
+      {
+        "path": "app/src/main/jni/librime_jni/session.h",
+        "git_blob_oid": "307bf2f941e257b137445163ae8db1f628ee12a0",
+        "bytes": 480,
+        "sha256": "c63ab01720af175a4edbbb76ec89948511da88771f2a067e6cbcf070930eafd0",
+        "recorded_sha256": "c63ab01720af175a4edbbb76ec89948511da88771f2a067e6cbcf070930eafd0",
+        "matches_recorded_input": true
+      },
+      {
+        "path": "app/src/main/jni/librime_jni/t9.cc",
+        "git_blob_oid": "1ec4b69e8a3cb30b9644f9fba892014ef44e8026",
+        "bytes": 22301,
+        "sha256": "af98c65673df53c7ed24bdac1576b89b1c674e2a32fc52a84ab9681635a71725",
+        "recorded_sha256": "af98c65673df53c7ed24bdac1576b89b1c674e2a32fc52a84ab9681635a71725",
+        "matches_recorded_input": true
+      },
+      {
+        "path": "app/src/main/jni/librime_jni/t9.h",
+        "git_blob_oid": "1007103593379fcd912eaf30c0a51b1c45f4ef9e",
+        "bytes": 2150,
+        "sha256": "718a46338d5047a31830e0b818f5f39566751001b8325557d6f7dbf71ea27f78",
+        "recorded_sha256": "718a46338d5047a31830e0b818f5f39566751001b8325557d6f7dbf71ea27f78",
+        "matches_recorded_input": true
+      },
+      {
+        "path": "app/src/main/jni/librime_jni/t9_assist.cc",
+        "git_blob_oid": "91981861e78ffc863961fccbb09511a0396106ca",
+        "bytes": 5392,
+        "sha256": "6a4fc0f4af754f0dd4c099e3b60a867ffcc7d94b59be8bb5c077c56d76952fc4",
+        "recorded_sha256": "6a4fc0f4af754f0dd4c099e3b60a867ffcc7d94b59be8bb5c077c56d76952fc4",
+        "matches_recorded_input": true
+      },
+      {
+        "path": "app/src/main/jni/librime_jni/t9_assist.h",
+        "git_blob_oid": "767df203b223cea5d3aa23a03a69eba0492d88d4",
+        "bytes": 792,
+        "sha256": "aaf2d49b85771fddf5167460e6c4dc6667a39841ee57f4e8674224ce40002229",
+        "recorded_sha256": "aaf2d49b85771fddf5167460e6c4dc6667a39841ee57f4e8674224ce40002229",
+        "matches_recorded_input": true
+      }
+    ]
+  },
+  "unicode_input_binding": {
+    "native_wrapper_binding": {
+      "source_report": "native-review/final-summary.json",
+      "source_report_sha256": "bdbd075785039bbf81a307c4a10d4ce9784fe4d652437868726bdbc964ab3c65",
+      "all_7_inputs_match_commit": true,
+      "bindings": [
+        {
+          "path": "app/src/main/jni/librime_jni/jni-utils.h",
+          "git_blob_oid": "48010ed43bc11e20c91ee6721e957ec511c0fb64",
+          "bytes": 8970,
+          "sha256": "3c82d877bd5ac0d8fce43d76730af20218f774bd5aa4de863cf54eaf79131fd0",
+          "recorded_sha256": "3c82d877bd5ac0d8fce43d76730af20218f774bd5aa4de863cf54eaf79131fd0",
+          "matches_recorded_input": true
+        },
+        {
+          "path": "app/src/main/jni/librime_jni/helper-types.h",
+          "git_blob_oid": "34c30eb242957c1362eca78439a4fa0b63d80415",
+          "bytes": 4595,
+          "sha256": "a3b5cc0ff5aa795af583edf7eb619a279d1f8a544621d74ef5ccd4a62989bc15",
+          "recorded_sha256": "a3b5cc0ff5aa795af583edf7eb619a279d1f8a544621d74ef5ccd4a62989bc15",
+          "matches_recorded_input": true
+        },
+        {
+          "path": "app/src/main/jni/librime_jni/objconv.h",
+          "git_blob_oid": "6d796ee02229ba73bcbd02d49f6315a74670abfa",
+          "bytes": 5571,
+          "sha256": "25aa29e27e20a90e60def6f11b0977482bca1cc6ec9f60c485ce7c7aa39b482f",
+          "recorded_sha256": "25aa29e27e20a90e60def6f11b0977482bca1cc6ec9f60c485ce7c7aa39b482f",
+          "matches_recorded_input": true
+        },
+        {
+          "path": "app/src/main/jni/librime_jni/rime_jni.cc",
+          "git_blob_oid": "d879b79746ce9d6854d6aeb9d953e69a01e799bc",
+          "bytes": 22416,
+          "sha256": "8698012656ee6664eb3fbc9c9a54375449e7f21dfa96c83fd84294b9c4fa384d",
+          "recorded_sha256": "8698012656ee6664eb3fbc9c9a54375449e7f21dfa96c83fd84294b9c4fa384d",
+          "matches_recorded_input": true
+        },
+        {
+          "path": "app/src/test/native/jni/unicode_test.cc",
+          "git_blob_oid": "d1ac8ea50785439213d4fa0b3984de5f5a69b7d9",
+          "bytes": 8104,
+          "sha256": "aa2e336a8bad5faa2e8f362fe11a35490fbdd9fbf4ff62617e9349a99f9a1da4",
+          "recorded_sha256": "aa2e336a8bad5faa2e8f362fe11a35490fbdd9fbf4ff62617e9349a99f9a1da4",
+          "matches_recorded_input": true
+        },
+        {
+          "path": "app/src/test/native/jni/run_unicode.py",
+          "git_blob_oid": "af4bdfc64bcc11946528d91bd7b1b1f9f9ccf2b2",
+          "bytes": 3980,
+          "sha256": "c64fc3bf2f21cdc315d5377c713e0bc9504d17737d2851bd603e9fe2183ff654",
+          "recorded_sha256": "c64fc3bf2f21cdc315d5377c713e0bc9504d17737d2851bd603e9fe2183ff654",
+          "matches_recorded_input": true
+        },
+        {
+          "path": "app/src/test/native/jni/README.md",
+          "git_blob_oid": "a3ba6e707a2fbfa758f3b8a2aa9732bd875b1482",
+          "bytes": 1593,
+          "sha256": "8ef16247a35016fe90abc2919a5685c9c2b19e22a94f3764a45ee4163845a824",
+          "recorded_sha256": "8ef16247a35016fe90abc2919a5685c9c2b19e22a94f3764a45ee4163845a824",
+          "matches_recorded_input": true
+        }
+      ]
+    },
+    "tests_rerun_by_this_binding": false
+  },
+  "real_jvm": {
+    "implementation": "HotSpot17",
+    "executed_assertions": 115,
+    "checked_jni": true,
+    "heap_mib": 128,
+    "baseline_runtime_exit": 1,
+    "fixed_runtime_exit": 0,
+    "fixed_compiler_and_stderr_bytes": 0,
+    "source_report_sha256": "bdbd075785039bbf81a307c4a10d4ce9784fe4d652437868726bdbc964ab3c65"
+  },
+  "controller_rerun": {
+    "exact_clean_source": "5b6d1df4dc1a553fbe513c729aade7e9b3e4cdc7",
+    "assertion_executions": 743,
+    "process_counts": [
+      376,
+      5,
+      359,
+      3
+    ],
+    "librime_git_sha": "7bc3fb0005a03aff1c086611e4d52bb7f6444fdd",
+    "reused_unmodified_engine_not_rebuilt_this_turn": true,
+    "librime_library_sha256": "31076e8e7dfc6c2a901ac68b8e592502ea50025bf0e95421449948f5a0968a00",
+    "all_six_compile_run_exit_zero": true,
+    "result_sha256": "9e6ab834033e6380e1c0045ea1ca202388455ae1ef3074662b7ea22e8388b857"
+  },
+  "unchanged_jvm_inputs": [
+    {
+      "scope": "Kotlin and Java application sources",
+      "pathspecs": [
+        "app/src/main/java"
+      ],
+      "unchanged": true,
+      "tracked_file_count": 254,
+      "changed_paths": [],
+      "tree_listing_sha256": "e38d3e5d3397039887362dadd43de440cbca3e75134581ebc5c5b6c17a0e35da"
+    },
+    {
+      "scope": "Application resources",
+      "pathspecs": [
+        "app/src/main/res"
+      ],
+      "unchanged": true,
+      "tracked_file_count": 81,
+      "changed_paths": [],
+      "tree_listing_sha256": "4f2fe28cc4f2f7df33756e31b73a0120f77da7af932ab34dda7a42530b2228aa"
+    },
+    {
+      "scope": "Bundled Rime/theme assets",
+      "pathspecs": [
+        "app/src/main/assets"
+      ],
+      "unchanged": true,
+      "tracked_file_count": 17,
+      "changed_paths": [],
+      "tree_listing_sha256": "d95713022f69b35170fb1e27cdc58dba15971acd4b91e72686e22ce7fa7013da"
+    },
+    {
+      "scope": "Application manifest",
+      "pathspecs": [
+        "app/src/main/AndroidManifest.xml"
+      ],
+      "unchanged": true,
+      "tracked_file_count": 1,
+      "changed_paths": [],
+      "tree_listing_sha256": "63d82df5adc19f0de72e6f39f1ec4e00f2be75eda6453e7b46153ec139391010"
+    },
+    {
+      "scope": "Application JVM test sources and resources",
+      "pathspecs": [
+        "app/src/test/java",
+        "app/src/test/resources"
+      ],
+      "unchanged": true,
+      "tracked_file_count": 26,
+      "changed_paths": [],
+      "tree_listing_sha256": "450af67bb9bba47349e1909cffd69b032590b4af7901c4e13f14a9f972ab4d77"
+    },
+    {
+      "scope": "Existing T9 native controller/assist tests and fixtures",
+      "pathspecs": [
+        "app/src/test/native/t9"
+      ],
+      "unchanged": true,
+      "tracked_file_count": 11,
+      "changed_paths": [],
+      "tree_listing_sha256": "71e87a9f3f198749f527135426710109ba80d28e856c58d2c1a665a0276d3f01"
+    },
+    {
+      "scope": "Build logic and Gradle configuration",
+      "pathspecs": [
+        "build-logic",
+        "gradle",
+        "gradlew",
+        "gradlew.bat",
+        "settings.gradle.kts",
+        "build.gradle.kts",
+        "app/build.gradle.kts",
+        "gradle.properties"
+      ],
+      "unchanged": true,
+      "tracked_file_count": 22,
+      "changed_paths": [],
+      "tree_listing_sha256": "5b8064bbcdc37d205ddde0cc7321d99585d492fd7bbdbacad4c73ad00261e5ce"
+    }
+  ],
+  "prior_jvm_evidence": {
+    "source_head": "649c07559cfbc1e494835465e71277fe8dc8051c",
+    "run": 39467124333,
+    "tests": 328,
+    "suites": 25,
+    "final_source_exact_head_run_not_yet_verified_by_this_binding": true
+  },
+  "new_exact_source_cloud_validation": {
+    "source_head": "5b6d1df4dc1a553fbe513c729aade7e9b3e4cdc7",
+    "control_head": "02219f9eaa7646b70376a96f5c6cfcc02fdbcf19",
+    "run": 39526955308,
+    "url": "https://github.com/X2M7/trime/actions/runs/39526955308",
+    "job": 118983748295,
+    "run_conclusion": "success",
+    "official_artifact": {
+      "id": 12313543750,
+      "name": "split-unit-tests-pr-t9-input-1",
+      "bytes": 381286,
+      "sha256": "e2011f71d718b24a354b08a5721c423818654356605096f5bd9d148ce6c6f930",
+      "official_digest_matches": true,
+      "official_size_matches": true,
+      "crc_passed": true
+    },
+    "application_jvm": {
+      "tests": 328,
+      "suites": 25,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "task_actually_executed_not_cached": true,
+      "baseline_count": 301,
+      "allowed_source_proved_baseline_rename_count": 1,
+      "missing_after_allowed_rename": 0,
+      "new_cases": 27,
+      "new_case_names_match_final_source": true,
+      "recursive_pins": 20,
+      "exact_head_and_pins_verified": true,
+      "w_prefix_application_diagnostic_count": 0,
+      "new_source_warning": false,
+      "known_srcdirs_warning_present": true,
+      "broad_tool_warning_candidate_lines": 101,
+      "tool_warning_multiset_matches_existing_baseline": true
+    },
+    "real_host_vm_unicode": {
+      "assertions": 115,
+      "step_success": true,
+      "fixed_compile_stdout_stderr_empty": true,
+      "fixed_checkjni_stderr_empty": true,
+      "fixed_destroy_jvm_exit": 0,
+      "fixed_process_exit": 0,
+      "baseline_head": "649c07559cfbc1e494835465e71277fe8dc8051c",
+      "baseline_compile_exit": 0,
+      "baseline_runtime_expected_failure_exit": 1,
+      "cloud_jdk_version": [
+        "openjdk version \"25.0.4.1\" 2026-08-18 LTS",
+        "OpenJDK Runtime Environment Temurin-25.0.4.1+1 (build 25.0.4.1+1-LTS)",
+        "OpenJDK 64-Bit Server VM Temurin-25.0.4.1+1 (build 25.0.4.1+1-LTS, mixed mode, sharing)"
+      ],
+      "cloud_ndk28_jni_header_bytes_verified": true,
+      "local115_same_pass_labels": true
+    }
+  },
+  "limits": [
+    "NDK compile-only x86_64/API21 is not Android linking/runtime or full ABI acceptance.",
+    "Real host JVM Unicode transport is not Android ART, InputConnection, touch or device acceptance.",
+    "Existing dependency/build-tool warnings and old output-allocation/OOM exception chains are not claimed fixed.",
+    "The 743 native assertion executions are separate from the 115 JNI checks and prior 328 JVM cases.",
+    "Failed validation setup attempts and original failing product controls remain in local raw evidence."
+  ],
+  "pr_readback": {
+    "pr": 2183,
+    "source_sha": "5b6d1df4dc1a553fbe513c729aade7e9b3e4cdc7",
+    "draft": true,
+    "state": "open",
+    "base_sha": "144f6111d0498da85e0ffa250245f18955179ed3",
+    "file_count": 61,
+    "all_remote_paths_and_blobs_match_local": true,
+    "body_sha256": "9c7ec86c0ed82e5e6a4b74dc4b98b4ee100dd4db0cab567fc4d01b5098c500a8",
+    "readback_sha256": "759026eb86bb85cb0df35dc582b256f60b2493bd894790cf3140d13e1a74ac70",
+    "files_readback_sha256": "a16c11a767552576a049af90a525bee033fd02b680fbeccac6b59195a0aabba6",
+    "body_matches_current_proposal": true,
+    "final_update_api_sha256": "9a5f2e128f73d7a1248fb76032f39807dc209c117c9ab046fef81ec2e1d5d106"
+  },
+  "remote_changed_files": [
+    {
+      "filename": "app/src/main/assets/shared/luna_pinyin_t9.schema.yaml",
+      "sha": "2a4b08c8f0f7baed89798ea7463d26628a932fe6",
+      "status": "added"
+    },
+    {
+      "filename": "app/src/main/assets/shared/tongwenfeng.trime.yaml",
+      "sha": "30e66fcddc164f64a9d9db2e9a1295e976ad7c23",
+      "status": "modified"
+    },
+    {
+      "filename": "app/src/main/assets/shared/trime.yaml",
+      "sha": "fa1f1b384453a2d9c23a91466e833912741f7d90",
+      "status": "modified"
+    },
+    {
+      "filename": "app/src/main/java/com/osfans/trime/core/EditorPreeditResponse.kt",
+      "sha": "ee4b01b2e55a3404801f42e187731500d2e31f54",
+      "status": "added"
+    },
+    {
+      "filename": "app/src/main/java/com/osfans/trime/core/KeySequenceFallback.kt",
+      "sha": "38dece17d0ab1e42a2fb85137c68a1d783aedd47",
+      "status": "added"
+    },
+    {
+      "filename": "app/src/main/java/com/osfans/trime/core/Rime.kt",
+      "sha": "576129ebc2c392c6ff3147e3b5fbdafe0d24d51e",
+      "status": "modified"
+    },
+    {
+      "filename": "app/src/main/java/com/osfans/trime/core/RimeApi.kt",
+      "sha": "24160a0e5447c123c86a54cc742d1d731439059b",
+      "status": "modified"
+    },
+    {
+      "filename": "app/src/main/java/com/osfans/trime/core/RimeMessage.kt",
+      "sha": "b7775b45bd13d0f6ca1f8bf4bfa269ac6ea6c348",
+      "status": "modified"
+    },
+    {
+      "filename": "app/src/main/java/com/osfans/trime/core/RimeProto.kt",
+      "sha": "8e7a175165592415fbd2944704e8bcf404700efa",
+      "status": "modified"
+    },
+    {
+      "filename": "app/src/main/java/com/osfans/trime/core/RimeSchema.kt",
+      "sha": "627e25c45b3a0fa9fb74a89a0ba2bf2e552c6e3d",
+      "status": "modified"
+    },
+    {
+      "filename": "app/src/main/java/com/osfans/trime/core/data/UserDataManager.kt",
+      "sha": "636ccad94748c587e9386423b7fedf6645d9f95f",
+      "status": "modified"
+    },
+    {
+      "filename": "app/src/main/java/com/osfans/trime/data/theme/model/TextKeyboard.kt",
+      "sha": "9c2cf27145bd231413b3d7f4b2a24fe9dc952c9a",
+      "status": "modified"
+    },
+    {
+      "filename": "app/src/main/java/com/osfans/trime/ime/composition/CandidatesView.kt",
+      "sha": "07e7bc2e78b914ddcbc4ff7945e38499ea4e74b5",
+      "status": "modified"
+    },
+    {
+      "filename": "app/src/main/java/com/osfans/trime/ime/composition/PreeditCursor.kt",
+      "sha": "0fc74319183033fe284972579df322e2e82c8338",
+      "status": "added"
+    },
+    {
+      "filename": "app/src/main/java/com/osfans/trime/ime/composition/PreeditDelegate.kt",
+      "sha": "47facc5c2624c58b6817cb9064d4238e8f3a850a",
+      "status": "modified"
+    },
+    {
+      "filename": "app/src/main/java/com/osfans/trime/ime/composition/PreeditTextView.kt",
+      "sha": "1943aee5a593d3250897c0f369d1b0863817e678",
+      "status": "modified"
+    },
+    {
+      "filename": "app/src/main/java/com/osfans/trime/ime/composition/PreeditUi.kt",
+      "sha": "fe279dd6c7530433939eb04f22e99cabcda18cd5",
+      "status": "modified"
+    },
+    {
+      "filename": "app/src/main/java/com/osfans/trime/ime/composition/T9ActionBinding.kt",
+      "sha": "8193f6e9c434ff759513d14659830c8aecdd06d4",
+      "status": "added"
+    },
+    {
+      "filename": "app/src/main/java/com/osfans/trime/ime/composition/T9DisambiguationView.kt",
+      "sha": "f9d2751fb73485e5f530e8ec1ccfd4bb7e462814",
+      "status": "added"
+    },
+    {
+      "filename": "app/src/main/java/com/osfans/trime/ime/core/InputView.kt",
+      "sha": "6c2cef2080929374513c2c9993e4f43856270903",
+      "status": "modified"
+    },
+    {
+      "filename": "app/src/main/java/com/osfans/trime/ime/core/TrimeInputMethodService.kt",
+      "sha": "7651b3204c15d02b085d3f6fbf494963cbed840b",
+      "status": "modified"
+    },
+    {
+      "filename": "app/src/main/java/com/osfans/trime/ime/keyboard/CommonKeyboardActionListener.kt",
+      "sha": "6fd6beef3fd56a00ed50447f07a8e3cce53ec8d5",
+      "status": "modified"
+    },
+    {
+      "filename": "app/src/main/java/com/osfans/trime/ime/keyboard/Keyboard.kt",
+      "sha": "5bcf9a53fd8c626ab456ef5eb2a2df34e3d3215b",
+      "status": "modified"
+    },
+    {
+      "filename": "app/src/main/java/com/osfans/trime/ime/keyboard/KeyboardWindow.kt",
+      "sha": "02529e4f835927d0b01bbddd523a30919116029e",
+      "status": "modified"
+    },
+    {
+      "filename": "app/src/main/jni/librime_jni/config.cc",
+      "sha": "8750efaa01fc0955faf4541bd0c23f23bbf6c60f",
+      "status": "modified"
+    },
+    {
+      "filename": "app/src/main/jni/librime_jni/helper-types.h",
+      "sha": "34c30eb242957c1362eca78439a4fa0b63d80415",
+      "status": "modified"
+    },
+    {
+      "filename": "app/src/main/jni/librime_jni/jni-utils.h",
+      "sha": "48010ed43bc11e20c91ee6721e957ec511c0fb64",
+      "status": "modified"
+    },
+    {
+      "filename": "app/src/main/jni/librime_jni/key.cc",
+      "sha": "6954a280b34a45878c206f895225ee935f73794c",
+      "status": "modified"
+    },
+    {
+      "filename": "app/src/main/jni/librime_jni/levers.cc",
+      "sha": "fbc26abe4a8249f2b3ff6fd4e479164d6f0ee4fe",
+      "status": "modified"
+    },
+    {
+      "filename": "app/src/main/jni/librime_jni/objconv.h",
+      "sha": "6d796ee02229ba73bcbd02d49f6315a74670abfa",
+      "status": "modified"
+    },
+    {
+      "filename": "app/src/main/jni/librime_jni/opencc.cc",
+      "sha": "aab915b3e7b5a47120e465d7fd83e99740dafed1",
+      "status": "modified"
+    },
+    {
+      "filename": "app/src/main/jni/librime_jni/rime_jni.cc",
+      "sha": "d879b79746ce9d6854d6aeb9d953e69a01e799bc",
+      "status": "modified"
+    },
+    {
+      "filename": "app/src/main/jni/librime_jni/t9.cc",
+      "sha": "1ec4b69e8a3cb30b9644f9fba892014ef44e8026",
+      "status": "added"
+    },
+    {
+      "filename": "app/src/main/jni/librime_jni/t9.h",
+      "sha": "1007103593379fcd912eaf30c0a51b1c45f4ef9e",
+      "status": "added"
+    },
+    {
+      "filename": "app/src/main/jni/librime_jni/t9_assist.cc",
+      "sha": "91981861e78ffc863961fccbb09511a0396106ca",
+      "status": "added"
+    },
+    {
+      "filename": "app/src/main/jni/librime_jni/t9_assist.h",
+      "sha": "767df203b223cea5d3aa23a03a69eba0492d88d4",
+      "status": "added"
+    },
+    {
+      "filename": "app/src/main/res/values-zh-rCN/strings_t9.xml",
+      "sha": "3669aca58f9feac0212ce94a403872bf7bb10d4b",
+      "status": "added"
+    },
+    {
+      "filename": "app/src/main/res/values-zh-rTW/strings_t9.xml",
+      "sha": "a90a6bcff93befba1933641bda96f601b52bc810",
+      "status": "added"
+    },
+    {
+      "filename": "app/src/main/res/values/strings_t9.xml",
+      "sha": "df777732dcd23ff98c60420f00e0985834f76b9b",
+      "status": "added"
+    },
+    {
+      "filename": "app/src/test/java/com/osfans/trime/core/EditorPreeditResponseTest.kt",
+      "sha": "5c29c4c842bad8c8553c61fcc10ed21fa61b8b6a",
+      "status": "added"
+    },
+    {
+      "filename": "app/src/test/java/com/osfans/trime/core/KeySequenceFallbackTest.kt",
+      "sha": "279e577eea14b42d1add614e3b89e8bc9e693b0a",
+      "status": "added"
+    },
+    {
+      "filename": "app/src/test/java/com/osfans/trime/core/T9ProtocolTest.kt",
+      "sha": "18943a2072b6eee9e2b5f8536df09312ddde1871",
+      "status": "added"
+    },
+    {
+      "filename": "app/src/test/java/com/osfans/trime/data/theme/T9KeyboardAssetTest.kt",
+      "sha": "8678615c85f4e5b76a7caab740a084ae551d332e",
+      "status": "added"
+    },
+    {
+      "filename": "app/src/test/java/com/osfans/trime/data/theme/ThemeGoldenTest.kt",
+      "sha": "8d9a4f85508f1251b5496714e30b2cbdf0ebc3e0",
+      "status": "modified"
+    },
+    {
+      "filename": "app/src/test/java/com/osfans/trime/ime/composition/PreeditCursorTest.kt",
+      "sha": "6437188fa8dd8dc07a637dde65f7856428afed79",
+      "status": "added"
+    },
+    {
+      "filename": "app/src/test/java/com/osfans/trime/ime/composition/T9ActionBindingTest.kt",
+      "sha": "742d3ece82bd9f8c3dd0b28ba065afccf4b8c930",
+      "status": "added"
+    },
+    {
+      "filename": "app/src/test/native/jni/README.md",
+      "sha": "a3ba6e707a2fbfa758f3b8a2aa9732bd875b1482",
+      "status": "added"
+    },
+    {
+      "filename": "app/src/test/native/jni/run_unicode.py",
+      "sha": "af4bdfc64bcc11946528d91bd7b1b1f9f9ccf2b2",
+      "status": "added"
+    },
+    {
+      "filename": "app/src/test/native/jni/unicode_test.cc",
+      "sha": "d1ac8ea50785439213d4fa0b3984de5f5a69b7d9",
+      "status": "added"
+    },
+    {
+      "filename": "app/src/test/native/t9/README.md",
+      "sha": "f823508d0e6617756f54d39f406736058df70f57",
+      "status": "added"
+    },
+    {
+      "filename": "app/src/test/native/t9/assist_test.cc",
+      "sha": "2f9c99bf3f4c1c45b7c52a49da0a48a98d9fa984",
+      "status": "added"
+    },
+    {
+      "filename": "app/src/test/native/t9/controller_test.cc",
+      "sha": "b9078cd39889a596ad6418379986731101e751d5",
+      "status": "added"
+    },
+    {
+      "filename": "app/src/test/native/t9/fixtures/assist/luna_pinyin_t9.custom.yaml",
+      "sha": "d20c6832562e1578a1a7e49c57da9425080c400a",
+      "status": "added"
+    },
+    {
+      "filename": "app/src/test/native/t9/fixtures/assist/t9_test.dict.yaml",
+      "sha": "86b3aa455b4bd6ad344eccf75b22928d0e49458e",
+      "status": "added"
+    },
+    {
+      "filename": "app/src/test/native/t9/fixtures/common/default.yaml",
+      "sha": "be837d64b03f624766aa541aec8ffd0e4f66fba6",
+      "status": "added"
+    },
+    {
+      "filename": "app/src/test/native/t9/fixtures/common/double_pinyin.custom.yaml",
+      "sha": "3b8a18f3ed71cf60ff86cb8215eae42a6eacfff7",
+      "status": "added"
+    },
+    {
+      "filename": "app/src/test/native/t9/fixtures/common/luna_pinyin.custom.yaml",
+      "sha": "460c78b3a923acf51726d7ed05f569f28942cd05",
+      "status": "added"
+    },
+    {
+      "filename": "app/src/test/native/t9/fixtures/controller/luna_pinyin_t9.custom.yaml",
+      "sha": "a31a67333db234267ab2c195c35019f63b5f8f85",
+      "status": "added"
+    },
+    {
+      "filename": "app/src/test/native/t9/fixtures/controller/t9_test.dict.yaml",
+      "sha": "654c74b9bd55fd4bb0e05999e1d5550004c73640",
+      "status": "added"
+    },
+    {
+      "filename": "app/src/test/native/t9/run.py",
+      "sha": "7ce54dc19d7b49330cf9503c7c52629561eb04d1",
+      "status": "added"
+    },
+    {
+      "filename": "doc/t9-input.md",
+      "sha": "7ee0388dfee82864f4a095d637be5c7d3765db98",
+      "status": "added"
+    }
+  ],
+  "recursive_submodules": [
+    {
+      "sha": "0766c929ec3e578c2c80861e988decd3703a1c3d",
+      "path": "app/data/rime/essay"
+    },
+    {
+      "sha": "46acf03142c12b5aeed7002675046bf7255eed35",
+      "path": "app/data/rime/luna-pinyin"
+    },
+    {
+      "sha": "3803f09458072e03b9ed396692ce7e1d35c88c95",
+      "path": "app/data/rime/prelude"
+    },
+    {
+      "sha": "7c9874c6b2e0b94947653e9a7de6f99623ff27e4",
+      "path": "app/data/rime/stroke"
+    },
+    {
+      "sha": "7bc3fb0005a03aff1c086611e4d52bb7f6444fdd",
+      "path": "app/src/main/jni/librime"
+    },
+    {
+      "sha": "7b134a5c82c0c0b5698bb6bf7a835b230c5638e4",
+      "path": "app/src/main/jni/librime/deps/glog"
+    },
+    {
+      "sha": "f8d7d77c06936315286eb55f8de22cd23c188571",
+      "path": "app/src/main/jni/librime/deps/googletest"
+    },
+    {
+      "sha": "99b3c03b3284f5886f9ef9a4ef703d57373e61be",
+      "path": "app/src/main/jni/librime/deps/leveldb"
+    },
+    {
+      "sha": "bf585a2789e30585b4e3ce6baf11ef2750b54677",
+      "path": "app/src/main/jni/librime/deps/leveldb/third_party/benchmark"
+    },
+    {
+      "sha": "c27acebba3b3c7d94209e0467b0a801db4af73ed",
+      "path": "app/src/main/jni/librime/deps/leveldb/third_party/googletest"
+    },
+    {
+      "sha": "3e87d53b78e15f2f43783d5e376561a8c9722051",
+      "path": "app/src/main/jni/librime/deps/marisa-trie"
+    },
+    {
+      "sha": "025f371dc76b598d77384fbdab90c937471844d8",
+      "path": "app/src/main/jni/librime/deps/opencc"
+    },
+    {
+      "sha": "2f86d13775d119edbb69af52e5f566fd65c6953b",
+      "path": "app/src/main/jni/librime/deps/yaml-cpp"
+    },
+    {
+      "sha": "68f9c364a2d25a04c7d4794981d7c796b05ab627",
+      "path": "app/src/main/jni/librime-lua"
+    },
+    {
+      "sha": "9c53b362229766a97b83683b9541c46679118a90",
+      "path": "app/src/main/jni/librime-lua-deps"
+    },
+    {
+      "sha": "bd12863f45fbbd5c7db06d5ec8be8987b10253bf",
+      "path": "app/src/main/jni/librime-octagram"
+    },
+    {
+      "sha": "67c2881914a0242fc14ec7d6877782771b75800c",
+      "path": "app/src/main/jni/librime-predict"
+    },
+    {
+      "sha": "32ded457c0b1fe78ceb8397632c416568d6714a0",
+      "path": "app/src/main/jni/snappy"
+    },
+    {
+      "sha": "d572f4777349d43653b21d6c2fc63020ab326db2",
+      "path": "app/src/main/jni/snappy/third_party/benchmark"
+    },
+    {
+      "sha": "b796f7d44681514f58a683a3a71ff17c94edb0c1",
+      "path": "app/src/main/jni/snappy/third_party/googletest"
+    }
+  ],
+  "submodule_gitlinks_changed_from_upstream": []
+}
