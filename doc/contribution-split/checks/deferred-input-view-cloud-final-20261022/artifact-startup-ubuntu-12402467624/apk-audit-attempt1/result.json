@@ -1,0 +1,135 @@
+{
+  "schema": "trime-deferred-input-view-startup-cloud-apk-audit/v1",
+  "passed": false,
+  "repository": "X2M7/trime",
+  "run": 39723620625,
+  "source_head": "2d2fbce70b449ec8b6560c844ca5ddbc2e08a4c3",
+  "source_tree": "f58d898da7b8c2cec4c8c613087adf8b7937d289",
+  "source_checkout": "/home/xumin/Public/Trime-pr-deferred-input-view",
+  "source_service_sha256": "152fbdbeef9fa0554eaa090568ba5a547a2c292508c4c342e43d59d56d1c2b5a",
+  "source_service_blob": "af74f764d2ee27ecbbd035ea7680b0c5ded2542c",
+  "artifact": {
+    "id": 12402467624,
+    "node_id": "MDg6QXJ0aWZhY3QxMjQwMjQ2NzYyNA==",
+    "name": "trime-ubuntu-26.04",
+    "size_in_bytes": 77111095,
+    "url": "https://api.github.com/repos/X2M7/trime/actions/artifacts/12402467624",
+    "archive_download_url": "https://api.github.com/repos/X2M7/trime/actions/artifacts/12402467624/zip",
+    "expired": false,
+    "digest": "sha256:9bde82b8cee21d6dfd14e8da17ba3bda690c19fef24e5c8ce924f9bac98fbf6c",
+    "created_at": "2026-10-22T04:52:36Z",
+    "updated_at": "2026-10-22T04:52:36Z",
+    "expires_at": "2027-01-20T04:39:49Z",
+    "workflow_run": {
+      "id": 39723620625,
+      "repository_id": 1252010092,
+      "head_repository_id": 1252010092,
+      "head_branch": "contrib/pr-deferred-input-view",
+      "head_sha": "2d2fbce70b449ec8b6560c844ca5ddbc2e08a4c3"
+    }
+  },
+  "original_zip_sha256": "9bde82b8cee21d6dfd14e8da17ba3bda690c19fef24e5c8ce924f9bac98fbf6c",
+  "output_metadata": {
+    "path": "/home/xumin/Public/Trime/build/readiness-20261022/deferred-input-view/cloud1/monitor1/artifact-startup-ubuntu-12402467624/files/output-metadata.json",
+    "sha256": "6ceee134d28d95a783454c3970bf39d0849b9ca1557aa26d2d95dc855f1b2452",
+    "content": {
+      "version": 3,
+      "artifactType": {
+        "type": "APK",
+        "kind": "Directory"
+      },
+      "applicationId": "com.osfans.trime.debug",
+      "variantName": "debug",
+      "elements": [
+        {
+          "type": "ONE_OF_MANY",
+          "filters": [
+            {
+              "filterType": "ABI",
+              "value": "armeabi-v7a"
+            }
+          ],
+          "attributes": [],
+          "versionCode": 20261101,
+          "versionName": "3.3.13",
+          "outputFile": "com.osfans.trime-2d2fbce7-armeabi-v7a-debug.apk"
+        },
+        {
+          "type": "ONE_OF_MANY",
+          "filters": [
+            {
+              "filterType": "ABI",
+              "value": "x86"
+            }
+          ],
+          "attributes": [],
+          "versionCode": 20261101,
+          "versionName": "3.3.13",
+          "outputFile": "com.osfans.trime-2d2fbce7-x86-debug.apk"
+        },
+        {
+          "type": "ONE_OF_MANY",
+          "filters": [
+            {
+              "filterType": "ABI",
+              "value": "arm64-v8a"
+            }
+          ],
+          "attributes": [],
+          "versionCode": 20261101,
+          "versionName": "3.3.13",
+          "outputFile": "com.osfans.trime-2d2fbce7-arm64-v8a-debug.apk"
+        },
+        {
+          "type": "ONE_OF_MANY",
+          "filters": [
+            {
+              "filterType": "ABI",
+              "value": "x86_64"
+            }
+          ],
+          "attributes": [],
+          "versionCode": 20261101,
+          "versionName": "3.3.13",
+          "outputFile": "com.osfans.trime-2d2fbce7-x86_64-debug.apk"
+        }
+      ],
+      "elementType": "File",
+      "minSdkVersionForDexing": 21
+    }
+  },
+  "commands": [
+    {
+      "label": "arm64-v8a-badging",
+      "argv": [
+        "/home/xumin/Public/android-toolchain/android-sdk/build-tools/36.0.0/aapt",
+        "dump",
+        "badging",
+        "/home/xumin/Public/Trime/build/readiness-20261022/deferred-input-view/cloud1/monitor1/artifact-startup-ubuntu-12402467624/files/com.osfans.trime-2d2fbce7-arm64-v8a-debug.apk"
+      ],
+      "exit_code": 0,
+      "stdout": "/home/xumin/Public/Trime/build/readiness-20261022/deferred-input-view/cloud1/monitor1/artifact-startup-ubuntu-12402467624/apk-audit/arm64-v8a-badging.stdout",
+      "stdout_sha256": "f79be78f3445ab9c6250aa6d7515483fbaa751dcef7042e9af20b9d93926ed92",
+      "stderr": "/home/xumin/Public/Trime/build/readiness-20261022/deferred-input-view/cloud1/monitor1/artifact-startup-ubuntu-12402467624/apk-audit/arm64-v8a-badging.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "arm64-v8a-signer",
+      "argv": [
+        "/home/xumin/Public/android-toolchain/android-sdk/build-tools/36.0.0/apksigner",
+        "-JXmx256m",
+        "-JXX:MaxMetaspaceSize=128m",
+        "verify",
+        "--verbose",
+        "--print-certs",
+        "/home/xumin/Public/Trime/build/readiness-20261022/deferred-input-view/cloud1/monitor1/artifact-startup-ubuntu-12402467624/files/com.osfans.trime-2d2fbce7-arm64-v8a-debug.apk"
+      ],
+      "exit_code": 0,
+      "stdout": "/home/xumin/Public/Trime/build/readiness-20261022/deferred-input-view/cloud1/monitor1/artifact-startup-ubuntu-12402467624/apk-audit/arm64-v8a-signer.stdout",
+      "stdout_sha256": "7ce5ad8278bce1a6ce45c389dc91e9cd4c45cc4312d43a6fbbbbd8ea47339f7c",
+      "stderr": "/home/xumin/Public/Trime/build/readiness-20261022/deferred-input-view/cloud1/monitor1/artifact-startup-ubuntu-12402467624/apk-audit/arm64-v8a-signer.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "apks": []
+}

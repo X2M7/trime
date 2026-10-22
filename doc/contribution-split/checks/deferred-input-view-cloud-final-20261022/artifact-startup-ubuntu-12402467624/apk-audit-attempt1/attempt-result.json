@@ -1,0 +1,11 @@
+{
+  "schema": "trime-startup-apk-audit-attempt/v1",
+  "passed": false,
+  "artifact_failure": false,
+  "reason": "Audit assumption failure: startup and T9 are separate cloud debug jobs and use different generated debug certificates. Attempt1 incorrectly required the previously observed T9 certificate. The startup APK verified successfully and exposed its actual certificate; the corrected audit requires one signer and equality across all four startup APKs.",
+  "incorrect_expected_t9_certificate_sha256": "bbb43f63ebe868257f0f9cef41194ef0bba4d752a25029d39eb273eef6d95a57",
+  "actual_first_startup_certificate_sha256": "70946ccf34d5d37159ee437b53afca37b955635c47d7ebbebbad87a520ebad6b",
+  "partial_result_path": "artifact-startup-ubuntu-12402467624/apk-audit-attempt1/result.json",
+  "partial_result_sha256": "dac818d2167690533c1f326c8bdb77eabdfe229a0e62a84dc7259d1e7d97cba5",
+  "signer_stdout_sha256": "7ce5ad8278bce1a6ce45c389dc91e9cd4c45cc4312d43a6fbbbbd8ea47339f7c"
+}
