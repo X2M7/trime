@@ -21,8 +21,10 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          - scope: pr-deferred-input-view
+            sha: 2d2fbce70b449ec8b6560c844ca5ddbc2e08a4c3
           - scope: pr-t9-input
-            sha: eeb4804a3dcfbb48cdb5b4c9638aad550a0283e0
+            sha: 9f86bc8f1d11d65d2e22e437f111a965bc2faba5
     env:
       CI_NAME: Split validation CI
       BUILD_ABI: x86_64
