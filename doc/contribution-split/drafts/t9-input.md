@@ -49,7 +49,7 @@ the new tongwenfeng symbol alias forced ASCII mode over its inherited Chinese
 category page. The real `{Escape}/bd` macro executed but produced no candidates.
 The latest correction preserves that page's original mode; literal number and
 English pages remain ASCII. Two added tests check each theme's inherited symbol
-semantics. New-source device and build checks are pending, not inferred from the
+semantics. New-source device checks are pending, not inferred from the
 earlier successful literal-punctuation path.
 
 #### Validation

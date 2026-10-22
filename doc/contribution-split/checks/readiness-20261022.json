@@ -21,6 +21,36 @@
       "source_unchanged": true,
       "four_checks_success_at_transition": true,
       "remaining_manual_checks_preserved": true
+    },
+    {
+      "number": 2176,
+      "url": "https://github.com/osfans/trime/pull/2176",
+      "head": "a219a07545ba26d7cfda287305ceedee34ea824c",
+      "before_draft": true,
+      "after_draft": false,
+      "four_checks_success_at_transition": true,
+      "body_exact_readback": true,
+      "body_sha256": "2016bbce5f19dc69b83363ea8fac17ee3c949ca4bad8ff8fbcaf8c4efc80014c",
+      "index_evidence_commit": "c3bc896a6039e2f5486111e63e2c108e97dec644",
+      "ready_for_review_not_merge_approval": true,
+      "merged": false,
+      "receipt": "ready-transitions-20261022-batch2.json",
+      "receipt_sha256": "58a4217eaa0e2ca0f7db54024a4289b006bd3d2e959e22c3e7ea32d802b7c31b"
+    },
+    {
+      "number": 2179,
+      "url": "https://github.com/osfans/trime/pull/2179",
+      "head": "e7e63932683dfcc985cc88601f995968b8fc50b4",
+      "before_draft": true,
+      "after_draft": false,
+      "four_checks_success_at_transition": true,
+      "body_exact_readback": true,
+      "body_sha256": "4d2b192795a246804b46bd3993ccfe665b4c8ef207eba97ffcf99d35d66de9ae",
+      "index_evidence_commit": "c3bc896a6039e2f5486111e63e2c108e97dec644",
+      "ready_for_review_not_merge_approval": true,
+      "merged": false,
+      "receipt": "ready-transitions-20261022-batch2.json",
+      "receipt_sha256": "58a4217eaa0e2ca0f7db54024a4289b006bd3d2e959e22c3e7ea32d802b7c31b"
     }
   ],
   "ready_is_not_approval_or_merge": true,
@@ -38,19 +68,66 @@
   "t9": {
     "pr": 2183,
     "draft": true,
-    "source": "593c23002343d5c7e6db5bf37e2bdfa0ba05f8ee",
+    "source": "eeb4804a3dcfbb48cdb5b4c9638aad550a0283e0",
     "ordinary_merge": true,
-    "business_source_unchanged_from": "5b6d1df4dc1a553fbe513c729aade7e9b3e4cdc7",
-    "cloud_application_tests": 328,
+    "cloud_application_tests": 330,
     "cloud_failures_errors_skipped": 0,
     "cloud_jni_host_assertions": 115,
-    "cloud_run": "https://github.com/X2M7/trime/actions/runs/39706284345",
+    "cloud_run": "https://github.com/X2M7/trime/actions/runs/39711445476",
     "separate_local_real_vm_assertions": 146,
     "ndk_translation_units_werror": 8,
-    "android_runtime_acceptance": "117 candidate display precondition failed under accessibility observation; zero of16business cases executed.593 rendering repair awaiting new Android run.",
-    "previous_source": "117468018fd757d3abddb2d3f8e055759e01152f",
+    "android_runtime_acceptance": "New eeb source: API21/API35 full16corecases plus tongwenfeng category-macro regression still pending. No old593 device result counted as newsource pass.",
+    "previous_source": "593c23002343d5c7e6db5bf37e2bdfa0ba05f8ee",
     "candidate_fix_merge": "7a45cf29c8e112a4081a5e72cb465447d847e1c1",
-    "tree": "f996128d5ffeef5f87e85b70df535b0f51a1457a"
+    "tree": "a5c66a361a30df5b1ce23d0392e08a97045e9a33",
+    "fork_debug_run": "https://github.com/X2M7/trime/actions/runs/39711397673",
+    "upstream_pr_debug_run": "https://github.com/osfans/trime/actions/runs/39711402810",
+    "fork_and_upstream_os_jobs_success": 8,
+    "old_593_api21": {
+      "source": "593c23002343d5c7e6db5bf37e2bdfa0ba05f8ee",
+      "all16_frozen_core_cases_observed_match": true,
+      "entire_acceptance_passed": false,
+      "extra_category_macro_failed": true,
+      "root_cause": "Newtongwenfeng T9_symbols alias forcedASCII1 over inherited category layoutChinese0; actual Escape/slash/b/d sequence produced noinput/candidates.",
+      "corrected_source": "eeb4804a3dcfbb48cdb5b4c9638aad550a0283e0",
+      "operator_summary_local_path": "build/readiness-20261022/t9/api21-smoke2/operator-case-summary-v3.json",
+      "operator_summary_sha256": "10381205d8e555bd8be968f4b2d0b34cb1baa8561a74e77b80027a073d392bf9",
+      "raw_tool_rejections_preserved": [
+        "Themechange initial fixturewindowfocus rejected beforeC1 input; actualfocus tap and separate accepted capture retained.",
+        "Operator mistook fullwidthU+FF01 sourcekey forASCII!; originala! assertion rejection preserved, separate source-bounda！ evidence."
+      ],
+      "journal_passed_false_not_rewritten": true
+    },
+    "category_symbol_fix": {
+      "production_changed_paths": 1,
+      "test_changed_paths": 1,
+      "production_change": "tongwenfeng luna_pinyin_t9_symbols ascii_mode1→0; defaulttheme literal-symbolASCII1 and bothnumberwrapperASCII1 unchanged.",
+      "asset_suite_case_count_before_after": [
+        4,
+        6
+      ],
+      "source_attribution_local_path": "build/readiness-20261022/t9/category-macro-host-attribution-v1.json",
+      "source_attribution_sha256": "60d160649e72e59ce675bdfaf84414b5a60f74733648ad846ffa9910765cacbe"
+    },
+    "native_provenance": {
+      "new_cloud_native_compile_claim": false,
+      "fork_all4_os_jni_cache_hit": true,
+      "explicit_new_native_build_link_records": 0,
+      "x86_64_librime_jni_sha256": "aac1d2aa0c51517f540c3050337736477b4c728803d9cc9fdeeb6755f2006409",
+      "x86_64_so_byte_identical_to_593": true,
+      "local146_and_8tu_scope": "Prior146realVM and8TUstrict checks retained under identical native inputs; not rerun for eeb."
+    },
+    "new_original_apk": {
+      "source": "eeb4804a3dcfbb48cdb5b4c9638aad550a0283e0",
+      "repo": "X2M7/trime",
+      "sha256": "6ebfb90c9aa4d6723f23eff46ac8604538e67779816775721b27a5d1f7700181",
+      "certificate_sha256": "269319034080478b47973796695c2551213ddb66f7f9052f2cdb99382eb0e993",
+      "direct_build_sha_not_virtual_merge": true,
+      "four_abi_static_audit_passed": true,
+      "original_services_signature_warnings_per_apk": 2,
+      "android_qualification": "pendingbothsystems"
+    },
+    "older_candidate_failure_source": "117468018fd757d3abddb2d3f8e055759e01152f"
   },
   "logcat": {
     "pr": 2182,
@@ -251,23 +328,25 @@
         "The original6e4 stream EOF cause remains unproven.",
         "The prior d7 cold-memory failure and all original tool/product failures are retained."
       ]
-    }
+    },
+    "api35_current_stage": "Original e8 API35 cold deployment/log scopes in progress; no final pass recorded yet. API21 qualifiedbusiness scopes and oldfailures retained."
   },
   "still_draft": [
-    2176,
-    2179,
     2182,
     2183,
     2186,
     2187
   ],
   "warnings_and_limits": [
-    "No zero-warning claim: fixed dependencies/toolchain warnings and original Debug APK META-INF/services signature warnings remain.",
-    "API21 first-attempt failure is retained; no success claimed after app PID changed.",
-    "No physical phone, stable release, production signing, full T12 acceptance or automatic merge performed.",
-    "API21 layout font1/font2 and feedback resource groups passed within their stated scopes; API35 remains pending.",
-    "A matching API21 x64 Pico shutdown crash independently reproduced with no Trime code and zero stop/one shutdown establishes only that specific system-engine boundary. Raw fatal events remain.",
-    "The193 identical preset-vocabulary encoding warnings in T9/e16/d7 come from pinned librime/luna_pinyin/essay, not Android or the emulator. They remain, with exact-sequence and source comparison retained; no zero-runtime-warning claim."
+    "Readyforreview is not maintainer approval, automaticmerge, universalbugfree or fullapplication acceptance.",
+    "OriginalDebugAPKs retain2META-INF/services signaturewarnings; SDK/Gradle/nativeaccess and dependency/presetvocabulary warnings are retained, notsilenced.",
+    "API21 independent standardclients without Trime reproduce the matchingPico shutdown SIGSEGV; this only qualifies that systemengine fault, not globalzeroFatal or repairedAndroid.",
+    "API35 has noTTSengine: initializationfailure path passed; realspeechstart/done, physicalaudibility, SoundPool streamId, actualkeyboardgestures and stale nativecallback delivery remain unverified.",
+    "API35 UIlease contains actualCalendar low-watermark LMK; originalevent preserved, no whole-systemzeroLMK or memoryriskfree claim.",
+    "UI manager/layout diagnostics used copieswith signingentries changed and payloadverified; this is not production/release signing or upgrade acceptance. No physicalphone, stablepublication, fullT12 or automaticmerge.",
+    "eeb T9 cloud330+115 and8OSsuccess are independent of pending API21/API35 runtimechecks. Prior59316corematches do not erase its category-mode failure or qualifyeeb.",
+    "API21 original tool/precondition failures and changingPIDs remain; no blanket combined multi-toolpass. Old6e4 streamEOF cause remainsunproven.",
+    "The193 identical preset-vocabulary encodingwarnings in T9/e16/d7 originate in pinnedlibrime/luna_pinyin/essay, notAndroid/emulator; exactsource/sequence comparison retained."
   ],
   "retained_local_evidence": [
     {
@@ -309,29 +388,58 @@
       "path": "build/readiness-20261022/logcat/api21/first-deploy-failure-summary.json",
       "bytes": 2124,
       "sha256": "956e1274ebc0ccfef499bbcb2e05c36a1996ac96c21bf5d18614e39201014b3d"
+    },
+    {
+      "path": "build/readiness-20261022/t9/symbol-mode-ci1/all-cloud-terminal-and-fork-source-audit.json",
+      "bytes": 13017,
+      "sha256": "bade1ea3ae6afd1cc89e90d95f6d448699a5b7d015b1abdd984dea61e249beca"
+    },
+    {
+      "path": "build/readiness-20261022/t9/symbol-mode-ci1/artifacts-control-12397686736/independent-control-audit.json",
+      "bytes": 16653,
+      "sha256": "6d5643b3e567134edff0e768f3ffe8561136e6deaccf086f2d59e89745c7c739"
+    },
+    {
+      "path": "build/readiness-20261022/t9/symbol-mode-ci1/artifacts-fork-12397327283/apk-audit/result.json",
+      "bytes": 19548,
+      "sha256": "e9f9fec7447f70635126fe35bde945cd4116867196b3d175b35a531a6d6fb833"
+    },
+    {
+      "path": "build/readiness-20261022/t9/v4-original-fork-eeb-freeze.json",
+      "bytes": 1951,
+      "sha256": "5c7ac39d73a5ee25e2257a52bd0c27395300e4ec5af4f3dbe7eb071627c4c5c2"
     }
   ],
   "setup_footer": {
     "pr": 2176,
-    "draft": true,
+    "draft": false,
     "source": "a219a07545ba26d7cfda287305ceedee34ea824c",
-    "status": "API21 actual SetupActivity font1/font2 short-screen scrolling/navigation passed; API35 scoped check pending.",
+    "status": "Targeted API21+API35 real SetupActivity shortscreen font1/font2 scrolling and five-step navigation qualified; Readyforreview, not completeonboarding/upgrade or mergeapproval.",
     "paired_report": "setup-footer-runtime-20261022/result.json",
     "application_jvm_cases": 301,
     "application_cases_failures_errors_skipped": 0,
-    "api21_runtime_report": "setup-footer-api21-20261022.json"
+    "api21_runtime_report": "setup-footer-api21-20261022.json",
+    "ready_for_review": true,
+    "api35_runtime_report": "ui-api35-20261022/qualification/result.json",
+    "api35_root_readiness": "ui-api35-root-readiness-20261022.json"
   },
   "feedback": {
     "pr": 2179,
-    "draft": true,
+    "draft": false,
     "source": "e7e63932683dfcc985cc88601f995968b8fc50b4",
     "android_business_checks": 6,
     "overall_acceptance": false,
-    "reason": "Six manager groups passed. Independent standard TTS clients without Trime reproduce the matching API21 x64 Pico shutdown fatal with zero or two explicit stops, establishing that specific system-engine cause; API35 scoped check pending.",
+    "reason": "Limited API21+API35 manager/Looper/SoundPool scopes qualified. API21 independentPico controls establish only the matching systemengine shutdown fault. API35 has no TTSengine: actual initfailure/release/pendingcleanup/no per-keyretry passed, speechstart/done nottested. Fullkeyboard/nativecallback/physicalaudio acceptance remainsfalse.",
     "system_engine_control": "lazy-feedback-pico-control-20261022.json",
-    "physical_audio_and_soundpool_stream_id": "not observed"
+    "physical_audio_and_soundpool_stream_id": "not observed",
+    "ready_for_review": true,
+    "api35_runtime_report": "ui-api35-20261022/qualification/result.json",
+    "api35_speech_callbacks_passed": false,
+    "api35_tts_engines": [],
+    "api35_actual_initialization_failure_path_passed": true,
+    "api35_soundpool_real_load_callback_passed": true
   },
-  "updated_utc": "2026-10-22T01:54:17.712584+00:00",
+  "updated_utc": "2026-10-22T02:50:33.375730+00:00",
   "unicode_foundation": {
     "branch": "contrib/pr-jni-unicode-transport",
     "source": "e16ab85f495e5bbf353187c29efbff74526cff9c",
@@ -379,12 +487,13 @@
         "sha256": "316cefdca875812a0d87abcc9f12b7576925aadb7da3572f2cd1e03b30773698"
       }
     },
-    "fork_and_upstream_os_jobs_success": 8
+    "fork_and_upstream_os_jobs_success": 8,
+    "api35_current_stage": "Originale16 API35 stock supplementarycandidate/CheckJNI shortscope pending nextlease; no pass recorded."
   },
   "candidate_display": {
-    "status": "Investigating; not a pass",
+    "status": "API21 independent old/fixed production-class observation qualified; API35 original7a45 scope pending.",
     "e16_observed_blank": true,
-    "t9_source_precondition_test": "running",
+    "t9_source_precondition_test": "593 API21 candidate glyphs/nodes recovered and16corematches; separate symbol-category integrationfailed; eeb fullretests pending.",
     "historical_product_fix": "Main fork d7ec1a4e restores TextView text/measure/layout contracts; old AutoScale blob exactly matches current e16/117. Historical API21/35 screenshots establish a prior same-class issue only; current source/device control still required.",
     "current_source_changed": true,
     "fix_source": "7a45cf29c8e112a4081a5e72cb465447d847e1c1",
@@ -396,5 +505,12 @@
     "draft": true,
     "api21_qualification": "candidate-layout-api21-20261022/qualification.json"
   },
-  "warning_comparison_local_evidence": "build/readiness-20261022/t9/encode-warning-comparison1/result.json"
+  "warning_comparison_local_evidence": "build/readiness-20261022/t9/encode-warning-comparison1/result.json",
+  "ready_for_review_count": 4,
+  "ready_transition_batch2_receipt": {
+    "path": "ready-transitions-20261022-batch2.json",
+    "bytes": 1131,
+    "sha256": "58a4217eaa0e2ca0f7db54024a4289b006bd3d2e959e22c3e7ea32d802b7c31b",
+    "original_local_path": "/home/xumin/Public/Trime/build/readiness-20261022/ui/ready-transitions2/result.json"
+  }
 }
