@@ -13,9 +13,11 @@ A focused API 21 [Android probe and raw results](https://github.com/X2M7/trime/b
 - [x] New-head [four-platform Debug/native builds](https://github.com/X2M7/trime/actions/runs/39417654398) and Ubuntu style checks passed.
 - [ ] Real Activity-window, IME/insets, scrolling and save/cancel touch acceptance.
 
-This is a Draft. The probe measures unattached layouts and uses AndroidX Core 1.3.2 rather than the complete application dependency graph. It does not verify the actual window or change `adjustPan`. Existing build/tool warnings remain; Lint/Release acceptance is not claimed.
+Ready for review. The remaining Activity/IME and touch checks are still listed above and are not marked complete. The probe measures unattached layouts and uses AndroidX Core 1.3.2 rather than the complete application dependency graph. It does not verify the actual window or change `adjustPan`. Existing build/tool warnings remain; Lint/Release acceptance is not claimed.
 
 ### Contribution checks
 
 - [x] Read CONTRIBUTING; one fix and a Conventional Commit with an explanatory body.
 - [ ] Manually test: Done.
+
+Current status: [#2177](https://github.com/osfans/trime/pull/2177) is Ready for review; manual checks above remain open.
