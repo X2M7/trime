@@ -1,0 +1,139 @@
+{
+  "scope": "Read-only Root diagnostic after explicit ADB lease and normal Observer stop; no product case executed",
+  "commands": [
+    {
+      "name": "independent-screen",
+      "argv": [
+        "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+        "-s",
+        "emulator-5584",
+        "exec-out",
+        "screencap",
+        "-p"
+      ],
+      "started_utc": "2026-10-22T04:27:57.026098+00:00",
+      "finished_utc": "2026-10-22T04:27:57.498474+00:00",
+      "exit": 0,
+      "stdout": "/home/xumin/Public/Trime/build/readiness-20261022/api35-t9-tail1/root-white-screen-diagnostic1/independent-screen.png",
+      "bytes": 9719,
+      "sha256": "ce4feb908514becd1200b29139be9049f5cfd206ed7de20115795befd5e3e8d1",
+      "stderr_bytes": 0
+    },
+    {
+      "name": "windows",
+      "argv": [
+        "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+        "-s",
+        "emulator-5584",
+        "shell",
+        "dumpsys",
+        "window",
+        "windows"
+      ],
+      "started_utc": "2026-10-22T04:27:57.503888+00:00",
+      "finished_utc": "2026-10-22T04:27:57.907925+00:00",
+      "exit": 0,
+      "stdout": "/home/xumin/Public/Trime/build/readiness-20261022/api35-t9-tail1/root-white-screen-diagnostic1/windows.stdout.txt",
+      "bytes": 41302,
+      "sha256": "5dc87e72671e5e8ed225090c5114f0f922c1344eb0a265837c64792c76c25045",
+      "stderr_bytes": 0
+    },
+    {
+      "name": "surface-list",
+      "argv": [
+        "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+        "-s",
+        "emulator-5584",
+        "shell",
+        "dumpsys",
+        "SurfaceFlinger",
+        "--list"
+      ],
+      "started_utc": "2026-10-22T04:27:57.504887+00:00",
+      "finished_utc": "2026-10-22T04:27:57.638553+00:00",
+      "exit": 0,
+      "stdout": "/home/xumin/Public/Trime/build/readiness-20261022/api35-t9-tail1/root-white-screen-diagnostic1/surface-list.stdout.txt",
+      "bytes": 6237,
+      "sha256": "91d1058554e1a1efc63d6bb9633d79382262b454e0546f5fc8a5e51f63c0a4e4",
+      "stderr_bytes": 0
+    },
+    {
+      "name": "fixture-gfx",
+      "argv": [
+        "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+        "-s",
+        "emulator-5584",
+        "shell",
+        "dumpsys",
+        "gfxinfo",
+        "org.x2m7.trime.editorfixture",
+        "framestats"
+      ],
+      "started_utc": "2026-10-22T04:27:57.505284+00:00",
+      "finished_utc": "2026-10-22T04:27:57.790663+00:00",
+      "exit": 0,
+      "stdout": "/home/xumin/Public/Trime/build/readiness-20261022/api35-t9-tail1/root-white-screen-diagnostic1/fixture-gfx.stdout.txt",
+      "bytes": 8360,
+      "sha256": "15ef87815a3d96cc4a1b9a561a3299b147fa8063b97f300159509f2dda2e7573",
+      "stderr_bytes": 0
+    },
+    {
+      "name": "trime-gfx",
+      "argv": [
+        "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+        "-s",
+        "emulator-5584",
+        "shell",
+        "dumpsys",
+        "gfxinfo",
+        "com.osfans.trime.debug",
+        "framestats"
+      ],
+      "started_utc": "2026-10-22T04:27:57.510498+00:00",
+      "finished_utc": "2026-10-22T04:27:57.844564+00:00",
+      "exit": 0,
+      "stdout": "/home/xumin/Public/Trime/build/readiness-20261022/api35-t9-tail1/root-white-screen-diagnostic1/trime-gfx.stdout.txt",
+      "bytes": 6181,
+      "sha256": "0f5cb1840f37b68043fc55c486a5cafe0cbd6ccb25d3aa831213813be6cb55f3",
+      "stderr_bytes": 0
+    },
+    {
+      "name": "input-method",
+      "argv": [
+        "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+        "-s",
+        "emulator-5584",
+        "shell",
+        "dumpsys",
+        "input_method"
+      ],
+      "started_utc": "2026-10-22T04:27:57.638689+00:00",
+      "finished_utc": "2026-10-22T04:27:57.944425+00:00",
+      "exit": 0,
+      "stdout": "/home/xumin/Public/Trime/build/readiness-20261022/api35-t9-tail1/root-white-screen-diagnostic1/input-method.stdout.txt",
+      "bytes": 45104,
+      "sha256": "67d9e410c11784aab15a014d73eef0a0bb1e524a8e7361f68e2d7d07063dab4d",
+      "stderr_bytes": 0
+    },
+    {
+      "name": "processes",
+      "argv": [
+        "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+        "-s",
+        "emulator-5584",
+        "shell",
+        "ps",
+        "-A",
+        "-o",
+        "PID,PPID,NAME"
+      ],
+      "started_utc": "2026-10-22T04:27:57.790810+00:00",
+      "finished_utc": "2026-10-22T04:27:57.967569+00:00",
+      "exit": 0,
+      "stdout": "/home/xumin/Public/Trime/build/readiness-20261022/api35-t9-tail1/root-white-screen-diagnostic1/processes.stdout.txt",
+      "bytes": 9432,
+      "sha256": "5209343499294a530fc2cb4489a941cbf144d325d549d73f3c62d7695fb096bd",
+      "stderr_bytes": 0
+    }
+  ]
+}

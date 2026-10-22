@@ -1,0 +1,28 @@
+{
+  "utc": "2026-10-22T04:36:48.135133+00:00",
+  "source": "eeb4804a3dcfbb48cdb5b4c9638aad550a0283e0",
+  "scope": "Independent causal control, not acceptance; original cold run stays failed and C7/C8 remain unexecuted",
+  "same_process": [
+    {
+      "phase": "cold-failed",
+      "pid": 2098,
+      "start_ticks": 40679
+    },
+    {
+      "phase": "latin",
+      "pid": 2098,
+      "start_ticks": 40679
+    },
+    {
+      "phase": "warm-trime",
+      "pid": 2098,
+      "start_ticks": 40679
+    }
+  ],
+  "all_18_adb_commands_exit_zero": true,
+  "actually_viewed_originals": [
+    "latin-screen.png",
+    "warm-trime-screen.png"
+  ],
+  "observation": "Latin renders fixture and keyboard; switching back to Trime in same PID creates visible T9 keyboard. Continuous log adds onCreateInputView at 12:36:15.851, KeyboardWindow attach, then onStartInputView. Gfx tree grows from 10 to 82 views. Supports deferred missing-view diagnosis, not a repaired source qualification."
+}

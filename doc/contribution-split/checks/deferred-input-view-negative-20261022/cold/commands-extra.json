@@ -1,0 +1,80 @@
+{
+  "utc": "2026-10-22T04:28:39.819956+00:00",
+  "readonly": true,
+  "commands": [
+    {
+      "name": "surface-full",
+      "argv": [
+        "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+        "-s",
+        "emulator-5584",
+        "shell",
+        "dumpsys",
+        "SurfaceFlinger"
+      ],
+      "exit": 0,
+      "bytes": 32731,
+      "sha256": "88519e7f4a7a8d237c59b545658bf6b2cd29d2a9bcc15e2aec6f237c5f9a9164"
+    },
+    {
+      "name": "window-animator",
+      "argv": [
+        "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+        "-s",
+        "emulator-5584",
+        "shell",
+        "dumpsys",
+        "window",
+        "animator"
+      ],
+      "exit": 0,
+      "bytes": 911,
+      "sha256": "cc4bab9719514880431b4112bf8fb6f0ef94546fc95bb672d7b9e7ab20b28775"
+    },
+    {
+      "name": "window-displays",
+      "argv": [
+        "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+        "-s",
+        "emulator-5584",
+        "shell",
+        "dumpsys",
+        "window",
+        "displays"
+      ],
+      "exit": 0,
+      "bytes": 18052,
+      "sha256": "9f5527764aa027d821f29bc150a9db525316a72f15281070a823091dcff2a533"
+    },
+    {
+      "name": "activity-top",
+      "argv": [
+        "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+        "-s",
+        "emulator-5584",
+        "shell",
+        "dumpsys",
+        "activity",
+        "top"
+      ],
+      "exit": 0,
+      "bytes": 61641,
+      "sha256": "f4e89c20f4d17b5bee72fcac2d40ed38d6d05896388628fbeb239a164996564c"
+    },
+    {
+      "name": "animation-scales",
+      "argv": [
+        "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+        "-s",
+        "emulator-5584",
+        "shell",
+        "sh",
+        "-c",
+        "settings get global window_animation_scale; settings get global transition_animation_scale; settings get global animator_duration_scale"
+      ],
+      "exit": 0,
+      "bytes": 883,
+      "sha256": "6694f803c24f461c31c076205fe6f48b59019c236ad888dee28c61b5b4d9cfa2"
+    }
+  ]
+}

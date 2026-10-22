@@ -1,0 +1,79 @@
+[
+  {
+    "name": "restore-latin",
+    "argv": [
+      "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+      "-s",
+      "emulator-5584",
+      "shell",
+      "ime",
+      "set",
+      "com.android.inputmethod.latin/.LatinIME"
+    ],
+    "exit": 0,
+    "stdout": "Input method com.android.inputmethod.latin/.LatinIME selected for user #0\n",
+    "stderr": ""
+  },
+  {
+    "name": "restore-enabled",
+    "argv": [
+      "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+      "-s",
+      "emulator-5584",
+      "shell",
+      "ime",
+      "disable",
+      "com.osfans.trime.debug/com.osfans.trime.ime.core.TrimeInputMethodService"
+    ],
+    "exit": 0,
+    "stdout": "Input method com.osfans.trime.debug/com.osfans.trime.ime.core.TrimeInputMethodService: now disabled for user #0\n",
+    "stderr": ""
+  },
+  {
+    "name": "stop-fixture",
+    "argv": [
+      "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+      "-s",
+      "emulator-5584",
+      "shell",
+      "am",
+      "force-stop",
+      "org.x2m7.trime.editorfixture"
+    ],
+    "exit": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "name": "selected-readback",
+    "argv": [
+      "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+      "-s",
+      "emulator-5584",
+      "shell",
+      "settings",
+      "get",
+      "secure",
+      "default_input_method"
+    ],
+    "exit": 0,
+    "stdout": "com.android.inputmethod.latin/.LatinIME\n",
+    "stderr": ""
+  },
+  {
+    "name": "enabled-readback",
+    "argv": [
+      "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+      "-s",
+      "emulator-5584",
+      "shell",
+      "settings",
+      "get",
+      "secure",
+      "enabled_input_methods"
+    ],
+    "exit": 0,
+    "stdout": "com.android.inputmethod.latin/.LatinIME\n",
+    "stderr": ""
+  }
+]

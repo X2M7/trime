@@ -1,0 +1,84 @@
+{
+  "schema": "trime-deferred-input-view-source-review/v1",
+  "utc": "2026-10-22T04:39:23.458182+00:00",
+  "base": "12ffd16fe03537b6d0ed9716c71cbc33608c2a33",
+  "branch": "contrib/pr-deferred-input-view",
+  "worktree": "/home/xumin/Public/Trime-pr-deferred-input-view",
+  "status": "dirty_patch_for_Root_review_not_committed_or_built",
+  "changed_files": [
+    "app/src/main/java/com/osfans/trime/ime/core/TrimeInputMethodService.kt"
+  ],
+  "source_bindings": [
+    {
+      "path": "app/src/main/java/com/osfans/trime/ime/core/TrimeInputMethodService.kt",
+      "sha256": "152fbdbeef9fa0554eaa090568ba5a547a2c292508c4c342e43d59d56d1c2b5a",
+      "git_blob": "af74f764d2ee27ecbbd035ea7680b0c5ded2542c"
+    },
+    {
+      "path": "app/src/main/java/com/osfans/trime/ime/core/BaseInputView.kt",
+      "sha256": "3f9c0208ee00e5278931fd914022b66640a2b44afd6913757a4a017ab93d50a6",
+      "git_blob": "1fc1a68a1730876d596cb2b14174d8855bedcb1e"
+    },
+    {
+      "path": "app/src/main/java/com/osfans/trime/ime/core/InputView.kt",
+      "sha256": "b43212ae42192f486be5a95e2f5d78a5974e0b85f863510be9468fc8ca236ada",
+      "git_blob": "92ea752158d8db1dd03cc370a9544fbb21d2926d"
+    },
+    {
+      "path": "app/src/main/java/com/osfans/trime/ime/core/InputDeviceManager.kt",
+      "sha256": "97ae0f3fd35ff0579bc853ac4c953dd03de911df9165435b27db8503af5d6328",
+      "git_blob": "ea0fb4774e4d4a22fa1498907b13a4fbd5e3fe38"
+    },
+    {
+      "path": "app/src/main/java/com/osfans/trime/daemon/RimeSession.kt",
+      "sha256": "c32125b9d6ed3088e5e7f2c24ab2cc21f804f9253024700836aa23f517575c89",
+      "git_blob": "000b5eeecef6924483980ae6e8396bae70e320ad"
+    },
+    {
+      "path": "app/src/main/java/com/osfans/trime/ime/core/LifecycleInputMethodService.kt",
+      "sha256": "f86333b0afd0012fa469d30dc1c374adf5941c3b359f0641268be6c242441757",
+      "git_blob": "5388e2fec32c389d8fa1fda0ffac02931094800b"
+    },
+    {
+      "path": "app/src/main/java/com/osfans/trime/data/theme/ThemeManager.kt",
+      "sha256": "a89b077527ae246c7d146d7cd874b0444a88407bfd3467595e69f211c08716ea",
+      "git_blob": "bed9824d0f2a0c587853dda3d466a39252a783b4"
+    }
+  ],
+  "patch_sha256": "24f6f018218ed9f7d645987cc1b9e7780fc027e838b2b3c9273d63613a520f89",
+  "applicable_agents_files_found": [],
+  "behavior": [
+    "An actual onCreateInputView request with no ThemeScope sets inputViewCreationDeferred; ThemeManager readiness alone does not construct views without that request.",
+    "The existing service lifecycleScope is Main; RimeSession.runOnReady explicitly runs the block in caller thread. Ready completion checks the deferred flag after ThemeManager.init and listener registration.",
+    "Ready recovery requests replaceExisting=false: only a missing InputView or CandidatesView is constructed. Normal different-theme replacement retains its previous replace-both semantics. Successful completion clears the deferred flag.",
+    "onStartInputView records a pending start whenever InputView is absent, regardless of virtual/physical mode at that instant. Replay after registering the new view uses currentInputEditorInfo and current useVirtualKeyboard, not stale attribute/mode captured before readiness.",
+    "A fresh InputView uses default restarting=false, because all its broadcaster receivers and resident KeyboardWindow were initialized by its constructor before setInputView / InputDeviceManager registration and replay. BaseInputView.onAttachedToWindow only requests insets; it does not erase editor state.",
+    "onFinishInputView clears pending start. A hidden previously requested tree may be completed, but no showWindow, showSoftInput or forceShowSelf is introduced; it is not restarted for a finished editor.",
+    "onDestroy clears both flags before the existing lifecycle superclass cancels the coroutine and removes listeners. A destroyed service does not get a new deferred recovery job."
+  ],
+  "independent_review_iteration": {
+    "previous_source_sha256": "781c7ee627af517008fc9c8e84ed91614ec82b432d5ea2c2eb0a9313e1432cbf",
+    "finding": "Sampling virtual mode at the early start could miss physical-to-touch transition before readiness.",
+    "fix": "Pending now records the missing active view start regardless of early mode; replay evaluates current mode.",
+    "original_style_record_preserved": "../implementation1/style-result.json"
+  },
+  "validation": {
+    "style": "style-result.json",
+    "ktlint_exit": 0,
+    "ktlint_stdout_bytes": 0,
+    "ktlint_stderr_bytes": 0,
+    "git_diff_check_exit": 0,
+    "application_compiled": false,
+    "unit_tests_run": false,
+    "android_run": false
+  },
+  "scope_exclusions": [
+    "No T9 branch/source/asset/schema changes.",
+    "No fork publication, version, signing or ABI configuration changes.",
+    "No unit tests that mirror boolean assignments; no additional Service harness/dependencies.",
+    "No Gradle, emulator, ADB, commit or push by this agent.",
+    "Existing ThemeScope deferral warning remains; this check does not establish universal zero warnings.",
+    "Base12 candidate TextView/Unicode defects are not included in this independent single-file fix."
+  ],
+  "device_qualification_required": true
+}

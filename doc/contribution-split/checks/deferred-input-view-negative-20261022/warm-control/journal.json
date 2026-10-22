@@ -1,0 +1,324 @@
+{
+  "scope": "Causal diagnostic only; prior cold failure remains failed and no C7/C8 acceptance is inferred.",
+  "commands": [
+    {
+      "name": "original-selected",
+      "argv": [
+        "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+        "-s",
+        "emulator-5584",
+        "shell",
+        "settings",
+        "get",
+        "secure",
+        "default_input_method"
+      ],
+      "started_utc": "2026-10-22T04:36:09.720751+00:00",
+      "finished_utc": "2026-10-22T04:36:09.777359+00:00",
+      "exit": 0,
+      "output": "/home/xumin/Public/Trime/build/readiness-20261022/api35-t9-tail1/root-warm-ime-control1/original-selected.txt",
+      "bytes": 73,
+      "sha256": "b70f8e8321cb864b99170e5fa02d07622ea6c815c0c8421817d4f537c2d3b35f"
+    },
+    {
+      "name": "cold-failed-screen",
+      "argv": [
+        "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+        "-s",
+        "emulator-5584",
+        "exec-out",
+        "screencap",
+        "-p"
+      ],
+      "started_utc": "2026-10-22T04:36:09.777654+00:00",
+      "finished_utc": "2026-10-22T04:36:10.410142+00:00",
+      "exit": 0,
+      "output": "/home/xumin/Public/Trime/build/readiness-20261022/api35-t9-tail1/root-warm-ime-control1/cold-failed-screen.png",
+      "bytes": 9924,
+      "sha256": "fb2f7c6cb389f2843769c684af93e2e159c465254287e449c34eca6308eac30c"
+    },
+    {
+      "name": "cold-failed-ime",
+      "argv": [
+        "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+        "-s",
+        "emulator-5584",
+        "shell",
+        "dumpsys",
+        "input_method"
+      ],
+      "started_utc": "2026-10-22T04:36:10.410740+00:00",
+      "finished_utc": "2026-10-22T04:36:10.512217+00:00",
+      "exit": 0,
+      "output": "/home/xumin/Public/Trime/build/readiness-20261022/api35-t9-tail1/root-warm-ime-control1/cold-failed-ime.txt",
+      "bytes": 45104,
+      "sha256": "67d9e410c11784aab15a014d73eef0a0bb1e524a8e7361f68e2d7d07063dab4d"
+    },
+    {
+      "name": "cold-failed-window",
+      "argv": [
+        "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+        "-s",
+        "emulator-5584",
+        "shell",
+        "dumpsys",
+        "window",
+        "windows"
+      ],
+      "started_utc": "2026-10-22T04:36:10.513412+00:00",
+      "finished_utc": "2026-10-22T04:36:10.632424+00:00",
+      "exit": 0,
+      "output": "/home/xumin/Public/Trime/build/readiness-20261022/api35-t9-tail1/root-warm-ime-control1/cold-failed-window.txt",
+      "bytes": 41302,
+      "sha256": "5dc87e72671e5e8ed225090c5114f0f922c1344eb0a265837c64792c76c25045"
+    },
+    {
+      "name": "cold-failed-gfx",
+      "argv": [
+        "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+        "-s",
+        "emulator-5584",
+        "shell",
+        "dumpsys",
+        "gfxinfo",
+        "com.osfans.trime.debug",
+        "framestats"
+      ],
+      "started_utc": "2026-10-22T04:36:10.633209+00:00",
+      "finished_utc": "2026-10-22T04:36:10.772053+00:00",
+      "exit": 0,
+      "output": "/home/xumin/Public/Trime/build/readiness-20261022/api35-t9-tail1/root-warm-ime-control1/cold-failed-gfx.txt",
+      "bytes": 6183,
+      "sha256": "fb226e4a6763dcbdb9f85d314bc21eb138a5649972966bb64038e3c66a1c158d"
+    },
+    {
+      "name": "cold-failed-process",
+      "argv": [
+        "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+        "-s",
+        "emulator-5584",
+        "shell",
+        "cat",
+        "/proc/2098/stat"
+      ],
+      "started_utc": "2026-10-22T04:36:10.772868+00:00",
+      "finished_utc": "2026-10-22T04:36:10.844592+00:00",
+      "exit": 0,
+      "output": "/home/xumin/Public/Trime/build/readiness-20261022/api35-t9-tail1/root-warm-ime-control1/cold-failed-process.txt",
+      "bytes": 201,
+      "sha256": "fdf5a7d3aa697a672b2096868dd1daa30efdc5d707378540bd48fe7e74beef23"
+    },
+    {
+      "name": "select-latin",
+      "argv": [
+        "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+        "-s",
+        "emulator-5584",
+        "shell",
+        "ime",
+        "set",
+        "com.android.inputmethod.latin/.LatinIME"
+      ],
+      "started_utc": "2026-10-22T04:36:10.845086+00:00",
+      "finished_utc": "2026-10-22T04:36:10.944160+00:00",
+      "exit": 0,
+      "output": "/home/xumin/Public/Trime/build/readiness-20261022/api35-t9-tail1/root-warm-ime-control1/select-latin.txt",
+      "bytes": 74,
+      "sha256": "e7f7788ef5d09111c9c7d9425dc56572cbce17525084c67f3c1dfc7a889569bf"
+    },
+    {
+      "name": "latin-screen",
+      "argv": [
+        "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+        "-s",
+        "emulator-5584",
+        "exec-out",
+        "screencap",
+        "-p"
+      ],
+      "started_utc": "2026-10-22T04:36:13.945038+00:00",
+      "finished_utc": "2026-10-22T04:36:15.008720+00:00",
+      "exit": 0,
+      "output": "/home/xumin/Public/Trime/build/readiness-20261022/api35-t9-tail1/root-warm-ime-control1/latin-screen.png",
+      "bytes": 64711,
+      "sha256": "920390b497b259a7fa1d19b115f4f0702dcea971824ef5fe3b0abf00bdc3c77d"
+    },
+    {
+      "name": "latin-ime",
+      "argv": [
+        "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+        "-s",
+        "emulator-5584",
+        "shell",
+        "dumpsys",
+        "input_method"
+      ],
+      "started_utc": "2026-10-22T04:36:15.009773+00:00",
+      "finished_utc": "2026-10-22T04:36:15.114523+00:00",
+      "exit": 0,
+      "output": "/home/xumin/Public/Trime/build/readiness-20261022/api35-t9-tail1/root-warm-ime-control1/latin-ime.txt",
+      "bytes": 48821,
+      "sha256": "3514034ff97d0b670add680326c9de5152e1dd04876f2a6689646cd85d14cb7b"
+    },
+    {
+      "name": "latin-window",
+      "argv": [
+        "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+        "-s",
+        "emulator-5584",
+        "shell",
+        "dumpsys",
+        "window",
+        "windows"
+      ],
+      "started_utc": "2026-10-22T04:36:15.115585+00:00",
+      "finished_utc": "2026-10-22T04:36:15.218110+00:00",
+      "exit": 0,
+      "output": "/home/xumin/Public/Trime/build/readiness-20261022/api35-t9-tail1/root-warm-ime-control1/latin-window.txt",
+      "bytes": 41292,
+      "sha256": "45f290adebb1b00a866171c6c0e90bbac4c6826285e8cbf8e3b3231539b0bcfe"
+    },
+    {
+      "name": "latin-gfx",
+      "argv": [
+        "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+        "-s",
+        "emulator-5584",
+        "shell",
+        "dumpsys",
+        "gfxinfo",
+        "com.osfans.trime.debug",
+        "framestats"
+      ],
+      "started_utc": "2026-10-22T04:36:15.220103+00:00",
+      "finished_utc": "2026-10-22T04:36:15.287269+00:00",
+      "exit": 0,
+      "output": "/home/xumin/Public/Trime/build/readiness-20261022/api35-t9-tail1/root-warm-ime-control1/latin-gfx.txt",
+      "bytes": 2771,
+      "sha256": "c896d231dd528ce32c5231455b2993f383fb3972cca41f569392e93db1a3c03d"
+    },
+    {
+      "name": "latin-process",
+      "argv": [
+        "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+        "-s",
+        "emulator-5584",
+        "shell",
+        "cat",
+        "/proc/2098/stat"
+      ],
+      "started_utc": "2026-10-22T04:36:15.287930+00:00",
+      "finished_utc": "2026-10-22T04:36:15.362792+00:00",
+      "exit": 0,
+      "output": "/home/xumin/Public/Trime/build/readiness-20261022/api35-t9-tail1/root-warm-ime-control1/latin-process.txt",
+      "bytes": 199,
+      "sha256": "d4c4f6f613bfd3ce0292641b5dc504c96ee7e3927e946349effef82003a76535"
+    },
+    {
+      "name": "restore-trime",
+      "argv": [
+        "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+        "-s",
+        "emulator-5584",
+        "shell",
+        "ime",
+        "set",
+        "com.osfans.trime.debug/com.osfans.trime.ime.core.TrimeInputMethodService"
+      ],
+      "started_utc": "2026-10-22T04:36:15.363639+00:00",
+      "finished_utc": "2026-10-22T04:36:15.459395+00:00",
+      "exit": 0,
+      "output": "/home/xumin/Public/Trime/build/readiness-20261022/api35-t9-tail1/root-warm-ime-control1/restore-trime.txt",
+      "bytes": 107,
+      "sha256": "d67a279eb192d4e3a57ce2d718c63acd6ac708cc7d67ae92988c97933bad5dc5"
+    },
+    {
+      "name": "warm-trime-screen",
+      "argv": [
+        "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+        "-s",
+        "emulator-5584",
+        "exec-out",
+        "screencap",
+        "-p"
+      ],
+      "started_utc": "2026-10-22T04:36:20.464255+00:00",
+      "finished_utc": "2026-10-22T04:36:21.543540+00:00",
+      "exit": 0,
+      "output": "/home/xumin/Public/Trime/build/readiness-20261022/api35-t9-tail1/root-warm-ime-control1/warm-trime-screen.png",
+      "bytes": 58034,
+      "sha256": "73e8b89b818d0a7aaf6827825c3cd86e3abafe6baf74a41d620d6f740606e60b"
+    },
+    {
+      "name": "warm-trime-ime",
+      "argv": [
+        "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+        "-s",
+        "emulator-5584",
+        "shell",
+        "dumpsys",
+        "input_method"
+      ],
+      "started_utc": "2026-10-22T04:36:21.544636+00:00",
+      "finished_utc": "2026-10-22T04:36:21.644906+00:00",
+      "exit": 0,
+      "output": "/home/xumin/Public/Trime/build/readiness-20261022/api35-t9-tail1/root-warm-ime-control1/warm-trime-ime.txt",
+      "bytes": 48652,
+      "sha256": "7a7fdefdc41884f37d85ed15b037e096d6ae1e617221df172cb9d27efa0d9d13"
+    },
+    {
+      "name": "warm-trime-window",
+      "argv": [
+        "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+        "-s",
+        "emulator-5584",
+        "shell",
+        "dumpsys",
+        "window",
+        "windows"
+      ],
+      "started_utc": "2026-10-22T04:36:21.645895+00:00",
+      "finished_utc": "2026-10-22T04:36:21.770048+00:00",
+      "exit": 0,
+      "output": "/home/xumin/Public/Trime/build/readiness-20261022/api35-t9-tail1/root-warm-ime-control1/warm-trime-window.txt",
+      "bytes": 41373,
+      "sha256": "6035ebf318a28f4869e3685b6c3d3c3ebaf3d592fe2dcea9780d1d6abd6721a5"
+    },
+    {
+      "name": "warm-trime-gfx",
+      "argv": [
+        "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+        "-s",
+        "emulator-5584",
+        "shell",
+        "dumpsys",
+        "gfxinfo",
+        "com.osfans.trime.debug",
+        "framestats"
+      ],
+      "started_utc": "2026-10-22T04:36:21.771020+00:00",
+      "finished_utc": "2026-10-22T04:36:21.904095+00:00",
+      "exit": 0,
+      "output": "/home/xumin/Public/Trime/build/readiness-20261022/api35-t9-tail1/root-warm-ime-control1/warm-trime-gfx.txt",
+      "bytes": 6996,
+      "sha256": "3754d615d228664c4802b3b923997fd1a5bbb8f76ed63664d02b8987b6f70125"
+    },
+    {
+      "name": "warm-trime-process",
+      "argv": [
+        "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+        "-s",
+        "emulator-5584",
+        "shell",
+        "cat",
+        "/proc/2098/stat"
+      ],
+      "started_utc": "2026-10-22T04:36:21.905933+00:00",
+      "finished_utc": "2026-10-22T04:36:21.971999+00:00",
+      "exit": 0,
+      "output": "/home/xumin/Public/Trime/build/readiness-20261022/api35-t9-tail1/root-warm-ime-control1/warm-trime-process.txt",
+      "bytes": 201,
+      "sha256": "b5e35062c1c101a3fcc8edb9ece0724b3c91802eab3469d6d022377f99e73d90"
+    }
+  ]
+}
