@@ -1,0 +1,49 @@
+{
+  "action": "verify-export",
+  "serial": null,
+  "start_epoch": 1792638724.6245227,
+  "assertions": [
+    {
+      "name": "real negative marker captured from a different PID",
+      "passed": true,
+      "negative_pids": [
+        10813
+      ]
+    },
+    {
+      "name": "negative marker excluded from exported app log",
+      "passed": true
+    },
+    {
+      "name": "export contains real app PID records",
+      "passed": true,
+      "parsed_records": 10000
+    },
+    {
+      "name": "every exported numeric PID belongs to this app process",
+      "passed": true,
+      "observed_pids": [
+        3271
+      ]
+    },
+    {
+      "name": "exact exported timestamp/PID/payload independently present before negative marker",
+      "passed": true,
+      "overlap_records": 9916
+    },
+    {
+      "name": "exact exported timestamp/PID/payload independently present after negative marker",
+      "passed": true,
+      "overlap_records": 84
+    }
+  ],
+  "end_epoch": 1792638734.8004954,
+  "inputs": {
+    "/home/xumin/Public/Trime/build/readiness-20261022/logcat/api35-buffer1/exported-default.txt": "5c166510dbfc126a90c7bbf1b6fda43bfea60c196da41c58457a7b7b2f0a1f38",
+    "/home/xumin/Public/Trime/build/readiness-20261022/logcat/api35-buffer1/full-system-log.raw.txt": "31b1c16d6db67dc37325ba8d95b01cd0d137374a36917f0397c995d9b27c472a"
+  },
+  "adb_transport_terminal_crlf_lines_normalized_for_comparison_only": 0,
+  "positive_before_example": "10-22 11:03:52.634  3271  3293 D EGL_emulation: app_time_stats: avg=111.88ms min=95.91ms max=128.05ms count=9",
+  "positive_after_example": "10-22 11:03:53.714  3271  3293 D EGL_emulation: app_time_stats: avg=107.58ms min=92.28ms max=128.31ms count=10",
+  "passed": true
+}

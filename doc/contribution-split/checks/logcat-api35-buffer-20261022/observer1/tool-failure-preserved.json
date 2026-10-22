@@ -1,0 +1,90 @@
+{
+  "at": "2026-10-22T02:36:10.431146+00:00",
+  "status": "tool_failure_not_product_test",
+  "failed_client_ready": "TimeoutError: Missing original complete JSON: ready.json",
+  "following_capture_also_failed": "AssertionError: push request; original 01-setup/push.json retains Permission denied",
+  "cause_observed": "ADB uid2000 and ready file existed in helper private cache; existing client assumes root file reads/push. No source/app maintenance started.",
+  "helper_terminal": {
+    "passed": false,
+    "error": "java.lang.IllegalStateException: Observation session exceeded 90-second idle deadline\n\tat org.x2m7.trime.editorobserver8.Observer.require(Observer.java:70)\n\tat org.x2m7.trime.editorobserver8.Observer.onStart(Observer.java:529)\n\tat android.app.Instrumentation$InstrumentationThread.run(Instrumentation.java:2594)\n",
+    "stop_received": false,
+    "request_count": 0,
+    "capture_count": 0,
+    "capture_failures": 0
+  },
+  "host_exit": {
+    "utc": "2026-10-22T02:35:13.513336+00:00",
+    "argv": [
+      "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+      "-s",
+      "emulator-5584",
+      "shell",
+      "am",
+      "instrument",
+      "-w",
+      "-r",
+      "-e",
+      "mode",
+      "session",
+      "-e",
+      "session_token",
+      "0d82ebcb945e49a989bf934e7a49d203",
+      "-e",
+      "expected_package",
+      "com.osfans.trime.debug",
+      "-e",
+      "expected_apk_sha256",
+      "09e19ae6802bf9fd29b167cc205494c252fbbcc1876980a55d108d20710adfc5",
+      "org.x2m7.trime.editorobserver8/.Observer"
+    ],
+    "exit": 0
+  },
+  "manual_stop_request_late": "run-as published sequence1 only after helper idle deadline; does not establish normal stop.",
+  "corrected_parent_message": "Initially called hostwait0 normal stop; immediately corrected after finished original read: idle failure, no normal stop.",
+  "files": {
+    "actual-host-exit.json": {
+      "bytes": 573,
+      "sha256": "1b79029b7f9ffaec4505ce747306956e3f4f6afa52553cda3952d8fdbc2b1056"
+    },
+    "manual-access-recovery-stop-command.json": {
+      "bytes": 502,
+      "sha256": "59aa18d4ed6ea8dae31f019adb373e5a19f43c45aac0b7caff93108429bcbc6a"
+    },
+    "client-state.json": {
+      "bytes": 907,
+      "sha256": "988e81959a4dd1d860d7580a7461ab3f1b18c56de8a1a47a759e87c52de60c45"
+    },
+    "actual-instrument.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "ready-runas-original.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "actual-instrument.stdout": {
+      "bytes": 1748,
+      "sha256": "78e585d6dabfe849b6ef176d25105e897620e07b92991ca6e11849fa45364722"
+    },
+    "finished-runas-original.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "finished-runas-original.json": {
+      "bytes": 1613,
+      "sha256": "3ec5a88edffbfcce31eae5c297ff740622d4ca945c7b54bcfc7fe412c300e07e"
+    },
+    "ready-runas-original.json": {
+      "bytes": 1100,
+      "sha256": "f356ec536899c08d0fb60e60efc3863d6866a179f949a59a010d0d6d0bfc06a0"
+    },
+    "manual-access-recovery-stop-request.json": {
+      "bytes": 140,
+      "sha256": "3380b847f9ef000dc511822c48b3e32387dc628ca5dab0b8ce939ba0fa60b175"
+    },
+    "access-recovery-read-commands.json": {
+      "bytes": 624,
+      "sha256": "a0257b1b22e5392c68902052a489326df933cca83e33140b935283ac5200717f"
+    }
+  }
+}

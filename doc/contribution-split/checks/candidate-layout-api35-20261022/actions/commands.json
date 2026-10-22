@@ -1,0 +1,783 @@
+[
+  {
+    "name": "01-boot",
+    "command": [
+      "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+      "-s",
+      "emulator-5584",
+      "shell",
+      "cat",
+      "/proc/sys/kernel/random/boot_id"
+    ],
+    "exit": 0,
+    "seconds": 0.03212633500515949,
+    "stdoutBytes": 37,
+    "stderrBytes": 0
+  },
+  {
+    "name": "02-sdk",
+    "command": [
+      "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+      "-s",
+      "emulator-5584",
+      "shell",
+      "getprop",
+      "ro.build.version.sdk"
+    ],
+    "exit": 0,
+    "seconds": 0.03215794800053118,
+    "stdoutBytes": 3,
+    "stderrBytes": 0
+  },
+  {
+    "name": "03-original-default-ime",
+    "command": [
+      "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+      "-s",
+      "emulator-5584",
+      "shell",
+      "settings",
+      "get",
+      "secure",
+      "default_input_method"
+    ],
+    "exit": 0,
+    "seconds": 0.06414953000057722,
+    "stdoutBytes": 40,
+    "stderrBytes": 0
+  },
+  {
+    "name": "04-original-enabled-imes",
+    "command": [
+      "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+      "-s",
+      "emulator-5584",
+      "shell",
+      "settings",
+      "get",
+      "secure",
+      "enabled_input_methods"
+    ],
+    "exit": 0,
+    "seconds": 0.06450367700017523,
+    "stdoutBytes": 40,
+    "stderrBytes": 0
+  },
+  {
+    "name": "05-original-size",
+    "command": [
+      "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+      "-s",
+      "emulator-5584",
+      "shell",
+      "wm",
+      "size"
+    ],
+    "exit": 0,
+    "seconds": 0.06412537099822657,
+    "stdoutBytes": 24,
+    "stderrBytes": 0
+  },
+  {
+    "name": "06-original-density",
+    "command": [
+      "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+      "-s",
+      "emulator-5584",
+      "shell",
+      "wm",
+      "density"
+    ],
+    "exit": 0,
+    "seconds": 0.06448224999621743,
+    "stdoutBytes": 22,
+    "stderrBytes": 0
+  },
+  {
+    "name": "07-original-font",
+    "command": [
+      "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+      "-s",
+      "emulator-5584",
+      "shell",
+      "settings",
+      "get",
+      "system",
+      "font_scale"
+    ],
+    "exit": 0,
+    "seconds": 0.06472428699635202,
+    "stdoutBytes": 4,
+    "stderrBytes": 0
+  },
+  {
+    "name": "08-original-debug-checkjni",
+    "command": [
+      "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+      "-s",
+      "emulator-5584",
+      "shell",
+      "getprop",
+      "debug.checkjni"
+    ],
+    "exit": 0,
+    "seconds": 0.03246800700435415,
+    "stdoutBytes": 1,
+    "stderrBytes": 0
+  },
+  {
+    "name": "09-original-kernel-checkjni",
+    "command": [
+      "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+      "-s",
+      "emulator-5584",
+      "shell",
+      "getprop",
+      "ro.kernel.android.checkjni"
+    ],
+    "exit": 0,
+    "seconds": 0.0324502939984086,
+    "stdoutBytes": 1,
+    "stderrBytes": 0
+  },
+  {
+    "name": "10-before-processes",
+    "command": [
+      "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+      "-s",
+      "emulator-5584",
+      "shell",
+      "ps",
+      "-A"
+    ],
+    "exit": 0,
+    "seconds": 0.11513308999565197,
+    "stdoutBytes": 23984,
+    "stderrBytes": 0
+  },
+  {
+    "name": "11-select-latin",
+    "command": [
+      "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+      "-s",
+      "emulator-5584",
+      "shell",
+      "ime",
+      "set",
+      "com.android.inputmethod.latin/.LatinIME"
+    ],
+    "exit": 0,
+    "seconds": 0.06522081799630541,
+    "stdoutBytes": 74,
+    "stderrBytes": 0
+  },
+  {
+    "name": "12-disable-target-ime",
+    "command": [
+      "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+      "-s",
+      "emulator-5584",
+      "shell",
+      "ime",
+      "disable",
+      "com.osfans.trime.debug/.ime.core.TrimeInputMethodService"
+    ],
+    "exit": 0,
+    "seconds": 0.06448992399964482,
+    "stdoutBytes": 100,
+    "stderrBytes": 0
+  },
+  {
+    "name": "13-force-stop-target",
+    "command": [
+      "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+      "-s",
+      "emulator-5584",
+      "shell",
+      "am",
+      "force-stop",
+      "com.osfans.trime.debug"
+    ],
+    "exit": 0,
+    "seconds": 0.11475603900180431,
+    "stdoutBytes": 0,
+    "stderrBytes": 0
+  },
+  {
+    "name": "14-uninstall-pure-test-target",
+    "command": [
+      "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+      "-s",
+      "emulator-5584",
+      "uninstall",
+      "com.osfans.trime.debug"
+    ],
+    "exit": 0,
+    "seconds": 0.4702702840004349,
+    "stdoutBytes": 8,
+    "stderrBytes": 0
+  },
+  {
+    "name": "15-install-original-7a45",
+    "command": [
+      "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+      "-s",
+      "emulator-5584",
+      "install",
+      "/home/xumin/Public/Trime/build/readiness-20261022/candidate-layout/new-ci/fork-ubuntu-download1/com.osfans.trime-7a45cf29-x86_64-debug.apk"
+    ],
+    "exit": 0,
+    "seconds": 3.1429958879962214,
+    "stdoutBytes": 36,
+    "stderrBytes": 0
+  },
+  {
+    "name": "16-install-frozen-probe4",
+    "command": [
+      "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+      "-s",
+      "emulator-5584",
+      "install",
+      "-r",
+      "/home/xumin/Public/Trime/build/readiness-20261022/ui/candidate-layout-build4/probe.apk"
+    ],
+    "exit": 0,
+    "seconds": 0.5666294290058431,
+    "stdoutBytes": 85,
+    "stderrBytes": 50
+  },
+  {
+    "name": "17-target-apk-path",
+    "command": [
+      "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+      "-s",
+      "emulator-5584",
+      "shell",
+      "pm",
+      "path",
+      "com.osfans.trime.debug"
+    ],
+    "exit": 0,
+    "seconds": 0.11516905300231883,
+    "stdoutBytes": 102,
+    "stderrBytes": 0
+  },
+  {
+    "name": "18-installed-original-bytes",
+    "command": [
+      "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+      "-s",
+      "emulator-5584",
+      "exec-out",
+      "cat",
+      "/data/app/~~__tACO4Ol8ueODLDHtqOAg==/com.osfans.trime.debug-kq847WMB42VQbaZJ0T4Org==/base.apk"
+    ],
+    "exit": 0,
+    "seconds": 0.9188583180002752,
+    "stdoutBytes": 20533673,
+    "stderrBytes": 0
+  },
+  {
+    "name": "19-before-probe-window",
+    "command": [
+      "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+      "-s",
+      "emulator-5584",
+      "shell",
+      "dumpsys",
+      "window",
+      "windows"
+    ],
+    "exit": 0,
+    "seconds": 0.3255070520026493,
+    "stdoutBytes": 47788,
+    "stderrBytes": 0
+  },
+  {
+    "name": "20-before-probe-screen",
+    "command": [
+      "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+      "-s",
+      "emulator-5584",
+      "exec-out",
+      "screencap",
+      "-p"
+    ],
+    "exit": 0,
+    "seconds": 0.9186893090009107,
+    "stdoutBytes": 121071,
+    "stderrBytes": 0
+  },
+  {
+    "name": "21-run-probe4",
+    "command": [
+      "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+      "-s",
+      "emulator-5584",
+      "shell",
+      "am",
+      "instrument",
+      "-w",
+      "org.x2m7.trime.readiness.candidate/.CandidateProbe"
+    ],
+    "exit": 0,
+    "seconds": 10.56731495999702,
+    "stdoutBytes": 7948,
+    "stderrBytes": 0
+  },
+  {
+    "name": "22-list-original-results",
+    "command": [
+      "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+      "-s",
+      "emulator-5584",
+      "exec-out",
+      "run-as",
+      "org.x2m7.trime.readiness.candidate",
+      "ls",
+      "cache/candidate-layout-de984c75-9539-47da-a1f7-cc1cf15df19d"
+    ],
+    "exit": 0,
+    "seconds": 0.11517100899800425,
+    "stdoutBytes": 364,
+    "stderrBytes": 0
+  },
+  {
+    "name": "23-export-00",
+    "command": [
+      "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+      "-s",
+      "emulator-5584",
+      "exec-out",
+      "run-as",
+      "org.x2m7.trime.readiness.candidate",
+      "cat",
+      "cache/candidate-layout-de984c75-9539-47da-a1f7-cc1cf15df19d/constructor-production.png  latin-production.png  rebind-production.png"
+    ],
+    "exit": 0,
+    "seconds": 0.06485396399511956,
+    "stdoutBytes": 164,
+    "stderrBytes": 0
+  },
+  {
+    "name": "23-export-01",
+    "command": [
+      "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+      "-s",
+      "emulator-5584",
+      "exec-out",
+      "run-as",
+      "org.x2m7.trime.readiness.candidate",
+      "cat",
+      "cache/candidate-layout-de984c75-9539-47da-a1f7-cc1cf15df19d/constructor-reference.png   latin-reference.png   rebind-reference.png"
+    ],
+    "exit": 0,
+    "seconds": 0.06544332100020256,
+    "stdoutBytes": 163,
+    "stderrBytes": 0
+  },
+  {
+    "name": "23-export-02",
+    "command": [
+      "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+      "-s",
+      "emulator-5584",
+      "exec-out",
+      "run-as",
+      "org.x2m7.trime.readiness.candidate",
+      "cat",
+      "cache/candidate-layout-de984c75-9539-47da-a1f7-cc1cf15df19d/constructor-screen.png      latin-screen.png      rebind-screen.png"
+    ],
+    "exit": 0,
+    "seconds": 0.06464275899634231,
+    "stdoutBytes": 160,
+    "stderrBytes": 0
+  },
+  {
+    "name": "23-export-03",
+    "command": [
+      "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+      "-s",
+      "emulator-5584",
+      "exec-out",
+      "run-as",
+      "org.x2m7.trime.readiness.candidate",
+      "cat",
+      "cache/candidate-layout-de984c75-9539-47da-a1f7-cc1cf15df19d/hanzi-production.png        null-production.png   result.json"
+    ],
+    "exit": 0,
+    "seconds": 0.06428637500357581,
+    "stdoutBytes": 154,
+    "stderrBytes": 0
+  },
+  {
+    "name": "23-export-04",
+    "command": [
+      "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+      "-s",
+      "emulator-5584",
+      "exec-out",
+      "run-as",
+      "org.x2m7.trime.readiness.candidate",
+      "cat",
+      "cache/candidate-layout-de984c75-9539-47da-a1f7-cc1cf15df19d/hanzi-reference.png         null-reference.png"
+    ],
+    "exit": 0,
+    "seconds": 0.06450712399964686,
+    "stdoutBytes": 139,
+    "stderrBytes": 0
+  },
+  {
+    "name": "23-export-05",
+    "command": [
+      "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+      "-s",
+      "emulator-5584",
+      "exec-out",
+      "run-as",
+      "org.x2m7.trime.readiness.candidate",
+      "cat",
+      "cache/candidate-layout-de984c75-9539-47da-a1f7-cc1cf15df19d/hanzi-screen.png            null-screen.png"
+    ],
+    "exit": 0,
+    "seconds": 0.06426865399407689,
+    "stdoutBytes": 136,
+    "stderrBytes": 0
+  },
+  {
+    "name": "24-list-one-per-line",
+    "command": [
+      "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+      "-s",
+      "emulator-5584",
+      "exec-out",
+      "run-as",
+      "org.x2m7.trime.readiness.candidate",
+      "ls",
+      "-1",
+      "cache/candidate-layout-de984c75-9539-47da-a1f7-cc1cf15df19d"
+    ],
+    "exit": 0,
+    "seconds": 0.06463532100315206,
+    "stdoutBytes": 320,
+    "stderrBytes": 0
+  },
+  {
+    "name": "25-export-00",
+    "command": [
+      "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+      "-s",
+      "emulator-5584",
+      "exec-out",
+      "run-as",
+      "org.x2m7.trime.readiness.candidate",
+      "cat",
+      "cache/candidate-layout-de984c75-9539-47da-a1f7-cc1cf15df19d/constructor-production.png"
+    ],
+    "exit": 0,
+    "seconds": 0.1150059300052817,
+    "stdoutBytes": 146,
+    "stderrBytes": 0
+  },
+  {
+    "name": "25-export-01",
+    "command": [
+      "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+      "-s",
+      "emulator-5584",
+      "exec-out",
+      "run-as",
+      "org.x2m7.trime.readiness.candidate",
+      "cat",
+      "cache/candidate-layout-de984c75-9539-47da-a1f7-cc1cf15df19d/constructor-reference.png"
+    ],
+    "exit": 0,
+    "seconds": 0.11514595100015868,
+    "stdoutBytes": 146,
+    "stderrBytes": 0
+  },
+  {
+    "name": "25-export-02",
+    "command": [
+      "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+      "-s",
+      "emulator-5584",
+      "exec-out",
+      "run-as",
+      "org.x2m7.trime.readiness.candidate",
+      "cat",
+      "cache/candidate-layout-de984c75-9539-47da-a1f7-cc1cf15df19d/constructor-screen.png"
+    ],
+    "exit": 0,
+    "seconds": 0.11608125299972016,
+    "stdoutBytes": 20934,
+    "stderrBytes": 0
+  },
+  {
+    "name": "25-export-03",
+    "command": [
+      "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+      "-s",
+      "emulator-5584",
+      "exec-out",
+      "run-as",
+      "org.x2m7.trime.readiness.candidate",
+      "cat",
+      "cache/candidate-layout-de984c75-9539-47da-a1f7-cc1cf15df19d/hanzi-production.png"
+    ],
+    "exit": 0,
+    "seconds": 0.1657814040008816,
+    "stdoutBytes": 1182,
+    "stderrBytes": 0
+  },
+  {
+    "name": "25-export-04",
+    "command": [
+      "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+      "-s",
+      "emulator-5584",
+      "exec-out",
+      "run-as",
+      "org.x2m7.trime.readiness.candidate",
+      "cat",
+      "cache/candidate-layout-de984c75-9539-47da-a1f7-cc1cf15df19d/hanzi-reference.png"
+    ],
+    "exit": 0,
+    "seconds": 0.17079020099481568,
+    "stdoutBytes": 1182,
+    "stderrBytes": 0
+  },
+  {
+    "name": "25-export-05",
+    "command": [
+      "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+      "-s",
+      "emulator-5584",
+      "exec-out",
+      "run-as",
+      "org.x2m7.trime.readiness.candidate",
+      "cat",
+      "cache/candidate-layout-de984c75-9539-47da-a1f7-cc1cf15df19d/hanzi-screen.png"
+    ],
+    "exit": 0,
+    "seconds": 0.16581439100264106,
+    "stdoutBytes": 17909,
+    "stderrBytes": 0
+  },
+  {
+    "name": "25-export-06",
+    "command": [
+      "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+      "-s",
+      "emulator-5584",
+      "exec-out",
+      "run-as",
+      "org.x2m7.trime.readiness.candidate",
+      "cat",
+      "cache/candidate-layout-de984c75-9539-47da-a1f7-cc1cf15df19d/latin-production.png"
+    ],
+    "exit": 0,
+    "seconds": 0.11516637199383695,
+    "stdoutBytes": 551,
+    "stderrBytes": 0
+  },
+  {
+    "name": "25-export-07",
+    "command": [
+      "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+      "-s",
+      "emulator-5584",
+      "exec-out",
+      "run-as",
+      "org.x2m7.trime.readiness.candidate",
+      "cat",
+      "cache/candidate-layout-de984c75-9539-47da-a1f7-cc1cf15df19d/latin-reference.png"
+    ],
+    "exit": 0,
+    "seconds": 0.11501306399441091,
+    "stdoutBytes": 551,
+    "stderrBytes": 0
+  },
+  {
+    "name": "25-export-08",
+    "command": [
+      "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+      "-s",
+      "emulator-5584",
+      "exec-out",
+      "run-as",
+      "org.x2m7.trime.readiness.candidate",
+      "cat",
+      "cache/candidate-layout-de984c75-9539-47da-a1f7-cc1cf15df19d/latin-screen.png"
+    ],
+    "exit": 0,
+    "seconds": 0.11484158399980515,
+    "stdoutBytes": 16251,
+    "stderrBytes": 0
+  },
+  {
+    "name": "25-export-09",
+    "command": [
+      "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+      "-s",
+      "emulator-5584",
+      "exec-out",
+      "run-as",
+      "org.x2m7.trime.readiness.candidate",
+      "cat",
+      "cache/candidate-layout-de984c75-9539-47da-a1f7-cc1cf15df19d/null-production.png"
+    ],
+    "exit": 0,
+    "seconds": 0.11480122000648407,
+    "stdoutBytes": 146,
+    "stderrBytes": 0
+  },
+  {
+    "name": "25-export-10",
+    "command": [
+      "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+      "-s",
+      "emulator-5584",
+      "exec-out",
+      "run-as",
+      "org.x2m7.trime.readiness.candidate",
+      "cat",
+      "cache/candidate-layout-de984c75-9539-47da-a1f7-cc1cf15df19d/null-reference.png"
+    ],
+    "exit": 0,
+    "seconds": 0.1153421700000763,
+    "stdoutBytes": 146,
+    "stderrBytes": 0
+  },
+  {
+    "name": "25-export-11",
+    "command": [
+      "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+      "-s",
+      "emulator-5584",
+      "exec-out",
+      "run-as",
+      "org.x2m7.trime.readiness.candidate",
+      "cat",
+      "cache/candidate-layout-de984c75-9539-47da-a1f7-cc1cf15df19d/null-screen.png"
+    ],
+    "exit": 0,
+    "seconds": 0.11491885500436183,
+    "stdoutBytes": 15363,
+    "stderrBytes": 0
+  },
+  {
+    "name": "25-export-12",
+    "command": [
+      "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+      "-s",
+      "emulator-5584",
+      "exec-out",
+      "run-as",
+      "org.x2m7.trime.readiness.candidate",
+      "cat",
+      "cache/candidate-layout-de984c75-9539-47da-a1f7-cc1cf15df19d/rebind-production.png"
+    ],
+    "exit": 0,
+    "seconds": 0.06514944499940611,
+    "stdoutBytes": 1182,
+    "stderrBytes": 0
+  },
+  {
+    "name": "25-export-13",
+    "command": [
+      "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+      "-s",
+      "emulator-5584",
+      "exec-out",
+      "run-as",
+      "org.x2m7.trime.readiness.candidate",
+      "cat",
+      "cache/candidate-layout-de984c75-9539-47da-a1f7-cc1cf15df19d/rebind-reference.png"
+    ],
+    "exit": 0,
+    "seconds": 0.06475037900236202,
+    "stdoutBytes": 1182,
+    "stderrBytes": 0
+  },
+  {
+    "name": "25-export-14",
+    "command": [
+      "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+      "-s",
+      "emulator-5584",
+      "exec-out",
+      "run-as",
+      "org.x2m7.trime.readiness.candidate",
+      "cat",
+      "cache/candidate-layout-de984c75-9539-47da-a1f7-cc1cf15df19d/rebind-screen.png"
+    ],
+    "exit": 0,
+    "seconds": 0.06461475999822142,
+    "stdoutBytes": 18035,
+    "stderrBytes": 0
+  },
+  {
+    "name": "25-export-15",
+    "command": [
+      "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+      "-s",
+      "emulator-5584",
+      "exec-out",
+      "run-as",
+      "org.x2m7.trime.readiness.candidate",
+      "cat",
+      "cache/candidate-layout-de984c75-9539-47da-a1f7-cc1cf15df19d/result.json"
+    ],
+    "exit": 0,
+    "seconds": 0.06452174299920443,
+    "stdoutBytes": 10904,
+    "stderrBytes": 0
+  },
+  {
+    "name": "26-after-probe-processes",
+    "command": [
+      "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+      "-s",
+      "emulator-5584",
+      "shell",
+      "ps",
+      "-A"
+    ],
+    "exit": 0,
+    "seconds": 0.11467320800147718,
+    "stdoutBytes": 24224,
+    "stderrBytes": 0
+  },
+  {
+    "name": "27-after-probe-window",
+    "command": [
+      "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+      "-s",
+      "emulator-5584",
+      "shell",
+      "dumpsys",
+      "window",
+      "windows"
+    ],
+    "exit": 0,
+    "seconds": 0.11452750099851983,
+    "stdoutBytes": 47790,
+    "stderrBytes": 0
+  },
+  {
+    "name": "28-after-probe-screen",
+    "command": [
+      "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+      "-s",
+      "emulator-5584",
+      "exec-out",
+      "screencap",
+      "-p"
+    ],
+    "exit": 0,
+    "seconds": 0.6662615110035404,
+    "stdoutBytes": 121183,
+    "stderrBytes": 0
+  }
+]

@@ -1,0 +1,35 @@
+[
+  {
+    "label": "emulator",
+    "command": [
+      "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+      "-s",
+      "emulator-5584",
+      "shell",
+      "getprop ro.kernel.qemu"
+    ],
+    "exit": 0
+  },
+  {
+    "label": "sdk",
+    "command": [
+      "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+      "-s",
+      "emulator-5584",
+      "shell",
+      "getprop ro.build.version.sdk"
+    ],
+    "exit": 0
+  },
+  {
+    "label": "negative-marker",
+    "command": [
+      "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+      "-s",
+      "emulator-5584",
+      "shell",
+      "run-as com.osfans.trime.debug /system/bin/sh -c 'echo MARKER_PID=$$; id; exec /system/bin/log -p i -t TrimeReadiness TRIME_READINESS_NEGATIVE_3c0f6fc1010c474d85411d912ae157ad'"
+    ],
+    "exit": 0
+  }
+]

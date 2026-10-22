@@ -1,0 +1,63 @@
+{
+  "schema": 1,
+  "recorded_utc": "2026-10-22T03:05:45.955067+00:00",
+  "main_audit": {
+    "path": "/home/xumin/Public/Trime/build/readiness-20261022/logcat/api35-buffer1/cold-system-phase-host-audit1.json",
+    "sha256": "2e087d0fcb622ca2e2ac64c9988644d14f177072df555920d17d599be127ec95"
+  },
+  "frozen_range": {
+    "path": "/home/xumin/Public/Trime/build/readiness-20261022/logcat/api35-buffer1/cold-system-phase.raw.txt",
+    "sha256": "d1c9e33cf26cd4b4c23ccd6c2fa5401e781d06c2ae1d2b6882882cd643cdfdd0",
+    "bytes": 105864442,
+    "all_1472450_lines_match_threadtime_parser": true
+  },
+  "target_wefa_taxonomy": {
+    "first_deployment_missing_config_notice": 9,
+    "art_runtime_diagnostic": 20,
+    "theme_unknown_ignored_style_key": 4,
+    "theme_unknown_color_key": 1,
+    "framework_back_dispatch_diagnostic": 5,
+    "existing_preset_key_or_modifier_parse_error": 4,
+    "native_dictionary_encode_failure": 193
+  },
+  "target_examples": {
+    "first_deployment_missing_config_notice": "10-22 10:37:51.574  3271  4448 W rime.trime: nonexistent config file '/storage/emulated/0/Android/data/com.osfans.trime.debug/files/rime/installation.yaml'.",
+    "art_runtime_diagnostic": "10-22 10:37:51.753  3271  3276 W ans.trime.debug: Cleared Reference was only reachable from finalizer (only reported once)",
+    "theme_unknown_ignored_style_key": "10-22 10:37:54.466  3271  3271 W [main] ThemeDiagnostics: ThemeDiagnostics.kt:105] Theme 'trime': unknown key 'preview_font' in 'style'; the runtime ignores it",
+    "theme_unknown_color_key": "10-22 10:37:54.479  3271  3271 W [main] ThemeScope: ThemeScope.kt:52] Unknown color key: candidate_border_color",
+    "framework_back_dispatch_diagnostic": "10-22 10:38:32.574  3271  3271 W WindowOnBackDispatcher: sendCancelIfRunning: isInProgress=false callback=android.view.ViewRootImpl$$ExternalSyntheticLambda11@4d7dce0",
+    "existing_preset_key_or_modifier_parse_error": "10-22 10:39:13.813  3271  3271 E [main] KeyCode: KeyCode.kt:109] Unrecognized key '(){Left}'",
+    "native_dictionary_encode_failure": "10-22 10:40:01.859  3271  4468 W rime.trime: Encode failure: '亞歷山大·杜布切克'."
+  },
+  "kernel_irq_event": {
+    "raw_context_path": "/home/xumin/Public/Trime/build/readiness-20261022/logcat/api35-buffer1/cold-system-kernel-irq35-context.raw.txt",
+    "raw_sha256": "8ef3fa71e003fece3323b1a70c86888a7678016df6174d053702a66f6c9c1292",
+    "source_start_offset_inclusive": 40929189,
+    "source_end_offset_exclusive": 40933417,
+    "line_count": 48,
+    "pid": 0,
+    "priority_F_count": 1,
+    "text": "Disabling IRQ #35",
+    "context": "QEMU Standard PC, vp_vring_interrupt [virtio_pci], __report_bad_irq / nobody cared call trace",
+    "assessment": "Real kernel/QEMU IRQ warning plus F-priority event. It must remain in system critical/error reporting; it is not an AndroidRuntime/native application crash header and does not prove PID3271 died. No sole cause or global emulator safety claim is made."
+  },
+  "fatal_anr_oom_lmk_assessment": {
+    "structural_java_native_crash_headers": 0,
+    "structural_anr_events": 0,
+    "structural_checkjni_events": 0,
+    "structural_oom_events": 0,
+    "structural_low_memory_kill_events": 0,
+    "system_F_priority_events": 1,
+    "cannot_claim_all_system_critical_zero": true
+  },
+  "host_audit_tool_warning": {
+    "original_execution": "The first audit command returned one Python DeprecationWarning for strptime without an explicit year; the exact warning was visible in tool output, not captured as a separate raw stderr file. It is a host audit-tool warning, not an Android/system/application event.",
+    "warning_text_as_returned": "DeprecationWarning: Parsing dates involving a day of month without a year specified is ambiguous and fails to parse leap day. The default behavior will change in Python 3.15 to either always raise an exception or to use a different default year (TBD). To avoid trouble, add a specific year to the input & format. See https://github.com/python/cpython/issues/70647.",
+    "followup_validation": "Recomputed both timestamp values with explicit 2026 and format %Y-%m-%d %H:%M:%S.%f; same1472.734s, no new warning, no original raw/log/audit bytes modified."
+  },
+  "limits": [
+    "Only this exact cold-phase range was frozen/audited, not the entire runtime round.",
+    "W/E/F source lines remain unmodified in separate derived original-byte files. Existing application/theme/dictionary notices are not relabelled as emulator-only or eliminated.",
+    "These bounded native maintenance observations are not release startup/performance results, and do not prove realtime UI suffix freshness."
+  ]
+}

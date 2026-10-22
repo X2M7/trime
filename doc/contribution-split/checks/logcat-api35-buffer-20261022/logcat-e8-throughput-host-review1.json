@@ -1,0 +1,167 @@
+{
+  "schema": 1,
+  "utc": "2026-10-22T02:58:55.941177+00:00",
+  "scope": "HOST read-only source and preserved API35 observations; no ADB, source edits, new tests or device-scope expansion",
+  "source_head": "e8e4db837d16e00bdbc3d5ab266561ac5a99114c",
+  "base_head": "12ffd16fe03537b6d0ed9716c71cbc33608c2a33",
+  "sources": [
+    {
+      "path": "/home/xumin/Public/Trime-pr-logcat-reliability/app/src/main/java/com/osfans/trime/util/Logcat.kt",
+      "sha256": "675da61a06b8c923690f4fb40d2a4953986d2837317c2f9ea998dd6e9a70952c",
+      "relevant_lines": {
+        "MutableSharedFlow()": [
+          45
+        ],
+        "collectLines(": [
+          119
+        ],
+        "CoroutineStart.UNDISPATCHED": [
+          120
+        ],
+        "flow.emit(line)": [
+          155
+        ],
+        "readLogLine()": [
+          75,
+          154,
+          186
+        ]
+      }
+    },
+    {
+      "path": "/home/xumin/Public/Trime-pr-logcat-reliability/app/src/main/java/com/osfans/trime/ui/main/log/LogView.kt",
+      "sha256": "003c32aa84c778f9f8971ed9d13c13d93b5c7269fbd1a7e9464f9b514a7da985",
+      "relevant_lines": {
+        "scope.launch": [
+          75
+        ],
+        "collectLines(::appendLogcatLine)": [
+          76
+        ],
+        "logAdapter.append(line": [
+          91
+        ],
+        "scrollToPosition": [
+          103
+        ]
+      }
+    },
+    {
+      "path": "/home/xumin/Public/Trime-pr-logcat-reliability/app/src/main/java/com/osfans/trime/ui/main/log/LogAdapter.kt",
+      "sha256": "2ce0e98d86b5d3ac3165c29657369a6793e94985940019dea8aa1579a2f327b0",
+      "relevant_lines": {
+        "private val entries": [
+          32
+        ],
+        "private val pending": [
+          33
+        ],
+        "postOnAnimation": [
+          75
+        ],
+        "pending.drainTo(entries)": [
+          87
+        ],
+        "logString(": [
+          110
+        ]
+      }
+    },
+    {
+      "path": "/home/xumin/Public/Trime-pr-logcat-reliability/app/src/main/java/com/osfans/trime/ui/main/log/LogBuffer.kt",
+      "sha256": "0d3c4d4aae5cf17b38b0b5102219cf66b378c12a4c604e1653f916378a8420d6",
+      "relevant_lines": {
+        "maxLines:": [
+          17
+        ],
+        "maxCharacters:": [
+          18
+        ],
+        "fun append(": [
+          56
+        ],
+        "fun drainTo(": [
+          104
+        ]
+      }
+    },
+    {
+      "path": "/home/xumin/Public/Trime-pr-logcat-reliability/app/src/main/java/com/osfans/trime/util/Process.kt",
+      "sha256": "82d6de5eca68df42401ef1b424e9c3f332db5a1c05010fe07a95ecdbcbde40c7",
+      "relevant_lines": {
+        "consumeOutput(": [
+          34
+        ],
+        "Dispatchers.IO": [
+          31,
+          38,
+          141
+        ],
+        "releaseProcess()": [
+          46,
+          84,
+          92
+        ]
+      }
+    }
+  ],
+  "confirmed_causal_path": [
+    "Logcat uses MutableSharedFlow<String>() with zero replay/extra capacity; its IO producer calls suspend emit once per included record.",
+    "LogView launches collection in lifecycleScope (Main context); collectLines inherits that context for onLine -> LogAdapter.append.",
+    "Each included line therefore requires producer/subscriber rendezvous and Main work. postOnAnimation batches RecyclerView notifications, not the IO-to-Main per-line delivery.",
+    "When Main delivery/processing is slower than logcat stdout production, the producer stops draining stdout while waiting; a finite stdout pipe can exert backpressure on the logcat child.",
+    "The two LogBuffers bound text retained after arrival at the adapter (each 10000 records / 2097152 UTF16 units); they do not promise that collection has caught up to the live logd suffix.",
+    "The same zero-buffer SharedFlow and Main subscriber design exists at base12; this observation is not evidence of a new e8-specific throughput regression."
+  ],
+  "preserved_device_evidence": {
+    "flow06": {
+      "observation_path": "/home/xumin/Public/Trime/build/readiness-20261022/logcat/api35-buffer1/observer3/flow-06/original/observation.json",
+      "observation_sha256": "75d8f470b5a129694a10ddb83949bdfa8178d766560629742c81bf5e9cb7c3e4",
+      "xml_path": "/home/xumin/Public/Trime/build/readiness-20261022/logcat/api35-buffer1/observer3/flow-06/original/after.xml",
+      "xml_sha256": "eda49e7ff47fc0ba2d4ba21d6598b50157970789954effe02ebd42b0342248c0",
+      "png_path": "/home/xumin/Public/Trime/build/readiness-20261022/logcat/api35-buffer1/observer3/flow-06/original/in-connection.png",
+      "png_sha256": "322209b0e15facdaba706f9c623b9c8b2a0ada4be0c36ae0d4e80d6705c1729e",
+      "png_actually_viewed": true,
+      "status_bar_visible": "10:49",
+      "visible_record_first": "10-22 10:42:57.199 I/rime.trime( 3271): extra code length: 1",
+      "visible_record_last": "10-22 10:42:57.208 I/rime.trime( 3271): extra code length: 1"
+    },
+    "process_snapshot": {
+      "path": "/home/xumin/Public/Trime/build/readiness-20261022/logcat/api35-buffer1/process-mid-cold/result.json",
+      "sha256": "1999a4d67383157e6220d659da1e5acf5bfffe9f51a92dbaecae1e608e84a87c",
+      "owned_logcat_child": {
+        "pid": 5197,
+        "ppid": 3271,
+        "name": "logcat",
+        "raw": "u0_a151       5197  3271   10821580   3776 pipe_write          0 S logcat"
+      }
+    },
+    "capture_driver": {
+      "path": "/home/xumin/Public/Trime/build/readiness-20261022/logcat/api35-buffer1/capture-flow.py",
+      "sha256": "1d89d7799d0325c10e6fdddb52987266b27edf94e68c79c15edadba578fa8f2f",
+      "observation": "Periodic capture only; no jump-to-bottom or scroll injection in its loop."
+    },
+    "first_memory_segment": {
+      "path": "/home/xumin/Public/Trime/build/readiness-20261022/logcat/api35-buffer1/root-first-memory-segment-review1.json",
+      "sha256": "eafc90c6a729f635bcca04a20e238aae6982939e333e2f323e1c64b685e23183",
+      "sample_count": 35,
+      "dalvik_heap_alloc_kib_min": 6359,
+      "dalvik_heap_alloc_kib_max": 7187,
+      "scope": "Completed first 600-second sampler segment only; native terminal/export/lifecycle still pending. Discrete samples, not an instantaneous peak or formal performance result."
+    }
+  },
+  "important_limits": [
+    "flow06 visible old timestamps cannot by themselves measure reader/retained-tail delay: append does not auto-scroll, and capture driver does not jump to bottom. A preserved scroll anchor can show earlier rows even if newer records exist.",
+    "pipe_write is a point-in-time stdout backpressure observation, not proof of deadlock or a permanently blocked reader.",
+    "No missing source line, logd overwrite, lost line count, throughput ceiling, or latency P95 is established by this review.",
+    "No hard leak or exact all-heap memory cap follows from bounded adapter text; the stated 2-window cap concerns retained record text only.",
+    "The memory segment is finite/discrete and includes native dictionary maintenance; it is not a long-run performance result or proof that allocations are flat under all loads."
+  ],
+  "pr_wording_recommendation": "Bounds the displayed/exported suffix of records received by the view, with explicit omission notice and owned reader cleanup. It does not guarantee real-time freshness during sustained high-volume output; catch-up rate, source logd loss and source-to-screen latency remain unqualified.",
+  "bug_assessment": {
+    "definite_new_product_bug_proven": false,
+    "definite_architecture_limitation": "There is no decoupled IO ingestion or throughput/freshness guarantee; Main per-line rendezvous can backpressure the child under sustained output.",
+    "possible_future_minimal_design": "If live-tail freshness becomes a required contract, batch/queue received records on IO using a bounded suffix buffer, then drain a bounded batch to Main per frame with source order and explicit omission accounting. Keep process ownership/cancellation tests. Adding finite extra SharedFlow capacity alone only postpones sustained overload, and DROP_OLDEST without omission accounting would silently change diagnostic semantics.",
+    "current_action": "Do not change production code or enlarge the current device scope. Complete the already frozen original-APK lifecycle/export/17-item and T9 scopes; report this limitation separately."
+  }
+}

@@ -1,0 +1,35 @@
+[
+  {
+    "label": "emulator",
+    "command": [
+      "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+      "-s",
+      "emulator-5584",
+      "shell",
+      "getprop ro.kernel.qemu"
+    ],
+    "exit": 0
+  },
+  {
+    "label": "sdk",
+    "command": [
+      "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+      "-s",
+      "emulator-5584",
+      "shell",
+      "getprop ro.build.version.sdk"
+    ],
+    "exit": 0
+  },
+  {
+    "label": "processes",
+    "command": [
+      "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+      "-s",
+      "emulator-5584",
+      "shell",
+      "ps -A"
+    ],
+    "exit": 0
+  }
+]

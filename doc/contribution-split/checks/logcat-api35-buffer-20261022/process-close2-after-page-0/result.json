@@ -1,0 +1,58 @@
+{
+  "action": "processes",
+  "serial": "emulator-5584",
+  "start_epoch": 1792638552.1874688,
+  "assertions": [
+    {
+      "name": "emulator command exit0",
+      "passed": true,
+      "exit": 0
+    },
+    {
+      "name": "isolated emulator only",
+      "passed": true,
+      "ro_kernel_qemu": "1"
+    },
+    {
+      "name": "sdk command exit0",
+      "passed": true,
+      "exit": 0
+    },
+    {
+      "name": "intended API21 or modern API35+",
+      "passed": true
+    },
+    {
+      "name": "processes command exit0",
+      "passed": true,
+      "exit": 0
+    },
+    {
+      "name": "process table has PID and PPID",
+      "passed": true
+    },
+    {
+      "name": "one known app PID",
+      "passed": true,
+      "candidates": [
+        {
+          "pid": 3271,
+          "ppid": 347,
+          "name": "com.osfans.trime.debug",
+          "raw": "u0_a151       3271   347   16096848 270140 do_epoll_wait       0 S com.osfans.trime.debug"
+        }
+      ]
+    },
+    {
+      "name": "expected owned logcat child count",
+      "passed": true,
+      "expected": 0,
+      "actual": 0
+    }
+  ],
+  "end_epoch": 1792638552.3349721,
+  "sdk": 35,
+  "app_pid": 3271,
+  "logcat_children": [],
+  "passed": true
+}
