@@ -1,0 +1,144 @@
+{
+  "schema": 1,
+  "utc": "2026-10-22T17:33:23.834135+00:00",
+  "source_head": "c4b613f78835e7b914e02447955c6b89fe9839ab",
+  "boot": "ba13c239-0862-4901-a4c7-3b1f2e4c6608",
+  "target_pid": 2228,
+  "target_starttime": "18495",
+  "source": {
+    "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-run1/device-logcat.txt",
+    "inode": 29768490,
+    "device": 66306,
+    "bytes": 114014633,
+    "lines": 1529760,
+    "sha256": "263b7f9ca74225b3ad91d1821ca476c73514dfca28c8f8e30665a2ddb320d83d"
+  },
+  "priority_counts": {
+    "W": 11198,
+    "I": 1487256,
+    "D": 21097,
+    "E": 2464,
+    "V": 7739,
+    "F": 1
+  },
+  "target_WEF_counts": {
+    "W": 311,
+    "E": 158
+  },
+  "priority_F_rows": [
+    {
+      "line": 472919,
+      "offset": 38800857,
+      "pid": 0,
+      "tag": "",
+      "text": "10-23 00:44:06.222     0     0 F         : Disabling IRQ #35\n"
+    }
+  ],
+  "critical_events": [
+    {
+      "kinds": [
+        "ANR-or-process-crash-record"
+      ],
+      "line": 15822,
+      "offset": 2058788,
+      "pid": 554,
+      "tag": "am_anr",
+      "text": "10-23 00:39:04.068   554  1262 I am_anr  : [0,931,com.android.phone,952647245,Broadcast of Intent { act=android.safetycenter.action.REFRESH_SAFETY_SOURCES flg=0x10000010 pkg=com.android.phone cmp=com.android.phone/.security.SafetySourceReceiver (has extras) }]\n"
+    },
+    {
+      "kinds": [
+        "ANR-or-process-crash-record"
+      ],
+      "line": 16320,
+      "offset": 2139457,
+      "pid": 554,
+      "tag": "ActivityManager",
+      "text": "10-23 00:39:06.588   554  1262 E ActivityManager: ANR in com.android.phone\n"
+    },
+    {
+      "kinds": [
+        "ANR-or-process-crash-record"
+      ],
+      "line": 16539,
+      "offset": 2177525,
+      "pid": 554,
+      "tag": "am_anr",
+      "text": "10-23 00:39:08.702   554  1262 I am_anr  : [0,802,com.android.systemui,818462221,executing service com.android.systemui/.SystemUIService, waited 20498ms]\n"
+    },
+    {
+      "kinds": [
+        "ANR-or-process-crash-record"
+      ],
+      "line": 18640,
+      "offset": 2498517,
+      "pid": 554,
+      "tag": "ActivityManager",
+      "text": "10-23 00:39:26.132   554  1262 E ActivityManager: ANR in com.android.systemui\n"
+    }
+  ],
+  "target_critical_events": [],
+  "memory": {
+    "samples": 1645,
+    "minimum_available_kib": 4320488,
+    "floor_kib": 1048576
+  },
+  "controller_completion": {
+    "argv": [
+      "/home/xumin/Public/android-toolchain/android-sdk/emulator/emulator",
+      "-avd",
+      "trime_readiness_api35_20261022",
+      "-sysdir",
+      "/home/xumin/Public/Trime/build/readiness-20261022/api35/system-images",
+      "-no-snapshot",
+      "-no-window",
+      "-no-boot-anim",
+      "-gpu",
+      "swangle",
+      "-cores",
+      "2",
+      "-memory",
+      "2304",
+      "-port",
+      "5584",
+      "-accel",
+      "on",
+      "-feature",
+      "-Vulkan"
+    ],
+    "serial": "emulator-5584",
+    "started_utc": "2026-10-22T16:37:49.329088+00:00",
+    "memory_floor_kib": 1048576,
+    "source_head": "c4b613f78835e7b914e02447955c6b89fe9839ab",
+    "original_apk_sha256": "453c71544f67685db3b85fc91855ed27c5ff264d0a25671669642b0dc4b8732e",
+    "controller_sha256": "a74b0bbdde83e18a02a39fd0a59bdb23d4e1a7818b88b5d9e3e2b5dfd03c931d",
+    "session_lifetime_guard": null,
+    "operator_normal_stop_required": true,
+    "prelaunch_memory": {
+      "MemTotal": 16017176,
+      "MemAvailable": 8304684,
+      "SwapFree": 0,
+      "utc": "2026-10-22T16:37:49.329841+00:00"
+    },
+    "pid": 199292,
+    "proc_stat_at_launch": "199292 (emulator) R 199291 199292 199292 0 -1 4194304 19 0 0 0 0 0 0 0 20 0 1 0 1229771 2142208 108 18446744073709551615 94562360984784 94562361925728 140730965274048 0 0 0 0 0 0 0 0 0 17 2 0 0 0 0 0 94562361953904 94562361956480 94562406682624 140730965278268 140730965278560 140730965278560 140730965282741 0\n",
+    "minimum_mem_available_kib": 4320488,
+    "booted": true,
+    "normal_stop": {
+      "exit": 0,
+      "stdout": "OK: killing emulator, bye bye\nOK\n",
+      "stderr": ""
+    },
+    "emulator_exit": 0,
+    "collector_exit": 255,
+    "cleanup_errors": [],
+    "reason": "requested-normal-stop",
+    "ended_utc": "2026-10-22T17:32:43.220019+00:00"
+  },
+  "limits": [
+    "Actual pre-install phone/SystemUI ANR records retained; no all-PID-zero-ANR claim.",
+    "No preinstall ps-A snapshot; install/enable ordering and raw boot prefix do not pretend historical ps proof.",
+    "Raw W/E/F retained; not a warning-free or Release claim.",
+    "Event metadata/tag rules do not classify arbitrary Exception payload text as fatal.",
+    "Physical phone NOT_RUN."
+  ]
+}

@@ -1,14 +1,18 @@
 # 上游贡献拆分清单
 
-## 当前整改状态（2026-10-22）
+## 当前整改状态（2026-10-23）
 
-[#2183](https://github.com/osfans/trime/pull/2183) 保持 **Draft**；当前源码已正常推送为 `c4b613f7`，基线为上游 `19b04849`，五条 Conventional Commits、零 merge。最新两文件修复让输入框强制 ASCII 要求优先于异步布局恢复；[独立源码审阅](checks/pr2183-rebase-20261022/schema-layout-regression/ascii-mode-source-independent1/review1.json)、[推送](checks/pr2183-rebase-20261022/schema-layout-regression/ascii-mode-source-push1/receipt.json)与[正文读回](checks/pr2183-rebase-20261022/original-pr-update4/receipt.json)保留。JNI、主题资产、词库与递归 pin 未改。
+[#2183](https://github.com/osfans/trime/pull/2183) 保持 **Draft，等待真机验收**。源码 `c4b613f7` 已推至原贡献分支，基线为上游 `19b04849`，五条 Conventional Commits、零 merge。[补丁范围](checks/pr2183-rebase-20261022/schema-layout-regression/current-c4-patch-shape-root1.json)为 62 个应用代码／测试及九键说明文件，没有 fork 发布、Pages 或此索引配置。方案切换恢复旧九键、数字框转邮箱时强制 ASCII 被布局附着覆盖的两个真实缺陷已修复；这两次后续修复未改 JNI、主题资产或子模块 pin，原失败保留。
 
-初始 `1754bb51` 在 API21 发现切全拼后新输入框恢复旧九键，修复为 `b14a2f1e`。b14 的正式两轮各 5/5 CI、360 JVM／115 JNI 已通过；但后续默认 trime 主题真实数字→邮箱输入仍落入中文组合（实际 InputType0x21、编辑器空、预编辑a），故 b14 也[退出验收候选](checks/pr2183-rebase-20261022/device-delivery-b14-status.json)。这些通过与失败只对应原头，不构成 c4 通过。标准 R4／嵌入K1、CATEGORY、K2 的独立限定资格保留；S2 原两进程触摸间隔421ms，未达到300ms，按工具时序拒收，不能认定产品双击失败，旧S1也不是真双击。
+[当前源码限定总表](checks/pr2183-rebase-20261022/current-c4-qualified-scope.json)绑定 fork／上游正式 CI 各 **5/5 成功**，以及[独立控制新执行](checks/pr2183-rebase-20261022/schema-layout-regression/c4-control-run-39806534353/artifact-execution-audit.json)的 **360 项应用 JVM、115 项独立 JNI 断言**。参见[云端资格](checks/pr2183-rebase-20261022/schema-layout-regression/c4-cloud-terminal1/qualification2.json)、[原始四 ABI APK 身份审计](checks/pr2183-rebase-20261022/schema-layout-regression/c4-fork-run-39806420824-ubuntu1/apk-audit/result.json)及[终态补充](checks/pr2183-rebase-20261022/schema-layout-regression/c4-cloud-terminal1/terminal-status-addendum1.json)。上游 synthetic merge 产物单列，未冒充 fork 原包；缓存 native 不改称全量新编译。
 
-新 c4 构建／完整宿主检查／双平台回归待闭合；旧模拟器已正常退出，SDK10文件不变，全日志唯一Fatal归于系统 input 命令进程，不是全系统零Fatal。真实同进程双触摸工具已准备，默认300ms与aa/AA预期不改。新 ARM64 交付待 exact-c4 原包，所有实体用例仍 **NOT_RUN**。原件和工具警告均保留，不宣称零警告、Ready、合并或稳定发布。当前状态见[机器清单](checks/readiness-20261022.json)。
+同一未改动、未重签的原始 x86_64 Debug APK 已完成 [Android 5.0 业务](checks/pr2183-rebase-20261022/runtime/api21-c4-independent1/api21-c4-business-aggregate-qualification1.json)及 [Android 15 业务](checks/pr2183-rebase-20261022/runtime/api35-c4-independent1/api35-c4-business-aggregate-qualification1.json)限定核验：**每系统 12 个成功会话、14 项逻辑检查、134 帧**，K1 各只在两主题 R4 内执行一次。覆盖方案／强制模式恢复、拼音锁定、回车、符号混输、编辑器隔离及真实触摸 Shift。默认／标准主题快速 Shift 得到 `aa`，标准显式双击正控得到 `AA`，应用内释放／分发与原 300 ms 限制均核对。原始 `passed=false/checks=[]` 采集日志未改写，业务结论由独立资格给出；Root 仅声明实际复核的 [34／26 张原图](checks/pr2183-rebase-20261022/runtime/root-image-publication-map.json)，不称全帧人工审阅。
 
-#2176／#2177／#2179／#2180 已由维护者合入；#2182／#2186／#2187／#2188 的此前 Ready 状态未改。下文为历史过程；主 develop 未改或推送。
+[Android 5.0 终态](checks/pr2183-rebase-20261022/runtime/api21-c4-independent1/api21-c4-terminal-qualification1.json)及 [Android 15 终态](checks/pr2183-rebase-20261022/runtime/api35-c4-independent1/api35-c4-terminal-qualification1.json)已复核：两个模拟器／控制器正常退出 0，清理无错误，原 SDK 10／25 项文件内容不变、原输入法默认及 enabled 恢复。最低可用内存分别 6,205,852／4,320,488 KiB；原日志分别 W2095／E2435／F0 与 W11198／E2464／F1。Android 15 采集器断开实际退出 255，前置 phone／SystemUI ANR 及 `Disabling IRQ #35` 内核 F 级事件保留，未推断唯一因果或全系统零错误。Trime 目标 PID 的 W/E 也完整分组保留，没有免责或警告清零。
+
+[修订后的 ARM64 真机清单](checks/pr2183-rebase-20261022/device-delivery-c4-reviewed/README.md)及 [Root 字节／契约核验](checks/pr2183-rebase-20261022/device-delivery-c4-reviewed-root-verification.json)已准备。原 CI Debug APK SHA-256 为 `12fd34dad063e76a0cdd132bbed83e802e02cd5f5ada80671f7f6935c09619c0`，证书为 `f6409a2d9db2800f1acc9b2e614d73e4609df3652d265cf2c40eb8a64456deb2`。44 个真机结果字段全部 **NOT_RUN**。Git 索引没有 APK：先从[原 Actions 附件](https://github.com/X2M7/trime/actions/runs/39806420824/artifacts/12438099455)取出对应 ARM64 文件放入清单目录，再运行 `sha256sum -c SHA256SUMS`。签名不匹配时保留用户数据并停止，不卸载绕过。
+
+本轮不是旧十七项全部重跑、展开候选滚动恢复、全应用、快速焦点竞态、全部缓存强制模式、真机、TalkBack、Release、升级或正式性能验收。Debug 首次维护单列，不代表每次弹键盘都全量编译。旧源码失败、421 ms Shift 工具拒收、API21 v7 缺失 env 的触摸前远端 127 均保留，未冒充产品通过。依赖／工具／运行／META-INF 签名警告仍存在，未 Ready、合并或发布稳定版，主 develop 未改或推送。当前机器状态见[清单](checks/readiness-20261022.json)；下文保留原时间和源码范围的历史记录。
 
 ## 先前审阅状态（2026-10-22 06:02 UTC，历史记录）
 

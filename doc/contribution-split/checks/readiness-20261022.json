@@ -269,7 +269,7 @@
   "t9": {
     "pr": 2183,
     "draft": true,
-    "status": "OPEN_DRAFT_NEW_EDITOR_ASCII_FIX_VALIDATION_PENDING",
+    "status": "OPEN_DRAFT_PHYSICAL_DEVICE_PENDING",
     "source": "c4b613f78835e7b914e02447955c6b89fe9839ab",
     "tree": "d7639dfce3b6b5646bb004479a688148c1b19900",
     "base": "19b048494ffa55cae52d5385dfa6d0611461c27d",
@@ -316,7 +316,7 @@
       "upstream_pr_run": 39806428888,
       "control_run": 39806534353,
       "control_head": "de991cbe6c05bf43c919e93200e8a0fc62518a8c",
-      "state": "PENDING_CURRENT_SOURCE_VALIDATION",
+      "state": "PASS_CURRENT_SOURCE_CLOUD_QUALIFIED",
       "previous_b14_successes_not_current_pass": true,
       "current_host_execution": {
         "executed_jvm": 360,
@@ -326,26 +326,56 @@
         "skipped": 0,
         "jni_assertions": 115,
         "original_audit": "pr2183-rebase-20261022/schema-layout-regression/c4-control-run-39806534353/artifact-execution-audit.json",
-        "formal_OS_builds": "IN_PROGRESS"
-      }
+        "formal_OS_builds": "FORK_AND_UPSTREAM_5_OF_5_SUCCESS_EACH"
+      },
+      "qualification": "pr2183-rebase-20261022/schema-layout-regression/c4-cloud-terminal1/qualification2.json"
     },
-    "current_emulator_regression": "NOT_RUN_PENDING_EXACT_C4_APK_AND_NEW_RUNNER_BINDING",
+    "current_emulator_regression": "API21_AND_API35_MAPPED_BUSINESS_AND_TERMINAL_QUALIFIED",
     "physical_device_acceptance": "NOT_RUN",
     "old_head_emulator_results_are_historical": true,
     "no_zero_warning_claim": true,
     "merge_or_release_action": false,
-    "physical_device_plan": "Old b14 guide retained but candidate superseded after real forced-ASCII failure; exact-c4 replacement pending.",
+    "physical_device_plan": "pr2183-rebase-20261022/device-delivery-c4-reviewed/REAL-DEVICE-ACCEPTANCE.md",
     "new_fix_source_review": "pr2183-rebase-20261022/schema-layout-regression/ascii-mode-source-independent1/review1.json",
     "new_fix_push_receipt": "pr2183-rebase-20261022/schema-layout-regression/ascii-mode-source-push1/receipt.json",
     "current_apk": {
-      "state": "PENDING_EXACT_C4_ORIGINAL_APK_AUDIT",
-      "b14_candidate_superseded": "pr2183-rebase-20261022/device-delivery-b14-status.json"
+      "state": "AUDITED_ORIGINAL_EXACT_C4_DEBUG_FOUR_ABI",
+      "audit": "pr2183-rebase-20261022/schema-layout-regression/c4-fork-run-39806420824-ubuntu1/apk-audit/result.json",
+      "arm64_sha256": "12fd34dad063e76a0cdd132bbed83e802e02cd5f5ada80671f7f6935c09619c0",
+      "x86_64_sha256": "453c71544f67685db3b85fc91855ed27c5ff264d0a25671669642b0dc4b8732e",
+      "certificate_sha256": "f6409a2d9db2800f1acc9b2e614d73e4609df3652d265cf2c40eb8a64456deb2"
     },
-    "physical_device_handoff_root_verification": "Old b14 host verification retained historically; not current candidate.",
+    "physical_device_handoff_root_verification": "pr2183-rebase-20261022/device-delivery-c4-reviewed-root-verification.json",
     "physical_device_core_cases": "Original17 + R1/R2/R4; R3 records only actual available feedback abilities and gaps; all physical NOT_RUN.",
-    "runtime_runner_binding": "Pending new c4/v7 binding; all older bindings remain source-attributed.",
+    "runtime_runner_binding": "pr2183-rebase-20261022/runtime/original-apk-binding-c4-v7.json",
     "source_history_check": "pr2183-rebase-20261022/schema-layout-regression/current-c4-source-history-check1.json",
-    "runtime_v7_review": "pr2183-rebase-20261022/runtime/sequence-v7-root-review1.json"
+    "runtime_v7_review": "pr2183-rebase-20261022/runtime/sequence-v7-root-review1.json",
+    "api21_current_business_qualification": "pr2183-rebase-20261022/runtime/api21-c4-independent1/api21-c4-business-aggregate-qualification1.json",
+    "runtime_shift_v8_binding": "pr2183-rebase-20261022/runtime/original-apk-binding-c4-v8-shift.json",
+    "physical_device_handoff_runtime_addendum": "pr2183-rebase-20261022/device-delivery-c4-reviewed-runtime-addendum1.json",
+    "current_scope": "pr2183-rebase-20261022/current-c4-qualified-scope.json",
+    "physical_recursive_status_fields": 44,
+    "api35_current_business_qualification": "pr2183-rebase-20261022/runtime/api35-c4-independent1/api35-c4-business-aggregate-qualification1.json",
+    "api21_current_terminal_qualification": "pr2183-rebase-20261022/runtime/api21-c4-independent1/api21-c4-terminal-qualification1.json",
+    "api35_current_terminal_qualification": "pr2183-rebase-20261022/runtime/api35-c4-independent1/api35-c4-terminal-qualification1.json",
+    "root_selected_original_pngs": {
+      "API21": 34,
+      "API35": 26
+    },
+    "api21_and_api35_captures_each": 134,
+    "warnings_retained": {
+      "API21": {
+        "W": 2095,
+        "E": 2435,
+        "F": 0
+      },
+      "API35": {
+        "W": 11198,
+        "E": 2464,
+        "F": 1,
+        "collector_exit_actual": 255
+      }
+    }
   },
   "logcat": {
     "pr": 2182,
@@ -749,7 +779,7 @@
     "current_pr_state": "MERGED",
     "merged_by_maintainer_not_this_run": true
   },
-  "updated_utc": "2026-10-22T15:56:04.493037+00:00",
+  "updated_utc": "2026-10-22T17:39:38.215902+00:00",
   "unicode_foundation": {
     "branch": "contrib/pr-jni-unicode-transport",
     "source": "e16ab85f495e5bbf353187c29efbff74526cff9c",
@@ -1078,7 +1108,7 @@
     2179,
     2180
   ],
-  "current_state_receipt": "pr2183-rebase-20261022/pr-state-snapshot.json",
+  "current_state_receipt": "pr2183-rebase-20261022/remote-pr-before-final-publish1.json",
   "ready_for_review_transitions_scope": "Historical transitions at their recorded timestamps; not current PR state.",
   "historical_t9_initial_rebase_1754": {
     "pr": 2183,

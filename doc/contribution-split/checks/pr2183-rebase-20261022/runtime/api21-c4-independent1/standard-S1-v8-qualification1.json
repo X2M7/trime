@@ -1,0 +1,463 @@
+{
+  "schema": "trime-independent-runtime-qualification/v1",
+  "generated_utc": "2026-10-22T16:33:06.751046+00:00",
+  "review_mode": "HOST_ONLY_NO_ADB_VM_GRADLE",
+  "verdict": "PASS_API21_STANDARD_S1_V8_REAL_TOUCH_PLAIN_CLICK_SCOPE",
+  "qualification_scope": {
+    "platform": "Android API21 emulator",
+    "theme": "standard / tongwenfeng.trime.yaml",
+    "actual_case_session": "S1-v8",
+    "physical_device": "NOT_RUN",
+    "qualified_behavior": "one single injector process supplied DOWN/UP/DOWN/UP to the actual Shift coordinate; the target process dispatched two plain CLICK actions within the production 300ms interval; the unchanged plain layout then produced exact lowercase aa in the same editor",
+    "not_qualified_here": [
+      "standard S2 DOUBLE_CLICK/AA",
+      "trime S1",
+      "other runtime cases",
+      "API35",
+      "physical device",
+      "whole suite"
+    ]
+  },
+  "frozen_inputs": {
+    "session": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-standard-S1-v8",
+    "raw_report": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-standard-S1-v8/report.json",
+      "bytes": 370812,
+      "sha256": "f892ba781e65754e46cd6845cd791f39bb7db5c2dba0b408f519219b2b003e60",
+      "completed": true,
+      "passed": false,
+      "checks": []
+    },
+    "sequence_result": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-standard-S1-v8/sequence-result.json",
+      "bytes": 1774,
+      "sha256": "39b65dac4e5cc333c3ba96e941d407eacf1931dd0bd521fcb8ba37c1261a7e70",
+      "business_passed": false,
+      "strict_sequence_completed": true,
+      "authenticated_normal_stop": true
+    },
+    "binding": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/original-apk-binding-c4-v8-shift.json",
+      "bytes": 4369,
+      "sha256": "a7bb75201086c795f4d3e2de89b5e8ab5e67d8504145cee24dcbe3298c41ea21"
+    },
+    "runner": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/t9_case_sequences_v8.py",
+      "bytes": 23026,
+      "sha256": "554eb1f704b058d8591bf2ae57a76c5372f56deb549c3612ee5efb9da5d787ea"
+    },
+    "start_installed_apk": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-standard-S1-v8/start-installed-apk.bin",
+      "bytes": 20673055,
+      "sha256": "453c71544f67685db3b85fc91855ed27c5ff264d0a25671669642b0dc4b8732e"
+    },
+    "injector_stdout": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-standard-S1-v8/standard-S1-injector-stdout.raw.txt",
+      "bytes": 1069,
+      "sha256": "f24d276be27f8184b7f93f6ef3824144faf51f51a1ac43e56e732cdeca710afb"
+    },
+    "injector_device_readback": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-standard-S1-v8/standard-S1-injector-device-readback.bin",
+      "bytes": 4240,
+      "sha256": "55bd2a26e0c43564d6d2a35157c8abeb5efc5263757cab22c03157accb639507"
+    },
+    "continuous_device_log": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-run1/device-logcat.txt",
+      "append_only_source": true,
+      "reviewed_prefix_ending_line": 1344226,
+      "reviewed_prefix_bytes": 100244901,
+      "reviewed_prefix_sha256": "7e85f24238d951c69f994028d45e6b7bfb342bbc257250cefd04a9ba486588a2",
+      "file_bytes_at_review": 100518894,
+      "full_file_hash_deferred_until_terminal_freeze": true
+    },
+    "keyview_source": {
+      "path": "/home/xumin/Public/Trime-pr-t9-rebased/app/src/main/java/com/osfans/trime/ime/keyboard/KeyView.kt",
+      "bytes": 14417,
+      "sha256": "288fdb6b8aa4d2788996fa1480b1b98072dfba3117ef9ec36c7151c06e086f61",
+      "git_head_verified": "c4b613f78835e7b914e02447955c6b89fe9839ab",
+      "release_dispatch_lines": [
+        90,
+        109
+      ],
+      "process_action_lines": [
+        195,
+        203
+      ]
+    },
+    "root_visual_ledger_snapshot": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/root-image-review-c4.json",
+      "bytes": 23086,
+      "sha256": "ca7d47d4b240ace4753b3058453f050ea8fc8d75321e8898dc63750932f13142",
+      "record_count": 33,
+      "matching_records": [
+        {
+          "utc": "2026-10-22T16:31:57.328084+00:00",
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-standard-S1-v8/captures/standard-S1-plain-aa/observer-in-connection.png",
+          "sha256": "9002b056cc5a7e39179a9e9bd1bfca8c8d25376ebed97070602535deeceff93e",
+          "platform": "API21",
+          "case": "standard S1 v8 plain aa",
+          "observed": "Root actually viewed lowercase aa in editor and lowercase alphabet keys in En mode.",
+          "scope": "Selected original image only; target real-contact timing and two CLICK/no DOUBLE_CLICK still require independent continuous-log qualification. v7 env127 rejection remains separate."
+        }
+      ]
+    }
+  },
+  "identity": {
+    "source_head": "c4b613f78835e7b914e02447955c6b89fe9839ab",
+    "source_tree": "d7639dfce3b6b5646bb004479a688148c1b19900",
+    "base": "19b048494ffa55cae52d5385dfa6d0611461c27d",
+    "actual_build_commit": "c4b613f78835e7b914e02447955c6b89fe9839ab",
+    "producer": {
+      "repository": "X2M7/trime",
+      "run": 39806420824,
+      "artifact": 12438099455
+    },
+    "package": "com.osfans.trime.debug",
+    "version_code": 20261101,
+    "version_name": "3.3.13",
+    "apk_sha256": "453c71544f67685db3b85fc91855ed27c5ff264d0a25671669642b0dc4b8732e",
+    "apk_signer_sha256": "f6409a2d9db2800f1acc9b2e614d73e4609df3652d265cf2c40eb8a64456deb2",
+    "artifact_audit_sha256": "58b3d5e7f60678c164269897764957053bacc47055eed69a1a657dfb3a53f336",
+    "target_pid": 2543,
+    "target_starttime": "18220",
+    "target_stat_probe_count": 16,
+    "target_stat_starttime_values": [
+      "18220"
+    ],
+    "target_cmdline_probe_count": 16,
+    "target_cmdline_values": [
+      "com.osfans.trime.debug"
+    ],
+    "boot_id": "d75bca76-0594-45f7-9f2f-52a1a39ec013",
+    "boot_id_probe_count": 11,
+    "boot_id_values": [
+      "d75bca76-0594-45f7-9f2f-52a1a39ec013"
+    ],
+    "fixture_pid": 32277,
+    "activity_instance": "03912c0ae27c444cb68f23269ee6b4d5",
+    "observer_pid": 32170,
+    "observer_starttime": "200400",
+    "observer_session_token": "d212aaf3ff0f46c318d886cf602eaab4"
+  },
+  "real_touch_and_target_dispatch": {
+    "injector_process": {
+      "pid": 32719,
+      "uid": 0,
+      "single_process_for_all_four_events": true,
+      "backend": "android.hardware.input.InputManager",
+      "source": 4098,
+      "display_id": 0,
+      "coordinate": [
+        54.0,
+        996.0
+      ],
+      "gap_ms": 60,
+      "attempted": 4,
+      "accepted": 4,
+      "event_order": [
+        "DOWN_1",
+        "UP_1",
+        "DOWN_2",
+        "UP_2"
+      ],
+      "event_uptime_ms": [
+        2021041,
+        2021104,
+        2021172,
+        2021235
+      ],
+      "contact_durations_ms": [
+        63,
+        63
+      ],
+      "up_event_delta_ms": 131,
+      "up_call_delta_ms": 130,
+      "production_timeout_ms": 300
+    },
+    "target_process": {
+      "pid": 2543,
+      "dispatch_window_lines": [
+        1344160,
+        1344165
+      ],
+      "injector_entry_wall_time": "10-23 00:30:34.714",
+      "injector_exit_wall_time": "10-23 00:30:34.923",
+      "shift_release_wall_times": [
+        "10-23 00:30:34.784",
+        "10-23 00:30:34.917"
+      ],
+      "shift_process_action_wall_times": [
+        "10-23 00:30:34.786",
+        "10-23 00:30:34.919"
+      ],
+      "release_delta_ms": 133,
+      "release_behaviors": [
+        "CLICK",
+        "CLICK"
+      ],
+      "process_action_types": [
+        "CLICK",
+        "CLICK"
+      ],
+      "bounded_window_DOUBLE_CLICK_count": 0,
+      "exact_source_lines": [
+        {
+          "line": 1344160,
+          "text": "10-23 00:30:34.714 32719 32719 D AndroidRuntime: Calling main entry org.x2m7.trime.readiness.input.TrimeRealDoubleTap"
+        },
+        {
+          "line": 1344161,
+          "text": "10-23 00:30:34.784  2543  2543 D [main] KeyView: KeyView.kt:91] KeyView release: label=Shift, behavior=CLICK, fromLongPress=false"
+        },
+        {
+          "line": 1344162,
+          "text": "10-23 00:30:34.786  2543  2543 D [main] KeyView: KeyView.kt:196] processKeyAction: label=Shift, code=59, type=CLICK"
+        },
+        {
+          "line": 1344163,
+          "text": "10-23 00:30:34.917  2543  2543 D [main] KeyView: KeyView.kt:91] KeyView release: label=Shift, behavior=CLICK, fromLongPress=false"
+        },
+        {
+          "line": 1344164,
+          "text": "10-23 00:30:34.919  2543  2543 D [main] KeyView: KeyView.kt:196] processKeyAction: label=Shift, code=59, type=CLICK"
+        },
+        {
+          "line": 1344165,
+          "text": "10-23 00:30:34.923 32719 32719 D AndroidRuntime: Shutting down VM"
+        }
+      ]
+    },
+    "source_semantics": "At exact c4 head, KeyView onRelease logs the recognized KeyBehavior before its when-dispatch; CLICK resolves an action and processKeyAction logs the dispatched behavior. Thus the four target PID lines demonstrate two received/released Shift contacts and two actual CLICK dispatches, while the injector receipt supplies the raw DOWN/UP identities and event uptimes.",
+    "evidence_combination_limit": "The target log does not print a separate raw DOWN/UP line. Qualification combines the single-process injector four-event receipt with the immediately bounded target PID release/action records; helper success alone is not used as product qualification.",
+    "plain_layout_expected_result": "two CLICK modifier actions toggle Shift on then off; this layout has no exercised DOUBLE_CLICK action",
+    "final_letter_dispatch": {
+      "exact_source_lines": [
+        {
+          "line": 1344204,
+          "text": "10-23 00:30:41.351  2543  2543 D [main] KeyView: KeyView.kt:91] KeyView release: label=a, behavior=CLICK, fromLongPress=false"
+        },
+        {
+          "line": 1344205,
+          "text": "10-23 00:30:41.351  2543  2543 D [main] KeyView: KeyView.kt:196] processKeyAction: label=a, code=29, type=CLICK"
+        },
+        {
+          "line": 1344225,
+          "text": "10-23 00:30:42.091  2543  2543 D [main] KeyView: KeyView.kt:91] KeyView release: label=a, behavior=CLICK, fromLongPress=false"
+        },
+        {
+          "line": 1344226,
+          "text": "10-23 00:30:42.091  2543  2543 D [main] KeyView: KeyView.kt:196] processKeyAction: label=a, code=29, type=CLICK"
+        }
+      ],
+      "behaviors": [
+        "CLICK",
+        "CLICK"
+      ],
+      "labels": [
+        "a",
+        "a"
+      ]
+    }
+  },
+  "capture_chain": {
+    "capture_count": 4,
+    "completed_capture_count": 4,
+    "capture_failures": 0,
+    "same_cached_automation_connection": true,
+    "all_xml_before_after_byte_equal": true,
+    "captures": [
+      {
+        "sequence": 1,
+        "label": "standard-S1-initial",
+        "capture_token": "197e4855daab7dc1222b5cba0427c010",
+        "png_sha256": "f514812f19e50ac8a7fbb8edd666f566b3f198685b38015180d8afa383e9cb07",
+        "before_xml_sha256": "5e01290fec97f205fc8d4ac6170cb7b6bfc06aa81cfef73655fc40b19e29e6b0",
+        "after_xml_sha256": "5e01290fec97f205fc8d4ac6170cb7b6bfc06aa81cfef73655fc40b19e29e6b0",
+        "hierarchies_equal": true,
+        "capture_complete": true,
+        "same_connection_xml_png_xml": true,
+        "raw_accepted_by_gui": false
+      },
+      {
+        "sequence": 2,
+        "label": "standard-S1-plain-letter-before",
+        "capture_token": "4a777223100518fb88552132d6c73bb8",
+        "png_sha256": "3c6a5c98879b6dd0fe780ab98af2a5a74ac15faf1ab9567bc9ee6486e7d5945e",
+        "before_xml_sha256": "0cdea47c7ce49935b30cbc2fd7b000a8c34f6130e1a120065b426c666cc698e2",
+        "after_xml_sha256": "0cdea47c7ce49935b30cbc2fd7b000a8c34f6130e1a120065b426c666cc698e2",
+        "hierarchies_equal": true,
+        "capture_complete": true,
+        "same_connection_xml_png_xml": true,
+        "raw_accepted_by_gui": false
+      },
+      {
+        "sequence": 3,
+        "label": "standard-S1-plain-double-shift",
+        "capture_token": "a85e231efe5012e5691fe180fb4d8703",
+        "png_sha256": "3c6a5c98879b6dd0fe780ab98af2a5a74ac15faf1ab9567bc9ee6486e7d5945e",
+        "before_xml_sha256": "0cdea47c7ce49935b30cbc2fd7b000a8c34f6130e1a120065b426c666cc698e2",
+        "after_xml_sha256": "0cdea47c7ce49935b30cbc2fd7b000a8c34f6130e1a120065b426c666cc698e2",
+        "hierarchies_equal": true,
+        "capture_complete": true,
+        "same_connection_xml_png_xml": true,
+        "raw_accepted_by_gui": false
+      },
+      {
+        "sequence": 4,
+        "label": "standard-S1-plain-aa",
+        "capture_token": "e680ad8f39a7c9b319cf95e716a35e43",
+        "png_sha256": "9002b056cc5a7e39179a9e9bd1bfca8c8d25376ebed97070602535deeceff93e",
+        "before_xml_sha256": "5d77e14a79e16a65ee3796a4de02f435846072485f9d43fc2a0fe25887457b65",
+        "after_xml_sha256": "5d77e14a79e16a65ee3796a4de02f435846072485f9d43fc2a0fe25887457b65",
+        "hierarchies_equal": true,
+        "capture_complete": true,
+        "same_connection_xml_png_xml": true,
+        "raw_accepted_by_gui": false
+      }
+    ]
+  },
+  "oracle_chain": {
+    "pair_count": 4,
+    "same_fixture_pid": true,
+    "same_activity_instance": true,
+    "all_main_thread_read_only_focused": true,
+    "pairs": [
+      {
+        "label": "standard-S1-initial",
+        "expected_text": "",
+        "utf8_hex": "",
+        "text_utf8_bytes": 0,
+        "selection": [
+          0,
+          0
+        ],
+        "fixture_pid": 32277,
+        "activity_instance": "03912c0ae27c444cb68f23269ee6b4d5",
+        "before": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-standard-S1-v8/standard-S1-initial-before-oracle.json",
+          "bytes": 974,
+          "sha256": "593c296f6383353631ddb642e588113b5e3dd721284a6849243cea9fcdbc63f3"
+        },
+        "after": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-standard-S1-v8/standard-S1-initial-after-oracle.json",
+          "bytes": 974,
+          "sha256": "27af9d97fb9a72c4e4ddedeb336f3f85e6ce84e35f9744843aa58b28a486dbe9"
+        },
+        "main_thread_read_only_focused": true
+      },
+      {
+        "label": "standard-S1-plain-letter-before",
+        "expected_text": "",
+        "utf8_hex": "",
+        "text_utf8_bytes": 0,
+        "selection": [
+          0,
+          0
+        ],
+        "fixture_pid": 32277,
+        "activity_instance": "03912c0ae27c444cb68f23269ee6b4d5",
+        "before": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-standard-S1-v8/standard-S1-plain-letter-before-before-oracle.json",
+          "bytes": 974,
+          "sha256": "36af43604d4b6546f4f5b6d84a183dca9172df9942e7c2f45725df6d4d37b629"
+        },
+        "after": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-standard-S1-v8/standard-S1-plain-letter-before-after-oracle.json",
+          "bytes": 974,
+          "sha256": "fc4a347c84d3405c8d3d008ae55218e68896fcc52956520dffffc8c829c8c251"
+        },
+        "main_thread_read_only_focused": true
+      },
+      {
+        "label": "standard-S1-plain-double-shift",
+        "expected_text": "",
+        "utf8_hex": "",
+        "text_utf8_bytes": 0,
+        "selection": [
+          0,
+          0
+        ],
+        "fixture_pid": 32277,
+        "activity_instance": "03912c0ae27c444cb68f23269ee6b4d5",
+        "before": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-standard-S1-v8/standard-S1-plain-double-shift-before-oracle.json",
+          "bytes": 974,
+          "sha256": "59486fa3c3c561cce4d5c6d2fa7227cce21785bc64073796fb22849f3a2c5da6"
+        },
+        "after": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-standard-S1-v8/standard-S1-plain-double-shift-after-oracle.json",
+          "bytes": 974,
+          "sha256": "f94b4e668971b63cfa21cf0d7da9ee35d24d4074f3439643a10ea5ca9dc0c4e1"
+        },
+        "main_thread_read_only_focused": true
+      },
+      {
+        "label": "standard-S1-plain-aa",
+        "expected_text": "aa",
+        "utf8_hex": "6161",
+        "text_utf8_bytes": 2,
+        "selection": [
+          2,
+          2
+        ],
+        "fixture_pid": 32277,
+        "activity_instance": "03912c0ae27c444cb68f23269ee6b4d5",
+        "before": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-standard-S1-v8/standard-S1-plain-aa-before-oracle.json",
+          "bytes": 978,
+          "sha256": "acb68a8fb6f161d3f0cb7979f176527b76c0a09bfc504c0fb70aa9b9ae4737c1"
+        },
+        "after": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-standard-S1-v8/standard-S1-plain-aa-after-oracle.json",
+          "bytes": 978,
+          "sha256": "511d22986ce4d8e03a658ffd65e348168d79049c8c980724c0927057fde0f8c9"
+        },
+        "main_thread_read_only_focused": true
+      }
+    ],
+    "final_exact": {
+      "text": "aa",
+      "utf8_hex": "6161",
+      "bytes": 2,
+      "selection": [
+        2,
+        2
+      ],
+      "passes": true
+    }
+  },
+  "normal_stop": {
+    "authenticated": true,
+    "finished_receipt": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-standard-S1-v8/observer8-session/finished.json",
+      "bytes": 2116,
+      "sha256": "e39e9448d25869bf538bbf423a293746572df1deec813bedc62ca591400219fc"
+    },
+    "stop_received": true,
+    "actual_child_wait_returncode": 0,
+    "actual_remote_returncode": 0,
+    "cleanup": [],
+    "atexit_fallback_retained": false
+  },
+  "raw_status_retained": {
+    "report_completed": true,
+    "report_passed": false,
+    "report_checks": [],
+    "sequence_business_passed": false,
+    "capture_accepted_by_gui_values": [
+      false,
+      false,
+      false,
+      false
+    ],
+    "qualification_is_separate_from_raw_journal": true
+  },
+  "limits": [
+    "This qualifies only the frozen API21 standard-theme S1-v8 session and its actual mapped behavior.",
+    "The target continuous log proves two target-side CLICK releases/dispatches 133ms apart; raw DOWN/UP identities and 131ms UP-event delta come from the separately frozen injector stdout, not from target logging.",
+    "Only the final aa PNG was actually viewed by Root in the bound visual-ledger snapshot; this qualification does not claim review of every PNG.",
+    "The earlier v7 env-not-found S1 rejection remains an immutable harness-precondition rejection and is not overwritten by this v8 qualification.",
+    "Raw report passed=false/checks=[] and per-capture accepted_by_gui=false are retained; no whole-tool pass is inferred.",
+    "No API35 or physical-device result follows from this evidence."
+  ]
+}

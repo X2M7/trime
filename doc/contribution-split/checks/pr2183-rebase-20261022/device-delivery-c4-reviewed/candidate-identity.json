@@ -1,0 +1,167 @@
+{
+  "schema": "pr2183-exact-c4-device-delivery-reviewed-identity/v2",
+  "record_state": "HOST_AUDITED_REVIEWED_TEMPLATE_PHYSICAL_NOT_RUN",
+  "identity_authority": {
+    "file": "apk-audit-result.json",
+    "bytes": 27780,
+    "sha256": "58b3d5e7f60678c164269897764957053bacc47055eed69a1a657dfb3a53f336",
+    "rule": "The included full audit result is the identity authority; this summary cannot override it."
+  },
+  "source": {
+    "head": "c4b613f78835e7b914e02447955c6b89fe9839ab",
+    "tree": "d7639dfce3b6b5646bb004479a688148c1b19900",
+    "parent_predecessor": "b14a2f1e0565cec4953f5a974bfcea023875369f",
+    "upstream_base": "19b048494ffa55cae52d5385dfa6d0611461c27d",
+    "history_review_file": "source-history-check.json",
+    "history_review_sha256": "0301041da96197bf9c39dba0aad4bf0d77715da7604740cf327678470fb52f11",
+    "history_review_state": "FIVE_LINEAR_CONVENTIONAL_COMMITS_AND_SCOPED_ASCII_FIX_VERIFIED"
+  },
+  "behavior_document": {
+    "included_file": "t9-input.md",
+    "source_repo_path": "doc/t9-input.md",
+    "git_blob_sha1": "e5fe70dc917d3229efe3da3ca096a8c89132d735",
+    "bytes": 2299,
+    "sha256": "2cb473b0bb404569030fb99e5d5beca4530d809e6ec09f9a6ed5ed3034599bf0"
+  },
+  "current_source_review": {
+    "file": "source-independent-review.json",
+    "sha256": "e1a7ff1e68af5f0038f80c1a43722522977f34eb4e7efd1dfa2b0cecc42ab611",
+    "reviewed_diff_file": "source-fix-reviewed.diff",
+    "reviewed_diff_sha256": "2b4d7d6171bf7a77daa8b564e194ead13a2250c7b79cd82dc2014b97e8be477e",
+    "verdict": "PASS_MINIMAL_FIX_SCOPE_NO_BLOCKER",
+    "runtime_and_physical_device_pass_inferred": false
+  },
+  "producer": {
+    "kind": "GitHub Actions fork push workflow",
+    "repository": "X2M7/trime",
+    "run_id": 39806420824,
+    "artifact_id": 12438099455,
+    "artifact_name": "trime-ubuntu-26.04",
+    "artifact_archive_sha256": "8730839641d03b78394ec53e1a7892f29ec1b4a9e31aaa46619653eb2d3be65a",
+    "download_receipt_file": "producer-download-receipt.json",
+    "download_receipt_sha256": "5da00a49c8ea6f0cc85579763796056574dd89f721797f0f0bd401b308969d41",
+    "run_and_ubuntu_job_at_collection": "completed/success",
+    "audit_incident_limit_retained": "Artifact endpoint carried the completed artifact while the jobs/run endpoint still lagged; terminal workflow qualification is deferred."
+  },
+  "apk": {
+    "file": "com.osfans.trime-c4b613f7-arm64-v8a-debug.apk",
+    "bytes": 20603550,
+    "sha256": "12fd34dad063e76a0cdd132bbed83e802e02cd5f5ada80671f7f6935c09619c0",
+    "original_ci_apk_unmodified": true,
+    "package": "com.osfans.trime.debug",
+    "version_name": "3.3.13",
+    "version_code": 20261101,
+    "variant": "debug",
+    "build_type": "Debug",
+    "not_stable_release": true,
+    "min_sdk": 21,
+    "target_sdk": 37,
+    "abi": "arm64-v8a",
+    "buildconfig_commit_hash": "c4b613f78835e7b914e02447955c6b89fe9839ab",
+    "output_metadata_file": "output-metadata.json",
+    "output_metadata_sha256": "2363c47ea3b232ae990a569bd362d4515152cb3f363fb8dd4487cba49ef9ac89",
+    "badging_file": "apk-audit-arm64-badging.stdout",
+    "badging_sha256": "f79be78f3445ab9c6250aa6d7515483fbaa751dcef7042e9af20b9d93926ed92",
+    "buildconfig_file": "apk-audit-arm64-buildconfig.stdout",
+    "buildconfig_sha256": "00334d855551003cdcb535cb47b5dd50616f22d0ec3bf737d0f72ab7ab46ba2a"
+  },
+  "native_payload": {
+    "entry": "lib/arm64-v8a/librime_jni.so",
+    "bytes": 15071232,
+    "sha256": "532a630b506331401393e260f831bac0e89605d3f0d296750380065425f65634",
+    "elf_class": "ELF64",
+    "elf_machine": "AArch64"
+  },
+  "theme_assets_sha256": {
+    "assets/shared/trime.yaml": "ff65e4a8ada630dcd14b9d7f036201579ddefa4758868df1b497b45dcfef2d08",
+    "assets/shared/tongwenfeng.trime.yaml": "e758ce8f9059f0fbe3c27c2de9c5faffff761b825feed437075f285e15af9147"
+  },
+  "signing": {
+    "verification_file": "apk-audit-arm64-signer.stdout",
+    "verification_file_sha256": "8af98da72394a50fd0c34022d648526d6f3e26f233d157f9a2202d19ca58ed68",
+    "original_signature_preserved": true,
+    "signer_count": 1,
+    "certificate_dn": "C=US, O=Android, CN=Android Debug",
+    "certificate_sha256": "f6409a2d9db2800f1acc9b2e614d73e4609df3652d265cf2c40eb8a64456deb2",
+    "certificate_sha1": "ef00eb18abc6bcef64d6275c4e290a9d957e0692",
+    "certificate_md5": "a21cdbc412494762eae1341416f3e3e7",
+    "key_algorithm": "RSA",
+    "key_bits": 2048,
+    "public_key_sha256": "d5ea2c6950fc525db646dd433f63ce45b90c23e7d7fd359f34e08484560938a6",
+    "schemes": {
+      "v1": true,
+      "v2": true,
+      "v3": false,
+      "v3_1": false,
+      "v4": false,
+      "source_stamp": false
+    },
+    "warnings_retained_exactly": [
+      "WARNING: META-INF/services/kotlinx.coroutines.CoroutineExceptionHandler not protected by signature. Unauthorized modifications to this JAR entry will not be detected. Delete or move the entry outside of META-INF/.",
+      "WARNING: META-INF/services/kotlinx.coroutines.internal.MainDispatcherFactory not protected by signature. Unauthorized modifications to this JAR entry will not be detected. Delete or move the entry outside of META-INF/."
+    ]
+  },
+  "same_producer_as_x86_64_runtime": {
+    "runtime_binding_file": "runtime-x86_64-binding.json",
+    "runtime_binding_sha256": "52919b0ce3ee58c654f73c80008d4ea4575362f11d08eba540eb9207c4781778",
+    "same_source_head": true,
+    "same_repository": true,
+    "same_run_id": true,
+    "same_artifact_id": true,
+    "same_full_audit": true,
+    "same_certificate": true,
+    "runtime_x86_64_apk_sha256": "453c71544f67685db3b85fc91855ed27c5ff264d0a25671669642b0dc4b8732e",
+    "physical_arm64_apk_sha256": "12fd34dad063e76a0cdd132bbed83e802e02cd5f5ada80671f7f6935c09619c0",
+    "note": "The APK bytes differ by ABI; source/run/artifact/audit/certificate producer identity is shared."
+  },
+  "superseded_deliveries": [
+    {
+      "path": "../device-delivery",
+      "status": "SUPERSEDED_FOR_ACCEPTANCE",
+      "files_modified": false
+    },
+    {
+      "path": "../device-delivery-b14",
+      "status": "SUPERSEDED_APK_IDENTITY_BUT_TEMPLATE_IS_PRESERVATION_BASELINE",
+      "files_modified": false
+    },
+    {
+      "path": "../device-delivery-c4",
+      "status": "SUPERSEDED_HANDOFF_TEMPLATE_VALIDATION_FAILED_49_PROTECTED_BLOCK_CHANGES",
+      "files_modified": false,
+      "payload_inventory_sha256": "926589a7f777ed71716c3b1f4095043fc7841c51df411e50e60836b58170e124"
+    }
+  ],
+  "acceptance": {
+    "physical_device": "NOT_RUN",
+    "legacy_cases": 17,
+    "supplemental_cases": [
+      "R1",
+      "R2",
+      "R3",
+      "R4"
+    ],
+    "all_top_level_case_statuses": "NOT_RUN",
+    "R4_forced_ascii_regression": "NOT_RUN",
+    "installation_guard": "Do not uninstall, clear daily data, or allow downgrade to bypass certificate/version restrictions.",
+    "template": "device-result-template.json",
+    "template_validation": "PASS_PROTECTED_BLOCK_DEEP_EQUALITY"
+  },
+  "limits": [
+    "Exact Debug APK artifact and immutable source binding only; no Release claim.",
+    "Host inspection does not replace installation or behavior testing.",
+    "The fork run and Ubuntu job were completed/success at collection; other producers are audited separately.",
+    "Debug signing identity and any apksigner warnings are retained; this is not a release-signature claim.",
+    "Packaged ELF structure/hashes are verified; cached native compilation is not restated as a fresh compile claim.",
+    "The current source review is static; it does not establish runtime or physical-device behavior.",
+    "The physical checklist and empty result template do not mark the PR Ready or authorize merge.",
+    "The earlier device-delivery-c4 v1 template failed protected-block equality and is not the recording template; its payload bytes remain unchanged for audit."
+  ],
+  "template_contract": {
+    "baseline_path": "../device-delivery-b14/device-result-template.json",
+    "baseline_sha256": "0a211e51d341d821c8294b1c64bf48f48d15fe4c51205e19eb21bcf4bb1c8ab4",
+    "validation_file": "template-preservation-validation.json",
+    "v1_template_validation": "FAILED_49_PROTECTED_BLOCK_CHANGES",
+    "reviewed_template_replaces_v1_for_device_recording": true
+  }
+}

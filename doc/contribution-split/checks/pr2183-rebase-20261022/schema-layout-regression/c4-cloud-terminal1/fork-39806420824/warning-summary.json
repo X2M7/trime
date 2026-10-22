@@ -1,0 +1,169 @@
+{
+  "schema": "trime-c4-fork-cloud-warning-audit/v1",
+  "passed": true,
+  "run": {
+    "repository": "X2M7/trime",
+    "id": 39806420824,
+    "head": "c4b613f78835e7b914e02447955c6b89fe9839ab",
+    "status": "completed",
+    "conclusion": "success",
+    "jobs": {
+      "check / lint-and-test": "success",
+      "build (macos-26-intel)": "success",
+      "build (macos-26)": "success",
+      "build (windows-2025)": "success",
+      "build (ubuntu-26.04)": "success"
+    }
+  },
+  "mechanical_warning_lines": {
+    "count": 103,
+    "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/c4-cloud-terminal1/fork-39806420824/warning-raw-lines.json",
+    "sha256": "e81d9d924f5d70908c79034fd177e6a9e7e7fb80dec24994f90c0479f68754ea"
+  },
+  "families": {
+    "sdkmanager_deprecated": {
+      "raw_line_count": 14,
+      "occurrence_count": 14,
+      "owners": [
+        "GitHub workflow / Android SDK setup action or SDK CLI"
+      ],
+      "certainty": "high",
+      "product_t9_source_implication": "none demonstrated"
+    },
+    "java_native_access": {
+      "raw_line_count": 24,
+      "occurrence_count": 6,
+      "owners": [
+        "Android SDK cmdline-tools 22.0 bundled JNA on macOS Intel and Windows"
+      ],
+      "certainty": "high",
+      "product_t9_source_implication": "none demonstrated"
+    },
+    "gradle_deprecation_summary": {
+      "raw_line_count": 10,
+      "occurrence_count": 10,
+      "owners": [
+        "Gradle build, plugin, or project script unresolved by aggregate message"
+      ],
+      "certainty": "medium",
+      "product_t9_source_implication": "unknown without --warning-mode all; do not absolve project code"
+    },
+    "cmake_leveldb_minimum_deprecation": {
+      "raw_line_count": 4,
+      "occurrence_count": 4,
+      "owners": [
+        "pinned librime/deps/leveldb CMakeLists"
+      ],
+      "certainty": "high",
+      "product_t9_source_implication": "dependency/build maintenance; no runtime failure demonstrated"
+    },
+    "yaml_cpp_dragonbox_constexpr": {
+      "raw_line_count": 48,
+      "occurrence_count": 48,
+      "owners": [
+        "pinned librime/deps/yaml-cpp dragonbox header"
+      ],
+      "certainty": "high",
+      "product_t9_source_implication": "dependency/compiler compatibility; no runtime failure demonstrated"
+    },
+    "librime_lua_size_t_conversion": {
+      "raw_line_count": 2,
+      "occurrence_count": 2,
+      "owners": [
+        "pinned librime-lua types.cc on 32-bit targets"
+      ],
+      "certainty": "high",
+      "product_t9_source_implication": "dependency numeric-conversion warning; retained as potential 32-bit maintenance risk"
+    },
+    "windows_cache_save": {
+      "raw_line_count": 1,
+      "occurrence_count": 1,
+      "owners": [
+        "GitHub Actions JNI cache save / Windows tar path handling"
+      ],
+      "certainty": "high",
+      "product_t9_source_implication": "CI cache persistence issue; build and APK upload still succeeded"
+    },
+    "apksigner_unsigned_meta_inf_services": {
+      "raw_line_count": 8,
+      "occurrence_count": 8,
+      "distinct_messages": 2,
+      "owners": [
+        "Debug APK signing/package metadata"
+      ],
+      "certainty": "high",
+      "product_t9_source_implication": "Debug signature coverage warning; no Release-signature claim"
+    }
+  },
+  "raw_job_logs": [
+    {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/c4-cloud-terminal1/fork-39806420824/logs/119920738316-check-lint-and-test.log",
+      "bytes": 262741,
+      "sha256": "913f6709bca945ff28393ca4a81460767c928a0c21b72ad74600e59b2c5f9891"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/c4-cloud-terminal1/fork-39806420824/logs/119923814944-macos-26-intel.log",
+      "bytes": 292158,
+      "sha256": "7770d1efd3cbfe5b9f761ca3eeb0c58849de42d58bdfddc47c1e11f8b2d7619e"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/c4-cloud-terminal1/fork-39806420824/logs/119923814970-macos-26.log",
+      "bytes": 291415,
+      "sha256": "bf226435a3a945bd0f665ac375f4da8c10c0f94817b0cb1118e386e982ad4a2d"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/c4-cloud-terminal1/fork-39806420824/logs/119923814974-windows-2025.log",
+      "bytes": 190208,
+      "sha256": "e9c33c9aa988425cf8dd21fe86ac79b4f2c2f32b9e6c3d1cd1777ce2dd6a2b48"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/c4-cloud-terminal1/fork-39806420824/logs/119923815112-ubuntu-26.04.log",
+      "bytes": 321242,
+      "sha256": "9664da707f143d896d14496b8a4524c6a095ff5e42732ec311083f5871b559b3"
+    }
+  ],
+  "apksigner": {
+    "audit_path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/c4-fork-run-39806420824-ubuntu1/apk-audit/result.json",
+    "audit_sha256": "58b3d5e7f60678c164269897764957053bacc47055eed69a1a657dfb3a53f336",
+    "warnings": [
+      {
+        "abi": "arm64-v8a",
+        "text": "WARNING: META-INF/services/kotlinx.coroutines.CoroutineExceptionHandler not protected by signature. Unauthorized modifications to this JAR entry will not be detected. Delete or move the entry outside of META-INF/."
+      },
+      {
+        "abi": "arm64-v8a",
+        "text": "WARNING: META-INF/services/kotlinx.coroutines.internal.MainDispatcherFactory not protected by signature. Unauthorized modifications to this JAR entry will not be detected. Delete or move the entry outside of META-INF/."
+      },
+      {
+        "abi": "armeabi-v7a",
+        "text": "WARNING: META-INF/services/kotlinx.coroutines.CoroutineExceptionHandler not protected by signature. Unauthorized modifications to this JAR entry will not be detected. Delete or move the entry outside of META-INF/."
+      },
+      {
+        "abi": "armeabi-v7a",
+        "text": "WARNING: META-INF/services/kotlinx.coroutines.internal.MainDispatcherFactory not protected by signature. Unauthorized modifications to this JAR entry will not be detected. Delete or move the entry outside of META-INF/."
+      },
+      {
+        "abi": "x86",
+        "text": "WARNING: META-INF/services/kotlinx.coroutines.CoroutineExceptionHandler not protected by signature. Unauthorized modifications to this JAR entry will not be detected. Delete or move the entry outside of META-INF/."
+      },
+      {
+        "abi": "x86",
+        "text": "WARNING: META-INF/services/kotlinx.coroutines.internal.MainDispatcherFactory not protected by signature. Unauthorized modifications to this JAR entry will not be detected. Delete or move the entry outside of META-INF/."
+      },
+      {
+        "abi": "x86_64",
+        "text": "WARNING: META-INF/services/kotlinx.coroutines.CoroutineExceptionHandler not protected by signature. Unauthorized modifications to this JAR entry will not be detected. Delete or move the entry outside of META-INF/."
+      },
+      {
+        "abi": "x86_64",
+        "text": "WARNING: META-INF/services/kotlinx.coroutines.internal.MainDispatcherFactory not protected by signature. Unauthorized modifications to this JAR entry will not be detected. Delete or move the entry outside of META-INF/."
+      }
+    ]
+  },
+  "limits": [
+    "Successful jobs do not erase warnings.",
+    "Counts cover the five decoded fork job logs plus apksigner output in the selected original Ubuntu artifact audit.",
+    "Aggregate Gradle deprecation output does not identify its emitter, so ownership remains unresolved.",
+    "This warning audit does not qualify device behavior or physical-device execution."
+  ]
+}

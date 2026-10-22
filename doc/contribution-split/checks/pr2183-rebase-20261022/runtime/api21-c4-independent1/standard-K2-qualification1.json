@@ -1,0 +1,1227 @@
+{
+  "schema": "trime-independent-runtime-qualification/v1",
+  "generated_utc": "2026-10-22T16:32:23.863736+00:00",
+  "review_mode": "HOST_ONLY_NO_ADB_VM_GRADLE_NO_FROZEN_SESSION_EDIT",
+  "verdict": "PASS_API21_C4_STANDARD_K2_EXACT_FROZEN_V7_PATH",
+  "scope": {
+    "platform": "Android API21 emulator",
+    "api": 21,
+    "serial_recorded": "emulator-5582",
+    "theme": "standard / tongwenfeng.trime",
+    "actual_case_session": "K2",
+    "exact_session_only": true,
+    "physical_device": "NOT_RUN",
+    "not_qualified": [
+      "other cases or themes",
+      "API35",
+      "physical device",
+      "whole c4 build",
+      "performance or race freedom",
+      "PR or merge readiness"
+    ]
+  },
+  "frozen_inputs": {
+    "session": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-standard-K2",
+    "raw_report": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-standard-K2/report.json",
+      "bytes": 564344,
+      "sha256": "37ebd6b1f8f0a284376291618eaf92a1a3b9dabe0060f8ab2417539b453dfd46",
+      "completed": true,
+      "passed": false,
+      "checks": []
+    },
+    "sequence_result": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-standard-K2/sequence-result.json",
+      "bytes": 1774,
+      "sha256": "5ad4c784a6c704e60b00f68fff10e84dc39f5c236aecba9fbf9e79da9a0cd8da",
+      "strict_sequence_completed": true,
+      "business_passed": false,
+      "raw_journal_pass_flag_is_not_case_qualification": true,
+      "requires_external_visual_qualification": true,
+      "authenticated_normal_stop": true
+    },
+    "binding": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/original-apk-binding-c4-v7.json",
+      "bytes": 4021,
+      "sha256": "52919b0ce3ee58c654f73c80008d4ea4575362f11d08eba540eb9207c4781778",
+      "embedded_report_value_deep_equal": true
+    },
+    "runner": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/t9_case_sequences_v7.py",
+      "bytes": 22810,
+      "sha256": "3f7739c86af44fd08b97598286f9e697ce500473c7dc5d642466cf77229b6846",
+      "loaded_path_matches_binding": true,
+      "loaded_sha256_matches_binding": true,
+      "k2_source_lines": {
+        "start": 213,
+        "end": 225
+      },
+      "run_and_stop_lines": {
+        "start": 399,
+        "end": 500
+      }
+    },
+    "start_installed_apk": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-standard-K2/start-installed-apk.bin",
+      "bytes": 20673055,
+      "sha256": "453c71544f67685db3b85fc91855ed27c5ff264d0a25671669642b0dc4b8732e"
+    },
+    "start_package": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-standard-K2/start-package.txt",
+      "bytes": 7506,
+      "sha256": "c06dc569212b6201b508538480b40afb4b8df3f157e5b9fb0d45b9bb8a5cf444"
+    },
+    "precondition_prefs": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-standard-K2/standard-K2-precondition-prefs.xml",
+      "bytes": 308,
+      "sha256": "f80cd31863331abf4d3ed7385e3042105c16e0c95fcee6e9ab08c3cb9a56a14b",
+      "values": {
+        "profile_data_storage_mode": "APP_STORAGE",
+        "general__pid": "2543",
+        "follow_system_day_night": "false",
+        "selected_theme": "tongwenfeng.trime"
+      },
+      "read_only_capture": true,
+      "read_boundary": {
+        "shell_identity": "uid=0(root) gid=0(root) groups=1003(graphics),1004(input),1007(log),1011(adb),1015(sdcard_rw),1028(sdcard_r),3001(net_bt_admin),3002(net_bt),3003(inet),3006(net_bw_stats)",
+        "argv": [
+          "cat",
+          "/data/data/com.osfans.trime.debug/shared_prefs/com.osfans.trime.debug_preferences.xml"
+        ],
+        "read_only": true
+      }
+    }
+  },
+  "identity": {
+    "source_head": "c4b613f78835e7b914e02447955c6b89fe9839ab",
+    "source_tree": "d7639dfce3b6b5646bb004479a688148c1b19900",
+    "actual_build_commit": "c4b613f78835e7b914e02447955c6b89fe9839ab",
+    "base": "19b048494ffa55cae52d5385dfa6d0611461c27d",
+    "producer": {
+      "repository": "X2M7/trime",
+      "run": 39806420824,
+      "artifact": 12438099455
+    },
+    "package": "com.osfans.trime.debug",
+    "uid": 10073,
+    "data_dir": "/data/data/com.osfans.trime.debug",
+    "version_code": 20261101,
+    "version_name": "3.3.13",
+    "apk_sha256": "453c71544f67685db3b85fc91855ed27c5ff264d0a25671669642b0dc4b8732e",
+    "apk_signer_sha256": "f6409a2d9db2800f1acc9b2e614d73e4609df3652d265cf2c40eb8a64456deb2",
+    "artifact_audit": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/c4-fork-run-39806420824-ubuntu1/apk-audit/result.json",
+      "bytes": 27780,
+      "sha256": "58b3d5e7f60678c164269897764957053bacc47055eed69a1a657dfb3a53f336"
+    },
+    "artifact_archive_sha256": "8730839641d03b78394ec53e1a7892f29ec1b4a9e31aaa46619653eb2d3be65a",
+    "installed_copy_byte_equal_to_bound_original": true,
+    "no_resigning": true,
+    "retained_signature_warnings": [
+      "WARNING: META-INF/services/kotlinx.coroutines.CoroutineExceptionHandler not protected by signature. Unauthorized modifications to this JAR entry will not be detected. Delete or move the entry outside of META-INF/.",
+      "WARNING: META-INF/services/kotlinx.coroutines.internal.MainDispatcherFactory not protected by signature. Unauthorized modifications to this JAR entry will not be detected. Delete or move the entry outside of META-INF/."
+    ],
+    "target_pid": 2543,
+    "target_starttime": "18220",
+    "target_stat_probe_count": 24,
+    "target_stat_starttime_values": [
+      "18220"
+    ],
+    "target_cmdline_probe_count": 24,
+    "target_cmdline_values": [
+      "com.osfans.trime.debug"
+    ],
+    "boot_id": "d75bca76-0594-45f7-9f2f-52a1a39ec013",
+    "boot_id_probe_count": 17,
+    "boot_id_values": [
+      "d75bca76-0594-45f7-9f2f-52a1a39ec013"
+    ],
+    "observer_session_token": "80a5867063775e7da177b62d98dd3e31",
+    "observer_pid": 26482,
+    "observer_starttime": "179443",
+    "observer_apk_copy": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-standard-K2/installed-public-input-observer8-apk.bin",
+      "bytes": 41363,
+      "sha256": "9edd1ffeade1621faa5f6c51bb1699032bfcd827f3cd28a0143b37099ad812aa"
+    },
+    "oracle_fixture_apk_copy": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-standard-K2/installed-oracle-fixture.bin",
+      "bytes": 29075,
+      "sha256": "e094d767c820b77ec93d9b3f461b2208b4d7dcbec4f37ea869926b7987dfea59"
+    },
+    "display": {
+      "size_raw": "Physical size: 720x1280",
+      "density_raw": "Physical density: 320",
+      "effective_size": "720x1280",
+      "effective_density": "320"
+    },
+    "theme_asset": "assets/shared/tongwenfeng.trime.yaml",
+    "theme_asset_bytes": 200597,
+    "theme_asset_sha256": "e758ce8f9059f0fbe3c27c2de9c5faffff761b825feed437075f285e15af9147"
+  },
+  "raw_status_retained": {
+    "report_completed": true,
+    "report_passed": false,
+    "report_checks": [],
+    "sequence_business_passed": false,
+    "all_capture_report_image_reviewed": false,
+    "all_capture_report_accepted_business_case": false,
+    "qualification_is_separate_from_raw_journal": true
+  },
+  "capture_chain": {
+    "capture_count": 7,
+    "completed_capture_count": 7,
+    "capture_failures": 0,
+    "same_cached_automation_connection": true,
+    "automation_connection_count": 1,
+    "helper_injected_touch": false,
+    "candidate_ui_acceptance": false,
+    "byte_equal_xml_capture_count": 6,
+    "byte_unequal_xml_capture_count": 1,
+    "byte_unequal_xml_changed_node_count": 2,
+    "byte_unequal_xml_captures": [
+      {
+        "label": "standard-K2-raw64-before",
+        "before_xml_sha256": "2780212549257f7e90ed960fbba56cf633396f80e8ac7289554a70900ceba864",
+        "after_xml_sha256": "d6970220e44500c9c709ac12f721e938524d7eaff2462ffb67429669ecf61ae2",
+        "changed_node_count": 2,
+        "changes": [
+          {
+            "document_node_index": 67,
+            "package": "com.osfans.trime.debug",
+            "class": "android.widget.TextView",
+            "text": "mi",
+            "content_desc": "",
+            "changed_attributes": {
+              "bounds": [
+                "[450,465][473,492]",
+                "[450,466][473,493]"
+              ]
+            }
+          },
+          {
+            "document_node_index": 71,
+            "package": "com.osfans.trime.debug",
+            "class": "android.widget.TextView",
+            "text": "ni",
+            "content_desc": "",
+            "changed_attributes": {
+              "bounds": [
+                "[533,465][549,492]",
+                "[533,466][549,493]"
+              ]
+            }
+          }
+        ]
+      }
+    ],
+    "byte_unequal_limit": "The sole unequal XML pair has exactly two target-package annotation TextViews (mi and ni); each bounds rectangle moves down by one pixel and no other node, text, state, class, package, count, or attribute changes. The frame remains explicitly non-byte-stable.",
+    "captures": [
+      {
+        "sequence": 1,
+        "label": "standard-K2-raw-initial",
+        "observation": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-standard-K2/captures/standard-K2-raw-initial/observer-observation.json",
+          "bytes": 1851,
+          "sha256": "3db1352efe5f617fbe8e9529dd898f304725dfeca84f74a1ce2d339369b78b8d"
+        },
+        "capture_token": "cff1147e0a1bbd2bea08b480da279739",
+        "png_sha256": "b8f4fff40339465c0a55aaa185a10310d0bce741d294d35b8a8071168b7cb5bd",
+        "before_xml_sha256": "42f429facb97aedc635df82012db786b2ac2fc4d05163b734842ed2751f4386d",
+        "after_xml_sha256": "42f429facb97aedc635df82012db786b2ac2fc4d05163b734842ed2751f4386d",
+        "hierarchies_equal": true,
+        "capture_complete": true,
+        "same_connection_xml_png_xml": true,
+        "raw_image_reviewed": false,
+        "raw_accepted_business_case": false
+      },
+      {
+        "sequence": 2,
+        "label": "standard-K2-raw64-before",
+        "observation": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-standard-K2/captures/standard-K2-raw64-before/observer-observation.json",
+          "bytes": 1852,
+          "sha256": "9de9dad57472b0fd35084f75cd922ac8715cf1273b6559035e54e7a64353b982"
+        },
+        "capture_token": "b177d1355b8e93c3aa3f23ec3b9fb9d9",
+        "png_sha256": "c3016124f36467f6e280833e52e485dbde84daf0b09525f24f769315e0c3febc",
+        "before_xml_sha256": "2780212549257f7e90ed960fbba56cf633396f80e8ac7289554a70900ceba864",
+        "after_xml_sha256": "d6970220e44500c9c709ac12f721e938524d7eaff2462ffb67429669ecf61ae2",
+        "hierarchies_equal": false,
+        "capture_complete": true,
+        "same_connection_xml_png_xml": true,
+        "raw_image_reviewed": false,
+        "raw_accepted_business_case": false
+      },
+      {
+        "sequence": 3,
+        "label": "standard-K2-raw64-enter",
+        "observation": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-standard-K2/captures/standard-K2-raw64-enter/observer-observation.json",
+          "bytes": 1851,
+          "sha256": "014e9cf0f52e5da2e935115f60b51c8feaf2058e21c859b271f8c1a09743f4e2"
+        },
+        "capture_token": "e06b15a34bc634824421c20747c46525",
+        "png_sha256": "637fa399be09e7ee96c65578a8c5a44ea68632781279034c692841d37dc15019",
+        "before_xml_sha256": "1b363d3258abb711a8b6c781b60bb6c1300921e4e160c4717bd7bd11bd09983b",
+        "after_xml_sha256": "1b363d3258abb711a8b6c781b60bb6c1300921e4e160c4717bd7bd11bd09983b",
+        "hierarchies_equal": true,
+        "capture_complete": true,
+        "same_connection_xml_png_xml": true,
+        "raw_image_reviewed": false,
+        "raw_accepted_business_case": false
+      },
+      {
+        "sequence": 4,
+        "label": "standard-K2-chat-before",
+        "observation": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-standard-K2/captures/standard-K2-chat-before/observer-observation.json",
+          "bytes": 1851,
+          "sha256": "bf370a3ba836ce2682f2d1559345344808e6c30df532e8eca50ca2e74292b132"
+        },
+        "capture_token": "2a95e1ef0a50d129dbe6fc40e579fdf6",
+        "png_sha256": "79f4492db6f5b25f16011fc6d000dc726d8832f47a00bbcb72e5597f0b7d26e9",
+        "before_xml_sha256": "043722799b50044c20763910646f72003d03ea7b26e417d58b68238646657bb4",
+        "after_xml_sha256": "043722799b50044c20763910646f72003d03ea7b26e417d58b68238646657bb4",
+        "hierarchies_equal": true,
+        "capture_complete": true,
+        "same_connection_xml_png_xml": true,
+        "raw_image_reviewed": false,
+        "raw_accepted_business_case": false
+      },
+      {
+        "sequence": 5,
+        "label": "standard-K2-chat-action4",
+        "observation": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-standard-K2/captures/standard-K2-chat-action4/observer-observation.json",
+          "bytes": 1851,
+          "sha256": "106203ba93f5fc25d05e0b9249e990743f7018e23b37d275e477ed36be5e8531"
+        },
+        "capture_token": "d11d8027695bc1ac7a1e324f0e35a5f7",
+        "png_sha256": "d48049c85bb374483800d4cc6f7c9eec36515689a4daea9d75f072bb8dab474d",
+        "before_xml_sha256": "437112f0ffdac4f264b79999785b4450ad57c84de48ac6553a54ec104bed66de",
+        "after_xml_sha256": "437112f0ffdac4f264b79999785b4450ad57c84de48ac6553a54ec104bed66de",
+        "hierarchies_equal": true,
+        "capture_complete": true,
+        "same_connection_xml_png_xml": true,
+        "raw_image_reviewed": false,
+        "raw_accepted_business_case": false
+      },
+      {
+        "sequence": 6,
+        "label": "standard-K2-multiline-before",
+        "observation": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-standard-K2/captures/standard-K2-multiline-before/observer-observation.json",
+          "bytes": 1851,
+          "sha256": "f3e5568bf5e69c03e3daa3b1262e74c0f63f5c9e79716283dcd82db7e764c9cc"
+        },
+        "capture_token": "06e5a0480c26aa5dfd060a2fc846d639",
+        "png_sha256": "5c459c47d1e64f3b54e2eeb40572492ad1f02a3bf348c2f28cba8e348983f7fe",
+        "before_xml_sha256": "40b9e445ee0dfbe2cb76df56077f02ef15bfb6eb83173bd54000860ac5d3f4ec",
+        "after_xml_sha256": "40b9e445ee0dfbe2cb76df56077f02ef15bfb6eb83173bd54000860ac5d3f4ec",
+        "hierarchies_equal": true,
+        "capture_complete": true,
+        "same_connection_xml_png_xml": true,
+        "raw_image_reviewed": false,
+        "raw_accepted_business_case": false
+      },
+      {
+        "sequence": 7,
+        "label": "standard-K2-multiline-newline",
+        "observation": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-standard-K2/captures/standard-K2-multiline-newline/observer-observation.json",
+          "bytes": 1851,
+          "sha256": "e50207f73db6e0b04a89171ec92464ef024afc4a1366e1a96d43565fbcb51ff7"
+        },
+        "capture_token": "519286fe804fb9135bbd08bb74fea4b4",
+        "png_sha256": "1fcecd0936abdc505041e4da2dc6a7ee65b8bbd892227c3745237441848a8a8b",
+        "before_xml_sha256": "85cac8f745e60c2671254716a93e9254e809595db87517939225ac146f9ecf6f",
+        "after_xml_sha256": "85cac8f745e60c2671254716a93e9254e809595db87517939225ac146f9ecf6f",
+        "hierarchies_equal": true,
+        "capture_complete": true,
+        "same_connection_xml_png_xml": true,
+        "raw_image_reviewed": false,
+        "raw_accepted_business_case": false
+      }
+    ]
+  },
+  "oracle_chain": {
+    "pair_count": 7,
+    "oracle_json_file_count": 14,
+    "oracle_raw_text_file_count": 14,
+    "all_pairs_same_pid_and_activity_before_after": true,
+    "all_before_after_text_equal": true,
+    "all_main_thread_read_only_focused": true,
+    "fresh_editor_groups": [
+      {
+        "mode": "raw64",
+        "fixture_pid": 26586,
+        "activity_instance": "71ae1ae5e7db42168b575b9b9ccb2219",
+        "labels": [
+          "standard-K2-raw-initial",
+          "standard-K2-raw64-before",
+          "standard-K2-raw64-enter"
+        ]
+      },
+      {
+        "mode": "chat",
+        "fixture_pid": 27254,
+        "activity_instance": "6a1ffcdbcbf146b79ec784fcbe126a22",
+        "labels": [
+          "standard-K2-chat-before",
+          "standard-K2-chat-action4"
+        ]
+      },
+      {
+        "mode": "multiline",
+        "fixture_pid": 27687,
+        "activity_instance": "fd69db2a6aaf4b86bf5dab2274b50b50",
+        "labels": [
+          "standard-K2-multiline-before",
+          "standard-K2-multiline-newline"
+        ]
+      }
+    ],
+    "three_fresh_editor_pids_and_activity_instances_pairwise_distinct": true,
+    "pairs": [
+      {
+        "label": "standard-K2-raw-initial",
+        "expected_and_observed_text": "",
+        "text_utf8_base64": "",
+        "text_utf8_hex": "",
+        "text_utf8_bytes": 0,
+        "selection": [
+          0,
+          0
+        ],
+        "fixture_pid": 26586,
+        "activity_instance": "71ae1ae5e7db42168b575b9b9ccb2219",
+        "sequences": [
+          1,
+          2
+        ],
+        "before": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-standard-K2/standard-K2-raw-initial-before-oracle.json",
+          "bytes": 974,
+          "sha256": "8c7ee23e7eb913f35d49dba743683fbe78fb8a43af1df07e84b6a218e62254d0",
+          "request_nonce": "7a4d157444c96fd0ce42ebe187763278"
+        },
+        "after": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-standard-K2/standard-K2-raw-initial-after-oracle.json",
+          "bytes": 974,
+          "sha256": "af77d7ac3e95298536b4f6788585ff5e29555bca320f438b291fdc093f63b571",
+          "request_nonce": "8a9ba6fa1781da9ed67ff141078a2b86"
+        },
+        "same_fixture_pid_and_activity": true,
+        "before_after_text_equal": true,
+        "main_thread_read_only_focused": true
+      },
+      {
+        "label": "standard-K2-raw64-before",
+        "expected_and_observed_text": "",
+        "text_utf8_base64": "",
+        "text_utf8_hex": "",
+        "text_utf8_bytes": 0,
+        "selection": [
+          0,
+          0
+        ],
+        "fixture_pid": 26586,
+        "activity_instance": "71ae1ae5e7db42168b575b9b9ccb2219",
+        "sequences": [
+          3,
+          4
+        ],
+        "before": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-standard-K2/standard-K2-raw64-before-before-oracle.json",
+          "bytes": 974,
+          "sha256": "26188b425a474e11a57baa91f73660d28215620d9b912206faf71690b545e04d",
+          "request_nonce": "f2a783c5479fe01f6c76a62d09657c7a"
+        },
+        "after": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-standard-K2/standard-K2-raw64-before-after-oracle.json",
+          "bytes": 974,
+          "sha256": "e178e0b46181458127952038d7218152688bbd7c688508177a9f5f869d6359ad",
+          "request_nonce": "e3a707e7d00136ed36bfd1fcda1a824f"
+        },
+        "same_fixture_pid_and_activity": true,
+        "before_after_text_equal": true,
+        "main_thread_read_only_focused": true
+      },
+      {
+        "label": "standard-K2-raw64-enter",
+        "expected_and_observed_text": "64",
+        "text_utf8_base64": "NjQ=",
+        "text_utf8_hex": "3634",
+        "text_utf8_bytes": 2,
+        "selection": [
+          2,
+          2
+        ],
+        "fixture_pid": 26586,
+        "activity_instance": "71ae1ae5e7db42168b575b9b9ccb2219",
+        "sequences": [
+          5,
+          6
+        ],
+        "before": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-standard-K2/standard-K2-raw64-enter-before-oracle.json",
+          "bytes": 978,
+          "sha256": "09fe88e4b232e4be4b1b678d6a9231583259e94516d8fdba3e2a0877b5d335f1",
+          "request_nonce": "976642b0b75299615e2d64a9511f5eb5"
+        },
+        "after": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-standard-K2/standard-K2-raw64-enter-after-oracle.json",
+          "bytes": 978,
+          "sha256": "1fb21b7131bf48a07e6483ad017fb40379bba5c70569e5411514841617590db3",
+          "request_nonce": "dfb9e549113b1a808cc4a26734405fc1"
+        },
+        "same_fixture_pid_and_activity": true,
+        "before_after_text_equal": true,
+        "main_thread_read_only_focused": true
+      },
+      {
+        "label": "standard-K2-chat-before",
+        "expected_and_observed_text": "",
+        "text_utf8_base64": "",
+        "text_utf8_hex": "",
+        "text_utf8_bytes": 0,
+        "selection": [
+          0,
+          0
+        ],
+        "fixture_pid": 27254,
+        "activity_instance": "6a1ffcdbcbf146b79ec784fcbe126a22",
+        "sequences": [
+          1,
+          2
+        ],
+        "before": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-standard-K2/standard-K2-chat-before-before-oracle.json",
+          "bytes": 974,
+          "sha256": "876a6a17edc03f59b3028842f52556da161d7ce27edb08d58844db7e2b0ba8de",
+          "request_nonce": "462295052026df4230d94b292ca65249"
+        },
+        "after": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-standard-K2/standard-K2-chat-before-after-oracle.json",
+          "bytes": 974,
+          "sha256": "a1b6cba9b76232b7ccc3e3f88e35035c027ceae55a12875fefe5eb21c0f3823e",
+          "request_nonce": "dd356d38627857e09ed490711663be4a"
+        },
+        "same_fixture_pid_and_activity": true,
+        "before_after_text_equal": true,
+        "main_thread_read_only_focused": true
+      },
+      {
+        "label": "standard-K2-chat-action4",
+        "expected_and_observed_text": "",
+        "text_utf8_base64": "",
+        "text_utf8_hex": "",
+        "text_utf8_bytes": 0,
+        "selection": [
+          0,
+          0
+        ],
+        "fixture_pid": 27254,
+        "activity_instance": "6a1ffcdbcbf146b79ec784fcbe126a22",
+        "sequences": [
+          3,
+          4
+        ],
+        "before": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-standard-K2/standard-K2-chat-action4-before-oracle.json",
+          "bytes": 974,
+          "sha256": "78331e20e26842e639f3720c8300b7edbec1090d37be1f55ada3919e0ccdb5f2",
+          "request_nonce": "f7b6514f54cfbbc73beb51eb85cf4e6f"
+        },
+        "after": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-standard-K2/standard-K2-chat-action4-after-oracle.json",
+          "bytes": 974,
+          "sha256": "d42c1dac3df6faa72eba80affcddcfb99ba06edb418fe0a084878ae19e0c7949",
+          "request_nonce": "b35d6c495713e7ee3e609f2787b8a8f0"
+        },
+        "same_fixture_pid_and_activity": true,
+        "before_after_text_equal": true,
+        "main_thread_read_only_focused": true
+      },
+      {
+        "label": "standard-K2-multiline-before",
+        "expected_and_observed_text": "",
+        "text_utf8_base64": "",
+        "text_utf8_hex": "",
+        "text_utf8_bytes": 0,
+        "selection": [
+          0,
+          0
+        ],
+        "fixture_pid": 27687,
+        "activity_instance": "fd69db2a6aaf4b86bf5dab2274b50b50",
+        "sequences": [
+          1,
+          2
+        ],
+        "before": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-standard-K2/standard-K2-multiline-before-before-oracle.json",
+          "bytes": 974,
+          "sha256": "8f238e06ce3899eb043d1f4726c1fe8ac238807ece854a5bd0300cf1cd4f1a13",
+          "request_nonce": "cf01a7fc5c6024a1d16cdda0d50c00fa"
+        },
+        "after": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-standard-K2/standard-K2-multiline-before-after-oracle.json",
+          "bytes": 974,
+          "sha256": "da49c3723a092d2739835f5cf1b3e5cd052581c0850244227371115d3134a776",
+          "request_nonce": "3c03436ccd012ed7c78f680222145d36"
+        },
+        "same_fixture_pid_and_activity": true,
+        "before_after_text_equal": true,
+        "main_thread_read_only_focused": true
+      },
+      {
+        "label": "standard-K2-multiline-newline",
+        "expected_and_observed_text": "\n",
+        "text_utf8_base64": "Cg==",
+        "text_utf8_hex": "0a",
+        "text_utf8_bytes": 1,
+        "selection": [
+          1,
+          1
+        ],
+        "fixture_pid": 27687,
+        "activity_instance": "fd69db2a6aaf4b86bf5dab2274b50b50",
+        "sequences": [
+          3,
+          4
+        ],
+        "before": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-standard-K2/standard-K2-multiline-newline-before-oracle.json",
+          "bytes": 978,
+          "sha256": "bc8fb3322d71e4518b3fb6936534af36c5dbb49b8298b17185905aea70395cec",
+          "request_nonce": "a4a827bc082a6b894698d25da94ea246"
+        },
+        "after": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-standard-K2/standard-K2-multiline-newline-after-oracle.json",
+          "bytes": 978,
+          "sha256": "5d0133658b1a61b0292f82cdd4cc2305310d621a4bf9d0b858e1b3af9e8f9553",
+          "request_nonce": "074b7c5dfb8842ab6329940ce5e75574"
+        },
+        "same_fixture_pid_and_activity": true,
+        "before_after_text_equal": true,
+        "main_thread_read_only_focused": true
+      }
+    ]
+  },
+  "return_and_action_binding": {
+    "actual_tap_coordinate": [
+      640,
+      884
+    ],
+    "report_actions": [
+      {
+        "report_action_ordinal_1_based": 5,
+        "action": "tap",
+        "x": 640,
+        "y": 884,
+        "at": "2026-10-22T16:27:07.423419+00:00"
+      },
+      {
+        "report_action_ordinal_1_based": 8,
+        "action": "tap",
+        "x": 640,
+        "y": 884,
+        "at": "2026-10-22T16:27:25.882577+00:00"
+      },
+      {
+        "report_action_ordinal_1_based": 11,
+        "action": "tap",
+        "x": 640,
+        "y": 884,
+        "at": "2026-10-22T16:27:40.951638+00:00"
+      }
+    ],
+    "journal_tap_commands": [
+      {
+        "command_ordinal_1_based": 148,
+        "finished": "2026-10-22T16:27:07.413707+00:00",
+        "host_returncode": 0,
+        "remote_returncode": 0,
+        "stdout_sha256": "31665fe5efd90810172a807a3d303bcd4adf2672e2cb4fa9122d7a20c3fab12a"
+      },
+      {
+        "command_ordinal_1_based": 253,
+        "finished": "2026-10-22T16:27:25.868247+00:00",
+        "host_returncode": 0,
+        "remote_returncode": 0,
+        "stdout_sha256": "237a3c650a4ccd6097860a8904518e81ed068aad808854d27e6994be5b66fdcb"
+      },
+      {
+        "command_ordinal_1_based": 356,
+        "finished": "2026-10-22T16:27:40.928514+00:00",
+        "host_returncode": 0,
+        "remote_returncode": 0,
+        "stdout_sha256": "3563a5c128c7f7072e5734c3d0cc6609c01eec6fa7139737050d100f3730473e"
+      }
+    ],
+    "pre_action_captured_leaf_key_cells": [
+      {
+        "context": "raw64_pending",
+        "capture": "standard-K2-raw64-before",
+        "xml": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-standard-K2/captures/standard-K2-raw64-before/observer-after.xml",
+          "bytes": 44442,
+          "sha256": "d6970220e44500c9c709ac12f721e938524d7eaff2462ffb67429669ecf61ae2"
+        },
+        "node": {
+          "package": "com.osfans.trime.debug",
+          "class": "android.widget.FrameLayout",
+          "index": "10",
+          "resource_id": "",
+          "text": "",
+          "content_desc": "",
+          "clickable": "false",
+          "enabled": "true",
+          "selected": "false",
+          "bounds": "[561,824][720,944]"
+        },
+        "leaf_node": true,
+        "tap": [
+          640,
+          884
+        ],
+        "tap_inside_half_open_bounds": true
+      },
+      {
+        "context": "chat",
+        "capture": "standard-K2-chat-before",
+        "xml": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-standard-K2/captures/standard-K2-chat-before/observer-after.xml",
+          "bytes": 33993,
+          "sha256": "043722799b50044c20763910646f72003d03ea7b26e417d58b68238646657bb4"
+        },
+        "node": {
+          "package": "com.osfans.trime.debug",
+          "class": "android.widget.FrameLayout",
+          "index": "10",
+          "resource_id": "",
+          "text": "",
+          "content_desc": "",
+          "clickable": "false",
+          "enabled": "true",
+          "selected": "false",
+          "bounds": "[561,824][720,944]"
+        },
+        "leaf_node": true,
+        "tap": [
+          640,
+          884
+        ],
+        "tap_inside_half_open_bounds": true
+      },
+      {
+        "context": "multiline",
+        "capture": "standard-K2-multiline-before",
+        "xml": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-standard-K2/captures/standard-K2-multiline-before/observer-after.xml",
+          "bytes": 34003,
+          "sha256": "40b9e445ee0dfbe2cb76df56077f02ef15bfb6eb83173bd54000860ac5d3f4ec"
+        },
+        "node": {
+          "package": "com.osfans.trime.debug",
+          "class": "android.widget.FrameLayout",
+          "index": "10",
+          "resource_id": "",
+          "text": "",
+          "content_desc": "",
+          "clickable": "false",
+          "enabled": "true",
+          "selected": "false",
+          "bounds": "[561,824][720,944]"
+        },
+        "leaf_node": true,
+        "tap": [
+          640,
+          884
+        ],
+        "tap_inside_half_open_bounds": true
+      }
+    ],
+    "fixture_action_nodes": {
+      "chat_before": {
+        "capture": "standard-K2-chat-before",
+        "xml": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-standard-K2/captures/standard-K2-chat-before/observer-after.xml",
+          "bytes": 33993,
+          "sha256": "043722799b50044c20763910646f72003d03ea7b26e417d58b68238646657bb4"
+        },
+        "node": {
+          "package": "org.x2m7.trime.editorfixture",
+          "class": "android.widget.TextView",
+          "index": "2",
+          "resource_id": "org.x2m7.trime.editorfixture:id/action_result",
+          "text": "action: none",
+          "content_desc": "",
+          "clickable": "false",
+          "enabled": "true",
+          "selected": "false",
+          "bounds": "[0,194][720,242]"
+        }
+      },
+      "chat_after_return": {
+        "capture": "standard-K2-chat-action4",
+        "xml": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-standard-K2/captures/standard-K2-chat-action4/observer-after.xml",
+          "bytes": 33990,
+          "sha256": "437112f0ffdac4f264b79999785b4450ad57c84de48ac6553a54ec104bed66de"
+        },
+        "node": {
+          "package": "org.x2m7.trime.editorfixture",
+          "class": "android.widget.TextView",
+          "index": "2",
+          "resource_id": "org.x2m7.trime.editorfixture:id/action_result",
+          "text": "action: 4",
+          "content_desc": "",
+          "clickable": "false",
+          "enabled": "true",
+          "selected": "false",
+          "bounds": "[0,194][720,242]"
+        }
+      },
+      "multiline_before": {
+        "capture": "standard-K2-multiline-before",
+        "xml": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-standard-K2/captures/standard-K2-multiline-before/observer-after.xml",
+          "bytes": 34003,
+          "sha256": "40b9e445ee0dfbe2cb76df56077f02ef15bfb6eb83173bd54000860ac5d3f4ec"
+        },
+        "node": {
+          "package": "org.x2m7.trime.editorfixture",
+          "class": "android.widget.TextView",
+          "index": "2",
+          "resource_id": "org.x2m7.trime.editorfixture:id/action_result",
+          "text": "action: none",
+          "content_desc": "",
+          "clickable": "false",
+          "enabled": "true",
+          "selected": "false",
+          "bounds": "[0,194][720,242]"
+        }
+      },
+      "multiline_after_return": {
+        "capture": "standard-K2-multiline-newline",
+        "xml": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-standard-K2/captures/standard-K2-multiline-newline/observer-after.xml",
+          "bytes": 33994,
+          "sha256": "85cac8f745e60c2671254716a93e9254e809595db87517939225ac146f9ecf6f"
+        },
+        "node": {
+          "package": "org.x2m7.trime.editorfixture",
+          "class": "android.widget.TextView",
+          "index": "2",
+          "resource_id": "org.x2m7.trime.editorfixture:id/action_result",
+          "text": "action: 0",
+          "content_desc": "",
+          "clickable": "false",
+          "enabled": "true",
+          "selected": "false",
+          "bounds": "[0,194][720,242]"
+        }
+      }
+    },
+    "exact_apk_theme_asset_evidence": {
+      "asset": "assets/shared/tongwenfeng.trime.yaml",
+      "bytes": 200597,
+      "sha256": "e758ce8f9059f0fbe3c27c2de9c5faffff761b825feed437075f285e15af9147",
+      "lines": [
+        {
+          "line": 67,
+          "text": "  enter_label_mode: 0  #是否使用App提供的ActionLabel内容作为Enter键的文本（由于多数App没有适配ActionLable，实际影响不大）。0不使用，1只使用actionlabel，2优先使用，3当其他方式没有获得label时才读取actionlabel"
+        },
+        {
+          "line": 68,
+          "text": "  enter_labels:  # 定义Enter键的文本"
+        },
+        {
+          "line": 69,
+          "text": "    go: 前往"
+        },
+        {
+          "line": 70,
+          "text": "    done: 完成"
+        },
+        {
+          "line": 71,
+          "text": "    next: 下个"
+        },
+        {
+          "line": 72,
+          "text": "    pre:  上个"
+        },
+        {
+          "line": 73,
+          "text": "    search: 搜索"
+        },
+        {
+          "line": 74,
+          "text": "    send: 发送"
+        },
+        {
+          "line": 75,
+          "text": "    default: Enter   # 定义默认Enter键的文本"
+        },
+        {
+          "line": 1087,
+          "text": "  luna_pinyin_t9:"
+        },
+        {
+          "line": 1090,
+          "text": "    t9_layout: true"
+        },
+        {
+          "line": 1093,
+          "text": "    width: 26"
+        },
+        {
+          "line": 1094,
+          "text": "    height: 55"
+        },
+        {
+          "line": 1102,
+          "text": "      - {click: T9_separator, width: 26, label: '|', hint: '1', long_click: T9_digit_1}"
+        },
+        {
+          "line": 1103,
+          "text": "      - {click: '2', width: 26, label: 'ABC', hint: '2', long_click: T9_digit_2}"
+        },
+        {
+          "line": 1104,
+          "text": "      - {click: '3', width: 26, label: 'DEF', hint: '3', long_click: T9_digit_3}"
+        },
+        {
+          "line": 1105,
+          "text": "      - {click: T9_backspace, width: 22}"
+        },
+        {
+          "line": 1106,
+          "text": "      - {click: '4', width: 26, label: 'GHI', hint: '4', long_click: T9_digit_4}"
+        },
+        {
+          "line": 1107,
+          "text": "      - {click: '5', width: 26, label: 'JKL', hint: '5', long_click: T9_digit_5}"
+        },
+        {
+          "line": 1108,
+          "text": "      - {click: '6', width: 26, label: 'MNO', hint: '6', long_click: T9_digit_6}"
+        },
+        {
+          "line": 1109,
+          "text": "      - {click: T9_enter, width: 22}"
+        },
+        {
+          "line": 4012,
+          "text": "  T9_enter: {label: enter_labels, send: Return}"
+        }
+      ],
+      "semantics": "The exact standard T9 layout has rows whose first three keys are width 26 and right key width 22. The right cell in row two is T9_enter; preset T9_enter uses enter_labels and sends Return. enter_labels maps send to 发送 and default to Enter. Each recorded tap (640,884) falls inside the captured right-row-two leaf cell [561,824][720,944]."
+    },
+    "binding_result": "For raw64, chat and multiline, the immediately preceding same-connection XML contains the same leaf key cell [561,824][720,944], and (640,884) lies inside it. Exact bound APK asset lines map that row-two right slot to T9_enter/send Return. Retained outcomes distinguish commit 64, editor action 4 with empty Editable, and editor action 0 plus one U+000A.",
+    "boundary_limit": "The accessibility leaf cell itself has no semantic label; the Return identity is established by its captured position plus the exact hash-bound theme layout, runner coordinate and resulting fixture/oracle states."
+  },
+  "business_findings": {
+    "raw64_return": {
+      "before_editable": "",
+      "before_pending_segment": {
+        "package": "com.osfans.trime.debug",
+        "class": "android.widget.TextView",
+        "index": "0",
+        "resource_id": "",
+        "text": "64",
+        "content_desc": "Current: Input segment: 64",
+        "clickable": "true",
+        "enabled": "true",
+        "selected": "true",
+        "bounds": "[0,512][96,608]"
+      },
+      "return_action": {
+        "report_action_ordinal_1_based": 5,
+        "action": "tap",
+        "x": 640,
+        "y": 884,
+        "at": "2026-10-22T16:27:07.423419+00:00"
+      },
+      "after_editable": "64",
+      "after_utf8_base64": "NjQ=",
+      "after_utf8_hex": "3634",
+      "after_utf8_bytes": 2,
+      "after_selection": [
+        2,
+        2
+      ],
+      "same_fixture_pid": 26586,
+      "same_activity_instance": "71ae1ae5e7db42168b575b9b9ccb2219",
+      "post_return_clean_counts": {
+        "input_segment": 0,
+        "locked_syllable": 0,
+        "undo": 0,
+        "cancel": 0,
+        "unlock": 0
+      },
+      "post_return_target_semantic_nodes": [
+        {
+          "package": "com.osfans.trime.debug",
+          "class": "android.widget.TextView",
+          "index": "0",
+          "resource_id": "",
+          "text": "中",
+          "content_desc": "",
+          "clickable": "false",
+          "enabled": "true",
+          "selected": "false",
+          "bounds": "[285,624][355,704]"
+        }
+      ],
+      "post_return_segment_lock_undo_cancel_unlock_absent": true
+    },
+    "chat_send_action": {
+      "before_editable": "",
+      "before_action_node": {
+        "package": "org.x2m7.trime.editorfixture",
+        "class": "android.widget.TextView",
+        "index": "2",
+        "resource_id": "org.x2m7.trime.editorfixture:id/action_result",
+        "text": "action: none",
+        "content_desc": "",
+        "clickable": "false",
+        "enabled": "true",
+        "selected": "false",
+        "bounds": "[0,194][720,242]"
+      },
+      "return_action": {
+        "report_action_ordinal_1_based": 8,
+        "action": "tap",
+        "x": 640,
+        "y": 884,
+        "at": "2026-10-22T16:27:25.882577+00:00"
+      },
+      "after_editable": "",
+      "after_utf8_bytes": 0,
+      "after_selection": [
+        0,
+        0
+      ],
+      "after_action_node": {
+        "package": "org.x2m7.trime.editorfixture",
+        "class": "android.widget.TextView",
+        "index": "2",
+        "resource_id": "org.x2m7.trime.editorfixture:id/action_result",
+        "text": "action: 4",
+        "content_desc": "",
+        "clickable": "false",
+        "enabled": "true",
+        "selected": "false",
+        "bounds": "[0,194][720,242]"
+      },
+      "strict_editable_empty": true,
+      "dynamic_return_label_from_asset_and_root_snapshot": "发送",
+      "same_fixture_pid": 27254,
+      "same_activity_instance": "6a1ffcdbcbf146b79ec784fcbe126a22"
+    },
+    "multiline_newline": {
+      "before_editable": "",
+      "before_action_node": {
+        "package": "org.x2m7.trime.editorfixture",
+        "class": "android.widget.TextView",
+        "index": "2",
+        "resource_id": "org.x2m7.trime.editorfixture:id/action_result",
+        "text": "action: none",
+        "content_desc": "",
+        "clickable": "false",
+        "enabled": "true",
+        "selected": "false",
+        "bounds": "[0,194][720,242]"
+      },
+      "return_action": {
+        "report_action_ordinal_1_based": 11,
+        "action": "tap",
+        "x": 640,
+        "y": 884,
+        "at": "2026-10-22T16:27:40.951638+00:00"
+      },
+      "after_editable": "\n",
+      "after_code_point": "U+000A",
+      "after_unicode_scalar_count": 1,
+      "after_utf8_base64": "Cg==",
+      "after_utf8_hex": "0a",
+      "after_utf8_bytes": 1,
+      "after_selection": [
+        1,
+        1
+      ],
+      "after_action_node": {
+        "package": "org.x2m7.trime.editorfixture",
+        "class": "android.widget.TextView",
+        "index": "2",
+        "resource_id": "org.x2m7.trime.editorfixture:id/action_result",
+        "text": "action: 0",
+        "content_desc": "",
+        "clickable": "false",
+        "enabled": "true",
+        "selected": "false",
+        "bounds": "[0,194][720,242]"
+      },
+      "strict_single_u000a": true,
+      "same_fixture_pid": 27687,
+      "same_activity_instance": "fd69db2a6aaf4b86bf5dab2274b50b50"
+    }
+  },
+  "command_boundary": {
+    "journal_commands": 423,
+    "all_completed": true,
+    "all_host_returncode_zero": true,
+    "remote_returncode_counts": {
+      "0": 228,
+      "1": 114,
+      "not_applicable": 81
+    },
+    "remote_one_scope": {
+      "test_-e_absence_poll": 26,
+      "test_-f_absence_poll": 88
+    },
+    "observer_request_pushes": 8,
+    "target_preference_access": {
+      "shell_identity": "uid=0(root) gid=0(root) groups=1003(graphics),1004(input),1007(log),1011(adb),1015(sdcard_rw),1028(sdcard_r),3001(net_bt_admin),3002(net_bt),3003(inet),3006(net_bw_stats)",
+      "argv": [
+        "cat",
+        "/data/data/com.osfans.trime.debug/shared_prefs/com.osfans.trime.debug_preferences.xml"
+      ],
+      "read_only": true
+    },
+    "review_generated_without_device_commands": true,
+    "review_generated_without_vm_gradle_or_source_edits": true,
+    "frozen_session_bytes_modified_by_review": false
+  },
+  "normal_stop": {
+    "report_started_utc": "2026-10-22T16:26:45.826080+00:00",
+    "report_finished_utc": "2026-10-22T16:27:48.950754+00:00",
+    "report_completed": true,
+    "sequence_result_authenticated_normal_stop": true,
+    "direct_finish_succeeded": true,
+    "atexit_fallback_retained": false,
+    "observer_identity_authenticated": true,
+    "observer_ready": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-standard-K2/observer8-session/ready.json",
+      "bytes": 1100,
+      "sha256": "81defe772bf29e0a9f7eef58d8874cecd9e9286b02c005c4f12ed2ac0f59d973"
+    },
+    "observer_finished": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-standard-K2/observer8-session/finished.json",
+      "bytes": 2116,
+      "sha256": "1d35dda85f900ba4035e52b7abbd074cd9789e3fa7ca475c313055dfad46c34b"
+    },
+    "observer_passed": true,
+    "stop_received": true,
+    "request_count": 8,
+    "capture_count": 7,
+    "completed_capture_count": 7,
+    "capture_failures": 0,
+    "host_instrument_command_returncode": 0,
+    "host_child_wait_returncode": 0,
+    "remote_returncode": 0,
+    "cleanup": [],
+    "host_deadline_signals": [],
+    "source_inputs_unchanged": true,
+    "session_elapsed_ms": 59645
+  },
+  "selected_root_visual_review_snapshot": {
+    "ledger": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/root-image-review-c4.json",
+      "bytes_at_generation": 22360,
+      "sha256_at_generation": "e387588808a78f3507a8d28eb53445900bf08a3e55efda9cab3f766ca70abf92",
+      "schema": "root-original-image-review/v1",
+      "binding_sha256": "52919b0ce3ee58c654f73c80008d4ea4575362f11d08eba540eb9207c4781778",
+      "snapshot_full_ledger_record_count": 32,
+      "live_ledger_is_append_only_working_file": true
+    },
+    "count": 2,
+    "records": [
+      {
+        "utc": "2026-10-22T16:31:03.984998+00:00",
+        "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-standard-K2/captures/standard-K2-chat-action4/observer-in-connection.png",
+        "sha256": "d48049c85bb374483800d4cc6f7c9eec36515689a4daea9d75f072bb8dab474d",
+        "platform": "API21",
+        "case": "standard-K2-chat-action4",
+        "observed": "Root actually viewed: Empty chat hint, actual action4 displayed, dynamic T9 Return label 发送.",
+        "scope": "Selected original image only, exact text/control identity and full-case qualification are separately bound."
+      },
+      {
+        "utc": "2026-10-22T16:31:03.985980+00:00",
+        "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-standard-K2/captures/standard-K2-multiline-newline/observer-in-connection.png",
+        "sha256": "1fcecd0936abdc505041e4da2dc6a7ee65b8bbd892227c3745237441848a8a8b",
+        "platform": "API21",
+        "case": "standard-K2-multiline-newline",
+        "observed": "Root actually viewed: Multiline blank editor with cursor on next line, action0 displayed and Enter label; exact one U+000A only from oracle.",
+        "scope": "Selected original image only, exact text/control identity and full-case qualification are separately bound."
+      }
+    ],
+    "role": "Point-in-time snapshot of Root selected-frame records already present at generation. This HOST mechanical reviewer made no new visual acceptance decision. Exact text, byte and action findings are established by retained XML and strict Editable oracles."
+  },
+  "qualification_checks": [
+    {
+      "id": "exact_c4_original_apk_audit_signer_binding_and_v7_runner",
+      "passed": true
+    },
+    {
+      "id": "target_pid_starttime_cmdline_and_boot_continuity",
+      "passed": true
+    },
+    {
+      "id": "all_seven_capture_receipts_complete_no_failure",
+      "passed": true
+    },
+    {
+      "id": "sole_xml_delta_two_one_pixel_annotation_moves_only",
+      "passed": true
+    },
+    {
+      "id": "raw64_return_commits_exact_utf8_64",
+      "passed": true
+    },
+    {
+      "id": "fresh_chat_return_records_action4_and_editable_strictly_empty",
+      "passed": true
+    },
+    {
+      "id": "fresh_multiline_return_records_action0_and_exactly_one_u000a_selection1",
+      "passed": true
+    },
+    {
+      "id": "actual_return_coordinate_captured_leaf_cell_asset_and_outcome_chain",
+      "passed": true
+    },
+    {
+      "id": "authenticated_normal_stop_host_child_and_remote_zero",
+      "passed": true
+    },
+    {
+      "id": "raw_false_status_preserved",
+      "passed": true
+    }
+  ],
+  "limits": [
+    "This qualification is restricted to the exact frozen API21 emulator standard K2 session, exact c4 APK, and executed v7 path.",
+    "No conclusion is made for any other case, theme, API35, physical-device behavior, Release signing, whole-build status, performance, PR readiness, or merge readiness.",
+    "Physical-device execution is NOT_RUN.",
+    "The raw report remains passed=false with checks=[] and sequence business_passed=false; all seven raw capture image_reviewed and accepted_business_case fields remain false. This independent file does not rewrite them.",
+    "The Root ledger records are copied as a hash-bound point-in-time snapshot. This reviewer made no new visual acceptance decision; strict text/action conclusions come from retained XML and main-thread Editable oracles.",
+    "In an empty fixture editor, hierarchy text can expose its mode hint (chat or multiline). Editable emptiness is established by the retained oracle, not inferred from that hint.",
+    "The captured Return key cell has no accessibility label. Its identity is a bounded inference from exact coordinate, cell geometry, exact hash-bound theme layout and observed outcome; this report does not claim a labeled accessibility Return node.",
+    "Capture settle windows are synchronization evidence, not latency, dispatch timing, race-freedom, or performance measurements.",
+    "The one unequal XML pair remains explicitly unequal; its two exact deltas are only one-pixel vertical annotation-bound moves."
+  ],
+  "final_assessment": {
+    "qualified": true,
+    "scope": "Exact c4 API21 emulator, standard K2 frozen v7 actual path only",
+    "physical_device": "NOT_RUN",
+    "raw_report_passed": false,
+    "raw_checks": [],
+    "raw_business_passed": false
+  }
+}

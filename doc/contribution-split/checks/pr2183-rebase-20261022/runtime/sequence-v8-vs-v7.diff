@@ -1,0 +1,17 @@
+--- /home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/t9_case_sequences_v7.py
++++ /home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/t9_case_sequences_v8.py
+@@ -146,8 +146,12 @@
+     S.run('push', jar, remote)
+     readback = S.raw(remote, prefix + '-injector-device-readback')
+     _need(readback['sha256'] == DOUBLETAP_JAR_SHA, 'Device injector differs from original jar')
+-    argv = ['env', 'CLASSPATH=' + remote, 'app_process', '/system/bin',
+-            'org.x2m7.trime.readiness.input.TrimeRealDoubleTap', str(x), str(y), '60']
++    # API21 has no env binary. The path/class/gap are constants and x/y have
++    # already passed the exact frozen-coordinate allowlist above.
++    argv = ['sh', '-c', 'CLASSPATH=/data/local/tmp/trime-real-doubletap.jar '
++            'exec app_process /system/bin '
++            'org.x2m7.trime.readiness.input.TrimeRealDoubleTap '
++            + str(x) + ' ' + str(y) + ' 60']
+     action = dict(action='single_process_real_touch_doubletap', x=x, y=y,
+         inter_event_gap_ms=60, tool_jar_sha256=DOUBLETAP_JAR_SHA,
+         root_review_sha256=DOUBLETAP_REVIEW_SHA, device_readback=readback, argv=argv,

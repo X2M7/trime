@@ -1,0 +1,37 @@
+{
+  "schema": "trime-c4-artifact-audit-terminal-status-addendum/v1",
+  "generated_at": "2026-10-22T16:02:27.308468+00:00",
+  "bound_audit": {
+    "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/c4-fork-run-39806420824-ubuntu1/apk-audit/result.json",
+    "sha256": "58b3d5e7f60678c164269897764957053bacc47055eed69a1a657dfb3a53f336",
+    "modified": false
+  },
+  "stale_field": {
+    "json_pointer": "/actions_results_incident_limit",
+    "original_text": "Artifact endpoint carried the completed artifact while the jobs/run endpoint still lagged; terminal workflow qualification is deferred.",
+    "disposition": "SUPERSEDED_BY_LATER_OFFICIAL_TERMINAL_RUN_AND_JOB_READBACK"
+  },
+  "later_official_readback": {
+    "run_id": 39806420824,
+    "run_status": "completed",
+    "run_conclusion": "success",
+    "head_sha": "c4b613f78835e7b914e02447955c6b89fe9839ab",
+    "run_updated_at": "2026-10-22T15:54:30Z",
+    "run_evidence": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/c4-cloud-terminal1/fork-39806420824/run-current.json",
+      "sha256": "0ae1c6120f482fa14a0ec9cefc2dc080f7d41e54ee17a1a2ef0c09d61b29fc3f"
+    },
+    "jobs_total": 5,
+    "jobs_all_completed_success": true,
+    "ubuntu_job_id": 119923815112,
+    "jobs_evidence": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/c4-cloud-terminal1/fork-39806420824/jobs-current.json",
+      "sha256": "99b7d252b1f17306c9be4af862688ff3d2ceac6ca432b5f8f7c0b4f154a4f5bd"
+    }
+  },
+  "effect": [
+    "The immutable APK audit remains valid for bytes, BuildConfig, ABI/ELF, certificate, assets, pins and package identity.",
+    "Only the stale endpoint-status limitation is superseded; no runtime/device/physical/Release claim is added.",
+    "The operator v7 binding and delivery copies retain the original audit SHA and require no mutation."
+  ]
+}

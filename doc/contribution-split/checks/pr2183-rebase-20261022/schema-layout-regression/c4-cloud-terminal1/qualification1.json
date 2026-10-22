@@ -1,0 +1,734 @@
+{
+  "schema": "trime-pr2183-c4-independent-cloud-qualification-v1",
+  "generated_at": "2026-10-22T16:01:56.146697+00:00",
+  "method": {
+    "host_only": true,
+    "adb": false,
+    "vm": false,
+    "local_gradle": false,
+    "product_source_modified": false,
+    "remote_actions_retried": false,
+    "remote_actions_cancelled": false
+  },
+  "verdict": {
+    "cloud_qualification": "PASS",
+    "scope": "Exact c4 source identity; corrected 360-case JVM and 115-check JNI control; fork and upstream formal five-job success; audited direct-head Ubuntu four-ABI Debug artifact; synthetic PR artifact identity; complete retained warning inventories.",
+    "runtime_regression": "IN_PROGRESS_NOT_CLAIMED",
+    "physical_device": "NOT_RUN",
+    "pr_state": "DRAFT_NOT_READY_OR_MERGED"
+  },
+  "target_source": {
+    "head": "c4b613f78835e7b914e02447955c6b89fe9839ab",
+    "tree": "d7639dfce3b6b5646bb004479a688148c1b19900",
+    "parent": "b14a2f1e0565cec4953f5a974bfcea023875369f",
+    "base": "19b048494ffa55cae52d5385dfa6d0611461c27d",
+    "fix_paths": [
+      "app/src/main/java/com/osfans/trime/ime/keyboard/KeyboardWindow.kt",
+      "doc/t9-input.md"
+    ],
+    "source_review": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/ascii-mode-source-independent1/review1.json",
+      "bytes": 5013,
+      "sha256": "e1a7ff1e68af5f0038f80c1a43722522977f34eb4e7efd1dfa2b0cecc42ab611"
+    },
+    "source_review_verdict": "NO_BLOCKER_MINIMAL_EDITOR_FORCED_ASCII_FIX",
+    "v7_independent_review": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/sequence-v7-independent-review1/review1.json",
+      "bytes": 3431,
+      "sha256": "56a5d7b2f4e5499413339f8da1e16d43c7d0f5d1d30c62957778f9a93cbbcc7b"
+    },
+    "v7_root_review": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/sequence-v7-root-review1.json",
+      "bytes": 1865,
+      "sha256": "de595a8937e81042d7bfbfc265758ed8cd23677045f3c4053c89272210fb7000"
+    }
+  },
+  "retained_regression_trigger": {
+    "superseded_source": "b14a2f1e0565cec4953f5a974bfcea023875369f",
+    "case": "API21 trime R4 number-to-email forced ASCII",
+    "result": "REJECTED_EMPTY_EDITOR_WITH_CHINESE_PREEDIT",
+    "raw_business_passed": false,
+    "authenticated_normal_stop": true,
+    "evidence": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-b14-trime-R4/sequence-result.json",
+      "bytes": 1869,
+      "sha256": "17e2e60c35ff6b038f52bd52d24238a6993c5de6590b2ee94d927e943cd54916"
+    },
+    "effect": "The b14 cloud success is not transferred to c4 runtime; c4 device replay remains required."
+  },
+  "control": {
+    "scope": "pr-t9-schema-memory",
+    "control_head": "de991cbe6c05bf43c919e93200e8a0fc62518a8c",
+    "target_head": "c4b613f78835e7b914e02447955c6b89fe9839ab",
+    "jni_baseline": "12ffd16fe03537b6d0ed9716c71cbc33608c2a33",
+    "run": {
+      "id": 39806534353,
+      "status": "completed",
+      "conclusion": "success",
+      "attempt": 1,
+      "evidence": {
+        "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/c4-cloud-terminal1/control-39806534353/run-current.json",
+        "bytes": 11299,
+        "sha256": "a8327725fc74b9f323eda48ae39d18c1ea8b294ed1312c33a645b355b5c84c3f"
+      }
+    },
+    "jobs": [
+      {
+        "id": 119921135478,
+        "name": "Unit tests (pr-t9-schema-memory)",
+        "status": "completed",
+        "conclusion": "success",
+        "steps": {
+          "Set up job": "success",
+          "Initialize evidence directory": "success",
+          "Fetch exact source and recursive submodules": "success",
+          "Verify checked-out identity": "success",
+          "Set up Java": "success",
+          "Set up Android SDK": "success",
+          "Install CMake and pinned NDK for the JNI check": "success",
+          "Run the complete application unit test task": "success",
+          "Summarize actual JUnit reports": "success",
+          "Check production JNI Unicode transport in a real host VM": "success",
+          "Upload original test reports and execution evidence": "success",
+          "Post Set up Java": "success",
+          "Post Fetch exact source and recursive submodules": "success",
+          "Complete job": "success"
+        }
+      }
+    ],
+    "jobs_evidence": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/c4-cloud-terminal1/control-39806534353/jobs-current.json",
+      "bytes": 2552,
+      "sha256": "622a439bb8ef1539df0d6baceddf1c2b74b54f0c690df497f08b9251e3143d8e"
+    },
+    "artifact": {
+      "id": 12436699658,
+      "name": "split-unit-tests-pr-t9-schema-memory-1",
+      "sha256": "239313629874e51c5a59ad1fb7f866d84be54cdd73eb47b25628d9e3ce180b12",
+      "audit": {
+        "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/c4-control-run-39806534353/artifact-execution-audit.json",
+        "bytes": 3012,
+        "sha256": "1b781b6275247becd2a920d4a0740448770b93241df69dce474dee116a37852f"
+      }
+    },
+    "execution": {
+      "jvm": {
+        "tests": 360,
+        "suites": 29,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "jni_fixed": {
+        "checks": 115,
+        "summary": "SUMMARY checks=115 destroy=0 exit=0"
+      },
+      "baseline_expected_failure": {
+        "checks": 17,
+        "summary": "SUMMARY checks=17 destroy=0 exit=1"
+      }
+    },
+    "warning_audit": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/c4-cloud-terminal1/control-39806534353/warning-summary.json",
+      "bytes": 1530,
+      "sha256": "fdae5dd89a70c28b2cfdf0ee9bc433f8e3e93a26bd989804a59ee2887d241c19"
+    },
+    "history": {
+      "original_wrong_baseline_failure": {
+        "run_id": 39796394613,
+        "result": "FAILED_AS_EXPECTED_FROM_WRONG_DEFAULT_649C_BASELINE",
+        "adjudication": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/cloud-control-run-39796394613/failure-adjudication.json",
+          "bytes": 4125,
+          "sha256": "2463876da3673953efede2369f11e15458371678828cd09676486a7a7c388598"
+        }
+      },
+      "baseline_correction": {
+        "result": "CONTROL_WORKFLOW_ONLY_BASELINE_MAPPED_TO_12FFD",
+        "source_audit": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/cloud-control-fix1/source-audit.json",
+          "bytes": 2359,
+          "sha256": "4c92dd08aaeae44814336010191f6d5db119829cabbc0f59e64e948b2accb6ce"
+        }
+      },
+      "prior_b14_corrected_execution": {
+        "run_id": 39798930637,
+        "scope": "historical b14 target only",
+        "audit": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/cloud-control-run-39798930637/artifact-execution-audit.json",
+          "bytes": 2989,
+          "sha256": "5808ce70ff227cedbee482024830081b6c866f0880acbd312dca3871eea67705"
+        }
+      }
+    }
+  },
+  "formal_producers": {
+    "fork_direct_head": {
+      "repository": "X2M7/trime",
+      "run": {
+        "id": 39806420824,
+        "event": "push",
+        "head_sha": "c4b613f78835e7b914e02447955c6b89fe9839ab",
+        "status": "completed",
+        "conclusion": "success",
+        "attempt": 1,
+        "evidence": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/c4-cloud-terminal1/fork-39806420824/run-current.json",
+          "bytes": 12091,
+          "sha256": "0ae1c6120f482fa14a0ec9cefc2dc080f7d41e54ee17a1a2ef0c09d61b29fc3f"
+        }
+      },
+      "jobs": [
+        {
+          "id": 119920738316,
+          "name": "check / lint-and-test",
+          "status": "completed",
+          "conclusion": "success",
+          "steps": {
+            "Set up job": "success",
+            "Fetch source code": "success",
+            "Setup Java": "success",
+            "Setup Android SDK": "success",
+            "Check code style": "success",
+            "Run unit tests and lint": "success",
+            "Post Setup Java": "success",
+            "Post Fetch source code": "success",
+            "Complete job": "success"
+          }
+        },
+        {
+          "id": 119923814944,
+          "name": "build (macos-26-intel)",
+          "status": "completed",
+          "conclusion": "success",
+          "steps": {
+            "Set up job": "success",
+            "Fetch source code": "success",
+            "Get branch name": "success",
+            "Setup Java": "success",
+            "Setup Android SDK": "success",
+            "Install Android NDK": "success",
+            "Calculate JNI cache hash": "success",
+            "Fetch JNI cache": "success",
+            "Build debug Trime": "success",
+            "Add JNI cache": "skipped",
+            "Upload APK artifact": "success",
+            "Upload APK artifact (ARM64_V8A only)": "success",
+            "Upload JNI artifact (librime_jni.so)": "success",
+            "Post Fetch JNI cache": "success",
+            "Post Setup Java": "success",
+            "Post Fetch source code": "success",
+            "Complete job": "success"
+          }
+        },
+        {
+          "id": 119923814970,
+          "name": "build (macos-26)",
+          "status": "completed",
+          "conclusion": "success",
+          "steps": {
+            "Set up job": "success",
+            "Fetch source code": "success",
+            "Get branch name": "success",
+            "Setup Java": "success",
+            "Setup Android SDK": "success",
+            "Install Android NDK": "success",
+            "Calculate JNI cache hash": "success",
+            "Fetch JNI cache": "success",
+            "Build debug Trime": "success",
+            "Add JNI cache": "skipped",
+            "Upload APK artifact": "success",
+            "Upload APK artifact (ARM64_V8A only)": "success",
+            "Upload JNI artifact (librime_jni.so)": "success",
+            "Post Fetch JNI cache": "success",
+            "Post Setup Java": "success",
+            "Post Fetch source code": "success",
+            "Complete job": "success"
+          }
+        },
+        {
+          "id": 119923814974,
+          "name": "build (windows-2025)",
+          "status": "completed",
+          "conclusion": "success",
+          "steps": {
+            "Set up job": "success",
+            "Fetch source code": "success",
+            "Get branch name": "success",
+            "Setup Java": "success",
+            "Setup Android SDK": "success",
+            "Install Android NDK": "success",
+            "Calculate JNI cache hash": "success",
+            "Fetch JNI cache": "success",
+            "Build debug Trime": "success",
+            "Add JNI cache": "skipped",
+            "Upload APK artifact": "success",
+            "Upload APK artifact (ARM64_V8A only)": "success",
+            "Upload JNI artifact (librime_jni.so)": "success",
+            "Post Fetch JNI cache": "success",
+            "Post Setup Java": "success",
+            "Post Fetch source code": "success",
+            "Complete job": "success"
+          }
+        },
+        {
+          "id": 119923815112,
+          "name": "build (ubuntu-26.04)",
+          "status": "completed",
+          "conclusion": "success",
+          "steps": {
+            "Set up job": "success",
+            "Fetch source code": "success",
+            "Get branch name": "success",
+            "Setup Java": "success",
+            "Setup Android SDK": "success",
+            "Install Android NDK": "success",
+            "Calculate JNI cache hash": "success",
+            "Fetch JNI cache": "success",
+            "Build debug Trime": "success",
+            "Add JNI cache": "success",
+            "Upload APK artifact": "success",
+            "Upload APK artifact (ARM64_V8A only)": "success",
+            "Upload JNI artifact (librime_jni.so)": "success",
+            "Post Fetch JNI cache": "success",
+            "Post Setup Java": "success",
+            "Post Fetch source code": "success",
+            "Complete job": "success"
+          }
+        }
+      ],
+      "formal_result": "5/5 current job rows completed success",
+      "jobs_evidence": {
+        "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/c4-cloud-terminal1/fork-39806420824/jobs-current.json",
+        "bytes": 12774,
+        "sha256": "99b7d252b1f17306c9be4af862688ff3d2ceac6ca432b5f8f7c0b4f154a4f5bd"
+      },
+      "logs_archive": {
+        "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/c4-cloud-terminal1/fork-39806420824/logs.zip",
+        "bytes": 199985,
+        "sha256": "bcd4dedf889f36229b4ffdc123f99bf2be50eec06a7266c2db9ae66e155d055b"
+      },
+      "warning_audit": {
+        "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/c4-cloud-terminal1/fork-39806420824/warning-summary.json",
+        "bytes": 7704,
+        "sha256": "eb1c0adcb13b1655246c6f8c982302fbdb331063518b7546ae5bb5f6757014fd"
+      },
+      "selected_ubuntu_artifact": {
+        "id": 12438099455,
+        "name": "trime-ubuntu-26.04",
+        "archive": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/c4-fork-run-39806420824-ubuntu1/artifact-12438099455-trime-ubuntu-26.04.zip",
+          "bytes": 77647630,
+          "sha256": "8730839641d03b78394ec53e1a7892f29ec1b4a9e31aaa46619653eb2d3be65a"
+        },
+        "audit": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/c4-fork-run-39806420824-ubuntu1/apk-audit/result.json",
+          "bytes": 27780,
+          "sha256": "58b3d5e7f60678c164269897764957053bacc47055eed69a1a657dfb3a53f336"
+        },
+        "producer_debug_certificate_sha256": "f6409a2d9db2800f1acc9b2e614d73e4609df3652d265cf2c40eb8a64456deb2",
+        "apks_by_abi": {
+          "arm64-v8a": {
+            "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/c4-fork-run-39806420824-ubuntu1/files/com.osfans.trime-c4b613f7-arm64-v8a-debug.apk",
+            "bytes": 20603550,
+            "sha256": "12fd34dad063e76a0cdd132bbed83e802e02cd5f5ada80671f7f6935c09619c0",
+            "buildconfig_commit": "c4b613f78835e7b914e02447955c6b89fe9839ab",
+            "signer_certificate_sha256": "f6409a2d9db2800f1acc9b2e614d73e4609df3652d265cf2c40eb8a64456deb2",
+            "native_assets": [
+              {
+                "entry": "lib/arm64-v8a/librime_jni.so",
+                "bytes": 15071232,
+                "sha256": "532a630b506331401393e260f831bac0e89605d3f0d296750380065425f65634",
+                "elf_class": "ELF64",
+                "elf_machine": "AArch64"
+              }
+            ],
+            "package": "com.osfans.trime.debug",
+            "min_sdk": 21,
+            "target_sdk": 37,
+            "theme_asset_sha256": {
+              "assets/shared/trime.yaml": "ff65e4a8ada630dcd14b9d7f036201579ddefa4758868df1b497b45dcfef2d08",
+              "assets/shared/tongwenfeng.trime.yaml": "e758ce8f9059f0fbe3c27c2de9c5faffff761b825feed437075f285e15af9147"
+            }
+          },
+          "armeabi-v7a": {
+            "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/c4-fork-run-39806420824-ubuntu1/files/com.osfans.trime-c4b613f7-armeabi-v7a-debug.apk",
+            "bytes": 19405291,
+            "sha256": "1a0bc90acd531868edc41ddfb0eed1b3a0a0968cf8151342277cd7dbd6a00c0b",
+            "buildconfig_commit": "c4b613f78835e7b914e02447955c6b89fe9839ab",
+            "signer_certificate_sha256": "f6409a2d9db2800f1acc9b2e614d73e4609df3652d265cf2c40eb8a64456deb2",
+            "native_assets": [
+              {
+                "entry": "lib/armeabi-v7a/librime_jni.so",
+                "bytes": 9090452,
+                "sha256": "c109eb11424ef6ca62d70fd47e9dc63b4cb563c792247b0f21563bc0f2b7b282",
+                "elf_class": "ELF32",
+                "elf_machine": "ARM"
+              }
+            ],
+            "package": "com.osfans.trime.debug",
+            "min_sdk": 21,
+            "target_sdk": 37,
+            "theme_asset_sha256": {
+              "assets/shared/trime.yaml": "ff65e4a8ada630dcd14b9d7f036201579ddefa4758868df1b497b45dcfef2d08",
+              "assets/shared/tongwenfeng.trime.yaml": "e758ce8f9059f0fbe3c27c2de9c5faffff761b825feed437075f285e15af9147"
+            }
+          },
+          "x86": {
+            "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/c4-fork-run-39806420824-ubuntu1/files/com.osfans.trime-c4b613f7-x86-debug.apk",
+            "bytes": 21108388,
+            "sha256": "ed03249c8f32759126edd9f8c384106d3a4ac4aae367ee760096120ad88faa45",
+            "buildconfig_commit": "c4b613f78835e7b914e02447955c6b89fe9839ab",
+            "signer_certificate_sha256": "f6409a2d9db2800f1acc9b2e614d73e4609df3652d265cf2c40eb8a64456deb2",
+            "native_assets": [
+              {
+                "entry": "lib/x86/librime_jni.so",
+                "bytes": 15849256,
+                "sha256": "44c24c9174bb1761e42492567c2cfda64764bbf77931343f265984a5e1cb1475",
+                "elf_class": "ELF32",
+                "elf_machine": "Intel 80386"
+              }
+            ],
+            "package": "com.osfans.trime.debug",
+            "min_sdk": 21,
+            "target_sdk": 37,
+            "theme_asset_sha256": {
+              "assets/shared/trime.yaml": "ff65e4a8ada630dcd14b9d7f036201579ddefa4758868df1b497b45dcfef2d08",
+              "assets/shared/tongwenfeng.trime.yaml": "e758ce8f9059f0fbe3c27c2de9c5faffff761b825feed437075f285e15af9147"
+            }
+          },
+          "x86_64": {
+            "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/c4-fork-run-39806420824-ubuntu1/files/com.osfans.trime-c4b613f7-x86_64-debug.apk",
+            "bytes": 20673055,
+            "sha256": "453c71544f67685db3b85fc91855ed27c5ff264d0a25671669642b0dc4b8732e",
+            "buildconfig_commit": "c4b613f78835e7b914e02447955c6b89fe9839ab",
+            "signer_certificate_sha256": "f6409a2d9db2800f1acc9b2e614d73e4609df3652d265cf2c40eb8a64456deb2",
+            "native_assets": [
+              {
+                "entry": "lib/x86_64/librime_jni.so",
+                "bytes": 14726000,
+                "sha256": "aac1d2aa0c51517f540c3050337736477b4c728803d9cc9fdeeb6755f2006409",
+                "elf_class": "ELF64",
+                "elf_machine": "Advanced Micro Devices X86-64"
+              }
+            ],
+            "package": "com.osfans.trime.debug",
+            "min_sdk": 21,
+            "target_sdk": 37,
+            "theme_asset_sha256": {
+              "assets/shared/trime.yaml": "ff65e4a8ada630dcd14b9d7f036201579ddefa4758868df1b497b45dcfef2d08",
+              "assets/shared/tongwenfeng.trime.yaml": "e758ce8f9059f0fbe3c27c2de9c5faffff761b825feed437075f285e15af9147"
+            }
+          }
+        },
+        "eligible_for_exact_c4_runtime_binding": true
+      }
+    },
+    "upstream_pr_synthetic_merge": {
+      "repository": "osfans/trime",
+      "run": {
+        "id": 39806428888,
+        "event": "pull_request",
+        "head_sha": "c4b613f78835e7b914e02447955c6b89fe9839ab",
+        "status": "completed",
+        "conclusion": "success",
+        "attempt": 1,
+        "evidence": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/c4-cloud-terminal1/pr-39806428888/run-current.json",
+          "bytes": 11810,
+          "sha256": "18f82e10f735f5947d5af1b3964a57ad591c1f2bdefeb8e14ae45a8bf9b5e0b4"
+        }
+      },
+      "jobs": [
+        {
+          "id": 119920765170,
+          "name": "check / lint-and-test",
+          "status": "completed",
+          "conclusion": "success",
+          "steps": {
+            "Set up job": "success",
+            "Fetch source code": "success",
+            "Setup Java": "success",
+            "Setup Android SDK": "success",
+            "Check code style": "success",
+            "Run unit tests and lint": "success",
+            "Post Setup Java": "success",
+            "Post Fetch source code": "success",
+            "Complete job": "success"
+          }
+        },
+        {
+          "id": 119923809755,
+          "name": "build (macos-26)",
+          "status": "completed",
+          "conclusion": "success",
+          "steps": {
+            "Set up job": "success",
+            "Fetch source code": "success",
+            "Get branch name": "success",
+            "Setup Java": "success",
+            "Setup Android SDK": "success",
+            "Install Android NDK": "success",
+            "Calculate JNI cache hash": "success",
+            "Fetch JNI cache": "success",
+            "Build debug Trime": "success",
+            "Add JNI cache": "skipped",
+            "Upload APK artifact": "success",
+            "Post Fetch JNI cache": "success",
+            "Post Setup Java": "success",
+            "Post Fetch source code": "success",
+            "Complete job": "success"
+          }
+        },
+        {
+          "id": 119923809804,
+          "name": "build (ubuntu-26.04)",
+          "status": "completed",
+          "conclusion": "success",
+          "steps": {
+            "Set up job": "success",
+            "Fetch source code": "success",
+            "Get branch name": "success",
+            "Setup Java": "success",
+            "Setup Android SDK": "success",
+            "Install Android NDK": "success",
+            "Calculate JNI cache hash": "success",
+            "Fetch JNI cache": "success",
+            "Build debug Trime": "success",
+            "Add JNI cache": "skipped",
+            "Upload APK artifact": "success",
+            "Post Fetch JNI cache": "success",
+            "Post Setup Java": "success",
+            "Post Fetch source code": "success",
+            "Complete job": "success"
+          }
+        },
+        {
+          "id": 119923810023,
+          "name": "build (macos-26-intel)",
+          "status": "completed",
+          "conclusion": "success",
+          "steps": {
+            "Set up job": "success",
+            "Fetch source code": "success",
+            "Get branch name": "success",
+            "Setup Java": "success",
+            "Setup Android SDK": "success",
+            "Install Android NDK": "success",
+            "Calculate JNI cache hash": "success",
+            "Fetch JNI cache": "success",
+            "Build debug Trime": "success",
+            "Add JNI cache": "skipped",
+            "Upload APK artifact": "success",
+            "Post Fetch JNI cache": "success",
+            "Post Setup Java": "success",
+            "Post Fetch source code": "success",
+            "Complete job": "success"
+          }
+        },
+        {
+          "id": 119923810125,
+          "name": "build (windows-2025)",
+          "status": "completed",
+          "conclusion": "success",
+          "steps": {
+            "Set up job": "success",
+            "Fetch source code": "success",
+            "Get branch name": "success",
+            "Setup Java": "success",
+            "Setup Android SDK": "success",
+            "Install Android NDK": "success",
+            "Calculate JNI cache hash": "success",
+            "Fetch JNI cache": "success",
+            "Build debug Trime": "success",
+            "Add JNI cache": "skipped",
+            "Upload APK artifact": "success",
+            "Post Fetch JNI cache": "success",
+            "Post Setup Java": "success",
+            "Post Fetch source code": "success",
+            "Complete job": "success"
+          }
+        }
+      ],
+      "formal_result": "5/5 current job rows completed success",
+      "jobs_evidence": {
+        "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/c4-cloud-terminal1/pr-39806428888/jobs-current.json",
+        "bytes": 11414,
+        "sha256": "29c5d6bcced3beefc636728b32d187a5693fbdf2f44f4bb4f67d5a313744c1ec"
+      },
+      "logs_archive": {
+        "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/c4-cloud-terminal1/pr-39806428888/logs.zip",
+        "bytes": 194012,
+        "sha256": "d300e6d3df98b1fc5380d41165521e39815199c33dd34c7ef4ec9caa4bb2ae49"
+      },
+      "warning_audit": {
+        "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/c4-cloud-terminal1/pr-39806428888/warning-summary.json",
+        "bytes": 6135,
+        "sha256": "f09d4cb8b68ad4d0bf57128f911e435bcaaa5ce0a39b0fc27edfa2346bf29fe7"
+      },
+      "identity": {
+        "pr_head": "c4b613f78835e7b914e02447955c6b89fe9839ab",
+        "pr_base": "19b048494ffa55cae52d5385dfa6d0611461c27d",
+        "actual_build_commit": "02997dc933424a7f71dfe78fda48f6168645f66a",
+        "actual_build_tree": "d7639dfce3b6b5646bb004479a688148c1b19900",
+        "synthetic_parents": [
+          "19b048494ffa55cae52d5385dfa6d0611461c27d",
+          "c4b613f78835e7b914e02447955c6b89fe9839ab"
+        ],
+        "tree_equals_reviewed_head_tree": true,
+        "proof": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/c4-pr-run-39806428888-ubuntu1/synthetic-merge-proof.json",
+          "bytes": 598,
+          "sha256": "186ed967e1d74f29fa89df0ba7477245b7df4b232a3d9e33723370edbc8de730"
+        }
+      },
+      "selected_ubuntu_artifact": {
+        "id": 12438572087,
+        "name": "trime-ubuntu-26.04",
+        "archive": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/c4-pr-run-39806428888-ubuntu1/artifact-12438572087-trime-ubuntu-26.04.zip",
+          "bytes": 77648182,
+          "sha256": "7258cfa0e3dbafad97f1f8060a3e2a9d4a32eec76d7bf80e88d080d900e3a079"
+        },
+        "audit": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/c4-pr-run-39806428888-ubuntu1/apk-audit/result.json",
+          "bytes": 28792,
+          "sha256": "2b3bbfb253dd7d7b36b4a530ae27056525a2a35ed7029a977932ddbe21c3f2f3"
+        },
+        "producer_debug_certificate_sha256": "12a12700c16ea9ea06f42141904017d5437fcfda2955864a6349a0eefdcb1d3f",
+        "apks_by_abi": {
+          "arm64-v8a": {
+            "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/c4-pr-run-39806428888-ubuntu1/files/com.osfans.trime-v3.3.12-105-g02997dc9-arm64-v8a-debug.apk",
+            "bytes": 20603671,
+            "sha256": "026de573a3b0144aefd6aac8c447ad8831fdf534f60cc02be667b323269b812f",
+            "buildconfig_commit": "02997dc933424a7f71dfe78fda48f6168645f66a",
+            "signer_certificate_sha256": "12a12700c16ea9ea06f42141904017d5437fcfda2955864a6349a0eefdcb1d3f",
+            "native_assets": [
+              {
+                "entry": "lib/arm64-v8a/librime_jni.so",
+                "bytes": 15071232,
+                "sha256": "532a630b506331401393e260f831bac0e89605d3f0d296750380065425f65634",
+                "elf_class": "ELF64",
+                "elf_machine": "AArch64"
+              }
+            ],
+            "package": "com.osfans.trime.debug",
+            "min_sdk": 21,
+            "target_sdk": 37,
+            "theme_asset_sha256": {
+              "assets/shared/trime.yaml": "ff65e4a8ada630dcd14b9d7f036201579ddefa4758868df1b497b45dcfef2d08",
+              "assets/shared/tongwenfeng.trime.yaml": "e758ce8f9059f0fbe3c27c2de9c5faffff761b825feed437075f285e15af9147"
+            }
+          },
+          "armeabi-v7a": {
+            "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/c4-pr-run-39806428888-ubuntu1/files/com.osfans.trime-v3.3.12-105-g02997dc9-armeabi-v7a-debug.apk",
+            "bytes": 19405408,
+            "sha256": "acb790d99145e8b26acdf42e4c734a9f00991c8bc86b34be5ec167ce523c530d",
+            "buildconfig_commit": "02997dc933424a7f71dfe78fda48f6168645f66a",
+            "signer_certificate_sha256": "12a12700c16ea9ea06f42141904017d5437fcfda2955864a6349a0eefdcb1d3f",
+            "native_assets": [
+              {
+                "entry": "lib/armeabi-v7a/librime_jni.so",
+                "bytes": 9090452,
+                "sha256": "c109eb11424ef6ca62d70fd47e9dc63b4cb563c792247b0f21563bc0f2b7b282",
+                "elf_class": "ELF32",
+                "elf_machine": "ARM"
+              }
+            ],
+            "package": "com.osfans.trime.debug",
+            "min_sdk": 21,
+            "target_sdk": 37,
+            "theme_asset_sha256": {
+              "assets/shared/trime.yaml": "ff65e4a8ada630dcd14b9d7f036201579ddefa4758868df1b497b45dcfef2d08",
+              "assets/shared/tongwenfeng.trime.yaml": "e758ce8f9059f0fbe3c27c2de9c5faffff761b825feed437075f285e15af9147"
+            }
+          },
+          "x86": {
+            "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/c4-pr-run-39806428888-ubuntu1/files/com.osfans.trime-v3.3.12-105-g02997dc9-x86-debug.apk",
+            "bytes": 21108501,
+            "sha256": "75b2b8541a5f84aa860158e08e5dd14b412eb3b5c5aead9a5aa97a1e70f9351b",
+            "buildconfig_commit": "02997dc933424a7f71dfe78fda48f6168645f66a",
+            "signer_certificate_sha256": "12a12700c16ea9ea06f42141904017d5437fcfda2955864a6349a0eefdcb1d3f",
+            "native_assets": [
+              {
+                "entry": "lib/x86/librime_jni.so",
+                "bytes": 15849256,
+                "sha256": "44c24c9174bb1761e42492567c2cfda64764bbf77931343f265984a5e1cb1475",
+                "elf_class": "ELF32",
+                "elf_machine": "Intel 80386"
+              }
+            ],
+            "package": "com.osfans.trime.debug",
+            "min_sdk": 21,
+            "target_sdk": 37,
+            "theme_asset_sha256": {
+              "assets/shared/trime.yaml": "ff65e4a8ada630dcd14b9d7f036201579ddefa4758868df1b497b45dcfef2d08",
+              "assets/shared/tongwenfeng.trime.yaml": "e758ce8f9059f0fbe3c27c2de9c5faffff761b825feed437075f285e15af9147"
+            }
+          },
+          "x86_64": {
+            "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/c4-pr-run-39806428888-ubuntu1/files/com.osfans.trime-v3.3.12-105-g02997dc9-x86_64-debug.apk",
+            "bytes": 20673177,
+            "sha256": "f2337f84da57ebfc67337b29394affbf4f2af0b5df7a5581475833df7a1c98e5",
+            "buildconfig_commit": "02997dc933424a7f71dfe78fda48f6168645f66a",
+            "signer_certificate_sha256": "12a12700c16ea9ea06f42141904017d5437fcfda2955864a6349a0eefdcb1d3f",
+            "native_assets": [
+              {
+                "entry": "lib/x86_64/librime_jni.so",
+                "bytes": 14726000,
+                "sha256": "aac1d2aa0c51517f540c3050337736477b4c728803d9cc9fdeeb6755f2006409",
+                "elf_class": "ELF64",
+                "elf_machine": "Advanced Micro Devices X86-64"
+              }
+            ],
+            "package": "com.osfans.trime.debug",
+            "min_sdk": 21,
+            "target_sdk": 37,
+            "theme_asset_sha256": {
+              "assets/shared/trime.yaml": "ff65e4a8ada630dcd14b9d7f036201579ddefa4758868df1b497b45dcfef2d08",
+              "assets/shared/tongwenfeng.trime.yaml": "e758ce8f9059f0fbe3c27c2de9c5faffff761b825feed437075f285e15af9147"
+            }
+          }
+        },
+        "eligible_for_exact_c4_runtime_binding": false
+      }
+    }
+  },
+  "warning_scope": {
+    "fork_direct_head": {
+      "mechanical_job_log_warning_lines": 103,
+      "apksigner_warning_lines": 8,
+      "summary": {
+        "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/c4-cloud-terminal1/fork-39806420824/warning-summary.json",
+        "bytes": 7704,
+        "sha256": "eb1c0adcb13b1655246c6f8c982302fbdb331063518b7546ae5bb5f6757014fd"
+      }
+    },
+    "upstream_pr_synthetic": {
+      "mechanical_job_log_warning_lines": 49,
+      "apksigner_warning_lines": 8,
+      "summary": {
+        "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/c4-cloud-terminal1/pr-39806428888/warning-summary.json",
+        "bytes": 6135,
+        "sha256": "f09d4cb8b68ad4d0bf57128f911e435bcaaa5ce0a39b0fc27edfa2346bf29fe7"
+      }
+    },
+    "control": {
+      "mechanical_job_log_warning_lines": 3,
+      "summary": {
+        "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/c4-cloud-terminal1/control-39806534353/warning-summary.json",
+        "bytes": 1530,
+        "sha256": "fdae5dd89a70c28b2cfdf0ee9bc433f8e3e93a26bd989804a59ee2887d241c19"
+      }
+    },
+    "statement": "Success is not restated as zero-warning; family ownership and unknown Gradle emitters remain in the linked reports."
+  },
+  "limits": [
+    "Cloud PASS is limited to source/control/formal-build/artifact evidence. It is not Android behavior, emulator-platform, physical-device, PR Ready, merge, or Release acceptance.",
+    "The fork Ubuntu APKs are Debug-signed; the actual producer certificate and apksigner warnings are retained and are not a Release-signature claim.",
+    "The upstream PR APKs embed synthetic merge 02997dc even though its tree equals c4; they cannot satisfy the exact-c4 v7 runtime binding.",
+    "The b14 runtime regression is retained and cannot be erased by c4 cloud success. New c4 device cases must qualify independently.",
+    "Formal gate success does not itself establish a 360-test count; the 360/115 counts come from the separate original control artifact.",
+    "Warnings remain present. In particular, aggregate Gradle deprecation ownership is unresolved and the Windows cache-save warning is an actionable CI issue."
+  ]
+}

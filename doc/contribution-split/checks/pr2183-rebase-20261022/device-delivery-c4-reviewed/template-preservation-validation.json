@@ -1,0 +1,287 @@
+{
+  "schema": "pr2183-c4-reviewed-template-preservation-validation/v1",
+  "validation_mode": "HOST_ONLY_JSON_OBJECT_COMPARISON_NO_ADB_VM_GRADLE_SOURCE_OR_GIT_EDIT",
+  "baseline": {
+    "path": "../device-delivery-b14/device-result-template.json",
+    "sha256": "0a211e51d341d821c8294b1c64bf48f48d15fe4c51205e19eb21bcf4bb1c8ab4",
+    "role": "CURRENT_VALID_DELIVERY_TEMPLATE_CONTRACT"
+  },
+  "superseded_v1": {
+    "path": "../device-delivery-c4/device-result-template.json",
+    "sha256": "f87d8d6e5f42c2691fdab37d6e4a373343b1d57ae0dd4e6f351b4a2c6ac6cf1c",
+    "validation_result": "FAILED_PROTECTED_BLOCK_DEEP_EQUALITY",
+    "protected_change_count": 49,
+    "change_count_by_block": {
+      "legacy_17_cases": 32,
+      "R1": 3,
+      "R2": 5,
+      "R3": 9
+    },
+    "changes": {
+      "legacy_17_cases": [
+        {
+          "path": "$.legacy_17_cases[0].required_observation",
+          "kind": "EXTRA_IN_V1"
+        },
+        {
+          "path": "$.legacy_17_cases[1].required_observation",
+          "kind": "EXTRA_IN_V1"
+        },
+        {
+          "path": "$.legacy_17_cases[2].title",
+          "kind": "VALUE",
+          "baseline": "空格提交与字面空格",
+          "v1": "空格路径"
+        },
+        {
+          "path": "$.legacy_17_cases[2].required_observation",
+          "kind": "EXTRA_IN_V1"
+        },
+        {
+          "path": "$.legacy_17_cases[3].required_observation",
+          "kind": "EXTRA_IN_V1"
+        },
+        {
+          "path": "$.legacy_17_cases[4].title",
+          "kind": "VALUE",
+          "baseline": "Return 提交完整原始码",
+          "v1": "Return 原始码"
+        },
+        {
+          "path": "$.legacy_17_cases[4].required_observation",
+          "kind": "EXTRA_IN_V1"
+        },
+        {
+          "path": "$.legacy_17_cases[5].title",
+          "kind": "VALUE",
+          "baseline": "数字页字面输入与 T9 恢复",
+          "v1": "数字页与恢复"
+        },
+        {
+          "path": "$.legacy_17_cases[5].required_observation",
+          "kind": "EXTRA_IN_V1"
+        },
+        {
+          "path": "$.legacy_17_cases[6].title",
+          "kind": "VALUE",
+          "baseline": "ASCII、符号页与 T9 恢复",
+          "v1": "ASCII、符号页与恢复"
+        },
+        {
+          "path": "$.legacy_17_cases[6].frozen_pending64_to_english_subpath",
+          "kind": "MISSING_IN_V1"
+        },
+        {
+          "path": "$.legacy_17_cases[6].required_observation",
+          "kind": "EXTRA_IN_V1"
+        },
+        {
+          "path": "$.legacy_17_cases[6].pending64_to_english_subcheck",
+          "kind": "EXTRA_IN_V1"
+        },
+        {
+          "path": "$.legacy_17_cases[7].title",
+          "kind": "VALUE",
+          "baseline": "编辑器边界清理",
+          "v1": "编辑器边界"
+        },
+        {
+          "path": "$.legacy_17_cases[7].required_observation",
+          "kind": "EXTRA_IN_V1"
+        },
+        {
+          "path": "$.legacy_17_cases[8].required_observation",
+          "kind": "EXTRA_IN_V1"
+        },
+        {
+          "path": "$.legacy_17_cases[9].required_observation",
+          "kind": "EXTRA_IN_V1"
+        },
+        {
+          "path": "$.legacy_17_cases[10].title",
+          "kind": "VALUE",
+          "baseline": "空格提交与字面空格",
+          "v1": "空格路径"
+        },
+        {
+          "path": "$.legacy_17_cases[10].required_observation",
+          "kind": "EXTRA_IN_V1"
+        },
+        {
+          "path": "$.legacy_17_cases[11].required_observation",
+          "kind": "EXTRA_IN_V1"
+        },
+        {
+          "path": "$.legacy_17_cases[12].title",
+          "kind": "VALUE",
+          "baseline": "Return 提交完整原始码",
+          "v1": "Return 原始码"
+        },
+        {
+          "path": "$.legacy_17_cases[12].required_observation",
+          "kind": "EXTRA_IN_V1"
+        },
+        {
+          "path": "$.legacy_17_cases[13].title",
+          "kind": "VALUE",
+          "baseline": "数字页字面输入与 T9 恢复",
+          "v1": "数字页与恢复"
+        },
+        {
+          "path": "$.legacy_17_cases[13].required_observation",
+          "kind": "EXTRA_IN_V1"
+        },
+        {
+          "path": "$.legacy_17_cases[14].title",
+          "kind": "VALUE",
+          "baseline": "ASCII、符号页与 T9 恢复",
+          "v1": "ASCII、符号页与恢复"
+        },
+        {
+          "path": "$.legacy_17_cases[14].frozen_pending64_to_english_subpath",
+          "kind": "MISSING_IN_V1"
+        },
+        {
+          "path": "$.legacy_17_cases[14].required_observation",
+          "kind": "EXTRA_IN_V1"
+        },
+        {
+          "path": "$.legacy_17_cases[14].pending64_to_english_subcheck",
+          "kind": "EXTRA_IN_V1"
+        },
+        {
+          "path": "$.legacy_17_cases[15].title",
+          "kind": "VALUE",
+          "baseline": "编辑器边界清理",
+          "v1": "编辑器边界"
+        },
+        {
+          "path": "$.legacy_17_cases[15].required_observation",
+          "kind": "EXTRA_IN_V1"
+        },
+        {
+          "path": "$.legacy_17_cases[16].legacy_id",
+          "kind": "VALUE",
+          "baseline": "C7-category-macro-and-number-restore",
+          "v1": "T17"
+        },
+        {
+          "path": "$.legacy_17_cases[16].required_observation",
+          "kind": "EXTRA_IN_V1"
+        }
+      ],
+      "R1": [
+        {
+          "path": "$.R1.editor_variants_tested",
+          "kind": "MISSING_IN_V1"
+        },
+        {
+          "path": "$.R1.observed_labels_and_actions",
+          "kind": "MISSING_IN_V1"
+        },
+        {
+          "path": "$.R1.subchecks",
+          "kind": "EXTRA_IN_V1"
+        }
+      ],
+      "R2": [
+        {
+          "path": "$.R2.title",
+          "kind": "VALUE",
+          "baseline": "Shift 回退：两个 T9 letter 无显式双击；tongwenfeng.default 显式 Shift_L3 正控",
+          "v1": "Shift 回退与显式 double_click 正控"
+        },
+        {
+          "path": "$.R2.observed_letters_and_states",
+          "kind": "MISSING_IN_V1"
+        },
+        {
+          "path": "$.R2.layout_subresults",
+          "kind": "MISSING_IN_V1"
+        },
+        {
+          "path": "$.R2.double_tap_rule",
+          "kind": "VALUE",
+          "baseline": "Use two real rapid taps in one uninterrupted action/journal; do not insert PID/screenshot probes between taps and do not substitute two slow single taps.",
+          "v1": "两次真实快速触摸必须连续执行；不得用两次慢单击或插入探测替代。"
+        },
+        {
+          "path": "$.R2.subchecks",
+          "kind": "EXTRA_IN_V1"
+        }
+      ],
+      "R3": [
+        {
+          "path": "$.R3.feedback_modes_tested",
+          "kind": "MISSING_IN_V1"
+        },
+        {
+          "path": "$.R3.first_initialization_observation",
+          "kind": "MISSING_IN_V1"
+        },
+        {
+          "path": "$.R3.lifecycle_observation",
+          "kind": "MISSING_IN_V1"
+        },
+        {
+          "path": "$.R3.required_scope",
+          "kind": "MISSING_IN_V1"
+        },
+        {
+          "path": "$.R3.capability_inventory",
+          "kind": "TYPE",
+          "baseline_type": "dict",
+          "v1_type": "NoneType"
+        },
+        {
+          "path": "$.R3.capability_subresults",
+          "kind": "MISSING_IN_V1"
+        },
+        {
+          "path": "$.R3.maintainer_scope_notes",
+          "kind": "MISSING_IN_V1"
+        },
+        {
+          "path": "$.R3.scope_rule",
+          "kind": "EXTRA_IN_V1"
+        },
+        {
+          "path": "$.R3.subchecks",
+          "kind": "EXTRA_IN_V1"
+        }
+      ]
+    },
+    "directory_payload_preserved": true,
+    "directory_18_file_inventory_sha256_before_and_after": "926589a7f777ed71716c3b1f4095043fc7841c51df411e50e60836b58170e124"
+  },
+  "reviewed_template": {
+    "path": "device-result-template.json",
+    "sha256": "b892091fe8830d7a49786a1d3d24c2c8c6616455743bfc3984ff6982f5c1fc1f",
+    "legacy_17_cases_deep_equal": true,
+    "legacy_17_cases_canonical_sha256": "b0598afff12752cdf93ba9a669f561d9590e47ac63860907c2917492132a30fb",
+    "R1_deep_equal": true,
+    "R1_canonical_sha256": "1c3cfb4133bd7e49f0b76137eb07d0eb943bf7e03dd91750bf60a68876d713e6",
+    "R2_deep_equal": true,
+    "R2_canonical_sha256": "d5585a8d9f5e279cb7d4be012a97acae5142ddb4e9ec012d344f247f7652c9d8",
+    "R3_deep_equal": true,
+    "R3_canonical_sha256": "5c5b1f8401abf7e32d76438f41568d4883b13eb3af5d7dae3070c36c041a324d",
+    "R4_baseline_projection_deep_equal_after_normalizing_source_head": true,
+    "R4_only_added_key": "c4_forced_ascii_capability",
+    "R4_active_source_fix_head": "c4b613f78835e7b914e02447955c6b89fe9839ab",
+    "recursive_status_field_count": 44,
+    "recursive_status_values": [
+      "NOT_RUN"
+    ]
+  },
+  "canonical_hash_algorithm": "SHA-256 of UTF-8 json.dumps(obj, ensure_ascii=False, sort_keys=True, separators=(',', ':'))",
+  "critical_semantics_retained": {
+    "C7_both_frozen_pending64_to_english_subpath_objects_exact": true,
+    "C7_required_true": true,
+    "C7_exact_你_once_then_ascii_你a": true,
+    "T17_legacy_id_exact": true,
+    "R2_layout_subresults_and_AA_aa_slot_retained": true,
+    "R4_old_literal_a_and_exact_你_retained": true,
+    "R3_actual_available_enabled_TTS_boundary_retained": true
+  },
+  "runtime_execution": "NOT_RUN"
+}

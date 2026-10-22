@@ -1,0 +1,226 @@
+{
+  "schema": "trime-sequence-runner-independent-review/v1",
+  "generated_utc": "2026-10-22T16:21:04.481831+00:00",
+  "review_mode": "HOST_ONLY_NO_ADB_VM_GRADLE",
+  "verdict": "PASS_STATIC_MINIMAL_API21_HARNESS_COMPATIBILITY_FIX",
+  "scope": "Review only the v8 delta from frozen v7: replace unavailable API21 env executable with a fixed sh -c CLASSPATH assignment plus exec app_process. No product source or business expectation is reviewed as changed.",
+  "inputs": {
+    "v7": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/t9_case_sequences_v7.py",
+      "bytes": 22810,
+      "sha256": "3f7739c86af44fd08b97598286f9e697ce500473c7dc5d642466cf77229b6846"
+    },
+    "v8": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/t9_case_sequences_v8.py",
+      "bytes": 23026,
+      "sha256": "554eb1f704b058d8591bf2ae57a76c5372f56deb549c3612ee5efb9da5d787ea"
+    },
+    "recorded_diff": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/sequence-v8-vs-v7.diff",
+      "bytes": 1179,
+      "sha256": "d6243d128990f291d7215f340b57330b5fad7b750c2c30f1d71b163ffcb51e6f"
+    },
+    "root_review": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/sequence-v8-root-review1.json",
+      "bytes": 1808,
+      "sha256": "5e0e439261aa63b6c59afcdb76e1ffab564ae95620f9de4b350aa0d1471735b5"
+    },
+    "binding_before_v8": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/original-apk-binding-c4-v7.json",
+      "bytes": 4021,
+      "sha256": "52919b0ce3ee58c654f73c80008d4ea4575362f11d08eba540eb9207c4781778"
+    }
+  },
+  "v7_rejection_preserved": {
+    "session": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-trime-S1",
+    "sequence_result": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-trime-S1/sequence-result.json",
+      "bytes": 2013,
+      "sha256": "a3adb34a00b4dd404f0e2e50d4a38d6aaf6704db3f5d85c4dac396e80f2af96e"
+    },
+    "report": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-trime-S1/report.json",
+      "bytes": 223110,
+      "sha256": "ef34b97f762f2a0b58d7459fa13ddbebe95cbf086031bedbceaf022bde5fd089"
+    },
+    "observer_finished": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-trime-S1/observer8-session/finished.json",
+      "bytes": 2116,
+      "sha256": "8337533533f5ef8034d25aa544ad3ddafab906f62c2e9fa4fccd05a09fcee86d"
+    },
+    "strict_sequence_completed": false,
+    "authenticated_normal_stop": true,
+    "business_rejection": {
+      "type": "AssertionError",
+      "message": "Remote shell command failed (127): env CLASSPATH=/data/local/tmp/trime-real-doubletap.jar app_process /system/bin org.x2m7.trime.readiness.input.TrimeRealDoubleTap 36 1134 60"
+    },
+    "failing_command_record": {
+      "at": "2026-10-22T16:18:28.917985+00:00",
+      "argv": [
+        "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+        "-s",
+        "emulator-5582",
+        "shell",
+        "sh -c 'env CLASSPATH=/data/local/tmp/trime-real-doubletap.jar app_process /system/bin org.x2m7.trime.readiness.input.TrimeRealDoubleTap 36 1134 60'; _trime_t12_status=$?; echo ''; echo \"__TRIME_T12_REMOTE_RC_794f267ec036a16cfd3456d179f63ffb:$_trime_t12_status\""
+      ],
+      "stdout": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-trime-S1/commands/0144.stdout",
+      "stderr": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-trime-S1/commands/0144.stderr",
+      "timeout_seconds": 60,
+      "completed": true,
+      "returncode": 0,
+      "finished": "2026-10-22T16:18:28.938682+00:00",
+      "stdout_sha256": "60415af2e6c92383e8e31b030905b21fe5a51a096105e15e246d09e917da5039",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "shell_protocol_nonce": "794f267ec036a16cfd3456d179f63ffb",
+      "remote_returncode": 127,
+      "remote_stdout_bytes": 20,
+      "remote_stdout_sha256": "b437f453e44da595c243566bcf9f458dc17cbd5b2ebcd60b2ba5d9e8efd0c5b7",
+      "shell_protocol_failed_at": "2026-10-22T16:18:28.948944+00:00",
+      "shell_protocol_error": "Remote shell command failed (127): env CLASSPATH=/data/local/tmp/trime-real-doubletap.jar app_process /system/bin org.x2m7.trime.readiness.input.TrimeRealDoubleTap 36 1134 60"
+    },
+    "failing_stdout": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-trime-S1/commands/0144.stdout",
+      "sha256": "60415af2e6c92383e8e31b030905b21fe5a51a096105e15e246d09e917da5039",
+      "text": "sh: env: not found\n\n__TRIME_T12_REMOTE_RC_794f267ec036a16cfd3456d179f63ffb:127\n"
+    },
+    "interpretation": "API21 rejected before the injector process started because env was missing (remote 127). The jar push/readback completed, but zero helper MotionEvents and zero product Shift dispatches were produced; this is a harness precondition rejection, not a product Shift result."
+  },
+  "structural_comparison": {
+    "changed_top_level_definitions": [
+      "_doubletap_real"
+    ],
+    "unchanged_business_functions": [
+      "_k1",
+      "_k2",
+      "_k3",
+      "_k4",
+      "_s1",
+      "_s2",
+      "_category",
+      "_r4",
+      "_full_mode_cycle",
+      "_select_schema"
+    ],
+    "unchanged_finally_function": "run_and_stop",
+    "diff_hunks": 1,
+    "removed_hunk_lines": [
+      "-    argv = ['env', 'CLASSPATH=' + remote, 'app_process', '/system/bin',",
+      "-            'org.x2m7.trime.readiness.input.TrimeRealDoubleTap', str(x), str(y), '60']"
+    ],
+    "added_hunk_lines": [
+      "+    # API21 has no env binary. The path/class/gap are constants and x/y have",
+      "+    # already passed the exact frozen-coordinate allowlist above.",
+      "+    argv = ['sh', '-c', 'CLASSPATH=/data/local/tmp/trime-real-doubletap.jar '",
+      "+            'exec app_process /system/bin '",
+      "+            'org.x2m7.trime.readiness.input.TrimeRealDoubleTap '",
+      "+            + str(x) + ' ' + str(y) + ' 60']"
+    ]
+  },
+  "host_stub_negative_free_check": {
+    "device_calls": "NONE; a fake S object captured argv and supplied synthetic parser lines",
+    "coordinates_tested": [
+      {
+        "coordinates": [
+          36,
+          1134
+        ],
+        "shell_arguments": [
+          "sh",
+          "-c",
+          "CLASSPATH=/data/local/tmp/trime-real-doubletap.jar exec app_process /system/bin org.x2m7.trime.readiness.input.TrimeRealDoubleTap 36 1134 60"
+        ],
+        "shlex_join_as_used_by_Gui_shell": "sh -c 'CLASSPATH=/data/local/tmp/trime-real-doubletap.jar exec app_process /system/bin org.x2m7.trime.readiness.input.TrimeRealDoubleTap 36 1134 60'",
+        "synthetic_parser_result": "4 events + 1 summary accepted; state remains target qualification pending"
+      },
+      {
+        "coordinates": [
+          54,
+          996
+        ],
+        "shell_arguments": [
+          "sh",
+          "-c",
+          "CLASSPATH=/data/local/tmp/trime-real-doubletap.jar exec app_process /system/bin org.x2m7.trime.readiness.input.TrimeRealDoubleTap 54 996 60"
+        ],
+        "shlex_join_as_used_by_Gui_shell": "sh -c 'CLASSPATH=/data/local/tmp/trime-real-doubletap.jar exec app_process /system/bin org.x2m7.trime.readiness.input.TrimeRealDoubleTap 54 996 60'",
+        "synthetic_parser_result": "4 events + 1 summary accepted; state remains target qualification pending"
+      }
+    ],
+    "assertions": [
+      "exact argv tokens",
+      "fixed sh -c payload",
+      "four ordered events",
+      "one summary",
+      "accepted state remains external-target-qualification pending"
+    ]
+  },
+  "checks": [
+    {
+      "id": "recorded_v8_sha_exact",
+      "passed": true
+    },
+    {
+      "id": "unified_diff_one_hunk_doubletap_argv_only",
+      "passed": true
+    },
+    {
+      "id": "only_doubletap_function_ast_changed",
+      "passed": true
+    },
+    {
+      "id": "run_and_stop_ast_unchanged",
+      "passed": true
+    },
+    {
+      "id": "business_functions_ast_unchanged",
+      "passed": true
+    },
+    {
+      "id": "head_assets_jar_review_constants_unchanged",
+      "passed": true
+    },
+    {
+      "id": "fixed_sh_c_exec_app_process_replaces_missing_env",
+      "passed": true
+    },
+    {
+      "id": "coordinate_allowlist_precedes_string_concatenation",
+      "passed": true
+    },
+    {
+      "id": "jar_identity_readback_and_timeout300_guards_retained",
+      "passed": true
+    },
+    {
+      "id": "four_event_identity_timing_parser_retained",
+      "passed": true
+    },
+    {
+      "id": "aa_AA_oracles_unchanged",
+      "passed": true
+    },
+    {
+      "id": "helper_success_still_not_app_acceptance",
+      "passed": true
+    }
+  ],
+  "required_runtime_acceptance": [
+    "Freeze a new binding that names v8 path and exact SHA; v7 binding is insufficient.",
+    "Run a new Shift-only session; do not rewrite or count the v7 rejection.",
+    "Require actual helper stdout/readback identity and four accepted events from one injector PID/UID, display0/source4098, fixed coordinates and gap60.",
+    "Independently inspect continuous target-process logs for the four MotionEvents, actual UP-to-UP/contact timing <=300ms, and app dispatch: trime S1 requires two CLICK plus exact aa; standard S2 requires DOUBLE_CLICK plus exact AA.",
+    "Require exact Editable oracle, original capture/XML and authenticated normal stop. Helper accepted output alone cannot qualify product behavior."
+  ],
+  "limits": [
+    "Static HOST review only; v8 has not executed on API21 or API35 in this report.",
+    "The fixed command contains only constants plus x/y after the existing exact tuple allowlist; it does not accept free-form shell input.",
+    "POSIX/mksh `VAR=value exec command ...` supplies CLASSPATH to app_process and avoids dependency on an env binary. Actual device success is still required.",
+    "This report does not qualify S1/S2, product Shift behavior, APK/runtime, API35 or physical-device behavior.",
+    "No source product, Git ref, device, v7 file or failed evidence was changed."
+  ],
+  "final_assessment": {
+    "static_review_passed": true,
+    "runtime_shift_qualification": "NOT_RUN_ON_V8",
+    "v7_s1_result": "HARNESS_PRECONDITION_REJECTED_NOT_PRODUCT_FAILURE"
+  }
+}

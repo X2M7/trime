@@ -1,0 +1,759 @@
+{
+  "schema": "trime-independent-precondition-anr-audit/v1",
+  "generated_utc": "2026-10-22T16:45:08.073699+00:00",
+  "review_mode": "HOST_ONLY_NO_ADB_VM_GRADLE_NO_FROZEN_INPUT_EDIT",
+  "verdict": "CONFIRMED_PRE_C4_INSTALL_ENABLE_PROCESS_ANR_BOUNDARY; ENVIRONMENT_ANRS_RETAINED; BUSINESS_RUN_NONTERMINAL",
+  "qualification": {
+    "precondition_event_ordering_proven": true,
+    "clean_precondition_proven": false,
+    "causation_determined": false,
+    "business_session_qualified": false,
+    "terminal_session_qualified": false
+  },
+  "scope": {
+    "platform": "Android API35 emulator",
+    "api": 35,
+    "serial_recorded": "emulator-5584",
+    "boot_id": "ba13c239-0862-4901-a4c7-3b1f2e4c6608",
+    "package": "com.osfans.trime.debug",
+    "exact_session_paths": [
+      "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-prep-native",
+      "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-run1"
+    ],
+    "log_scope": "Only bytes [0, 3843702) of device-logcat.txt declared by pre-enable-log-source.json are qualified.",
+    "meaning": "The retained com.android.phone and SystemUI ANRs occurred before installation of the exact c4 APK, before c4 Trime IME enable/set, and before any Trime process-start marker recorded in the frozen boot/pre-enable prefix.",
+    "not_qualified": [
+      "business behavior or any test case in api35-c4-run1",
+      "terminal completion, normal stop, cleanup, memory, or full-session log results",
+      "absence of ANRs outside the frozen prefix",
+      "absence of warnings, errors, crashes, or health defects elsewhere in the device",
+      "root cause of either ANR",
+      "the old installed Trime build as a general product family",
+      "physical device, other API levels, other sessions, PR readiness, or merge readiness"
+    ]
+  },
+  "source_bindings": {
+    "binding": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/original-apk-binding-c4-v7.json",
+      "bytes": 4021,
+      "sha256": "52919b0ce3ee58c654f73c80008d4ea4575362f11d08eba540eb9207c4781778",
+      "embedded_report_value_deep_equal": true
+    },
+    "launch": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-run1/launch.json",
+      "bytes": 1391,
+      "sha256": "ebe84ce8b39f5c8d5b2fda751be95b23d410cd08c070d2500ebf2d7b6d505d59"
+    },
+    "booted": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-run1/booted.json",
+      "bytes": 140,
+      "sha256": "a4a84af28516280054af2f0036035108bba7ed7de7fdec59d6b6d203689a992b"
+    },
+    "prep_report_generation_snapshot": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-prep-native/report.json",
+      "bytes": 61854,
+      "sha256": "3ad97be296dfb889064aaeb10fd401bbeb73f8a87239936a7acf5595779c4fa5",
+      "snapshot_kind": "POINT_IN_TIME_BYTES_READ_ONCE_DURING_GENERATION",
+      "started": "2026-10-22T16:37:50.674698+00:00",
+      "command_count": 51,
+      "capture_count": 0,
+      "action_count": 1,
+      "passed": false,
+      "checks": [],
+      "has_completed_field": false,
+      "nonterminal_use_limit": "Relevant command records are embedded below. This source file belonged to a still-live preparation helper at generation and is not claimed as a terminal business report."
+    },
+    "pre_enable_log_source": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-prep-native/pre-enable-log-source.json",
+      "bytes": 271,
+      "sha256": "e41ae56e2eee97cbb5f6db43cfb19fe01af25432c33c674e6d5419cfc3bd6218"
+    },
+    "frozen_pre_enable_log_prefix": {
+      "source_path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-run1/device-logcat.txt",
+      "source_device": 66306,
+      "source_inode": 29768490,
+      "exclusive_end_offset": 3843702,
+      "bytes": 3843702,
+      "sha256": "03cf7cc18563d555d81920f9dd4ee8a8a6d8a9be0e4aa64145a965871e0db0e8",
+      "line_count_splitlines": 27362,
+      "declared_utc": "2026-10-22T16:40:58.785032+00:00",
+      "declared_boot_id": "ba13c239-0862-4901-a4c7-3b1f2e4c6608",
+      "current_source_stat_matched_device_inode_and_minimum_size_at_generation": true,
+      "first_line": {
+        "source_line": 1,
+        "raw": "--------- beginning of main"
+      },
+      "last_line": {
+        "source_line": 27362,
+        "raw": "10-23 00:40:57.718   554   595 I am_uid_idle: 10102"
+      },
+      "live_tail_read_or_qualified": false
+    },
+    "baseline_identity": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-prep-native/baseline-identity.json",
+      "bytes": 595,
+      "sha256": "1844b5c0add0a6e0ee33e2eb7116816dcc27662be330412ec48f6b4e4a9e47ae"
+    },
+    "old_package_dump": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-prep-native/old-package.raw.txt",
+      "bytes": 10654,
+      "sha256": "60adc4620fc20652f33781c7b62841c28d4a774a22b91ed29886c449db53bd5d"
+    },
+    "old_installed_apk_copy": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-prep-native/old-installed-apk.bin",
+      "bytes": 20665304,
+      "sha256": "9cdb36ab38a5a4d76ab619d54b0b5b484505472cdd7253be3cf0a34502a4706b"
+    },
+    "old_isolated_profile_manifest": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-prep-native/old-isolated-profile-manifest.json",
+      "bytes": 1003,
+      "sha256": "fda3e92011368b4c5c3cd57911c71a887c6bdb69c437d774c60f534e4191d0ef"
+    },
+    "fresh_package_dump": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-prep-native/fresh-before-prep-package.txt",
+      "bytes": 10703,
+      "sha256": "20f58c7622c2407ff67052ea567bcde64df5fbf842fd936916fcfe0124131bbd"
+    },
+    "fresh_installed_apk_copy": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-prep-native/fresh-before-prep-installed-apk.bin",
+      "bytes": 20673055,
+      "sha256": "453c71544f67685db3b85fc91855ed27c5ff264d0a25671669642b0dc4b8732e"
+    },
+    "native_initial_process_probe": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-prep-native/native-initial-process.json",
+      "bytes": 358,
+      "sha256": "ae62bb333f8e45f7a4194b666cc1e37593ce468d625f514830aaa37a51426e6c"
+    },
+    "bound_original_apk": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/c4-fork-run-39806420824-ubuntu1/files/com.osfans.trime-c4b613f7-x86_64-debug.apk",
+      "bytes": 20673055,
+      "sha256": "453c71544f67685db3b85fc91855ed27c5ff264d0a25671669642b0dc4b8732e"
+    }
+  },
+  "exact_c4_identity": {
+    "source_head": "c4b613f78835e7b914e02447955c6b89fe9839ab",
+    "source_tree": "d7639dfce3b6b5646bb004479a688148c1b19900",
+    "base": "19b048494ffa55cae52d5385dfa6d0611461c27d",
+    "repository": "X2M7/trime",
+    "producer_run": 39806420824,
+    "producer_artifact": 12438099455,
+    "package": "com.osfans.trime.debug",
+    "version_code": 20261101,
+    "version_name": "3.3.13",
+    "apk_sha256": "453c71544f67685db3b85fc91855ed27c5ff264d0a25671669642b0dc4b8732e",
+    "apk_signer_sha256": "f6409a2d9db2800f1acc9b2e614d73e4609df3652d265cf2c40eb8a64456deb2",
+    "artifact_audit_sha256": "58b3d5e7f60678c164269897764957053bacc47055eed69a1a657dfb3a53f336",
+    "original_apk_equals_fresh_installed_copy": true,
+    "prep_report_binding_deep_equal": true
+  },
+  "baseline_and_package_transition": {
+    "baseline": {
+      "observed_utc": "2026-10-22T16:39:09.225167+00:00",
+      "default_input_method": "com.android.inputmethod.latin/.LatinIME",
+      "enabled_input_methods": "com.android.inputmethod.latin/.LatinIME",
+      "trime_was_enabled_or_default_in_this_snapshot": false,
+      "temporal_limit": "This settings snapshot was taken immediately after the am_anr event rows, not before them; it still precedes uninstall, c4 install, and c4 enable/set."
+    },
+    "old_package": {
+      "dump_command": {
+        "ordinal": 10,
+        "at": "2026-10-22T16:39:14.230518+00:00",
+        "finished": "2026-10-22T16:39:16.208606+00:00",
+        "argv": [
+          "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+          "-s",
+          "emulator-5584",
+          "shell",
+          "sh -c 'dumpsys package com.osfans.trime.debug'; _trime_t12_status=$?; echo ''; echo \"__TRIME_T12_REMOTE_RC_3a3829a9e2bf8e958b83f826eb151485:$_trime_t12_status\""
+        ],
+        "completed": true,
+        "host_returncode": 0,
+        "remote_returncode": 0,
+        "stdout_sha256": "26ddd158683673de53251d27342b15025e0d675a438a5fe381ba18806a4edbb0",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "apk_copy_command": {
+        "ordinal": 12,
+        "at": "2026-10-22T16:39:16.908324+00:00",
+        "finished": "2026-10-22T16:39:21.828815+00:00",
+        "argv": [
+          "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+          "-s",
+          "emulator-5584",
+          "exec-out",
+          "cat",
+          "/data/app/~~JWqZgY43XxOkxUctXfvwsA==/com.osfans.trime.debug-o6b-W2Xp5ZyBQhHQhv2j_Q==/base.apk"
+        ],
+        "completed": true,
+        "host_returncode": 0,
+        "remote_returncode": null,
+        "stdout_sha256": "9cdb36ab38a5a4d76ab619d54b0b5b484505472cdd7253be3cf0a34502a4706b",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "metadata": {
+        "app_id": 10158,
+        "code_path": "/data/app/~~JWqZgY43XxOkxUctXfvwsA==/com.osfans.trime.debug-o6b-W2Xp5ZyBQhHQhv2j_Q==",
+        "version_code": 20261101,
+        "version_name": "3.3.13",
+        "timestamp": "2026-10-22 12:47:11",
+        "last_update_time": "2026-10-22 12:47:12",
+        "user0_state_raw": "User 0: ceDataInode=344654 deDataInode=90690 installed=true hidden=false suspended=false distractionFlags=0 stopped=true notLaunched=false enabled=0 instant=false virtual=false quarantined=false",
+        "stopped": true,
+        "enabled_numeric": 0
+      },
+      "apk_sha256": "9cdb36ab38a5a4d76ab619d54b0b5b484505472cdd7253be3cf0a34502a4706b",
+      "apk_bytes": 20665304,
+      "differs_from_exact_c4_apk": true,
+      "profile_restored_to_new_package": false,
+      "temporal_limit": "The package dump and APK byte copy were captured after both am_anr event rows. stopped=true is a later observed package state, not a contemporaneous pre-ANR process snapshot."
+    },
+    "transition_commands": {
+      "old_package_uninstall": {
+        "ordinal": 21,
+        "at": "2026-10-22T16:40:26.862307+00:00",
+        "finished": "2026-10-22T16:40:27.684922+00:00",
+        "argv": [
+          "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+          "-s",
+          "emulator-5584",
+          "uninstall",
+          "com.osfans.trime.debug"
+        ],
+        "completed": true,
+        "host_returncode": 0,
+        "remote_returncode": null,
+        "stdout_sha256": "7fc0023a6402c7bd7abd98bb3e580968de4833eed07d88d1cc8d70819d69c7a0",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "exact_c4_install": {
+        "ordinal": 22,
+        "at": "2026-10-22T16:40:27.687563+00:00",
+        "finished": "2026-10-22T16:40:30.518272+00:00",
+        "argv": [
+          "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+          "-s",
+          "emulator-5584",
+          "install",
+          "-t",
+          "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/c4-fork-run-39806420824-ubuntu1/files/com.osfans.trime-c4b613f7-x86_64-debug.apk"
+        ],
+        "completed": true,
+        "host_returncode": 0,
+        "remote_returncode": null,
+        "stdout_sha256": "781a31c82430c97897af612ece5e0ca2205e301cb5ff121ce2660541ea5182c7",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "fresh_package_dump": {
+        "ordinal": 23,
+        "at": "2026-10-22T16:40:30.521400+00:00",
+        "finished": "2026-10-22T16:40:30.990206+00:00",
+        "argv": [
+          "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+          "-s",
+          "emulator-5584",
+          "shell",
+          "sh -c 'dumpsys package com.osfans.trime.debug'; _trime_t12_status=$?; echo ''; echo \"__TRIME_T12_REMOTE_RC_f87421aa8d04a4be95992ae7548f1bf5:$_trime_t12_status\""
+        ],
+        "completed": true,
+        "host_returncode": 0,
+        "remote_returncode": 0,
+        "stdout_sha256": "fa3f5b2173bea890b57ab8d6bfe16cecc946d7183b749298f63e8dd83f119b39",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "fresh_installed_apk_copy": {
+        "ordinal": 25,
+        "at": "2026-10-22T16:40:31.227186+00:00",
+        "finished": "2026-10-22T16:40:32.196687+00:00",
+        "argv": [
+          "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+          "-s",
+          "emulator-5584",
+          "exec-out",
+          "cat",
+          "/data/app/~~cRV5JEQ5stPF2Cg2OBAvAg==/com.osfans.trime.debug-JEjHSA8C547z1r6h4U_nig==/base.apk"
+        ],
+        "completed": true,
+        "host_returncode": 0,
+        "remote_returncode": null,
+        "stdout_sha256": "453c71544f67685db3b85fc91855ed27c5ff264d0a25671669642b0dc4b8732e",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "c4_ime_enable": {
+        "ordinal": 34,
+        "at": "2026-10-22T16:40:58.785666+00:00",
+        "finished": "2026-10-22T16:40:59.010187+00:00",
+        "argv": [
+          "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+          "-s",
+          "emulator-5584",
+          "shell",
+          "sh -c 'ime enable com.osfans.trime.debug/com.osfans.trime.ime.core.TrimeInputMethodService'; _trime_t12_status=$?; echo ''; echo \"__TRIME_T12_REMOTE_RC_b236741d8b07e4d0ee8cae89c98320b8:$_trime_t12_status\""
+        ],
+        "completed": true,
+        "host_returncode": 0,
+        "remote_returncode": 0,
+        "stdout_sha256": "591fd9b3af406c86f358f67a472f735d6b77df1847acb2eaf2cdec6e64897414",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "c4_ime_set": {
+        "ordinal": 35,
+        "at": "2026-10-22T16:40:59.020812+00:00",
+        "finished": "2026-10-22T16:40:59.241062+00:00",
+        "argv": [
+          "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+          "-s",
+          "emulator-5584",
+          "shell",
+          "sh -c 'ime set com.osfans.trime.debug/com.osfans.trime.ime.core.TrimeInputMethodService'; _trime_t12_status=$?; echo ''; echo \"__TRIME_T12_REMOTE_RC_fa3a1d71334671b62965aa367fbcff9b:$_trime_t12_status\""
+        ],
+        "completed": true,
+        "host_returncode": 0,
+        "remote_returncode": 0,
+        "stdout_sha256": "f8de46e28fa51077a4b30e691eec07027af8f2e41ff0bfa45aba11b0ec1efb15",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "fresh_c4_package": {
+      "metadata": {
+        "app_id": 10159,
+        "code_path": "/data/app/~~cRV5JEQ5stPF2Cg2OBAvAg==/com.osfans.trime.debug-JEjHSA8C547z1r6h4U_nig==",
+        "version_code": 20261101,
+        "version_name": "3.3.13",
+        "timestamp": "2026-10-23 00:40:28",
+        "last_update_time": "2026-10-23 00:40:30",
+        "user0_state_raw": "User 0: ceDataInode=344654 deDataInode=90690 installed=true hidden=false suspended=false distractionFlags=0 stopped=true notLaunched=true enabled=0 instant=false virtual=false quarantined=false",
+        "stopped": true,
+        "not_launched": true,
+        "enabled_numeric": 0
+      },
+      "apk_sha256": "453c71544f67685db3b85fc91855ed27c5ff264d0a25671669642b0dc4b8732e",
+      "apk_bytes": 20673055,
+      "exact_bound_original_byte_hash_match": true
+    }
+  },
+  "anr_inventory_within_frozen_prefix": {
+    "mechanical_rules": {
+      "event_row": "line contains ' I am_anr  :'",
+      "activity_manager_detail_row": "line contains ' E ActivityManager: ANR in '"
+    },
+    "event_row_count": 2,
+    "activity_manager_detail_row_count": 2,
+    "events": [
+      {
+        "package": "com.android.phone",
+        "pid": 931,
+        "event": {
+          "source_line": 15822,
+          "raw": "10-23 00:39:04.068   554  1262 I am_anr  : [0,931,com.android.phone,952647245,Broadcast of Intent { act=android.safetycenter.action.REFRESH_SAFETY_SOURCES flg=0x10000010 pkg=com.android.phone cmp=com.android.phone/.security.SafetySourceReceiver (has extras) }]"
+        },
+        "detail": {
+          "source_line": 16320,
+          "raw": "10-23 00:39:06.588   554  1262 E ActivityManager: ANR in com.android.phone"
+        },
+        "pid_detail": {
+          "source_line": 16321,
+          "raw": "10-23 00:39:06.588   554  1262 E ActivityManager: PID: 931"
+        },
+        "recorded_reason": {
+          "source_line": 16322,
+          "raw": "10-23 00:39:06.588   554  1262 E ActivityManager: Reason: Broadcast of Intent { act=android.safetycenter.action.REFRESH_SAFETY_SOURCES flg=0x10000010 pkg=com.android.phone cmp=com.android.phone/.security.SafetySourceReceiver (has extras) }"
+        },
+        "completion": {
+          "source_line": 16538,
+          "raw": "10-23 00:39:08.701   554  1262 D ActivityManager: Completed ANR of com.android.phone in 4872ms, latency 54ms (expired, only dump ANR app)"
+        },
+        "device_event_time": "2026-10-23T00:39:04.068+08:00",
+        "mapped_utc": "2026-10-22T16:39:04.068000+00:00",
+        "disposition": "RETAINED; not omitted merely because the requested visual dialog was SystemUI"
+      },
+      {
+        "package": "com.android.systemui",
+        "pid": 802,
+        "timeout": {
+          "source_line": 16528,
+          "raw": "10-23 00:39:08.681   554   595 W ActivityManager: Timeout executing service: ServiceRecord{950e92f u0 com.android.systemui/.SystemUIService c:android}"
+        },
+        "event": {
+          "source_line": 16539,
+          "raw": "10-23 00:39:08.702   554  1262 I am_anr  : [0,802,com.android.systemui,818462221,executing service com.android.systemui/.SystemUIService, waited 20498ms]"
+        },
+        "detail": {
+          "source_line": 18640,
+          "raw": "10-23 00:39:26.132   554  1262 E ActivityManager: ANR in com.android.systemui"
+        },
+        "pid_detail": {
+          "source_line": 18641,
+          "raw": "10-23 00:39:26.132   554  1262 E ActivityManager: PID: 802"
+        },
+        "recorded_reason": {
+          "source_line": 18642,
+          "raw": "10-23 00:39:26.132   554  1262 E ActivityManager: Reason: executing service com.android.systemui/.SystemUIService, waited 20498ms"
+        },
+        "error_id": {
+          "source_line": 18643,
+          "raw": "10-23 00:39:26.132   554  1262 E ActivityManager: ErrorId: 692eaf45-d1d9-45f6-a06e-3839fb4c84fa"
+        },
+        "completion": {
+          "source_line": 18900,
+          "raw": "10-23 00:39:26.815   554  1262 D ActivityManager: Completed ANR of com.android.systemui in 18114ms, latency 8ms (expired, only dump ANR app)"
+        },
+        "dialog_window": {
+          "source_line": 19043,
+          "raw": "10-23 00:39:27.811   554   582 D CoreBackPreview: Window{eceaf3b u0 Application Not Responding: com.android.systemui}: Setting back callback OnBackInvokedCallbackInfo{mCallback=android.window.WindowOnBackInvokedDispatcher$OnBackInvokedCallbackWrapper@fd57532, mPriority=0, mIsAnimationCallback=false}"
+        },
+        "dialog_focus_request": {
+          "source_line": 21448,
+          "raw": "10-23 00:39:38.379   554   585 I input_focus: [Focus request eceaf3b Application Not Responding: com.android.systemui,reason=UpdateInputWindows]"
+        },
+        "dialog_focus_enter": {
+          "source_line": 21455,
+          "raw": "10-23 00:39:38.429   554   668 I input_focus: [Focus entering eceaf3b Application Not Responding: com.android.systemui (server),reason=Window became focusable. Previous reason: NOT_FOCUSABLE]"
+        },
+        "wait_interaction": {
+          "source_line": 26428,
+          "raw": "10-23 00:40:08.610   554   668 I input_interaction: Interaction with: eceaf3b Application Not Responding: com.android.systemui (server), PointerEventDispatcher0 (server), "
+        },
+        "dialog_callback_cleared": {
+          "source_line": 26437,
+          "raw": "10-23 00:40:08.808   554   582 D CoreBackPreview: Window{eceaf3b u0 Application Not Responding: com.android.systemui}: Setting back callback null"
+        },
+        "dialog_input_channel_disposed": {
+          "source_line": 26450,
+          "raw": "10-23 00:40:09.267   554   582 W InputManager-JNI: Input channel object 'eceaf3b Application Not Responding: com.android.systemui (client)' was disposed without first being removed with the input manager!"
+        },
+        "device_event_time": "2026-10-23T00:39:08.702+08:00",
+        "mapped_utc": "2026-10-22T16:39:08.702000+00:00",
+        "recorded_reason_text": "executing service com.android.systemui/.SystemUIService, waited 20498ms",
+        "recorded_reason_is_not_root_cause_finding": true,
+        "disposition": "RETAINED_PRECONDITION_ANR; no waiver or exemption assigned"
+      }
+    ],
+    "count_limit": "Counts are exhaustive only for the two exact mechanical row patterns in the qualified prefix. They are not an all-system, all-buffer, all-time, or alternate-ANR-marker absence claim."
+  },
+  "systemui_visual_chain": {
+    "before": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-prep-native/before-install-system-screen.png",
+      "bytes": 245797,
+      "sha256": "aa047c08ae310b5b23e07f1b11a717792cad08644b2f8f7c2f6f59c19c8588b2",
+      "width": 720,
+      "height": 1280,
+      "capture_command": {
+        "ordinal": 16,
+        "at": "2026-10-22T16:39:42.070754+00:00",
+        "finished": "2026-10-22T16:39:45.984842+00:00",
+        "argv": [
+          "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+          "-s",
+          "emulator-5584",
+          "exec-out",
+          "screencap",
+          "-p"
+        ],
+        "completed": true,
+        "host_returncode": 0,
+        "remote_returncode": null,
+        "stdout_sha256": "aa047c08ae310b5b23e07f1b11a717792cad08644b2f8f7c2f6f59c19c8588b2",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "host_visual_observation": "Visible Android dialog reads 'System UI isn’t responding' and shows 'Close app' and 'Wait' over the home screen."
+    },
+    "actual_wait_tap": {
+      "report_action": {
+        "action": "pre_target_systemui_actual_Wait_tap",
+        "x": 260,
+        "y": 692,
+        "at": "2026-10-22T16:40:08.888000+00:00",
+        "before_original": "before-install-system-screen.png",
+        "Trime_not_enabled_or_started": true
+      },
+      "command": {
+        "ordinal": 17,
+        "at": "2026-10-22T16:40:08.718082+00:00",
+        "finished": "2026-10-22T16:40:08.884681+00:00",
+        "argv": [
+          "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+          "-s",
+          "emulator-5584",
+          "shell",
+          "sh -c 'input tap 260 692'; _trime_t12_status=$?; echo ''; echo \"__TRIME_T12_REMOTE_RC_754568064dec97f473d1021fdf92d173:$_trime_t12_status\""
+        ],
+        "completed": true,
+        "host_returncode": 0,
+        "remote_returncode": 0,
+        "stdout_sha256": "f64e82a80216c19e9624914bcbdca332b75b83a0665728f8fe102c6fb0d484f6",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "log_interaction": {
+        "source_line": 26428,
+        "raw": "10-23 00:40:08.610   554   668 I input_interaction: Interaction with: eceaf3b Application Not Responding: com.android.systemui (server), PointerEventDispatcher0 (server), "
+      },
+      "binding": "The command coordinate (260,692), action record, and log interaction fall in the captured SystemUI ANR-dialog interval."
+    },
+    "after": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-prep-native/after-systemui-Wait.png",
+      "bytes": 682497,
+      "sha256": "0b113820c4dd3947dab50ec809c98fd376e0b9850260add8de369dfae061b397",
+      "width": 720,
+      "height": 1280,
+      "capture_command": {
+        "ordinal": 20,
+        "at": "2026-10-22T16:40:13.362346+00:00",
+        "finished": "2026-10-22T16:40:15.436439+00:00",
+        "argv": [
+          "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+          "-s",
+          "emulator-5584",
+          "exec-out",
+          "screencap",
+          "-p"
+        ],
+        "completed": true,
+        "host_returncode": 0,
+        "remote_returncode": null,
+        "stdout_sha256": "0b113820c4dd3947dab50ec809c98fd376e0b9850260add8de369dfae061b397",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "host_visual_observation": "Home screen is visible and the SystemUI ANR dialog is absent in this captured frame.",
+      "limit": "One frame without the dialog does not prove root-cause resolution, continuing SystemUI health, or absence of later ANRs."
+    }
+  },
+  "process_boundary": {
+    "frozen_prefix_trime_process_start_rule": "line contains com.osfans.trime.debug and either 'am_proc_start' or 'Start proc'",
+    "matching_line_count": 0,
+    "matching_source_lines": [],
+    "what_is_proven": "No Trime process-start marker matching the stated rule appears from the retained log beginning through the pre-enable prefix cut.",
+    "install_precondition_ps_snapshot_present": false,
+    "ps_limit": "There is no pre-install ps -A capture in the 51-command prep report and no separate pre-install ps artifact was found. Therefore this audit does not upgrade log-marker absence into an exhaustive device-process-state proof.",
+    "supporting_old_package_state": "The later old-package dump records stopped=true, and the immediately post-ANR IME baseline names only LatinIME.",
+    "post_enable_identity_probe": {
+      "utc": "2026-10-22T16:41:05.071225+00:00",
+      "pid": 2228,
+      "starttime": "18495",
+      "boot_id": "ba13c239-0862-4901-a4c7-3b1f2e4c6608",
+      "logsource_matches_prefix_descriptor": true,
+      "report_ps_probe": {
+        "ordinal": 37,
+        "at": "2026-10-22T16:41:03.707944+00:00",
+        "finished": "2026-10-22T16:41:04.508318+00:00",
+        "argv": [
+          "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+          "-s",
+          "emulator-5584",
+          "shell",
+          "sh -c 'ps -A'; _trime_t12_status=$?; echo ''; echo \"__TRIME_T12_REMOTE_RC_7b77cc849a6e93291554087357bf2174:$_trime_t12_status\""
+        ],
+        "completed": true,
+        "host_returncode": 0,
+        "remote_returncode": 0,
+        "stdout_sha256": "cb9f14169741de8d4fe052fda004b3a7244699c45a6c8d29de48a68de1753c3f",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "report_proc_stat_probe": {
+        "ordinal": 38,
+        "at": "2026-10-22T16:41:04.551346+00:00",
+        "finished": "2026-10-22T16:41:04.826345+00:00",
+        "argv": [
+          "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+          "-s",
+          "emulator-5584",
+          "shell",
+          "sh -c 'cat /proc/2228/stat'; _trime_t12_status=$?; echo ''; echo \"__TRIME_T12_REMOTE_RC_e7abd469579f415144f214163f67c50d:$_trime_t12_status\""
+        ],
+        "completed": true,
+        "host_returncode": 0,
+        "remote_returncode": 0,
+        "stdout_sha256": "6015be15c3a56bd604d14899a7f0a632d4a1e04bcd7f4e62a8bd7cd2c4f0e37a",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "report_cmdline_probe": {
+        "ordinal": 39,
+        "at": "2026-10-22T16:41:04.836912+00:00",
+        "finished": "2026-10-22T16:41:05.057398+00:00",
+        "argv": [
+          "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+          "-s",
+          "emulator-5584",
+          "exec-out",
+          "cat",
+          "/proc/2228/cmdline"
+        ],
+        "completed": true,
+        "host_returncode": 0,
+        "remote_returncode": null,
+        "stdout_sha256": "43d72aea72b8f9c72e63231d79190df4fbfa37e95cfd0e332d614e94416488b2",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "limit": "This establishes a later Trime process identity probe after enable/set; it does not supply the exact process-start instant inside the qualified prefix."
+    }
+  },
+  "ordered_timeline": [
+    {
+      "order": 1,
+      "event": "emulator controller launch",
+      "utc": "2026-10-22T16:37:49.329088+00:00"
+    },
+    {
+      "order": 2,
+      "event": "retained log prefix begins",
+      "device_time": "10-23 00:38:03.837",
+      "source_line": 2
+    },
+    {
+      "order": 3,
+      "event": "boot completed probe record",
+      "utc": "2026-10-22T16:38:54.522608+00:00"
+    },
+    {
+      "order": 4,
+      "event": "com.android.phone am_anr",
+      "device_time": "10-23 00:39:04.068",
+      "utc": "2026-10-22T16:39:04.068000+00:00",
+      "source_line": 15822
+    },
+    {
+      "order": 5,
+      "event": "SystemUI am_anr",
+      "device_time": "10-23 00:39:08.702",
+      "utc": "2026-10-22T16:39:08.702000+00:00",
+      "source_line": 16539
+    },
+    {
+      "order": 6,
+      "event": "post-event Latin-only IME baseline snapshot",
+      "utc": "2026-10-22T16:39:09.225167+00:00"
+    },
+    {
+      "order": 7,
+      "event": "SystemUI detailed ANR row",
+      "device_time": "10-23 00:39:26.132",
+      "utc": "2026-10-22T16:39:26.132000+00:00",
+      "source_line": 18640
+    },
+    {
+      "order": 8,
+      "event": "before screenshot command begins",
+      "utc": "2026-10-22T16:39:42.070754+00:00"
+    },
+    {
+      "order": 9,
+      "event": "actual Wait action record",
+      "utc": "2026-10-22T16:40:08.888000+00:00"
+    },
+    {
+      "order": 10,
+      "event": "after screenshot command begins",
+      "utc": "2026-10-22T16:40:13.362346+00:00"
+    },
+    {
+      "order": 11,
+      "event": "old package uninstall command begins",
+      "utc": "2026-10-22T16:40:26.862307+00:00"
+    },
+    {
+      "order": 12,
+      "event": "exact c4 APK install command begins",
+      "utc": "2026-10-22T16:40:27.687563+00:00"
+    },
+    {
+      "order": 13,
+      "event": "frozen pre-enable log prefix cut",
+      "utc": "2026-10-22T16:40:58.785032+00:00",
+      "exclusive_end_offset": 3843702
+    },
+    {
+      "order": 14,
+      "event": "c4 Trime IME enable command begins",
+      "utc": "2026-10-22T16:40:58.785666+00:00"
+    },
+    {
+      "order": 15,
+      "event": "c4 Trime IME set command begins",
+      "utc": "2026-10-22T16:40:59.020812+00:00"
+    },
+    {
+      "order": 16,
+      "event": "later native Trime process identity probe",
+      "utc": "2026-10-22T16:41:05.071225+00:00",
+      "pid": 2228,
+      "starttime": "18495"
+    }
+  ],
+  "ordering_checks": {
+    "device_to_utc_mapping_basis": "The device 00:40:08.610 SystemUI dialog interaction pairs with host command #17 at 16:40:08.718Z, supporting device local time UTC+08:00 for these rows.",
+    "phone_am_anr_seconds_before_c4_install_start": 83.619563,
+    "systemui_am_anr_seconds_before_c4_install_start": 78.985563,
+    "systemui_detail_seconds_before_c4_install_start": 61.555563,
+    "systemui_am_anr_seconds_before_c4_ime_enable_start": 110.083666,
+    "systemui_am_anr_seconds_before_later_process_identity_probe": 116.369225,
+    "wait_action_seconds_before_c4_install_start": 18.799563,
+    "prefix_cut_seconds_before_c4_ime_enable_start": 0.000634,
+    "strict_order_assertion_passed": true
+  },
+  "causation_and_evidence_boundary": {
+    "status": "UNRESOLVED_RETAINED",
+    "proven": [
+      "Both retained ANR event rows predate exact c4 installation.",
+      "The SystemUI ANR predates c4 IME enable/set and any matching Trime process-start marker in the frozen prefix.",
+      "An old, byte-different Trime package was present; its later dump says stopped=true; the post-event baseline default/enabled IME is LatinIME only.",
+      "The SystemUI ANR dialog was visibly present before the recorded Wait tap and absent in the one later screenshot."
+    ],
+    "not_proven": [
+      "Root cause of either ANR.",
+      "That the emulator or full Android system was otherwise healthy or ANR-free.",
+      "That clicking Wait cured the SystemUI condition.",
+      "An exhaustive absence of an old-package process at the ANR instant, because no pre-install ps snapshot exists.",
+      "Any business-case result or terminal outcome of api35-c4-run1.",
+      "Any exemption, waiver, harmlessness, or general product conclusion from the unknown causation."
+    ],
+    "disposition": "Treat the ANRs as a retained precondition limitation for the still-running session. Temporal exclusion of the new c4 installation is narrow and does not erase the events or assign their cause."
+  },
+  "nonterminal_run_state_at_generation": {
+    "snapshot_utc": "2026-10-22T16:45:08.073699+00:00",
+    "completion_json_path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-run1/completion.json",
+    "completion_json_exists": false,
+    "source_device_log_current_bytes_at_generation": 39679874,
+    "source_device_log_is_larger_than_qualified_prefix": true,
+    "host_process_snapshot": {
+      "controller": {
+        "pid": 199291,
+        "present": true,
+        "ppid": 3423,
+        "starttime": "1229731",
+        "cmdline": "python3 /home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/run-api35-c4-v7.py"
+      },
+      "emulator": {
+        "pid": 199292,
+        "present": true,
+        "ppid": 199291,
+        "starttime": "1229771",
+        "cmdline": "/home/xumin/Public/android-toolchain/android-sdk/emulator/qemu/linux-x86_64/qemu-system-x86_64-headless -avd trime_readiness_api35_20261022 -sysdir /home/xumin/Public/Trime/build/readiness-20261022/api35/system-images -no-snapshot -no-window -no-boot-anim -gpu swangle -cores 2 -memory 2304 -port 5584 -accel on -feature -Vulkan"
+      },
+      "prep_helper": {
+        "pid": 199355,
+        "present": true,
+        "ppid": 3423,
+        "starttime": "1229849",
+        "cmdline": "python3 -i /home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/t9_smoke_helper_v6.py --binding /home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/original-apk-binding-c4-v7.json --serial emulator-5584 --api 35 --output /home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-prep-native"
+      },
+      "logcat_collector": {
+        "pid": 200747,
+        "present": true,
+        "ppid": 199291,
+        "starttime": "1236330",
+        "cmdline": "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb -s emulator-5584 logcat -b all -v threadtime"
+      }
+    },
+    "session_running_at_generation": true,
+    "full_live_log_hashed_or_qualified": false,
+    "terminal_conclusion_allowed": false
+  },
+  "raw_status_retained": {
+    "prep_report_passed": false,
+    "prep_report_checks": [],
+    "prep_report_has_completed_field": false,
+    "business_passed": false,
+    "all_system_no_anr_claim": false,
+    "zero_warning_or_zero_error_claim": false,
+    "product_bug_claim": false
+  }
+}

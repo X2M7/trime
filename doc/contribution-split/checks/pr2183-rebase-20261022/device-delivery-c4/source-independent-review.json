@@ -1,0 +1,80 @@
+{
+  "schema": "trime-independent-source-review/v1",
+  "generated_utc": "2026-10-22T15:35:29.344377+00:00",
+  "review_mode": "HOST_ONLY_STATIC_NO_ADB_VM_GRADLE_NO_SOURCE_EDIT",
+  "verdict": "PASS_MINIMAL_FIX_SCOPE_NO_BLOCKER",
+  "base": {
+    "head": "b14a2f1e0565cec4953f5a974bfcea023875369f",
+    "tree": "3b40eef39ce8245096c74b1a3a5066d9b4009df1"
+  },
+  "reviewed_diff": {
+    "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/ascii-mode-source-independent1/reviewed.diff",
+    "sha256": "2b4d7d6171bf7a77daa8b564e194ead13a2250c7b79cd82dc2014b97e8be477e",
+    "files": [
+      {
+        "path": "app/src/main/java/com/osfans/trime/ime/keyboard/KeyboardWindow.kt",
+        "base_sha256": "764829383a3789649f7c42cdcc8efefcbfaa5c9ecffd052b76fa3a90dabcaeb4",
+        "reviewed_worktree_sha256": "38adde86142312d348ac05388d0aff1a7d3e61bdb76e18273645b79845d1dbd7"
+      },
+      {
+        "path": "doc/t9-input.md",
+        "base_sha256": "24d3a29209fe629b8a6198624ee0df43110736f70da527ac18ad6335000394aa",
+        "reviewed_worktree_sha256": "2cb473b0bb404569030fb99e5d5beca4530d809e6ec09f9a6ed5ed3034599bf0"
+      }
+    ],
+    "diff_check": "PASS",
+    "numstat": {
+      "insertions": 11,
+      "deletions": 2
+    }
+  },
+  "regression_provenance": {
+    "old_apk_head": "b14a2f1e0565cec4953f5a974bfcea023875369f",
+    "old_apk_sha256": "38b8523cd1334ce0434004b80c16766ca2c6ffbf0a95ac19bc53eaade51921ee",
+    "observed_sequence": "number editor established Rime ascii_mode=true; following email editor selected a full keyboard whose cached lastAsciiMode=false; asynchronous attachment then posted false and the typed a remained native composition instead of editor text.",
+    "scope": "The old runtime failure remains evidence against b14. This static review does not qualify the patch or a replacement APK."
+  },
+  "reviewed_state_machine": {
+    "number_to_email": {
+      "result": "FIXED_BY_DESIGN",
+      "reason": "onStartInput records editorForcesAsciiMode=true before switchKeyboard. The later queued attachKeyboard ignores the cached layout reset/last mode and selects targetMode=true, so it cannot enqueue the stale false that caused the observed overwrite."
+    },
+    "same_cached_target": {
+      "result": "COVERED",
+      "reason": "If switchKeyboard returns because the target is already current, the existing onStartInput forced branch still posts ascii_mode=true whenever the current cached Rime status is false."
+    },
+    "return_to_normal_editor": {
+      "result": "PRESERVED",
+      "reason": "onStartInput clears editorForcesAsciiMode before scheduling the normal layout. attachKeyboard then uses the original resetAsciiMode/asciiMode/lastAsciiMode selection, while the unchanged tempAsciiMode branch restores the mode saved before the forced editor."
+    },
+    "manual_normal_mode_memory": {
+      "result": "PRESERVED_IN_PATCH_SCOPE",
+      "reason": "No normal-editor selection, tempAsciiMode save/restore, detach lastAsciiMode assignment, schema lock memory, or manual option handler is changed. Layout attachment gets forced priority only while the current EditorInfo requires ASCII."
+    },
+    "queued_attachments": {
+      "result": "LATEST_EDITOR_REQUIREMENT_WINS",
+      "reason": "The field is assigned synchronously on each onStartInput before its attachment is enqueued. An attachment delayed past a newer onStartInput reads the newer editor requirement; FIFO main-executor target switches then converge on the newest target and mode rather than reapplying the old editor requirement."
+    },
+    "schema_callback_during_forced_editor": {
+      "result": "CONSISTENT",
+      "reason": "Any layout attached by a schema callback while the current editor requires ASCII also selects true, which preserves the EditorInfo requirement."
+    }
+  },
+  "documentation_review": {
+    "result": "ACCURATE",
+    "text_scope": "The added sentence precisely describes editor-required ASCII priority, including number-to-email/password, without claiming runtime validation."
+  },
+  "blocking_findings": [],
+  "required_validation": [
+    "Build a replacement APK from the committed successor head; never reuse b14 results as patch validation.",
+    "Repeat trime R4 number -> email -> literal a and require exact editor text a with no native preedit/candidates.",
+    "Return to a normal editor and prove the previously saved Chinese/ASCII mode is restored.",
+    "Exercise a same-target forced editor and the standard theme to cover cached-target behavior.",
+    "Retain exact source/APK/PID/theme bindings and authenticated stop for each replacement session."
+  ],
+  "limitations": [
+    "Static review only; no compile, Gradle, emulator, ADB, or runtime action was performed.",
+    "The existing asynchronous Rime-job queue and statusCached timing were not redesigned. Rapid focus churn remains a separate runtime stress case, not evidence of a blocker in this two-file diff.",
+    "No API21, API35, or physical-device pass is inferred."
+  ]
+}

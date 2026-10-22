@@ -1,0 +1,516 @@
+{
+  "schema": 1,
+  "passed": true,
+  "producer": "GitHub Actions upstream pull_request workflow",
+  "repository": "X2M7/trime",
+  "run_id": 39806428888,
+  "artifact_id": 12438572087,
+  "source_head": "c4b613f78835e7b914e02447955c6b89fe9839ab",
+  "source_tree": "d7639dfce3b6b5646bb004479a688148c1b19900",
+  "source_parent": "b14a2f1e0565cec4953f5a974bfcea023875369f",
+  "source_base": "19b048494ffa55cae52d5385dfa6d0611461c27d",
+  "source_checkout": "/home/xumin/Public/Trime-pr-t9-rebased",
+  "apk_build_commit": "02997dc933424a7f71dfe78fda48f6168645f66a",
+  "apk_build_tree": "d7639dfce3b6b5646bb004479a688148c1b19900",
+  "artifact_archive": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/c4-pr-run-39806428888-ubuntu1/artifact-12438572087-trime-ubuntu-26.04.zip",
+  "artifact_archive_sha256": "7258cfa0e3dbafad97f1f8060a3e2a9d4a32eec76d7bf80e88d080d900e3a079",
+  "output_metadata": {
+    "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/c4-pr-run-39806428888-ubuntu1/files/output-metadata.json",
+    "sha256": "66d9df9bca62a34da36c66e77c06845cae3c97bac72b09745196b41652cc7b4f",
+    "content": {
+      "version": 3,
+      "artifactType": {
+        "type": "APK",
+        "kind": "Directory"
+      },
+      "applicationId": "com.osfans.trime.debug",
+      "variantName": "debug",
+      "elements": [
+        {
+          "type": "ONE_OF_MANY",
+          "filters": [
+            {
+              "filterType": "ABI",
+              "value": "armeabi-v7a"
+            }
+          ],
+          "attributes": [],
+          "versionCode": 20261101,
+          "versionName": "3.3.13",
+          "outputFile": "com.osfans.trime-v3.3.12-105-g02997dc9-armeabi-v7a-debug.apk"
+        },
+        {
+          "type": "ONE_OF_MANY",
+          "filters": [
+            {
+              "filterType": "ABI",
+              "value": "x86"
+            }
+          ],
+          "attributes": [],
+          "versionCode": 20261101,
+          "versionName": "3.3.13",
+          "outputFile": "com.osfans.trime-v3.3.12-105-g02997dc9-x86-debug.apk"
+        },
+        {
+          "type": "ONE_OF_MANY",
+          "filters": [
+            {
+              "filterType": "ABI",
+              "value": "arm64-v8a"
+            }
+          ],
+          "attributes": [],
+          "versionCode": 20261101,
+          "versionName": "3.3.13",
+          "outputFile": "com.osfans.trime-v3.3.12-105-g02997dc9-arm64-v8a-debug.apk"
+        },
+        {
+          "type": "ONE_OF_MANY",
+          "filters": [
+            {
+              "filterType": "ABI",
+              "value": "x86_64"
+            }
+          ],
+          "attributes": [],
+          "versionCode": 20261101,
+          "versionName": "3.3.13",
+          "outputFile": "com.osfans.trime-v3.3.12-105-g02997dc9-x86_64-debug.apk"
+        }
+      ],
+      "elementType": "File",
+      "minSdkVersionForDexing": 21
+    }
+  },
+  "checkout_identity": "synthetic merge commit; official commit API proves parents base+c4 and tree exactly equals c4 tree",
+  "runtime_binding_eligible": false,
+  "commands": [
+    {
+      "label": "arm64-v8a-badging",
+      "argv": [
+        "/home/xumin/Public/android-toolchain/android-sdk/build-tools/36.0.0/aapt",
+        "dump",
+        "badging",
+        "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/c4-pr-run-39806428888-ubuntu1/files/com.osfans.trime-v3.3.12-105-g02997dc9-arm64-v8a-debug.apk"
+      ],
+      "exit_code": 0,
+      "stdout": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/c4-pr-run-39806428888-ubuntu1/apk-audit/arm64-v8a-badging.stdout",
+      "stdout_sha256": "f79be78f3445ab9c6250aa6d7515483fbaa751dcef7042e9af20b9d93926ed92",
+      "stderr": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/c4-pr-run-39806428888-ubuntu1/apk-audit/arm64-v8a-badging.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "arm64-v8a-signer",
+      "argv": [
+        "/home/xumin/Public/android-toolchain/android-sdk/build-tools/36.0.0/apksigner",
+        "-JXmx256m",
+        "-JXX:MaxMetaspaceSize=128m",
+        "verify",
+        "--verbose",
+        "--print-certs",
+        "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/c4-pr-run-39806428888-ubuntu1/files/com.osfans.trime-v3.3.12-105-g02997dc9-arm64-v8a-debug.apk"
+      ],
+      "exit_code": 0,
+      "stdout": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/c4-pr-run-39806428888-ubuntu1/apk-audit/arm64-v8a-signer.stdout",
+      "stdout_sha256": "f763fb961bcc66d2d649ba91d4ff27b917c176afe126da179847d50654ae080f",
+      "stderr": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/c4-pr-run-39806428888-ubuntu1/apk-audit/arm64-v8a-signer.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "arm64-v8a-buildconfig",
+      "argv": [
+        "/home/xumin/Public/android-toolchain/android-sdk/cmdline-tools/latest/bin/apkanalyzer",
+        "dex",
+        "code",
+        "--class",
+        "com.osfans.trime.BuildConfig",
+        "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/c4-pr-run-39806428888-ubuntu1/files/com.osfans.trime-v3.3.12-105-g02997dc9-arm64-v8a-debug.apk"
+      ],
+      "exit_code": 0,
+      "stdout": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/c4-pr-run-39806428888-ubuntu1/apk-audit/arm64-v8a-buildconfig.stdout",
+      "stdout_sha256": "e52abe79eb59ad36e73693062967204fee470d2b14e1f7110bbd61576101392a",
+      "stderr": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/c4-pr-run-39806428888-ubuntu1/apk-audit/arm64-v8a-buildconfig.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "armeabi-v7a-badging",
+      "argv": [
+        "/home/xumin/Public/android-toolchain/android-sdk/build-tools/36.0.0/aapt",
+        "dump",
+        "badging",
+        "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/c4-pr-run-39806428888-ubuntu1/files/com.osfans.trime-v3.3.12-105-g02997dc9-armeabi-v7a-debug.apk"
+      ],
+      "exit_code": 0,
+      "stdout": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/c4-pr-run-39806428888-ubuntu1/apk-audit/armeabi-v7a-badging.stdout",
+      "stdout_sha256": "52b02b11cd7327fee072373381ab54151fb767ca478b9ab7d0ceb5860726e25f",
+      "stderr": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/c4-pr-run-39806428888-ubuntu1/apk-audit/armeabi-v7a-badging.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "armeabi-v7a-signer",
+      "argv": [
+        "/home/xumin/Public/android-toolchain/android-sdk/build-tools/36.0.0/apksigner",
+        "-JXmx256m",
+        "-JXX:MaxMetaspaceSize=128m",
+        "verify",
+        "--verbose",
+        "--print-certs",
+        "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/c4-pr-run-39806428888-ubuntu1/files/com.osfans.trime-v3.3.12-105-g02997dc9-armeabi-v7a-debug.apk"
+      ],
+      "exit_code": 0,
+      "stdout": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/c4-pr-run-39806428888-ubuntu1/apk-audit/armeabi-v7a-signer.stdout",
+      "stdout_sha256": "f763fb961bcc66d2d649ba91d4ff27b917c176afe126da179847d50654ae080f",
+      "stderr": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/c4-pr-run-39806428888-ubuntu1/apk-audit/armeabi-v7a-signer.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "armeabi-v7a-buildconfig",
+      "argv": [
+        "/home/xumin/Public/android-toolchain/android-sdk/cmdline-tools/latest/bin/apkanalyzer",
+        "dex",
+        "code",
+        "--class",
+        "com.osfans.trime.BuildConfig",
+        "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/c4-pr-run-39806428888-ubuntu1/files/com.osfans.trime-v3.3.12-105-g02997dc9-armeabi-v7a-debug.apk"
+      ],
+      "exit_code": 0,
+      "stdout": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/c4-pr-run-39806428888-ubuntu1/apk-audit/armeabi-v7a-buildconfig.stdout",
+      "stdout_sha256": "e52abe79eb59ad36e73693062967204fee470d2b14e1f7110bbd61576101392a",
+      "stderr": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/c4-pr-run-39806428888-ubuntu1/apk-audit/armeabi-v7a-buildconfig.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "x86-badging",
+      "argv": [
+        "/home/xumin/Public/android-toolchain/android-sdk/build-tools/36.0.0/aapt",
+        "dump",
+        "badging",
+        "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/c4-pr-run-39806428888-ubuntu1/files/com.osfans.trime-v3.3.12-105-g02997dc9-x86-debug.apk"
+      ],
+      "exit_code": 0,
+      "stdout": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/c4-pr-run-39806428888-ubuntu1/apk-audit/x86-badging.stdout",
+      "stdout_sha256": "c20b7b400bb2762ca0e105a627bf6dac83a1e34450c418452009810682a87831",
+      "stderr": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/c4-pr-run-39806428888-ubuntu1/apk-audit/x86-badging.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "x86-signer",
+      "argv": [
+        "/home/xumin/Public/android-toolchain/android-sdk/build-tools/36.0.0/apksigner",
+        "-JXmx256m",
+        "-JXX:MaxMetaspaceSize=128m",
+        "verify",
+        "--verbose",
+        "--print-certs",
+        "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/c4-pr-run-39806428888-ubuntu1/files/com.osfans.trime-v3.3.12-105-g02997dc9-x86-debug.apk"
+      ],
+      "exit_code": 0,
+      "stdout": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/c4-pr-run-39806428888-ubuntu1/apk-audit/x86-signer.stdout",
+      "stdout_sha256": "f763fb961bcc66d2d649ba91d4ff27b917c176afe126da179847d50654ae080f",
+      "stderr": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/c4-pr-run-39806428888-ubuntu1/apk-audit/x86-signer.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "x86-buildconfig",
+      "argv": [
+        "/home/xumin/Public/android-toolchain/android-sdk/cmdline-tools/latest/bin/apkanalyzer",
+        "dex",
+        "code",
+        "--class",
+        "com.osfans.trime.BuildConfig",
+        "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/c4-pr-run-39806428888-ubuntu1/files/com.osfans.trime-v3.3.12-105-g02997dc9-x86-debug.apk"
+      ],
+      "exit_code": 0,
+      "stdout": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/c4-pr-run-39806428888-ubuntu1/apk-audit/x86-buildconfig.stdout",
+      "stdout_sha256": "e52abe79eb59ad36e73693062967204fee470d2b14e1f7110bbd61576101392a",
+      "stderr": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/c4-pr-run-39806428888-ubuntu1/apk-audit/x86-buildconfig.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "x86_64-badging",
+      "argv": [
+        "/home/xumin/Public/android-toolchain/android-sdk/build-tools/36.0.0/aapt",
+        "dump",
+        "badging",
+        "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/c4-pr-run-39806428888-ubuntu1/files/com.osfans.trime-v3.3.12-105-g02997dc9-x86_64-debug.apk"
+      ],
+      "exit_code": 0,
+      "stdout": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/c4-pr-run-39806428888-ubuntu1/apk-audit/x86_64-badging.stdout",
+      "stdout_sha256": "b5c63744569115a6029a29566e29f3897ea694f26cdbc427d6d8374909e9ae6d",
+      "stderr": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/c4-pr-run-39806428888-ubuntu1/apk-audit/x86_64-badging.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "x86_64-signer",
+      "argv": [
+        "/home/xumin/Public/android-toolchain/android-sdk/build-tools/36.0.0/apksigner",
+        "-JXmx256m",
+        "-JXX:MaxMetaspaceSize=128m",
+        "verify",
+        "--verbose",
+        "--print-certs",
+        "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/c4-pr-run-39806428888-ubuntu1/files/com.osfans.trime-v3.3.12-105-g02997dc9-x86_64-debug.apk"
+      ],
+      "exit_code": 0,
+      "stdout": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/c4-pr-run-39806428888-ubuntu1/apk-audit/x86_64-signer.stdout",
+      "stdout_sha256": "f763fb961bcc66d2d649ba91d4ff27b917c176afe126da179847d50654ae080f",
+      "stderr": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/c4-pr-run-39806428888-ubuntu1/apk-audit/x86_64-signer.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "x86_64-buildconfig",
+      "argv": [
+        "/home/xumin/Public/android-toolchain/android-sdk/cmdline-tools/latest/bin/apkanalyzer",
+        "dex",
+        "code",
+        "--class",
+        "com.osfans.trime.BuildConfig",
+        "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/c4-pr-run-39806428888-ubuntu1/files/com.osfans.trime-v3.3.12-105-g02997dc9-x86_64-debug.apk"
+      ],
+      "exit_code": 0,
+      "stdout": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/c4-pr-run-39806428888-ubuntu1/apk-audit/x86_64-buildconfig.stdout",
+      "stdout_sha256": "e52abe79eb59ad36e73693062967204fee470d2b14e1f7110bbd61576101392a",
+      "stderr": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/c4-pr-run-39806428888-ubuntu1/apk-audit/x86_64-buildconfig.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "parent-head-native-asset-diff",
+      "argv": [
+        "git",
+        "-C",
+        "/home/xumin/Public/Trime-pr-t9-rebased",
+        "diff",
+        "--name-status",
+        "b14a2f1e0565cec4953f5a974bfcea023875369f",
+        "c4b613f78835e7b914e02447955c6b89fe9839ab",
+        "--",
+        "app/src/main/jni",
+        "app/src/main/assets",
+        "app/data"
+      ],
+      "exit_code": 0,
+      "stdout": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/c4-pr-run-39806428888-ubuntu1/apk-audit/parent-head-native-asset-diff.stdout",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/c4-pr-run-39806428888-ubuntu1/apk-audit/parent-head-native-asset-diff.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "pin-head-submodule-gitlink-diff",
+      "argv": [
+        "git",
+        "-C",
+        "/home/xumin/Public/Trime-pr-t9-rebased",
+        "diff",
+        "--raw",
+        "9f86bc8f1d11d65d2e22e437f111a965bc2faba5",
+        "c4b613f78835e7b914e02447955c6b89fe9839ab",
+        "--",
+        ".gitmodules",
+        "app/data/rime/essay",
+        "app/data/rime/luna-pinyin",
+        "app/data/rime/prelude",
+        "app/data/rime/stroke",
+        "app/src/main/jni/librime",
+        "app/src/main/jni/librime-lua",
+        "app/src/main/jni/librime-lua-deps",
+        "app/src/main/jni/librime-octagram",
+        "app/src/main/jni/librime-predict",
+        "app/src/main/jni/snappy"
+      ],
+      "exit_code": 0,
+      "stdout": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/c4-pr-run-39806428888-ubuntu1/apk-audit/pin-head-submodule-gitlink-diff.stdout",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/c4-pr-run-39806428888-ubuntu1/apk-audit/pin-head-submodule-gitlink-diff.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "recursive-submodule-pins",
+      "argv": [
+        "git",
+        "-C",
+        "/home/xumin/Public/Trime-pr-t9-input",
+        "submodule",
+        "status",
+        "--recursive"
+      ],
+      "exit_code": 0,
+      "stdout": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/c4-pr-run-39806428888-ubuntu1/apk-audit/recursive-submodule-pins.stdout",
+      "stdout_sha256": "e54819dbd2dec880b9d15f5cbc23a6aa3391e349b95b5a68853fae2774e5b974",
+      "stderr": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/c4-pr-run-39806428888-ubuntu1/apk-audit/recursive-submodule-pins.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "apks": [
+    {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/c4-pr-run-39806428888-ubuntu1/files/com.osfans.trime-v3.3.12-105-g02997dc9-arm64-v8a-debug.apk",
+      "bytes": 20603671,
+      "sha256": "026de573a3b0144aefd6aac8c447ad8831fdf534f60cc02be667b323269b812f",
+      "abi": "arm64-v8a",
+      "native_entry_count": 1,
+      "native_assets": [
+        {
+          "entry": "lib/arm64-v8a/librime_jni.so",
+          "bytes": 15071232,
+          "sha256": "532a630b506331401393e260f831bac0e89605d3f0d296750380065425f65634",
+          "elf_class": "ELF64",
+          "elf_machine": "AArch64"
+        }
+      ],
+      "theme_asset_sha256": {
+        "assets/shared/trime.yaml": "ff65e4a8ada630dcd14b9d7f036201579ddefa4758868df1b497b45dcfef2d08",
+        "assets/shared/tongwenfeng.trime.yaml": "e758ce8f9059f0fbe3c27c2de9c5faffff761b825feed437075f285e15af9147"
+      },
+      "buildconfig_commit_hash": "02997dc933424a7f71dfe78fda48f6168645f66a",
+      "signer_certificate_sha256": "12a12700c16ea9ea06f42141904017d5437fcfda2955864a6349a0eefdcb1d3f",
+      "signature_warnings": [
+        "WARNING: META-INF/services/kotlinx.coroutines.CoroutineExceptionHandler not protected by signature. Unauthorized modifications to this JAR entry will not be detected. Delete or move the entry outside of META-INF/.",
+        "WARNING: META-INF/services/kotlinx.coroutines.internal.MainDispatcherFactory not protected by signature. Unauthorized modifications to this JAR entry will not be detected. Delete or move the entry outside of META-INF/."
+      ],
+      "package": "com.osfans.trime.debug",
+      "min_sdk": 21,
+      "target_sdk": 37
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/c4-pr-run-39806428888-ubuntu1/files/com.osfans.trime-v3.3.12-105-g02997dc9-armeabi-v7a-debug.apk",
+      "bytes": 19405408,
+      "sha256": "acb790d99145e8b26acdf42e4c734a9f00991c8bc86b34be5ec167ce523c530d",
+      "abi": "armeabi-v7a",
+      "native_entry_count": 1,
+      "native_assets": [
+        {
+          "entry": "lib/armeabi-v7a/librime_jni.so",
+          "bytes": 9090452,
+          "sha256": "c109eb11424ef6ca62d70fd47e9dc63b4cb563c792247b0f21563bc0f2b7b282",
+          "elf_class": "ELF32",
+          "elf_machine": "ARM"
+        }
+      ],
+      "theme_asset_sha256": {
+        "assets/shared/trime.yaml": "ff65e4a8ada630dcd14b9d7f036201579ddefa4758868df1b497b45dcfef2d08",
+        "assets/shared/tongwenfeng.trime.yaml": "e758ce8f9059f0fbe3c27c2de9c5faffff761b825feed437075f285e15af9147"
+      },
+      "buildconfig_commit_hash": "02997dc933424a7f71dfe78fda48f6168645f66a",
+      "signer_certificate_sha256": "12a12700c16ea9ea06f42141904017d5437fcfda2955864a6349a0eefdcb1d3f",
+      "signature_warnings": [
+        "WARNING: META-INF/services/kotlinx.coroutines.CoroutineExceptionHandler not protected by signature. Unauthorized modifications to this JAR entry will not be detected. Delete or move the entry outside of META-INF/.",
+        "WARNING: META-INF/services/kotlinx.coroutines.internal.MainDispatcherFactory not protected by signature. Unauthorized modifications to this JAR entry will not be detected. Delete or move the entry outside of META-INF/."
+      ],
+      "package": "com.osfans.trime.debug",
+      "min_sdk": 21,
+      "target_sdk": 37
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/c4-pr-run-39806428888-ubuntu1/files/com.osfans.trime-v3.3.12-105-g02997dc9-x86-debug.apk",
+      "bytes": 21108501,
+      "sha256": "75b2b8541a5f84aa860158e08e5dd14b412eb3b5c5aead9a5aa97a1e70f9351b",
+      "abi": "x86",
+      "native_entry_count": 1,
+      "native_assets": [
+        {
+          "entry": "lib/x86/librime_jni.so",
+          "bytes": 15849256,
+          "sha256": "44c24c9174bb1761e42492567c2cfda64764bbf77931343f265984a5e1cb1475",
+          "elf_class": "ELF32",
+          "elf_machine": "Intel 80386"
+        }
+      ],
+      "theme_asset_sha256": {
+        "assets/shared/trime.yaml": "ff65e4a8ada630dcd14b9d7f036201579ddefa4758868df1b497b45dcfef2d08",
+        "assets/shared/tongwenfeng.trime.yaml": "e758ce8f9059f0fbe3c27c2de9c5faffff761b825feed437075f285e15af9147"
+      },
+      "buildconfig_commit_hash": "02997dc933424a7f71dfe78fda48f6168645f66a",
+      "signer_certificate_sha256": "12a12700c16ea9ea06f42141904017d5437fcfda2955864a6349a0eefdcb1d3f",
+      "signature_warnings": [
+        "WARNING: META-INF/services/kotlinx.coroutines.CoroutineExceptionHandler not protected by signature. Unauthorized modifications to this JAR entry will not be detected. Delete or move the entry outside of META-INF/.",
+        "WARNING: META-INF/services/kotlinx.coroutines.internal.MainDispatcherFactory not protected by signature. Unauthorized modifications to this JAR entry will not be detected. Delete or move the entry outside of META-INF/."
+      ],
+      "package": "com.osfans.trime.debug",
+      "min_sdk": 21,
+      "target_sdk": 37
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/c4-pr-run-39806428888-ubuntu1/files/com.osfans.trime-v3.3.12-105-g02997dc9-x86_64-debug.apk",
+      "bytes": 20673177,
+      "sha256": "f2337f84da57ebfc67337b29394affbf4f2af0b5df7a5581475833df7a1c98e5",
+      "abi": "x86_64",
+      "native_entry_count": 1,
+      "native_assets": [
+        {
+          "entry": "lib/x86_64/librime_jni.so",
+          "bytes": 14726000,
+          "sha256": "aac1d2aa0c51517f540c3050337736477b4c728803d9cc9fdeeb6755f2006409",
+          "elf_class": "ELF64",
+          "elf_machine": "Advanced Micro Devices X86-64"
+        }
+      ],
+      "theme_asset_sha256": {
+        "assets/shared/trime.yaml": "ff65e4a8ada630dcd14b9d7f036201579ddefa4758868df1b497b45dcfef2d08",
+        "assets/shared/tongwenfeng.trime.yaml": "e758ce8f9059f0fbe3c27c2de9c5faffff761b825feed437075f285e15af9147"
+      },
+      "buildconfig_commit_hash": "02997dc933424a7f71dfe78fda48f6168645f66a",
+      "signer_certificate_sha256": "12a12700c16ea9ea06f42141904017d5437fcfda2955864a6349a0eefdcb1d3f",
+      "signature_warnings": [
+        "WARNING: META-INF/services/kotlinx.coroutines.CoroutineExceptionHandler not protected by signature. Unauthorized modifications to this JAR entry will not be detected. Delete or move the entry outside of META-INF/.",
+        "WARNING: META-INF/services/kotlinx.coroutines.internal.MainDispatcherFactory not protected by signature. Unauthorized modifications to this JAR entry will not be detected. Delete or move the entry outside of META-INF/."
+      ],
+      "package": "com.osfans.trime.debug",
+      "min_sdk": 21,
+      "target_sdk": 37
+    }
+  ],
+  "runtime_arm64_apk": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/c4-pr-run-39806428888-ubuntu1/files/com.osfans.trime-v3.3.12-105-g02997dc9-arm64-v8a-debug.apk",
+  "runtime_arm64_apk_sha256": "026de573a3b0144aefd6aac8c447ad8831fdf534f60cc02be667b323269b812f",
+  "shared_debug_certificate_sha256": "12a12700c16ea9ea06f42141904017d5437fcfda2955864a6349a0eefdcb1d3f",
+  "submodule_pin_binding": {
+    "top_level_gitlinks_unchanged_from_pin_head": true,
+    "top_level_gitlinks": 10,
+    "recursive_pin_count": 20,
+    "pins": [
+      " 0766c929ec3e578c2c80861e988decd3703a1c3d app/data/rime/essay (0766c92)",
+      " 46acf03142c12b5aeed7002675046bf7255eed35 app/data/rime/luna-pinyin (46acf03)",
+      " 3803f09458072e03b9ed396692ce7e1d35c88c95 app/data/rime/prelude (3803f09)",
+      " 7c9874c6b2e0b94947653e9a7de6f99623ff27e4 app/data/rime/stroke (7c9874c)",
+      " 7bc3fb0005a03aff1c086611e4d52bb7f6444fdd app/src/main/jni/librime (1.17.0-66-g7bc3fb00)",
+      " 7b134a5c82c0c0b5698bb6bf7a835b230c5638e4 app/src/main/jni/librime/deps/glog (v0.4.0-447-g7b134a5)",
+      " f8d7d77c06936315286eb55f8de22cd23c188571 app/src/main/jni/librime/deps/googletest (release-1.8.0-3335-gf8d7d77c)",
+      " 99b3c03b3284f5886f9ef9a4ef703d57373e61be app/src/main/jni/librime/deps/leveldb (1.23)",
+      " bf585a2789e30585b4e3ce6baf11ef2750b54677 app/src/main/jni/librime/deps/leveldb/third_party/benchmark (v1.5.2-14-gbf585a2)",
+      " c27acebba3b3c7d94209e0467b0a801db4af73ed app/src/main/jni/librime/deps/leveldb/third_party/googletest (release-1.8.0-2179-gc27acebb)",
+      " 3e87d53b78e15f2f43783d5e376561a8c9722051 app/src/main/jni/librime/deps/marisa-trie (v0.2.5-198-g3e87d53)",
+      " 025f371dc76b598d77384fbdab90c937471844d8 app/src/main/jni/librime/deps/opencc (ver.1.4.2)",
+      " 2f86d13775d119edbb69af52e5f566fd65c6953b app/src/main/jni/librime/deps/yaml-cpp (0.8.0-74-g2f86d13)",
+      " 68f9c364a2d25a04c7d4794981d7c796b05ab627 app/src/main/jni/librime-lua (lua-dev-build-17-214-g68f9c36)",
+      " 9c53b362229766a97b83683b9541c46679118a90 app/src/main/jni/librime-lua-deps (9c53b36)",
+      " bd12863f45fbbd5c7db06d5ec8be8987b10253bf app/src/main/jni/librime-octagram (bd12863)",
+      " 67c2881914a0242fc14ec7d6877782771b75800c app/src/main/jni/librime-predict (data-1.0-17-g67c2881)",
+      " 9c28114a38866f6deeaa826db918293bc28ae410 app/src/main/jni/snappy (1.3.1)",
+      " b20cea674170b2ba45da0dfaf03953cdea473d0d app/src/main/jni/snappy/third_party/benchmark (v1.9.4-9-gb20cea6)",
+      " b796f7d44681514f58a683a3a71ff17c94edb0c1 app/src/main/jni/snappy/third_party/googletest (release-1.8.0-3137-gb796f7d4)"
+    ],
+    "resolution_checkout": "/home/xumin/Public/Trime-pr-t9-input"
+  },
+  "synthetic_merge_proof": {
+    "schema": 1,
+    "source": "GitHub commit REST via connected GitHub app",
+    "url": "https://api.github.com/repos/osfans/trime/commits/02997dc933424a7f71dfe78fda48f6168645f66a",
+    "sha": "02997dc933424a7f71dfe78fda48f6168645f66a",
+    "tree": "d7639dfce3b6b5646bb004479a688148c1b19900",
+    "parents": [
+      "19b048494ffa55cae52d5385dfa6d0611461c27d",
+      "c4b613f78835e7b914e02447955c6b89fe9839ab"
+    ],
+    "commit_message": "Merge c4b613f78835e7b914e02447955c6b89fe9839ab into 19b048494ffa55cae52d5385dfa6d0611461c27d",
+    "github_signature_verified": true,
+    "collected_utc": "2026-10-22T15:47:00Z"
+  },
+  "limits": [
+    "Synthetic-merge Debug APK artifact with exact c4-equivalent source tree only; no direct-head or Release claim.",
+    "All APKs embed synthetic merge BuildConfig 02997dc, not direct head c4; these bytes must not satisfy v7 actual_build_commit==c4 or be delivered as exact-c4 runtime APK.",
+    "The synthetic commit's source tree equals c4's tree, but that does not erase the BuildConfig/provenance distinction.",
+    "Host inspection does not replace installation or behavior testing.",
+    "The Ubuntu job was completed/success when the artifact was collected; whole four-OS workflow qualification is separate.",
+    "Debug signing identity and any apksigner warnings are retained; this is not a release-signature claim.",
+    "Packaged ELF structure/hashes are verified; cached native compilation is not restated as a fresh compile claim."
+  ]
+}

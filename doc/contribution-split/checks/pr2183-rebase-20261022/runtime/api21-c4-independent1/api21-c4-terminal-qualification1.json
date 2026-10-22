@@ -1,0 +1,643 @@
+{
+  "schema": "trime-independent-terminal-qualification/v1",
+  "generated_utc": "2026-10-22T16:40:48.083409+00:00",
+  "review_mode": "HOST_ONLY_NO_ADB_VM_GRADLE_NO_FROZEN_INPUT_EDIT",
+  "verdict": "PASS_API21_C4_TERMINAL_EVIDENCE_BOUNDARY_WITH_WARNINGS_RETAINED",
+  "scope": {
+    "platform": "Android API21 emulator",
+    "source_head": "c4b613f78835e7b914e02447955c6b89fe9839ab",
+    "apk_sha256": "453c71544f67685db3b85fc91855ed27c5ff264d0a25671669642b0dc4b8732e",
+    "boot_id": "d75bca76-0594-45f7-9f2f-52a1a39ec013",
+    "target_pid": 2543,
+    "target_starttime": "18220",
+    "terminal_session_only": true,
+    "physical_device": "NOT_RUN",
+    "meaning": "The bounded terminal identity, log scan, memory, SDK, controlled cleanup, setting restore, and controller stop checks passed. Runtime warnings/errors remain retained and unresolved by this terminal audit."
+  },
+  "frozen_inputs": {
+    "binding": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/original-apk-binding-c4-v7.json",
+      "bytes": 4021,
+      "sha256": "52919b0ce3ee58c654f73c80008d4ea4575362f11d08eba540eb9207c4781778"
+    },
+    "launch": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-run1/launch.json",
+      "bytes": 1390,
+      "sha256": "a477f4ee80ac4b75901b4b06988b1a8940d5ee463aafad4132131461ea04020c"
+    },
+    "booted": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-run1/booted.json",
+      "bytes": 140,
+      "sha256": "2c523cef5bbccb6f3b38f01e06ed3258a853066498bc5d840ce6387a7043733d"
+    },
+    "completion": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-run1/completion.json",
+      "bytes": 1714,
+      "sha256": "87d9dcac2cf9296cb1f4989f701c27926dbe5a596f9628198e6bbcecdb28fd2d"
+    },
+    "device_logcat": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-run1/device-logcat.txt",
+      "bytes": 100652926,
+      "sha256": "cb358d3603f4ce9f1ef6eb7f287e5577813c900f9c48b7d1ef1b90d6a98966a7"
+    },
+    "memory_jsonl": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-run1/memory.jsonl",
+      "bytes": 124444,
+      "sha256": "eca7daa4ad468bf9ffe8fe7e2679d73a86f628e19f3333f91fd04a181e79a82a"
+    },
+    "cleanup_report": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-terminal-cleanup1/report.json",
+      "bytes": 18494,
+      "sha256": "c6545bc8b62f5c6d4fad864516e306e42eca72702de49b46ba112f256cb05b01"
+    },
+    "cleanup_result": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-terminal-cleanup1/terminal-device-cleanup-result.json",
+      "bytes": 1156,
+      "sha256": "bc8ae5bf83d6f07a052cfc37a09a6e714560b4d1b26f8bf2e4cd4ce23d4cf150"
+    },
+    "final_device_ps": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-terminal-cleanup1/final-ps.raw.txt",
+      "bytes": 5292,
+      "sha256": "c5538135a986b5a1877f71abd74611cd0324187a6c3619834d6ac1258400e7b6"
+    },
+    "sdk_before": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-original-sdk-before1.json",
+      "bytes": 3198,
+      "sha256": "50d4f133781b7010b3477c4e832f4213f0d693f36fb5862666784c0683f5363f"
+    },
+    "sdk_after": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-terminal-host-audit1/original-sdk-after.json",
+      "bytes": 2984,
+      "sha256": "65d7f92dc6b155954a90796ebc9ecc9f17b88227d2c63ca022e4f6c246db3f42"
+    },
+    "bounded_host_log_memory_audit": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-terminal-host-audit1/log-memory-controller-audit.json",
+      "bytes": 3030,
+      "sha256": "6e820c093924952e08faba124858afc0c5543200df585f1fe2f997c03633dc53"
+    },
+    "retained_target_wef": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-terminal-host-audit1/target2543-WEF.raw.txt",
+      "bytes": 30792,
+      "sha256": "41aabaa702270b4b972bd69729bf4511b5e0c35eeebbee2447cca564045c37d3"
+    },
+    "retained_all_priority_f": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-terminal-host-audit1/all-priority-F.raw.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "retained_critical_events": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-terminal-host-audit1/critical-event-lines.raw.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "identity_and_controller": {
+    "source_head": "c4b613f78835e7b914e02447955c6b89fe9839ab",
+    "apk_sha256": "453c71544f67685db3b85fc91855ed27c5ff264d0a25671669642b0dc4b8732e",
+    "apk_signer_sha256": "f6409a2d9db2800f1acc9b2e614d73e4609df3652d265cf2c40eb8a64456deb2",
+    "artifact_audit_sha256": "58b3d5e7f60678c164269897764957053bacc47055eed69a1a657dfb3a53f336",
+    "boot_id": "d75bca76-0594-45f7-9f2f-52a1a39ec013",
+    "target_pid": 2543,
+    "target_starttime": "18220",
+    "target_cmdline": "com.osfans.trime.debug",
+    "emulator_pid": 133756,
+    "started_utc": "2026-10-22T15:56:52.261075+00:00",
+    "ended_utc": "2026-10-22T16:35:59.635768+00:00",
+    "booted": true,
+    "normal_stop": {
+      "exit": 0,
+      "stdout": "OK: killing emulator, bye bye\nOK\n",
+      "stderr": ""
+    },
+    "emulator_exit": 0,
+    "collector_exit": 0,
+    "cleanup_errors": [],
+    "reason": "requested-normal-stop",
+    "recorded_emulator_pid_absent_at_generation": true,
+    "host_vm_or_gradle_residual": []
+  },
+  "all_pid_log_boundary": {
+    "source": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-run1/device-logcat.txt",
+      "bytes": 100652926,
+      "sha256": "cb358d3603f4ce9f1ef6eb7f287e5577813c900f9c48b7d1ef1b90d6a98966a7"
+    },
+    "raw_line_count": 1347755,
+    "parsed_threadtime_line_count": 1347751,
+    "unparsed_header_or_boundary_line_count": 4,
+    "priority_counts": {
+      "I": 1331401,
+      "D": 11706,
+      "E": 2435,
+      "V": 114,
+      "W": 2095,
+      "F": 0
+    },
+    "critical_rule_definitions": [
+      {
+        "id": "priority_F",
+        "match": "any parsed threadtime row whose priority is F"
+      },
+      {
+        "id": "android_runtime_fatal",
+        "match": "tag ends with AndroidRuntime and message contains 'FATAL EXCEPTION'"
+      },
+      {
+        "id": "native_fatal_signal",
+        "match": "tag is libc, DEBUG, debuggerd, or debuggerd64 and message contains 'Fatal signal'"
+      },
+      {
+        "id": "activity_manager_anr",
+        "match": "tag ends with ActivityManager and message contains 'ANR in'"
+      },
+      {
+        "id": "event_am_anr",
+        "match": "tag is am_anr"
+      },
+      {
+        "id": "event_am_crash",
+        "match": "tag is am_crash"
+      },
+      {
+        "id": "java_out_of_memory",
+        "match": "message contains 'OutOfMemoryError'"
+      },
+      {
+        "id": "low_memory_kill",
+        "match": "tag is lmkd or lowmemorykiller and message has Kill/Killing plus process/pid; connection/startup rows do not match"
+      }
+    ],
+    "critical_match_count": 0,
+    "critical_matches": [],
+    "scope_limit": "This is an exhaustive scan of the retained log bytes for the listed threadtime metadata rules. It is not an exhaustive kernel trace, a warning-free claim, or causal attribution for system processes."
+  },
+  "target_pid_warning_error_inventory": {
+    "pid": 2543,
+    "starttime": "18220",
+    "priority_counts": {
+      "W": 242,
+      "E": 86,
+      "F": 0
+    },
+    "total_rows": 328,
+    "retained_raw": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-terminal-host-audit1/target2543-WEF.raw.txt",
+      "bytes": 30792,
+      "sha256": "41aabaa702270b4b972bd69729bf4511b5e0c35eeebbee2447cca564045c37d3"
+    },
+    "family_count": 10,
+    "families": [
+      {
+        "id": "rime_encode_failure",
+        "mechanical_rule": "priority W; tag exactly rime.trime; message prefix 'Encode failure: '",
+        "count": 193,
+        "priority_counts": {
+          "W": 193
+        },
+        "tag_counts": {
+          "rime.trime": 193
+        },
+        "unique_message_count": 193,
+        "first": {
+          "source_line": 450524,
+          "raw": "10-23 00:02:01.568  2543  2599 W rime.trime: Encode failure: '亞歷山大·杜布切克'."
+        },
+        "last": {
+          "source_line": 450745,
+          "raw": "10-23 00:02:38.741  2543  2599 W rime.trime: Encode failure: 'ｎ遍'."
+        },
+        "attribution_limit": "Attribution is limited to the recorded PID, priority, logger tag, and message pattern. This terminal audit does not assign cause, user impact, fix status, or exemption.",
+        "disposition": "RETAINED_WARNING_OR_ERROR; not cleared and not converted to a zero-warning claim"
+      },
+      {
+        "id": "rime_nonexistent_config",
+        "mechanical_rule": "priority W; tag exactly rime.trime; message prefix 'nonexistent config file '",
+        "count": 12,
+        "priority_counts": {
+          "W": 12
+        },
+        "tag_counts": {
+          "rime.trime": 12
+        },
+        "unique_message_count": 8,
+        "first": {
+          "source_line": 5822,
+          "raw": "10-22 23:59:57.532  2543  2570 W rime.trime: nonexistent config file '/storage/sdcard/Android/data/com.osfans.trime.debug/files/rime/installation.yaml'."
+        },
+        "last": {
+          "source_line": 1322374,
+          "raw": "10-23 00:06:03.078  2543  2599 W rime.trime: nonexistent config file '/storage/sdcard/Android/data/com.osfans.trime.debug/files/rime/user.yaml'."
+        },
+        "attribution_limit": "Attribution is limited to the recorded PID, priority, logger tag, and message pattern. This terminal audit does not assign cause, user impact, fix status, or exemption.",
+        "disposition": "RETAINED_WARNING_OR_ERROR; not cleared and not converted to a zero-warning claim"
+      },
+      {
+        "id": "keycode_text_fallback_unrecognized_key",
+        "mechanical_rule": "priority E; tag exactly [main] KeyCode; message contains 'Unrecognized key '",
+        "count": 80,
+        "priority_counts": {
+          "E": 80
+        },
+        "tag_counts": {
+          "[main] KeyCode": 80
+        },
+        "unique_message_count": 69,
+        "first": {
+          "source_line": 6037,
+          "raw": "10-23 00:00:01.004  2543  2543 E [main] KeyCode: KeyCode.kt:111] Unrecognized key '(){Left}'"
+        },
+        "last": {
+          "source_line": 1347295,
+          "raw": "10-23 00:34:33.440  2543  2543 E [main] KeyCode: KeyCode.kt:111] Unrecognized key ')'"
+        },
+        "attribution_limit": "Attribution is limited to the recorded PID, priority, logger tag, and message pattern. This terminal audit does not assign cause, user impact, fix status, or exemption.",
+        "disposition": "RETAINED_WARNING_OR_ERROR; not cleared and not converted to a zero-warning claim"
+      },
+      {
+        "id": "keycode_text_fallback_unrecognized_modifier",
+        "mechanical_rule": "priority E; tag exactly [main] KeyCode; message contains 'Unrecognized modifier '",
+        "count": 3,
+        "priority_counts": {
+          "E": 3
+        },
+        "tag_counts": {
+          "[main] KeyCode": 3
+        },
+        "unique_message_count": 1,
+        "first": {
+          "source_line": 6059,
+          "raw": "10-23 00:00:01.022  2543  2543 E [main] KeyCode: KeyCode.kt:94] Unrecognized modifier ''"
+        },
+        "last": {
+          "source_line": 1347302,
+          "raw": "10-23 00:34:33.441  2543  2543 E [main] KeyCode: KeyCode.kt:94] Unrecognized modifier ''"
+        },
+        "attribution_limit": "Attribution is limited to the recorded PID, priority, logger tag, and message pattern. This terminal audit does not assign cause, user impact, fix status, or exemption.",
+        "disposition": "RETAINED_WARNING_OR_ERROR; not cleared and not converted to a zero-warning claim"
+      },
+      {
+        "id": "theme_diagnostics_unknown_key",
+        "mechanical_rule": "priority W; ThemeDiagnostics main/worker tag; message contains unknown key",
+        "count": 12,
+        "priority_counts": {
+          "W": 12
+        },
+        "tag_counts": {
+          "[DefaultDispatcher-worker-1] ThemeDiagnostics": 8,
+          "[main] ThemeDiagnostics": 4
+        },
+        "unique_message_count": 4,
+        "first": {
+          "source_line": 5998,
+          "raw": "10-22 23:59:59.802  2543  2543 W [main] ThemeDiagnostics: ThemeDiagnostics.kt:105] Theme 'trime': unknown key 'preview_font' in 'style'; the runtime ignores it"
+        },
+        "last": {
+          "source_line": 1346794,
+          "raw": "10-23 00:33:54.849  2543  2564 W [DefaultDispatcher-worker-1] ThemeDiagnostics: ThemeDiagnostics.kt:105] Theme 'trime': unknown key 'preview_text_size' in 'style'; the runtime ignores it"
+        },
+        "attribution_limit": "Attribution is limited to the recorded PID, priority, logger tag, and message pattern. This terminal audit does not assign cause, user impact, fix status, or exemption.",
+        "disposition": "RETAINED_WARNING_OR_ERROR; not cleared and not converted to a zero-warning claim"
+      },
+      {
+        "id": "theme_scope_unknown_color",
+        "mechanical_rule": "priority W; tag exactly [main] ThemeScope; message contains 'Unknown color key:'",
+        "count": 3,
+        "priority_counts": {
+          "W": 3
+        },
+        "tag_counts": {
+          "[main] ThemeScope": 3
+        },
+        "unique_message_count": 1,
+        "first": {
+          "source_line": 6002,
+          "raw": "10-22 23:59:59.833  2543  2543 W [main] ThemeScope: ThemeScope.kt:52] Unknown color key: candidate_border_color"
+        },
+        "last": {
+          "source_line": 1346795,
+          "raw": "10-23 00:33:54.854  2543  2543 W [main] ThemeScope: ThemeScope.kt:52] Unknown color key: candidate_border_color"
+        },
+        "attribution_limit": "Attribution is limited to the recorded PID, priority, logger tag, and message pattern. This terminal audit does not assign cause, user impact, fix status, or exemption.",
+        "disposition": "RETAINED_WARNING_OR_ERROR; not cleared and not converted to a zero-warning claim"
+      },
+      {
+        "id": "art_suspend_threads",
+        "mechanical_rule": "priority W; tag exactly art; message prefix 'Suspending all threads took: '",
+        "count": 12,
+        "priority_counts": {
+          "W": 12
+        },
+        "tag_counts": {
+          "art": 12
+        },
+        "unique_message_count": 12,
+        "first": {
+          "source_line": 5575,
+          "raw": "10-22 23:59:55.960  2543  2555 W art     : Suspending all threads took: 11.811ms"
+        },
+        "last": {
+          "source_line": 1334577,
+          "raw": "10-23 00:21:08.779  2543  2555 W art     : Suspending all threads took: 49.433ms"
+        },
+        "attribution_limit": "Attribution is limited to the recorded PID, priority, logger tag, and message pattern. This terminal audit does not assign cause, user impact, fix status, or exemption.",
+        "disposition": "RETAINED_WARNING_OR_ERROR; not cleared and not converted to a zero-warning claim"
+      },
+      {
+        "id": "input_event_receiver_disposed",
+        "mechanical_rule": "priority W; tag exactly InputEventReceiver; message contains 'already been disposed'",
+        "count": 8,
+        "priority_counts": {
+          "W": 8
+        },
+        "tag_counts": {
+          "InputEventReceiver": 8
+        },
+        "unique_message_count": 1,
+        "first": {
+          "source_line": 1323856,
+          "raw": "10-23 00:06:55.853  2543  2543 W InputEventReceiver: Attempted to finish an input event but the input event receiver has already been disposed."
+        },
+        "last": {
+          "source_line": 1346528,
+          "raw": "10-23 00:32:58.310  2543  2543 W InputEventReceiver: Attempted to finish an input event but the input event receiver has already been disposed."
+        },
+        "attribution_limit": "Attribution is limited to the recorded PID, priority, logger tag, and message pattern. This terminal audit does not assign cause, user impact, fix status, or exemption.",
+        "disposition": "RETAINED_WARNING_OR_ERROR; not cleared and not converted to a zero-warning claim"
+      },
+      {
+        "id": "egl_opengl_graphics",
+        "mechanical_rule": "either eglCodecCommon E unknown-param or OpenGLRenderer W preserved-config retry",
+        "count": 4,
+        "priority_counts": {
+          "E": 3,
+          "W": 1
+        },
+        "tag_counts": {
+          "OpenGLRenderer": 1,
+          "eglCodecCommon": 3
+        },
+        "unique_message_count": 4,
+        "first": {
+          "source_line": 6143,
+          "raw": "10-23 00:00:01.396  2543  2609 W OpenGLRenderer: Failed to choose config with EGL_SWAP_BEHAVIOR_PRESERVED, retrying without..."
+        },
+        "last": {
+          "source_line": 6148,
+          "raw": "10-23 00:00:01.402  2543  2609 E eglCodecCommon: glUtilsParamSize: unknow param 0x00008824"
+        },
+        "attribution_limit": "Attribution is limited to the recorded PID, priority, logger tag, and message pattern. This terminal audit does not assign cause, user impact, fix status, or exemption.",
+        "disposition": "RETAINED_WARNING_OR_ERROR; not cleared and not converted to a zero-warning claim"
+      },
+      {
+        "id": "rime_dispatcher_empty_age",
+        "mechanical_rule": "priority W; exact RimeDispatcher tag; message contains 'WrappedRunnable[Empty] has waited '",
+        "count": 1,
+        "priority_counts": {
+          "W": 1
+        },
+        "tag_counts": {
+          "[rime-main] RimeDispatcher$WrappedR": 1
+        },
+        "unique_message_count": 1,
+        "first": {
+          "source_line": 1347648,
+          "raw": "10-23 00:35:40.957  2543  2570 W [rime-main] RimeDispatcher$WrappedR: RimeDispatcher.kt:51] WrappedRunnable[Empty] has waited 2143400 ms to get run since created!"
+        },
+        "last": {
+          "source_line": 1347648,
+          "raw": "10-23 00:35:40.957  2543  2570 W [rime-main] RimeDispatcher$WrappedR: RimeDispatcher.kt:51] WrappedRunnable[Empty] has waited 2143400 ms to get run since created!"
+        },
+        "attribution_limit": "Attribution is limited to the recorded PID, priority, logger tag, and message pattern. This terminal audit does not assign cause, user impact, fix status, or exemption.",
+        "disposition": "RETAINED_WARNING_OR_ERROR; not cleared and not converted to a zero-warning claim"
+      }
+    ],
+    "partition_checks": {
+      "all_328_rows_classified": true,
+      "no_unclassified_rows": true,
+      "no_overlapping_rows": true,
+      "warning_sum": 242,
+      "error_sum": 86
+    },
+    "retention_statement": "KeyCode text-fallback rows, ThemeDiagnostics, ThemeScope, rime encode/config rows, art, EGL/OpenGL, InputEventReceiver, and RimeDispatcher rows remain warnings/errors. No family is waived, excused, marked fixed, or converted into a zero-warning claim."
+  },
+  "memory": {
+    "samples": 1174,
+    "first": {
+      "MemTotal": 16017176,
+      "MemAvailable": 9323444,
+      "SwapFree": 0,
+      "utc": "2026-10-22T15:56:52.261895+00:00"
+    },
+    "last": {
+      "MemTotal": 16017176,
+      "MemAvailable": 6660544,
+      "SwapFree": 0,
+      "utc": "2026-10-22T16:35:57.801439+00:00"
+    },
+    "minimum_available_kib": 6205852,
+    "maximum_available_kib": 9323444,
+    "guard_floor_kib": 1048576,
+    "samples_below_floor": 0,
+    "guard_triggered": false,
+    "collector_exit": 0,
+    "source": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-run1/memory.jsonl",
+      "bytes": 124444,
+      "sha256": "eca7daa4ad468bf9ffe8fe7e2679d73a86f628e19f3333f91fd04a181e79a82a"
+    },
+    "scope_limit": "Host MemAvailable sampling verifies the recorded floor was not crossed; it is not an application memory-leak or performance proof."
+  },
+  "sdk_integrity": {
+    "file_count": 10,
+    "all_path_size_sha256_tuples_equal": true,
+    "all_current_file_hashes_match": true,
+    "streamed_read_only": true,
+    "before": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-original-sdk-before1.json",
+      "bytes": 3198,
+      "sha256": "50d4f133781b7010b3477c4e832f4213f0d693f36fb5862666784c0683f5363f"
+    },
+    "after": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-terminal-host-audit1/original-sdk-after.json",
+      "bytes": 2984,
+      "sha256": "65d7f92dc6b155954a90796ebc9ecc9f17b88227d2c63ca022e4f6c246db3f42"
+    },
+    "files": [
+      {
+        "path": "/home/xumin/Public/android-toolchain/android-sdk/system-images/android-21/default/x86_64/NOTICE.txt",
+        "bytes": 1557047,
+        "sha256": "8ff5f5332fcb194953f5934e2368815dc9123465d0a2aa378a59add7997be1f9",
+        "unchanged": true
+      },
+      {
+        "path": "/home/xumin/Public/android-toolchain/android-sdk/system-images/android-21/default/x86_64/advancedFeatures.ini",
+        "bytes": 122,
+        "sha256": "a9136fa0a90aa270907ca387f6893ffca76a27652065f006a5633c71fb21f584",
+        "unchanged": true
+      },
+      {
+        "path": "/home/xumin/Public/android-toolchain/android-sdk/system-images/android-21/default/x86_64/build.prop",
+        "bytes": 1913,
+        "sha256": "ca722c17645039d375121dec02d58370ec6505d2905f9fc86ede7ab9c617f6d4",
+        "unchanged": true
+      },
+      {
+        "path": "/home/xumin/Public/android-toolchain/android-sdk/system-images/android-21/default/x86_64/kernel-qemu",
+        "bytes": 4141776,
+        "sha256": "e52d5634de07e6e7c2b7505643c500e89c37aa248cb9d8a190a17cd1ad952c08",
+        "unchanged": true
+      },
+      {
+        "path": "/home/xumin/Public/android-toolchain/android-sdk/system-images/android-21/default/x86_64/kernel-ranchu",
+        "bytes": 4219200,
+        "sha256": "21508a9706cd4dd774d80b82e8c9cbd7a902299b0ccf6a0293aa02ae43d1e847",
+        "unchanged": true
+      },
+      {
+        "path": "/home/xumin/Public/android-toolchain/android-sdk/system-images/android-21/default/x86_64/package.xml",
+        "bytes": 18860,
+        "sha256": "fdc9675ba74a47d0fffbfc9a025812bd95269e290e5ba9f0eecd306a3c43adb1",
+        "unchanged": true
+      },
+      {
+        "path": "/home/xumin/Public/android-toolchain/android-sdk/system-images/android-21/default/x86_64/ramdisk.img",
+        "bytes": 1050255,
+        "sha256": "fb8d3215f6bcf4139c9e67e64ee9a2eac47e4a52903b6cb8dabba823ee45be53",
+        "unchanged": true
+      },
+      {
+        "path": "/home/xumin/Public/android-toolchain/android-sdk/system-images/android-21/default/x86_64/source.properties",
+        "bytes": 174,
+        "sha256": "033a58ce313a2df77302322772f68f23dab427a3d61fbb83d1c8d3b262e68fa7",
+        "unchanged": true
+      },
+      {
+        "path": "/home/xumin/Public/android-toolchain/android-sdk/system-images/android-21/default/x86_64/system.img",
+        "bytes": 1178599424,
+        "sha256": "5ffb473249982a792074b5e27a974ed4c1229640f4857f260357f9cdb55414d9",
+        "unchanged": true
+      },
+      {
+        "path": "/home/xumin/Public/android-toolchain/android-sdk/system-images/android-21/default/x86_64/userdata.img",
+        "bytes": 2147483648,
+        "sha256": "92a241fc8260cbb2c93c76c45a9da150d1a9982cfa552810f13fc0af0c1501f8",
+        "unchanged": true
+      }
+    ]
+  },
+  "device_cleanup_and_restore": {
+    "raw_cleanup_report_status": {
+      "passed": false,
+      "checks": []
+    },
+    "command_count": 11,
+    "all_commands_completed": true,
+    "all_host_returncodes_zero": true,
+    "remote_returncode_counts": {
+      "0": 10,
+      "not_applicable": 1
+    },
+    "controlled_force_stop_packages": [
+      "com.osfans.trime.debug",
+      "org.x2m7.trime.editorfixture",
+      "org.x2m7.trime.editorobserver8"
+    ],
+    "final_device_ps_owned_process_presence": {
+      "com.osfans.trime.debug": false,
+      "org.x2m7.trime.editorfixture": false,
+      "org.x2m7.trime.editorobserver8": false
+    },
+    "owned_processes_absent": true,
+    "baseline": {
+      "utc": "2026-10-22T15:58:11.723543+00:00",
+      "default": "com.android.inputmethod.latin/.LatinIME",
+      "enabled": "com.android.inputmethod.latin/.LatinIME:com.osfans.trime.debug/com.osfans.trime.ime.core.TrimeInputMethodService",
+      "boot": "d75bca76-0594-45f7-9f2f-52a1a39ec013",
+      "id": "uid=0(root) gid=0(root) groups=1003(graphics),1004(input),1007(log),1011(adb),1015(sdcard_rw),1028(sdcard_r),3001(net_bt_admin),3002(net_bt),3003(inet),3006(net_bw_stats)",
+      "wm_size": "Physical size: 720x1280",
+      "wm_density": "Physical density: 320",
+      "font": "null"
+    },
+    "restored": {
+      "default": "com.android.inputmethod.latin/.LatinIME",
+      "enabled": "com.android.inputmethod.latin/.LatinIME:com.osfans.trime.debug/com.osfans.trime.ime.core.TrimeInputMethodService"
+    },
+    "input_method_default_and_enabled_restored_exactly": true,
+    "debug_original_apk_unchanged_recorded_by_terminal_result": true,
+    "apk_limit": "The frozen terminal result records debug_original_apk_unchanged=true. This independent HOST-only audit binds that result and the c4 APK identity but does not re-query the stopped emulator."
+  },
+  "qualification_checks": [
+    {
+      "id": "exact_c4_head_apk_boot_target_pid_starttime_cmdline",
+      "passed": true
+    },
+    {
+      "id": "all_pid_full_retained_log_priority_counts_W2095_E2435_F0",
+      "passed": true
+    },
+    {
+      "id": "bounded_critical_rules_find_zero_rows",
+      "passed": true
+    },
+    {
+      "id": "target2543_W242_E86_F0_exactly_partitioned_into_ten_families",
+      "passed": true
+    },
+    {
+      "id": "all_warning_and_error_families_retained_without_exemption",
+      "passed": true
+    },
+    {
+      "id": "memory_1174_samples_minimum_6205852_above_1048576_floor",
+      "passed": true
+    },
+    {
+      "id": "all_ten_original_sdk_files_path_size_sha256_unchanged",
+      "passed": true
+    },
+    {
+      "id": "controlled_cleanup_commands_host_and_remote_success",
+      "passed": true
+    },
+    {
+      "id": "final_device_ps_owned_processes_absent",
+      "passed": true
+    },
+    {
+      "id": "default_and_enabled_input_method_settings_restored_exactly",
+      "passed": true
+    },
+    {
+      "id": "controller_normal_stop_emulator_and_collector_exit_zero",
+      "passed": true
+    },
+    {
+      "id": "recorded_emulator_pid_and_host_vm_gradle_residual_absent",
+      "passed": true
+    },
+    {
+      "id": "raw_cleanup_passed_false_checks_empty_preserved",
+      "passed": true
+    }
+  ],
+  "limits": [
+    "This terminal qualification covers only the exact frozen API21 c4 emulator lifetime and the retained files named above.",
+    "The all-PID critical result is limited to the explicit metadata rules in this artifact. It does not assign system-process causality or prove absence of every possible failure mode.",
+    "The target inventory retains 242 W and 86 E rows. F=0 and bounded critical-match=0 do not mean zero warnings or zero errors.",
+    "Family attribution is mechanical by PID, priority, tag, and message prefix/substring. No family is classified as benign, expected, fixed, or exempt.",
+    "The terminal checks do not qualify any individual business case, another API, physical device, Release signing, whole-build readiness, PR readiness, or merge readiness."
+  ],
+  "final_assessment": {
+    "terminal_evidence_boundary_qualified": true,
+    "warnings_and_errors_retained": true,
+    "zero_warning_claim": false,
+    "all_pid_W": 2095,
+    "all_pid_E": 2435,
+    "all_pid_F": 0,
+    "target_W": 242,
+    "target_E": 86,
+    "target_F": 0,
+    "physical_device": "NOT_RUN",
+    "business_case_verdict": "OUT_OF_SCOPE"
+  }
+}

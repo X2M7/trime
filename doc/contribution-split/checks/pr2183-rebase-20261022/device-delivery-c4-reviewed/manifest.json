@@ -1,0 +1,172 @@
+{
+  "schema": "pr2183-exact-c4-device-delivery-reviewed-manifest/v2",
+  "generated_utc": "2026-10-22T16:07:32.308518+00:00",
+  "state": "HOST_PREPARED_REVIEWED_TEMPLATE_PHYSICAL_NOT_RUN",
+  "scope": "Exact original c4 ARM64 Debug APK and current evidence with b14-contract-preserving physical-device template; all runtime statuses NOT_RUN.",
+  "source_binding": {
+    "head": "c4b613f78835e7b914e02447955c6b89fe9839ab",
+    "tree": "d7639dfce3b6b5646bb004479a688148c1b19900",
+    "parent_predecessor": "b14a2f1e0565cec4953f5a974bfcea023875369f",
+    "base": "19b048494ffa55cae52d5385dfa6d0611461c27d"
+  },
+  "producer": {
+    "repository": "X2M7/trime",
+    "run_id": 39806420824,
+    "artifact_id": 12438099455,
+    "artifact_archive_sha256": "8730839641d03b78394ec53e1a7892f29ec1b4a9e31aaa46619653eb2d3be65a",
+    "arm64_apk_sha256": "12fd34dad063e76a0cdd132bbed83e802e02cd5f5ada80671f7f6935c09619c0",
+    "shared_certificate_sha256": "f6409a2d9db2800f1acc9b2e614d73e4609df3652d265cf2c40eb8a64456deb2",
+    "same_producer_as_x86_64_runtime": true,
+    "x86_64_runtime_apk_sha256": "453c71544f67685db3b85fc91855ed27c5ff264d0a25671669642b0dc4b8732e"
+  },
+  "authority": {
+    "apk_audit_result_sha256": "58b3d5e7f60678c164269897764957053bacc47055eed69a1a657dfb3a53f336",
+    "source_independent_review_sha256": "e1a7ff1e68af5f0038f80c1a43722522977f34eb4e7efd1dfa2b0cecc42ab611",
+    "source_history_check_sha256": "0301041da96197bf9c39dba0aad4bf0d77715da7604740cf327678470fb52f11",
+    "runtime_x86_64_binding_sha256": "52919b0ce3ee58c654f73c80008d4ea4575362f11d08eba540eb9207c4781778"
+  },
+  "template_review": {
+    "baseline_path": "../device-delivery-b14/device-result-template.json",
+    "baseline_sha256": "0a211e51d341d821c8294b1c64bf48f48d15fe4c51205e19eb21bcf4bb1c8ab4",
+    "reviewed_validation_file": "template-preservation-validation.json",
+    "legacy_17_cases_deep_equal": true,
+    "R1_deep_equal": true,
+    "R2_deep_equal": true,
+    "R3_deep_equal": true,
+    "R4_old_field_projection_preserved": true,
+    "R4_added_capability": "c4_forced_ascii_capability",
+    "recursive_runtime_status_field_count": 44,
+    "recursive_runtime_status_values": [
+      "NOT_RUN"
+    ]
+  },
+  "superseded_v1": {
+    "path": "../device-delivery-c4",
+    "template_sha256": "f87d8d6e5f42c2691fdab37d6e4a373343b1d57ae0dd4e6f351b4a2c6ac6cf1c",
+    "template_validation_result": "FAILED_49_PROTECTED_BLOCK_CHANGES",
+    "protected_change_count": 49,
+    "payload_bytes_preserved": true,
+    "directory_18_file_inventory_sha256_before_and_after": "926589a7f777ed71716c3b1f4095043fc7841c51df411e50e60836b58170e124",
+    "replacement": "../device-delivery-c4-reviewed"
+  },
+  "superseded_identity_values": {
+    "b14_apk_sha256_do_not_substitute": "a393b74c52ba78dd5e28240b390a6686b0af47d76750c9a8aa561b94758b57b2",
+    "b14_certificate_sha256_do_not_substitute": "c137e00f34fe583772632ee915cdd156e830746d6fbf1c9e5e2f7d3d2f6239e2",
+    "pre_b14_certificate_sha256_do_not_substitute": "0d50a6c4b5af14741b9307952de134bff81ebf38c81d8030d1528200873f5c38"
+  },
+  "case_inventory": {
+    "legacy_count": 17,
+    "supplemental": [
+      "R1",
+      "R2",
+      "R3",
+      "R4"
+    ],
+    "top_level_runtime_status": "NOT_RUN",
+    "physical_device": "NOT_RUN"
+  },
+  "creation_constraints": {
+    "host_only": true,
+    "adb": false,
+    "vm": false,
+    "gradle": false,
+    "publish": false,
+    "product_or_git_edits": false
+  },
+  "limits": [
+    "Physical installation and all behavior remain NOT_RUN.",
+    "Exact Debug APK only; no Release/stable claim.",
+    "The two retained apksigner META-INF service warnings are not suppressed.",
+    "Actions endpoint lag and terminal workflow qualification limit remain as recorded in the full audit.",
+    "Static source review does not establish runtime behavior.",
+    "A result applies only to the recorded physical device, OS/API, ABI, APK hash, and certificate."
+  ],
+  "inventory_rule": "files lists every payload file byte; SHA256SUMS lists every payload plus manifest.json and necessarily excludes itself.",
+  "files": [
+    {
+      "path": "README.md",
+      "bytes": 2885,
+      "sha256": "074eeee2a4709a49c86158270bdb60e9c6251eacd740aadcc172aae1a69804f0"
+    },
+    {
+      "path": "REAL-DEVICE-ACCEPTANCE.md",
+      "bytes": 20828,
+      "sha256": "15fae886864b99b745a50ac70fbcea096c88d43698de5cf4aa11c1deec42631e"
+    },
+    {
+      "path": "apk-audit-arm64-badging.stdout",
+      "bytes": 5612,
+      "sha256": "f79be78f3445ab9c6250aa6d7515483fbaa751dcef7042e9af20b9d93926ed92"
+    },
+    {
+      "path": "apk-audit-arm64-buildconfig.stdout",
+      "bytes": 1491,
+      "sha256": "00334d855551003cdcb535cb47b5dd50616f22d0ec3bf737d0f72ab7ab46ba2a"
+    },
+    {
+      "path": "apk-audit-arm64-signer.stdout",
+      "bytes": 1387,
+      "sha256": "8af98da72394a50fd0c34022d648526d6f3e26f233d157f9a2202d19ca58ed68"
+    },
+    {
+      "path": "apk-audit-result.json",
+      "bytes": 27780,
+      "sha256": "58b3d5e7f60678c164269897764957053bacc47055eed69a1a657dfb3a53f336"
+    },
+    {
+      "path": "candidate-identity.json",
+      "bytes": 8147,
+      "sha256": "51c7da77173b5d540ef4bca682036294ada4b1138ee0a8634bf788fe35ad4103"
+    },
+    {
+      "path": "com.osfans.trime-c4b613f7-arm64-v8a-debug.apk",
+      "bytes": 20603550,
+      "sha256": "12fd34dad063e76a0cdd132bbed83e802e02cd5f5ada80671f7f6935c09619c0"
+    },
+    {
+      "path": "device-result-template.json",
+      "bytes": 31634,
+      "sha256": "b892091fe8830d7a49786a1d3d24c2c8c6616455743bfc3984ff6982f5c1fc1f"
+    },
+    {
+      "path": "output-metadata.json",
+      "bytes": 1444,
+      "sha256": "2363c47ea3b232ae990a569bd362d4515152cb3f363fb8dd4487cba49ef9ac89"
+    },
+    {
+      "path": "producer-download-receipt.json",
+      "bytes": 2428,
+      "sha256": "5da00a49c8ea6f0cc85579763796056574dd89f721797f0f0bd401b308969d41"
+    },
+    {
+      "path": "runtime-x86_64-binding.json",
+      "bytes": 4021,
+      "sha256": "52919b0ce3ee58c654f73c80008d4ea4575362f11d08eba540eb9207c4781778"
+    },
+    {
+      "path": "source-fix-reviewed.diff",
+      "bytes": 2652,
+      "sha256": "2b4d7d6171bf7a77daa8b564e194ead13a2250c7b79cd82dc2014b97e8be477e"
+    },
+    {
+      "path": "source-history-check.json",
+      "bytes": 1539,
+      "sha256": "0301041da96197bf9c39dba0aad4bf0d77715da7604740cf327678470fb52f11"
+    },
+    {
+      "path": "source-independent-review.json",
+      "bytes": 5013,
+      "sha256": "e1a7ff1e68af5f0038f80c1a43722522977f34eb4e7efd1dfa2b0cecc42ab611"
+    },
+    {
+      "path": "t9-input.md",
+      "bytes": 2299,
+      "sha256": "2cb473b0bb404569030fb99e5d5beca4530d809e6ec09f9a6ed5ed3034599bf0"
+    },
+    {
+      "path": "template-preservation-validation.json",
+      "bytes": 9342,
+      "sha256": "5155208eaa8ec05670855fcf9c616fc2e3f5380a0c06efcf67203a63bcdf2c09"
+    }
+  ]
+}

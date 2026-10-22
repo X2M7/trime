@@ -1,0 +1,1344 @@
+{
+  "schema": "trime-independent-runtime-qualification/v1",
+  "generated_utc": "2026-10-22T17:35:53.786651+00:00",
+  "review_mode": "HOST_ONLY_NO_ADB_VM_GRADLE_NO_FROZEN_SESSION_EDIT",
+  "verdict": "PASS_API35_STANDARD_S2_V8_REAL_TOUCH_DOUBLE_CLICK_EXACT_AA_SCOPE",
+  "qualification_scope": {
+    "platform": "Android API35 emulator",
+    "theme": "standard / tongwenfeng.trime.yaml",
+    "actual_case_session": "S2-v8",
+    "session": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-S2-v8",
+    "physical_device": "NOT_RUN",
+    "qualified_behavior": "Public chooser changed T9 to full 朙月拼音 with unique checked readback; a distinct fresh full/default editor entered ASCII; one injector process supplied accepted DOWN/UP/DOWN/UP at the frozen Shift coordinate; continuous target-PID logs recorded CLICK then DOUBLE_CLICK releases 231 ms apart and both matching process-action dispatch types; two actual uppercase A actions produced strict Editable AA (U+0041 U+0041).",
+    "not_qualified_here": [
+      "standard S1",
+      "trime theme",
+      "another case or API",
+      "whole terminal run",
+      "physical device",
+      "whole c4 build"
+    ]
+  },
+  "frozen_inputs": {
+    "raw_report": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-S2-v8/report.json",
+      "bytes": 676028,
+      "sha256": "0de0334c151d69c41ad9122ab38bfcc49b208ff0c9179fc6842e2f58a4ff7dc5",
+      "completed": true,
+      "passed": false,
+      "checks": []
+    },
+    "sequence_result": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-S2-v8/sequence-result.json",
+      "bytes": 1902,
+      "sha256": "8c42b577a4d549a6b4fcb29dde3213c0de74bd8cd246add9ee01510fd4db74ba",
+      "strict_sequence_completed": true,
+      "business_passed": false,
+      "authenticated_normal_stop": true
+    },
+    "observer_finished": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-S2-v8/observer8-session/finished.json",
+      "bytes": 2123,
+      "sha256": "be5300f1664db0a6ea360a06784fd59dc09fcf122be26e70bb6e00b277014841"
+    },
+    "binding": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/original-apk-binding-c4-v8-shift.json",
+      "bytes": 4369,
+      "sha256": "a7bb75201086c795f4d3e2de89b5e8ab5e67d8504145cee24dcbe3298c41ea21",
+      "embedded_report_value_deep_equal": true
+    },
+    "runner": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/t9_case_sequences_v8.py",
+      "bytes": 23026,
+      "sha256": "554eb1f704b058d8591bf2ae57a76c5372f56deb549c3612ee5efb9da5d787ea",
+      "s2_lines": [
+        299,
+        312
+      ],
+      "doubletap_helper_lines": [
+        119,
+        194
+      ],
+      "schema_helper_lines": [
+        340,
+        367
+      ],
+      "run_and_stop_lines": [
+        403,
+        505
+      ]
+    },
+    "theme_asset_in_exact_apk": {
+      "container_apk": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/c4-fork-run-39806420824-ubuntu1/files/com.osfans.trime-c4b613f7-x86_64-debug.apk",
+      "entry": "assets/shared/tongwenfeng.trime.yaml",
+      "bytes": 200597,
+      "sha256": "e758ce8f9059f0fbe3c27c2de9c5faffff761b825feed437075f285e15af9147",
+      "default_shift_line": 1149,
+      "default_shift_definition": "- {click: Shift_L, label_symbol: \" \", long_click: Shift_L, double_click: Shift_L3, composing: delimiter, width: 15, hilited_key_back_color: benter, key_back_color: bbs, key_text_color: tbs}",
+      "Shift_L3_line": 4042,
+      "Shift_L3_definition": "Shift_L3: {label: Shift, preview: '⇪', functional: false, send: Shift_L, shift_lock: click}"
+    },
+    "keyview_source": {
+      "path": "/home/xumin/Public/Trime-pr-t9-rebased/app/src/main/java/com/osfans/trime/ime/keyboard/KeyView.kt",
+      "bytes": 14417,
+      "sha256": "288fdb6b8aa4d2788996fa1480b1b98072dfba3117ef9ec36c7151c06e086f61",
+      "git_head_verified": "c4b613f78835e7b914e02447955c6b89fe9839ab",
+      "release_recognition_and_dispatch_lines": [
+        90,
+        123
+      ],
+      "process_action_lines": [
+        195,
+        203
+      ]
+    },
+    "start_installed_apk": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-S2-v8/start-installed-apk.bin",
+      "bytes": 20673055,
+      "sha256": "453c71544f67685db3b85fc91855ed27c5ff264d0a25671669642b0dc4b8732e"
+    },
+    "start_package": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-S2-v8/start-package.txt",
+      "bytes": 11482,
+      "sha256": "7debb90f422f4c4f0ede0f769727fc302a04151f6c9004080c579b1d9257f3e2"
+    },
+    "observer_apk_copy": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-S2-v8/installed-public-input-observer8-apk.bin",
+      "bytes": 41363,
+      "sha256": "9edd1ffeade1621faa5f6c51bb1699032bfcd827f3cd28a0143b37099ad812aa"
+    },
+    "oracle_fixture_apk_copy": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-S2-v8/installed-oracle-fixture.bin",
+      "bytes": 29075,
+      "sha256": "e094d767c820b77ec93d9b3f461b2208b4d7dcbec4f37ea869926b7987dfea59"
+    },
+    "injector_stdout": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-S2-v8/standard-S2-injector-stdout.raw.txt",
+      "bytes": 1081,
+      "sha256": "b4c13d5115bfe78db41a13818cb64f7f0812bf93d918e24c638a8e0b0bd42a91"
+    },
+    "injector_device_readback": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-S2-v8/standard-S2-injector-device-readback.bin",
+      "bytes": 4240,
+      "sha256": "55bd2a26e0c43564d6d2a35157c8abeb5efc5263757cab22c03157accb639507"
+    },
+    "precondition_prefs": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-S2-v8/standard-S2-precondition-prefs.xml",
+      "bytes": 302,
+      "sha256": "f3773629700fa5f9beb08f7c35ca9ad22942d7500cf6526cb9e57f918b88f5bc",
+      "values": {
+        "general__pid": "2228",
+        "follow_system_day_night": "false",
+        "selected_theme": "tongwenfeng.trime",
+        "profile_data_storage_mode": "APP_STORAGE"
+      },
+      "key_double_tap_timeout_override_absent": true,
+      "production_default_timeout_ms": 300,
+      "read_boundary": {
+        "shell_identity": "uid=2000(shell) gid=2000(shell) groups=2000(shell),1004(input),1007(log),1011(adb),1015(sdcard_rw),1028(sdcard_r),1078(ext_data_rw),1079(ext_obb_rw),3001(net_bt_admin),3002(net_bt),3003(inet),3006(net_bw_stats),3009(readproc),3011(uhid),3012(readtracefs) context=u:r:shell:s0",
+        "argv": [
+          "su",
+          "0",
+          "cat",
+          "/data/data/com.osfans.trime.debug/shared_prefs/com.osfans.trime.debug_preferences.xml"
+        ],
+        "read_only": true
+      }
+    },
+    "continuous_device_log": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-run1/device-logcat.txt",
+      "append_only_source": true,
+      "reviewed_prefix_ending_line": 1529301,
+      "reviewed_prefix_bytes": 113942745,
+      "reviewed_prefix_sha256": "d4279398b3ac6701c96c6f51df772232dd2792c903f8fa3d4c91c5f4f1d6399f",
+      "file_bytes_at_review": 114014633,
+      "file_line_count_at_review": 1529760,
+      "file_sha256_at_review": "263b7f9ca74225b3ad91d1821ca476c73514dfca28c8f8e30665a2ddb320d83d",
+      "full_file_was_still_appendable": true,
+      "qualification_depends_on_hash_bound_prefix_not_later_tail": true
+    },
+    "root_visual_ledger_snapshot": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/root-image-review-c4.json",
+      "bytes_at_generation": 43965,
+      "sha256_at_generation": "51fb689248040c5864b776a4da89671f66eeb4af5a423fd1bee96b8a2e5955c5",
+      "record_count": 60,
+      "matching_records": [
+        {
+          "utc": "2026-10-22T17:32:57.651007+00:00",
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-S2-v8/captures/standard-S2-explicit-AA/observer-in-connection.png",
+          "sha256": "b56f6f8631986c682ed96037ce01366a1024d21180329367174f450fd32eb354",
+          "platform": "API35",
+          "case": "standard S2 v8 explicit double Shift resulting AA",
+          "observed": "Root actually viewed editor AA, uppercase full QWERTY keys, blue latched Shift, En and blank composition strip.",
+          "scope": "Selected resulting original frame only. Exact Shift_L3 binding, real MotionEvents, target release<=300ms and actual DOUBLE_CLICK classification require independent continuous-log qualification; not inferred from uppercase text alone."
+        }
+      ],
+      "live_ledger_is_append_only_working_file": true
+    }
+  },
+  "identity": {
+    "source_head": "c4b613f78835e7b914e02447955c6b89fe9839ab",
+    "source_tree": "d7639dfce3b6b5646bb004479a688148c1b19900",
+    "base": "19b048494ffa55cae52d5385dfa6d0611461c27d",
+    "actual_build_commit": "c4b613f78835e7b914e02447955c6b89fe9839ab",
+    "producer": {
+      "repository": "X2M7/trime",
+      "run": 39806420824,
+      "artifact": 12438099455
+    },
+    "package": "com.osfans.trime.debug",
+    "version_code": 20261101,
+    "version_name": "3.3.13",
+    "apk_sha256": "453c71544f67685db3b85fc91855ed27c5ff264d0a25671669642b0dc4b8732e",
+    "apk_signer_sha256": "f6409a2d9db2800f1acc9b2e614d73e4609df3652d265cf2c40eb8a64456deb2",
+    "artifact_audit_sha256": "58b3d5e7f60678c164269897764957053bacc47055eed69a1a657dfb3a53f336",
+    "target_pid": 2228,
+    "target_starttime": "18495",
+    "target_stat_probe_count": 31,
+    "target_stat_starttime_values": [
+      "18495"
+    ],
+    "target_cmdline_probe_count": 31,
+    "target_cmdline_values": [
+      "com.osfans.trime.debug"
+    ],
+    "boot_id": "ba13c239-0862-4901-a4c7-3b1f2e4c6608",
+    "boot_id_probe_count": 21,
+    "boot_id_values": [
+      "ba13c239-0862-4901-a4c7-3b1f2e4c6608"
+    ],
+    "initial_t9_fixture": {
+      "pid": 1783,
+      "activity_instance": "45aed9942c204455a7d3a4d67a005bd8"
+    },
+    "fresh_full_fixture": {
+      "pid": 2950,
+      "activity_instance": "1c9c08f39fe145be9771aeb90c32a7ef"
+    },
+    "observer_pid": 1631,
+    "observer_starttime": "308295",
+    "observer_session_token": "4cae3d8fc43e8c2539540ddeb709ea3f",
+    "display": {
+      "size_raw": "Physical size: 720x1280",
+      "density_raw": "Physical density: 320",
+      "effective_size": "720x1280",
+      "effective_density": "320"
+    }
+  },
+  "schema_and_layout_chain": {
+    "initial_public_chooser": {
+      "xml": {
+        "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-S2-v8/captures/standard-S2-to-full-chooser/observer-after.xml",
+        "bytes": 22970,
+        "sha256": "fd36047fefe430eac5f8da52fa56993548416fdbf3517b3289997fb1c9538217"
+      },
+      "row_count": 3,
+      "unique_checked": {
+        "index": "2",
+        "text": "朙月拼音九键",
+        "resource-id": "android:id/text1",
+        "content-desc": "",
+        "package": "com.osfans.trime.debug",
+        "class": "android.widget.CheckedTextView",
+        "enabled": "true",
+        "password": "false",
+        "focused": "false",
+        "focusable": "false",
+        "checkable": "true",
+        "checked": "true",
+        "clickable": "true",
+        "long-clickable": "false",
+        "selected": "false",
+        "scrollable": "false",
+        "text-selection-start": "-1",
+        "text-selection-end": "-1",
+        "bounds": "[50,661][670,757]"
+      },
+      "full_target": {
+        "index": "0",
+        "text": "朙月拼音",
+        "resource-id": "android:id/text1",
+        "content-desc": "",
+        "package": "com.osfans.trime.debug",
+        "class": "android.widget.CheckedTextView",
+        "enabled": "true",
+        "password": "false",
+        "focused": "false",
+        "focusable": "false",
+        "checkable": "true",
+        "checked": "false",
+        "clickable": "true",
+        "long-clickable": "false",
+        "selected": "false",
+        "scrollable": "false",
+        "text-selection-start": "-1",
+        "text-selection-end": "-1",
+        "bounds": "[50,469][670,565]"
+      },
+      "actual_selection_tap": {
+        "action": "tap",
+        "x": 360,
+        "y": 517,
+        "at": "2026-10-22T17:29:52.372642+00:00"
+      },
+      "selection_tap_inside_full_target": true
+    },
+    "public_full_schema_readback": {
+      "xml": {
+        "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-S2-v8/captures/standard-S2-to-full-current-schema-readback/observer-after.xml",
+        "bytes": 22973,
+        "sha256": "e23d376e6d3bc625301eef6e60c40505d8c18c011ccb7ce3560f44be3bef6486"
+      },
+      "row_count": 3,
+      "unique_checked": {
+        "index": "0",
+        "text": "朙月拼音",
+        "resource-id": "android:id/text1",
+        "content-desc": "",
+        "package": "com.osfans.trime.debug",
+        "class": "android.widget.CheckedTextView",
+        "enabled": "true",
+        "password": "false",
+        "focused": "false",
+        "focusable": "false",
+        "checkable": "true",
+        "checked": "true",
+        "clickable": "true",
+        "long-clickable": "false",
+        "selected": "false",
+        "scrollable": "false",
+        "text-selection-start": "-1",
+        "text-selection-end": "-1",
+        "bounds": "[50,469][670,565]"
+      },
+      "runner_recorded_readback": {
+        "action": "sequence_current_schema_readback",
+        "expected": "朙月拼音",
+        "actual": {
+          "index": "0",
+          "text": "朙月拼音",
+          "resource-id": "android:id/text1",
+          "content-desc": "",
+          "package": "com.osfans.trime.debug",
+          "class": "android.widget.CheckedTextView",
+          "enabled": "true",
+          "password": "false",
+          "focused": "false",
+          "focusable": "false",
+          "checkable": "true",
+          "checked": "true",
+          "clickable": "true",
+          "long-clickable": "false",
+          "selected": "false",
+          "scrollable": "false",
+          "text-selection-start": "-1",
+          "text-selection-end": "-1",
+          "bounds": "[50,469][670,565]"
+        }
+      },
+      "actual_back_binding": {
+        "action": "sequence_actual_node_binding",
+        "reason": "Back",
+        "attributes": {
+          "index": "0",
+          "text": "",
+          "resource-id": "com.android.launcher3:id/back",
+          "content-desc": "Back",
+          "package": "com.android.launcher3",
+          "class": "android.widget.ImageView",
+          "enabled": "true",
+          "password": "false",
+          "focused": "false",
+          "focusable": "false",
+          "checkable": "false",
+          "checked": "false",
+          "clickable": "true",
+          "long-clickable": "true",
+          "selected": "false",
+          "scrollable": "false",
+          "text-selection-start": "-1",
+          "text-selection-end": "-1",
+          "bounds": "[86,1188][223,1276]"
+        },
+        "clipped_bounds": [
+          86,
+          1188,
+          223,
+          1276
+        ]
+      },
+      "actual_back_tap": {
+        "action": "tap",
+        "x": 154,
+        "y": 1232,
+        "at": "2026-10-22T17:30:15.124232+00:00"
+      },
+      "chooser_dismissed": true
+    },
+    "fresh_full_editor": {
+      "distinct_from_initial_fixture_pid": true,
+      "distinct_from_initial_activity_instance": true,
+      "fresh_launch_action": {
+        "action": "launch_independent_editor",
+        "mode": "multiline",
+        "initial_text": "",
+        "at": "2026-10-22T17:30:29.641303+00:00"
+      },
+      "default_before_mode_node": {
+        "index": "0",
+        "text": "中",
+        "resource-id": "",
+        "content-desc": "",
+        "package": "com.osfans.trime.debug",
+        "class": "android.widget.TextView",
+        "enabled": "true",
+        "password": "false",
+        "focused": "false",
+        "focusable": "false",
+        "checkable": "false",
+        "checked": "false",
+        "clickable": "false",
+        "long-clickable": "false",
+        "selected": "false",
+        "scrollable": "false",
+        "text-selection-start": "-1",
+        "text-selection-end": "-1",
+        "bounds": "[285,604][355,684]"
+      },
+      "ascii_mode_node": {
+        "index": "0",
+        "text": "En",
+        "resource-id": "",
+        "content-desc": "",
+        "package": "com.osfans.trime.debug",
+        "class": "android.widget.TextView",
+        "enabled": "true",
+        "password": "false",
+        "focused": "false",
+        "focusable": "false",
+        "checkable": "false",
+        "checked": "false",
+        "clickable": "false",
+        "long-clickable": "false",
+        "selected": "false",
+        "scrollable": "false",
+        "text-selection-start": "-1",
+        "text-selection-end": "-1",
+        "bounds": "[280,604][360,684]"
+      },
+      "continuous_target_records": [
+        {
+          "line": 1528262,
+          "text": "10-23 01:29:54.420  2228  2228 D [main] KeyboardWindow: KeyboardWindow.kt:285] Switched to keyboard: default"
+        },
+        {
+          "line": 1528355,
+          "text": "10-23 01:29:54.715  2228  2294 D [rime-main] Rime$Companion: Rime.kt:650] Handling SchemaMessage(id=luna_pinyin, name=朙月拼音)"
+        },
+        {
+          "line": 1528436,
+          "text": "10-23 01:29:54.884  2228  2294 D [rime-main] Rime$Companion: Rime.kt:650] Handling StatusMessage(data=StatusProto(schemaId=luna_pinyin, schemaName=朙月拼音, isDisabled=false, isComposing=false, isAsciiMode=false, isFullShape=false, isSimplified=false, isTraditional=false, isAsciiPunct=false))"
+        },
+        {
+          "line": 1528440,
+          "text": "10-23 01:29:55.158  2228  2228 D [main] KeyboardWindow: KeyboardWindow.kt:285] Switched to keyboard: default"
+        },
+        {
+          "line": 1528697,
+          "text": "10-23 01:30:26.000  2228  2294 D [rime-main] Rime$Companion: Rime.kt:650] Handling StatusMessage(data=StatusProto(schemaId=luna_pinyin, schemaName=朙月拼音, isDisabled=false, isComposing=false, isAsciiMode=false, isFullShape=false, isSimplified=false, isTraditional=false, isAsciiPunct=false))"
+        },
+        {
+          "line": 1528950,
+          "text": "10-23 01:30:30.537  2228  2294 D [rime-main] Rime$Companion: Rime.kt:650] Handling StatusMessage(data=StatusProto(schemaId=luna_pinyin, schemaName=朙月拼音, isDisabled=false, isComposing=false, isAsciiMode=false, isFullShape=false, isSimplified=false, isTraditional=false, isAsciiPunct=false))"
+        },
+        {
+          "line": 1528961,
+          "text": "10-23 01:30:30.981  2228  2228 D [main] KeyboardWindow: KeyboardWindow.kt:285] Switched to keyboard: default"
+        },
+        {
+          "line": 1529085,
+          "text": "10-23 01:30:45.689  2228  2294 D [rime-main] Rime$Companion: Rime.kt:650] Handling StatusMessage(data=StatusProto(schemaId=luna_pinyin, schemaName=朙月拼音, isDisabled=false, isComposing=false, isAsciiMode=true, isFullShape=false, isSimplified=false, isTraditional=false, isAsciiPunct=false))"
+        }
+      ],
+      "default_keyboard_record_lines": [
+        1528262,
+        1528440,
+        1528961
+      ],
+      "ascii_true_record_line": 1529085
+    },
+    "asset_mapping": {
+      "default_Shift_click": "Shift_L",
+      "default_Shift_double_click": "Shift_L3",
+      "Shift_L3_send": "Shift_L",
+      "Shift_L3_shift_lock": "click"
+    }
+  },
+  "raw_helper_pending_fields_retained": {
+    "state": "INJECTOR_ACCEPTED_TARGET_QUALIFICATION_PENDING",
+    "target_contact_timing_and_dispatch": "PENDING_EXTERNAL_CONTINUOUS_LOG_REVIEW",
+    "acceptance_not_inferred_from_helper_success": true,
+    "meaning": "The frozen raw report remains pending. This separate HOST qualification resolves the target side only through continuous target-PID logs and strict oracle evidence; it does not rewrite raw fields."
+  },
+  "real_touch_and_target_dispatch": {
+    "injector_process": {
+      "pid": 3389,
+      "uid": 2000,
+      "single_process_for_all_four_events": true,
+      "backend": "android.hardware.input.InputManagerGlobal",
+      "source": 4098,
+      "display_id": 0,
+      "coordinate": [
+        54.0,
+        996.0
+      ],
+      "configured_gap_ms": 60,
+      "attempted": 4,
+      "accepted": 4,
+      "event_order": [
+        "DOWN_1",
+        "UP_1",
+        "DOWN_2",
+        "UP_2"
+      ],
+      "event_uptime_ms": [
+        3187526,
+        3187595,
+        3187683,
+        3187826
+      ],
+      "contact_durations_ms": [
+        69,
+        143
+      ],
+      "up_event_delta_ms": 231,
+      "up_call_delta_ms": 230,
+      "production_timeout_ms": 300,
+      "necessary_condition_only": true
+    },
+    "target_process": {
+      "pid": 2228,
+      "bounded_injector_window_lines": [
+        1529179,
+        1529185
+      ],
+      "injector_entry_wall_time": "10-23 01:31:01.675",
+      "injector_exit_wall_time": "10-23 01:31:02.014",
+      "shift_release_lines": [
+        1529181,
+        1529183
+      ],
+      "shift_release_wall_times": [
+        "10-23 01:31:01.769",
+        "10-23 01:31:02.000"
+      ],
+      "shift_process_action_lines": [
+        1529182,
+        1529184
+      ],
+      "shift_process_action_wall_times": [
+        "10-23 01:31:01.776",
+        "10-23 01:31:02.008"
+      ],
+      "release_delta_ms": 231,
+      "release_within_production_timeout": true,
+      "release_behaviors": [
+        "CLICK",
+        "DOUBLE_CLICK"
+      ],
+      "process_action_types": [
+        "CLICK",
+        "DOUBLE_CLICK"
+      ],
+      "exact_source_lines": [
+        {
+          "line": 1529179,
+          "text": "10-23 01:31:01.675  3389  3389 D AndroidRuntime: Calling main entry org.x2m7.trime.readiness.input.TrimeRealDoubleTap"
+        },
+        {
+          "line": 1529181,
+          "text": "10-23 01:31:01.769  2228  2228 D [main] KeyView: KeyView.kt:91] KeyView release: label=Shift, behavior=CLICK, fromLongPress=false"
+        },
+        {
+          "line": 1529182,
+          "text": "10-23 01:31:01.776  2228  2228 D [main] KeyView: KeyView.kt:196] processKeyAction: label=Shift, code=59, type=CLICK"
+        },
+        {
+          "line": 1529183,
+          "text": "10-23 01:31:02.000  2228  2228 D [main] KeyView: KeyView.kt:91] KeyView release: label=Shift, behavior=DOUBLE_CLICK, fromLongPress=false"
+        },
+        {
+          "line": 1529184,
+          "text": "10-23 01:31:02.008  2228  2228 D [main] KeyView: KeyView.kt:196] processKeyAction: label=Shift, code=59, type=DOUBLE_CLICK"
+        },
+        {
+          "line": 1529185,
+          "text": "10-23 01:31:02.014  3389  3389 D AndroidRuntime: Shutting down VM"
+        }
+      ]
+    },
+    "source_semantics": "At exact c4 head, KeyView line 91 logs the recognized KeyBehavior on release. The CLICK branch dispatches through processKeyAction at line 109; the DOUBLE_CLICK branch dispatches through processKeyAction at line 115. processKeyAction line 196 logs the actual behavior type. Therefore target lines 1529181-1529184 prove first CLICK recognition/dispatch and second DOUBLE_CLICK recognition/dispatch.",
+    "evidence_combination_limit": "The target log does not print raw MotionEvent IDs, coordinates, or DOWN lines. Those facts come from the frozen single-process four-event receipt. The injector PID entry/exit bounds the four target Shift lines, and qualification requires both sources; helper acceptance alone is insufficient.",
+    "final_uppercase_dispatch": {
+      "actual_tap_actions": [
+        {
+          "action": "tap",
+          "x": 72,
+          "y": 872,
+          "at": "2026-10-22T17:31:16.759742+00:00"
+        },
+        {
+          "action": "tap",
+          "x": 72,
+          "y": 872,
+          "at": "2026-10-22T17:31:17.618289+00:00"
+        }
+      ],
+      "exact_source_lines": [
+        {
+          "line": 1529271,
+          "text": "10-23 01:31:16.370  2228  2228 D [main] KeyView: KeyView.kt:91] KeyView release: label=A, behavior=CLICK, fromLongPress=false"
+        },
+        {
+          "line": 1529272,
+          "text": "10-23 01:31:16.372  2228  2228 D [main] KeyView: KeyView.kt:196] processKeyAction: label=A, code=29, type=CLICK"
+        },
+        {
+          "line": 1529273,
+          "text": "10-23 01:31:16.379  2228  2294 I rime.trime: process key: Shift+A, synthetic: 0"
+        },
+        {
+          "line": 1529280,
+          "text": "10-23 01:31:16.397  2228  2294 D [rime-main] Rime$Companion: Rime.kt:650] Handling StatusMessage(data=StatusProto(schemaId=luna_pinyin, schemaName=朙月拼音, isDisabled=false, isComposing=false, isAsciiMode=true, isFullShape=false, isSimplified=false, isTraditional=false, isAsciiPunct=false))"
+        },
+        {
+          "line": 1529282,
+          "text": "10-23 01:31:16.408  2228  2294 D [rime-main] Rime$Companion: Rime.kt:650] Handling KeyMessage(data=Data(value=0x0041, modifiers=KeyModifiers(modifiers=1), isVirtual=true))"
+        },
+        {
+          "line": 1529290,
+          "text": "10-23 01:31:17.219  2228  2228 D [main] KeyView: KeyView.kt:91] KeyView release: label=A, behavior=CLICK, fromLongPress=false"
+        },
+        {
+          "line": 1529291,
+          "text": "10-23 01:31:17.221  2228  2228 D [main] KeyView: KeyView.kt:196] processKeyAction: label=A, code=29, type=CLICK"
+        },
+        {
+          "line": 1529292,
+          "text": "10-23 01:31:17.229  2228  2294 I rime.trime: process key: Shift+A, synthetic: 0"
+        },
+        {
+          "line": 1529299,
+          "text": "10-23 01:31:17.244  2228  2294 D [rime-main] Rime$Companion: Rime.kt:650] Handling StatusMessage(data=StatusProto(schemaId=luna_pinyin, schemaName=朙月拼音, isDisabled=false, isComposing=false, isAsciiMode=true, isFullShape=false, isSimplified=false, isTraditional=false, isAsciiPunct=false))"
+        },
+        {
+          "line": 1529301,
+          "text": "10-23 01:31:17.246  2228  2294 D [rime-main] Rime$Companion: Rime.kt:650] Handling KeyMessage(data=Data(value=0x0041, modifiers=KeyModifiers(modifiers=1), isVirtual=true))"
+        }
+      ],
+      "A_release_lines": [
+        1529271,
+        1529290
+      ],
+      "A_process_lines": [
+        1529272,
+        1529291
+      ],
+      "native_Shift_A_lines": [
+        1529273,
+        1529292
+      ],
+      "U_0041_key_message_lines": [
+        1529282,
+        1529301
+      ],
+      "full_schema_ascii_status_lines": [
+        1529280,
+        1529299
+      ]
+    }
+  },
+  "capture_chain": {
+    "capture_count": 9,
+    "completed_capture_count": 9,
+    "capture_failures": 0,
+    "same_cached_automation_connection": true,
+    "automation_connection_count": 1,
+    "helper_injected_touch": false,
+    "candidate_ui_acceptance": false,
+    "mechanically_byte_equal_before_after_count": 9,
+    "mechanically_byte_unequal_before_after_count": 0,
+    "before_after_differences": [],
+    "comparison_rule": "All nine retained before.xml and after.xml pairs were independently compared byte-for-byte; all are equal.",
+    "captures": [
+      {
+        "sequence": 1,
+        "label": "standard-S2-initial-t9",
+        "capture_token": "8f3644bf1d9ed8a2489fd27e8f7977aa",
+        "request": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-S2-v8/observer8-session/requests/00001.json",
+          "bytes": 167,
+          "sha256": "c3e5fea7317903bc8b3921e1a4311b1ec9a3d8547296b574a2a4c1291c1cd31a"
+        },
+        "observation": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-S2-v8/captures/standard-S2-initial-t9/observer-observation.json",
+          "bytes": 1853,
+          "sha256": "b463e0430f3a2520803a03e39a8958edc3fac72f4106ec3f0ee1f59381ab019b"
+        },
+        "png": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-S2-v8/captures/standard-S2-initial-t9/observer-in-connection.png",
+          "bytes": 54432,
+          "sha256": "7bdce54054dcb5a71adb2bce89ce435f6ace0908dd793fbafd24c533ac9d038f"
+        },
+        "before_xml": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-S2-v8/captures/standard-S2-initial-t9/observer-before.xml",
+          "bytes": 38411,
+          "sha256": "39c3e1b9ca218fdad11ea84eb600b9f9e3c0b8c69ba692aa3b474d48a54c5d87"
+        },
+        "after_xml": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-S2-v8/captures/standard-S2-initial-t9/observer-after.xml",
+          "bytes": 38411,
+          "sha256": "39c3e1b9ca218fdad11ea84eb600b9f9e3c0b8c69ba692aa3b474d48a54c5d87"
+        },
+        "before_after_byte_equal": true,
+        "differences": [],
+        "capture_complete": true,
+        "same_connection_xml_png_xml": true,
+        "raw_image_reviewed": false,
+        "raw_accepted_business_case": false,
+        "raw_accepted_by_gui": false
+      },
+      {
+        "sequence": 2,
+        "label": "standard-S2-to-full-chooser",
+        "capture_token": "c20883d223af2c4fa72c8a1757cffbd1",
+        "request": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-S2-v8/observer8-session/requests/00002.json",
+          "bytes": 167,
+          "sha256": "95570359a6fd620de6e878b1ba464f2e50b14a26a96c2e03bdf3591d8ef09af8"
+        },
+        "observation": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-S2-v8/captures/standard-S2-to-full-chooser/observer-observation.json",
+          "bytes": 1853,
+          "sha256": "d8ad74556f6d54d8e0c59ee09410a15b2b04f7d5dcc6ecba7f75e93addfc4594"
+        },
+        "png": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-S2-v8/captures/standard-S2-to-full-chooser/observer-in-connection.png",
+          "bytes": 82107,
+          "sha256": "a2e1dae559c583e5a0f49e867665921f51aaa56bf7026ab5eb7f7cc986e184fd"
+        },
+        "before_xml": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-S2-v8/captures/standard-S2-to-full-chooser/observer-before.xml",
+          "bytes": 22970,
+          "sha256": "fd36047fefe430eac5f8da52fa56993548416fdbf3517b3289997fb1c9538217"
+        },
+        "after_xml": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-S2-v8/captures/standard-S2-to-full-chooser/observer-after.xml",
+          "bytes": 22970,
+          "sha256": "fd36047fefe430eac5f8da52fa56993548416fdbf3517b3289997fb1c9538217"
+        },
+        "before_after_byte_equal": true,
+        "differences": [],
+        "capture_complete": true,
+        "same_connection_xml_png_xml": true,
+        "raw_image_reviewed": false,
+        "raw_accepted_business_case": false,
+        "raw_accepted_by_gui": false
+      },
+      {
+        "sequence": 3,
+        "label": "standard-S2-to-full-target-layout-ready",
+        "capture_token": "0931d9c80cf9be494ed7fee774fd219e",
+        "request": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-S2-v8/observer8-session/requests/00003.json",
+          "bytes": 167,
+          "sha256": "95f554538d4b7d80f8fde6dde07cfaa84583272dc4074fd2e061ea50ca7c2965"
+        },
+        "observation": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-S2-v8/captures/standard-S2-to-full-target-layout-ready/observer-observation.json",
+          "bytes": 1853,
+          "sha256": "56a7ddcba798d91fb75ffb42eec457d29da9d2a00e07e0b8b946630601c4d485"
+        },
+        "png": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-S2-v8/captures/standard-S2-to-full-target-layout-ready/observer-in-connection.png",
+          "bytes": 70708,
+          "sha256": "471ef783cf400f82bbe080f8f1bc7455fa93c6ca5cc36fa74769ae1183e719e5"
+        },
+        "before_xml": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-S2-v8/captures/standard-S2-to-full-target-layout-ready/observer-before.xml",
+          "bytes": 45365,
+          "sha256": "5b1b729a46575da67e0a0e7e8246b11c2008218671d16af5cd8826d77d782ca4"
+        },
+        "after_xml": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-S2-v8/captures/standard-S2-to-full-target-layout-ready/observer-after.xml",
+          "bytes": 45365,
+          "sha256": "5b1b729a46575da67e0a0e7e8246b11c2008218671d16af5cd8826d77d782ca4"
+        },
+        "before_after_byte_equal": true,
+        "differences": [],
+        "capture_complete": true,
+        "same_connection_xml_png_xml": true,
+        "raw_image_reviewed": false,
+        "raw_accepted_business_case": false,
+        "raw_accepted_by_gui": false
+      },
+      {
+        "sequence": 4,
+        "label": "standard-S2-to-full-current-schema-readback",
+        "capture_token": "52e1e465fcfb4266d421f926016332d2",
+        "request": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-S2-v8/observer8-session/requests/00004.json",
+          "bytes": 167,
+          "sha256": "e0b6a6d34450f6c3e0ea8d47b59308ebb466160454bb155e5596bc8881a1faaf"
+        },
+        "observation": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-S2-v8/captures/standard-S2-to-full-current-schema-readback/observer-observation.json",
+          "bytes": 1853,
+          "sha256": "5b4ef55dcd3e850c23350316b4a85f8f1fdcbeea8b2e240a1d2ad5407cb254a9"
+        },
+        "png": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-S2-v8/captures/standard-S2-to-full-current-schema-readback/observer-in-connection.png",
+          "bytes": 89181,
+          "sha256": "4b09c6ce288a106837fb2cc6ff9cf8766c232a470c9dffbd016355b5a6ced89a"
+        },
+        "before_xml": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-S2-v8/captures/standard-S2-to-full-current-schema-readback/observer-before.xml",
+          "bytes": 22973,
+          "sha256": "e23d376e6d3bc625301eef6e60c40505d8c18c011ccb7ce3560f44be3bef6486"
+        },
+        "after_xml": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-S2-v8/captures/standard-S2-to-full-current-schema-readback/observer-after.xml",
+          "bytes": 22973,
+          "sha256": "e23d376e6d3bc625301eef6e60c40505d8c18c011ccb7ce3560f44be3bef6486"
+        },
+        "before_after_byte_equal": true,
+        "differences": [],
+        "capture_complete": true,
+        "same_connection_xml_png_xml": true,
+        "raw_image_reviewed": false,
+        "raw_accepted_business_case": false,
+        "raw_accepted_by_gui": false
+      },
+      {
+        "sequence": 5,
+        "label": "standard-S2-to-full-schema-readback-dismissed",
+        "capture_token": "f5b1ded9163f5423edf5378792a9c0c2",
+        "request": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-S2-v8/observer8-session/requests/00005.json",
+          "bytes": 167,
+          "sha256": "135a5e7dfac553f5d7a7c9808e1a8fac8bc14168f66cb930dd75aa48792a29c0"
+        },
+        "observation": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-S2-v8/captures/standard-S2-to-full-schema-readback-dismissed/observer-observation.json",
+          "bytes": 1853,
+          "sha256": "dd63cebb619c801a3a60c2df1d9bf5db5114f371f40cfadf5c6c6cd90e7260b1"
+        },
+        "png": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-S2-v8/captures/standard-S2-to-full-schema-readback-dismissed/observer-in-connection.png",
+          "bytes": 70675,
+          "sha256": "4e7cbb274bd317597495514537bac25c27817e3c09d10f5524f9e60e5c3cba99"
+        },
+        "before_xml": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-S2-v8/captures/standard-S2-to-full-schema-readback-dismissed/observer-before.xml",
+          "bytes": 45368,
+          "sha256": "cb7620470e872f276ced9624611bceaabdd8dbb0c7fa1a7fbee52d0fed50006c"
+        },
+        "after_xml": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-S2-v8/captures/standard-S2-to-full-schema-readback-dismissed/observer-after.xml",
+          "bytes": 45368,
+          "sha256": "cb7620470e872f276ced9624611bceaabdd8dbb0c7fa1a7fbee52d0fed50006c"
+        },
+        "before_after_byte_equal": true,
+        "differences": [],
+        "capture_complete": true,
+        "same_connection_xml_png_xml": true,
+        "raw_image_reviewed": false,
+        "raw_accepted_business_case": false,
+        "raw_accepted_by_gui": false
+      },
+      {
+        "sequence": 6,
+        "label": "standard-S2-full-default-before",
+        "capture_token": "6d970051d4cafd1ad86eaf53139aef8e",
+        "request": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-S2-v8/observer8-session/requests/00006.json",
+          "bytes": 167,
+          "sha256": "b60ad12e5d19491121abed4cb0f7fca9bb30a5a2af9648fcaa327e9b59f88db7"
+        },
+        "observation": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-S2-v8/captures/standard-S2-full-default-before/observer-observation.json",
+          "bytes": 1853,
+          "sha256": "fc20487f0ffcb7b96f7606fdd1e24568dafc56f64a4259b60e3bde46054e913a"
+        },
+        "png": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-S2-v8/captures/standard-S2-full-default-before/observer-in-connection.png",
+          "bytes": 70675,
+          "sha256": "4e7cbb274bd317597495514537bac25c27817e3c09d10f5524f9e60e5c3cba99"
+        },
+        "before_xml": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-S2-v8/captures/standard-S2-full-default-before/observer-before.xml",
+          "bytes": 45368,
+          "sha256": "cb7620470e872f276ced9624611bceaabdd8dbb0c7fa1a7fbee52d0fed50006c"
+        },
+        "after_xml": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-S2-v8/captures/standard-S2-full-default-before/observer-after.xml",
+          "bytes": 45368,
+          "sha256": "cb7620470e872f276ced9624611bceaabdd8dbb0c7fa1a7fbee52d0fed50006c"
+        },
+        "before_after_byte_equal": true,
+        "differences": [],
+        "capture_complete": true,
+        "same_connection_xml_png_xml": true,
+        "raw_image_reviewed": false,
+        "raw_accepted_business_case": false,
+        "raw_accepted_by_gui": false
+      },
+      {
+        "sequence": 7,
+        "label": "standard-S2-full-default-ascii",
+        "capture_token": "f4a1f7cc0b61978071b44d0fa6c19786",
+        "request": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-S2-v8/observer8-session/requests/00007.json",
+          "bytes": 167,
+          "sha256": "99428f87d1b66b9de7ee2b64bf2d16d24bf1ba247e5453089154b74fe5265931"
+        },
+        "observation": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-S2-v8/captures/standard-S2-full-default-ascii/observer-observation.json",
+          "bytes": 1853,
+          "sha256": "7deb9d68217fde1faaef1839ba4280e3374c320a611dcc136136463d3ff97126"
+        },
+        "png": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-S2-v8/captures/standard-S2-full-default-ascii/observer-in-connection.png",
+          "bytes": 70393,
+          "sha256": "83adf036eb5786b91b9bd880074b359235d97eea4c1cdf3f8f9c7904c24d4bbe"
+        },
+        "before_xml": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-S2-v8/captures/standard-S2-full-default-ascii/observer-before.xml",
+          "bytes": 45367,
+          "sha256": "915cdb369e2ae166f326c82febd65c18b2217b6503c0b7a83b7a145789d912b0"
+        },
+        "after_xml": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-S2-v8/captures/standard-S2-full-default-ascii/observer-after.xml",
+          "bytes": 45367,
+          "sha256": "915cdb369e2ae166f326c82febd65c18b2217b6503c0b7a83b7a145789d912b0"
+        },
+        "before_after_byte_equal": true,
+        "differences": [],
+        "capture_complete": true,
+        "same_connection_xml_png_xml": true,
+        "raw_image_reviewed": false,
+        "raw_accepted_business_case": false,
+        "raw_accepted_by_gui": false
+      },
+      {
+        "sequence": 8,
+        "label": "standard-S2-explicit-double-shift",
+        "capture_token": "2d56bad596cf253ff7aa078cbdf044ef",
+        "request": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-S2-v8/observer8-session/requests/00008.json",
+          "bytes": 167,
+          "sha256": "c4ff6934b3fd3fdb7803a946536f34d8ab09db8a85ec448d148c68f807b7e544"
+        },
+        "observation": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-S2-v8/captures/standard-S2-explicit-double-shift/observer-observation.json",
+          "bytes": 1853,
+          "sha256": "fce1015b7707526bc64734fc3a912cdde1797e8096018a6365fc6bfb32109350"
+        },
+        "png": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-S2-v8/captures/standard-S2-explicit-double-shift/observer-in-connection.png",
+          "bytes": 74433,
+          "sha256": "a6326b576c3f5756d29fdd70097fa908325aa2b5d7daa8d3fa4990cf53e5bcad"
+        },
+        "before_xml": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-S2-v8/captures/standard-S2-explicit-double-shift/observer-before.xml",
+          "bytes": 45367,
+          "sha256": "7697d9b694bdbbef125718a4514455623abee138ed4ec6d30dce9a18cbf0a55c"
+        },
+        "after_xml": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-S2-v8/captures/standard-S2-explicit-double-shift/observer-after.xml",
+          "bytes": 45367,
+          "sha256": "7697d9b694bdbbef125718a4514455623abee138ed4ec6d30dce9a18cbf0a55c"
+        },
+        "before_after_byte_equal": true,
+        "differences": [],
+        "capture_complete": true,
+        "same_connection_xml_png_xml": true,
+        "raw_image_reviewed": false,
+        "raw_accepted_business_case": false,
+        "raw_accepted_by_gui": false
+      },
+      {
+        "sequence": 9,
+        "label": "standard-S2-explicit-AA",
+        "capture_token": "8b10908c4a63087041bbc5044017af6e",
+        "request": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-S2-v8/observer8-session/requests/00009.json",
+          "bytes": 167,
+          "sha256": "1a158bfed4c0e633cd91ecd6958d5b57c28b4e808b48d883bb80a64f75e27674"
+        },
+        "observation": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-S2-v8/captures/standard-S2-explicit-AA/observer-observation.json",
+          "bytes": 1853,
+          "sha256": "3214bc5e75c09327c1a5facd6867e8c542da7fffb38bdc57a27eaf13c027b7e6"
+        },
+        "png": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-S2-v8/captures/standard-S2-explicit-AA/observer-in-connection.png",
+          "bytes": 73242,
+          "sha256": "b56f6f8631986c682ed96037ce01366a1024d21180329367174f450fd32eb354"
+        },
+        "before_xml": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-S2-v8/captures/standard-S2-explicit-AA/observer-before.xml",
+          "bytes": 45358,
+          "sha256": "0ca45768e32861ed5e16301853a2c05b6b4da3ec6287f7cba7bbe7cfb4427277"
+        },
+        "after_xml": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-S2-v8/captures/standard-S2-explicit-AA/observer-after.xml",
+          "bytes": 45358,
+          "sha256": "0ca45768e32861ed5e16301853a2c05b6b4da3ec6287f7cba7bbe7cfb4427277"
+        },
+        "before_after_byte_equal": true,
+        "differences": [],
+        "capture_complete": true,
+        "same_connection_xml_png_xml": true,
+        "raw_image_reviewed": false,
+        "raw_accepted_business_case": false,
+        "raw_accepted_by_gui": false
+      }
+    ]
+  },
+  "oracle_chain": {
+    "pair_count": 5,
+    "json_file_count": 10,
+    "raw_file_count": 10,
+    "all_raw_snapshots_deep_equal_to_json": true,
+    "initial_and_fresh_full_are_distinct_editor_instances": true,
+    "all_full_state_oracles_same_fresh_fixture": true,
+    "all_main_thread_read_only_focused": true,
+    "pairs": [
+      {
+        "label": "standard-S2-initial-t9",
+        "exact_text": "",
+        "unicode_codepoints": [],
+        "utf8_hex": "",
+        "text_utf8_bytes": 0,
+        "selection": [
+          0,
+          0
+        ],
+        "fixture_pid": 1783,
+        "activity_instance": "45aed9942c204455a7d3a4d67a005bd8",
+        "before": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-S2-v8/standard-S2-initial-t9-before-oracle.json",
+          "bytes": 976,
+          "sha256": "50ef7585de67346037bf9acef61595c00caecebaf3a6c72d8d23ee03565ac5e2",
+          "raw": {
+            "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-S2-v8/standard-S2-initial-t9-before-oracle-raw.txt",
+            "bytes": 1169,
+            "sha256": "a36184a7b4bdfbaedbd870a95fe692957e3be48e857d54a571e0927f50c52d9d"
+          }
+        },
+        "after": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-S2-v8/standard-S2-initial-t9-after-oracle.json",
+          "bytes": 976,
+          "sha256": "048e9356baabb0ea2d4b7f597fea57fea354dcbe36dea12008c6372c931b5202",
+          "raw": {
+            "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-S2-v8/standard-S2-initial-t9-after-oracle-raw.txt",
+            "bytes": 1169,
+            "sha256": "99d30eb3f84969e022ac574ba99f50570dd8a0bb5abad4d85811686c98842d7d"
+          }
+        },
+        "raw_snapshot_deep_equal_to_json": true,
+        "main_thread_read_only_focused": true
+      },
+      {
+        "label": "standard-S2-full-default-before",
+        "exact_text": "",
+        "unicode_codepoints": [],
+        "utf8_hex": "",
+        "text_utf8_bytes": 0,
+        "selection": [
+          0,
+          0
+        ],
+        "fixture_pid": 2950,
+        "activity_instance": "1c9c08f39fe145be9771aeb90c32a7ef",
+        "before": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-S2-v8/standard-S2-full-default-before-before-oracle.json",
+          "bytes": 976,
+          "sha256": "9c8b39cfda4ea15a0f36974d70d3e7a54c154c5bc32c03cbc6e25810fffaa3cc",
+          "raw": {
+            "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-S2-v8/standard-S2-full-default-before-before-oracle-raw.txt",
+            "bytes": 1169,
+            "sha256": "507d93c824675ff5a0d2c557c9a2aa3f3154277e195d6ccad4a8eca4c287ce0c"
+          }
+        },
+        "after": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-S2-v8/standard-S2-full-default-before-after-oracle.json",
+          "bytes": 976,
+          "sha256": "936a891b535d42c571f372865cbaaa70420367efbe576231cdf09e0970613c7b",
+          "raw": {
+            "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-S2-v8/standard-S2-full-default-before-after-oracle-raw.txt",
+            "bytes": 1169,
+            "sha256": "157ab4b05c2e8edc819f91e0e275e0c2f581643ba87498a6d7ac74deaa173eab"
+          }
+        },
+        "raw_snapshot_deep_equal_to_json": true,
+        "main_thread_read_only_focused": true
+      },
+      {
+        "label": "standard-S2-full-default-ascii",
+        "exact_text": "",
+        "unicode_codepoints": [],
+        "utf8_hex": "",
+        "text_utf8_bytes": 0,
+        "selection": [
+          0,
+          0
+        ],
+        "fixture_pid": 2950,
+        "activity_instance": "1c9c08f39fe145be9771aeb90c32a7ef",
+        "before": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-S2-v8/standard-S2-full-default-ascii-before-oracle.json",
+          "bytes": 976,
+          "sha256": "776e0a09bf493dbcbc33e3fe6a5a81f9f484a4241fb5123edb0108d0ce86a1a3",
+          "raw": {
+            "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-S2-v8/standard-S2-full-default-ascii-before-oracle-raw.txt",
+            "bytes": 1169,
+            "sha256": "92b2ef3651d5d8e4ec7859c4d100377cf57e9251cefef2a98397a7cee222b154"
+          }
+        },
+        "after": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-S2-v8/standard-S2-full-default-ascii-after-oracle.json",
+          "bytes": 976,
+          "sha256": "2e7d181f4dc77073c3eb319268decf2dcff21233bac79d9b12f63d02ef850ccf",
+          "raw": {
+            "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-S2-v8/standard-S2-full-default-ascii-after-oracle-raw.txt",
+            "bytes": 1169,
+            "sha256": "a4c32609212a28a8a1763235e81dc340df5508e36c8fa43260c5acf79070a509"
+          }
+        },
+        "raw_snapshot_deep_equal_to_json": true,
+        "main_thread_read_only_focused": true
+      },
+      {
+        "label": "standard-S2-explicit-double-shift",
+        "exact_text": "",
+        "unicode_codepoints": [],
+        "utf8_hex": "",
+        "text_utf8_bytes": 0,
+        "selection": [
+          0,
+          0
+        ],
+        "fixture_pid": 2950,
+        "activity_instance": "1c9c08f39fe145be9771aeb90c32a7ef",
+        "before": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-S2-v8/standard-S2-explicit-double-shift-before-oracle.json",
+          "bytes": 976,
+          "sha256": "dacfff021fe6969c7d0814916f241f47a947b49132d51716776039f671bf6dc1",
+          "raw": {
+            "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-S2-v8/standard-S2-explicit-double-shift-before-oracle-raw.txt",
+            "bytes": 1169,
+            "sha256": "b50ac1b1abefe6b6d127d71faeab34e1885a54e6c3f9a4cf2b9037d144957930"
+          }
+        },
+        "after": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-S2-v8/standard-S2-explicit-double-shift-after-oracle.json",
+          "bytes": 976,
+          "sha256": "70c78d7912dbce8c22c148b33c4fe9163b41013d9866f66ccae411d7a3633524",
+          "raw": {
+            "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-S2-v8/standard-S2-explicit-double-shift-after-oracle-raw.txt",
+            "bytes": 1169,
+            "sha256": "d1a986c373fd80fe32aa54289eac87160617d4ddd7b59c2c726fd19e026b2b21"
+          }
+        },
+        "raw_snapshot_deep_equal_to_json": true,
+        "main_thread_read_only_focused": true
+      },
+      {
+        "label": "standard-S2-explicit-AA",
+        "exact_text": "AA",
+        "unicode_codepoints": [
+          "U+0041",
+          "U+0041"
+        ],
+        "utf8_hex": "4141",
+        "text_utf8_bytes": 2,
+        "selection": [
+          2,
+          2
+        ],
+        "fixture_pid": 2950,
+        "activity_instance": "1c9c08f39fe145be9771aeb90c32a7ef",
+        "before": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-S2-v8/standard-S2-explicit-AA-before-oracle.json",
+          "bytes": 980,
+          "sha256": "4e574a0cb55a986b64ce424ea799fcb6077ac669db88c41fde634d47ace35343",
+          "raw": {
+            "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-S2-v8/standard-S2-explicit-AA-before-oracle-raw.txt",
+            "bytes": 1173,
+            "sha256": "b67cdef6291dd45a0aff5386eabf60a7cd69f1f15f3543ebf6ab953669cc3c8e"
+          }
+        },
+        "after": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-S2-v8/standard-S2-explicit-AA-after-oracle.json",
+          "bytes": 980,
+          "sha256": "67be843b1a5854a1f411bf8a3adf981fbdb0a388d400183de95dc2a6f30612b1",
+          "raw": {
+            "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-S2-v8/standard-S2-explicit-AA-after-oracle-raw.txt",
+            "bytes": 1173,
+            "sha256": "1cdd91ea008701dab840744c6e595338f337f813e22ac7b46e597246af32897a"
+          }
+        },
+        "raw_snapshot_deep_equal_to_json": true,
+        "main_thread_read_only_focused": true
+      }
+    ],
+    "final_exact": {
+      "text": "AA",
+      "unicode_codepoints": [
+        "U+0041",
+        "U+0041"
+      ],
+      "utf8_hex": "4141",
+      "bytes": 2,
+      "selection": [
+        2,
+        2
+      ],
+      "passes": true
+    }
+  },
+  "selected_root_visual_review_snapshot": {
+    "count": 1,
+    "records": [
+      {
+        "utc": "2026-10-22T17:32:57.651007+00:00",
+        "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-S2-v8/captures/standard-S2-explicit-AA/observer-in-connection.png",
+        "sha256": "b56f6f8631986c682ed96037ce01366a1024d21180329367174f450fd32eb354",
+        "platform": "API35",
+        "case": "standard S2 v8 explicit double Shift resulting AA",
+        "observed": "Root actually viewed editor AA, uppercase full QWERTY keys, blue latched Shift, En and blank composition strip.",
+        "scope": "Selected resulting original frame only. Exact Shift_L3 binding, real MotionEvents, target release<=300ms and actual DOUBLE_CLICK classification require independent continuous-log qualification; not inferred from uppercase text alone."
+      }
+    ],
+    "role": "Root visually confirmed only the selected final AA frame and its uppercase full QWERTY/latched Shift/En presentation. Exact text comes from strict oracle; timing and DOUBLE_CLICK classification come from the continuous target log and are not inferred from pixels."
+  },
+  "command_boundary": {
+    "command_count": 502,
+    "all_completed": true,
+    "all_host_returncodes_zero": true,
+    "remote_returncode_counts": {
+      "0": 275,
+      "1": 123,
+      "not_applicable": 104
+    },
+    "all_remote_rc1_are_read_only_test_e_or_test_f_existence_probes": true
+  },
+  "normal_stop": {
+    "authenticated": true,
+    "direct_finish_succeeded": true,
+    "atexit_fallback_retained": false,
+    "finished_receipt": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-S2-v8/observer8-session/finished.json",
+      "bytes": 2123,
+      "sha256": "be5300f1664db0a6ea360a06784fd59dc09fcf122be26e70bb6e00b277014841"
+    },
+    "observer_passed": true,
+    "stop_received": true,
+    "request_count": 10,
+    "capture_count": 9,
+    "completed_capture_count": 9,
+    "capture_failures": 0,
+    "actual_child_wait_returncode": 0,
+    "actual_remote_returncode": 0,
+    "cleanup": []
+  },
+  "raw_status_retained": {
+    "report_completed": true,
+    "report_passed": false,
+    "report_checks": [],
+    "sequence_business_passed": false,
+    "all_capture_image_reviewed_false": true,
+    "all_capture_accepted_business_case_false": true,
+    "all_capture_accepted_by_gui_false": true,
+    "qualification_is_separate_from_raw_journal": true
+  },
+  "qualification_checks": [
+    {
+      "id": "exact_c4_v8_binding_apk_theme_pid_start_boot_identity",
+      "passed": true
+    },
+    {
+      "id": "public_full_schema_unique_checked_readback_and_actual_dismiss",
+      "passed": true
+    },
+    {
+      "id": "distinct_fresh_full_default_editor_entered_ascii",
+      "passed": true
+    },
+    {
+      "id": "four_real_events_same_injector_process_all_accepted_as_necessary_condition",
+      "passed": true
+    },
+    {
+      "id": "injector_UP_event_delta_231ms_within_300ms",
+      "passed": true
+    },
+    {
+      "id": "target_first_Shift_CLICK_release_and_dispatch",
+      "passed": true
+    },
+    {
+      "id": "target_second_Shift_DOUBLE_CLICK_release_and_dispatch",
+      "passed": true
+    },
+    {
+      "id": "target_release_delta_231ms_within_300ms",
+      "passed": true
+    },
+    {
+      "id": "two_actual_uppercase_A_dispatches_and_U_0041_records",
+      "passed": true
+    },
+    {
+      "id": "strict_oracle_exact_AA_U_0041_U_0041",
+      "passed": true
+    },
+    {
+      "id": "nine_capture_receipts_complete_and_xml_pairs_byte_equal",
+      "passed": true
+    },
+    {
+      "id": "authenticated_normal_stop",
+      "passed": true
+    },
+    {
+      "id": "raw_false_and_PENDING_fields_preserved",
+      "passed": true
+    }
+  ],
+  "limits": [
+    "This qualifies only the exact frozen API35 standard-theme S2-v8 c4 emulator session and its actual public-schema/full-default path.",
+    "Four accepted injector events are a necessary condition only. Target DOUBLE_CLICK qualification comes from the bounded target PID release/process records plus the strict oracle.",
+    "Target logs do not expose raw MotionEvent IDs or coordinates; those remain bound through the single-process injector receipt and its PID-bounded log window.",
+    "Only the final AA PNG was selected in the Root ledger. No dispatch or timing fact is inferred from that visual frame.",
+    "The continuous log was still appendable; this qualification binds the immutable prefix through line 1529301 and does not claim a terminal full-log hash.",
+    "Raw report passed=false/checks=[], sequence business_passed=false, PENDING helper fields, and all raw acceptance flags remain unchanged.",
+    "No result for standard S1, trime theme, another case/API, whole terminal run, physical device, performance, PR readiness, or merge readiness follows."
+  ],
+  "final_assessment": {
+    "qualified": true,
+    "scope": "Exact c4 API35 emulator standard S2-v8 frozen path only",
+    "final_exact_text": "AA",
+    "target_dispatch": [
+      "CLICK",
+      "DOUBLE_CLICK"
+    ],
+    "release_delta_ms": 231,
+    "injector_up_event_delta_ms": 231,
+    "physical_device": "NOT_RUN",
+    "raw_report_passed": false,
+    "raw_business_passed": false
+  }
+}

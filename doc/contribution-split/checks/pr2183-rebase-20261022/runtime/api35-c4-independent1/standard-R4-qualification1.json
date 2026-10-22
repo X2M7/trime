@@ -1,0 +1,3961 @@
+{
+  "schema": "trime-independent-runtime-qualification/v1",
+  "generated_utc": "2026-10-22T17:21:43.054194+00:00",
+  "review_mode": "HOST_ONLY_NO_ADB_VM_GRADLE_NO_FROZEN_SESSION_EDIT",
+  "verdict": "PASS_API35_C4_STANDARD_R4_EXACT_FROZEN_V7_PATH_WITH_ONE_EMBEDDED_K1",
+  "qualification_scope": {
+    "platform": "Android API35 emulator",
+    "api": 35,
+    "serial_recorded": "emulator-5584",
+    "theme": "standard / tongwenfeng.trime",
+    "actual_case_session": "R4",
+    "exact_session_only": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4",
+    "logical_items_qualified": [
+      "standard R4 as actually implemented by frozen v7",
+      "standard K1 embedded exactly once at the R4 tail"
+    ],
+    "execution_count_rule": "This is one actual R4 session. Frozen v7 _r4 calls the complete _k1 once at its tail. The embedded path qualifies that logical K1 behavior but is not an independent K1 session and is not counted twice.",
+    "standard_branch_only": "The theme is standard. The conditional trime-only 朙月拼音·简化字/SIMP branch at runner lines 386-390 was not entered; zero capture/action labels contain simp.",
+    "not_qualified_here": [
+      "an independent standard K1 session",
+      "the trime-theme simplified-schema branch",
+      "any other API35 case or theme",
+      "API21",
+      "physical-device behavior",
+      "terminal/whole-platform status",
+      "whole c4 build, PR-ready, or merge-ready conclusions"
+    ]
+  },
+  "frozen_inputs": {
+    "session": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4",
+    "raw_report": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/report.json",
+      "bytes": 1614333,
+      "sha256": "7bf99bb279c37a456cece1b1619893af8f36a4e0d8720ebc7d327900451b2dc2",
+      "completed": true,
+      "passed": false,
+      "checks": [],
+      "started": "2026-10-22T17:11:40.801783+00:00",
+      "finished": "2026-10-22T17:18:20.564645+00:00",
+      "command_count": 1216,
+      "capture_count": 24,
+      "action_count": 43
+    },
+    "sequence_result": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/sequence-result.json",
+      "bytes": 1902,
+      "sha256": "8f690bd906127ddcb2bef62ef53285d10c04678b3e03307bced003dbec6d7333",
+      "strict_sequence_completed": true,
+      "business_passed": false,
+      "authenticated_normal_stop": true,
+      "direct_finish_succeeded": true,
+      "atexit_fallback_retained": false
+    },
+    "binding": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/original-apk-binding-c4-v7.json",
+      "bytes": 4021,
+      "sha256": "52919b0ce3ee58c654f73c80008d4ea4575362f11d08eba540eb9207c4781778",
+      "embedded_report_value_deep_equal": true
+    },
+    "runner": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/t9_case_sequences_v7.py",
+      "bytes": 22810,
+      "sha256": "3f7739c86af44fd08b97598286f9e697ce500473c7dc5d642466cf77229b6846",
+      "loaded_path_matches_binding": true,
+      "loaded_sha256_matches_binding": true,
+      "source_line_ranges": {
+        "asset_binding": [
+          30,
+          35
+        ],
+        "embedded_k1": [
+          193,
+          210
+        ],
+        "schema_selector": [
+          336,
+          363
+        ],
+        "full_mode_cycle": [
+          366,
+          379
+        ],
+        "r4": [
+          382,
+          392
+        ],
+        "run_and_stop": [
+          399,
+          500
+        ]
+      }
+    },
+    "execution_mapping": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/c4-v7-execution-mapping1.json",
+      "bytes": 2260,
+      "sha256": "dd3345466983cc3c150640550644287344b4034b9c6407be48fc254f45b6d973"
+    },
+    "precondition_prefs_snapshot": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/standard-R4-precondition-prefs.xml",
+      "bytes": 302,
+      "sha256": "f3773629700fa5f9beb08f7c35ca9ad22942d7500cf6526cb9e57f918b88f5bc",
+      "values": {
+        "general__pid": "2228",
+        "follow_system_day_night": "false",
+        "selected_theme": "tongwenfeng.trime",
+        "profile_data_storage_mode": "APP_STORAGE"
+      },
+      "read_only_capture": true,
+      "read_boundary": {
+        "shell_identity": "uid=2000(shell) gid=2000(shell) groups=2000(shell),1004(input),1007(log),1011(adb),1015(sdcard_rw),1028(sdcard_r),1078(ext_data_rw),1079(ext_obb_rw),3001(net_bt_admin),3002(net_bt),3003(inet),3006(net_bw_stats),3009(readproc),3011(uhid),3012(readtracefs) context=u:r:shell:s0",
+        "argv": [
+          "su",
+          "0",
+          "cat",
+          "/data/data/com.osfans.trime.debug/shared_prefs/com.osfans.trime.debug_preferences.xml"
+        ],
+        "read_only": true
+      }
+    },
+    "start_installed_apk": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/start-installed-apk.bin",
+      "bytes": 20673055,
+      "sha256": "453c71544f67685db3b85fc91855ed27c5ff264d0a25671669642b0dc4b8732e"
+    },
+    "start_package": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/start-package.txt",
+      "bytes": 11484,
+      "sha256": "248a83208ad730d8299e22e9a7bf7c4b77e90100178d59437efb7196f9ed8145"
+    },
+    "installed_public_input_observer8_apk": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/installed-public-input-observer8-apk.bin",
+      "bytes": 41363,
+      "sha256": "9edd1ffeade1621faa5f6c51bb1699032bfcd827f3cd28a0143b37099ad812aa"
+    },
+    "installed_oracle_fixture_apk": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/installed-oracle-fixture.bin",
+      "bytes": 29075,
+      "sha256": "e094d767c820b77ec93d9b3f461b2208b4d7dcbec4f37ea869926b7987dfea59"
+    },
+    "observer_finished": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/observer8-session/finished.json",
+      "bytes": 2127,
+      "sha256": "8a88965bcb7c2692014cabf1d36f6bad22e35cb19306584984533b242a31731d"
+    },
+    "root_visual_ledger_snapshot": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/root-image-review-c4.json",
+      "bytes": 39240,
+      "sha256": "397a0cfbd7932b02c790310bf739b970c8cc0cf032aa7f274989ebd2082ae1a4",
+      "total_records_at_snapshot": 55,
+      "matching_selected_frame_records": 4,
+      "records": [
+        {
+          "utc": "2026-10-22T17:14:49.318702+00:00",
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/captures/standard-R4-full-email-a/observer-in-connection.png",
+          "sha256": "217f31a086ab334bf19dfe6d7fd1fe9cd2d42b7269a0df2c268144d0849ac38a",
+          "platform": "API35",
+          "case": "standard R4 full schema forced email literal a",
+          "observed": "Root actually viewed email editor containing a, full QWERTY with En/西文 and next-action key, blank composition/candidate area.",
+          "scope": "Selected original frame, viewed only after its PNG existed; directory appearance alone was not treated as an image. Exact forced integer→email and recovery sequence qualifications are separate."
+        },
+        {
+          "utc": "2026-10-22T17:15:23.047659+00:00",
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/captures/standard-R4-full-normal-selected-ni/observer-in-connection.png",
+          "sha256": "76aca79947125e059ee536a0e75b71785a78490b0a96417ed30af6d02c882509",
+          "platform": "API35",
+          "case": "standard R4 full schema restored normal Chinese 你",
+          "observed": "Root actually viewed multiline editor 你, full QWERTY with 中/中文, Enter key and cleared candidate/composition strip.",
+          "scope": "Selected original final frame; forced-mode recovery ordering and exact oracle verified separately. Not independent physical-device testing."
+        },
+        {
+          "utc": "2026-10-22T17:17:56.007858+00:00",
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/captures/standard-R4-new-T9-K1-selected-nihao/observer-in-connection.png",
+          "sha256": "89ce4b7881ce95f3b2c05b594cf2fffea62bf86a7984d75f4af73bf9b14a0f8f",
+          "platform": "API35",
+          "case": "standard R4 embedded K1 selected nihao",
+          "observed": "Root actually viewed editor 你好, standard T9 keyboard with 中 indicator and cleared composition/candidate strip.",
+          "scope": "Selected original frame after public full-schema→T9 path. Embedded K1 is counted once in R4; not an additional standalone successful session."
+        },
+        {
+          "utc": "2026-10-22T17:18:40.792895+00:00",
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/captures/standard-R4-new-T9-K1-cancel6/observer-in-connection.png",
+          "sha256": "26e0ee1120c7ffd3fbbe84d6dfed3d61ce68eec0b09870cdf9d8d4920942f34b",
+          "platform": "API35",
+          "case": "standard R4 embedded K1 new6 Cancel",
+          "observed": "Root actually viewed 你好 preserved in editor after new6 Cancel, standard T9 visible and no spelling Current/Locked/Undo/Cancel/candidate controls.",
+          "scope": "Selected original final frame; exact cancellation target, editable equality and state identity are separately qualified. R4/K1 not counted as separate duplicate sessions."
+        }
+      ],
+      "selected_frames_only": true,
+      "does_not_replace_xml_oracle_or_action_evidence": true
+    }
+  },
+  "identity": {
+    "source_head": "c4b613f78835e7b914e02447955c6b89fe9839ab",
+    "source_tree": "d7639dfce3b6b5646bb004479a688148c1b19900",
+    "actual_build_commit": "c4b613f78835e7b914e02447955c6b89fe9839ab",
+    "base": "19b048494ffa55cae52d5385dfa6d0611461c27d",
+    "producer": {
+      "repository": "X2M7/trime",
+      "run": 39806420824,
+      "artifact": 12438099455
+    },
+    "package": "com.osfans.trime.debug",
+    "uid": 10159,
+    "data_dir": "/data/user/0/com.osfans.trime.debug",
+    "version_code": 20261101,
+    "version_name": "3.3.13",
+    "apk_sha256": "453c71544f67685db3b85fc91855ed27c5ff264d0a25671669642b0dc4b8732e",
+    "apk_signer_sha256": "f6409a2d9db2800f1acc9b2e614d73e4609df3652d265cf2c40eb8a64456deb2",
+    "artifact_audit_sha256": "58b3d5e7f60678c164269897764957053bacc47055eed69a1a657dfb3a53f336",
+    "artifact_archive_sha256": "8730839641d03b78394ec53e1a7892f29ec1b4a9e31aaa46619653eb2d3be65a",
+    "installed_copy_byte_equal_to_bound_original": true,
+    "no_resigning": true,
+    "retained_signature_warnings": [
+      "WARNING: META-INF/services/kotlinx.coroutines.CoroutineExceptionHandler not protected by signature. Unauthorized modifications to this JAR entry will not be detected. Delete or move the entry outside of META-INF/.",
+      "WARNING: META-INF/services/kotlinx.coroutines.internal.MainDispatcherFactory not protected by signature. Unauthorized modifications to this JAR entry will not be detected. Delete or move the entry outside of META-INF/."
+    ],
+    "theme_asset": {
+      "path_in_apk": "assets/shared/tongwenfeng.trime.yaml",
+      "bytes": 200597,
+      "sha256": "e758ce8f9059f0fbe3c27c2de9c5faffff761b825feed437075f285e15af9147"
+    },
+    "target_pid": 2228,
+    "target_starttime": "18495",
+    "target_stat_probe_count": 78,
+    "target_stat_starttime_values": [
+      "18495"
+    ],
+    "target_stat_command_ordinals": [
+      6,
+      1199
+    ],
+    "target_cmdline_probe_count": 78,
+    "target_cmdline_values": [
+      "com.osfans.trime.debug"
+    ],
+    "target_cmdline_command_ordinals": [
+      7,
+      1200
+    ],
+    "boot_id": "ba13c239-0862-4901-a4c7-3b1f2e4c6608",
+    "boot_id_probe_count": 51,
+    "boot_id_values": [
+      "ba13c239-0862-4901-a4c7-3b1f2e4c6608"
+    ],
+    "boot_id_command_ordinals": [
+      1,
+      1201
+    ],
+    "observer_session_token": "992d3aa2456702ddfc12ac681a926654",
+    "observer_pid": 19263,
+    "observer_starttime": "203139",
+    "observer_apk_sha256": "9edd1ffeade1621faa5f6c51bb1699032bfcd827f3cd28a0143b37099ad812aa",
+    "display": {
+      "size_raw": "Physical size: 720x1280",
+      "density_raw": "Physical density: 320",
+      "effective_size": "720x1280",
+      "effective_density": "320"
+    }
+  },
+  "raw_status_retained": {
+    "report_completed": true,
+    "report_passed": false,
+    "report_checks": [],
+    "sequence_strict_completed": true,
+    "sequence_business_passed": false,
+    "raw_journal_pass_flag_is_not_case_qualification": true,
+    "capture_image_reviewed_true_count": 0,
+    "capture_accepted_business_case_true_count": 0,
+    "qualification_is_separate_from_raw_journal": true
+  },
+  "capture_chain": {
+    "capture_count": 24,
+    "complete_capture_count": 24,
+    "capture_failures": 0,
+    "same_cached_automation_connection": true,
+    "automation_connection_count": 1,
+    "helper_injected_touch": false,
+    "candidate_ui_acceptance": false,
+    "byte_equal_xml_capture_count": 24,
+    "byte_unequal_xml_capture_count": 0,
+    "byte_unequal_xml_captures": [],
+    "byte_unequal_limit": "Every one of the 24 observer XML-before/after pairs is byte-for-byte equal; no difference is being normalized or excused.",
+    "captures": [
+      {
+        "sequence": 1,
+        "label": "standard-R4-initial-t9",
+        "observation": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/captures/standard-R4-initial-t9/observer-observation.json",
+          "bytes": 1854,
+          "sha256": "9049f1a083b4d786d8e67ac332e2d840041dea89e2c07c8aa03df8860c5fd904"
+        },
+        "png": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/captures/standard-R4-initial-t9/observer-in-connection.png",
+          "bytes": 54250,
+          "sha256": "a63d93e7058aa9dcf30c066b7dcc85445d9bf597ee1bb278f8d4e70eb0fec2e5"
+        },
+        "before_xml": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/captures/standard-R4-initial-t9/observer-before.xml",
+          "bytes": 38414,
+          "sha256": "590e522618989b6ed3fcada91b03543fa90747c8c7ba706b31f237c211b9518e"
+        },
+        "after_xml": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/captures/standard-R4-initial-t9/observer-after.xml",
+          "bytes": 38414,
+          "sha256": "590e522618989b6ed3fcada91b03543fa90747c8c7ba706b31f237c211b9518e"
+        },
+        "hierarchies_equal": true,
+        "capture_complete": true,
+        "same_connection_xml_png_xml": true,
+        "raw_image_reviewed": false,
+        "raw_accepted_business_case": false,
+        "oracle_text_if_present": ""
+      },
+      {
+        "sequence": 2,
+        "label": "standard-R4-T9-to-full-chooser",
+        "observation": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/captures/standard-R4-T9-to-full-chooser/observer-observation.json",
+          "bytes": 1854,
+          "sha256": "8cd66d3bf16f94eef5cc395390febc0c327efe53ca3a09c98714028ac56fef09"
+        },
+        "png": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/captures/standard-R4-T9-to-full-chooser/observer-in-connection.png",
+          "bytes": 81604,
+          "sha256": "259f5ba5520e9fe038a8ff8117ff5ebeed32b3fd94ffe856fc00a654ec376bb2"
+        },
+        "before_xml": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/captures/standard-R4-T9-to-full-chooser/observer-before.xml",
+          "bytes": 22973,
+          "sha256": "37109ae3acafee990f369448f2eda1433f2d24ea37b60e862263a9e006419cf3"
+        },
+        "after_xml": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/captures/standard-R4-T9-to-full-chooser/observer-after.xml",
+          "bytes": 22973,
+          "sha256": "37109ae3acafee990f369448f2eda1433f2d24ea37b60e862263a9e006419cf3"
+        },
+        "hierarchies_equal": true,
+        "capture_complete": true,
+        "same_connection_xml_png_xml": true,
+        "raw_image_reviewed": false,
+        "raw_accepted_business_case": false,
+        "oracle_text_if_present": null
+      },
+      {
+        "sequence": 3,
+        "label": "standard-R4-T9-to-full-target-layout-ready",
+        "observation": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/captures/standard-R4-T9-to-full-target-layout-ready/observer-observation.json",
+          "bytes": 1854,
+          "sha256": "d39b04d4cf7510b60f57692b8908e2eab3373eee1f1516373c7d698dec1dcea9"
+        },
+        "png": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/captures/standard-R4-T9-to-full-target-layout-ready/observer-in-connection.png",
+          "bytes": 70576,
+          "sha256": "aa7262f8ce077e859022a2cd597c22bd7d0a53db14f21fccdfeff393b19cf6aa"
+        },
+        "before_xml": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/captures/standard-R4-T9-to-full-target-layout-ready/observer-before.xml",
+          "bytes": 45368,
+          "sha256": "df422fddff0d5c7bf15b5eea413be61dcfa287beefef225a73c88a390d529a55"
+        },
+        "after_xml": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/captures/standard-R4-T9-to-full-target-layout-ready/observer-after.xml",
+          "bytes": 45368,
+          "sha256": "df422fddff0d5c7bf15b5eea413be61dcfa287beefef225a73c88a390d529a55"
+        },
+        "hierarchies_equal": true,
+        "capture_complete": true,
+        "same_connection_xml_png_xml": true,
+        "raw_image_reviewed": false,
+        "raw_accepted_business_case": false,
+        "oracle_text_if_present": null
+      },
+      {
+        "sequence": 4,
+        "label": "standard-R4-T9-to-full-current-schema-readback",
+        "observation": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/captures/standard-R4-T9-to-full-current-schema-readback/observer-observation.json",
+          "bytes": 1854,
+          "sha256": "ac02a399b822ef33ffdaa082f3345c8954cbff980f0cbfa0d24fba1def9a1ea5"
+        },
+        "png": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/captures/standard-R4-T9-to-full-current-schema-readback/observer-in-connection.png",
+          "bytes": 88606,
+          "sha256": "0665b8608c890884e80d47cc8162239016c86cbbc732f29d285e73b150c7876f"
+        },
+        "before_xml": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/captures/standard-R4-T9-to-full-current-schema-readback/observer-before.xml",
+          "bytes": 22973,
+          "sha256": "f4bd411a48ff5b92d7e0dd06346c02a90316f5e393c0b7f5c172ebaa9b85367f"
+        },
+        "after_xml": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/captures/standard-R4-T9-to-full-current-schema-readback/observer-after.xml",
+          "bytes": 22973,
+          "sha256": "f4bd411a48ff5b92d7e0dd06346c02a90316f5e393c0b7f5c172ebaa9b85367f"
+        },
+        "hierarchies_equal": true,
+        "capture_complete": true,
+        "same_connection_xml_png_xml": true,
+        "raw_image_reviewed": false,
+        "raw_accepted_business_case": false,
+        "oracle_text_if_present": null
+      },
+      {
+        "sequence": 5,
+        "label": "standard-R4-T9-to-full-schema-readback-dismissed",
+        "observation": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/captures/standard-R4-T9-to-full-schema-readback-dismissed/observer-observation.json",
+          "bytes": 1854,
+          "sha256": "973f9da35c97cdef2444c230c0d4e548bc99d4d896ed6543f118d2d2ceaf07a8"
+        },
+        "png": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/captures/standard-R4-T9-to-full-schema-readback-dismissed/observer-in-connection.png",
+          "bytes": 70523,
+          "sha256": "4c1e841e78e44480856c6b64061bdde6a406f981334d73dfb54627f696585460"
+        },
+        "before_xml": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/captures/standard-R4-T9-to-full-schema-readback-dismissed/observer-before.xml",
+          "bytes": 45368,
+          "sha256": "df422fddff0d5c7bf15b5eea413be61dcfa287beefef225a73c88a390d529a55"
+        },
+        "after_xml": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/captures/standard-R4-T9-to-full-schema-readback-dismissed/observer-after.xml",
+          "bytes": 45368,
+          "sha256": "df422fddff0d5c7bf15b5eea413be61dcfa287beefef225a73c88a390d529a55"
+        },
+        "hierarchies_equal": true,
+        "capture_complete": true,
+        "same_connection_xml_png_xml": true,
+        "raw_image_reviewed": false,
+        "raw_accepted_business_case": false,
+        "oracle_text_if_present": null
+      },
+      {
+        "sequence": 6,
+        "label": "standard-R4-full-new-normal-full",
+        "observation": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/captures/standard-R4-full-new-normal-full/observer-observation.json",
+          "bytes": 1854,
+          "sha256": "8d22426219f787b2281eb6d6b3f083b617e6af6829f0bb1cad68d51c8699be0e"
+        },
+        "png": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/captures/standard-R4-full-new-normal-full/observer-in-connection.png",
+          "bytes": 70580,
+          "sha256": "e001da694a9294712343f1c724965059a9961476b20a95dda249f2fb94e0d7b6"
+        },
+        "before_xml": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/captures/standard-R4-full-new-normal-full/observer-before.xml",
+          "bytes": 45368,
+          "sha256": "be88e5001d909a36aa3da861a441ae11db10d41151be00fa72eef225e689eec3"
+        },
+        "after_xml": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/captures/standard-R4-full-new-normal-full/observer-after.xml",
+          "bytes": 45368,
+          "sha256": "be88e5001d909a36aa3da861a441ae11db10d41151be00fa72eef225e689eec3"
+        },
+        "hierarchies_equal": true,
+        "capture_complete": true,
+        "same_connection_xml_png_xml": true,
+        "raw_image_reviewed": false,
+        "raw_accepted_business_case": false,
+        "oracle_text_if_present": ""
+      },
+      {
+        "sequence": 7,
+        "label": "standard-R4-full-forced-integer",
+        "observation": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/captures/standard-R4-full-forced-integer/observer-observation.json",
+          "bytes": 1854,
+          "sha256": "afd2dba8ce1205a1f77d1d4362538f9ee5574c3d80ee07c0fef7d81fd18d866c"
+        },
+        "png": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/captures/standard-R4-full-forced-integer/observer-in-connection.png",
+          "bytes": 60398,
+          "sha256": "df4a8ef505cfb6eee62dd1e97036345c6e508a8963984d972ba0c2ad4b675c3c"
+        },
+        "before_xml": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/captures/standard-R4-full-forced-integer/observer-before.xml",
+          "bytes": 41115,
+          "sha256": "00b10d199f560357fc560da93cfb1303cd6c167354e5f426d20c748a987a2ea0"
+        },
+        "after_xml": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/captures/standard-R4-full-forced-integer/observer-after.xml",
+          "bytes": 41115,
+          "sha256": "00b10d199f560357fc560da93cfb1303cd6c167354e5f426d20c748a987a2ea0"
+        },
+        "hierarchies_equal": true,
+        "capture_complete": true,
+        "same_connection_xml_png_xml": true,
+        "raw_image_reviewed": false,
+        "raw_accepted_business_case": false,
+        "oracle_text_if_present": ""
+      },
+      {
+        "sequence": 8,
+        "label": "standard-R4-full-forced-email",
+        "observation": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/captures/standard-R4-full-forced-email/observer-observation.json",
+          "bytes": 1854,
+          "sha256": "0472bfc54fa56d7a8da4372ef7d004b4ba8c13376c52f66efb27f7d359aa0df6"
+        },
+        "png": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/captures/standard-R4-full-forced-email/observer-in-connection.png",
+          "bytes": 69874,
+          "sha256": "c017aa6b7ee0107dc3b439b00d14889ca8b8bc17754bbfdd0938214c3e166732"
+        },
+        "before_xml": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/captures/standard-R4-full-forced-email/observer-before.xml",
+          "bytes": 45358,
+          "sha256": "24b2b79f540037cd58f2e83ae4c87b854f0ee26ea320b782b576f9a9fbf1c610"
+        },
+        "after_xml": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/captures/standard-R4-full-forced-email/observer-after.xml",
+          "bytes": 45358,
+          "sha256": "24b2b79f540037cd58f2e83ae4c87b854f0ee26ea320b782b576f9a9fbf1c610"
+        },
+        "hierarchies_equal": true,
+        "capture_complete": true,
+        "same_connection_xml_png_xml": true,
+        "raw_image_reviewed": false,
+        "raw_accepted_business_case": false,
+        "oracle_text_if_present": ""
+      },
+      {
+        "sequence": 9,
+        "label": "standard-R4-full-email-a",
+        "observation": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/captures/standard-R4-full-email-a/observer-observation.json",
+          "bytes": 1854,
+          "sha256": "2ed4bcb3c0b1cb0f80eaf3f7a168aac1551e15b60508009da8ed1050a6fa2243"
+        },
+        "png": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/captures/standard-R4-full-email-a/observer-in-connection.png",
+          "bytes": 68641,
+          "sha256": "217f31a086ab334bf19dfe6d7fd1fe9cd2d42b7269a0df2c268144d0849ac38a"
+        },
+        "before_xml": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/captures/standard-R4-full-email-a/observer-before.xml",
+          "bytes": 45352,
+          "sha256": "6e031972d37ae658cc13ac00efdfb81a77a3e861ceaf62bc7c5366f4bd7a05bc"
+        },
+        "after_xml": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/captures/standard-R4-full-email-a/observer-after.xml",
+          "bytes": 45352,
+          "sha256": "6e031972d37ae658cc13ac00efdfb81a77a3e861ceaf62bc7c5366f4bd7a05bc"
+        },
+        "hierarchies_equal": true,
+        "capture_complete": true,
+        "same_connection_xml_png_xml": true,
+        "raw_image_reviewed": false,
+        "raw_accepted_business_case": false,
+        "oracle_text_if_present": "a"
+      },
+      {
+        "sequence": 10,
+        "label": "standard-R4-full-normal-after-forced",
+        "observation": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/captures/standard-R4-full-normal-after-forced/observer-observation.json",
+          "bytes": 1855,
+          "sha256": "8ad5de5a57544f2e250712bc476e811ec83322d06c02c4ad3e524839a73fd213"
+        },
+        "png": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/captures/standard-R4-full-normal-after-forced/observer-in-connection.png",
+          "bytes": 70553,
+          "sha256": "5cb2b47c31faa6a747b921a7f3d24e2d7f3b6ea1f08d8a76df3b1368bfa93361"
+        },
+        "before_xml": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/captures/standard-R4-full-normal-after-forced/observer-before.xml",
+          "bytes": 45365,
+          "sha256": "b7903dfc1de8909913f73407a6591eaa1de619f0b09df0d21640b6538c1783b7"
+        },
+        "after_xml": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/captures/standard-R4-full-normal-after-forced/observer-after.xml",
+          "bytes": 45365,
+          "sha256": "b7903dfc1de8909913f73407a6591eaa1de619f0b09df0d21640b6538c1783b7"
+        },
+        "hierarchies_equal": true,
+        "capture_complete": true,
+        "same_connection_xml_png_xml": true,
+        "raw_image_reviewed": false,
+        "raw_accepted_business_case": false,
+        "oracle_text_if_present": ""
+      },
+      {
+        "sequence": 11,
+        "label": "standard-R4-full-normal-ni",
+        "observation": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/captures/standard-R4-full-normal-ni/observer-observation.json",
+          "bytes": 1855,
+          "sha256": "3ab98a81f27c895b8b4f7ef3d07d55601fe0961756dacc978dc44b8dc5470177"
+        },
+        "png": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/captures/standard-R4-full-normal-ni/observer-in-connection.png",
+          "bytes": 78782,
+          "sha256": "f526388dd47fd404c9284a41a8c71ef964b8031f6bcf8c614d4cff94446432a8"
+        },
+        "before_xml": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/captures/standard-R4-full-normal-ni/observer-before.xml",
+          "bytes": 49637,
+          "sha256": "23a8848ab4cc3185d9ab94be3a436baf1b88c18f730b17610d57750f25ec44e5"
+        },
+        "after_xml": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/captures/standard-R4-full-normal-ni/observer-after.xml",
+          "bytes": 49637,
+          "sha256": "23a8848ab4cc3185d9ab94be3a436baf1b88c18f730b17610d57750f25ec44e5"
+        },
+        "hierarchies_equal": true,
+        "capture_complete": true,
+        "same_connection_xml_png_xml": true,
+        "raw_image_reviewed": false,
+        "raw_accepted_business_case": false,
+        "oracle_text_if_present": ""
+      },
+      {
+        "sequence": 12,
+        "label": "standard-R4-full-normal-selected-ni",
+        "observation": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/captures/standard-R4-full-normal-selected-ni/observer-observation.json",
+          "bytes": 1855,
+          "sha256": "15e78f2bbbcd7c7bdd75313ebb2b27680585091112d2e0f665fec22237376d60"
+        },
+        "png": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/captures/standard-R4-full-normal-selected-ni/observer-in-connection.png",
+          "bytes": 69838,
+          "sha256": "76aca79947125e059ee536a0e75b71785a78490b0a96417ed30af6d02c882509"
+        },
+        "before_xml": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/captures/standard-R4-full-normal-selected-ni/observer-before.xml",
+          "bytes": 45357,
+          "sha256": "70f72fad87c58e2b74e02eea01f6777be245972d538eafc3443fb1ecddaf0c2c"
+        },
+        "after_xml": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/captures/standard-R4-full-normal-selected-ni/observer-after.xml",
+          "bytes": 45357,
+          "sha256": "70f72fad87c58e2b74e02eea01f6777be245972d538eafc3443fb1ecddaf0c2c"
+        },
+        "hierarchies_equal": true,
+        "capture_complete": true,
+        "same_connection_xml_png_xml": true,
+        "raw_image_reviewed": false,
+        "raw_accepted_business_case": false,
+        "oracle_text_if_present": "你"
+      },
+      {
+        "sequence": 13,
+        "label": "standard-R4-full-to-T9-chooser",
+        "observation": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/captures/standard-R4-full-to-T9-chooser/observer-observation.json",
+          "bytes": 1855,
+          "sha256": "11e4fb989045c55767ccb2eb4825e59066c5f07dadbd2da7dc71fda266ee7f03"
+        },
+        "png": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/captures/standard-R4-full-to-T9-chooser/observer-in-connection.png",
+          "bytes": 88212,
+          "sha256": "8adabfe415b04c0179bdaf2a019e42ff45459d4401b638a6cf5329f39852668f"
+        },
+        "before_xml": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/captures/standard-R4-full-to-T9-chooser/observer-before.xml",
+          "bytes": 22973,
+          "sha256": "008fc6d0615160019625d164be69b456b10b7591c186b106def8a9d138fb0fd9"
+        },
+        "after_xml": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/captures/standard-R4-full-to-T9-chooser/observer-after.xml",
+          "bytes": 22973,
+          "sha256": "008fc6d0615160019625d164be69b456b10b7591c186b106def8a9d138fb0fd9"
+        },
+        "hierarchies_equal": true,
+        "capture_complete": true,
+        "same_connection_xml_png_xml": true,
+        "raw_image_reviewed": false,
+        "raw_accepted_business_case": false,
+        "oracle_text_if_present": null
+      },
+      {
+        "sequence": 14,
+        "label": "standard-R4-full-to-T9-target-layout-ready",
+        "observation": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/captures/standard-R4-full-to-T9-target-layout-ready/observer-observation.json",
+          "bytes": 1855,
+          "sha256": "2c4502d6825843959c36a1709753fc77b9336f7f4d6afd2dee389eef6bbcfaac"
+        },
+        "png": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/captures/standard-R4-full-to-T9-target-layout-ready/observer-in-connection.png",
+          "bytes": 53566,
+          "sha256": "2b3b157b784509e381b7523beea39657c5097d33dbc642874ffb8882410de18f"
+        },
+        "before_xml": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/captures/standard-R4-full-to-T9-target-layout-ready/observer-before.xml",
+          "bytes": 38406,
+          "sha256": "3b962033848709277520195e5f55f9fa0cba4c8966662ae8fae135ad2c4728b2"
+        },
+        "after_xml": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/captures/standard-R4-full-to-T9-target-layout-ready/observer-after.xml",
+          "bytes": 38406,
+          "sha256": "3b962033848709277520195e5f55f9fa0cba4c8966662ae8fae135ad2c4728b2"
+        },
+        "hierarchies_equal": true,
+        "capture_complete": true,
+        "same_connection_xml_png_xml": true,
+        "raw_image_reviewed": false,
+        "raw_accepted_business_case": false,
+        "oracle_text_if_present": null
+      },
+      {
+        "sequence": 15,
+        "label": "standard-R4-full-to-T9-current-schema-readback",
+        "observation": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/captures/standard-R4-full-to-T9-current-schema-readback/observer-observation.json",
+          "bytes": 1855,
+          "sha256": "1cb0e1b2fc595c21092b9502283bd7244bbd50430c32eb7b9a99d9746fedc142"
+        },
+        "png": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/captures/standard-R4-full-to-T9-current-schema-readback/observer-in-connection.png",
+          "bytes": 81182,
+          "sha256": "3f6cec9efd149e38c8596bf3f2df2a797dbe5dc0792fb6e620d28d31e2e2bb95"
+        },
+        "before_xml": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/captures/standard-R4-full-to-T9-current-schema-readback/observer-before.xml",
+          "bytes": 22973,
+          "sha256": "68855c4963f0b063673ff16b9228db1e563d03aae43d20772ef3d0858538c768"
+        },
+        "after_xml": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/captures/standard-R4-full-to-T9-current-schema-readback/observer-after.xml",
+          "bytes": 22973,
+          "sha256": "68855c4963f0b063673ff16b9228db1e563d03aae43d20772ef3d0858538c768"
+        },
+        "hierarchies_equal": true,
+        "capture_complete": true,
+        "same_connection_xml_png_xml": true,
+        "raw_image_reviewed": false,
+        "raw_accepted_business_case": false,
+        "oracle_text_if_present": null
+      },
+      {
+        "sequence": 16,
+        "label": "standard-R4-full-to-T9-schema-readback-dismissed",
+        "observation": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/captures/standard-R4-full-to-T9-schema-readback-dismissed/observer-observation.json",
+          "bytes": 1855,
+          "sha256": "7b8ae3e1f259d005e3c578169f4673c3730373da95dac3cc8979ce89281b8946"
+        },
+        "png": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/captures/standard-R4-full-to-T9-schema-readback-dismissed/observer-in-connection.png",
+          "bytes": 53566,
+          "sha256": "2b3b157b784509e381b7523beea39657c5097d33dbc642874ffb8882410de18f"
+        },
+        "before_xml": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/captures/standard-R4-full-to-T9-schema-readback-dismissed/observer-before.xml",
+          "bytes": 38406,
+          "sha256": "3b962033848709277520195e5f55f9fa0cba4c8966662ae8fae135ad2c4728b2"
+        },
+        "after_xml": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/captures/standard-R4-full-to-T9-schema-readback-dismissed/observer-after.xml",
+          "bytes": 38406,
+          "sha256": "3b962033848709277520195e5f55f9fa0cba4c8966662ae8fae135ad2c4728b2"
+        },
+        "hierarchies_equal": true,
+        "capture_complete": true,
+        "same_connection_xml_png_xml": true,
+        "raw_image_reviewed": false,
+        "raw_accepted_business_case": false,
+        "oracle_text_if_present": null
+      },
+      {
+        "sequence": 17,
+        "label": "standard-R4-new-T9-K1-initial",
+        "observation": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/captures/standard-R4-new-T9-K1-initial/observer-observation.json",
+          "bytes": 1855,
+          "sha256": "c861addcf0ec4386fa7199c0d90d1e2caacb55beee263a50c082e57bbb63713a"
+        },
+        "png": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/captures/standard-R4-new-T9-K1-initial/observer-in-connection.png",
+          "bytes": 54281,
+          "sha256": "e4f57d37a9f1478a653e1c59006680cb846b44864def21c5a259e42f09ef186c"
+        },
+        "before_xml": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/captures/standard-R4-new-T9-K1-initial/observer-before.xml",
+          "bytes": 38414,
+          "sha256": "cab01c184b71508638be84660258b648f69fa8bfcedd91c3c527af7ae0d8caf9"
+        },
+        "after_xml": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/captures/standard-R4-new-T9-K1-initial/observer-after.xml",
+          "bytes": 38414,
+          "sha256": "cab01c184b71508638be84660258b648f69fa8bfcedd91c3c527af7ae0d8caf9"
+        },
+        "hierarchies_equal": true,
+        "capture_complete": true,
+        "same_connection_xml_png_xml": true,
+        "raw_image_reviewed": false,
+        "raw_accepted_business_case": false,
+        "oracle_text_if_present": ""
+      },
+      {
+        "sequence": 18,
+        "label": "standard-R4-new-T9-K1-64",
+        "observation": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/captures/standard-R4-new-T9-K1-64/observer-observation.json",
+          "bytes": 1855,
+          "sha256": "3615612c2c2efee3ad2c6551863cc9371b6282b972a8998dcfb5f12917baf73e"
+        },
+        "png": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/captures/standard-R4-new-T9-K1-64/observer-in-connection.png",
+          "bytes": 69589,
+          "sha256": "17fc75c6cdde8eafb7304b084906fbf6f0abd20197d4ed327ef1063d4ff64831"
+        },
+        "before_xml": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/captures/standard-R4-new-T9-K1-64/observer-before.xml",
+          "bytes": 48935,
+          "sha256": "699993250baa447099c064248d9e5f61906a9ed016f814821b32196b12ec0877"
+        },
+        "after_xml": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/captures/standard-R4-new-T9-K1-64/observer-after.xml",
+          "bytes": 48935,
+          "sha256": "699993250baa447099c064248d9e5f61906a9ed016f814821b32196b12ec0877"
+        },
+        "hierarchies_equal": true,
+        "capture_complete": true,
+        "same_connection_xml_png_xml": true,
+        "raw_image_reviewed": false,
+        "raw_accepted_business_case": false,
+        "oracle_text_if_present": ""
+      },
+      {
+        "sequence": 19,
+        "label": "standard-R4-new-T9-K1-ni-locked",
+        "observation": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/captures/standard-R4-new-T9-K1-ni-locked/observer-observation.json",
+          "bytes": 1855,
+          "sha256": "3e0efb96c657f2ccab5dea9c6c1fbc411201488d57b9e01f502cba3dc9f55e2f"
+        },
+        "png": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/captures/standard-R4-new-T9-K1-ni-locked/observer-in-connection.png",
+          "bytes": 68799,
+          "sha256": "fe4d3ac8754624b46c23456535943fe281df60323a8fb9192aec454b20623eb2"
+        },
+        "before_xml": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/captures/standard-R4-new-T9-K1-ni-locked/observer-before.xml",
+          "bytes": 48934,
+          "sha256": "a29c3d7b010682e975ab1a227a61d22aa22e95f934ba12cc016cd0db451c6594"
+        },
+        "after_xml": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/captures/standard-R4-new-T9-K1-ni-locked/observer-after.xml",
+          "bytes": 48934,
+          "sha256": "a29c3d7b010682e975ab1a227a61d22aa22e95f934ba12cc016cd0db451c6594"
+        },
+        "hierarchies_equal": true,
+        "capture_complete": true,
+        "same_connection_xml_png_xml": true,
+        "raw_image_reviewed": false,
+        "raw_accepted_business_case": false,
+        "oracle_text_if_present": ""
+      },
+      {
+        "sequence": 20,
+        "label": "standard-R4-new-T9-K1-hao-options",
+        "observation": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/captures/standard-R4-new-T9-K1-hao-options/observer-observation.json",
+          "bytes": 1855,
+          "sha256": "c5a6339bd545ae631a473882408feecc48add7bdd8e15e11888d7f81c261d743"
+        },
+        "png": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/captures/standard-R4-new-T9-K1-hao-options/observer-in-connection.png",
+          "bytes": 69300,
+          "sha256": "ff4c2dc8bac177be84aedb02c37d22291841de6830787719c0bc56f1f0bd10b9"
+        },
+        "before_xml": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/captures/standard-R4-new-T9-K1-hao-options/observer-before.xml",
+          "bytes": 45906,
+          "sha256": "c9300706b229558a4d3e5525a8bf2297fc9e5cafbdba8358c31e227f9055a833"
+        },
+        "after_xml": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/captures/standard-R4-new-T9-K1-hao-options/observer-after.xml",
+          "bytes": 45906,
+          "sha256": "c9300706b229558a4d3e5525a8bf2297fc9e5cafbdba8358c31e227f9055a833"
+        },
+        "hierarchies_equal": true,
+        "capture_complete": true,
+        "same_connection_xml_png_xml": true,
+        "raw_image_reviewed": false,
+        "raw_accepted_business_case": false,
+        "oracle_text_if_present": ""
+      },
+      {
+        "sequence": 21,
+        "label": "standard-R4-new-T9-K1-nihao-locked",
+        "observation": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/captures/standard-R4-new-T9-K1-nihao-locked/observer-observation.json",
+          "bytes": 1855,
+          "sha256": "e13f17c6734363dd96621929249db66b9759a969838dea0578156a0f84ce82fb"
+        },
+        "png": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/captures/standard-R4-new-T9-K1-nihao-locked/observer-in-connection.png",
+          "bytes": 70935,
+          "sha256": "ecdfe8156594214f906d530d7f7db943ea0be0ccb0a7ebafee94ec76e3602169"
+        },
+        "before_xml": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/captures/standard-R4-new-T9-K1-nihao-locked/observer-before.xml",
+          "bytes": 45906,
+          "sha256": "7b0f48f1dd9c6f66a7573f10135b591b5a0861168e2737ecd8292597e0ebbc55"
+        },
+        "after_xml": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/captures/standard-R4-new-T9-K1-nihao-locked/observer-after.xml",
+          "bytes": 45906,
+          "sha256": "7b0f48f1dd9c6f66a7573f10135b591b5a0861168e2737ecd8292597e0ebbc55"
+        },
+        "hierarchies_equal": true,
+        "capture_complete": true,
+        "same_connection_xml_png_xml": true,
+        "raw_image_reviewed": false,
+        "raw_accepted_business_case": false,
+        "oracle_text_if_present": ""
+      },
+      {
+        "sequence": 22,
+        "label": "standard-R4-new-T9-K1-selected-nihao",
+        "observation": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/captures/standard-R4-new-T9-K1-selected-nihao/observer-observation.json",
+          "bytes": 1855,
+          "sha256": "899a65221df1f5b22221a1861c40b56a0cb054b35a546549b6ab6b63d621fb6a"
+        },
+        "png": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/captures/standard-R4-new-T9-K1-selected-nihao/observer-in-connection.png",
+          "bytes": 54789,
+          "sha256": "89ce4b7881ce95f3b2c05b594cf2fffea62bf86a7984d75f4af73bf9b14a0f8f"
+        },
+        "before_xml": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/captures/standard-R4-new-T9-K1-selected-nihao/observer-before.xml",
+          "bytes": 38406,
+          "sha256": "cd0d9b8d707fbe2efee2a34fa70f58c679398141999c53d563e750f24cf7d615"
+        },
+        "after_xml": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/captures/standard-R4-new-T9-K1-selected-nihao/observer-after.xml",
+          "bytes": 38406,
+          "sha256": "cd0d9b8d707fbe2efee2a34fa70f58c679398141999c53d563e750f24cf7d615"
+        },
+        "hierarchies_equal": true,
+        "capture_complete": true,
+        "same_connection_xml_png_xml": true,
+        "raw_image_reviewed": false,
+        "raw_accepted_business_case": false,
+        "oracle_text_if_present": "你好"
+      },
+      {
+        "sequence": 23,
+        "label": "standard-R4-new-T9-K1-new6",
+        "observation": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/captures/standard-R4-new-T9-K1-new6/observer-observation.json",
+          "bytes": 1855,
+          "sha256": "8bd2efe2632298d0b92c861000c17e8b695d9fdad3c67032c6329a7fa816d9c4"
+        },
+        "png": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/captures/standard-R4-new-T9-K1-new6/observer-in-connection.png",
+          "bytes": 67916,
+          "sha256": "bbccc7707c35b3eba93c9070ca3c0897227578c9326dbfafe296f3817e10ec59"
+        },
+        "before_xml": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/captures/standard-R4-new-T9-K1-new6/observer-before.xml",
+          "bytes": 48936,
+          "sha256": "476247669d3898fb4969e06ce06ec9a18018305bc798b84bd1f5ba4ad8e0dfb0"
+        },
+        "after_xml": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/captures/standard-R4-new-T9-K1-new6/observer-after.xml",
+          "bytes": 48936,
+          "sha256": "476247669d3898fb4969e06ce06ec9a18018305bc798b84bd1f5ba4ad8e0dfb0"
+        },
+        "hierarchies_equal": true,
+        "capture_complete": true,
+        "same_connection_xml_png_xml": true,
+        "raw_image_reviewed": false,
+        "raw_accepted_business_case": false,
+        "oracle_text_if_present": "你好"
+      },
+      {
+        "sequence": 24,
+        "label": "standard-R4-new-T9-K1-cancel6",
+        "observation": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/captures/standard-R4-new-T9-K1-cancel6/observer-observation.json",
+          "bytes": 1855,
+          "sha256": "1c50b3ed005edbd28a11bedd0ac6e7778469342c14378e63bd3334be55b889fc"
+        },
+        "png": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/captures/standard-R4-new-T9-K1-cancel6/observer-in-connection.png",
+          "bytes": 54930,
+          "sha256": "26e0ee1120c7ffd3fbbe84d6dfed3d61ce68eec0b09870cdf9d8d4920942f34b"
+        },
+        "before_xml": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/captures/standard-R4-new-T9-K1-cancel6/observer-before.xml",
+          "bytes": 38409,
+          "sha256": "a2aff7f1f23e14f2c562bbaccf1c1aa823fa437176ab6bbbc470fe33f9d34a17"
+        },
+        "after_xml": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/captures/standard-R4-new-T9-K1-cancel6/observer-after.xml",
+          "bytes": 38409,
+          "sha256": "a2aff7f1f23e14f2c562bbaccf1c1aa823fa437176ab6bbbc470fe33f9d34a17"
+        },
+        "hierarchies_equal": true,
+        "capture_complete": true,
+        "same_connection_xml_png_xml": true,
+        "raw_image_reviewed": false,
+        "raw_accepted_business_case": false,
+        "oracle_text_if_present": "你好"
+      }
+    ]
+  },
+  "actual_action_chain": {
+    "action_count": 43,
+    "canonical_sorted_key_json_sha256": "d001da5ffdde3fbb5460b615d8f261bdcede9faae85ef84ae734d128470c0902",
+    "launch_independent_editor_modes": [
+      "multiline",
+      "multiline",
+      "integer",
+      "email",
+      "multiline",
+      "multiline"
+    ],
+    "schema_readback_actions": [
+      {
+        "action": "sequence_current_schema_readback",
+        "expected": "朙月拼音",
+        "actual": {
+          "index": "0",
+          "text": "朙月拼音",
+          "resource-id": "android:id/text1",
+          "content-desc": "",
+          "package": "com.osfans.trime.debug",
+          "class": "android.widget.CheckedTextView",
+          "enabled": "true",
+          "password": "false",
+          "focused": "false",
+          "focusable": "false",
+          "checkable": "true",
+          "checked": "true",
+          "clickable": "true",
+          "long-clickable": "false",
+          "selected": "false",
+          "scrollable": "false",
+          "text-selection-start": "-1",
+          "text-selection-end": "-1",
+          "bounds": "[50,469][670,565]"
+        }
+      },
+      {
+        "action": "sequence_current_schema_readback",
+        "expected": "朙月拼音九键",
+        "actual": {
+          "index": "2",
+          "text": "朙月拼音九键",
+          "resource-id": "android:id/text1",
+          "content-desc": "",
+          "package": "com.osfans.trime.debug",
+          "class": "android.widget.CheckedTextView",
+          "enabled": "true",
+          "password": "false",
+          "focused": "false",
+          "focusable": "false",
+          "checkable": "true",
+          "checked": "true",
+          "clickable": "true",
+          "long-clickable": "false",
+          "selected": "false",
+          "scrollable": "false",
+          "text-selection-start": "-1",
+          "text-selection-end": "-1",
+          "bounds": "[50,661][670,757]"
+        }
+      }
+    ],
+    "candidate_leaf_binding_actions": [
+      {
+        "action": "sequence_candidate_leaf_binding",
+        "text": "你",
+        "leaf": {
+          "index": "0",
+          "text": "你",
+          "resource-id": "",
+          "content-desc": "",
+          "package": "com.osfans.trime.debug",
+          "class": "android.widget.TextView",
+          "enabled": "true",
+          "password": "false",
+          "focused": "false",
+          "focusable": "false",
+          "checkable": "false",
+          "checked": "false",
+          "clickable": "false",
+          "long-clickable": "false",
+          "selected": "false",
+          "scrollable": "false",
+          "text-selection-start": "-1",
+          "text-selection-end": "-1",
+          "bounds": "[26,620][61,668]"
+        }
+      },
+      {
+        "action": "sequence_candidate_leaf_binding",
+        "text": "你好",
+        "leaf": {
+          "index": "0",
+          "text": "你好",
+          "resource-id": "",
+          "content-desc": "",
+          "package": "com.osfans.trime.debug",
+          "class": "android.widget.TextView",
+          "enabled": "true",
+          "password": "false",
+          "focused": "false",
+          "focusable": "false",
+          "checkable": "false",
+          "checked": "false",
+          "clickable": "false",
+          "long-clickable": "false",
+          "selected": "false",
+          "scrollable": "false",
+          "text-selection-start": "-1",
+          "text-selection-end": "-1",
+          "bounds": "[14,448][86,496]"
+        }
+      }
+    ],
+    "actual_node_binding_actions": [
+      {
+        "action": "sequence_actual_node_binding",
+        "reason": "Back",
+        "attributes": {
+          "index": "0",
+          "text": "",
+          "resource-id": "com.android.launcher3:id/back",
+          "content-desc": "Back",
+          "package": "com.android.launcher3",
+          "class": "android.widget.ImageView",
+          "enabled": "true",
+          "password": "false",
+          "focused": "false",
+          "focusable": "false",
+          "checkable": "false",
+          "checked": "false",
+          "clickable": "true",
+          "long-clickable": "true",
+          "selected": "false",
+          "scrollable": "false",
+          "text-selection-start": "-1",
+          "text-selection-end": "-1",
+          "bounds": "[86,1188][223,1276]"
+        },
+        "clipped_bounds": [
+          86,
+          1188,
+          223,
+          1276
+        ]
+      },
+      {
+        "action": "sequence_actual_node_binding",
+        "reason": "native candidate 你",
+        "attributes": {
+          "index": "0",
+          "text": "",
+          "resource-id": "",
+          "content-desc": "",
+          "package": "com.osfans.trime.debug",
+          "class": "android.widget.FrameLayout",
+          "enabled": "true",
+          "password": "false",
+          "focused": "false",
+          "focusable": "false",
+          "checkable": "false",
+          "checked": "false",
+          "clickable": "true",
+          "long-clickable": "true",
+          "selected": "false",
+          "scrollable": "false",
+          "text-selection-start": "-1",
+          "text-selection-end": "-1",
+          "bounds": "[4,604][84,684]"
+        },
+        "clipped_bounds": [
+          4,
+          604,
+          84,
+          684
+        ]
+      },
+      {
+        "action": "sequence_actual_node_binding",
+        "reason": "Back",
+        "attributes": {
+          "index": "0",
+          "text": "",
+          "resource-id": "com.android.launcher3:id/back",
+          "content-desc": "Back",
+          "package": "com.android.launcher3",
+          "class": "android.widget.ImageView",
+          "enabled": "true",
+          "password": "false",
+          "focused": "false",
+          "focusable": "false",
+          "checkable": "false",
+          "checked": "false",
+          "clickable": "true",
+          "long-clickable": "true",
+          "selected": "false",
+          "scrollable": "false",
+          "text-selection-start": "-1",
+          "text-selection-end": "-1",
+          "bounds": "[86,1188][223,1276]"
+        },
+        "clipped_bounds": [
+          86,
+          1188,
+          223,
+          1276
+        ]
+      },
+      {
+        "action": "sequence_actual_node_binding",
+        "reason": "native candidate 你好",
+        "attributes": {
+          "index": "0",
+          "text": "",
+          "resource-id": "",
+          "content-desc": "",
+          "package": "com.osfans.trime.debug",
+          "class": "android.widget.FrameLayout",
+          "enabled": "true",
+          "password": "false",
+          "focused": "false",
+          "focusable": "false",
+          "checkable": "false",
+          "checked": "false",
+          "clickable": "true",
+          "long-clickable": "true",
+          "selected": "false",
+          "scrollable": "false",
+          "text-selection-start": "-1",
+          "text-selection-end": "-1",
+          "bounds": "[4,432][152,512]"
+        },
+        "clipped_bounds": [
+          4,
+          432,
+          152,
+          512
+        ]
+      },
+      {
+        "action": "sequence_actual_node_binding",
+        "reason": "Cancel composition",
+        "attributes": {
+          "index": "3",
+          "text": "",
+          "resource-id": "",
+          "content-desc": "Cancel composition",
+          "package": "com.osfans.trime.debug",
+          "class": "android.widget.ImageButton",
+          "enabled": "true",
+          "password": "false",
+          "focused": "false",
+          "focusable": "true",
+          "checkable": "false",
+          "checked": "false",
+          "clickable": "true",
+          "long-clickable": "false",
+          "selected": "false",
+          "scrollable": "false",
+          "text-selection-start": "-1",
+          "text-selection-end": "-1",
+          "bounds": "[624,512][720,608]"
+        },
+        "clipped_bounds": [
+          624,
+          512,
+          720,
+          608
+        ]
+      }
+    ],
+    "all_actions": [
+      {
+        "action": "launch_independent_editor",
+        "mode": "multiline",
+        "initial_text": "",
+        "at": "2026-10-22T17:11:53.117288+00:00"
+      },
+      {
+        "action": "tap",
+        "x": 240,
+        "y": 100,
+        "at": "2026-10-22T17:11:55.153355+00:00"
+      },
+      {
+        "action": "longpress",
+        "x": 640,
+        "y": 1004,
+        "duration_ms": 750,
+        "at": "2026-10-22T17:12:09.396951+00:00"
+      },
+      {
+        "action": "tap",
+        "x": 360,
+        "y": 517,
+        "at": "2026-10-22T17:12:19.654430+00:00"
+      },
+      {
+        "action": "longpress",
+        "x": 45,
+        "y": 1124,
+        "duration_ms": 750,
+        "at": "2026-10-22T17:12:32.410364+00:00"
+      },
+      {
+        "action": "sequence_current_schema_readback",
+        "expected": "朙月拼音",
+        "actual": {
+          "index": "0",
+          "text": "朙月拼音",
+          "resource-id": "android:id/text1",
+          "content-desc": "",
+          "package": "com.osfans.trime.debug",
+          "class": "android.widget.CheckedTextView",
+          "enabled": "true",
+          "password": "false",
+          "focused": "false",
+          "focusable": "false",
+          "checkable": "true",
+          "checked": "true",
+          "clickable": "true",
+          "long-clickable": "false",
+          "selected": "false",
+          "scrollable": "false",
+          "text-selection-start": "-1",
+          "text-selection-end": "-1",
+          "bounds": "[50,469][670,565]"
+        }
+      },
+      {
+        "action": "sequence_actual_node_binding",
+        "reason": "Back",
+        "attributes": {
+          "index": "0",
+          "text": "",
+          "resource-id": "com.android.launcher3:id/back",
+          "content-desc": "Back",
+          "package": "com.android.launcher3",
+          "class": "android.widget.ImageView",
+          "enabled": "true",
+          "password": "false",
+          "focused": "false",
+          "focusable": "false",
+          "checkable": "false",
+          "checked": "false",
+          "clickable": "true",
+          "long-clickable": "true",
+          "selected": "false",
+          "scrollable": "false",
+          "text-selection-start": "-1",
+          "text-selection-end": "-1",
+          "bounds": "[86,1188][223,1276]"
+        },
+        "clipped_bounds": [
+          86,
+          1188,
+          223,
+          1276
+        ]
+      },
+      {
+        "action": "tap",
+        "x": 154,
+        "y": 1232,
+        "at": "2026-10-22T17:12:43.429930+00:00"
+      },
+      {
+        "action": "launch_independent_editor",
+        "mode": "multiline",
+        "initial_text": "",
+        "at": "2026-10-22T17:12:56.832603+00:00"
+      },
+      {
+        "action": "tap",
+        "x": 240,
+        "y": 100,
+        "at": "2026-10-22T17:12:59.288844+00:00"
+      },
+      {
+        "action": "launch_independent_editor",
+        "mode": "integer",
+        "initial_text": "",
+        "at": "2026-10-22T17:13:16.837882+00:00"
+      },
+      {
+        "action": "tap",
+        "x": 240,
+        "y": 100,
+        "at": "2026-10-22T17:13:18.997274+00:00"
+      },
+      {
+        "action": "launch_independent_editor",
+        "mode": "email",
+        "initial_text": "",
+        "at": "2026-10-22T17:13:36.951417+00:00"
+      },
+      {
+        "action": "tap",
+        "x": 240,
+        "y": 100,
+        "at": "2026-10-22T17:13:39.099447+00:00"
+      },
+      {
+        "action": "tap",
+        "x": 72,
+        "y": 872,
+        "at": "2026-10-22T17:13:54.020721+00:00"
+      },
+      {
+        "action": "launch_independent_editor",
+        "mode": "multiline",
+        "initial_text": "",
+        "at": "2026-10-22T17:14:12.384704+00:00"
+      },
+      {
+        "action": "tap",
+        "x": 240,
+        "y": 100,
+        "at": "2026-10-22T17:14:14.195440+00:00"
+      },
+      {
+        "action": "tap",
+        "x": 504,
+        "y": 996,
+        "at": "2026-10-22T17:14:28.814413+00:00"
+      },
+      {
+        "action": "tap",
+        "x": 540,
+        "y": 748,
+        "at": "2026-10-22T17:14:30.695699+00:00"
+      },
+      {
+        "action": "sequence_candidate_leaf_binding",
+        "text": "你",
+        "leaf": {
+          "index": "0",
+          "text": "你",
+          "resource-id": "",
+          "content-desc": "",
+          "package": "com.osfans.trime.debug",
+          "class": "android.widget.TextView",
+          "enabled": "true",
+          "password": "false",
+          "focused": "false",
+          "focusable": "false",
+          "checkable": "false",
+          "checked": "false",
+          "clickable": "false",
+          "long-clickable": "false",
+          "selected": "false",
+          "scrollable": "false",
+          "text-selection-start": "-1",
+          "text-selection-end": "-1",
+          "bounds": "[26,620][61,668]"
+        }
+      },
+      {
+        "action": "sequence_actual_node_binding",
+        "reason": "native candidate 你",
+        "attributes": {
+          "index": "0",
+          "text": "",
+          "resource-id": "",
+          "content-desc": "",
+          "package": "com.osfans.trime.debug",
+          "class": "android.widget.FrameLayout",
+          "enabled": "true",
+          "password": "false",
+          "focused": "false",
+          "focusable": "false",
+          "checkable": "false",
+          "checked": "false",
+          "clickable": "true",
+          "long-clickable": "true",
+          "selected": "false",
+          "scrollable": "false",
+          "text-selection-start": "-1",
+          "text-selection-end": "-1",
+          "bounds": "[4,604][84,684]"
+        },
+        "clipped_bounds": [
+          4,
+          604,
+          84,
+          684
+        ]
+      },
+      {
+        "action": "tap",
+        "x": 44,
+        "y": 644,
+        "at": "2026-10-22T17:14:47.632165+00:00"
+      },
+      {
+        "action": "longpress",
+        "x": 45,
+        "y": 1124,
+        "duration_ms": 750,
+        "at": "2026-10-22T17:15:04.776696+00:00"
+      },
+      {
+        "action": "tap",
+        "x": 360,
+        "y": 709,
+        "at": "2026-10-22T17:15:16.373871+00:00"
+      },
+      {
+        "action": "longpress",
+        "x": 640,
+        "y": 1004,
+        "duration_ms": 750,
+        "at": "2026-10-22T17:15:32.738981+00:00"
+      },
+      {
+        "action": "sequence_current_schema_readback",
+        "expected": "朙月拼音九键",
+        "actual": {
+          "index": "2",
+          "text": "朙月拼音九键",
+          "resource-id": "android:id/text1",
+          "content-desc": "",
+          "package": "com.osfans.trime.debug",
+          "class": "android.widget.CheckedTextView",
+          "enabled": "true",
+          "password": "false",
+          "focused": "false",
+          "focusable": "false",
+          "checkable": "true",
+          "checked": "true",
+          "clickable": "true",
+          "long-clickable": "false",
+          "selected": "false",
+          "scrollable": "false",
+          "text-selection-start": "-1",
+          "text-selection-end": "-1",
+          "bounds": "[50,661][670,757]"
+        }
+      },
+      {
+        "action": "sequence_actual_node_binding",
+        "reason": "Back",
+        "attributes": {
+          "index": "0",
+          "text": "",
+          "resource-id": "com.android.launcher3:id/back",
+          "content-desc": "Back",
+          "package": "com.android.launcher3",
+          "class": "android.widget.ImageView",
+          "enabled": "true",
+          "password": "false",
+          "focused": "false",
+          "focusable": "false",
+          "checkable": "false",
+          "checked": "false",
+          "clickable": "true",
+          "long-clickable": "true",
+          "selected": "false",
+          "scrollable": "false",
+          "text-selection-start": "-1",
+          "text-selection-end": "-1",
+          "bounds": "[86,1188][223,1276]"
+        },
+        "clipped_bounds": [
+          86,
+          1188,
+          223,
+          1276
+        ]
+      },
+      {
+        "action": "tap",
+        "x": 154,
+        "y": 1232,
+        "at": "2026-10-22T17:15:44.512658+00:00"
+      },
+      {
+        "action": "launch_independent_editor",
+        "mode": "multiline",
+        "initial_text": "",
+        "at": "2026-10-22T17:15:58.622724+00:00"
+      },
+      {
+        "action": "tap",
+        "x": 240,
+        "y": 100,
+        "at": "2026-10-22T17:16:01.286931+00:00"
+      },
+      {
+        "action": "tap",
+        "x": 468,
+        "y": 884,
+        "at": "2026-10-22T17:16:16.438190+00:00"
+      },
+      {
+        "action": "tap",
+        "x": 94,
+        "y": 884,
+        "at": "2026-10-22T17:16:19.178281+00:00"
+      },
+      {
+        "action": "tap",
+        "x": 144,
+        "y": 656,
+        "at": "2026-10-22T17:16:35.204558+00:00"
+      },
+      {
+        "action": "tap",
+        "x": 94,
+        "y": 884,
+        "at": "2026-10-22T17:16:50.959261+00:00"
+      },
+      {
+        "action": "tap",
+        "x": 280,
+        "y": 764,
+        "at": "2026-10-22T17:16:52.354283+00:00"
+      },
+      {
+        "action": "tap",
+        "x": 468,
+        "y": 884,
+        "at": "2026-10-22T17:16:53.959781+00:00"
+      },
+      {
+        "action": "tap",
+        "x": 559,
+        "y": 656,
+        "at": "2026-10-22T17:17:10.192150+00:00"
+      },
+      {
+        "action": "sequence_candidate_leaf_binding",
+        "text": "你好",
+        "leaf": {
+          "index": "0",
+          "text": "你好",
+          "resource-id": "",
+          "content-desc": "",
+          "package": "com.osfans.trime.debug",
+          "class": "android.widget.TextView",
+          "enabled": "true",
+          "password": "false",
+          "focused": "false",
+          "focusable": "false",
+          "checkable": "false",
+          "checked": "false",
+          "clickable": "false",
+          "long-clickable": "false",
+          "selected": "false",
+          "scrollable": "false",
+          "text-selection-start": "-1",
+          "text-selection-end": "-1",
+          "bounds": "[14,448][86,496]"
+        }
+      },
+      {
+        "action": "sequence_actual_node_binding",
+        "reason": "native candidate 你好",
+        "attributes": {
+          "index": "0",
+          "text": "",
+          "resource-id": "",
+          "content-desc": "",
+          "package": "com.osfans.trime.debug",
+          "class": "android.widget.FrameLayout",
+          "enabled": "true",
+          "password": "false",
+          "focused": "false",
+          "focusable": "false",
+          "checkable": "false",
+          "checked": "false",
+          "clickable": "true",
+          "long-clickable": "true",
+          "selected": "false",
+          "scrollable": "false",
+          "text-selection-start": "-1",
+          "text-selection-end": "-1",
+          "bounds": "[4,432][152,512]"
+        },
+        "clipped_bounds": [
+          4,
+          432,
+          152,
+          512
+        ]
+      },
+      {
+        "action": "tap",
+        "x": 78,
+        "y": 472,
+        "at": "2026-10-22T17:17:26.728753+00:00"
+      },
+      {
+        "action": "tap",
+        "x": 468,
+        "y": 884,
+        "at": "2026-10-22T17:17:42.299158+00:00"
+      },
+      {
+        "action": "sequence_actual_node_binding",
+        "reason": "Cancel composition",
+        "attributes": {
+          "index": "3",
+          "text": "",
+          "resource-id": "",
+          "content-desc": "Cancel composition",
+          "package": "com.osfans.trime.debug",
+          "class": "android.widget.ImageButton",
+          "enabled": "true",
+          "password": "false",
+          "focused": "false",
+          "focusable": "true",
+          "checkable": "false",
+          "checked": "false",
+          "clickable": "true",
+          "long-clickable": "false",
+          "selected": "false",
+          "scrollable": "false",
+          "text-selection-start": "-1",
+          "text-selection-end": "-1",
+          "bounds": "[624,512][720,608]"
+        },
+        "clipped_bounds": [
+          624,
+          512,
+          720,
+          608
+        ]
+      },
+      {
+        "action": "tap",
+        "x": 672,
+        "y": 560,
+        "at": "2026-10-22T17:18:01.495699+00:00"
+      }
+    ]
+  },
+  "business_evidence": {
+    "schema_chooser_transitions": [
+      {
+        "name": "T9_to_full",
+        "prefix": "standard-R4-T9-to-full",
+        "chooser_unique_checked": {
+          "count": 1,
+          "text": "朙月拼音九键",
+          "node": {
+            "index": "2",
+            "text": "朙月拼音九键",
+            "resource-id": "android:id/text1",
+            "content-desc": "",
+            "package": "com.osfans.trime.debug",
+            "class": "android.widget.CheckedTextView",
+            "enabled": "true",
+            "password": "false",
+            "focused": "false",
+            "focusable": "false",
+            "checkable": "true",
+            "checked": "true",
+            "clickable": "true",
+            "long-clickable": "false",
+            "selected": "false",
+            "scrollable": "false",
+            "text-selection-start": "-1",
+            "text-selection-end": "-1",
+            "bounds": "[50,661][670,757]"
+          }
+        },
+        "target_unique_enabled_clickable_node": {
+          "count": 1,
+          "text": "朙月拼音",
+          "node": {
+            "index": "0",
+            "text": "朙月拼音",
+            "resource-id": "android:id/text1",
+            "content-desc": "",
+            "package": "com.osfans.trime.debug",
+            "class": "android.widget.CheckedTextView",
+            "enabled": "true",
+            "password": "false",
+            "focused": "false",
+            "focusable": "false",
+            "checkable": "true",
+            "checked": "false",
+            "clickable": "true",
+            "long-clickable": "false",
+            "selected": "false",
+            "scrollable": "false",
+            "text-selection-start": "-1",
+            "text-selection-end": "-1",
+            "bounds": "[50,469][670,565]"
+          }
+        },
+        "target_tap": {
+          "report_action_zero_based_index": 3,
+          "action": "tap",
+          "x": 360,
+          "y": 517,
+          "at": "2026-10-22T17:12:19.654430+00:00",
+          "inside_target_bounds": true,
+          "target_bounds": "[50,469][670,565]"
+        },
+        "target_layout_ready_checked_text_view_count": 0,
+        "readback_unique_checked": {
+          "count": 1,
+          "text": "朙月拼音",
+          "node": {
+            "index": "0",
+            "text": "朙月拼音",
+            "resource-id": "android:id/text1",
+            "content-desc": "",
+            "package": "com.osfans.trime.debug",
+            "class": "android.widget.CheckedTextView",
+            "enabled": "true",
+            "password": "false",
+            "focused": "false",
+            "focusable": "false",
+            "checkable": "true",
+            "checked": "true",
+            "clickable": "true",
+            "long-clickable": "false",
+            "selected": "false",
+            "scrollable": "false",
+            "text-selection-start": "-1",
+            "text-selection-end": "-1",
+            "bounds": "[50,469][670,565]"
+          }
+        },
+        "readback_action": {
+          "report_action_zero_based_index": 5,
+          "action": "sequence_current_schema_readback",
+          "expected": "朙月拼音",
+          "actual": {
+            "index": "0",
+            "text": "朙月拼音",
+            "resource-id": "android:id/text1",
+            "content-desc": "",
+            "package": "com.osfans.trime.debug",
+            "class": "android.widget.CheckedTextView",
+            "enabled": "true",
+            "password": "false",
+            "focused": "false",
+            "focusable": "false",
+            "checkable": "true",
+            "checked": "true",
+            "clickable": "true",
+            "long-clickable": "false",
+            "selected": "false",
+            "scrollable": "false",
+            "text-selection-start": "-1",
+            "text-selection-end": "-1",
+            "bounds": "[50,469][670,565]"
+          }
+        },
+        "back_node_binding": {
+          "report_action_zero_based_index": 6,
+          "action": "sequence_actual_node_binding",
+          "reason": "Back",
+          "attributes": {
+            "index": "0",
+            "text": "",
+            "resource-id": "com.android.launcher3:id/back",
+            "content-desc": "Back",
+            "package": "com.android.launcher3",
+            "class": "android.widget.ImageView",
+            "enabled": "true",
+            "password": "false",
+            "focused": "false",
+            "focusable": "false",
+            "checkable": "false",
+            "checked": "false",
+            "clickable": "true",
+            "long-clickable": "true",
+            "selected": "false",
+            "scrollable": "false",
+            "text-selection-start": "-1",
+            "text-selection-end": "-1",
+            "bounds": "[86,1188][223,1276]"
+          },
+          "clipped_bounds": [
+            86,
+            1188,
+            223,
+            1276
+          ]
+        },
+        "back_tap": {
+          "report_action_zero_based_index": 7,
+          "action": "tap",
+          "x": 154,
+          "y": 1232,
+          "at": "2026-10-22T17:12:43.429930+00:00"
+        },
+        "dismissed_checked_text_view_count": 0,
+        "passes": true
+      },
+      {
+        "name": "full_to_T9",
+        "prefix": "standard-R4-full-to-T9",
+        "chooser_unique_checked": {
+          "count": 1,
+          "text": "朙月拼音",
+          "node": {
+            "index": "0",
+            "text": "朙月拼音",
+            "resource-id": "android:id/text1",
+            "content-desc": "",
+            "package": "com.osfans.trime.debug",
+            "class": "android.widget.CheckedTextView",
+            "enabled": "true",
+            "password": "false",
+            "focused": "false",
+            "focusable": "false",
+            "checkable": "true",
+            "checked": "true",
+            "clickable": "true",
+            "long-clickable": "false",
+            "selected": "false",
+            "scrollable": "false",
+            "text-selection-start": "-1",
+            "text-selection-end": "-1",
+            "bounds": "[50,469][670,565]"
+          }
+        },
+        "target_unique_enabled_clickable_node": {
+          "count": 1,
+          "text": "朙月拼音九键",
+          "node": {
+            "index": "2",
+            "text": "朙月拼音九键",
+            "resource-id": "android:id/text1",
+            "content-desc": "",
+            "package": "com.osfans.trime.debug",
+            "class": "android.widget.CheckedTextView",
+            "enabled": "true",
+            "password": "false",
+            "focused": "false",
+            "focusable": "false",
+            "checkable": "true",
+            "checked": "false",
+            "clickable": "true",
+            "long-clickable": "false",
+            "selected": "false",
+            "scrollable": "false",
+            "text-selection-start": "-1",
+            "text-selection-end": "-1",
+            "bounds": "[50,661][670,757]"
+          }
+        },
+        "target_tap": {
+          "report_action_zero_based_index": 23,
+          "action": "tap",
+          "x": 360,
+          "y": 709,
+          "at": "2026-10-22T17:15:16.373871+00:00",
+          "inside_target_bounds": true,
+          "target_bounds": "[50,661][670,757]"
+        },
+        "target_layout_ready_checked_text_view_count": 0,
+        "readback_unique_checked": {
+          "count": 1,
+          "text": "朙月拼音九键",
+          "node": {
+            "index": "2",
+            "text": "朙月拼音九键",
+            "resource-id": "android:id/text1",
+            "content-desc": "",
+            "package": "com.osfans.trime.debug",
+            "class": "android.widget.CheckedTextView",
+            "enabled": "true",
+            "password": "false",
+            "focused": "false",
+            "focusable": "false",
+            "checkable": "true",
+            "checked": "true",
+            "clickable": "true",
+            "long-clickable": "false",
+            "selected": "false",
+            "scrollable": "false",
+            "text-selection-start": "-1",
+            "text-selection-end": "-1",
+            "bounds": "[50,661][670,757]"
+          }
+        },
+        "readback_action": {
+          "report_action_zero_based_index": 25,
+          "action": "sequence_current_schema_readback",
+          "expected": "朙月拼音九键",
+          "actual": {
+            "index": "2",
+            "text": "朙月拼音九键",
+            "resource-id": "android:id/text1",
+            "content-desc": "",
+            "package": "com.osfans.trime.debug",
+            "class": "android.widget.CheckedTextView",
+            "enabled": "true",
+            "password": "false",
+            "focused": "false",
+            "focusable": "false",
+            "checkable": "true",
+            "checked": "true",
+            "clickable": "true",
+            "long-clickable": "false",
+            "selected": "false",
+            "scrollable": "false",
+            "text-selection-start": "-1",
+            "text-selection-end": "-1",
+            "bounds": "[50,661][670,757]"
+          }
+        },
+        "back_node_binding": {
+          "report_action_zero_based_index": 26,
+          "action": "sequence_actual_node_binding",
+          "reason": "Back",
+          "attributes": {
+            "index": "0",
+            "text": "",
+            "resource-id": "com.android.launcher3:id/back",
+            "content-desc": "Back",
+            "package": "com.android.launcher3",
+            "class": "android.widget.ImageView",
+            "enabled": "true",
+            "password": "false",
+            "focused": "false",
+            "focusable": "false",
+            "checkable": "false",
+            "checked": "false",
+            "clickable": "true",
+            "long-clickable": "true",
+            "selected": "false",
+            "scrollable": "false",
+            "text-selection-start": "-1",
+            "text-selection-end": "-1",
+            "bounds": "[86,1188][223,1276]"
+          },
+          "clipped_bounds": [
+            86,
+            1188,
+            223,
+            1276
+          ]
+        },
+        "back_tap": {
+          "report_action_zero_based_index": 27,
+          "action": "tap",
+          "x": 154,
+          "y": 1232,
+          "at": "2026-10-22T17:15:44.512658+00:00"
+        },
+        "dismissed_checked_text_view_count": 0,
+        "passes": true
+      }
+    ],
+    "full_schema_cycle": {
+      "fresh_after_T9_schema_switch": {
+        "initial_T9_editor": {
+          "fixture_pid": 19358,
+          "activity_instance": "2888a02ce03947788048e581ddbc1c20"
+        },
+        "new_full_editor": {
+          "fixture_pid": 20306,
+          "activity_instance": "e40947767ca941fc8920e2da99321f94"
+        },
+        "different_fixture_pid_and_activity_instance": true,
+        "new_full_editor_oracle": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/standard-R4-full-new-normal-full-after-oracle.json",
+          "bytes": 977,
+          "sha256": "fd130c1441e81a9fe9e8fb5cb7e26a7350af5a5baec366a28523fff68cd21ca6",
+          "fixture_pid": 20306,
+          "fixture_uid": 10157,
+          "activity_instance": "e40947767ca941fc8920e2da99321f94",
+          "sequence": 2,
+          "text": "",
+          "unicode_codepoints": [],
+          "text_utf8_bytes": 0,
+          "selection": [
+            0,
+            0
+          ],
+          "main_thread_read": true,
+          "read_only": true,
+          "has_window_focus": true,
+          "editor_focused": true,
+          "activity_is_finishing": false,
+          "activity_is_destroyed": false
+        }
+      },
+      "independent_editor_instances": {
+        "standard-R4-full-new-normal-full": {
+          "fixture_pid": 20306,
+          "activity_instance": "e40947767ca941fc8920e2da99321f94"
+        },
+        "standard-R4-full-forced-integer": {
+          "fixture_pid": 20538,
+          "activity_instance": "8d6589aa83d24b3ea9d38255207cc050"
+        },
+        "standard-R4-full-forced-email": {
+          "fixture_pid": 20772,
+          "activity_instance": "73231bb7c73f461a957835b65aa06013"
+        },
+        "standard-R4-full-normal-after-forced": {
+          "fixture_pid": 21201,
+          "activity_instance": "1c1aa56ef2e44b7d96f8abb87731e791"
+        }
+      },
+      "number_then_email_launch_modes": [
+        "integer",
+        "email"
+      ],
+      "integer_empty_oracle": {
+        "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/standard-R4-full-forced-integer-after-oracle.json",
+        "bytes": 977,
+        "sha256": "d9621692267f72b9b6fa61143d20eb817bd1285343e77c24a61458e506e88ed6",
+        "fixture_pid": 20538,
+        "fixture_uid": 10157,
+        "activity_instance": "8d6589aa83d24b3ea9d38255207cc050",
+        "sequence": 2,
+        "text": "",
+        "unicode_codepoints": [],
+        "text_utf8_bytes": 0,
+        "selection": [
+          0,
+          0
+        ],
+        "main_thread_read": true,
+        "read_only": true,
+        "has_window_focus": true,
+        "editor_focused": true,
+        "activity_is_finishing": false,
+        "activity_is_destroyed": false
+      },
+      "email_before_a_empty_oracle": {
+        "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/standard-R4-full-forced-email-after-oracle.json",
+        "bytes": 977,
+        "sha256": "81dd7c35b923b9732c0b38a604754e9c5dc7a8e1059d2a06fa98da586ee31427",
+        "fixture_pid": 20772,
+        "fixture_uid": 10157,
+        "activity_instance": "73231bb7c73f461a957835b65aa06013",
+        "sequence": 2,
+        "text": "",
+        "unicode_codepoints": [],
+        "text_utf8_bytes": 0,
+        "selection": [
+          0,
+          0
+        ],
+        "main_thread_read": true,
+        "read_only": true,
+        "has_window_focus": true,
+        "editor_focused": true,
+        "activity_is_finishing": false,
+        "activity_is_destroyed": false
+      },
+      "email_exact_literal_a_oracle": {
+        "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/standard-R4-full-email-a-after-oracle.json",
+        "bytes": 981,
+        "sha256": "ff80aea57e088bdd19c440737dacf9ac7a7d3d764c7c85492606cdc78027e5ef",
+        "fixture_pid": 20772,
+        "fixture_uid": 10157,
+        "activity_instance": "73231bb7c73f461a957835b65aa06013",
+        "sequence": 4,
+        "text": "a",
+        "unicode_codepoints": [
+          "U+0061"
+        ],
+        "text_utf8_bytes": 1,
+        "selection": [
+          1,
+          1
+        ],
+        "main_thread_read": true,
+        "read_only": true,
+        "has_window_focus": true,
+        "editor_focused": true,
+        "activity_is_finishing": false,
+        "activity_is_destroyed": false
+      },
+      "actual_full_QWERTY_a_tap": {
+        "action": "tap",
+        "x": 72,
+        "y": 872,
+        "at": "2026-10-22T17:13:54.020721+00:00"
+      },
+      "email_target_package_nonempty_texts": [
+        "En"
+      ],
+      "email_no_visible_native_preedit_candidates_or_controls_in_after_xml": true,
+      "fresh_normal_empty_oracle": {
+        "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/standard-R4-full-normal-after-forced-after-oracle.json",
+        "bytes": 977,
+        "sha256": "1bf0fd349525f4b6b381cf8b4d5c376d2471e1f104e5c2cf699963ac948f332e",
+        "fixture_pid": 21201,
+        "fixture_uid": 10157,
+        "activity_instance": "1c1aa56ef2e44b7d96f8abb87731e791",
+        "sequence": 2,
+        "text": "",
+        "unicode_codepoints": [],
+        "text_utf8_bytes": 0,
+        "selection": [
+          0,
+          0
+        ],
+        "main_thread_read": true,
+        "read_only": true,
+        "has_window_focus": true,
+        "editor_focused": true,
+        "activity_is_finishing": false,
+        "activity_is_destroyed": false
+      },
+      "normal_ni_uncommitted_oracle": {
+        "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/standard-R4-full-normal-ni-after-oracle.json",
+        "bytes": 977,
+        "sha256": "bcb74b4f1310339f147322a0da434ebb0f6f9e703d8fba081c1b2cc10e5b56db",
+        "fixture_pid": 21201,
+        "fixture_uid": 10157,
+        "activity_instance": "1c1aa56ef2e44b7d96f8abb87731e791",
+        "sequence": 4,
+        "text": "",
+        "unicode_codepoints": [],
+        "text_utf8_bytes": 0,
+        "selection": [
+          0,
+          0
+        ],
+        "main_thread_read": true,
+        "read_only": true,
+        "has_window_focus": true,
+        "editor_focused": true,
+        "activity_is_finishing": false,
+        "activity_is_destroyed": false
+      },
+      "normal_ni_preedit_node": {
+        "class": "android.widget.TextView",
+        "text": "ni‸",
+        "content-desc": "",
+        "bounds": "[0,561][71,604]",
+        "clickable": "false",
+        "enabled": "true",
+        "selected": "false",
+        "checked": "false",
+        "package": "com.osfans.trime.debug"
+      },
+      "normal_ni_candidate_node": {
+        "class": "android.widget.TextView",
+        "text": "你",
+        "content-desc": "",
+        "bounds": "[26,620][61,668]",
+        "clickable": "false",
+        "enabled": "true",
+        "selected": "false",
+        "checked": "false",
+        "package": "com.osfans.trime.debug"
+      },
+      "actual_full_QWERTY_n_then_i_taps": [
+        {
+          "action": "tap",
+          "x": 504,
+          "y": 996,
+          "at": "2026-10-22T17:14:28.814413+00:00"
+        },
+        {
+          "action": "tap",
+          "x": 540,
+          "y": 748,
+          "at": "2026-10-22T17:14:30.695699+00:00"
+        }
+      ],
+      "actual_candidate_你_leaf_binding": {
+        "action": "sequence_candidate_leaf_binding",
+        "text": "你",
+        "leaf": {
+          "index": "0",
+          "text": "你",
+          "resource-id": "",
+          "content-desc": "",
+          "package": "com.osfans.trime.debug",
+          "class": "android.widget.TextView",
+          "enabled": "true",
+          "password": "false",
+          "focused": "false",
+          "focusable": "false",
+          "checkable": "false",
+          "checked": "false",
+          "clickable": "false",
+          "long-clickable": "false",
+          "selected": "false",
+          "scrollable": "false",
+          "text-selection-start": "-1",
+          "text-selection-end": "-1",
+          "bounds": "[26,620][61,668]"
+        }
+      },
+      "actual_candidate_你_parent_binding": {
+        "action": "sequence_actual_node_binding",
+        "reason": "native candidate 你",
+        "attributes": {
+          "index": "0",
+          "text": "",
+          "resource-id": "",
+          "content-desc": "",
+          "package": "com.osfans.trime.debug",
+          "class": "android.widget.FrameLayout",
+          "enabled": "true",
+          "password": "false",
+          "focused": "false",
+          "focusable": "false",
+          "checkable": "false",
+          "checked": "false",
+          "clickable": "true",
+          "long-clickable": "true",
+          "selected": "false",
+          "scrollable": "false",
+          "text-selection-start": "-1",
+          "text-selection-end": "-1",
+          "bounds": "[4,604][84,684]"
+        },
+        "clipped_bounds": [
+          4,
+          604,
+          84,
+          684
+        ]
+      },
+      "actual_candidate_你_tap": {
+        "action": "tap",
+        "x": 44,
+        "y": 644,
+        "at": "2026-10-22T17:14:47.632165+00:00"
+      },
+      "normal_selected_exact_你_oracle": {
+        "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/standard-R4-full-normal-selected-ni-after-oracle.json",
+        "bytes": 981,
+        "sha256": "698ff97d7250aee7a11488df33d1ebb42222c538566e73885932386215cd3bb5",
+        "fixture_pid": 21201,
+        "fixture_uid": 10157,
+        "activity_instance": "1c1aa56ef2e44b7d96f8abb87731e791",
+        "sequence": 6,
+        "text": "你",
+        "unicode_codepoints": [
+          "U+4F60"
+        ],
+        "text_utf8_bytes": 3,
+        "selection": [
+          1,
+          1
+        ],
+        "main_thread_read": true,
+        "read_only": true,
+        "has_window_focus": true,
+        "editor_focused": true,
+        "activity_is_finishing": false,
+        "activity_is_destroyed": false
+      },
+      "normal_selected_target_package_nonempty_texts": [
+        "中"
+      ],
+      "normal_selected_composition_controls_and_candidates_cleared": true
+    },
+    "standard_has_no_simplified_branch": {
+      "runner_condition": "theme == 'trime'",
+      "runner_lines": [
+        386,
+        390
+      ],
+      "actual_theme": "standard",
+      "simp_capture_label_count": 0,
+      "simp_action_label_count": 0,
+      "qualified": false,
+      "reason": "The standard execution correctly does not enter the trime-only conditional; no simplified-schema result is claimed."
+    },
+    "return_to_T9": {
+      "name": "full_to_T9",
+      "prefix": "standard-R4-full-to-T9",
+      "chooser_unique_checked": {
+        "count": 1,
+        "text": "朙月拼音",
+        "node": {
+          "index": "0",
+          "text": "朙月拼音",
+          "resource-id": "android:id/text1",
+          "content-desc": "",
+          "package": "com.osfans.trime.debug",
+          "class": "android.widget.CheckedTextView",
+          "enabled": "true",
+          "password": "false",
+          "focused": "false",
+          "focusable": "false",
+          "checkable": "true",
+          "checked": "true",
+          "clickable": "true",
+          "long-clickable": "false",
+          "selected": "false",
+          "scrollable": "false",
+          "text-selection-start": "-1",
+          "text-selection-end": "-1",
+          "bounds": "[50,469][670,565]"
+        }
+      },
+      "target_unique_enabled_clickable_node": {
+        "count": 1,
+        "text": "朙月拼音九键",
+        "node": {
+          "index": "2",
+          "text": "朙月拼音九键",
+          "resource-id": "android:id/text1",
+          "content-desc": "",
+          "package": "com.osfans.trime.debug",
+          "class": "android.widget.CheckedTextView",
+          "enabled": "true",
+          "password": "false",
+          "focused": "false",
+          "focusable": "false",
+          "checkable": "true",
+          "checked": "false",
+          "clickable": "true",
+          "long-clickable": "false",
+          "selected": "false",
+          "scrollable": "false",
+          "text-selection-start": "-1",
+          "text-selection-end": "-1",
+          "bounds": "[50,661][670,757]"
+        }
+      },
+      "target_tap": {
+        "report_action_zero_based_index": 23,
+        "action": "tap",
+        "x": 360,
+        "y": 709,
+        "at": "2026-10-22T17:15:16.373871+00:00",
+        "inside_target_bounds": true,
+        "target_bounds": "[50,661][670,757]"
+      },
+      "target_layout_ready_checked_text_view_count": 0,
+      "readback_unique_checked": {
+        "count": 1,
+        "text": "朙月拼音九键",
+        "node": {
+          "index": "2",
+          "text": "朙月拼音九键",
+          "resource-id": "android:id/text1",
+          "content-desc": "",
+          "package": "com.osfans.trime.debug",
+          "class": "android.widget.CheckedTextView",
+          "enabled": "true",
+          "password": "false",
+          "focused": "false",
+          "focusable": "false",
+          "checkable": "true",
+          "checked": "true",
+          "clickable": "true",
+          "long-clickable": "false",
+          "selected": "false",
+          "scrollable": "false",
+          "text-selection-start": "-1",
+          "text-selection-end": "-1",
+          "bounds": "[50,661][670,757]"
+        }
+      },
+      "readback_action": {
+        "report_action_zero_based_index": 25,
+        "action": "sequence_current_schema_readback",
+        "expected": "朙月拼音九键",
+        "actual": {
+          "index": "2",
+          "text": "朙月拼音九键",
+          "resource-id": "android:id/text1",
+          "content-desc": "",
+          "package": "com.osfans.trime.debug",
+          "class": "android.widget.CheckedTextView",
+          "enabled": "true",
+          "password": "false",
+          "focused": "false",
+          "focusable": "false",
+          "checkable": "true",
+          "checked": "true",
+          "clickable": "true",
+          "long-clickable": "false",
+          "selected": "false",
+          "scrollable": "false",
+          "text-selection-start": "-1",
+          "text-selection-end": "-1",
+          "bounds": "[50,661][670,757]"
+        }
+      },
+      "back_node_binding": {
+        "report_action_zero_based_index": 26,
+        "action": "sequence_actual_node_binding",
+        "reason": "Back",
+        "attributes": {
+          "index": "0",
+          "text": "",
+          "resource-id": "com.android.launcher3:id/back",
+          "content-desc": "Back",
+          "package": "com.android.launcher3",
+          "class": "android.widget.ImageView",
+          "enabled": "true",
+          "password": "false",
+          "focused": "false",
+          "focusable": "false",
+          "checkable": "false",
+          "checked": "false",
+          "clickable": "true",
+          "long-clickable": "true",
+          "selected": "false",
+          "scrollable": "false",
+          "text-selection-start": "-1",
+          "text-selection-end": "-1",
+          "bounds": "[86,1188][223,1276]"
+        },
+        "clipped_bounds": [
+          86,
+          1188,
+          223,
+          1276
+        ]
+      },
+      "back_tap": {
+        "report_action_zero_based_index": 27,
+        "action": "tap",
+        "x": 154,
+        "y": 1232,
+        "at": "2026-10-22T17:15:44.512658+00:00"
+      },
+      "dismissed_checked_text_view_count": 0,
+      "passes": true
+    },
+    "embedded_k1_once": {
+      "capture_labels": [
+        "standard-R4-new-T9-K1-initial",
+        "standard-R4-new-T9-K1-64",
+        "standard-R4-new-T9-K1-ni-locked",
+        "standard-R4-new-T9-K1-hao-options",
+        "standard-R4-new-T9-K1-nihao-locked",
+        "standard-R4-new-T9-K1-selected-nihao",
+        "standard-R4-new-T9-K1-new6",
+        "standard-R4-new-T9-K1-cancel6"
+      ],
+      "fixture_identity": {
+        "fixture_pid": 22505,
+        "activity_instance": "078b6b6290c44915a530fd014b61dd83"
+      },
+      "actual_raw64_lock_hao_input_taps": [
+        {
+          "action": "tap",
+          "x": 468,
+          "y": 884,
+          "at": "2026-10-22T17:16:16.438190+00:00"
+        },
+        {
+          "action": "tap",
+          "x": 94,
+          "y": 884,
+          "at": "2026-10-22T17:16:19.178281+00:00"
+        },
+        {
+          "action": "tap",
+          "x": 144,
+          "y": 656,
+          "at": "2026-10-22T17:16:35.204558+00:00"
+        },
+        {
+          "action": "tap",
+          "x": 94,
+          "y": 884,
+          "at": "2026-10-22T17:16:50.959261+00:00"
+        },
+        {
+          "action": "tap",
+          "x": 280,
+          "y": 764,
+          "at": "2026-10-22T17:16:52.354283+00:00"
+        },
+        {
+          "action": "tap",
+          "x": 468,
+          "y": 884,
+          "at": "2026-10-22T17:16:53.959781+00:00"
+        },
+        {
+          "action": "tap",
+          "x": 559,
+          "y": 656,
+          "at": "2026-10-22T17:17:10.192150+00:00"
+        }
+      ],
+      "initial_empty_oracle": {
+        "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/standard-R4-new-T9-K1-initial-after-oracle.json",
+        "bytes": 977,
+        "sha256": "b20a3b1b20973823f80a7095a47dd0ec283894c36eb60fa308225c019f6ec353",
+        "fixture_pid": 22505,
+        "fixture_uid": 10157,
+        "activity_instance": "078b6b6290c44915a530fd014b61dd83",
+        "sequence": 2,
+        "text": "",
+        "unicode_codepoints": [],
+        "text_utf8_bytes": 0,
+        "selection": [
+          0,
+          0
+        ],
+        "main_thread_read": true,
+        "read_only": true,
+        "has_window_focus": true,
+        "editor_focused": true,
+        "activity_is_finishing": false,
+        "activity_is_destroyed": false
+      },
+      "raw64_uncommitted_oracle": {
+        "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/standard-R4-new-T9-K1-64-after-oracle.json",
+        "bytes": 977,
+        "sha256": "b086b5859d0e06c49c867b3633af56ba62530d5ff05f5c217c93be24b77ae8c2",
+        "fixture_pid": 22505,
+        "fixture_uid": 10157,
+        "activity_instance": "078b6b6290c44915a530fd014b61dd83",
+        "sequence": 4,
+        "text": "",
+        "unicode_codepoints": [],
+        "text_utf8_bytes": 0,
+        "selection": [
+          0,
+          0
+        ],
+        "main_thread_read": true,
+        "read_only": true,
+        "has_window_focus": true,
+        "editor_focused": true,
+        "activity_is_finishing": false,
+        "activity_is_destroyed": false
+      },
+      "raw64_segment": {
+        "capture": "standard-R4-new-T9-K1-64",
+        "node": {
+          "class": "android.widget.TextView",
+          "text": "64",
+          "content-desc": "Current: Input segment: 64",
+          "bounds": "[0,512][96,608]",
+          "clickable": "true",
+          "enabled": "true",
+          "selected": "true",
+          "checked": "false",
+          "package": "com.osfans.trime.debug"
+        }
+      },
+      "ni_locked_uncommitted_oracle": {
+        "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/standard-R4-new-T9-K1-ni-locked-after-oracle.json",
+        "bytes": 977,
+        "sha256": "c2442d6adf6d8be015b6a9e24335c171afa8e6abb7e11405ab82659cc03d6df3",
+        "fixture_pid": 22505,
+        "fixture_uid": 10157,
+        "activity_instance": "078b6b6290c44915a530fd014b61dd83",
+        "sequence": 6,
+        "text": "",
+        "unicode_codepoints": [],
+        "text_utf8_bytes": 0,
+        "selection": [
+          0,
+          0
+        ],
+        "main_thread_read": true,
+        "read_only": true,
+        "has_window_focus": true,
+        "editor_focused": true,
+        "activity_is_finishing": false,
+        "activity_is_destroyed": false
+      },
+      "ni_locked_segment": {
+        "capture": "standard-R4-new-T9-K1-ni-locked",
+        "node": {
+          "class": "android.widget.TextView",
+          "text": "ni",
+          "content-desc": "Current: Locked syllable: ni",
+          "bounds": "[0,512][96,608]",
+          "clickable": "true",
+          "enabled": "true",
+          "selected": "true",
+          "checked": "false",
+          "package": "com.osfans.trime.debug"
+        }
+      },
+      "hao_options_uncommitted_oracle": {
+        "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/standard-R4-new-T9-K1-hao-options-after-oracle.json",
+        "bytes": 977,
+        "sha256": "d29ff3ac5767bb788761fc725e9faff8aed236061b028b62f7e6df45014feaf4",
+        "fixture_pid": 22505,
+        "fixture_uid": 10157,
+        "activity_instance": "078b6b6290c44915a530fd014b61dd83",
+        "sequence": 8,
+        "text": "",
+        "unicode_codepoints": [],
+        "text_utf8_bytes": 0,
+        "selection": [
+          0,
+          0
+        ],
+        "main_thread_read": true,
+        "read_only": true,
+        "has_window_focus": true,
+        "editor_focused": true,
+        "activity_is_finishing": false,
+        "activity_is_destroyed": false
+      },
+      "hao_old_ni_lock": {
+        "capture": "standard-R4-new-T9-K1-hao-options",
+        "node": {
+          "class": "android.widget.TextView",
+          "text": "ni",
+          "content-desc": "Locked syllable: ni",
+          "bounds": "[0,512][96,608]",
+          "clickable": "true",
+          "enabled": "true",
+          "selected": "false",
+          "checked": "false",
+          "package": "com.osfans.trime.debug"
+        }
+      },
+      "hao_current_426": {
+        "capture": "standard-R4-new-T9-K1-hao-options",
+        "node": {
+          "class": "android.widget.TextView",
+          "text": "426",
+          "content-desc": "Current: Input segment: 426",
+          "bounds": "[96,512][201,608]",
+          "clickable": "true",
+          "enabled": "true",
+          "selected": "true",
+          "checked": "false",
+          "package": "com.osfans.trime.debug"
+        }
+      },
+      "nihao_locked_uncommitted_oracle": {
+        "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/standard-R4-new-T9-K1-nihao-locked-after-oracle.json",
+        "bytes": 978,
+        "sha256": "1c2ef15b7ab27e8b6a0b0d55402c2cd2b499233ed6c77e8895ac97f240dd294a",
+        "fixture_pid": 22505,
+        "fixture_uid": 10157,
+        "activity_instance": "078b6b6290c44915a530fd014b61dd83",
+        "sequence": 10,
+        "text": "",
+        "unicode_codepoints": [],
+        "text_utf8_bytes": 0,
+        "selection": [
+          0,
+          0
+        ],
+        "main_thread_read": true,
+        "read_only": true,
+        "has_window_focus": true,
+        "editor_focused": true,
+        "activity_is_finishing": false,
+        "activity_is_destroyed": false
+      },
+      "nihao_old_ni_lock": {
+        "capture": "standard-R4-new-T9-K1-nihao-locked",
+        "node": {
+          "class": "android.widget.TextView",
+          "text": "ni",
+          "content-desc": "Locked syllable: ni",
+          "bounds": "[0,512][96,608]",
+          "clickable": "true",
+          "enabled": "true",
+          "selected": "false",
+          "checked": "false",
+          "package": "com.osfans.trime.debug"
+        }
+      },
+      "nihao_current_hao_lock": {
+        "capture": "standard-R4-new-T9-K1-nihao-locked",
+        "node": {
+          "class": "android.widget.TextView",
+          "text": "hao",
+          "content-desc": "Current: Locked syllable: hao",
+          "bounds": "[96,512][201,608]",
+          "clickable": "true",
+          "enabled": "true",
+          "selected": "true",
+          "checked": "false",
+          "package": "com.osfans.trime.debug"
+        }
+      },
+      "nihao_candidate_node": {
+        "capture": "standard-R4-new-T9-K1-nihao-locked",
+        "node": {
+          "class": "android.widget.TextView",
+          "text": "你好",
+          "content-desc": "",
+          "bounds": "[14,448][86,496]",
+          "clickable": "false",
+          "enabled": "true",
+          "selected": "false",
+          "checked": "false",
+          "package": "com.osfans.trime.debug"
+        }
+      },
+      "actual_candidate_你好_leaf_binding": {
+        "action": "sequence_candidate_leaf_binding",
+        "text": "你好",
+        "leaf": {
+          "index": "0",
+          "text": "你好",
+          "resource-id": "",
+          "content-desc": "",
+          "package": "com.osfans.trime.debug",
+          "class": "android.widget.TextView",
+          "enabled": "true",
+          "password": "false",
+          "focused": "false",
+          "focusable": "false",
+          "checkable": "false",
+          "checked": "false",
+          "clickable": "false",
+          "long-clickable": "false",
+          "selected": "false",
+          "scrollable": "false",
+          "text-selection-start": "-1",
+          "text-selection-end": "-1",
+          "bounds": "[14,448][86,496]"
+        }
+      },
+      "actual_candidate_你好_parent_binding": {
+        "action": "sequence_actual_node_binding",
+        "reason": "native candidate 你好",
+        "attributes": {
+          "index": "0",
+          "text": "",
+          "resource-id": "",
+          "content-desc": "",
+          "package": "com.osfans.trime.debug",
+          "class": "android.widget.FrameLayout",
+          "enabled": "true",
+          "password": "false",
+          "focused": "false",
+          "focusable": "false",
+          "checkable": "false",
+          "checked": "false",
+          "clickable": "true",
+          "long-clickable": "true",
+          "selected": "false",
+          "scrollable": "false",
+          "text-selection-start": "-1",
+          "text-selection-end": "-1",
+          "bounds": "[4,432][152,512]"
+        },
+        "clipped_bounds": [
+          4,
+          432,
+          152,
+          512
+        ]
+      },
+      "actual_candidate_你好_tap": {
+        "action": "tap",
+        "x": 78,
+        "y": 472,
+        "at": "2026-10-22T17:17:26.728753+00:00"
+      },
+      "selected_exact_你好_oracle": {
+        "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/standard-R4-new-T9-K1-selected-nihao-after-oracle.json",
+        "bytes": 986,
+        "sha256": "d3aaca6849c7cc1c7e22e44fb3e1b2353475d33f183b59e7cf52c9f676aa8946",
+        "fixture_pid": 22505,
+        "fixture_uid": 10157,
+        "activity_instance": "078b6b6290c44915a530fd014b61dd83",
+        "sequence": 12,
+        "text": "你好",
+        "unicode_codepoints": [
+          "U+4F60",
+          "U+597D"
+        ],
+        "text_utf8_bytes": 6,
+        "selection": [
+          2,
+          2
+        ],
+        "main_thread_read": true,
+        "read_only": true,
+        "has_window_focus": true,
+        "editor_focused": true,
+        "activity_is_finishing": false,
+        "activity_is_destroyed": false
+      },
+      "selected_composition_controls_and_candidates_cleared": true,
+      "pending_new6_editor_unchanged_oracle": {
+        "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/standard-R4-new-T9-K1-new6-after-oracle.json",
+        "bytes": 986,
+        "sha256": "9ae8b5a7c20041cd18043dbc857eade10e1d04aba4c5eb61b2b5f7e5c4ca84c8",
+        "fixture_pid": 22505,
+        "fixture_uid": 10157,
+        "activity_instance": "078b6b6290c44915a530fd014b61dd83",
+        "sequence": 14,
+        "text": "你好",
+        "unicode_codepoints": [
+          "U+4F60",
+          "U+597D"
+        ],
+        "text_utf8_bytes": 6,
+        "selection": [
+          2,
+          2
+        ],
+        "main_thread_read": true,
+        "read_only": true,
+        "has_window_focus": true,
+        "editor_focused": true,
+        "activity_is_finishing": false,
+        "activity_is_destroyed": false
+      },
+      "pending_new6_segment": {
+        "capture": "standard-R4-new-T9-K1-new6",
+        "node": {
+          "class": "android.widget.TextView",
+          "text": "6",
+          "content-desc": "Current: Input segment: 6",
+          "bounds": "[0,512][96,608]",
+          "clickable": "true",
+          "enabled": "true",
+          "selected": "true",
+          "checked": "false",
+          "package": "com.osfans.trime.debug"
+        }
+      },
+      "actual_new6_tap": {
+        "action": "tap",
+        "x": 468,
+        "y": 884,
+        "at": "2026-10-22T17:17:42.299158+00:00"
+      },
+      "actual_cancel_node_binding": {
+        "action": "sequence_actual_node_binding",
+        "reason": "Cancel composition",
+        "attributes": {
+          "index": "3",
+          "text": "",
+          "resource-id": "",
+          "content-desc": "Cancel composition",
+          "package": "com.osfans.trime.debug",
+          "class": "android.widget.ImageButton",
+          "enabled": "true",
+          "password": "false",
+          "focused": "false",
+          "focusable": "true",
+          "checkable": "false",
+          "checked": "false",
+          "clickable": "true",
+          "long-clickable": "false",
+          "selected": "false",
+          "scrollable": "false",
+          "text-selection-start": "-1",
+          "text-selection-end": "-1",
+          "bounds": "[624,512][720,608]"
+        },
+        "clipped_bounds": [
+          624,
+          512,
+          720,
+          608
+        ]
+      },
+      "actual_cancel_tap": {
+        "action": "tap",
+        "x": 672,
+        "y": 560,
+        "at": "2026-10-22T17:18:01.495699+00:00"
+      },
+      "after_cancel_editor_unchanged_oracle": {
+        "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/standard-R4-new-T9-K1-cancel6-after-oracle.json",
+        "bytes": 986,
+        "sha256": "65fa113cb963cde6f5add67c04568ece89ddce1208df179692fb7276e7bcfdcc",
+        "fixture_pid": 22505,
+        "fixture_uid": 10157,
+        "activity_instance": "078b6b6290c44915a530fd014b61dd83",
+        "sequence": 16,
+        "text": "你好",
+        "unicode_codepoints": [
+          "U+4F60",
+          "U+597D"
+        ],
+        "text_utf8_bytes": 6,
+        "selection": [
+          2,
+          2
+        ],
+        "main_thread_read": true,
+        "read_only": true,
+        "has_window_focus": true,
+        "editor_focused": true,
+        "activity_is_finishing": false,
+        "activity_is_destroyed": false
+      },
+      "after_cancel_target_package_nonempty_texts": [
+        "中"
+      ],
+      "after_cancel_composition_descriptions": [],
+      "cancel_after_xml_clears_segment_lock_unlock_undo_cancel_spelling_and_candidates": true,
+      "selected_new6_and_after_cancel_all_exact_你好": true,
+      "static_r4_embedded_k1_call_count": 1,
+      "not_an_independent_k1_session": true
+    },
+    "all_strict_oracle_pairs": {
+      "standard-R4-initial-t9": {
+        "before": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/standard-R4-initial-t9-before-oracle.json",
+          "bytes": 977,
+          "sha256": "2c43cb9ff9a5b9e3af307a24384b7a34048975aa10c37ab08e56271fe47766e2",
+          "fixture_pid": 19358,
+          "fixture_uid": 10157,
+          "activity_instance": "2888a02ce03947788048e581ddbc1c20",
+          "sequence": 1,
+          "text": "",
+          "unicode_codepoints": [],
+          "text_utf8_bytes": 0,
+          "selection": [
+            0,
+            0
+          ],
+          "main_thread_read": true,
+          "read_only": true,
+          "has_window_focus": true,
+          "editor_focused": true,
+          "activity_is_finishing": false,
+          "activity_is_destroyed": false
+        },
+        "after": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/standard-R4-initial-t9-after-oracle.json",
+          "bytes": 977,
+          "sha256": "66b36442e4c7663e329cabf455e12f7bae0ed9b86c294482c5764a6860a48c28",
+          "fixture_pid": 19358,
+          "fixture_uid": 10157,
+          "activity_instance": "2888a02ce03947788048e581ddbc1c20",
+          "sequence": 2,
+          "text": "",
+          "unicode_codepoints": [],
+          "text_utf8_bytes": 0,
+          "selection": [
+            0,
+            0
+          ],
+          "main_thread_read": true,
+          "read_only": true,
+          "has_window_focus": true,
+          "editor_focused": true,
+          "activity_is_finishing": false,
+          "activity_is_destroyed": false
+        },
+        "same_fixture_pid_and_activity": true,
+        "same_text_and_selection_across_capture": true
+      },
+      "standard-R4-full-new-normal-full": {
+        "before": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/standard-R4-full-new-normal-full-before-oracle.json",
+          "bytes": 977,
+          "sha256": "7376dfbcfdd1ed5aa0efd3d1a300c07efb1a4df1f51ecb9e3e20e81def7935e8",
+          "fixture_pid": 20306,
+          "fixture_uid": 10157,
+          "activity_instance": "e40947767ca941fc8920e2da99321f94",
+          "sequence": 1,
+          "text": "",
+          "unicode_codepoints": [],
+          "text_utf8_bytes": 0,
+          "selection": [
+            0,
+            0
+          ],
+          "main_thread_read": true,
+          "read_only": true,
+          "has_window_focus": true,
+          "editor_focused": true,
+          "activity_is_finishing": false,
+          "activity_is_destroyed": false
+        },
+        "after": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/standard-R4-full-new-normal-full-after-oracle.json",
+          "bytes": 977,
+          "sha256": "fd130c1441e81a9fe9e8fb5cb7e26a7350af5a5baec366a28523fff68cd21ca6",
+          "fixture_pid": 20306,
+          "fixture_uid": 10157,
+          "activity_instance": "e40947767ca941fc8920e2da99321f94",
+          "sequence": 2,
+          "text": "",
+          "unicode_codepoints": [],
+          "text_utf8_bytes": 0,
+          "selection": [
+            0,
+            0
+          ],
+          "main_thread_read": true,
+          "read_only": true,
+          "has_window_focus": true,
+          "editor_focused": true,
+          "activity_is_finishing": false,
+          "activity_is_destroyed": false
+        },
+        "same_fixture_pid_and_activity": true,
+        "same_text_and_selection_across_capture": true
+      },
+      "standard-R4-full-forced-integer": {
+        "before": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/standard-R4-full-forced-integer-before-oracle.json",
+          "bytes": 977,
+          "sha256": "2bf07cc37466abe868c38ec35c8ae07fc0ab033c251c553ba111ea185b316945",
+          "fixture_pid": 20538,
+          "fixture_uid": 10157,
+          "activity_instance": "8d6589aa83d24b3ea9d38255207cc050",
+          "sequence": 1,
+          "text": "",
+          "unicode_codepoints": [],
+          "text_utf8_bytes": 0,
+          "selection": [
+            0,
+            0
+          ],
+          "main_thread_read": true,
+          "read_only": true,
+          "has_window_focus": true,
+          "editor_focused": true,
+          "activity_is_finishing": false,
+          "activity_is_destroyed": false
+        },
+        "after": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/standard-R4-full-forced-integer-after-oracle.json",
+          "bytes": 977,
+          "sha256": "d9621692267f72b9b6fa61143d20eb817bd1285343e77c24a61458e506e88ed6",
+          "fixture_pid": 20538,
+          "fixture_uid": 10157,
+          "activity_instance": "8d6589aa83d24b3ea9d38255207cc050",
+          "sequence": 2,
+          "text": "",
+          "unicode_codepoints": [],
+          "text_utf8_bytes": 0,
+          "selection": [
+            0,
+            0
+          ],
+          "main_thread_read": true,
+          "read_only": true,
+          "has_window_focus": true,
+          "editor_focused": true,
+          "activity_is_finishing": false,
+          "activity_is_destroyed": false
+        },
+        "same_fixture_pid_and_activity": true,
+        "same_text_and_selection_across_capture": true
+      },
+      "standard-R4-full-forced-email": {
+        "before": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/standard-R4-full-forced-email-before-oracle.json",
+          "bytes": 977,
+          "sha256": "45b42d1523616037cbc7fd25876b33f2af048d9079dd0546824d5b2d38d6b552",
+          "fixture_pid": 20772,
+          "fixture_uid": 10157,
+          "activity_instance": "73231bb7c73f461a957835b65aa06013",
+          "sequence": 1,
+          "text": "",
+          "unicode_codepoints": [],
+          "text_utf8_bytes": 0,
+          "selection": [
+            0,
+            0
+          ],
+          "main_thread_read": true,
+          "read_only": true,
+          "has_window_focus": true,
+          "editor_focused": true,
+          "activity_is_finishing": false,
+          "activity_is_destroyed": false
+        },
+        "after": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/standard-R4-full-forced-email-after-oracle.json",
+          "bytes": 977,
+          "sha256": "81dd7c35b923b9732c0b38a604754e9c5dc7a8e1059d2a06fa98da586ee31427",
+          "fixture_pid": 20772,
+          "fixture_uid": 10157,
+          "activity_instance": "73231bb7c73f461a957835b65aa06013",
+          "sequence": 2,
+          "text": "",
+          "unicode_codepoints": [],
+          "text_utf8_bytes": 0,
+          "selection": [
+            0,
+            0
+          ],
+          "main_thread_read": true,
+          "read_only": true,
+          "has_window_focus": true,
+          "editor_focused": true,
+          "activity_is_finishing": false,
+          "activity_is_destroyed": false
+        },
+        "same_fixture_pid_and_activity": true,
+        "same_text_and_selection_across_capture": true
+      },
+      "standard-R4-full-email-a": {
+        "before": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/standard-R4-full-email-a-before-oracle.json",
+          "bytes": 981,
+          "sha256": "a540ba5f7c2c23c05b437edc8c623c6e4f8a13dd7b02351182aad04780fcf4c0",
+          "fixture_pid": 20772,
+          "fixture_uid": 10157,
+          "activity_instance": "73231bb7c73f461a957835b65aa06013",
+          "sequence": 3,
+          "text": "a",
+          "unicode_codepoints": [
+            "U+0061"
+          ],
+          "text_utf8_bytes": 1,
+          "selection": [
+            1,
+            1
+          ],
+          "main_thread_read": true,
+          "read_only": true,
+          "has_window_focus": true,
+          "editor_focused": true,
+          "activity_is_finishing": false,
+          "activity_is_destroyed": false
+        },
+        "after": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/standard-R4-full-email-a-after-oracle.json",
+          "bytes": 981,
+          "sha256": "ff80aea57e088bdd19c440737dacf9ac7a7d3d764c7c85492606cdc78027e5ef",
+          "fixture_pid": 20772,
+          "fixture_uid": 10157,
+          "activity_instance": "73231bb7c73f461a957835b65aa06013",
+          "sequence": 4,
+          "text": "a",
+          "unicode_codepoints": [
+            "U+0061"
+          ],
+          "text_utf8_bytes": 1,
+          "selection": [
+            1,
+            1
+          ],
+          "main_thread_read": true,
+          "read_only": true,
+          "has_window_focus": true,
+          "editor_focused": true,
+          "activity_is_finishing": false,
+          "activity_is_destroyed": false
+        },
+        "same_fixture_pid_and_activity": true,
+        "same_text_and_selection_across_capture": true
+      },
+      "standard-R4-full-normal-after-forced": {
+        "before": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/standard-R4-full-normal-after-forced-before-oracle.json",
+          "bytes": 977,
+          "sha256": "25463f5cc3dbe38b2a7bcbf1a680f60bc6dbc6a7380db76e6c27f1a2a1cc2038",
+          "fixture_pid": 21201,
+          "fixture_uid": 10157,
+          "activity_instance": "1c1aa56ef2e44b7d96f8abb87731e791",
+          "sequence": 1,
+          "text": "",
+          "unicode_codepoints": [],
+          "text_utf8_bytes": 0,
+          "selection": [
+            0,
+            0
+          ],
+          "main_thread_read": true,
+          "read_only": true,
+          "has_window_focus": true,
+          "editor_focused": true,
+          "activity_is_finishing": false,
+          "activity_is_destroyed": false
+        },
+        "after": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/standard-R4-full-normal-after-forced-after-oracle.json",
+          "bytes": 977,
+          "sha256": "1bf0fd349525f4b6b381cf8b4d5c376d2471e1f104e5c2cf699963ac948f332e",
+          "fixture_pid": 21201,
+          "fixture_uid": 10157,
+          "activity_instance": "1c1aa56ef2e44b7d96f8abb87731e791",
+          "sequence": 2,
+          "text": "",
+          "unicode_codepoints": [],
+          "text_utf8_bytes": 0,
+          "selection": [
+            0,
+            0
+          ],
+          "main_thread_read": true,
+          "read_only": true,
+          "has_window_focus": true,
+          "editor_focused": true,
+          "activity_is_finishing": false,
+          "activity_is_destroyed": false
+        },
+        "same_fixture_pid_and_activity": true,
+        "same_text_and_selection_across_capture": true
+      },
+      "standard-R4-full-normal-ni": {
+        "before": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/standard-R4-full-normal-ni-before-oracle.json",
+          "bytes": 977,
+          "sha256": "a506ed537e2a528af072973b35add988e1245570a1a21b695e32931b2ff597a4",
+          "fixture_pid": 21201,
+          "fixture_uid": 10157,
+          "activity_instance": "1c1aa56ef2e44b7d96f8abb87731e791",
+          "sequence": 3,
+          "text": "",
+          "unicode_codepoints": [],
+          "text_utf8_bytes": 0,
+          "selection": [
+            0,
+            0
+          ],
+          "main_thread_read": true,
+          "read_only": true,
+          "has_window_focus": true,
+          "editor_focused": true,
+          "activity_is_finishing": false,
+          "activity_is_destroyed": false
+        },
+        "after": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/standard-R4-full-normal-ni-after-oracle.json",
+          "bytes": 977,
+          "sha256": "bcb74b4f1310339f147322a0da434ebb0f6f9e703d8fba081c1b2cc10e5b56db",
+          "fixture_pid": 21201,
+          "fixture_uid": 10157,
+          "activity_instance": "1c1aa56ef2e44b7d96f8abb87731e791",
+          "sequence": 4,
+          "text": "",
+          "unicode_codepoints": [],
+          "text_utf8_bytes": 0,
+          "selection": [
+            0,
+            0
+          ],
+          "main_thread_read": true,
+          "read_only": true,
+          "has_window_focus": true,
+          "editor_focused": true,
+          "activity_is_finishing": false,
+          "activity_is_destroyed": false
+        },
+        "same_fixture_pid_and_activity": true,
+        "same_text_and_selection_across_capture": true
+      },
+      "standard-R4-full-normal-selected-ni": {
+        "before": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/standard-R4-full-normal-selected-ni-before-oracle.json",
+          "bytes": 981,
+          "sha256": "a32309794f3d3b9c3698a1b09262e588d5da77182a760ef99ecb8423a06d3960",
+          "fixture_pid": 21201,
+          "fixture_uid": 10157,
+          "activity_instance": "1c1aa56ef2e44b7d96f8abb87731e791",
+          "sequence": 5,
+          "text": "你",
+          "unicode_codepoints": [
+            "U+4F60"
+          ],
+          "text_utf8_bytes": 3,
+          "selection": [
+            1,
+            1
+          ],
+          "main_thread_read": true,
+          "read_only": true,
+          "has_window_focus": true,
+          "editor_focused": true,
+          "activity_is_finishing": false,
+          "activity_is_destroyed": false
+        },
+        "after": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/standard-R4-full-normal-selected-ni-after-oracle.json",
+          "bytes": 981,
+          "sha256": "698ff97d7250aee7a11488df33d1ebb42222c538566e73885932386215cd3bb5",
+          "fixture_pid": 21201,
+          "fixture_uid": 10157,
+          "activity_instance": "1c1aa56ef2e44b7d96f8abb87731e791",
+          "sequence": 6,
+          "text": "你",
+          "unicode_codepoints": [
+            "U+4F60"
+          ],
+          "text_utf8_bytes": 3,
+          "selection": [
+            1,
+            1
+          ],
+          "main_thread_read": true,
+          "read_only": true,
+          "has_window_focus": true,
+          "editor_focused": true,
+          "activity_is_finishing": false,
+          "activity_is_destroyed": false
+        },
+        "same_fixture_pid_and_activity": true,
+        "same_text_and_selection_across_capture": true
+      },
+      "standard-R4-new-T9-K1-initial": {
+        "before": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/standard-R4-new-T9-K1-initial-before-oracle.json",
+          "bytes": 977,
+          "sha256": "f5fda344019b3873241c05cb452772b2b6862b88d0a9ec493dabeaa91093782f",
+          "fixture_pid": 22505,
+          "fixture_uid": 10157,
+          "activity_instance": "078b6b6290c44915a530fd014b61dd83",
+          "sequence": 1,
+          "text": "",
+          "unicode_codepoints": [],
+          "text_utf8_bytes": 0,
+          "selection": [
+            0,
+            0
+          ],
+          "main_thread_read": true,
+          "read_only": true,
+          "has_window_focus": true,
+          "editor_focused": true,
+          "activity_is_finishing": false,
+          "activity_is_destroyed": false
+        },
+        "after": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/standard-R4-new-T9-K1-initial-after-oracle.json",
+          "bytes": 977,
+          "sha256": "b20a3b1b20973823f80a7095a47dd0ec283894c36eb60fa308225c019f6ec353",
+          "fixture_pid": 22505,
+          "fixture_uid": 10157,
+          "activity_instance": "078b6b6290c44915a530fd014b61dd83",
+          "sequence": 2,
+          "text": "",
+          "unicode_codepoints": [],
+          "text_utf8_bytes": 0,
+          "selection": [
+            0,
+            0
+          ],
+          "main_thread_read": true,
+          "read_only": true,
+          "has_window_focus": true,
+          "editor_focused": true,
+          "activity_is_finishing": false,
+          "activity_is_destroyed": false
+        },
+        "same_fixture_pid_and_activity": true,
+        "same_text_and_selection_across_capture": true
+      },
+      "standard-R4-new-T9-K1-64": {
+        "before": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/standard-R4-new-T9-K1-64-before-oracle.json",
+          "bytes": 977,
+          "sha256": "b6e3249bc4b071a50e1be447bf94b23c2cb89cc4ecde1aa202e918e69884a7e0",
+          "fixture_pid": 22505,
+          "fixture_uid": 10157,
+          "activity_instance": "078b6b6290c44915a530fd014b61dd83",
+          "sequence": 3,
+          "text": "",
+          "unicode_codepoints": [],
+          "text_utf8_bytes": 0,
+          "selection": [
+            0,
+            0
+          ],
+          "main_thread_read": true,
+          "read_only": true,
+          "has_window_focus": true,
+          "editor_focused": true,
+          "activity_is_finishing": false,
+          "activity_is_destroyed": false
+        },
+        "after": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/standard-R4-new-T9-K1-64-after-oracle.json",
+          "bytes": 977,
+          "sha256": "b086b5859d0e06c49c867b3633af56ba62530d5ff05f5c217c93be24b77ae8c2",
+          "fixture_pid": 22505,
+          "fixture_uid": 10157,
+          "activity_instance": "078b6b6290c44915a530fd014b61dd83",
+          "sequence": 4,
+          "text": "",
+          "unicode_codepoints": [],
+          "text_utf8_bytes": 0,
+          "selection": [
+            0,
+            0
+          ],
+          "main_thread_read": true,
+          "read_only": true,
+          "has_window_focus": true,
+          "editor_focused": true,
+          "activity_is_finishing": false,
+          "activity_is_destroyed": false
+        },
+        "same_fixture_pid_and_activity": true,
+        "same_text_and_selection_across_capture": true
+      },
+      "standard-R4-new-T9-K1-ni-locked": {
+        "before": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/standard-R4-new-T9-K1-ni-locked-before-oracle.json",
+          "bytes": 977,
+          "sha256": "fe8a78cacbb4733627abb2ca4641d9c704e6c62b61dc7e1ad18354a42a1d07f9",
+          "fixture_pid": 22505,
+          "fixture_uid": 10157,
+          "activity_instance": "078b6b6290c44915a530fd014b61dd83",
+          "sequence": 5,
+          "text": "",
+          "unicode_codepoints": [],
+          "text_utf8_bytes": 0,
+          "selection": [
+            0,
+            0
+          ],
+          "main_thread_read": true,
+          "read_only": true,
+          "has_window_focus": true,
+          "editor_focused": true,
+          "activity_is_finishing": false,
+          "activity_is_destroyed": false
+        },
+        "after": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/standard-R4-new-T9-K1-ni-locked-after-oracle.json",
+          "bytes": 977,
+          "sha256": "c2442d6adf6d8be015b6a9e24335c171afa8e6abb7e11405ab82659cc03d6df3",
+          "fixture_pid": 22505,
+          "fixture_uid": 10157,
+          "activity_instance": "078b6b6290c44915a530fd014b61dd83",
+          "sequence": 6,
+          "text": "",
+          "unicode_codepoints": [],
+          "text_utf8_bytes": 0,
+          "selection": [
+            0,
+            0
+          ],
+          "main_thread_read": true,
+          "read_only": true,
+          "has_window_focus": true,
+          "editor_focused": true,
+          "activity_is_finishing": false,
+          "activity_is_destroyed": false
+        },
+        "same_fixture_pid_and_activity": true,
+        "same_text_and_selection_across_capture": true
+      },
+      "standard-R4-new-T9-K1-hao-options": {
+        "before": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/standard-R4-new-T9-K1-hao-options-before-oracle.json",
+          "bytes": 977,
+          "sha256": "37f2984d433588ff56fee75bdc52fb76331c13794959efde63f85f4b69616833",
+          "fixture_pid": 22505,
+          "fixture_uid": 10157,
+          "activity_instance": "078b6b6290c44915a530fd014b61dd83",
+          "sequence": 7,
+          "text": "",
+          "unicode_codepoints": [],
+          "text_utf8_bytes": 0,
+          "selection": [
+            0,
+            0
+          ],
+          "main_thread_read": true,
+          "read_only": true,
+          "has_window_focus": true,
+          "editor_focused": true,
+          "activity_is_finishing": false,
+          "activity_is_destroyed": false
+        },
+        "after": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/standard-R4-new-T9-K1-hao-options-after-oracle.json",
+          "bytes": 977,
+          "sha256": "d29ff3ac5767bb788761fc725e9faff8aed236061b028b62f7e6df45014feaf4",
+          "fixture_pid": 22505,
+          "fixture_uid": 10157,
+          "activity_instance": "078b6b6290c44915a530fd014b61dd83",
+          "sequence": 8,
+          "text": "",
+          "unicode_codepoints": [],
+          "text_utf8_bytes": 0,
+          "selection": [
+            0,
+            0
+          ],
+          "main_thread_read": true,
+          "read_only": true,
+          "has_window_focus": true,
+          "editor_focused": true,
+          "activity_is_finishing": false,
+          "activity_is_destroyed": false
+        },
+        "same_fixture_pid_and_activity": true,
+        "same_text_and_selection_across_capture": true
+      },
+      "standard-R4-new-T9-K1-nihao-locked": {
+        "before": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/standard-R4-new-T9-K1-nihao-locked-before-oracle.json",
+          "bytes": 977,
+          "sha256": "f81415ad19e658f84ddf090e5fa821c35f18de85bbf8b4bebe67dc71b123b037",
+          "fixture_pid": 22505,
+          "fixture_uid": 10157,
+          "activity_instance": "078b6b6290c44915a530fd014b61dd83",
+          "sequence": 9,
+          "text": "",
+          "unicode_codepoints": [],
+          "text_utf8_bytes": 0,
+          "selection": [
+            0,
+            0
+          ],
+          "main_thread_read": true,
+          "read_only": true,
+          "has_window_focus": true,
+          "editor_focused": true,
+          "activity_is_finishing": false,
+          "activity_is_destroyed": false
+        },
+        "after": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/standard-R4-new-T9-K1-nihao-locked-after-oracle.json",
+          "bytes": 978,
+          "sha256": "1c2ef15b7ab27e8b6a0b0d55402c2cd2b499233ed6c77e8895ac97f240dd294a",
+          "fixture_pid": 22505,
+          "fixture_uid": 10157,
+          "activity_instance": "078b6b6290c44915a530fd014b61dd83",
+          "sequence": 10,
+          "text": "",
+          "unicode_codepoints": [],
+          "text_utf8_bytes": 0,
+          "selection": [
+            0,
+            0
+          ],
+          "main_thread_read": true,
+          "read_only": true,
+          "has_window_focus": true,
+          "editor_focused": true,
+          "activity_is_finishing": false,
+          "activity_is_destroyed": false
+        },
+        "same_fixture_pid_and_activity": true,
+        "same_text_and_selection_across_capture": true
+      },
+      "standard-R4-new-T9-K1-selected-nihao": {
+        "before": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/standard-R4-new-T9-K1-selected-nihao-before-oracle.json",
+          "bytes": 986,
+          "sha256": "e2ccc32058a9c1593695e5c924f180c8287e846bc02d1c877b28aaf7813bfdc0",
+          "fixture_pid": 22505,
+          "fixture_uid": 10157,
+          "activity_instance": "078b6b6290c44915a530fd014b61dd83",
+          "sequence": 11,
+          "text": "你好",
+          "unicode_codepoints": [
+            "U+4F60",
+            "U+597D"
+          ],
+          "text_utf8_bytes": 6,
+          "selection": [
+            2,
+            2
+          ],
+          "main_thread_read": true,
+          "read_only": true,
+          "has_window_focus": true,
+          "editor_focused": true,
+          "activity_is_finishing": false,
+          "activity_is_destroyed": false
+        },
+        "after": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/standard-R4-new-T9-K1-selected-nihao-after-oracle.json",
+          "bytes": 986,
+          "sha256": "d3aaca6849c7cc1c7e22e44fb3e1b2353475d33f183b59e7cf52c9f676aa8946",
+          "fixture_pid": 22505,
+          "fixture_uid": 10157,
+          "activity_instance": "078b6b6290c44915a530fd014b61dd83",
+          "sequence": 12,
+          "text": "你好",
+          "unicode_codepoints": [
+            "U+4F60",
+            "U+597D"
+          ],
+          "text_utf8_bytes": 6,
+          "selection": [
+            2,
+            2
+          ],
+          "main_thread_read": true,
+          "read_only": true,
+          "has_window_focus": true,
+          "editor_focused": true,
+          "activity_is_finishing": false,
+          "activity_is_destroyed": false
+        },
+        "same_fixture_pid_and_activity": true,
+        "same_text_and_selection_across_capture": true
+      },
+      "standard-R4-new-T9-K1-new6": {
+        "before": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/standard-R4-new-T9-K1-new6-before-oracle.json",
+          "bytes": 986,
+          "sha256": "bfdee5c601dea6e903736b155a6cb53c3c68257aeeea58ac074306d096815488",
+          "fixture_pid": 22505,
+          "fixture_uid": 10157,
+          "activity_instance": "078b6b6290c44915a530fd014b61dd83",
+          "sequence": 13,
+          "text": "你好",
+          "unicode_codepoints": [
+            "U+4F60",
+            "U+597D"
+          ],
+          "text_utf8_bytes": 6,
+          "selection": [
+            2,
+            2
+          ],
+          "main_thread_read": true,
+          "read_only": true,
+          "has_window_focus": true,
+          "editor_focused": true,
+          "activity_is_finishing": false,
+          "activity_is_destroyed": false
+        },
+        "after": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/standard-R4-new-T9-K1-new6-after-oracle.json",
+          "bytes": 986,
+          "sha256": "9ae8b5a7c20041cd18043dbc857eade10e1d04aba4c5eb61b2b5f7e5c4ca84c8",
+          "fixture_pid": 22505,
+          "fixture_uid": 10157,
+          "activity_instance": "078b6b6290c44915a530fd014b61dd83",
+          "sequence": 14,
+          "text": "你好",
+          "unicode_codepoints": [
+            "U+4F60",
+            "U+597D"
+          ],
+          "text_utf8_bytes": 6,
+          "selection": [
+            2,
+            2
+          ],
+          "main_thread_read": true,
+          "read_only": true,
+          "has_window_focus": true,
+          "editor_focused": true,
+          "activity_is_finishing": false,
+          "activity_is_destroyed": false
+        },
+        "same_fixture_pid_and_activity": true,
+        "same_text_and_selection_across_capture": true
+      },
+      "standard-R4-new-T9-K1-cancel6": {
+        "before": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/standard-R4-new-T9-K1-cancel6-before-oracle.json",
+          "bytes": 986,
+          "sha256": "c8416665ca9b2d37e3a09127b798a613d6154a5c4aeb71fe89e38250ba639760",
+          "fixture_pid": 22505,
+          "fixture_uid": 10157,
+          "activity_instance": "078b6b6290c44915a530fd014b61dd83",
+          "sequence": 15,
+          "text": "你好",
+          "unicode_codepoints": [
+            "U+4F60",
+            "U+597D"
+          ],
+          "text_utf8_bytes": 6,
+          "selection": [
+            2,
+            2
+          ],
+          "main_thread_read": true,
+          "read_only": true,
+          "has_window_focus": true,
+          "editor_focused": true,
+          "activity_is_finishing": false,
+          "activity_is_destroyed": false
+        },
+        "after": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/standard-R4-new-T9-K1-cancel6-after-oracle.json",
+          "bytes": 986,
+          "sha256": "65fa113cb963cde6f5add67c04568ece89ddce1208df179692fb7276e7bcfdcc",
+          "fixture_pid": 22505,
+          "fixture_uid": 10157,
+          "activity_instance": "078b6b6290c44915a530fd014b61dd83",
+          "sequence": 16,
+          "text": "你好",
+          "unicode_codepoints": [
+            "U+4F60",
+            "U+597D"
+          ],
+          "text_utf8_bytes": 6,
+          "selection": [
+            2,
+            2
+          ],
+          "main_thread_read": true,
+          "read_only": true,
+          "has_window_focus": true,
+          "editor_focused": true,
+          "activity_is_finishing": false,
+          "activity_is_destroyed": false
+        },
+        "same_fixture_pid_and_activity": true,
+        "same_text_and_selection_across_capture": true
+      }
+    },
+    "root_selected_visual_frames": {
+      "count": 4,
+      "records": [
+        {
+          "utc": "2026-10-22T17:14:49.318702+00:00",
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/captures/standard-R4-full-email-a/observer-in-connection.png",
+          "sha256": "217f31a086ab334bf19dfe6d7fd1fe9cd2d42b7269a0df2c268144d0849ac38a",
+          "platform": "API35",
+          "case": "standard R4 full schema forced email literal a",
+          "observed": "Root actually viewed email editor containing a, full QWERTY with En/西文 and next-action key, blank composition/candidate area.",
+          "scope": "Selected original frame, viewed only after its PNG existed; directory appearance alone was not treated as an image. Exact forced integer→email and recovery sequence qualifications are separate."
+        },
+        {
+          "utc": "2026-10-22T17:15:23.047659+00:00",
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/captures/standard-R4-full-normal-selected-ni/observer-in-connection.png",
+          "sha256": "76aca79947125e059ee536a0e75b71785a78490b0a96417ed30af6d02c882509",
+          "platform": "API35",
+          "case": "standard R4 full schema restored normal Chinese 你",
+          "observed": "Root actually viewed multiline editor 你, full QWERTY with 中/中文, Enter key and cleared candidate/composition strip.",
+          "scope": "Selected original final frame; forced-mode recovery ordering and exact oracle verified separately. Not independent physical-device testing."
+        },
+        {
+          "utc": "2026-10-22T17:17:56.007858+00:00",
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/captures/standard-R4-new-T9-K1-selected-nihao/observer-in-connection.png",
+          "sha256": "89ce4b7881ce95f3b2c05b594cf2fffea62bf86a7984d75f4af73bf9b14a0f8f",
+          "platform": "API35",
+          "case": "standard R4 embedded K1 selected nihao",
+          "observed": "Root actually viewed editor 你好, standard T9 keyboard with 中 indicator and cleared composition/candidate strip.",
+          "scope": "Selected original frame after public full-schema→T9 path. Embedded K1 is counted once in R4; not an additional standalone successful session."
+        },
+        {
+          "utc": "2026-10-22T17:18:40.792895+00:00",
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/captures/standard-R4-new-T9-K1-cancel6/observer-in-connection.png",
+          "sha256": "26e0ee1120c7ffd3fbbe84d6dfed3d61ce68eec0b09870cdf9d8d4920942f34b",
+          "platform": "API35",
+          "case": "standard R4 embedded K1 new6 Cancel",
+          "observed": "Root actually viewed 你好 preserved in editor after new6 Cancel, standard T9 visible and no spelling Current/Locked/Undo/Cancel/candidate controls.",
+          "scope": "Selected original final frame; exact cancellation target, editable equality and state identity are separately qualified. R4/K1 not counted as separate duplicate sessions."
+        }
+      ],
+      "selected_only": true,
+      "all_24_frames_viewed_by_root": false
+    }
+  },
+  "normal_stop": {
+    "sequence_result_authenticated_normal_stop": true,
+    "direct_finish_succeeded": true,
+    "atexit_fallback_retained": false,
+    "observer_finished": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-standard-R4/observer8-session/finished.json",
+      "bytes": 2127,
+      "sha256": "8a88965bcb7c2692014cabf1d36f6bad22e35cb19306584984533b242a31731d"
+    },
+    "observer_passed": true,
+    "identity_authenticated": true,
+    "stop_received": true,
+    "request_count": 25,
+    "capture_count": 24,
+    "completed_capture_count": 24,
+    "capture_failures": 0,
+    "instrumentation_command": {
+      "ordinal": 17,
+      "at": "2026-10-22T17:11:44.757031+00:00",
+      "finished": "2026-10-22T17:18:20.482278+00:00",
+      "argv": [
+        "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+        "-s",
+        "emulator-5584",
+        "shell",
+        "sh -c 'am instrument -w -r -e mode session -e session_token 992d3aa2456702ddfc12ac681a926654 -e expected_package com.osfans.trime.debug -e expected_apk_sha256 453c71544f67685db3b85fc91855ed27c5ff264d0a25671669642b0dc4b8732e org.x2m7.trime.editorobserver8/.Observer'; _trime_t12_status=$?; echo ''; echo \"__TRIME_T12_REMOTE_RC_78e61ac752d3758fee4db5ac0300b8b3:$_trime_t12_status\""
+      ],
+      "completed": true,
+      "host_returncode": 0,
+      "actual_child_wait_returncode": 0,
+      "remote_returncode": 0,
+      "stdout_sha256": "2c9bdd7ae94d647eedc65f75f5b18005a7e80af316b7435bf060e8dffc68dc7f",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "elapsed_seconds": 395.7227084410006,
+      "hard_host_deadline_expired": false,
+      "actual_deadline_signals": []
+    },
+    "observer_cleanup_records": []
+  },
+  "qualification_checks": [
+    {
+      "id": "exact_c4_original_apk_signer_audit_identity",
+      "passed": true
+    },
+    {
+      "id": "same_target_pid2228_start18495_cmdline_and_boot_all_probes",
+      "passed": true
+    },
+    {
+      "id": "v7_runner_and_standard_tongwenfeng_asset_exact",
+      "passed": true
+    },
+    {
+      "id": "both_public_schema_chooser_initial_and_readback_unique_checked_then_actual_back_dismissed",
+      "passed": true
+    },
+    {
+      "id": "fresh_full_editor_after_T9_to_full_schema_switch",
+      "passed": true
+    },
+    {
+      "id": "integer_then_email_exact_literal_U+0061_a_no_native_composition",
+      "passed": true
+    },
+    {
+      "id": "fresh_normal_ni_then_actual_candidate_exact_U+4F60_你",
+      "passed": true
+    },
+    {
+      "id": "standard_branch_contains_no_trime_only_SIMP_cycle",
+      "passed": true
+    },
+    {
+      "id": "return_to_T9_unique_checked_readback_then_actual_back_dismissed",
+      "passed": true
+    },
+    {
+      "id": "embedded_K1_complete_exact_你好_new6_then_actual_Cancel",
+      "passed": true
+    },
+    {
+      "id": "Cancel_after_XML_preserves_你好_and_clears_composition_controls_candidates",
+      "passed": true
+    },
+    {
+      "id": "all_24_capture_receipts_complete_and_XML_byte_equal",
+      "passed": true
+    },
+    {
+      "id": "strict_sequence_and_authenticated_observer_normal_stop_host_remote_zero",
+      "passed": true
+    },
+    {
+      "id": "raw_report_passed_false_checks_empty_and_business_false_retained",
+      "passed": true
+    }
+  ],
+  "limits": [
+    "The raw journal remains passed=false with checks=[]; all 24 raw capture summaries remain image_reviewed=false and accepted_business_case=false. This independent HOST qualification does not rewrite those fields.",
+    "This qualifies only the frozen API35 emulator standard R4 v7 path and its one embedded K1. It does not qualify other cases, themes, API levels, or the whole c4 build.",
+    "The standard branch has no trime-only 朙月拼音·简化字/SIMP cycle; none is inferred or claimed.",
+    "Physical-device execution is NOT_RUN. No phone-template cached-same-target forced editor scenario is inferred from this v7 path.",
+    "Overall API35 terminal log, warnings/errors, memory, cleanup, setting restoration, emulator stop, and pre-install ANR disposition are outside this case report.",
+    "Controlled preparation selected APP_STORAGE, disabled follow-system day/night, and selected tongwenfeng.trime before business checks; this is not pure-default first-install, onboarding, or upgrade coverage.",
+    "Root visual ledger snapshot contains 4 selected original PNGs for this session, not all 24. Qualification predicates come from frozen XML, strict Editable oracles, and recorded actions; unlisted PNGs are not claimed as independently viewed by Root.",
+    "All 24 before/after XML pairs are byte-equal. Observer settle windows are synchronization, not latency measurements.",
+    "The bound APK retains the two recorded apksigner META-INF service warnings and is not re-signed; this report does not clear those warnings."
+  ],
+  "final_assessment": {
+    "qualified": true,
+    "scope": "API35 emulator, exact c4 standard R4 frozen v7 path plus its one embedded K1 only",
+    "physical_device": "NOT_RUN",
+    "terminal": "NOT_QUALIFIED_HERE",
+    "other_cases": "NOT_QUALIFIED_HERE",
+    "simplified_schema_branch": "NOT_PRESENT_IN_STANDARD_R4",
+    "raw_business_passed": false
+  }
+}

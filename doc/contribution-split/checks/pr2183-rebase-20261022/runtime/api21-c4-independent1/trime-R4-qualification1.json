@@ -1,0 +1,1531 @@
+{
+  "schema": "trime-independent-runtime-qualification/v1",
+  "generated_utc": "2026-10-22T16:15:55.665189+00:00",
+  "review_mode": "HOST_ONLY_NO_ADB_VM_GRADLE",
+  "verdict": "PASS_API21_TRIME_R4_V7_ACTUAL_SCOPE_WITH_EMBEDDED_TRIME_K1",
+  "qualification_scope": {
+    "platform": "Android API21 emulator",
+    "theme": "trime / trime.yaml",
+    "actual_case_session": "R4",
+    "logical_items_qualified": [
+      "trime R4 as implemented by frozen v7",
+      "trime K1 embedded once at R4 tail"
+    ],
+    "execution_count_rule": "One actual R4 session. Frozen v7 _r4 calls the complete _k1 exactly once; this is not an independent K1 session and is not double-counted.",
+    "regression_focus": "T9 -> full schema -> integer -> email must commit literal a rather than re-enter cached Chinese composition; normal editors must then restore Chinese composition. The trime same-QWERTY luna_pinyin_simp branch repeats that actual cycle.",
+    "not_qualified_here": [
+      "separate K1 session",
+      "API35",
+      "physical device",
+      "whole case plan",
+      "phone-template c4_forced_ascii_capability cached-same-target email/password subcheck"
+    ]
+  },
+  "frozen_inputs": {
+    "session": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-trime-R4",
+    "raw_report": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-trime-R4/report.json",
+      "bytes": 2364663,
+      "sha256": "7740adc4314079f354ae8525dcc0cb7c2230aa8d90d9a5223c8cf230dda58d62",
+      "passed": false,
+      "checks": [],
+      "completed": true
+    },
+    "sequence_result": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-trime-R4/sequence-result.json",
+      "bytes": 1759,
+      "sha256": "83b074fdc0317c6fcf5ccce27274b8132ba28dc5e98804ea414d1978ae3a2842",
+      "business_passed": false,
+      "strict_sequence_completed": true,
+      "authenticated_normal_stop": true
+    },
+    "binding": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/original-apk-binding-c4-v7.json",
+      "bytes": 4021,
+      "sha256": "52919b0ce3ee58c654f73c80008d4ea4575362f11d08eba540eb9207c4781778"
+    },
+    "runner": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/t9_case_sequences_v7.py",
+      "bytes": 22810,
+      "sha256": "3f7739c86af44fd08b97598286f9e697ce500473c7dc5d642466cf77229b6846"
+    },
+    "execution_mapping": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/c4-v7-execution-mapping1.json",
+      "bytes": 2260,
+      "sha256": "dd3345466983cc3c150640550644287344b4034b9c6407be48fc254f45b6d973"
+    },
+    "precondition_prefs_snapshot": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-trime-R4/trime-R4-precondition-prefs.xml",
+      "bytes": 296,
+      "sha256": "6ce4e09de791c1ae16b82c359bff9990f69ac8ffffd4ef4f655f5663e928c455",
+      "controlled_values": [
+        "profile_data_storage_mode=APP_STORAGE",
+        "follow_system_day_night=false",
+        "selected_theme=trime"
+      ],
+      "runtime_identity_value": "general__pid=2543"
+    },
+    "root_visual_ledger_snapshot": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/root-image-review-c4.json",
+      "sha256_at_review": "b059aafeb3a624cc418fc26806d9395a7ec78d956f82e4b1d16e559cb224d44f",
+      "total_records_at_review": 14,
+      "r4_records_at_review": 10,
+      "r4_records": [
+        {
+          "utc": "2026-10-22T16:09:33.899430+00:00",
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-trime-R4/captures/trime-R4-full-email-a/observer-in-connection.png",
+          "sha256": "2fc32577029c203dbc2973dff80bf4a0c9e9d164dd4664bd674df6b422bc78a0",
+          "platform": "API21",
+          "case": "trime R4 full-schema forced email literal a",
+          "observed": "Root actually viewed editor with literal lowercase a, cursor after a, email/action none, QWERTY with 西文 and blank candidate area. Prior b14 negative Chinese a preedit is absent in this frame.",
+          "scope": "Selected original frame only; full R4/session and native-state qualification remains separate."
+        },
+        {
+          "utc": "2026-10-22T16:10:22.355880+00:00",
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-trime-R4/captures/trime-R4-full-normal-ni/observer-in-connection.png",
+          "sha256": "d58f3842653b5b13cab3308e1cc04ccffccde17997a70923ca22ba635a8b91bd",
+          "platform": "API21",
+          "case": "trime R4 trime-R4-full-normal-ni",
+          "observed": "Root actually viewed: Fresh normal multiline editor has native ni composition and visible first candidate 你; 中文 keyboard mode restored after forced email.",
+          "scope": "Selected original visual frame only; exact Editable, state identity, complete session and stop qualification are separate."
+        },
+        {
+          "utc": "2026-10-22T16:10:22.357140+00:00",
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-trime-R4/captures/trime-R4-full-normal-selected-ni/observer-in-connection.png",
+          "sha256": "64d04dd3d5e09908b107f37a4c930a9072771aebcc7568d9a56e7f96f81349be",
+          "platform": "API21",
+          "case": "trime R4 trime-R4-full-normal-selected-ni",
+          "observed": "Root actually viewed: Normal editor visibly contains exactly 你 with cursor following; candidate area cleared.",
+          "scope": "Selected original visual frame only; exact Editable, state identity, complete session and stop qualification are separate."
+        },
+        {
+          "utc": "2026-10-22T16:10:22.358193+00:00",
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-trime-R4/captures/trime-R4-same-id-simp-current-schema-readback/observer-in-connection.png",
+          "sha256": "cdae02701f3d8d46557464d2fb74183a2a19f049e0d8369b306eab029540b268",
+          "platform": "API21",
+          "case": "trime R4 trime-R4-same-id-simp-current-schema-readback",
+          "observed": "Root actually viewed: Public reopened schema chooser has only 朙月拼音·简化字 checked while same QWERTY remains visible behind; previous editor 你 retained.",
+          "scope": "Selected original visual frame only; exact Editable, state identity, complete session and stop qualification are separate."
+        },
+        {
+          "utc": "2026-10-22T16:13:13.485307+00:00",
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-trime-R4/captures/trime-R4-simp-email-a/observer-in-connection.png",
+          "sha256": "870841484bc948e2367739e6cd95eb143972b3411607c7428d732ebac61a54b9",
+          "platform": "API21",
+          "case": "trime R4 trime-R4-simp-email-a",
+          "observed": "Root actually viewed: Simplified schema QWERTY shows 西文, email Editable a, candidate strip empty.",
+          "scope": "Selected original visual frame only; exact Editable, state identity, complete session and stop qualification are separate."
+        },
+        {
+          "utc": "2026-10-22T16:13:13.486480+00:00",
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-trime-R4/captures/trime-R4-simp-normal-selected-ni/observer-in-connection.png",
+          "sha256": "7046aed74e8082b15aea59112801d204845ea1b966c1703f788c4ec806fbc71c",
+          "platform": "API21",
+          "case": "trime R4 trime-R4-simp-normal-selected-ni",
+          "observed": "Root actually viewed: After simplified-schema forced editors, normal multiline Editable visibly contains 你 and 中文 mode is restored.",
+          "scope": "Selected original visual frame only; exact Editable, state identity, complete session and stop qualification are separate."
+        },
+        {
+          "utc": "2026-10-22T16:13:13.487450+00:00",
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-trime-R4/captures/trime-R4-new-T9-K1-nihao-locked/observer-in-connection.png",
+          "sha256": "6282dc888cafa51e3c915c27e9dfb7d786b91b13bf1298b15d269c2287557e15",
+          "platform": "API21",
+          "case": "trime R4 trime-R4-new-T9-K1-nihao-locked",
+          "observed": "Root actually viewed: Returned T9 in fresh editor has locked ni and hao, highlighted hao, and 你好 as first Hanzi candidate; editor not yet committed.",
+          "scope": "Selected original visual frame only; exact Editable, state identity, complete session and stop qualification are separate."
+        },
+        {
+          "utc": "2026-10-22T16:13:13.488503+00:00",
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-trime-R4/captures/trime-R4-new-T9-K1-selected-nihao/observer-in-connection.png",
+          "sha256": "8481886825e7dff9e9cafb2cd44349c6f45288dec16f138cbd76d212d03aeabf",
+          "platform": "API21",
+          "case": "trime R4 trime-R4-new-T9-K1-selected-nihao",
+          "observed": "Root actually viewed: After actual candidate selection, editor displays 你好, candidate area cleared and T9 remains visible.",
+          "scope": "Selected original visual frame only; exact Editable, state identity, complete session and stop qualification are separate."
+        },
+        {
+          "utc": "2026-10-22T16:13:13.489475+00:00",
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-trime-R4/captures/trime-R4-new-T9-K1-new6/observer-in-connection.png",
+          "sha256": "7f3e4706fd09412cd6c2067f9d8f624c405561001224aaef1382dcee91e2cb5d",
+          "platform": "API21",
+          "case": "trime R4 trime-R4-new-T9-K1-new6",
+          "observed": "Root actually viewed: A new raw 6 composition is visible while existing editor text remains 你好; cancel result has not been inferred from this frame.",
+          "scope": "Selected original visual frame only; exact Editable, state identity, complete session and stop qualification are separate."
+        },
+        {
+          "utc": "2026-10-22T16:13:46.534254+00:00",
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-trime-R4/captures/trime-R4-new-T9-K1-cancel6/observer-in-connection.png",
+          "sha256": "8481886825e7dff9e9cafb2cd44349c6f45288dec16f138cbd76d212d03aeabf",
+          "platform": "API21",
+          "case": "trime R4 embedded K1 cancel new6",
+          "observed": "Root actually viewed editor 你好 preserved after cancellation, T9 visible, no preedit/locked segments/undo/cancel/spelling rows or candidates visible.",
+          "scope": "Actual original visual frame; full raw business flag remains false, host qualification separately required."
+        }
+      ]
+    }
+  },
+  "identity": {
+    "source_head": "c4b613f78835e7b914e02447955c6b89fe9839ab",
+    "source_tree": "d7639dfce3b6b5646bb004479a688148c1b19900",
+    "base": "19b048494ffa55cae52d5385dfa6d0611461c27d",
+    "producer": {
+      "repository": "X2M7/trime",
+      "run": 39806420824,
+      "artifact": 12438099455
+    },
+    "package": "com.osfans.trime.debug",
+    "version_code": 20261101,
+    "version_name": "3.3.13",
+    "apk_sha256": "453c71544f67685db3b85fc91855ed27c5ff264d0a25671669642b0dc4b8732e",
+    "signer_sha256": "f6409a2d9db2800f1acc9b2e614d73e4609df3652d265cf2c40eb8a64456deb2",
+    "installed_apk_copy": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-trime-R4/start-installed-apk.bin",
+      "bytes": 20673055,
+      "sha256": "453c71544f67685db3b85fc91855ed27c5ff264d0a25671669642b0dc4b8732e"
+    },
+    "installed_copy_byte_equal_to_bound_original": true,
+    "theme_asset": "assets/shared/trime.yaml",
+    "theme_asset_sha256": "ff65e4a8ada630dcd14b9d7f036201579ddefa4758868df1b497b45dcfef2d08",
+    "target_pid": 2543,
+    "target_starttime": "18220",
+    "target_stat_probe_count": 112,
+    "target_stat_starttime_values": [
+      "18220"
+    ],
+    "target_cmdline_probe_count": 112,
+    "target_cmdline_values": [
+      "com.osfans.trime.debug"
+    ],
+    "boot_id": "d75bca76-0594-45f7-9f2f-52a1a39ec013",
+    "observer_session_token": "5926abb7cf0947df64b0cd76fce9602f",
+    "observer_pid": 3889,
+    "observer_starttime": "61894"
+  },
+  "capture_chain": {
+    "capture_count": 35,
+    "capture_failures": 0,
+    "same_cached_automation_connection": true,
+    "automation_connection_count": 1,
+    "helper_injected_touch": false,
+    "complete_capture_count": 35,
+    "byte_equal_xml_capture_count": 32,
+    "byte_unequal_xml_captures": [
+      {
+        "label": "trime-R4-new-T9-K1-64",
+        "changes": [
+          {
+            "package": "com.osfans.trime.debug",
+            "class": "android.widget.TextView",
+            "text": "ni",
+            "content_desc": "",
+            "changed_attributes": {
+              "bounds": [
+                "[57,469][73,496]",
+                "[57,470][73,497]"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "label": "trime-R4-new-T9-K1-ni-locked",
+        "changes": [
+          {
+            "package": "com.osfans.trime.debug",
+            "class": "android.widget.TextView",
+            "text": "ni",
+            "content_desc": "",
+            "changed_attributes": {
+              "bounds": [
+                "[376,469][392,496]",
+                "[376,470][392,497]"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "label": "trime-R4-new-T9-K1-nihao-locked",
+        "changes": [
+          {
+            "package": "com.osfans.trime.debug",
+            "class": "android.widget.TextView",
+            "text": "ni hao",
+            "content_desc": "",
+            "changed_attributes": {
+              "bounds": [
+                "[432,469][486,496]",
+                "[432,468][486,495]"
+              ]
+            }
+          }
+        ]
+      }
+    ],
+    "byte_unequal_limit": "Three transient T9 annotation TextViews changed only by one pixel vertically between XML-before and XML-after. Node counts, semantic text, controls, editor oracle and capture identity remain unchanged; those three frames are not represented as byte-stable.",
+    "captures": [
+      {
+        "sequence": 1,
+        "label": "trime-R4-initial-t9",
+        "png_sha256": "6733e23663fa0c235fa539617a37a528e6fa26e61ad09fad3fbb5ba8f07855b8",
+        "before_xml_sha256": "65e158d6a33faf1dcf096cfce0ca42aeaaaa6dc9e06bd0f6b68ce7ac3df0e678",
+        "after_xml_sha256": "65e158d6a33faf1dcf096cfce0ca42aeaaaa6dc9e06bd0f6b68ce7ac3df0e678",
+        "hierarchies_equal": true,
+        "capture_complete": true,
+        "same_connection_xml_png_xml": true,
+        "text": ""
+      },
+      {
+        "sequence": 2,
+        "label": "trime-R4-T9-to-full-chooser",
+        "png_sha256": "60eb1e3be16440deebc70c6a2381055898372109f3055d72942af2652d93664a",
+        "before_xml_sha256": "32cb63d9a7880bf806e298ccb284ed7d024807f3e13ba3760c98950b4dc6dce1",
+        "after_xml_sha256": "32cb63d9a7880bf806e298ccb284ed7d024807f3e13ba3760c98950b4dc6dce1",
+        "hierarchies_equal": true,
+        "capture_complete": true,
+        "same_connection_xml_png_xml": true,
+        "text": null
+      },
+      {
+        "sequence": 3,
+        "label": "trime-R4-T9-to-full-target-layout-ready",
+        "png_sha256": "94d94d41fffd79a2ce0301f22a2fbff29f7eb3d94798d3f777ad28e930bd7c70",
+        "before_xml_sha256": "af17a82b71050db3c32f12f6780a781eb4e6196eb6f9e05b531bca495f3122f6",
+        "after_xml_sha256": "af17a82b71050db3c32f12f6780a781eb4e6196eb6f9e05b531bca495f3122f6",
+        "hierarchies_equal": true,
+        "capture_complete": true,
+        "same_connection_xml_png_xml": true,
+        "text": null
+      },
+      {
+        "sequence": 4,
+        "label": "trime-R4-T9-to-full-current-schema-readback",
+        "png_sha256": "0a260395eb86eec00e5b75af9420f23a3b229d88c15f5072189724d51cee46de",
+        "before_xml_sha256": "2eb1baf3481dbda35096a01725e3693191c0088e28b6b4bee7f7ec7467359c78",
+        "after_xml_sha256": "2eb1baf3481dbda35096a01725e3693191c0088e28b6b4bee7f7ec7467359c78",
+        "hierarchies_equal": true,
+        "capture_complete": true,
+        "same_connection_xml_png_xml": true,
+        "text": null
+      },
+      {
+        "sequence": 5,
+        "label": "trime-R4-T9-to-full-schema-readback-dismissed",
+        "png_sha256": "94d94d41fffd79a2ce0301f22a2fbff29f7eb3d94798d3f777ad28e930bd7c70",
+        "before_xml_sha256": "af17a82b71050db3c32f12f6780a781eb4e6196eb6f9e05b531bca495f3122f6",
+        "after_xml_sha256": "af17a82b71050db3c32f12f6780a781eb4e6196eb6f9e05b531bca495f3122f6",
+        "hierarchies_equal": true,
+        "capture_complete": true,
+        "same_connection_xml_png_xml": true,
+        "text": null
+      },
+      {
+        "sequence": 6,
+        "label": "trime-R4-full-new-normal-full",
+        "png_sha256": "1b92f0d898fbdd2c37a2974236178f9ccad13489b976bfebadd9e10750e90bdb",
+        "before_xml_sha256": "af17a82b71050db3c32f12f6780a781eb4e6196eb6f9e05b531bca495f3122f6",
+        "after_xml_sha256": "af17a82b71050db3c32f12f6780a781eb4e6196eb6f9e05b531bca495f3122f6",
+        "hierarchies_equal": true,
+        "capture_complete": true,
+        "same_connection_xml_png_xml": true,
+        "text": ""
+      },
+      {
+        "sequence": 7,
+        "label": "trime-R4-full-forced-integer",
+        "png_sha256": "d50b1874e33ae7d2460341f0a87759bbf21eb57d60493e73f4b114c437fd6ebc",
+        "before_xml_sha256": "2c57726b33e55fe306c39c5598d66900ea739c82f2eeb0f497485c942f0e44fc",
+        "after_xml_sha256": "2c57726b33e55fe306c39c5598d66900ea739c82f2eeb0f497485c942f0e44fc",
+        "hierarchies_equal": true,
+        "capture_complete": true,
+        "same_connection_xml_png_xml": true,
+        "text": ""
+      },
+      {
+        "sequence": 8,
+        "label": "trime-R4-full-forced-email",
+        "png_sha256": "d743228063a68316db16b9ee37cb8de5be4fab08e32d73f4949569faa1cbbfb4",
+        "before_xml_sha256": "25ff978f40d759da6fefcf93f254b0404792f955b4b0376a78bd34923d65197e",
+        "after_xml_sha256": "25ff978f40d759da6fefcf93f254b0404792f955b4b0376a78bd34923d65197e",
+        "hierarchies_equal": true,
+        "capture_complete": true,
+        "same_connection_xml_png_xml": true,
+        "text": ""
+      },
+      {
+        "sequence": 9,
+        "label": "trime-R4-full-email-a",
+        "png_sha256": "2fc32577029c203dbc2973dff80bf4a0c9e9d164dd4664bd674df6b422bc78a0",
+        "before_xml_sha256": "4927d13db77d724fc398c88ae77deb373c207eeb40c729c4fc35f120c8149616",
+        "after_xml_sha256": "4927d13db77d724fc398c88ae77deb373c207eeb40c729c4fc35f120c8149616",
+        "hierarchies_equal": true,
+        "capture_complete": true,
+        "same_connection_xml_png_xml": true,
+        "text": "a"
+      },
+      {
+        "sequence": 10,
+        "label": "trime-R4-full-normal-after-forced",
+        "png_sha256": "6ab3168f82149c14ee9d2768ade73e3dacb2b1e1c250683e1e531cdfac5ae835",
+        "before_xml_sha256": "c886b957e10504ac178fa71367e395d669139f9783253d61cc72b92f906c8175",
+        "after_xml_sha256": "c886b957e10504ac178fa71367e395d669139f9783253d61cc72b92f906c8175",
+        "hierarchies_equal": true,
+        "capture_complete": true,
+        "same_connection_xml_png_xml": true,
+        "text": ""
+      },
+      {
+        "sequence": 11,
+        "label": "trime-R4-full-normal-ni",
+        "png_sha256": "d58f3842653b5b13cab3308e1cc04ccffccde17997a70923ca22ba635a8b91bd",
+        "before_xml_sha256": "37d2804b7ef811beb5b1aa86f35366e0f9d7f9f69ed3bb52bd8e4ed6f2fa8619",
+        "after_xml_sha256": "37d2804b7ef811beb5b1aa86f35366e0f9d7f9f69ed3bb52bd8e4ed6f2fa8619",
+        "hierarchies_equal": true,
+        "capture_complete": true,
+        "same_connection_xml_png_xml": true,
+        "text": ""
+      },
+      {
+        "sequence": 12,
+        "label": "trime-R4-full-normal-selected-ni",
+        "png_sha256": "64d04dd3d5e09908b107f37a4c930a9072771aebcc7568d9a56e7f96f81349be",
+        "before_xml_sha256": "7ee3f7353308e6db8678cc896efb32eb027b052995cf3787effce0eb1bef7e57",
+        "after_xml_sha256": "7ee3f7353308e6db8678cc896efb32eb027b052995cf3787effce0eb1bef7e57",
+        "hierarchies_equal": true,
+        "capture_complete": true,
+        "same_connection_xml_png_xml": true,
+        "text": "你"
+      },
+      {
+        "sequence": 13,
+        "label": "trime-R4-same-id-simp-chooser",
+        "png_sha256": "3d06df72eae7e01baaf37d2b951a42ed5c3c5020f278859939266f61711d77a8",
+        "before_xml_sha256": "ffc76dcd2aebb3759ba5c6f22cd1eb7d22a93bc2515927e012693cf73c072f05",
+        "after_xml_sha256": "ffc76dcd2aebb3759ba5c6f22cd1eb7d22a93bc2515927e012693cf73c072f05",
+        "hierarchies_equal": true,
+        "capture_complete": true,
+        "same_connection_xml_png_xml": true,
+        "text": null
+      },
+      {
+        "sequence": 14,
+        "label": "trime-R4-same-id-simp-target-layout-ready",
+        "png_sha256": "4b161fc04208bb2385d700ffae1553817d7109a614ed3fa370c6d1e6bcf46b67",
+        "before_xml_sha256": "8f237033d5d2f5b4709e15616b0133b52bcfe0846aebbc8d9398b0f9ae010856",
+        "after_xml_sha256": "8f237033d5d2f5b4709e15616b0133b52bcfe0846aebbc8d9398b0f9ae010856",
+        "hierarchies_equal": true,
+        "capture_complete": true,
+        "same_connection_xml_png_xml": true,
+        "text": null
+      },
+      {
+        "sequence": 15,
+        "label": "trime-R4-same-id-simp-current-schema-readback",
+        "png_sha256": "cdae02701f3d8d46557464d2fb74183a2a19f049e0d8369b306eab029540b268",
+        "before_xml_sha256": "c137ee6237fe1aebb231dc0f3efb82e00ec22de38bded5540562dc930e8200dc",
+        "after_xml_sha256": "c137ee6237fe1aebb231dc0f3efb82e00ec22de38bded5540562dc930e8200dc",
+        "hierarchies_equal": true,
+        "capture_complete": true,
+        "same_connection_xml_png_xml": true,
+        "text": null
+      },
+      {
+        "sequence": 16,
+        "label": "trime-R4-same-id-simp-schema-readback-dismissed",
+        "png_sha256": "2003cb48740e826bd8d82be85f282c76ed58a031e0c237e5693f13792f2a24b0",
+        "before_xml_sha256": "8f237033d5d2f5b4709e15616b0133b52bcfe0846aebbc8d9398b0f9ae010856",
+        "after_xml_sha256": "8f237033d5d2f5b4709e15616b0133b52bcfe0846aebbc8d9398b0f9ae010856",
+        "hierarchies_equal": true,
+        "capture_complete": true,
+        "same_connection_xml_png_xml": true,
+        "text": null
+      },
+      {
+        "sequence": 17,
+        "label": "trime-R4-simp-new-normal-full",
+        "png_sha256": "ba89b272af193d9c7fdd19eff4bcd847ff329b46e4b65be4cfbd814efd36bb1d",
+        "before_xml_sha256": "06a9274d91547d18c3a9997fa95c723a6356d5c718d0fc983b1c96da3fe5e35c",
+        "after_xml_sha256": "06a9274d91547d18c3a9997fa95c723a6356d5c718d0fc983b1c96da3fe5e35c",
+        "hierarchies_equal": true,
+        "capture_complete": true,
+        "same_connection_xml_png_xml": true,
+        "text": ""
+      },
+      {
+        "sequence": 18,
+        "label": "trime-R4-simp-forced-integer",
+        "png_sha256": "0f2d8ef460f6439182bf211803ba0cd616cfd01311e79fd99456daa264674f0f",
+        "before_xml_sha256": "895c0d0ba056f0db47182d88cda36ef33faaadf72ce67bace92763ff0ca483eb",
+        "after_xml_sha256": "895c0d0ba056f0db47182d88cda36ef33faaadf72ce67bace92763ff0ca483eb",
+        "hierarchies_equal": true,
+        "capture_complete": true,
+        "same_connection_xml_png_xml": true,
+        "text": ""
+      },
+      {
+        "sequence": 19,
+        "label": "trime-R4-simp-forced-email",
+        "png_sha256": "25472e298e27be817576acc57ba4a14f4c904490be0efaced274a1da20f131c8",
+        "before_xml_sha256": "4c4c9aa329ff72a959be2ea1c55806665cb9c7720282b5d4a2158cc1403a9ba1",
+        "after_xml_sha256": "4c4c9aa329ff72a959be2ea1c55806665cb9c7720282b5d4a2158cc1403a9ba1",
+        "hierarchies_equal": true,
+        "capture_complete": true,
+        "same_connection_xml_png_xml": true,
+        "text": ""
+      },
+      {
+        "sequence": 20,
+        "label": "trime-R4-simp-email-a",
+        "png_sha256": "870841484bc948e2367739e6cd95eb143972b3411607c7428d732ebac61a54b9",
+        "before_xml_sha256": "961cdbfff84b82e597e6053c0aeafb962307490a6f787225487f2eb0167f7dd8",
+        "after_xml_sha256": "961cdbfff84b82e597e6053c0aeafb962307490a6f787225487f2eb0167f7dd8",
+        "hierarchies_equal": true,
+        "capture_complete": true,
+        "same_connection_xml_png_xml": true,
+        "text": "a"
+      },
+      {
+        "sequence": 21,
+        "label": "trime-R4-simp-normal-after-forced",
+        "png_sha256": "a050a6d0ec2c1f78ebe3ab500ce8ca2a1f1c5a340e25dd699965b48d180f86e5",
+        "before_xml_sha256": "813c9323bdc3ebadb9fe1ce93003bb22f9e98e8735b56b458af8246329cf0b2d",
+        "after_xml_sha256": "813c9323bdc3ebadb9fe1ce93003bb22f9e98e8735b56b458af8246329cf0b2d",
+        "hierarchies_equal": true,
+        "capture_complete": true,
+        "same_connection_xml_png_xml": true,
+        "text": ""
+      },
+      {
+        "sequence": 22,
+        "label": "trime-R4-simp-normal-ni",
+        "png_sha256": "47eb98a7579e8d99dd607cef591cea76787fd5b6d7a2687a9ee84415c153593e",
+        "before_xml_sha256": "d354ca582294392efe3f69df9ea6a807b0e20d9815cd3c7a764640fa468f4208",
+        "after_xml_sha256": "d354ca582294392efe3f69df9ea6a807b0e20d9815cd3c7a764640fa468f4208",
+        "hierarchies_equal": true,
+        "capture_complete": true,
+        "same_connection_xml_png_xml": true,
+        "text": ""
+      },
+      {
+        "sequence": 23,
+        "label": "trime-R4-simp-normal-selected-ni",
+        "png_sha256": "7046aed74e8082b15aea59112801d204845ea1b966c1703f788c4ec806fbc71c",
+        "before_xml_sha256": "2c09681515e83a688bb81003d5a64523c1a2c4682307230cf2cbd765caefae0c",
+        "after_xml_sha256": "2c09681515e83a688bb81003d5a64523c1a2c4682307230cf2cbd765caefae0c",
+        "hierarchies_equal": true,
+        "capture_complete": true,
+        "same_connection_xml_png_xml": true,
+        "text": "你"
+      },
+      {
+        "sequence": 24,
+        "label": "trime-R4-full-to-T9-chooser",
+        "png_sha256": "971dcae2de4c351f4d9fca618f0cdbe0202a85ddba6f0e2e194fefc833527373",
+        "before_xml_sha256": "95688109e3afcbf93eb9dbc28382461d5dcad72d266ec3105f4ba47097586e81",
+        "after_xml_sha256": "95688109e3afcbf93eb9dbc28382461d5dcad72d266ec3105f4ba47097586e81",
+        "hierarchies_equal": true,
+        "capture_complete": true,
+        "same_connection_xml_png_xml": true,
+        "text": null
+      },
+      {
+        "sequence": 25,
+        "label": "trime-R4-full-to-T9-target-layout-ready",
+        "png_sha256": "14781ea6b5ff90dec56811ca6b633c0339ab291a1508044136efab8c17ea188c",
+        "before_xml_sha256": "001a5e8dafc667c235ec9c19cb16d231e70b11acbcb4d30f64b07a6398dc8617",
+        "after_xml_sha256": "001a5e8dafc667c235ec9c19cb16d231e70b11acbcb4d30f64b07a6398dc8617",
+        "hierarchies_equal": true,
+        "capture_complete": true,
+        "same_connection_xml_png_xml": true,
+        "text": null
+      },
+      {
+        "sequence": 26,
+        "label": "trime-R4-full-to-T9-current-schema-readback",
+        "png_sha256": "a23a0378cd3b57c090ca0d3d1be669cb984b4eee840ac8f7a3bdfe4dc88ec413",
+        "before_xml_sha256": "ba2e15202a87dd25e40c48ccacd47d837d95e6fed221b9f6de369dab47cc534e",
+        "after_xml_sha256": "ba2e15202a87dd25e40c48ccacd47d837d95e6fed221b9f6de369dab47cc534e",
+        "hierarchies_equal": true,
+        "capture_complete": true,
+        "same_connection_xml_png_xml": true,
+        "text": null
+      },
+      {
+        "sequence": 27,
+        "label": "trime-R4-full-to-T9-schema-readback-dismissed",
+        "png_sha256": "014f67414f19b8a74fe970e04673b80e6d1ad30f03d54d656ca81f7457c50e81",
+        "before_xml_sha256": "001a5e8dafc667c235ec9c19cb16d231e70b11acbcb4d30f64b07a6398dc8617",
+        "after_xml_sha256": "001a5e8dafc667c235ec9c19cb16d231e70b11acbcb4d30f64b07a6398dc8617",
+        "hierarchies_equal": true,
+        "capture_complete": true,
+        "same_connection_xml_png_xml": true,
+        "text": null
+      },
+      {
+        "sequence": 28,
+        "label": "trime-R4-new-T9-K1-initial",
+        "png_sha256": "eafef247982da12f691c5b91efe401bfba302b5afc58c33528d9f158bc51eab9",
+        "before_xml_sha256": "46ff48984bb78a2e01b2d2dd65a1b1f0c828538ba452cf08d83c8622a60c837d",
+        "after_xml_sha256": "46ff48984bb78a2e01b2d2dd65a1b1f0c828538ba452cf08d83c8622a60c837d",
+        "hierarchies_equal": true,
+        "capture_complete": true,
+        "same_connection_xml_png_xml": true,
+        "text": ""
+      },
+      {
+        "sequence": 29,
+        "label": "trime-R4-new-T9-K1-64",
+        "png_sha256": "8b2eae1bfc98f9d9474b38bf103d2030d8056aa699f57ddcc1569c53413b45ba",
+        "before_xml_sha256": "81a6cef737c961ca0d1424d72ccf0a0faf1af0dbf97fc7f0c6c6c6ebc62b5a9e",
+        "after_xml_sha256": "ed54e3551ff456df6bb26a9ce6183b8ad75caad4ee36000fbf675086a8657fa4",
+        "hierarchies_equal": false,
+        "capture_complete": true,
+        "same_connection_xml_png_xml": true,
+        "text": ""
+      },
+      {
+        "sequence": 30,
+        "label": "trime-R4-new-T9-K1-ni-locked",
+        "png_sha256": "b3507f3dbb2e6348a2cf55db29faa9f6e6c4c070ce0af3a7c7fbf4992738247d",
+        "before_xml_sha256": "43ac875c3f3861073b27c812d2393208657ce95612f114a5f835219844188ff6",
+        "after_xml_sha256": "da1f2391625dace5d40d6a0bb8bda13f477e27634389e12348eabcdbc57c6f3e",
+        "hierarchies_equal": false,
+        "capture_complete": true,
+        "same_connection_xml_png_xml": true,
+        "text": ""
+      },
+      {
+        "sequence": 31,
+        "label": "trime-R4-new-T9-K1-hao-options",
+        "png_sha256": "040d70e42ac7975da8dacc2cfd3bd1fe9cc8b18fd9d447b183abd94c2b577fcb",
+        "before_xml_sha256": "0359a60bbf1c68e1bc5ab9a9c67261ddd3ba0c93a62521480932ea6742667411",
+        "after_xml_sha256": "0359a60bbf1c68e1bc5ab9a9c67261ddd3ba0c93a62521480932ea6742667411",
+        "hierarchies_equal": true,
+        "capture_complete": true,
+        "same_connection_xml_png_xml": true,
+        "text": ""
+      },
+      {
+        "sequence": 32,
+        "label": "trime-R4-new-T9-K1-nihao-locked",
+        "png_sha256": "6282dc888cafa51e3c915c27e9dfb7d786b91b13bf1298b15d269c2287557e15",
+        "before_xml_sha256": "bea0cd087aad2e6b72201886d44259b76acce0a09ec3ce578fdf7d37a842f91e",
+        "after_xml_sha256": "e4c3e2f98e7d0709ce38a2867a18c4a967d00bec4069091b722955fec558cd31",
+        "hierarchies_equal": false,
+        "capture_complete": true,
+        "same_connection_xml_png_xml": true,
+        "text": ""
+      },
+      {
+        "sequence": 33,
+        "label": "trime-R4-new-T9-K1-selected-nihao",
+        "png_sha256": "8481886825e7dff9e9cafb2cd44349c6f45288dec16f138cbd76d212d03aeabf",
+        "before_xml_sha256": "c37810f42fc541d533ae0fd623f03586756793442b13686abde7b466e980e1c5",
+        "after_xml_sha256": "c37810f42fc541d533ae0fd623f03586756793442b13686abde7b466e980e1c5",
+        "hierarchies_equal": true,
+        "capture_complete": true,
+        "same_connection_xml_png_xml": true,
+        "text": "你好"
+      },
+      {
+        "sequence": 34,
+        "label": "trime-R4-new-T9-K1-new6",
+        "png_sha256": "7f3e4706fd09412cd6c2067f9d8f624c405561001224aaef1382dcee91e2cb5d",
+        "before_xml_sha256": "5cc83c594654f0b8ff73eff051992f7a34be5790762dbda19f2158be96443a39",
+        "after_xml_sha256": "5cc83c594654f0b8ff73eff051992f7a34be5790762dbda19f2158be96443a39",
+        "hierarchies_equal": true,
+        "capture_complete": true,
+        "same_connection_xml_png_xml": true,
+        "text": "你好"
+      },
+      {
+        "sequence": 35,
+        "label": "trime-R4-new-T9-K1-cancel6",
+        "png_sha256": "8481886825e7dff9e9cafb2cd44349c6f45288dec16f138cbd76d212d03aeabf",
+        "before_xml_sha256": "c37810f42fc541d533ae0fd623f03586756793442b13686abde7b466e980e1c5",
+        "after_xml_sha256": "c37810f42fc541d533ae0fd623f03586756793442b13686abde7b466e980e1c5",
+        "hierarchies_equal": true,
+        "capture_complete": true,
+        "same_connection_xml_png_xml": true,
+        "text": "你好"
+      }
+    ]
+  },
+  "business_evidence": {
+    "public_schema_readback": [
+      {
+        "label": "trime-R4-T9-to-full-current-schema-readback",
+        "unique_checked_text": [
+          "朙月拼音"
+        ],
+        "expected": "朙月拼音",
+        "passes": true
+      },
+      {
+        "label": "trime-R4-same-id-simp-current-schema-readback",
+        "unique_checked_text": [
+          "朙月拼音·简化字"
+        ],
+        "expected": "朙月拼音·简化字",
+        "passes": true
+      },
+      {
+        "label": "trime-R4-full-to-T9-current-schema-readback",
+        "unique_checked_text": [
+          "朙月拼音九键"
+        ],
+        "expected": "朙月拼音九键",
+        "passes": true
+      }
+    ],
+    "full_schema_cycle": {
+      "independent_editor_instances": {
+        "trime-R4-full-new-normal-full": "930bd11a23c0450eb6e277792944ee81",
+        "trime-R4-full-forced-integer": "c98cde093c9547358779948720385455",
+        "trime-R4-full-forced-email": "979c101fd0fc4ee6908b57560dcf06a3",
+        "trime-R4-full-normal-after-forced": "a04c1b115dd949d881239b38ba32ba1d"
+      },
+      "email_exact_literal": {
+        "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-trime-R4/trime-R4-full-email-a-after-oracle.json",
+        "sha256": "ba1df347cb84c02e88e10e3a09ced9f579e40591dac7625e28cdc4f8cf27c164",
+        "fixture_pid": 5412,
+        "activity_instance": "979c101fd0fc4ee6908b57560dcf06a3",
+        "sequence": 4,
+        "text": "a",
+        "text_utf8_bytes": 1,
+        "selection": [
+          1,
+          1
+        ],
+        "main_thread_read": true,
+        "read_only": true,
+        "has_window_focus": true,
+        "editor_focused": true
+      },
+      "email_target_nonempty_native_nodes": [],
+      "email_no_visible_native_preedit_or_candidates_in_xml": true,
+      "normal_ni_native_nodes": [
+        {
+          "class": "android.widget.TextView",
+          "text": "你",
+          "content_desc": "",
+          "bounds": "[23,616][64,672]"
+        },
+        {
+          "class": "android.widget.TextView",
+          "text": "擬",
+          "content_desc": "",
+          "bounds": "[104,616][144,672]"
+        },
+        {
+          "class": "android.widget.TextView",
+          "text": "尼",
+          "content_desc": "",
+          "bounds": "[183,616][224,672]"
+        },
+        {
+          "class": "android.widget.TextView",
+          "text": "泥",
+          "content_desc": "",
+          "bounds": "[263,616][304,672]"
+        },
+        {
+          "class": "android.widget.TextView",
+          "text": "呢",
+          "content_desc": "",
+          "bounds": "[344,616][383,672]"
+        },
+        {
+          "class": "android.widget.TextView",
+          "text": "妳",
+          "content_desc": "",
+          "bounds": "[424,616][463,672]"
+        },
+        {
+          "class": "android.widget.TextView",
+          "text": "妮",
+          "content_desc": "",
+          "bounds": "[504,616][544,672]"
+        }
+      ],
+      "normal_selected_exact": {
+        "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-trime-R4/trime-R4-full-normal-selected-ni-after-oracle.json",
+        "sha256": "9cba8b0e1feef2016603f3fef7250d5458a9ef36f06a7d3103a7e2f6231e56dc",
+        "fixture_pid": 5836,
+        "activity_instance": "a04c1b115dd949d881239b38ba32ba1d",
+        "sequence": 6,
+        "text": "你",
+        "text_utf8_bytes": 3,
+        "selection": [
+          1,
+          1
+        ],
+        "main_thread_read": true,
+        "read_only": true,
+        "has_window_focus": true,
+        "editor_focused": true
+      }
+    },
+    "simplified_same_qwerty_cycle": {
+      "schema_checked": "朙月拼音·简化字",
+      "independent_editor_instances": {
+        "trime-R4-simp-new-normal-full": "f7d7e1aa816a4bdc9a144d02fe5378a5",
+        "trime-R4-simp-forced-integer": "1f186ad117df4d47ad21a2ab70e8e478",
+        "trime-R4-simp-forced-email": "5aa9bc3bf3a74a359f72f657f58059ad",
+        "trime-R4-simp-normal-after-forced": "ddf3c23fef674576bb558dbaf0ff5444"
+      },
+      "email_exact_literal": {
+        "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-trime-R4/trime-R4-simp-email-a-after-oracle.json",
+        "sha256": "ca77e1fa81300a391a1473fbd8f79b143b540a864fad2b3678672b1a3913cd70",
+        "fixture_pid": 7592,
+        "activity_instance": "5aa9bc3bf3a74a359f72f657f58059ad",
+        "sequence": 4,
+        "text": "a",
+        "text_utf8_bytes": 1,
+        "selection": [
+          1,
+          1
+        ],
+        "main_thread_read": true,
+        "read_only": true,
+        "has_window_focus": true,
+        "editor_focused": true
+      },
+      "email_target_nonempty_native_nodes": [],
+      "email_no_visible_native_preedit_or_candidates_in_xml": true,
+      "normal_ni_native_nodes": [
+        {
+          "class": "android.widget.TextView",
+          "text": "你",
+          "content_desc": "",
+          "bounds": "[23,616][64,672]"
+        },
+        {
+          "class": "android.widget.TextView",
+          "text": "拟",
+          "content_desc": "",
+          "bounds": "[104,616][144,672]"
+        },
+        {
+          "class": "android.widget.TextView",
+          "text": "尼",
+          "content_desc": "",
+          "bounds": "[183,616][224,672]"
+        },
+        {
+          "class": "android.widget.TextView",
+          "text": "泥",
+          "content_desc": "",
+          "bounds": "[263,616][304,672]"
+        },
+        {
+          "class": "android.widget.TextView",
+          "text": "呢",
+          "content_desc": "",
+          "bounds": "[344,616][383,672]"
+        },
+        {
+          "class": "android.widget.TextView",
+          "text": "妳",
+          "content_desc": "",
+          "bounds": "[424,616][463,672]"
+        },
+        {
+          "class": "android.widget.TextView",
+          "text": "妮",
+          "content_desc": "",
+          "bounds": "[504,616][544,672]"
+        }
+      ],
+      "normal_selected_exact": {
+        "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-trime-R4/trime-R4-simp-normal-selected-ni-after-oracle.json",
+        "sha256": "1de312e6c74ae713e9a3ccd9607cbcd52d6edd829f587d667edc7b14816efbfc",
+        "fixture_pid": 8005,
+        "activity_instance": "ddf3c23fef674576bb558dbaf0ff5444",
+        "sequence": 6,
+        "text": "你",
+        "text_utf8_bytes": 3,
+        "selection": [
+          1,
+          1
+        ],
+        "main_thread_read": true,
+        "read_only": true,
+        "has_window_focus": true,
+        "editor_focused": true
+      }
+    },
+    "embedded_k1": {
+      "initial": {
+        "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-trime-R4/trime-R4-new-T9-K1-initial-after-oracle.json",
+        "sha256": "47273a71423aa6970e6ac5149f09731fa84cef31b32ad8261b1ee2cc063ee9d0",
+        "fixture_pid": 9282,
+        "activity_instance": "67f885e312fa415cad22b31bb79a0fff",
+        "sequence": 2,
+        "text": "",
+        "text_utf8_bytes": 0,
+        "selection": [
+          0,
+          0
+        ],
+        "main_thread_read": true,
+        "read_only": true,
+        "has_window_focus": true,
+        "editor_focused": true
+      },
+      "selected_exact": {
+        "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-trime-R4/trime-R4-new-T9-K1-selected-nihao-after-oracle.json",
+        "sha256": "393eb54016f339a2f18e37346a3fe5382305ef0814bb672ee7b65e18e21dcce1",
+        "fixture_pid": 9282,
+        "activity_instance": "67f885e312fa415cad22b31bb79a0fff",
+        "sequence": 12,
+        "text": "你好",
+        "text_utf8_bytes": 6,
+        "selection": [
+          2,
+          2
+        ],
+        "main_thread_read": true,
+        "read_only": true,
+        "has_window_focus": true,
+        "editor_focused": true
+      },
+      "pending_new6_editor_unchanged": {
+        "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-trime-R4/trime-R4-new-T9-K1-new6-after-oracle.json",
+        "sha256": "93e16ce988b4d116b767dbbebf27ef31e3fbbc444c341972e47d3ad67718d38c",
+        "fixture_pid": 9282,
+        "activity_instance": "67f885e312fa415cad22b31bb79a0fff",
+        "sequence": 14,
+        "text": "你好",
+        "text_utf8_bytes": 6,
+        "selection": [
+          2,
+          2
+        ],
+        "main_thread_read": true,
+        "read_only": true,
+        "has_window_focus": true,
+        "editor_focused": true
+      },
+      "after_cancel_editor_unchanged": {
+        "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-trime-R4/trime-R4-new-T9-K1-cancel6-after-oracle.json",
+        "sha256": "db8ea9381c4f0b4a43c62e7c53c2be3636ab4d3048b3263a49b37af8368abcab",
+        "fixture_pid": 9282,
+        "activity_instance": "67f885e312fa415cad22b31bb79a0fff",
+        "sequence": 16,
+        "text": "你好",
+        "text_utf8_bytes": 6,
+        "selection": [
+          2,
+          2
+        ],
+        "main_thread_read": true,
+        "read_only": true,
+        "has_window_focus": true,
+        "editor_focused": true
+      },
+      "new6_native_nodes": [
+        {
+          "class": "android.widget.TextView",
+          "text": "哦",
+          "content_desc": "",
+          "bounds": "[17,444][57,500]"
+        },
+        {
+          "class": "android.widget.TextView",
+          "text": "o",
+          "content_desc": "",
+          "bounds": "[59,469][70,496]"
+        },
+        {
+          "class": "android.widget.TextView",
+          "text": "噢",
+          "content_desc": "",
+          "bounds": "[97,444][137,500]"
+        },
+        {
+          "class": "android.widget.TextView",
+          "text": "o",
+          "content_desc": "",
+          "bounds": "[139,469][150,496]"
+        },
+        {
+          "class": "android.widget.TextView",
+          "text": "喔",
+          "content_desc": "",
+          "bounds": "[177,444][217,500]"
+        },
+        {
+          "class": "android.widget.TextView",
+          "text": "o",
+          "content_desc": "",
+          "bounds": "[219,469][230,496]"
+        },
+        {
+          "class": "android.widget.TextView",
+          "text": "筽",
+          "content_desc": "",
+          "bounds": "[257,444][297,500]"
+        },
+        {
+          "class": "android.widget.TextView",
+          "text": "o",
+          "content_desc": "",
+          "bounds": "[299,469][310,496]"
+        },
+        {
+          "class": "android.widget.TextView",
+          "text": "嚄",
+          "content_desc": "",
+          "bounds": "[338,444][377,500]"
+        },
+        {
+          "class": "android.widget.TextView",
+          "text": "o",
+          "content_desc": "",
+          "bounds": "[379,469][390,496]"
+        },
+        {
+          "class": "android.widget.TextView",
+          "text": "ㄛ",
+          "content_desc": "",
+          "bounds": "[419,444][455,500]"
+        },
+        {
+          "class": "android.widget.TextView",
+          "text": "o",
+          "content_desc": "",
+          "bounds": "[457,469][468,496]"
+        },
+        {
+          "class": "android.widget.TextView",
+          "text": "呵",
+          "content_desc": "",
+          "bounds": "[498,444][537,500]"
+        },
+        {
+          "class": "android.widget.TextView",
+          "text": "o",
+          "content_desc": "",
+          "bounds": "[539,469][550,496]"
+        },
+        {
+          "class": "android.widget.TextView",
+          "text": "6",
+          "content_desc": "Current: Input segment: 6",
+          "bounds": "[0,512][96,608]"
+        },
+        {
+          "class": "android.widget.ImageButton",
+          "text": "",
+          "content_desc": "Unlock syllable",
+          "bounds": "[432,512][528,608]"
+        },
+        {
+          "class": "android.widget.ImageButton",
+          "text": "",
+          "content_desc": "Undo",
+          "bounds": "[528,512][624,608]"
+        },
+        {
+          "class": "android.widget.ImageButton",
+          "text": "",
+          "content_desc": "Cancel composition",
+          "bounds": "[624,512][720,608]"
+        },
+        {
+          "class": "android.widget.TextView",
+          "text": "o",
+          "content_desc": "o",
+          "bounds": "[0,608][96,704]"
+        },
+        {
+          "class": "android.widget.TextView",
+          "text": "ma (complete)",
+          "content_desc": "ma (complete)",
+          "bounds": "[96,608][366,704]"
+        },
+        {
+          "class": "android.widget.TextView",
+          "text": "mai (complete)",
+          "content_desc": "mai (complete)",
+          "bounds": "[366,608][644,704]"
+        },
+        {
+          "class": "android.widget.TextView",
+          "text": "man (complete)",
+          "content_desc": "man (complete)",
+          "bounds": "[644,608][933,704]"
+        }
+      ],
+      "after_cancel_native_nodes": [],
+      "cancel_clears_visible_segment_lock_undo_cancel_spelling_and_candidates": true,
+      "new6_and_cancel_text_both_exact_你好": true
+    },
+    "exact_oracles": {
+      "trime-R4-full-new-normal-full": {
+        "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-trime-R4/trime-R4-full-new-normal-full-after-oracle.json",
+        "sha256": "8c4e280b124d433d89ec0a85cb23278226a86de4612a0c9f07e2f05c20e6055f",
+        "fixture_pid": 4952,
+        "activity_instance": "930bd11a23c0450eb6e277792944ee81",
+        "sequence": 2,
+        "text": "",
+        "text_utf8_bytes": 0,
+        "selection": [
+          0,
+          0
+        ],
+        "main_thread_read": true,
+        "read_only": true,
+        "has_window_focus": true,
+        "editor_focused": true
+      },
+      "trime-R4-full-forced-integer": {
+        "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-trime-R4/trime-R4-full-forced-integer-after-oracle.json",
+        "sha256": "342ee164b62b9526698be0e4277df91e6d477dd443c7f34b23df0c656e412b3e",
+        "fixture_pid": 5182,
+        "activity_instance": "c98cde093c9547358779948720385455",
+        "sequence": 2,
+        "text": "",
+        "text_utf8_bytes": 0,
+        "selection": [
+          0,
+          0
+        ],
+        "main_thread_read": true,
+        "read_only": true,
+        "has_window_focus": true,
+        "editor_focused": true
+      },
+      "trime-R4-full-forced-email": {
+        "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-trime-R4/trime-R4-full-forced-email-after-oracle.json",
+        "sha256": "579af9084863b3a0279bf0a27ad5ee5c81e64f509a3146d576d04d2adc9811c1",
+        "fixture_pid": 5412,
+        "activity_instance": "979c101fd0fc4ee6908b57560dcf06a3",
+        "sequence": 2,
+        "text": "",
+        "text_utf8_bytes": 0,
+        "selection": [
+          0,
+          0
+        ],
+        "main_thread_read": true,
+        "read_only": true,
+        "has_window_focus": true,
+        "editor_focused": true
+      },
+      "trime-R4-full-email-a": {
+        "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-trime-R4/trime-R4-full-email-a-after-oracle.json",
+        "sha256": "ba1df347cb84c02e88e10e3a09ced9f579e40591dac7625e28cdc4f8cf27c164",
+        "fixture_pid": 5412,
+        "activity_instance": "979c101fd0fc4ee6908b57560dcf06a3",
+        "sequence": 4,
+        "text": "a",
+        "text_utf8_bytes": 1,
+        "selection": [
+          1,
+          1
+        ],
+        "main_thread_read": true,
+        "read_only": true,
+        "has_window_focus": true,
+        "editor_focused": true
+      },
+      "trime-R4-full-normal-after-forced": {
+        "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-trime-R4/trime-R4-full-normal-after-forced-after-oracle.json",
+        "sha256": "97a7567c3f06dc83d40a6048cb51af991c816da13ee8934b92c88952bb0b984a",
+        "fixture_pid": 5836,
+        "activity_instance": "a04c1b115dd949d881239b38ba32ba1d",
+        "sequence": 2,
+        "text": "",
+        "text_utf8_bytes": 0,
+        "selection": [
+          0,
+          0
+        ],
+        "main_thread_read": true,
+        "read_only": true,
+        "has_window_focus": true,
+        "editor_focused": true
+      },
+      "trime-R4-full-normal-ni": {
+        "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-trime-R4/trime-R4-full-normal-ni-after-oracle.json",
+        "sha256": "0421a01954973ddb46308a73c02d5586b09465f3cbc5a0688d00bd8a6f7fa74c",
+        "fixture_pid": 5836,
+        "activity_instance": "a04c1b115dd949d881239b38ba32ba1d",
+        "sequence": 4,
+        "text": "",
+        "text_utf8_bytes": 0,
+        "selection": [
+          0,
+          0
+        ],
+        "main_thread_read": true,
+        "read_only": true,
+        "has_window_focus": true,
+        "editor_focused": true
+      },
+      "trime-R4-full-normal-selected-ni": {
+        "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-trime-R4/trime-R4-full-normal-selected-ni-after-oracle.json",
+        "sha256": "9cba8b0e1feef2016603f3fef7250d5458a9ef36f06a7d3103a7e2f6231e56dc",
+        "fixture_pid": 5836,
+        "activity_instance": "a04c1b115dd949d881239b38ba32ba1d",
+        "sequence": 6,
+        "text": "你",
+        "text_utf8_bytes": 3,
+        "selection": [
+          1,
+          1
+        ],
+        "main_thread_read": true,
+        "read_only": true,
+        "has_window_focus": true,
+        "editor_focused": true
+      },
+      "trime-R4-simp-new-normal-full": {
+        "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-trime-R4/trime-R4-simp-new-normal-full-after-oracle.json",
+        "sha256": "7cf0c92822757c4a31dd863c5e7b4838952cfea365b4cbe42bf1f7dad3148cd2",
+        "fixture_pid": 7151,
+        "activity_instance": "f7d7e1aa816a4bdc9a144d02fe5378a5",
+        "sequence": 2,
+        "text": "",
+        "text_utf8_bytes": 0,
+        "selection": [
+          0,
+          0
+        ],
+        "main_thread_read": true,
+        "read_only": true,
+        "has_window_focus": true,
+        "editor_focused": true
+      },
+      "trime-R4-simp-forced-integer": {
+        "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-trime-R4/trime-R4-simp-forced-integer-after-oracle.json",
+        "sha256": "75c280b26f83332fc99f38ba966c46e419f454a603139b3001a93ac9219be0f7",
+        "fixture_pid": 7372,
+        "activity_instance": "1f186ad117df4d47ad21a2ab70e8e478",
+        "sequence": 2,
+        "text": "",
+        "text_utf8_bytes": 0,
+        "selection": [
+          0,
+          0
+        ],
+        "main_thread_read": true,
+        "read_only": true,
+        "has_window_focus": true,
+        "editor_focused": true
+      },
+      "trime-R4-simp-forced-email": {
+        "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-trime-R4/trime-R4-simp-forced-email-after-oracle.json",
+        "sha256": "d8997a124eda2898a19d23c214e493e2f293b664a4355cbbdfd6f9d4bb298b76",
+        "fixture_pid": 7592,
+        "activity_instance": "5aa9bc3bf3a74a359f72f657f58059ad",
+        "sequence": 2,
+        "text": "",
+        "text_utf8_bytes": 0,
+        "selection": [
+          0,
+          0
+        ],
+        "main_thread_read": true,
+        "read_only": true,
+        "has_window_focus": true,
+        "editor_focused": true
+      },
+      "trime-R4-simp-email-a": {
+        "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-trime-R4/trime-R4-simp-email-a-after-oracle.json",
+        "sha256": "ca77e1fa81300a391a1473fbd8f79b143b540a864fad2b3678672b1a3913cd70",
+        "fixture_pid": 7592,
+        "activity_instance": "5aa9bc3bf3a74a359f72f657f58059ad",
+        "sequence": 4,
+        "text": "a",
+        "text_utf8_bytes": 1,
+        "selection": [
+          1,
+          1
+        ],
+        "main_thread_read": true,
+        "read_only": true,
+        "has_window_focus": true,
+        "editor_focused": true
+      },
+      "trime-R4-simp-normal-after-forced": {
+        "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-trime-R4/trime-R4-simp-normal-after-forced-after-oracle.json",
+        "sha256": "6cef21c9a19237bd65d2d309be7a57cfdaafeba82bc17e86b583b1ff97abe825",
+        "fixture_pid": 8005,
+        "activity_instance": "ddf3c23fef674576bb558dbaf0ff5444",
+        "sequence": 2,
+        "text": "",
+        "text_utf8_bytes": 0,
+        "selection": [
+          0,
+          0
+        ],
+        "main_thread_read": true,
+        "read_only": true,
+        "has_window_focus": true,
+        "editor_focused": true
+      },
+      "trime-R4-simp-normal-ni": {
+        "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-trime-R4/trime-R4-simp-normal-ni-after-oracle.json",
+        "sha256": "ac0e2a29d73a2aaf3387ccc5a30dc4bcf759e804bd464b2eda93785d976a3e69",
+        "fixture_pid": 8005,
+        "activity_instance": "ddf3c23fef674576bb558dbaf0ff5444",
+        "sequence": 4,
+        "text": "",
+        "text_utf8_bytes": 0,
+        "selection": [
+          0,
+          0
+        ],
+        "main_thread_read": true,
+        "read_only": true,
+        "has_window_focus": true,
+        "editor_focused": true
+      },
+      "trime-R4-simp-normal-selected-ni": {
+        "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-trime-R4/trime-R4-simp-normal-selected-ni-after-oracle.json",
+        "sha256": "1de312e6c74ae713e9a3ccd9607cbcd52d6edd829f587d667edc7b14816efbfc",
+        "fixture_pid": 8005,
+        "activity_instance": "ddf3c23fef674576bb558dbaf0ff5444",
+        "sequence": 6,
+        "text": "你",
+        "text_utf8_bytes": 3,
+        "selection": [
+          1,
+          1
+        ],
+        "main_thread_read": true,
+        "read_only": true,
+        "has_window_focus": true,
+        "editor_focused": true
+      },
+      "trime-R4-new-T9-K1-initial": {
+        "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-trime-R4/trime-R4-new-T9-K1-initial-after-oracle.json",
+        "sha256": "47273a71423aa6970e6ac5149f09731fa84cef31b32ad8261b1ee2cc063ee9d0",
+        "fixture_pid": 9282,
+        "activity_instance": "67f885e312fa415cad22b31bb79a0fff",
+        "sequence": 2,
+        "text": "",
+        "text_utf8_bytes": 0,
+        "selection": [
+          0,
+          0
+        ],
+        "main_thread_read": true,
+        "read_only": true,
+        "has_window_focus": true,
+        "editor_focused": true
+      },
+      "trime-R4-new-T9-K1-selected-nihao": {
+        "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-trime-R4/trime-R4-new-T9-K1-selected-nihao-after-oracle.json",
+        "sha256": "393eb54016f339a2f18e37346a3fe5382305ef0814bb672ee7b65e18e21dcce1",
+        "fixture_pid": 9282,
+        "activity_instance": "67f885e312fa415cad22b31bb79a0fff",
+        "sequence": 12,
+        "text": "你好",
+        "text_utf8_bytes": 6,
+        "selection": [
+          2,
+          2
+        ],
+        "main_thread_read": true,
+        "read_only": true,
+        "has_window_focus": true,
+        "editor_focused": true
+      },
+      "trime-R4-new-T9-K1-new6": {
+        "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-trime-R4/trime-R4-new-T9-K1-new6-after-oracle.json",
+        "sha256": "93e16ce988b4d116b767dbbebf27ef31e3fbbc444c341972e47d3ad67718d38c",
+        "fixture_pid": 9282,
+        "activity_instance": "67f885e312fa415cad22b31bb79a0fff",
+        "sequence": 14,
+        "text": "你好",
+        "text_utf8_bytes": 6,
+        "selection": [
+          2,
+          2
+        ],
+        "main_thread_read": true,
+        "read_only": true,
+        "has_window_focus": true,
+        "editor_focused": true
+      },
+      "trime-R4-new-T9-K1-cancel6": {
+        "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-trime-R4/trime-R4-new-T9-K1-cancel6-after-oracle.json",
+        "sha256": "db8ea9381c4f0b4a43c62e7c53c2be3636ab4d3048b3263a49b37af8368abcab",
+        "fixture_pid": 9282,
+        "activity_instance": "67f885e312fa415cad22b31bb79a0fff",
+        "sequence": 16,
+        "text": "你好",
+        "text_utf8_bytes": 6,
+        "selection": [
+          2,
+          2
+        ],
+        "main_thread_read": true,
+        "read_only": true,
+        "has_window_focus": true,
+        "editor_focused": true
+      }
+    }
+  },
+  "regression_comparison": {
+    "prior_source_head": "b14a2f1e0565cec4953f5a974bfcea023875369f",
+    "prior_session": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-b14-trime-R4",
+    "prior_sequence_result": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-b14-trime-R4/sequence-result.json",
+      "bytes": 1869,
+      "sha256": "17e2e60c35ff6b038f52bd52d24238a6993c5de6590b2ee94d927e943cd54916"
+    },
+    "prior_report": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-b14-trime-R4/report.json",
+      "bytes": 685666,
+      "sha256": "2944f7383bf99b45875020d7efd4d4e13eb6c3c1229b300d7a476ca01ba3a7e4"
+    },
+    "prior_strict_sequence_completed": false,
+    "prior_business_rejection": {
+      "type": "AssertionError",
+      "message": "Actual editor text differs: ''"
+    },
+    "prior_email_oracle": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-b14-trime-R4/trime-R4-full-email-a-after-oracle.json",
+      "sha256": "cf294f00b05a75e2ecbe76ee26c61f237294c9730aee6e88dd330cb67238fea0",
+      "text": "",
+      "text_utf8_bytes": 0,
+      "selection": [
+        0,
+        0
+      ]
+    },
+    "prior_email_native_nodes": [
+      {
+        "class": "android.widget.TextView",
+        "text": "啊",
+        "content_desc": ""
+      },
+      {
+        "class": "android.widget.TextView",
+        "text": "阿",
+        "content_desc": ""
+      },
+      {
+        "class": "android.widget.TextView",
+        "text": "吖",
+        "content_desc": ""
+      },
+      {
+        "class": "android.widget.TextView",
+        "text": "錒",
+        "content_desc": ""
+      },
+      {
+        "class": "android.widget.TextView",
+        "text": "嗄",
+        "content_desc": ""
+      },
+      {
+        "class": "android.widget.TextView",
+        "text": "呵",
+        "content_desc": ""
+      },
+      {
+        "class": "android.widget.TextView",
+        "text": "腌",
+        "content_desc": ""
+      }
+    ],
+    "prior_email_png": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-b14-trime-R4/captures/trime-R4-full-email-a/observer-in-connection.png",
+      "bytes": 83037,
+      "sha256": "e413e621dba620dcb49bce8e53432ff078050c3f045d08865ce00472d7ef784e"
+    },
+    "current_actual_path_result": "On exact c4, the same v7 ordered path reaches literal a in full and simplified schema cycles and subsequently restores Chinese ni -> 你. This closes the observed b14 failure for the executed API21 path; it is not a claim for unexecuted cached-same-target or physical-device paths."
+  },
+  "normal_stop": {
+    "sequence_result_authenticated_normal_stop": true,
+    "direct_finish_succeeded": true,
+    "atexit_fallback_retained": false,
+    "observer_finished": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-trime-R4/observer8-session/finished.json",
+      "bytes": 2116,
+      "sha256": "8d497732aa2207df229f866be8db5d0b47c1a3037e61297d92bf30b24d2f984d"
+    },
+    "observer_passed": true,
+    "stop_received": true,
+    "request_count": 36,
+    "capture_count": 35,
+    "completed_capture_count": 35,
+    "capture_failures": 0,
+    "instrument_host_returncode": 0,
+    "instrument_actual_child_wait_returncode": 0,
+    "instrument_remote_returncode": 0,
+    "hard_host_deadline_expired": false,
+    "actual_deadline_signals": [],
+    "elapsed_seconds": 354.9672448300007
+  },
+  "qualification_checks": [
+    {
+      "id": "exact_c4_original_apk_identity",
+      "passed": true
+    },
+    {
+      "id": "same_target_pid_starttime_and_cmdline_all_probes",
+      "passed": true
+    },
+    {
+      "id": "v7_runner_binding_exact",
+      "passed": true
+    },
+    {
+      "id": "three_public_schema_checked_readbacks_exact",
+      "passed": true
+    },
+    {
+      "id": "full_email_exact_a_no_native_preedit_xml",
+      "passed": true
+    },
+    {
+      "id": "full_normal_restores_chinese_exact_你",
+      "passed": true
+    },
+    {
+      "id": "simp_email_exact_a_no_native_preedit_xml",
+      "passed": true
+    },
+    {
+      "id": "simp_normal_restores_chinese_exact_你",
+      "passed": true
+    },
+    {
+      "id": "embedded_k1_exact_你好_then_cancel_new6",
+      "passed": true
+    },
+    {
+      "id": "all_capture_receipts_complete_no_failure",
+      "passed": true
+    },
+    {
+      "id": "strict_sequence_and_authenticated_normal_stop",
+      "passed": true
+    }
+  ],
+  "limits": [
+    "The raw journal remains passed=false with checks=[] and every capture remains accepted_business_case=false; this separate HOST qualification does not rewrite those fields.",
+    "This is one exact-source Debug APK session on one API21 emulator. API35, Release signing, physical-device behavior, performance, and the rest of the case plan are outside this report.",
+    "Controlled preparation selected APP_STORAGE, disabled follow-system day/night, and selected the trime theme before business checks. This is not pure-default first install, onboarding, or upgrade coverage.",
+    "The v7 R4 path opens one fresh email editor in each full-schema cycle. It does not execute the phone handoff template c4_forced_ascii_capability cached-same-target email/password subcheck; all 44 phone-template statuses remain NOT_RUN.",
+    "The Root visual ledger records actual review of selected original PNGs. This reviewer verified their hashes, XML and exact Editable oracles on host; it did not independently view every PNG.",
+    "Three XML-before/after pairs are not byte-equal due only to one-pixel vertical bounds movement of a T9 annotation TextView; the exact differences are retained above.",
+    "Observer settle windows are synchronization, not latency measurements. No timing or race-freedom guarantee beyond the executed sequence is claimed.",
+    "The bound APK retains two apksigner META-INF service warnings and is not re-signed; cloud/tool warnings are qualified separately.",
+    "The earlier b14 failure remains immutable evidence and is not overwritten by this c4 result."
+  ],
+  "final_assessment": {
+    "qualified": true,
+    "scope": "API21 emulator, trime R4 frozen v7 actual path plus its one embedded K1 only",
+    "physical_device": "NOT_RUN",
+    "raw_business_passed": false
+  }
+}

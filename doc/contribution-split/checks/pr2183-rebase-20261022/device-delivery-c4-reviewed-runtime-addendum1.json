@@ -1,0 +1,34 @@
+{
+  "utc": "2026-10-22T16:33:44.950695+00:00",
+  "scope": "Supplement immutable phone handoff with a later host test-launch compatibility fix; no APK or device-status mutation.",
+  "source_head": "c4b613f78835e7b914e02447955c6b89fe9839ab",
+  "phone_delivery_manifest": {
+    "path": "device-delivery-c4-reviewed/manifest.json",
+    "sha256": "31b1c88c94eaefb9357a6cd91b248d39e2701ed6b9c603118ab46b104034cf52"
+  },
+  "same_producer": {
+    "repository": "X2M7/trime",
+    "run": 39806420824,
+    "artifact": 12438099455,
+    "certificate_sha256": "f6409a2d9db2800f1acc9b2e614d73e4609df3652d265cf2c40eb8a64456deb2",
+    "arm64_sha256": "12fd34dad063e76a0cdd132bbed83e802e02cd5f5ada80671f7f6935c09619c0",
+    "x86_64_sha256": "453c71544f67685db3b85fc91855ed27c5ff264d0a25671669642b0dc4b8732e"
+  },
+  "original_non_shift_v7_binding": {
+    "path": "runtime/original-apk-binding-c4-v7.json",
+    "sha256": "52919b0ce3ee58c654f73c80008d4ea4575362f11d08eba540eb9207c4781778"
+  },
+  "later_shift_only_v8_binding": {
+    "path": "runtime/original-apk-binding-c4-v8-shift.json",
+    "sha256": "a7bb75201086c795f4d3e2de89b5e8ab5e67d8504145cee24dcbe3298c41ea21"
+  },
+  "reason": "Actual API21 env command was missing; first v7 trime S1 exited127 before any injector events. v8 changes only launch argv to fixed sh -c CLASSPATH assignment with exec, independently reviewed. JAR, source APK, 300ms target timeout, real event/oracle checks and aa/AA expectations remain unchanged.",
+  "qualification_rule": "Device outcomes come from their separately frozen session and host qualifications, not this identity addendum. The earlier v7 rejection remains a rejected session.",
+  "physical": "NOT_RUN",
+  "phone_template_44_statuses": "ALL_NOT_RUN_UNCHANGED",
+  "product_or_delivery_payload_modified": false,
+  "terminal_cloud_status_addendum": {
+    "path": "schema-layout-regression/c4-cloud-terminal1/terminal-status-addendum1.json",
+    "sha256": "1899bf46d570f3078b20a617c6b5e3606cc93dc4f3c7f9cda039b7ceed2862a4"
+  }
+}

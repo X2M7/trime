@@ -1,0 +1,127 @@
+{
+  "schema": "trime-c4-pr-synthetic-cloud-warning-audit/v1",
+  "passed": true,
+  "run": {
+    "repository": "osfans/trime",
+    "id": 39806428888,
+    "pull_request_head": "c4b613f78835e7b914e02447955c6b89fe9839ab",
+    "apk_build_commit": "02997dc933424a7f71dfe78fda48f6168645f66a",
+    "source_tree": "d7639dfce3b6b5646bb004479a688148c1b19900",
+    "jobs": {
+      "check / lint-and-test": "success",
+      "build (macos-26)": "success",
+      "build (ubuntu-26.04)": "success",
+      "build (macos-26-intel)": "success",
+      "build (windows-2025)": "success"
+    }
+  },
+  "mechanical_warning_lines": {
+    "count": 49,
+    "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/c4-cloud-terminal1/pr-39806428888/warning-raw-lines.json",
+    "sha256": "a595d4eab6ee33a515566269dfdf5bfb3e5be87e922fb9fc151c165cffdfc154"
+  },
+  "families": {
+    "sdkmanager_deprecated": {
+      "raw_line_count": 14,
+      "occurrences": 14,
+      "owner": "SDK setup/tooling",
+      "certainty": "high"
+    },
+    "java_native_access": {
+      "raw_line_count": 24,
+      "occurrences": 6,
+      "owner": "SDK cmdline-tools JNA on macOS Intel and Windows",
+      "certainty": "high"
+    },
+    "gradle_deprecation_summary": {
+      "raw_line_count": 10,
+      "occurrences": 10,
+      "owner": "unresolved Gradle/plugin/project aggregate",
+      "certainty": "medium"
+    },
+    "windows_cache_save": {
+      "raw_line_count": 1,
+      "occurrences": 1,
+      "owner": "Actions cache save/Windows tar handling",
+      "certainty": "high"
+    },
+    "apksigner_unsigned_meta_inf_services": {
+      "raw_line_count": 8,
+      "occurrences": 8,
+      "distinct_messages": 2,
+      "owner": "Debug APK signature/package metadata",
+      "certainty": "high"
+    }
+  },
+  "raw_job_logs": [
+    {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/c4-cloud-terminal1/pr-39806428888/logs/119920765170-check-lint-and-test.log",
+      "bytes": 264038,
+      "sha256": "bcd5a19cceafad535b0395f719c40bfc76ad94c40d4788900647a8b31ea3572e"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/c4-cloud-terminal1/pr-39806428888/logs/119923809755-macos-26.log",
+      "bytes": 286029,
+      "sha256": "17824fb395129bdfbd55671cddf097d9fb95a6f8d5ecfce955f0e3356b48dbc3"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/c4-cloud-terminal1/pr-39806428888/logs/119923809804-ubuntu-26.04.log",
+      "bytes": 280561,
+      "sha256": "1452fe2af40194a52a9d83ee654bd8e5d71058aba6d571889d97c27e6a06b740"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/c4-cloud-terminal1/pr-39806428888/logs/119923810023-macos-26-intel.log",
+      "bytes": 284864,
+      "sha256": "6cf1c78412ac4d87f1119f2867edf07d76b9f818ae69902af22ab0513f78f906"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/c4-cloud-terminal1/pr-39806428888/logs/119923810125-windows-2025.log",
+      "bytes": 184254,
+      "sha256": "c122d5e55cc97313a930b1fe031a92848e30518eaa40f01747452b24070690ae"
+    }
+  ],
+  "apksigner": {
+    "audit_path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/c4-pr-run-39806428888-ubuntu1/apk-audit/result.json",
+    "audit_sha256": "2b3bbfb253dd7d7b36b4a530ae27056525a2a35ed7029a977932ddbe21c3f2f3",
+    "warnings": [
+      {
+        "abi": "arm64-v8a",
+        "text": "WARNING: META-INF/services/kotlinx.coroutines.CoroutineExceptionHandler not protected by signature. Unauthorized modifications to this JAR entry will not be detected. Delete or move the entry outside of META-INF/."
+      },
+      {
+        "abi": "arm64-v8a",
+        "text": "WARNING: META-INF/services/kotlinx.coroutines.internal.MainDispatcherFactory not protected by signature. Unauthorized modifications to this JAR entry will not be detected. Delete or move the entry outside of META-INF/."
+      },
+      {
+        "abi": "armeabi-v7a",
+        "text": "WARNING: META-INF/services/kotlinx.coroutines.CoroutineExceptionHandler not protected by signature. Unauthorized modifications to this JAR entry will not be detected. Delete or move the entry outside of META-INF/."
+      },
+      {
+        "abi": "armeabi-v7a",
+        "text": "WARNING: META-INF/services/kotlinx.coroutines.internal.MainDispatcherFactory not protected by signature. Unauthorized modifications to this JAR entry will not be detected. Delete or move the entry outside of META-INF/."
+      },
+      {
+        "abi": "x86",
+        "text": "WARNING: META-INF/services/kotlinx.coroutines.CoroutineExceptionHandler not protected by signature. Unauthorized modifications to this JAR entry will not be detected. Delete or move the entry outside of META-INF/."
+      },
+      {
+        "abi": "x86",
+        "text": "WARNING: META-INF/services/kotlinx.coroutines.internal.MainDispatcherFactory not protected by signature. Unauthorized modifications to this JAR entry will not be detected. Delete or move the entry outside of META-INF/."
+      },
+      {
+        "abi": "x86_64",
+        "text": "WARNING: META-INF/services/kotlinx.coroutines.CoroutineExceptionHandler not protected by signature. Unauthorized modifications to this JAR entry will not be detected. Delete or move the entry outside of META-INF/."
+      },
+      {
+        "abi": "x86_64",
+        "text": "WARNING: META-INF/services/kotlinx.coroutines.internal.MainDispatcherFactory not protected by signature. Unauthorized modifications to this JAR entry will not be detected. Delete or move the entry outside of META-INF/."
+      }
+    ]
+  },
+  "limits": [
+    "Successful jobs do not erase warnings.",
+    "The four build jobs used restored JNI caches, so absence of compiler warning lines is not a fresh native zero-warning claim.",
+    "These PR APK bytes embed synthetic merge 02997dc and are not eligible for exact-c4 v7 runtime binding.",
+    "Gradle aggregate emitter remains unresolved."
+  ]
+}

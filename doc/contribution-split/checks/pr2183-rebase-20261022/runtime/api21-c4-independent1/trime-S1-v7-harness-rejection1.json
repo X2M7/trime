@@ -1,0 +1,155 @@
+{
+  "schema": "trime-independent-runtime-rejection/v1",
+  "generated_utc": "2026-10-22T16:23:54.289996+00:00",
+  "review_mode": "HOST_ONLY_NO_ADB_VM_GRADLE",
+  "verdict": "REJECTED_HARNESS_PRECONDITION_API21_ENV_MISSING_NOT_PRODUCT_SHIFT_RESULT",
+  "session": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-trime-S1",
+  "frozen_inputs": {
+    "report": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-trime-S1/report.json",
+      "bytes": 223110,
+      "sha256": "ef34b97f762f2a0b58d7459fa13ddbebe95cbf086031bedbceaf022bde5fd089"
+    },
+    "sequence_result": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-trime-S1/sequence-result.json",
+      "bytes": 2013,
+      "sha256": "a3adb34a00b4dd404f0e2e50d4a38d6aaf6704db3f5d85c4dac396e80f2af96e"
+    },
+    "observer_finished": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-trime-S1/observer8-session/finished.json",
+      "bytes": 2116,
+      "sha256": "8337533533f5ef8034d25aa544ad3ddafab906f62c2e9fa4fccd05a09fcee86d"
+    },
+    "v7_runner": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/t9_case_sequences_v7.py",
+      "bytes": 22810,
+      "sha256": "3f7739c86af44fd08b97598286f9e697ce500473c7dc5d642466cf77229b6846"
+    },
+    "v7_binding": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/original-apk-binding-c4-v7.json",
+      "bytes": 4021,
+      "sha256": "52919b0ce3ee58c654f73c80008d4ea4575362f11d08eba540eb9207c4781778"
+    }
+  },
+  "identity": {
+    "source_head": "c4b613f78835e7b914e02447955c6b89fe9839ab",
+    "apk_sha256": "453c71544f67685db3b85fc91855ed27c5ff264d0a25671669642b0dc4b8732e",
+    "target_pid": 2543,
+    "target_starttime": "18220",
+    "boot_id": "d75bca76-0594-45f7-9f2f-52a1a39ec013"
+  },
+  "failure": {
+    "business_rejection": {
+      "type": "AssertionError",
+      "message": "Remote shell command failed (127): env CLASSPATH=/data/local/tmp/trime-real-doubletap.jar app_process /system/bin org.x2m7.trime.readiness.input.TrimeRealDoubleTap 36 1134 60"
+    },
+    "failing_command": {
+      "at": "2026-10-22T16:18:28.917985+00:00",
+      "argv": [
+        "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+        "-s",
+        "emulator-5582",
+        "shell",
+        "sh -c 'env CLASSPATH=/data/local/tmp/trime-real-doubletap.jar app_process /system/bin org.x2m7.trime.readiness.input.TrimeRealDoubleTap 36 1134 60'; _trime_t12_status=$?; echo ''; echo \"__TRIME_T12_REMOTE_RC_794f267ec036a16cfd3456d179f63ffb:$_trime_t12_status\""
+      ],
+      "stdout": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-trime-S1/commands/0144.stdout",
+      "stderr": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-trime-S1/commands/0144.stderr",
+      "timeout_seconds": 60,
+      "completed": true,
+      "returncode": 0,
+      "finished": "2026-10-22T16:18:28.938682+00:00",
+      "stdout_sha256": "60415af2e6c92383e8e31b030905b21fe5a51a096105e15e246d09e917da5039",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "shell_protocol_nonce": "794f267ec036a16cfd3456d179f63ffb",
+      "remote_returncode": 127,
+      "remote_stdout_bytes": 20,
+      "remote_stdout_sha256": "b437f453e44da595c243566bcf9f458dc17cbd5b2ebcd60b2ba5d9e8efd0c5b7",
+      "shell_protocol_failed_at": "2026-10-22T16:18:28.948944+00:00",
+      "shell_protocol_error": "Remote shell command failed (127): env CLASSPATH=/data/local/tmp/trime-real-doubletap.jar app_process /system/bin org.x2m7.trime.readiness.input.TrimeRealDoubleTap 36 1134 60"
+    },
+    "stdout": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-trime-S1/commands/0144.stdout",
+      "sha256": "60415af2e6c92383e8e31b030905b21fe5a51a096105e15e246d09e917da5039",
+      "text": "sh: env: not found\n\n__TRIME_T12_REMOTE_RC_794f267ec036a16cfd3456d179f63ffb:127\n"
+    },
+    "jar_readback": {
+      "path": "/data/local/tmp/trime-real-doubletap.jar",
+      "exists": true,
+      "evidence": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-trime-S1/trime-S1-injector-device-readback.bin",
+      "sha256": "55bd2a26e0c43564d6d2a35157c8abeb5efc5263757cab22c03157accb639507",
+      "bytes": 4240
+    },
+    "action_state": "ATTEMPTED_NOT_QUALIFIED",
+    "event_or_summary_markers_found_in_session": false,
+    "injector_stdout_file_exists": false
+  },
+  "capture_boundary": {
+    "labels": [
+      "trime-S1-initial",
+      "trime-S1-plain-letter-before"
+    ],
+    "capture_count": 2,
+    "capture_failures": 0,
+    "plain_double_shift_capture": "NOT_CREATED",
+    "plain_aa_oracle": "NOT_CREATED"
+  },
+  "normal_stop": {
+    "authenticated_normal_stop": true,
+    "observer_passed": true,
+    "stop_received": true,
+    "request_count": 3,
+    "capture_count": 2,
+    "completed_capture_count": 2,
+    "capture_failures": 0
+  },
+  "checks": [
+    {
+      "id": "strict_sequence_rejected",
+      "passed": true
+    },
+    {
+      "id": "failure_is_remote_env_not_found_127",
+      "passed": true
+    },
+    {
+      "id": "approved_jar_push_and_readback_completed",
+      "passed": true
+    },
+    {
+      "id": "injector_never_reached_event_output",
+      "passed": true
+    },
+    {
+      "id": "no_aa_or_shift_result_capture",
+      "passed": true
+    },
+    {
+      "id": "authenticated_normal_stop_after_rejection",
+      "passed": true
+    }
+  ],
+  "interpretation": "The API21 shell returned 127 before app_process/injector startup because env is unavailable. No four-event helper output, no application Shift dispatch evidence and no aa oracle were produced. This is a harness precondition rejection; it neither passes nor fails product Shift behavior.",
+  "superseding_tool_review": {
+    "v8_runner": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/t9_case_sequences_v8.py",
+      "bytes": 23026,
+      "sha256": "554eb1f704b058d8591bf2ae57a76c5372f56deb549c3612ee5efb9da5d787ea"
+    },
+    "root_review": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/sequence-v8-root-review1.json",
+      "bytes": 1808,
+      "sha256": "5e0e439261aa63b6c59afcdb76e1ffab564ae95620f9de4b350aa0d1471735b5"
+    },
+    "independent_review": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/sequence-v8-independent-review1/review1.json",
+      "bytes": 10420,
+      "sha256": "9858129ddc416de9b6dd5589f6875255640c9626258f7a6cc5722791c2d4a9c0"
+    },
+    "runtime_status": "NOT_RUN_IN_THIS_REPORT"
+  },
+  "limits": [
+    "The v7 evidence is immutable and is not converted into a v8 run.",
+    "No product Shift, double-tap, aa/AA, API35 or physical-device conclusion is made.",
+    "A new v8-bound Shift session plus continuous target logs, exact oracle and normal stop is required."
+  ]
+}
