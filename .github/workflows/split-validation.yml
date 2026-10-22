@@ -21,10 +21,8 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - scope: pr-deferred-input-view
-            sha: 2d2fbce70b449ec8b6560c844ca5ddbc2e08a4c3
-          - scope: pr-t9-input
-            sha: 9f86bc8f1d11d65d2e22e437f111a965bc2faba5
+          - scope: pr-t9-input-rebased
+            sha: 1754bb51931407ac916549edc2ae57bba4c073bc
     env:
       CI_NAME: Split validation CI
       BUILD_ABI: x86_64
@@ -204,7 +202,7 @@ jobs:
           PY
 
       - name: Check production JNI Unicode transport in a real host VM
-        if: matrix.scope == 'pr-t9-input' || matrix.scope == 'pr-jni-unicode-transport'
+        if: matrix.scope == 'pr-t9-input-rebased' || matrix.scope == 'pr-jni-unicode-transport'
         shell: bash
         run: |
           set -euo pipefail
