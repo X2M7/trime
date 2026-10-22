@@ -58,9 +58,12 @@
       "bytes": 1228
     },
     {
-      "file": "feedback-pico-control-20261022/two-stops-tombstone.txt",
-      "sha256": "e5927bfdd91a76b1a856c9e18d8f1ccb35da00ceabef8e8231ee2ce7596f187c",
-      "bytes": 110800
+      "file": "feedback-pico-control-20261022/two-stops-tombstone.txt.gz",
+      "encoding": "gzip",
+      "uncompressed_bytes": 110800,
+      "uncompressed_sha256": "e5927bfdd91a76b1a856c9e18d8f1ccb35da00ceabef8e8231ee2ce7596f187c",
+      "bytes": 14950,
+      "sha256": "751a75f8966e2149f0c149933856522d85ae8c9cd58f46b3c99e57311d15dec6"
     },
     {
       "file": "feedback-pico-control-20261022/zero-stops-result.json",
@@ -68,9 +71,13 @@
       "bytes": 1092
     },
     {
-      "file": "feedback-pico-control-20261022/zero-stops-tombstone.txt",
-      "sha256": "8788e3e9a6a37220caae8433fb872e427d1e14dfdef9faf0dc6b006f3d5f54ca",
-      "bytes": 110847
+      "file": "feedback-pico-control-20261022/zero-stops-tombstone.txt.gz",
+      "encoding": "gzip",
+      "uncompressed_bytes": 110847,
+      "uncompressed_sha256": "8788e3e9a6a37220caae8433fb872e427d1e14dfdef9faf0dc6b006f3d5f54ca",
+      "bytes": 14968,
+      "sha256": "7dc7db645fa7d016ced18b6c5c2ae3e32be653078c0a6bcee508cae896853d73"
     }
-  ]
+  ],
+  "rawArchiveNote": "Gzip preserves unmodified tombstone bytes, including original whitespace. Decompressed SHA-256 binds each original. Only the packaging changed after the first staged diff check reported whitespace in raw tombstones."
 }
