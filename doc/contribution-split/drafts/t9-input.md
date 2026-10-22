@@ -18,7 +18,7 @@ without merging or review and provides related design history.
   snapshot of the current spelling state.
 - Supply matching layouts, literal number/symbol pages and long-press digits.
   Keep existing user configuration and describe switching behavior in
-  [doc/t9-input.md](https://github.com/X2M7/trime/blob/593c23002343d5c7e6db5bf37e2bdfa0ba05f8ee/doc/t9-input.md).
+  [doc/t9-input.md](https://github.com/X2M7/trime/blob/eeb4804a3dcfbb48cdb5b4c9638aad550a0283e0/doc/t9-input.md).
 
 The feature includes its native/JVM tests and usage notes. Prediction models,
 privacy policy, candidate pinning, broad accessibility/viewport changes and fork
@@ -35,22 +35,46 @@ and aggregate-initializer diagnostics without changing pinned dependencies.
 
 #### Current upstream integration
 
-Current head `593c23002343d5c7e6db5bf37e2bdfa0ba05f8ee` normally merges the
+Current head `eeb4804a3dcfbb48cdb5b4c9638aad550a0283e0` follows the normal merge of the
 independent TextView state correction (#2187) into `11746801`, which already
 integrated upstream `12ffd16f` (JNI ownership/source directories and Snappy 1.3.1).
-The rendering merge changes only AutoScaleTextView; T9 native/protocol/assets and
-all 20 recursive pins remain identical to `11746801`. The first API21 run of
+The rendering merge changes only AutoScaleTextView. The latest correction changes
+one theme value and its asset regression tests; native/protocol code and all 20
+recursive pins remain identical to `11746801`. The first API21 run of
 `11746801` failed its display precondition under actual accessibility-node
-inspection, so its 16 planned input cases were not executed or accepted. New
-Android checks use the repaired source; earlier build evidence retains its SHA.
+inspection, so its 16 planned input cases were not executed or accepted.
+
+API21 investigation of `593c2300` then exposed a separate integration defect:
+the new tongwenfeng symbol alias forced ASCII mode over its inherited Chinese
+category page. The real `{Escape}/bd` macro executed but produced no candidates.
+The latest correction preserves that page's original mode; literal number and
+English pages remain ASCII. Two added tests check each theme's inherited symbol
+semantics. New-source device and build checks are pending, not inferred from the
+earlier successful literal-punctuation path.
 
 #### Validation
 
-- [x] Current `593c2300`: [complete exact-source JVM/JNI task](https://github.com/X2M7/trime/actions/runs/39706284345)
+- [x] Current `eeb4804a`: [fresh exact-source application/JNI task](https://github.com/X2M7/trime/actions/runs/39711445476)
+  actually passed 330 application cases / 25 suites and 115 real-JVM Unicode
+  assertions. The theme asset suite now has six cases. Original XMLs/streams,
+  exact source and all 20 recursive pins were independently verified.
+- [x] Current `eeb4804a`: [fork](https://github.com/X2M7/trime/actions/runs/39711397673)
+  and [upstream](https://github.com/osfans/trime/actions/runs/39711402810) APK builds
+  each passed all four OS jobs. Original fork APK identities, four ELF ABIs,
+  signatures and shipped assets were verified. Native caches hit; no new native
+  compile/link execution is claimed for this theme-only correction. Existing
+  dependency/toolchain and Debug signature warnings remain.
+- [x] Parent `593c2300`: [complete exact-source JVM/JNI task](https://github.com/X2M7/trime/actions/runs/39706284345)
   actually passed 328 application cases / 25 suites and 115 real-JVM Unicode
   assertions. XMLs, original streams, source and 20 pins were verified.
-- [ ] Current-source cloud APK platform jobs and two-theme Android checks are
-  still being completed; earlier source results below are not relabeled as new runs.
+- [x] Parent `593c2300`: [fork](https://github.com/X2M7/trime/actions/runs/39706270715)
+  and [upstream](https://github.com/osfans/trime/actions/runs/39706275575) APK builds
+  each passed all four OS jobs. On API21 the original APK completed both themes'
+  16 fixed input cases in the same PID, with exact editor-oracle results and
+  independently reviewed original frames. This is a scoped result: the additional
+  category-macro path failed, so whole-feature acceptance remains incomplete.
+  Original focus/expectation rejections and annotation-only 1px XML differences
+  are retained; the original unadjudicated journals were not rewritten.
 
 - [x] Parent `11746801` (same native inputs): eight JNI translation units compile for NDK28,
   x86_64/API21 under strict warnings as errors, with zero diagnostics.
@@ -69,8 +93,9 @@ Android checks use the repaired source; earlier build evidence retains its SHA.
   in each pipeline succeeded. Fork Ubuntu/Windows retain their first-attempt results;
   only the failed/capacity-interrupted Mac jobs were rerun. Original APK identity,
   ABI and signature were audited; known dependency/Debug signature warnings remain.
-- [ ] Two-theme Android input, spelling locks/undo, literal pages, Unicode caret,
-  editor restart/application switching and stale-action smoke checks.
+- [ ] New-source two-theme Android input, spelling locks/undo, literal pages,
+  category-macro selection and layout/editor restoration. Broader Unicode-caret,
+  application-switching and stale-action device coverage remains separate.
 
 The PR remains Draft. Host checks do not replace production native linking,
 Android ART/InputConnection/UI or device acceptance. Existing dependency/tool

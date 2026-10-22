@@ -1,0 +1,20 @@
+{
+  "tts": {
+    "engines": [],
+    "initialized": false,
+    "failedInitialization": true
+  },
+  "passed": true,
+  "checks": [
+    "disabled initialization and requests allocate no TTS or SoundPool",
+    "real worker queued speech rejected after finishInput",
+    "real worker queued speech rejected after destroy\/init",
+    "system sound does not allocate custom pool; muted custom feedback allocates none",
+    "real SoundPool loads WAV and manager receives load callback, plays, retains across finish and clears on destroy",
+    "real TTS initialization failure releases resource, clears pending and avoids per-key retry"
+  ],
+  "pid": 3056,
+  "sdk": 35,
+  "targetApk": "\/data\/app\/~~PYYs9z7tVSaytl3YpaXErA==\/com.osfans.trime.debug-ovYp5udgolaU4MIwp8b9Hg==\/base.apk",
+  "scope": "Real target manager\/Looper, real SoundPool WAV load callback and TTS initialization; TTS speech only if ready engine reports start\/done. No physical audibility, actual keyboard gestures or observed stale native callback claim"
+}

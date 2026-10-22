@@ -1,0 +1,6 @@
+{
+  "scope": "offline qualification only",
+  "failedAssertion": "Compared hidden Prev rectangle before and after its first layout",
+  "observation": "Prev remains GONE on Mode; its stored bounds change from allzero to prior laidout bounds after visitingEnable. Visible Next/Skip stay equal. This is not failed product/probe acceptance.",
+  "correction": "Compare retained visible navigation geometry, not stale bounds of GONE views; original data unchanged."
+}
