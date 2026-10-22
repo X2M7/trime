@@ -21,8 +21,8 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - scope: pr-logcat-reliability
-            sha: d7c0d44191c9e73be2b2a23c40d4909b100f2ddd
+          - scope: pr-jni-unicode-transport
+            sha: e16ab85f495e5bbf353187c29efbff74526cff9c
     env:
       CI_NAME: Split validation CI
       BUILD_ABI: x86_64
@@ -202,17 +202,29 @@ jobs:
           PY
 
       - name: Check production JNI Unicode transport in a real host VM
-        if: matrix.scope == 'pr-t9-input'
+        if: matrix.scope == 'pr-t9-input' || matrix.scope == 'pr-jni-unicode-transport'
         shell: bash
         run: |
           set -euo pipefail
           evidence="$RUNNER_TEMP/split-validation/$VALIDATION_SCOPE"
+          baseline=649c07559cfbc1e494835465e71277fe8dc8051c
+          if [ "$VALIDATION_SCOPE" = pr-jni-unicode-transport ]; then
+            baseline=12ffd16fe03537b6d0ed9716c71cbc33608c2a33
+          fi
           python3 app/src/test/native/jni/run_unicode.py \
             --jdk "$JAVA_HOME" \
             --ndk "$ANDROID_HOME/ndk/28.0.13004108" \
             --rime-source app/src/main/jni/librime \
-            --baseline 649c07559cfbc1e494835465e71277fe8dc8051c \
+            --baseline "$baseline" \
             --out "$evidence/jni-unicode" 2>&1 | tee "$evidence/jni-unicode.log"
+          if [ "$VALIDATION_SCOPE" = pr-jni-unicode-transport ]; then
+            python3 app/src/test/native/jni/run_unicode.py \
+              --jdk "$JAVA_HOME" \
+              --ndk "$ANDROID_HOME/ndk/28.0.13004108" \
+              --rime-source app/src/main/jni/librime \
+              --baseline "$baseline" --offsets \
+              --out "$evidence/jni-offsets" 2>&1 | tee "$evidence/jni-offsets.log"
+          fi
 
       - name: Upload original test reports and execution evidence
         if: always()
