@@ -1,0 +1,81 @@
+{
+  "schema": "trime-exact-source-control-failure-adjudication-v1",
+  "created_at": "2026-10-22T14:48:10.667572+00:00",
+  "run": {
+    "repository": "X2M7/trime",
+    "run_id": 39796394613,
+    "job_id": 119884545776,
+    "workflow_head": "f70978085dbb9cd11bf5f4ed67f37905de7fed78",
+    "scope": "pr-t9-schema-memory",
+    "status": "completed",
+    "conclusion": "failure",
+    "attempt": 1
+  },
+  "target_identity": {
+    "expected_sha": "b14a2f1e0565cec4953f5a974bfcea023875369f",
+    "actual_sha": "b14a2f1e0565cec4953f5a974bfcea023875369f",
+    "head_matches": true,
+    "recursive_submodule_count": 20,
+    "uninitialized_or_mismatched_submodules": [],
+    "tree": "3b40eef39ce8245096c74b1a3a5066d9b4009df1"
+  },
+  "jvm": {
+    "status": "passed",
+    "dynamic_count_not_hardcoded": true,
+    "executed_tests": 360,
+    "totals": {
+      "tests": 360,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "suite_count": 29,
+    "report_problems": [],
+    "summary_path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/cloud-control-run-39796394613/artifact-files/_temp/split-validation/pr-t9-schema-memory/test-summary.json",
+    "summary_sha256": "3752436d27b59a51802a8b3bd4eea0e9fbdb46f149b5bf7b7d2376948a0b2383"
+  },
+  "jni": {
+    "status": "NOT_EXECUTED",
+    "checks_executed": 0,
+    "claimed_expected_checks": 115,
+    "failure_stage": "baseline header extraction before baseline/fixed compile and run",
+    "log_path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/cloud-control-run-39796394613/artifact-files/_temp/split-validation/pr-t9-schema-memory/jni-unicode.log",
+    "log_sha256": "febe1325035ee212529e42fe5801eeee346962687b9f080b2ff2c5865efba82f"
+  },
+  "first_root_cause": {
+    "classification": "control-workflow-scope-mapping defect; not a product test failure",
+    "workflow_evidence": "The JNI step admits pr-t9-schema-memory at lines 204-205, but lines 210-213 map only pr-jni-unicode-transport to 12ffd and leave the new scope at default 649c.",
+    "runtime_error": "git show 649c07559cfbc1e494835465e71277fe8dc8051c:app/src/main/jni/librime_jni/jni-utils.h returned 128 because the path does not exist in that baseline",
+    "job_log_lines": [
+      14544,
+      14591
+    ],
+    "job_log_path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/cloud-control-run-39796394613/job-119884545776.log",
+    "job_log_sha256": "15b491b0b83915a7f8a1d46b8cb43d83c3260d1e8bd85cff10f257e76e33bb99",
+    "workflow_path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/cloud-control-run-39796394613/workflow-f7097808.yml",
+    "workflow_sha256": "5a24a19845ae42ecdb165ad4e7db19dc012e632f5c83ad1ea21023ad71f4135a"
+  },
+  "failed_run_artifact": {
+    "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/cloud-control-run-39796394613/artifact-12432579623-split-unit-tests.zip",
+    "bytes": 330679,
+    "sha256": "3fd1bba40e7d1249496c3ab5017e615db973178c73e5ce77d5f1324dd1065e3d",
+    "extracted_file_count": 224
+  },
+  "baseline_12ffd_basis": {
+    "headers_present": [
+      "jni-utils.h",
+      "objconv.h",
+      "helper-types.h"
+    ],
+    "previous_successful_control_run": 39787582756,
+    "previous_result": "baseline compile 0; expected baseline run 1; fixed compile 0; fixed run 0; fixed SUMMARY checks=115 destroy=0 exit=0",
+    "previous_audit": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/cloud-run-39787582756/machine-audit.json"
+  },
+  "authorized_correction": "Extend only the baseline-selection condition so pr-t9-schema-memory also selects 12ffd; retain the offsets-only condition and all source/JNI oracle code unchanged.",
+  "retry_policy": "The failed run remains immutable. A new control commit and new workflow run are used instead of retrying attempt 1.",
+  "limits": [
+    "360/360 applies only to application JVM tests.",
+    "No JNI assertion executed in failed run 39796394613.",
+    "This adjudication makes no device or product behavior claim."
+  ]
+}

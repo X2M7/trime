@@ -1,0 +1,23 @@
+{
+  "utc": "2026-10-22T14:29:34.903194+00:00",
+  "source_before_fix": "1754bb51931407ac916549edc2ae57bba4c073bc",
+  "platform": "Android5.0/API21 emulator",
+  "actual_schema_event": "22:19:48.872 SchemaMessage(id=luna_pinyin)",
+  "actual_keyboard_events": [
+    "22:19:48.714 switched default",
+    "22:19:49.023 switched default",
+    "22:19:52.602 new editor switched luna_pinyin_t9",
+    "22:19:52.737 new editor switched luna_pinyin_t9"
+  ],
+  "target_pid": 2461,
+  "target_start_ticks": 15252,
+  "diagnosis": "Previous locked T9 id survived the schema change because non-locking standard default does not overwrite lastLockKeyboardId; normal editor fallback restores that id.",
+  "proposed_fix": "Reset the recovery anchor to smartMatchKeyboard() when schema changes. Keep switchKeyboard(.default), all caches and ASCII/number logic.",
+  "empty_reset_rejected": "Clearing to empty is insufficient for cached same-target locks and number-to-email fallback from non-locking full layout.",
+  "source_changed_paths": [
+    "app/src/main/java/com/osfans/trime/ime/keyboard/KeyboardWindow.kt",
+    "doc/t9-input.md"
+  ],
+  "negative_evidence": "runtime/api21-operator-standard-tail/standard-S2-precondition-unmet.json",
+  "fixed_device_result": "NOT_RUN"
+}

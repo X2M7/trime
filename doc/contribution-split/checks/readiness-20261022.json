@@ -269,33 +269,35 @@
   "t9": {
     "pr": 2183,
     "draft": true,
-    "status": "OPEN_DRAFT_PHYSICAL_DEVICE_PENDING",
-    "source": "1754bb51931407ac916549edc2ae57bba4c073bc",
-    "tree": "3c3ecc4764bef17b20bceece6d6c83e4475ec601",
+    "status": "OPEN_DRAFT_NEW_SCHEMA_FIX_VALIDATION_PENDING",
+    "source": "b14a2f1e0565cec4953f5a974bfcea023875369f",
+    "tree": "3b40eef39ce8245096c74b1a3a5066d9b4009df1",
     "base": "19b048494ffa55cae52d5385dfa6d0611461c27d",
     "linear_commits": [
       {
-        "oid": "caf61850bce8b8fb4f11d61b459385e17b8fa84e",
+        "sha": "caf61850bce8b8fb4f11d61b459385e17b8fa84e",
         "subject": "feat: add nine-key Pinyin input with syllable selection",
-        "message": "feat: add nine-key Pinyin input with syllable selection\n\nProvide a complete nine-key input path using the existing luna_pinyin dictionary.\nKeep syllable locks, undo, raw-code edits and literal digits on the Rime dispatcher,\nand ship the matching layouts, spelling panel and revision-bound actions.\n\nPreserve batched Hanzi candidates and map displayed caret positions to native input.\nHandle standard UTF-8 through the JNI bridge so supplementary characters and offsets\nremain consistent. Keep symbol category input in Chinese mode and literal pages explicit.\n\nInclude focused native, controller, protocol and theme regressions. Keep prediction,\nprivacy policy, candidate pinning and fork release configuration outside this feature.\n\nRelated: #1464, #1299, #459\n\n",
-        "max_line_length": 89
+        "maximum_line_length": 89
       },
       {
-        "oid": "aeae918a711b727697d543032f8d286590fd3946",
+        "sha": "aeae918a711b727697d543032f8d286590fd3946",
         "subject": "fix: synchronize candidate text with TextView layout",
-        "message": "fix: synchronize candidate text with TextView layout\n\nKeep framework text and layout synchronized before custom candidate drawing.\nPreserve sizing and scaling while handling constructor-time setText safely, so\naccessibility node creation cannot leave visible candidates with an empty layout.\n\nThis dependency is also submitted separately in #2187.\n\n",
-        "max_line_length": 81
+        "maximum_line_length": 81
       },
       {
-        "oid": "1754bb51931407ac916549edc2ae57bba4c073bc",
+        "sha": "1754bb51931407ac916549edc2ae57bba4c073bc",
         "subject": "fix: create deferred input views after theme initialization",
-        "message": "fix: create deferred input views after theme initialization\n\nRemember input view requests that arrive before the theme scope is available and\ncreate the missing tree once initialization finishes. Restore pending input state\nusing the current editor without forcing the input method window to reopen.\n\nThis dependency is also submitted separately in #2188.\n\n",
-        "max_line_length": 81
+        "maximum_line_length": 81
+      },
+      {
+        "sha": "b14a2f1e0565cec4953f5a974bfcea023875369f",
+        "subject": "fix: reset remembered keyboard when changing input schemes",
+        "maximum_line_length": 78
       }
     ],
     "merge_commit_count": 0,
-    "source_tree_equivalence": "pr2183-rebase-20261022/rebase-tree-equivalence.json",
-    "update_receipt": "pr2183-rebase-20261022/original-pr-update1/receipt.json",
+    "source_tree_equivalence": "Initial1754 rebase equivalence retained; b14a adds only six lines in two paths, independently reviewed, with native/assets/submodule diff0.",
+    "update_receipt": "pr2183-rebase-20261022/original-pr-update3/receipt.json",
     "startup_dependency": {
       "separate_pr": 2188,
       "original_patch_commit": "2d2fbce70b449ec8b6560c844ca5ddbc2e08a4c3",
@@ -309,34 +311,42 @@
       "old_sha_is_not_new_history_ancestor": true
     },
     "current_cloud": {
-      "source": "1754bb51931407ac916549edc2ae57bba4c073bc",
-      "application_tests_executed": 360,
-      "suites": 29,
-      "failures": 0,
-      "errors": 0,
-      "skipped": 0,
-      "separate_host_jni_unicode_assertions": 115,
-      "control_run": 39787582756,
-      "report": "pr2183-rebase-20261022/cloud-run-39787582756/machine-audit.json",
-      "apk_builds": "Formal fork and upstream PR workflows each completed all five jobs successfully (new check plus four OS builds).",
-      "original_apk_audit": "pr2183-rebase-20261022/cloud-run-39787303403/apk-audit/result.json",
-      "formal_fork_run": 39789373604,
-      "upstream_pr_run": 39789381040,
-      "formal_successful_jobs_each": 5,
-      "upstream_synthetic_checkout": "fa7b6215e1b54690fd3151685189239c10cc398f",
-      "upstream_synthetic_tree_equals_source": true,
-      "formal_ci_audit": "pr2183-rebase-20261022/cloud-final-audit/formal-cloud-audit.json",
-      "warning_audit": "pr2183-rebase-20261022/cloud-final-audit/warning-summary.json",
-      "temporary_run": 39787303403,
-      "temporary_run_remaining_jobs_cancelled_as_redundant": true,
-      "temporary_all_os_success_claim": false
+      "source": "b14a2f1e0565cec4953f5a974bfcea023875369f",
+      "fork_run": 39796208691,
+      "upstream_pr_run": 39796220972,
+      "control_run": 39798930637,
+      "control_head": "3810942c8d9302a531e02ff8d852eb880078e996",
+      "state": "PENDING_FINAL_AUDIT_DURING_GITHUB_ACTIONS_RESULTS_INCIDENT",
+      "previous_1754_successes_do_not_count_as_current_pass": true,
+      "first_control_state": "FAILURE_WRONG_BASELINE_MAPPING_IN_VALIDATION_WORKFLOW",
+      "first_control_application_tests": {
+        "executed": 360,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "first_control_jni_assertions_executed": 0,
+      "baseline_fix_and_new_control_run": "MINIMAL_CONTROL_MAPPING_FIXED_NEW_ATTEMPT1_QUEUED",
+      "first_control_run": 39796394613
     },
-    "current_emulator_regression": "RUNNING_API21_THEN_API35_SERIAL",
+    "current_emulator_regression": "IN_PROGRESS_EXACT_B14_API21_SINGLE_VM_THEN_API35",
     "physical_device_acceptance": "NOT_RUN",
     "old_head_emulator_results_are_historical": true,
     "no_zero_warning_claim": true,
     "merge_or_release_action": false,
-    "physical_device_plan": "pr2183-rebase-20261022/device-delivery/REAL-DEVICE-ACCEPTANCE.md"
+    "physical_device_plan": "Exact b14 ARM64 artifact identity audited; refreshed guide with R4 is being prepared. All physical results remain NOT_RUN; old1754 delivery superseded.",
+    "new_fix_source_review": "pr2183-rebase-20261022/schema-layout-regression/source-independent-review1.json",
+    "new_fix_push_receipt": "pr2183-rebase-20261022/schema-layout-regression/source-push/receipt.json",
+    "current_apk": {
+      "producer": "X2M7 fork Ubuntu Debug workflow artifact; run terminal qualification pending",
+      "run": 39796208691,
+      "artifact": 12433229282,
+      "source_head": "b14a2f1e0565cec4953f5a974bfcea023875369f",
+      "audit": "pr2183-rebase-20261022/schema-layout-regression/cloud-fork-run-39796208691-ubuntu1/apk-audit/result.json",
+      "four_abis_passed_identity_audit": true,
+      "debug_signature_warning_entries_per_apk": 2,
+      "no_release_claim": true
+    }
   },
   "logcat": {
     "pr": 2182,
@@ -740,7 +750,7 @@
     "current_pr_state": "MERGED",
     "merged_by_maintainer_not_this_run": true
   },
-  "updated_utc": "2026-10-22T14:04:11.261329+00:00",
+  "updated_utc": "2026-10-22T14:49:06.368058+00:00",
   "unicode_foundation": {
     "branch": "contrib/pr-jni-unicode-transport",
     "source": "e16ab85f495e5bbf353187c29efbff74526cff9c",
@@ -1070,5 +1080,81 @@
     2180
   ],
   "current_state_receipt": "pr2183-rebase-20261022/pr-state-snapshot.json",
-  "ready_for_review_transitions_scope": "Historical transitions at their recorded timestamps; not current PR state."
+  "ready_for_review_transitions_scope": "Historical transitions at their recorded timestamps; not current PR state.",
+  "historical_t9_initial_rebase_1754": {
+    "pr": 2183,
+    "draft": true,
+    "status": "OPEN_DRAFT_PHYSICAL_DEVICE_PENDING",
+    "source": "1754bb51931407ac916549edc2ae57bba4c073bc",
+    "tree": "3c3ecc4764bef17b20bceece6d6c83e4475ec601",
+    "base": "19b048494ffa55cae52d5385dfa6d0611461c27d",
+    "linear_commits": [
+      {
+        "oid": "caf61850bce8b8fb4f11d61b459385e17b8fa84e",
+        "subject": "feat: add nine-key Pinyin input with syllable selection",
+        "message": "feat: add nine-key Pinyin input with syllable selection\n\nProvide a complete nine-key input path using the existing luna_pinyin dictionary.\nKeep syllable locks, undo, raw-code edits and literal digits on the Rime dispatcher,\nand ship the matching layouts, spelling panel and revision-bound actions.\n\nPreserve batched Hanzi candidates and map displayed caret positions to native input.\nHandle standard UTF-8 through the JNI bridge so supplementary characters and offsets\nremain consistent. Keep symbol category input in Chinese mode and literal pages explicit.\n\nInclude focused native, controller, protocol and theme regressions. Keep prediction,\nprivacy policy, candidate pinning and fork release configuration outside this feature.\n\nRelated: #1464, #1299, #459\n\n",
+        "max_line_length": 89
+      },
+      {
+        "oid": "aeae918a711b727697d543032f8d286590fd3946",
+        "subject": "fix: synchronize candidate text with TextView layout",
+        "message": "fix: synchronize candidate text with TextView layout\n\nKeep framework text and layout synchronized before custom candidate drawing.\nPreserve sizing and scaling while handling constructor-time setText safely, so\naccessibility node creation cannot leave visible candidates with an empty layout.\n\nThis dependency is also submitted separately in #2187.\n\n",
+        "max_line_length": 81
+      },
+      {
+        "oid": "1754bb51931407ac916549edc2ae57bba4c073bc",
+        "subject": "fix: create deferred input views after theme initialization",
+        "message": "fix: create deferred input views after theme initialization\n\nRemember input view requests that arrive before the theme scope is available and\ncreate the missing tree once initialization finishes. Restore pending input state\nusing the current editor without forcing the input method window to reopen.\n\nThis dependency is also submitted separately in #2188.\n\n",
+        "max_line_length": 81
+      }
+    ],
+    "merge_commit_count": 0,
+    "source_tree_equivalence": "pr2183-rebase-20261022/rebase-tree-equivalence.json",
+    "update_receipt": "pr2183-rebase-20261022/original-pr-update1/receipt.json",
+    "startup_dependency": {
+      "separate_pr": 2188,
+      "original_patch_commit": "2d2fbce70b449ec8b6560c844ca5ddbc2e08a4c3",
+      "rebased_commit": "1754bb51931407ac916549edc2ae57bba4c073bc",
+      "old_sha_is_not_new_history_ancestor": true
+    },
+    "candidate_dependency": {
+      "separate_pr": 2187,
+      "original_patch_commit": "7a45cf29c8e112a4081a5e72cb465447d847e1c1",
+      "rebased_commit": "aeae918a711b727697d543032f8d286590fd3946",
+      "old_sha_is_not_new_history_ancestor": true
+    },
+    "current_cloud": {
+      "source": "1754bb51931407ac916549edc2ae57bba4c073bc",
+      "application_tests_executed": 360,
+      "suites": 29,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "separate_host_jni_unicode_assertions": 115,
+      "control_run": 39787582756,
+      "report": "pr2183-rebase-20261022/cloud-run-39787582756/machine-audit.json",
+      "apk_builds": "Formal fork and upstream PR workflows each completed all five jobs successfully (new check plus four OS builds).",
+      "original_apk_audit": "pr2183-rebase-20261022/cloud-run-39787303403/apk-audit/result.json",
+      "formal_fork_run": 39789373604,
+      "upstream_pr_run": 39789381040,
+      "formal_successful_jobs_each": 5,
+      "upstream_synthetic_checkout": "fa7b6215e1b54690fd3151685189239c10cc398f",
+      "upstream_synthetic_tree_equals_source": true,
+      "formal_ci_audit": "pr2183-rebase-20261022/cloud-final-audit/formal-cloud-audit.json",
+      "warning_audit": "pr2183-rebase-20261022/cloud-final-audit/warning-summary.json",
+      "temporary_run": 39787303403,
+      "temporary_run_remaining_jobs_cancelled_as_redundant": true,
+      "temporary_all_os_success_claim": false,
+      "final_qualification": "pr2183-rebase-20261022/cloud-final-audit/final-cloud-qualification.json",
+      "warning_lines_final_expanded_scope": 399,
+      "warning_count_is_not_defect_count": true,
+      "warning_scope_expansion": "Formal workflows, exact-source control, completed and cancelled temporary jobs, original APK signature verification; early e0ab 161-line subset remains historical."
+    },
+    "current_emulator_regression": "RUNNING_API21_THEN_API35_SERIAL",
+    "physical_device_acceptance": "NOT_RUN",
+    "old_head_emulator_results_are_historical": true,
+    "no_zero_warning_claim": true,
+    "merge_or_release_action": false,
+    "physical_device_plan": "pr2183-rebase-20261022/device-delivery/REAL-DEVICE-ACCEPTANCE.md"
+  }
 }

@@ -1,0 +1,1024 @@
+{
+  "schema": "trime-api21-first-session-independent-qualification/v1",
+  "generated_utc": "2026-10-22T14:19:55.808466+00:00",
+  "review_method": {
+    "host_only": true,
+    "adb_used": false,
+    "vm_used": false,
+    "gradle_used": false,
+    "source_or_frozen_session_modified": false,
+    "session_path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-operator-prep-and-standard",
+    "session_tree_snapshot": {
+      "file_count": 4043,
+      "total_bytes": 170622958,
+      "aggregate_algorithm": "sha256 over sorted relpath NUL decimal-size NUL file-sha256 LF",
+      "aggregate_sha256": "105d40af23c92199ded58daa4cc11fc741d4ade73c6ee046fdd3de0c6a8cb23d"
+    }
+  },
+  "verdict": {
+    "qualification": "PASS_WITHIN_EXPLICIT_SCOPE",
+    "qualified_cases": [
+      "standard-category-retry",
+      "standard-K1",
+      "standard-K2"
+    ],
+    "whole_tool_run_passed": false,
+    "whole_platform_or_full_T9_qualification": false,
+    "observer_normal_stop": false,
+    "physical_device_qualification": false,
+    "explanation": "The retained evidence independently supports the three named API21 emulator business scopes. The helper report and observer remain raw passed=false/checks=[] and normal_stop=false because the observer ended on its 90-second idle deadline. Transport wait status 0/remote status 0 does not change that status."
+  },
+  "identity": {
+    "api": 21,
+    "emulator_only": true,
+    "boot_id": "54d26e2d-c178-4613-8d97-00709312f908",
+    "package": "com.osfans.trime.debug",
+    "source_head": "1754bb51931407ac916549edc2ae57bba4c073bc",
+    "source_tree": "3c3ecc4764bef17b20bceece6d6c83e4475ec601",
+    "apk_sha256": "b316fac143965738f42ea18bd5ecd73abb7ef0eca47b38bb1d3311b37fd4db82",
+    "apk_signer_sha256": "0d50a6c4b5af14741b9307952de134bff81ebf38c81d8030d1528200873f5c38",
+    "artifact_run": 39787303403,
+    "artifact_id": 12430451882,
+    "installed_apk_copies": [
+      {
+        "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-operator-prep-and-standard/start-installed-apk.bin",
+        "bytes": 20673120,
+        "sha256": "b316fac143965738f42ea18bd5ecd73abb7ef0eca47b38bb1d3311b37fd4db82"
+      },
+      {
+        "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-operator-prep-and-standard/new1754-installed-installed-apk.bin",
+        "bytes": 20673120,
+        "sha256": "b316fac143965738f42ea18bd5ecd73abb7ef0eca47b38bb1d3311b37fd4db82"
+      }
+    ],
+    "target_process": {
+      "pid": 2461,
+      "starttime_ticks": "15252",
+      "stat_probe_count": 114,
+      "cmdline_probe_count": 114,
+      "all_stat_probes_match": true,
+      "all_cmdline_probes_match": true,
+      "first_stat_probe": {
+        "command_index": 38,
+        "at": "2026-10-22T13:50:13.054642+00:00",
+        "finished": "2026-10-22T13:50:13.090755+00:00"
+      },
+      "last_stat_probe": {
+        "command_index": 1801,
+        "at": "2026-10-22T14:14:01.057757+00:00",
+        "finished": "2026-10-22T14:14:01.124708+00:00"
+      },
+      "first_cmdline_probe": {
+        "command_index": 39,
+        "at": "2026-10-22T13:50:13.095999+00:00",
+        "finished": "2026-10-22T13:50:13.114095+00:00"
+      },
+      "last_cmdline_probe": {
+        "command_index": 1802,
+        "at": "2026-10-22T14:14:01.245826+00:00",
+        "finished": "2026-10-22T14:14:01.315901+00:00"
+      }
+    }
+  },
+  "capture_integrity": {
+    "raw_observer_capture_count": 34,
+    "raw_observer_request_count": 34,
+    "completed_capture_count": 34,
+    "acquisition_failure_count": 0,
+    "verified_request_file_count": 34,
+    "verified_capture_file_count": 136,
+    "normalized_oracle_count": 61,
+    "raw_oracle_snapshot_count": 61,
+    "all_raw_oracle_snapshots_semantically_match_normalized_json": true,
+    "all_recorded_file_sizes_and_sha256_match": true,
+    "all_receipts_capture_complete": true,
+    "all_receipts_same_connection_xml_png_xml": true,
+    "helper_injected_touch": false,
+    "helper_candidate_ui_acceptance": false,
+    "report_business_summary_capture_count": 33,
+    "count_difference_explanation": "The raw observer contains 34 captures. report.captures contains 33 because it excludes only the explicitly rejected standard-category-immediate6 operator-error capture.",
+    "raw_only_labels": [
+      "standard-category-immediate6"
+    ],
+    "observer_session_token": "89c0752227b191613a965d197f140896"
+  },
+  "session_end": {
+    "report_passed_raw": false,
+    "report_checks_raw": [],
+    "observer_passed_raw": false,
+    "observer_stop_received": false,
+    "observer_normal_stop": false,
+    "error": "java.lang.IllegalStateException: Observation session exceeded 90-second idle deadline",
+    "configured_idle_timeout_ms": 90000,
+    "configured_whole_session_timeout_ms": 1680000,
+    "last_capture_after_xml_end_elapsed_realtime_ms": 1222749,
+    "session_end_elapsed_realtime_ms": 1313294,
+    "end_minus_last_capture_ms": 90545,
+    "actual_host_wait_status": 0,
+    "actual_remote_returncode": 0,
+    "interpretation": "The 90,545 ms gap supports expiry of the configured 90 s idle deadline. It is not a 28-minute whole-session timeout and it is not a normal authenticated stop."
+  },
+  "controlled_precondition": {
+    "allowed_preferences": [
+      "profile_data_storage_mode",
+      "selected_theme",
+      "follow_system_day_night"
+    ],
+    "prefs_sha256": "cdc02c729c18ef10e3a4c3135ee9740d7be10d68317fd7d0e9631191642e6c35",
+    "no_compiled_cache_native_checksums_userdb_or_yaml_restored": true,
+    "not_public_settings_acceptance": true,
+    "qualification_limit": "This is a controlled-preference emulator check, not default-install, onboarding, settings-UI, or upgrade acceptance.",
+    "evidence": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-operator-prep-and-standard/minimal-prep-identity.json",
+      "bytes": 418,
+      "sha256": "c8965e250972e232914a323df070ad0a6e45218006cfe7d3ed0c7677e6587ca9"
+    }
+  },
+  "operator_rejection": {
+    "kept_separate_from_retry": true,
+    "label": "standard-category-immediate6",
+    "expected": "、",
+    "actual": "、\n",
+    "tap": {
+      "x": 640,
+      "y": 1124,
+      "visible_key": "Enter"
+    },
+    "product_failure_claim": false,
+    "excluded_from_report_business_summary": true,
+    "oracle": {
+      "label": "standard-category-immediate6",
+      "phase": "after",
+      "text": "、\n",
+      "text_utf8_base64": "44CBCg==",
+      "text_utf8_bytes": 4,
+      "selection": [
+        2,
+        2
+      ],
+      "activity_instance": "13266b468c1847df886e4d3b7d324e11",
+      "fixture_pid": 4058,
+      "editor_focused": true,
+      "read_only": true,
+      "evidence": {
+        "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-operator-prep-and-standard/standard-category-immediate6-after-oracle.json",
+        "bytes": 974,
+        "sha256": "7445c21c75372e287de0a4a620e1ab768ab6dca1acce5858d6681cb5687660af"
+      }
+    },
+    "xml": {
+      "label": "standard-category-immediate6",
+      "required_values_present": [
+        "、\n",
+        "action: 0"
+      ],
+      "evidence": {
+        "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-operator-prep-and-standard/captures/standard-category-immediate6/observer-after.xml",
+        "bytes": 45930,
+        "sha256": "6c8abe38dbd1c4991e1a60366ab98908429ad6bab67449c0759f56128cf7285c"
+      }
+    },
+    "evidence": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-operator-prep-and-standard/operator-deviation-category-return1.json",
+      "bytes": 469,
+      "sha256": "a2f168a078c435a6aee3efff94454b641d4387da11a63fbe5a24b8e2086010f5"
+    }
+  },
+  "qualified_business_cases": {
+    "standard-category-retry": {
+      "status": "PASS_WITHIN_SCOPE",
+      "new_fixture_instance_separate_from_rejected_attempt": true,
+      "selected_punctuation": {
+        "label": "standard-category-retry-selected",
+        "phase": "after",
+        "text": "、",
+        "text_utf8_base64": "44CB",
+        "text_utf8_bytes": 3,
+        "selection": [
+          1,
+          1
+        ],
+        "activity_instance": "cf15311d4dc545d4abc85460f84aeceb",
+        "fixture_pid": 4892,
+        "editor_focused": true,
+        "read_only": true,
+        "evidence": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-operator-prep-and-standard/standard-category-retry-selected-after-oracle.json",
+          "bytes": 970,
+          "sha256": "c7b045cb46487fb9492f7ab7a01a702fe833ecb7a9395050f138d3632f2d7695"
+        }
+      },
+      "literal_2": {
+        "label": "standard-category-literal2",
+        "phase": "after",
+        "text": "、2",
+        "text_utf8_base64": "44CBMg==",
+        "text_utf8_bytes": 4,
+        "selection": [
+          2,
+          2
+        ],
+        "activity_instance": "cf15311d4dc545d4abc85460f84aeceb",
+        "fixture_pid": 4892,
+        "editor_focused": true,
+        "read_only": true,
+        "evidence": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-operator-prep-and-standard/standard-category-literal2-after-oracle.json",
+          "bytes": 975,
+          "sha256": "e2500a8600d76ec548370431c32fda8b4c59074ec33886c8d34bb4cd7698b450"
+        }
+      },
+      "pending_64_return_preserved_editor": {
+        "label": "standard-category-return64",
+        "phase": "after",
+        "text": "、2",
+        "text_utf8_base64": "44CBMg==",
+        "text_utf8_bytes": 4,
+        "selection": [
+          2,
+          2
+        ],
+        "activity_instance": "cf15311d4dc545d4abc85460f84aeceb",
+        "fixture_pid": 4892,
+        "editor_focused": true,
+        "read_only": true,
+        "evidence": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-operator-prep-and-standard/standard-category-return64-after-oracle.json",
+          "bytes": 975,
+          "sha256": "6e00cf8d657bf065a3f4bc874290dccc1c9f747e8b4be4e1592d882df5f1d042"
+        }
+      },
+      "cancel_64_preserved_editor": {
+        "label": "standard-category-final-cancel64",
+        "phase": "after",
+        "text": "、2",
+        "text_utf8_base64": "44CBMg==",
+        "text_utf8_bytes": 4,
+        "selection": [
+          2,
+          2
+        ],
+        "activity_instance": "cf15311d4dc545d4abc85460f84aeceb",
+        "fixture_pid": 4892,
+        "editor_focused": true,
+        "read_only": true,
+        "evidence": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-operator-prep-and-standard/standard-category-final-cancel64-after-oracle.json",
+          "bytes": 981,
+          "sha256": "c47df5bf07dadcf0ef8442859af12ea24d991499f8aed22524f77c97126caed3"
+        }
+      },
+      "xml_checks": [
+        {
+          "label": "standard-category-retry-candidates",
+          "required_values_present": [
+            "、",
+            "。",
+            "「",
+            "」"
+          ],
+          "evidence": {
+            "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-operator-prep-and-standard/captures/standard-category-retry-candidates/observer-after.xml",
+            "bytes": 46369,
+            "sha256": "e33855e05943a60128c7124d0649f7ebb1c2bdc332b8be27da364c2d1480c04d"
+          }
+        },
+        {
+          "label": "standard-category-retry-selected",
+          "required_values_present": [
+            "、",
+            "action: none"
+          ],
+          "evidence": {
+            "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-operator-prep-and-standard/captures/standard-category-retry-selected/observer-after.xml",
+            "bytes": 43257,
+            "sha256": "e3fd8726012b423de36041be40fc8dddbd9246f16a66b5f49204e5dace24fa62"
+          }
+        },
+        {
+          "label": "standard-category-literal2",
+          "required_values_present": [
+            "、2",
+            "action: none"
+          ],
+          "evidence": {
+            "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-operator-prep-and-standard/captures/standard-category-literal2/observer-after.xml",
+            "bytes": 36701,
+            "sha256": "11a891b538243ca863ac3b2e854b406908fd8f6f9be69fb2467249d550ea9ad1"
+          }
+        },
+        {
+          "label": "standard-category-return64",
+          "required_values_present": [
+            "64",
+            "、2",
+            "desc:Cancel composition"
+          ],
+          "evidence": {
+            "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-operator-prep-and-standard/captures/standard-category-return64/observer-after.xml",
+            "bytes": 44435,
+            "sha256": "0b92bdfbb5f1be24fd7c3f6db864223acd98c06b69d41a251589f36e7a5aee50"
+          }
+        },
+        {
+          "label": "standard-category-final-cancel64",
+          "required_values_present": [
+            "、2",
+            "desc:Cancel composition"
+          ],
+          "evidence": {
+            "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-operator-prep-and-standard/captures/standard-category-final-cancel64/observer-after.xml",
+            "bytes": 35945,
+            "sha256": "2a89da49afc8be7679f74895bb0c6bd76963e7bc2d9c31650aec2c456af6e4c9"
+          }
+        }
+      ],
+      "result": "Exact editor progression 、 -> 、2; pending 64 does not alter 、2, and cancellation leaves exact 、2."
+    },
+    "standard-K1": {
+      "status": "PASS_WITHIN_SCOPE",
+      "selected_nihao": {
+        "label": "standard-K1-selected-nihao",
+        "phase": "after",
+        "text": "你好",
+        "text_utf8_base64": "5L2g5aW9",
+        "text_utf8_bytes": 6,
+        "selection": [
+          2,
+          2
+        ],
+        "activity_instance": "d4ad06d4cff8493c837ab6310c5292aa",
+        "fixture_pid": 6723,
+        "editor_focused": true,
+        "read_only": true,
+        "evidence": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-operator-prep-and-standard/standard-K1-selected-nihao-after-oracle.json",
+          "bytes": 982,
+          "sha256": "79b6d76d93a31ffdf1733ccd9ccea8b2bb5e95385b992fce77f979adaff5cc0f"
+        }
+      },
+      "new_6_preserved_committed_text": {
+        "label": "standard-K1-new6",
+        "phase": "after",
+        "text": "你好",
+        "text_utf8_base64": "5L2g5aW9",
+        "text_utf8_bytes": 6,
+        "selection": [
+          2,
+          2
+        ],
+        "activity_instance": "d4ad06d4cff8493c837ab6310c5292aa",
+        "fixture_pid": 6723,
+        "editor_focused": true,
+        "read_only": true,
+        "evidence": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-operator-prep-and-standard/standard-K1-new6-after-oracle.json",
+          "bytes": 982,
+          "sha256": "ae8e3d4d270ffd2376d814ee5b9b111aa6e71e718962a7e742ae9e74a8fc7d6a"
+        }
+      },
+      "cancel_6_preserved_committed_text": {
+        "label": "standard-K1-cancel6",
+        "phase": "after",
+        "text": "你好",
+        "text_utf8_base64": "5L2g5aW9",
+        "text_utf8_bytes": 6,
+        "selection": [
+          2,
+          2
+        ],
+        "activity_instance": "d4ad06d4cff8493c837ab6310c5292aa",
+        "fixture_pid": 6723,
+        "editor_focused": true,
+        "read_only": true,
+        "evidence": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-operator-prep-and-standard/standard-K1-cancel6-after-oracle.json",
+          "bytes": 982,
+          "sha256": "4dc697a3731eb79ac0f092f287b811825f7107ef08e50d83540e4918e2754847"
+        }
+      },
+      "xml_checks": [
+        {
+          "label": "standard-K1-64",
+          "required_values_present": [
+            "64",
+            "mi",
+            "ni",
+            "desc:Cancel composition"
+          ],
+          "evidence": {
+            "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-operator-prep-and-standard/captures/standard-K1-64/observer-after.xml",
+            "bytes": 44442,
+            "sha256": "16cf54b83b7b11e992827ab533e12ffa4fdc05fd7200499bfa4b2845fd91aadc"
+          }
+        },
+        {
+          "label": "standard-K1-ni-locked",
+          "required_values_present": [
+            "ni",
+            "desc:Unlock syllable"
+          ],
+          "evidence": {
+            "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-operator-prep-and-standard/captures/standard-K1-ni-locked/observer-after.xml",
+            "bytes": 44442,
+            "sha256": "285562ea8aad9a2f2d0f7cc93f03b31b0e4346fc37b015b9e4d277fd9de4f8b1"
+          }
+        },
+        {
+          "label": "standard-K1-hao-options",
+          "required_values_present": [
+            "你好",
+            "hao",
+            "426"
+          ],
+          "evidence": {
+            "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-operator-prep-and-standard/captures/standard-K1-hao-options/observer-after.xml",
+            "bytes": 41429,
+            "sha256": "8695f35f63d4b42544c18b90f41827e0822ca835e8304e02e79e692e57a4ac9f"
+          }
+        },
+        {
+          "label": "standard-K1-nihao-locked",
+          "required_values_present": [
+            "你好",
+            "ni",
+            "hao",
+            "desc:Unlock syllable"
+          ],
+          "evidence": {
+            "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-operator-prep-and-standard/captures/standard-K1-nihao-locked/observer-after.xml",
+            "bytes": 41429,
+            "sha256": "b191d7c241cebf2be0639d0f949169337c0486d53b526560792d756215cfda6d"
+          }
+        },
+        {
+          "label": "standard-K1-selected-nihao",
+          "required_values_present": [
+            "你好",
+            "action: none"
+          ],
+          "evidence": {
+            "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-operator-prep-and-standard/captures/standard-K1-selected-nihao/observer-after.xml",
+            "bytes": 33998,
+            "sha256": "0db0e8c4cff99145e4c47bed4b888f187392ed7c8ee3e32d754c3bda815b5f22"
+          }
+        },
+        {
+          "label": "standard-K1-new6",
+          "required_values_present": [
+            "6",
+            "o",
+            "你好",
+            "desc:Cancel composition"
+          ],
+          "evidence": {
+            "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-operator-prep-and-standard/captures/standard-K1-new6/observer-after.xml",
+            "bytes": 44446,
+            "sha256": "d4781be7e1a72ecb4e23d1ec01d1c79876ce36c82a5187964c4a73cc0dcf8dc3"
+          }
+        },
+        {
+          "label": "standard-K1-cancel6",
+          "required_values_present": [
+            "你好",
+            "desc:Cancel composition"
+          ],
+          "evidence": {
+            "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-operator-prep-and-standard/captures/standard-K1-cancel6/observer-after.xml",
+            "bytes": 35947,
+            "sha256": "67c1a952d5f6cb7c59ba6d9d12401b8ef2088602cec0f0a0887bd696e5d9f1d6"
+          }
+        }
+      ],
+      "result": "ni then hao were locked, 你好 was selected into the editor, and a fresh 6 composition was cancelled without changing 你好."
+    },
+    "standard-K2": {
+      "status": "PASS_WITHIN_SCOPE",
+      "raw_64_before": {
+        "label": "standard-K2-raw64-before",
+        "phase": "after",
+        "text": "",
+        "text_utf8_base64": "",
+        "text_utf8_bytes": 0,
+        "selection": [
+          0,
+          0
+        ],
+        "activity_instance": "1d7b83aacdab4eb29c42173ad0c30b79",
+        "fixture_pid": 8302,
+        "editor_focused": true,
+        "read_only": true,
+        "evidence": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-operator-prep-and-standard/standard-K2-raw64-before-after-oracle.json",
+          "bytes": 973,
+          "sha256": "f565fe2411b70ffd66a6c465b2085bdb78771f6c3078e10a16f162fdb95cb592"
+        }
+      },
+      "raw_64_after_return": {
+        "label": "standard-K2-raw64-enter",
+        "phase": "after",
+        "text": "64",
+        "text_utf8_base64": "NjQ=",
+        "text_utf8_bytes": 2,
+        "selection": [
+          2,
+          2
+        ],
+        "activity_instance": "1d7b83aacdab4eb29c42173ad0c30b79",
+        "fixture_pid": 8302,
+        "editor_focused": true,
+        "read_only": true,
+        "evidence": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-operator-prep-and-standard/standard-K2-raw64-enter-after-oracle.json",
+          "bytes": 977,
+          "sha256": "fa8f8af7a8389e44071f5d438c410382a1e0568f57ceebd08734157008e7950b"
+        }
+      },
+      "chat_before": {
+        "label": "standard-K2-chat-before",
+        "phase": "after",
+        "text": "",
+        "text_utf8_base64": "",
+        "text_utf8_bytes": 0,
+        "selection": [
+          0,
+          0
+        ],
+        "activity_instance": "8535841478364af2ba09ed326e40b697",
+        "fixture_pid": 8723,
+        "editor_focused": true,
+        "read_only": true,
+        "evidence": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-operator-prep-and-standard/standard-K2-chat-before-after-oracle.json",
+          "bytes": 973,
+          "sha256": "d3659e1a2a93d89ce12eabb54102e3a4083f923bb07b4a0e37888ea9376b1a07"
+        }
+      },
+      "chat_after_return": {
+        "label": "standard-K2-chat-action4",
+        "phase": "after",
+        "text": "",
+        "text_utf8_base64": "",
+        "text_utf8_bytes": 0,
+        "selection": [
+          0,
+          0
+        ],
+        "activity_instance": "8535841478364af2ba09ed326e40b697",
+        "fixture_pid": 8723,
+        "editor_focused": true,
+        "read_only": true,
+        "evidence": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-operator-prep-and-standard/standard-K2-chat-action4-after-oracle.json",
+          "bytes": 973,
+          "sha256": "bac8d1cac5832f0d2a189a309c7f8e2933343ae29043badb0a1e71a68c47af2a"
+        }
+      },
+      "multiline_before": {
+        "label": "standard-K2-multiline-before",
+        "phase": "after",
+        "text": "",
+        "text_utf8_base64": "",
+        "text_utf8_bytes": 0,
+        "selection": [
+          0,
+          0
+        ],
+        "activity_instance": "51e9b64a3bad4fe2b113abf2ed337211",
+        "fixture_pid": 9107,
+        "editor_focused": true,
+        "read_only": true,
+        "evidence": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-operator-prep-and-standard/standard-K2-multiline-before-after-oracle.json",
+          "bytes": 973,
+          "sha256": "049d87a9b288fde3ca7c40ef8e31520607032a58870d28700f059b67f15310c6"
+        }
+      },
+      "multiline_after_return": {
+        "label": "standard-K2-multiline-newline",
+        "phase": "after",
+        "text": "\n",
+        "text_utf8_base64": "Cg==",
+        "text_utf8_bytes": 1,
+        "selection": [
+          1,
+          1
+        ],
+        "activity_instance": "51e9b64a3bad4fe2b113abf2ed337211",
+        "fixture_pid": 9107,
+        "editor_focused": true,
+        "read_only": true,
+        "evidence": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-operator-prep-and-standard/standard-K2-multiline-newline-after-oracle.json",
+          "bytes": 977,
+          "sha256": "036cdd9d80a0546e94fa381ec0419583fb47e0b11e70ccf4fec13df3ed8d0120"
+        }
+      },
+      "xml_checks": [
+        {
+          "label": "standard-K2-raw64-before",
+          "required_values_present": [
+            "64",
+            "desc:Cancel composition"
+          ],
+          "evidence": {
+            "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-operator-prep-and-standard/captures/standard-K2-raw64-before/observer-after.xml",
+            "bytes": 44442,
+            "sha256": "8e3b27db515c47d513f84c635d1013f14658f5d218edc3a3f814e57e83811859"
+          }
+        },
+        {
+          "label": "standard-K2-raw64-enter",
+          "required_values_present": [
+            "64",
+            "action: none"
+          ],
+          "evidence": {
+            "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-operator-prep-and-standard/captures/standard-K2-raw64-enter/observer-after.xml",
+            "bytes": 33994,
+            "sha256": "080fbb0f4d280b15f41b2f7267bfcb9711f9d7c765ab5d20feff94c775898d3b"
+          }
+        },
+        {
+          "label": "standard-K2-chat-before",
+          "required_values_present": [
+            "chat",
+            "action: none"
+          ],
+          "evidence": {
+            "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-operator-prep-and-standard/captures/standard-K2-chat-before/observer-after.xml",
+            "bytes": 33993,
+            "sha256": "a0d808e440087c3d30b5f4f9acd32c9a7170d37347d404ff73e5d892a02c788f"
+          }
+        },
+        {
+          "label": "standard-K2-chat-action4",
+          "required_values_present": [
+            "chat",
+            "action: 4"
+          ],
+          "evidence": {
+            "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-operator-prep-and-standard/captures/standard-K2-chat-action4/observer-after.xml",
+            "bytes": 33990,
+            "sha256": "216c02460b8a3df9eb2a846c9543c30766d39e3962a03b62287a13302547f91a"
+          }
+        },
+        {
+          "label": "standard-K2-multiline-before",
+          "required_values_present": [
+            "multiline",
+            "action: none"
+          ],
+          "evidence": {
+            "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-operator-prep-and-standard/captures/standard-K2-multiline-before/observer-after.xml",
+            "bytes": 34003,
+            "sha256": "9733159d6877af2201296caf345ae0dbe723529903efecf0078a2b310ed3cf5c"
+          }
+        },
+        {
+          "label": "standard-K2-multiline-newline",
+          "required_values_present": [
+            "\n",
+            "action: 0"
+          ],
+          "evidence": {
+            "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-operator-prep-and-standard/captures/standard-K2-multiline-newline/observer-after.xml",
+            "bytes": 33994,
+            "sha256": "ecfca20584fdd1dd2adef92de64b2c81d7c43012d6eb5b9c98294b9e28077130"
+          }
+        }
+      ],
+      "result": "Return commits literal 64 from raw composition, invokes chat editor action 4 without inserting text, and inserts exactly U+000A in multiline mode."
+    }
+  },
+  "action_binding": {
+    "total_actions": 49,
+    "indexing": "zero-based report.actions positions",
+    "verified_decisive_actions": [
+      {
+        "index": 9,
+        "required_fields": {
+          "action": "launch_independent_editor",
+          "mode": "multiline",
+          "initial_text": ""
+        },
+        "recorded_at": "2026-10-22T13:59:59.733084+00:00"
+      },
+      {
+        "index": 13,
+        "required_fields": {
+          "action": "tap",
+          "x": 640,
+          "y": 1124
+        },
+        "recorded_at": "2026-10-22T14:01:24.410831+00:00"
+      },
+      {
+        "index": 15,
+        "required_fields": {
+          "action": "launch_independent_editor",
+          "mode": "multiline",
+          "initial_text": ""
+        },
+        "recorded_at": "2026-10-22T14:01:50.436236+00:00"
+      },
+      {
+        "index": 19,
+        "required_fields": {
+          "action": "tap",
+          "x": 44,
+          "y": 1124
+        },
+        "recorded_at": "2026-10-22T14:03:13.094563+00:00"
+      },
+      {
+        "index": 29,
+        "required_fields": {
+          "action": "launch_independent_editor",
+          "mode": "multiline",
+          "initial_text": ""
+        },
+        "recorded_at": "2026-10-22T14:04:48.561410+00:00"
+      },
+      {
+        "index": 37,
+        "required_fields": {
+          "action": "candidate_selection_binding",
+          "text": "你好",
+          "capture_label": "standard-K1-nihao-locked"
+        },
+        "recorded_at": "2026-10-22T14:06:11.297023+00:00"
+      },
+      {
+        "index": 38,
+        "required_fields": {
+          "action": "tap",
+          "x": 78,
+          "y": 472
+        },
+        "recorded_at": "2026-10-22T14:06:12.371430+00:00"
+      },
+      {
+        "index": 39,
+        "required_fields": {
+          "action": "tap",
+          "x": 468,
+          "y": 884
+        },
+        "recorded_at": "2026-10-22T14:06:23.878452+00:00"
+      },
+      {
+        "index": 40,
+        "required_fields": {
+          "action": "tap",
+          "x": 640,
+          "y": 764
+        },
+        "recorded_at": "2026-10-22T14:06:35.494131+00:00"
+      },
+      {
+        "index": 41,
+        "required_fields": {
+          "action": "launch_independent_editor",
+          "mode": "multiline",
+          "initial_text": ""
+        },
+        "recorded_at": "2026-10-22T14:06:53.246233+00:00"
+      },
+      {
+        "index": 42,
+        "required_fields": {
+          "action": "tap",
+          "x": 468,
+          "y": 884
+        },
+        "recorded_at": "2026-10-22T14:06:54.779676+00:00"
+      },
+      {
+        "index": 43,
+        "required_fields": {
+          "action": "tap",
+          "x": 94,
+          "y": 884
+        },
+        "recorded_at": "2026-10-22T14:06:56.101659+00:00"
+      },
+      {
+        "index": 44,
+        "required_fields": {
+          "action": "tap",
+          "x": 640,
+          "y": 884
+        },
+        "recorded_at": "2026-10-22T14:07:07.097959+00:00"
+      },
+      {
+        "index": 45,
+        "required_fields": {
+          "action": "launch_independent_editor",
+          "mode": "chat",
+          "initial_text": ""
+        },
+        "recorded_at": "2026-10-22T14:07:19.365832+00:00"
+      },
+      {
+        "index": 46,
+        "required_fields": {
+          "action": "tap",
+          "x": 640,
+          "y": 884
+        },
+        "recorded_at": "2026-10-22T14:07:31.972569+00:00"
+      },
+      {
+        "index": 47,
+        "required_fields": {
+          "action": "launch_independent_editor",
+          "mode": "multiline",
+          "initial_text": ""
+        },
+        "recorded_at": "2026-10-22T14:07:43.972243+00:00"
+      },
+      {
+        "index": 48,
+        "required_fields": {
+          "action": "tap",
+          "x": 640,
+          "y": 884
+        },
+        "recorded_at": "2026-10-22T14:07:55.668265+00:00"
+      }
+    ],
+    "report_evidence": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-operator-prep-and-standard/report.json",
+      "bytes": 2405016,
+      "sha256": "710884faf4640ad983d6656ed7c3b2fbb7a162a9223e9e74c4f3ca74c10dd3c4"
+    }
+  },
+  "visual_review": {
+    "root_reviewed_original_count": 5,
+    "root_review_is_bounded": true,
+    "root_review_entries_for_this_session": [
+      {
+        "utc": "2026-10-22T13:52:38.670237+00:00",
+        "path": "runtime/api21-operator-prep-and-standard/cold-automatic-keyboard-later.png",
+        "sha256": "a46f79ae2602136b3b75c58472fc94a84986c23e2c0954b9811942761a640ae7",
+        "root_actually_viewed": true,
+        "observation": "API21 multiline fixture with full standard QWERTY keyboard, candidate row and Enter visible. Deployment and T9 selection not yet qualified.",
+        "scope_null_race_claim": false
+      },
+      {
+        "utc": "2026-10-22T14:13:38.755215+00:00",
+        "path": "runtime/api21-operator-prep-and-standard/captures/standard-transition-ready/observer-in-connection.png",
+        "sha256": "6ade35448e464ec215be546da2554d968f87390abfe0561a164efe00bfb20043",
+        "root_actually_viewed": true,
+        "observation": "API21 standard-theme nine-key layout visible, blank editor; readiness image only."
+      },
+      {
+        "utc": "2026-10-22T14:13:38.756564+00:00",
+        "path": "runtime/api21-operator-prep-and-standard/captures/standard-category-selected-dunhao/observer-in-connection.png",
+        "sha256": "711489374e17c081ce3cac358802b92c50a36dc894f4219f6316ba739b8b476f",
+        "root_actually_viewed": true,
+        "observation": "API21 actual editor shows 、 and symbol-category layout; later wrong Enter attempt is separately retained and this image alone is not full-case qualification."
+      },
+      {
+        "utc": "2026-10-22T14:13:38.758353+00:00",
+        "path": "runtime/api21-operator-prep-and-standard/captures/standard-K1-nihao-locked/observer-in-connection.png",
+        "sha256": "47e0261c5463bc3effb9cc040615207a5ce0f0c8a3dad1c87ab6c08bf98b775b",
+        "root_actually_viewed": true,
+        "observation": "API21 ni/hao segments and spelling options visible, highlighted 你好 candidate."
+      },
+      {
+        "utc": "2026-10-22T14:13:38.759718+00:00",
+        "path": "runtime/api21-operator-prep-and-standard/captures/standard-K1-selected-nihao/observer-in-connection.png",
+        "sha256": "91e8290db36de67ca81e3e205067a90a38166560101f783a67a6f1e9cbb35156",
+        "root_actually_viewed": true,
+        "observation": "API21 editor shows exact 你好 with composition and spelling controls cleared."
+      }
+    ],
+    "root_review_snapshot_evidence": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-independent-first1/root-image-review-first-session-snapshot.json",
+      "bytes": 2918,
+      "sha256": "922e517d2050d650d5bf1c1c88b586f5def280f71e2f85e8afd23426bc7e23cb"
+    },
+    "root_review_source_sha256_at_snapshot": "226f9b5208bf2191ec260b5a983a11de018abed95411e2a75f01551b8949b584",
+    "independent_reviewer_original_count": 5,
+    "independent_reviewer_images": [
+      {
+        "label": "standard-category-immediate6",
+        "observation": "Rejected frame visibly contains the editor text followed by a newline/cursor and action: 0; symbols layout and Enter are visible.",
+        "evidence": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-operator-prep-and-standard/captures/standard-category-immediate6/observer-in-connection.png",
+          "bytes": 108904,
+          "sha256": "987efaf9a06658365220e01dca2f683f4e81d6e398fc455ece901f5c40075960"
+        }
+      },
+      {
+        "label": "standard-category-literal2",
+        "observation": "Accepted retry frame visibly contains exact 、2 in the editor on the numeric layout.",
+        "evidence": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-operator-prep-and-standard/captures/standard-category-literal2/observer-in-connection.png",
+          "bytes": 64115,
+          "sha256": "af469916dbf05b3f8b64ae596576704133196aeea520b1c4158377a9372a8d71"
+        }
+      },
+      {
+        "label": "standard-K1-nihao-locked",
+        "observation": "Frame visibly contains ni and hao locked segments and 你好 as the leading candidate.",
+        "evidence": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-operator-prep-and-standard/captures/standard-K1-nihao-locked/observer-in-connection.png",
+          "bytes": 82689,
+          "sha256": "47e0261c5463bc3effb9cc040615207a5ce0f0c8a3dad1c87ab6c08bf98b775b"
+        }
+      },
+      {
+        "label": "standard-K2-chat-action4",
+        "observation": "Frame visibly contains chat mode and action: 4 after the Send-key action.",
+        "evidence": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-operator-prep-and-standard/captures/standard-K2-chat-action4/observer-in-connection.png",
+          "bytes": 62022,
+          "sha256": "31eaf58fe6858a45313eaad2f1238c2fdc962c5660f4888e22a577cd9e05250a"
+        }
+      },
+      {
+        "label": "standard-K2-multiline-newline",
+        "observation": "Frame visibly contains a new blank line/cursor in multiline mode and action: 0.",
+        "evidence": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-operator-prep-and-standard/captures/standard-K2-multiline-newline/observer-in-connection.png",
+          "bytes": 60075,
+          "sha256": "47cb23884840aed59b4b34c8b682a2b5385c2b5949b83fec1791f53d88e8c9fb"
+        }
+      }
+    ],
+    "limit": "Selected screenshots corroborate the XML/oracle findings; neither the five Root images nor the five independent images constitute exhaustive visual or physical-device acceptance."
+  },
+  "raw_status_preserved": {
+    "report_passed": false,
+    "report_checks": [],
+    "observer_passed": false,
+    "observer_normal_stop": false,
+    "operator_marker_whole_platform_qualification": false,
+    "remaining_from_marker": [
+      "standard-K3",
+      "standard-K4",
+      "standard-Shift",
+      "trime-K1-K4",
+      "trime-Shift"
+    ]
+  },
+  "primary_evidence": {
+    "report": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-operator-prep-and-standard/report.json",
+      "bytes": 2405016,
+      "sha256": "710884faf4640ad983d6656ed7c3b2fbb7a162a9223e9e74c4f3ca74c10dd3c4"
+    },
+    "operator_marker": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-operator-prep-and-standard/operator-stage-standard-first-result.json",
+      "bytes": 862,
+      "sha256": "262a9b6f97ac2b6604fd684fd4e1c86089d3ef73f3e325bc037d2856c4d00a0b"
+    },
+    "operator_deviation": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-operator-prep-and-standard/operator-deviation-category-return1.json",
+      "bytes": 469,
+      "sha256": "a2f168a078c435a6aee3efff94454b641d4387da11a63fbe5a24b8e2086010f5"
+    },
+    "observer_ready": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-operator-prep-and-standard/observer8-session/ready.json",
+      "bytes": 1097,
+      "sha256": "d5873de7f24a399eb797aa9e9986df5717259a04bb4ede1e3c1e798e58bfcce6"
+    },
+    "observer_unexpected_finished": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-operator-prep-and-standard/observer8-session/unexpected-finished.json",
+      "bytes": 1617,
+      "sha256": "dcc1e97f00a3f8241303f295378c4f48c96713f6e16ae94c320aff073caef1da"
+    },
+    "observer_cleanup_finished": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-operator-prep-and-standard/observer8-session/cleanup-finished.json",
+      "bytes": 1617,
+      "sha256": "dcc1e97f00a3f8241303f295378c4f48c96713f6e16ae94c320aff073caef1da"
+    },
+    "source_apk_binding": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/original-apk-binding.json",
+      "bytes": 1498,
+      "sha256": "346037b1ca3b75e2a757530a0f163903748b35ac29d3aa4ca2e5b78fa50dab0a"
+    },
+    "minimal_prep_identity": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-operator-prep-and-standard/minimal-prep-identity.json",
+      "bytes": 418,
+      "sha256": "c8965e250972e232914a323df070ad0a6e45218006cfe7d3ed0c7677e6587ca9"
+    },
+    "root_image_review_first_session_snapshot": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-independent-first1/root-image-review-first-session-snapshot.json",
+      "bytes": 2918,
+      "sha256": "922e517d2050d650d5bf1c1c88b586f5def280f71e2f85e8afd23426bc7e23cb"
+    }
+  },
+  "limits": [
+    "Host-only review of frozen artifacts; no ADB, VM, Gradle, source edit, or frozen-session edit was performed.",
+    "Qualification is limited to standard-category-retry, standard-K1, and standard-K2 on this API21 emulator boot, APK, and process identity.",
+    "The rejected category attempt is retained as operator error and is not converted into a product failure or a passing capture.",
+    "Raw passed=false/checks=[] and observer normal_stop=false remain authoritative for whole-tool status.",
+    "Exit/wait status 0 proves transport completion only.",
+    "No physical-device, full-T9, default-install, onboarding, settings-UI, upgrade, latency, or 28-minute endurance claim is made."
+  ]
+}

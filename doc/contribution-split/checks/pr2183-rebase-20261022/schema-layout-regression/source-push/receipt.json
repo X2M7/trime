@@ -1,0 +1,199 @@
+{
+  "utc": "2026-10-22T14:30:19.898870+00:00",
+  "head": "b14a2f1e0565cec4953f5a974bfcea023875369f",
+  "tree": "3b40eef39ce8245096c74b1a3a5066d9b4009df1",
+  "parent": "1754bb51931407ac916549edc2ae57bba4c073bc",
+  "base": "19b048494ffa55cae52d5385dfa6d0611461c27d",
+  "changed_paths": [
+    "app/src/main/java/com/osfans/trime/ime/keyboard/KeyboardWindow.kt",
+    "doc/t9-input.md"
+  ],
+  "native_assets_submodules_unchanged": true,
+  "normal_fast_forward_push": true,
+  "pr": 2183,
+  "draft": true,
+  "fix_validation": "PENDING_NEW_HEAD_CLOUD_AND_DEVICE",
+  "physical_device": "NOT_RUN",
+  "calls": [
+    {
+      "label": "head-before",
+      "args": [
+        "rev-parse",
+        "HEAD"
+      ],
+      "exit": 0
+    },
+    {
+      "label": "branch",
+      "args": [
+        "branch",
+        "--show-current"
+      ],
+      "exit": 0
+    },
+    {
+      "label": "push-url",
+      "args": [
+        "remote",
+        "get-url",
+        "--push",
+        "x2m7"
+      ],
+      "exit": 0
+    },
+    {
+      "label": "staged-before",
+      "args": [
+        "diff",
+        "--cached",
+        "--name-only"
+      ],
+      "exit": 0
+    },
+    {
+      "label": "changed",
+      "args": [
+        "diff",
+        "--name-only"
+      ],
+      "exit": 0
+    },
+    {
+      "label": "diff-check",
+      "args": [
+        "diff",
+        "--check"
+      ],
+      "exit": 0
+    },
+    {
+      "label": "stage",
+      "args": [
+        "add",
+        "--",
+        "app/src/main/java/com/osfans/trime/ime/keyboard/KeyboardWindow.kt",
+        "doc/t9-input.md"
+      ],
+      "exit": 0
+    },
+    {
+      "label": "commit",
+      "args": [
+        "commit",
+        "-F",
+        "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/commit-message.txt"
+      ],
+      "exit": 0
+    },
+    {
+      "label": "head-after",
+      "args": [
+        "rev-parse",
+        "HEAD"
+      ],
+      "exit": 0
+    },
+    {
+      "label": "tree",
+      "args": [
+        "rev-parse",
+        "HEAD^{tree}"
+      ],
+      "exit": 0
+    },
+    {
+      "label": "parent",
+      "args": [
+        "rev-parse",
+        "HEAD^"
+      ],
+      "exit": 0
+    },
+    {
+      "label": "merge-count",
+      "args": [
+        "rev-list",
+        "--count",
+        "--merges",
+        "19b048494ffa55cae52d5385dfa6d0611461c27d..HEAD"
+      ],
+      "exit": 0
+    },
+    {
+      "label": "native-assets-unchanged",
+      "args": [
+        "diff",
+        "--exit-code",
+        "1754bb51931407ac916549edc2ae57bba4c073bc",
+        "HEAD",
+        "--",
+        "app/src/main/jni",
+        "app/src/main/assets",
+        "app/data",
+        ".gitmodules"
+      ],
+      "exit": 0
+    },
+    {
+      "label": "pr-before",
+      "args": [
+        "pr",
+        "view",
+        "2183",
+        "--repo",
+        "osfans/trime",
+        "--json",
+        "headRefOid,state,isDraft"
+      ],
+      "exit": 0
+    },
+    {
+      "label": "remote-before",
+      "args": [
+        "ls-remote",
+        "x2m7",
+        "refs/heads/contrib/pr-t9-input"
+      ],
+      "exit": 0
+    },
+    {
+      "label": "push",
+      "args": [
+        "push",
+        "x2m7",
+        "HEAD:refs/heads/contrib/pr-t9-input"
+      ],
+      "exit": 0
+    },
+    {
+      "label": "remote-after",
+      "args": [
+        "ls-remote",
+        "x2m7",
+        "refs/heads/contrib/pr-t9-input"
+      ],
+      "exit": 0
+    },
+    {
+      "label": "pr-after",
+      "args": [
+        "pr",
+        "view",
+        "2183",
+        "--repo",
+        "osfans/trime",
+        "--json",
+        "headRefOid,state,isDraft"
+      ],
+      "exit": 0
+    },
+    {
+      "label": "status",
+      "args": [
+        "status",
+        "--porcelain"
+      ],
+      "exit": 0
+    }
+  ]
+}

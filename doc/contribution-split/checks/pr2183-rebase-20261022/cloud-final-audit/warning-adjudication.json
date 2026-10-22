@@ -1,0 +1,140 @@
+{
+  "schema": 1,
+  "passed": true,
+  "total_occurrences": 399,
+  "family_count": 9,
+  "families": [
+    {
+      "family": "apk_v1_jar_signature_unprotected_meta_inf_service",
+      "occurrences": 8,
+      "emitter": "apksigner verify --verbose --print-certs on each debug ABI APK",
+      "attribution": "APK packaging / v1 JAR-signature entry rules",
+      "confidence": "high",
+      "observed_effect": "two META-INF kotlinx.coroutines service entries per APK are excluded from the v1/JAR entry-signature path; apksigner reports both v1 and v2 verification successful, so this warning must not be restated as absence of v2 whole-APK integrity",
+      "follow_up": "Retain the exact v1/JAR-entry warning in delivery notes and assess packaging policy separately; do not state warning-free signature verification."
+    },
+    {
+      "family": "github_action_annotation",
+      "occurrences": 2,
+      "emitter": "setup-java Gradle cache post-job save on Windows",
+      "attribution": "CI/action/cache behavior",
+      "confidence": "high",
+      "observed_effect": "Git tar could not read busy Gradle lock files and exited 2 after build and artifact uploads; the jobs still succeeded, but that Gradle cache save did not",
+      "follow_up": "Track cache shutdown/lock handling in CI or the action. Do not treat the successful job as a zero-warning result."
+    },
+    {
+      "family": "gradle_configuration_set_visible_deprecated",
+      "occurrences": 55,
+      "emitter": "Gradle warning-mode-all; stack traces enter Android Gradle Plugin BasePlugin.kt and SourceSetManager.kt",
+      "attribution": "Android Gradle Plugin / Gradle compatibility path",
+      "confidence": "high",
+      "observed_effect": "55 diagnostics in the exact-source control job; Configuration.setVisible(boolean) is scheduled for removal in Gradle 11, while the current validation completed",
+      "follow_up": "Track an Android Gradle Plugin update or compatibility fix before adopting Gradle 11. Do not add that unrelated build-tool change to the T9 patch."
+    },
+    {
+      "family": "gradle_deprecated_features",
+      "occurrences": 28,
+      "emitter": "Gradle build",
+      "attribution": "build scripts or plugins not distinguished by these summary lines",
+      "confidence": "high for emitter, unknown for owner",
+      "observed_effect": "builds completed; log warns about Gradle 10 incompatibility",
+      "follow_up": "Run the affected full build path with actionable deprecation detail and assign each feature before a Gradle 10 migration."
+    },
+    {
+      "family": "java_native_access_restricted",
+      "occurrences": 72,
+      "emitter": "Android cmdline-tools JNA under Java 25, observed on macOS Intel and Windows",
+      "attribution": "CI/toolchain dependency",
+      "confidence": "high",
+      "observed_effect": "warning only today; the JDK states restricted calls may be blocked in a future release",
+      "follow_up": "Update the tool/JNA path or explicitly configure native access after assessing the security and compatibility implications."
+    },
+    {
+      "family": "leveldb_cmake_minimum_deprecated",
+      "occurrences": 14,
+      "emitter": "app/src/main/jni/librime/deps/leveldb/CMakeLists.txt",
+      "attribution": "pinned native dependency",
+      "confidence": "high",
+      "observed_effect": "cache-miss native builds completed; future CMake compatibility warning remains",
+      "follow_up": "Resolve through the pinned dependency or an upstream-compatible CMake minimum update, outside an unrelated T9 behavior patch."
+    },
+    {
+      "family": "librime_lua_32bit_constant_conversion",
+      "occurrences": 7,
+      "emitter": "app/src/main/jni/librime/plugins/librime-lua/src/types.cc:1959",
+      "attribution": "pinned native dependency, 32-bit targets",
+      "confidence": "high",
+      "observed_effect": "ULL maximum converts to 32-bit size_t maximum; the log alone cannot prove the truncation is benign",
+      "follow_up": "Review the sentinel/value intent on armeabi-v7a and x86 in the dependency; keep it visible as a possible 32-bit correctness concern."
+    },
+    {
+      "family": "sdkmanager_cli_deprecated",
+      "occurrences": 45,
+      "emitter": "Android SDK command-line sdkmanager invoked by CI setup",
+      "attribution": "CI/toolchain dependency",
+      "confidence": "high",
+      "observed_effect": "warning only; associated jobs completed",
+      "follow_up": "Track migration away from the deprecated sdkmanager CLI in CI/tooling; do not attribute it to T9 runtime code."
+    },
+    {
+      "family": "yaml_cpp_cxx14_constexpr",
+      "occurrences": 168,
+      "emitter": "pinned yaml-cpp dragonbox.h",
+      "attribution": "pinned native dependency",
+      "confidence": "high",
+      "observed_effect": "repeated compiler warning across native ABIs; actual packaged ELF files passed inspection",
+      "follow_up": "Track the dependency/compiler compatibility fix; successful packaging does not erase the future behavior-change warning."
+    }
+  ],
+  "scope_counts": {
+    "downloaded_ubuntu_apk_signature": {
+      "apk_v1_jar_signature_unprotected_meta_inf_service": 8
+    },
+    "exact_source_control": {
+      "gradle_configuration_set_visible_deprecated": 55,
+      "sdkmanager_cli_deprecated": 3
+    },
+    "fork_formal_head": {
+      "github_action_annotation": 1,
+      "gradle_deprecated_features": 10,
+      "java_native_access_restricted": 24,
+      "sdkmanager_cli_deprecated": 14
+    },
+    "temp_cancelled_partial": {
+      "gradle_deprecated_features": 4,
+      "java_native_access_restricted": 24,
+      "leveldb_cmake_minimum_deprecated": 10,
+      "librime_lua_32bit_constant_conversion": 5,
+      "sdkmanager_cli_deprecated": 9,
+      "yaml_cpp_cxx14_constexpr": 120
+    },
+    "temp_exact_head": {
+      "gradle_deprecated_features": 4,
+      "leveldb_cmake_minimum_deprecated": 4,
+      "librime_lua_32bit_constant_conversion": 2,
+      "sdkmanager_cli_deprecated": 5,
+      "yaml_cpp_cxx14_constexpr": 48
+    },
+    "upstream_pr_merge": {
+      "github_action_annotation": 1,
+      "gradle_deprecated_features": 10,
+      "java_native_access_restricted": 24,
+      "sdkmanager_cli_deprecated": 14
+    }
+  },
+  "raw_records": {
+    "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/cloud-final-audit/warning-records.jsonl",
+    "sha256": "285a466513d3d0e7a13e728db9766deab49190b5131cac036ecd145104f1e585"
+  },
+  "counting_rules": [
+    "An occurrence is one warning-emitting line selected by the mechanical extractor, plus each apksigner warning captured per ABI APK.",
+    "Repeated lines across setup invocations, ABIs, platforms, direct-head and PR-merge runs remain separate occurrences.",
+    "Cancelled temp-job logs are partial and are counted only to preserve their emitted warnings; they are not passing validation evidence.",
+    "The direct-head and PR-merge formal runs exercise the same source tree. Warning occurrence totals are provenance counts and must not be interpreted as independent defect or test counts."
+  ],
+  "limits": [
+    "Classification identifies the emitting path with the stated confidence; it does not exempt system, action, plugin, or dependency warnings from follow-up.",
+    "Successful jobs and APK verification do not make these warnings disappear.",
+    "No source or workflow fix is made by this audit."
+  ]
+}

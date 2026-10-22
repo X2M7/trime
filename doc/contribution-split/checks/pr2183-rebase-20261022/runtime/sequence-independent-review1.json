@@ -1,0 +1,155 @@
+{
+  "schema": "trime-t9-sequence-independent-static-review-v1",
+  "created_at": "2026-10-22T22:43:00+08:00",
+  "host_only": true,
+  "adb_used": false,
+  "vm_used": false,
+  "gradle_used": false,
+  "product_source_modified": false,
+  "reviewed": {
+    "runner": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/t9_case_sequences_v5.py",
+      "sha256": "939ca19bb2b798b5ae703afb2a03db3d206d20d5ed31a0c05c6061d2093f32ca",
+      "required_source_head": "b14a2f1e0565cec4953f5a974bfcea023875369f"
+    },
+    "scope": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/next-source-regression-scope5.json",
+      "sha256": "93e9d4d01d0898d8284ee8a1cdeae1f56b9de8bf20c25536c83fa8b2b2a2ada7",
+      "declared_state": "UNFROZEN_NEW_SOURCE_REQUIRED"
+    },
+    "helper": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/t9_smoke_helper_v6.py",
+      "sha256": "4f83a98b133a045cef77a77194eb0ad12ed0af0fe25ca0fbebd5678c542b9285",
+      "unchanged_by_runner_review": true
+    }
+  },
+  "verdict": "QUALIFIED_FOR_CONTROLLED_EXECUTION_WITH_EXTERNAL_OFFLINE_REVIEW",
+  "blocking_findings": [],
+  "verified": [
+    {
+      "claim": "Import/compile is host-safe and top level only defines constants/functions/CASES; it makes no ADB/device call.",
+      "evidence": [
+        "runner lines 1-33, 319-320",
+        "successful in-memory import during host stubs"
+      ]
+    },
+    {
+      "claim": "Execution rejects any source/build identity other than exact b14a and binds the loaded runner path and bytes to the frozen source binding.",
+      "evidence": [
+        "runner lines 336-349"
+      ]
+    },
+    {
+      "claim": "All fallible theme/APK/display/prefs/case preconditions are inside the try/finally cleanup boundary.",
+      "evidence": [
+        "runner lines 334-417"
+      ]
+    },
+    {
+      "claim": "Effective WM Override values take precedence over Physical values and must be 720x1280/dpi320.",
+      "evidence": [
+        "runner lines 358-373",
+        "effective-override-density host stub rejected Physical320 plus Override480"
+      ]
+    },
+    {
+      "claim": "Schema selection waits for a retained target-layout frame, reopens the menu at the target layout coordinates, reads one exact checked label (including luna to luna_simp), closes via an actual accessible Back node, and proves the chooser absent.",
+      "evidence": [
+        "runner lines 260-287",
+        "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-operator-standard-tail/captures/standard-S2-full-schema-chooser/observer-after.xml"
+      ]
+    },
+    {
+      "claim": "The retained API21 chooser XML has exactly one enabled/clickable Back node, a SystemUI ImageView.",
+      "evidence": [
+        {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-operator-standard-tail/captures/standard-S2-full-schema-chooser/observer-after.xml",
+          "sha256": "e0b40add389b124bc5a3ea3e756560e24941a472914f6102aedd75f1f9d42f7c",
+          "matching_nodes": [
+            {
+              "index": "0",
+              "text": "",
+              "resource-id": "com.android.systemui:id/back",
+              "content-desc": "Back",
+              "package": "com.android.systemui",
+              "class": "android.widget.ImageView",
+              "enabled": "true",
+              "password": "false",
+              "focused": "false",
+              "focusable": "false",
+              "checkable": "false",
+              "checked": "false",
+              "clickable": "true",
+              "long-clickable": "true",
+              "selected": "false",
+              "scrollable": "false",
+              "text-selection-start": "-1",
+              "text-selection-end": "-1",
+              "bounds": "[80,1184][240,1280]"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "claim": "R4 full keyboard coordinates match standard default and Trime smart-matched qwerty assets; T9 menu coordinates match both unchanged T9 assets.",
+      "evidence": [
+        "runner lines 260-316",
+        "theme asset SHA guards at lines 29-33 and 351-354"
+      ]
+    },
+    {
+      "claim": "Normal stop is based on observer.normal_stop; finish failure invokes cleanup, double failure retains atexit, and an earlier business exception remains primary.",
+      "evidence": [
+        "runner lines 383-417",
+        "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/sequence-independent-review1-stubs.json"
+      ]
+    },
+    {
+      "claim": "Raw journals never become case qualification: each record begins with business_passed=false and requires external image qualification.",
+      "evidence": [
+        "runner lines 331-333"
+      ]
+    }
+  ],
+  "host_negative_controls": {
+    "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/sequence-independent-review1-stubs.json",
+    "sha256": "951b224c440c6bd5faaac6cb469db6fc6a8cedeb1baf482698ac185f10f150f0",
+    "passed": true,
+    "cases": [
+      "old-head rejects and still finishes",
+      "unknown theme rejects and still finishes",
+      "missing asset rejects and still finishes",
+      "finish plus cleanup double failure retains atexit and preserves original rejection",
+      "Physical320 plus Override480 rejects effective density"
+    ]
+  },
+  "nonblocking_limits": [
+    {
+      "id": "cancel-binding-and-poststate",
+      "detail": "Cancel is selected by a globally unique content-desc/clickable/enabled predicate without a Trime package/class predicate. The subsequent editor text can stay unchanged even if composition remained pending. Offline qualification must verify the retained after-XML contains the intended Trime control before the touch and no Current input/locked segment plus disabled/absent Cancel afterward, and must inspect the actual image.",
+      "source_lines": "64-67 and all _cancel follow-up captures"
+    },
+    {
+      "id": "no-platform-result",
+      "detail": "This static review qualifies runner v5 for later controlled execution. It does not qualify b14a on API21, API35, or a physical phone, and does not reinterpret raw passed=false/checks[]."
+    },
+    {
+      "id": "scope-preparation-state",
+      "detail": "scope5 itself remains UNFROZEN_NEW_SOURCE_REQUIRED. A later producer may bind the separately audited exact-b14 artifact and runner bytes; that later binding/execution requires its own evidence."
+    }
+  ],
+  "superseded_runners": [
+    "t9_case_sequences_v1.py",
+    "t9_case_sequences_v2.py",
+    "t9_case_sequences_v3.py",
+    "t9_case_sequences_v4.py"
+  ],
+  "artifact_available_after_static_review": {
+    "note": "A separate exact-b14 fork Ubuntu artifact subsequently passed host APK identity audit; availability does not create a runtime result.",
+    "apk": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/cloud-fork-run-39796208691-ubuntu1/files/com.osfans.trime-b14a2f1e-arm64-v8a-debug.apk",
+    "apk_sha256": "a393b74c52ba78dd5e28240b390a6686b0af47d76750c9a8aa561b94758b57b2",
+    "audit": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/cloud-fork-run-39796208691-ubuntu1/apk-audit/result.json",
+    "audit_sha256": "65259e1fb68eaebb25d1cb3e3b5d881021129d5463734a51c1d5c4e0387d6f93"
+  }
+}

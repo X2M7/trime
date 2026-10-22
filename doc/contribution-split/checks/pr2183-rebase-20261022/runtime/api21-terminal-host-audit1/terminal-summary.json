@@ -1,0 +1,122 @@
+{
+  "utc": "2026-10-22T14:29:07.216114+00:00",
+  "source_head": "1754bb51931407ac916549edc2ae57bba4c073bc",
+  "old_device_scope": "API21 standard category retry + K1/K2/K3/K4/S1 observed; S2 not executed because real stale-lock layout precondition failure; trime theme and API35 not executed",
+  "normal_cleanup": {
+    "default_ime": "com.android.inputmethod.latin/.LatinIME",
+    "enabled_imes": "com.android.inputmethod.latin/.LatinIME:com.osfans.trime.debug/com.osfans.trime.ime.core.TrimeInputMethodService",
+    "expected_default": "com.android.inputmethod.latin/.LatinIME",
+    "expected_enabled": "com.android.inputmethod.latin/.LatinIME:com.osfans.trime.debug/com.osfans.trime.ime.core.TrimeInputMethodService",
+    "target_and_fixture_controlled_force_stop": true,
+    "observer_sessions": [
+      "first_actual_idle_failure",
+      "second_authenticated_normal_stop"
+    ],
+    "S2_not_run": true,
+    "api35_not_started": true
+  },
+  "controller": {
+    "argv": [
+      "/home/xumin/Public/android-toolchain/android-sdk/emulator/emulator",
+      "-avd",
+      "trime_readiness_api21_20261022",
+      "-sysdir",
+      "/home/xumin/Public/Trime/build/readiness-20261022/api21/system-images",
+      "-no-snapshot",
+      "-no-window",
+      "-no-boot-anim",
+      "-gpu",
+      "swangle",
+      "-cores",
+      "1",
+      "-memory",
+      "2048",
+      "-port",
+      "5582",
+      "-accel",
+      "on",
+      "-feature",
+      "-Vulkan"
+    ],
+    "serial": "emulator-5582",
+    "started_utc": "2026-10-22T13:47:35.573646+00:00",
+    "memory_floor_kib": 1048576,
+    "source_head": "1754bb51931407ac916549edc2ae57bba4c073bc",
+    "original_apk_sha256": "b316fac143965738f42ea18bd5ecd73abb7ef0eca47b38bb1d3311b37fd4db82",
+    "controller_sha256": "9d8fbfef8516ba85c3ecf89cc6f22d45404a8a3e237e51bea77918466db62d63",
+    "session_lifetime_guard": null,
+    "operator_normal_stop_required": true,
+    "prelaunch_memory": {
+      "MemTotal": 16017176,
+      "MemAvailable": 7875884,
+      "SwapFree": 0,
+      "utc": "2026-10-22T13:47:35.574341+00:00"
+    },
+    "pid": 17665,
+    "proc_stat_at_launch": "17665 (emulator) D 17661 17665 17665 0 -1 4194304 2 0 0 0 0 0 0 0 20 0 1 0 208396 1552384 0 18446744073709551615 0 0 140731298778684 0 0 0 0 0 0 1 0 0 17 7 0 0 0 0 0 0 0 0 140731298778684 0 0 0 0\n",
+    "minimum_mem_available_kib": 5946428,
+    "booted": true,
+    "normal_stop": {
+      "exit": 0,
+      "stdout": "OK: killing emulator, bye bye\nOK\n",
+      "stderr": ""
+    },
+    "emulator_exit": 0,
+    "collector_exit": 0,
+    "cleanup_errors": [],
+    "reason": "requested-normal-stop",
+    "ended_utc": "2026-10-22T14:26:36.845985+00:00"
+  },
+  "sdk_all_unchanged": true,
+  "memory": {
+    "samples": 1171,
+    "first": {
+      "MemTotal": 16017176,
+      "MemAvailable": 7875884,
+      "SwapFree": 0,
+      "utc": "2026-10-22T13:47:35.574341+00:00"
+    },
+    "last": {
+      "MemTotal": 16017176,
+      "MemAvailable": 6549412,
+      "SwapFree": 0,
+      "utc": "2026-10-22T14:26:35.670638+00:00"
+    },
+    "minimum_available_kib": 5946428,
+    "maximum_available_kib": 7998292,
+    "guard_floor_kib": 1048576,
+    "guard_triggered": false,
+    "source": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-1754-run1/memory.jsonl",
+      "sha256": "96f88091ad277e334074ad6f96c9db57a9adf16f16d465fbfb8298dd4c571e0d"
+    }
+  },
+  "source": {
+    "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-1754-run1/device-logcat.txt",
+    "dev": 66306,
+    "inode": 28705536,
+    "bytes": 96805643,
+    "sha256": "e8f83ec56bff51d481576b09121de13d2e70258e151eafbe7b52ca66f0d9e06d",
+    "lines": 1297893,
+    "parsed_threadtime_lines": 1297888,
+    "all_bytes_scanned": true
+  },
+  "all_pid_actual_fatal": 1,
+  "all_pid_anr_oom_lmk_detected": 0,
+  "target_fatal_anr_oom_lmk_detected": 0,
+  "fatal_identity": "system shell am PID13488 com.android.commands.am.Am at VM shutdown",
+  "raw_level_counts": {
+    "W": 1840,
+    "E": 1203,
+    "F": 1
+  },
+  "all_runtime_warnings_eliminated": false,
+  "no_vm_or_gradle_residual": true,
+  "not_run": [
+    "standard explicit default ShiftS2",
+    "trime theme K1-K4/S1",
+    "API35",
+    "physical Android"
+  ],
+  "new_source_required_for_schema_restore_bug": true
+}

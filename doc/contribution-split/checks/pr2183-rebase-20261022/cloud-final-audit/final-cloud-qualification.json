@@ -1,0 +1,404 @@
+{
+  "schema": 1,
+  "passed": true,
+  "qualification": "cloud validation passed within the stated scope; physical-device acceptance remains pending, so this does not mark PR #2183 Ready or authorize merge",
+  "source": {
+    "base": "19b048494ffa55cae52d5385dfa6d0611461c27d",
+    "head": "1754bb51931407ac916549edc2ae57bba4c073bc",
+    "tree": "3c3ecc4764bef17b20bceece6d6c83e4475ec601",
+    "rebased_linear_commits": [
+      {
+        "sha": "caf61850bce8b8fb4f11d61b459385e17b8fa84e",
+        "subject": "feat: add nine-key Pinyin input with syllable selection"
+      },
+      {
+        "sha": "aeae918a711b727697d543032f8d286590fd3946",
+        "subject": "fix: synchronize candidate text with TextView layout"
+      },
+      {
+        "sha": "1754bb51931407ac916549edc2ae57bba4c073bc",
+        "subject": "fix: create deferred input views after theme initialization"
+      }
+    ],
+    "pull_request": {
+      "number": 2183,
+      "state": "open",
+      "draft": true,
+      "synthetic_merge": "fa7b6215e1b54690fd3151685189239c10cc398f",
+      "synthetic_merge_parents": [
+        "19b048494ffa55cae52d5385dfa6d0611461c27d",
+        "1754bb51931407ac916549edc2ae57bba4c073bc"
+      ],
+      "synthetic_merge_tree": "3c3ecc4764bef17b20bceece6d6c83e4475ec601"
+    }
+  },
+  "exact_source_control": {
+    "run": 39787582756,
+    "conclusion": "success",
+    "target_sha_binding_exact": true,
+    "recursive_submodules": 20,
+    "junit": {
+      "policy": "dynamic totals from all TEST-*.xml; no old fixed total reused",
+      "suite_count": 29,
+      "tests": 360,
+      "executed": 360,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "jni": {
+      "checks": 115,
+      "fixed_summary": "SUMMARY checks=115 destroy=0 exit=0",
+      "pass_sequence_contiguous": true,
+      "expected_baseline_failure_retained": true,
+      "baseline_summary": "SUMMARY checks=17 destroy=0 exit=1"
+    },
+    "evidence": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/cloud-run-39787582756/machine-audit.json",
+      "bytes": 23908,
+      "sha256": "76181004b2e13e1b331279e1ef6c5746566cdecb4b06fbf806f4447c78dc9b06"
+    }
+  },
+  "formal_workflows": [
+    {
+      "label": "fork_formal_exact_head",
+      "repository": "X2M7/trime",
+      "run": 39789373604,
+      "event": "push",
+      "api_head": "1754bb51931407ac916549edc2ae57bba4c073bc",
+      "checkout_proved_by_every_job_log": "1754bb51931407ac916549edc2ae57bba4c073bc",
+      "status": "completed",
+      "conclusion": "success",
+      "jobs_successful": 5,
+      "jobs_total": 5,
+      "build_platforms": [
+        "ubuntu-26.04",
+        "macos-26",
+        "macos-26-intel",
+        "windows-2025"
+      ],
+      "configured_abis_in_every_build_log": [
+        "armeabi-v7a",
+        "arm64-v8a",
+        "x86",
+        "x86_64"
+      ],
+      "native_cache_evidence": {
+        "job-119863786334-ubuntu.log": {
+          "restored_keys": [
+            "ubuntu-26.04-trime-jni-debug-c31ea5d0fd3b8145ac5625b0423dfbc4c85714c333c8b20ff38f05b39ac1af8a"
+          ],
+          "missing_keys": []
+        },
+        "job-119863786362-macos.log": {
+          "restored_keys": [
+            "macos-26-trime-jni-debug-80299ccd297679af08ea97e616e2f23e9693922057b2072d9cd96a3340902479"
+          ],
+          "missing_keys": []
+        },
+        "job-119863786466-macos-intel.log": {
+          "restored_keys": [
+            "macos-26-intel-trime-jni-debug-80299ccd297679af08ea97e616e2f23e9693922057b2072d9cd96a3340902479"
+          ],
+          "missing_keys": []
+        },
+        "job-119863786704-windows.log": {
+          "restored_keys": [
+            "windows-2025-trime-jni-debug-d5dca5366bceae7cc309882216a6ea94dac5111c50ee3cb5ba998ea5750c7021"
+          ],
+          "missing_keys": []
+        }
+      },
+      "artifact_metadata_count": 12,
+      "logs_archive": {
+        "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/cloud-run-39789373604/logs/run-39789373604-logs.zip",
+        "bytes": 437191,
+        "sha256": "4344e22b50d1ebd43ab26b8e781dab1d46f48f5bcb06c07e6cc89997d188dd09",
+        "zip_crc_passed": true,
+        "member_count": 83
+      }
+    },
+    {
+      "label": "upstream_pull_request_synthetic_merge",
+      "repository": "osfans/trime",
+      "run": 39789381040,
+      "event": "pull_request",
+      "api_head": "1754bb51931407ac916549edc2ae57bba4c073bc",
+      "checkout_proved_by_every_job_log": "fa7b6215e1b54690fd3151685189239c10cc398f",
+      "status": "completed",
+      "conclusion": "success",
+      "jobs_successful": 5,
+      "jobs_total": 5,
+      "build_platforms": [
+        "ubuntu-26.04",
+        "macos-26",
+        "macos-26-intel",
+        "windows-2025"
+      ],
+      "configured_abis_in_every_build_log": [
+        "armeabi-v7a",
+        "arm64-v8a",
+        "x86",
+        "x86_64"
+      ],
+      "native_cache_evidence": {
+        "job-119863505589-macos-intel.log": {
+          "restored_keys": [
+            "macos-26-intel-trime-jni-debug-80299ccd297679af08ea97e616e2f23e9693922057b2072d9cd96a3340902479"
+          ],
+          "missing_keys": []
+        },
+        "job-119863505645-ubuntu.log": {
+          "restored_keys": [
+            "ubuntu-26.04-trime-jni-debug-c31ea5d0fd3b8145ac5625b0423dfbc4c85714c333c8b20ff38f05b39ac1af8a"
+          ],
+          "missing_keys": []
+        },
+        "job-119863505743-macos.log": {
+          "restored_keys": [
+            "macos-26-trime-jni-debug-80299ccd297679af08ea97e616e2f23e9693922057b2072d9cd96a3340902479"
+          ],
+          "missing_keys": []
+        },
+        "job-119863505889-windows.log": {
+          "restored_keys": [
+            "windows-2025-trime-jni-debug-d5dca5366bceae7cc309882216a6ea94dac5111c50ee3cb5ba998ea5750c7021"
+          ],
+          "missing_keys": []
+        }
+      },
+      "artifact_metadata_count": 4,
+      "logs_archive": {
+        "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/cloud-run-39789381040/logs/run-39789381040-logs.zip",
+        "bytes": 424796,
+        "sha256": "7985bfccd7723fc111e4a4c300cf3c7eb03af1487e64b5a4f0c78232b3271290",
+        "zip_crc_passed": true,
+        "member_count": 74
+      }
+    }
+  ],
+  "formal_workflow_interpretation": [
+    "The fork Commit run 39789373604 completed 5/5 jobs successfully at the exact source head.",
+    "The upstream pull-request run 39789381040 completed 5/5 jobs successfully; every job log proves checkout of the synthetic merge, whose tree equals the source tree.",
+    "The source head and synthetic merge are two identities for one PR execution context, not additive test cases.",
+    "The upstream workflow actually ran to success while the PR remained Draft; no pending maintainer-approval gate was observed for this run."
+  ],
+  "temporary_run": {
+    "run": 39787303403,
+    "status": "completed",
+    "conclusion": "cancelled",
+    "successful_jobs": [
+      "check / lint-and-test",
+      "build (ubuntu-26.04)"
+    ],
+    "cancelled_jobs": [
+      "build (macos-26)",
+      "build (macos-26-intel)",
+      "build (windows-2025)"
+    ],
+    "all_os_pass_claim": false,
+    "macos_26_bounded_fact": "build/upload steps succeeded and three artifacts exist, but the authoritative job conclusion is cancelled",
+    "evidence": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/cloud-final-audit/temp-run-final-audit.json",
+      "bytes": 9048,
+      "sha256": "e5c94f47a414ba833f0b982f883c8fd7a406de3e3704a7ee1d32f6335b43d34b"
+    }
+  },
+  "downloaded_ubuntu_debug_apks": {
+    "run": 39787303403,
+    "artifact": "trime-ubuntu-26.04",
+    "artifact_id": 12430451882,
+    "source_head": "1754bb51931407ac916549edc2ae57bba4c073bc",
+    "source_tree": "3c3ecc4764bef17b20bceece6d6c83e4475ec601",
+    "abis": [
+      "arm64-v8a",
+      "armeabi-v7a",
+      "x86",
+      "x86_64"
+    ],
+    "shared_debug_certificate_sha256": "0d50a6c4b5af14741b9307952de134bff81ebf38c81d8030d1528200873f5c38",
+    "x86_64_apk": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/cloud-run-39787303403/artifacts/trime-ubuntu-26.04-12430451882/files/com.osfans.trime-1754bb51-x86_64-debug.apk",
+    "x86_64_apk_sha256": "b316fac143965738f42ea18bd5ecd73abb7ef0eca47b38bb1d3311b37fd4db82",
+    "recursive_submodule_pins": 20,
+    "audit": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/cloud-run-39787303403/apk-audit/result.json",
+      "bytes": 22154,
+      "sha256": "1ab688ad485f4870e3d6538c442fb7eeee839a4b53a6bb757d37287a834ea8e8"
+    },
+    "limits": [
+      "Only this Ubuntu artifact was downloaded and unpacked; formal artifacts from the other platforms were retained by official API identity and successful upload logs without duplicate downloads.",
+      "The debug certificate and apksigner warnings are recorded below; this is not Release-signature evidence."
+    ]
+  },
+  "warnings": {
+    "occurrence_unit": "one mechanically selected warning-emitting line, plus each apksigner warning captured per ABI APK",
+    "total_occurrences": 399,
+    "family_count": 9,
+    "families": [
+      {
+        "family": "apk_v1_jar_signature_unprotected_meta_inf_service",
+        "occurrences": 8,
+        "emitter": "apksigner verify --verbose --print-certs on each debug ABI APK",
+        "attribution": "APK packaging / v1 JAR-signature entry rules",
+        "confidence": "high",
+        "observed_effect": "two META-INF kotlinx.coroutines service entries per APK are excluded from the v1/JAR entry-signature path; apksigner reports both v1 and v2 verification successful, so this warning must not be restated as absence of v2 whole-APK integrity",
+        "follow_up": "Retain the exact v1/JAR-entry warning in delivery notes and assess packaging policy separately; do not state warning-free signature verification."
+      },
+      {
+        "family": "github_action_annotation",
+        "occurrences": 2,
+        "emitter": "setup-java Gradle cache post-job save on Windows",
+        "attribution": "CI/action/cache behavior",
+        "confidence": "high",
+        "observed_effect": "Git tar could not read busy Gradle lock files and exited 2 after build and artifact uploads; the jobs still succeeded, but that Gradle cache save did not",
+        "follow_up": "Track cache shutdown/lock handling in CI or the action. Do not treat the successful job as a zero-warning result."
+      },
+      {
+        "family": "gradle_configuration_set_visible_deprecated",
+        "occurrences": 55,
+        "emitter": "Gradle warning-mode-all; stack traces enter Android Gradle Plugin BasePlugin.kt and SourceSetManager.kt",
+        "attribution": "Android Gradle Plugin / Gradle compatibility path",
+        "confidence": "high",
+        "observed_effect": "55 diagnostics in the exact-source control job; Configuration.setVisible(boolean) is scheduled for removal in Gradle 11, while the current validation completed",
+        "follow_up": "Track an Android Gradle Plugin update or compatibility fix before adopting Gradle 11. Do not add that unrelated build-tool change to the T9 patch."
+      },
+      {
+        "family": "gradle_deprecated_features",
+        "occurrences": 28,
+        "emitter": "Gradle build",
+        "attribution": "build scripts or plugins not distinguished by these summary lines",
+        "confidence": "high for emitter, unknown for owner",
+        "observed_effect": "builds completed; log warns about Gradle 10 incompatibility",
+        "follow_up": "Run the affected full build path with actionable deprecation detail and assign each feature before a Gradle 10 migration."
+      },
+      {
+        "family": "java_native_access_restricted",
+        "occurrences": 72,
+        "emitter": "Android cmdline-tools JNA under Java 25, observed on macOS Intel and Windows",
+        "attribution": "CI/toolchain dependency",
+        "confidence": "high",
+        "observed_effect": "warning only today; the JDK states restricted calls may be blocked in a future release",
+        "follow_up": "Update the tool/JNA path or explicitly configure native access after assessing the security and compatibility implications."
+      },
+      {
+        "family": "leveldb_cmake_minimum_deprecated",
+        "occurrences": 14,
+        "emitter": "app/src/main/jni/librime/deps/leveldb/CMakeLists.txt",
+        "attribution": "pinned native dependency",
+        "confidence": "high",
+        "observed_effect": "cache-miss native builds completed; future CMake compatibility warning remains",
+        "follow_up": "Resolve through the pinned dependency or an upstream-compatible CMake minimum update, outside an unrelated T9 behavior patch."
+      },
+      {
+        "family": "librime_lua_32bit_constant_conversion",
+        "occurrences": 7,
+        "emitter": "app/src/main/jni/librime/plugins/librime-lua/src/types.cc:1959",
+        "attribution": "pinned native dependency, 32-bit targets",
+        "confidence": "high",
+        "observed_effect": "ULL maximum converts to 32-bit size_t maximum; the log alone cannot prove the truncation is benign",
+        "follow_up": "Review the sentinel/value intent on armeabi-v7a and x86 in the dependency; keep it visible as a possible 32-bit correctness concern."
+      },
+      {
+        "family": "sdkmanager_cli_deprecated",
+        "occurrences": 45,
+        "emitter": "Android SDK command-line sdkmanager invoked by CI setup",
+        "attribution": "CI/toolchain dependency",
+        "confidence": "high",
+        "observed_effect": "warning only; associated jobs completed",
+        "follow_up": "Track migration away from the deprecated sdkmanager CLI in CI/tooling; do not attribute it to T9 runtime code."
+      },
+      {
+        "family": "yaml_cpp_cxx14_constexpr",
+        "occurrences": 168,
+        "emitter": "pinned yaml-cpp dragonbox.h",
+        "attribution": "pinned native dependency",
+        "confidence": "high",
+        "observed_effect": "repeated compiler warning across native ABIs; actual packaged ELF files passed inspection",
+        "follow_up": "Track the dependency/compiler compatibility fix; successful packaging does not erase the future behavior-change warning."
+      }
+    ],
+    "scope_counts": {
+      "downloaded_ubuntu_apk_signature": {
+        "apk_v1_jar_signature_unprotected_meta_inf_service": 8
+      },
+      "exact_source_control": {
+        "gradle_configuration_set_visible_deprecated": 55,
+        "sdkmanager_cli_deprecated": 3
+      },
+      "fork_formal_head": {
+        "github_action_annotation": 1,
+        "gradle_deprecated_features": 10,
+        "java_native_access_restricted": 24,
+        "sdkmanager_cli_deprecated": 14
+      },
+      "temp_cancelled_partial": {
+        "gradle_deprecated_features": 4,
+        "java_native_access_restricted": 24,
+        "leveldb_cmake_minimum_deprecated": 10,
+        "librime_lua_32bit_constant_conversion": 5,
+        "sdkmanager_cli_deprecated": 9,
+        "yaml_cpp_cxx14_constexpr": 120
+      },
+      "temp_exact_head": {
+        "gradle_deprecated_features": 4,
+        "leveldb_cmake_minimum_deprecated": 4,
+        "librime_lua_32bit_constant_conversion": 2,
+        "sdkmanager_cli_deprecated": 5,
+        "yaml_cpp_cxx14_constexpr": 48
+      },
+      "upstream_pr_merge": {
+        "github_action_annotation": 1,
+        "gradle_deprecated_features": 10,
+        "java_native_access_restricted": 24,
+        "sdkmanager_cli_deprecated": 14
+      }
+    },
+    "diagnostic_group_notes": [
+      "The 72 Java native-access lines are 18 four-line warning blocks; the line-level total preserves every emitted warning line.",
+      "The 55 Configuration.setVisible(boolean) diagnostics come from the exact-source control run with --warning-mode=all; their stack traces enter Android Gradle Plugin code.",
+      "The two GitHub action annotations are one Windows setup-java Gradle-cache save failure in each formal run, after successful build and artifact upload.",
+      "The eight apksigner warnings concern two META-INF service entries per ABI APK in the v1/JAR entry-signature path; the same four signer outputs report successful v1 and v2 verification.",
+      "Warnings from the three partially executed cancelled temp jobs remain included and do not turn those jobs into passes."
+    ],
+    "records": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/cloud-final-audit/warning-records.jsonl",
+      "bytes": 150975,
+      "sha256": "285a466513d3d0e7a13e728db9766deab49190b5131cac036ecd145104f1e585"
+    },
+    "summary": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/cloud-final-audit/warning-summary.json",
+      "bytes": 12971,
+      "sha256": "9eab6a59bce9ce0d4a758ad4d35e9ebccf39195508b61206878db3cd1e70e77a"
+    },
+    "adjudication": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/cloud-final-audit/warning-adjudication.json",
+      "bytes": 7357,
+      "sha256": "6e28888b6a7e7a5fcabde204e46339758b233b9b8e8890401730bfc48e9de1a6"
+    }
+  },
+  "evidence_roots": {
+    "formal_audit": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/cloud-final-audit/formal-cloud-audit.json",
+      "bytes": 18316,
+      "sha256": "f90c04154b65f4b264ba73daa70eb5653b60b67e406e5e632979c4cc0ccaeb6d"
+    },
+    "temp_audit": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/cloud-final-audit/temp-run-final-audit.json",
+      "bytes": 9048,
+      "sha256": "e5c94f47a414ba833f0b982f883c8fd7a406de3e3704a7ee1d32f6335b43d34b"
+    },
+    "control_binding": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/cloud-prepare/local-binding-verification.json",
+      "bytes": 5645,
+      "sha256": "65fad6340a72d91cec7914fd5a8bb7e6b5745b23bee9bac32fd1be98b511644d"
+    }
+  },
+  "limits": [
+    "Four-OS CI proves successful debug build paths configured for four Android ABIs; it is not Release or device acceptance.",
+    "The cache-hit formal runs do not prove fresh per-object native compilation. The cache-miss Ubuntu temp log records four configure tasks, four build tasks, and four Ninja directory entries, but no per-object compile or explicit link records.",
+    "The two formal Windows jobs succeeded after artifact upload, but each failed to save the post-job Gradle cache because Git tar encountered busy lock files; this CI/action warning remains open.",
+    "Dependency/tool warnings, including the 32-bit librime-lua conversion and debug APK signature warnings, remain visible and are not declared harmless by successful jobs.",
+    "No source, workflow, PR state, Git ref, device, or Gradle execution was changed by this final audit.",
+    "Physical-device validation is outside this cloud audit and remains required before declaring the Draft PR Ready."
+  ]
+}

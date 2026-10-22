@@ -1,0 +1,51 @@
+{
+  "utc": "2026-10-22T14:32:04.628138+00:00",
+  "head": "b14a2f1e0565cec4953f5a974bfcea023875369f",
+  "draft": true,
+  "body_exact_readback": true,
+  "body_sha256": "404fe7419a0eba18ca2e185e67f69b52ee8e6afda7e70ecf3532ea3f9806e175",
+  "old_1754_candidate_superseded_and_results_explicitly_historical": true,
+  "new_head_ci_and_android_pass_claim": false,
+  "physical_device": "NOT_RUN",
+  "calls": [
+    {
+      "label": "before",
+      "args": [
+        "pr",
+        "view",
+        "2183",
+        "--repo",
+        "osfans/trime",
+        "--json",
+        "state,isDraft,headRefOid,body,url"
+      ],
+      "exit": 0
+    },
+    {
+      "label": "edit",
+      "args": [
+        "pr",
+        "edit",
+        "2183",
+        "--repo",
+        "osfans/trime",
+        "--body-file",
+        "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/pr-body-draft-schema-fix-pending.md"
+      ],
+      "exit": 0
+    },
+    {
+      "label": "after",
+      "args": [
+        "pr",
+        "view",
+        "2183",
+        "--repo",
+        "osfans/trime",
+        "--json",
+        "state,isDraft,headRefOid,body,url"
+      ],
+      "exit": 0
+    }
+  ]
+}

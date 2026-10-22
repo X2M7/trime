@@ -1,0 +1,106 @@
+{
+  "utc": "2026-10-22T14:31:38.297980+00:00",
+  "repository": "X2M7/trime",
+  "control_head": "f70978085dbb9cd11bf5f4ed67f37905de7fed78",
+  "source_target": "b14a2f1e0565cec4953f5a974bfcea023875369f",
+  "scope": "pr-t9-schema-memory",
+  "fork_only": true,
+  "workflow_body_otherwise_unchanged": true,
+  "calls": [
+    {
+      "label": "head-before",
+      "args": [
+        "rev-parse",
+        "HEAD"
+      ],
+      "exit": 0
+    },
+    {
+      "label": "status-before",
+      "args": [
+        "status",
+        "--porcelain"
+      ],
+      "exit": 0
+    },
+    {
+      "label": "push-url",
+      "args": [
+        "remote",
+        "get-url",
+        "--push",
+        "x2m7"
+      ],
+      "exit": 0
+    },
+    {
+      "label": "remote-before",
+      "args": [
+        "ls-remote",
+        "x2m7",
+        "refs/heads/contrib/split-validation"
+      ],
+      "exit": 0
+    },
+    {
+      "label": "diff-check",
+      "args": [
+        "diff",
+        "--check"
+      ],
+      "exit": 0
+    },
+    {
+      "label": "stage",
+      "args": [
+        "add",
+        "--",
+        ".github/workflows/split-validation.yml"
+      ],
+      "exit": 0
+    },
+    {
+      "label": "commit",
+      "args": [
+        "commit",
+        "-F",
+        "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/control-push/commit-message.txt"
+      ],
+      "exit": 0
+    },
+    {
+      "label": "head-after",
+      "args": [
+        "rev-parse",
+        "HEAD"
+      ],
+      "exit": 0
+    },
+    {
+      "label": "push",
+      "args": [
+        "push",
+        "x2m7",
+        "HEAD:refs/heads/contrib/split-validation"
+      ],
+      "exit": 0
+    },
+    {
+      "label": "remote-after",
+      "args": [
+        "ls-remote",
+        "x2m7",
+        "refs/heads/contrib/split-validation"
+      ],
+      "exit": 0
+    },
+    {
+      "label": "status-after",
+      "args": [
+        "status",
+        "--porcelain"
+      ],
+      "exit": 0
+    }
+  ]
+}

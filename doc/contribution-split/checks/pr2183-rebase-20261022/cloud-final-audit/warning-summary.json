@@ -3,8 +3,11 @@
   "passed": true,
   "selection": {
     "temp_exact_head": "Successful check and cache-miss Ubuntu jobs only; the remaining temp jobs are intentionally not used for the formal four-OS conclusion.",
+    "temp_cancelled_partial": "Original partial logs from temp build jobs cancelled after formal coverage completed; warning occurrences are retained but these jobs are not passes.",
+    "exact_source_control": "Successful exact-source dynamic JVM and 115-check JNI control job.",
     "fork_formal_head": "All five successful jobs at exact source head.",
-    "upstream_pr_merge": "All five successful jobs at the synthetic merge tree."
+    "upstream_pr_merge": "All five successful jobs at the synthetic merge tree.",
+    "downloaded_ubuntu_apk_signature": "apksigner warnings from all four inspected ABI APKs."
   },
   "log_inventory": [
     {
@@ -18,6 +21,30 @@
       "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/cloud-run-39787303403/logs/job-119856412324-ubuntu.log",
       "bytes": 321001,
       "sha256": "c93b65f492a350c051b2e3765a7b71e3ca4c7929d115764c307d26e40ee14984"
+    },
+    {
+      "scope": "temp_cancelled_partial",
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/cloud-run-39787303403/logs/job-119856412064-macos-intel-cancelled.log",
+      "bytes": 271245,
+      "sha256": "a435f1d6e27a93ea974ca32eb18b8b0120e33ddb0c8666266c9d72e68d3bad98"
+    },
+    {
+      "scope": "temp_cancelled_partial",
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/cloud-run-39787303403/logs/job-119856412353-macos-cancelled.log",
+      "bytes": 326049,
+      "sha256": "e0bf24ab15772f50c0cddeea1937803a387445c1417b6a2f05a6f30e228bc03e"
+    },
+    {
+      "scope": "temp_cancelled_partial",
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/cloud-run-39787303403/logs/job-119856412439-windows-cancelled.log",
+      "bytes": 202393,
+      "sha256": "c22eee2f3393ff904eb7e8cacff2d325fd6ab6dace47da9dce94ed7f8e8b55f5"
+    },
+    {
+      "scope": "exact_source_control",
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/cloud-run-39787582756/logs/job-119854694532.log",
+      "bytes": 2003393,
+      "sha256": "0a39d41857b95670a52da28920491b482ddecfda46d715a29a759fe855aa9e17"
     },
     {
       "scope": "fork_formal_head",
@@ -80,13 +107,28 @@
       "sha256": "be17132d3a8b7ba1a2b4205b8a5947919103292cce534defd109a4544bc33259"
     }
   ],
-  "record_count": 161,
+  "record_count": 399,
   "counts_by_scope_and_family": {
+    "downloaded_ubuntu_apk_signature": {
+      "apk_v1_jar_signature_unprotected_meta_inf_service": 8
+    },
+    "exact_source_control": {
+      "gradle_configuration_set_visible_deprecated": 55,
+      "sdkmanager_cli_deprecated": 3
+    },
     "fork_formal_head": {
       "github_action_annotation": 1,
       "gradle_deprecated_features": 10,
       "java_native_access_restricted": 24,
       "sdkmanager_cli_deprecated": 14
+    },
+    "temp_cancelled_partial": {
+      "gradle_deprecated_features": 4,
+      "java_native_access_restricted": 24,
+      "leveldb_cmake_minimum_deprecated": 10,
+      "librime_lua_32bit_constant_conversion": 5,
+      "sdkmanager_cli_deprecated": 9,
+      "yaml_cpp_cxx14_constexpr": 120
     },
     "temp_exact_head": {
       "gradle_deprecated_features": 4,
@@ -103,6 +145,22 @@
     }
   },
   "counts_by_log_and_family": {
+    "downloaded_ubuntu_apk_signature//home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/cloud-run-39787303403/artifacts/trime-ubuntu-26.04-12430451882/files/com.osfans.trime-1754bb51-arm64-v8a-debug.apk": {
+      "apk_v1_jar_signature_unprotected_meta_inf_service": 2
+    },
+    "downloaded_ubuntu_apk_signature//home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/cloud-run-39787303403/artifacts/trime-ubuntu-26.04-12430451882/files/com.osfans.trime-1754bb51-armeabi-v7a-debug.apk": {
+      "apk_v1_jar_signature_unprotected_meta_inf_service": 2
+    },
+    "downloaded_ubuntu_apk_signature//home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/cloud-run-39787303403/artifacts/trime-ubuntu-26.04-12430451882/files/com.osfans.trime-1754bb51-x86-debug.apk": {
+      "apk_v1_jar_signature_unprotected_meta_inf_service": 2
+    },
+    "downloaded_ubuntu_apk_signature//home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/cloud-run-39787303403/artifacts/trime-ubuntu-26.04-12430451882/files/com.osfans.trime-1754bb51-x86_64-debug.apk": {
+      "apk_v1_jar_signature_unprotected_meta_inf_service": 2
+    },
+    "exact_source_control/job-119854694532.log": {
+      "gradle_configuration_set_visible_deprecated": 55,
+      "sdkmanager_cli_deprecated": 3
+    },
     "fork_formal_head/job-119860988370-check.log": {
       "gradle_deprecated_features": 2,
       "sdkmanager_cli_deprecated": 2
@@ -125,6 +183,29 @@
       "gradle_deprecated_features": 2,
       "java_native_access_restricted": 12,
       "sdkmanager_cli_deprecated": 3
+    },
+    "temp_cancelled_partial/job-119856412064-macos-intel-cancelled.log": {
+      "gradle_deprecated_features": 1,
+      "java_native_access_restricted": 12,
+      "leveldb_cmake_minimum_deprecated": 3,
+      "librime_lua_32bit_constant_conversion": 1,
+      "sdkmanager_cli_deprecated": 3,
+      "yaml_cpp_cxx14_constexpr": 36
+    },
+    "temp_cancelled_partial/job-119856412353-macos-cancelled.log": {
+      "gradle_deprecated_features": 2,
+      "leveldb_cmake_minimum_deprecated": 4,
+      "librime_lua_32bit_constant_conversion": 2,
+      "sdkmanager_cli_deprecated": 3,
+      "yaml_cpp_cxx14_constexpr": 48
+    },
+    "temp_cancelled_partial/job-119856412439-windows-cancelled.log": {
+      "gradle_deprecated_features": 1,
+      "java_native_access_restricted": 12,
+      "leveldb_cmake_minimum_deprecated": 3,
+      "librime_lua_32bit_constant_conversion": 2,
+      "sdkmanager_cli_deprecated": 3,
+      "yaml_cpp_cxx14_constexpr": 36
     },
     "temp_exact_head/job-119853801115-check.log": {
       "gradle_deprecated_features": 2,
@@ -163,17 +244,21 @@
   },
   "families": {
     "sdkmanager_cli_deprecated": "Android SDK setup tool deprecation emitted by the runner toolchain.",
-    "java_native_access_restricted": "JDK native-access warnings from cmdline-tools/JNA, observed on macOS Intel.",
+    "java_native_access_restricted": "JDK native-access warnings from cmdline-tools/JNA, observed on macOS Intel and Windows.",
     "leveldb_cmake_minimum_deprecated": "Pinned librime LevelDB CMake minimum compatibility warning.",
     "yaml_cpp_cxx14_constexpr": "Pinned yaml-cpp dragonbox C++14 behavior-change warning.",
     "librime_lua_32bit_constant_conversion": "Pinned librime-lua conversion warning observed for 32-bit ABIs.",
     "gradle_deprecated_features": "Gradle reports deprecated features incompatible with Gradle 10.",
+    "gradle_configuration_set_visible_deprecated": "Gradle warning-mode-all reports Android Gradle Plugin calls to Configuration.setVisible(boolean), scheduled for removal in Gradle 11.",
+    "apk_v1_jar_signature_unprotected_meta_inf_service": "apksigner reports META-INF service entries excluded from the v1/JAR entry-signature path; the same outputs report successful v1 and v2 APK verification.",
     "github_action_annotation": "Other GitHub Actions warning annotation; retained verbatim for review.",
     "other_compiler_or_tool_warning": "Other compiler/tool warning; retained verbatim for review.",
     "unclassified_warning": "Warning-shaped line without a recognized family; retained verbatim."
   },
   "interpretation": [
     "The cache-miss temp Ubuntu log is included so native dependency warnings are not hidden by the quieter cache-hit formal jobs.",
+    "Cancelled temp-job warnings are preserved as partial execution output and are not evidence that those jobs passed.",
+    "APK signature warnings are counted once per emitted warning per ABI APK; repeated messages across four APKs remain visible.",
     "Counts include repeated emissions across setup invocations, ABIs, platforms, and runs; they are occurrence counts, not unique defects.",
     "Successful jobs do not discharge these warnings. This report attributes only their emitter/path and does not claim they are harmless."
   ]
