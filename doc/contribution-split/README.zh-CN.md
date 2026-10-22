@@ -12,7 +12,7 @@
 
 [修订后的 ARM64 真机清单](checks/pr2183-rebase-20261022/device-delivery-c4-reviewed/README.md)及 [Root 字节／契约核验](checks/pr2183-rebase-20261022/device-delivery-c4-reviewed-root-verification.json)已准备。原 CI Debug APK SHA-256 为 `12fd34dad063e76a0cdd132bbed83e802e02cd5f5ada80671f7f6935c09619c0`，证书为 `f6409a2d9db2800f1acc9b2e614d73e4609df3652d265cf2c40eb8a64456deb2`。44 个真机结果字段全部 **NOT_RUN**。Git 索引没有 APK：先从[原 Actions 附件](https://github.com/X2M7/trime/actions/runs/39806420824/artifacts/12438099455)取出对应 ARM64 文件放入清单目录，再运行 `sha256sum -c SHA256SUMS`。签名不匹配时保留用户数据并停止，不卸载绕过。
 
-本轮不是旧十七项全部重跑、展开候选滚动恢复、全应用、快速焦点竞态、全部缓存强制模式、真机、TalkBack、Release、升级或正式性能验收。Debug 首次维护单列，不代表每次弹键盘都全量编译。旧源码失败、421 ms Shift 工具拒收、API21 v7 缺失 env 的触摸前远端 127 均保留，未冒充产品通过。依赖／工具／运行／META-INF 签名警告仍存在，未 Ready、合并或发布稳定版，主 develop 未改或推送。当前机器状态见[清单](checks/readiness-20261022.json)；下文保留原时间和源码范围的历史记录。
+本轮不是旧十七项全部重跑、展开候选滚动恢复、全应用、快速焦点竞态、全部缓存强制模式、真机、TalkBack、Release、升级或正式性能验收。Debug 首次维护单列，不代表每次弹键盘都全量编译。旧源码失败、421 ms Shift 工具拒收、API21 v7 缺失 env 的触摸前远端 127 均保留，未冒充产品通过。依赖／工具／运行／META-INF 签名警告仍存在，未 Ready、合并或发布稳定版，主 develop 未改或推送。[PR 正文实际更新回执](checks/pr2183-rebase-20261022/original-pr-update5/receipt.json)确认原源码与 Draft 未变、正文逐字读回一致，正文证据固定引用 `9b8d7472`。当前机器状态见[清单](checks/readiness-20261022.json)；下文保留原时间和源码范围的历史记录。
 
 ## 先前审阅状态（2026-10-22 06:02 UTC，历史记录）
 

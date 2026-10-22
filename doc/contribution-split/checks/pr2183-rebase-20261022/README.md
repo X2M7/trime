@@ -1,6 +1,6 @@
 # PR #2183 当前整改与证据（c4b613f7）
 
-当前源码 `c4b613f78835e7b914e02447955c6b89fe9839ab`，基线 `19b048494ffa55cae52d5385dfa6d0611461c27d`，五条规范提交、零 merge。原 PR 保持 **Draft，真机 NOT_RUN**。[当前限定总表](current-c4-qualified-scope.json)为本节入口。
+当前源码 `c4b613f78835e7b914e02447955c6b89fe9839ab`，基线 `19b048494ffa55cae52d5385dfa6d0611461c27d`，五条规范提交、零 merge。原 PR 保持 **Draft，真机 NOT_RUN**。[当前限定总表](current-c4-qualified-scope.json)为本节入口。 [实际 fork 索引推送](index-publish4/receipt.json)、[现有 PR 正文更新回执](original-pr-update5/receipt.json)及[读回一致的正文](original-pr-update5/body.md)保留；正文固定引用 `9b8d7472` 的验收证据，本次后续提交只补录实际操作回执。
 
 - [云端资格](schema-layout-regression/c4-cloud-terminal1/qualification2.json)：fork／上游正式各 5/5 成功，新执行 360 JVM／115 JNI 通过。[原始四 ABI APK 审计](schema-layout-regression/c4-fork-run-39806420824-ubuntu1/apk-audit/result.json)与[真实终态补充](schema-layout-regression/c4-cloud-terminal1/terminal-status-addendum1.json)保留原字节；旧端点滞后句由后续终态覆盖。
 - [Android 5.0 业务资格](runtime/api21-c4-independent1/api21-c4-business-aggregate-qualification1.json)及 [Android 15 业务资格](runtime/api35-c4-independent1/api35-c4-business-aggregate-qualification1.json)：每系统 12 实际成功会话／14 逻辑项／134 帧；K1 各嵌入两主题 R4 一次，没有额外 K1 会话或重复计数。当前原包由 [v7 绑定](runtime/original-apk-binding-c4-v7.json)及仅 Shift 使用的 [v8 绑定](runtime/original-apk-binding-c4-v8-shift.json)固定。精确提交文本、拼音状态、进程和真实触摸断言保留，原采集日志 false／空 checks 未改。

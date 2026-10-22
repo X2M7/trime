@@ -1,0 +1,8 @@
+{
+  "utc": "2026-10-22T17:41:58.869240+00:00",
+  "phase": "Local read-only validation before first GitHub API fetch/body edit",
+  "error": "TypeError: api function shadowed by platform loop variable",
+  "external_PR_mutation": false,
+  "evidence": "Traceback at before = api(...); receipt directory not yet created",
+  "correction": "Rename platform loop variable to platform_api; all guards, expected source/body/base and test oracles unchanged"
+}
