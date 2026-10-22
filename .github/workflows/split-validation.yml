@@ -208,7 +208,8 @@ jobs:
           set -euo pipefail
           evidence="$RUNNER_TEMP/split-validation/$VALIDATION_SCOPE"
           baseline=649c07559cfbc1e494835465e71277fe8dc8051c
-          if [ "$VALIDATION_SCOPE" = pr-jni-unicode-transport ]; then
+          if [ "$VALIDATION_SCOPE" = pr-jni-unicode-transport ] || \
+             [ "$VALIDATION_SCOPE" = pr-t9-schema-memory ]; then
             baseline=12ffd16fe03537b6d0ed9716c71cbc33608c2a33
           fi
           python3 app/src/test/native/jni/run_unicode.py \
