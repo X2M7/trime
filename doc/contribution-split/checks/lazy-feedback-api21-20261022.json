@@ -1,0 +1,45 @@
+{
+  "tts": {
+    "engines": [
+      "com.svox.pico"
+    ],
+    "initialized": true,
+    "failedInitialization": false,
+    "utteranceStart": true,
+    "utteranceDone": true
+  },
+  "checks": [
+    "disabled initialization and requests allocate no TTS or SoundPool",
+    "real worker queued speech rejected after finishInput",
+    "real worker queued speech rejected after destroy/init",
+    "system sound does not allocate custom pool; muted custom feedback allocates none",
+    "real SoundPool loads WAV and manager receives load callback, plays, retains across finish and clears on destroy",
+    "real TTS initializes, manager utterance starts/completes, finish clears pending and destroy clears resource"
+  ],
+  "pid": 4092,
+  "sdk": 21,
+  "targetApk": "/data/app/com.osfans.trime.debug-1/base.apk",
+  "scope": "Real target manager/Looper, real SoundPool WAV load callback and TTS initialization; TTS speech only if ready engine reports start/done. No physical audibility, actual keyboard gestures or observed stale native callback claim",
+  "source_head": "e7e63932683dfcc985cc88601f995968b8fc50b4",
+  "helper_build": "feedback-build5",
+  "original_result_sha256": "acbc150e8b588fd991a19bab0a00d3f440e408bae7b178d7a815d2b9935bcfb8",
+  "signature_scope": "Diagnostic-only re-signed exact-source target; non-signature payload entries retained.",
+  "limits": [
+    "Six Android checks, separate from the 14 earlier host unit cases.",
+    "Pico initialized and reported start/done. No claim of physical audible output or an observed late native callback.",
+    "Initial probe attempted singleton access before Application initialization and failed with zero cases; preserved as a harness failure.",
+    "API35 and real keyboard gesture validation pending; no Rime startup or application stability acceptance from this focused probe.",
+    "Six checks are not an overall pass: engine later crashed during shutdown, and #2179 remains Draft."
+  ],
+  "six_business_groups_passed": true,
+  "overall_acceptance_passed": false,
+  "post_checks_engine_failure": {
+    "device_time": "10-22 08:20:38.242",
+    "package": "com.svox.pico",
+    "pid": 2552,
+    "signal": "SIGSEGV",
+    "stack": "/system/lib64/libttspico.so picoos_deallocate -> sigDeallocate -> pico_disposeEngine -> android::TtsEngine::shutdown",
+    "attribution": "Not yet uniquely determined. Self-target standalone standard TTS API control pending. Do not exempt solely by package ownership.",
+    "later_logcat_apk": "Failure predates its 08:22 installation; not a new7da Trime startup fatal."
+  }
+}
