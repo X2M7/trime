@@ -5,3 +5,7 @@
 # Handle line endings automatically for files detected as text
 # and leave all files detected as binary untouched.
 *	text=auto
+
+# Preserve original device evidence byte-for-byte, including Android 5 CRLF.
+/doc/contribution-split/checks/deferred-input-view-api21-startup-20261022/** -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+/doc/contribution-split/checks/deferred-input-view-api21-20261022/** -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
