@@ -1,0 +1,57 @@
+{
+  "schema": "trime-t9-api21-new-source-execution-order/v1",
+  "status": "HOST_PREPARED_NO_ADB",
+  "source": "9f86bc8f1d11d65d2e22e437f111a965bc2faba5",
+  "original_binding": "/home/xumin/Public/Trime/build/readiness-20261022/t9/v5-original-fork-9f86-binding1.json",
+  "original_17_definition": "/home/xumin/Public/Trime/build/readiness-20261022/t9/android-smoke-minimal-v4.json",
+  "sessions": [
+    {
+      "name": "api21-smoke-v5-standard-first-session",
+      "scope": [
+        "actual theme/schema setup",
+        "tongwenfeng category macro regression",
+        "standard C1",
+        "standard C2",
+        "standard C3",
+        "standard C4"
+      ]
+    },
+    {
+      "name": "api21-smoke-v5-standard-last-session",
+      "scope": [
+        "standard C5",
+        "standard C6",
+        "standard C7",
+        "standard C8"
+      ]
+    },
+    {
+      "name": "api21-smoke-v5-trime-session",
+      "scope": [
+        "actual theme switch",
+        "trime C1",
+        "trime C2",
+        "trime C3",
+        "trime C4",
+        "trime C5",
+        "trime C6",
+        "trime C7",
+        "trime C8"
+      ]
+    }
+  ],
+  "preflight": [
+    "Root launches soleAPI21 then explicitly leases ADB.",
+    "Read installedoldtestAPK/cert/profile; backup old private/external profile byte-exact plus HOST file hashes before target-only incompatible-signature uninstall. Do not copy oldcompiledcache/shared/checksums/native/userdb back.",
+    "Install same exact original9f86 APK; only explicit3testprefs APP_STORAGE/trime/follow_system_night=false if needed, separately record.",
+    "Actual native Success+stablePID, real visible candidates/schema UI; cold EngineReady and asynchronous maintenanceSuccess distinguished.",
+    "Retain original v4 case requirements including C1 actual segment-focus gesture and ni-after-undo semantics, C4raw64 undo, C5raw64/Sendaction4/newline, C6literal2/longABC2raw642, C7theme-specific a! versus a！, C8fresh-editor nooldlock."
+  ],
+  "fixed_limits_unchanged": {
+    "observer_hard_minutes": 28,
+    "idle_seconds": 90,
+    "requests": 400,
+    "output_mib": 256
+  },
+  "no_new_tests_run": true
+}
