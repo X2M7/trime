@@ -1,0 +1,123 @@
+{
+  "schema": "pr2183-exact-b14-device-delivery-identity/v1",
+  "record_state": "HOST_AUDITED_PHYSICAL_NOT_RUN",
+  "identity_authority": {
+    "file": "apk-audit-result.json",
+    "bytes": 27624,
+    "sha256": "65259e1fb68eaebb25d1cb3e3b5d881021129d5463734a51c1d5c4e0387d6f93",
+    "rule": "The included audit result is the complete identity authority; this summary must not override it."
+  },
+  "source": {
+    "head": "b14a2f1e0565cec4953f5a974bfcea023875369f",
+    "tree": "3b40eef39ce8245096c74b1a3a5066d9b4009df1",
+    "parent": "1754bb51931407ac916549edc2ae57bba4c073bc",
+    "upstream_base": "19b048494ffa55cae52d5385dfa6d0611461c27d",
+    "changed_paths": [
+      "app/src/main/java/com/osfans/trime/ime/keyboard/KeyboardWindow.kt",
+      "doc/t9-input.md"
+    ],
+    "independent_review_file": "source-independent-review.json",
+    "independent_review_sha256": "8b68252de8be04a9a535f1908162c8ce226cc3a29cb51689038907dbfcf3f102",
+    "review_verdict": "APPROVE_WITH_NEW_HEAD_RUNTIME_REGRESSION_REQUIRED"
+  },
+  "behavior_document": {
+    "included_file": "t9-input.md",
+    "source_repo_path": "doc/t9-input.md",
+    "git_blob_sha1": "e4fde0aa867291ae72527e00e5bb5334aa38a6d4",
+    "bytes": 2153,
+    "sha256": "24d3a29209fe629b8a6198624ee0df43110736f70da527ac18ad6335000394aa"
+  },
+  "producer": {
+    "kind": "GitHub Actions fork push workflow",
+    "repository": "X2M7/trime",
+    "run_id": 39796208691,
+    "artifact_id": 12433229282,
+    "artifact_name": "trime-ubuntu-26.04",
+    "artifact_archive_bytes": 77648082,
+    "artifact_archive_sha256": "e24c07f0ebca98bfe65f0a237ca5968055a20860778a90910b6b7c703d4a8269",
+    "results_endpoint_limit": "Artifact endpoint carried the completed artifact while the jobs/run endpoint still lagged; terminal workflow qualification is deferred."
+  },
+  "apk": {
+    "file": "com.osfans.trime-b14a2f1e-arm64-v8a-debug.apk",
+    "bytes": 20603568,
+    "sha256": "a393b74c52ba78dd5e28240b390a6686b0af47d76750c9a8aa561b94758b57b2",
+    "original_ci_apk_unmodified": true,
+    "package": "com.osfans.trime.debug",
+    "version_name": "3.3.13",
+    "version_code": 20261101,
+    "variant": "debug",
+    "build_type": "Debug",
+    "not_stable_release": true,
+    "min_sdk": 21,
+    "target_sdk": 37,
+    "abi": "arm64-v8a",
+    "buildconfig_commit_hash": "b14a2f1e0565cec4953f5a974bfcea023875369f",
+    "output_metadata_file": "output-metadata.json",
+    "output_metadata_sha256": "42ff18d9d04f561e6c2b65a74d490f2970ab2d293cb73ea82480357ebb2ee231",
+    "badging_file": "apk-audit-arm64-badging.stdout",
+    "badging_sha256": "f79be78f3445ab9c6250aa6d7515483fbaa751dcef7042e9af20b9d93926ed92",
+    "buildconfig_file": "apk-audit-arm64-buildconfig.stdout",
+    "buildconfig_sha256": "f7bca04a3eacaee1c9a5e765a03a2c4e2f5a241b2c73a0dbd33800eb803381cf"
+  },
+  "native_payload": {
+    "entry": "lib/arm64-v8a/librime_jni.so",
+    "bytes": 15071232,
+    "sha256": "532a630b506331401393e260f831bac0e89605d3f0d296750380065425f65634",
+    "elf_class": "ELF64",
+    "elf_machine": "AArch64"
+  },
+  "theme_assets_sha256": {
+    "assets/shared/trime.yaml": "ff65e4a8ada630dcd14b9d7f036201579ddefa4758868df1b497b45dcfef2d08",
+    "assets/shared/tongwenfeng.trime.yaml": "e758ce8f9059f0fbe3c27c2de9c5faffff761b825feed437075f285e15af9147"
+  },
+  "signing": {
+    "verification_file": "apk-audit-arm64-signer.stdout",
+    "verification_file_sha256": "6cd2230725109d2ee35f2f5d419789458452336e9a0872fa613285b2fdfb252b",
+    "original_signature_preserved": true,
+    "signer_count": 1,
+    "certificate_dn": "C=US, O=Android, CN=Android Debug",
+    "certificate_sha256": "c137e00f34fe583772632ee915cdd156e830746d6fbf1c9e5e2f7d3d2f6239e2",
+    "certificate_sha1": "6055d4c791a1efeb01b850b63870e0a199934b55",
+    "certificate_md5": "b488e22de9fe7e9fb3a97075619a18b0",
+    "key_algorithm": "RSA",
+    "key_bits": 2048,
+    "public_key_sha256": "8cf7b1b8463dec5a918cc722c6a4faac861d8e7fd7ef44b638bf86aabba2b25c",
+    "schemes": {
+      "v1": true,
+      "v2": true,
+      "v3": false,
+      "v3_1": false,
+      "v4": false,
+      "source_stamp": false
+    },
+    "warnings_retained_exactly": [
+      "WARNING: META-INF/services/kotlinx.coroutines.CoroutineExceptionHandler not protected by signature. Unauthorized modifications to this JAR entry will not be detected. Delete or move the entry outside of META-INF/.",
+      "WARNING: META-INF/services/kotlinx.coroutines.internal.MainDispatcherFactory not protected by signature. Unauthorized modifications to this JAR entry will not be detected. Delete or move the entry outside of META-INF/."
+    ],
+    "superseded_old_delivery_certificate_sha256_do_not_substitute": "0d50a6c4b5af14741b9307952de134bff81ebf38c81d8030d1528200873f5c38"
+  },
+  "acceptance": {
+    "physical_device": "NOT_RUN",
+    "legacy_cases": 17,
+    "supplemental_cases": [
+      "R1",
+      "R2",
+      "R3",
+      "R4"
+    ],
+    "core_scope": [
+      "legacy_17_cases",
+      "R1",
+      "R2",
+      "R4"
+    ],
+    "installation_guard": "Do not uninstall, clear daily data, or allow downgrade to bypass a certificate/version restriction."
+  },
+  "limits": [
+    "Exact Debug APK artifact and immutable source binding only; no Release claim.",
+    "Host inspection does not replace installation or behavior testing.",
+    "The delayed Actions Results endpoint does not yet prove the fork workflow/job terminal state.",
+    "Debug signing identity and any apksigner warnings are retained; this is not a release-signature claim.",
+    "Packaged ELF structure/hashes are verified; cached native compilation is not restated as a fresh compile claim."
+  ]
+}

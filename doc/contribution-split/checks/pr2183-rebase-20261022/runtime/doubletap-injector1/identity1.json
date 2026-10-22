@@ -1,0 +1,139 @@
+{
+  "schema": 1,
+  "status": "HOST_BUILT_NOT_DEVICE_EXECUTED",
+  "purpose": "Inject a real two-tap touchscreen MotionEvent sequence from one app_process process; device execution belongs to the runtime operator.",
+  "scope": {
+    "supported_api_targets": [
+      21,
+      35
+    ],
+    "uid_allowlist": [
+      0,
+      2000
+    ],
+    "default_display_id": 0,
+    "source": "SOURCE_TOUCHSCREEN",
+    "injection_mode": "INJECT_INPUT_EVENT_MODE_WAIT_FOR_FINISH (2)",
+    "event_sequence": [
+      "DOWN_1",
+      "UP_1",
+      "DOWN_2",
+      "UP_2"
+    ],
+    "frozen_runtime_arguments": {
+      "standard_shift_x": 54,
+      "standard_shift_y": 996,
+      "inter_event_gap_ms": 60
+    },
+    "planned_up_call_spacing_ms": 120,
+    "hard_helper_up_call_spacing_limit_ms": 300
+  },
+  "artifacts": {
+    "source": {
+      "path": "src/TrimeRealDoubleTap.java",
+      "bytes": 8462,
+      "sha256": "3f1abeb7a6360b0aa5fb62684df11fceffa46e2887b26b18432f2c6fa00d03c6"
+    },
+    "build_script": {
+      "path": "build-host.sh",
+      "bytes": 716,
+      "sha256": "9a93811ab7c4474b81cc6150c4a057818d92474230a1d468dd0bfed9c2d1ce76"
+    },
+    "dex_jar": {
+      "path": "trime-real-doubletap.jar",
+      "bytes": 4240,
+      "sha256": "55bd2a26e0c43564d6d2a35157c8abeb5efc5263757cab22c03157accb639507",
+      "entries": [
+        "classes.dex"
+      ],
+      "dex_version": "035",
+      "class_count": 1
+    }
+  },
+  "toolchain": {
+    "javac": {
+      "path": "/home/xumin/Public/android-toolchain/jdk-17.0.19+10/bin/javac",
+      "version": "javac 17.0.19",
+      "max_heap": "256m"
+    },
+    "d8": {
+      "path": "/home/xumin/Public/android-toolchain/android-sdk/build-tools/35.0.0/d8",
+      "version": "D8 8.6.2-dev",
+      "max_heap": "256m",
+      "min_api": 21
+    },
+    "android_jar": {
+      "path": "/home/xumin/Public/android-toolchain/android-sdk/platforms/android-35/android.jar",
+      "sha256": "4566663c3876e022b4fa4ced8c8697c4ab1688267f090114fd92d027b32e619b"
+    },
+    "reproducibility": "two consecutive clean host builds produced identical dex-jar SHA-256 and empty stdout/stderr"
+  },
+  "device_invocation_template": {
+    "precondition": "operator separately verifies exact b14 APK/source/theme/PID and copies the exact jar to /data/local/tmp/trime-real-doubletap.jar",
+    "argv": [
+      "env",
+      "CLASSPATH=/data/local/tmp/trime-real-doubletap.jar",
+      "app_process",
+      "/system/bin",
+      "org.x2m7.trime.readiness.input.TrimeRealDoubleTap",
+      "54",
+      "996",
+      "60"
+    ],
+    "forbidden_shortcuts": [
+      "View.performClick",
+      "GestureFrame direct invocation",
+      "KeyView direct invocation"
+    ]
+  },
+  "backend_selection": {
+    "api35": "reflect android.hardware.input.InputManagerGlobal.getInstance().injectInputEvent",
+    "api21": "fallback on absent InputManagerGlobal to android.hardware.input.InputManager.getInstance().injectInputEvent"
+  },
+  "acceptance_contract": {
+    "common": [
+      "process exit 0",
+      "exact helper jar SHA matches binding",
+      "same helper PID reports all four events",
+      "attempted=4 and accepted=4",
+      "injector_up_call_delta_ms in (0,300]",
+      "continuous target log proves both ACTION_UP events at the frozen coordinates and target PID/source identity remains exact"
+    ],
+    "S1_plain_negative_control": [
+      "target MotionEvent/KeyView release timestamps prove the two UP deliveries are <=300ms apart",
+      "plain layout has no double-click action and logs two CLICK releases",
+      "final editor oracle is exact lowercase aa"
+    ],
+    "S2_explicit_double_click": [
+      "target MotionEvent/KeyView release timestamps prove the two UP deliveries are <=300ms apart",
+      "second Shift release logs behavior=DOUBLE_CLICK and processKeyAction type=DOUBLE_CLICK",
+      "final editor oracle is exact uppercase AA"
+    ],
+    "non_substitutable": "injector timestamps alone cannot qualify app receipt timing or DOUBLE_CLICK; continuous target logs and editor oracles are mandatory"
+  },
+  "provenance": [
+    {
+      "path": "/home/xumin/Public/Trime/build/upstream19/api21-runtime3-sqlite-wal-attribution1/official-originals/Instrumentation-android-5.0.2_r1.java",
+      "sha256": "27b9c0481255543f0a8c21ccbfdff856803398b64bee2b07a22520b29eda68c4",
+      "lines": "898-899, 936-942",
+      "supports": "API21 InputManager + WAIT_FOR_FINISH and uptimeMillis touch source pattern"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/t13/nonplatform-warnings-20261015/directory-swipe-review1/InputShellCommand.java",
+      "sha256": "f4bb437cb03fc8bf12d53abbdeb2eb3fcbba9911cb39a16d13fae84bfc5889c4",
+      "lines": "137-139, 211-238",
+      "supports": "API35 InputManagerGlobal, pointer metadata, WAIT_FOR_FINISH"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/t07-privacy/hold-touch-driver/src/TrimeHoldTouch.java",
+      "sha256": "234bcb5094c11b9c091a58ce17eaeab680151935dd952f5276a76da7d7d09362",
+      "supports": "existing local one-process app_process reflection/injection pattern"
+    }
+  ],
+  "limitations": [
+    "The jar has only been built and statically inspected on the host; no device execution is claimed.",
+    "Hidden platform entry points are selected reflectively; successful loading and injection must be demonstrated independently on each API image.",
+    "The helper targets display 0 and the binding coordinates are valid only for the frozen portrait runtime geometry.",
+    "This helper does not change the 300ms preference and does not relax the S2 AA oracle."
+  ]
+}

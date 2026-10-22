@@ -1,0 +1,50 @@
+{
+  "schema": "trime-t9-sequence-v7-independent-static-review/v1",
+  "passed": true,
+  "verdict": "NO_STATIC_BLOCKER_FOR_CONTROLLED_C4_DEVICE_EXECUTION",
+  "reviewed": {
+    "runner": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/t9_case_sequences_v7.py",
+      "sha256": "3f7739c86af44fd08b97598286f9e697ce500473c7dc5d642466cf77229b6846"
+    },
+    "v6": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/t9_case_sequences_v6.py",
+      "sha256": "14c87d18d3431fcc7ce21ae2712bb661b1851c037d2fad8fa519d49209d4f2c3"
+    },
+    "diff": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/sequence-v7-vs-v6.diff",
+      "sha256": "a0693ab52013553fadb4d742c5490d898c9702ba88a5d21611902cc46a57fad5"
+    },
+    "helper_jar": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/doubletap-injector1/trime-real-doubletap.jar",
+      "sha256": "55bd2a26e0c43564d6d2a35157c8abeb5efc5263757cab22c03157accb639507"
+    },
+    "root_review": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/doubletap-injector1/root-review1.json",
+      "sha256": "3a663840b80d3d150f4b417e6d4059f6074df599bdcb8bc30c6f063a4a7d7fc7"
+    },
+    "identity": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/doubletap-injector1/identity1.json",
+      "sha256": "15c7eab897d7e77a11a3987a762a9b2567446174b3a818d4818e0746794bc745"
+    }
+  },
+  "findings": [
+    "The runner pins exact source/build c4b613f78835e7b914e02447955c6b89fe9839ab and its own path/SHA through the frozen runtime binding.",
+    "S1 and S2 call the fixed, root-reviewed single-process app_process helper at only the two frozen Shift coordinates; the old two-process shell input doubletap path is not used.",
+    "Before execution it verifies host jar/review/identity bytes, production timeout absent-or-exactly-300, fixed remote path, post-push device bytes, four ordered accepted events, one PID/UID, touchscreen source4098, display0, coordinates, and helper UP-call delta in (0,300].",
+    "A successful helper result remains explicitly pending external continuous target-log review; exact aa/AA editor oracles are unchanged.",
+    "Attempt state is persisted before device execution, raw stdout is written before parsing, and parser/assertion failures retain ATTEMPTED_NOT_QUALIFIED evidence for the enclosing finally stop path."
+  ],
+  "host_negative_controls": {
+    "valid_fixed_helper_output": "accepted_pending_external_target_qualification",
+    "cross_pid": "rejected_raw_retained",
+    "over_300ms": "rejected_raw_retained",
+    "summary_accepted_3": "rejected_raw_retained"
+  },
+  "limits": [
+    "Static/import-only host review; no ADB, VM, APK install, or device injection was performed.",
+    "Injector acceptance and injector-side timing cannot prove target app receipt timing or CLICK/DOUBLE_CLICK dispatch. Continuous target logs and exact editor oracle are mandatory per platform.",
+    "The approved identity document retains historical b14 preparation wording; root-review1 explicitly requires a new exact source/APK binding, and v7 independently pins c4.",
+    "A helper failure preserves raw stdout but does not copy parsed partial events into the action object; the raw command/output and enclosing sequence rejection remain the authoritative failure evidence."
+  ]
+}

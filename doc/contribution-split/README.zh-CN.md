@@ -2,13 +2,13 @@
 
 ## 当前整改状态（2026-10-22）
 
-[#2183](https://github.com/osfans/trime/pull/2183) 已恢复 **Draft**，旧 `9f86bc8f` 已备份，初始线性 `1754bb51` 已 rebase 到上游 `19b04849`。其 360 项应用 JVM／115 项 JNI 宿主断言及正式 fork／上游各五项 CI 通过，但实际 Android 5.0 回归发现：选全拼后新输入框会恢复旧九键布局，故该 APK 已退出验收候选。
+[#2183](https://github.com/osfans/trime/pull/2183) 保持 **Draft**；当前源码已正常推送为 `c4b613f7`，基线为上游 `19b04849`，五条 Conventional Commits、零 merge。最新两文件修复让输入框强制 ASCII 要求优先于异步布局恢复；[独立源码审阅](checks/pr2183-rebase-20261022/schema-layout-regression/ascii-mode-source-independent1/review1.json)、[推送](checks/pr2183-rebase-20261022/schema-layout-regression/ascii-mode-source-push1/receipt.json)与[正文读回](checks/pr2183-rebase-20261022/original-pr-update4/receipt.json)保留。JNI、主题资产、词库与递归 pin 未改。
 
-修复已正常推送为 `b14a2f1e`，只把方案切换时的布局恢复锚点更新到新方案匹配布局，并补四行行为说明。JNI、主题资产与递归 pin 未变；[独立源码审阅](checks/pr2183-rebase-20261022/schema-layout-regression/source-independent-review1.json)认可此方案，设备回归仍待完成。当前为四条规范线性提交、零 merge；[推送读回](checks/pr2183-rebase-20261022/schema-layout-regression/source-push/receipt.json)确认仍 Open／Draft。[新原始 Debug APK 四 ABI 身份审计](checks/pr2183-rebase-20261022/schema-layout-regression/cloud-fork-run-39796208691-ubuntu1/apk-audit/result.json)通过；Android 5.0 已启动修复版的新轮限定回归，Android 15 待串行运行。首轮新源控制中的 360 项 JVM 实执行通过，但 JNI 检查因验证脚本选错基准而未执行，原失败保留；[控制脚本映射修复](checks/pr2183-rebase-20261022/schema-layout-regression/cloud-control-fix1/push-receipt.json)已另行触发新运行。GitHub Actions Results 服务故障造成部分任务状态滞后，不能由已上传 APK 推断整轮终态。当前不能继承 `1754bb51` 的通过结论；真机仍 **NOT_RUN**。
+初始 `1754bb51` 在 API21 发现切全拼后新输入框恢复旧九键，修复为 `b14a2f1e`。b14 的正式两轮各 5/5 CI、360 JVM／115 JNI 已通过；但后续默认 trime 主题真实数字→邮箱输入仍落入中文组合（实际 InputType0x21、编辑器空、预编辑a），故 b14 也[退出验收候选](checks/pr2183-rebase-20261022/device-delivery-b14-status.json)。这些通过与失败只对应原头，不构成 c4 通过。标准 R4／嵌入K1、CATEGORY、K2 的独立限定资格保留；S2 原两进程触摸间隔421ms，未达到300ms，按工具时序拒收，不能认定产品双击失败，旧S1也不是真双击。
 
-[旧 API21 限定资格](checks/pr2183-rebase-20261022/runtime/api21-independent-first1/qualification1.json)、[方案恢复负例](checks/pr2183-rebase-20261022/runtime/negative-schema-layout-1754.png)及[正常退出和系统 am 崩溃归属](checks/pr2183-rebase-20261022/runtime/api21-terminal-host-audit1/terminal-summary.json)保留。旧 Observer 的 90 秒空闲拒收、误点 Enter 与独立重试没有改成整工具通过。当前没有该轮默认主题、Android 15 或修复版设备通过声明。旧 [ARM64 交付](checks/pr2183-rebase-20261022/README.md)仅保留来源，不作为已知缺陷后的当前验收候选；新包需重新绑定后交付。
+新 c4 构建／完整宿主检查／双平台回归待闭合；旧模拟器已正常退出，SDK10文件不变，全日志唯一Fatal归于系统 input 命令进程，不是全系统零Fatal。真实同进程双触摸工具已准备，默认300ms与aa/AA预期不改。新 ARM64 交付待 exact-c4 原包，所有实体用例仍 **NOT_RUN**。原件和工具警告均保留，不宣称零警告、Ready、合并或稳定发布。当前状态见[机器清单](checks/readiness-20261022.json)。
 
-此前九项中，#2176／#2177／#2179／#2180 已由维护者合入；#2182／#2186／#2187／#2188 仍 Open Ready；#2183 为 Draft。见[机器清单](checks/readiness-20261022.json)。下文九项 Ready 和旧 head 结果均为历史；不代表新源码通过、零警告、Ready、合并或稳定发布。
+#2176／#2177／#2179／#2180 已由维护者合入；#2182／#2186／#2187／#2188 的此前 Ready 状态未改。下文为历史过程；主 develop 未改或推送。
 
 ## 先前审阅状态（2026-10-22 06:02 UTC，历史记录）
 

@@ -1,0 +1,75 @@
+{
+  "schema": "trime-b14-exact-control-artifact-execution-audit-v1",
+  "passed": true,
+  "verdict": "EXECUTION_ARTIFACT_PASSED_TERMINAL_RESULTS_API_PENDING",
+  "run": {
+    "id": 39798930637,
+    "attempt": 1,
+    "control_head": "3810942c8d9302a531e02ff8d852eb880078e996",
+    "control_tree": "a375b2ca39dd7a09d24eeb84c13d7b1bdce0c5ea",
+    "snapshot_status": "in_progress",
+    "snapshot_conclusion": null
+  },
+  "job": {
+    "id": 119893752265,
+    "name": "Unit tests (pr-t9-schema-memory)",
+    "snapshot_status": "in_progress",
+    "snapshot_conclusion": null,
+    "required_step_conclusions": {
+      "Fetch exact source and recursive submodules": "success",
+      "Verify checked-out identity": "success",
+      "Run the complete application unit test task": "success",
+      "Summarize actual JUnit reports": "success",
+      "Check production JNI Unicode transport in a real host VM": "success",
+      "Upload original test reports and execution evidence": "success"
+    }
+  },
+  "artifact": {
+    "id": 12435635239,
+    "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/cloud-control-run-39798930637/artifact-12435635239-split-unit-tests.zip",
+    "bytes": 393230,
+    "sha256": "7c9acc4c1b7c11f32d02d5c9505e268d7e4a85b8f55c0012fa136aed4ea51411",
+    "api_digest_verified": true
+  },
+  "target": {
+    "expected_sha": "b14a2f1e0565cec4953f5a974bfcea023875369f",
+    "actual_sha": "b14a2f1e0565cec4953f5a974bfcea023875369f",
+    "head_matches": true,
+    "recursive_submodule_count": 20,
+    "uninitialized_or_mismatched_submodules": []
+  },
+  "jvm": {
+    "passed": true,
+    "executed_testcases": 360,
+    "suite_count": 29,
+    "totals": {
+      "tests": 360,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "distinct_junit_display_identities": 314,
+    "duplicate_junit_display_identities": 45,
+    "max_junit_display_identity_multiplicity": 3,
+    "cloud_summary_sha256": "3390093a0226aefa670109dfa6a979fd9961c93e7d57611a1fc5946f277d9a5d"
+  },
+  "jni": {
+    "passed": true,
+    "fixed_checks": 115,
+    "fixed_summary": "SUMMARY checks=115 destroy=0 exit=0",
+    "fixed_stderr_bytes": 0,
+    "baseline_expected_failure_checks": 17,
+    "baseline_summary": "SUMMARY checks=17 destroy=0 exit=1",
+    "outer_phase_log_sha256": "a9e817c5510e3e83e4bf9f78777cc0d86f7a0e235d4661e47c72c5bd37f43b1a"
+  },
+  "recursive_submodules": {
+    "count": 20,
+    "all_initialized_and_matching": true,
+    "status_sha256": "e54819dbd2dec880b9d15f5cbc23a6aa3391e349b95b5a68853fae2774e5b974"
+  },
+  "limits": [
+    "The artifact proves completed 360-case JVM and 115-check JNI execution at exact target b14a.",
+    "At collection time the official Actions Results run/job status still said in_progress despite all required steps and artifact upload being successful; whole-run terminal success is deferred until that API converges.",
+    "This is host JVM/JNI evidence, not Android emulator or physical-device acceptance."
+  ]
+}

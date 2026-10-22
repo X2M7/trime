@@ -1,0 +1,648 @@
+{
+  "schema": "trime-pr2183-b14-independent-cloud-qualification-v1",
+  "generated_at": "2026-10-22T14:55:24.512537+00:00",
+  "method": {
+    "host_only": true,
+    "adb": false,
+    "vm": false,
+    "local_gradle": false,
+    "product_source_modified": false,
+    "remote_actions_retried": false
+  },
+  "verdict": {
+    "cloud_qualification": "PASS",
+    "scope": "Exact-source identity, formal four-OS job completion, audited Ubuntu four-ABI APKs, complete host JVM/JNI execution, and retained warning inventory.",
+    "runtime_or_physical_device": "NOT_CLAIMED",
+    "pr_readiness": "CLOUD_COMPLETE_RUNTIME_REGRESSION_STILL_REQUIRED"
+  },
+  "target_source": {
+    "head": "b14a2f1e0565cec4953f5a974bfcea023875369f",
+    "tree": "3b40eef39ce8245096c74b1a3a5066d9b4009df1",
+    "parent": "1754bb51931407ac916549edc2ae57bba4c073bc",
+    "base": "19b048494ffa55cae52d5385dfa6d0611461c27d",
+    "changed_paths_in_schema_fix": [
+      "app/src/main/java/com/osfans/trime/ime/keyboard/KeyboardWindow.kt",
+      "doc/t9-input.md"
+    ],
+    "source_review_verdict": "APPROVE_WITH_NEW_HEAD_RUNTIME_REGRESSION_REQUIRED",
+    "source_review": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/source-independent-review1.json",
+      "bytes": 5162,
+      "sha256": "8b68252de8be04a9a535f1908162c8ce226cc3a29cb51689038907dbfcf3f102"
+    },
+    "note": "The source-review report predates these b14 artifacts; its historical no-b14-APK statement is superseded only for cloud build availability, not for device regression proof."
+  },
+  "formal_producers": {
+    "fork_exact_head": {
+      "repository": "X2M7/trime",
+      "workflow_run": {
+        "id": 39796208691,
+        "status": "completed",
+        "conclusion": "success",
+        "head_sha": "b14a2f1e0565cec4953f5a974bfcea023875369f",
+        "event": "push",
+        "run_attempt": 1,
+        "updated_at": "2026-10-22T14:45:41Z",
+        "evidence": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/cloud-independent1/fork-run-current.json",
+          "bytes": 13741,
+          "sha256": "b8bf28f89d2fc0deac422f975dc8211fe93a7f4ae4fd5d298971670b1523bf9b"
+        }
+      },
+      "jobs": {
+        "total_count": 5,
+        "all_completed_success": true,
+        "jobs": [
+          {
+            "id": 119883949235,
+            "name": "check / lint-and-test",
+            "status": "completed",
+            "conclusion": "success",
+            "started_at": "2026-10-22T14:30:21Z",
+            "completed_at": "2026-10-22T14:34:51Z"
+          },
+          {
+            "id": 119886277376,
+            "name": "build (macos-26-intel)",
+            "status": "completed",
+            "conclusion": "success",
+            "started_at": "2026-10-22T14:34:57Z",
+            "completed_at": "2026-10-22T14:43:55Z"
+          },
+          {
+            "id": 119886277489,
+            "name": "build (windows-2025)",
+            "status": "completed",
+            "conclusion": "success",
+            "started_at": "2026-10-22T14:34:55Z",
+            "completed_at": "2026-10-22T14:43:14Z"
+          },
+          {
+            "id": 119886277656,
+            "name": "build (macos-26)",
+            "status": "completed",
+            "conclusion": "success",
+            "started_at": "2026-10-22T14:34:55Z",
+            "completed_at": "2026-10-22T14:39:18Z"
+          },
+          {
+            "id": 119886277750,
+            "name": "build (ubuntu-26.04)",
+            "status": "completed",
+            "conclusion": "success",
+            "started_at": "2026-10-22T14:34:55Z",
+            "completed_at": "2026-10-22T14:38:20Z"
+          }
+        ],
+        "evidence": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/cloud-independent1/fork-jobs-current.json",
+          "bytes": 24703,
+          "sha256": "b23453ea896fa06ecfbad8596ec8ed72b249cf37db52003d4b58ac718b7b9fc7"
+        }
+      },
+      "formal_result": "5/5 current job rows completed success",
+      "complete_combined_job_logs": {
+        "count": 5,
+        "archive": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/cloud-formal-terminal1/fork-39796208691/logs.zip",
+          "bytes": 437293,
+          "sha256": "60d5721587c693f1c749df411b15745d35ef809722408fcc352b1b60ca76a93c"
+        }
+      },
+      "ubuntu_artifact": {
+        "artifact_id": 12433229282,
+        "archive": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/cloud-fork-run-39796208691-ubuntu1/artifact-12433229282-trime-ubuntu-26.04.zip",
+          "sha256": "e24c07f0ebca98bfe65f0a237ca5968055a20860778a90910b6b7c703d4a8269"
+        },
+        "producer_debug_certificate_sha256": "c137e00f34fe583772632ee915cdd156e830746d6fbf1c9e5e2f7d3d2f6239e2",
+        "apks_by_abi": {
+          "arm64-v8a": {
+            "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/cloud-fork-run-39796208691-ubuntu1/files/com.osfans.trime-b14a2f1e-arm64-v8a-debug.apk",
+            "bytes": 20603568,
+            "sha256": "a393b74c52ba78dd5e28240b390a6686b0af47d76750c9a8aa561b94758b57b2",
+            "buildconfig_commit": "b14a2f1e0565cec4953f5a974bfcea023875369f",
+            "native_entry": {
+              "entry": "lib/arm64-v8a/librime_jni.so",
+              "bytes": 15071232,
+              "sha256": "532a630b506331401393e260f831bac0e89605d3f0d296750380065425f65634",
+              "elf_class": "ELF64",
+              "elf_machine": "AArch64"
+            },
+            "package": "com.osfans.trime.debug",
+            "min_sdk": 21,
+            "target_sdk": 37
+          },
+          "armeabi-v7a": {
+            "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/cloud-fork-run-39796208691-ubuntu1/files/com.osfans.trime-b14a2f1e-armeabi-v7a-debug.apk",
+            "bytes": 19405311,
+            "sha256": "2f44f820f1912d398e92616adc2204b9f62616bcb80195509f6be441b847a7b3",
+            "buildconfig_commit": "b14a2f1e0565cec4953f5a974bfcea023875369f",
+            "native_entry": {
+              "entry": "lib/armeabi-v7a/librime_jni.so",
+              "bytes": 9090452,
+              "sha256": "c109eb11424ef6ca62d70fd47e9dc63b4cb563c792247b0f21563bc0f2b7b282",
+              "elf_class": "ELF32",
+              "elf_machine": "ARM"
+            },
+            "package": "com.osfans.trime.debug",
+            "min_sdk": 21,
+            "target_sdk": 37
+          },
+          "x86": {
+            "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/cloud-fork-run-39796208691-ubuntu1/files/com.osfans.trime-b14a2f1e-x86-debug.apk",
+            "bytes": 21108393,
+            "sha256": "ceead1c520cf1245cf8a5aee68ab1d7993a69e22ac9f858b8198506e45603c5d",
+            "buildconfig_commit": "b14a2f1e0565cec4953f5a974bfcea023875369f",
+            "native_entry": {
+              "entry": "lib/x86/librime_jni.so",
+              "bytes": 15849256,
+              "sha256": "44c24c9174bb1761e42492567c2cfda64764bbf77931343f265984a5e1cb1475",
+              "elf_class": "ELF32",
+              "elf_machine": "Intel 80386"
+            },
+            "package": "com.osfans.trime.debug",
+            "min_sdk": 21,
+            "target_sdk": 37
+          },
+          "x86_64": {
+            "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/cloud-fork-run-39796208691-ubuntu1/files/com.osfans.trime-b14a2f1e-x86_64-debug.apk",
+            "bytes": 20673071,
+            "sha256": "38b8523cd1334ce0434004b80c16766ca2c6ffbf0a95ac19bc53eaade51921ee",
+            "buildconfig_commit": "b14a2f1e0565cec4953f5a974bfcea023875369f",
+            "native_entry": {
+              "entry": "lib/x86_64/librime_jni.so",
+              "bytes": 14726000,
+              "sha256": "aac1d2aa0c51517f540c3050337736477b4c728803d9cc9fdeeb6755f2006409",
+              "elf_class": "ELF64",
+              "elf_machine": "Advanced Micro Devices X86-64"
+            },
+            "package": "com.osfans.trime.debug",
+            "min_sdk": 21,
+            "target_sdk": 37
+          }
+        },
+        "audit": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/cloud-fork-run-39796208691-ubuntu1/apk-audit/result.json",
+          "bytes": 27624,
+          "sha256": "65259e1fb68eaebb25d1cb3e3b5d881021129d5463734a51c1d5c4e0387d6f93"
+        },
+        "eligible_for_exact_b14_runtime_binding": true
+      }
+    },
+    "upstream_pr_synthetic_merge": {
+      "repository": "osfans/trime",
+      "workflow_run": {
+        "id": 39796220972,
+        "status": "completed",
+        "conclusion": "success",
+        "head_sha": "b14a2f1e0565cec4953f5a974bfcea023875369f",
+        "event": "pull_request",
+        "run_attempt": 1,
+        "updated_at": "2026-10-22T14:43:13Z",
+        "evidence": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/cloud-independent1/pr-run-current.json",
+          "bytes": 13246,
+          "sha256": "16b14263aa14f13a20ac6bb63380568b82ca0bb837436bcc6362425cb4a0bbd8"
+        }
+      },
+      "jobs": {
+        "total_count": 5,
+        "all_completed_success": true,
+        "jobs": [
+          {
+            "id": 119883985627,
+            "name": "check / lint-and-test",
+            "status": "completed",
+            "conclusion": "success",
+            "started_at": "2026-10-22T14:30:26Z",
+            "completed_at": "2026-10-22T14:34:35Z"
+          },
+          {
+            "id": 119886127611,
+            "name": "build (windows-2025)",
+            "status": "completed",
+            "conclusion": "success",
+            "started_at": "2026-10-22T14:34:39Z",
+            "completed_at": "2026-10-22T14:41:37Z"
+          },
+          {
+            "id": 119886127635,
+            "name": "build (macos-26)",
+            "status": "completed",
+            "conclusion": "success",
+            "started_at": "2026-10-22T14:34:39Z",
+            "completed_at": "2026-10-22T14:38:05Z"
+          },
+          {
+            "id": 119886127652,
+            "name": "build (ubuntu-26.04)",
+            "status": "completed",
+            "conclusion": "success",
+            "started_at": "2026-10-22T14:34:38Z",
+            "completed_at": "2026-10-22T14:37:53Z"
+          },
+          {
+            "id": 119886128144,
+            "name": "build (macos-26-intel)",
+            "status": "completed",
+            "conclusion": "success",
+            "started_at": "2026-10-22T14:34:39Z",
+            "completed_at": "2026-10-22T14:40:05Z"
+          }
+        ],
+        "evidence": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/cloud-independent1/pr-jobs-current.json",
+          "bytes": 22629,
+          "sha256": "e8faeeff7b3d7f45904bde88c2b29f9eb50e12c9c4b1c08160ea82145132d9a3"
+        }
+      },
+      "formal_result": "5/5 current job rows completed success",
+      "complete_combined_job_logs": {
+        "count": 5,
+        "archive": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/cloud-formal-terminal1/pr-39796220972/logs.zip",
+          "bytes": 424204,
+          "sha256": "55fc46260452e744a0c21390823790246c478ae95be454895236a08ec1ddeeee"
+        }
+      },
+      "identity": {
+        "pr_head": "b14a2f1e0565cec4953f5a974bfcea023875369f",
+        "pr_base": "19b048494ffa55cae52d5385dfa6d0611461c27d",
+        "actual_build_commit": "862065d6abaf245790020115cf4d36204c884ff2",
+        "actual_build_tree": "3b40eef39ce8245096c74b1a3a5066d9b4009df1",
+        "synthetic_parents": [
+          "19b048494ffa55cae52d5385dfa6d0611461c27d",
+          "b14a2f1e0565cec4953f5a974bfcea023875369f"
+        ],
+        "tree_equals_reviewed_head_tree": true
+      },
+      "ubuntu_artifact": {
+        "artifact_id": 12433399311,
+        "archive": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/cloud-pr-run-39796220972-ubuntu1/artifact-12433399311-trime-ubuntu-26.04.zip",
+          "sha256": "2d978be890a16fbb350bc0e88d59c50f76eb71ede32b0cdc0ee1544dce9ebc04"
+        },
+        "producer_debug_certificate_sha256": "8a1b990bb68727717ccadee64012f8b0e753cdf30ab46ffb90ec41eff0d99837",
+        "certificate_equals_exact_head_fork": false,
+        "apks_by_abi": {
+          "arm64-v8a": {
+            "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/cloud-pr-run-39796220972-ubuntu1/files/com.osfans.trime-v3.3.12-104-g862065d6-arm64-v8a-debug.apk",
+            "bytes": 20603698,
+            "sha256": "0d17daebe44038ced747606735370f741bd370cb3563a2e2ae892cdef2b90de0",
+            "buildconfig_commit": "862065d6abaf245790020115cf4d36204c884ff2",
+            "native_entry": {
+              "entry": "lib/arm64-v8a/librime_jni.so",
+              "bytes": 15071232,
+              "sha256": "532a630b506331401393e260f831bac0e89605d3f0d296750380065425f65634",
+              "elf_class": "ELF64",
+              "elf_machine": "AArch64"
+            },
+            "native_equal_to_exact_head_fork": true,
+            "package": "com.osfans.trime.debug",
+            "min_sdk": 21,
+            "target_sdk": 37
+          },
+          "armeabi-v7a": {
+            "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/cloud-pr-run-39796220972-ubuntu1/files/com.osfans.trime-v3.3.12-104-g862065d6-armeabi-v7a-debug.apk",
+            "bytes": 19405436,
+            "sha256": "67a604575e85651b6129d9968d287c73928bd39476eb7d50a2eeac91c6c21cad",
+            "buildconfig_commit": "862065d6abaf245790020115cf4d36204c884ff2",
+            "native_entry": {
+              "entry": "lib/armeabi-v7a/librime_jni.so",
+              "bytes": 9090452,
+              "sha256": "c109eb11424ef6ca62d70fd47e9dc63b4cb563c792247b0f21563bc0f2b7b282",
+              "elf_class": "ELF32",
+              "elf_machine": "ARM"
+            },
+            "native_equal_to_exact_head_fork": true,
+            "package": "com.osfans.trime.debug",
+            "min_sdk": 21,
+            "target_sdk": 37
+          },
+          "x86": {
+            "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/cloud-pr-run-39796220972-ubuntu1/files/com.osfans.trime-v3.3.12-104-g862065d6-x86-debug.apk",
+            "bytes": 21108533,
+            "sha256": "91a0b79ca8531c4b602daaa5c6aa735362a3a785ad3f48bee2e0cdbf764b30dd",
+            "buildconfig_commit": "862065d6abaf245790020115cf4d36204c884ff2",
+            "native_entry": {
+              "entry": "lib/x86/librime_jni.so",
+              "bytes": 15849256,
+              "sha256": "44c24c9174bb1761e42492567c2cfda64764bbf77931343f265984a5e1cb1475",
+              "elf_class": "ELF32",
+              "elf_machine": "Intel 80386"
+            },
+            "native_equal_to_exact_head_fork": true,
+            "package": "com.osfans.trime.debug",
+            "min_sdk": 21,
+            "target_sdk": 37
+          },
+          "x86_64": {
+            "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/cloud-pr-run-39796220972-ubuntu1/files/com.osfans.trime-v3.3.12-104-g862065d6-x86_64-debug.apk",
+            "bytes": 20673206,
+            "sha256": "d4fc0f92f68acc96f99b931863ec3ea5570d2182b0a1ac9c594b144269f14dcd",
+            "buildconfig_commit": "862065d6abaf245790020115cf4d36204c884ff2",
+            "native_entry": {
+              "entry": "lib/x86_64/librime_jni.so",
+              "bytes": 14726000,
+              "sha256": "aac1d2aa0c51517f540c3050337736477b4c728803d9cc9fdeeb6755f2006409",
+              "elf_class": "ELF64",
+              "elf_machine": "Advanced Micro Devices X86-64"
+            },
+            "native_equal_to_exact_head_fork": true,
+            "package": "com.osfans.trime.debug",
+            "min_sdk": 21,
+            "target_sdk": 37
+          }
+        },
+        "audit": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/cloud-pr-run-39796220972-ubuntu1/apk-audit/result.json",
+          "bytes": 22803,
+          "sha256": "d86166ddbad01e37b98f37f97407f6118b05162ace76e55d84dd25b8264f800e"
+        },
+        "eligible_for_exact_b14_runtime_binding": false,
+        "reason": "BuildConfig contains the synthetic merge commit even though its tree and parents bind it to the reviewed head/base."
+      }
+    },
+    "interpretation": "The direct-head and synthetic-merge runs are separate producers over the same product tree; they are complementary provenance and are not additive product test cases."
+  },
+  "exact_source_host_execution": {
+    "immutable_failed_first_control": {
+      "run_id": 39796394613,
+      "control_head": "f70978085dbb9cd11bf5f4ed67f37905de7fed78",
+      "status": "completed",
+      "conclusion": "failure",
+      "target_identity_matched": true,
+      "jvm": {
+        "status": "passed",
+        "dynamic_count_not_hardcoded": true,
+        "executed_tests": 360,
+        "totals": {
+          "tests": 360,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "suite_count": 29,
+        "report_problems": [],
+        "summary_path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/cloud-control-run-39796394613/artifact-files/_temp/split-validation/pr-t9-schema-memory/test-summary.json",
+        "summary_sha256": "3752436d27b59a51802a8b3bd4eea0e9fbdb46f149b5bf7b7d2376948a0b2383"
+      },
+      "jni": {
+        "status": "NOT_EXECUTED",
+        "checks_executed": 0,
+        "claimed_expected_checks": 115,
+        "failure_stage": "baseline header extraction before baseline/fixed compile and run",
+        "log_path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/cloud-control-run-39796394613/artifact-files/_temp/split-validation/pr-t9-schema-memory/jni-unicode.log",
+        "log_sha256": "febe1325035ee212529e42fe5801eeee346962687b9f080b2ff2c5865efba82f"
+      },
+      "root_cause": {
+        "classification": "control-workflow-scope-mapping defect; not a product test failure",
+        "workflow_evidence": "The JNI step admits pr-t9-schema-memory at lines 204-205, but lines 210-213 map only pr-jni-unicode-transport to 12ffd and leave the new scope at default 649c.",
+        "runtime_error": "git show 649c07559cfbc1e494835465e71277fe8dc8051c:app/src/main/jni/librime_jni/jni-utils.h returned 128 because the path does not exist in that baseline",
+        "job_log_lines": [
+          14544,
+          14591
+        ],
+        "job_log_path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/cloud-control-run-39796394613/job-119884545776.log",
+        "job_log_sha256": "15b491b0b83915a7f8a1d46b8cb43d83c3260d1e8bd85cff10f257e76e33bb99",
+        "workflow_path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/cloud-control-run-39796394613/workflow-f7097808.yml",
+        "workflow_sha256": "5a24a19845ae42ecdb165ad4e7db19dc012e632f5c83ad1ea21023ad71f4135a"
+      },
+      "evidence": {
+        "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/cloud-control-run-39796394613/failure-adjudication.json",
+        "bytes": 4125,
+        "sha256": "2463876da3673953efede2369f11e15458371678828cd09676486a7a7c388598"
+      },
+      "interpretation": "Control-workflow baseline mapping failed before any JNI assertion; it is retained as a failed run and is not a product-test failure or a 115-check result."
+    },
+    "minimal_control_fix": {
+      "control_commit": "3810942c8d9302a531e02ff8d852eb880078e996",
+      "control_tree": "a375b2ca39dd7a09d24eeb84c13d7b1bdce0c5ea",
+      "parent": "f70978085dbb9cd11bf5f4ed67f37905de7fed78",
+      "changed_paths": [
+        "M\t.github/workflows/split-validation.yml"
+      ],
+      "change": "pr-t9-schema-memory now selects baseline 12ffd in the existing JNI step; pr-jni-unicode-transport mapping and its offsets-only branch are unchanged.",
+      "baseline": "12ffd16fe03537b6d0ed9716c71cbc33608c2a33",
+      "not_a_retry": true,
+      "no_product_change": true,
+      "evidence": {
+        "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/cloud-control-fix1/source-audit.json",
+        "bytes": 2359,
+        "sha256": "4c92dd08aaeae44814336010191f6d5db119829cabbc0f59e64e948b2accb6ce"
+      }
+    },
+    "successful_new_control": {
+      "workflow_run": {
+        "id": 39798930637,
+        "status": "completed",
+        "conclusion": "success",
+        "head_sha": "3810942c8d9302a531e02ff8d852eb880078e996",
+        "event": "push",
+        "run_attempt": 1,
+        "updated_at": "2026-10-22T14:52:10Z",
+        "evidence": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/cloud-independent1/fixed-control-run-current.json",
+          "bytes": 12479,
+          "sha256": "b47062d01e603ee659a56f1c914a6ba4a3a6bce75364a8a85f974c7b5e20b3b4"
+        }
+      },
+      "jobs": {
+        "total_count": 1,
+        "all_completed_success": true,
+        "jobs": [
+          {
+            "id": 119893752265,
+            "name": "Unit tests (pr-t9-schema-memory)",
+            "status": "completed",
+            "conclusion": "success",
+            "started_at": "2026-10-22T14:48:30Z",
+            "completed_at": "2026-10-22T14:51:15Z"
+          }
+        ],
+        "evidence": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/cloud-independent1/fixed-control-jobs-current.json",
+          "bytes": 4844,
+          "sha256": "bbaacc3b41a50863c406207755eefd3bb71ce7a0801f9682a78abadd9e40a97a"
+        }
+      },
+      "artifact_execution": {
+        "artifact_id": 12435635239,
+        "archive": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/cloud-control-run-39798930637/artifact-12435635239-split-unit-tests.zip",
+          "bytes": 393230,
+          "sha256": "7c9acc4c1b7c11f32d02d5c9505e268d7e4a85b8f55c0012fa136aed4ea51411",
+          "api_digest_verified": true
+        },
+        "target": {
+          "expected_sha": "b14a2f1e0565cec4953f5a974bfcea023875369f",
+          "actual_sha": "b14a2f1e0565cec4953f5a974bfcea023875369f",
+          "head_matches": true,
+          "recursive_submodule_count": 20,
+          "uninitialized_or_mismatched_submodules": []
+        },
+        "jvm": {
+          "passed": true,
+          "executed_testcases": 360,
+          "suite_count": 29,
+          "totals": {
+            "tests": 360,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+          },
+          "distinct_junit_display_identities": 314,
+          "duplicate_junit_display_identities": 45,
+          "max_junit_display_identity_multiplicity": 3,
+          "cloud_summary_sha256": "3390093a0226aefa670109dfa6a979fd9961c93e7d57611a1fc5946f277d9a5d"
+        },
+        "jni": {
+          "passed": true,
+          "fixed_checks": 115,
+          "fixed_summary": "SUMMARY checks=115 destroy=0 exit=0",
+          "fixed_stderr_bytes": 0,
+          "baseline_expected_failure_checks": 17,
+          "baseline_summary": "SUMMARY checks=17 destroy=0 exit=1",
+          "outer_phase_log_sha256": "a9e817c5510e3e83e4bf9f78777cc0d86f7a0e235d4661e47c72c5bd37f43b1a"
+        },
+        "recursive_submodules": {
+          "count": 20,
+          "all_initialized_and_matching": true,
+          "status_sha256": "e54819dbd2dec880b9d15f5cbc23a6aa3391e349b95b5a68853fae2774e5b974"
+        },
+        "audit": {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/cloud-control-run-39798930637/artifact-execution-audit.json",
+          "bytes": 2989,
+          "sha256": "5808ce70ff227cedbee482024830081b6c866f0880acbd312dca3871eea67705"
+        }
+      },
+      "results_api_timeline": {
+        "artifact_collection_snapshot": {
+          "run_status": "in_progress",
+          "run_conclusion": null,
+          "job_status": "in_progress",
+          "job_conclusion": null,
+          "all_job_steps_completed_success": true,
+          "run_evidence": {
+            "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/cloud-control-run-39798930637/run-at-artifact.json",
+            "bytes": 11147,
+            "sha256": "8ce38effdfb750e71e0700ca59fd57c5420121a6a12f9b84c3ea6d4cec066eaa"
+          },
+          "job_evidence": {
+            "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/cloud-control-run-39798930637/job-119893752265.json",
+            "bytes": 3306,
+            "sha256": "139112b36eefce6ac60c0e698141be176e55e81bc5621c0eacb523abdf91c75d"
+          }
+        },
+        "current_snapshot": {
+          "run_status": "completed",
+          "run_conclusion": "success",
+          "job_status": "completed",
+          "job_conclusion": "success"
+        },
+        "interpretation": "During the official Actions Results incident, successful steps and the uploaded artifact became visible before the run/job terminal rows. The current saved snapshots have converged to completed/success; the earlier discrepancy remains preserved rather than rewritten."
+      }
+    }
+  },
+  "warning_inventory": {
+    "total_provenance_occurrences": 114,
+    "families": [
+      {
+        "family": "apk_v1_jar_signature_unprotected_meta_inf_service",
+        "occurrences": 16,
+        "disposition": "Retain Debug APK v1/JAR warning; v2 verification succeeded, and neither producer is a Release signature claim."
+      },
+      {
+        "family": "github_action_annotation",
+        "occurrences": 2,
+        "disposition": "CI cache post-save failure on Windows; build and artifacts completed, but cache save did not."
+      },
+      {
+        "family": "gradle_deprecated_features",
+        "occurrences": 20,
+        "disposition": "Build/plugin ownership unresolved by summary line; investigate before Gradle 10 migration."
+      },
+      {
+        "family": "java_native_access_restricted",
+        "occurrences": 48,
+        "disposition": "CI/toolchain dependency follow-up on both macOS Intel and Windows."
+      },
+      {
+        "family": "sdkmanager_cli_deprecated",
+        "occurrences": 28,
+        "disposition": "CI/toolchain migration follow-up; no T9 runtime attribution."
+      }
+    ],
+    "counts_by_scope_and_family": {
+      "fork_exact_b14": {
+        "github_action_annotation": 1,
+        "gradle_deprecated_features": 10,
+        "java_native_access_restricted": 24,
+        "sdkmanager_cli_deprecated": 14
+      },
+      "fork_exact_b14_apks": {
+        "apk_v1_jar_signature_unprotected_meta_inf_service": 8
+      },
+      "upstream_pr_synthetic_merge": {
+        "github_action_annotation": 1,
+        "gradle_deprecated_features": 10,
+        "java_native_access_restricted": 24,
+        "sdkmanager_cli_deprecated": 14
+      },
+      "upstream_pr_synthetic_merge_apks": {
+        "apk_v1_jar_signature_unprotected_meta_inf_service": 8
+      }
+    },
+    "raw_records": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/cloud-formal-terminal1/warning-records.jsonl",
+      "sha256": "c65fa1a2fad916fff3ccf75a02c9da44babc81ba01dec494fc4504594bd86cc2"
+    },
+    "summary": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/cloud-formal-terminal1/warning-summary.json",
+      "bytes": 9755,
+      "sha256": "47fe148facbcf9d6690dc0d6d63751a30db49fb9518de6d270e189d2cf47d9f9"
+    },
+    "adjudication": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/cloud-formal-terminal1/warning-adjudication.json",
+      "bytes": 1558,
+      "sha256": "9ef82a3277078869e3b09a8f0c59ee505a53490a2cffec46893671302b860987"
+    },
+    "scope_limit": "The 114-line inventory covers the two formal five-job log archives and apksigner output for both four-ABI Ubuntu artifacts. It does not claim the separate fixed-control job had zero warnings; its original combined job log was unavailable while the Results row lagged."
+  },
+  "github_actions_results_incident": {
+    "incident_id": "q29p76qtnkyk",
+    "name": "Incident with Actions Results",
+    "status_at_collection": "investigating",
+    "impact": "minor",
+    "started_at": "2026-10-22T14:18:15.716Z",
+    "updated_at": "2026-10-22T14:35:29.243Z",
+    "latest_update": "Repository update processing has recovered. We’re continuing to work on delays affecting GitHub Actions workflow and step results. We’ll share another update as we make progress.",
+    "overall_status": {
+      "indicator": "minor",
+      "description": "Partially Degraded Service"
+    },
+    "summary_evidence": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/cloud-independent1/github-status-summary-current.json",
+      "bytes": 9159,
+      "sha256": "969e2e342244756c24f8ec3ce77bd694f6c5547fe9622bbca9e7abaddcddecd6"
+    },
+    "incident_evidence": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/cloud-independent1/github-status-incident-current.json",
+      "bytes": 3403,
+      "sha256": "f72f9311e87d2c5dd3b0560a44e32d919a9639c5588fedab48f0c7e98f8154c7"
+    }
+  },
+  "limits": [
+    "Only the Ubuntu artifacts were downloaded and inspected byte-for-byte; the four formal OS jobs are qualified from current API terminal rows plus complete combined job logs.",
+    "Debug certificates are producer-specific and differ; neither producer supplies a release-signature claim.",
+    "The upstream pull_request APK embeds the synthetic merge commit and must not satisfy an exact-b14 runtime guard.",
+    "The retained warnings are not erased by successful jobs, and emitter classification does not prove harmlessness.",
+    "This cloud qualification does not claim Android API21/API35 behavior, physical-device behavior, PR Ready state, or merge readiness."
+  ],
+  "collection": {
+    "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/cloud-independent1/collection-receipt.json",
+    "bytes": 3270,
+    "sha256": "93874fb8285185a799ff920723db4da56469a0fee8272a9a99b9e782f5cca87a"
+  }
+}

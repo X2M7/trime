@@ -1,0 +1,621 @@
+{
+  "schema": "pr2183-real-device-acceptance-result/v2",
+  "record_state": "TEMPLATE_NOT_RUN",
+  "warning": "空模板及模拟器结果不是真机通过证据。核心必测为旧17项及R1、R2、R4；R3仍按实体设备实际可用且启用的反馈能力记录，能力缺口由维护者裁定。",
+  "plan": {
+    "document": "REAL-DEVICE-ACCEPTANCE.md",
+    "legacy_case_count": 17,
+    "legacy_definition": {
+      "path": "/home/xumin/Public/Trime/build/readiness-20261022/t9/android-smoke-minimal-v4.json",
+      "sha256": "c6600665bed383da968c9ad7ed9dd9db571537abeb36eb757f904890bd806318"
+    },
+    "behavior_doc": {
+      "included_path": "t9-input.md",
+      "source_path": "/home/xumin/Public/Trime-pr-t9-rebased/doc/t9-input.md",
+      "git_blob_sha1": "e4fde0aa867291ae72527e00e5bb5334aa38a6d4",
+      "bytes": 2153,
+      "sha256": "24d3a29209fe629b8a6198624ee0df43110736f70da527ac18ad6335000394aa"
+    },
+    "upstream_observed_before_rebase": "19b048494ffa55cae52d5385dfa6d0611461c27d",
+    "upstream_interaction_commits": {
+      "lazy_feedback": "b60c329942eefb7ff9d0c6a4c63bde1d333655ad",
+      "return_label_and_action": "a45f6d6536cdd59c61257e994e98d742f9c242ff",
+      "shift_double_tap_revert": "a39859c16da7be240e4951c8c327223fa27a72cc"
+    },
+    "rebased_source_head": "b14a2f1e0565cec4953f5a974bfcea023875369f",
+    "upstream_base": "19b048494ffa55cae52d5385dfa6d0611461c27d",
+    "shift_source_binding": {
+      "commit": "b14a2f1e0565cec4953f5a974bfcea023875369f",
+      "trime_t9_ascii": "app/src/main/assets/shared/trime.yaml:861 selects letter; letter at 1119-1123 includes default; inherited Shift at 1083 has no double_click",
+      "tongwenfeng_t9_ascii": "app/src/main/assets/shared/tongwenfeng.trime.yaml:4007 selects letter; letter Shift at 1198 has no double_click",
+      "tongwenfeng_default_control": "app/src/main/assets/shared/tongwenfeng.trime.yaml:1149 explicitly sets double_click: Shift_L3; Shift_L3 at 4042 sets shift_lock: click"
+    },
+    "source_tree": "3b40eef39ce8245096c74b1a3a5066d9b4009df1",
+    "source_parent": "1754bb51931407ac916549edc2ae57bba4c073bc",
+    "schema_layout_fix": {
+      "head": "b14a2f1e0565cec4953f5a974bfcea023875369f",
+      "changed_paths": [
+        "app/src/main/java/com/osfans/trime/ime/keyboard/KeyboardWindow.kt",
+        "doc/t9-input.md"
+      ],
+      "required_physical_regression": "R4"
+    }
+  },
+  "candidate_identity": {
+    "pr_number": 2183,
+    "candidate_name": "PR #2183 exact b14a2f1e fork CI Debug ARM64",
+    "rebased_source_head_sha40": "b14a2f1e0565cec4953f5a974bfcea023875369f",
+    "source_tree_sha40": "3b40eef39ce8245096c74b1a3a5066d9b4009df1",
+    "source_parent_sha40": "1754bb51931407ac916549edc2ae57bba4c073bc",
+    "upstream_base_sha40": "19b048494ffa55cae52d5385dfa6d0611461c27d",
+    "behavior_doc_git_blob_sha1": "e4fde0aa867291ae72527e00e5bb5334aa38a6d4",
+    "behavior_doc_sha256": "24d3a29209fe629b8a6198624ee0df43110736f70da527ac18ad6335000394aa",
+    "cloud_repository": "X2M7/trime",
+    "cloud_run_id": 39796208691,
+    "artifact_id": 12433229282,
+    "artifact_archive_sha256": "e24c07f0ebca98bfe65f0a237ca5968055a20860778a90910b6b7c703d4a8269",
+    "apk_filename": "com.osfans.trime-b14a2f1e-arm64-v8a-debug.apk",
+    "apk_sha256": "a393b74c52ba78dd5e28240b390a6686b0af47d76750c9a8aa561b94758b57b2",
+    "apk_bytes": 20603568,
+    "apk_signing_certificate_sha256": "c137e00f34fe583772632ee915cdd156e830746d6fbf1c9e5e2f7d3d2f6239e2",
+    "superseded_old_certificate_sha256_do_not_reuse": "0d50a6c4b5af14741b9307952de134bff81ebf38c81d8030d1528200873f5c38",
+    "package_name": "com.osfans.trime.debug",
+    "version_name": "3.3.13",
+    "version_code": 20261101,
+    "build_type": "Debug",
+    "min_sdk": 21,
+    "target_sdk": 37,
+    "packaged_abis": [
+      "arm64-v8a"
+    ],
+    "signature_warnings_retained": [
+      "WARNING: META-INF/services/kotlinx.coroutines.CoroutineExceptionHandler not protected by signature. Unauthorized modifications to this JAR entry will not be detected. Delete or move the entry outside of META-INF/.",
+      "WARNING: META-INF/services/kotlinx.coroutines.internal.MainDispatcherFactory not protected by signature. Unauthorized modifications to this JAR entry will not be detected. Delete or move the entry outside of META-INF/."
+    ],
+    "original_ci_apk_unmodified": true,
+    "not_stable_release": true,
+    "physical_device_acceptance": "NOT_RUN",
+    "identity_verified_before_test": null,
+    "identity_mismatch_notes": null
+  },
+  "physical_device": {
+    "is_physical_device": null,
+    "manufacturer": null,
+    "model": null,
+    "product_name": null,
+    "android_version": null,
+    "api_level": null,
+    "security_patch": null,
+    "supported_abis_in_order": [],
+    "actual_process_abi": null,
+    "kernel_version_optional": null,
+    "page_size_optional": null,
+    "device_build_fingerprint_optional": null,
+    "tester_name": null,
+    "test_started_at_with_timezone": null,
+    "test_finished_at_with_timezone": null
+  },
+  "installation": {
+    "mode": "NOT_SELECTED",
+    "allowed_modes": [
+      "UPGRADE_EXISTING",
+      "FRESH_TEST_DEVICE"
+    ],
+    "preinstall_package_name": null,
+    "preinstall_version_name": null,
+    "preinstall_version_code": null,
+    "preinstall_certificate_sha256": null,
+    "candidate_certificate_matches_preinstall": null,
+    "install_succeeded_without_uninstall_or_data_clear": null,
+    "installed_version_verified": null,
+    "installed_apk_sha256_if_technically_captured": null,
+    "notes": null,
+    "candidate_expected_certificate_sha256": "c137e00f34fe583772632ee915cdd156e830746d6fbf1c9e5e2f7d3d2f6239e2",
+    "superseded_old_delivery_certificate_sha256": "0d50a6c4b5af14741b9307952de134bff81ebf38c81d8030d1528200873f5c38",
+    "certificate_mismatch_requires_stop_without_uninstall_or_clear": true
+  },
+  "data_protection": {
+    "test_device_or_secondary_profile_used": null,
+    "no_personal_or_secret_input_used": null,
+    "backup_completed_before_upgrade": null,
+    "backup_location_redacted": null,
+    "backup_sha256_or_inventory_reference": null,
+    "pretest_selected_schema": null,
+    "pretest_theme": null,
+    "pretest_feedback_settings": null,
+    "pretest_known_user_dictionary_entry": null,
+    "no_uninstall_or_clear_data_for_upgrade_test": null,
+    "existing_scheme_selection_preserved": null,
+    "custom_configuration_preserved": null,
+    "known_user_dictionary_entry_preserved": null,
+    "screenshots_and_logs_privacy_reviewed": null,
+    "original_ime_theme_and_feedback_restored_after_test": null,
+    "data_loss_or_privacy_notes": null
+  },
+  "environment": {
+    "rime_schema": "luna_pinyin_t9",
+    "themes_required": [
+      "trime",
+      "tongwenfeng"
+    ],
+    "tts_engine_and_version": null,
+    "tts_language": null,
+    "media_volume": null,
+    "vibration_setting": null,
+    "custom_sound_effect_name": null,
+    "fixture_or_test_app_identity": null,
+    "deployment_completed_by_observed_success": null,
+    "notes": null
+  },
+  "legacy_17_cases": [
+    {
+      "case_id": "trime-C1",
+      "legacy_id": "C1",
+      "theme": "trime",
+      "title": "拼音筛选、解锁、撤销、取消",
+      "status": "NOT_RUN",
+      "actual_actions": null,
+      "before_text": null,
+      "visible_spelling_or_candidate": null,
+      "after_text": null,
+      "evidence_files": [],
+      "issue_or_blocker": null,
+      "tester_notes": null
+    },
+    {
+      "case_id": "trime-C2",
+      "legacy_id": "C2",
+      "theme": "trime",
+      "title": "选汉字后立即新输入",
+      "status": "NOT_RUN",
+      "actual_actions": null,
+      "before_text": null,
+      "visible_spelling_or_candidate": null,
+      "after_text": null,
+      "evidence_files": [],
+      "issue_or_blocker": null,
+      "tester_notes": null
+    },
+    {
+      "case_id": "trime-C3",
+      "legacy_id": "C3",
+      "theme": "trime",
+      "title": "空格提交与字面空格",
+      "status": "NOT_RUN",
+      "actual_actions": null,
+      "before_text": null,
+      "visible_spelling_or_candidate": null,
+      "after_text": null,
+      "evidence_files": [],
+      "issue_or_blocker": null,
+      "tester_notes": null
+    },
+    {
+      "case_id": "trime-C4",
+      "legacy_id": "C4",
+      "theme": "trime",
+      "title": "删除、撤销边界",
+      "status": "NOT_RUN",
+      "actual_actions": null,
+      "before_text": null,
+      "visible_spelling_or_candidate": null,
+      "after_text": null,
+      "evidence_files": [],
+      "issue_or_blocker": null,
+      "tester_notes": null
+    },
+    {
+      "case_id": "trime-C5",
+      "legacy_id": "C5",
+      "theme": "trime",
+      "title": "Return 提交完整原始码",
+      "status": "NOT_RUN",
+      "actual_actions": null,
+      "before_text": null,
+      "visible_spelling_or_candidate": null,
+      "after_text": null,
+      "evidence_files": [],
+      "issue_or_blocker": null,
+      "tester_notes": null
+    },
+    {
+      "case_id": "trime-C6",
+      "legacy_id": "C6",
+      "theme": "trime",
+      "title": "数字页字面输入与 T9 恢复",
+      "status": "NOT_RUN",
+      "actual_actions": null,
+      "before_text": null,
+      "visible_spelling_or_candidate": null,
+      "after_text": null,
+      "evidence_files": [],
+      "issue_or_blocker": null,
+      "tester_notes": null
+    },
+    {
+      "case_id": "trime-C7",
+      "legacy_id": "C7",
+      "theme": "trime",
+      "title": "ASCII、符号页与 T9 恢复",
+      "status": "NOT_RUN",
+      "actual_actions": null,
+      "before_text": null,
+      "visible_spelling_or_candidate": null,
+      "after_text": null,
+      "evidence_files": [],
+      "issue_or_blocker": null,
+      "tester_notes": null,
+      "frozen_pending64_to_english_subpath": {
+        "required": true,
+        "status": "NOT_RUN",
+        "actions": [
+          "fresh empty editor",
+          "tap 6 then 4 and keep raw composition active",
+          "directly long-press 123/EN to switch to English without selecting/cancelling",
+          "type lowercase a"
+        ],
+        "expected_switch_commit_exact": "你",
+        "expected_switch_commit_count": 1,
+        "expected_final_text_exact": "你a",
+        "private_markers_forbidden": [
+          "~"
+        ],
+        "subsequent_ascii_must_work": true,
+        "observed_text_after_switch": null,
+        "observed_final_text": null,
+        "observed_commit_count": null,
+        "private_marker_observed": null,
+        "evidence_files": [],
+        "issue_or_blocker": null
+      }
+    },
+    {
+      "case_id": "trime-C8",
+      "legacy_id": "C8",
+      "theme": "trime",
+      "title": "编辑器边界清理",
+      "status": "NOT_RUN",
+      "actual_actions": null,
+      "before_text": null,
+      "visible_spelling_or_candidate": null,
+      "after_text": null,
+      "evidence_files": [],
+      "issue_or_blocker": null,
+      "tester_notes": null
+    },
+    {
+      "case_id": "tongwenfeng-C1",
+      "legacy_id": "C1",
+      "theme": "tongwenfeng",
+      "title": "拼音筛选、解锁、撤销、取消",
+      "status": "NOT_RUN",
+      "actual_actions": null,
+      "before_text": null,
+      "visible_spelling_or_candidate": null,
+      "after_text": null,
+      "evidence_files": [],
+      "issue_or_blocker": null,
+      "tester_notes": null
+    },
+    {
+      "case_id": "tongwenfeng-C2",
+      "legacy_id": "C2",
+      "theme": "tongwenfeng",
+      "title": "选汉字后立即新输入",
+      "status": "NOT_RUN",
+      "actual_actions": null,
+      "before_text": null,
+      "visible_spelling_or_candidate": null,
+      "after_text": null,
+      "evidence_files": [],
+      "issue_or_blocker": null,
+      "tester_notes": null
+    },
+    {
+      "case_id": "tongwenfeng-C3",
+      "legacy_id": "C3",
+      "theme": "tongwenfeng",
+      "title": "空格提交与字面空格",
+      "status": "NOT_RUN",
+      "actual_actions": null,
+      "before_text": null,
+      "visible_spelling_or_candidate": null,
+      "after_text": null,
+      "evidence_files": [],
+      "issue_or_blocker": null,
+      "tester_notes": null
+    },
+    {
+      "case_id": "tongwenfeng-C4",
+      "legacy_id": "C4",
+      "theme": "tongwenfeng",
+      "title": "删除、撤销边界",
+      "status": "NOT_RUN",
+      "actual_actions": null,
+      "before_text": null,
+      "visible_spelling_or_candidate": null,
+      "after_text": null,
+      "evidence_files": [],
+      "issue_or_blocker": null,
+      "tester_notes": null
+    },
+    {
+      "case_id": "tongwenfeng-C5",
+      "legacy_id": "C5",
+      "theme": "tongwenfeng",
+      "title": "Return 提交完整原始码",
+      "status": "NOT_RUN",
+      "actual_actions": null,
+      "before_text": null,
+      "visible_spelling_or_candidate": null,
+      "after_text": null,
+      "evidence_files": [],
+      "issue_or_blocker": null,
+      "tester_notes": null
+    },
+    {
+      "case_id": "tongwenfeng-C6",
+      "legacy_id": "C6",
+      "theme": "tongwenfeng",
+      "title": "数字页字面输入与 T9 恢复",
+      "status": "NOT_RUN",
+      "actual_actions": null,
+      "before_text": null,
+      "visible_spelling_or_candidate": null,
+      "after_text": null,
+      "evidence_files": [],
+      "issue_or_blocker": null,
+      "tester_notes": null
+    },
+    {
+      "case_id": "tongwenfeng-C7",
+      "legacy_id": "C7",
+      "theme": "tongwenfeng",
+      "title": "ASCII、符号页与 T9 恢复",
+      "status": "NOT_RUN",
+      "actual_actions": null,
+      "before_text": null,
+      "visible_spelling_or_candidate": null,
+      "after_text": null,
+      "evidence_files": [],
+      "issue_or_blocker": null,
+      "tester_notes": null,
+      "frozen_pending64_to_english_subpath": {
+        "required": true,
+        "status": "NOT_RUN",
+        "actions": [
+          "fresh empty editor",
+          "tap 6 then 4 and keep raw composition active",
+          "directly long-press 123/EN to switch to English without selecting/cancelling",
+          "type lowercase a"
+        ],
+        "expected_switch_commit_exact": "你",
+        "expected_switch_commit_count": 1,
+        "expected_final_text_exact": "你a",
+        "private_markers_forbidden": [
+          "~"
+        ],
+        "subsequent_ascii_must_work": true,
+        "observed_text_after_switch": null,
+        "observed_final_text": null,
+        "observed_commit_count": null,
+        "private_marker_observed": null,
+        "evidence_files": [],
+        "issue_or_blocker": null
+      }
+    },
+    {
+      "case_id": "tongwenfeng-C8",
+      "legacy_id": "C8",
+      "theme": "tongwenfeng",
+      "title": "编辑器边界清理",
+      "status": "NOT_RUN",
+      "actual_actions": null,
+      "before_text": null,
+      "visible_spelling_or_candidate": null,
+      "after_text": null,
+      "evidence_files": [],
+      "issue_or_blocker": null,
+      "tester_notes": null
+    },
+    {
+      "case_id": "tongwenfeng-T17",
+      "legacy_id": "C7-category-macro-and-number-restore",
+      "theme": "tongwenfeng",
+      "title": "符号类别宏、候选提交、数字页与 T9 恢复",
+      "status": "NOT_RUN",
+      "actual_actions": null,
+      "before_text": null,
+      "visible_spelling_or_candidate": null,
+      "after_text": null,
+      "evidence_files": [],
+      "issue_or_blocker": null,
+      "tester_notes": null
+    }
+  ],
+  "rebased_upstream_supplemental": [
+    {
+      "case_id": "R1",
+      "title": "Return 标签、editor action 与 T9 原始码路径",
+      "status": "NOT_RUN",
+      "editor_variants_tested": [],
+      "observed_labels_and_actions": null,
+      "evidence_files": [],
+      "issue_or_blocker": null,
+      "notes": null,
+      "core_required": true
+    },
+    {
+      "case_id": "R2",
+      "title": "Shift 回退：两个 T9 letter 无显式双击；tongwenfeng.default 显式 Shift_L3 正控",
+      "status": "NOT_RUN",
+      "observed_letters_and_states": null,
+      "evidence_files": [],
+      "issue_or_blocker": null,
+      "notes": null,
+      "core_required": true,
+      "layout_subresults": [
+        {
+          "layout": "trime T9 -> letter",
+          "source": "trime.yaml:861,1119-1123 inheriting Shift at 1083",
+          "explicit_double_click": false,
+          "status": "NOT_RUN",
+          "observed_editable_case": null,
+          "evidence_files": []
+        },
+        {
+          "layout": "tongwenfeng T9 -> letter",
+          "source": "tongwenfeng.trime.yaml:4007,1167-1198",
+          "explicit_double_click": false,
+          "status": "NOT_RUN",
+          "observed_editable_case": null,
+          "evidence_files": []
+        },
+        {
+          "layout": "tongwenfeng full-pinyin/default control",
+          "source": "tongwenfeng.trime.yaml:1149 and Shift_L3 at 4042",
+          "explicit_double_click": true,
+          "status": "NOT_RUN",
+          "observed_editable_AA_aa": null,
+          "actual_double_click_route_observed": null,
+          "evidence_files": []
+        }
+      ],
+      "double_tap_rule": "Use two real rapid taps in one uninterrupted action/journal; do not insert PID/screenshot probes between taps and do not substitute two slow single taps."
+    },
+    {
+      "case_id": "R3",
+      "title": "反馈按需初始化、启停与输入生命周期",
+      "status": "NOT_RUN",
+      "feedback_modes_tested": [],
+      "first_initialization_observation": null,
+      "lifecycle_observation": null,
+      "evidence_files": [],
+      "issue_or_blocker": null,
+      "notes": null,
+      "core_required": false,
+      "required_scope": "Record and test feedback capabilities that are actually available and enabled on this physical device; unavailable capabilities are BLOCKED pending maintainer scope disposition, not an automatic failure of all T9.",
+      "capability_inventory": {
+        "system_key_sound_available": null,
+        "vibration_available_and_perceptible": null,
+        "custom_sound_effect_available": null,
+        "tts_engine_available": null,
+        "tts_language_available": null,
+        "speak_on_key_press_enabled_for_test": null,
+        "speak_on_commit_enabled_for_test": null
+      },
+      "capability_subresults": {
+        "all_feedback_disabled_baseline": "NOT_RUN",
+        "system_key_sound": "NOT_RUN",
+        "vibration": "NOT_RUN",
+        "custom_sound_effect": "NOT_RUN",
+        "tts_key_speech": "NOT_RUN",
+        "tts_commit_speech": "NOT_RUN",
+        "lifecycle_stale_feedback": "NOT_RUN"
+      },
+      "maintainer_scope_disposition": "PENDING",
+      "maintainer_scope_notes": null
+    },
+    {
+      "case_id": "R4",
+      "title": "方案切换后的锁定布局恢复：T9→全拼→强制布局→全拼→T9",
+      "status": "NOT_RUN",
+      "core_required": true,
+      "source_fix_head": "b14a2f1e0565cec4953f5a974bfcea023875369f",
+      "actual_actions": null,
+      "evidence_files": [],
+      "issue_or_blocker": null,
+      "notes": null,
+      "required_common_path": [
+        "start from luna_pinyin_t9 in a fresh normal editor",
+        "use the public schema chooser to select 朙月拼音 and reopen it to record the checked label",
+        "open an independent new normal editor and verify full QWERTY remains selected",
+        "open an integer editor and verify the forced numeric layout",
+        "open an email editor and commit exact literal lowercase a",
+        "open a new normal editor, type full-Pinyin ni, and select exact 你",
+        "after the theme-specific checks, use the public chooser to select 朙月拼音九键 and reopen it to record the checked label",
+        "open an independent new editor, enter T9 ni then hao, and select exact 你好"
+      ],
+      "theme_subresults": [
+        {
+          "theme": "tongwenfeng",
+          "status": "NOT_RUN",
+          "full_schema_checked_label": null,
+          "new_editor_layout": null,
+          "forced_integer_layout_observed": null,
+          "email_literal_text": null,
+          "normal_full_pinyin_selected_text": null,
+          "return_t9_checked_label": null,
+          "return_t9_selected_text": null,
+          "evidence_files": [],
+          "issue_or_blocker": null
+        },
+        {
+          "theme": "trime",
+          "status": "NOT_RUN",
+          "full_schema_checked_label": null,
+          "new_editor_layout": null,
+          "forced_integer_layout_observed": null,
+          "email_literal_text": null,
+          "normal_full_pinyin_selected_text": null,
+          "same_qwerty_schema_transition": {
+            "from": "朙月拼音",
+            "to": "朙月拼音·简化字",
+            "required_checked_label": "朙月拼音·简化字",
+            "status": "NOT_RUN",
+            "observed_checked_label": null,
+            "repeat_integer_email_a_normal_ni_select_你": "NOT_RUN",
+            "evidence_files": []
+          },
+          "return_t9_checked_label": null,
+          "return_t9_selected_text": null,
+          "evidence_files": [],
+          "issue_or_blocker": null
+        }
+      ],
+      "exact_expected_literals": {
+        "email": "a",
+        "normal_full_pinyin_selection": "你",
+        "return_t9_selection": "你好"
+      },
+      "required_trime_same_qwerty_path": [
+        "while the trime theme is on 朙月拼音 QWERTY, use the public chooser to select 朙月拼音·简化字",
+        "reopen the chooser and require the checked label 朙月拼音·简化字 even though the keyboard is still the same qwerty layout",
+        "repeat integer editor -> email editor literal a -> new normal editor full-Pinyin ni -> select exact 你",
+        "then return through the public chooser to 朙月拼音九键 and finish with exact 你好 in a new editor"
+      ],
+      "oracle_rule": "Judge schema changes by the reopened public chooser checked label and judge layout by the visible keyboard in the specified independent editor; do not infer a schema change from the shared qwerty layout alone."
+    }
+  ],
+  "failures": [],
+  "completion_checks": {
+    "all_17_legacy_cases_have_terminal_status": false,
+    "candidate_identity_complete_and_consistent": false,
+    "physical_device_identity_complete": false,
+    "data_protection_and_restore_complete": false,
+    "evidence_inventory_complete": false,
+    "R1_R2_core_cases_have_terminal_status": false,
+    "no_unexplained_core_fail_or_blocked": false,
+    "R3_available_and_enabled_capabilities_recorded": false,
+    "R3_blocked_or_unavailable_scope_has_maintainer_disposition": false,
+    "R4_core_case_has_terminal_status": false,
+    "R4_both_themes_and_trime_same_qwerty_transition_recorded": false
+  },
+  "final_assessment": {
+    "status": "NOT_RUN",
+    "allowed_statuses": [
+      "NOT_RUN",
+      "PASS_FOR_RECORDED_DEVICE_ONLY",
+      "FAIL",
+      "BLOCKED"
+    ],
+    "scope_statement": null,
+    "tester_signature": null,
+    "reviewer_signature": null,
+    "signed_at_with_timezone": null,
+    "core_scope": "legacy_17_cases + R1 + R2 + R4",
+    "feedback_scope": "R3 capabilities actually available/enabled on recorded device; gaps require maintainer disposition",
+    "maintainer_feedback_scope_decision": null,
+    "maintainer_feedback_scope_notes": null
+  }
+}

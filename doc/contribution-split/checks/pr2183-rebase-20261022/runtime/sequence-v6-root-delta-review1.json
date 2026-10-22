@@ -1,0 +1,28 @@
+{
+  "schema": "sequence-runner-v6-delta-review/v1",
+  "utc": "2026-10-22T14:50:39.783071+00:00",
+  "reviewer": "root",
+  "state": "APPROVED_FOR_EXECUTION_WITH_INHERITED_LIMITS",
+  "v6_path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/t9_case_sequences_v6.py",
+  "v6_sha256": "14c87d18d3431fcc7ce21ae2712bb661b1851c037d2fad8fa519d49209d4f2c3",
+  "v5_sha256": "939ca19bb2b798b5ae703afb2a03db3d206d20d5ed31a0c05c6061d2093f32ca",
+  "v5_review_path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/sequence-independent-review1.json",
+  "v5_review_sha256": "e31c719ae20433365b6f175bf75c501722363adf5b05cf878d92e99fb85fa25a",
+  "checks": {
+    "only_pref_read_hunk_changed": true,
+    "syntax_parse_passed": true,
+    "uses_real_shell_id": true,
+    "root_uses_plain_cat": true,
+    "other_identity_uses_existing_su0_cat": true,
+    "pref_path_literal_fixed_to_target_debug_package": true,
+    "records_actual_read_identity_and_argv": true,
+    "no_adb_restart_vm_mutation_or_write_added": true,
+    "all_cases_source_runner_sha_guards_and_finally_unchanged": true
+  },
+  "limits": [
+    "Delta source review only; no new ADB/VM execution or platform pass.",
+    "V5 failure-path host stub results are retained at the original v5 SHA, not rerun at v6.",
+    "Cancel package/class binding and cleared composition must still be independently verified in after-XML and actual images.",
+    "Exact APK binding must be newly frozen for v6 without overwriting the v5 artifact."
+  ]
+}

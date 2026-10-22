@@ -1,0 +1,79 @@
+{
+  "schema": "trime-t9-sequence-v6-independent-diff-review-v1",
+  "created_at": "2026-10-22T14:50:56.456006+00:00",
+  "host_only": true,
+  "adb_used": false,
+  "vm_used": false,
+  "gradle_used": false,
+  "reviewed": {
+    "base_runner": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/t9_case_sequences_v5.py",
+      "sha256": "939ca19bb2b798b5ae703afb2a03db3d206d20d5ed31a0c05c6061d2093f32ca"
+    },
+    "runner": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/t9_case_sequences_v6.py",
+      "sha256": "14c87d18d3431fcc7ce21ae2712bb661b1851c037d2fad8fa519d49209d4f2c3"
+    },
+    "base_independent_review": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/sequence-independent-review1.json",
+      "sha256": "e31c719ae20433365b6f175bf75c501722363adf5b05cf878d92e99fb85fa25a"
+    },
+    "diff": "--- /home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/t9_case_sequences_v5.py\t2026-10-22 22:40:01.774775775 +0800\n+++ /home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/t9_case_sequences_v6.py\t2026-10-22 22:50:06.796307885 +0800\n@@ -371,8 +371,16 @@\n         _need(density_effective == '320', 'Expected effective dpi320')\n         font = S.shell('settings', 'get', 'system', 'font_scale').strip()\n         _need(font in ('null', '1', '1.0'), 'Default font1 required for explicit coordinates')\n-        prefs = S.shell('cat', '/data/data/com.osfans.trime.debug/shared_prefs/'\n-                        'com.osfans.trime.debug_preferences.xml')\n+        actual_shell_id = S.shell('id').strip()\n+        pref_path = ('/data/data/com.osfans.trime.debug/shared_prefs/'\n+                     'com.osfans.trime.debug_preferences.xml')\n+        # API35 may keep adbd as shell2000. Use its already available su0 only\n+        # for this read; do not restart adbd or disconnect the continuous log.\n+        pref_args = (['cat', pref_path] if actual_shell_id.startswith('uid=0(')\n+                     else ['su', '0', 'cat', pref_path])\n+        record['precondition_pref_read'] = dict(shell_identity=actual_shell_id,\n+                                               argv=pref_args, read_only=True)\n+        prefs = S.shell(*pref_args)\n         (S.out / (prefix + '-precondition-prefs.xml')).write_text(prefs)\n         nodes = ET.fromstring(prefs)\n         selected = next((n.text for n in nodes if n.get('name') == 'selected_theme'), None)\n"
+  },
+  "verdict": "APPROVE_FOR_CONTROLLED_EMULATOR_EXECUTION_WITH_EXISTING_EXTERNAL_REVIEW_LIMITS",
+  "blocking_findings": [],
+  "verified": [
+    {
+      "claim": "The only v5-to-v6 behavior change is the private preference read precondition.",
+      "evidence": "one hunk, 10 added/2 removed lines at v6 374-383"
+    },
+    {
+      "claim": "The runner captures actual id; uid=0 uses direct cat, any non-root identity uses argument-vector su 0 cat on one fixed package-private XML path. There is no shell interpolation or write command.",
+      "evidence": "v6 lines 374-383"
+    },
+    {
+      "claim": "The actual identity, exact argv, and read_only=true are stored before the read; S.shell separately journals the command and rejects nonzero execution.",
+      "evidence": [
+        "v6 lines 381-383",
+        "t9_smoke_helper_v6.py shell/run command journal semantics"
+      ]
+    },
+    {
+      "claim": "Neither v6 nor its diff invokes adb root, restarts adbd, disconnects the observer/log collector, writes prefs, or changes product/helper source.",
+      "evidence": "complete v5-v6 diff"
+    },
+    {
+      "claim": "Both root and shell branches select the expected fixed argv and complete the synthetic read-only precondition in host stubs.",
+      "evidence": {
+        "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/sequence-v6-pref-read-stubs.json",
+        "sha256": "2a386338d977338f345ced00a1abca0de7056dac5cfe01a2b0f21838bbb2cbf3",
+        "cases": [
+          "uid=0 direct cat",
+          "uid=2000 su 0 cat"
+        ]
+      }
+    },
+    {
+      "claim": "All v5 identity, geometry, asset, schema-readback, finally/normal-stop, raw false, and external image/XML qualification controls are byte-identical and carry forward.",
+      "evidence": {
+        "base_review": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/sequence-independent-review1.json",
+        "base_review_sha256": "e31c719ae20433365b6f175bf75c501722363adf5b05cf878d92e99fb85fa25a"
+      }
+    }
+  ],
+  "nonblocking_limits": [
+    {
+      "id": "privileged-test-harness-precondition",
+      "detail": "For a non-root adbd shell this requires an already available su 0 on the controlled emulator. It does not demonstrate access on a production/user device and must not be presented as an app capability."
+    },
+    {
+      "id": "fail-closed",
+      "detail": "If id, su, cat, XML parsing, or selected-theme validation fails, the case rejects and still follows the existing finish/cleanup path."
+    },
+    {
+      "id": "external-business-qualification",
+      "detail": "The unchanged v5 limits remain: runner output keeps business_passed=false; actual images, before/after XML including Cancel/segment state, PID/oracles, and normal stop require offline qualification."
+    }
+  ],
+  "supersedes_for_execution_only": "t9_case_sequences_v5.py; v5 and its independent review remain retained evidence"
+}

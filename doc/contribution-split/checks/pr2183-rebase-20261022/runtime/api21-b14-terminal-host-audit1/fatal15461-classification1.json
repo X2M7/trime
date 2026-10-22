@@ -1,0 +1,36 @@
+{
+  "event": {
+    "kind": "fatal",
+    "line": 1352991,
+    "byte_offset": 100221470,
+    "bytes": 129,
+    "pid": 15461,
+    "level": "F",
+    "tag": "libc",
+    "sha256": "e9a13f08a2f9c2caf3ff65f556bcfb32449d1e9560cf417d9edb7f38f8944a16",
+    "raw": "10-22 23:10:46.077 15461 15470 F libc    : Fatal signal 11 (SIGSEGV), code 1, fault addr 0x7ff1eac2e545 in tid 15470 (Binder_2)"
+  },
+  "process_identity_lines": [
+    {
+      "line": 1352910,
+      "raw": "10-22 23:10:45.025 15461 15461 D AndroidRuntime: >>>>>> AndroidRuntime START com.android.internal.os.RuntimeInit <<<<<<"
+    },
+    {
+      "line": 1352914,
+      "raw": "10-22 23:10:45.101 15461 15461 D AndroidRuntime: Calling main entry com.android.commands.input.Input"
+    },
+    {
+      "line": 1352989,
+      "raw": "10-22 23:10:45.869 15461 15461 D AndroidRuntime: Shutting down VM"
+    },
+    {
+      "line": 1352991,
+      "raw": "10-22 23:10:46.077 15461 15470 F libc    : Fatal signal 11 (SIGSEGV), code 1, fault addr 0x7ff1eac2e545 in tid 15470 (Binder_2)"
+    }
+  ],
+  "classification": "Android system shell input command process, com.android.commands.input.Input, real Binder SIGSEGV after Shutting down VM",
+  "not_target2461": true,
+  "not_fixture_app": true,
+  "underlying_platform_shutdown_cause_not_fully_diagnosed": true,
+  "not_eliminated_or_hidden": true
+}

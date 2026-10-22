@@ -1,0 +1,303 @@
+{
+  "schema": "trime-independent-runtime-qualification/v1",
+  "generated_utc": "2026-10-22T15:15:05.016592+00:00",
+  "review_mode": "HOST_ONLY_NO_ADB_VM_GRADLE",
+  "verdict": "PASS_API21_STANDARD_K2",
+  "scope": {
+    "platform": "Android API21 emulator",
+    "theme": "standard / tongwenfeng.trime",
+    "actual_case_session": "K2",
+    "physical_device": "NOT_RUN"
+  },
+  "frozen_inputs": {
+    "session": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-b14-standard-K2",
+    "raw_report": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-b14-standard-K2/report.json",
+      "sha256": "116b7555a16245f4023289150fd4e9d8eca21ceeeb6c15921c15ffaa14872c57",
+      "passed": false,
+      "checks": []
+    },
+    "sequence_result": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-b14-standard-K2/sequence-result.json",
+      "sha256": "dd10d7332bbc61057f47086fe54c557437bf79fac70e26c12f125b011fa24dc8",
+      "business_passed": false
+    },
+    "binding": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/original-apk-binding-b14-v6.json",
+      "sha256": "7b08ec8476a13f16995f4b90d07d19e553f9de129f60b3feeec371d9af4ddfeb"
+    },
+    "runner": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/t9_case_sequences_v6.py",
+      "sha256": "14c87d18d3431fcc7ce21ae2712bb661b1851c037d2fad8fa519d49209d4f2c3"
+    },
+    "root_visual_ledger_snapshot": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/root-image-review-b14.json",
+      "sha256_at_review": "488c861c08061a411617811d1a81aa93cbc00cbba339926737154a927d4a421a"
+    }
+  },
+  "identity": {
+    "source_head": "b14a2f1e0565cec4953f5a974bfcea023875369f",
+    "apk_sha256": "38b8523cd1334ce0434004b80c16766ca2c6ffbf0a95ac19bc53eaade51921ee",
+    "target_pid": 2461,
+    "target_starttime": "12268",
+    "target_stat_probe_count": 24,
+    "target_cmdline_probe_count": 24,
+    "observer_session_token": "531d030a389de7094b723f836028380a",
+    "observer_pid": 11647,
+    "observer_starttime": "138414",
+    "boot_id": "d95d42cb-3547-4e86-829a-aa46004f7cac",
+    "theme_asset_sha256": "e758ce8f9059f0fbe3c27c2de9c5faffff761b825feed437075f285e15af9147"
+  },
+  "capture_chain": {
+    "capture_count": 7,
+    "capture_failures": 0,
+    "same_cached_automation_connection": true,
+    "helper_injected_touch": false,
+    "byte_equal_xml_capture_count": 6,
+    "byte_unequal_xml_captures": [
+      {
+        "label": "standard-K2-raw64-before",
+        "differences": [
+          {
+            "package": "com.osfans.trime.debug",
+            "class": "android.widget.TextView",
+            "text": "mi",
+            "delta": {
+              "bounds": [
+                "[450,465][473,492]",
+                "[450,466][473,493]"
+              ]
+            }
+          }
+        ]
+      }
+    ],
+    "byte_unequal_limit": "Retained differences only move secondary Trime TextView bounds by one pixel; they are not represented as byte-stable frames.",
+    "captures": [
+      {
+        "sequence": 1,
+        "label": "standard-K2-raw-initial",
+        "png_sha256": "fd65b0695ee20a00ba55bf146549b86a50496df0cf1679dbf58fe610ffc6475f",
+        "before_xml_sha256": "7aa48f35ed8500baa1d1ed350febe4e80e6394f51d6b1bc5743677cb374158a0",
+        "after_xml_sha256": "7aa48f35ed8500baa1d1ed350febe4e80e6394f51d6b1bc5743677cb374158a0",
+        "hierarchies_equal": true
+      },
+      {
+        "sequence": 2,
+        "label": "standard-K2-raw64-before",
+        "png_sha256": "1f584c0707b43fc1bd8d4cf9aedb1087d055f574af80c5070fb6ecf9931a6f86",
+        "before_xml_sha256": "5c6a5aaee4823281ed38b30b250e525f1834ae3baac34f5caf093f1b945eb147",
+        "after_xml_sha256": "c42d89224a7b658d668b2e52a02febfe9ba6d142f9278980e485d9914ebc3d68",
+        "hierarchies_equal": false
+      },
+      {
+        "sequence": 3,
+        "label": "standard-K2-raw64-enter",
+        "png_sha256": "851c6e016588969de022716dd4c85c118086f5433292e5e8486001cbfdd9b8ab",
+        "before_xml_sha256": "f6573b79affd1fcddfc43f8c3dafcd8f40ca5986a7733f46090cf1fb39c0ded1",
+        "after_xml_sha256": "f6573b79affd1fcddfc43f8c3dafcd8f40ca5986a7733f46090cf1fb39c0ded1",
+        "hierarchies_equal": true
+      },
+      {
+        "sequence": 4,
+        "label": "standard-K2-chat-before",
+        "png_sha256": "357166b96ebf28bc2c061ab22c7778d3952b46e6e6103e469ee97268d987195b",
+        "before_xml_sha256": "c42bed3f93ef2dde7139d1252627fd1db6e96716bd72b52b77fe66d4f8150ce1",
+        "after_xml_sha256": "c42bed3f93ef2dde7139d1252627fd1db6e96716bd72b52b77fe66d4f8150ce1",
+        "hierarchies_equal": true
+      },
+      {
+        "sequence": 5,
+        "label": "standard-K2-chat-action4",
+        "png_sha256": "ad502ec7aaf9656cd0b3cbcbba653ba7376855c18558762e90bc79d5e0fb3d2a",
+        "before_xml_sha256": "87e44dbd3068c8798434c48f754d5bb909aba2aa11a8a8b3e57e7d6ed753e97e",
+        "after_xml_sha256": "87e44dbd3068c8798434c48f754d5bb909aba2aa11a8a8b3e57e7d6ed753e97e",
+        "hierarchies_equal": true
+      },
+      {
+        "sequence": 6,
+        "label": "standard-K2-multiline-before",
+        "png_sha256": "ae3f9460dc8241e500da3b5da2a9560612237ad9dc6f3d91b4a73762c360eacd",
+        "before_xml_sha256": "130d4386b032c4bd9cbfe3bf8fbead902a1bf44ef4f2255614ee6393c3f95676",
+        "after_xml_sha256": "130d4386b032c4bd9cbfe3bf8fbead902a1bf44ef4f2255614ee6393c3f95676",
+        "hierarchies_equal": true
+      },
+      {
+        "sequence": 7,
+        "label": "standard-K2-multiline-newline",
+        "png_sha256": "6d82b549d98d842005c19f6b796626bb641bb12953a92d25191bab32a68b06cb",
+        "before_xml_sha256": "66e79f5c800e92b537628997ce195199a053c8276e49461c012a112c91dba215",
+        "after_xml_sha256": "66e79f5c800e92b537628997ce195199a053c8276e49461c012a112c91dba215",
+        "hierarchies_equal": true
+      }
+    ]
+  },
+  "oracle_chain": {
+    "pair_count": 7,
+    "file_count": 14,
+    "all_main_thread_read_only_focused": true,
+    "pairs": [
+      {
+        "label": "standard-K2-raw-initial",
+        "expected_text": "",
+        "fixture_pid": 11754,
+        "activity_instance": "2c8ee11fa40f48fd8d1cc5132d1bb22b",
+        "sequences": [
+          1,
+          2
+        ],
+        "before_sha256": "7a3347129fd9a8cb2d55a4a0fddc6492dfc3d93b02aa7158f074de8008c36abc",
+        "after_sha256": "3ab257cf9c9062583816520e0e9ce34f5ba322e411cb2d504253cfbd99ed0faf"
+      },
+      {
+        "label": "standard-K2-raw64-before",
+        "expected_text": "",
+        "fixture_pid": 11754,
+        "activity_instance": "2c8ee11fa40f48fd8d1cc5132d1bb22b",
+        "sequences": [
+          3,
+          4
+        ],
+        "before_sha256": "75a6cd0dfc8387d0fa8cd04b652cff539264f0efcad85b8b332b3504e236755d",
+        "after_sha256": "a54d47dfc61de74a126adb84c971ca12de1bfb0f27a9f83367fed0141e6294e5"
+      },
+      {
+        "label": "standard-K2-raw64-enter",
+        "expected_text": "64",
+        "fixture_pid": 11754,
+        "activity_instance": "2c8ee11fa40f48fd8d1cc5132d1bb22b",
+        "sequences": [
+          5,
+          6
+        ],
+        "before_sha256": "e27633cf02008e6749fed78d419960f48c68019c34bf9d0edd151769de3e824c",
+        "after_sha256": "36ff85b4692a8ea158fb21a7dfa5009f263280a81b4d550e05a8817c2a27d6a0"
+      },
+      {
+        "label": "standard-K2-chat-before",
+        "expected_text": "",
+        "fixture_pid": 12415,
+        "activity_instance": "ccf2faf5fd1648b48c931a1b825f1620",
+        "sequences": [
+          1,
+          2
+        ],
+        "before_sha256": "24fc64004f0cd03976ffa8cf308308f4614f817f66d1f1be3c5bea65d9c1d438",
+        "after_sha256": "6c3fe50df5404a5347b3c3f1c951373b33a29cbc7900c265cd5392540820889e"
+      },
+      {
+        "label": "standard-K2-chat-action4",
+        "expected_text": "",
+        "fixture_pid": 12415,
+        "activity_instance": "ccf2faf5fd1648b48c931a1b825f1620",
+        "sequences": [
+          3,
+          4
+        ],
+        "before_sha256": "a6f9492165b9e0b68927170548ddcfaca8bd81cc71a3d213e09c02af2428ba99",
+        "after_sha256": "353c95e4d383a73c82f5256159e1319ba4c75234755eb691fc72e35464c73f4c"
+      },
+      {
+        "label": "standard-K2-multiline-before",
+        "expected_text": "",
+        "fixture_pid": 12850,
+        "activity_instance": "1108bf24fc9f4756b2b543e33709bb62",
+        "sequences": [
+          1,
+          2
+        ],
+        "before_sha256": "1e5b8bf6bc400fa3b3a93728c8a17ca2b4a864fd16474c7c5bc3fdfb650a98e5",
+        "after_sha256": "de5f4fd866cde67e5b3b2a45ee2713ca26063470c658f988cc6a07e0b97d8b3e"
+      },
+      {
+        "label": "standard-K2-multiline-newline",
+        "expected_text": "\n",
+        "fixture_pid": 12850,
+        "activity_instance": "1108bf24fc9f4756b2b543e33709bb62",
+        "sequences": [
+          3,
+          4
+        ],
+        "before_sha256": "c2204792bd97498082aee12ec7636b9b43db7f7612ed0ded38a1d69c6540d08b",
+        "after_sha256": "5ffc8b548478a7f473f652e815bc78cc56f7819677e19b4febe7b44e37d7faf4"
+      }
+    ]
+  },
+  "command_boundary": {
+    "journal_commands": 424,
+    "all_completed": true,
+    "all_host_returncode_zero": true,
+    "remote_returncode_counts": {
+      "0": 228,
+      "not_applicable": 81,
+      "1": 115
+    },
+    "remote_one_scope": "Only expected test -e/test -f absence polling; terminal remote return code is zero.",
+    "target_preference_access": {
+      "shell_identity": "uid=0(root) gid=0(root) groups=1003(graphics),1004(input),1007(log),1011(adb),1015(sdcard_rw),1028(sdcard_r),3001(net_bt_admin),3002(net_bt),3003(inet),3006(net_bw_stats)",
+      "argv": [
+        "cat",
+        "/data/data/com.osfans.trime.debug/shared_prefs/com.osfans.trime.debug_preferences.xml"
+      ],
+      "read_only": true
+    },
+    "scope_note": "Observer/temp request staging writes control-channel files. No install/uninstall/force-stop/adb-root/remount/settings-put/setprop, target shared-prefs write, or YAML command is present."
+  },
+  "stop": {
+    "authenticated_normal_stop": true,
+    "direct_finish_succeeded": true,
+    "host_wait_returncode": 0,
+    "remote_returncode": 0,
+    "requests": 8,
+    "captures": 7,
+    "cleanup": []
+  },
+  "selected_root_visual_review": {
+    "count": 3,
+    "records": [
+      {
+        "utc": "2026-10-22T15:10:37.043122+00:00",
+        "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-b14-standard-K2/captures/standard-K2-raw64-enter/observer-in-connection.png",
+        "sha256": "851c6e016588969de022716dd4c85c118086f5433292e5e8486001cbfdd9b8ab",
+        "platform": "API21",
+        "case": "standard K2",
+        "execution_binding_sha256": "7b08ec8476a13f16995f4b90d07d19e553f9de129f60b3feeec371d9af4ddfeb",
+        "observed": "Multiline editor visibly contains exact64 after Return; clean T9 layout and Enter remain.",
+        "scope": "Root original visual review; exact text bytes and action oracle independently required."
+      },
+      {
+        "utc": "2026-10-22T15:10:37.044716+00:00",
+        "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-b14-standard-K2/captures/standard-K2-chat-action4/observer-in-connection.png",
+        "sha256": "ad502ec7aaf9656cd0b3cbcbba653ba7376855c18558762e90bc79d5e0fb3d2a",
+        "platform": "API21",
+        "case": "standard K2",
+        "execution_binding_sha256": "7b08ec8476a13f16995f4b90d07d19e553f9de129f60b3feeec371d9af4ddfeb",
+        "observed": "Chat editor shows empty hint, fixture action:4 and dynamic key label 发送.",
+        "scope": "Root original visual review; exact text bytes and action oracle independently required."
+      },
+      {
+        "utc": "2026-10-22T15:10:37.046053+00:00",
+        "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-b14-standard-K2/captures/standard-K2-multiline-newline/observer-in-connection.png",
+        "sha256": "6d82b549d98d842005c19f6b796626bb641bb12953a92d25191bab32a68b06cb",
+        "platform": "API21",
+        "case": "standard K2",
+        "execution_binding_sha256": "7b08ec8476a13f16995f4b90d07d19e553f9de129f60b3feeec371d9af4ddfeb",
+        "observed": "Multiline editor no longer shows its hint, fixture action:0, key label Enter. A newline byte cannot be established visually and requires the retained exact oracle.",
+        "scope": "Root original visual review; exact text bytes and action oracle independently required."
+      }
+    ],
+    "limit": "Root reviewed 3 selected original PNGs, not every capture."
+  },
+  "limits": [
+    "API21 emulator, standard theme, K2 only; no API35, other case, whole-platform, PR Ready, or merge conclusion.",
+    "Physical device is NOT_RUN.",
+    "The three explicit minimal test preferences are a separately recorded preparation precondition; this is not pure-default, onboarding, or upgrade acceptance.",
+    "Raw report passed:false/checks:[] and sequence business_passed:false remain unchanged; this file is the separate qualification decision.",
+    "Capture settle timing is synchronization evidence, not a latency measurement."
+  ],
+  "business_findings": {
+    "raw64_return": "Pending Current: Input segment: 64 existed while Editable was empty; right Return then produced exact Editable UTF-8 64 and a clean T9 XML.",
+    "chat_action": "A fresh chat editor remained byte-empty while the fixture recorded action: 4; selected Root frame also shows dynamic 发送 key.",
+    "multiline_newline": "A fresh multiline editor received one exact U+000A byte (base64 Cg==), cursor 1/1, same focused activity, while fixture recorded action: 0. The newline conclusion comes from the retained oracle, not visual inference."
+  }
+}

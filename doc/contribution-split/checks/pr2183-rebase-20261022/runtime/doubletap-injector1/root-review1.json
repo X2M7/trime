@@ -1,0 +1,34 @@
+{
+  "utc": "2026-10-22T15:35:21.982589+00:00",
+  "state": "APPROVED_FOR_CONTROLLED_DEVICE_TEST_NOT_EXECUTED",
+  "reviewer": "root",
+  "source_sha256": "3f1abeb7a6360b0aa5fb62684df11fceffa46e2887b26b18432f2c6fa00d03c6",
+  "jar_sha256": "55bd2a26e0c43564d6d2a35157c8abeb5efc5263757cab22c03157accb639507",
+  "identity_sha256": "15c7eab897d7e77a11a3987a762a9b2567446174b3a818d4818e0746794bc745",
+  "checks": {
+    "source_byte_identity": true,
+    "build_script_byte_identity": true,
+    "dex_jar_byte_identity": true,
+    "one_dex035_entry": true,
+    "real_inputmanager_motion_events": true,
+    "no_direct_app_gesture_or_performclick_calls": true,
+    "fixed_4_accepted_and_300ms_gate": true,
+    "failure_contact_cancel_after_up_error": true,
+    "root_shell_only_and_default_display": true,
+    "api21_fallback_and_api35_reflection": true,
+    "event_recycled_in_finally": true,
+    "no_setting_preference_or_data_write": true
+  },
+  "execution_requirements": [
+    "Freeze a new exact source/APK/runner binding before execution; identity1 b14 wording describes the historical host-preparation plan only.",
+    "Same process four events all accepted; helper exit0 and UP call delta<=300 are necessary but insufficient.",
+    "Target app logs must show actual contact/release within300ms and S2 DOUBLE_CLICK dispatch; exact uppercaseAA oracle remains mandatory.",
+    "S1 no-action negative control requires fast contact logs/twoCLICK plus exact lowercaseaa.",
+    "Do not change double_tap_timeout300 or directly invoke app/KeyView/GestureFrame actions."
+  ],
+  "limits": [
+    "Host source/artifact review only; successful platform reflection/injection unproven on API21/35.",
+    "Default display0/portrait frozen coordinates only.",
+    "Rejected injection must stop the case and preserve raw events/cleanup outcome; no automatic claim of product defect."
+  ]
+}

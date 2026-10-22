@@ -1,0 +1,59 @@
+{
+  "schema": "trime-fixed-control-warning-supplement-v1",
+  "generated_at": "2026-10-22T14:59:19.169580+00:00",
+  "passed": true,
+  "scope": {
+    "repository": "X2M7/trime",
+    "run_id": 39798930637,
+    "job_id": 119893752265,
+    "control_head": "3810942c8d9302a531e02ff8d852eb880078e996",
+    "target_head": "b14a2f1e0565cec4953f5a974bfcea023875369f",
+    "log_source": "Authenticated GitHub connector download-job-logs result after the job reached terminal success.",
+    "combined_job_log": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/cloud-control-run-39798930637/job-119893752265-terminal.log",
+      "bytes": 2003248,
+      "sha256": "c45b154f64dbfd940ac4d9f0d2ab13e98d8f4885f5479a08b841d94ce2dff2ae",
+      "line_count": 14734
+    }
+  },
+  "selection_rule": "The same warning-shaped-line regex used for the formal b14 warning audit: GitHub warning annotations, WARNING/warning markers, CMake deprecation, Gradle deprecated-feature/setVisible messages, and Kotlin 'w:' lines.",
+  "occurrence_count": 58,
+  "counts_by_family": {
+    "gradle_configuration_set_visible_deprecated": 55,
+    "sdkmanager_cli_deprecated": 3
+  },
+  "gradle_set_visible_first_non_gradle_stack_frames": {
+    "com.android.build.gradle.internal.TaskManager$Companion$createCoreLibraryDesugaringConfig$1.execute": 1,
+    "com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration": 41,
+    "com.android.build.gradle.internal.dependency.VariantDependenciesBuilder.build": 4,
+    "com.android.build.gradle.internal.plugins.BasePlugin$Companion$createAndroidJdkImageConfiguration$1.execute": 1,
+    "com.android.build.gradle.internal.plugins.BasePlugin$Companion.createAndroidTestUtilConfiguration$gradle_core": 1,
+    "com.android.build.gradle.internal.plugins.BasePlugin$Companion.createCustomLintChecksConfig": 1,
+    "com.android.build.gradle.internal.plugins.BasePlugin$Companion.createCustomLintPublishConfig": 1,
+    "com.android.build.gradle.internal.tasks.creationconfig.BaseJavaPreCompileTaskCreationConfig.createKaptOrKspClassPath": 1,
+    "com.android.build.gradle.internal.testing.utp.UtpTestUtilsKt$maybeCreateUtpConfigurations$1$1.execute": 1,
+    "com.google.devtools.ksp.gradle.KspConfigurations.<init>": 1,
+    "com.google.devtools.ksp.gradle.KspConfigurations.createConfiguration": 1,
+    "com.google.devtools.ksp.gradle.KspSubpluginKt.markResolvable": 1
+  },
+  "family_adjudication": {
+    "sdkmanager_cli_deprecated": "Android SDK setup/toolchain migration warning; no T9 product-runtime attribution.",
+    "gradle_configuration_set_visible_deprecated": "Gradle 9.8.1 removal warning scheduled for Gradle 11. The retained stacks point to Android Gradle Plugin and KSP plugin frames; 55 emitted lines are provenance occurrences, not 55 established independent defects."
+  },
+  "raw_records": {
+    "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/cloud-control-run-39798930637/warning-supplement1/warning-records.jsonl",
+    "bytes": 27776,
+    "sha256": "23e4e0fea09134a5b58cce2c3d91f082a933e0f60d54cf994cca2d987e01d329"
+  },
+  "relationship_to_formal_warning_inventory": {
+    "formal_occurrence_count_unchanged": 114,
+    "additive_supplement_occurrences": 58,
+    "must_not_be_described_as_a_revised_formal_total": true,
+    "reason": "The prior 114 count is explicitly scoped to two formal five-job archives plus their two four-ABI apksigner sets. This is a separate control-job producer."
+  },
+  "limits": [
+    "Successful JVM/JNI execution does not erase these warnings.",
+    "This mechanical scan does not prove warning harmlessness or assign repository-code ownership beyond the retained stack frames.",
+    "No workflow was retried and no product or control source was changed to collect this terminal log."
+  ]
+}

@@ -1,0 +1,413 @@
+{
+  "schema": "trime-independent-runtime-qualification/v1",
+  "generated_utc": "2026-10-22T15:15:04.810748+00:00",
+  "review_mode": "HOST_ONLY_NO_ADB_VM_GRADLE",
+  "verdict": "PASS_API21_STANDARD_CATEGORY",
+  "scope": {
+    "platform": "Android API21 emulator",
+    "theme": "standard / tongwenfeng.trime",
+    "actual_case_session": "CATEGORY",
+    "physical_device": "NOT_RUN"
+  },
+  "frozen_inputs": {
+    "session": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-b14-standard-CATEGORY",
+    "raw_report": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-b14-standard-CATEGORY/report.json",
+      "sha256": "f9d9721bcfa161b059df9ea81ec949be695ff4c383fd440ed494b491cf17979d",
+      "passed": false,
+      "checks": []
+    },
+    "sequence_result": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-b14-standard-CATEGORY/sequence-result.json",
+      "sha256": "8ceb0575a32c4cd3ed71249a8b165e50f5ee0ed9e6c47c5322e25175ef313a69",
+      "business_passed": false
+    },
+    "binding": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/original-apk-binding-b14-v6.json",
+      "sha256": "7b08ec8476a13f16995f4b90d07d19e553f9de129f60b3feeec371d9af4ddfeb"
+    },
+    "runner": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/t9_case_sequences_v6.py",
+      "sha256": "14c87d18d3431fcc7ce21ae2712bb661b1851c037d2fad8fa519d49209d4f2c3"
+    },
+    "root_visual_ledger_snapshot": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/root-image-review-b14.json",
+      "sha256_at_review": "488c861c08061a411617811d1a81aa93cbc00cbba339926737154a927d4a421a"
+    }
+  },
+  "identity": {
+    "source_head": "b14a2f1e0565cec4953f5a974bfcea023875369f",
+    "apk_sha256": "38b8523cd1334ce0434004b80c16766ca2c6ffbf0a95ac19bc53eaade51921ee",
+    "target_pid": 2461,
+    "target_starttime": "12268",
+    "target_stat_probe_count": 35,
+    "target_cmdline_probe_count": 35,
+    "observer_session_token": "cb65a225a41b6dc611831c6bcf0778bd",
+    "observer_pid": 9308,
+    "observer_starttime": "124465",
+    "boot_id": "d95d42cb-3547-4e86-829a-aa46004f7cac",
+    "theme_asset_sha256": "e758ce8f9059f0fbe3c27c2de9c5faffff761b825feed437075f285e15af9147"
+  },
+  "capture_chain": {
+    "capture_count": 10,
+    "capture_failures": 0,
+    "same_cached_automation_connection": true,
+    "helper_injected_touch": false,
+    "byte_equal_xml_capture_count": 8,
+    "byte_unequal_xml_captures": [
+      {
+        "label": "standard-CATEGORY-punctuation-candidates",
+        "differences": [
+          {
+            "package": "com.osfans.trime.debug",
+            "class": "android.widget.TextView",
+            "text": "〔全角〕",
+            "delta": {
+              "bounds": [
+                "[27,637][107,664]",
+                "[27,638][107,665]"
+              ]
+            }
+          },
+          {
+            "package": "com.osfans.trime.debug",
+            "class": "android.widget.TextView",
+            "text": "〔全角〕",
+            "delta": {
+              "bounds": [
+                "[140,637][220,664]",
+                "[140,638][220,665]"
+              ]
+            }
+          },
+          {
+            "package": "com.osfans.trime.debug",
+            "class": "android.widget.TextView",
+            "text": "〔全角〕",
+            "delta": {
+              "bounds": [
+                "[252,637][332,664]",
+                "[252,638][332,665]"
+              ]
+            }
+          },
+          {
+            "package": "com.osfans.trime.debug",
+            "class": "android.widget.TextView",
+            "text": "〔全角〕",
+            "delta": {
+              "bounds": [
+                "[364,637][444,664]",
+                "[364,638][444,665]"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "label": "standard-CATEGORY-return64",
+        "differences": [
+          {
+            "package": "com.osfans.trime.debug",
+            "class": "android.widget.TextView",
+            "text": "ni",
+            "delta": {
+              "bounds": [
+                "[53,465][69,492]",
+                "[53,466][69,493]"
+              ]
+            }
+          }
+        ]
+      }
+    ],
+    "byte_unequal_limit": "Retained differences only move secondary Trime TextView bounds by one pixel; they are not represented as byte-stable frames.",
+    "captures": [
+      {
+        "sequence": 1,
+        "label": "standard-CATEGORY-initial",
+        "png_sha256": "c4f8a072aa539371f09c013766ae400ff07146772f5706b3bd26988a734b0a9e",
+        "before_xml_sha256": "4d1aecea8cb163ef62925484681b810c612750a30e08d096dcc77449756d3f4e",
+        "after_xml_sha256": "4d1aecea8cb163ef62925484681b810c612750a30e08d096dcc77449756d3f4e",
+        "hierarchies_equal": true
+      },
+      {
+        "sequence": 2,
+        "label": "standard-CATEGORY-symbol-page",
+        "png_sha256": "74fd4bf95c6122e53ef8ddbfac6f2f1cc46e1d9ccabfc2b32769022a8a585b56",
+        "before_xml_sha256": "451b1da1a30366c73a16b085745f3785c9eab52050bbb5bb1e4cd20f9db538dc",
+        "after_xml_sha256": "451b1da1a30366c73a16b085745f3785c9eab52050bbb5bb1e4cd20f9db538dc",
+        "hierarchies_equal": true
+      },
+      {
+        "sequence": 3,
+        "label": "standard-CATEGORY-punctuation-candidates",
+        "png_sha256": "ecebb129ccd94ffa733d19a907d51781a02dcc02021c98d8a12ca89509f128d6",
+        "before_xml_sha256": "2f3f30588678064d5483a3fb51a61e13e054a7ffab1b5a3fae50f811c4045684",
+        "after_xml_sha256": "8432f342951ecda8711473f453f55b96444da1f2115ab243d0e9b6abfec75dcb",
+        "hierarchies_equal": false
+      },
+      {
+        "sequence": 4,
+        "label": "standard-CATEGORY-selected",
+        "png_sha256": "bf4074b21b17cb5a6ff4b86561616acb0d37c255d2d7b824bff98a6366e8050e",
+        "before_xml_sha256": "eaf24d333e4d72297a8cf3c2f48f5bdd23066fbb34d771d8c819c14850e51fe0",
+        "after_xml_sha256": "eaf24d333e4d72297a8cf3c2f48f5bdd23066fbb34d771d8c819c14850e51fe0",
+        "hierarchies_equal": true
+      },
+      {
+        "sequence": 5,
+        "label": "standard-CATEGORY-new6",
+        "png_sha256": "41b2362a349efdaf7c51859f9710c20b611069ad3af26fe9c36177895605fff7",
+        "before_xml_sha256": "fb36338e031579651c17d0cdb70fe3f591c91cfb2fc6539d1e7a69c94633f315",
+        "after_xml_sha256": "fb36338e031579651c17d0cdb70fe3f591c91cfb2fc6539d1e7a69c94633f315",
+        "hierarchies_equal": true
+      },
+      {
+        "sequence": 6,
+        "label": "standard-CATEGORY-cancel6",
+        "png_sha256": "4330e86ad1440c50d18dfcc6e488a57b2d12fcbd00e54388bb0f0643c00024ef",
+        "before_xml_sha256": "8327d41b6b77102c51d2e092a84a4889d20d4e07f40a63fccc65ef2ece36f3e2",
+        "after_xml_sha256": "8327d41b6b77102c51d2e092a84a4889d20d4e07f40a63fccc65ef2ece36f3e2",
+        "hierarchies_equal": true
+      },
+      {
+        "sequence": 7,
+        "label": "standard-CATEGORY-numeric-page",
+        "png_sha256": "ef53688bdf8bcf31c856dc88e24498e709d7f113fe0fe7050a847aa1af217a0c",
+        "before_xml_sha256": "9fdef0e01c56055ddcc768360c62c3eeb432e555d7d540298292faf1b5757062",
+        "after_xml_sha256": "9fdef0e01c56055ddcc768360c62c3eeb432e555d7d540298292faf1b5757062",
+        "hierarchies_equal": true
+      },
+      {
+        "sequence": 8,
+        "label": "standard-CATEGORY-literal2",
+        "png_sha256": "4bb1736c2f0e578705875901d4289204bf93dc1fc88f7c0d8df4566a12914ced",
+        "before_xml_sha256": "9f4893950047edb064a350c48802676f7c29e41e9067e41c87e99a6293c1e534",
+        "after_xml_sha256": "9f4893950047edb064a350c48802676f7c29e41e9067e41c87e99a6293c1e534",
+        "hierarchies_equal": true
+      },
+      {
+        "sequence": 9,
+        "label": "standard-CATEGORY-return64",
+        "png_sha256": "b4c07565efbea2e74177272636fc668a414b4808ebf312b211f5ca5e835f81e9",
+        "before_xml_sha256": "b1fd62511a0f8d6fb39565d5a795f65564f5b553c7b802d994761f3beb17eaba",
+        "after_xml_sha256": "78ed14ae526ad67d1a7a7885218ddc79058b94d497c4154cd164d10c87117466",
+        "hierarchies_equal": false
+      },
+      {
+        "sequence": 10,
+        "label": "standard-CATEGORY-cancel64",
+        "png_sha256": "e54e2a5ff5d970e69c70b392ef1ed79ce70d2fc69a4cf5609f90ce39ff0a6cf7",
+        "before_xml_sha256": "14778687dcc87b9e3dec7a338a21736a6e8baa91cccd5cf20b099d357f2f10c7",
+        "after_xml_sha256": "14778687dcc87b9e3dec7a338a21736a6e8baa91cccd5cf20b099d357f2f10c7",
+        "hierarchies_equal": true
+      }
+    ]
+  },
+  "oracle_chain": {
+    "pair_count": 10,
+    "file_count": 20,
+    "all_main_thread_read_only_focused": true,
+    "pairs": [
+      {
+        "label": "standard-CATEGORY-initial",
+        "expected_text": "",
+        "fixture_pid": 9414,
+        "activity_instance": "4a44936fd5b24b818f9898d32c18ae5e",
+        "sequences": [
+          1,
+          2
+        ],
+        "before_sha256": "5d747c1506d6c0c5c6d58f4ea7b2fb38ed1fbc12001a6c6d4113515981882feb",
+        "after_sha256": "185bed60cd5a42b2f6e6d71655ac0fdd34c3a368ad206cb970f51ebf5cf1a7d0"
+      },
+      {
+        "label": "standard-CATEGORY-symbol-page",
+        "expected_text": "",
+        "fixture_pid": 9414,
+        "activity_instance": "4a44936fd5b24b818f9898d32c18ae5e",
+        "sequences": [
+          3,
+          4
+        ],
+        "before_sha256": "c2dc8dd3db4b6d0279b3e5867799070b8a192cf146485a9e0da20fb8c787c8e4",
+        "after_sha256": "e6aa340e55f9d06dec7e3968ca00ae5120b6ae54566660044c6ac52673be1b0f"
+      },
+      {
+        "label": "standard-CATEGORY-punctuation-candidates",
+        "expected_text": "",
+        "fixture_pid": 9414,
+        "activity_instance": "4a44936fd5b24b818f9898d32c18ae5e",
+        "sequences": [
+          5,
+          6
+        ],
+        "before_sha256": "37b131b11936e128ac364346169c0778a58440126b0a86c8b58475503fcd7fa6",
+        "after_sha256": "0b2e24e8405ee48a7cf9f5722957f4b79838d8e82361bfb941604216cc0889e1"
+      },
+      {
+        "label": "standard-CATEGORY-selected",
+        "expected_text": "、",
+        "fixture_pid": 9414,
+        "activity_instance": "4a44936fd5b24b818f9898d32c18ae5e",
+        "sequences": [
+          7,
+          8
+        ],
+        "before_sha256": "87e802384d5b3aa4c437ff40561ee433f725245c55e08d6df2659d2675622870",
+        "after_sha256": "b95d86caba98495f53fcb6bbc7ccfe31fb7747c46fbb2cf14860522876799a51"
+      },
+      {
+        "label": "standard-CATEGORY-new6",
+        "expected_text": "、",
+        "fixture_pid": 9414,
+        "activity_instance": "4a44936fd5b24b818f9898d32c18ae5e",
+        "sequences": [
+          9,
+          10
+        ],
+        "before_sha256": "34764666609a9ada5262e8cb2b3fb6dd92ea88b79eb085ad44fce44e0223bc50",
+        "after_sha256": "8b51bc497cdd43413d13706f944002575204b0c188a4ecf5e114dcee7202d03a"
+      },
+      {
+        "label": "standard-CATEGORY-cancel6",
+        "expected_text": "、",
+        "fixture_pid": 9414,
+        "activity_instance": "4a44936fd5b24b818f9898d32c18ae5e",
+        "sequences": [
+          11,
+          12
+        ],
+        "before_sha256": "696819f45377e9bd530a99eb126ae8b7a34ae6e6ad23650597ae9ba636ef2b37",
+        "after_sha256": "04ed1f8ba53222e5200406aebd628115dfbf351852b0c4673305aa0d6f4b7c60"
+      },
+      {
+        "label": "standard-CATEGORY-numeric-page",
+        "expected_text": "、",
+        "fixture_pid": 9414,
+        "activity_instance": "4a44936fd5b24b818f9898d32c18ae5e",
+        "sequences": [
+          13,
+          14
+        ],
+        "before_sha256": "8d189e285fd67f842badbe605837f62234ec3b54988d1010fc7221f964971a96",
+        "after_sha256": "447e73e312381374c3b64c61b5e9ee48398302f59d16873ffc14aaf4ddfd2462"
+      },
+      {
+        "label": "standard-CATEGORY-literal2",
+        "expected_text": "、2",
+        "fixture_pid": 9414,
+        "activity_instance": "4a44936fd5b24b818f9898d32c18ae5e",
+        "sequences": [
+          15,
+          16
+        ],
+        "before_sha256": "1f6f8707802c336ee601634e61a6815ffec26ee4aeeb05a5eba0921b112f70f7",
+        "after_sha256": "aeeb8299bbe9c12ad22a0ccb7cf4966b7f8618de7d716e443ae43e5cbc36bd9a"
+      },
+      {
+        "label": "standard-CATEGORY-return64",
+        "expected_text": "、2",
+        "fixture_pid": 9414,
+        "activity_instance": "4a44936fd5b24b818f9898d32c18ae5e",
+        "sequences": [
+          17,
+          18
+        ],
+        "before_sha256": "b4685aa3a35af0e0be6b2bda13d1da265b0dbe1e7b373a819c78dadb29f19171",
+        "after_sha256": "3e97cc1552fdf9e64982bc1355d0f7ed2130ba2bfdf8481c408d22b6ad4cec14"
+      },
+      {
+        "label": "standard-CATEGORY-cancel64",
+        "expected_text": "、2",
+        "fixture_pid": 9414,
+        "activity_instance": "4a44936fd5b24b818f9898d32c18ae5e",
+        "sequences": [
+          19,
+          20
+        ],
+        "before_sha256": "35ee2cfe495cffc409dacb11a2f266f0f756631845f838e60edb222cab7b9e0b",
+        "after_sha256": "d56f630b1b591032b56af479ea22a30f0bc7cf6336dcfd433a3dae59eb0e92cd"
+      }
+    ]
+  },
+  "command_boundary": {
+    "journal_commands": 583,
+    "all_completed": true,
+    "all_host_returncode_zero": true,
+    "remote_returncode_counts": {
+      "0": 313,
+      "not_applicable": 113,
+      "1": 157
+    },
+    "remote_one_scope": "Only expected test -e/test -f absence polling; terminal remote return code is zero.",
+    "target_preference_access": {
+      "shell_identity": "uid=0(root) gid=0(root) groups=1003(graphics),1004(input),1007(log),1011(adb),1015(sdcard_rw),1028(sdcard_r),3001(net_bt_admin),3002(net_bt),3003(inet),3006(net_bw_stats)",
+      "argv": [
+        "cat",
+        "/data/data/com.osfans.trime.debug/shared_prefs/com.osfans.trime.debug_preferences.xml"
+      ],
+      "read_only": true
+    },
+    "scope_note": "Observer/temp request staging writes control-channel files. No install/uninstall/force-stop/adb-root/remount/settings-put/setprop, target shared-prefs write, or YAML command is present."
+  },
+  "stop": {
+    "authenticated_normal_stop": true,
+    "direct_finish_succeeded": true,
+    "host_wait_returncode": 0,
+    "remote_returncode": 0,
+    "requests": 11,
+    "captures": 10,
+    "cleanup": []
+  },
+  "selected_root_visual_review": {
+    "count": 3,
+    "records": [
+      {
+        "utc": "2026-10-22T15:09:04.696671+00:00",
+        "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-b14-standard-CATEGORY/captures/standard-CATEGORY-selected/observer-in-connection.png",
+        "sha256": "bf4074b21b17cb5a6ff4b86561616acb0d37c255d2d7b824bff98a6366e8050e",
+        "platform": "API21",
+        "case": "standard CATEGORY",
+        "execution_binding_sha256": "7b08ec8476a13f16995f4b90d07d19e553f9de129f60b3feeec371d9af4ddfeb",
+        "observed": "Editor shows the selected delimiter 、 while public category keyboard is still visible; left 返回 and right Enter are distinct controls.",
+        "scope": "Root visual review; exact Editable/oracle and Cancel XML qualification remain independent requirements."
+      },
+      {
+        "utc": "2026-10-22T15:09:04.698364+00:00",
+        "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-b14-standard-CATEGORY/captures/standard-CATEGORY-cancel6/observer-in-connection.png",
+        "sha256": "4330e86ad1440c50d18dfcc6e488a57b2d12fcbd00e54388bb0f0643c00024ef",
+        "platform": "API21",
+        "case": "standard CATEGORY",
+        "execution_binding_sha256": "7b08ec8476a13f16995f4b90d07d19e553f9de129f60b3feeec371d9af4ddfeb",
+        "observed": "After return to T9 and6 cancellation, delimiter remains alone and no current spelling strip is visible.",
+        "scope": "Root visual review; exact Editable/oracle and Cancel XML qualification remain independent requirements."
+      },
+      {
+        "utc": "2026-10-22T15:09:04.699131+00:00",
+        "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-b14-standard-CATEGORY/captures/standard-CATEGORY-cancel64/observer-in-connection.png",
+        "sha256": "e54e2a5ff5d970e69c70b392ef1ed79ce70d2fc69a4cf5609f90ce39ff0a6cf7",
+        "platform": "API21",
+        "case": "standard CATEGORY",
+        "execution_binding_sha256": "7b08ec8476a13f16995f4b90d07d19e553f9de129f60b3feeec371d9af4ddfeb",
+        "observed": "After literal numeric2 and return64 cancellation, editor visibly contains 、2 on one line; T9 layout has no current spelling strip.",
+        "scope": "Root visual review; exact Editable/oracle and Cancel XML qualification remain independent requirements."
+      }
+    ],
+    "limit": "Root reviewed 3 selected original PNGs, not every capture."
+  },
+  "limits": [
+    "API21 emulator, standard theme, CATEGORY only; no API35, other case, whole-platform, PR Ready, or merge conclusion.",
+    "Physical device is NOT_RUN.",
+    "The three explicit minimal test preferences are a separately recorded preparation precondition; this is not pure-default, onboarding, or upgrade acceptance.",
+    "Raw report passed:false/checks:[] and sequence business_passed:false remain unchanged; this file is the separate qualification decision.",
+    "Capture settle timing is synchronization evidence, not a latency measurement."
+  ],
+  "business_findings": {
+    "category_candidate": "Actual Trime delimiter leaf 、 was bound to its unique clickable long-clickable candidate parent and committed as exact Editable 、.",
+    "first_cancel": "After later6, exact enabled Trime Cancel ImageButton was center-tapped; Editable remained 、 and the next XML had no segment/lock/action/candidate state.",
+    "literal_and_left_return": "Public numeric page produced exact Editable 、2. The retained action then taps the asset-bound left 返回 coordinate (58,1124), distinct from right Return by Root visual review, before entering pending64; it does not commit 64.",
+    "second_cancel": "Pending64 is present while Editable remains 、2; the second exact Cancel tap leaves Editable 、2 and removes composition/locks/actions/candidates."
+  }
+}

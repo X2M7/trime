@@ -1,0 +1,44 @@
+{
+  "case": "R4",
+  "theme": "trime",
+  "requires_external_visual_qualification": true,
+  "business_passed": false,
+  "raw_journal_pass_flag_is_not_case_qualification": true,
+  "sequence_runner": {
+    "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/t9_case_sequences_v6.py",
+    "sha256": "14c87d18d3431fcc7ce21ae2712bb661b1851c037d2fad8fa519d49209d4f2c3",
+    "expected_path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/t9_case_sequences_v6.py",
+    "expected_sha256": "14c87d18d3431fcc7ce21ae2712bb661b1851c037d2fad8fa519d49209d4f2c3"
+  },
+  "source_head": "b14a2f1e0565cec4953f5a974bfcea023875369f",
+  "actual_apk_sha256": "38b8523cd1334ce0434004b80c16766ca2c6ffbf0a95ac19bc53eaade51921ee",
+  "theme_asset": "assets/shared/trime.yaml",
+  "theme_asset_sha256": "ff65e4a8ada630dcd14b9d7f036201579ddefa4758868df1b497b45dcfef2d08",
+  "frozen_pid": {
+    "pid": 2461,
+    "starttime": "12268"
+  },
+  "display": {
+    "size_raw": "Physical size: 720x1280",
+    "density_raw": "Physical density: 320",
+    "effective_size": "720x1280",
+    "effective_density": "320"
+  },
+  "precondition_pref_read": {
+    "shell_identity": "uid=0(root) gid=0(root) groups=1003(graphics),1004(input),1007(log),1011(adb),1015(sdcard_rw),1028(sdcard_r),3001(net_bt_admin),3002(net_bt),3003(inet),3006(net_bw_stats)",
+    "argv": [
+      "cat",
+      "/data/data/com.osfans.trime.debug/shared_prefs/com.osfans.trime.debug_preferences.xml"
+    ],
+    "read_only": true
+  },
+  "strict_sequence_completed": false,
+  "business_rejection": {
+    "type": "AssertionError",
+    "message": "Actual editor text differs: ''"
+  },
+  "observer_stop_result": "Observer stop/wait passed; business cases still require actual evidence review.",
+  "direct_finish_succeeded": true,
+  "authenticated_normal_stop": true,
+  "atexit_fallback_retained": false
+}

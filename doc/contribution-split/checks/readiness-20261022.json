@@ -269,35 +269,35 @@
   "t9": {
     "pr": 2183,
     "draft": true,
-    "status": "OPEN_DRAFT_NEW_SCHEMA_FIX_VALIDATION_PENDING",
-    "source": "b14a2f1e0565cec4953f5a974bfcea023875369f",
-    "tree": "3b40eef39ce8245096c74b1a3a5066d9b4009df1",
+    "status": "OPEN_DRAFT_NEW_EDITOR_ASCII_FIX_VALIDATION_PENDING",
+    "source": "c4b613f78835e7b914e02447955c6b89fe9839ab",
+    "tree": "d7639dfce3b6b5646bb004479a688148c1b19900",
     "base": "19b048494ffa55cae52d5385dfa6d0611461c27d",
     "linear_commits": [
       {
         "sha": "caf61850bce8b8fb4f11d61b459385e17b8fa84e",
-        "subject": "feat: add nine-key Pinyin input with syllable selection",
-        "maximum_line_length": 89
+        "subject": "feat: add nine-key Pinyin input with syllable selection"
       },
       {
         "sha": "aeae918a711b727697d543032f8d286590fd3946",
-        "subject": "fix: synchronize candidate text with TextView layout",
-        "maximum_line_length": 81
+        "subject": "fix: synchronize candidate text with TextView layout"
       },
       {
         "sha": "1754bb51931407ac916549edc2ae57bba4c073bc",
-        "subject": "fix: create deferred input views after theme initialization",
-        "maximum_line_length": 81
+        "subject": "fix: create deferred input views after theme initialization"
       },
       {
         "sha": "b14a2f1e0565cec4953f5a974bfcea023875369f",
-        "subject": "fix: reset remembered keyboard when changing input schemes",
-        "maximum_line_length": 78
+        "subject": "fix: reset remembered keyboard when changing input schemes"
+      },
+      {
+        "sha": "c4b613f78835e7b914e02447955c6b89fe9839ab",
+        "subject": "fix: keep editor-required ASCII mode when attaching keyboards"
       }
     ],
     "merge_commit_count": 0,
-    "source_tree_equivalence": "Initial1754 rebase equivalence retained; b14a adds only six lines in two paths, independently reviewed, with native/assets/submodule diff0.",
-    "update_receipt": "pr2183-rebase-20261022/original-pr-update3/receipt.json",
+    "source_tree_equivalence": "Initial1754 rebase equivalence and later scoped source checks retained. c4 adds only forced-ASCII priority and two doc lines; native/assets/pins unchanged.",
+    "update_receipt": "pr2183-rebase-20261022/original-pr-update4/receipt.json",
     "startup_dependency": {
       "separate_pr": 2188,
       "original_patch_commit": "2d2fbce70b449ec8b6560c844ca5ddbc2e08a4c3",
@@ -311,42 +311,41 @@
       "old_sha_is_not_new_history_ancestor": true
     },
     "current_cloud": {
-      "source": "b14a2f1e0565cec4953f5a974bfcea023875369f",
-      "fork_run": 39796208691,
-      "upstream_pr_run": 39796220972,
-      "control_run": 39798930637,
-      "control_head": "3810942c8d9302a531e02ff8d852eb880078e996",
-      "state": "PENDING_FINAL_AUDIT_DURING_GITHUB_ACTIONS_RESULTS_INCIDENT",
-      "previous_1754_successes_do_not_count_as_current_pass": true,
-      "first_control_state": "FAILURE_WRONG_BASELINE_MAPPING_IN_VALIDATION_WORKFLOW",
-      "first_control_application_tests": {
-        "executed": 360,
-        "failures": 0,
+      "source": "c4b613f78835e7b914e02447955c6b89fe9839ab",
+      "fork_run": 39806420824,
+      "upstream_pr_run": 39806428888,
+      "control_run": 39806534353,
+      "control_head": "de991cbe6c05bf43c919e93200e8a0fc62518a8c",
+      "state": "PENDING_CURRENT_SOURCE_VALIDATION",
+      "previous_b14_successes_not_current_pass": true,
+      "current_host_execution": {
+        "executed_jvm": 360,
+        "suites": 29,
+        "failed": 0,
         "errors": 0,
-        "skipped": 0
-      },
-      "first_control_jni_assertions_executed": 0,
-      "baseline_fix_and_new_control_run": "MINIMAL_CONTROL_MAPPING_FIXED_NEW_ATTEMPT1_QUEUED",
-      "first_control_run": 39796394613
+        "skipped": 0,
+        "jni_assertions": 115,
+        "original_audit": "pr2183-rebase-20261022/schema-layout-regression/c4-control-run-39806534353/artifact-execution-audit.json",
+        "formal_OS_builds": "IN_PROGRESS"
+      }
     },
-    "current_emulator_regression": "IN_PROGRESS_EXACT_B14_API21_SINGLE_VM_THEN_API35",
+    "current_emulator_regression": "NOT_RUN_PENDING_EXACT_C4_APK_AND_NEW_RUNNER_BINDING",
     "physical_device_acceptance": "NOT_RUN",
     "old_head_emulator_results_are_historical": true,
     "no_zero_warning_claim": true,
     "merge_or_release_action": false,
-    "physical_device_plan": "Exact b14 ARM64 artifact identity audited; refreshed guide with R4 is being prepared. All physical results remain NOT_RUN; old1754 delivery superseded.",
-    "new_fix_source_review": "pr2183-rebase-20261022/schema-layout-regression/source-independent-review1.json",
-    "new_fix_push_receipt": "pr2183-rebase-20261022/schema-layout-regression/source-push/receipt.json",
+    "physical_device_plan": "Old b14 guide retained but candidate superseded after real forced-ASCII failure; exact-c4 replacement pending.",
+    "new_fix_source_review": "pr2183-rebase-20261022/schema-layout-regression/ascii-mode-source-independent1/review1.json",
+    "new_fix_push_receipt": "pr2183-rebase-20261022/schema-layout-regression/ascii-mode-source-push1/receipt.json",
     "current_apk": {
-      "producer": "X2M7 fork Ubuntu Debug workflow artifact; run terminal qualification pending",
-      "run": 39796208691,
-      "artifact": 12433229282,
-      "source_head": "b14a2f1e0565cec4953f5a974bfcea023875369f",
-      "audit": "pr2183-rebase-20261022/schema-layout-regression/cloud-fork-run-39796208691-ubuntu1/apk-audit/result.json",
-      "four_abis_passed_identity_audit": true,
-      "debug_signature_warning_entries_per_apk": 2,
-      "no_release_claim": true
-    }
+      "state": "PENDING_EXACT_C4_ORIGINAL_APK_AUDIT",
+      "b14_candidate_superseded": "pr2183-rebase-20261022/device-delivery-b14-status.json"
+    },
+    "physical_device_handoff_root_verification": "Old b14 host verification retained historically; not current candidate.",
+    "physical_device_core_cases": "Original17 + R1/R2/R4; R3 records only actual available feedback abilities and gaps; all physical NOT_RUN.",
+    "runtime_runner_binding": "Pending new c4/v7 binding; all older bindings remain source-attributed.",
+    "source_history_check": "pr2183-rebase-20261022/schema-layout-regression/current-c4-source-history-check1.json",
+    "runtime_v7_review": "pr2183-rebase-20261022/runtime/sequence-v7-root-review1.json"
   },
   "logcat": {
     "pr": 2182,
@@ -750,7 +749,7 @@
     "current_pr_state": "MERGED",
     "merged_by_maintainer_not_this_run": true
   },
-  "updated_utc": "2026-10-22T14:49:06.368058+00:00",
+  "updated_utc": "2026-10-22T15:56:04.493037+00:00",
   "unicode_foundation": {
     "branch": "contrib/pr-jni-unicode-transport",
     "source": "e16ab85f495e5bbf353187c29efbff74526cff9c",
@@ -1156,5 +1155,112 @@
     "no_zero_warning_claim": true,
     "merge_or_release_action": false,
     "physical_device_plan": "pr2183-rebase-20261022/device-delivery/REAL-DEVICE-ACCEPTANCE.md"
+  },
+  "historical_t9_b14": {
+    "pr": 2183,
+    "draft": true,
+    "status": "OPEN_DRAFT_NEW_SCHEMA_FIX_VALIDATION_PENDING",
+    "source": "b14a2f1e0565cec4953f5a974bfcea023875369f",
+    "tree": "3b40eef39ce8245096c74b1a3a5066d9b4009df1",
+    "base": "19b048494ffa55cae52d5385dfa6d0611461c27d",
+    "linear_commits": [
+      {
+        "sha": "caf61850bce8b8fb4f11d61b459385e17b8fa84e",
+        "subject": "feat: add nine-key Pinyin input with syllable selection",
+        "maximum_line_length": 89
+      },
+      {
+        "sha": "aeae918a711b727697d543032f8d286590fd3946",
+        "subject": "fix: synchronize candidate text with TextView layout",
+        "maximum_line_length": 81
+      },
+      {
+        "sha": "1754bb51931407ac916549edc2ae57bba4c073bc",
+        "subject": "fix: create deferred input views after theme initialization",
+        "maximum_line_length": 81
+      },
+      {
+        "sha": "b14a2f1e0565cec4953f5a974bfcea023875369f",
+        "subject": "fix: reset remembered keyboard when changing input schemes",
+        "maximum_line_length": 78
+      }
+    ],
+    "merge_commit_count": 0,
+    "source_tree_equivalence": "Initial1754 rebase equivalence retained; b14a adds only six lines in two paths, independently reviewed, with native/assets/submodule diff0.",
+    "update_receipt": "pr2183-rebase-20261022/original-pr-update3/receipt.json",
+    "startup_dependency": {
+      "separate_pr": 2188,
+      "original_patch_commit": "2d2fbce70b449ec8b6560c844ca5ddbc2e08a4c3",
+      "rebased_commit": "1754bb51931407ac916549edc2ae57bba4c073bc",
+      "old_sha_is_not_new_history_ancestor": true
+    },
+    "candidate_dependency": {
+      "separate_pr": 2187,
+      "original_patch_commit": "7a45cf29c8e112a4081a5e72cb465447d847e1c1",
+      "rebased_commit": "aeae918a711b727697d543032f8d286590fd3946",
+      "old_sha_is_not_new_history_ancestor": true
+    },
+    "current_cloud": {
+      "source": "b14a2f1e0565cec4953f5a974bfcea023875369f",
+      "fork_run": 39796208691,
+      "upstream_pr_run": 39796220972,
+      "control_run": 39798930637,
+      "control_head": "3810942c8d9302a531e02ff8d852eb880078e996",
+      "state": "PASS_EXACT_SOURCE_FORMAL_FORK_AND_UPSTREAM_5_OF_5_AND_HOST_360_PLUS_115",
+      "previous_1754_successes_do_not_count_as_current_pass": true,
+      "first_control_state": "FAILURE_WRONG_BASELINE_MAPPING_IN_VALIDATION_WORKFLOW",
+      "first_control_application_tests": {
+        "executed": 360,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "first_control_jni_assertions_executed": 0,
+      "baseline_fix_and_new_control_run": "CORRECTED_CONTROL_COMPLETED_SUCCESS",
+      "first_control_run": 39796394613,
+      "corrected_control_execution": {
+        "executed_jvm": 360,
+        "jvm_suites": 29,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "separate_jni_assertions": 115,
+        "artifact": 12435635239,
+        "audit": "pr2183-rebase-20261022/schema-layout-regression/cloud-control-run-39798930637/artifact-execution-audit.json",
+        "run_terminal_api": "COMPLETED_SUCCESS"
+      },
+      "formal_fork_jobs_success": 5,
+      "formal_upstream_jobs_success": 5,
+      "qualification": "pr2183-rebase-20261022/schema-layout-regression/cloud-independent1/qualification1.json",
+      "initial_results_lag_is_historical": true,
+      "warning_records": {
+        "formal_two_runs_plus_eight_apk_signer_outputs": 114,
+        "fixed_control_separate_supplement": 58,
+        "defect_count_not_claimed": true,
+        "no_zero_warning_claim": true
+      }
+    },
+    "current_emulator_regression": "IN_PROGRESS_EXACT_B14_API21_SINGLE_VM_THEN_API35",
+    "physical_device_acceptance": "NOT_RUN",
+    "old_head_emulator_results_are_historical": true,
+    "no_zero_warning_claim": true,
+    "merge_or_release_action": false,
+    "physical_device_plan": "pr2183-rebase-20261022/device-delivery-b14/REAL-DEVICE-ACCEPTANCE.md",
+    "new_fix_source_review": "pr2183-rebase-20261022/schema-layout-regression/source-independent-review1.json",
+    "new_fix_push_receipt": "pr2183-rebase-20261022/schema-layout-regression/source-push/receipt.json",
+    "current_apk": {
+      "producer": "X2M7 fork Ubuntu Debug workflow artifact; run terminal qualification pending",
+      "run": 39796208691,
+      "artifact": 12433229282,
+      "source_head": "b14a2f1e0565cec4953f5a974bfcea023875369f",
+      "audit": "pr2183-rebase-20261022/schema-layout-regression/cloud-fork-run-39796208691-ubuntu1/apk-audit/result.json",
+      "four_abis_passed_identity_audit": true,
+      "debug_signature_warning_entries_per_apk": 2,
+      "no_release_claim": true
+    },
+    "physical_device_handoff_root_verification": "pr2183-rebase-20261022/device-delivery-b14-root-verification.json",
+    "physical_device_core_cases": "Original17 + R1/R2/R4; R3 records only actual available feedback abilities and gaps; all physical NOT_RUN.",
+    "runtime_runner_binding": "pr2183-rebase-20261022/runtime/original-apk-binding-b14-v6.json",
+    "source_history_check": "pr2183-rebase-20261022/schema-layout-regression/current-source-history-check1.json"
   }
 }

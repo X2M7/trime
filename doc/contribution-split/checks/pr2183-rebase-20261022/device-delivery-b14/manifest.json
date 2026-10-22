@@ -1,0 +1,117 @@
+{
+  "schema": "pr2183-exact-b14-device-delivery-manifest/v1",
+  "generated_utc": "2026-10-22T14:50:55.619690+00:00",
+  "state": "HOST_PREPARED_PHYSICAL_NOT_RUN",
+  "scope": "Exact original fork Ubuntu ARM64 Debug APK and host-side instructions; all physical cases NOT_RUN.",
+  "source_binding": {
+    "head": "b14a2f1e0565cec4953f5a974bfcea023875369f",
+    "tree": "3b40eef39ce8245096c74b1a3a5066d9b4009df1",
+    "parent": "1754bb51931407ac916549edc2ae57bba4c073bc",
+    "base": "19b048494ffa55cae52d5385dfa6d0611461c27d",
+    "doc_blob_sha1": "e4fde0aa867291ae72527e00e5bb5334aa38a6d4",
+    "doc_sha256": "24d3a29209fe629b8a6198624ee0df43110736f70da527ac18ad6335000394aa"
+  },
+  "authority": {
+    "apk_audit_result_sha256": "65259e1fb68eaebb25d1cb3e3b5d881021129d5463734a51c1d5c4e0387d6f93",
+    "source_independent_review_sha256": "8b68252de8be04a9a535f1908162c8ce226cc3a29cb51689038907dbfcf3f102"
+  },
+  "old_delivery": {
+    "path": "../device-delivery",
+    "status": "SUPERSEDED_FOR_ACCEPTANCE_KNOWN_SCHEMA_LAYOUT_REGRESSION",
+    "files_modified": false,
+    "status_record": "../device-delivery-status.json",
+    "status_record_sha256": "0d26cdd9a0a98e694a67da4a55181f9818f0d85b4b986dcf09fa7df3ad6a5d62"
+  },
+  "case_inventory": {
+    "legacy_count": 17,
+    "supplemental": [
+      "R1",
+      "R2",
+      "R3",
+      "R4"
+    ],
+    "core": [
+      "legacy_17_cases",
+      "R1",
+      "R2",
+      "R4"
+    ],
+    "physical_device": "NOT_RUN"
+  },
+  "creation_constraints": {
+    "host_only": true,
+    "adb": false,
+    "vm": false,
+    "gradle": false,
+    "network": false,
+    "git_or_github_publish": false
+  },
+  "inventory_rule": "files lists every payload file byte; SHA256SUMS lists every payload plus manifest.json and necessarily excludes itself.",
+  "files": [
+    {
+      "path": "EMULATOR-FOCUS.md",
+      "bytes": 8437,
+      "sha256": "482c74de6278934dc4484ced9b64b929a8bef93b025cb987fe64777ce56a6ef5"
+    },
+    {
+      "path": "README.md",
+      "bytes": 1938,
+      "sha256": "97bd5b6226adfbd12559d894cba44cf42e1bb3490be7d3fb2913a01928dd9fe0"
+    },
+    {
+      "path": "REAL-DEVICE-ACCEPTANCE.md",
+      "bytes": 17916,
+      "sha256": "c22915e34edc8625cbb29ede8d61e319d819a583ae74382553fde2e369625f81"
+    },
+    {
+      "path": "apk-audit-arm64-badging.stdout",
+      "bytes": 5612,
+      "sha256": "f79be78f3445ab9c6250aa6d7515483fbaa751dcef7042e9af20b9d93926ed92"
+    },
+    {
+      "path": "apk-audit-arm64-buildconfig.stdout",
+      "bytes": 1491,
+      "sha256": "f7bca04a3eacaee1c9a5e765a03a2c4e2f5a241b2c73a0dbd33800eb803381cf"
+    },
+    {
+      "path": "apk-audit-arm64-signer.stdout",
+      "bytes": 1387,
+      "sha256": "6cd2230725109d2ee35f2f5d419789458452336e9a0872fa613285b2fdfb252b"
+    },
+    {
+      "path": "apk-audit-result.json",
+      "bytes": 27624,
+      "sha256": "65259e1fb68eaebb25d1cb3e3b5d881021129d5463734a51c1d5c4e0387d6f93"
+    },
+    {
+      "path": "candidate-identity.json",
+      "bytes": 5598,
+      "sha256": "5d3b5f82960c4e47ab1ffdeb420254de719688ca794cfbc1ddd1e5ee1b19982a"
+    },
+    {
+      "path": "com.osfans.trime-b14a2f1e-arm64-v8a-debug.apk",
+      "bytes": 20603568,
+      "sha256": "a393b74c52ba78dd5e28240b390a6686b0af47d76750c9a8aa561b94758b57b2"
+    },
+    {
+      "path": "device-result-template.json",
+      "bytes": 23112,
+      "sha256": "0a211e51d341d821c8294b1c64bf48f48d15fe4c51205e19eb21bcf4bb1c8ab4"
+    },
+    {
+      "path": "output-metadata.json",
+      "bytes": 1444,
+      "sha256": "42ff18d9d04f561e6c2b65a74d490f2970ab2d293cb73ea82480357ebb2ee231"
+    },
+    {
+      "path": "source-independent-review.json",
+      "bytes": 5162,
+      "sha256": "8b68252de8be04a9a535f1908162c8ce226cc3a29cb51689038907dbfcf3f102"
+    },
+    {
+      "path": "t9-input.md",
+      "bytes": 2153,
+      "sha256": "24d3a29209fe629b8a6198624ee0df43110736f70da527ac18ad6335000394aa"
+    }
+  ]
+}

@@ -1,0 +1,94 @@
+{
+  "schema": "trime-schema-layout-anchor-source-review/v1",
+  "generated_utc": "2026-10-22T14:36:16.171543+00:00",
+  "method": {
+    "host_only": true,
+    "adb": false,
+    "vm": false,
+    "gradle": false,
+    "source_modified": false
+  },
+  "identity": {
+    "head": "b14a2f1e0565cec4953f5a974bfcea023875369f",
+    "tree": "3b40eef39ce8245096c74b1a3a5066d9b4009df1",
+    "parent": "1754bb51931407ac916549edc2ae57bba4c073bc",
+    "changed_paths": [
+      "app/src/main/java/com/osfans/trime/ime/keyboard/KeyboardWindow.kt",
+      "doc/t9-input.md"
+    ],
+    "diff_check": "PASS"
+  },
+  "verdict": {
+    "source_review": "APPROVE_WITH_NEW_HEAD_RUNTIME_REGRESSION_REQUIRED",
+    "blocking_source_findings": [],
+    "summary": "Assigning lastLockKeyboardId = smartMatchKeyboard() before the existing .default switch correctly moves the recovery anchor to the new schema and covers cached same-target layouts and non-lock full-Pinyin number/email fallback. The new head still requires device proof and remains Draft."
+  },
+  "negative_evidence_attribution": {
+    "source_head": "1754bb51931407ac916549edc2ae57bba4c073bc",
+    "facts": [
+      "22:19:48.872 SchemaMessage selects luna_pinyin after the UI switched to default.",
+      "22:19:52.602 and 22:19:52.737 a new editor switches back to luna_pinyin_t9 while status remains luna_pinyin.",
+      "The pre-fix callback switches .default, but attachKeyboard updates lastLockKeyboardId only for locking keyboards, so full-Pinyin default cannot replace the old T9 anchor."
+    ],
+    "device_log": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-1754-run1/device-logcat.txt",
+      "bytes": 96805643,
+      "sha256": "e8f83ec56bff51d481576b09121de13d2e70258e151eafbe7b52ca66f0d9e06d",
+      "relevant_line_numbers": [
+        1296950,
+        1297164,
+        1297257,
+        1297357,
+        1297388
+      ]
+    },
+    "root_attribution": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/schema-layout-regression/root-attribution.json",
+      "bytes": 1256,
+      "sha256": "1d2d805ed58bb6debc4ee300050862e7b62c6a954889b331954b2b65f11a8a83"
+    }
+  },
+  "source_reasoning": {
+    "cache_order": "Rime.handleRimeMessage updates statusCached and schemaCached before messageFlow emission, so smartMatchKeyboard() in the downstream schema callback reads the new schema.",
+    "t9_to_full": "The anchor changes from luna_pinyin_t9 to the full schema match (default in the reproduced theme); the existing switch then attaches that layout. A later normal editor resolves to the new default rather than the old T9 lock.",
+    "full_to_t9": "The anchor changes to luna_pinyin_t9 before switching, and attachKeyboard preserves the same locking id.",
+    "same_target_cached": "The anchor assignment runs before switchKeyboard can take its cached target==current early return, avoiding the clear-to-empty variant failure.",
+    "number_email": "For full-Pinyin default(lock=false), a temporary number keyboard followed by .ascii can fall back to the new default anchor instead of an empty or stale T9 id.",
+    "ordinary_same_schema_input": "No schema callback occurs, so existing normal, FORCE_ASCII, number, tempAsciiMode, and per-keyboard ASCII state logic is unchanged.",
+    "duplicate_schema_callback": "Repeated callbacks for the same schema recompute the same schema default and the existing callback already switches .default, so the added assignment is idempotent at the intended state level.",
+    "documentation": "The added documentation accurately limits the reset to schema changes and describes the observed T9-to-full behavior."
+  },
+  "residual_limits_and_tests": [
+    "No APK built from b14a2f1e has yet supplied device proof; 1754 evidence is negative reproduction only.",
+    "Regression should cover T9 to full schema to a new normal editor, full to T9, schemes sharing a cached target, and full default to number to email/FORCE_ASCII to normal.",
+    "A theoretical burst of multiple schema callbacks can interleave with switchKeyboard main-executor posts and temporarily overwrite the anchor through a queued locking attach. This was not the reproduced single-switch path and is not treated as a blocker; the device sequence should still verify the final layout and schema together.",
+    "No physical-device qualification is implied."
+  ],
+  "source_evidence": {
+    "keyboard_window": {
+      "path": "/home/xumin/Public/Trime-pr-t9-rebased/app/src/main/java/com/osfans/trime/ime/keyboard/KeyboardWindow.kt",
+      "bytes": 15814,
+      "sha256": "764829383a3789649f7c42cdcc8efefcbfaa5c9ecffd052b76fa3a90dabcaeb4",
+      "relevant_lines": [
+        204,
+        228,
+        231,
+        280,
+        302,
+        355,
+        382,
+        386
+      ]
+    },
+    "documentation": {
+      "path": "/home/xumin/Public/Trime-pr-t9-rebased/doc/t9-input.md",
+      "bytes": 2153,
+      "sha256": "24d3a29209fe629b8a6198624ee0df43110736f70da527ac18ad6335000394aa",
+      "relevant_lines": [
+        22,
+        29
+      ]
+    },
+    "commit_patch_sha256": "d7afefbdf3aeac99c6a3347411023316250501e1618d97e573857c1e7b49af12"
+  }
+}

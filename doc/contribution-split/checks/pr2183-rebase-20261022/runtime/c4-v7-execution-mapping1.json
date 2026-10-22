@@ -1,0 +1,66 @@
+{
+  "state": "PLAN_ONLY_NO_DEVICE_EXECUTION",
+  "created_utc": "2026-10-22T15:48:49.789872+00:00",
+  "source_head": "c4b613f78835e7b914e02447955c6b89fe9839ab",
+  "sequence": {
+    "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/t9_case_sequences_v7.py",
+    "sha256": "3f7739c86af44fd08b97598286f9e697ce500473c7dc5d642466cf77229b6846"
+  },
+  "platform_order": [
+    21,
+    35
+  ],
+  "theme_order": [
+    "trime",
+    "standard"
+  ],
+  "cases": {
+    "trime": [
+      "R4",
+      "K2",
+      "K3",
+      "K4",
+      "S1"
+    ],
+    "standard": [
+      "R4",
+      "CATEGORY",
+      "K2",
+      "K3",
+      "K4",
+      "S1",
+      "S2"
+    ]
+  },
+  "embedded_K1": {
+    "actual_call": "_r4 -> _k1(S, theme, prefix + \"-new-T9-K1\")",
+    "one_per_R4": true,
+    "no_separate_K1_session": true,
+    "all_existing_K1_assertions_and_captures_unchanged": true,
+    "not_double_counted": true
+  },
+  "first_case_priority": "trime R4 number->email literal a; no manual ASCII/layout workaround; product rejection halts current source round",
+  "fixed_limits": "Original Observer9 28min / 90s idle; normal stop and wait per case; no keepalive",
+  "Shift_qualification": "Single-process injector accepted events are necessary only: target continuous log must show actual <=300ms contacts with S1 plain aa/two CLICK or standard S2 AA/DOUBLE_CLICK",
+  "reviews": [
+    {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/sequence-v7-root-review1.json",
+      "sha256": "de595a8937e81042d7bfbfc265758ed8cd23677045f3c4053c89272210fb7000"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/sequence-v7-independent-review1/review1.json",
+      "sha256": "56a5d7b2f4e5499413339f8da1e16d43c7d0f5d1d30c62957778f9a93cbbcc7b"
+    }
+  ],
+  "raw_business_passed_stays_false": true,
+  "required_external_review": [
+    "actual original PNG",
+    "Cancel after XML clears Current input/locked segments/controls",
+    "strict actual Editable oracle",
+    "same target PID/start/boot/source identity",
+    "authenticated Observer normal-stop",
+    "actual rapid Shift target dispatch/timing"
+  ],
+  "physical_device": "NOT_RUN",
+  "runtime_status": "NOT_STARTED_EXACT_APK_PENDING"
+}
