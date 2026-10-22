@@ -1,0 +1,314 @@
+{
+  "schema": "trime-t9-minimal-real-android-smoke/v4",
+  "source_head": "eeb4804a3dcfbb48cdb5b4c9638aad550a0283e0",
+  "status": "frozen_original_fork_eeb_ready_for_exclusive_android",
+  "systems": [
+    21,
+    35
+  ],
+  "themes": [
+    "trime",
+    "tongwenfeng"
+  ],
+  "original_ime_apk": {
+    "path": "/home/xumin/Public/Trime/build/readiness-20261022/t9/symbol-mode-ci1/artifacts-fork-12397327283/files/com.osfans.trime-eeb4804a-x86_64-debug.apk",
+    "sha256": "6ebfb90c9aa4d6723f23eff46ac8604538e67779816775721b27a5d1f7700181",
+    "package": "com.osfans.trime.debug",
+    "certificate_sha256": "269319034080478b47973796695c2551213ddb66f7f9052f2cdb99382eb0e993",
+    "never_resign": true,
+    "freeze_gate": "Require Root reviewed committed category-mode fix and exact audited original artifact checkout/BuildConfig/pins/ABI/cert/CRC before freezing v4. Old593 APK cannot qualify this new source.",
+    "actual_build_commit": "eeb4804a3dcfbb48cdb5b4c9638aad550a0283e0",
+    "repo": "X2M7/trime",
+    "audit": "/home/xumin/Public/Trime/build/readiness-20261022/t9/symbol-mode-ci1/artifacts-fork-12397327283/apk-audit/result.json",
+    "audit_sha256": "e9f9fec7447f70635126fe35bde945cd4116867196b3d175b35a531a6d6fb833",
+    "signature_warnings_retained": [
+      "WARNING: META-INF/services/kotlinx.coroutines.CoroutineExceptionHandler not protected by signature. Unauthorized modifications to this JAR entry will not be detected. Delete or move the entry outside of META-INF/.",
+      "WARNING: META-INF/services/kotlinx.coroutines.internal.MainDispatcherFactory not protected by signature. Unauthorized modifications to this JAR entry will not be detected. Delete or move the entry outside of META-INF/."
+    ]
+  },
+  "fixture": {
+    "apk": "/home/xumin/Public/Trime/build/t10/editor-oracle-fixture-build2/editor-fixture.apk",
+    "sha256": "e094d767c820b77ec93d9b3f461b2208b4d7dcbec4f37ea869926b7987dfea59",
+    "package": "org.x2m7.trime.editorfixture",
+    "component": "org.x2m7.trime.editorfixture/.EditorActivity",
+    "sources_byte_verified_against_build_identity": true,
+    "actual_extra_names": [
+      "mode",
+      "text"
+    ],
+    "modes": {
+      "chat": "text / SEND(4)",
+      "multiline": "text multiline / NONE + NO_ENTER_ACTION",
+      "search": "text / SEARCH(3)",
+      "email": "email / NEXT(5)",
+      "address": "URI / GO(2)",
+      "password": "password / DONE(6)",
+      "phone": "phone / DONE(6)",
+      "integer": "number / DONE(6)",
+      "decimal": "signed decimal / DONE(6)"
+    },
+    "extras_limit": "No schema/theme/selection/inputType numeric override extra exists. Text extra is initial fixture content only. Relaunch -S is required to consume changed mode/text; force-stops fixture, not IME.",
+    "oracle": {
+      "uri": "content://org.x2m7.trime.editorfixture.t10/state?nonce=<fresh32lowerhex>",
+      "projection": "snapshot_b64",
+      "caller": "shell UID2000 or root UID0 (not Observer app UID)",
+      "decode": "Base64 snapshot_b64 => UTF-8 JSON; then Base64 text_utf8_base64 => actual text. Check nonce, main_thread_read/read_only, fixture_pid, activity_instance, increasing sequence, selection UTF-16 bounds.",
+      "limit": "Includes actual Editable text and selection, not composing-span range; lock/choice no-commit must be verified by cancellation returning to known prefix, not by assuming intermediate Editable unchanged."
+    },
+    "editor_action_limit": "EditorActivity retains only final action:id label. C5 proves one journaled Return gesture, actual action:4 label and unchanged text; it cannot independently count internal callback multiplicity."
+  },
+  "observer9": {
+    "apk": "/home/xumin/Public/Trime/build/t12/observer9-build1/editor-fixture.apk",
+    "sha256": "9edd1ffeade1621faa5f6c51bb1699032bfcd827f3cd28a0143b37099ad812aa",
+    "package": "org.x2m7.trime.editorobserver8",
+    "component": "org.x2m7.trime.editorobserver8/.Observer",
+    "source_manifest_self_targeted": true,
+    "product_resigning_needed": false,
+    "required_extras": {
+      "mode": "session",
+      "session_token": "<fresh32lowerhex>",
+      "expected_package": "com.osfans.trime.debug",
+      "expected_apk_sha256": "6ebfb90c9aa4d6723f23eff46ac8604538e67779816775721b27a5d1f7700181"
+    },
+    "constraints": "ranchu/goldfish API21 or35; 28min hard session,90s idle,400requests,256MiB output. It observes only; Root injects touch. Product APK/source/UID/dataDir must stay fixed. No debug-vs-release restriction and no same-signature requirement because helper instrumentation targets itself. Root separately pins Trime PID/starttime."
+  },
+  "preflight": [
+    "Use isolated emulator and original cloud Debug APK; compare installed APK bytes and certificate, package and ABI; retain current selected IME for final restoration.",
+    "If setup is unfinished, choose app-specific storage in Mode; enable/select IME in system settings; complete three-page setup. This PR does not include T12 full onboarding wizard.",
+    "On first IME start/deploy allow actual maintenance to finish and verify real Success;5min timeout applies explicit deployment, not first startup. Do not open Logcat page while dictionaries compile.",
+    "Record Trime PID/starttime before/after readiness; require same process and actual deploy success + normal candidates. No fixed sleep is a success oracle.",
+    "Ensure luna_pinyin_t9 in enabled schemes via existing scheme selector; first-run default.custom includes it. Existing default.custom is not overwritten, so old profiles may require enabling via selector.",
+    "Choose theme through UI, then fresh multiline fixture; pin real screen rectangles before touches. Both themes use identical T9 numeric layout,96dp disambiguation panel sits separately above keyboard.",
+    "After theme selection wait for actual fixture focus/windowfocus before starting a case. Preserve any initialfocus-rejected raw oracle; actual editor tap/fresh focusedcapture may prepare a new case label, never rewrite oldfailure."
+  ],
+  "launch_templates_for_Root_only": [
+    {
+      "label": "fresh-multiline",
+      "adb_shell_command": "am start -W -S -n org.x2m7.trime.editorfixture/.EditorActivity --es mode multiline"
+    },
+    {
+      "label": "fresh-chat",
+      "adb_shell_command": "am start -W -S -n org.x2m7.trime.editorfixture/.EditorActivity --es mode chat"
+    },
+    {
+      "label": "unicode-prefix-editor",
+      "adb_shell_command": "am start -W -S -n org.x2m7.trime.editorfixture/.EditorActivity --es mode multiline --es text '𠮷😀'"
+    },
+    {
+      "label": "actual-editor-oracle",
+      "adb_shell_command": "content query --uri content://org.x2m7.trime.editorfixture.t10/state?nonce=<fresh32lowerhex> --projection snapshot_b64"
+    }
+  ],
+  "per_theme_cases": [
+    {
+      "id": "C1-filter-cancel",
+      "start": "Fresh multiline editor empty; T9 Chinese layout.",
+      "touches": [
+        "6(MNO)",
+        "4(GHI)",
+        "visible spelling ni",
+        "segment ni (focus)",
+        "解除拼音锁定",
+        "undo icon",
+        "取消组合"
+      ],
+      "accept": "64 shows alternatives; ni locks/selection changes; unlock+undo are visibly consistent. Cancel returns actual fixture text to empty and clears panel/preview. No private ~ markers exposed."
+    },
+    {
+      "id": "C2-hanzi-and-new-digit",
+      "start": "Fresh editor empty.",
+      "touches": [
+        "6",
+        "4",
+        "ni spelling",
+        "4",
+        "2",
+        "6",
+        "hao spelling when available",
+        "visible Hanzi candidate (e.g.你好)",
+        "6",
+        "取消组合"
+      ],
+      "accept": "Capture actual displayed chosen candidate and require exact single commit via oracle. Immediate6 starts a new composition; cancel leaves chosen committed Hanzi unchanged, rather than selecting another candidate."
+    },
+    {
+      "id": "C3-space",
+      "start": "Fresh editor empty.",
+      "touches": [
+        "6",
+        "4",
+        "capture highlighted candidate",
+        "space",
+        "space"
+      ],
+      "accept": "First space commits exact highlighted Hanzi once; second empty-composition space is the ordinary literal-space path. Record actual result, require no private locks/old candidates remain."
+    },
+    {
+      "id": "C4-delete-undo",
+      "start": "Fresh editor empty.",
+      "touches": [
+        "6",
+        "4",
+        "ni spelling",
+        "backspace",
+        "backspace",
+        "undo icon",
+        "取消组合"
+      ],
+      "accept": "First delete removes spelling lock, next removes original digit, undo restores the immediately prior edit; final cancel restores empty prefix. It must not delete text outside pending composition."
+    },
+    {
+      "id": "C5-raw-enter",
+      "start": "Fresh editor empty.",
+      "touches": [
+        "6",
+        "4",
+        "ni spelling",
+        "Return"
+      ],
+      "accept": "Enter with composition commits complete raw original64 (not ni/not~ni~); no pending tail. In fresh chat one journaled Return gesture shows action:4 with unchanged text; final-label fixture cannot establish internal callback count. In fresh multiline empty Return inserts newline."
+    },
+    {
+      "id": "C6-literal-number-and-restore",
+      "start": "Fresh editor empty.",
+      "touches": [
+        "123 short tap",
+        "digit2 on number page",
+        "返回/.default",
+        "6",
+        "4",
+        "取消组合"
+      ],
+      "accept": "Number-page2 commits literal2 immediately. Return restores schema T9 (not QWERTY); subsequent64 composes and cancel leaves only2. With pending64, long-press ABC/2 specifically commits raw642 once according to commitT9Digit, not a Hanzi candidate."
+    },
+    {
+      "id": "C7-ascii-and-symbol",
+      "start": "Fresh editor empty.",
+      "touches": [
+        "long-press123/EN (T9_ascii)",
+        "letter a",
+        "open number page from letter layout (trime: long-press symbol key; tongwenfeng: bottom-left123)",
+        "tap number-page 返回/.default",
+        "符号 short tap",
+        "a visible punctuation",
+        "返回/.default",
+        "6",
+        "4",
+        "取消组合"
+      ],
+      "accept": "ABC uses temporary letter/QWERTY layout and commits literal a. Symbol page is literal. Both returns restore schema T9; later64 cancels cleanly. Record the declared existing commit-on-layout-switch behavior when switching with composition. In tongwenfeng #!? Chinese punctuation page U+FF01 is fullwidth！; bind expectation to actualdisplayed/sourcekey, not a hardcodedASCII!. Category macro has an additional independentregression and cannot be substituted by literalpage."
+    },
+    {
+      "id": "C8-editor-boundary",
+      "start": "Multiline active64/ni lock, then launch fresh chat fixture using -S.",
+      "touches": [
+        "6 in fresh chat",
+        "取消组合"
+      ],
+      "accept": "Fresh editor does not receive prior locks/candidates or a prior Hanzi commit. Starting6 is new input; cancel leaves fresh editor empty. Trime PID stays identical."
+    }
+  ],
+  "unicode_note": "Unicode initial-text extra tests external editor prefix/caret only; it does not prove supplementary Hanzi candidate JNI transport. That requires real supplementary candidate from a narrowly isolated fixture dictionary (or explicit retained host146/115 evidence). Do not mislabel prefix preload as JNI candidate acceptance.",
+  "coordinate_reference_not_blind_taps": {
+    "main_keyboard_only": "Exclude candidate and96dp spelling rows; confirm bounds in PNG/XML before using percentages.",
+    "rows": [
+      "1/2/3/backspace",
+      "4/5/6/Return",
+      "7/8/9/符号",
+      "123/comma/space/period/0"
+    ],
+    "row123_centers_x_fraction": [
+      0.13,
+      0.39,
+      0.65,
+      0.89
+    ],
+    "row4_centers_x_fraction": [
+      0.09,
+      0.26,
+      0.5,
+      0.74,
+      0.91
+    ],
+    "rows_centers_y_fraction": [
+      0.125,
+      0.375,
+      0.625,
+      0.875
+    ]
+  },
+  "evidence": [
+    "Per case: real touch sequence, bounded same-connection beforeXML/PNG/afterXML, oracle raw reply and decoded text, PID/starttime checks.",
+    "Keep original failed captures; no late completion credentials. Stop/wait observer within fixed limits.",
+    "Do not claim TalkBack, real device, Release, startup performance, prediction or universal zero warnings from this smoke."
+  ],
+  "ascii_return_route_source_notes": {
+    "trime": "letter includes default; its Mode_switch toggles ascii_mode but does not itself select .default. Use letter symbol-key long press→number→返回 to explicitly test schema layout restoration.",
+    "tongwenfeng": "letter bottom-right 中 is space_R2 select:fbj (pre-existing general-theme behavior), not .default. Use bottom-left123→number→返回 to explicitly restore current-schema T9.",
+    "classification": "These are observed source action definitions. No new one-tap automatic ASCII-to-T9 restoration is claimed; assess actual UI against documented .default route before classifying a product regression."
+  },
+  "helper": {
+    "path": "/home/xumin/Public/Trime/build/readiness-20261022/t9/t9_smoke_helper_v4.py",
+    "preparation_state": "FROZEN_ORIGINAL_CLOUD_APK",
+    "source_head": "eeb4804a3dcfbb48cdb5b4c9638aad550a0283e0",
+    "intent": "Reuse unchanged thin Observer9 helper with only exact source/APK constants frozen after audit; no framework/limit changes.",
+    "sha256": "ed35b3d1708c966fb054b4276ca8726861a7edd2987302ab438ddc73be5fa995"
+  },
+  "observation_path_limit": "Observer9 captures XML-before/PNG/XML-after via accessibility nodes. Old117 candidate loss was observed under this node-observation path; it does not establish that every plain UI render without accessibility/node reads is blank. The new AutoScale fix aligns framework text/layout semantics; verify actual visible text and nodes after observation.",
+  "previous_failure": {
+    "source": "117468018fd757d3abddb2d3f8e055759e01152f",
+    "report": "/home/xumin/Public/Trime/build/readiness-20261022/t9/api21-smoke1/offline-failure-review.json",
+    "scope": "SameAPI21 original117, actualschema/T9 numeric64/filter choices visible but primary/most Hanzi candidates absent under Observer; one 泥ni visible. Candidate gate failed;0/16 cases executed; normal Observer stop/wait0. Originalfiles retained.",
+    "additional_593_observation": "Original593 passed agreed16cases but newT9alias forcedASCIImode on tongwenfeng macrocategorylayout; actual{Escape}/bd produced no input/candidates. Source+logs localized this defect. Newmodefix needs originalAPK revalidation."
+  },
+  "business_scope_unchanged": "Original C1-C8 per two themes. Candidate visibility is a prerequisite; halt and preserve actual frames if it fails. No T12/prediction/new acceptance feature.",
+  "previous_frozen_v3_plan": {
+    "path": "/home/xumin/Public/Trime/build/readiness-20261022/t9/android-smoke-minimal-v3.json",
+    "sha256": "91271934f5d73f38dd83547ff20cbfca1616384e20b47618bd43c24e8525566d",
+    "source_head": "593c23002343d5c7e6db5bf37e2bdfa0ba05f8ee"
+  },
+  "systems_validation_delta": {
+    "api35": "New originalAPK: full originalC1–C8 for both themes plus tongwenfeng category regression. Root controls lease after UI/runtime/Unicode stages.",
+    "api21": "New original eeb APK: complete original C1–C8 for both themes plus tongwenfeng category regression, by Root explicit assignment. Original593 records remain historical only.",
+    "no_claim": "No newdevice result yet."
+  },
+  "additional_tongwenfeng_category_regression": {
+    "id": "C7-category-macro-and-number-restore",
+    "start": "NeworiginalAPK, tongwenfeng theme, luna_pinyin_t9 selected, fresh focused empty multiline editor; no pending lock/composition.",
+    "actions": [
+      "ShorttapT9符号 to actual macro-category layout; capture actual toolbar/state and empty editor before macro.",
+      "Tap actual 标点 category key. Capture new actual visible punctuation candidate list and empty committed editor; require native macro result input/menu present, not unchanged empty/no-op. Real onText/simulate raw evidence must preserve Escape/slash/b/d order.",
+      "Read exact visible candidate text and actual parent rectangle from current frame; touch that candidate once. Capture exact oracle equals chosen text with no{Escape},/bd or private~markers.",
+      "Use actual 返回/.default from symbol layout to T9; tap6, capture new numericcomposition; cancel, require chosen punctuation unchanged.",
+      "Open123 number page, tap actualliteral2, return/.default, type64 andcancel. Require exactly chosenpunctuation+2 and actual T9restored. Captures may combine bounded actions but actualselectedtext/PID identity andbefore/after oracle remain strict."
+    ],
+    "accept": "Category macro now produces actual punctuation candidates; selected actual punctuation is committed exactly; following numeric input is fresh composition and literal-number prefix survives. Same TrimePID, sameoriginalAPK; no blind candidate click.",
+    "guards": [
+      "Candidateparent/text/sequence identity stable before actualclick. Preserve any before/afterXML drift as originalmetadata; businessassessment uses parent/text stability, not blanketbyte-equality.",
+      "If category remains empty/no-op, halt and preserve; cannot substitute#!?literalpage for categoryregression.",
+      "Use actualsymbol candidateU+FF01 orother displayedcodepoints. Do not assumehalfwidthASCII! when sourcekey is！."
+    ],
+    "evidence": [
+      "Two key categorybefore/after macro PNG/XML+oracles",
+      "Actualcandidatechosen and exact postcommit oracle",
+      "Defaultrestored numeric6 and finalliteral2 prefixoracles",
+      "Raw contiguous bounded macrosequence log excerpt from existing controller collector; do not open logUI"
+    ],
+    "not_added": [
+      "Prediction",
+      "T12fullsetup",
+      "T13TalkBack",
+      "PhysicaldeviceorReleaseperformance"
+    ]
+  },
+  "source_tree": "a5c66a361a30df5b1ce23d0392e08a97045e9a33",
+  "new_source_checks": {
+    "application_junit_actual": 330,
+    "host_unicode_checks": 115,
+    "control_audit": "/home/xumin/Public/Trime/build/readiness-20261022/t9/symbol-mode-ci1/artifacts-control-12397686736/independent-control-audit.json",
+    "control_audit_sha256": "6d5643b3e567134edff0e768f3ffe8561136e6deaccf086f2d59e89745c7c739",
+    "pins_cache_audit": "/home/xumin/Public/Trime/build/readiness-20261022/t9/symbol-mode-ci1/ubuntu-source-pins-cache-audit.json",
+    "pins_cache_audit_sha256": "0846ff10844e2617a57717215839f091fadd553c73b7590b72694d859da767bf",
+    "native_provenance": "ActualUbuntuJNIcachehit; no newnativecompile/link; x64.sobytesidentical593. Do not call newlycompiled."
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "source_head": "9f86bc8f1d11d65d2e22e437f111a965bc2faba5",
+  "source_log": "/home/xumin/Public/Trime/build/readiness-20261022/api35-t9-fixed1/device-logcat.txt",
+  "observed_complete_prefix_bytes": 38669505,
+  "current_dump": "/home/xumin/Public/Trime/build/readiness-20261022/t9/api35-smoke-v5-trime-cold-session/cold-integer-show-before-ready-input-method.raw.txt",
+  "dump_sha256": "09e9a507deacf194dd16c3246514512b0009281887fb45a7bfa1da5b6b6d276f",
+  "active_integer_indicators": {
+    "mInputShown=true": true,
+    "mInputStarted=true mInputViewStarted=true": true,
+    "inputType=0x2 imeOptions=0x6": true
+  },
+  "same_pid_logs": [
+    {
+      "byte_offset": 3786473,
+      "line": "10-22 12:48:29.864  2235  2235 D [main] TrimeInputMethodService: TrimeInputMethodService.kt:576] onCreateInputView"
+    },
+    {
+      "byte_offset": 3786588,
+      "line": "10-22 12:48:29.893  2235  2235 W [main] TrimeInputMethodService: TrimeInputMethodService.kt:580] ThemeScope is not ready yet; deferring input view creation"
+    },
+    {
+      "byte_offset": 3786744,
+      "line": "10-22 12:48:29.908  2235  2235 D [main] TrimeInputMethodService: TrimeInputMethodService.kt:643] onStartInputView: restarting=false"
+    },
+    {
+      "byte_offset": 3817189,
+      "line": "10-22 12:48:32.157  2235  2320 D [Thread-6] Rime$Companion: Rime.kt:650] Handling DeployMessage(state=Start)"
+    }
+  ],
+  "positive_pass_claim": false,
+  "pending": "Real Success/Theme ready then visible current numeric InputView with exact text; no manual IME toggle."
+}

@@ -1,0 +1,286 @@
+{
+  "adjudication": {
+    "business_blocker_found_in_fixed_g1_scope": false,
+    "limited_qualification_pass": true,
+    "not_a_full_t9_pass": true,
+    "original_report_unchanged": {
+      "business_acceptance_flags_remain_false": true,
+      "checks": [],
+      "passed": false
+    },
+    "scope": "G1 deferred ThemeScope recovery with latest integer EditorInfo, one explicit fixture SHOW, visible number keyboard, and literal 2 after one bounded tap"
+  },
+  "allowed_claims": [
+    "The same cold Trime process PID 2235/starttime 35778 first returned null while ThemeScope was unavailable, then attached a keyboard tree after ThemeScope became ready.",
+    "The recovered tree used the latest integer EditorInfo and selected the number keyboard.",
+    "After one explicit real fixture SHOW, the number keyboard was visible; one host tap at (360,734), inside the visible 2-key bounds [288,684][432,784], produced fixture oracle text 2.",
+    "No second IME enable/disable/set operation was used during this recovery sequence.",
+    "Observer session ended by authenticated normal stop with all three requested captures complete and no capture failure."
+  ],
+  "capture_facts": {
+    "causal_boundary": "The first capture independently shows the number-key layout; command 125 is the only text-producing tap and command 129 then reads 2. The second capture before/after XML difference alone is not used as causal proof.",
+    "literal2_after": {
+      "oracle_text": "2",
+      "png_bytes": 48215,
+      "png_dimensions": [
+        720,
+        1280
+      ],
+      "xml_before_after_equal": false
+    },
+    "visible": {
+      "oracle_text": "",
+      "png_bytes": 49550,
+      "png_dimensions": [
+        720,
+        1280
+      ],
+      "xml_before_after_equal": true
+    }
+  },
+  "claims_not_supported": [
+    "The IME window stayed visible throughout the null-input-view interval.",
+    "The window automatically reopened without the explicit fixture SHOW.",
+    "A SHOW screenshot existed before ThemeScope became ready.",
+    "Native maintenance Success occurred within the G1 stage or was the trigger for tree recovery.",
+    "The full T9 business suite passed; stage1-scope records no T9 business cases executed.",
+    "Observer normal stop also stopped the parent controller/logcat transport."
+  ],
+  "commands": {
+    "all_completed": true,
+    "host_rc0_count": 249,
+    "key_commands": [
+      38,
+      44,
+      62,
+      125,
+      129
+    ],
+    "remote_rc1_count": 52,
+    "remote_rc1_scope": "52 expected bounded existence checks; no G1 command transport failure",
+    "total": 249
+  },
+  "files": {
+    "G1-integer-keyboard-visible/observer-after.xml": {
+      "bytes": 37671,
+      "path": "/home/xumin/Public/Trime/build/readiness-20261022/t9/api35-smoke-v5-trime-cold-session/captures/G1-integer-keyboard-visible/observer-after.xml",
+      "sha256": "4c02342f87291b8d490a469e60921d0ac077c06e2215d3a2c5e9490b94c4bcd8"
+    },
+    "G1-integer-keyboard-visible/observer-before.xml": {
+      "bytes": 37671,
+      "path": "/home/xumin/Public/Trime/build/readiness-20261022/t9/api35-smoke-v5-trime-cold-session/captures/G1-integer-keyboard-visible/observer-before.xml",
+      "sha256": "4c02342f87291b8d490a469e60921d0ac077c06e2215d3a2c5e9490b94c4bcd8"
+    },
+    "G1-integer-keyboard-visible/observer-in-connection.png": {
+      "bytes": 49550,
+      "path": "/home/xumin/Public/Trime/build/readiness-20261022/t9/api35-smoke-v5-trime-cold-session/captures/G1-integer-keyboard-visible/observer-in-connection.png",
+      "sha256": "2e8287cd6d57f5c55dd3f224605aa6f1860a19e8a8e3cb2017ba28bd8750a4bb"
+    },
+    "G1-integer-keyboard-visible/observer-observation.json": {
+      "bytes": 1846,
+      "path": "/home/xumin/Public/Trime/build/readiness-20261022/t9/api35-smoke-v5-trime-cold-session/captures/G1-integer-keyboard-visible/observer-observation.json",
+      "sha256": "e1bebfcc3a3bc92a0b32f8f97101015ee7322f2f161ce1357e1631e16e3bf3af"
+    },
+    "G1-integer-literal2-after/observer-after.xml": {
+      "bytes": 37666,
+      "path": "/home/xumin/Public/Trime/build/readiness-20261022/t9/api35-smoke-v5-trime-cold-session/captures/G1-integer-literal2-after/observer-after.xml",
+      "sha256": "a5befc318b1d3bb44386d134636bb33352b31e8b96db506f2c179beda963bb9e"
+    },
+    "G1-integer-literal2-after/observer-before.xml": {
+      "bytes": 37663,
+      "path": "/home/xumin/Public/Trime/build/readiness-20261022/t9/api35-smoke-v5-trime-cold-session/captures/G1-integer-literal2-after/observer-before.xml",
+      "sha256": "3af1041399c0ad5aa1441ec6c2b56749ca8f503365346f8520cc8a63a34206f6"
+    },
+    "G1-integer-literal2-after/observer-in-connection.png": {
+      "bytes": 48215,
+      "path": "/home/xumin/Public/Trime/build/readiness-20261022/t9/api35-smoke-v5-trime-cold-session/captures/G1-integer-literal2-after/observer-in-connection.png",
+      "sha256": "b0021ae8f9f48352000c779594c9b61c545a4d6540288b9ed15c1315e2407b42"
+    },
+    "G1-integer-literal2-after/observer-observation.json": {
+      "bytes": 1847,
+      "path": "/home/xumin/Public/Trime/build/readiness-20261022/t9/api35-smoke-v5-trime-cold-session/captures/G1-integer-literal2-after/observer-observation.json",
+      "sha256": "eacee00369f4621c9d34cfd3239d249b851d6a7ce8084b3cc0002f164752ddfb"
+    },
+    "command_0038_stderr": {
+      "bytes": 0,
+      "path": "/home/xumin/Public/Trime/build/readiness-20261022/t9/api35-smoke-v5-trime-cold-session/commands/0038.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "command_0038_stdout": {
+      "bytes": 40392,
+      "path": "/home/xumin/Public/Trime/build/readiness-20261022/t9/api35-smoke-v5-trime-cold-session/commands/0038.stdout",
+      "sha256": "5f8f198f4091da437812d4a443fd67c53e45d9b3ac24009d8085de2f34e9a566"
+    },
+    "command_0044_stderr": {
+      "bytes": 0,
+      "path": "/home/xumin/Public/Trime/build/readiness-20261022/t9/api35-smoke-v5-trime-cold-session/commands/0044.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "command_0044_stdout": {
+      "bytes": 47287,
+      "path": "/home/xumin/Public/Trime/build/readiness-20261022/t9/api35-smoke-v5-trime-cold-session/commands/0044.stdout",
+      "sha256": "8051223a58d91730994a3ef0c3b17ecca844ac3725b899c0fa718d5dd8aee267"
+    },
+    "command_0062_stderr": {
+      "bytes": 0,
+      "path": "/home/xumin/Public/Trime/build/readiness-20261022/t9/api35-smoke-v5-trime-cold-session/commands/0062.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "command_0062_stdout": {
+      "bytes": 1462,
+      "path": "/home/xumin/Public/Trime/build/readiness-20261022/t9/api35-smoke-v5-trime-cold-session/commands/0062.stdout",
+      "sha256": "c309feb1eace35c521ea99c99fd2a635afec79e19a07ed60bc53154033637c7a"
+    },
+    "command_0125_stderr": {
+      "bytes": 0,
+      "path": "/home/xumin/Public/Trime/build/readiness-20261022/t9/api35-smoke-v5-trime-cold-session/commands/0125.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "command_0125_stdout": {
+      "bytes": 58,
+      "path": "/home/xumin/Public/Trime/build/readiness-20261022/t9/api35-smoke-v5-trime-cold-session/commands/0125.stdout",
+      "sha256": "cf39398f18503d8db3ce9a8d11b3adbaa9cc78c4b409be8c91cb49c6a4ba8551"
+    },
+    "command_0129_stderr": {
+      "bytes": 0,
+      "path": "/home/xumin/Public/Trime/build/readiness-20261022/t9/api35-smoke-v5-trime-cold-session/commands/0129.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "command_0129_stdout": {
+      "bytes": 1223,
+      "path": "/home/xumin/Public/Trime/build/readiness-20261022/t9/api35-smoke-v5-trime-cold-session/commands/0129.stdout",
+      "sha256": "74f230804ac0f21756c006629c697d9fd31f7b1e11be2423217e0527f044d237"
+    },
+    "observer_finished": {
+      "bytes": 2117,
+      "path": "/home/xumin/Public/Trime/build/readiness-20261022/t9/api35-smoke-v5-trime-cold-session/observer8-session/finished.json",
+      "sha256": "9270c4b40adcadd71801a19ceb6c8aa9aec2dc71373388060c9ad8e7eb115907"
+    },
+    "observer_ready": {
+      "bytes": 1100,
+      "path": "/home/xumin/Public/Trime/build/readiness-20261022/t9/api35-smoke-v5-trime-cold-session/observer8-session/ready.json",
+      "sha256": "7d6429814a6dd6d5322f11cabad264b71d75f4a7a1fe3f77e92a373ae9e97c18"
+    },
+    "original_report": {
+      "bytes": 324461,
+      "path": "/home/xumin/Public/Trime/build/readiness-20261022/t9/api35-smoke-v5-trime-cold-session/report.json",
+      "sha256": "2a6ffdebf308e7f0467dc7458c5292c7b58562ab05a6ca71f7709b14a0f48fa9"
+    },
+    "scope": {
+      "bytes": 376,
+      "path": "/home/xumin/Public/Trime/build/readiness-20261022/t9/api35-smoke-v5-trime-cold-session/stage1-scope.json",
+      "sha256": "5ba76784354ca1d8f215458f4db87ca61e9852860d045400241e154b23041791"
+    }
+  },
+  "generated_at_utc": "2026-10-22T05:00:14.963301+00:00",
+  "method": "HOST-only immutable evidence review and independent SHA-256 recomputation; no ADB, Gradle, source, device, or original-report mutation",
+  "observer_session": {
+    "candidate_ui_acceptance": false,
+    "capture_count": 3,
+    "capture_failures": 0,
+    "command_62": {
+      "child_wait_returncode": 0,
+      "deadline_signals": [],
+      "elapsed_seconds": 89.452021168996,
+      "host_returncode": 0,
+      "normal_authenticated_stop": true,
+      "remote_returncode": 0
+    },
+    "completed_capture_count": 3,
+    "helper_injected_touch": false,
+    "observer_pid": 2446,
+    "observer_starttime_ticks": "53477",
+    "passed_for_transport_scope": true,
+    "ready": true,
+    "request_count": 4,
+    "session_token": "faf1b54563b18804b5e18d89d17915bb",
+    "stop_received": true
+  },
+  "parent_log_fixed_evidence": {
+    "append_only_observation": "Fixed prefix and G1 range rehashed identically while the same dev/inode file continued to append.",
+    "byte_prefix": {
+      "bytes": 108722748,
+      "end_exclusive": 108722748,
+      "sha256": "ba2b9426c8444a25f9023e4263c5938483c1896b40963ee49992d8bcdc3ef0ef",
+      "start": 0
+    },
+    "g1_range": {
+      "bytes": 105084344,
+      "end_exclusive": 108722748,
+      "sha256": "31a4b95e0de37d1ce3632a5db029e7bb14b4f15687044c54c8b26e889916a160",
+      "start": 3638404
+    },
+    "path": "/home/xumin/Public/Trime/build/readiness-20261022/api35-t9-fixed1/device-logcat.txt",
+    "size_when_rechecked": 109126979,
+    "st_dev": 66306,
+    "st_ino": 29653307,
+    "whole_file_final_sha256": null,
+    "whole_file_status": "pending parent controller/logcat normal stop; not required for this bounded G1 qualification"
+  },
+  "process_identity": {
+    "boot_id": "97980241-f595-458d-b383-347968ad6691",
+    "pid": 2235,
+    "proc_starttime_ticks": "35778"
+  },
+  "schema": "trime-g1-independent-limited-qualification/v1",
+  "source_identity": {
+    "apk_certificate_sha256": "bbb43f63ebe868257f0f9cef41194ef0bba4d752a25029d39eb273eef6d95a57",
+    "apk_sha256": "9cdb36ab38a5a4d76ab619d54b0b5b484505472cdd7253be3cf0a34502a4706b",
+    "artifact_audit_sha256": "825fc5da1d62f46679ea31d79ab3fe5077cc64a11e600c1b943ddebe093b93f9",
+    "combined_tree": "4b676f615138cfae088cf02264647c8c1cb09dde",
+    "source_binding_path": "/home/xumin/Public/Trime/build/readiness-20261022/t9/v5-original-fork-9f86-binding1.json",
+    "source_binding_sha256": "d8b7b1c380f37b7df9ab465627a34995d1b4c574789d52e79fc4a2e13f883783",
+    "source_head": "9f86bc8f1d11d65d2e22e437f111a965bc2faba5",
+    "startup_fix_commit": "2d2fbce70b449ec8b6560c844ca5ddbc2e08a4c3"
+  },
+  "timeline": [
+    {
+      "event": "onCreateInputView, PID 2235",
+      "local_time": "2026-10-22 12:48:29.864 +08:00"
+    },
+    {
+      "event": "ThemeScope not ready; input view creation deferred",
+      "local_time": "2026-10-22 12:48:29.893 +08:00"
+    },
+    {
+      "event": "command 38: current EditorInfo inputType 0x2 observed while mInputShown=false",
+      "utc_interval": "2026-10-22T04:48:29.456284Z/2026-10-22T04:48:29.774028Z"
+    },
+    {
+      "event": "Rime DeployMessage Start; this is not maintenance completion",
+      "local_time": "2026-10-22 12:48:32.157 +08:00"
+    },
+    {
+      "event": "ThemeDiagnostics begins",
+      "local_time": "2026-10-22 12:48:45.012 +08:00"
+    },
+    {
+      "event": "KeyboardWindow attached",
+      "local_time": "2026-10-22 12:48:45.860 +08:00"
+    },
+    {
+      "event": "keyboard switched to number",
+      "local_time": "2026-10-22 12:48:46.034 +08:00"
+    },
+    {
+      "event": "explicit fixture SHOW action",
+      "utc_time": "2026-10-22T04:50:29.628152Z"
+    },
+    {
+      "event": "command 44: mInputShown=true, mWindowVisible=true, inputType 0x2",
+      "utc_interval": "2026-10-22T04:50:30.332783Z/2026-10-22T04:50:30.758375Z"
+    },
+    {
+      "event": "command 125: single input tap 360 734; remote and host rc 0",
+      "utc_interval": "2026-10-22T04:51:33.595065Z/2026-10-22T04:51:33.764347Z"
+    },
+    {
+      "event": "command 129: fixture oracle reads literal 2",
+      "utc_interval": "2026-10-22T04:51:34.254523Z/2026-10-22T04:51:35.977391Z"
+    },
+    {
+      "event": "Rime DeployMessage Success, after Observer ended; excluded as G1-stage success evidence",
+      "local_time": "2026-10-22 12:56:02.547 +08:00"
+    }
+  ]
+}
