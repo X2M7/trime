@@ -85,6 +85,23 @@
       "merged": false,
       "receipt": "ready-transitions-20261022-batch3.json",
       "receipt_sha256": "4569140520914afcfe3dea89ec4a25d1e85f12edd2c4967f4b7f377aec9b94d8"
+    },
+    {
+      "number": 2186,
+      "url": "https://github.com/osfans/trime/pull/2186",
+      "head": "e16ab85f495e5bbf353187c29efbff74526cff9c",
+      "before_draft": true,
+      "after_draft": false,
+      "source_unchanged": true,
+      "four_checks_success_at_transition": true,
+      "body_exact_readback": true,
+      "body_sha256": "b1b2d7abc00af0d17e96fbb0a89220f3a6e071d3ce49a9a1d94d0b334f3da331",
+      "index_evidence_commit": "4c2e259615b94ccfb88f92ad0e4db3d2a110532b",
+      "ready_for_review_not_merge_approval": true,
+      "observed_state": "OPEN",
+      "merged": false,
+      "receipt": "ready-transitions-20261022-batch4.json",
+      "receipt_sha256": "b4ce7bc14e5d4ed4906490eb7c8869cf8f6e42d57709d1ef2d60ebc9ebf050c6"
     }
   ],
   "ready_is_not_approval_or_merge": true,
@@ -110,7 +127,7 @@
     "cloud_run": "https://github.com/X2M7/trime/actions/runs/39711445476",
     "separate_local_real_vm_assertions": 146,
     "ndk_translation_units_werror": 8,
-    "android_runtime_acceptance": "New eeb source:17fixed cases per API21/API35 (16corecases plus category-macro/number-restoration regression) still pending. No old593 device result counted as newsource pass.",
+    "android_runtime_acceptance": "API35 samePID13449 nativeStart11:27:20.389→Success11:33:05.052 in344.663s; category-macro regression then two-theme16fixedcases ongoing. All17fixedcases perOS not closed; eeb API21 not run. StillDraft; old593 results not reused as newsource pass.",
     "previous_source": "593c23002343d5c7e6db5bf37e2bdfa0ba05f8ee",
     "candidate_fix_merge": "7a45cf29c8e112a4081a5e72cb465447d847e1c1",
     "tree": "a5c66a361a30df5b1ce23d0392e08a97045e9a33",
@@ -159,9 +176,18 @@
       "direct_build_sha_not_virtual_merge": true,
       "four_abi_static_audit_passed": true,
       "original_services_signature_warnings_per_apk": 2,
-      "android_qualification": "pendingbothsystems"
+      "android_qualification": "API35maintenanceSuccess;17casequalificationpending;API21notrun"
     },
-    "older_candidate_failure_source": "117468018fd757d3abddb2d3f8e055759e01152f"
+    "older_candidate_failure_source": "117468018fd757d3abddb2d3f8e055759e01152f",
+    "api35_current_stage": {
+      "pid": 13449,
+      "native_start": "2026-10-22 11:27:20.389",
+      "native_success": "2026-10-22 11:33:05.052",
+      "maintenance_seconds": 344.663,
+      "business_checks": "Category regression first, then both themes16fixedcases in progress; entire17casequalification pending.",
+      "api21_run_started": false,
+      "draft": true
+    }
   },
   "logcat": {
     "pr": 2182,
@@ -453,8 +479,7 @@
     }
   },
   "still_draft": [
-    2183,
-    2186
+    2183
   ],
   "warnings_and_limits": [
     "Readyforreview is not maintainer approval, automaticmerge, universalbugfree or fullapplication acceptance.",
@@ -562,7 +587,7 @@
     "api35_actual_initialization_failure_path_passed": true,
     "api35_soundpool_real_load_callback_passed": true
   },
-  "updated_utc": "2026-10-22T03:27:29.480912+00:00",
+  "updated_utc": "2026-10-22T03:36:35.182607+00:00",
   "unicode_foundation": {
     "branch": "contrib/pr-jni-unicode-transport",
     "source": "e16ab85f495e5bbf353187c29efbff74526cff9c",
@@ -576,10 +601,11 @@
     "both_baseline_controls_failed_as_expected": true,
     "ndk_api21_x64_translation_units_werror": 6,
     "independent_review": "Two reviewers read production, test and runner code; 12 exact source blobs bound.",
-    "cloud_and_android": "Cloud full application and checked-JVM controls passed. Original API21 APK CheckJNI survives actual stock a candidates including𠼞; ni/Space commits你. Candidate rows draw blank, so visual selection and whole-app acceptance do not pass. API35 scoped originalAPK CheckJNI/a14/DEL-ni-Space business completed; final evidence review ongoing, not a whole-app or Ready qualification.",
+    "cloud_and_android": "Cloud full application and checked-JVM controls passed. Original API21 APK CheckJNI survives actual stock a including native𠼞, and ni/Space commits你; API21 blank candidate rows remain an independent UI gap. Original API35 actual CheckJNI/native stocka/DEL-ni-Space scopes completed and Root qualified, batch4 Readyforreview; native preparing14 is not Java candidate-array introspection. Not rarecandidate visualclick, wholeapp or Release qualification.",
     "limits": [
       "Host checks do not initialize a real Rime session, GlobalRef singleton or Android editor.",
-      "No arbitrary native allocation exception wrapper, no C-string embedded-NUL acceptance claim."
+      "No arbitrary native allocation exception wrapper, no C-string embedded-NUL acceptance claim.",
+      "API35 native preparing14 plus𠼞 is original native log evidence, not Java candidate-array introspection; ordinary a/ni rows visible, rarecandidate visible click or commit not tested. API21 candidate blank gap and193 dictionary Encode failures remain."
     ],
     "cloud_application_jvm_cases": 301,
     "cloud_failures_errors_skipped": 0,
@@ -593,7 +619,7 @@
     },
     "upstream_pr": 2186,
     "upstream_pr_url": "https://github.com/osfans/trime/pull/2186",
-    "draft": true,
+    "draft": false,
     "api21_original_apk": {
       "sha256": "77dde310fd3a328f30070239b73ddd3f7c17f8ea19b77dba6722ba7a40096565",
       "pid": 11449,
@@ -611,7 +637,42 @@
       }
     },
     "fork_and_upstream_os_jobs_success": 8,
-    "api35_current_stage": "SamePID12444 actual native maintenance Success after319.277s; real CheckJNI startup evidence, stock luna_pinyin a snapshot14 including𠼞/ascii=false, DEL then ni/Space committed你. Root actually viewed4originalscreens; Observer authenticatedstop7 andhost0, debug.checkjni empty/Latin restored. Scoped business complete; evidence freezing and final qualification review ongoing. StillDraft, no Ready transition."
+    "api35_current_stage": "Qualified for review, actual batch4 Open/nonDraft transition with exact e16 source/four upstreamsuccess/bodyreadback; source/evidence binding retained. SamePID12444/nativeSuccess319.277s, actualCheckJNI/stocka nativepreparing14 plus𠼞, DEL-ni-Space editor你, ordinaryrowsvisible, rareclick untested. Authenticatedstop7/host0 and settingsrestored.",
+    "ready_for_review": true,
+    "api35_original_apk": {
+      "sha256": "77dde310fd3a328f30070239b73ddd3f7c17f8ea19b77dba6722ba7a40096565",
+      "original_signature_unchanged": true,
+      "pid": 12444,
+      "starttime_ticks": "331260",
+      "uid": 10155,
+      "same_pid_preserved": true,
+      "maintenance_seconds": 319.277,
+      "real_app_checkjni_startup_witness": true,
+      "actual_schema": "luna_pinyin",
+      "actual_ascii_mode": false,
+      "stock_a_real_keyevent": 29,
+      "native_supplementary_phrase": "𠼞",
+      "native_preparing_candidate_count": 14,
+      "native_count_not_java_array_introspection": true,
+      "actual_ni_space_editor_text": "你",
+      "ordinary_a_ni_rows_visible": true,
+      "rare_candidate_visible_click_or_commit_tested": false,
+      "api21_blank_candidate_gap_retained": true,
+      "root_actually_viewed_original_pngs": 4,
+      "root_independently_verified_payload_files": 75,
+      "root_qualified_for_review": true,
+      "observer_authenticated_stop_sequence": 7,
+      "observer_actual_host_exit": 0,
+      "debug_checkjni_restored": "",
+      "default_and_enabled_ime_restored": "com.android.inputmethod.latin/.LatinIME",
+      "native_encode_failures_retained": 193,
+      "all_tool_attempts_passed_claim": false,
+      "published_reports": {
+        "qualification": "jni-unicode-api35-20261022/qualification/result.json",
+        "root": "jni-unicode-api35-20261022/root-qualification1.json"
+      },
+      "whole_app_release_physical_talkback_acceptance": false
+    }
   },
   "candidate_display": {
     "status": "API21 five-stage production-class baseline/fix control and API35 original7a45 five-stage positive qualification complete; actualbatch3 Readyforreview, not nativeIME/TalkBack or mergeapproval.",
@@ -637,7 +698,7 @@
     "api35_first_columnar_ls_export_failure_preserved": true
   },
   "warning_comparison_local_evidence": "build/readiness-20261022/t9/encode-warning-comparison1/result.json",
-  "ready_for_review_count": 6,
+  "ready_for_review_count": 7,
   "ready_transition_batch2_receipt": {
     "path": "ready-transitions-20261022-batch2.json",
     "bytes": 1131,
@@ -649,5 +710,11 @@
     "bytes": 1225,
     "sha256": "4569140520914afcfe3dea89ec4a25d1e85f12edd2c4967f4b7f377aec9b94d8",
     "original_local_path": "/home/xumin/Public/Trime/build/readiness-20261022/ui/ready-transitions3/result.json"
+  },
+  "ready_transition_batch4_receipt": {
+    "path": "ready-transitions-20261022-batch4.json",
+    "bytes": 648,
+    "sha256": "b4ce7bc14e5d4ed4906490eb7c8869cf8f6e42d57709d1ef2d60ebc9ebf050c6",
+    "original_local_path": "/home/xumin/Public/Trime/build/readiness-20261022/ui/ready-transitions4/result.json"
   }
 }
