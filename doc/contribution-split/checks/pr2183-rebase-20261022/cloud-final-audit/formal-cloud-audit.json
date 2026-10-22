@@ -1,0 +1,428 @@
+{
+  "schema": 1,
+  "passed": true,
+  "source": {
+    "base": "19b048494ffa55cae52d5385dfa6d0611461c27d",
+    "head": "1754bb51931407ac916549edc2ae57bba4c073bc",
+    "tree": "3c3ecc4764bef17b20bceece6d6c83e4475ec601"
+  },
+  "formal_runs": [
+    {
+      "label": "fork_formal_exact_head",
+      "repository": "X2M7/trime",
+      "run": {
+        "id": 39789373604,
+        "attempt": 1,
+        "event": "push",
+        "head_branch": "contrib/pr-t9-input",
+        "api_head_sha": "1754bb51931407ac916549edc2ae57bba4c073bc",
+        "status": "completed",
+        "conclusion": "success",
+        "created_at": "2026-10-22T13:43:27Z",
+        "updated_at": "2026-10-22T13:57:28Z",
+        "html_url": "https://github.com/X2M7/trime/actions/runs/39789373604"
+      },
+      "checkout_sha_proved_by_every_job_log": "1754bb51931407ac916549edc2ae57bba4c073bc",
+      "jobs": [
+        {
+          "id": 119860988370,
+          "name": "check / lint-and-test",
+          "conclusion": "success",
+          "started_at": "2026-10-22T13:43:30Z",
+          "completed_at": "2026-10-22T13:48:40Z"
+        },
+        {
+          "id": 119863786334,
+          "name": "build (ubuntu-26.04)",
+          "conclusion": "success",
+          "started_at": "2026-10-22T13:48:44Z",
+          "completed_at": "2026-10-22T13:52:22Z"
+        },
+        {
+          "id": 119863786362,
+          "name": "build (macos-26)",
+          "conclusion": "success",
+          "started_at": "2026-10-22T13:49:59Z",
+          "completed_at": "2026-10-22T13:57:19Z"
+        },
+        {
+          "id": 119863786466,
+          "name": "build (macos-26-intel)",
+          "conclusion": "success",
+          "started_at": "2026-10-22T13:48:45Z",
+          "completed_at": "2026-10-22T13:57:21Z"
+        },
+        {
+          "id": 119863786704,
+          "name": "build (windows-2025)",
+          "conclusion": "success",
+          "started_at": "2026-10-22T13:48:44Z",
+          "completed_at": "2026-10-22T13:57:26Z"
+        }
+      ],
+      "configured_abis_proved_by_every_build_log": [
+        "armeabi-v7a",
+        "arm64-v8a",
+        "x86",
+        "x86_64"
+      ],
+      "native_cache_evidence_by_job_log": {
+        "job-119863786334-ubuntu.log": {
+          "restored_keys": [
+            "ubuntu-26.04-trime-jni-debug-c31ea5d0fd3b8145ac5625b0423dfbc4c85714c333c8b20ff38f05b39ac1af8a"
+          ],
+          "missing_keys": []
+        },
+        "job-119863786362-macos.log": {
+          "restored_keys": [
+            "macos-26-trime-jni-debug-80299ccd297679af08ea97e616e2f23e9693922057b2072d9cd96a3340902479"
+          ],
+          "missing_keys": []
+        },
+        "job-119863786466-macos-intel.log": {
+          "restored_keys": [
+            "macos-26-intel-trime-jni-debug-80299ccd297679af08ea97e616e2f23e9693922057b2072d9cd96a3340902479"
+          ],
+          "missing_keys": []
+        },
+        "job-119863786704-windows.log": {
+          "restored_keys": [
+            "windows-2025-trime-jni-debug-d5dca5366bceae7cc309882216a6ea94dac5111c50ee3cb5ba998ea5750c7021"
+          ],
+          "missing_keys": []
+        }
+      },
+      "artifacts": [
+        {
+          "id": 12431985596,
+          "name": "trime-macos-26-intel",
+          "bytes": 77646075,
+          "digest": "sha256:5acfe6100c20e19ef3abe25c3e17f0ed5b24568525855d6d3f96b6dae1106d5f",
+          "workflow_head_sha": "1754bb51931407ac916549edc2ae57bba4c073bc"
+        },
+        {
+          "id": 12431811055,
+          "name": "trime-arm64-v8a-macos-26",
+          "bytes": 19568045,
+          "digest": "sha256:849ef351eca19792f5e10b01cb468439815ee82e3ea748eebd05516cc2df3f35",
+          "workflow_head_sha": "1754bb51931407ac916549edc2ae57bba4c073bc"
+        },
+        {
+          "id": 12431806070,
+          "name": "librime_jni-macos-26",
+          "bytes": 121747021,
+          "digest": "sha256:34706e96728fcd7f286a1702f09555f9a79b0f7f857ba4a09b028cf715fc8c30",
+          "workflow_head_sha": "1754bb51931407ac916549edc2ae57bba4c073bc"
+        },
+        {
+          "id": 12431650446,
+          "name": "trime-arm64-v8a-ubuntu-26.04",
+          "bytes": 19570616,
+          "digest": "sha256:b5ca7c1fa589741949850d66fa2a5bad389ce3e8a728d9b56d6c8984b2b72b16",
+          "workflow_head_sha": "1754bb51931407ac916549edc2ae57bba4c073bc"
+        },
+        {
+          "id": 12431606396,
+          "name": "trime-macos-26",
+          "bytes": 77645756,
+          "digest": "sha256:6b303f0fdf43a07833667cc232f4f464a1b07e154c08444eb7c152116a85d2a4",
+          "workflow_head_sha": "1754bb51931407ac916549edc2ae57bba4c073bc"
+        },
+        {
+          "id": 12431401722,
+          "name": "librime_jni-windows-2025",
+          "bytes": 121204611,
+          "digest": "sha256:01613a8600972d070bcc874529726db4efdb11c9fe47310378c950eefe849098",
+          "workflow_head_sha": "1754bb51931407ac916549edc2ae57bba4c073bc"
+        },
+        {
+          "id": 12431182220,
+          "name": "trime-arm64-v8a-macos-26-intel",
+          "bytes": 19568141,
+          "digest": "sha256:e36e10702848d839348bdbbfeb380a1ebdaedcb2281bd0dabc982ccd7a54e278",
+          "workflow_head_sha": "1754bb51931407ac916549edc2ae57bba4c073bc"
+        },
+        {
+          "id": 12430777738,
+          "name": "trime-ubuntu-26.04",
+          "bytes": 77648120,
+          "digest": "sha256:eee86406b768d607d5eed60be747bb6fc8b39ae62e7a8664f0b0533067d3a1e6",
+          "workflow_head_sha": "1754bb51931407ac916549edc2ae57bba4c073bc"
+        },
+        {
+          "id": 12430598586,
+          "name": "trime-arm64-v8a-windows-2025",
+          "bytes": 19673797,
+          "digest": "sha256:1ed71bad050936ac7f5eb201c55849d74d283b6526d892d405b378d4887e6fe5",
+          "workflow_head_sha": "1754bb51931407ac916549edc2ae57bba4c073bc"
+        },
+        {
+          "id": 12430413570,
+          "name": "librime_jni-ubuntu-26.04",
+          "bytes": 121218267,
+          "digest": "sha256:ef8aaeb3cf96ad426b0b4b67585f7d8d548e4717448066ab1d611b4052ed923e",
+          "workflow_head_sha": "1754bb51931407ac916549edc2ae57bba4c073bc"
+        },
+        {
+          "id": 12430259596,
+          "name": "librime_jni-macos-26-intel",
+          "bytes": 121747021,
+          "digest": "sha256:9a7e354aec18a6b927e6245371acdf1e935ef09f7eaee205bb6268ffa8779297",
+          "workflow_head_sha": "1754bb51931407ac916549edc2ae57bba4c073bc"
+        },
+        {
+          "id": 12430109392,
+          "name": "trime-windows-2025",
+          "bytes": 78065448,
+          "digest": "sha256:55caabefc50bec3cc65be7fb15241cc8ca85a5f3ee3109d041c017b157c99ba4",
+          "workflow_head_sha": "1754bb51931407ac916549edc2ae57bba4c073bc"
+        }
+      ],
+      "logs_archive": {
+        "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/cloud-run-39789373604/logs/run-39789373604-logs.zip",
+        "bytes": 437191,
+        "sha256": "4344e22b50d1ebd43ab26b8e781dab1d46f48f5bcb06c07e6cc89997d188dd09",
+        "zip_crc_passed": true,
+        "member_count": 83
+      },
+      "individual_job_logs": [
+        {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/cloud-run-39789373604/logs/job-119860988370-check.log",
+          "bytes": 262736,
+          "sha256": "6b0b0329452b6f8018f47afb7cf7ad5cecb63a7ae4fd8f82ef5c96dc03ed4b55"
+        },
+        {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/cloud-run-39789373604/logs/job-119863786334-ubuntu.log",
+          "bytes": 286365,
+          "sha256": "7ad57d8aa994d2796d2a4dda86349f1334366d9a25716c4c739cd37e29becf06"
+        },
+        {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/cloud-run-39789373604/logs/job-119863786362-macos.log",
+          "bytes": 291265,
+          "sha256": "8028cc4718b605b23dff7c933e70c0d4391ea10d1316f9e4b4ba91cd736ace3e"
+        },
+        {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/cloud-run-39789373604/logs/job-119863786466-macos-intel.log",
+          "bytes": 292161,
+          "sha256": "283fa7351df3a8171692a1462dc270dded7322ada306c9486bffbc080ebb5d70"
+        },
+        {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/cloud-run-39789373604/logs/job-119863786704-windows.log",
+          "bytes": 189877,
+          "sha256": "26c4dc58f1f4ec9faa0a3d1f8f2854255b5f8d322e27d55acd0680b0fc4f8487"
+        }
+      ]
+    },
+    {
+      "label": "upstream_pull_request_synthetic_merge",
+      "repository": "osfans/trime",
+      "run": {
+        "id": 39789381040,
+        "attempt": 1,
+        "event": "pull_request",
+        "head_branch": "contrib/pr-t9-input",
+        "api_head_sha": "1754bb51931407ac916549edc2ae57bba4c073bc",
+        "status": "completed",
+        "conclusion": "success",
+        "created_at": "2026-10-22T13:43:29Z",
+        "updated_at": "2026-10-22T13:57:32Z",
+        "html_url": "https://github.com/osfans/trime/actions/runs/39789381040"
+      },
+      "checkout_sha_proved_by_every_job_log": "fa7b6215e1b54690fd3151685189239c10cc398f",
+      "jobs": [
+        {
+          "id": 119861015329,
+          "name": "check / lint-and-test",
+          "conclusion": "success",
+          "started_at": "2026-10-22T13:43:33Z",
+          "completed_at": "2026-10-22T13:48:08Z"
+        },
+        {
+          "id": 119863505589,
+          "name": "build (macos-26-intel)",
+          "conclusion": "success",
+          "started_at": "2026-10-22T13:48:12Z",
+          "completed_at": "2026-10-22T13:53:37Z"
+        },
+        {
+          "id": 119863505645,
+          "name": "build (ubuntu-26.04)",
+          "conclusion": "success",
+          "started_at": "2026-10-22T13:48:12Z",
+          "completed_at": "2026-10-22T13:51:47Z"
+        },
+        {
+          "id": 119863505743,
+          "name": "build (macos-26)",
+          "conclusion": "success",
+          "started_at": "2026-10-22T13:48:12Z",
+          "completed_at": "2026-10-22T13:53:38Z"
+        },
+        {
+          "id": 119863505889,
+          "name": "build (windows-2025)",
+          "conclusion": "success",
+          "started_at": "2026-10-22T13:48:11Z",
+          "completed_at": "2026-10-22T13:57:30Z"
+        }
+      ],
+      "configured_abis_proved_by_every_build_log": [
+        "armeabi-v7a",
+        "arm64-v8a",
+        "x86",
+        "x86_64"
+      ],
+      "native_cache_evidence_by_job_log": {
+        "job-119863505589-macos-intel.log": {
+          "restored_keys": [
+            "macos-26-intel-trime-jni-debug-80299ccd297679af08ea97e616e2f23e9693922057b2072d9cd96a3340902479"
+          ],
+          "missing_keys": []
+        },
+        "job-119863505645-ubuntu.log": {
+          "restored_keys": [
+            "ubuntu-26.04-trime-jni-debug-c31ea5d0fd3b8145ac5625b0423dfbc4c85714c333c8b20ff38f05b39ac1af8a"
+          ],
+          "missing_keys": []
+        },
+        "job-119863505743-macos.log": {
+          "restored_keys": [
+            "macos-26-trime-jni-debug-80299ccd297679af08ea97e616e2f23e9693922057b2072d9cd96a3340902479"
+          ],
+          "missing_keys": []
+        },
+        "job-119863505889-windows.log": {
+          "restored_keys": [
+            "windows-2025-trime-jni-debug-d5dca5366bceae7cc309882216a6ea94dac5111c50ee3cb5ba998ea5750c7021"
+          ],
+          "missing_keys": []
+        }
+      },
+      "artifacts": [
+        {
+          "id": 12431342365,
+          "name": "trime-windows-2025",
+          "bytes": 78066224,
+          "digest": "sha256:5abe2e04a7b041d3c818daa1dbf92c5e9f5945b54000aa7c5a5973528ec6e8cc",
+          "workflow_head_sha": "1754bb51931407ac916549edc2ae57bba4c073bc"
+        },
+        {
+          "id": 12431241850,
+          "name": "trime-macos-26-intel",
+          "bytes": 77646872,
+          "digest": "sha256:ba5bc1ae0a75139579c1001c9dd530acedaba0b6d974e00bf794958292bee7b3",
+          "workflow_head_sha": "1754bb51931407ac916549edc2ae57bba4c073bc"
+        },
+        {
+          "id": 12431013083,
+          "name": "trime-macos-26",
+          "bytes": 77646074,
+          "digest": "sha256:ab1fd3edbaaf8a992093f428d85166ec4b1ecea86204e00656fa1cfd9b2540a6",
+          "workflow_head_sha": "1754bb51931407ac916549edc2ae57bba4c073bc"
+        },
+        {
+          "id": 12429764675,
+          "name": "trime-ubuntu-26.04",
+          "bytes": 77648790,
+          "digest": "sha256:b3f57e0a85674e9789b417515b0dca8882e199983d529b16e8c7b7cf3d71ac2a",
+          "workflow_head_sha": "1754bb51931407ac916549edc2ae57bba4c073bc"
+        }
+      ],
+      "logs_archive": {
+        "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/cloud-run-39789381040/logs/run-39789381040-logs.zip",
+        "bytes": 424796,
+        "sha256": "7985bfccd7723fc111e4a4c300cf3c7eb03af1487e64b5a4f0c78232b3271290",
+        "zip_crc_passed": true,
+        "member_count": 74
+      },
+      "individual_job_logs": [
+        {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/cloud-run-39789381040/logs/job-119861015329-check.log",
+          "bytes": 263952,
+          "sha256": "4db03b48455cd79d73f57b7ed660cfa12832e754b48ce3c70c47e1fa3346f26b"
+        },
+        {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/cloud-run-39789381040/logs/job-119863505589-macos-intel.log",
+          "bytes": 286231,
+          "sha256": "14d226fbee80937157015add649f57d94fbf511bbe205e04ff43bb6fa91f7694"
+        },
+        {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/cloud-run-39789381040/logs/job-119863505645-ubuntu.log",
+          "bytes": 280722,
+          "sha256": "e4990523361957680a70fa002f94b0cde1523396b47892e7caaa4d9f85648db4"
+        },
+        {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/cloud-run-39789381040/logs/job-119863505743-macos.log",
+          "bytes": 284663,
+          "sha256": "07caaed176f042d707fbd5194dbe9f86b1a0088cfcf97ef2c40caab8ef393472"
+        },
+        {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/cloud-run-39789381040/logs/job-119863505889-windows.log",
+          "bytes": 183841,
+          "sha256": "be17132d3a8b7ba1a2b4205b8a5947919103292cce534defd109a4544bc33259"
+        }
+      ]
+    }
+  ],
+  "pull_request_binding": {
+    "number": 2183,
+    "state": "open",
+    "draft": true,
+    "source_head": "1754bb51931407ac916549edc2ae57bba4c073bc",
+    "base": "19b048494ffa55cae52d5385dfa6d0611461c27d",
+    "synthetic_merge": "fa7b6215e1b54690fd3151685189239c10cc398f",
+    "synthetic_merge_parents": [
+      "19b048494ffa55cae52d5385dfa6d0611461c27d",
+      "1754bb51931407ac916549edc2ae57bba4c073bc"
+    ],
+    "source_tree": "3c3ecc4764bef17b20bceece6d6c83e4475ec601",
+    "synthetic_merge_tree": "3c3ecc4764bef17b20bceece6d6c83e4475ec601",
+    "interpretation": "The run API identifies the source head while every upstream job log proves checkout of the synthetic merge. The trees are identical. These are two identities for one PR execution context, not two independent test cases."
+  },
+  "exact_source_control": {
+    "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/cloud-run-39787582756/machine-audit.json",
+    "sha256": "76181004b2e13e1b331279e1ef6c5746566cdecb4b06fbf806f4447c78dc9b06",
+    "junit_suites": 29,
+    "junit_tests": 360,
+    "junit_executed": 360,
+    "junit_failures": 0,
+    "junit_errors": 0,
+    "junit_skipped": 0,
+    "jni_checks": 115,
+    "jni_summary": "SUMMARY checks=115 destroy=0 exit=0"
+  },
+  "downloaded_ubuntu_apk_audit": {
+    "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/cloud-run-39787303403/apk-audit/result.json",
+    "sha256": "1ab688ad485f4870e3d6538c442fb7eeee839a4b53a6bb757d37287a834ea8e8",
+    "source_head": "1754bb51931407ac916549edc2ae57bba4c073bc",
+    "source_tree": "3c3ecc4764bef17b20bceece6d6c83e4475ec601",
+    "abis": [
+      "arm64-v8a",
+      "armeabi-v7a",
+      "x86",
+      "x86_64"
+    ],
+    "shared_debug_certificate_sha256": "0d50a6c4b5af14741b9307952de134bff81ebf38c81d8030d1528200873f5c38",
+    "x86_64_apk": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/cloud-run-39787303403/artifacts/trime-ubuntu-26.04-12430451882/files/com.osfans.trime-1754bb51-x86_64-debug.apk",
+    "x86_64_apk_sha256": "b316fac143965738f42ea18bd5ecd73abb7ef0eca47b38bb1d3311b37fd4db82",
+    "recursive_submodule_pins": 20
+  },
+  "warnings": {
+    "summary_path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/cloud-final-audit/warning-summary.json",
+    "summary_sha256": "7aef0d64971fdedb7ffef4d63e41cf82eea67ae1bbb019ec372cab08d4454238",
+    "records_path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/cloud-final-audit/warning-records.jsonl",
+    "records_sha256": "64b2505da36f56bcd690b17340cdaacf0d3750604732be4bd0a602cede5dc78a",
+    "record_count": 161,
+    "limits": [
+      "The cache-miss temp Ubuntu log is included so native dependency warnings are not hidden by the quieter cache-hit formal jobs.",
+      "Counts include repeated emissions across setup invocations, ABIs, platforms, and runs; they are occurrence counts, not unique defects.",
+      "Successful jobs do not discharge these warnings. This report attributes only their emitter/path and does not claim they are harmless."
+    ]
+  },
+  "limits": [
+    "Only the downloaded Ubuntu artifact was unpacked and inspected for APK ABI, signature, BuildConfig head, native ELF assets, and recursive source pins. Other platform artifact identities are retained from official API metadata and successful upload logs without duplicate downloads.",
+    "The four-OS jobs prove the configured four-ABI debug build path completed on each platform; they do not constitute Release or device acceptance.",
+    "The fork and upstream formal workflows execute the same source tree in direct-head and pull-request merge contexts. Their successes are retained separately for provenance and are not added as independent application test counts.",
+    "The PR remains Draft. This cloud report does not mark it Ready or authorize merging."
+  ]
+}

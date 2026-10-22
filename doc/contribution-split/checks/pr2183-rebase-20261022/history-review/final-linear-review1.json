@@ -1,0 +1,227 @@
+{
+  "schema": "pr2183-final-linear-independent-readonly-review/v1",
+  "utc": "2026-10-22T13:30:33.583928+00:00",
+  "worktree": "/home/xumin/Public/Trime-pr-t9-rebased",
+  "base": "19b048494ffa55cae52d5385dfa6d0611461c27d",
+  "head": "1754bb51931407ac916549edc2ae57bba4c073bc",
+  "tree": "3c3ecc4764bef17b20bceece6d6c83e4475ec601",
+  "tree_matches_requested": true,
+  "base_is_ancestor": true,
+  "merge_commit_count": 0,
+  "commit_count": 3,
+  "commits": [
+    {
+      "sha": "caf61850bce8b8fb4f11d61b459385e17b8fa84e",
+      "parents": [
+        "19b048494ffa55cae52d5385dfa6d0611461c27d"
+      ],
+      "title": "feat: add nine-key Pinyin input with syllable selection",
+      "body": "Provide a complete nine-key input path using the existing luna_pinyin dictionary.\nKeep syllable locks, undo, raw-code edits and literal digits on the Rime dispatcher,\nand ship the matching layouts, spelling panel and revision-bound actions.\n\nPreserve batched Hanzi candidates and map displayed caret positions to native input.\nHandle standard UTF-8 through the JNI bridge so supplementary characters and offsets\nremain consistent. Keep symbol category input in Chinese mode and literal pages explicit.\n\nInclude focused native, controller, protocol and theme regressions. Keep prediction,\nprivacy policy, candidate pinning and fork release configuration outside this feature.\n\nRelated: #1464, #1299, #459",
+      "conventional": true,
+      "body_characters": 703,
+      "body_at_least20": true,
+      "maximum_message_line_characters": 89,
+      "every_message_line_at_most100": true,
+      "changed_paths": [
+        "app/src/main/assets/shared/luna_pinyin_t9.schema.yaml",
+        "app/src/main/assets/shared/tongwenfeng.trime.yaml",
+        "app/src/main/assets/shared/trime.yaml",
+        "app/src/main/java/com/osfans/trime/core/EditorPreeditResponse.kt",
+        "app/src/main/java/com/osfans/trime/core/KeySequenceFallback.kt",
+        "app/src/main/java/com/osfans/trime/core/Rime.kt",
+        "app/src/main/java/com/osfans/trime/core/RimeApi.kt",
+        "app/src/main/java/com/osfans/trime/core/RimeMessage.kt",
+        "app/src/main/java/com/osfans/trime/core/RimeProto.kt",
+        "app/src/main/java/com/osfans/trime/core/RimeSchema.kt",
+        "app/src/main/java/com/osfans/trime/core/data/UserDataManager.kt",
+        "app/src/main/java/com/osfans/trime/data/theme/model/TextKeyboard.kt",
+        "app/src/main/java/com/osfans/trime/ime/composition/CandidatesView.kt",
+        "app/src/main/java/com/osfans/trime/ime/composition/PreeditCursor.kt",
+        "app/src/main/java/com/osfans/trime/ime/composition/PreeditDelegate.kt",
+        "app/src/main/java/com/osfans/trime/ime/composition/PreeditTextView.kt",
+        "app/src/main/java/com/osfans/trime/ime/composition/PreeditUi.kt",
+        "app/src/main/java/com/osfans/trime/ime/composition/T9ActionBinding.kt",
+        "app/src/main/java/com/osfans/trime/ime/composition/T9DisambiguationView.kt",
+        "app/src/main/java/com/osfans/trime/ime/core/InputView.kt",
+        "app/src/main/java/com/osfans/trime/ime/core/TrimeInputMethodService.kt",
+        "app/src/main/java/com/osfans/trime/ime/keyboard/CommonKeyboardActionListener.kt",
+        "app/src/main/java/com/osfans/trime/ime/keyboard/Keyboard.kt",
+        "app/src/main/java/com/osfans/trime/ime/keyboard/KeyboardWindow.kt",
+        "app/src/main/jni/librime_jni/config.cc",
+        "app/src/main/jni/librime_jni/helper-types.h",
+        "app/src/main/jni/librime_jni/jni-utils.h",
+        "app/src/main/jni/librime_jni/key.cc",
+        "app/src/main/jni/librime_jni/levers.cc",
+        "app/src/main/jni/librime_jni/objconv.h",
+        "app/src/main/jni/librime_jni/opencc.cc",
+        "app/src/main/jni/librime_jni/rime_jni.cc",
+        "app/src/main/jni/librime_jni/t9.cc",
+        "app/src/main/jni/librime_jni/t9.h",
+        "app/src/main/jni/librime_jni/t9_assist.cc",
+        "app/src/main/jni/librime_jni/t9_assist.h",
+        "app/src/main/res/values-zh-rCN/strings_t9.xml",
+        "app/src/main/res/values-zh-rTW/strings_t9.xml",
+        "app/src/main/res/values/strings_t9.xml",
+        "app/src/test/java/com/osfans/trime/core/EditorPreeditResponseTest.kt",
+        "app/src/test/java/com/osfans/trime/core/KeySequenceFallbackTest.kt",
+        "app/src/test/java/com/osfans/trime/core/T9ProtocolTest.kt",
+        "app/src/test/java/com/osfans/trime/data/theme/T9KeyboardAssetTest.kt",
+        "app/src/test/java/com/osfans/trime/data/theme/ThemeGoldenTest.kt",
+        "app/src/test/java/com/osfans/trime/ime/composition/PreeditCursorTest.kt",
+        "app/src/test/java/com/osfans/trime/ime/composition/T9ActionBindingTest.kt",
+        "app/src/test/native/jni/README.md",
+        "app/src/test/native/jni/run_unicode.py",
+        "app/src/test/native/jni/unicode_test.cc",
+        "app/src/test/native/t9/README.md",
+        "app/src/test/native/t9/assist_test.cc",
+        "app/src/test/native/t9/controller_test.cc",
+        "app/src/test/native/t9/fixtures/assist/luna_pinyin_t9.custom.yaml",
+        "app/src/test/native/t9/fixtures/assist/t9_test.dict.yaml",
+        "app/src/test/native/t9/fixtures/common/default.yaml",
+        "app/src/test/native/t9/fixtures/common/double_pinyin.custom.yaml",
+        "app/src/test/native/t9/fixtures/common/luna_pinyin.custom.yaml",
+        "app/src/test/native/t9/fixtures/controller/luna_pinyin_t9.custom.yaml",
+        "app/src/test/native/t9/fixtures/controller/t9_test.dict.yaml",
+        "app/src/test/native/t9/run.py",
+        "doc/t9-input.md"
+      ]
+    },
+    {
+      "sha": "aeae918a711b727697d543032f8d286590fd3946",
+      "parents": [
+        "caf61850bce8b8fb4f11d61b459385e17b8fa84e"
+      ],
+      "title": "fix: synchronize candidate text with TextView layout",
+      "body": "Keep framework text and layout synchronized before custom candidate drawing.\nPreserve sizing and scaling while handling constructor-time setText safely, so\naccessibility node creation cannot leave visible candidates with an empty layout.\n\nThis dependency is also submitted separately in #2187.",
+      "conventional": true,
+      "body_characters": 293,
+      "body_at_least20": true,
+      "maximum_message_line_characters": 81,
+      "every_message_line_at_most100": true,
+      "changed_paths": [
+        "app/src/main/java/com/osfans/trime/ime/core/AutoScaleTextView.kt"
+      ]
+    },
+    {
+      "sha": "1754bb51931407ac916549edc2ae57bba4c073bc",
+      "parents": [
+        "aeae918a711b727697d543032f8d286590fd3946"
+      ],
+      "title": "fix: create deferred input views after theme initialization",
+      "body": "Remember input view requests that arrive before the theme scope is available and\ncreate the missing tree once initialization finishes. Restore pending input state\nusing the current editor without forcing the input method window to reopen.\n\nThis dependency is also submitted separately in #2188.",
+      "conventional": true,
+      "body_characters": 294,
+      "body_at_least20": true,
+      "maximum_message_line_characters": 81,
+      "every_message_line_at_most100": true,
+      "changed_paths": [
+        "app/src/main/java/com/osfans/trime/ime/core/TrimeInputMethodService.kt"
+      ]
+    }
+  ],
+  "worktree_clean": true,
+  "scope": {
+    "paths": 62,
+    "same62_path_set_as_old9f": true,
+    "no_fork_release_ci_pages_or_version_paths_added": true,
+    "native_t9_and_neutral_jni_all_old_bytes_preserved": true,
+    "all60_nonoverlap_old_blobs_preserved": true,
+    "both_overlap_files_match_independent_three_way_expected": true,
+    "all31_upstream_exclusive_paths_exact_new_upstream": true
+  },
+  "dependency_fixes": [
+    {
+      "name": "candidate",
+      "original": "7a45cf29c8e112a4081a5e72cb465447d847e1c1",
+      "new_commit": "aeae918a711b727697d543032f8d286590fd3946",
+      "path": "app/src/main/java/com/osfans/trime/ime/core/AutoScaleTextView.kt",
+      "added_removed_code_identical": true,
+      "original_change_sha256": "bf7b73843410bae227dd37930c20802b0cbf139b856141080aa5fcb810f5628d",
+      "new_change_sha256": "bf7b73843410bae227dd37930c20802b0cbf139b856141080aa5fcb810f5628d"
+    },
+    {
+      "name": "startup",
+      "original": "2d2fbce70b449ec8b6560c844ca5ddbc2e08a4c3",
+      "new_commit": "1754bb51931407ac916549edc2ae57bba4c073bc",
+      "path": "app/src/main/java/com/osfans/trime/ime/core/TrimeInputMethodService.kt",
+      "added_removed_code_identical": true,
+      "original_change_sha256": "5b6649e9b9697f335aa170e0edf432c841b89c8cb0aecbdb1c47b2eff1d498c1",
+      "new_change_sha256": "5b6649e9b9697f335aa170e0edf432c841b89c8cb0aecbdb1c47b2eff1d498c1"
+    }
+  ],
+  "submodules": {
+    "main_gitlinks_count": 10,
+    "same_links_old_t9_and_latest_upstream": true,
+    "recursive_graph_from_existing_object_stores_count": 20,
+    "all20_recursive_pins_match_previous_original9f_audit": true,
+    "object_read_errors": [],
+    "pins": {
+      "app/data/rime/essay": "0766c929ec3e578c2c80861e988decd3703a1c3d",
+      "app/data/rime/luna-pinyin": "46acf03142c12b5aeed7002675046bf7255eed35",
+      "app/data/rime/prelude": "3803f09458072e03b9ed396692ce7e1d35c88c95",
+      "app/data/rime/stroke": "7c9874c6b2e0b94947653e9a7de6f99623ff27e4",
+      "app/src/main/jni/librime": "7bc3fb0005a03aff1c086611e4d52bb7f6444fdd",
+      "app/src/main/jni/librime-lua": "68f9c364a2d25a04c7d4794981d7c796b05ab627",
+      "app/src/main/jni/librime-lua-deps": "9c53b362229766a97b83683b9541c46679118a90",
+      "app/src/main/jni/librime-octagram": "bd12863f45fbbd5c7db06d5ec8be8987b10253bf",
+      "app/src/main/jni/librime-predict": "67c2881914a0242fc14ec7d6877782771b75800c",
+      "app/src/main/jni/snappy": "9c28114a38866f6deeaa826db918293bc28ae410",
+      "app/src/main/jni/librime/deps/glog": "7b134a5c82c0c0b5698bb6bf7a835b230c5638e4",
+      "app/src/main/jni/librime/deps/googletest": "f8d7d77c06936315286eb55f8de22cd23c188571",
+      "app/src/main/jni/librime/deps/leveldb": "99b3c03b3284f5886f9ef9a4ef703d57373e61be",
+      "app/src/main/jni/librime/deps/marisa-trie": "3e87d53b78e15f2f43783d5e376561a8c9722051",
+      "app/src/main/jni/librime/deps/opencc": "025f371dc76b598d77384fbdab90c937471844d8",
+      "app/src/main/jni/librime/deps/yaml-cpp": "2f86d13775d119edbb69af52e5f566fd65c6953b",
+      "app/src/main/jni/snappy/third_party/benchmark": "b20cea674170b2ba45da0dfaf03953cdea473d0d",
+      "app/src/main/jni/snappy/third_party/googletest": "b796f7d44681514f58a683a3a71ff17c94edb0c1",
+      "app/src/main/jni/librime/deps/leveldb/third_party/benchmark": "bf585a2789e30585b4e3ce6baf11ef2750b54677",
+      "app/src/main/jni/librime/deps/leveldb/third_party/googletest": "c27acebba3b3c7d94209e0467b0a801db4af73ed"
+    },
+    "prior_audit_binding": {
+      "path": "/home/xumin/Public/Trime/build/readiness-20261022/deferred-input-view/cloud1/monitor1/artifact-t9-ubuntu-12402430914/apk-audit/result.json",
+      "bytes": 29081,
+      "sha256": "825fc5da1d62f46679ea31d79ab3fe5077cc64a11e600c1b943ddebe093b93f9"
+    },
+    "new_worktree_submodule_workingtrees_initialized": false,
+    "note": "Actual status prefixes are minus (uninitialized). Recursive immutable gitlink graph independently read through existing old worktree repositories; not a claim of fresh checkout or build."
+  },
+  "upstream_changes_preserved": [
+    "API<26 ThemeLoader JavaNio fallback exact base blob",
+    "Return label/dispatch new base hunks in independently merged Service+KeyboardWindow",
+    "Feedback AppPrefs/manager/resource/dispatcher and tests exact new base blobs",
+    "Double-tap Shift revert KeyView/KeyboardView exact new base blobs",
+    "KeyCode/test restore, make/style/lint/unit workflows, git fallback and CI submodule cleanup exact new base blobs"
+  ],
+  "diff_check_exit": 0,
+  "proofs": [
+    {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/history-review/linear-source-byte-proof1.json",
+      "bytes": 26872,
+      "sha256": "612dfc8fccf981407ed155038560ca23d6af66ded01aff1f7e48f5cdb40b211c"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/history-review/linear-upstream-only-proof1.json",
+      "bytes": 3398,
+      "sha256": "968cd6b8bcf1a6d29a53cf4dd7f0a4b7a0f01c4e138300fdbdc7478ad398148e"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/history-review/linear-submodule-status1.stdout",
+      "bytes": 688,
+      "sha256": "c9c319f38f2622f5d157790a89bf556f2e4fd91c0c847bc2075e94585decea29"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/history-review/linear-diff-check1.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/history-review/linear-diff-check1.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "read_only_git_refs_sources_github": true,
+  "not_runtime_or_build_acceptance": true,
+  "old_validation_preserved_as_historical_not_new_head_acceptance": true,
+  "passed": true
+}

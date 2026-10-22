@@ -1,0 +1,608 @@
+{
+  "schema": "trime-pr2183-rebase-control-run-audit/v1",
+  "audited_at_utc": "2026-10-22T13:38:09.231212+00:00",
+  "passed": true,
+  "first_failure": null,
+  "repository": "X2M7/trime",
+  "run": {
+    "id": 39787582756,
+    "url": "https://github.com/X2M7/trime/actions/runs/39787582756",
+    "name": "Split application unit tests",
+    "number": 23,
+    "attempt": 1,
+    "event": "push",
+    "status": "completed",
+    "conclusion": "success",
+    "created_at": "2026-10-22T13:31:24Z",
+    "started_at": "2026-10-22T13:31:24Z",
+    "updated_at": "2026-10-22T13:35:03Z",
+    "control_branch": "contrib/split-validation",
+    "control_head": "fe742f30f8efe59d63c9b0722f90b8b4e5008aa5",
+    "control_tree": "7bfbc237ad2a677a0ab96ebfdf3a5787c2976b55"
+  },
+  "target": {
+    "requested_sha": "1754bb51931407ac916549edc2ae57bba4c073bc",
+    "identity_expected_sha": "1754bb51931407ac916549edc2ae57bba4c073bc",
+    "identity_actual_sha": "1754bb51931407ac916549edc2ae57bba4c073bc",
+    "api_commit_sha": "1754bb51931407ac916549edc2ae57bba4c073bc",
+    "tree": "3c3ecc4764bef17b20bceece6d6c83e4475ec601",
+    "all_sha_bindings_exact": true,
+    "recursive_submodules": 20,
+    "recursive_submodules_clean": true
+  },
+  "job": {
+    "id": 119854694532,
+    "name": "Unit tests (pr-t9-input-rebased)",
+    "status": "completed",
+    "conclusion": "success",
+    "started_at": "2026-10-22T13:31:28Z",
+    "completed_at": "2026-10-22T13:34:47Z",
+    "required_steps": [
+      {
+        "number": 2,
+        "name": "Initialize evidence directory",
+        "conclusion": "success"
+      },
+      {
+        "number": 3,
+        "name": "Fetch exact source and recursive submodules",
+        "conclusion": "success"
+      },
+      {
+        "number": 4,
+        "name": "Verify checked-out identity",
+        "conclusion": "success"
+      },
+      {
+        "number": 8,
+        "name": "Run the complete application unit test task",
+        "conclusion": "success"
+      },
+      {
+        "number": 9,
+        "name": "Summarize actual JUnit reports",
+        "conclusion": "success"
+      },
+      {
+        "number": 10,
+        "name": "Check production JNI Unicode transport in a real host VM",
+        "conclusion": "success"
+      },
+      {
+        "number": 11,
+        "name": "Upload original test reports and execution evidence",
+        "conclusion": "success"
+      }
+    ]
+  },
+  "junit": {
+    "policy": "dynamic totals independently recomputed from every TEST-*.xml; no historical total asserted",
+    "suite_count": 29,
+    "unique_testcase_identity_count": 314,
+    "executed_tests": 360,
+    "totals": {
+      "tests": 360,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "cloud_summary_matches_independent_parse": true,
+    "suites": [
+      {
+        "name": "com.osfans.trime.core.EditorPreeditResponseTest",
+        "path": "trime/trime/app/build/test-results/testDebugUnitTest/TEST-com.osfans.trime.core.EditorPreeditResponseTest.xml",
+        "bytes": 1354,
+        "sha256": "e765b50cf712672648476896ec372405a8b4dc193ff70df7a7a64685336f3a74",
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.osfans.trime.core.KeySequenceFallbackTest",
+        "path": "trime/trime/app/build/test-results/testDebugUnitTest/TEST-com.osfans.trime.core.KeySequenceFallbackTest.xml",
+        "bytes": 671,
+        "sha256": "7c34ed45c4a861bdd29680536aa545c925fd53a39eba97d9124ae0f952753d0a",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.osfans.trime.core.T9ProtocolTest",
+        "path": "trime/trime/app/build/test-results/testDebugUnitTest/TEST-com.osfans.trime.core.T9ProtocolTest.xml",
+        "bytes": 1276,
+        "sha256": "21cd1f65a8447c160fe6b1c8cac46fb49949f59effb9d55aa38758c887691490",
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.osfans.trime.data.theme.ColorKeyTest",
+        "path": "trime/trime/app/build/test-results/testDebugUnitTest/TEST-com.osfans.trime.data.theme.ColorKeyTest.xml",
+        "bytes": 1059,
+        "sha256": "5304df93ea00734d502bb6528891814418c04674a5a3c2467f404837ea6ee562",
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.osfans.trime.data.theme.ColorSchemeResolverTest",
+        "path": "trime/trime/app/build/test-results/testDebugUnitTest/TEST-com.osfans.trime.data.theme.ColorSchemeResolverTest.xml",
+        "bytes": 2127,
+        "sha256": "573b082b0cd372f0652d032a9bc7a53a504899028a6324272b88e8a05675461e",
+        "tests": 13,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.osfans.trime.data.theme.ColorTableTest",
+        "path": "trime/trime/app/build/test-results/testDebugUnitTest/TEST-com.osfans.trime.data.theme.ColorTableTest.xml",
+        "bytes": 14381,
+        "sha256": "b1428188def17777800a9d0c844176b1728d9c7ea09f4eed6d9998929a2692d2",
+        "tests": 93,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.osfans.trime.data.theme.GeneralStyleTest",
+        "path": "trime/trime/app/build/test-results/testDebugUnitTest/TEST-com.osfans.trime.data.theme.GeneralStyleTest.xml",
+        "bytes": 1496,
+        "sha256": "b3902e3eb767c34eb75d0a6a23fb74e119256db713d68b94b0b88eb3f34b3a41",
+        "tests": 8,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.osfans.trime.data.theme.KeyActionManagerTest",
+        "path": "trime/trime/app/build/test-results/testDebugUnitTest/TEST-com.osfans.trime.data.theme.KeyActionManagerTest.xml",
+        "bytes": 860,
+        "sha256": "9487f09c2ab65de5a796b7936b43ee604989b02345a6250c166ac222cfa892ea",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.osfans.trime.data.theme.LiquidKeyboardTest",
+        "path": "trime/trime/app/build/test-results/testDebugUnitTest/TEST-com.osfans.trime.data.theme.LiquidKeyboardTest.xml",
+        "bytes": 2093,
+        "sha256": "543c8a159a34e87323e9efb6a3b207d6694b4fdfca433a77ff2e8cb37a93509b",
+        "tests": 12,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.osfans.trime.data.theme.T9KeyboardAssetTest",
+        "path": "trime/trime/app/build/test-results/testDebugUnitTest/TEST-com.osfans.trime.data.theme.T9KeyboardAssetTest.xml",
+        "bytes": 1323,
+        "sha256": "68aa95a67fa86061671c520b9801cdff732db5b916482a17692899feea809e84",
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.osfans.trime.data.theme.TextKeyboardTest",
+        "path": "trime/trime/app/build/test-results/testDebugUnitTest/TEST-com.osfans.trime.data.theme.TextKeyboardTest.xml",
+        "bytes": 1818,
+        "sha256": "55ae46c8c2c7ce686c668121b1a75fda9c976091f190d97f8ecdb44a681f108a",
+        "tests": 11,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.osfans.trime.data.theme.ThemeColorsTest",
+        "path": "trime/trime/app/build/test-results/testDebugUnitTest/TEST-com.osfans.trime.data.theme.ThemeColorsTest.xml",
+        "bytes": 1062,
+        "sha256": "832ebdb78f2b4f362bcd8016c7f9d0e061f91acac9766ff5b241fb6b5ec2f17b",
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.osfans.trime.data.theme.ThemeDiagnosticsTest",
+        "path": "trime/trime/app/build/test-results/testDebugUnitTest/TEST-com.osfans.trime.data.theme.ThemeDiagnosticsTest.xml",
+        "bytes": 4101,
+        "sha256": "2c709e0a4b9dc9f6f69ae7e86597b954cdf38af5310c6d49c34d70a9c7c0bafd",
+        "tests": 26,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.osfans.trime.data.theme.ThemeDslExpanderTest",
+        "path": "trime/trime/app/build/test-results/testDebugUnitTest/TEST-com.osfans.trime.data.theme.ThemeDslExpanderTest.xml",
+        "bytes": 3557,
+        "sha256": "7d22733a9df949f99e8056e69402408e2f9d95b4f8c35f1a0868d07188233fa3",
+        "tests": 22,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.osfans.trime.data.theme.ThemeGoldenTest",
+        "path": "trime/trime/app/build/test-results/testDebugUnitTest/TEST-com.osfans.trime.data.theme.ThemeGoldenTest.xml",
+        "bytes": 2403,
+        "sha256": "c005e8de6cea9eaf4ac2f7972fb7a643e4173eee7898b2327c9e152eb1e84457",
+        "tests": 14,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.osfans.trime.data.theme.ThemeLoaderTest",
+        "path": "trime/trime/app/build/test-results/testDebugUnitTest/TEST-com.osfans.trime.data.theme.ThemeLoaderTest.xml",
+        "bytes": 3463,
+        "sha256": "7f505aafd162f90473cf77b125f4cdce0d0b47f119123a0ca75298465909d344",
+        "tests": 21,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.osfans.trime.data.theme.ThemeScopeTest",
+        "path": "trime/trime/app/build/test-results/testDebugUnitTest/TEST-com.osfans.trime.data.theme.ThemeScopeTest.xml",
+        "bytes": 877,
+        "sha256": "1cb70b789820ba1e5c91bef0caf1e3c0e29dfd03917d0a966e76f2b5add4f04d",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.osfans.trime.ime.broadcast.EnterKeyDisplayDelegateTest",
+        "path": "trime/trime/app/build/test-results/testDebugUnitTest/TEST-com.osfans.trime.ime.broadcast.EnterKeyDisplayDelegateTest.xml",
+        "bytes": 1087,
+        "sha256": "ec6d839a4a42e1f80a036106baf22dac83c1fd08791b8848e0ce53cd61c4b9ec",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.osfans.trime.ime.composition.PreeditCursorTest",
+        "path": "trime/trime/app/build/test-results/testDebugUnitTest/TEST-com.osfans.trime.ime.composition.PreeditCursorTest.xml",
+        "bytes": 867,
+        "sha256": "e02f2345a506f73bbceb4a55116d7c95bc6ad6decd0a0660947eafdd21b0ab5e",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.osfans.trime.ime.composition.T9ActionBindingTest",
+        "path": "trime/trime/app/build/test-results/testDebugUnitTest/TEST-com.osfans.trime.ime.composition.T9ActionBindingTest.xml",
+        "bytes": 1333,
+        "sha256": "71a26284a45ddf2d5d3f5d4500ade36b6f0ce99dce58fef34a4e725dbcb318c8",
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.osfans.trime.ime.core.EditorEnterActionTest",
+        "path": "trime/trime/app/build/test-results/testDebugUnitTest/TEST-com.osfans.trime.ime.core.EditorEnterActionTest.xml",
+        "bytes": 2380,
+        "sha256": "2582f0f0bcf001e28b76e098fed5064a160333785cf551891b526df621a8e569",
+        "tests": 12,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.osfans.trime.ime.core.VirtualReturnDispatchTest",
+        "path": "trime/trime/app/build/test-results/testDebugUnitTest/TEST-com.osfans.trime.ime.core.VirtualReturnDispatchTest.xml",
+        "bytes": 791,
+        "sha256": "cf4b1a65187552e17cdda8681e4f3c9a3466a303de7fa789cb121439d3c41114",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.osfans.trime.ime.keyboard.FeedbackRequestDispatcherTest",
+        "path": "trime/trime/app/build/test-results/testDebugUnitTest/TEST-com.osfans.trime.ime.keyboard.FeedbackRequestDispatcherTest.xml",
+        "bytes": 1427,
+        "sha256": "becfeadcf2e1e2de31f80fc9bc2fc5bd47399a155211dad28ca4f75a140983ea",
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.osfans.trime.ime.keyboard.FeedbackResourceTest",
+        "path": "trime/trime/app/build/test-results/testDebugUnitTest/TEST-com.osfans.trime.ime.keyboard.FeedbackResourceTest.xml",
+        "bytes": 1700,
+        "sha256": "f6dccc5adb31ecb122140b69718b18ae39e4333c0e38366097424c11bde7cb2e",
+        "tests": 8,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.osfans.trime.ime.keyboard.KeyActionTest",
+        "path": "trime/trime/app/build/test-results/testDebugUnitTest/TEST-com.osfans.trime.ime.keyboard.KeyActionTest.xml",
+        "bytes": 2511,
+        "sha256": "c698ea51a0f05d09deceac9a6ff4e9e2ec2289638e6845b0846d7b976f90c775",
+        "tests": 16,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.osfans.trime.ime.keyboard.KeyboardResolveTest",
+        "path": "trime/trime/app/build/test-results/testDebugUnitTest/TEST-com.osfans.trime.ime.keyboard.KeyboardResolveTest.xml",
+        "bytes": 2557,
+        "sha256": "110fe94c10967c7146604f49d119efe65e9d0bc8378afe1de7349df901416107",
+        "tests": 18,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.osfans.trime.provider.DocumentsBaseDirTest",
+        "path": "trime/trime/app/build/test-results/testDebugUnitTest/TEST-com.osfans.trime.provider.DocumentsBaseDirTest.xml",
+        "bytes": 753,
+        "sha256": "dc364acd07c8ea8198365ad01d357d80e4e84fd748dcb45d37ba97d663cf9377",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.osfans.trime.util.WeakHashSetTest",
+        "path": "trime/trime/app/build/test-results/testDebugUnitTest/TEST-com.osfans.trime.util.WeakHashSetTest.xml",
+        "bytes": 2117,
+        "sha256": "3783640a067264ba370a51d72ce8473c6a6dfaebb13c6056d2d99ac9a608e470",
+        "tests": 14,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.osfans.trime.util.YamlTest",
+        "path": "trime/trime/app/build/test-results/testDebugUnitTest/TEST-com.osfans.trime.util.YamlTest.xml",
+        "bytes": 1542,
+        "sha256": "d0d705a20717a1ceaea15c308b3de0fe99d7ef108c24b76adf1a559b129a210b",
+        "tests": 9,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      }
+    ]
+  },
+  "jni": {
+    "checks": 115,
+    "fixed_summary": "SUMMARY checks=115 destroy=0 exit=0",
+    "fixed_pass_sequence_contiguous": true,
+    "fixed_passed": true,
+    "expected_baseline_failure_retained": true,
+    "baseline_summary_last_line": "SUMMARY checks=17 destroy=0 exit=1",
+    "baseline_stderr": "FAIL: standard UTF-8 becomes expected UTF-16",
+    "files_with_sha256_and_crc32": [
+      {
+        "path": "_temp/split-validation/pr-t9-input-rebased/jni-unicode/baseline/check",
+        "bytes": 58416,
+        "sha256": "17ba66c8f7ae1b35d3ddc75392a51187ebccaa4610033213ae08a677880e22ab",
+        "crc32": "3ca956fb",
+        "zip_crc32": "3ca956fb",
+        "crc_matches": true,
+        "zip_mode": "0o100755"
+      },
+      {
+        "path": "_temp/split-validation/pr-t9-input-rebased/jni-unicode/baseline/compile.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "crc32": "00000000",
+        "zip_crc32": "00000000",
+        "crc_matches": true,
+        "zip_mode": "0o100644"
+      },
+      {
+        "path": "_temp/split-validation/pr-t9-input-rebased/jni-unicode/baseline/compile.stdout",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "crc32": "00000000",
+        "zip_crc32": "00000000",
+        "crc_matches": true,
+        "zip_mode": "0o100644"
+      },
+      {
+        "path": "_temp/split-validation/pr-t9-input-rebased/jni-unicode/baseline/headers/helper-types.h",
+        "bytes": 4582,
+        "sha256": "f8c3769549e1444c7001df3afdc8a6ca215c790d143659c22b443f0925114d96",
+        "crc32": "fb326cf7",
+        "zip_crc32": "fb326cf7",
+        "crc_matches": true,
+        "zip_mode": "0o100644"
+      },
+      {
+        "path": "_temp/split-validation/pr-t9-input-rebased/jni-unicode/baseline/headers/jni-utils.h",
+        "bytes": 6356,
+        "sha256": "bb47aa29ba2a5154055e4b54b6ca29ea2feeb9e92e6f550cdf2d9c03835c2f23",
+        "crc32": "0588d546",
+        "zip_crc32": "0588d546",
+        "crc_matches": true,
+        "zip_mode": "0o100644"
+      },
+      {
+        "path": "_temp/split-validation/pr-t9-input-rebased/jni-unicode/baseline/headers/objconv.h",
+        "bytes": 5295,
+        "sha256": "2f96e9d420ec85720db8184ece0fd923e38cbdecb4c2735933372c7ed2016c25",
+        "crc32": "814ab894",
+        "zip_crc32": "814ab894",
+        "crc_matches": true,
+        "zip_mode": "0o100644"
+      },
+      {
+        "path": "_temp/split-validation/pr-t9-input-rebased/jni-unicode/baseline/run.stderr",
+        "bytes": 45,
+        "sha256": "50bc7e5c8cd5288bfa56667482de608444f863c192649d39b385be3192556868",
+        "crc32": "39c77499",
+        "zip_crc32": "39c77499",
+        "crc_matches": true,
+        "zip_mode": "0o100644"
+      },
+      {
+        "path": "_temp/split-validation/pr-t9-input-rebased/jni-unicode/baseline/run.stdout",
+        "bytes": 799,
+        "sha256": "b82c6b90e3f11d9912405a776bcb1ff5a2f3841ebc97ff13833ffb881875d8a0",
+        "crc32": "14425fa1",
+        "zip_crc32": "14425fa1",
+        "crc_matches": true,
+        "zip_mode": "0o100644"
+      },
+      {
+        "path": "_temp/split-validation/pr-t9-input-rebased/jni-unicode/fixed/check",
+        "bytes": 125472,
+        "sha256": "14a3b600c2b967c7f50f92ec257af5b6cdee1025e57b32d06b1e57480acfb8b1",
+        "crc32": "88be40d2",
+        "zip_crc32": "88be40d2",
+        "crc_matches": true,
+        "zip_mode": "0o100755"
+      },
+      {
+        "path": "_temp/split-validation/pr-t9-input-rebased/jni-unicode/fixed/compile.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "crc32": "00000000",
+        "zip_crc32": "00000000",
+        "crc_matches": true,
+        "zip_mode": "0o100644"
+      },
+      {
+        "path": "_temp/split-validation/pr-t9-input-rebased/jni-unicode/fixed/compile.stdout",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "crc32": "00000000",
+        "zip_crc32": "00000000",
+        "crc_matches": true,
+        "zip_mode": "0o100644"
+      },
+      {
+        "path": "_temp/split-validation/pr-t9-input-rebased/jni-unicode/fixed/run.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "crc32": "00000000",
+        "zip_crc32": "00000000",
+        "crc_matches": true,
+        "zip_mode": "0o100644"
+      },
+      {
+        "path": "_temp/split-validation/pr-t9-input-rebased/jni-unicode/fixed/run.stdout",
+        "bytes": 5679,
+        "sha256": "c245eb0fc97841796236458052e6702bf62b33d73383bdd31f7de1da324ad745",
+        "crc32": "a5e0e736",
+        "zip_crc32": "a5e0e736",
+        "crc_matches": true,
+        "zip_mode": "0o100644"
+      },
+      {
+        "path": "_temp/split-validation/pr-t9-input-rebased/jni-unicode/jni-headers/jni.h",
+        "bytes": 52236,
+        "sha256": "5df9074457c041b372f2c68ff646d6e8600cd673a223885e8df21c44c94ec667",
+        "crc32": "5cdb9b05",
+        "zip_crc32": "5cdb9b05",
+        "crc_matches": true,
+        "zip_mode": "0o100644"
+      },
+      {
+        "path": "_temp/split-validation/pr-t9-input-rebased/jni-unicode.log",
+        "bytes": 126,
+        "sha256": "a9e817c5510e3e83e4bf9f78777cc0d86f7a0e235d4661e47c72c5bd37f43b1a",
+        "crc32": "c264dc58",
+        "zip_crc32": "c264dc58",
+        "crc_matches": true,
+        "zip_mode": "0o100644"
+      }
+    ]
+  },
+  "artifact": {
+    "id": 12429542679,
+    "name": "split-unit-tests-pr-t9-input-rebased-1",
+    "bytes": 394073,
+    "api_digest": "sha256:52be39e08e4af2f6f3aee29c1344d5fd52a01d7b5c5dbdf0632f26eb4dba36d9",
+    "downloaded_digest": "sha256:52be39e08e4af2f6f3aee29c1344d5fd52a01d7b5c5dbdf0632f26eb4dba36d9",
+    "zip_crc_passed": true,
+    "safe_extraction_passed": true,
+    "file_count": 237,
+    "original_zip": "artifacts/split-unit-tests-pr-t9-input-rebased-1-12429542679/original.zip",
+    "files_directory": "artifacts/split-unit-tests-pr-t9-input-rebased-1-12429542679/files"
+  },
+  "logs": {
+    "run_logs_zip": "logs/run-39787582756-logs.zip",
+    "run_logs_zip_bytes": 537143,
+    "run_logs_zip_sha256": "4738d0e551b915ecc1d33953f8d62e8da818ad97aa2e4f945900b8627e5f6fe8",
+    "run_logs_zip_crc_passed": true,
+    "run_logs_safe_extraction_passed": true,
+    "run_log_file_count": 16,
+    "job_log": "logs/job-119854694532.log",
+    "job_log_bytes": 2003393,
+    "job_log_sha256": "0a39d41857b95670a52da28920491b482ddecfda46d715a29a759fe855aa9e17",
+    "job_log_matches_combined_run_log": true
+  },
+  "workflow_source": {
+    "path": "api/workflow-at-control-head.yml",
+    "sha256": "2c60f3f53f3cbee9b45fdb78d21773a8288706ef564efb3eebaa37581f58c164",
+    "scope": "pr-t9-input-rebased",
+    "target_sha_occurrences": 1
+  },
+  "collection": {
+    "receipt": "collection-receipt.json",
+    "receipt_sha256": "5f8b1d446f767cb34b873f12de0b6325a575ffcc648293cbfbcdbb30528784e1",
+    "artifact_file_manifest": "artifacts/split-unit-tests-pr-t9-input-rebased-1-12429542679/file-manifest.json",
+    "artifact_file_manifest_sha256": "f9352ab310c6ed0455f0101dd671da5932426cf0687267191b3bb197f73c65a7",
+    "run_log_file_manifest": "logs/run-log-file-manifest.json",
+    "run_log_file_manifest_sha256": "5f135865e54d714f36a60074d115ab17ebc561b643d0d02d0211547a46923562"
+  },
+  "raw_evidence": [
+    {
+      "path": "artifacts/split-unit-tests-pr-t9-input-rebased-1-12429542679/files/_temp/split-validation/pr-t9-input-rebased/request.json",
+      "bytes": 347,
+      "sha256": "042a7621ef8a10450e1a143e09fdc2609427a0b25c0ad671fab0f14bad79b003"
+    },
+    {
+      "path": "artifacts/split-unit-tests-pr-t9-input-rebased-1-12429542679/files/_temp/split-validation/pr-t9-input-rebased/identity.json",
+      "bytes": 232,
+      "sha256": "dbfc17adb13d0b28732d1c5dedfc2f7e06964d91f6e695b40b6ed06eed8e0562"
+    },
+    {
+      "path": "artifacts/split-unit-tests-pr-t9-input-rebased-1-12429542679/files/_temp/split-validation/pr-t9-input-rebased/test-summary.json",
+      "bytes": 11227,
+      "sha256": "b2e34ab587b7f09c162a79ff011dafd96d089f7d549ca4bb5e0ee6fd3d5ed417"
+    },
+    {
+      "path": "artifacts/split-unit-tests-pr-t9-input-rebased-1-12429542679/files/_temp/split-validation/pr-t9-input-rebased/head.txt",
+      "bytes": 41,
+      "sha256": "40f10a4769554f41e2e1c8a2f041c2d7d993ea4c8486184a71cdad6de967a73e"
+    },
+    {
+      "path": "artifacts/split-unit-tests-pr-t9-input-rebased-1-12429542679/files/_temp/split-validation/pr-t9-input-rebased/submodules.txt",
+      "bytes": 1916,
+      "sha256": "e54819dbd2dec880b9d15f5cbc23a6aa3391e349b95b5a68853fae2774e5b974"
+    },
+    {
+      "path": "artifacts/split-unit-tests-pr-t9-input-rebased-1-12429542679/files/_temp/split-validation/pr-t9-input-rebased/gradle-test.log",
+      "bytes": 1374424,
+      "sha256": "326a59add03ccbfa3c7270f0c43da9a37fa9d636a44b8b49b561f203f1ba9414"
+    },
+    {
+      "path": "artifacts/split-unit-tests-pr-t9-input-rebased-1-12429542679/files/_temp/split-validation/pr-t9-input-rebased/jni-unicode.log",
+      "bytes": 126,
+      "sha256": "a9e817c5510e3e83e4bf9f78777cc0d86f7a0e235d4661e47c72c5bd37f43b1a"
+    }
+  ],
+  "limits": [
+    "This proves the exact target's cloud JVM unit-test result and the Linux host-VM JNI control.",
+    "It is not Android real-device acceptance."
+  ]
+}

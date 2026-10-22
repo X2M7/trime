@@ -1,0 +1,65 @@
+{
+  "schema": 1,
+  "passed": true,
+  "scope": "Ubuntu build job evidence captured while other matrix jobs continue",
+  "repository": "X2M7/trime",
+  "run_id": 39787303403,
+  "run_attempt": 1,
+  "head_branch": "contrib/pr-t9-rebased-20261022",
+  "head_sha": "1754bb51931407ac916549edc2ae57bba4c073bc",
+  "tree": "3c3ecc4764bef17b20bceece6d6c83e4475ec601",
+  "gate_job": {
+    "id": 119853801115,
+    "status": "completed",
+    "conclusion": "success"
+  },
+  "ubuntu_job": {
+    "id": 119856412324,
+    "status": "completed",
+    "conclusion": "success",
+    "started_at": "2026-10-22T13:34:49Z",
+    "completed_at": "2026-10-22T13:44:52Z",
+    "all_steps_success_or_skipped": true
+  },
+  "job_log": {
+    "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/cloud-run-39787303403/logs/job-119856412324-ubuntu.log",
+    "bytes": 321001,
+    "sha256": "c93b65f492a350c051b2e3765a7b71e3ca4c7929d115764c307d26e40ee14984",
+    "native_cache_key": "ubuntu-26.04-trime-jni-debug-c31ea5d0fd3b8145ac5625b0423dfbc4c85714c333c8b20ff38f05b39ac1af8a",
+    "native_cache_hit": false,
+    "cache_miss_line_present": true,
+    "build_success_lines": [
+      "BUILD SUCCESSFUL in 57s",
+      "BUILD SUCCESSFUL in 7m 53s"
+    ],
+    "source_head_occurrences": 2
+  },
+  "native_build_interpretation": "The app/prebuilt native cache key was absent. The log records four configureCMakeDebug tasks, four buildCMakeDebug tasks, four Ninja directory entries, a successful make debug, and the conditional Add JNI cache step. It does not print per-object compilation or native link commands, so this report does not claim a counted all-object fresh rebuild. The resulting APKs independently contain and pass ELF/hash inspection for each ABI.",
+  "artifact_receipt": {
+    "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/cloud-run-39787303403/artifacts/trime-ubuntu-26.04-12430451882/early-download-receipt.json",
+    "sha256": "868e1cd354810a955981d1d0392ca21e1b3aedba5c071c28a2e440638b24b8ce"
+  },
+  "apk_audit": {
+    "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/cloud-run-39787303403/apk-audit/result.json",
+    "sha256": "1ab688ad485f4870e3d6538c442fb7eeee839a4b53a6bb757d37287a834ea8e8",
+    "passed": true
+  },
+  "limits": [
+    "This is one successful Ubuntu matrix job; the overall five-job run was still in progress at capture time.",
+    "Debug APK evidence only; device behavior is audited separately.",
+    "The Gradle/Ninja log has no per-object compile or link records; cache miss and high-level native tasks must not be restated as a counted full fresh compilation of every object."
+  ],
+  "native_build_records": {
+    "configure_cmake_task_records": 4,
+    "build_cmake_task_records": 4,
+    "ninja_entering_directory_records": 4,
+    "explicit_object_compile_records": 0,
+    "explicit_native_link_records": 0,
+    "abis": [
+      "arm64-v8a",
+      "armeabi-v7a",
+      "x86",
+      "x86_64"
+    ]
+  }
+}

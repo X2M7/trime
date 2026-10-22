@@ -1,0 +1,22 @@
+{
+  "schema": "pr2183-device-plan-correction/v1",
+  "state": "PLAN_ONLY_NOT_RUN",
+  "superseded_artifact_hashes": {
+    "REAL-DEVICE-ACCEPTANCE.md": "982deca8ca4cbdd58d0689a07097fd6fb93d2a7bf9aa4e8fc39e698c2aa31d9a",
+    "EMULATOR-FOCUS.md": "465cba0989b577ac1068aa9bc900c375c872c39232b6949e9e00297b68a827ae",
+    "device-result-template.json": "64e3f59bebe7a491d928c4b01d5a17160ca462971f7216f2555869eb20ff2dae",
+    "manifest.json": "75ad55fc356ae5a21703c7af4ec5fea80b9af7f030c51e9c581144c46bcd5601"
+  },
+  "corrections": [
+    "C7 now includes the frozen pending raw 64 -> direct English switch path, requiring exactly one 你 commit, no private marker, and working subsequent ASCII.",
+    "R2 now distinguishes both T9-selected letter layouts, which have no explicit double_click, from the tongwenfeng full-pinyin/default control that explicitly binds Shift_L3.",
+    "The corrected 1754 source binding uses trime.yaml line 1083 for the Shift inherited by letter at 1119-1123; tongwenfeng lines 1198, 1149, and 4042 remain the other controls.",
+    "Core completion is legacy 17 plus R1/R2. R3 is scoped to feedback capabilities available and enabled on the physical device; unavailable capabilities remain BLOCKED pending maintainer disposition and do not automatically fail all T9.",
+    "Known rebase HEAD and upstream base are populated. APK hash, bytes, certificate, version, package, build type, and ABI remain unset until the actual artifact is downloaded and audited."
+  ],
+  "source_identity": {
+    "rebased_head": "1754bb51931407ac916549edc2ae57bba4c073bc",
+    "upstream_base": "19b048494ffa55cae52d5385dfa6d0611461c27d"
+  },
+  "execution_claim": "NOT RUN; this correction record contains no emulator or physical-device pass claim"
+}

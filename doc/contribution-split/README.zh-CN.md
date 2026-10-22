@@ -1,6 +1,14 @@
 # 上游贡献拆分清单
 
-## 当前审阅状态（2026-10-22）
+## 当前整改状态（2026-10-22）
+
+根据维护者对 [#2183](https://github.com/osfans/trime/pull/2183) 的反馈，九键 PR 已恢复 **Draft**，并在备份旧 `9f86bc8f` 后 rebase 到上游 `19b04849`。当前源分支 `contrib/pr-t9-input` 为 `1754bb51`，三个线性提交均符合贡献规范；不再保留三个集成 merge。候选 TextView 与冷启动修复仍分别在 #2187／#2188 审阅，当前分支保留其等价补丁。独立 tree 比较确认新树等于旧树加十二项上游更新，没有混入 fork 发布配置。见[实际推送及 Draft 读回](checks/pr2183-rebase-20261022/original-pr-update1/receipt.json)、[历史与范围绑定](checks/pr2183-rebase-20261022/linear-source-binding.json)。
+
+精确新源的 [360 项应用 JVM 测试和 115 项独立 JNI Unicode 断言](checks/pr2183-rebase-20261022/cloud-run-39787582756/machine-audit.json)已新执行通过；格式／单元／Lint 门禁通过。首个 Ubuntu 四 ABI 原始 Debug APK 的源码／签名／ELF 已[核对](checks/pr2183-rebase-20261022/cloud-run-39787303403/apk-audit/result.json)，[ARM64 测试包与真机清单](checks/pr2183-rebase-20261022/README.md)已准备；[正式 fork 与上游 PR 的两条流水线](checks/pr2183-rebase-20261022/cloud-final-audit/formal-cloud-audit.json)各五项全部成功（检查加四平台构建）；上游 synthetic merge tree 与提交树相同。新源模拟器限定回归仍在串行进行。Windows Gradle 缓存保存失败、工具与依赖警告[原样保留](checks/pr2183-rebase-20261022/cloud-final-audit/warning-summary.json)，不是零警告。真机验收 **NOT_RUN**，不以旧模拟器结果替代，也不标 Ready、合并或发布稳定版。
+
+此前九项中，#2176／#2177／#2179／#2180 已由维护者合入；#2182／#2186／#2187／#2188 仍 Open Ready；#2183 为 Draft。见[状态快照及观察边界](checks/pr2183-rebase-20261022/pr-state-snapshot.json)和[当前机器清单](checks/readiness-20261022.json)。下文“九项 Ready”只记录之前的转换，不代表当前状态；原失败和警告证据保留。
+
+## 先前审阅状态（2026-10-22 06:02 UTC，历史记录）
 
 [#2177 剪贴板编辑器高度](https://github.com/osfans/trime/pull/2177)、[#2180 回车标签与动作](https://github.com/osfans/trime/pull/2180)、[#2176 首次设置](https://github.com/osfans/trime/pull/2176)、[#2179 反馈资源](https://github.com/osfans/trime/pull/2179)、[#2182 日志](https://github.com/osfans/trime/pull/2182)、[#2187 候选 TextView](https://github.com/osfans/trime/pull/2187)、[#2186 JNI Unicode](https://github.com/osfans/trime/pull/2186)、[#2188 冷启动 InputView](https://github.com/osfans/trime/pull/2188)及 [#2183 九键](https://github.com/osfans/trime/pull/2183)目前共九项 **Ready for review**，均未自动合并。JNI 的[第四批实际转换回执](checks/ready-transitions-20261022-batch4.json)确认 Open／非 Draft、`e16ab85f` 源码未变、四项上游构建成功及正文逐字读回，证据提交为 `4c2e2596`。日志与候选的[第三批回执](checks/ready-transitions-20261022-batch3.json)及首次设置与反馈的[第二批回执](checks/ready-transitions-20261022-batch2.json)保留。冷启动的[第五批实际转换回执](checks/ready-transitions-20261022-batch5.json)确认 Open／非 Draft、`2d2fbce7` 源码未变、四项上游检查成功及正文逐字读回。九键的[第六批实际转换回执](checks/ready-transitions-20261022-batch6.json)确认 Open／非 Draft、`9f86bc8f` 源码未变、四项上游检查成功及正文逐字读回，证据提交 `3c7da424`。Ready 表示可以开始审阅，不能替代维护者批准、完整应用验收或合并；[当前状态与证据绑定](checks/readiness-20261022.json)仍列出每项缺口。
 

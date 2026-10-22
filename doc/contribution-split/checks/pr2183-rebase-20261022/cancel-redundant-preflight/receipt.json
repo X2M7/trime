@@ -1,0 +1,81 @@
+{
+  "utc": "2026-10-22T13:58:34.496415+00:00",
+  "target_repo": "X2M7/trime",
+  "run_id": 39787303403,
+  "source": "1754bb51931407ac916549edc2ae57bba4c073bc",
+  "reason": "Redundant temporary branch builds after the identical source official fork and upstream PR workflows each completed all five jobs successfully. Original completed Ubuntu job/artifact remains retained and is used for device testing.",
+  "all_platform_temporary_success_claim": false,
+  "old_logs_or_artifacts_deleted": false,
+  "jobs_before": [
+    {
+      "name": "check / lint-and-test",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "build (macos-26-intel)",
+      "status": "in_progress",
+      "conclusion": null
+    },
+    {
+      "name": "build (ubuntu-26.04)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "build (macos-26)",
+      "status": "in_progress",
+      "conclusion": null
+    },
+    {
+      "name": "build (windows-2025)",
+      "status": "in_progress",
+      "conclusion": null
+    }
+  ],
+  "calls": [
+    {
+      "label": "formal-39789373604",
+      "args": [
+        "api",
+        "repos/X2M7/trime/actions/runs/39789373604"
+      ],
+      "exit": 0
+    },
+    {
+      "label": "formal-39789381040",
+      "args": [
+        "api",
+        "repos/osfans/trime/actions/runs/39789381040"
+      ],
+      "exit": 0
+    },
+    {
+      "label": "temporary-before",
+      "args": [
+        "api",
+        "repos/X2M7/trime/actions/runs/39787303403"
+      ],
+      "exit": 0
+    },
+    {
+      "label": "jobs-before",
+      "args": [
+        "api",
+        "repos/X2M7/trime/actions/runs/39787303403/jobs?per_page=100"
+      ],
+      "exit": 0
+    },
+    {
+      "label": "cancel",
+      "args": [
+        "run",
+        "cancel",
+        "39787303403",
+        "--repo",
+        "X2M7/trime"
+      ],
+      "exit": 0
+    }
+  ]
+}
