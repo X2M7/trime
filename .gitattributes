@@ -6,6 +6,8 @@
 # and leave all files detected as binary untouched.
 *	text=auto
 
-# Preserve original device evidence byte-for-byte, including Android 5 CRLF.
-/doc/contribution-split/checks/deferred-input-view-api21-startup-20261022/** -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
-/doc/contribution-split/checks/deferred-input-view-api21-20261022/** -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+# Captured evidence is data: preserve original bytes, not source whitespace style.
+/doc/contribution-split/checks/deferred-input-view-api35-20261022/** -text -whitespace
+/doc/contribution-split/checks/deferred-input-view-cloud-final-20261022/** -text -whitespace
+/doc/contribution-split/checks/deferred-input-view-api21-startup-20261022/** -text -whitespace
+/doc/contribution-split/checks/deferred-input-view-api21-20261022/** -text -whitespace
