@@ -38,43 +38,236 @@
   "t9": {
     "pr": 2183,
     "draft": true,
-    "source": "117468018fd757d3abddb2d3f8e055759e01152f",
+    "source": "593c23002343d5c7e6db5bf37e2bdfa0ba05f8ee",
     "ordinary_merge": true,
     "business_source_unchanged_from": "5b6d1df4dc1a553fbe513c729aade7e9b3e4cdc7",
     "cloud_application_tests": 328,
     "cloud_failures_errors_skipped": 0,
     "cloud_jni_host_assertions": 115,
-    "cloud_run": "https://github.com/X2M7/trime/actions/runs/39634407030",
+    "cloud_run": "https://github.com/X2M7/trime/actions/runs/39706284345",
     "separate_local_real_vm_assertions": 146,
     "ndk_translation_units_werror": 8,
-    "android_runtime_acceptance": "pending"
+    "android_runtime_acceptance": "117 candidate display precondition failed under accessibility observation; zero of16business cases executed.593 rendering repair awaiting new Android run.",
+    "previous_source": "117468018fd757d3abddb2d3f8e055759e01152f",
+    "candidate_fix_merge": "7a45cf29c8e112a4081a5e72cb465447d847e1c1",
+    "tree": "f996128d5ffeef5f87e85b70df535b0f51a1457a"
   },
   "logcat": {
     "pr": 2182,
     "draft": true,
-    "source": "d7c0d44191c9e73be2b2a23c40d4909b100f2ddd",
+    "source": "e8e4db837d16e00bdbc3d5ab266561ac5a99114c",
     "ordinary_merge": true,
     "six_business_blobs_unchanged_from": "6e4f2e59acce6cff0d097ff47a8d635940a6aa69",
-    "fresh_cloud_control_run": "https://github.com/X2M7/trime/actions/runs/39701012200",
-    "fresh_control_audit": "333 cases/21 suites actually executed, 0 failures/errors/skips; 20 pins and original APK identity verified.",
-    "android_runtime_acceptance": "In progress: default SAF name, 3 reader cycles/PID filtering/export, then separate first-maintenance high-flow check.",
+    "fresh_cloud_control_run": "https://github.com/X2M7/trime/actions/runs/39705023492",
+    "fresh_control_audit": "349 cases/22 suites actually executed, 0 failures/errors/skips; LogBuffer adds 16 cases. Exact e8 HEAD, 20 pins, raw XML sizes/digests and task execution verified.",
+    "android_runtime_acceptance": "API21 e8 product scopes passed: cold-memory sampling/native success, actual default SAF export/PID exclusion, and three1/0 reader cycles. One Observer idle and host preconditions retained; entire combined multi-tool round not passed. API35 pending.",
     "old_api21_attempt": "6e4 failed native exit without DetachCurrentThread, predating accepted #2178; separate high-flow stream error remains unproven until new cold device test.",
     "filename_fix": "Actual API21 VFAT createDocument failed with EINVAL for colon-containing ISO filename. d7c0d441 changes only the suggested export filename to replace colons with hyphens.",
     "previous_api21_integrated_attempt": "7da maintenance succeeded with same PID4398 and no old detach failure; actual default export failed; later normal a candidate 𠼞 triggered NewStringUTF CheckJNI abort. Failed attempt and PID transition retained.",
-    "implementation_and_test_paths": 7
+    "implementation_and_test_paths": 14,
+    "api21_steady_state": {
+      "source": "d7c0d44191c9e73be2b2a23c40d4909b100f2ddd",
+      "passed": true,
+      "pid": 8653,
+      "uid": 10062,
+      "filename_edited": false,
+      "default_filename": "com.osfans.trime.debug-2026-10-22T00-56-00Z.txt",
+      "save_attempts": 1,
+      "export_bytes": 397438,
+      "export_sha256": "7bf31f75af91096d6f6bb1b431c80d94ec31f50701ebd0313ca45cff4745a107",
+      "exported_pid_set": [
+        8653
+      ],
+      "exported_parsed_records": 5073,
+      "negative_marker_actual_pid": 9663,
+      "negative_marker_excluded": true,
+      "reader_counts_after_open": [
+        1,
+        1,
+        1
+      ],
+      "reader_counts_after_back": [
+        0,
+        0,
+        0
+      ],
+      "root_original_pngs_reviewed": [
+        "09-download-default-name",
+        "10-save-default-return",
+        "11-close3"
+      ],
+      "still_pending": [
+        "Separate first-maintenance high-flow check",
+        "API35 logcat --pid check",
+        "Independent Unicode candidate fix ART checks"
+      ]
+    },
+    "api21_cold_high_flow": {
+      "source": "d7c0d44191c9e73be2b2a23c40d4909b100f2ddd",
+      "status": "CONTROLLED_MEMORY_PRESSURE_FAILURE",
+      "passed": false,
+      "pid": 10064,
+      "reader_pid": 10513,
+      "reader_before_after_back": [
+        1,
+        0
+      ],
+      "target_survived": true,
+      "native_maintenance_seconds": 412.408,
+      "native_success_before_back": true,
+      "gc_events": 404,
+      "pss_kib": 317535,
+      "dalvik_alloc_kib": 247440,
+      "dalvik_free_kib": 3663,
+      "maximum_heap_property": "512m",
+      "actual_oom_or_crash_claim": false,
+      "nonzero_stream_reproduced": false,
+      "old_eof_root_cause_resolved_claim": false,
+      "source_finding": "Unbounded LogAdapter retention and per-line Spannable/adapter notification; e8e4db83 bounded-window/batched-display repair pushed, device retest pending."
+    },
+    "bounded_display_fix": {
+      "source": "e8e4db837d16e00bdbc3d5ab266561ac5a99114c",
+      "rows_per_window": 10000,
+      "utf16_units_per_window": 2097152,
+      "windows": [
+        "display",
+        "pending"
+      ],
+      "all_heap_budget_claim": false,
+      "retention_loss_reported_in_ui_and_export": true,
+      "exact_source_style_passed": true,
+      "independent_review_blockers": 0,
+      "source_binding": {
+        "local_path": "build/readiness-20261022/log-memory-source-binding1.json",
+        "bytes": 1352,
+        "sha256": "b6416da1087e07feaf17b6be68d7512f545a27b576c68eb647dea83ec94d794d"
+      },
+      "static_checks": {
+        "local_path": "build/readiness-20261022/log-memory-static1/result.json",
+        "bytes": 3890,
+        "sha256": "179e3b99c69c909ffeb7c6f04de6664939e969833630ba8ad08ddacbd0e72922"
+      },
+      "style_check": {
+        "local_path": "build/readiness-20261022/log-memory-style1/result.json",
+        "bytes": 1735,
+        "sha256": "b0ce226b4a0baf4e24d3b286838b7de23fc35c9675ff6e6e33bcca80f9197704"
+      },
+      "new_cases_actually_executed": 16,
+      "cloud_application_cases": 349,
+      "cloud_failures_errors_skipped": 0
+    },
+    "new_original_apk": {
+      "sha256": "09e19ae6802bf9fd29b167cc205494c252fbbcc1876980a55d108d20710adfc5",
+      "native_binary_same_as_d7": true,
+      "new_native_compilation_claim": false,
+      "audit_receipt_sha256": "cd6c12c7e080cb929fda0a139a631b7e25f94e8a2a769b01a56d03cbd01dfb02"
+    },
+    "api21_e8_business_scopes": {
+      "source_head": "e8e4db837d16e00bdbc3d5ab266561ac5a99114c",
+      "apk_sha256": "09e19ae6802bf9fd29b167cc205494c252fbbcc1876980a55d108d20710adfc5",
+      "target_pid": 14399,
+      "target_starttime_ticks": "3300401",
+      "target_uid": 10067,
+      "product_scopes": {
+        "first_maintenance_same_pid_success": true,
+        "bounded_log_memory_observed": true,
+        "default_name_saf_saved_without_edit": true,
+        "export_omission_notice_and_10000_row_bound": true,
+        "same_uid_negative_pid_filter": true,
+        "three_reader_open_back_cycles": true
+      },
+      "reader_cycles": [
+        {
+          "cycle": 1,
+          "open": 1,
+          "after_back": 0
+        },
+        {
+          "cycle": 2,
+          "open": 1,
+          "after_back": 0
+        },
+        {
+          "cycle": 3,
+          "open": 1,
+          "after_back": 0
+        }
+      ],
+      "native_seconds": 306.036,
+      "memory_scope": "20 samples during high-flow and post-success, plus one earlier open sample; not an instantaneous or complete-process peak claim",
+      "sample_dalvik_alloc_kib_min_max": [
+        11464,
+        16817
+      ],
+      "sample_total_pss_kib_max": 274366,
+      "post_success_total_pss_kib_min_max": [
+        80063,
+        82827
+      ],
+      "export": {
+        "bytes": 777201,
+        "sha256": "54f3f96c0478a092317df042e65ce6c7d4eb2185ac0d458a387516baca35b7dc",
+        "omission_notice": true,
+        "parsed_records": 10000,
+        "pid_set": [
+          14399
+        ],
+        "total_utf16_units_including_device_info": 732766,
+        "filename_edited": false,
+        "save_attempts": 1
+      },
+      "export_real_negative_pid": 16159,
+      "export_exact_record_overlap_before_after": [
+        9999,
+        1
+      ],
+      "root_png_reviewed": [
+        "observer1/07-log-open",
+        "observer2/08-log-flow",
+        "observer3/10-default-export-dialog",
+        "observer3/11-saved-return",
+        "observer3/16-back3"
+      ],
+      "observer_sessions": {
+        "observer1": "FAILED 90-second idle; Root request gap. All seven actual complete captures retained; no normal-stop claim.",
+        "observer2": "Three captures, authenticated stop and actual host exit0.",
+        "observer3": "Eight captures, authenticated stop and actual host exit0."
+      },
+      "all_helper_sessions_passed": false,
+      "entire_combined_round_passed": false,
+      "tool_failure_does_not_imply_product_death": true,
+      "other_host_precondition_failures_retained": [
+        "preflight before initial APK installation finished",
+        "Attempted export read from absent /storage/emulated/0 instead of actual /sdcard mount; original Save succeeded once, no re-save."
+      ],
+      "evidence_sha256": {
+        "independent_cold_memory": "61c151e447ec88b38e985ac081ab996c42498e8e563fad25b020ce0c0cdf5bcb",
+        "export_verification": "5ed914add14352e18a3480a003eaeadb51c9aa059bd1cdce397a75a7efb3a633",
+        "full_range": "57c3f80ac0e94a36ecee58c5ad0cddc9fbb7a93712eaaba26ebba868036da5db"
+      },
+      "limits": [
+        "API35 pending",
+        "No universal zero runtime warning, whole-app input, Release/Lint or performance acceptance claim",
+        "The original6e4 stream EOF cause remains unproven.",
+        "The prior d7 cold-memory failure and all original tool/product failures are retained."
+      ]
+    }
   },
   "still_draft": [
     2176,
     2179,
     2182,
-    2183
+    2183,
+    2186,
+    2187
   ],
   "warnings_and_limits": [
     "No zero-warning claim: fixed dependencies/toolchain warnings and original Debug APK META-INF/services signature warnings remain.",
     "API21 first-attempt failure is retained; no success claimed after app PID changed.",
     "No physical phone, stable release, production signing, full T12 acceptance or automatic merge performed.",
     "API21 layout font1/font2 and feedback resource groups passed within their stated scopes; API35 remains pending.",
-    "A matching API21 x64 Pico shutdown crash independently reproduced with no Trime code and zero stop/one shutdown establishes only that specific system-engine boundary. Raw fatal events remain."
+    "A matching API21 x64 Pico shutdown crash independently reproduced with no Trime code and zero stop/one shutdown establishes only that specific system-engine boundary. Raw fatal events remain.",
+    "The193 identical preset-vocabulary encoding warnings in T9/e16/d7 come from pinned librime/luna_pinyin/essay, not Android or the emulator. They remain, with exact-sequence and source comparison retained; no zero-runtime-warning claim."
   ],
   "retained_local_evidence": [
     {
@@ -138,24 +331,70 @@
     "system_engine_control": "lazy-feedback-pico-control-20261022.json",
     "physical_audio_and_soundpool_stream_id": "not observed"
   },
-  "updated_utc": "2026-10-22T00:50:52.472971+00:00",
+  "updated_utc": "2026-10-22T01:54:17.712584+00:00",
   "unicode_foundation": {
     "branch": "contrib/pr-jni-unicode-transport",
     "source": "e16ab85f495e5bbf353187c29efbff74526cff9c",
     "base": "12ffd16fe03537b6d0ed9716c71cbc33608c2a33",
     "tree": "6a440294760974c7a396c57dffa9655dc026d503",
     "pushed_to_fork": true,
-    "upstream_pr_created": false,
+    "upstream_pr_created": true,
     "scope": "Standard UTF8/UTF16 strings and composition positions; 8 production JNI files, 4 native test/docs, no T9 UI/schema, fork config or submodule changes.",
     "host_unicode_assertions": 115,
     "host_utf16_position_assertions": 46,
     "both_baseline_controls_failed_as_expected": true,
     "ndk_api21_x64_translation_units_werror": 6,
     "independent_review": "Two reviewers read production, test and runner code; 12 exact source blobs bound.",
-    "cloud_and_android": "Pending fresh cloud full application/JNI checks and original APK/ART candidate regression.",
+    "cloud_and_android": "Cloud full application and checked-JVM controls passed. Original APK on API21 CheckJNI survives actual stock a candidates including 𠼞; ni/Space commits 你. Candidate rows draw blank, so visual selection and whole-app acceptance do not pass. API35 remains pending.",
     "limits": [
       "Host checks do not initialize a real Rime session, GlobalRef singleton or Android editor.",
       "No arbitrary native allocation exception wrapper, no C-string embedded-NUL acceptance claim."
-    ]
-  }
+    ],
+    "cloud_application_jvm_cases": 301,
+    "cloud_failures_errors_skipped": 0,
+    "cloud_unicode_assertions": 115,
+    "cloud_utf16_position_assertions": 46,
+    "cloud_run": "https://github.com/X2M7/trime/actions/runs/39701967075",
+    "stock_candidate_reproducer": {
+      "luna_pinyin_pin": "46acf03142c12b5aeed7002675046bf7255eed35",
+      "entry": "𠼞\ta",
+      "line": 34018
+    },
+    "upstream_pr": 2186,
+    "upstream_pr_url": "https://github.com/osfans/trime/pull/2186",
+    "draft": true,
+    "api21_original_apk": {
+      "sha256": "77dde310fd3a328f30070239b73ddd3f7c17f8ea19b77dba6722ba7a40096565",
+      "pid": 11449,
+      "stock_a_no_original_abort": true,
+      "real_ni_space_editor_text": "你",
+      "native_transport_scope_passed": true,
+      "candidate_display_scope_passed": false,
+      "entire_app_passed": false,
+      "observer_sessions_stopped": true,
+      "same_pid_survived": true,
+      "evidence": {
+        "local_path": "build/readiness-20261022/jni-unicode/api21-art1/business-result.json",
+        "bytes": 3892,
+        "sha256": "316cefdca875812a0d87abcc9f12b7576925aadb7da3572f2cd1e03b30773698"
+      }
+    },
+    "fork_and_upstream_os_jobs_success": 8
+  },
+  "candidate_display": {
+    "status": "Investigating; not a pass",
+    "e16_observed_blank": true,
+    "t9_source_precondition_test": "running",
+    "historical_product_fix": "Main fork d7ec1a4e restores TextView text/measure/layout contracts; old AutoScale blob exactly matches current e16/117. Historical API21/35 screenshots establish a prior same-class issue only; current source/device control still required.",
+    "current_source_changed": true,
+    "fix_source": "7a45cf29c8e112a4081a5e72cb465447d847e1c1",
+    "branch": "contrib/pr-candidate-text-layout",
+    "changed_paths": 1,
+    "cloud_and_device": "301 baseline JVM cases and original Ubuntu APK verified. API21 original production-class five-stage negative/positive control completed: node creation clears old text, repaired original7a45 preserves text/layout/node/glyphs. API35 and native T9 integration still pending.",
+    "upstream_pr": 2187,
+    "upstream_pr_url": "https://github.com/osfans/trime/pull/2187",
+    "draft": true,
+    "api21_qualification": "candidate-layout-api21-20261022/qualification.json"
+  },
+  "warning_comparison_local_evidence": "build/readiness-20261022/t9/encode-warning-comparison1/result.json"
 }

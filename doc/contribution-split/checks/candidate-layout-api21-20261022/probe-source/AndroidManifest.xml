@@ -1,0 +1,8 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="org.x2m7.trime.readiness.candidate">
+    <uses-sdk android:minSdkVersion="21" android:targetSdkVersion="28" />
+    <queries><package android:name="com.osfans.trime.debug" /></queries>
+    <application android:label="Production candidate layout control" android:debuggable="true" android:theme="@android:style/Theme.Material.Light.NoActionBar">
+        <activity android:name=".CandidateActivity" android:exported="false" />
+    </application>
+    <instrumentation android:name=".CandidateProbe" android:targetPackage="org.x2m7.trime.readiness.candidate" />
+</manifest>

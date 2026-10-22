@@ -1,0 +1,90 @@
+{
+  "source_head": "e8e4db837d16e00bdbc3d5ab266561ac5a99114c",
+  "apk_sha256": "09e19ae6802bf9fd29b167cc205494c252fbbcc1876980a55d108d20710adfc5",
+  "target_pid": 14399,
+  "target_starttime_ticks": "3300401",
+  "target_uid": 10067,
+  "product_scopes": {
+    "first_maintenance_same_pid_success": true,
+    "bounded_log_memory_observed": true,
+    "default_name_saf_saved_without_edit": true,
+    "export_omission_notice_and_10000_row_bound": true,
+    "same_uid_negative_pid_filter": true,
+    "three_reader_open_back_cycles": true
+  },
+  "reader_cycles": [
+    {
+      "cycle": 1,
+      "open": 1,
+      "after_back": 0
+    },
+    {
+      "cycle": 2,
+      "open": 1,
+      "after_back": 0
+    },
+    {
+      "cycle": 3,
+      "open": 1,
+      "after_back": 0
+    }
+  ],
+  "native_seconds": 306.036,
+  "memory_scope": "20 samples during high-flow and post-success, plus one earlier open sample; not an instantaneous or complete-process peak claim",
+  "sample_dalvik_alloc_kib_min_max": [
+    11464,
+    16817
+  ],
+  "sample_total_pss_kib_max": 274366,
+  "post_success_total_pss_kib_min_max": [
+    80063,
+    82827
+  ],
+  "export": {
+    "bytes": 777201,
+    "sha256": "54f3f96c0478a092317df042e65ce6c7d4eb2185ac0d458a387516baca35b7dc",
+    "omission_notice": true,
+    "parsed_records": 10000,
+    "pid_set": [
+      14399
+    ],
+    "total_utf16_units_including_device_info": 732766,
+    "filename_edited": false,
+    "save_attempts": 1
+  },
+  "export_real_negative_pid": 16159,
+  "export_exact_record_overlap_before_after": [
+    9999,
+    1
+  ],
+  "root_png_reviewed": [
+    "observer1/07-log-open",
+    "observer2/08-log-flow",
+    "observer3/10-default-export-dialog",
+    "observer3/11-saved-return",
+    "observer3/16-back3"
+  ],
+  "observer_sessions": {
+    "observer1": "FAILED 90-second idle; Root request gap. All seven actual complete captures retained; no normal-stop claim.",
+    "observer2": "Three captures, authenticated stop and actual host exit0.",
+    "observer3": "Eight captures, authenticated stop and actual host exit0."
+  },
+  "all_helper_sessions_passed": false,
+  "entire_combined_round_passed": false,
+  "tool_failure_does_not_imply_product_death": true,
+  "other_host_precondition_failures_retained": [
+    "preflight before initial APK installation finished",
+    "Attempted export read from absent /storage/emulated/0 instead of actual /sdcard mount; original Save succeeded once, no re-save."
+  ],
+  "evidence_sha256": {
+    "independent_cold_memory": "61c151e447ec88b38e985ac081ab996c42498e8e563fad25b020ce0c0cdf5bcb",
+    "export_verification": "5ed914add14352e18a3480a003eaeadb51c9aa059bd1cdce397a75a7efb3a633",
+    "full_range": "57c3f80ac0e94a36ecee58c5ad0cddc9fbb7a93712eaaba26ebba868036da5db"
+  },
+  "limits": [
+    "API35 pending",
+    "No universal zero runtime warning, whole-app input, Release/Lint or performance acceptance claim",
+    "The original6e4 stream EOF cause remains unproven.",
+    "The prior d7 cold-memory failure and all original tool/product failures are retained."
+  ]
+}

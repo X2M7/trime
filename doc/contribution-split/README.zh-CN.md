@@ -4,7 +4,7 @@
 
 按用户确认的范围，[#2177 剪贴板编辑器高度](https://github.com/osfans/trime/pull/2177)和 [#2180 回车标签与动作](https://github.com/osfans/trime/pull/2180)已转为 **Ready for review**，源码 SHA 未变，提交时四项上游检查均成功。PR 正文仍明确列出实际窗口／InputConnection 等手测缺口，未勾选未执行的验收；Ready 不是维护者批准或可以直接合并。[转换回执与后续范围](checks/readiness-20261022.json)保留精确身份。
 
-[#2181](https://github.com/osfans/trime/pull/2181) 与 [#2178](https://github.com/osfans/trime/pull/2178)已由上游合入。九键 #2183 普通合并最新 `develop`（`12ffd16f`），新源码为 `11746801`；日志 #2182 在普通合并上游后修复了默认导出文件名，当前为 `d7c0d441`。合并只增加已被上游接受的 JNI 线程归属、JNI 目录 API 与 Snappy 更新；导出修复另外单列，未改写原历史。九键新源码已实际通过 328 项应用 JVM、115 项独立 JNI 宿主断言，另有本地真实 VM 的 146 项组合断言和 8 个 JNI 编译单元的严格 NDK 编译；这些不是 Android 运行验收。
+[#2181](https://github.com/osfans/trime/pull/2181) 与 [#2178](https://github.com/osfans/trime/pull/2178)已由上游合入。九键 #2183 已普通合并 `develop`（`12ffd16f`），并在 `593c2300` 合入独立的候选 TextView 修复；日志 #2182 在普通合并上游后修复了默认导出文件名，当前为 `e8e4db83`。上游合并部分包含已被接受的 JNI 线程归属、JNI 目录 API 与 Snappy 更新；候选 TextView、导出文件名和日志窗口修复分别单列，未改写原历史。九键新源码已实际通过 328 项应用 JVM、115 项独立 JNI 宿主断言，另有本地真实 VM 的 146 项组合断言和 8 个 JNI 编译单元的严格 NDK 编译；这些不是 Android 运行验收。
 
 #2176 首次设置、#2179 反馈资源、#2182 日志、#2183 九键继续保持 Draft，按各自完整行为做针对性 Android 5.0／15 验收。第一轮旧日志 APK 在首次维护完成后发生真实 JNI 未 detach 崩溃，原包尚未包含上游 #2178；另一次高日志量时的采集流非零退出仍未确认原因，失败原件保留，须用新集成包重测。布局与反馈探针中的前置／工具失败也保留，不能当成产品通过。
 
@@ -12,9 +12,13 @@
 
 #2179 的[六组真实 Android manager／Looper／SoundPool／TTS 回调检查](checks/lazy-feedback-api21-20261022.json)通过，但原整轮仍保留 shutdown 时 Pico native SIGSEGV，未改写为全 PID 通过。新的[独立标准 TTS 控制](checks/lazy-feedback-pico-control-20261022.json)在没有 Trime 类或绑定时，以全新 Pico PID 分别执行“两次 stop＋一次 shutdown”和“零次 stop＋一次 shutdown”，均复现同一 `libttspico.so` 释放栈，已证实这一个 Android 5.0 x86_64 系统引擎原因。该限定排除不等于修复系统引擎或全日志零 Fatal；API35、真实按键整合、迟到 native 回调、物理可听输出和 SoundPool stream ID 缺口保留。两项 PR 当前仍为 Draft，文档更新没有改变 GitHub 状态。
 
-日志新源码 `d7c0d441` 的 333 项完整应用 JVM 测试以及 fork／上游八个 OS 构建均通过。实际 Android 5.0 验证发现默认 ISO 文件名中的冒号会使 VFAT 保存失败，已只修改建议文件名，正在重新验证真实保存及日志采集。前一轮还在普通 `a` 输入的“𠼞”候选发现 JNI 标准 UTF-8／Modified UTF-8 不匹配的真实崩溃；独立修复已推送 [contrib/pr-jni-unicode-transport](https://github.com/X2M7/trime/tree/contrib/pr-jni-unicode-transport)（`e16ab85f`），115 项字符串与 46 项 UTF-16 位置宿主断言、6 个 JNI 单元严格编译通过，新的云端应用／APK 与 ART 验证仍在进行，尚未创建其上游 PR。
+日志当前源码 `e8e4db83` 已实际执行通过 349 项应用 JVM（新增 16 项缓存预算测试）。此前 `d7c0d441` 的独立首次维护高日志量轮次因持续留存的日志堆压力而受控正常 Back，原 PID 存活；新修复为显示和待刷新队列分别设定 10,000 行／2 Mi UTF-16 单位上限、按帧合并更新、只给可见行着色，UI／导出说明省略的旧日志。
 
-布局新源码的 fork 构建仍有任务运行，已成功的 Ubuntu APK 单独审计用于验收；日志分支八项构建通过与其他未完成的检查分别记录。Debug 原包的签名有效，但两条已有 `META-INF/services` 警告保留；不删除服务注册来隐藏它们。没有真机验收、稳定版发布或自动合并。下文是此前各轮拆分和检查记录，原日期／SHA 的通过结论不替代本节新源码的待验收事项。
+[新的 Android 5.0 限定业务范围](checks/logcat-api21-buffer-20261022/business-scopes-result.json)已完成：原包同 PID14399 的首次维护 Start→Success 为 306.036 秒，20 个样本的 Dalvik Alloc 为 11,464–16,817 KiB，成功后总 PSS 80,063–82,827 KiB；观测总 PSS 最高 274,366 KiB，不能称全进程只有十几 MiB，也不把离散采样当瞬时峰值。默认文件名不编辑、一次保存成功，777,201 字节导出含真实省略提示和 10,000 条同 PID 记录，真实同 UID 负 PID16159 被排除，原日志前后交集 9,999／1；三个打开／Back 循环各为一个／零个 reader。关键原图和独立内存复核已归档。原 Observer1 因我未及时续接请求而触发 90 秒空闲失败，原件保留；Observer2／3 正常认证 stop／host exit0，不能称整个多工具轮次全通过。错误挂载路径的首次拉取也单列保留，原实际保存没有重试。Android 15 尚待复测；旧流错误未证实原因继续保留。
+
+独立 JNI Unicode 修复已推送 [#2186 Draft](https://github.com/osfans/trime/pull/2186)（`e16ab85f`）。301 项云端应用测试、115 项 Unicode 与 46 项 UTF-16 位置真实 VM 检查及严格 NDK 编译通过。Android 5.0 原包在已开启 CheckJNI 的实际普通 `a` 路径存活，同 PID 的 `ni`／Space 真实提交“你”；但 compact／展开候选行实际空白，故仅原生传输范围通过，不能声称完整输入通过。候选单文件修复 [#2187 Draft](https://github.com/osfans/trime/pull/2187)（`7a45cf29`）恢复 TextView 的文本／测量／布局状态。[新的 API21 原包对照](checks/candidate-layout-api21-20261022/qualification.json)确认旧控件在创建无障碍节点前显示“你／ni”、创建后文字变空；原 `7a45cf29` 修复包在同探针的五阶段均保持文本、Layout、节点文本与实际字形，API35 及九键原生整体验收仍待完成；不直接借用主 fork 历史截图计本轮通过。
+
+布局新源码已通过四项上游构建，其他分支的未完成 OS 任务继续按各自精确 SHA 记录。Debug 原包签名有效，但两条已有 `META-INF/services` 警告保留；不删除服务注册来隐藏它们。没有真机验收、稳定版发布或自动合并。下文是此前各轮拆分和检查记录，原日期／SHA 的通过结论不替代本节新源码的待验收事项。
 
 日期：2026-10-21。本分支仅用于 X2M7 fork 的拆分索引，不作为上游 PR 的内容。
 

@@ -4,16 +4,45 @@
   "base": "12ffd16fe03537b6d0ed9716c71cbc33608c2a33",
   "tree": "6a440294760974c7a396c57dffa9655dc026d503",
   "pushed_to_fork": true,
-  "upstream_pr_created": false,
+  "upstream_pr_created": true,
   "scope": "Standard UTF8/UTF16 strings and composition positions; 8 production JNI files, 4 native test/docs, no T9 UI/schema, fork config or submodule changes.",
   "host_unicode_assertions": 115,
   "host_utf16_position_assertions": 46,
   "both_baseline_controls_failed_as_expected": true,
   "ndk_api21_x64_translation_units_werror": 6,
   "independent_review": "Two reviewers read production, test and runner code; 12 exact source blobs bound.",
-  "cloud_and_android": "Pending fresh cloud full application/JNI checks and original APK/ART candidate regression.",
+  "cloud_and_android": "Cloud full application and checked-JVM controls passed. Original APK on API21 CheckJNI survives actual stock a candidates including 𠼞; ni/Space commits 你. Candidate rows draw blank, so visual selection and whole-app acceptance do not pass. API35 remains pending.",
   "limits": [
     "Host checks do not initialize a real Rime session, GlobalRef singleton or Android editor.",
     "No arbitrary native allocation exception wrapper, no C-string embedded-NUL acceptance claim."
-  ]
+  ],
+  "cloud_application_jvm_cases": 301,
+  "cloud_failures_errors_skipped": 0,
+  "cloud_unicode_assertions": 115,
+  "cloud_utf16_position_assertions": 46,
+  "cloud_run": "https://github.com/X2M7/trime/actions/runs/39701967075",
+  "stock_candidate_reproducer": {
+    "luna_pinyin_pin": "46acf03142c12b5aeed7002675046bf7255eed35",
+    "entry": "𠼞\ta",
+    "line": 34018
+  },
+  "upstream_pr": 2186,
+  "upstream_pr_url": "https://github.com/osfans/trime/pull/2186",
+  "draft": true,
+  "api21_original_apk": {
+    "sha256": "77dde310fd3a328f30070239b73ddd3f7c17f8ea19b77dba6722ba7a40096565",
+    "pid": 11449,
+    "stock_a_no_original_abort": true,
+    "real_ni_space_editor_text": "你",
+    "native_transport_scope_passed": true,
+    "candidate_display_scope_passed": false,
+    "entire_app_passed": false,
+    "observer_sessions_stopped": true,
+    "same_pid_survived": true,
+    "evidence": {
+      "local_path": "build/readiness-20261022/jni-unicode/api21-art1/business-result.json",
+      "bytes": 3892,
+      "sha256": "316cefdca875812a0d87abcc9f12b7576925aadb7da3572f2cd1e03b30773698"
+    }
+  }
 }

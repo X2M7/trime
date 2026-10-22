@@ -1,0 +1,1279 @@
+{
+  "createdUtc": "2026-10-22T01:53:12.379757+00:00",
+  "scope": "Actual API21 production AutoScale class in a separate self-target diagnostic Activity, using the same frozen probe4 on two original CI-signed production APKs.",
+  "qualifiedScopedFix": true,
+  "overallAppOrNativeCandidateAcceptance": false,
+  "api35Acceptance": false,
+  "bootId": "584ba366-be23-47d0-9e5b-0765788304d3",
+  "serial": "emulator-5582",
+  "old": {
+    "head": "e8e4db837d16e00bdbc3d5ab266561ac5a99114c",
+    "apkSha256": "09e19ae6802bf9fd29b167cc205494c252fbbcc1876980a55d108d20710adfc5",
+    "probePid": 16782,
+    "report": "/home/xumin/Public/Trime/build/readiness-20261022/ui/candidate-layout-api21-old-e8-probe4/original/result.json",
+    "reportSha256": "ea12a7273c51cb6d4631594f249cb16cc9f34cfb6373068dc6253396dc5b0b28",
+    "passed": false,
+    "instrumentationCode": 0,
+    "autoScaleBlob": "c844f52dac721cacc232f1f5cdbdccb3751385be",
+    "autoScaleSha256": "1792ee6e085f4095848d342a3475913e8f76cfb99ef75f6ec9411122758cb6c5"
+  },
+  "fixed": {
+    "head": "7a45cf29c8e112a4081a5e72cb465447d847e1c1",
+    "apkSha256": "ef5585113d5f2e8d9565b6626048a0728492e3d8f718e80676096852aa2d0c1d",
+    "probePid": 16987,
+    "report": "/home/xumin/Public/Trime/build/readiness-20261022/ui/candidate-layout-api21-fixed-7a45-probe4/original/result.json",
+    "reportSha256": "b3fc51505a3d42c0197f43213cc9093c5e995878ca77214cf0c9a8b936a9d154",
+    "passed": true,
+    "instrumentationCode": -1,
+    "autoScaleBlob": "e87afdacc87e712d5c4208ec0e03ee00a2cf1983",
+    "autoScaleSha256": "64740722b41576ca30c3500154f702632f2520bc1841c33266a0599ef076e9bb",
+    "targetProcessAbsentBeforeAndAfter": true
+  },
+  "sameActualInstalledProbeSha256": "b7da44a9226e53b400655e511a409e6c8eb1ac4b396500740c2a3d5449b8ed1f",
+  "sourcePatchVsUpstreamBase": {
+    "base": "12ffd16fe03537b6d0ed9716c71cbc33608c2a33",
+    "files": [
+      "app/src/main/java/com/osfans/trime/ime/core/AutoScaleTextView.kt"
+    ],
+    "insertions": 9,
+    "deletions": 7,
+    "wholeOldAndNewApksAreNotSingleFileEquivalent": true
+  },
+  "facts": [
+    "Both old and fixed reference TextViews passed every one of5 stages. Actual OnDraw and at least1000ms elapsed before hardware capture; no remaining reference screen lag in this probe4 round.",
+    "Old production labels contain actual你/ni/你 immediately before createAccessibilityNodeInfo; that single main-thread operation leaves their text empty. Their framework Layout remains null. The hardware images captured beforehand visibly show the correct glyphs; subsequent software draw has zero ink.",
+    "Fixed production labels retain expected text before/after node creation, framework Layout text matches, accessibility text matches, and hardware/software glyph budgets pass through constructor/你/ni/null/rebind你.",
+    "The same Java one-argument setter did set the old production private text. The previous claim/hypothesis that it bypassed the subclass two-argument override is not supported by these observations.",
+    "The measured before/after operation demonstrates an accessibility-node text-loss defect. The exact internal framework stack was not captured; getIterableTextForAccessibility/setText(mText,SPANNABLE) remains a source-supported possible internal path, not a traced stack assertion."
+  ],
+  "visualReview": {
+    "reviewer": "Codex assistant readiness_ui",
+    "method": "Actually opened all10 unmodified original hardware PNGs using view_image. No OCR or human-review claim. Constructor/null blank, hanzi/rebind你 and latin ni visibly correct on both sides before the node operation.",
+    "all10OriginalsViewed": true,
+    "independentPixelRecounts": [
+      {
+        "scope": "old",
+        "stage": "constructor",
+        "label": "production",
+        "screenInk": 0,
+        "softwareInk": 0,
+        "matchesProducer": true,
+        "originalHardwareSha256": "1da83d99af636e9127e4d252becb9424fb8315cdea9bb8d789aefa2471fa7008",
+        "originalSoftwareSha256": "d6f433514884f3242887f352c3ccfdadfddfd52fd0f03497b37c17940cf05965"
+      },
+      {
+        "scope": "old",
+        "stage": "constructor",
+        "label": "reference",
+        "screenInk": 0,
+        "softwareInk": 0,
+        "matchesProducer": true,
+        "originalHardwareSha256": "1da83d99af636e9127e4d252becb9424fb8315cdea9bb8d789aefa2471fa7008",
+        "originalSoftwareSha256": "d6f433514884f3242887f352c3ccfdadfddfd52fd0f03497b37c17940cf05965"
+      },
+      {
+        "scope": "old",
+        "stage": "hanzi",
+        "label": "production",
+        "screenInk": 465,
+        "softwareInk": 0,
+        "matchesProducer": true,
+        "originalHardwareSha256": "e3eca3924b8b3dd03781d856932f9cd141bf7833698f1594d5249c52fec9c9f6",
+        "originalSoftwareSha256": "d6f433514884f3242887f352c3ccfdadfddfd52fd0f03497b37c17940cf05965"
+      },
+      {
+        "scope": "old",
+        "stage": "hanzi",
+        "label": "reference",
+        "screenInk": 465,
+        "softwareInk": 486,
+        "matchesProducer": true,
+        "originalHardwareSha256": "e3eca3924b8b3dd03781d856932f9cd141bf7833698f1594d5249c52fec9c9f6",
+        "originalSoftwareSha256": "07d416b1bc312430e41e08332c725fb8bb9424929cb04b64e44cc5f721baa318"
+      },
+      {
+        "scope": "old",
+        "stage": "latin",
+        "label": "production",
+        "screenInk": 272,
+        "softwareInk": 0,
+        "matchesProducer": true,
+        "originalHardwareSha256": "819fe431af65b123420cf6cd70a99d90d4e83fe32bed9fabaeac57af7e3e10a7",
+        "originalSoftwareSha256": "d6f433514884f3242887f352c3ccfdadfddfd52fd0f03497b37c17940cf05965"
+      },
+      {
+        "scope": "old",
+        "stage": "latin",
+        "label": "reference",
+        "screenInk": 272,
+        "softwareInk": 317,
+        "matchesProducer": true,
+        "originalHardwareSha256": "819fe431af65b123420cf6cd70a99d90d4e83fe32bed9fabaeac57af7e3e10a7",
+        "originalSoftwareSha256": "be237562604aa6e1222364df4d3c3940c604799247d8c73f421642bf7ebefc0f"
+      },
+      {
+        "scope": "old",
+        "stage": "null",
+        "label": "production",
+        "screenInk": 0,
+        "softwareInk": 0,
+        "matchesProducer": true,
+        "originalHardwareSha256": "6e6d51ff6a65d1f445386cc4f75d3f22c65ab79cc38e9d7721ebe5b80a07508a",
+        "originalSoftwareSha256": "d6f433514884f3242887f352c3ccfdadfddfd52fd0f03497b37c17940cf05965"
+      },
+      {
+        "scope": "old",
+        "stage": "null",
+        "label": "reference",
+        "screenInk": 0,
+        "softwareInk": 0,
+        "matchesProducer": true,
+        "originalHardwareSha256": "6e6d51ff6a65d1f445386cc4f75d3f22c65ab79cc38e9d7721ebe5b80a07508a",
+        "originalSoftwareSha256": "d6f433514884f3242887f352c3ccfdadfddfd52fd0f03497b37c17940cf05965"
+      },
+      {
+        "scope": "old",
+        "stage": "rebind",
+        "label": "production",
+        "screenInk": 465,
+        "softwareInk": 0,
+        "matchesProducer": true,
+        "originalHardwareSha256": "55039c53e0b4ec3d593c91444b67f161562e1c9e123e3e99809689f08ba2ed51",
+        "originalSoftwareSha256": "d6f433514884f3242887f352c3ccfdadfddfd52fd0f03497b37c17940cf05965"
+      },
+      {
+        "scope": "old",
+        "stage": "rebind",
+        "label": "reference",
+        "screenInk": 465,
+        "softwareInk": 486,
+        "matchesProducer": true,
+        "originalHardwareSha256": "55039c53e0b4ec3d593c91444b67f161562e1c9e123e3e99809689f08ba2ed51",
+        "originalSoftwareSha256": "07d416b1bc312430e41e08332c725fb8bb9424929cb04b64e44cc5f721baa318"
+      },
+      {
+        "scope": "fixed",
+        "stage": "constructor",
+        "label": "production",
+        "screenInk": 0,
+        "softwareInk": 0,
+        "matchesProducer": true,
+        "originalHardwareSha256": "ee4f46806a863c7415d39d8ae3ff2034b4e439250a0ba50e9c919154e5641c5d",
+        "originalSoftwareSha256": "d6f433514884f3242887f352c3ccfdadfddfd52fd0f03497b37c17940cf05965"
+      },
+      {
+        "scope": "fixed",
+        "stage": "constructor",
+        "label": "reference",
+        "screenInk": 0,
+        "softwareInk": 0,
+        "matchesProducer": true,
+        "originalHardwareSha256": "ee4f46806a863c7415d39d8ae3ff2034b4e439250a0ba50e9c919154e5641c5d",
+        "originalSoftwareSha256": "d6f433514884f3242887f352c3ccfdadfddfd52fd0f03497b37c17940cf05965"
+      },
+      {
+        "scope": "fixed",
+        "stage": "hanzi",
+        "label": "production",
+        "screenInk": 465,
+        "softwareInk": 486,
+        "matchesProducer": true,
+        "originalHardwareSha256": "0e056f5863b1b28704c388be6cf1fb816528c0af09f020e50a171e478419baf3",
+        "originalSoftwareSha256": "319e1ad411bd42ce8b33fe20d19eee535497d5be2c2d7b87ebef3cd412c1cd07"
+      },
+      {
+        "scope": "fixed",
+        "stage": "hanzi",
+        "label": "reference",
+        "screenInk": 465,
+        "softwareInk": 486,
+        "matchesProducer": true,
+        "originalHardwareSha256": "0e056f5863b1b28704c388be6cf1fb816528c0af09f020e50a171e478419baf3",
+        "originalSoftwareSha256": "07d416b1bc312430e41e08332c725fb8bb9424929cb04b64e44cc5f721baa318"
+      },
+      {
+        "scope": "fixed",
+        "stage": "latin",
+        "label": "production",
+        "screenInk": 272,
+        "softwareInk": 317,
+        "matchesProducer": true,
+        "originalHardwareSha256": "d19976a754e41de90d088647a9b4f01a6686c7098abeaa62f2975451511ea328",
+        "originalSoftwareSha256": "698459c57d3922e7cb03744ea79758bdd98ba29e71a904b882ede5cd9df14722"
+      },
+      {
+        "scope": "fixed",
+        "stage": "latin",
+        "label": "reference",
+        "screenInk": 272,
+        "softwareInk": 317,
+        "matchesProducer": true,
+        "originalHardwareSha256": "d19976a754e41de90d088647a9b4f01a6686c7098abeaa62f2975451511ea328",
+        "originalSoftwareSha256": "be237562604aa6e1222364df4d3c3940c604799247d8c73f421642bf7ebefc0f"
+      },
+      {
+        "scope": "fixed",
+        "stage": "null",
+        "label": "production",
+        "screenInk": 0,
+        "softwareInk": 0,
+        "matchesProducer": true,
+        "originalHardwareSha256": "ad2d88d39cec2d25e9b9ea17112b1ed3c1e455810543dd81049c32f55ca6ba0f",
+        "originalSoftwareSha256": "d6f433514884f3242887f352c3ccfdadfddfd52fd0f03497b37c17940cf05965"
+      },
+      {
+        "scope": "fixed",
+        "stage": "null",
+        "label": "reference",
+        "screenInk": 0,
+        "softwareInk": 0,
+        "matchesProducer": true,
+        "originalHardwareSha256": "ad2d88d39cec2d25e9b9ea17112b1ed3c1e455810543dd81049c32f55ca6ba0f",
+        "originalSoftwareSha256": "d6f433514884f3242887f352c3ccfdadfddfd52fd0f03497b37c17940cf05965"
+      },
+      {
+        "scope": "fixed",
+        "stage": "rebind",
+        "label": "production",
+        "screenInk": 465,
+        "softwareInk": 486,
+        "matchesProducer": true,
+        "originalHardwareSha256": "df97acd9937f297036fce0efa82cec904104bb6f9b71dac9b878997f64cf8f92",
+        "originalSoftwareSha256": "319e1ad411bd42ce8b33fe20d19eee535497d5be2c2d7b87ebef3cd412c1cd07"
+      },
+      {
+        "scope": "fixed",
+        "stage": "rebind",
+        "label": "reference",
+        "screenInk": 465,
+        "softwareInk": 486,
+        "matchesProducer": true,
+        "originalHardwareSha256": "df97acd9937f297036fce0efa82cec904104bb6f9b71dac9b878997f64cf8f92",
+        "originalSoftwareSha256": "07d416b1bc312430e41e08332c725fb8bb9424929cb04b64e44cc5f721baa318"
+      }
+    ]
+  },
+  "rawScopes": [
+    {
+      "scope": "old",
+      "raw": "/home/xumin/Public/Trime/build/readiness-20261022/ui/candidate-layout-api21-old-e8-probe4/root-continuous-phase.raw.txt",
+      "sha256": "885ae909cfcb09963f6197f44b7129c46c92fec659fdab9e742db67f7396e1a8",
+      "bytes": 19365,
+      "firstRawLine": "10-22 09:48:20.760  1921  1921 D RILJ    : [5418]> SIGNAL_STRENGTH [SUB0]",
+      "lastRawLine": "10-22 09:48:41.033  1788  2111 D EGL_emulation: eglMakeCurrent: 0x7f95496fe2a0: ver 3 1",
+      "criticalMatches": [],
+      "retainedWarningsAndErrors": [
+        {
+          "line": 8,
+          "pid": 1131,
+          "severity": "E",
+          "tag": "RILC",
+          "raw": "10-22 09:48:20.764  1131  1241 E RILC    : Send Response to RIL_SOCKET_1"
+        },
+        {
+          "line": 14,
+          "pid": 16754,
+          "severity": "E",
+          "tag": "memtrack",
+          "raw": "10-22 09:48:33.205 16754 16754 E memtrack: Couldn't load memtrack module (No such file or directory)"
+        },
+        {
+          "line": 15,
+          "pid": 16754,
+          "severity": "E",
+          "tag": "android.os.Debug",
+          "raw": "10-22 09:48:33.205 16754 16754 E android.os.Debug: failed to load memtrack module: -2"
+        },
+        {
+          "line": 18,
+          "pid": 1492,
+          "severity": "W",
+          "tag": "PackageParser",
+          "raw": "10-22 09:48:33.232  1492  1523 W PackageParser: Unknown element under <manifest>: queries at /data/app/vmdl1383581173.tmp/base.apk Binary XML file line #3"
+        },
+        {
+          "line": 28,
+          "pid": 16766,
+          "severity": "E",
+          "tag": "cutils-trace",
+          "raw": "10-22 09:48:33.276 16766 16766 E cutils-trace: Error opening trace file: Permission denied (13)"
+        },
+        {
+          "line": 32,
+          "pid": 1492,
+          "severity": "W",
+          "tag": "PackageManager",
+          "raw": "10-22 09:48:33.298  1492  1523 W PackageManager: Code path for pkg : org.x2m7.trime.readiness.candidate changing from /data/app/org.x2m7.trime.readiness.candidate-1 to /data/app/org.x2m7.trime.readiness.candidate-2"
+        },
+        {
+          "line": 33,
+          "pid": 1492,
+          "severity": "W",
+          "tag": "PackageManager",
+          "raw": "10-22 09:48:33.298  1492  1523 W PackageManager: Resource path for pkg : org.x2m7.trime.readiness.candidate changing from /data/app/org.x2m7.trime.readiness.candidate-1 to /data/app/org.x2m7.trime.readiness.candidate-2"
+        },
+        {
+          "line": 45,
+          "pid": 1921,
+          "severity": "E",
+          "tag": "SmsApplication",
+          "raw": "10-22 09:48:33.325  1921  1921 E SmsApplication: Bluetooth package not found: com.android.bluetooth"
+        },
+        {
+          "line": 46,
+          "pid": 2242,
+          "severity": "W",
+          "tag": "ContextImpl",
+          "raw": "10-22 09:48:33.332  2242  2242 W ContextImpl: Calling a method in the system process without a qualified user: android.app.ContextImpl.startService:1686 android.content.ContextWrapper.startService:515 android.content.ContextWrapper.startService:515 com.android.keychain.KeyChainBroadcastReceiver.onReceive:12 android.app.ActivityThread.handleReceiver:2579 "
+        },
+        {
+          "line": 50,
+          "pid": 1492,
+          "severity": "W",
+          "tag": "BackupManagerService",
+          "raw": "10-22 09:48:33.339  1492  1492 W BackupManagerService: Removing schedule queue dupe of org.x2m7.trime.readiness.candidate"
+        },
+        {
+          "line": 52,
+          "pid": 1921,
+          "severity": "E",
+          "tag": "SmsApplication",
+          "raw": "10-22 09:48:33.347  1921  1921 E SmsApplication: Bluetooth package not found: com.android.bluetooth"
+        },
+        {
+          "line": 53,
+          "pid": 1921,
+          "severity": "E",
+          "tag": "SmsApplication",
+          "raw": "10-22 09:48:33.350  1921  1921 E SmsApplication: Bluetooth package not found: com.android.bluetooth"
+        },
+        {
+          "line": 55,
+          "pid": 1492,
+          "severity": "W",
+          "tag": "Settings",
+          "raw": "10-22 09:48:33.355  1492  1523 W Settings: Setting install_non_market_apps has moved from android.provider.Settings.Global to android.provider.Settings.Secure, returning read-only value."
+        },
+        {
+          "line": 58,
+          "pid": 1492,
+          "severity": "W",
+          "tag": "VoiceInteractionManagerService",
+          "raw": "10-22 09:48:33.381  1492  1512 W VoiceInteractionManagerService: no available voice recognition services found for user 0"
+        },
+        {
+          "line": 65,
+          "pid": 16772,
+          "severity": "E",
+          "tag": "memtrack",
+          "raw": "10-22 09:48:33.728 16772 16772 E memtrack: Couldn't load memtrack module (No such file or directory)"
+        },
+        {
+          "line": 66,
+          "pid": 16772,
+          "severity": "E",
+          "tag": "android.os.Debug",
+          "raw": "10-22 09:48:33.728 16772 16772 E android.os.Debug: failed to load memtrack module: -2"
+        },
+        {
+          "line": 79,
+          "pid": 1122,
+          "severity": "E",
+          "tag": "EGL_emulation",
+          "raw": "10-22 09:48:33.781  1122  1122 E EGL_emulation: tid 1122: eglCreateSyncKHR(1865): error 0x3004 (EGL_BAD_ATTRIBUTE)"
+        },
+        {
+          "line": 103,
+          "pid": 16782,
+          "severity": "W",
+          "tag": "OpenGLRenderer",
+          "raw": "10-22 09:48:34.556 16782 16799 W OpenGLRenderer: Failed to choose config with EGL_SWAP_BEHAVIOR_PRESERVED, retrying without..."
+        },
+        {
+          "line": 106,
+          "pid": 16782,
+          "severity": "E",
+          "tag": "eglCodecCommon",
+          "raw": "10-22 09:48:34.585 16782 16799 E eglCodecCommon: glUtilsParamSize: unknow param 0x000082da"
+        },
+        {
+          "line": 107,
+          "pid": 16782,
+          "severity": "E",
+          "tag": "eglCodecCommon",
+          "raw": "10-22 09:48:34.586 16782 16799 E eglCodecCommon: glUtilsParamSize: unknow param 0x00008cdf"
+        },
+        {
+          "line": 108,
+          "pid": 16782,
+          "severity": "E",
+          "tag": "eglCodecCommon",
+          "raw": "10-22 09:48:34.593 16782 16799 E eglCodecCommon: glUtilsParamSize: unknow param 0x00008824"
+        },
+        {
+          "line": 117,
+          "pid": 1122,
+          "severity": "E",
+          "tag": "EGL_emulation",
+          "raw": "10-22 09:48:35.829  1122  1122 E EGL_emulation: tid 1122: eglCreateSyncKHR(1865): error 0x3004 (EGL_BAD_ATTRIBUTE)"
+        },
+        {
+          "line": 120,
+          "pid": 1122,
+          "severity": "E",
+          "tag": "EGL_emulation",
+          "raw": "10-22 09:48:36.951  1122  1122 E EGL_emulation: tid 1122: eglCreateSyncKHR(1865): error 0x3004 (EGL_BAD_ATTRIBUTE)"
+        },
+        {
+          "line": 122,
+          "pid": 1122,
+          "severity": "E",
+          "tag": "EGL_emulation",
+          "raw": "10-22 09:48:38.062  1122  1122 E EGL_emulation: tid 1122: eglCreateSyncKHR(1865): error 0x3004 (EGL_BAD_ATTRIBUTE)"
+        },
+        {
+          "line": 126,
+          "pid": 1122,
+          "severity": "E",
+          "tag": "EGL_emulation",
+          "raw": "10-22 09:48:39.195  1122  1122 E EGL_emulation: tid 1122: eglCreateSyncKHR(1865): error 0x3004 (EGL_BAD_ATTRIBUTE)"
+        },
+        {
+          "line": 128,
+          "pid": 1122,
+          "severity": "E",
+          "tag": "EGL_emulation",
+          "raw": "10-22 09:48:40.294  1122  1122 E EGL_emulation: tid 1122: eglCreateSyncKHR(1865): error 0x3004 (EGL_BAD_ATTRIBUTE)"
+        },
+        {
+          "line": 131,
+          "pid": 1122,
+          "severity": "E",
+          "tag": "EGL_emulation",
+          "raw": "10-22 09:48:40.416  1122  1122 E EGL_emulation: tid 1122: eglCreateSyncKHR(1865): error 0x3004 (EGL_BAD_ATTRIBUTE)"
+        },
+        {
+          "line": 140,
+          "pid": 1492,
+          "severity": "W",
+          "tag": "ActivityManager",
+          "raw": "10-22 09:48:40.702  1492  1763 W ActivityManager: Spurious death for ProcessRecord{2388172e 16782:org.x2m7.trime.readiness.candidate/u0a66}, curProc for 16782: null"
+        },
+        {
+          "line": 145,
+          "pid": 14399,
+          "severity": "E",
+          "tag": "eglCodecCommon",
+          "raw": "10-22 09:48:40.721 14399 14422 E eglCodecCommon: glUtilsParamSize: unknow param 0x000082da"
+        },
+        {
+          "line": 146,
+          "pid": 14399,
+          "severity": "E",
+          "tag": "eglCodecCommon",
+          "raw": "10-22 09:48:40.721 14399 14422 E eglCodecCommon: glUtilsParamSize: unknow param 0x00008cdf"
+        },
+        {
+          "line": 147,
+          "pid": 14399,
+          "severity": "E",
+          "tag": "eglCodecCommon",
+          "raw": "10-22 09:48:40.721 14399 14422 E eglCodecCommon: glUtilsParamSize: unknow param 0x00008824"
+        },
+        {
+          "line": 149,
+          "pid": 1492,
+          "severity": "W",
+          "tag": "InputMethodManagerService",
+          "raw": "10-22 09:48:40.729  1492  2013 W InputMethodManagerService: Got RemoteException sending setActive(false) notification to pid 16782 uid 10066"
+        },
+        {
+          "line": 157,
+          "pid": 1131,
+          "severity": "E",
+          "tag": "RILC",
+          "raw": "10-22 09:48:40.775  1131  1241 E RILC    : Send Response to RIL_SOCKET_1"
+        },
+        {
+          "line": 163,
+          "pid": 1122,
+          "severity": "W",
+          "tag": "SurfaceFlinger",
+          "raw": "10-22 09:48:40.841  1122  1122 W SurfaceFlinger: couldn't log to binary event log: overflow."
+        }
+      ],
+      "warningErrorCount": 34
+    },
+    {
+      "scope": "transition",
+      "raw": "/home/xumin/Public/Trime/build/readiness-20261022/ui/candidate-layout-api21-probe4-qualification1/transition.raw.txt",
+      "sha256": "c9a28996996eb9c3f0a497fa8c7e2cac611be3457701f5d57d5897ae9b95de87",
+      "bytes": 25702,
+      "firstRawLine": "10-22 09:48:41.574  1492  1518 I wm_task_removed: [25,removeAppToken: last token]",
+      "lastRawLine": "10-22 09:49:48.035  1122  1122 E EGL_emulation: tid 1122: eglCreateSyncKHR(1865): error 0x3004 (EGL_BAD_ATTRIBUTE)",
+      "criticalMatches": [],
+      "retainedWarningsAndErrors": [
+        {
+          "line": 19,
+          "pid": 1131,
+          "severity": "E",
+          "tag": "RILC",
+          "raw": "10-22 09:49:00.787  1131  1241 E RILC    : Send Response to RIL_SOCKET_1"
+        },
+        {
+          "line": 29,
+          "pid": 1131,
+          "severity": "E",
+          "tag": "RILC",
+          "raw": "10-22 09:49:20.800  1131  1241 E RILC    : Send Response to RIL_SOCKET_1"
+        },
+        {
+          "line": 35,
+          "pid": 16853,
+          "severity": "E",
+          "tag": "memtrack",
+          "raw": "10-22 09:49:23.339 16853 16853 E memtrack: Couldn't load memtrack module (No such file or directory)"
+        },
+        {
+          "line": 36,
+          "pid": 16853,
+          "severity": "E",
+          "tag": "android.os.Debug",
+          "raw": "10-22 09:49:23.339 16853 16853 E android.os.Debug: failed to load memtrack module: -2"
+        },
+        {
+          "line": 39,
+          "pid": 16853,
+          "severity": "E",
+          "tag": "art",
+          "raw": "10-22 09:49:23.353 16853 16862 E art     : Thread attaching while runtime is shutting down: Binder_1",
+          "samePidObservedCliEntry": "com.android.commands.ime.Ime"
+        },
+        {
+          "line": 44,
+          "pid": 16863,
+          "severity": "E",
+          "tag": "memtrack",
+          "raw": "10-22 09:49:23.644 16863 16863 E memtrack: Couldn't load memtrack module (No such file or directory)"
+        },
+        {
+          "line": 45,
+          "pid": 16863,
+          "severity": "E",
+          "tag": "android.os.Debug",
+          "raw": "10-22 09:49:23.644 16863 16863 E android.os.Debug: failed to load memtrack module: -2"
+        },
+        {
+          "line": 48,
+          "pid": 16863,
+          "severity": "E",
+          "tag": "art",
+          "raw": "10-22 09:49:23.656 16863 16872 E art     : Thread attaching while runtime is shutting down: Binder_1",
+          "samePidObservedCliEntry": "com.android.commands.ime.Ime"
+        },
+        {
+          "line": 53,
+          "pid": 16873,
+          "severity": "E",
+          "tag": "memtrack",
+          "raw": "10-22 09:49:24.006 16873 16873 E memtrack: Couldn't load memtrack module (No such file or directory)"
+        },
+        {
+          "line": 54,
+          "pid": 16873,
+          "severity": "E",
+          "tag": "android.os.Debug",
+          "raw": "10-22 09:49:24.006 16873 16873 E android.os.Debug: failed to load memtrack module: -2"
+        },
+        {
+          "line": 62,
+          "pid": 16885,
+          "severity": "E",
+          "tag": "memtrack",
+          "raw": "10-22 09:49:24.329 16885 16885 E memtrack: Couldn't load memtrack module (No such file or directory)"
+        },
+        {
+          "line": 63,
+          "pid": 16885,
+          "severity": "E",
+          "tag": "android.os.Debug",
+          "raw": "10-22 09:49:24.329 16885 16885 E android.os.Debug: failed to load memtrack module: -2"
+        },
+        {
+          "line": 65,
+          "pid": 1492,
+          "severity": "F",
+          "tag": "InputMethodManagerService",
+          "raw": "10-22 09:49:24.349  1492  1761 F InputMethodManagerService: Input Method Manager Crash"
+        },
+        {
+          "line": 66,
+          "pid": 1492,
+          "severity": "F",
+          "tag": "InputMethodManagerService",
+          "raw": "10-22 09:49:24.349  1492  1761 F InputMethodManagerService: java.lang.IllegalArgumentException: Unknown id: com.android.inputmethod.latin/.LatinIME"
+        },
+        {
+          "line": 67,
+          "pid": 1492,
+          "severity": "F",
+          "tag": "InputMethodManagerService",
+          "raw": "10-22 09:49:24.349  1492  1761 F InputMethodManagerService: \tat com.android.server.InputMethodManagerService.setInputMethodEnabledLocked(InputMethodManagerService.java:3005)"
+        },
+        {
+          "line": 68,
+          "pid": 1492,
+          "severity": "F",
+          "tag": "InputMethodManagerService",
+          "raw": "10-22 09:49:24.349  1492  1761 F InputMethodManagerService: \tat com.android.server.InputMethodManagerService.setInputMethodEnabled(InputMethodManagerService.java:2994)"
+        },
+        {
+          "line": 69,
+          "pid": 1492,
+          "severity": "F",
+          "tag": "InputMethodManagerService",
+          "raw": "10-22 09:49:24.349  1492  1761 F InputMethodManagerService: \tat com.android.internal.view.IInputMethodManager$Stub.onTransact(IInputMethodManager.java:425)"
+        },
+        {
+          "line": 70,
+          "pid": 1492,
+          "severity": "F",
+          "tag": "InputMethodManagerService",
+          "raw": "10-22 09:49:24.349  1492  1761 F InputMethodManagerService: \tat com.android.server.InputMethodManagerService.onTransact(InputMethodManagerService.java:867)"
+        },
+        {
+          "line": 71,
+          "pid": 1492,
+          "severity": "F",
+          "tag": "InputMethodManagerService",
+          "raw": "10-22 09:49:24.349  1492  1761 F InputMethodManagerService: \tat android.os.Binder.execTransact(Binder.java:446)"
+        },
+        {
+          "line": 74,
+          "pid": 16885,
+          "severity": "E",
+          "tag": "art",
+          "raw": "10-22 09:49:24.353 16885 16894 E art     : Thread attaching while runtime is shutting down: Binder_1",
+          "samePidObservedCliEntry": "com.android.commands.ime.Ime"
+        },
+        {
+          "line": 79,
+          "pid": 16895,
+          "severity": "E",
+          "tag": "memtrack",
+          "raw": "10-22 09:49:24.652 16895 16895 E memtrack: Couldn't load memtrack module (No such file or directory)"
+        },
+        {
+          "line": 80,
+          "pid": 16895,
+          "severity": "E",
+          "tag": "android.os.Debug",
+          "raw": "10-22 09:49:24.652 16895 16895 E android.os.Debug: failed to load memtrack module: -2"
+        },
+        {
+          "line": 86,
+          "pid": 1492,
+          "severity": "W",
+          "tag": "ActivityManager",
+          "raw": "10-22 09:49:24.673  1492  1509 W ActivityManager: Force removing ActivityRecord{3e8f00b4 u0 com.osfans.trime.debug/com.osfans.trime.ui.main.MainActivity t24}: app died, no saved state"
+        },
+        {
+          "line": 91,
+          "pid": 1492,
+          "severity": "W",
+          "tag": "ActivityManager",
+          "raw": "10-22 09:49:24.678  1492  2044 W ActivityManager: Spurious death for ProcessRecord{502783a 14399:com.osfans.trime.debug/u0a67}, curProc for 14399: null"
+        },
+        {
+          "line": 99,
+          "pid": 12884,
+          "severity": "E",
+          "tag": "eglCodecCommon",
+          "raw": "10-22 09:49:24.719 12884 12899 E eglCodecCommon: glUtilsParamSize: unknow param 0x000082da"
+        },
+        {
+          "line": 100,
+          "pid": 12884,
+          "severity": "E",
+          "tag": "eglCodecCommon",
+          "raw": "10-22 09:49:24.719 12884 12899 E eglCodecCommon: glUtilsParamSize: unknow param 0x00008cdf"
+        },
+        {
+          "line": 101,
+          "pid": 12884,
+          "severity": "E",
+          "tag": "eglCodecCommon",
+          "raw": "10-22 09:49:24.720 12884 12899 E eglCodecCommon: glUtilsParamSize: unknow param 0x00008824"
+        },
+        {
+          "line": 103,
+          "pid": 1492,
+          "severity": "W",
+          "tag": "InputMethodManagerService",
+          "raw": "10-22 09:49:24.746  1492  2044 W InputMethodManagerService: Got RemoteException sending setActive(false) notification to pid 14399 uid 10067"
+        },
+        {
+          "line": 104,
+          "pid": 1840,
+          "severity": "W",
+          "tag": "SubtypeSwitcher",
+          "raw": "10-22 09:49:24.762  1840  1840 W SubtypeSwitcher: Can't find emoji subtype"
+        },
+        {
+          "line": 105,
+          "pid": 1840,
+          "severity": "W",
+          "tag": "SubtypeSwitcher",
+          "raw": "10-22 09:49:24.762  1840  1840 W SubtypeSwitcher: No input method subtype found; returning dummy subtype: android.view.inputmethod.InputMethodSubtype@d78b2ed0"
+        },
+        {
+          "line": 106,
+          "pid": 1840,
+          "severity": "W",
+          "tag": "ViewPager",
+          "raw": "10-22 09:49:24.825  1840  1840 W ViewPager: Requested offscreen page limit 0 too small; defaulting to 1"
+        },
+        {
+          "line": 116,
+          "pid": 1840,
+          "severity": "E",
+          "tag": "eglCodecCommon",
+          "raw": "10-22 09:49:24.917  1840  9728 E eglCodecCommon: glUtilsParamSize: unknow param 0x000082da"
+        },
+        {
+          "line": 117,
+          "pid": 1840,
+          "severity": "E",
+          "tag": "eglCodecCommon",
+          "raw": "10-22 09:49:24.918  1840  9728 E eglCodecCommon: glUtilsParamSize: unknow param 0x00008cdf"
+        },
+        {
+          "line": 118,
+          "pid": 1840,
+          "severity": "E",
+          "tag": "eglCodecCommon",
+          "raw": "10-22 09:49:24.920  1840  9728 E eglCodecCommon: glUtilsParamSize: unknow param 0x00008824"
+        },
+        {
+          "line": 133,
+          "pid": 16909,
+          "severity": "E",
+          "tag": "memtrack",
+          "raw": "10-22 09:49:25.118 16909 16909 E memtrack: Couldn't load memtrack module (No such file or directory)"
+        },
+        {
+          "line": 134,
+          "pid": 16909,
+          "severity": "E",
+          "tag": "android.os.Debug",
+          "raw": "10-22 09:49:25.118 16909 16909 E android.os.Debug: failed to load memtrack module: -2"
+        },
+        {
+          "line": 151,
+          "pid": 1921,
+          "severity": "E",
+          "tag": "SmsApplication",
+          "raw": "10-22 09:49:25.262  1921  1921 E SmsApplication: Bluetooth package not found: com.android.bluetooth"
+        },
+        {
+          "line": 158,
+          "pid": 2242,
+          "severity": "W",
+          "tag": "ContextImpl",
+          "raw": "10-22 09:49:25.283  2242  2242 W ContextImpl: Calling a method in the system process without a qualified user: android.app.ContextImpl.startService:1686 android.content.ContextWrapper.startService:515 android.content.ContextWrapper.startService:515 com.android.keychain.KeyChainBroadcastReceiver.onReceive:12 android.app.ActivityThread.handleReceiver:2579 "
+        },
+        {
+          "line": 169,
+          "pid": 16926,
+          "severity": "E",
+          "tag": "memtrack",
+          "raw": "10-22 09:49:25.854 16926 16926 E memtrack: Couldn't load memtrack module (No such file or directory)"
+        },
+        {
+          "line": 170,
+          "pid": 16926,
+          "severity": "E",
+          "tag": "android.os.Debug",
+          "raw": "10-22 09:49:25.854 16926 16926 E android.os.Debug: failed to load memtrack module: -2"
+        },
+        {
+          "line": 177,
+          "pid": 1492,
+          "severity": "W",
+          "tag": "PackageManager",
+          "raw": "10-22 09:49:26.665  1492  1523 W PackageManager: Package com.osfans.trime.debug desires unavailable shared library androidx.window.extensions; ignoring!"
+        },
+        {
+          "line": 178,
+          "pid": 1492,
+          "severity": "W",
+          "tag": "PackageManager",
+          "raw": "10-22 09:49:26.665  1492  1523 W PackageManager: Package com.osfans.trime.debug desires unavailable shared library androidx.window.sidecar; ignoring!"
+        },
+        {
+          "line": 182,
+          "pid": 16937,
+          "severity": "E",
+          "tag": "cutils-trace",
+          "raw": "10-22 09:49:26.700 16937 16937 E cutils-trace: Error opening trace file: Permission denied (13)"
+        },
+        {
+          "line": 184,
+          "pid": 16937,
+          "severity": "W",
+          "tag": "dex2oat",
+          "raw": "10-22 09:49:27.474 16937 16937 W dex2oat : Before Android 4.1, method int androidx.appcompat.widget.DropDownListView.lookForSelectablePosition(int, boolean) would have incorrectly overridden the package-private method in android.widget.ListView"
+        },
+        {
+          "line": 185,
+          "pid": 16937,
+          "severity": "W",
+          "tag": "dex2oat",
+          "raw": "10-22 09:49:27.478 16937 16937 W dex2oat : Before Android 4.1, method int androidx.appcompat.widget.MenuPopupWindow$MenuDropDownListView.lookForSelectablePosition(int, boolean) would have incorrectly overridden the package-private method in android.widget.ListView"
+        },
+        {
+          "line": 186,
+          "pid": 16937,
+          "severity": "W",
+          "tag": "dex2oat",
+          "raw": "10-22 09:49:27.707 16937 16937 W dex2oat : Before Android 4.1, method android.graphics.PorterDuffColorFilter androidx.vectordrawable.graphics.drawable.VectorDrawableCompat.updateTintFilter(android.graphics.PorterDuffColorFilter, android.content.res.ColorStateList, android.graphics.PorterDuff$Mode) would have incorrectly overridden the package-private method in android.graphics.drawable.Drawable"
+        },
+        {
+          "line": 187,
+          "pid": 16937,
+          "severity": "W",
+          "tag": "dex2oat",
+          "raw": "10-22 09:49:27.979 16937 16937 W dex2oat : Before Android 4.1, method android.graphics.drawable.Drawable com.google.android.material.progressindicator.BaseProgressIndicator.getCurrentDrawable() would have incorrectly overridden the package-private method in android.widget.ProgressBar"
+        },
+        {
+          "line": 195,
+          "pid": 1131,
+          "severity": "E",
+          "tag": "RILC",
+          "raw": "10-22 09:49:40.810  1131  1241 E RILC    : Send Response to RIL_SOCKET_1"
+        },
+        {
+          "line": 204,
+          "pid": 1492,
+          "severity": "W",
+          "tag": "PackageManager",
+          "raw": "10-22 09:49:46.981  1492  1523 W PackageManager: Unknown permission android.permission.POST_NOTIFICATIONS in package com.osfans.trime.debug"
+        },
+        {
+          "line": 205,
+          "pid": 1492,
+          "severity": "W",
+          "tag": "PackageManager",
+          "raw": "10-22 09:49:46.981  1492  1523 W PackageManager: Unknown permission android.permission.FOREGROUND_SERVICE in package com.osfans.trime.debug"
+        },
+        {
+          "line": 216,
+          "pid": 1492,
+          "severity": "W",
+          "tag": "BackupManagerService",
+          "raw": "10-22 09:49:47.002  1492  1492 W BackupManagerService: Removing schedule queue dupe of com.osfans.trime.debug"
+        },
+        {
+          "line": 218,
+          "pid": 1921,
+          "severity": "E",
+          "tag": "SmsApplication",
+          "raw": "10-22 09:49:47.008  1921  1921 E SmsApplication: Bluetooth package not found: com.android.bluetooth"
+        },
+        {
+          "line": 220,
+          "pid": 1492,
+          "severity": "W",
+          "tag": "Settings",
+          "raw": "10-22 09:49:47.014  1492  1523 W Settings: Setting install_non_market_apps has moved from android.provider.Settings.Global to android.provider.Settings.Secure, returning read-only value."
+        },
+        {
+          "line": 222,
+          "pid": 1492,
+          "severity": "W",
+          "tag": "VoiceInteractionManagerService",
+          "raw": "10-22 09:49:47.040  1492  1512 W VoiceInteractionManagerService: no available voice recognition services found for user 0"
+        },
+        {
+          "line": 230,
+          "pid": 16942,
+          "severity": "E",
+          "tag": "memtrack",
+          "raw": "10-22 09:49:47.418 16942 16942 E memtrack: Couldn't load memtrack module (No such file or directory)"
+        },
+        {
+          "line": 231,
+          "pid": 16942,
+          "severity": "E",
+          "tag": "android.os.Debug",
+          "raw": "10-22 09:49:47.418 16942 16942 E android.os.Debug: failed to load memtrack module: -2"
+        },
+        {
+          "line": 234,
+          "pid": 16942,
+          "severity": "E",
+          "tag": "art",
+          "raw": "10-22 09:49:47.436 16942 16951 E art     : Thread attaching while runtime is shutting down: Binder_1",
+          "samePidObservedCliEntry": "com.android.commands.pm.Pm"
+        },
+        {
+          "line": 238,
+          "pid": 1122,
+          "severity": "E",
+          "tag": "EGL_emulation",
+          "raw": "10-22 09:49:48.035  1122  1122 E EGL_emulation: tid 1122: eglCreateSyncKHR(1865): error 0x3004 (EGL_BAD_ATTRIBUTE)"
+        }
+      ],
+      "warningErrorCount": 58
+    },
+    {
+      "scope": "fixed",
+      "raw": "/home/xumin/Public/Trime/build/readiness-20261022/ui/candidate-layout-api21-fixed-7a45-probe4/root-continuous-phase.raw.txt",
+      "sha256": "4d33d844386f76eaff15b31d9907bbbd6867905520c48db78e524a7271589c79",
+      "bytes": 20077,
+      "firstRawLine": "10-22 09:49:52.583  1921  1921 D DCT     : [0]onReceive: action=com.android.internal.telephony.data-stall",
+      "lastRawLine": "10-22 09:51:17.821  1122  1122 E EGL_emulation: tid 1122: eglCreateSyncKHR(1865): error 0x3004 (EGL_BAD_ATTRIBUTE)",
+      "criticalMatches": [],
+      "retainedWarningsAndErrors": [
+        {
+          "line": 18,
+          "pid": 1131,
+          "severity": "E",
+          "tag": "RILC",
+          "raw": "10-22 09:50:00.824  1131  1241 E RILC    : Send Response to RIL_SOCKET_1"
+        },
+        {
+          "line": 28,
+          "pid": 1131,
+          "severity": "E",
+          "tag": "RILC",
+          "raw": "10-22 09:50:20.832  1131  1241 E RILC    : Send Response to RIL_SOCKET_1"
+        },
+        {
+          "line": 34,
+          "pid": 16965,
+          "severity": "E",
+          "tag": "memtrack",
+          "raw": "10-22 09:50:22.643 16965 16965 E memtrack: Couldn't load memtrack module (No such file or directory)"
+        },
+        {
+          "line": 35,
+          "pid": 16965,
+          "severity": "E",
+          "tag": "android.os.Debug",
+          "raw": "10-22 09:50:22.643 16965 16965 E android.os.Debug: failed to load memtrack module: -2"
+        },
+        {
+          "line": 38,
+          "pid": 16965,
+          "severity": "E",
+          "tag": "art",
+          "raw": "10-22 09:50:22.659 16965 16974 E art     : Thread attaching while runtime is shutting down: Binder_1",
+          "samePidObservedCliEntry": "com.android.commands.pm.Pm"
+        },
+        {
+          "line": 43,
+          "pid": 16977,
+          "severity": "E",
+          "tag": "memtrack",
+          "raw": "10-22 09:50:22.996 16977 16977 E memtrack: Couldn't load memtrack module (No such file or directory)"
+        },
+        {
+          "line": 44,
+          "pid": 16977,
+          "severity": "E",
+          "tag": "android.os.Debug",
+          "raw": "10-22 09:50:22.996 16977 16977 E android.os.Debug: failed to load memtrack module: -2"
+        },
+        {
+          "line": 57,
+          "pid": 1122,
+          "severity": "E",
+          "tag": "EGL_emulation",
+          "raw": "10-22 09:50:23.047  1122  1122 E EGL_emulation: tid 1122: eglCreateSyncKHR(1865): error 0x3004 (EGL_BAD_ATTRIBUTE)"
+        },
+        {
+          "line": 68,
+          "pid": 16987,
+          "severity": "W",
+          "tag": "OpenGLRenderer",
+          "raw": "10-22 09:50:23.424 16987 17004 W OpenGLRenderer: Failed to choose config with EGL_SWAP_BEHAVIOR_PRESERVED, retrying without..."
+        },
+        {
+          "line": 71,
+          "pid": 16987,
+          "severity": "E",
+          "tag": "eglCodecCommon",
+          "raw": "10-22 09:50:23.480 16987 17004 E eglCodecCommon: glUtilsParamSize: unknow param 0x000082da"
+        },
+        {
+          "line": 72,
+          "pid": 16987,
+          "severity": "E",
+          "tag": "eglCodecCommon",
+          "raw": "10-22 09:50:23.482 16987 17004 E eglCodecCommon: glUtilsParamSize: unknow param 0x00008cdf"
+        },
+        {
+          "line": 73,
+          "pid": 16987,
+          "severity": "E",
+          "tag": "eglCodecCommon",
+          "raw": "10-22 09:50:23.483 16987 17004 E eglCodecCommon: glUtilsParamSize: unknow param 0x00008824"
+        },
+        {
+          "line": 77,
+          "pid": 12884,
+          "severity": "W",
+          "tag": "IInputConnectionWrapper",
+          "raw": "10-22 09:50:23.974 12884 12884 W IInputConnectionWrapper: showStatusIcon on inactive InputConnection"
+        },
+        {
+          "line": 85,
+          "pid": 1122,
+          "severity": "E",
+          "tag": "EGL_emulation",
+          "raw": "10-22 09:50:25.476  1122  1122 E EGL_emulation: tid 1122: eglCreateSyncKHR(1865): error 0x3004 (EGL_BAD_ATTRIBUTE)"
+        },
+        {
+          "line": 88,
+          "pid": 1122,
+          "severity": "E",
+          "tag": "EGL_emulation",
+          "raw": "10-22 09:50:26.633  1122  1122 E EGL_emulation: tid 1122: eglCreateSyncKHR(1865): error 0x3004 (EGL_BAD_ATTRIBUTE)"
+        },
+        {
+          "line": 92,
+          "pid": 1122,
+          "severity": "E",
+          "tag": "EGL_emulation",
+          "raw": "10-22 09:50:27.753  1122  1122 E EGL_emulation: tid 1122: eglCreateSyncKHR(1865): error 0x3004 (EGL_BAD_ATTRIBUTE)"
+        },
+        {
+          "line": 94,
+          "pid": 1122,
+          "severity": "E",
+          "tag": "EGL_emulation",
+          "raw": "10-22 09:50:28.862  1122  1122 E EGL_emulation: tid 1122: eglCreateSyncKHR(1865): error 0x3004 (EGL_BAD_ATTRIBUTE)"
+        },
+        {
+          "line": 96,
+          "pid": 1122,
+          "severity": "E",
+          "tag": "EGL_emulation",
+          "raw": "10-22 09:50:29.954  1122  1122 E EGL_emulation: tid 1122: eglCreateSyncKHR(1865): error 0x3004 (EGL_BAD_ATTRIBUTE)"
+        },
+        {
+          "line": 99,
+          "pid": 1122,
+          "severity": "E",
+          "tag": "EGL_emulation",
+          "raw": "10-22 09:50:30.028  1122  1122 E EGL_emulation: tid 1122: eglCreateSyncKHR(1865): error 0x3004 (EGL_BAD_ATTRIBUTE)"
+        },
+        {
+          "line": 108,
+          "pid": 1492,
+          "severity": "W",
+          "tag": "ActivityManager",
+          "raw": "10-22 09:50:30.270  1492  1695 W ActivityManager: Spurious death for ProcessRecord{300077b9 16987:org.x2m7.trime.readiness.candidate/u0a66}, curProc for 16987: null"
+        },
+        {
+          "line": 113,
+          "pid": 12884,
+          "severity": "E",
+          "tag": "eglCodecCommon",
+          "raw": "10-22 09:50:30.287 12884 12899 E eglCodecCommon: glUtilsParamSize: unknow param 0x000082da"
+        },
+        {
+          "line": 114,
+          "pid": 12884,
+          "severity": "E",
+          "tag": "eglCodecCommon",
+          "raw": "10-22 09:50:30.287 12884 12899 E eglCodecCommon: glUtilsParamSize: unknow param 0x00008cdf"
+        },
+        {
+          "line": 115,
+          "pid": 12884,
+          "severity": "E",
+          "tag": "eglCodecCommon",
+          "raw": "10-22 09:50:30.287 12884 12899 E eglCodecCommon: glUtilsParamSize: unknow param 0x00008824"
+        },
+        {
+          "line": 117,
+          "pid": 1492,
+          "severity": "W",
+          "tag": "InputMethodManagerService",
+          "raw": "10-22 09:50:30.291  1492  2067 W InputMethodManagerService: Got RemoteException sending setActive(false) notification to pid 16987 uid 10066"
+        },
+        {
+          "line": 118,
+          "pid": 1122,
+          "severity": "W",
+          "tag": "SurfaceFlinger",
+          "raw": "10-22 09:50:30.467  1122  1122 W SurfaceFlinger: couldn't log to binary event log: overflow."
+        },
+        {
+          "line": 128,
+          "pid": 1131,
+          "severity": "E",
+          "tag": "RILC",
+          "raw": "10-22 09:50:40.839  1131  1241 E RILC    : Send Response to RIL_SOCKET_1"
+        },
+        {
+          "line": 149,
+          "pid": 1131,
+          "severity": "E",
+          "tag": "RILC",
+          "raw": "10-22 09:51:00.847  1131  1241 E RILC    : Send Response to RIL_SOCKET_1"
+        },
+        {
+          "line": 155,
+          "pid": 17060,
+          "severity": "E",
+          "tag": "memtrack",
+          "raw": "10-22 09:51:16.176 17060 17060 E memtrack: Couldn't load memtrack module (No such file or directory)"
+        },
+        {
+          "line": 156,
+          "pid": 17060,
+          "severity": "E",
+          "tag": "android.os.Debug",
+          "raw": "10-22 09:51:16.176 17060 17060 E android.os.Debug: failed to load memtrack module: -2"
+        },
+        {
+          "line": 159,
+          "pid": 17060,
+          "severity": "E",
+          "tag": "art",
+          "raw": "10-22 09:51:16.196 17060 17069 E art     : Thread attaching while runtime is shutting down: Binder_1",
+          "samePidObservedCliEntry": "com.android.commands.settings.SettingsCmd"
+        },
+        {
+          "line": 164,
+          "pid": 17070,
+          "severity": "E",
+          "tag": "memtrack",
+          "raw": "10-22 09:51:16.522 17070 17070 E memtrack: Couldn't load memtrack module (No such file or directory)"
+        },
+        {
+          "line": 165,
+          "pid": 17070,
+          "severity": "E",
+          "tag": "android.os.Debug",
+          "raw": "10-22 09:51:16.522 17070 17070 E android.os.Debug: failed to load memtrack module: -2"
+        },
+        {
+          "line": 168,
+          "pid": 17070,
+          "severity": "E",
+          "tag": "art",
+          "raw": "10-22 09:51:16.542 17070 17079 E art     : Thread attaching while runtime is shutting down: Binder_1",
+          "samePidObservedCliEntry": "com.android.commands.settings.SettingsCmd"
+        },
+        {
+          "line": 173,
+          "pid": 17080,
+          "severity": "E",
+          "tag": "memtrack",
+          "raw": "10-22 09:51:16.862 17080 17080 E memtrack: Couldn't load memtrack module (No such file or directory)"
+        },
+        {
+          "line": 174,
+          "pid": 17080,
+          "severity": "E",
+          "tag": "android.os.Debug",
+          "raw": "10-22 09:51:16.862 17080 17080 E android.os.Debug: failed to load memtrack module: -2"
+        },
+        {
+          "line": 177,
+          "pid": 17080,
+          "severity": "E",
+          "tag": "art",
+          "raw": "10-22 09:51:16.876 17080 17089 E art     : Thread attaching while runtime is shutting down: Binder_1",
+          "samePidObservedCliEntry": "com.android.commands.wm.Wm"
+        },
+        {
+          "line": 182,
+          "pid": 17090,
+          "severity": "E",
+          "tag": "memtrack",
+          "raw": "10-22 09:51:17.183 17090 17090 E memtrack: Couldn't load memtrack module (No such file or directory)"
+        },
+        {
+          "line": 183,
+          "pid": 17090,
+          "severity": "E",
+          "tag": "android.os.Debug",
+          "raw": "10-22 09:51:17.183 17090 17090 E android.os.Debug: failed to load memtrack module: -2"
+        },
+        {
+          "line": 186,
+          "pid": 17090,
+          "severity": "E",
+          "tag": "art",
+          "raw": "10-22 09:51:17.195 17090 17099 E art     : Thread attaching while runtime is shutting down: Binder_1",
+          "samePidObservedCliEntry": "com.android.commands.wm.Wm"
+        },
+        {
+          "line": 191,
+          "pid": 17100,
+          "severity": "E",
+          "tag": "memtrack",
+          "raw": "10-22 09:51:17.504 17100 17100 E memtrack: Couldn't load memtrack module (No such file or directory)"
+        },
+        {
+          "line": 192,
+          "pid": 17100,
+          "severity": "E",
+          "tag": "android.os.Debug",
+          "raw": "10-22 09:51:17.504 17100 17100 E android.os.Debug: failed to load memtrack module: -2"
+        },
+        {
+          "line": 195,
+          "pid": 17100,
+          "severity": "E",
+          "tag": "art",
+          "raw": "10-22 09:51:17.524 17100 17109 E art     : Thread attaching while runtime is shutting down: Binder_1",
+          "samePidObservedCliEntry": "com.android.commands.settings.SettingsCmd"
+        },
+        {
+          "line": 199,
+          "pid": 1122,
+          "severity": "E",
+          "tag": "EGL_emulation",
+          "raw": "10-22 09:51:17.821  1122  1122 E EGL_emulation: tid 1122: eglCreateSyncKHR(1865): error 0x3004 (EGL_BAD_ATTRIBUTE)"
+        }
+      ],
+      "warningErrorCount": 43
+    }
+  ],
+  "allPidCriticalMatchesAcrossTheseExactRanges": 0,
+  "runtimeWarningFree": false,
+  "warningLimits": [
+    "All W/E/F raw lines preserved. PackageParser queries warning is produced while installing this forward-compatible diagnostic manifest on API21; no warning suppression or source change was applied.",
+    "Six fixed-scope ART Thread attaching while runtime is shutting down lines have same-PID preceding pm.Pm or settings.SettingsCmd main entries; they are CLI shutdown observations, not an observed Trime process Fatal.",
+    "Retained EGL_emulation/eglCodecCommon, memtrack, radio, instrumentation process-death/IME disconnect and SurfaceFlinger warnings are not claimed eliminated or universally benign."
+  ],
+  "handoff": {
+    "utc": "2026-10-22T01:51:18.150111+00:00",
+    "defaultIme": "com.android.inputmethod.latin/.LatinIME",
+    "enabledImes": "com.android.inputmethod.latin/.LatinIME",
+    "size": "Physical size: 720x1280",
+    "density": "Physical density: 320",
+    "fontSetting": "null",
+    "bootId": "584ba366-be23-47d0-9e5b-0765788304d3",
+    "targetProcessAbsent": true,
+    "probeProcessAbsent": true,
+    "focusLines": [
+      "mCurrentFocus=Window{106b08a1 u0 org.x2m7.trime.editorfixture/org.x2m7.trime.editorfixture.EditorActivity}"
+    ],
+    "noOwnedCollectorsStarted": true,
+    "leaseReleasedAfterTheseCommands": true
+  },
+  "preservedHostToolFailure": "/home/xumin/Public/Trime/build/readiness-20261022/ui/candidate-layout-api21-old-e8-probe4/preflight-host-error.json",
+  "limits": [
+    "This separate Activity does not load real candidate adapters, Rime JNI, the native schema or a live InputConnection; compact/expanded production candidate integration still requires its own fresh run.",
+    "Only default-font22sp120x80 labels were exercised; overflow/large-font scaling matrices, physical devices, API35 and TalkBack end-to-end remain separate.",
+    "The old e8 and new7a45 APKs have other whole-program differences. This experiment isolates the stated production class through its exact blob, does not invoke Trime Application/Rime, and keeps its host Activity/probe/Android configuration identical.",
+    "Historical d7ec1a4e glyph evidence and old probe2 screen-lag failure stay separate and are not counted as this fresh round."
+  ]
+}
