@@ -51,6 +51,40 @@
       "merged": false,
       "receipt": "ready-transitions-20261022-batch2.json",
       "receipt_sha256": "58a4217eaa0e2ca0f7db54024a4289b006bd3d2e959e22c3e7ea32d802b7c31b"
+    },
+    {
+      "number": 2182,
+      "url": "https://github.com/osfans/trime/pull/2182",
+      "head": "e8e4db837d16e00bdbc3d5ab266561ac5a99114c",
+      "before_draft": true,
+      "after_draft": false,
+      "source_unchanged": true,
+      "four_checks_success_at_transition": true,
+      "body_exact_readback": true,
+      "body_sha256": "41ae237dade43d5e28f8b1ce545452856681a6a53ad1189af73553e166b6673b",
+      "index_evidence_commit": "dcb6b0a70b18fc24b3d1bf537211cb4def7cc0eb",
+      "ready_for_review_not_merge_approval": true,
+      "observed_state": "OPEN",
+      "merged": false,
+      "receipt": "ready-transitions-20261022-batch3.json",
+      "receipt_sha256": "4569140520914afcfe3dea89ec4a25d1e85f12edd2c4967f4b7f377aec9b94d8"
+    },
+    {
+      "number": 2187,
+      "url": "https://github.com/osfans/trime/pull/2187",
+      "head": "7a45cf29c8e112a4081a5e72cb465447d847e1c1",
+      "before_draft": true,
+      "after_draft": false,
+      "source_unchanged": true,
+      "four_checks_success_at_transition": true,
+      "body_exact_readback": true,
+      "body_sha256": "a0b12e7efd73957e14a8419d2d24eed41aef54b87bf8da74ef52e9a66f33c05c",
+      "index_evidence_commit": "dcb6b0a70b18fc24b3d1bf537211cb4def7cc0eb",
+      "ready_for_review_not_merge_approval": true,
+      "observed_state": "OPEN",
+      "merged": false,
+      "receipt": "ready-transitions-20261022-batch3.json",
+      "receipt_sha256": "4569140520914afcfe3dea89ec4a25d1e85f12edd2c4967f4b7f377aec9b94d8"
     }
   ],
   "ready_is_not_approval_or_merge": true,
@@ -76,7 +110,7 @@
     "cloud_run": "https://github.com/X2M7/trime/actions/runs/39711445476",
     "separate_local_real_vm_assertions": 146,
     "ndk_translation_units_werror": 8,
-    "android_runtime_acceptance": "New eeb source: API21/API35 full16corecases plus tongwenfeng category-macro regression still pending. No old593 device result counted as newsource pass.",
+    "android_runtime_acceptance": "New eeb source:17fixed cases per API21/API35 (16corecases plus category-macro/number-restoration regression) still pending. No old593 device result counted as newsource pass.",
     "previous_source": "593c23002343d5c7e6db5bf37e2bdfa0ba05f8ee",
     "candidate_fix_merge": "7a45cf29c8e112a4081a5e72cb465447d847e1c1",
     "tree": "a5c66a361a30df5b1ce23d0392e08a97045e9a33",
@@ -131,13 +165,13 @@
   },
   "logcat": {
     "pr": 2182,
-    "draft": true,
+    "draft": false,
     "source": "e8e4db837d16e00bdbc3d5ab266561ac5a99114c",
     "ordinary_merge": true,
     "six_business_blobs_unchanged_from": "6e4f2e59acce6cff0d097ff47a8d635940a6aa69",
     "fresh_cloud_control_run": "https://github.com/X2M7/trime/actions/runs/39705023492",
     "fresh_control_audit": "349 cases/22 suites actually executed, 0 failures/errors/skips; LogBuffer adds 16 cases. Exact e8 HEAD, 20 pins, raw XML sizes/digests and task execution verified.",
-    "android_runtime_acceptance": "API21 e8 product scopes passed: cold-memory sampling/native success, actual default SAF export/PID exclusion, and three1/0 reader cycles. One Observer idle and host preconditions retained; entire combined multi-tool round not passed. API35 pending.",
+    "android_runtime_acceptance": "Exact e8 original APK scoped API21/API35 bounded-log, samePID maintenance, untouched-default SAF/PID export and three reader1/0 cycles qualified. Original idle/143/immediate-close failures preserved; entire combined multi-tool round is not passed. Readyforreview, not merge approval or wholeapp/Release acceptance.",
     "old_api21_attempt": "6e4 failed native exit without DetachCurrentThread, predating accepted #2178; separate high-flow stream error remains unproven until new cold device test.",
     "filename_fix": "Actual API21 VFAT createDocument failed with EINVAL for colon-containing ISO filename. d7c0d441 changes only the suggested export filename to replace colons with hyphens.",
     "previous_api21_integrated_attempt": "7da maintenance succeeded with same PID4398 and no old detach failure; actual default export failed; later normal a candidate 𠼞 triggered NewStringUTF CheckJNI abort. Failed attempt and PID transition retained.",
@@ -329,13 +363,98 @@
         "The prior d7 cold-memory failure and all original tool/product failures are retained."
       ]
     },
-    "api35_current_stage": "Original e8 API35 cold deployment/log scopes in progress; no final pass recorded yet. API21 qualifiedbusiness scopes and oldfailures retained."
+    "api35_current_stage": "Scoped business qualification complete; actual Readyforreview transition in batch3. No blanket tool-pass, real-time catch-up or zero-warning claim.",
+    "ready_for_review": true,
+    "api35_e8_business_scopes": {
+      "source_head": "e8e4db837d16e00bdbc3d5ab266561ac5a99114c",
+      "apk_sha256": "09e19ae6802bf9fd29b167cc205494c252fbbcc1876980a55d108d20710adfc5",
+      "target_pid": 3271,
+      "target_starttime_ticks": "82245",
+      "target_uid": 10151,
+      "product_scopes": {
+        "first_maintenance_same_pid_success": true,
+        "bounded_log_memory_observed": true,
+        "default_name_saf_saved_without_edit": true,
+        "export_omission_notice_and_10000_row_bound": true,
+        "same_uid_negative_pid_filter": true,
+        "three_reader_open_back_cycles_after_page_exit": true
+      },
+      "native_debug_maintenance_seconds": 1472.734,
+      "memory_sample_count": 89,
+      "sample_dalvik_heap_alloc_kib_min_max": [
+        5955,
+        9303
+      ],
+      "sample_total_pss_kib_max": 324049,
+      "sample_not_instantaneous_peak_or_all_heap_limit": true,
+      "export": {
+        "bytes": 744596,
+        "sha256": "5c166510dbfc126a90c7bbf1b6fda43bfea60c196da41c58457a7b7b2f0a1f38",
+        "parsed_records": 10000,
+        "utf16_units_including_header": 702155,
+        "exact_timestamp_pid_priority_tag_payload_raw_matches": 10000,
+        "pid_set": [
+          3271
+        ],
+        "negative_actual_pid": 10813,
+        "negative_same_uid": 10151,
+        "negative_excluded": true,
+        "positive_before_after_marker": [
+          9916,
+          84
+        ],
+        "filename_edited": false,
+        "save_attempts": 1,
+        "original_default_filename": "com.osfans.trime.debug-2026-10-22T03-04-42Z.txt"
+      },
+      "reader_counts_on_open": [
+        1,
+        1,
+        1
+      ],
+      "reader_counts_after_observed_page_exit": [
+        0,
+        0,
+        0
+      ],
+      "first_immediate_close1_attempt_passed": false,
+      "first_immediate_reader_count": 1,
+      "later_same_action_page_visible_reader_count": 0,
+      "later_two_cycles_budget_seconds_after_page_frame": 5,
+      "back_to_close_latency_guarantee": false,
+      "all_tool_attempts_passed": false,
+      "original_failures_preserved": [
+        "Observer1 private-file access at shellUID2000 and actual90-second idle failure; host0 was not normal device stop.",
+        "Observer2 twelve complete captures then actual90-second idle failure.",
+        "FirstBack immediate reader1 assertionfailed before exit-page precondition; originalfalse preserved; later sameBack Developer/reader0 and two synchronized cycles qualified.",
+        "Steady authenticated device stop11/10complete captures passed, but actual hostwrapper143 and missing stdout/terminal receipt remain unqualified; no synthetic host0.",
+        "memory3 actual host143 with18 complete original samples, not normal sampler end.",
+        "03 named default-export-dialog actually shows LogView;04 actual untouched-defaultSAF and05 returnedLogView."
+      ],
+      "cold_system_f_priority_events": 1,
+      "cold_kernel_irq_event": "Disabling IRQ #35; retained real kernel/QEMU event, not an app crash and not systemcritical0.",
+      "full_phase_raw_app_warning_error_counts": {
+        "W": 245,
+        "E": 4
+      },
+      "full_phase_raw_all_warning_error_fatal_priority_counts": {
+        "W": 1428,
+        "E": 273,
+        "F": 1
+      },
+      "published_reports": {
+        "host": "logcat-api35-buffer-20261022/final/host-business-scope-review1.json",
+        "root_final": "logcat-api35-buffer-20261022/final/root-final-qualification2.json",
+        "memory": "logcat-api35-buffer-20261022/final/root-independent-three-memory-segments1.json",
+        "export_lifecycle": "logcat-api35-buffer-20261022/final/root-independent-export-lifecycle1.json"
+      },
+      "throughput_limit": "Bounds suffix already received by view; sustained high-flow real-time freshness, source logd loss and source-to-screen latency not qualified. Old viewport timestamps alone do not measure ingestion lag.",
+      "release_physical_whole_app_qualification": false
+    }
   },
   "still_draft": [
-    2182,
     2183,
-    2186,
-    2187
+    2186
   ],
   "warnings_and_limits": [
     "Readyforreview is not maintainer approval, automaticmerge, universalbugfree or fullapplication acceptance.",
@@ -346,7 +465,11 @@
     "UI manager/layout diagnostics used copieswith signingentries changed and payloadverified; this is not production/release signing or upgrade acceptance. No physicalphone, stablepublication, fullT12 or automaticmerge.",
     "eeb T9 cloud330+115 and8OSsuccess are independent of pending API21/API35 runtimechecks. Prior59316corematches do not erase its category-mode failure or qualifyeeb.",
     "API21 original tool/precondition failures and changingPIDs remain; no blanket combined multi-toolpass. Old6e4 streamEOF cause remainsunproven.",
-    "The193 identical preset-vocabulary encodingwarnings in T9/e16/d7 originate in pinnedlibrime/luna_pinyin/essay, notAndroid/emulator; exactsource/sequence comparison retained."
+    "The193 identical preset-vocabulary encodingwarnings in T9/e16/d7 originate in pinnedlibrime/luna_pinyin/essay, notAndroid/emulator; exactsource/sequence comparison retained.",
+    "API35 e8:89samePID memory samples, actualdefaultSAF/PID filtering and three after-page reader cycles qualified; Observer1/2idle, firstimmediate1 and hostwrapper/memory3 exit143 remain failures. No all-toolspass or Back-to-close latency guarantee.",
+    "API35 e8 cold phase contains a genuine kernelIRQ35 F-priority event; raw app/theme/vocabulary warnings and all systemdiagnostics retained. No systemcritical0 or warningfree claim.",
+    "API35 e8 bounds only the already-received suffix; sustained-burst real-time freshness/source-log-loss/performance remain unqualified.",
+    "Candidate7a45 API35 is production-class positive rendering/text/node coverage only; negativebaseline onlyAPI21, no nativeIME/TalkBack operation or completecandidate integration qualification."
   ],
   "retained_local_evidence": [
     {
@@ -439,7 +562,7 @@
     "api35_actual_initialization_failure_path_passed": true,
     "api35_soundpool_real_load_callback_passed": true
   },
-  "updated_utc": "2026-10-22T02:50:33.375730+00:00",
+  "updated_utc": "2026-10-22T03:27:29.480912+00:00",
   "unicode_foundation": {
     "branch": "contrib/pr-jni-unicode-transport",
     "source": "e16ab85f495e5bbf353187c29efbff74526cff9c",
@@ -453,7 +576,7 @@
     "both_baseline_controls_failed_as_expected": true,
     "ndk_api21_x64_translation_units_werror": 6,
     "independent_review": "Two reviewers read production, test and runner code; 12 exact source blobs bound.",
-    "cloud_and_android": "Cloud full application and checked-JVM controls passed. Original APK on API21 CheckJNI survives actual stock a candidates including 𠼞; ni/Space commits 你. Candidate rows draw blank, so visual selection and whole-app acceptance do not pass. API35 remains pending.",
+    "cloud_and_android": "Cloud full application and checked-JVM controls passed. Original API21 APK CheckJNI survives actual stock a candidates including𠼞; ni/Space commits你. Candidate rows draw blank, so visual selection and whole-app acceptance do not pass. API35 scoped originalAPK CheckJNI/a14/DEL-ni-Space business completed; final evidence review ongoing, not a whole-app or Ready qualification.",
     "limits": [
       "Host checks do not initialize a real Rime session, GlobalRef singleton or Android editor.",
       "No arbitrary native allocation exception wrapper, no C-string embedded-NUL acceptance claim."
@@ -488,10 +611,10 @@
       }
     },
     "fork_and_upstream_os_jobs_success": 8,
-    "api35_current_stage": "Originale16 API35 stock supplementarycandidate/CheckJNI shortscope pending nextlease; no pass recorded."
+    "api35_current_stage": "SamePID12444 actual native maintenance Success after319.277s; real CheckJNI startup evidence, stock luna_pinyin a snapshot14 including𠼞/ascii=false, DEL then ni/Space committed你. Root actually viewed4originalscreens; Observer authenticatedstop7 andhost0, debug.checkjni empty/Latin restored. Scoped business complete; evidence freezing and final qualification review ongoing. StillDraft, no Ready transition."
   },
   "candidate_display": {
-    "status": "API21 independent old/fixed production-class observation qualified; API35 original7a45 scope pending.",
+    "status": "API21 five-stage production-class baseline/fix control and API35 original7a45 five-stage positive qualification complete; actualbatch3 Readyforreview, not nativeIME/TalkBack or mergeapproval.",
     "e16_observed_blank": true,
     "t9_source_precondition_test": "593 API21 candidate glyphs/nodes recovered and16corematches; separate symbol-category integrationfailed; eeb fullretests pending.",
     "historical_product_fix": "Main fork d7ec1a4e restores TextView text/measure/layout contracts; old AutoScale blob exactly matches current e16/117. Historical API21/35 screenshots establish a prior same-class issue only; current source/device control still required.",
@@ -499,18 +622,32 @@
     "fix_source": "7a45cf29c8e112a4081a5e72cb465447d847e1c1",
     "branch": "contrib/pr-candidate-text-layout",
     "changed_paths": 1,
-    "cloud_and_device": "301 baseline JVM cases and original Ubuntu APK verified. API21 original production-class five-stage negative/positive control completed: node creation clears old text, repaired original7a45 preserves text/layout/node/glyphs. API35 and native T9 integration still pending.",
+    "cloud_and_device": "301 baseline JVM cases and original Ubuntu APK verified. API21 node-creation negative/positive control and API35 original production-class constructor/hanzi/latin/null/rebind stages passed with text/Layout/node/glyph preservation. Baseline negative control only API21; no native TrimeApplication, actualcandidate click or TalkBack operation claim.",
     "upstream_pr": 2187,
     "upstream_pr_url": "https://github.com/osfans/trime/pull/2187",
-    "draft": true,
-    "api21_qualification": "candidate-layout-api21-20261022/qualification.json"
+    "draft": false,
+    "api21_qualification": "candidate-layout-api21-20261022/qualification.json",
+    "ready_for_review": true,
+    "api35_qualification": "candidate-layout-api35-20261022/qualification1.json",
+    "api35_root_qualification": "candidate-layout-api35-20261022/root-qualification1.json",
+    "api35_baseline_negative_control_repeated": false,
+    "api35_production_class_positive_stages": 5,
+    "api35_native_or_trime_application_started": false,
+    "api35_talkback_operation_passed": false,
+    "api35_first_columnar_ls_export_failure_preserved": true
   },
   "warning_comparison_local_evidence": "build/readiness-20261022/t9/encode-warning-comparison1/result.json",
-  "ready_for_review_count": 4,
+  "ready_for_review_count": 6,
   "ready_transition_batch2_receipt": {
     "path": "ready-transitions-20261022-batch2.json",
     "bytes": 1131,
     "sha256": "58a4217eaa0e2ca0f7db54024a4289b006bd3d2e959e22c3e7ea32d802b7c31b",
     "original_local_path": "/home/xumin/Public/Trime/build/readiness-20261022/ui/ready-transitions2/result.json"
+  },
+  "ready_transition_batch3_receipt": {
+    "path": "ready-transitions-20261022-batch3.json",
+    "bytes": 1225,
+    "sha256": "4569140520914afcfe3dea89ec4a25d1e85f12edd2c4967f4b7f377aec9b94d8",
+    "original_local_path": "/home/xumin/Public/Trime/build/readiness-20261022/ui/ready-transitions3/result.json"
   }
 }
