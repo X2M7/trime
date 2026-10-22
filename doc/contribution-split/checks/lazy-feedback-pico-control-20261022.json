@@ -1,0 +1,76 @@
+{
+  "bootId": "584ba366-be23-47d0-9e5b-0765788304d3",
+  "api": 21,
+  "systemAbi": "x86_64",
+  "probe": "Trime/build/readiness-20261022/ui/pico-control-build2/probe.apk",
+  "probeSha256": "4379c710256a555e7fe83f844b59e8bc704d9676c4a9850e6d174afe0effedfd",
+  "loadsTrime": false,
+  "isolation": {
+    "LatinOnly": true,
+    "TrimeForceStopped": true,
+    "TrimeOrTtsActiveBindingBeforeControl": false,
+    "oldCachedPicoKilledWithAmKill": 4319,
+    "picoAbsentBeforeControls": true
+  },
+  "runs": [
+    {
+      "report": "pico2/result.json",
+      "clientPid": 7635,
+      "freshEnginePid": 7652,
+      "explicitStopCalls": 2,
+      "explicitShutdownCalls": 1,
+      "clientCallbacksPassed": true,
+      "engineFatal": true,
+      "tombstone": "54-pico2-tombstone.stdout"
+    },
+    {
+      "report": "pico0/result.json",
+      "clientPid": 7733,
+      "freshEnginePid": 7750,
+      "explicitStopCalls": 0,
+      "explicitShutdownCalls": 1,
+      "clientCallbacksPassed": true,
+      "engineFatal": true,
+      "tombstone": "65-pico0-tombstone.stdout"
+    }
+  ],
+  "conclusion": "Same API21 x86_64 system Pico shutdown SIGSEGV reproduced by a self-target standard Android TextToSpeech client without Trime classes, bindings, or any explicit stop. This establishes a system engine cause for the matching feedback shutdown fatal in this VM; it does not fix that system engine, prove all TTS engines safe, or assert zero all-PID fatal events.",
+  "feedbackProductScope": "Six original real feedback resource/callback check groups remain passed. The earlier full runtime round retains its fatal record; this independent control supplies a justified system-engine exclusion for readiness. No physical audible output or SoundPool streamId acceptance.",
+  "rawEvidence": [
+    "raw-scope-083751-084235.txt",
+    "raw-scope-receipt.json",
+    "46-services-before-pico.stdout",
+    "51-processes-pico-fresh-pre.stdout",
+    "61-before-pico0-services.stdout",
+    "62-before-pico0-processes.stdout"
+  ],
+  "reportSha256": {
+    "pico2/result.json": "4d90b0dafbe96139f580a857dbd39d8f8126f195d979873999eb6d68a63a7160",
+    "pico0/result.json": "deef1229e8ca0694a65b04496788c1e092ec5ca6d87b29f6aba43f8891b8674f",
+    "54-pico2-tombstone.stdout": "e5927bfdd91a76b1a856c9e18d8f1ccb35da00ceabef8e8231ee2ce7596f187c",
+    "65-pico0-tombstone.stdout": "8788e3e9a6a37220caae8433fb872e427d1e14dfdef9faf0dc6b006f3d5f54ca"
+  },
+  "rawEvidenceRoot": "Trime/build/readiness-20261022/ui/runtime-api21-scroll1",
+  "portableRawFiles": [
+    {
+      "file": "feedback-pico-control-20261022/two-stops-result.json",
+      "sha256": "4d90b0dafbe96139f580a857dbd39d8f8126f195d979873999eb6d68a63a7160",
+      "bytes": 1228
+    },
+    {
+      "file": "feedback-pico-control-20261022/two-stops-tombstone.txt",
+      "sha256": "e5927bfdd91a76b1a856c9e18d8f1ccb35da00ceabef8e8231ee2ce7596f187c",
+      "bytes": 110800
+    },
+    {
+      "file": "feedback-pico-control-20261022/zero-stops-result.json",
+      "sha256": "deef1229e8ca0694a65b04496788c1e092ec5ca6d87b29f6aba43f8891b8674f",
+      "bytes": 1092
+    },
+    {
+      "file": "feedback-pico-control-20261022/zero-stops-tombstone.txt",
+      "sha256": "8788e3e9a6a37220caae8433fb872e427d1e14dfdef9faf0dc6b006f3d5f54ca",
+      "bytes": 110847
+    }
+  ]
+}

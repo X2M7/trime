@@ -4,13 +4,17 @@
 
 按用户确认的范围，[#2177 剪贴板编辑器高度](https://github.com/osfans/trime/pull/2177)和 [#2180 回车标签与动作](https://github.com/osfans/trime/pull/2180)已转为 **Ready for review**，源码 SHA 未变，提交时四项上游检查均成功。PR 正文仍明确列出实际窗口／InputConnection 等手测缺口，未勾选未执行的验收；Ready 不是维护者批准或可以直接合并。[转换回执与后续范围](checks/readiness-20261022.json)保留精确身份。
 
-[#2181](https://github.com/osfans/trime/pull/2181) 与 [#2178](https://github.com/osfans/trime/pull/2178)已由上游合入。九键 #2183 普通合并最新 `develop`（`12ffd16f`），新源码为 `11746801`；日志 #2182 同步到 `7da03b4b`。两支均只增加已被上游接受的 JNI 线程归属、JNI 目录 API 与 Snappy 更新，原功能文件不变；未改写原历史。九键新源码已实际通过 328 项应用 JVM、115 项独立 JNI 宿主断言，另有本地真实 VM 的 146 项组合断言和 8 个 JNI 编译单元的严格 NDK 编译；这些不是 Android 运行验收。
+[#2181](https://github.com/osfans/trime/pull/2181) 与 [#2178](https://github.com/osfans/trime/pull/2178)已由上游合入。九键 #2183 普通合并最新 `develop`（`12ffd16f`），新源码为 `11746801`；日志 #2182 在普通合并上游后修复了默认导出文件名，当前为 `d7c0d441`。合并只增加已被上游接受的 JNI 线程归属、JNI 目录 API 与 Snappy 更新；导出修复另外单列，未改写原历史。九键新源码已实际通过 328 项应用 JVM、115 项独立 JNI 宿主断言，另有本地真实 VM 的 146 项组合断言和 8 个 JNI 编译单元的严格 NDK 编译；这些不是 Android 运行验收。
 
 #2176 首次设置、#2179 反馈资源、#2182 日志、#2183 九键继续保持 Draft，按各自完整行为做针对性 Android 5.0／15 验收。第一轮旧日志 APK 在首次维护完成后发生真实 JNI 未 detach 崩溃，原包尚未包含上游 #2178；另一次高日志量时的采集流非零退出仍未确认原因，失败原件保留，须用新集成包重测。布局与反馈探针中的前置／工具失败也保留，不能当成产品通过。
 
-针对性的 Android 5.0 对照已实际发现 #2176 的短屏回归：底部按钮边界虽然正确，完成提示的可见高度却从 16px 降到 4px。[原始图片与配对测量](checks/setup-footer-runtime-20261022/result.json)保留，不能以五项导航通过代替内容可达。已正常推送修复 `a219a075`，为页面增加保持居中的 ScrollView；新包的滚动／大字体验收仍待完成。#2179 的六组真实 Android 资源／回调检查通过，但随后的系统 Pico TTS 在 shutdown 时发生 native SIGSEGV，[业务结果和失败边界](checks/lazy-feedback-api21-20261022.json)分别记录；独立 TTS 控制对照未完成前，不认定为系统自身原因，也不将整轮记为通过。
+#2176 的旧 footer-only 补丁曾把完成提示的可见高度从 16px 降到 4px，[失败对照原件](checks/setup-footer-runtime-20261022/result.json)保留。修复 `a219a075` 增加保持居中的 ScrollView 后，新的 [Android 5.0 实际设置验收](checks/setup-footer-api21-20261022.json)已在同一 480×540／dpi160、真实系统字体 1／2 下分别通过五步触摸与导航：全部正文、Done 及图标可真实滚动到完整可见，底部按钮固定，Next 隐藏时 pager 仍止于 Prev／Skip 上方。两组各保留七张原图，关键原图及矩形已独立复核；301 项应用 JVM 新执行通过、四项上游构建成功。签名仅用于诊断，API35、完整首次使用与真实设备仍未验收，原工具失败均保留。
 
-本轮新平台构建有基础设施中断，成功 Ubuntu APK 已单独审计用于验收，不能把部分成功写成八项全绿。Debug 原包的签名有效，但两条已有 `META-INF/services` 警告保留；不删除服务注册来隐藏它们。没有真机验收、稳定版发布或自动合并。下文是此前各轮拆分和检查记录，原日期／SHA 的通过结论不替代本节新源码的待验收事项。
+#2179 的[六组真实 Android manager／Looper／SoundPool／TTS 回调检查](checks/lazy-feedback-api21-20261022.json)通过，但原整轮仍保留 shutdown 时 Pico native SIGSEGV，未改写为全 PID 通过。新的[独立标准 TTS 控制](checks/lazy-feedback-pico-control-20261022.json)在没有 Trime 类或绑定时，以全新 Pico PID 分别执行“两次 stop＋一次 shutdown”和“零次 stop＋一次 shutdown”，均复现同一 `libttspico.so` 释放栈，已证实这一个 Android 5.0 x86_64 系统引擎原因。该限定排除不等于修复系统引擎或全日志零 Fatal；API35、真实按键整合、迟到 native 回调、物理可听输出和 SoundPool stream ID 缺口保留。两项 PR 当前仍为 Draft，文档更新没有改变 GitHub 状态。
+
+日志新源码 `d7c0d441` 的 333 项完整应用 JVM 测试以及 fork／上游八个 OS 构建均通过。实际 Android 5.0 验证发现默认 ISO 文件名中的冒号会使 VFAT 保存失败，已只修改建议文件名，正在重新验证真实保存及日志采集。前一轮还在普通 `a` 输入的“𠼞”候选发现 JNI 标准 UTF-8／Modified UTF-8 不匹配的真实崩溃；独立修复已推送 [contrib/pr-jni-unicode-transport](https://github.com/X2M7/trime/tree/contrib/pr-jni-unicode-transport)（`e16ab85f`），115 项字符串与 46 项 UTF-16 位置宿主断言、6 个 JNI 单元严格编译通过，新的云端应用／APK 与 ART 验证仍在进行，尚未创建其上游 PR。
+
+布局新源码的 fork 构建仍有任务运行，已成功的 Ubuntu APK 单独审计用于验收；日志分支八项构建通过与其他未完成的检查分别记录。Debug 原包的签名有效，但两条已有 `META-INF/services` 警告保留；不删除服务注册来隐藏它们。没有真机验收、稳定版发布或自动合并。下文是此前各轮拆分和检查记录，原日期／SHA 的通过结论不替代本节新源码的待验收事项。
 
 日期：2026-10-21。本分支仅用于 X2M7 fork 的拆分索引，不作为上游 PR 的内容。
 

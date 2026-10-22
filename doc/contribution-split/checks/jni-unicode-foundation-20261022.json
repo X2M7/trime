@@ -1,0 +1,19 @@
+{
+  "branch": "contrib/pr-jni-unicode-transport",
+  "source": "e16ab85f495e5bbf353187c29efbff74526cff9c",
+  "base": "12ffd16fe03537b6d0ed9716c71cbc33608c2a33",
+  "tree": "6a440294760974c7a396c57dffa9655dc026d503",
+  "pushed_to_fork": true,
+  "upstream_pr_created": false,
+  "scope": "Standard UTF8/UTF16 strings and composition positions; 8 production JNI files, 4 native test/docs, no T9 UI/schema, fork config or submodule changes.",
+  "host_unicode_assertions": 115,
+  "host_utf16_position_assertions": 46,
+  "both_baseline_controls_failed_as_expected": true,
+  "ndk_api21_x64_translation_units_werror": 6,
+  "independent_review": "Two reviewers read production, test and runner code; 12 exact source blobs bound.",
+  "cloud_and_android": "Pending fresh cloud full application/JNI checks and original APK/ART candidate regression.",
+  "limits": [
+    "Host checks do not initialize a real Rime session, GlobalRef singleton or Android editor.",
+    "No arbitrary native allocation exception wrapper, no C-string embedded-NUL acceptance claim."
+  ]
+}

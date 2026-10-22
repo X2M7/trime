@@ -1,0 +1,180 @@
+{
+  "sourceHead": "a219a07545ba26d7cfda287305ceedee34ea824c",
+  "scope": "API21 isolated emulator SetupActivity short-screen/footer scrolling smoke, system font1 and actual AMS font2. No Rime initialization/input, full install/onboarding, update-signature, Release or physical device acceptance.",
+  "officialCiApk": {
+    "run": 39699200200,
+    "artifact": 12391808006,
+    "sha256": "08cf65a5eaf4558625e27746c8b985979efbcb0546f6173d1e2c5678e1891560",
+    "treeEqualsPrHead": true
+  },
+  "diagnosticTarget": {
+    "sha256": "0d26323b1743a1c4b8ca67d3cc88d11d67712f4b5c852a396ec48b3c5adea196",
+    "all784NonSignatureZipPayloadsIdentical": true,
+    "installedReadback": "../runtime-api21-scroll1/21-installed-bytes.stdout",
+    "signatureAcceptance": false
+  },
+  "probe": {
+    "build": "setup-build10",
+    "sha256": "84f4696b639ff7b083123e9048b64fdd4a3e21ce109d5ceb9c4160a945f6e04e",
+    "localVisibleCoordinatesSubtractOwnScrollXY": true,
+    "realSwipeDistanceBoundedByMissingEdgeDistanceAndOriginalMaximum": true,
+    "eightAttemptsAndFullVisibilityAndFiveStepAssertionsPreserved": true
+  },
+  "results": {
+    "font1-probe10": {
+      "reportSha256": "6b548fc603ff449b131beb6df90a81c2a3eeb5343b478e8801e91ceba0eb54dc",
+      "pid": 8395,
+      "resourcesFontScale": 1,
+      "stepTextPx": 24,
+      "frames": 7,
+      "realTaps": 5,
+      "realSwipes": 3,
+      "doneFullAndVisibleRect": [
+        233,
+        352,
+        279,
+        380
+      ],
+      "iconFullAndVisibleRect": [
+        201,
+        354,
+        225,
+        378
+      ],
+      "allRequiredBodyViewsFullyReachable": true,
+      "pagerBottomAndVisibleFooterTop": 396,
+      "selectNext": "GONE"
+    },
+    "font2-probe10": {
+      "reportSha256": "8deeee7a0b8152642e2e527fb3f6e855b1b0a5821e8aa1631d39374aa937fc6d",
+      "pid": 8281,
+      "resourcesFontScale": 2,
+      "stepTextPx": 48,
+      "frames": 7,
+      "realTaps": 5,
+      "realSwipes": 11,
+      "doneFullAndVisibleRect": [
+        210,
+        331,
+        303,
+        385
+      ],
+      "iconFullAndVisibleRect": [
+        178,
+        346,
+        202,
+        370
+      ],
+      "allRequiredBodyViewsFullyReachable": true,
+      "pagerBottomAndVisibleFooterTop": 396,
+      "selectNext": "GONE"
+    }
+  },
+  "fontControl": {
+    "package": "org.x2m7.trime.readiness.config",
+    "permissions": [
+      "CHANGE_CONFIGURATION development grant",
+      "WRITE_SETTINGS"
+    ],
+    "api": "ActivityManagerNative.getDefault -> getConfiguration -> copy only fontScale -> updatePersistentConfiguration",
+    "setReport": "16-font2-ams-report3.stdout",
+    "restoredReport": "27-font1-restored-ams-report.stdout",
+    "otherConfigDiffMask": 0,
+    "restoredOriginalSettingsKeyNull": true
+  },
+  "rawAllPidScope": {
+    "path": "Trime/build/readiness-20261022/ui/runtime-api21-scroll2/raw-scope-084400-084742.txt",
+    "sha256": "63462a564b25a3faf981fcfba0c3c50dd0ddd9138ff4cd82c8a3cc8af38c45ab",
+    "lines": 1631,
+    "first": "10-22 08:44:00.409  7870  7870 D AndroidRuntime: ",
+    "last": "10-22 08:47:40.148  1122  1179 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 3686400",
+    "warningLines": 203,
+    "fatalLines": []
+  },
+  "finalState": {
+    "size": "720x1280",
+    "density": 320,
+    "fontScaleAMS": 1,
+    "fontSetting": null,
+    "onlyEnabledAndDefaultIme": "LatinIME",
+    "TrimeProcessPresent": false,
+    "cachedPicoProcess": 7907,
+    "cachedPicoCause": "Root continuous log08:44:01.708 VoiceDataInstallerReceiver broadcast started PID7907; not a control engine PID or observed Trime binding.",
+    "oldCrashModalPresent": false
+  },
+  "historicalFailuresRetained": [
+    "../runtime-api21-scroll1/17-font1-run.stdout (old crash modal)",
+    "../runtime-api21-scroll1/25-font1-run.stdout (old crash modal)",
+    "../runtime-api21-scroll1/font2-run1 (settings key alone did not update AMS)",
+    "12-font2-ams-report.stdout (WRITE_SETTINGS missing; config unchanged)",
+    "font2/result.json (fixed-distance preparation oscillated; not product failure)",
+    "../config-helper-build1/javac.stderr (constant referenced in wrong class)"
+  ],
+  "limitations": [
+    "Original CI signature replaced only for diagnostic instrumentation; original APK preserved.",
+    "All system/graphics/audio warnings remain in raw log; no zero-warning claim.",
+    "API21 UiAutomation PNGs are letterboxed; logical screen bounds cannot be overlaid naively on PNG pixels.",
+    "Earlier handoff message incorrectly claimed no Pico process in final scroll2 ps; corrected to cached broadcast PID7907 after offline verification."
+  ],
+  "localEvidenceRoot": "Trime/build/readiness-20261022/ui/runtime-api21-scroll2",
+  "currentGitHubState": "Draft; documentation update only, no PR transition",
+  "originalImagesUnmodified": [
+    {
+      "file": "setup-footer-scroll-api21-20261022/font1-mode-app-selected.png",
+      "sha256": "05ca9ca84a1bfc3b9e526ec6d5d8b90d83ec267307a672f1d13e03382b266432",
+      "bytes": 32149
+    },
+    {
+      "file": "setup-footer-scroll-api21-20261022/font1-mode-app-selected-scroll-top.png",
+      "sha256": "6948b9dc85f481d1c7c00ddd70db936c053af1ecb254c36da893e6fbe2360d7d",
+      "bytes": 28101
+    },
+    {
+      "file": "setup-footer-scroll-api21-20261022/font1-select-next-gone.png",
+      "sha256": "61dec8716757bbfa339439541ae1a6af64a9fa637525bc8858b3beb74c1c787e",
+      "bytes": 14803
+    },
+    {
+      "file": "setup-footer-scroll-api21-20261022/font2-mode-app-selected.png",
+      "sha256": "d916fe70a70b51096d4509c03ff06c36577c1ddf0aba72d05aeb9f6a854c688c",
+      "bytes": 36842
+    },
+    {
+      "file": "setup-footer-scroll-api21-20261022/font2-mode-app-selected-scroll-top.png",
+      "sha256": "1362224e4b20e75c627730e581a5b3ebdf9f4445495a807173ff8ef479dd6c06",
+      "bytes": 25091
+    },
+    {
+      "file": "setup-footer-scroll-api21-20261022/font2-select-next-gone.png",
+      "sha256": "8eb48938180cc79a4d8b704cd2d1d70bdaa8dd3e69d38d80a66044a8240dc91c",
+      "bytes": 24553
+    }
+  ],
+  "cloudScope": {
+    "head": "a219a07545ba26d7cfda287305ceedee34ea824c",
+    "applicationJVM": {
+      "cases": 301,
+      "failures": 0,
+      "errors": 0,
+      "skips": 0,
+      "run": "https://github.com/X2M7/trime/actions/runs/39699212750",
+      "sourceAndTwentyRecursivePinsVerified": true,
+      "testsNotCached": true
+    },
+    "upstreamFourPlatformDebug": {
+      "run": "https://github.com/osfans/trime/actions/runs/39699200200",
+      "allFourJobsSuccess": true
+    },
+    "forkFourPlatformDebug": {
+      "run": "https://github.com/X2M7/trime/actions/runs/39699195458",
+      "snapshot": "Ubuntu and macOS ARM success; macOS Intel and Windows running. No eight-job success claim."
+    },
+    "notCovered": [
+      "Release",
+      "Lint",
+      "full native rebuild proof",
+      "API35",
+      "physical devices"
+    ]
+  }
+}

@@ -1,16 +1,18 @@
-Setup pages currently extend beneath the bottom navigation buttons. Constrain the pager above the top of all visible navigation buttons, including Prev and Skip when Next is gone. Keep those buttons fixed while page content can scroll in a short viewport. A fill-viewport ScrollView preserves the centered page when its content fits; the existing page controls, storage behavior and navigation remain unchanged.
+Setup pages currently extend beneath the bottom navigation buttons. Constrain the pager above all visible navigation buttons, including Prev and Skip when Next is gone, and let overflowing page content scroll while the footer stays fixed. A fill-viewport ScrollView retains the centered layout when the content fits; existing page controls, storage behavior and navigation remain unchanged.
 
-The original footer-only patch reduced the page height without making overflowing content reachable. A paired API21 check at 480×540 and font scale 1 found the completed-storage hint clipped from 16 visible pixels to 4. That failed revision is retained in history. This update wraps the page content for scrolling and still needs the corresponding Android retest; successful navigation alone is not treated as proof that all content is visible.
+The earlier footer-only revision shortened the page without making overflowing content reachable. A paired API21 check at 480×540 and font scale 1 found the completed-storage hint clipped from 16 visible pixels to 4. That failed revision and its original images remain in the audit record; the current scrolling revision addresses that regression.
 
-Validation:
+Validation for `a219a075`:
 
-- Previous exact-source application tests and four-platform Debug builds passed for `560b5b99`; those results do not validate the new scrolling layout.
-- The paired original/fixed Activity check exercised five real touch and navigation steps for each layout. Footer button bounds stayed identical and the pager stopped at the visible footer, but the content-clipping regression above prevents acceptance.
-- The revised XML parses and compiles with AAPT2 without diagnostics. Existing child controls, IDs and constraints are preserved. Source review verified that SetupFragment returns the binding root as View without a ConstraintLayout cast.
-- Fresh full application unit tests and Debug/native builds are in progress for `a219a075`. Actual scrolling, focus, large-font visibility and navigation still need targeted Android validation.
+- [301 application JVM cases](https://github.com/X2M7/trime/actions/runs/39699212750) actually executed and passed with no failures, errors or skips. Source, test XMLs and 20 recursive submodule pins were verified.
+- [Upstream Debug/native CI](https://github.com/osfans/trime/actions/runs/39699200200) passed all four OS jobs. The separate fork run still had two jobs running at the recorded snapshot; no eight-job success or full native rebuild claim is made.
+- The actual SetupActivity passed the five touch/navigation steps at both system font scales 1 and 2 on API21, 480×540/dpi160. Each run preserved seven original frames; real vertical swipes made all body controls/text and the complete Done text/icon reachable. Footer bounds stayed fixed, and the pager stopped above Prev/Skip when Next was gone.
+- The font2 run read back both the actual ActivityManager configuration and target Resources (48px step text versus 24px at font1). Font configuration, its original unset settings key, screen size/density and Latin IME were restored. Key original PNGs and complete/visible rectangles were independently reviewed.
 
-This remains Draft. The earlier Activity comparison used exact CI setup code with a temporary diagnostic signature; the historical baseline APK has source-equivalent setup classes/layouts rather than the complete baseline tree. The probe does not establish a complete onboarding, upgrade, Release or Lint result. Existing dependency and tool warnings remain.
+The PR is still Draft; this update records scoped Android evidence rather than a status change. The diagnostic target differs from the original exact-source CI APK only in its temporary signature: all 784 non-signature ZIP payloads and the installed APK readback were verified. It does not establish official upgrade/signature acceptance, complete onboarding, API35, physical-device, Release or Lint results. System/graphics/audio and existing dependency/tool warnings remain. Earlier modal, configuration and fixed-distance probe failures are preserved separately.
 
 This branch also merges accepted upstream develop at `12ffd16f`, including JNI attachment ownership, the JNI source-directory API and Snappy. Relative to current develop, the feature changes only the two setup layouts.
+
+[Runtime evidence and scope](https://github.com/X2M7/trime/blob/contrib/split-index/doc/contribution-split/checks/setup-footer-api21-20261022.json).
 
 Source: `contrib/pr-setup-footer` at `a219a07545ba26d7cfda287305ceedee34ea824c`.

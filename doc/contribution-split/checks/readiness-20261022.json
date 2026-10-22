@@ -52,13 +52,16 @@
   "logcat": {
     "pr": 2182,
     "draft": true,
-    "source": "7da03b4ba5df97ac7a422ac9dc4947f1e40c2cc6",
+    "source": "d7c0d44191c9e73be2b2a23c40d4909b100f2ddd",
     "ordinary_merge": true,
     "six_business_blobs_unchanged_from": "6e4f2e59acce6cff0d097ff47a8d635940a6aa69",
-    "fresh_cloud_control_run": "https://github.com/X2M7/trime/actions/runs/39636423883",
-    "fresh_control_audit": "333 cases/21 suites actually executed, 0 failures/errors/skips; 20 pins verified; Root re-read XML.",
-    "android_runtime_acceptance": "pending",
-    "old_api21_attempt": "failed; native exit without DetachCurrentThread in APK predating #2178; separate stream nonzero exit unresolved"
+    "fresh_cloud_control_run": "https://github.com/X2M7/trime/actions/runs/39701012200",
+    "fresh_control_audit": "333 cases/21 suites actually executed, 0 failures/errors/skips; 20 pins and original APK identity verified.",
+    "android_runtime_acceptance": "In progress: default SAF name, 3 reader cycles/PID filtering/export, then separate first-maintenance high-flow check.",
+    "old_api21_attempt": "6e4 failed native exit without DetachCurrentThread, predating accepted #2178; separate high-flow stream error remains unproven until new cold device test.",
+    "filename_fix": "Actual API21 VFAT createDocument failed with EINVAL for colon-containing ISO filename. d7c0d441 changes only the suggested export filename to replace colons with hyphens.",
+    "previous_api21_integrated_attempt": "7da maintenance succeeded with same PID4398 and no old detach failure; actual default export failed; later normal a candidate 𠼞 triggered NewStringUTF CheckJNI abort. Failed attempt and PID transition retained.",
+    "implementation_and_test_paths": 7
   },
   "still_draft": [
     2176,
@@ -70,7 +73,8 @@
     "No zero-warning claim: fixed dependencies/toolchain warnings and original Debug APK META-INF/services signature warnings remain.",
     "API21 first-attempt failure is retained; no success claimed after app PID changed.",
     "No physical phone, stable release, production signing, full T12 acceptance or automatic merge performed.",
-    "Current Android setup/feedback diagnostics remain in progress."
+    "API21 layout font1/font2 and feedback resource groups passed within their stated scopes; API35 remains pending.",
+    "A matching API21 x64 Pico shutdown crash independently reproduced with no Trime code and zero stop/one shutdown establishes only that specific system-engine boundary. Raw fatal events remain."
   ],
   "retained_local_evidence": [
     {
@@ -118,8 +122,11 @@
     "pr": 2176,
     "draft": true,
     "source": "a219a07545ba26d7cfda287305ceedee34ea824c",
-    "status": "Confirmed short-screen clipping regression repaired in source, actual new layout acceptance pending.",
-    "paired_report": "setup-footer-runtime-20261022/result.json"
+    "status": "API21 actual SetupActivity font1/font2 short-screen scrolling/navigation passed; API35 scoped check pending.",
+    "paired_report": "setup-footer-runtime-20261022/result.json",
+    "application_jvm_cases": 301,
+    "application_cases_failures_errors_skipped": 0,
+    "api21_runtime_report": "setup-footer-api21-20261022.json"
   },
   "feedback": {
     "pr": 2179,
@@ -127,7 +134,28 @@
     "source": "e7e63932683dfcc985cc88601f995968b8fc50b4",
     "android_business_checks": 6,
     "overall_acceptance": false,
-    "reason": "Pico native shutdown fatal after business checks; standalone TTS control pending."
+    "reason": "Six manager groups passed. Independent standard TTS clients without Trime reproduce the matching API21 x64 Pico shutdown fatal with zero or two explicit stops, establishing that specific system-engine cause; API35 scoped check pending.",
+    "system_engine_control": "lazy-feedback-pico-control-20261022.json",
+    "physical_audio_and_soundpool_stream_id": "not observed"
   },
-  "updated_utc": "2026-10-22T00:26:21.932717+00:00"
+  "updated_utc": "2026-10-22T00:50:52.472971+00:00",
+  "unicode_foundation": {
+    "branch": "contrib/pr-jni-unicode-transport",
+    "source": "e16ab85f495e5bbf353187c29efbff74526cff9c",
+    "base": "12ffd16fe03537b6d0ed9716c71cbc33608c2a33",
+    "tree": "6a440294760974c7a396c57dffa9655dc026d503",
+    "pushed_to_fork": true,
+    "upstream_pr_created": false,
+    "scope": "Standard UTF8/UTF16 strings and composition positions; 8 production JNI files, 4 native test/docs, no T9 UI/schema, fork config or submodule changes.",
+    "host_unicode_assertions": 115,
+    "host_utf16_position_assertions": 46,
+    "both_baseline_controls_failed_as_expected": true,
+    "ndk_api21_x64_translation_units_werror": 6,
+    "independent_review": "Two reviewers read production, test and runner code; 12 exact source blobs bound.",
+    "cloud_and_android": "Pending fresh cloud full application/JNI checks and original APK/ART candidate regression.",
+    "limits": [
+      "Host checks do not initialize a real Rime session, GlobalRef singleton or Android editor.",
+      "No arbitrary native allocation exception wrapper, no C-string embedded-NUL acceptance claim."
+    ]
+  }
 }

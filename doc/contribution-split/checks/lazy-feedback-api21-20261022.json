@@ -29,7 +29,8 @@
     "Pico initialized and reported start/done. No claim of physical audible output or an observed late native callback.",
     "Initial probe attempted singleton access before Application initialization and failed with zero cases; preserved as a harness failure.",
     "API35 and real keyboard gesture validation pending; no Rime startup or application stability acceptance from this focused probe.",
-    "Six checks are not an overall pass: engine later crashed during shutdown, and #2179 remains Draft."
+    "The original six-check round retains its shutdown fatal and is not rewritten as an all-PID pass. Independent self-target controls now reproduce that system engine failure; scoped manager readiness can exclude this proved API21 x86_64 Pico issue.",
+    "Production manager keyPressSound was invoked after a real WAV load callback. SoundPool.play streamId and physical audible output were not observed."
   ],
   "six_business_groups_passed": true,
   "overall_acceptance_passed": false,
@@ -39,7 +40,9 @@
     "pid": 2552,
     "signal": "SIGSEGV",
     "stack": "/system/lib64/libttspico.so picoos_deallocate -> sigDeallocate -> pico_disposeEngine -> android::TtsEngine::shutdown",
-    "attribution": "Not yet uniquely determined. Self-target standalone standard TTS API control pending. Do not exempt solely by package ownership.",
+    "attribution": "Independently reproduced by a self-target standard Android TextToSpeech client without Trime classes or bindings: new Pico engines crash after two explicit stops/one shutdown and after zero explicit stops/one shutdown. This establishes the matching API21 x86_64 system Pico shutdown cause; it does not fix Pico or assert all-PID zero Fatal.",
     "later_logcat_apk": "Failure predates its 08:22 installation; not a new7da Trime startup fatal."
-  }
+  },
+  "independent_control": "lazy-feedback-pico-control-20261022.json",
+  "current_readiness_scope": "Six real Android manager groups verified with a separately proved system Pico exception; API35, actual keyboard gestures, late native callback delivery, physical audio and streamId remain unverified. No GitHub status change by this documentation update."
 }
