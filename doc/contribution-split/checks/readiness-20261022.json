@@ -102,6 +102,68 @@
       "merged": false,
       "receipt": "ready-transitions-20261022-batch4.json",
       "receipt_sha256": "b4ce7bc14e5d4ed4906490eb7c8869cf8f6e42d57709d1ef2d60ebc9ebf050c6"
+    },
+    {
+      "utc": "2026-10-22T05:43:57.076232+00:00",
+      "pr": 2188,
+      "url": "https://github.com/osfans/trime/pull/2188",
+      "head": "2d2fbce70b449ec8b6560c844ca5ddbc2e08a4c3",
+      "before_draft": true,
+      "after_draft": false,
+      "source_unchanged": true,
+      "four_upstream_checks_success": true,
+      "body_exact_readback": true,
+      "body_sha256": "62ccb83b9a95d89ea75363e38f73758a4d84f4cce5265d69ce5c37cb463b0d3c",
+      "evidence_index_commit": "06dd2ac672aeb96d94a88a40cd6b56abaf140080",
+      "api21_startup_scope_only": true,
+      "api21_startup_qualification_sha256": "d86e7ee8d515bf136900edf67574038bc1af5355db3d48cc99eb363f5f7e54e7",
+      "combined_apk_not_standalone_runtime": true,
+      "eight_fragments_not_whole_method_identity": true,
+      "status": "OPEN_READY_FOR_REVIEW",
+      "merge_action_executed": false,
+      "ready_is_not_merge_approval": true,
+      "upstream_checks": [
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-10-22T04:45:01Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/osfans/trime/actions/runs/39723839224/job/119643153083",
+          "name": "build (ubuntu-26.04)",
+          "startedAt": "2026-10-22T04:42:12Z",
+          "status": "COMPLETED",
+          "workflowName": "Pull Request"
+        },
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-10-22T04:45:54Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/osfans/trime/actions/runs/39723839224/job/119643153170",
+          "name": "build (macos-26)",
+          "startedAt": "2026-10-22T04:42:12Z",
+          "status": "COMPLETED",
+          "workflowName": "Pull Request"
+        },
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-10-22T04:49:56Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/osfans/trime/actions/runs/39723839224/job/119643153370",
+          "name": "build (macos-26-intel)",
+          "startedAt": "2026-10-22T04:42:17Z",
+          "status": "COMPLETED",
+          "workflowName": "Pull Request"
+        },
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-10-22T04:49:50Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/osfans/trime/actions/runs/39723839224/job/119643153290",
+          "name": "build (windows-2025)",
+          "startedAt": "2026-10-22T04:42:13Z",
+          "status": "COMPLETED",
+          "workflowName": "Pull Request"
+        }
+      ]
     }
   ],
   "ready_is_not_approval_or_merge": true,
@@ -247,7 +309,7 @@
       "apk_sha256": "9cdb36ab38a5a4d76ab619d54b0b5b484505472cdd7253be3cf0a34502a4706b",
       "boot": "8142a136-21a9-424c-a43e-0077f9539c64",
       "qualified": false,
-      "stage": "Category+standardC1-C4 completed and firstObservernormalstop; naturalstartupsubscopeindependentlyqualified. StandardC5-C8active; trimeC1-C8pending. Three explicitprep prefs, original9fAPK, no oldcache restore.",
+      "stage": "Standardcategory+C1-C8 completed across two normallystoppedObserver sessions; independentstageaudits passed. DefaultthemeC1-C8running; full17notyetqualified.",
       "startup_scope_qualified": true,
       "startup_public_provenance": "deferred-input-view-api21-startup-20261022/provenance.json"
     }
@@ -650,7 +712,7 @@
     "api35_actual_initialization_failure_path_passed": true,
     "api35_soundpool_real_load_callback_passed": true
   },
-  "updated_utc": "2026-10-22T05:37:47.534559+00:00",
+  "updated_utc": "2026-10-22T05:44:49.167626+00:00",
   "unicode_foundation": {
     "branch": "contrib/pr-jni-unicode-transport",
     "source": "e16ab85f495e5bbf353187c29efbff74526cff9c",
@@ -761,7 +823,7 @@
     "api35_first_columnar_ls_export_failure_preserved": true
   },
   "warning_comparison_local_evidence": "build/readiness-20261022/t9/encode-warning-comparison1/result.json",
-  "ready_for_review_count": 7,
+  "ready_for_review_count": 8,
   "ready_transition_batch2_receipt": {
     "path": "ready-transitions-20261022-batch2.json",
     "bytes": 1131,
@@ -782,7 +844,7 @@
   },
   "deferred_input_view": {
     "pr": 2188,
-    "draft": true,
+    "draft": false,
     "head": "2d2fbce70b449ec8b6560c844ca5ddbc2e08a4c3",
     "base": "12ffd16fe03537b6d0ed9716c71cbc33608c2a33",
     "production_files": 1,
@@ -798,6 +860,9 @@
     "final_cloud_provenance": "deferred-input-view-cloud-final-20261022/final-cloud-supplement-summary.json",
     "all_fork_upstream_os_jobs_success": 16,
     "api21_startup_qualified": true,
-    "api21_startup_public_provenance": "deferred-input-view-api21-startup-20261022/provenance.json"
-  }
+    "api21_startup_public_provenance": "deferred-input-view-api21-startup-20261022/provenance.json",
+    "status": "OPEN_READY_FOR_REVIEW",
+    "ready_receipt": "ready-transitions-20261022-batch5.json"
+  },
+  "ready_transition_batch5_receipt": "ready-transitions-20261022-batch5.json"
 }
