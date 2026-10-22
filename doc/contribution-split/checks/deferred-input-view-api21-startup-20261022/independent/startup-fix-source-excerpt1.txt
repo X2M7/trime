@@ -1,0 +1,128 @@
+git object: 9f86bc8f1d11d65d2e22e437f111a965bc2faba5:app/src/main/java/com/osfans/trime/ime/core/TrimeInputMethodService.kt
+blob: 5a431f0d883afb3efc90d87d6d5cb0388ca3c73d
+    77	    private val prefs = AppPrefs.defaultInstance()
+    78	    private lateinit var decorView: View
+    79	    private lateinit var contentView: FrameLayout
+    80	    private lateinit var lastKnownConfig: Configuration
+    81	    private var inputView: InputView? = null
+    82	    private var candidatesView: CandidatesView? = null
+    83	    private var inputViewCreationDeferred = false
+    84	    private var inputViewStartPending = false
+    85	    private val navBarManager = NavigationBarManager()
+    86	    private val inputDeviceManager = InputDeviceManager { useVirtualKeyboard, useCandidatesView ->
+    87	        postRimeJob {
+    88	            setCandidatePagingMode(useCandidatesView)
+    89	        }
+    90	        currentInputConnection?.monitorCursorAnchor(useCandidatesView)
+    91	        val scope = themeScope ?: return@InputDeviceManager
+    92	        window.window?.let {
+    93	            navBarManager.evaluate(it, useVirtualKeyboard, scope.colors)
+    94	        }
+    95	    }
+   206	    override fun onCreate() {
+   207	        rime = RimeDaemon.createSession(javaClass.name)
+   208	        lifecycleScope.launch {
+   209	            jobs.consumeEach { it.join() }
+   210	        }
+   211	        lifecycleScope.launch {
+   212	            rime.run { messageFlow }.collect {
+   213	                handleRimeMessage(it)
+   214	            }
+   215	        }
+   216	        recreateInputViewPrefs.forEach {
+   217	            it.registerOnChangeListener(recreateInputViewListener)
+   218	        }
+   219	        prefs.candidates.registerOnChangeListener(recreateCandidatesViewListener)
+   220	        // ensure theme and color managers are initialized after rime is ready
+   221	        lifecycleScope.launch {
+   222	            rime.runOnReady {
+   223	                ThemeManager.init(resources.configuration)
+   224	                ThemeManager.addOnChangedListener(onThemeChangeListener)
+   225	                ColorManager.addOnChangedListener(onColorChangeListener)
+   226	                if (inputViewCreationDeferred) {
+   227	                    themeScope?.let { replaceInputViews(it, replaceExisting = false) }
+   228	                }
+   229	            }
+   230	        }
+   231	        InputFeedbackManager.init(this)
+   232	        registerReceiver()
+   233	        super.onCreate()
+   234	        Timber.d("onCreate")
+   318	            is RimeMessage.DeployMessage -> {
+   319	                if (it.data == RimeMessage.DeployMessage.State.Success) {
+   320	                    // The deployment may have refreshed the current theme's artifact.
+   321	                    val themeId = ThemeManager.prefs.selectedTheme.getValue()
+   322	                    lifecycleScope.launch { ThemeManager.selectTheme(themeId) }
+   323	                }
+   324	            }
+   325	
+   326	            else -> {}
+   327	        }
+   328	    }
+   329	
+   330	    private fun replaceInputView(scope: ThemeScope): InputView {
+   331	        val newInputView = InputView(this, rime, scope)
+   332	        setInputView(newInputView)
+   333	        inputDeviceManager.setInputView(newInputView)
+   334	        inputView = newInputView
+   335	        if (inputViewStartPending) {
+   336	            if (inputDeviceManager.useVirtualKeyboard) {
+   337	                // A new tree needs the latest editor, even if its start callback arrived earlier.
+   338	                newInputView.startInput(currentInputEditorInfo)
+   339	            }
+   340	            inputViewStartPending = false
+   341	        }
+   342	        return newInputView
+   343	    }
+   344	
+   345	    private fun replaceCandidateView(scope: ThemeScope): CandidatesView {
+   346	        val newCandidatesView = CandidatesView(this, rime, scope)
+   347	        contentView.removeView(candidatesView)
+   348	        contentView.addView(newCandidatesView)
+   349	        inputDeviceManager.setCandidatesView(newCandidatesView)
+   350	        candidatesView = newCandidatesView
+   351	        if (decorLocationUpdated) {
+   352	            candidatesView?.updateCursorAnchor(anchorPosition, contentSize)
+   353	        } else {
+   354	            candidatesView?.updateCursorAnchor(contentSize)
+   355	        }
+   356	        return newCandidatesView
+   357	    }
+   358	
+   359	    private fun replaceInputViews(
+   360	        scope: ThemeScope,
+   361	        replaceExisting: Boolean = true,
+   362	    ) {
+   363	        navBarManager.evaluate(window.window!!, inputDeviceManager.useVirtualKeyboard, scope.colors)
+   364	        if (replaceExisting || inputView == null) replaceInputView(scope)
+   365	        if (replaceExisting || candidatesView == null) replaceCandidateView(scope)
+   366	        inputView?.updateEnterKeyLabel(currentInputEditorInfo)
+   367	        inputViewCreationDeferred = false
+   368	    }
+   575	    override fun onCreateInputView(): View? {
+   576	        Timber.d("onCreateInputView")
+   577	        val scope = themeScope
+   578	        if (scope == null) {
+   579	            inputViewCreationDeferred = true
+   580	            Timber.w("ThemeScope is not ready yet; deferring input view creation")
+   581	            return null
+   582	        }
+   583	        replaceInputViews(scope)
+   584	        // We will call `setInputView` by ourselves. This is fine.
+   585	        return null
+   639	    override fun onStartInputView(
+   640	        attribute: EditorInfo,
+   641	        restarting: Boolean,
+   642	    ) {
+   643	        Timber.d("onStartInputView: restarting=$restarting")
+   644	        InputFeedbackManager.startInput()
+   645	        postRimeJob {
+   646	            updateRimeOption(this)
+   647	        }
+   648	        val (useVirtualKeyboard, useCandidatesView) =
+   649	            inputDeviceManager.evaluateOnStartInputView(attribute, this)
+   650	        inputViewStartPending = inputView == null
+   651	        if (useVirtualKeyboard) {
+   652	            inputView?.startInput(attribute, restarting)
+   653	        }
+   654	        if (useCandidatesView) {
