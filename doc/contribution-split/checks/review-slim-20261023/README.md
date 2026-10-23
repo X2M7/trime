@@ -20,4 +20,4 @@
 
 原始 host 记录映射见 [静态清单](publication-map-static-final.json)，原始 CI 记录映射见 [CI 清单](publication-map-ci.json)。中间轮询快照和下载的官方源码／编译二进制仍留本地，正式引用与未截断日志保留。`.gitattributes` 保持原换行，统一 SHA 清单覆盖发布文件。
 
-PR 正文将在本证据提交固定后同步，并另存实际逐字读回回执。
+三份原 PR 正文已更新并逐字读回，源码、标题、Open／非 Draft 状态保持；没有评论、操作线程或更改审阅状态。正文固定引用完整证据提交 `599b26cf`；[实际发布状态与回执](publication-state.json)、[元数据原件映射](publication-map-metadata.json)单列。初次 `ec50e72e` 漏收七个被 Git 忽略的原生日志，已通过普通提交补齐并核对全部 632 个 Git 文件；初次提交未用作正文证据。
