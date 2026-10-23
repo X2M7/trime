@@ -1,0 +1,24 @@
+--- /home/xumin/Public/Trime/build/pr2187-review-20261023/runtime-plan/run-probes.py
++++ /home/xumin/Public/Trime/build/pr2187-review-20261023/runtime-plan2/run-probes.py
+@@ -147,6 +147,21 @@
+             (folder / 'instrumentation.stdout.txt').write_text(output)
+             codes = re.findall(r'^INSTRUMENTATION_CODE:\s*(-?\d+)\s*$', output, re.M)
+             directories = re.findall(r'^INSTRUMENTATION_RESULT: directory=(\S+)\s*$', output, re.M)
++            short_messages = re.findall(r'^INSTRUMENTATION_RESULT: shortMsg=(.+)$', output, re.M)
++            if (variant in ('equal_return', 'no_super_measure') and codes == ['0']
++                    and len(short_messages) == 1 and not directories
++                    and not re.search(r'^INSTRUMENTATION_RESULT:\s*directory=', output, re.M)):
++                record.update(state='CONTROL_ABORTED_UNQUALIFIED', instrumentation_code=0,
++                    instrumentation_short_message=short_messages[0],
++                    instrumentation_command=dict(self.report['commands'][-1]),
++                    instrumentation_output=dict(path=str(folder / 'instrumentation.stdout.txt'),
++                        sha256=sha(folder / 'instrumentation.stdout.txt')),
++                    actual_stage_count='NOT_EXPORTED', original_png_count='NOT_EXPORTED',
++                    result_export='NOT_EXPORTED', finished=now(),
++                    negative_control_semantics='Actual instrumentation abort without an exported directory; '
++                        'no stage/BufferType/reference verdict or qualified negative-control result.')
++                save(folder / 'phase-record.json', record)
++                return
+             require(len(codes) == len(directories) == 1, 'Actual instrumentation status/directory missing')
+             remote = directories[0]
+             require(re.fullmatch(r'/data/(?:user/0|data)/' + re.escape(package)

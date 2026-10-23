@@ -1,0 +1,64 @@
+{
+  "at": "2026-10-22T23:45:03.726149+00:00",
+  "passedHostPlanReview": true,
+  "deviceTestsRun": false,
+  "originalApkAuditSha256": "92cf8fa8f3c0cd723d6fdc7adb884579fc31b0c7d2a9bb763e8a06529e870382",
+  "originalApkSha256": "36ede385eac30511f3c600dbc059a196e1ac462f173b154643a54f79b3af7d3a",
+  "source": "92b13711162c5fa56c701267c3a06e5fbceeb6ce",
+  "scope": "Root read run-probes.py, common helper, API21 controller, exact API35 controller diff, log audit, host-preparation report, original APK audit and actual relevant x86_64 DEX. Approves controlled serial class-only round; no device pass or negative failure predeclared.",
+  "runtimePlans": [
+    {
+      "path": "README.md",
+      "bytes": 4779,
+      "sha256": "d1929c32868e01165843dbaecb4f057e49076b4859a361e99a570a0949a19cc1"
+    },
+    {
+      "path": "audit-logs.py",
+      "bytes": 3475,
+      "sha256": "4c776ac5de812be02a7940488ec0b71d8ed2e43a7359db1b298caf72524fa6f5"
+    },
+    {
+      "path": "binding-template.json",
+      "bytes": 7444,
+      "sha256": "ec91cc942cb325a1d35264c90164b20a6dd60be62be4c4794b48034b9c90d6c9"
+    },
+    {
+      "path": "filename-collision-correction.json",
+      "bytes": 466,
+      "sha256": "ff1d6c7954bc3379977c731a0025921072276d62945204f8a35c61429e551f7c"
+    },
+    {
+      "path": "run-api21.py",
+      "bytes": 10685,
+      "sha256": "5f340e01b1163dc44efe7b2656a2ef59fe30a9b7d1effef82ade67d47c18a8e0"
+    },
+    {
+      "path": "run-api35.py",
+      "bytes": 10685,
+      "sha256": "f7b9752be010469a3b33988c787b092a11ae9c22f7f54111f438fbef0e590c75"
+    },
+    {
+      "path": "run-probes.py",
+      "bytes": 16229,
+      "sha256": "1e89d83186e8393edeab572ce9cba6d02dec8f287a29d28221d430e2e6182d3d"
+    },
+    {
+      "path": "runtime_common.py",
+      "bytes": 2245,
+      "sha256": "b2bd72cc69efd8b8416ccf0e65d3ddd6afe8b7d3f3430a3faf0b7bdc8a5b3319"
+    }
+  ],
+  "negativeControlRules": [
+    "equal_return needs real immediate buffer mismatch and same-stage framework reference success.",
+    "no_super_measure must be reported not distinguished if 13/13 pass."
+  ],
+  "diagnosticLegacyProductionLabel": "Only a namespace source copy; not original CI APK.",
+  "requiredRootVisualReview": "Original five hardware screenshots per original-APK round; actual buffer/action JSON and selected additional original PNGs.",
+  "notAcceptedAsEvidence": [
+    "Hardcoded native/Application false flag",
+    "Source diagnostic as original APK",
+    "synthetic merge APK as exact fork92b",
+    "Global zero warnings",
+    "TalkBack or nativeIME integration"
+  ]
+}

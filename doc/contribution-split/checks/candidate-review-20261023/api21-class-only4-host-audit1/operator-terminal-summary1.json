@@ -1,0 +1,211 @@
+{
+  "operator_facts_only": true,
+  "independent_visual_qualification": "ROOT_AND_INDEPENDENT_AGENT_SEPARATE",
+  "source_head": "92b13711162c5fa56c701267c3a06e5fbceeb6ce",
+  "binding_sha256": "c3906484c17825efdc276666998a7878bc779e04f3a4556b9b8fabe50ed020e8",
+  "fixture_actual_exit": 0,
+  "child_actual_exit": 0,
+  "fixture_cleanup_errors": [],
+  "documents_restored_exactly": {
+    "package": "com.android.documentsui",
+    "present": true,
+    "apk_path": "/system/app/DocumentsUI/DocumentsUI.apk",
+    "apk_path_query": "PRESENT",
+    "installed": true,
+    "hidden": false,
+    "enabled": 0,
+    "stopped": false,
+    "user0_raw": "installed=true hidden=false stopped=false notLaunched=false enabled=0\r",
+    "pm_path_command": {
+      "at": "2026-10-23T00:19:25.180829+00:00",
+      "argv": [
+        "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+        "-s",
+        "emulator-5582",
+        "shell",
+        "sh -c 'pm path com.android.documentsui'; _trime_t12_status=$?; echo ''; echo \"__TRIME_T12_REMOTE_RC_df25c4892c3eea9f54fdf55b7371424c:$_trime_t12_status\""
+      ],
+      "stdout": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api21-class-only4/fixture1/commands/0016.stdout",
+      "stderr": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api21-class-only4/fixture1/commands/0016.stderr",
+      "timeout_seconds": 60,
+      "completed": true,
+      "returncode": 0,
+      "finished": "2026-10-23T00:19:25.756345+00:00",
+      "stdout_sha256": "824e12fef6dcddae14f815e07f1285a83652b234000a7e35863dbd7911203bbe",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "shell_protocol_nonce": "df25c4892c3eea9f54fdf55b7371424c",
+      "remote_returncode": 0,
+      "remote_stdout_bytes": 49,
+      "remote_stdout_sha256": "6139739fb636d87f2c3980b108af9376fa3139d9edb95ebddfeb96b7aa21fff0"
+    }
+  },
+  "nonce": "e23547ee385e9db9fabc09582a710e93",
+  "operator_sequence_completed": true,
+  "operator_restored_exactly": true,
+  "operator_cleanup_errors": [],
+  "phases": [
+    {
+      "name": "diagnostic-safe",
+      "notProductionApk": true,
+      "state": null,
+      "instrumentation_code": -1,
+      "reported_passed": true,
+      "actual_stage_count": 13,
+      "original_png_count": 39,
+      "original_folder": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api21-class-only4/operator1/diagnostic-safe/original",
+      "result_sha256": "f0cfe476bf2a346bd823b99f7d2d0b872acb39f9972d08b7f5bd690f1e36550e",
+      "actual_probe_process_identity": {
+        "self_reported_pid": 2531,
+        "os_pid_start": "NOT_OBSERVED"
+      }
+    },
+    {
+      "name": "diagnostic-equal_return",
+      "notProductionApk": true,
+      "state": "CONTROL_ABORTED_UNQUALIFIED",
+      "instrumentation_code": 0,
+      "reported_passed": null,
+      "actual_stage_count": "NOT_EXPORTED",
+      "original_png_count": "NOT_EXPORTED",
+      "original_folder": null,
+      "result_sha256": null,
+      "actual_probe_process_identity": null
+    },
+    {
+      "name": "diagnostic-no_super_measure",
+      "notProductionApk": true,
+      "state": null,
+      "instrumentation_code": 0,
+      "reported_passed": false,
+      "actual_stage_count": 13,
+      "original_png_count": 39,
+      "original_folder": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api21-class-only4/operator1/diagnostic-no_super_measure/original",
+      "result_sha256": "9928997783134c227b40df01324990dc182a66824e74b476315540b147b28997",
+      "actual_probe_process_identity": {
+        "self_reported_pid": 2633,
+        "os_pid_start": "NOT_OBSERVED"
+      }
+    },
+    {
+      "name": "production-class-only",
+      "notProductionApk": false,
+      "state": null,
+      "instrumentation_code": -1,
+      "reported_passed": true,
+      "actual_stage_count": 13,
+      "original_png_count": 39,
+      "original_folder": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api21-class-only4/operator1/production-class-only/original",
+      "result_sha256": "c6c642d051423e08bbcd8b925bd0cc504a6106904b25400abd8a4e6255a6db8c",
+      "actual_probe_process_identity": {
+        "self_reported_pid": 2884,
+        "os_pid_start": "NOT_OBSERVED"
+      }
+    }
+  ],
+  "controller_completion": {
+    "argv": [
+      "/home/xumin/Public/android-toolchain/android-sdk/emulator/emulator",
+      "-avd",
+      "trime_readiness_api21_20261022",
+      "-sysdir",
+      "/home/xumin/Public/Trime/build/readiness-20261022/api21/system-images",
+      "-no-snapshot",
+      "-no-window",
+      "-no-boot-anim",
+      "-gpu",
+      "swangle",
+      "-cores",
+      "1",
+      "-memory",
+      "2048",
+      "-port",
+      "5582",
+      "-accel",
+      "on",
+      "-feature",
+      "-Vulkan"
+    ],
+    "serial": "emulator-5582",
+    "started_utc": "2026-10-23T00:16:37.726268+00:00",
+    "memory_floor_kib": 1048576,
+    "source_head": "92b13711162c5fa56c701267c3a06e5fbceeb6ce",
+    "original_apk_sha256": "36ede385eac30511f3c600dbc059a196e1ac462f173b154643a54f79b3af7d3a",
+    "controller_sha256": "c95b1fa53e540e12134f9da152aa3ee19ae8f296c873242a747f2bdf2922ab49",
+    "session_lifetime_guard": null,
+    "operator_normal_stop_required": true,
+    "prelaunch_memory": {
+      "MemTotal": 16017176,
+      "MemAvailable": 8145672,
+      "SwapFree": 0,
+      "utc": "2026-10-23T00:17:03.353314+00:00"
+    },
+    "pid": 309666,
+    "proc_stat_at_launch": "309666 (emulator) D 309346 309666 309666 0 -1 4194304 2 0 0 0 0 0 0 0 20 0 1 0 3985174 1552384 0 18446744073709551615 0 0 140720938880572 0 0 0 0 0 0 1 0 0 17 7 0 0 0 0 0 0 0 0 140720938880572 0 0 0 0\n",
+    "minimum_mem_available_kib": 6787124,
+    "booted": true,
+    "normal_stop": {
+      "exit": 0,
+      "stdout": "OK: killing emulator, bye bye\nOK\n",
+      "stderr": ""
+    },
+    "emulator_exit": 0,
+    "collector_exit": 0,
+    "original_sdk_unchanged": true,
+    "cleanup_errors": [],
+    "reason": "requested-normal-stop",
+    "ended_utc": "2026-10-23T00:20:10.157412+00:00"
+  },
+  "whole_stream_warning_priority_counts": {
+    "I": 1285,
+    "D": 2827,
+    "E": 526,
+    "V": 116,
+    "W": 1568
+  },
+  "whole_stream_critical_events": [
+    {
+      "kinds": [
+        "runtime-fatal-or-oom"
+      ],
+      "line": 5639,
+      "byte_offset": 730864,
+      "pid": 2584,
+      "tag": "AndroidRuntime",
+      "text": "10-23 08:18:06.025  2584  2584 E AndroidRuntime: FATAL EXCEPTION: main\r\n"
+    },
+    {
+      "kinds": [
+        "ANR-or-crash-record"
+      ],
+      "line": 5687,
+      "byte_offset": 736454,
+      "pid": 1480,
+      "tag": "am_crash",
+      "text": "10-23 08:18:06.029  1480  1859 I am_crash: [2584,0,org.x2m7.trime.readiness.candidatediagnostic,11058758,java.lang.NullPointerException,Attempt to invoke interface method 'int java.lang.CharSequence.length()' on a null object reference,BoringLayout.java,256]\r\n"
+    }
+  ],
+  "whole_stream_target_start_records": [],
+  "scope": "Only BEGIN..END and actual child/phase ps may support class-only claims; not whole-VM historical Application absence.",
+  "evidence": [
+    {
+      "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api21-class-only4/fixture1/report.json",
+      "sha256": "d32c160de592026f4f6b403c86abe082903a295f739e41f05aa5066c82dc6a3a",
+      "bytes": 31064
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api21-class-only4/operator1/report.json",
+      "sha256": "fac48b339f8e85af3e834c1e77acae682bbeb3a485d4fadf2e55d0e35f207902",
+      "bytes": 160066
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api21-class-only4/completion.json",
+      "sha256": "3e072892372ad3bf2af24f536307f2882af326d84de473e2db4d8b9d44494130",
+      "bytes": 1639
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api21-class-only4-host-audit1/audit.json",
+      "sha256": "cc0bdbd0faae9d67e871777c14b314e4602ed7089c16f054444487c6d9e0f22f",
+      "bytes": 3194
+    }
+  ]
+}

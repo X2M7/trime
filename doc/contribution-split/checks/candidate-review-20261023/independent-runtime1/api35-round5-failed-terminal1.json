@@ -1,0 +1,954 @@
+{
+  "createdUtc": "2026-10-23T00:33:09.892342+00:00",
+  "reviewer": "candidate_review_prepare HOST independent",
+  "sourceHead": "92b13711162c5fa56c701267c3a06e5fbceeb6ce",
+  "sourceSha256": "59cf13b4b42b09acbb06f41922c2480844ffa96a7399494b565e718a4a12a05c",
+  "overallQualified": false,
+  "disposition": "NOT_QUALIFIED_ZERO_STAGE_READY_PRECONDITION_FAILURE",
+  "productSourceRejected": false,
+  "productSourcePassed": false,
+  "originalProductionPhase": "NOT_RUN",
+  "script": {
+    "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/independent-runtime1/qualify_failed_api35_round5.py",
+    "bytes": 8769,
+    "sha256": "f42e997b80e0d08216b34632b70ec2d5447197bb853668031ef3ce01914c2b8b",
+    "inode": 29788718,
+    "unchangedDuringHash": true
+  },
+  "helperScripts": {
+    "qualify.py": {
+      "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/independent-runtime1/qualify.py",
+      "bytes": 22753,
+      "sha256": "19cfd66f382eaf90b903a1686d24a5f9682bb204455638842d998e17182e3d2b",
+      "inode": 29786750,
+      "unchangedDuringHash": true
+    },
+    "qualify_fixture.py": {
+      "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/independent-runtime1/qualify_fixture.py",
+      "bytes": 13613,
+      "sha256": "4a48ebc56fbe7623df5e65675db14b7496f005f9abfe57d0d3beac2f531f8495",
+      "inode": 29787096,
+      "unchangedDuringHash": true
+    },
+    "bookend_rules.py": {
+      "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/independent-runtime1/bookend_rules.py",
+      "bytes": 4750,
+      "sha256": "6a1ac26ffef94cc7d5e054493733f6da4cd1a150d97be4f9be0faa3ae39420fd",
+      "inode": 29786946,
+      "unchangedDuringHash": true
+    }
+  },
+  "originalInputs": {
+    "fixture1/report.json": {
+      "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api35-class-only5/fixture1/report.json",
+      "bytes": 31402,
+      "sha256": "0050d382068a3b2c667886285919713eeffe59d4c7f96c8e28f88774fd9141cb",
+      "inode": 29788564,
+      "unchangedDuringHash": true
+    },
+    "operator1/report.json": {
+      "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api35-class-only5/operator1/report.json",
+      "bytes": 51534,
+      "sha256": "98d2dfe98bd0b22475402c686231610345f751cd04698d43a38511a92511e292",
+      "inode": 29788604,
+      "unchangedDuringHash": true
+    },
+    "completion.json": {
+      "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api35-class-only5/completion.json",
+      "bytes": 1751,
+      "sha256": "3087a9895f1583e0cfb42cba6a49deca6dc8ec82426d5b779b67b83cff262da9",
+      "inode": 29788710,
+      "unchangedDuringHash": true
+    }
+  },
+  "failedPhase": {
+    "name": "diagnostic-safe",
+    "notProductionApk": true,
+    "actualInstrumentationCodes": [
+      0
+    ],
+    "originalReport": {
+      "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api35-class-only5/operator1/diagnostic-safe/exported/candidate-layout-af77a6b6-bfb5-4b3a-be10-478912f1b5d1/result.json",
+      "bytes": 868,
+      "sha256": "e3daf297d7731d6fc84e254b0f59f58e47f6cb2f8764c948b283f839e6a656f1",
+      "inode": 29788659,
+      "unchangedDuringHash": true
+    },
+    "actualReport": {
+      "failure": "java.lang.IllegalStateException: Own Activity did not receive focus within 8 seconds\n\tat org.x2m7.trime.readiness.candidatediagnostic.CandidateProbe.onStart(CandidateProbe.java:303)\n\tat android.app.Instrumentation$InstrumentationThread.run(Instrumentation.java:2594)\n",
+      "passed": false,
+      "stages": [],
+      "expectedStageCount": 13,
+      "originalFiveStageNames": [
+        "constructor",
+        "hanzi",
+        "latin",
+        "null",
+        "rebind"
+      ],
+      "talkBackServiceTested": false,
+      "nativeCandidateIntegrationTested": false,
+      "scope": "Separately compiled NON-PRODUCTION source variant in its own diagnostic APK. Five original render oracles, six equal-content buffer cases, and two independent selectable/public-granularity stages. Does not prove TalkBack, binder-node routing, native candidate integration, physical audio, or whole-app acceptance."
+    },
+    "instrumentationStdout": {
+      "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api35-class-only5/operator1/diagnostic-safe/instrumentation.stdout.txt",
+      "bytes": 1013,
+      "sha256": "dad8b49acdc2ed28e14764b9435627748303617c6e63c58652f6e0bd7fb68199",
+      "inode": 29788653,
+      "unchangedDuringHash": true
+    },
+    "rawTar": {
+      "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api35-class-only5/operator1/diagnostic-safe/original-export.tar",
+      "bytes": 3072,
+      "sha256": "3abbc94b2e71dbd0f7beb2bf0f263dfb7b0269ba83b98bfef4a868992bea252f",
+      "inode": 29788656,
+      "unchangedDuringHash": true
+    },
+    "rawTarFiles": [
+      {
+        "name": "candidate-layout-af77a6b6-bfb5-4b3a-be10-478912f1b5d1/result.json",
+        "bytes": 868,
+        "sha256": "e3daf297d7731d6fc84e254b0f59f58e47f6cb2f8764c948b283f839e6a656f1",
+        "matchesExportedDisk": true
+      }
+    ],
+    "checks": {
+      "actualCodeIsFailure": true,
+      "actualFailed": true,
+      "actualStageCountZero": true,
+      "expectedThirteenStillDeclared": true,
+      "exportedEqualsInstrumentationReport": true,
+      "actualDriverMissingIdentityKeyError": true,
+      "identityUnavailableNotInferred": true,
+      "rawTarExportMatchesActualFiles": true
+    },
+    "qualifiedAsObservedFailure": true,
+    "missingIdentityFields": [
+      "sourceApk",
+      "sourceApkSha256",
+      "sdk",
+      "pid",
+      "runId",
+      "diagnosticVariant",
+      "diagnosticClassSourceSha256"
+    ],
+    "selfReportedProbePID": "NOT_RECORDED",
+    "osProbeStarttime": "NOT_OBSERVED",
+    "readyPredicate": "owner.hasWindowFocus() && owner.actual.isShown() && owner.actual.getWidth() > 0",
+    "predicateComponentsNotIndividuallyObserved": true,
+    "uniqueRootCauseNotEstablished": true
+  },
+  "remainingPhases": {
+    "diagnostic_equal_return": "NOT_RUN",
+    "diagnostic_no_super_measure": "NOT_RUN",
+    "production_class_only": "NOT_RUN"
+  },
+  "identityMetadata": {
+    "frozenBindingActual": true,
+    "wrapperActual": true,
+    "installedDiagnosticReadbackMatchesOriginal": true,
+    "frozenInputs": {
+      "passed": true,
+      "files": [
+        {
+          "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/runtime-plan5/audit-logs.py",
+          "bytes": 3475,
+          "sha256": "4c776ac5de812be02a7940488ec0b71d8ed2e43a7359db1b298caf72524fa6f5",
+          "inode": 29788468,
+          "unchangedDuringHash": true,
+          "matchesFrozen": true
+        },
+        {
+          "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/runtime-plan5/run-probes.py",
+          "bytes": 17438,
+          "sha256": "073cd350bb911c7fb3c6682c8612fa7dea1e9b237836a4820a109be74b5e6f4d",
+          "inode": 29788466,
+          "unchangedDuringHash": true,
+          "matchesFrozen": true
+        },
+        {
+          "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/runtime-plan4/run-api21.py",
+          "bytes": 10686,
+          "sha256": "c95b1fa53e540e12134f9da152aa3ee19ae8f296c873242a747f2bdf2922ab49",
+          "inode": 29787120,
+          "unchangedDuringHash": true,
+          "matchesFrozen": true
+        },
+        {
+          "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/runtime-plan5/run-api35.py",
+          "bytes": 10686,
+          "sha256": "25a0724feadb55cabcc87b5ade415752d9e9eef930f0b3eeb53c0d1eecabf086",
+          "inode": 29788471,
+          "unchangedDuringHash": true,
+          "matchesFrozen": true
+        },
+        {
+          "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/runtime-plan5/runtime_common.py",
+          "bytes": 2245,
+          "sha256": "b2bd72cc69efd8b8416ccf0e65d3ddd6afe8b7d3f3430a3faf0b7bdc8a5b3319",
+          "inode": 29788467,
+          "unchangedDuringHash": true,
+          "matchesFrozen": true
+        },
+        {
+          "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/diagnostic-build/build3/diagnostic.apk",
+          "bytes": 668134,
+          "sha256": "4b9a6d5c2b69073f733b60b9c35bdd7f587804a522d64612725c8af801dc1539",
+          "inode": 29785663,
+          "unchangedDuringHash": true,
+          "matchesFrozen": true
+        },
+        {
+          "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/diagnostic-build/build3/host-qualification2.json",
+          "bytes": 3941,
+          "sha256": "33e29a100b2a694f83f8c0d7f81c09511838c4cd3f266b7254ef21f574854acf",
+          "inode": 29785675,
+          "unchangedDuringHash": true,
+          "matchesFrozen": true
+        },
+        {
+          "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/probe-build1/probe.apk",
+          "bytes": 24979,
+          "sha256": "831e2a7da97c6880671108b628372655818c9dd3f19ad014118b2e34d2eac080",
+          "inode": 28222346,
+          "unchangedDuringHash": true,
+          "matchesFrozen": true
+        },
+        {
+          "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/probe-build1/result.json",
+          "bytes": 1017,
+          "sha256": "50b34584a7250bc7a0ebdf83d1f9c74496a2e8f37f4b1cb81bede5e6ed8fd558",
+          "inode": 28222352,
+          "unchangedDuringHash": true,
+          "matchesFrozen": true
+        },
+        {
+          "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/probe-source/CandidateActivity.java",
+          "bytes": 2724,
+          "sha256": "2d29b1aeaea42bcb1dced2b9d39788ce7f84d3a463c55f2146594ed1d23c9c93",
+          "inode": 28222322,
+          "unchangedDuringHash": true,
+          "matchesFrozen": true
+        },
+        {
+          "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/probe-source/CandidateProbe.java",
+          "bytes": 25549,
+          "sha256": "852b57261405bbf3d10efad896d7aa750aaa5c4e82bd2f6b8af93788564d84fe",
+          "inode": 28222323,
+          "unchangedDuringHash": true,
+          "matchesFrozen": true
+        },
+        {
+          "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/root-host-review1.json",
+          "bytes": 671,
+          "sha256": "e18e58c1663fb72c549327de91475a06024f596316e0b92d3635392fac46be9f",
+          "inode": 28222361,
+          "unchangedDuringHash": true,
+          "matchesFrozen": true
+        },
+        {
+          "path": "/home/xumin/Public/Trime/build/t12/tools/t12_release_setup_gui_v31.py",
+          "bytes": 88399,
+          "sha256": "1f61b4ceb3b314b88df42d1c756ee53ba0c93891b96198f65d6ea7a939bd69a6",
+          "inode": 32281233,
+          "unchangedDuringHash": true,
+          "matchesFrozen": true
+        },
+        {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api21-c4-terminal-host-audit1/original-sdk-after.json",
+          "bytes": 2984,
+          "sha256": "65d7f92dc6b155954a90796ebc9ecc9f17b88227d2c63ca022e4f6c246db3f42",
+          "inode": 29768450,
+          "unchangedDuringHash": true,
+          "matchesFrozen": true
+        },
+        {
+          "path": "/home/xumin/Public/Trime/build/pr2183-rebase-20261022-1320/runtime/api35-c4-original-sdk-after1.json",
+          "bytes": 7346,
+          "sha256": "9f576e4c83b579524ecbc9d4f3c1f2947e7a7052fd87abf461f851fb2d6e636e",
+          "inode": 28746909,
+          "unchangedDuringHash": true,
+          "matchesFrozen": true
+        },
+        {
+          "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/runtime-plan5/run-isolated-probes.py",
+          "bytes": 12698,
+          "sha256": "3c557910050dc7269e86ad55716ff8e0447615c73cb37170091c21c62d936884",
+          "inode": 29788469,
+          "unchangedDuringHash": true,
+          "matchesFrozen": true
+        },
+        {
+          "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/ci-apk1/files/com.osfans.trime-92b13711-x86_64-debug.apk",
+          "bytes": 20533654,
+          "sha256": "36ede385eac30511f3c600dbc059a196e1ac462f173b154643a54f79b3af7d3a",
+          "inode": 29786226,
+          "unchangedDuringHash": true,
+          "matchesFrozen": true
+        },
+        {
+          "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/ci-apk1/audit/result.json",
+          "bytes": 24338,
+          "sha256": "92cf8fa8f3c0cd723d6fdc7adb884579fc31b0c7d2a9bb763e8a06529e870382",
+          "inode": 29786234,
+          "unchangedDuringHash": true,
+          "matchesFrozen": true
+        },
+        {
+          "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/runtime-plan5/root-plan-review1.json",
+          "bytes": 873,
+          "sha256": "57f2d40cda9f2b73f534fb84a87c93374a989c5882ee9041c0d6531587357ac1",
+          "inode": 29788507,
+          "unchangedDuringHash": true,
+          "matchesFrozen": true
+        },
+        {
+          "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/runtime-plan5/host-check1/result.json",
+          "bytes": 5117,
+          "sha256": "05d74ec1c6d06b51f1e2c0e196ff00b8cadeb618bd3b6838174b33b59bf91d53",
+          "inode": 29788503,
+          "unchangedDuringHash": true,
+          "matchesFrozen": true
+        },
+        {
+          "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/runtime-plan5/preparation-final1.json",
+          "bytes": 2641,
+          "sha256": "e22740d7a7283ebb319621bcdbc5293a21e8299d5b90bef13059f98dd7840ba1",
+          "inode": 29788506,
+          "unchangedDuringHash": true,
+          "matchesFrozen": true
+        }
+      ],
+      "exactOriginalApk": true,
+      "exactDiagnosticApk": true
+    }
+  },
+  "installedDiagnosticReadback": {
+    "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api35-class-only5/operator1/diagnostic-installed-apk.bin",
+    "bytes": 668134,
+    "sha256": "4b9a6d5c2b69073f733b60b9c35bdd7f587804a522d64612725c8af801dc1539",
+    "inode": 29788642,
+    "unchangedDuringHash": true
+  },
+  "markerCommands": {
+    "begin": {
+      "passed": true,
+      "checks": {
+        "stdoutHash": true,
+        "stderrHash": true,
+        "hostExit0": true,
+        "completed": true,
+        "noncePresent": true,
+        "actualRemoteAllowed": true,
+        "exactMarkerCommandPayload": true
+      },
+      "stdout": {
+        "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api35-class-only5/fixture1/commands/0013.stdout",
+        "bytes": 58,
+        "sha256": "fc12ffc8de71d9cd9426c5d50dc381e1b917a0245a9e124c579b9354e1050391",
+        "inode": 29788598,
+        "unchangedDuringHash": true
+      },
+      "stderr": {
+        "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api35-class-only5/fixture1/commands/0013.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "inode": 29788599,
+        "unchangedDuringHash": true
+      },
+      "actualRemoteStatuses": [
+        0
+      ]
+    },
+    "end": {
+      "passed": true,
+      "checks": {
+        "stdoutHash": true,
+        "stderrHash": true,
+        "hostExit0": true,
+        "completed": true,
+        "noncePresent": true,
+        "actualRemoteAllowed": true,
+        "exactMarkerCommandPayload": true
+      },
+      "stdout": {
+        "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api35-class-only5/fixture1/commands/0014.stdout",
+        "bytes": 58,
+        "sha256": "cb443bf35b9d0b404404436d9e71bc731a5740eb873b12baa21b7f44361b8273",
+        "inode": 29788695,
+        "unchangedDuringHash": true
+      },
+      "stderr": {
+        "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api35-class-only5/fixture1/commands/0014.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "inode": 29788696,
+        "unchangedDuringHash": true
+      },
+      "actualRemoteStatuses": [
+        0
+      ]
+    }
+  },
+  "exactLogBookend": {
+    "source": {
+      "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api35-class-only5/device-logcat.txt",
+      "bytes": 4020420,
+      "sha256": "4e51b5dcc0885aa99bcc1d801d1b7c1c44c615af1dbd65b2e5b6ddddf836ae2f",
+      "inode": 29788561,
+      "stableDuringRead": true
+    },
+    "exactBeginMatches": [
+      {
+        "line": 18206,
+        "byteOffset": 2406173,
+        "bytes": 91,
+        "pid": 1550,
+        "tid": 1550,
+        "priority": "I",
+        "tag": "PR2187_CLASS_ONLY",
+        "message": "BEGIN d52fe7be34a56cc342530414a961a58e",
+        "rawSha256": "53370f2d80f4280688899b15e47d1e9ff453d490ada96f0ce1ad9aac921ad0ba",
+        "raw": "10-23 08:29:55.820  1550  1550 I PR2187_CLASS_ONLY: BEGIN d52fe7be34a56cc342530414a961a58e\n"
+      }
+    ],
+    "exactEndMatches": [
+      {
+        "line": 22838,
+        "byteOffset": 3070645,
+        "bytes": 89,
+        "pid": 2270,
+        "tid": 2270,
+        "priority": "I",
+        "tag": "PR2187_CLASS_ONLY",
+        "message": "END d52fe7be34a56cc342530414a961a58e",
+        "rawSha256": "2f28a21a56ed381f8e6409031efefefdc50f94209730f792e70c73b53a9e297b",
+        "raw": "10-23 08:30:34.899  2270  2270 I PR2187_CLASS_ONLY: END d52fe7be34a56cc342530414a961a58e\n"
+      }
+    ],
+    "wholeLogTargetProcessStarts": [],
+    "acceptedPlatformMessageSerializations": [
+      "exact argv payload",
+      "exact argv payload plus one terminal ASCII space"
+    ],
+    "serializationBasis": "AOSP android-5.0.0_r1 toolbox/log.c log_main appends one space after every message argv; no arbitrary strip or partial nonce match.",
+    "scope": "Whole-log starts are retained even outside the strict interval. Empty interval starts never means Application never started in this VM.",
+    "strictRangeQualified": true,
+    "state": "BOUNDED_SOURCE_COMPLETE",
+    "strictInterval": {
+      "firstByteInclusive": 2406264,
+      "lastByteExclusive": 3070645,
+      "bytes": 664381,
+      "sha256": "d756874f355f97d2d37d6ba11e81b3feb7e8e1e974d7aef9d16c46b35d5420dc",
+      "lineCount": 4631
+    },
+    "prefixThroughActualEndMarker": {
+      "bytes": 3070734,
+      "sha256": "8becd7a975c99e7d7acdbcc327103323a28f5ac30ce92a4d531b308e708bf2f2"
+    },
+    "strictRangeTargetProcessStarts": [],
+    "targetStartsBefore": [],
+    "targetStartsAfter": []
+  },
+  "strictActualPsSamples": {
+    "qualified": true,
+    "samples": [
+      {
+        "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api35-class-only5/operator1/baseline-ps.raw.txt",
+        "bytes": 24789,
+        "sha256": "dc07cea8f25b0f2d1146978ab364c97216a2ece3700f1dd4f85b59d362cca6cd",
+        "qualified": true,
+        "actualTargetProcesses": []
+      },
+      {
+        "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api35-class-only5/operator1/restored-ps.raw.txt",
+        "bytes": 26553,
+        "sha256": "5bea418843071d4b62f2d13c9eca31d65ef3c172ca4bdd69416e685d97dfa956",
+        "qualified": true,
+        "actualTargetProcesses": []
+      },
+      {
+        "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api35-class-only5/operator1/diagnostic-no-Trime-process.raw.txt",
+        "bytes": 25484,
+        "sha256": "b1cbc12994057635b96c5d7ca723478ba202af332bc30c56d7e56dbb9c7b4ba9",
+        "qualified": true,
+        "actualTargetProcesses": []
+      },
+      {
+        "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api35-class-only5/operator1/diagnostic-safe-before.raw.txt",
+        "bytes": 25585,
+        "sha256": "4e363651bbf45389858fb0e67dd5cafe63d685162f8ac7f16baa7064d129dac8",
+        "qualified": true,
+        "actualTargetProcesses": []
+      },
+      {
+        "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api35-class-only5/operator1/diagnostic-safe-after.raw.txt",
+        "bytes": 26453,
+        "sha256": "4ac50ec00d985cd54b1b728b3ea76920afc10ef70428a47cd33b43931ff9da7d",
+        "qualified": true,
+        "actualTargetProcesses": []
+      },
+      {
+        "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api35-class-only5/fixture1/after-explicit-old-target-stop-ps.raw.txt",
+        "bytes": 24425,
+        "sha256": "1c3f5d51a02d04072a88857ef2bc376dee0844e2f7b8106926a942b918b42368",
+        "qualified": true,
+        "actualTargetProcesses": []
+      }
+    ],
+    "limit": "Only these actual ps samples. Not proof of process absence at unsampled times; continuous log checked separately."
+  },
+  "documentsStateIndependent": {
+    "checks": {
+      "actualStateDumpsAndQueries": true,
+      "actualIsolatedDisabledUser": true,
+      "otherFieldsPreservedDuringIsolation": true,
+      "allOriginalFieldsAndPathRestored": true,
+      "actualFixtureRestorationRecordExact": true
+    },
+    "restorationQualified": true,
+    "before": {
+      "passed": true,
+      "checks": {
+        "present": true,
+        "installed": true,
+        "enabled": true,
+        "stopped": true,
+        "installedRecord": true,
+        "hidden": true,
+        "exactPackageHeader": true,
+        "actualPathQueryCommand": true,
+        "presentPathTruthful": true
+      },
+      "state": {
+        "package": "com.android.documentsui",
+        "present": true,
+        "apk_path": "/system/priv-app/DocumentsUI/DocumentsUI.apk",
+        "apk_path_query": "PRESENT",
+        "installed": true,
+        "hidden": false,
+        "enabled": 0,
+        "stopped": false,
+        "user0_raw": "ceDataInode=344120 deDataInode=90241 installed=true hidden=false suspended=false distractionFlags=0 stopped=false notLaunched=false enabled=0 instant=false virtual=false quarantined=false",
+        "pm_path_command": {
+          "at": "2026-10-23T00:29:50.646593+00:00",
+          "argv": [
+            "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+            "-s",
+            "emulator-5584",
+            "shell",
+            "sh -c 'pm path com.android.documentsui'; _trime_t12_status=$?; echo ''; echo \"__TRIME_T12_REMOTE_RC_3d47142d45e09655087cee59f8b9407f:$_trime_t12_status\""
+          ],
+          "stdout": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api35-class-only5/fixture1/commands/0002.stdout",
+          "stderr": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api35-class-only5/fixture1/commands/0002.stderr",
+          "timeout_seconds": 60,
+          "completed": true,
+          "returncode": 0,
+          "finished": "2026-10-23T00:29:51.420626+00:00",
+          "stdout_sha256": "dbd4f08d0a0a72188732a0c12eb30ea1c9ab031a67355255a3160c0adc817031",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "shell_protocol_nonce": "3d47142d45e09655087cee59f8b9407f",
+          "remote_returncode": 0,
+          "remote_stdout_bytes": 53,
+          "remote_stdout_sha256": "01b4ee0e2417fcef3649939c6b46b1b8851e432edf7486af178f8d5ece25e6f0"
+        }
+      },
+      "stateFile": {
+        "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api35-class-only5/fixture1/before-com.android.documentsui-state.json",
+        "bytes": 1579,
+        "sha256": "0527aa443f948e6e708d14165b771d0bc9467b465429016964c3356820487a3d",
+        "inode": 29788573,
+        "unchangedDuringHash": true
+      },
+      "actualPackageDump": {
+        "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api35-class-only5/fixture1/before-com.android.documentsui-package.raw.txt",
+        "bytes": 14840,
+        "sha256": "c278d9ec3059420a0cdd25587ff7c214e6cfdcadbf655db5ffd5d6d66e90e32a",
+        "inode": 29788572,
+        "unchangedDuringHash": true
+      },
+      "actualPackageUser0StateLines": [
+        "ceDataInode=344120 deDataInode=90241 installed=true hidden=false suspended=false distractionFlags=0 stopped=false notLaunched=false enabled=0 instant=false virtual=false quarantined=false"
+      ],
+      "allUser0LinesIncludingPermissionHeaders": [
+        "ceDataInode=344120 deDataInode=90241 installed=true hidden=false suspended=false distractionFlags=0 stopped=false notLaunched=false enabled=0 instant=false virtual=false quarantined=false",
+        "queryable via uses-library:"
+      ],
+      "ignoredNoStatePropertyHeaders": [
+        "queryable via uses-library:"
+      ]
+    },
+    "isolated": {
+      "passed": true,
+      "checks": {
+        "present": true,
+        "installed": true,
+        "enabled": true,
+        "stopped": true,
+        "installedRecord": true,
+        "hidden": true,
+        "exactPackageHeader": true,
+        "actualPathQueryCommand": true,
+        "presentPathTruthful": true
+      },
+      "state": {
+        "package": "com.android.documentsui",
+        "present": true,
+        "apk_path": "/system/priv-app/DocumentsUI/DocumentsUI.apk",
+        "apk_path_query": "PRESENT",
+        "installed": true,
+        "hidden": false,
+        "enabled": 3,
+        "stopped": false,
+        "user0_raw": "ceDataInode=344120 deDataInode=90241 installed=true hidden=false suspended=false distractionFlags=0 stopped=false notLaunched=false enabled=3 instant=false virtual=false quarantined=false",
+        "pm_path_command": {
+          "at": "2026-10-23T00:29:54.038502+00:00",
+          "argv": [
+            "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+            "-s",
+            "emulator-5584",
+            "shell",
+            "sh -c 'pm path com.android.documentsui'; _trime_t12_status=$?; echo ''; echo \"__TRIME_T12_REMOTE_RC_aff3f1df919b51e53c947ddc9db73653:$_trime_t12_status\""
+          ],
+          "stdout": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api35-class-only5/fixture1/commands/0008.stdout",
+          "stderr": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api35-class-only5/fixture1/commands/0008.stderr",
+          "timeout_seconds": 60,
+          "completed": true,
+          "returncode": 0,
+          "finished": "2026-10-23T00:29:54.404810+00:00",
+          "stdout_sha256": "b41346935ec569459459c7de09b375b1960b85f446331a69711ea62b62725d29",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "shell_protocol_nonce": "aff3f1df919b51e53c947ddc9db73653",
+          "remote_returncode": 0,
+          "remote_stdout_bytes": 53,
+          "remote_stdout_sha256": "01b4ee0e2417fcef3649939c6b46b1b8851e432edf7486af178f8d5ece25e6f0"
+        }
+      },
+      "stateFile": {
+        "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api35-class-only5/fixture1/isolated-state.json",
+        "bytes": 1579,
+        "sha256": "7840ce0b2cb58b9d32260f88a4402a0dc91232568793477e6f1cfabce14f0d93",
+        "inode": 29788589,
+        "unchangedDuringHash": true
+      },
+      "actualPackageDump": {
+        "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api35-class-only5/fixture1/isolated-package.raw.txt",
+        "bytes": 14876,
+        "sha256": "d0cb4ebe6f18eaf3cf08e06d8ed5fc07836238eef4fe9b226330810f821527b2",
+        "inode": 29788588,
+        "unchangedDuringHash": true
+      },
+      "actualPackageUser0StateLines": [
+        "ceDataInode=344120 deDataInode=90241 installed=true hidden=false suspended=false distractionFlags=0 stopped=false notLaunched=false enabled=3 instant=false virtual=false quarantined=false"
+      ],
+      "allUser0LinesIncludingPermissionHeaders": [
+        "ceDataInode=344120 deDataInode=90241 installed=true hidden=false suspended=false distractionFlags=0 stopped=false notLaunched=false enabled=3 instant=false virtual=false quarantined=false",
+        "queryable via uses-library:"
+      ],
+      "ignoredNoStatePropertyHeaders": [
+        "queryable via uses-library:"
+      ]
+    },
+    "restored": {
+      "passed": true,
+      "checks": {
+        "present": true,
+        "installed": true,
+        "enabled": true,
+        "stopped": true,
+        "installedRecord": true,
+        "hidden": true,
+        "exactPackageHeader": true,
+        "actualPathQueryCommand": true,
+        "presentPathTruthful": true
+      },
+      "state": {
+        "package": "com.android.documentsui",
+        "present": true,
+        "apk_path": "/system/priv-app/DocumentsUI/DocumentsUI.apk",
+        "apk_path_query": "PRESENT",
+        "installed": true,
+        "hidden": false,
+        "enabled": 0,
+        "stopped": false,
+        "user0_raw": "ceDataInode=344120 deDataInode=90241 installed=true hidden=false suspended=false distractionFlags=0 stopped=false notLaunched=false enabled=0 instant=false virtual=false quarantined=false",
+        "pm_path_command": {
+          "at": "2026-10-23T00:30:35.514468+00:00",
+          "argv": [
+            "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+            "-s",
+            "emulator-5584",
+            "shell",
+            "sh -c 'pm path com.android.documentsui'; _trime_t12_status=$?; echo ''; echo \"__TRIME_T12_REMOTE_RC_08dc3947245240449913e6960e83d82b:$_trime_t12_status\""
+          ],
+          "stdout": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api35-class-only5/fixture1/commands/0016.stdout",
+          "stderr": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api35-class-only5/fixture1/commands/0016.stderr",
+          "timeout_seconds": 60,
+          "completed": true,
+          "returncode": 0,
+          "finished": "2026-10-23T00:30:35.732490+00:00",
+          "stdout_sha256": "f61499f04d2af576e3e162b1605b4dcd21a89d5b8baf8558dd2123e2e4a97661",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "shell_protocol_nonce": "08dc3947245240449913e6960e83d82b",
+          "remote_returncode": 0,
+          "remote_stdout_bytes": 53,
+          "remote_stdout_sha256": "01b4ee0e2417fcef3649939c6b46b1b8851e432edf7486af178f8d5ece25e6f0"
+        }
+      },
+      "stateFile": {
+        "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api35-class-only5/fixture1/restore-isolation-state.json",
+        "bytes": 1579,
+        "sha256": "22298cae4b6c75d658c6bc68342841f6e3e078eeb96f5eca99ae46f0efe0342f",
+        "inode": 29788704,
+        "unchangedDuringHash": true
+      },
+      "actualPackageDump": {
+        "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api35-class-only5/fixture1/restore-isolation-package.raw.txt",
+        "bytes": 14876,
+        "sha256": "235abfade532ad6e3262d3af1c43548a833b9cee3e4305894395fde46fd9f220",
+        "inode": 29788703,
+        "unchangedDuringHash": true
+      },
+      "actualPackageUser0StateLines": [
+        "ceDataInode=344120 deDataInode=90241 installed=true hidden=false suspended=false distractionFlags=0 stopped=false notLaunched=false enabled=0 instant=false virtual=false quarantined=false"
+      ],
+      "allUser0LinesIncludingPermissionHeaders": [
+        "ceDataInode=344120 deDataInode=90241 installed=true hidden=false suspended=false distractionFlags=0 stopped=false notLaunched=false enabled=0 instant=false virtual=false quarantined=false",
+        "queryable via uses-library:"
+      ],
+      "ignoredNoStatePropertyHeaders": [
+        "queryable via uses-library:"
+      ]
+    }
+  },
+  "childStateRestoreDeclared": true,
+  "actualChildExit": 1,
+  "actualFixtureExit": 1,
+  "actualOperatorFailure": {
+    "type": "KeyError",
+    "message": "'sourceApkSha256'"
+  },
+  "fixtureCleanupErrors": [],
+  "terminalEvidence": {
+    "state": "COMPLETE",
+    "qualified": false,
+    "checks": {
+      "normalStop": true,
+      "emulatorExit0": true,
+      "collectorExit0": false,
+      "noControllerCleanupErrors": true,
+      "operatorCleanupErrorsEmpty": true,
+      "restoredDeclared": true,
+      "exactSampledStateRestored": true,
+      "SDKUnchangedDeclared": true,
+      "sourceHead": true,
+      "originalApk": true,
+      "actualSDKPathSizeHashMapsEqual": true,
+      "SDKAfterReferencesExactBefore": true
+    },
+    "inputs": {
+      "completion.json": {
+        "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api35-class-only5/completion.json",
+        "bytes": 1751,
+        "sha256": "3087a9895f1583e0cfb42cba6a49deca6dc8ec82426d5b779b67b83cff262da9",
+        "inode": 29788710,
+        "unchangedDuringHash": true
+      },
+      "sdk-before.json": {
+        "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api35-class-only5/sdk-before.json",
+        "bytes": 7275,
+        "sha256": "a191d8be01fda5af2d4484815f928136c46d412820017afa95e49896c15cbdb5",
+        "inode": 29788510,
+        "unchangedDuringHash": true
+      },
+      "sdk-after.json": {
+        "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api35-class-only5/sdk-after.json",
+        "bytes": 7262,
+        "sha256": "e2f16615f39ceffcde100e6290301e78b6a210d9fe072a03bad58d0ff9da83da",
+        "inode": 29788709,
+        "unchangedDuringHash": true
+      }
+    },
+    "sampledStateRestorationOnly": true,
+    "allWarningsEliminated": false
+  },
+  "actualVMExit": 0,
+  "actualCollectorExit": 255,
+  "actualControllerReason": "requested-normal-stop",
+  "controllerCleanupErrors": [],
+  "fullRawLog": {
+    "source": {
+      "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api35-class-only5/device-logcat.txt",
+      "bytes": 4020420,
+      "sha256": "4e51b5dcc0885aa99bcc1d801d1b7c1c44c615af1dbd65b2e5b6ddddf836ae2f",
+      "inode": 29788561,
+      "unchangedDuringHash": true
+    },
+    "lineCount": 28769,
+    "priorities": {
+      "V": 5626,
+      "D": 10796,
+      "I": 7559,
+      "W": 3002,
+      "E": 1780,
+      "F": 0
+    },
+    "actualTrimeStartRecords": [],
+    "actualDiagnosticStartRecords": [
+      {
+        "line": 20375,
+        "raw": "10-23 08:30:11.328   547   588 I am_proc_start: [0,1902,10148,org.x2m7.trime.readiness.candidatediagnostic,added application,org.x2m7.trime.readiness.candidatediagnostic]\n"
+      },
+      {
+        "line": 20378,
+        "raw": "10-23 08:30:11.330   547   588 I ActivityManager: Start proc 1902:org.x2m7.trime.readiness.candidatediagnostic/u0a148 for added application org.x2m7.trime.readiness.candidatediagnostic\n"
+      }
+    ],
+    "fatalContexts": [
+      {
+        "line": 24176,
+        "rawContext": "--------- beginning of crash\n10-23 08:30:40.570  2301  2301 E AndroidRuntime: FATAL EXCEPTION: main\n10-23 08:30:40.570  2301  2301 E AndroidRuntime: Process: com.android.phone, PID: 2301\n10-23 08:30:40.570  2301  2301 E AndroidRuntime: java.lang.RuntimeException: Unable to start receiver com.android.stk.StkCmdReceiver: android.app.BackgroundServiceStartNotAllowedException: Not allowed to start service Intent { cmp=com.android.stk/.StkAppService (has extras) }: app is in background uid UidRecord{5caa32d 1001 SVC  bg:+3s163ms idle change:procstate procs:0 seq(1022,981)} caps=-------\n10-23 08:30:40.570  2301  2301 E AndroidRuntime: \tat android.app.ActivityThread.handleReceiver(ActivityThread.java:4781)\n10-23 08:30:40.570  2301  2301 E AndroidRuntime: \tat android.app.ActivityThread.-$$Nest$mhandleReceiver(Unknown Source:0)\n10-23 08:30:40.570  2301  2301 E AndroidRuntime: \tat android.app.ActivityThread$H.handleMessage(ActivityThread.java:2436)\n10-23 08:30:40.570  2301  2301 E AndroidRuntime: \tat android.os.Handler.dispatchMessage(Handler.java:107)\n10-23 08:30:40.570  2301  2301 E AndroidRuntime: \tat android.os.Looper.loopOnce(Looper.java:232)\n10-23 08:30:40.570  2301  2301 E AndroidRuntime: \tat android.os.Looper.loop(Looper.java:317)\n10-23 08:30:40.570  2301  2301 E AndroidRuntime: \tat android.app.ActivityThread.main(ActivityThread.java:8705)\n10-23 08:30:40.570  2301  2301 E AndroidRuntime: \tat java.lang.reflect.Method.invoke(Native Method)\n10-23 08:30:40.570  2301  2301 E AndroidRuntime: \tat com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:580)\n10-23 08:30:40.570  2301  2301 E AndroidRuntime: \tat com.android.internal.os.ZygoteInit.main(ZygoteInit.java:886)\n10-23 08:30:40.570  2301  2301 E AndroidRuntime: Caused by: android.app.BackgroundServiceStartNotAllowedException: Not allowed to start service Intent { cmp=com.android.stk/.StkAppService (has extras) }: app is in background uid UidRecord{5caa32d 1001 SVC  bg:+3s163ms idle change:procstate procs:0 seq(1022,981)} caps=-------\n10-23 08:30:40.570  2301  2301 E AndroidRuntime: \tat android.app.ContextImpl.startServiceCommon(ContextImpl.java:1974)\n10-23 08:30:40.570  2301  2301 E AndroidRuntime: \tat android.app.ContextImpl.startService(ContextImpl.java:1929)\n10-23 08:30:40.570  2301  2301 E AndroidRuntime: \tat android.content.ContextWrapper.startService(ContextWrapper.java:827)\n10-23 08:30:40.570  2301  2301 E AndroidRuntime: \tat android.content.ContextWrapper.startService(ContextWrapper.java:827)\n10-23 08:30:40.570  2301  2301 E AndroidRuntime: \tat com.android.stk.StkCmdReceiver.handleAction(StkCmdReceiver.java:86)\n10-23 08:30:40.570  2301  2301 E AndroidRuntime: \tat com.android.stk.StkCmdReceiver.onReceive(StkCmdReceiver.java:44)\n10-23 08:30:40.570  2301  2301 E AndroidRuntime: \tat android.app.ActivityThread.handleReceiver(ActivityThread.java:4772)\n10-23 08:30:40.570  2301  2301 E AndroidRuntime: \t... 9 more\n10-23 08:30:40.572   547  1615 I am_crash: [2301,0,com.android.phone,1015791109,android.app.BackgroundServiceStartNotAllowedException,Not allowed to start service Intent { cmp=com.android.stk/.StkAppService (has extras) }: app is in background uid UidRecord{5caa32d 1001 SVC  bg:+3s163ms idle change:procstate procs:0 seq(1022,981)} caps=-------,ContextImpl.java,1974,0]\n10-23 08:30:40.579   547  2363 I DropBoxManagerService: add tag=system_app_crash isTagEnabled=true flags=0x2\n10-23 08:30:40.581   547  1615 I sysui_multi_action: [757,316,758,4,759,-1]\n10-23 08:30:40.582  2301  2301 I Process : Sending signal. PID: 2301 SIG: 9\n10-23 08:30:40.804     0     0 W binder_debug: 4 callbacks suppressed\n10-23 08:30:40.804     0     0 I binder  : release 2301:2318 transaction 61199 in, still active\n10-23 08:30:40.601   338   338 I Zygote  : Process 2301 exited due to signal 9 (Killed)\n10-23 08:30:40.807     0     0 I binder  : send failed reply for transaction 61199 to 874:1068\n10-23 08:30:40.605   547  1615 W ActivityManager: pid 874 com.android.bluetooth sent binder code 333 with flags 0 to frozen apps and got error -32\n10-23 08:30:40.606   874  1068 E TelephonyManager: Error calling ITelephony#clearSignalStrengthUpdateRequest\n10-23 08:30:40.606   874  1068 E TelephonyManager: android.os.DeadObjectException\n10-23 08:30:40.606   874  1068 E TelephonyManager: \tat android.os.BinderProxy.transactNative(Native Method)\n10-23 08:30:40.606   874  1068 E TelephonyManager: \tat android.os.BinderProxy.transact(BinderProxy.java:586)\n10-23 08:30:40.606   874  1068 E TelephonyManager: \tat com.android.internal.telephony.ITelephony$Stub$Proxy.clearSignalStrengthUpdateRequest(ITelephony.java:16003)\n10-23 08:30:40.606   874  1068 E TelephonyManager: \tat android.telephony.TelephonyManager.clearSignalStrengthUpdateRequest(TelephonyManager.java:18003)\n10-23 08:30:40.606   874  1068 E TelephonyManager: \tat com.android.bluetooth.hfp.HeadsetPhoneState.stopListenForPhoneState(HeadsetPhoneState.java:186)\n10-23 08:30:40.606   874  1068 E TelephonyManager: \tat com.android.bluetooth.hfp.HeadsetPhoneState.-$$Nest$mstopListenForPhoneState(HeadsetPhoneState.java:0)\n"
+      }
+    ],
+    "limits": "Collected log and sampled ps only. Hardcoded native/Application false is not process proof. No all-system absence/zero-warning claim."
+  },
+  "actualAnrCrashEventLines": [
+    {
+      "line": 15781,
+      "byteOffset": 2046416,
+      "bytes": 261,
+      "sha256": "0363e953a896e87b47038e495536f34b02e5c80e7238e694e0e1301ee50b8256",
+      "relation": "BEFORE_BEGIN",
+      "raw": "10-23 08:29:41.647   547  1274 I am_anr  : [0,905,com.android.phone,952647245,Broadcast of Intent { act=android.safetycenter.action.REFRESH_SAFETY_SOURCES flg=0x10000010 pkg=com.android.phone cmp=com.android.phone/.security.SafetySourceReceiver (has extras) }]\n"
+    },
+    {
+      "line": 16195,
+      "byteOffset": 2109575,
+      "bytes": 75,
+      "sha256": "69a9b234e1591c7cfebf83d43b70096a420758f8fb83f359e32a8d9dfcebf225",
+      "relation": "BEFORE_BEGIN",
+      "raw": "10-23 08:29:43.915   547  1274 E ActivityManager: ANR in com.android.phone\n"
+    },
+    {
+      "line": 16994,
+      "byteOffset": 2246717,
+      "bytes": 154,
+      "sha256": "7d57f524b9e534e0166dfe798a008b09c097256357ef573bb44e30e40b623452",
+      "relation": "BEFORE_BEGIN",
+      "raw": "10-23 08:29:49.840   547  1382 I am_anr  : [0,793,com.android.systemui,818462221,executing service com.android.systemui/.SystemUIService, waited 20564ms]\n"
+    },
+    {
+      "line": 17919,
+      "byteOffset": 2372610,
+      "bytes": 78,
+      "sha256": "8711c9a0511ff3af676ac508de5f203b396fefb7f91d24f8b5a4a3ea4fce93fb",
+      "relation": "BEFORE_BEGIN",
+      "raw": "10-23 08:29:55.347   547  1382 E ActivityManager: ANR in com.android.systemui\n"
+    },
+    {
+      "line": 18117,
+      "byteOffset": 2394612,
+      "bytes": 166,
+      "sha256": "f638a7d767019d1d14922a37491218c3596b0d6b7abe6521172f34273918780a",
+      "relation": "BEFORE_BEGIN",
+      "raw": "10-23 08:29:55.664   547  1382 I am_anr  : [0,1351,com.android.phone,952647245,Process ProcessRecord{52364e8 1351:com.android.phone/1001} failed to complete startup]\n"
+    },
+    {
+      "line": 18162,
+      "byteOffset": 2401272,
+      "bytes": 75,
+      "sha256": "b3dc2d8ab8dddf5e6e8bd10cbc1780ea1ddd2d185019a68525b2d66d192104b8",
+      "relation": "BEFORE_BEGIN",
+      "raw": "10-23 08:29:55.783   547  1382 E ActivityManager: ANR in com.android.phone\n"
+    },
+    {
+      "line": 20043,
+      "byteOffset": 2657563,
+      "bytes": 166,
+      "sha256": "abf3f498523eaf6a781c8488d2b6948fd7c6f9f8867637288302401b9778d3b8",
+      "relation": "INSIDE_STRICT_INTERVAL",
+      "raw": "10-23 08:30:07.432   547  1845 I am_anr  : [0,1617,com.android.phone,952647245,Process ProcessRecord{52364e8 1617:com.android.phone/1001} failed to complete startup]\n"
+    },
+    {
+      "line": 20194,
+      "byteOffset": 2686886,
+      "bytes": 75,
+      "sha256": "8b7a263872bf055204453a715bb6f72be7dcf2f84f8aae9742031a674716bd27",
+      "relation": "INSIDE_STRICT_INTERVAL",
+      "raw": "10-23 08:30:09.752   547  1845 E ActivityManager: ANR in com.android.phone\n"
+    },
+    {
+      "line": 21078,
+      "byteOffset": 2821464,
+      "bytes": 166,
+      "sha256": "a395d6c827f6df76a13685d2bd1d5e72a3e8e6b21491b236b2065d85f456cf17",
+      "relation": "INSIDE_STRICT_INTERVAL",
+      "raw": "10-23 08:30:16.964   547  2005 I am_anr  : [0,1865,com.android.phone,952647245,Process ProcessRecord{52364e8 1865:com.android.phone/1001} failed to complete startup]\n"
+    },
+    {
+      "line": 21156,
+      "byteOffset": 2830572,
+      "bytes": 75,
+      "sha256": "1e4ed4473c237b750f7eac3021c3fa1936e20fc808a1284eada4fae52e06463e",
+      "relation": "INSIDE_STRICT_INTERVAL",
+      "raw": "10-23 08:30:18.050   547  2005 E ActivityManager: ANR in com.android.phone\n"
+    },
+    {
+      "line": 22573,
+      "byteOffset": 3035980,
+      "bytes": 166,
+      "sha256": "b8d5a192a5ce1152b6c24cded1d89a864bbabc5879c57a392d998166bf00fd0d",
+      "relation": "INSIDE_STRICT_INTERVAL",
+      "raw": "10-23 08:30:30.054   547  2226 I am_anr  : [0,2030,com.android.phone,952647245,Process ProcessRecord{52364e8 2030:com.android.phone/1001} failed to complete startup]\n"
+    },
+    {
+      "line": 22614,
+      "byteOffset": 3040214,
+      "bytes": 75,
+      "sha256": "56ca5de6dce86dea131c365af3a834c4f4a6501c127f8949269d1e66c0b9dd4f",
+      "relation": "INSIDE_STRICT_INTERVAL",
+      "raw": "10-23 08:30:31.186   547  2226 E ActivityManager: ANR in com.android.phone\n"
+    },
+    {
+      "line": 22852,
+      "byteOffset": 3072796,
+      "bytes": 166,
+      "sha256": "d5d727d1689eedb806a2b5c4b5ebc61cfb7277aec51fb90a537513e53da28ae0",
+      "relation": "AFTER_END",
+      "raw": "10-23 08:30:35.149   547  2276 I am_anr  : [0,2240,com.android.phone,952647245,Process ProcessRecord{52364e8 2240:com.android.phone/1001} failed to complete startup]\n"
+    },
+    {
+      "line": 22932,
+      "byteOffset": 3082304,
+      "bytes": 75,
+      "sha256": "73af07dfc1de77cc25f35e176d3ee2310e60ba88fffc3a57f7dbbf30ac630e65",
+      "relation": "AFTER_END",
+      "raw": "10-23 08:30:35.998   547  2276 E ActivityManager: ANR in com.android.phone\n"
+    },
+    {
+      "line": 24176,
+      "byteOffset": 3250942,
+      "bytes": 71,
+      "sha256": "9318a8e97a2c5d9aa9d3e139af13d45050a6061a52181a40bd708156181d09c9",
+      "relation": "AFTER_END",
+      "raw": "10-23 08:30:40.570  2301  2301 E AndroidRuntime: FATAL EXCEPTION: main\n"
+    },
+    {
+      "line": 24198,
+      "byteOffset": 3253846,
+      "bytes": 371,
+      "sha256": "e32cdb6d0d2d61a3abb03978154e52eb302a194c4b066715183dca3a242d14bc",
+      "relation": "AFTER_END",
+      "raw": "10-23 08:30:40.572   547  1615 I am_crash: [2301,0,com.android.phone,1015791109,android.app.BackgroundServiceStartNotAllowedException,Not allowed to start service Intent { cmp=com.android.stk/.StkAppService (has extras) }: app is in background uid UidRecord{5caa32d 1001 SVC  bg:+3s163ms idle change:procstate procs:0 seq(1022,981)} caps=-------,ContextImpl.java,1974,0]\n"
+    }
+  ],
+  "systemUiAnrPrecededStrictBegin": true,
+  "scope": "Observed failed external namespace diagnostic, 0/13 stages, no original production APK class outcome. Fixture/SDK/VM cleanup evidence is separate from business qualification; collector actual255 remains255. Prior SystemUI ANR establishes temporal ordering only, not the unique cause of the three-part ready guard failure.",
+  "allWarningsRetained": true,
+  "allWarningsEliminated": false,
+  "humanImageReviewClaimed": false,
+  "physicalDevice": "NOT_RUN",
+  "TalkBack": "NOT_RUN",
+  "nativeCandidateIntegration": "NOT_RUN",
+  "noFurtherRuntimeRequestedByRoot": true
+}

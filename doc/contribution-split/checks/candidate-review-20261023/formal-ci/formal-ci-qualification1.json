@@ -1,0 +1,77 @@
+{
+  "allPassed": true,
+  "checks": {
+    "fork_head_exact": true,
+    "fork_run_and_all_jobs_terminal_success": true,
+    "fork_run_jobs_json_hashes_exact": true,
+    "fork_job_log_hashes_exact": true,
+    "fork_warning_rows_hash_exact": true,
+    "fork_workflow_zip_hash_exact": true,
+    "fork_workflow_zip_crc_passed": true,
+    "upstream_head_exact": true,
+    "upstream_run_and_all_jobs_terminal_success": true,
+    "upstream_run_jobs_json_hashes_exact": true,
+    "upstream_job_log_hashes_exact": true,
+    "upstream_warning_rows_hash_exact": true,
+    "upstream_workflow_zip_hash_exact": true,
+    "upstream_workflow_zip_crc_passed": true,
+    "fork_original_apk_audit_passed_exact_head": true,
+    "all_four_original_apk_hashes_still_exact": true,
+    "original_artifact_zip_server_digest_still_exact": true
+  },
+  "source_head": "92b13711162c5fa56c701267c3a06e5fbceeb6ce",
+  "runs": {
+    "fork": {
+      "qualificationPath": "/home/xumin/Public/Trime/build/pr2187-review-20261023/ci-formal1/fork/terminal/qualification.json",
+      "qualificationSha256": "43523b9295a606aa84807b6a75eb0e2d1834cf04114a677850934c5a48420f0f",
+      "runId": 39872383227,
+      "jobCount": 4,
+      "mechanicalWarningRowCount": 301,
+      "referencedWorkflows": []
+    },
+    "upstream": {
+      "qualificationPath": "/home/xumin/Public/Trime/build/pr2187-review-20261023/ci-formal1/upstream/terminal/qualification.json",
+      "qualificationSha256": "f9a07dc959839780e2632ec538be919c32b7838d825352ccdc2f15f81db366a8",
+      "runId": 39872386788,
+      "jobCount": 5,
+      "mechanicalWarningRowCount": 57,
+      "referencedWorkflows": [
+        {
+          "path": "osfans/trime/.github/workflows/check-ci.yml@0bcd28c2a4378dc0314259e042e8658365e29741",
+          "sha": "0bcd28c2a4378dc0314259e042e8658365e29741",
+          "ref": "refs/pull/2187/merge"
+        }
+      ]
+    }
+  },
+  "originalApkAudit": {
+    "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/ci-apk1/audit/result.json",
+    "sha256": "92cf8fa8f3c0cd723d6fdc7adb884579fc31b0c7d2a9bb763e8a06529e870382",
+    "actualSharedDebugCertificateSha256": "3a9003f52ba2aa9045d5ba320df1f2e04277c001420e05b8b8f0c69183b18458",
+    "signatureWarningRowsByAbi": {
+      "arm64-v8a": [
+        "WARNING: META-INF/services/kotlinx.coroutines.CoroutineExceptionHandler not protected by signature. Unauthorized modifications to this JAR entry will not be detected. Delete or move the entry outside of META-INF/.",
+        "WARNING: META-INF/services/kotlinx.coroutines.internal.MainDispatcherFactory not protected by signature. Unauthorized modifications to this JAR entry will not be detected. Delete or move the entry outside of META-INF/."
+      ],
+      "armeabi-v7a": [
+        "WARNING: META-INF/services/kotlinx.coroutines.CoroutineExceptionHandler not protected by signature. Unauthorized modifications to this JAR entry will not be detected. Delete or move the entry outside of META-INF/.",
+        "WARNING: META-INF/services/kotlinx.coroutines.internal.MainDispatcherFactory not protected by signature. Unauthorized modifications to this JAR entry will not be detected. Delete or move the entry outside of META-INF/."
+      ],
+      "x86": [
+        "WARNING: META-INF/services/kotlinx.coroutines.CoroutineExceptionHandler not protected by signature. Unauthorized modifications to this JAR entry will not be detected. Delete or move the entry outside of META-INF/.",
+        "WARNING: META-INF/services/kotlinx.coroutines.internal.MainDispatcherFactory not protected by signature. Unauthorized modifications to this JAR entry will not be detected. Delete or move the entry outside of META-INF/."
+      ],
+      "x86_64": [
+        "WARNING: META-INF/services/kotlinx.coroutines.CoroutineExceptionHandler not protected by signature. Unauthorized modifications to this JAR entry will not be detected. Delete or move the entry outside of META-INF/.",
+        "WARNING: META-INF/services/kotlinx.coroutines.internal.MainDispatcherFactory not protected by signature. Unauthorized modifications to this JAR entry will not be detected. Delete or move the entry outside of META-INF/."
+      ]
+    }
+  },
+  "limits": [
+    "Only CI terminal status, original logs and HOST artifact provenance are qualified.",
+    "Mechanical warning matches are retained, not distinct defect counts or exemptions.",
+    "No zero-warning, freshly rebuilt-all-native, Release, install, runtime or real-device claim.",
+    "The fork original Debug APK is the selected producer; upstream checkout can be a synthetic merge.",
+    "Read-only collector corrections and refused downloads remain available separately."
+  ]
+}

@@ -1,0 +1,114 @@
+--- /home/xumin/Public/Trime/build/pr2187-review-20261023/runtime-plan3/run-isolated-probes.py
++++ /home/xumin/Public/Trime/build/pr2187-review-20261023/runtime-plan4/run-isolated-probes.py
+@@ -52,21 +52,31 @@
+         dump = self.shell('dumpsys', 'package', package)
+         (self.out / (label + '-package.raw.txt')).write_text(dump)
+         users = re.findall(r'^\s*User 0:\s*(.*)$', dump, re.M)
+-        if not paths:
+-            known_absent = (not stderr or bool(re.fullmatch(
+-                r'(?:Error:\s*)?(?:package\s+[\'\"]?' + re.escape(package)
+-                + r'[\'\"]?\s+(?:was\s+)?not\s+found|Unknown package:\s*'
+-                + re.escape(package) + r')\.?', stderr, re.I)))
+-            require(known_absent and not users, 'Ambiguous or unrelated package absence')
++        headers = re.findall(r'^\s*Package \[([^\]]+)\][^\r\n]*:', dump, re.M)
++        known_absent = (not stderr or bool(re.fullmatch(
++            r'(?:Error:\s*)?(?:package\s+[\'\"]?' + re.escape(package)
++            + r'[\'\"]?\s+(?:was\s+)?not\s+found|Unknown package:\s*'
++            + re.escape(package) + r')\.?', stderr, re.I)))
++        if not paths and not users:
++            require(known_absent and not headers, 'Ambiguous or unrelated package absence')
+             result = dict(package=package, present=False, pm_path_command=path_command)
+         else:
+-            require(status == 0 and not stderr and len(paths) == 1 and paths[0].startswith('package:'),
+-                    'Ambiguous package identity')
+-            require(len(users) == 1, 'Unique User 0 package state required')
+-            fields = dict(re.findall(r'\b(installed|stopped|enabled)=([^\s]+)', users[0]))
+-            require(fields.get('installed') == 'true' and fields.get('stopped') in ('true', 'false')
++            require(headers == [package] and len(users) == 1, 'Unique exact Package/User 0 required')
++            fields = dict(re.findall(r'\b(installed|hidden|stopped|enabled)=([^\s]+)', users[0]))
++            require(fields.get('installed') == 'true' and fields.get('hidden') in ('true', 'false')
++                    and fields.get('stopped') in ('true', 'false')
+                     and re.fullmatch(r'[0-4]', fields.get('enabled', '')), 'Unreadable User 0 state')
+-            result = dict(package=package, present=True, apk_path=paths[0][8:],
++            if paths:
++                require(status == 0 and not stderr and len(paths) == 1 and paths[0].startswith('package:'),
++                        'Ambiguous package identity')
++                apk_path = paths[0][8:]
++                path_state = 'PRESENT'
++            else:
++                require(known_absent and fields['hidden'] == 'true', 'Missing APK path without actual hidden state')
++                apk_path = None
++                path_state = 'absent_due_to_hidden'
++            result = dict(package=package, present=True, apk_path=apk_path, apk_path_query=path_state,
++                installed=True, hidden=fields['hidden'] == 'true',
+                 enabled=int(fields['enabled']), stopped=fields['stopped'] == 'true',
+                 user0_raw=users[0], pm_path_command=path_command)
+         save(self.out / (label + '-state.json'), result)
+@@ -85,17 +95,21 @@
+ 
+     def restore(self, before, help_text):
+         package = before['package']
+-        command = 'default-state' if before['enabled'] == 0 else 'enable'
+-        self.shell('pm', command, '--user', '0', package)
+-        actual = self.package(package, 'restore-enabled')
++        if self.args.api == 21:
++            self.shell('pm', 'unhide', '--user', '0', package)
++        else:
++            command = 'default-state' if before['enabled'] == 0 else 'enable'
++            self.shell('pm', command, '--user', '0', package)
++        actual = self.package(package, 'restore-isolation')
+         if actual['stopped'] != before['stopped']:
+             require(bool(re.search(r'\bset-stopped-state\b', help_text)),
+                     'Stopped state changed and no supported public restoration command exists')
+             self.shell('pm', 'set-stopped-state', '--user', '0', package,
+                        'true' if before['stopped'] else 'false')
+             actual = self.package(package, 'restore-stopped')
+-        require(actual['enabled'] == before['enabled'] and actual['stopped'] == before['stopped'],
+-                'DocumentsUI enabled/stopped state was not restored exactly')
++        require(all(actual[key] == before[key] for key in
++                    ('enabled', 'stopped', 'hidden', 'installed', 'apk_path')),
++                'DocumentsUI APK path/hidden/installed/enabled/stopped not restored exactly')
+         self.report['documents_restored_exactly'] = actual
+         self.persist()
+ 
+@@ -125,21 +139,32 @@
+         require(len(present) == 1, 'Exactly one actual DocumentsUI package must exist')
+         before = present[0]
+         require(before['enabled'] in (0, 1), 'Fixture requires original DEFAULT or ENABLED state')
+-        help_text = fixture.shell('pm', 'help', check=False)
++        require(before['hidden'] is False, 'Initial DocumentsUI must not be hidden')
++        help_text = (fixture.shell('pm', check=False) if args.api == 21
++                     else fixture.shell('pm', 'help', check=False))
+         help_command = dict(fixture.report['commands'][-1])
+         require(help_command['remote_returncode'] in (0, 1), 'PackageManager help query failed')
+         help_text += '\n' + Path(help_command['stderr']).read_text()
+-        require('disable-user' in help_text, 'PackageManager must advertise disable-user before mutation')
+-        if before['enabled'] == 0:
+-            require('default-state' in help_text, 'Cannot restore DEFAULT; refuse before mutation')
++        if args.api == 21:
++            require(all(re.search(r'\bpm\s+' + command + r'\b', help_text) for command in ('hide', 'unhide')),
++                    'API21 actual usage must advertise both hide and unhide before mutation')
++        else:
++            require('disable-user' in help_text, 'PackageManager must advertise disable-user before mutation')
++            if before['enabled'] == 0:
++                require('default-state' in help_text, 'Cannot restore DEFAULT; refuse before mutation')
+         fixture.report.update(documents_before=before, help_command=help_command,
+                               help_text_sha256=hashlib.sha256(help_text.encode()).hexdigest())
+         fixture.persist()
+         mutation_attempted = True
+-        fixture.shell('pm', 'disable-user', '--user', '0', before['package'])
+-        disabled = fixture.package(before['package'], 'disabled')
+-        require(disabled['enabled'] == 3, 'Actual DocumentsUI is not disabled-user')
+-        require(disabled['stopped'] == before['stopped'], 'Disable unexpectedly changed stopped precondition')
++        fixture.shell('pm', 'hide' if args.api == 21 else 'disable-user', '--user', '0', before['package'])
++        disabled = fixture.package(before['package'], 'isolated')
++        if args.api == 21:
++            require(disabled['hidden'] is True and disabled['enabled'] == before['enabled'],
++                    'Actual hidden isolation must preserve original enabled state')
++        else:
++            require(disabled['enabled'] == 3 and disabled['hidden'] == before['hidden'],
++                    'Actual disabled-user isolation must preserve original hidden state')
++        require(disabled['stopped'] == before['stopped'], 'Isolation unexpectedly changed stopped precondition')
+         fixture.ps('before-explicit-old-target-stop')
+         fixture.shell('am', 'force-stop', TARGET)
+         require(not fixture.ps('after-explicit-old-target-stop')['target_rows'],

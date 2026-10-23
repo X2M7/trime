@@ -1,0 +1,11 @@
+--- /home/xumin/Public/Trime/build/pr2187-review-20261023/runtime-plan4/run-isolated-probes.py
++++ /home/xumin/Public/Trime/build/pr2187-review-20261023/runtime-plan5/run-isolated-probes.py
+@@ -51,7 +51,7 @@
+         require(status in (0, 1), 'Unexpected package query exit')
+         dump = self.shell('dumpsys', 'package', package)
+         (self.out / (label + '-package.raw.txt')).write_text(dump)
+-        users = re.findall(r'^\s*User 0:\s*(.*)$', dump, re.M)
++        users = re.findall(r'^[ \t]*User 0:[ \t]*([^\r\n]*\binstalled=[^\r\n]*)\r?$', dump, re.M)
+         headers = re.findall(r'^\s*Package \[([^\]]+)\][^\r\n]*:', dump, re.M)
+         known_absent = (not stderr or bool(re.fullmatch(
+             r'(?:Error:\s*)?(?:package\s+[\'\"]?' + re.escape(package)

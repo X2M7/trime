@@ -1,0 +1,123 @@
+{
+  "qualification": "PRECONDITION_REJECTED_BEFORE_ANY_PHASE",
+  "operator_actual_exit": 1,
+  "phases_NOT_RUN": [
+    "diagnostic-safe",
+    "diagnostic-equal_return",
+    "diagnostic-no_super_measure",
+    "production-class-only"
+  ],
+  "production_original_NOT_INSTALLED": true,
+  "operator_failure": {
+    "type": "AssertionError",
+    "message": "Unexpected Trime process: preserve precondition, do not qualify"
+  },
+  "operator_cleanup_errors": [
+    "Unexpected Trime process: preserve precondition, do not qualify"
+  ],
+  "actual_settings_equal": true,
+  "settings_equality_does_not_override_failed_ps": true,
+  "controller_actual_exit": 0,
+  "controller_completion": {
+    "argv": [
+      "/home/xumin/Public/android-toolchain/android-sdk/emulator/emulator",
+      "-avd",
+      "trime_readiness_api21_20261022",
+      "-sysdir",
+      "/home/xumin/Public/Trime/build/readiness-20261022/api21/system-images",
+      "-no-snapshot",
+      "-no-window",
+      "-no-boot-anim",
+      "-gpu",
+      "swangle",
+      "-cores",
+      "1",
+      "-memory",
+      "2048",
+      "-port",
+      "5582",
+      "-accel",
+      "on",
+      "-feature",
+      "-Vulkan"
+    ],
+    "serial": "emulator-5582",
+    "started_utc": "2026-10-22T23:53:39.799644+00:00",
+    "memory_floor_kib": 1048576,
+    "source_head": "92b13711162c5fa56c701267c3a06e5fbceeb6ce",
+    "original_apk_sha256": "36ede385eac30511f3c600dbc059a196e1ac462f173b154643a54f79b3af7d3a",
+    "controller_sha256": "7e967a6ab3b365f91fcb5d5441fd8814a3f87a8ebfb1574cfddc34f6674a6020",
+    "session_lifetime_guard": null,
+    "operator_normal_stop_required": true,
+    "prelaunch_memory": {
+      "MemTotal": 16017176,
+      "MemAvailable": 7438284,
+      "SwapFree": 0,
+      "utc": "2026-10-22T23:54:03.830925+00:00"
+    },
+    "pid": 300921,
+    "proc_stat_at_launch": "300921 (emulator) R 300871 300921 300921 0 -1 4194304 21 0 0 0 0 0 0 0 20 0 1 0 3847221 2150400 75 18446744073709551615 94702466647248 94702467588192 140723787166816 0 0 0 0 0 0 0 0 0 17 6 0 0 0 0 0 94702467616368 94702467618944 94702557884416 140723787169340 140723787169632 140723787169632 140723787173813 0\n",
+    "minimum_mem_available_kib": 6464356,
+    "booted": true,
+    "normal_stop": {
+      "exit": 0,
+      "stdout": "OK: killing emulator, bye bye\nOK\n",
+      "stderr": ""
+    },
+    "emulator_exit": 0,
+    "collector_exit": 0,
+    "original_sdk_unchanged": true,
+    "cleanup_errors": [],
+    "reason": "requested-normal-stop",
+    "ended_utc": "2026-10-22T23:59:51.602592+00:00"
+  },
+  "active_VMs_after_reap": [],
+  "actual_Trime_process_start_rows": [
+    {
+      "line": 5533,
+      "raw": "10-23 07:59:05.591  1480  1811 I am_proc_start: [0,2376,10073,com.osfans.trime.debug,content provider,com.osfans.trime.debug/com.osfans.trime.provider.RimeDataProvider]\r\n"
+    },
+    {
+      "line": 5534,
+      "raw": "10-23 07:59:05.591  1480  1811 I ActivityManager: Start proc com.osfans.trime.debug for content provider com.osfans.trime.debug/com.osfans.trime.provider.RimeDataProvider: pid=2376 uid=10073 gids={50073, 9997} abi=x86_64\r\n"
+    }
+  ],
+  "no_new_VM_ADB_Gradle": true,
+  "evidence": [
+    {
+      "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api21-class-only2/operator1/report.json",
+      "bytes": 60020,
+      "sha256": "b9b1b0fbcd94c89b8718a67d3e55ae3346421489144248fc8ca1fcbb9edf6f8e"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api21-class-only2/operator1/baseline.json",
+      "bytes": 513,
+      "sha256": "42236944abb1cfda7957366bdb782fb32bd3bc281b483e80ddc3de9f11c9eed1"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api21-class-only2/operator1/restored.json",
+      "bytes": 513,
+      "sha256": "42236944abb1cfda7957366bdb782fb32bd3bc281b483e80ddc3de9f11c9eed1"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api21-class-only2/operator1/diagnostic-no-Trime-process.raw.txt",
+      "bytes": 6008,
+      "sha256": "58f2574f7a5a284595929038f11d67fe6b45f6455ae1e2673ce99404b26fc99c"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api21-class-only2/operator1/restored-ps.raw.txt",
+      "bytes": 6008,
+      "sha256": "75704107f8f56e7439e1117513c29e894bf3ab0f87d58af052255d89991c824d"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api21-class-only2/completion.json",
+      "bytes": 1748,
+      "sha256": "a14dda4f2efe61c79360882b892c01aea637cfcb3d1f0ea4a2b719edf36569a5"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api21-class-only2-host-audit1/audit.json",
+      "bytes": 2902,
+      "sha256": "8ff68113ee646a499a578bcd3e25246fec351309b7b3388c598d6193d53a08a4"
+    }
+  ]
+}

@@ -1,0 +1,161 @@
+{
+  "host_only": true,
+  "no_VM_ADB_Gradle": true,
+  "passed": true,
+  "checks": [
+    {
+      "name": "run-probes.py-byte-exact",
+      "passed": true
+    },
+    {
+      "name": "runtime_common.py-byte-exact",
+      "passed": true
+    },
+    {
+      "name": "audit-logs.py-byte-exact",
+      "passed": true
+    },
+    {
+      "name": "controller-only-binding-and-OUT",
+      "passed": true
+    },
+    {
+      "name": "all-wrapper-AST-except-one-users-expression-identical",
+      "passed": true
+    },
+    {
+      "name": "all-syntax",
+      "passed": true
+    },
+    {
+      "name": "actual-api35-permission-User0",
+      "passed": true
+    },
+    {
+      "name": "duplicate-true-state-reject",
+      "passed": true
+    },
+    {
+      "name": "only-permissions-User0-reject",
+      "passed": true
+    },
+    {
+      "name": "actual-api21-regression",
+      "passed": true
+    },
+    {
+      "name": "hidden-API21-no-fabricated-path",
+      "passed": true
+    },
+    {
+      "name": "hidden-API21-no-fabricated-path-explicit-absent-due-to-hidden",
+      "passed": true
+    },
+    {
+      "name": "help-actual0-with-no-device",
+      "passed": true
+    },
+    {
+      "name": "actual-new-UNFROZEN-refusal-before-fixture",
+      "passed": true
+    },
+    {
+      "name": "all-old-plan4-frozen-inputs-unchanged",
+      "passed": true
+    }
+  ],
+  "parser_cases": [
+    {
+      "label": "actual-api35-permission-User0",
+      "input_dump_sha256": "5166c1793d58021459c53158d0077b1ed7a8ba0a0bb7a0ca77085d8b1a8814e7",
+      "accepted": true,
+      "value": {
+        "package": "com.android.documentsui",
+        "present": true,
+        "apk_path": "/system/priv-app/DocumentsUI/DocumentsUI.apk",
+        "apk_path_query": "PRESENT",
+        "installed": true,
+        "hidden": false,
+        "enabled": 0,
+        "stopped": false,
+        "user0_raw": "ceDataInode=344120 deDataInode=90241 installed=true hidden=false suspended=false distractionFlags=0 stopped=false notLaunched=false enabled=0 instant=false virtual=false quarantined=false",
+        "pm_path_command": {
+          "remote_returncode": 0,
+          "stderr": "/home/xumin/Public/Trime/build/pr2187-review-20261023/runtime-plan5/host-check1/actual-api35-permission-User0/stderr"
+        }
+      },
+      "error": null,
+      "HOST_only": true
+    },
+    {
+      "label": "duplicate-true-state-reject",
+      "input_dump_sha256": "e6ef724f264127e1147ec484a725295465efb2b18fbbd0b664f23c591564877d",
+      "accepted": false,
+      "value": null,
+      "error": "Unique exact Package/User 0 required",
+      "HOST_only": true
+    },
+    {
+      "label": "only-permissions-User0-reject",
+      "input_dump_sha256": "b5164b4d56e30fcf3fa1177f245cde1015855ccd6b46387c48923e0240ac2658",
+      "accepted": false,
+      "value": null,
+      "error": "Unique exact Package/User 0 required",
+      "HOST_only": true
+    },
+    {
+      "label": "actual-api21-regression",
+      "input_dump_sha256": "9a25b5ede0a0b57d3f1653b08bb097262cbc805bdfc774706e227350d1ae55a4",
+      "accepted": true,
+      "value": {
+        "package": "com.android.documentsui",
+        "present": true,
+        "apk_path": "/system/app/DocumentsUI/DocumentsUI.apk",
+        "apk_path_query": "PRESENT",
+        "installed": true,
+        "hidden": false,
+        "enabled": 0,
+        "stopped": false,
+        "user0_raw": "installed=true hidden=false stopped=false notLaunched=false enabled=0",
+        "pm_path_command": {
+          "remote_returncode": 0,
+          "stderr": "/home/xumin/Public/Trime/build/pr2187-review-20261023/runtime-plan5/host-check1/actual-api21-regression/stderr"
+        }
+      },
+      "error": null,
+      "HOST_only": true
+    },
+    {
+      "label": "hidden-API21-no-fabricated-path",
+      "input_dump_sha256": "2edb0422aead90e2b9f2d011c9a0e19a5bb7bfc0b453742c01e85ed312a05896",
+      "accepted": true,
+      "value": {
+        "package": "com.android.documentsui",
+        "present": true,
+        "apk_path": null,
+        "apk_path_query": "absent_due_to_hidden",
+        "installed": true,
+        "hidden": true,
+        "enabled": 0,
+        "stopped": false,
+        "user0_raw": "installed=true hidden=true stopped=false notLaunched=false enabled=0",
+        "pm_path_command": {
+          "remote_returncode": 0,
+          "stderr": "/home/xumin/Public/Trime/build/pr2187-review-20261023/runtime-plan5/host-check1/hidden-API21-no-fabricated-path/stderr"
+        }
+      },
+      "error": null,
+      "HOST_only": true
+    }
+  ],
+  "actual35_input": {
+    "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api35-class-only4/fixture1/before-com.android.documentsui-package.raw.txt",
+    "sha256": "5166c1793d58021459c53158d0077b1ed7a8ba0a0bb7a0ca77085d8b1a8814e7"
+  },
+  "actual21_input": {
+    "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api21-class-only3/fixture1/before-com.android.documentsui-package.raw.txt",
+    "sha256": "70a23f93196c972030f89b86cf7beb83cb8ed3512afc2bae8f3b64e8d5be4e9d"
+  },
+  "wrapper_sha256": "3c557910050dc7269e86ad55716ff8e0447615c73cb37170091c21c62d936884",
+  "guard_actual_exit": 1
+}

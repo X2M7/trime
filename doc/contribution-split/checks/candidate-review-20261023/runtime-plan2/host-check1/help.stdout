@@ -1,0 +1,15 @@
+usage: run-probes.py [-h] --binding BINDING --api {21,35} --output OUTPUT
+                     [--adb ADB]
+
+Explicit #2187 class-only sequence; no device action on import or --help.
+Requires Root's frozen binding and exclusive device lease. Never selects
+Trime, launches its Application/activity/service, writes its prefs, or re-
+signs an APK. Each diagnostic is a namespace copy, not the producer's
+application APK.
+
+options:
+  -h, --help         show this help message and exit
+  --binding BINDING
+  --api {21,35}
+  --output OUTPUT
+  --adb ADB

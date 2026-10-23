@@ -1,0 +1,48 @@
+{
+  "schema": 1,
+  "role": "Root actual original image inspection, not all screenshots or native IME/TalkBack acceptance",
+  "api": 21,
+  "source_head": "92b13711162c5fa56c701267c3a06e5fbceeb6ce",
+  "source_apk_sha256": "36ede385eac30511f3c600dbc059a196e1ac462f173b154643a54f79b3af7d3a",
+  "result_sha256": "c6c642d051423e08bbcd8b925bd0cc504a6106904b25400abd8a4e6255a6db8c",
+  "original_images_actually_viewed": [
+    {
+      "path": "api21-class-only4/operator1/production-class-only/original/constructor-screen.png",
+      "sha256": "cee2664b2882dfcc70e33238e94706d468fda4a6e3cc335bc66b7bbf12e6d492"
+    },
+    {
+      "path": "api21-class-only4/operator1/production-class-only/original/hanzi-screen.png",
+      "sha256": "0e2b77bcce00fece4403840e0f4b57cb82614cb0a87f5948314604f66b121022"
+    },
+    {
+      "path": "api21-class-only4/operator1/production-class-only/original/latin-screen.png",
+      "sha256": "7098d2c1c89c112da18332b3d3280596f547a72a7ace82731b9b171926a01a94"
+    },
+    {
+      "path": "api21-class-only4/operator1/production-class-only/original/null-screen.png",
+      "sha256": "025b2865edf2e72e6a0dbd6c1ce060d3914673c16f0d23cfdfad6d1e9e18c2f7"
+    },
+    {
+      "path": "api21-class-only4/operator1/production-class-only/original/rebind-screen.png",
+      "sha256": "c0a4f09684010645ba8a7971708ef1115aca57d63e26bac2497e2f1227a42d0c"
+    },
+    {
+      "path": "api21-class-only4/operator1/production-class-only/original/buffer-editable-screen.png",
+      "sha256": "ed25657408adeec3f7fc0a13a022c934dfc3e16f4e333a5e5e8d445e29e0a233"
+    },
+    {
+      "path": "api21-class-only4/operator1/production-class-only/original/granularity-line-next-previous-screen.png",
+      "sha256": "d4e048d876ee7d0b9c66405733af450ce51859d600c8f3bce1fd8fc5fcdb65d4"
+    }
+  ],
+  "visual_findings": [
+    "constructor and null show blank candidate views as intended",
+    "hanzi/rebind/editable show 你 in both columns",
+    "latin shows ni in both columns",
+    "granularity view shows 你好 in both columns; selection result must come from actual JSON, not the static PNG"
+  ],
+  "scope_limits": [
+    "Only seven original hardware PNGs visually inspected by Root at this point.",
+    "The loaded original production class runs in an external diagnostic Activity context, not the native IME or TalkBack service."
+  ]
+}

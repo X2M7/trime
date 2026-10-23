@@ -1,0 +1,142 @@
+{
+  "commands": [
+    {
+      "argv": [
+        "pm",
+        "help"
+      ],
+      "remote_returncode": 0,
+      "stderr": "/home/xumin/Public/Trime/build/pr2187-review-20261023/runtime-plan3/host-check1/restore-failure/empty-stderr"
+    },
+    {
+      "argv": [
+        "pm",
+        "disable-user",
+        "--user",
+        "0",
+        "com.android.documentsui"
+      ],
+      "remote_returncode": 0,
+      "stderr": "/home/xumin/Public/Trime/build/pr2187-review-20261023/runtime-plan3/host-check1/restore-failure/empty-stderr"
+    },
+    {
+      "argv": [
+        "am",
+        "force-stop",
+        "com.osfans.trime.debug"
+      ],
+      "remote_returncode": 0,
+      "stderr": "/home/xumin/Public/Trime/build/pr2187-review-20261023/runtime-plan3/host-check1/restore-failure/empty-stderr"
+    },
+    {
+      "argv": [
+        "log",
+        "-p",
+        "i",
+        "-t",
+        "PR2187_CLASS_ONLY",
+        "BEGIN 5c13b30bd3ab8f27e46645e290bea25f"
+      ],
+      "remote_returncode": 0,
+      "stderr": "/home/xumin/Public/Trime/build/pr2187-review-20261023/runtime-plan3/host-check1/restore-failure/empty-stderr"
+    },
+    {
+      "argv": [
+        "log",
+        "-p",
+        "i",
+        "-t",
+        "PR2187_CLASS_ONLY",
+        "END 5c13b30bd3ab8f27e46645e290bea25f"
+      ],
+      "remote_returncode": 0,
+      "stderr": "/home/xumin/Public/Trime/build/pr2187-review-20261023/runtime-plan3/host-check1/restore-failure/empty-stderr"
+    },
+    {
+      "argv": [
+        "pm",
+        "default-state",
+        "--user",
+        "0",
+        "com.android.documentsui"
+      ],
+      "remote_returncode": 0,
+      "stderr": "/home/xumin/Public/Trime/build/pr2187-review-20261023/runtime-plan3/host-check1/restore-failure/empty-stderr"
+    }
+  ],
+  "documents_before": {
+    "package": "com.android.documentsui",
+    "present": true,
+    "enabled": 0,
+    "stopped": false
+  },
+  "help_command": {
+    "argv": [
+      "pm",
+      "help"
+    ],
+    "remote_returncode": 0,
+    "stderr": "/home/xumin/Public/Trime/build/pr2187-review-20261023/runtime-plan3/host-check1/restore-failure/empty-stderr"
+  },
+  "help_text_sha256": "cbf0f78e69b48dcdbc87c8772f32afae83f4267436f49ffd3b3687b457c96055",
+  "begin_nonce": "5c13b30bd3ab8f27e46645e290bea25f",
+  "begin_at": "2026-10-23T00:04:30.592906+00:00",
+  "begin_command": {
+    "argv": [
+      "log",
+      "-p",
+      "i",
+      "-t",
+      "PR2187_CLASS_ONLY",
+      "BEGIN 5c13b30bd3ab8f27e46645e290bea25f"
+    ],
+    "remote_returncode": 0,
+    "stderr": "/home/xumin/Public/Trime/build/pr2187-review-20261023/runtime-plan3/host-check1/restore-failure/empty-stderr"
+  },
+  "child_argv": [
+    "/usr/bin/python3",
+    "/home/xumin/Public/Trime/build/pr2187-review-20261023/runtime-plan3/run-probes.py",
+    "--binding",
+    "/home/xumin/Public/Trime/build/pr2187-review-20261023/runtime-plan3/binding-template.json",
+    "--api",
+    "21",
+    "--output",
+    "/home/xumin/Public/Trime/build/pr2187-review-20261023/runtime-plan3/host-check1/restore-failure/child",
+    "--adb",
+    "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb"
+  ],
+  "child_host_pid": 999999,
+  "child_actual_exit": 0,
+  "child_streams": [
+    {
+      "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/runtime-plan3/host-check1/restore-failure/child.stdout",
+      "sha256": "b564f28d1bc03bf69fae574f053673542a9c38e79cb9163db3a3b872120b7932"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/runtime-plan3/host-check1/restore-failure/child.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "end_at": "2026-10-23T00:04:30.594183+00:00",
+  "end_command": {
+    "argv": [
+      "log",
+      "-p",
+      "i",
+      "-t",
+      "PR2187_CLASS_ONLY",
+      "END 5c13b30bd3ab8f27e46645e290bea25f"
+    ],
+    "remote_returncode": 0,
+    "stderr": "/home/xumin/Public/Trime/build/pr2187-review-20261023/runtime-plan3/host-check1/restore-failure/empty-stderr"
+  },
+  "cleanup_errors": [
+    {
+      "stage": "restore-DocumentsUI",
+      "message": "HOST stub actual restore failure"
+    }
+  ],
+  "finished": "2026-10-23T00:04:30.594222+00:00",
+  "fixture_operator_completed": false,
+  "actual_exit": 1
+}

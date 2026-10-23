@@ -1,0 +1,618 @@
+{
+  "host_only": true,
+  "no_ADB_VM_Gradle": true,
+  "passed": true,
+  "checks": [
+    {
+      "name": "added-only-shortmessage-parse-and-abort-if",
+      "passed": true
+    },
+    {
+      "name": "all-prior-runner-AST-including-finally-and-13-39-oracles-exact",
+      "passed": true
+    },
+    {
+      "name": "runtime_common.py-byte-identical",
+      "passed": true
+    },
+    {
+      "name": "audit-logs.py-byte-identical",
+      "passed": true
+    },
+    {
+      "name": "run-api21.py-only-new-binding-and-OUT",
+      "passed": true
+    },
+    {
+      "name": "run-api35.py-only-new-binding-and-OUT",
+      "passed": true
+    },
+    {
+      "name": "all-tool-Python-syntax",
+      "passed": true
+    },
+    {
+      "name": "actual-abort-raw-original-hash",
+      "passed": true
+    },
+    {
+      "name": "equal-return-abort-decision",
+      "passed": true
+    },
+    {
+      "name": "equal-return-abort-finally-stop-and-ps",
+      "passed": true
+    },
+    {
+      "name": "equal-return-abort-no-invented-qualification",
+      "passed": true
+    },
+    {
+      "name": "equal-return-abort-actual-raw-command-bound",
+      "passed": true
+    },
+    {
+      "name": "no-measure-abort-decision",
+      "passed": true
+    },
+    {
+      "name": "no-measure-abort-finally-stop-and-ps",
+      "passed": true
+    },
+    {
+      "name": "no-measure-abort-no-invented-qualification",
+      "passed": true
+    },
+    {
+      "name": "no-measure-abort-actual-raw-command-bound",
+      "passed": true
+    },
+    {
+      "name": "safe-must-reject-decision",
+      "passed": true
+    },
+    {
+      "name": "safe-must-reject-finally-stop-and-ps",
+      "passed": true
+    },
+    {
+      "name": "production-must-reject-decision",
+      "passed": true
+    },
+    {
+      "name": "production-must-reject-finally-stop-and-ps",
+      "passed": true
+    },
+    {
+      "name": "duplicate-code-reject-decision",
+      "passed": true
+    },
+    {
+      "name": "duplicate-code-reject-finally-stop-and-ps",
+      "passed": true
+    },
+    {
+      "name": "duplicate-message-reject-decision",
+      "passed": true
+    },
+    {
+      "name": "duplicate-message-reject-finally-stop-and-ps",
+      "passed": true
+    },
+    {
+      "name": "missing-message-reject-decision",
+      "passed": true
+    },
+    {
+      "name": "missing-message-reject-finally-stop-and-ps",
+      "passed": true
+    },
+    {
+      "name": "code-minus-one-reject-decision",
+      "passed": true
+    },
+    {
+      "name": "code-minus-one-reject-finally-stop-and-ps",
+      "passed": true
+    },
+    {
+      "name": "empty-directory-reject-decision",
+      "passed": true
+    },
+    {
+      "name": "empty-directory-reject-finally-stop-and-ps",
+      "passed": true
+    },
+    {
+      "name": "help-exits-zero-without-device",
+      "passed": true
+    },
+    {
+      "name": "unfrozen-rejected-before-Journal-and-device",
+      "passed": true
+    },
+    {
+      "name": "all-23-old-frozen-inputs-unchanged",
+      "passed": true
+    }
+  ],
+  "cases": [
+    {
+      "label": "equal-return-abort",
+      "variant": "equal_return",
+      "expected_abort_continuation": true,
+      "error": null,
+      "record": {
+        "name": "test-phase",
+        "package": "org.x2m7.trime.readiness.candidatediagnostic",
+        "variant": "equal_return",
+        "notProductionApk": true,
+        "started": "2026-10-22T23:51:45.677154+00:00",
+        "independently_qualified": false,
+        "state": "CONTROL_ABORTED_UNQUALIFIED",
+        "instrumentation_code": 0,
+        "instrumentation_short_message": "java.lang.NullPointerException",
+        "instrumentation_command": {
+          "at": "2026-10-22T23:46:51.485538+00:00",
+          "argv": [
+            "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+            "-s",
+            "emulator-5582",
+            "shell",
+            "sh -c 'am instrument -w -r -e variant equal_return org.x2m7.trime.readiness.candidatediagnostic/.CandidateProbe'; _trime_t12_status=$?; echo ''; echo \"__TRIME_T12_REMOTE_RC_00fd4050f5dfb6f58dc8861f27c705a6:$_trime_t12_status\""
+          ],
+          "stdout": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api21-class-only1/operator1/commands/0026.stdout",
+          "stderr": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api21-class-only1/operator1/commands/0026.stderr",
+          "timeout_seconds": 180,
+          "completed": true,
+          "returncode": 0,
+          "finished": "2026-10-22T23:46:52.357382+00:00",
+          "stdout_sha256": "87a516a8945bf386e7648442689b78a015954773ff2fa19cb2517e601e05ef35",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "shell_protocol_nonce": "00fd4050f5dfb6f58dc8861f27c705a6",
+          "remote_returncode": 0,
+          "remote_stdout_bytes": 255,
+          "remote_stdout_sha256": "8c5ba66b759c72690365d0c0378d7f9b9f33aeae70f0459d712476f8169faa00"
+        },
+        "instrumentation_output": {
+          "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/runtime-plan2/host-check1/equal-return-abort/test-phase/instrumentation.stdout.txt",
+          "sha256": "2b3d36bd849ba76dbcce3e0988d3a9b4860d7184bb2f1079376883d5643600f2"
+        },
+        "actual_stage_count": "NOT_EXPORTED",
+        "original_png_count": "NOT_EXPORTED",
+        "result_export": "NOT_EXPORTED",
+        "finished": "2026-10-22T23:51:45.678673+00:00",
+        "negative_control_semantics": "Actual instrumentation abort without an exported directory; no stage/BufferType/reference verdict or qualified negative-control result."
+      },
+      "calls": [
+        [
+          "ps",
+          "test-phase-before"
+        ],
+        [
+          "am",
+          "instrument",
+          "-w",
+          "-r",
+          "-e",
+          "variant",
+          "equal_return",
+          "org.x2m7.trime.readiness.candidatediagnostic/.CandidateProbe"
+        ],
+        [
+          "am",
+          "force-stop",
+          "org.x2m7.trime.readiness.candidatediagnostic"
+        ],
+        [
+          "ps",
+          "test-phase-after"
+        ]
+      ],
+      "synthetic_host_stub": true
+    },
+    {
+      "label": "no-measure-abort",
+      "variant": "no_super_measure",
+      "expected_abort_continuation": true,
+      "error": null,
+      "record": {
+        "name": "test-phase",
+        "package": "org.x2m7.trime.readiness.candidatediagnostic",
+        "variant": "no_super_measure",
+        "notProductionApk": true,
+        "started": "2026-10-22T23:51:45.679460+00:00",
+        "independently_qualified": false,
+        "state": "CONTROL_ABORTED_UNQUALIFIED",
+        "instrumentation_code": 0,
+        "instrumentation_short_message": "java.lang.NullPointerException",
+        "instrumentation_command": {
+          "at": "2026-10-22T23:46:51.485538+00:00",
+          "argv": [
+            "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+            "-s",
+            "emulator-5582",
+            "shell",
+            "sh -c 'am instrument -w -r -e variant equal_return org.x2m7.trime.readiness.candidatediagnostic/.CandidateProbe'; _trime_t12_status=$?; echo ''; echo \"__TRIME_T12_REMOTE_RC_00fd4050f5dfb6f58dc8861f27c705a6:$_trime_t12_status\""
+          ],
+          "stdout": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api21-class-only1/operator1/commands/0026.stdout",
+          "stderr": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api21-class-only1/operator1/commands/0026.stderr",
+          "timeout_seconds": 180,
+          "completed": true,
+          "returncode": 0,
+          "finished": "2026-10-22T23:46:52.357382+00:00",
+          "stdout_sha256": "87a516a8945bf386e7648442689b78a015954773ff2fa19cb2517e601e05ef35",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "shell_protocol_nonce": "00fd4050f5dfb6f58dc8861f27c705a6",
+          "remote_returncode": 0,
+          "remote_stdout_bytes": 255,
+          "remote_stdout_sha256": "8c5ba66b759c72690365d0c0378d7f9b9f33aeae70f0459d712476f8169faa00"
+        },
+        "instrumentation_output": {
+          "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/runtime-plan2/host-check1/no-measure-abort/test-phase/instrumentation.stdout.txt",
+          "sha256": "2b3d36bd849ba76dbcce3e0988d3a9b4860d7184bb2f1079376883d5643600f2"
+        },
+        "actual_stage_count": "NOT_EXPORTED",
+        "original_png_count": "NOT_EXPORTED",
+        "result_export": "NOT_EXPORTED",
+        "finished": "2026-10-22T23:51:45.679866+00:00",
+        "negative_control_semantics": "Actual instrumentation abort without an exported directory; no stage/BufferType/reference verdict or qualified negative-control result."
+      },
+      "calls": [
+        [
+          "ps",
+          "test-phase-before"
+        ],
+        [
+          "am",
+          "instrument",
+          "-w",
+          "-r",
+          "-e",
+          "variant",
+          "no_super_measure",
+          "org.x2m7.trime.readiness.candidatediagnostic/.CandidateProbe"
+        ],
+        [
+          "am",
+          "force-stop",
+          "org.x2m7.trime.readiness.candidatediagnostic"
+        ],
+        [
+          "ps",
+          "test-phase-after"
+        ]
+      ],
+      "synthetic_host_stub": true
+    },
+    {
+      "label": "safe-must-reject",
+      "variant": "safe",
+      "expected_abort_continuation": false,
+      "error": {
+        "type": "AssertionError",
+        "message": "Actual instrumentation status/directory missing"
+      },
+      "record": {
+        "name": "test-phase",
+        "package": "org.x2m7.trime.readiness.candidatediagnostic",
+        "variant": "safe",
+        "notProductionApk": true,
+        "started": "2026-10-22T23:51:45.680590+00:00",
+        "independently_qualified": false,
+        "failure": {
+          "type": "AssertionError",
+          "message": "Actual instrumentation status/directory missing"
+        }
+      },
+      "calls": [
+        [
+          "ps",
+          "test-phase-before"
+        ],
+        [
+          "am",
+          "instrument",
+          "-w",
+          "-r",
+          "-e",
+          "variant",
+          "safe",
+          "org.x2m7.trime.readiness.candidatediagnostic/.CandidateProbe"
+        ],
+        [
+          "am",
+          "force-stop",
+          "org.x2m7.trime.readiness.candidatediagnostic"
+        ],
+        [
+          "ps",
+          "test-phase-after"
+        ]
+      ],
+      "synthetic_host_stub": true
+    },
+    {
+      "label": "production-must-reject",
+      "variant": null,
+      "expected_abort_continuation": false,
+      "error": {
+        "type": "AssertionError",
+        "message": "Actual instrumentation status/directory missing"
+      },
+      "record": {
+        "name": "test-phase",
+        "package": "org.x2m7.trime.readiness.candidatediagnostic",
+        "variant": null,
+        "notProductionApk": false,
+        "started": "2026-10-22T23:51:45.681358+00:00",
+        "independently_qualified": false,
+        "failure": {
+          "type": "AssertionError",
+          "message": "Actual instrumentation status/directory missing"
+        }
+      },
+      "calls": [
+        [
+          "ps",
+          "test-phase-before"
+        ],
+        [
+          "am",
+          "instrument",
+          "-w",
+          "-r",
+          "org.x2m7.trime.readiness.candidatediagnostic/.CandidateProbe"
+        ],
+        [
+          "am",
+          "force-stop",
+          "org.x2m7.trime.readiness.candidatediagnostic"
+        ],
+        [
+          "ps",
+          "test-phase-after"
+        ]
+      ],
+      "synthetic_host_stub": true
+    },
+    {
+      "label": "duplicate-code-reject",
+      "variant": "equal_return",
+      "expected_abort_continuation": false,
+      "error": {
+        "type": "AssertionError",
+        "message": "Actual instrumentation status/directory missing"
+      },
+      "record": {
+        "name": "test-phase",
+        "package": "org.x2m7.trime.readiness.candidatediagnostic",
+        "variant": "equal_return",
+        "notProductionApk": true,
+        "started": "2026-10-22T23:51:45.682071+00:00",
+        "independently_qualified": false,
+        "failure": {
+          "type": "AssertionError",
+          "message": "Actual instrumentation status/directory missing"
+        }
+      },
+      "calls": [
+        [
+          "ps",
+          "test-phase-before"
+        ],
+        [
+          "am",
+          "instrument",
+          "-w",
+          "-r",
+          "-e",
+          "variant",
+          "equal_return",
+          "org.x2m7.trime.readiness.candidatediagnostic/.CandidateProbe"
+        ],
+        [
+          "am",
+          "force-stop",
+          "org.x2m7.trime.readiness.candidatediagnostic"
+        ],
+        [
+          "ps",
+          "test-phase-after"
+        ]
+      ],
+      "synthetic_host_stub": true
+    },
+    {
+      "label": "duplicate-message-reject",
+      "variant": "equal_return",
+      "expected_abort_continuation": false,
+      "error": {
+        "type": "AssertionError",
+        "message": "Actual instrumentation status/directory missing"
+      },
+      "record": {
+        "name": "test-phase",
+        "package": "org.x2m7.trime.readiness.candidatediagnostic",
+        "variant": "equal_return",
+        "notProductionApk": true,
+        "started": "2026-10-22T23:51:45.682763+00:00",
+        "independently_qualified": false,
+        "failure": {
+          "type": "AssertionError",
+          "message": "Actual instrumentation status/directory missing"
+        }
+      },
+      "calls": [
+        [
+          "ps",
+          "test-phase-before"
+        ],
+        [
+          "am",
+          "instrument",
+          "-w",
+          "-r",
+          "-e",
+          "variant",
+          "equal_return",
+          "org.x2m7.trime.readiness.candidatediagnostic/.CandidateProbe"
+        ],
+        [
+          "am",
+          "force-stop",
+          "org.x2m7.trime.readiness.candidatediagnostic"
+        ],
+        [
+          "ps",
+          "test-phase-after"
+        ]
+      ],
+      "synthetic_host_stub": true
+    },
+    {
+      "label": "missing-message-reject",
+      "variant": "equal_return",
+      "expected_abort_continuation": false,
+      "error": {
+        "type": "AssertionError",
+        "message": "Actual instrumentation status/directory missing"
+      },
+      "record": {
+        "name": "test-phase",
+        "package": "org.x2m7.trime.readiness.candidatediagnostic",
+        "variant": "equal_return",
+        "notProductionApk": true,
+        "started": "2026-10-22T23:51:45.683437+00:00",
+        "independently_qualified": false,
+        "failure": {
+          "type": "AssertionError",
+          "message": "Actual instrumentation status/directory missing"
+        }
+      },
+      "calls": [
+        [
+          "ps",
+          "test-phase-before"
+        ],
+        [
+          "am",
+          "instrument",
+          "-w",
+          "-r",
+          "-e",
+          "variant",
+          "equal_return",
+          "org.x2m7.trime.readiness.candidatediagnostic/.CandidateProbe"
+        ],
+        [
+          "am",
+          "force-stop",
+          "org.x2m7.trime.readiness.candidatediagnostic"
+        ],
+        [
+          "ps",
+          "test-phase-after"
+        ]
+      ],
+      "synthetic_host_stub": true
+    },
+    {
+      "label": "code-minus-one-reject",
+      "variant": "equal_return",
+      "expected_abort_continuation": false,
+      "error": {
+        "type": "AssertionError",
+        "message": "Actual instrumentation status/directory missing"
+      },
+      "record": {
+        "name": "test-phase",
+        "package": "org.x2m7.trime.readiness.candidatediagnostic",
+        "variant": "equal_return",
+        "notProductionApk": true,
+        "started": "2026-10-22T23:51:45.684137+00:00",
+        "independently_qualified": false,
+        "failure": {
+          "type": "AssertionError",
+          "message": "Actual instrumentation status/directory missing"
+        }
+      },
+      "calls": [
+        [
+          "ps",
+          "test-phase-before"
+        ],
+        [
+          "am",
+          "instrument",
+          "-w",
+          "-r",
+          "-e",
+          "variant",
+          "equal_return",
+          "org.x2m7.trime.readiness.candidatediagnostic/.CandidateProbe"
+        ],
+        [
+          "am",
+          "force-stop",
+          "org.x2m7.trime.readiness.candidatediagnostic"
+        ],
+        [
+          "ps",
+          "test-phase-after"
+        ]
+      ],
+      "synthetic_host_stub": true
+    },
+    {
+      "label": "empty-directory-reject",
+      "variant": "equal_return",
+      "expected_abort_continuation": false,
+      "error": {
+        "type": "AssertionError",
+        "message": "Actual instrumentation status/directory missing"
+      },
+      "record": {
+        "name": "test-phase",
+        "package": "org.x2m7.trime.readiness.candidatediagnostic",
+        "variant": "equal_return",
+        "notProductionApk": true,
+        "started": "2026-10-22T23:51:45.684840+00:00",
+        "independently_qualified": false,
+        "failure": {
+          "type": "AssertionError",
+          "message": "Actual instrumentation status/directory missing"
+        }
+      },
+      "calls": [
+        [
+          "ps",
+          "test-phase-before"
+        ],
+        [
+          "am",
+          "instrument",
+          "-w",
+          "-r",
+          "-e",
+          "variant",
+          "equal_return",
+          "org.x2m7.trime.readiness.candidatediagnostic/.CandidateProbe"
+        ],
+        [
+          "am",
+          "force-stop",
+          "org.x2m7.trime.readiness.candidatediagnostic"
+        ],
+        [
+          "ps",
+          "test-phase-after"
+        ]
+      ],
+      "synthetic_host_stub": true
+    }
+  ],
+  "help_actual_exit": 0,
+  "guard_actual_exit": 1,
+  "driver_sha256": "073cd350bb911c7fb3c6682c8612fa7dea1e9b237836a4820a109be74b5e6f4d"
+}

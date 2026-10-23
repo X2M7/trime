@@ -1,0 +1,99 @@
+{
+  "notProductionApk": true,
+  "purpose": "A/B/C source diagnostic only. No production or native-candidate acceptance.",
+  "productionInput": {
+    "path": "/home/xumin/Public/Trime-pr-candidate-text-layout/app/src/main/java/com/osfans/trime/ime/core/AutoScaleTextView.kt",
+    "sha256": "59cf13b4b42b09acbb06f41922c2480844ffa96a7399494b565e718a4a12a05c"
+  },
+  "variants": {
+    "safe": {
+      "className": "org.x2m7.trime.diagnostic.safe.AutoScaleTextView",
+      "sourceSha256": "08c375a4d475c143b2b3e0bfbf8bc35ee50ea494de5543b18303cd0d31444f4d",
+      "sourceChangeBeyondPackage": "none",
+      "diffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "equal_return": {
+      "className": "org.x2m7.trime.diagnostic.equal_return.AutoScaleTextView",
+      "sourceSha256": "d6007069c4830bdcd847c4984d131cbad715987e2750fa78bb926690b6bf6ae6",
+      "sourceChangeBeyondPackage": "literal review comment 4350112633 setter",
+      "diffSha256": "6abc69fc292680c98f9bc354ab2a30371a3a7f2443340d1390d2b8cc6f14741a"
+    },
+    "no_super_measure": {
+      "className": "org.x2m7.trime.diagnostic.no_super_measure.AutoScaleTextView",
+      "sourceSha256": "75c8372386d9500d071e829b16de3ea8fd5a5aee50d52784be93d014b3ff5a3e",
+      "sourceChangeBeyondPackage": "remove exactly one super.onMeasure call",
+      "diffSha256": "ee69441ae5b3e2648cfedad75e235b924b3336df8545962203d202331305bfbe"
+    }
+  },
+  "originalProbeInputs": {
+    "CandidateActivity.java": {
+      "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/probe-source/CandidateActivity.java",
+      "sha256": "2d29b1aeaea42bcb1dced2b9d39788ce7f84d3a463c55f2146594ed1d23c9c93"
+    },
+    "CandidateProbe.java": {
+      "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/probe-source/CandidateProbe.java",
+      "sha256": "852b57261405bbf3d10efad896d7aa750aaa5c4e82bd2f6b8af93788564d84fe"
+    },
+    "AndroidManifest.xml": {
+      "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/probe-source/AndroidManifest.xml",
+      "sha256": "a147daa4074a0918066ca73b2f743e13ce6f93c09627fc094ffe33342c3ff535"
+    }
+  },
+  "generatedSources": {
+    "source/AndroidManifest.xml": "0858f9de12a93eff74e0bba3b6115f129e013eb02579b4feeb53cc692bc46a24",
+    "source/AutoScaleTextView-production-input.kt": "59cf13b4b42b09acbb06f41922c2480844ffa96a7399494b565e718a4a12a05c",
+    "source/CandidateActivity.java": "b479a656d038e51b2d39ff9da9f08b73d617e3cb795e897b1cce8a4a663203aa",
+    "source/CandidateProbe.java": "cad32ee84465931d80aa9d39df7a35ffa12cf7410c45d1eba27e0e6aecbc5d54",
+    "source/DiagnosticIdentity.java": "cc24663a55a3d0d12364c74251c4e0c334ee66738387df2c4893651213ecda66",
+    "source/equal_return/AutoScaleTextView.kt": "d6007069c4830bdcd847c4984d131cbad715987e2750fa78bb926690b6bf6ae6",
+    "source/equal_return-vs-safe.diff": "6abc69fc292680c98f9bc354ab2a30371a3a7f2443340d1390d2b8cc6f14741a",
+    "source/no_super_measure/AutoScaleTextView.kt": "75c8372386d9500d071e829b16de3ea8fd5a5aee50d52784be93d014b3ff5a3e",
+    "source/no_super_measure-vs-safe.diff": "ee69441ae5b3e2648cfedad75e235b924b3336df8545962203d202331305bfbe",
+    "source/safe/AutoScaleTextView.kt": "08c375a4d475c143b2b3e0bfbf8bc35ee50ea494de5543b18303cd0d31444f4d",
+    "source/safe-vs-safe.diff": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "dependencies": {
+    "compiler": {
+      "path": "/home/xumin/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-compiler-embeddable/2.3.21/c4b47f8e33cdbeedd8c1415ab9f9ade870388162/kotlin-compiler-embeddable-2.3.21.jar",
+      "sha256": "d3e70fb011675e77ef00f1a68918d3cd91eed26058977d1e3ea2a37a293233af"
+    },
+    "stdlib": {
+      "path": "/home/xumin/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib/2.3.21/a2ee2c4e220fee522f0451b723bab2a43f3481a7/kotlin-stdlib-2.3.21.jar",
+      "sha256": "6f64eac736db9434dd6925b4a518b9d1d17177652320c37916cf9ba3ce7d7d7a"
+    },
+    "script": {
+      "path": "/home/xumin/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-script-runtime/2.3.21/8dafd7f0eb5efef35a446683a2774fef61c68aeb/kotlin-script-runtime-2.3.21.jar",
+      "sha256": "ec61bf1229c837fa9f4255f34ca69816138b73158e7ae9b8d964cf92ca6dfd2e"
+    },
+    "daemon": {
+      "path": "/home/xumin/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-daemon-embeddable/2.3.21/384c12222b10aaa06fdd2163435709efdade5a02/kotlin-daemon-embeddable-2.3.21.jar",
+      "sha256": "222fc10a3c22e74d30369bf8a0ca6c4f9372eac7d4a0081e290c256fa4d30fb2"
+    },
+    "reflect": {
+      "path": "/home/xumin/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-reflect/1.6.10/1cbe9c92c12a94eea200d23c2bbaedaf3daf5132/kotlin-reflect-1.6.10.jar",
+      "sha256": "3277ac102ae17aad10a55abec75ff5696c8d109790396434b496e75087854203"
+    },
+    "coroutines": {
+      "path": "/home/xumin/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlinx/kotlinx-coroutines-core-jvm/1.10.2/4a9f78ef49483748e2c129f3d124b8fa249dafbf/kotlinx-coroutines-core-jvm-1.10.2.jar",
+      "sha256": "5ca175b38df331fd64155b35cd8cae1251fa9ee369709b36d42e0a288ccce3fd"
+    },
+    "annotations": {
+      "path": "/home/xumin/.gradle/caches/modules-2/files-2.1/org.jetbrains/annotations/13.0/919f0dfe192fb4e063e7dacadee7f8bb9a2672a9/annotations-13.0.jar",
+      "sha256": "ace2a10dc8e2d5fd34925ecac03e4988b2c0f851650c94b8cef49ba1bd111478"
+    },
+    "coreKtxAar": {
+      "path": "/home/xumin/.gradle/caches/modules-2/files-2.1/androidx.core/core-ktx/1.16.0/fb0ea209ea2411dc5106cd1c95b513c81ce8aedb/core-ktx-1.16.0.aar",
+      "sha256": "1766dbd82f64a12dcd359ecb6f15f3cf35db4d66d22961a7c51b2ffc6468314c"
+    },
+    "agpBuilderD8": {
+      "path": "/home/xumin/.gradle/caches/modules-2/files-2.1/com.android.tools.build/builder/9.4.1/af1135b3a2fd9c7606e2f0e301348147953e49ef/builder-9.4.1.jar",
+      "sha256": "3ac6cce8e9aaa42683d66cf3b0d10b0bb44e40f9dea4a4db512481e858197b75"
+    },
+    "androidJar": {
+      "path": "/home/xumin/Public/android-toolchain/android-sdk/platforms/android-37.0/android.jar",
+      "sha256": "bf1b4387cc7ca94fc6ef684f040d9d16fbf16248e181819f020736ea2053f177"
+    }
+  },
+  "coreKtxCompileOnly": true,
+  "noAdbOrGradle": true
+}

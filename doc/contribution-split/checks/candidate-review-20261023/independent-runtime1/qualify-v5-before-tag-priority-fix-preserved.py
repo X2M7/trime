@@ -1,0 +1,314 @@
+#!/usr/bin/env python3
+"""HOST-only independent exact-source phase/oracle/PNG audit. Never calls ADB or imports runtime tools."""
+import argparse, datetime, hashlib, json, re
+from pathlib import Path
+from PIL import Image
+
+ROOT = Path('/home/xumin/Public/Trime/build/pr2187-review-20261023')
+OUT = ROOT / 'independent-runtime1'
+HEAD = '92b13711162c5fa56c701267c3a06e5fbceeb6ce'
+SOURCE = '59cf13b4b42b09acbb06f41922c2480844ffa96a7399494b565e718a4a12a05c'
+APK = '36ede385eac30511f3c600dbc059a196e1ac462f173b154643a54f79b3af7d3a'
+DIAG = '4b9a6d5c2b69073f733b60b9c35bdd7f587804a522d64612725c8af801dc1539'
+NAMES = ['constructor','hanzi','latin','null','rebind','buffer-normal','buffer-spannable',
+         'buffer-editable','buffer-back-normal','buffer-repeat-normal','buffer-repeat-spannable',
+         'granularity-selectable-precondition','granularity-line-next-previous']
+TYPES = {'buffer-normal':['NORMAL'], 'buffer-spannable':['NORMAL','SPANNABLE'],
+         'buffer-editable':['NORMAL','SPANNABLE','EDITABLE'],
+         'buffer-back-normal':['NORMAL','SPANNABLE','EDITABLE','NORMAL'],
+         'buffer-repeat-normal':['NORMAL','NORMAL'],
+         'buffer-repeat-spannable':['NORMAL','SPANNABLE','SPANNABLE']}
+
+
+def sha(p):
+    with p.open('rb') as f: return hashlib.file_digest(f,'sha256').hexdigest()
+
+
+def meta(p):
+    a = p.stat(); digest = sha(p); b = p.stat()
+    return dict(path=str(p), bytes=b.st_size, sha256=digest, inode=b.st_ino,
+                unchangedDuringHash=(a.st_size,a.st_mtime_ns,a.st_ino)==(b.st_size,b.st_mtime_ns,b.st_ino))
+
+
+def load(p): return json.loads(p.read_bytes())
+
+
+def ink(im, box):
+    image = im.crop(tuple(box)).convert('RGBA')
+    try: return sum(1 for r,g,b,a in image.get_flattened_data() if a>=128 and r+g+b<=162)
+    finally: image.close()
+
+
+def type_truth(snapshot, expected):
+    if snapshot.get('text') != '你': return False
+    s,e = snapshot.get('spannable'), snapshot.get('editable')
+    return {'NORMAL':s is False and e is False, 'SPANNABLE':s is True and e is False,
+            'EDITABLE':e is True and s is True}[expected]
+
+
+def expected(name):
+    return '' if name in ('constructor','null') else 'ni' if name=='latin' else '你好' if name.startswith('granularity-') else '你'
+
+
+def buffer_truth(value, name):
+    calls = value.get('calls',[])
+    wanted = TYPES[name]
+    results=[]
+    for i,call in enumerate(calls):
+        kind=call.get('requestedType')
+        truthful = (i<len(wanted) and kind==wanted[i] and call.get('sameContentBeforeSet') is True
+                    and type_truth(call.get('immediateAfterSet',{}), kind)) if kind in ('NORMAL','SPANNABLE','EDITABLE') else False
+        results.append(dict(index=i,requested=kind, independentlyPassed=truthful,
+                            reportedPassed=call.get('textAndTypePassed'), snapshot=call.get('immediateAfterSet')))
+    return dict(passed=len(calls)==len(wanted) and all(x['independentlyPassed'] and x['reportedPassed'] is True for x in results)
+                and value.get('passed') is True, calls=results, expectedRequests=wanted)
+
+
+def action_truth(v):
+    checks = dict(focus=v.get('requestFocusReturned') is True and v.get('focusedBeforeActions') is True,
+                  initialZero=v.get('initialSelectionStart')==0 and v.get('initialSelectionEnd')==0,
+                  nextTrueAndAtTwo=v.get('nextReturned') is True and v.get('nextSelectionStart')==v.get('nextSelectionEnd')==2,
+                  previousTrueAndAtZero=v.get('previousReturned') is True and v.get('previousSelectionStart')==v.get('previousSelectionEnd')==0,
+                  actionsAdvertised=256 in v.get('advertisedActionIds',[]) and 512 in v.get('advertisedActionIds',[]),
+                  lineAdvertised=v.get('lineAdvertised') is True and bool(v.get('movementGranularities',0)&4),
+                  beforeAndAfterText=all(v.get(k,{}).get('text')=='你好' and v.get(k,{}).get('spannable') is True
+                                         and v.get(k,{}).get('editable') is False for k in ('before','after')),
+                  reportedPassed=v.get('passed') is True)
+    return dict(passed=all(checks.values()),checks=checks,observed=v)
+
+
+def precondition_truth(v):
+    checks = dict(text=v.get('text')=='你好', spannable=v.get('spannable') is True and v.get('editable') is False,
+                  selectable=v.get('textIsSelectable') is True,focusable=v.get('focusable') is True,
+                  touchFocus=v.get('focusableInTouchMode') is True,movement=bool(v.get('movementMethodClass')),
+                  reportedPassed=v.get('passed') is True)
+    return dict(passed=all(checks.values()),checks=checks,observed=v)
+
+
+def stage_audit(stage,folder):
+    name=stage['name']; text=expected(name); checks=[]
+    def check(k,b): checks.append(dict(check=k,passed=bool(b)))
+    screen_path=folder/(name+'-screen.png')
+    check('hardwarePngHash',sha(screen_path)==stage['screenSha256'])
+    check('onDrawBeforeCapture',stage['bindUptimeMillis']<=stage['observedOnDrawUptimeMillis']<=stage['hardwareCaptureUptimeMillis'])
+    check('atLeast1000msAfterObservedDraw',stage['hardwareCaptureUptimeMillis']-stage['observedOnDrawUptimeMillis']>=1000)
+    check('declaredSettleUnchanged',stage['minimumCompositorSettleMillis']==1000)
+    labels={}
+    with Image.open(screen_path) as screen:
+        if screen.format!='PNG': raise ValueError('Not PNG')
+        screen.load()
+        for label in ('production','reference'):
+            v=stage[label]; p=folder/(name+'-'+label+'.png')
+            check(label+'SoftwarePngHash',sha(p)==v['softwareSha256'])
+            box=v['bounds']; valid=(len(box)==4 and 0<=box[0]<box[2]<=screen.width and 0<=box[1]<box[3]<=screen.height)
+            check(label+'InScreenBounds',valid)
+            with Image.open(p) as sw:
+                if sw.format!='PNG': raise ValueError('Not PNG')
+                sw.load(); sw_count=ink(sw,(0,0,sw.width,sw.height))
+                check(label+'SoftwareSize',sw.size==(box[2]-box[0],box[3]-box[1]))
+            screen_count=ink(screen,box) if valid else -1
+            glyph=(screen_count==0 and sw_count==0) if text=='' else screen_count>0 and sw_count>0 and screen_count>=max(1,sw_count//4)
+            text_layout=v.get('text')==text and v.get('frameworkLayoutText')==text
+            before_after={k:v.get(k) for k in ('textBeforeAccessibilityNode','frameworkLayoutTextBeforeAccessibilityNode',
+                'textAfterAccessibilityNode','frameworkLayoutTextAfterAccessibilityNode')}
+            # Preserve the actual producer oracle: it asserts final text/Layout, not every recorded pre-node field.
+            accessible=v.get('accessibilityText')==text
+            truth=dict(textAndLayout=text_layout,accessibility=accessible,glyph=glyph)
+            producer=dict(textAndLayout=v.get('textAndLayoutPassed'),accessibility=v.get('accessibilityPassed'),glyph=v.get('glyphPassed'))
+            check(label+'InkCountsMatch',screen_count==v['screenInk'] and sw_count==v['softwareInk'])
+            # Failed negative controls may legitimately report false. Check oracle honesty separately from pass.
+            check(label+'ReportedOracleMatchesIndependent',all(producer[k] is truth[k] for k in truth))
+            labels[label]=dict(passed=all(truth.values()),oracle=truth,reportedOracle=producer,
+                               screenInk=screen_count,softwareInk=sw_count,expectedText=text,
+                               observedBeforeAfter=before_after,beforeAndAfterAllExpected=all(x==text for x in before_after.values()))
+    mutation={}
+    if name in TYPES:
+        mutation={label:buffer_truth(stage['mutation'][label],name) for label in ('production','reference')}
+    elif name=='granularity-selectable-precondition':
+        mutation={label:precondition_truth(stage['mutation'][label]) for label in ('production','reference')}
+    elif name=='granularity-line-next-previous':
+        mutation={label:action_truth(stage['mutation'][label]) for label in ('production','reference')}
+    if mutation:
+        check('MutationAggregateTruth',stage['mutation'].get('passed') is all(x['passed'] for x in mutation.values()))
+    independent=all(x['passed'] for x in checks) and all(x['passed'] for x in labels.values()) and all(x['passed'] for x in mutation.values())
+    return dict(name=name,independentlyPassed=independent,reportedPassed=stage.get('passed'),integrityChecks=checks,
+                labels=labels,mutation=mutation,reportMatchesIndependent=stage.get('passed') is independent)
+
+
+def phase_audit(round_path,record,sdk,binding):
+    name=record['name']; folder=round_path/'operator1'/name; variant=record.get('variant')
+    result=dict(name=name,variant=variant,nonProductionDiagnostic=bool(variant),rawPhaseRecord=meta(folder/'phase-record.json'))
+    stdout=(folder/'instrumentation.stdout.txt').read_text() if (folder/'instrumentation.stdout.txt').exists() else ''
+    result['instrumentationStdout']=meta(folder/'instrumentation.stdout.txt') if stdout else None
+    codes=re.findall(r'^INSTRUMENTATION_CODE:\s*(-?\d+)\s*$',stdout,re.M)
+    result['actualInstrumentationCodes']=[int(x) for x in codes]
+    if not record.get('original_folder'):
+        result.update(disposition='UNQUALIFIED_NO_EXPORTED_REPORT',positiveQualified=False,
+            noBufferTypeOrLayoutOutcomeClaimed=True,rawFailure=record.get('failure'))
+        return result
+    original=Path(record['original_folder']); report=load(original/'result.json'); issues=[]
+    def require(k,b):
+        if not b: issues.append(k)
+    result['originalReport']=meta(original/'result.json')
+    require('phase report digest',sha(original/'result.json')==record.get('result_sha256'))
+    wanted_apk=DIAG if variant else APK
+    require('original exact APK hash',report.get('sourceApkSha256')==wanted_apk)
+    require('SDK',report.get('sdk')==sdk)
+    require('13 expected stages declared',report.get('expectedStageCount')==13)
+    require('original five order',report.get('originalFiveStageNames')==NAMES[:5])
+    require('hardware captured before software declared',report.get('hardwareCapturedBeforeSoftwareDraw') is True)
+    require('no TalkBack/native integration claim',report.get('talkBackServiceTested') is False and report.get('nativeCandidateIntegrationTested') is False)
+    if variant:
+        require('nonproduction diagnostic identity',report.get('notProductionApk') is True and report.get('diagnosticVariant')==variant)
+        require('diagnostic source input',report.get('originalProductionSourceSha256')==SOURCE)
+        require('variant source input',report.get('diagnosticClassSourceSha256')==binding['diagnostic_variants'][variant]['sourceSha256'])
+    else:
+        require('production report not diagnostic',not report.get('notProductionApk',False) and not report.get('diagnosticVariant'))
+        require('production installed source path',bool(re.fullmatch(r'/data/app/(?:[^/]+/)?com\.osfans\.trime\.debug[^/]*/(?:base|split[^/]+)\.apk',report.get('sourceApk',''))))
+    require('instrumentation code matches actual report',len(codes)==1 and int(codes[0])==(-1 if report.get('passed') else 0))
+    encoded=re.findall(r'^INSTRUMENTATION_RESULT: report=(\{[^\r\n]*\})\s*$',stdout,re.M)
+    require('device-exported report equals instrumentation JSON',len(encoded)==1 and json.loads(encoded[0])==report)
+    stages=report.get('stages',[])
+    require('stage order exact prefix', [x.get('name') for x in stages]==NAMES[:len(stages)] and len(stages)<=13)
+    actual_files={str(p.relative_to(original)):dict(bytes=p.stat().st_size,sha256=sha(p)) for p in original.rglob('*') if p.is_file()}
+    recorded={x['path']:dict(bytes=x['bytes'],sha256=x['sha256']) for x in record.get('files',[])}
+    require('all original exported files match phase manifest',actual_files==recorded)
+    actual_pngs=sorted(x for x in actual_files if x.endswith('.png'))
+    require('PNG set exact for actual stage prefix',actual_pngs==sorted(x['name']+'-'+label+'.png' for x in stages for label in ('screen','production','reference')))
+    reviewed=[stage_audit(x,original) for x in stages]
+    require('all stage reports independently truthful',all(x['reportMatchesIndependent'] and all(c['passed'] for c in x['integrityChecks']) for x in reviewed))
+    allpass=len(stages)==13 and all(x['independentlyPassed'] for x in reviewed)
+    require('aggregate report truth',report.get('passed') is allpass)
+    result.update(actualStageCount=len(stages),actualPngCount=len(actual_pngs),stages=reviewed,issues=issues,
+                  sourceApkSha256=report.get('sourceApkSha256'),sourceApkPath=report.get('sourceApk'),selfReportedPid=report.get('pid'),
+                  osIdentity=record.get('actual_probe_process_identity'),nativeFalseNotProcessEvidence=True,
+                  fileManifestIndependent=actual_files)
+    if variant in (None,'safe'):
+        result.update(positiveQualified=not issues and allpass and len(actual_pngs)==39,
+                      disposition='QUALIFIED_SCOPED_POSITIVE' if not issues and allpass and len(actual_pngs)==39 else 'UNQUALIFIED_POSITIVE')
+    elif allpass and not issues:
+        result.update(positiveQualified=False,disposition='NEGATIVE_NOT_DISTINGUISHED_13_OF_13')
+    else:
+        actual_type_fail=[s['name'] for s in reviewed if s['name'] in TYPES and not s['mutation']['production']['passed']
+                         and s['mutation']['reference']['passed'] and s['labels']['reference']['passed']]
+        actual_layout_fail=[s['name'] for s in reviewed if not s['labels']['production']['oracle']['textAndLayout']
+                            and s['labels']['reference']['passed'] and s['labels']['production']['oracle']['accessibility']]
+        result.update(positiveQualified=False,sameStageActualTypeFailuresWithReferencePass=actual_type_fail,
+                      sameStageActualLayoutFailuresWithReferencePass=actual_layout_fail,
+                      disposition='ACTUAL_DIAGNOSTIC_TYPE_DISCRIMINATION' if variant=='equal_return' and actual_type_fail and not issues
+                      else 'ACTUAL_DIAGNOSTIC_LAYOUT_DISCRIMINATION' if variant=='no_super_measure' and actual_layout_fail and not issues
+                      else 'UNQUALIFIED_DIAGNOSTIC_OUTCOME')
+    return result
+
+
+def terminal_audit(round_path,operator):
+    completion=round_path/'completion.json'
+    if not completion.exists(): return dict(state='PENDING',qualified=False)
+    c=load(completion); baseline=load(round_path/'operator1'/'baseline.json'); restored=load(round_path/'operator1'/'restored.json')
+    checks=dict(normalStop=c.get('normal_stop',{}).get('exit')==0,emulatorExit0=c.get('emulator_exit')==0,
+        collectorExit0=c.get('collector_exit')==0,noControllerCleanupErrors=c.get('cleanup_errors')==[],
+        operatorCleanupErrorsEmpty=operator.get('cleanup_errors')==[],restoredDeclared=operator.get('restored_exactly') is True,
+        exactSampledStateRestored=all(baseline.get(k)==restored.get(k) for k in ('default','enabled','size','density','font','boot')),
+        SDKUnchangedDeclared=c.get('original_sdk_unchanged') is True,sourceHead=c.get('source_head')==HEAD,
+        originalApk=c.get('original_apk_sha256')==APK)
+    before=load(round_path/'sdk-before.json'); after=load(round_path/'sdk-after.json')
+    def sdk_records(v):
+        if isinstance(v,list): return v
+        for key in ('files','records','paths'):
+            if key in v:return v[key]
+        return v
+    b,a=sdk_records(before),sdk_records(after)
+    def normalize(v):
+        if isinstance(v,list):return {x['path']:(x.get('bytes',x.get('size')),x.get('sha256')) for x in v}
+        if isinstance(v,dict):return {k:(x.get('bytes',x.get('size')),x.get('sha256')) for k,x in v.items() if isinstance(x,dict) and 'sha256' in x}
+        return None
+    checks['actualSDKPathSizeHashMapsEqual']=normalize(a)==normalize(b) and bool(normalize(a))
+    checks['SDKAfterReferencesExactBefore']=after.get('reference_sha256')==sha(round_path/'sdk-before.json')
+    return dict(state='COMPLETE',qualified=all(checks.values()),checks=checks,
+                inputs={x:meta(round_path/x) for x in ('completion.json','sdk-before.json','sdk-after.json')},
+                sampledStateRestorationOnly=True,allWarningsEliminated=False)
+
+
+def log_audit(round_path):
+    p=round_path/'device-logcat.txt'
+    if not p.exists():return dict(state='MISSING')
+    m=meta(p); text=p.read_text(errors='replace'); lines=text.splitlines(True)
+    starts=[]; diag=[]; fatals=[]; counts={k:0 for k in 'VDIWEF'}
+    for i,line in enumerate(lines,1):
+        match=re.match(r'^\d\d-\d\d\s+\S+\s+(\d+)\s+(\d+)\s+([VDIWEF])\s+(\S+)\s*:',line)
+        if match:counts[match[3]]+=1
+        if re.search(r'(?:Start proc|am_proc_start).*com\.osfans\.trime(?:\.debug)?(?:[/:\s},]|$)',line): starts.append(dict(line=i,raw=line))
+        if ('Start proc' in line or 'am_proc_start' in line) and 'org.x2m7.trime.readiness.candidate' in line:diag.append(dict(line=i,raw=line))
+        if 'FATAL EXCEPTION' in line:
+            # Keep full adjacent stack context; never infer a buffer-stage result from a constructor crash.
+            fatals.append(dict(line=i,rawContext=''.join(lines[max(0,i-2):min(len(lines),i+38)])))
+    return dict(source=m,lineCount=len(lines),priorities=counts,actualTrimeStartRecords=starts,
+                actualDiagnosticStartRecords=diag,fatalContexts=fatals,
+                limits='Collected log and sampled ps only. Hardcoded native/Application false is not process proof. No all-system absence/zero-warning claim.')
+
+
+def input_audit(binding):
+    records=[]
+    for item in binding.get('frozen_files',[]):
+        p=Path(item['path']); actual=meta(p)
+        actual['matchesFrozen']=actual['sha256']==item['sha256'] and actual['bytes']==item['bytes'] and actual['unchangedDuringHash']
+        records.append(actual)
+    return dict(passed=bool(records) and all(x['matchesFrozen'] for x in records),files=records,
+        exactOriginalApk=sha(Path(binding['original_apk_path']))==APK,
+        exactDiagnosticApk=sha(Path(binding['diagnostic_apk_path']))==DIAG)
+
+
+def main():
+    a=argparse.ArgumentParser(description=__doc__);a.add_argument('--round',required=True);a.add_argument('--sdk',type=int,choices=(21,35),required=True)
+    a.add_argument('--output',required=True);a.add_argument('--phase-only');a.add_argument('--binding',type=Path);args=a.parse_args()
+    if '/' in args.output or not args.output.endswith('.json'):raise ValueError('Output basename only')
+    path=ROOT/args.round
+    if path.parent!=ROOT:raise ValueError('Round child only')
+    output=OUT/args.output
+    if output.exists():raise FileExistsError('Immutable report exists: '+str(output))
+    if args.phase_only:
+        if args.binding is None: raise ValueError('Phase-only needs explicit frozen --binding')
+        binding=load(args.binding)
+        phase=load(path/'operator1'/args.phase_only/'phase-record.json')
+        operator=dict(binding=binding,phases=[phase],source_head=HEAD,api=args.sdk,business_qualified=False)
+    else:
+        operator=load(path/'operator1'/'report.json'); binding=operator['binding']
+    report=dict(createdUtc=datetime.datetime.now(datetime.timezone.utc).isoformat(),reviewer='candidate_review_prepare HOST independent',
+        sourceHead=HEAD,sourceSha256=SOURCE,round=args.round,sdk=args.sdk,script=meta(Path(__file__).resolve()),
+        originalOperatorReport=None if args.phase_only else meta(path/'operator1'/'report.json'),qualificationIsExternal=True,
+        operatorReportNotReadForPhaseOnly=bool(args.phase_only),
+        rawProducerBusinessQualifiedUntouched=operator.get('business_qualified'),physicalDevice='NOT_RUN',TalkBack='NOT_RUN',
+        nativeCandidateIntegration='NOT_RUN',humanImageReviewClaimed=False,phases=[])
+    try:
+        if operator.get('source_head')!=HEAD or operator.get('api')!=args.sdk:raise ValueError('operator source/API differs')
+        if binding.get('original_apk_sha256')!=APK or binding.get('production_view_source_sha256')!=SOURCE:raise ValueError('binding differs')
+        report['frozenInputAudit']=input_audit(binding)
+        if not all(report['frozenInputAudit'].get(k) for k in ('passed','exactOriginalApk','exactDiagnosticApk')):raise ValueError('Frozen input bytes differ')
+        for phase in operator['phases']:
+            if args.phase_only and phase['name']!=args.phase_only: continue
+            report['phases'].append(phase_audit(path,phase,args.sdk,binding))
+        report['log']=(dict(state='DEFERRED_UNTIL_COMPLETED_ROUND',scope='Phase-only audit does not read a still-growing device log.')
+                       if args.phase_only else log_audit(path))
+        if args.phase_only:
+            report.update(scope='SINGLE COMPLETED PHASE ONLY. Does not qualify the entire round, terminal cleanup, or unexecuted phases. Historical failed rounds remain failed.',
+                          positiveEvidenceQualified=False,roundTerminalQualified=False,overallQualified=False)
+        else:
+            positives={p['name']:p for p in report['phases'] if p['name'] in ('diagnostic-safe','production-class-only')}
+            positive=len(positives)==2 and all(p.get('positiveQualified') for p in positives.values())
+            terminal=terminal_audit(path,operator);report['terminal']=terminal
+            order=[p['name'] for p in report['phases']]
+            order_ok=order==['diagnostic-safe','diagnostic-equal_return','diagnostic-no_super_measure','production-class-only']
+            report.update(positiveEvidenceQualified=positive,roundTerminalQualified=terminal['qualified'],
+                phaseOrderExact=order_ok,operatorSequenceCompleted=operator.get('operator_sequence_completed') is True,
+                preservedOperatorFailure=operator.get('operator_failure'),
+                overallQualified=positive and terminal['qualified'] and order_ok and operator.get('operator_sequence_completed') is True
+                    and not operator.get('operator_failure'),
+                scope='Original CI APK class-only 13-stage rendering/type/framework-action checks, plus separately compiled namespace diagnostics. No full IME/native/TalkBack/physical-device/zero-warning acceptance.')
+    except BaseException as e:
+        report.update(overallQualified=False,auditFailure=dict(type=type(e).__name__,message=str(e)))
+    with output.open('x') as f:json.dump(report,f,indent=2,ensure_ascii=False);f.write('\n')
+    print(json.dumps(dict(output=str(output),sha256=sha(output),overallQualified=report.get('overallQualified'),
+                         phases=[dict(name=x['name'],disposition=x['disposition'],issues=x.get('issues')) for x in report['phases']],
+                         failure=report.get('auditFailure')),ensure_ascii=False))
+
+if __name__=='__main__':main()

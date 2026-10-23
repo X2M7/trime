@@ -1,0 +1,74 @@
+PR #2187 review regression probe (prepared; not compiled or run)
+
+Original five stages
+--------------------
+CandidateActivity.java and AndroidManifest.xml are byte-identical to the frozen
+2026-10-22 probe4. The capture() method and the five-stage loop (apart from one
+new trailing blank line) are unchanged. Constructor, Hanzi, Latin, null and
+rebind still require text, framework Layout text, node text and hardware/software
+ink checks on both the actual installed production class and framework reference.
+The original APK is loaded through createPackageContext; it is not rewritten,
+resigned, or bundled into this diagnostic APK. No Trime Application/Rime startup.
+
+Six additional buffer stages
+----------------------------
+Every setter call uses the existing same text, U+4F60, and snapshots text/class/
+Spannable/Editable immediately in the SAME main-thread callback. Prefixes are
+re-established inside that callback, so an API21 node query cannot silently
+promote NORMAL to SPANNABLE between the calls under test. Each prefix checks
+its own requested buffer type. Every stage also retains the original render
+oracle, actual OnDraw, >=1000ms settle and first hardware-before-software order.
+1 buffer-normal: NORMAL.
+2 buffer-spannable: NORMAL -> SPANNABLE.
+3 buffer-editable: NORMAL -> SPANNABLE -> EDITABLE.
+4 buffer-back-normal: NORMAL -> SPANNABLE -> EDITABLE -> NORMAL.
+5 buffer-repeat-normal: NORMAL -> NORMAL.
+6 buffer-repeat-spannable: NORMAL -> SPANNABLE -> SPANNABLE.
+NORMAL must be neither Spannable nor Editable; SPANNABLE must be non-Editable
+Spannable; EDITABLE must implement Editable. No exact implementation-class name
+is assumed. Immediate type truth is distinct from later accessibility promotion.
+
+Two independent framework granularity stages
+--------------------------------------------
+Only AFTER the preceding ordinary production rendering stages, the diagnostic
+views become selectable using setTextIsSelectable(true). This enables framework
+focusability, clickability/long-clickability and ArrowKeyMovementMethod, and
+requests a SPANNABLE buffer. setShowSoftInputOnFocus(false) prevents this separate
+selectable test view from requesting an input keyboard; no candidate-app settings
+are changed. First stage renders U+4F60 U+597D and checks this setup.
+Second stage requests each diagnostic view's real focus in turn, puts the cursor
+at zero as explicit setup, inspects actual advertised NEXT/PREVIOUS actions and
+LINE granularity, then calls the PUBLIC view.performAccessibilityAction API for
+LINE NEXT then PREVIOUS, extendSelection=false. Both must return true and actual
+selection must go 0 -> 2 -> 0. It does not call performClick, any listener, any
+private iterator, or manually set the post-action selection. Text/Layout/node/
+glyph assertions still apply after the actions. An unsupported action/focus/type
+is recorded as a failed stage, never relabeled a TalkBack pass. Exceptions retain
+the actual stack and failed overall report.
+
+There are 13 required stages. Direct framework actions do not prove TalkBack
+service interaction, accessibility Binder routing, exploration/gestures, real
+candidate selection, native integration, physical-device behavior, or whole-app
+acceptance. No stage has been executed at preparation time.
+
+Optional diagnostic controls (not created or executed)
+------------------------------------------------------
+A separate source copy of the production view with the review's equal-content
+early return should fail at least the NORMAL -> SPANNABLE/EDITABLE immediate
+conversion checks. Such a local variant must have an explicit different identity
+and must not be mistaken for the real PR APK.
+A separate copy omitting super.onMeasure should be tested with the SAME retained
+Layout assertion before and after node creation; null/stale Layout must fail,
+not be accepted just because custom onDraw shows ink. AOSP also has lazy layout
+paths, so predict neither pass nor failure without observing the exact round.
+Do not modify frozen probe4 or replace a failing control's original evidence.
+
+Build entry point for Root review
+---------------------------------
+python3 /home/xumin/Public/Trime/build/readiness-20261022/common/build_probe.py
+  --src-dir /home/xumin/Public/Trime/build/pr2187-review-20261023/probe-source
+  --manifest /home/xumin/Public/Trime/build/pr2187-review-20261023/probe-source/AndroidManifest.xml
+  --out <fresh output directory>
+The existing builder uses sequential javac/d8/aapt2/zipalign/sign with 128 MiB
+Java heaps and includes all emitted class files. No build, VM, ADB or push was
+started by the probe-preparation agent.

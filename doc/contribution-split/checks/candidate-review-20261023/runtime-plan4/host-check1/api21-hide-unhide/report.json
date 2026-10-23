@@ -1,0 +1,147 @@
+{
+  "commands": [
+    {
+      "argv": [
+        "pm"
+      ],
+      "remote_returncode": 0,
+      "stderr": "/home/xumin/Public/Trime/build/pr2187-review-20261023/runtime-plan4/host-check1/api21-hide-unhide/stderr"
+    },
+    {
+      "argv": [
+        "pm",
+        "hide",
+        "--user",
+        "0",
+        "com.android.documentsui"
+      ],
+      "remote_returncode": 0,
+      "stderr": "/home/xumin/Public/Trime/build/pr2187-review-20261023/runtime-plan4/host-check1/api21-hide-unhide/stderr"
+    },
+    {
+      "argv": [
+        "am",
+        "force-stop",
+        "com.osfans.trime.debug"
+      ],
+      "remote_returncode": 0,
+      "stderr": "/home/xumin/Public/Trime/build/pr2187-review-20261023/runtime-plan4/host-check1/api21-hide-unhide/stderr"
+    },
+    {
+      "argv": [
+        "log",
+        "-p",
+        "i",
+        "-t",
+        "PR2187_CLASS_ONLY",
+        "BEGIN cfb398df14dca8fe6733b56d4b7df4a8"
+      ],
+      "remote_returncode": 0,
+      "stderr": "/home/xumin/Public/Trime/build/pr2187-review-20261023/runtime-plan4/host-check1/api21-hide-unhide/stderr"
+    },
+    {
+      "argv": [
+        "log",
+        "-p",
+        "i",
+        "-t",
+        "PR2187_CLASS_ONLY",
+        "END cfb398df14dca8fe6733b56d4b7df4a8"
+      ],
+      "remote_returncode": 0,
+      "stderr": "/home/xumin/Public/Trime/build/pr2187-review-20261023/runtime-plan4/host-check1/api21-hide-unhide/stderr"
+    },
+    {
+      "argv": [
+        "pm",
+        "unhide",
+        "--user",
+        "0",
+        "com.android.documentsui"
+      ],
+      "remote_returncode": 0,
+      "stderr": "/home/xumin/Public/Trime/build/pr2187-review-20261023/runtime-plan4/host-check1/api21-hide-unhide/stderr"
+    }
+  ],
+  "documents_before": {
+    "package": "com.android.documentsui",
+    "present": true,
+    "installed": true,
+    "apk_path": "/system/priv-app/DocumentsUI/DocumentsUI.apk",
+    "enabled": 0,
+    "stopped": false,
+    "hidden": false
+  },
+  "help_command": {
+    "argv": [
+      "pm"
+    ],
+    "remote_returncode": 0,
+    "stderr": "/home/xumin/Public/Trime/build/pr2187-review-20261023/runtime-plan4/host-check1/api21-hide-unhide/stderr"
+  },
+  "help_text_sha256": "2c77d547bc59c315f520413179da857d792b13560c6f1cef21af188b7dbec903",
+  "begin_nonce": "cfb398df14dca8fe6733b56d4b7df4a8",
+  "begin_at": "2026-10-23T00:10:08.082469+00:00",
+  "begin_command": {
+    "argv": [
+      "log",
+      "-p",
+      "i",
+      "-t",
+      "PR2187_CLASS_ONLY",
+      "BEGIN cfb398df14dca8fe6733b56d4b7df4a8"
+    ],
+    "remote_returncode": 0,
+    "stderr": "/home/xumin/Public/Trime/build/pr2187-review-20261023/runtime-plan4/host-check1/api21-hide-unhide/stderr"
+  },
+  "child_argv": [
+    "/usr/bin/python3",
+    "/home/xumin/Public/Trime/build/pr2187-review-20261023/runtime-plan4/run-probes.py",
+    "--binding",
+    "/home/xumin/Public/Trime/build/pr2187-review-20261023/runtime-plan4/binding-template.json",
+    "--api",
+    "21",
+    "--output",
+    "/home/xumin/Public/Trime/build/pr2187-review-20261023/runtime-plan4/host-check1/api21-hide-unhide/child",
+    "--adb",
+    "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb"
+  ],
+  "child_host_pid": 999999,
+  "child_actual_exit": 0,
+  "child_streams": [
+    {
+      "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/runtime-plan4/host-check1/api21-hide-unhide/child.stdout",
+      "sha256": "d8ce607933da02ca9c79143910678f1b51bc1a957a96d0ce191b1624820a8785"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/runtime-plan4/host-check1/api21-hide-unhide/child.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "end_at": "2026-10-23T00:10:08.083920+00:00",
+  "end_command": {
+    "argv": [
+      "log",
+      "-p",
+      "i",
+      "-t",
+      "PR2187_CLASS_ONLY",
+      "END cfb398df14dca8fe6733b56d4b7df4a8"
+    ],
+    "remote_returncode": 0,
+    "stderr": "/home/xumin/Public/Trime/build/pr2187-review-20261023/runtime-plan4/host-check1/api21-hide-unhide/stderr"
+  },
+  "documents_restored_exactly": {
+    "package": "com.android.documentsui",
+    "present": true,
+    "installed": true,
+    "apk_path": "/system/priv-app/DocumentsUI/DocumentsUI.apk",
+    "enabled": 0,
+    "stopped": false,
+    "hidden": false
+  },
+  "cleanup_errors": [],
+  "finished": "2026-10-23T00:10:08.084331+00:00",
+  "fixture_operator_completed": true,
+  "actual_exit": 0
+}

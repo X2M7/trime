@@ -1,0 +1,134 @@
+{
+  "qualification": "FIXTURE_PACKAGE_PARSER_REFUSAL_BEFORE_MUTATION",
+  "wrapper_actual_exit": 1,
+  "child_NOT_CREATED": true,
+  "BEGIN": null,
+  "all_four_phases": "NOT_RUN",
+  "fixture_failure": {
+    "type": "AssertionError",
+    "message": "Unique exact Package/User 0 required"
+  },
+  "cleanup_errors": [],
+  "controller_completion": {
+    "argv": [
+      "/home/xumin/Public/android-toolchain/android-sdk/emulator/emulator",
+      "-avd",
+      "trime_readiness_api35_20261022",
+      "-sysdir",
+      "/home/xumin/Public/Trime/build/readiness-20261022/api35/system-images",
+      "-no-snapshot",
+      "-no-window",
+      "-no-boot-anim",
+      "-gpu",
+      "swangle",
+      "-cores",
+      "2",
+      "-memory",
+      "2304",
+      "-port",
+      "5584",
+      "-accel",
+      "on",
+      "-feature",
+      "-Vulkan"
+    ],
+    "serial": "emulator-5584",
+    "started_utc": "2026-10-23T00:20:16.267451+00:00",
+    "memory_floor_kib": 1048576,
+    "source_head": "92b13711162c5fa56c701267c3a06e5fbceeb6ce",
+    "original_apk_sha256": "36ede385eac30511f3c600dbc059a196e1ac462f173b154643a54f79b3af7d3a",
+    "controller_sha256": "63d2101ea77edbbdf4cbbf71387df90f92ae25eebdbf8e43d1509c477d8ff62c",
+    "session_lifetime_guard": null,
+    "operator_normal_stop_required": true,
+    "prelaunch_memory": {
+      "MemTotal": 16017176,
+      "MemAvailable": 8101572,
+      "SwapFree": 0,
+      "utc": "2026-10-23T00:20:29.408382+00:00"
+    },
+    "pid": 313548,
+    "proc_stat_at_launch": "313548 (emulator) R 313464 313548 313548 0 -1 4194304 17 0 0 0 0 0 0 0 20 0 1 0 4005779 2142208 77 18446744073709551615 94295553451216 94295554392160 140720574967184 0 0 0 0 0 0 0 0 0 17 9 0 0 0 0 0 94295554420336 94295554422912 94296549298176 140720574975548 140720574975840 140720574975840 140720574980021 0\n",
+    "minimum_mem_available_kib": 5760236,
+    "booted": true,
+    "normal_stop": {
+      "exit": 0,
+      "stdout": "OK: killing emulator, bye bye\nOK\n",
+      "stderr": ""
+    },
+    "emulator_exit": 0,
+    "collector_exit": 255,
+    "original_sdk_unchanged": true,
+    "cleanup_errors": [],
+    "reason": "requested-normal-stop",
+    "ended_utc": "2026-10-23T00:26:36.261900+00:00"
+  },
+  "whole_stream_priority_counts": {
+    "W": 2313,
+    "I": 6864,
+    "D": 8917,
+    "E": 1302,
+    "V": 5524
+  },
+  "whole_stream_critical_events": [
+    {
+      "kinds": [
+        "ANR-or-crash-record"
+      ],
+      "line": 16265,
+      "byte_offset": 2135598,
+      "pid": 551,
+      "tag": "am_anr",
+      "text": "10-23 08:21:36.339   551  1298 I am_anr  : [0,913,com.android.phone,952647245,Broadcast of Intent { act=android.safetycenter.action.REFRESH_SAFETY_SOURCES flg=0x10000010 pkg=com.android.phone cmp=com.android.phone/.security.SafetySourceReceiver (has extras) }]\n"
+    },
+    {
+      "kinds": [
+        "ANR-or-crash-record"
+      ],
+      "line": 16597,
+      "byte_offset": 2184064,
+      "pid": 551,
+      "tag": "ActivityManager",
+      "text": "10-23 08:21:39.178   551  1298 E ActivityManager: ANR in com.android.phone\n"
+    },
+    {
+      "kinds": [
+        "ANR-or-crash-record"
+      ],
+      "line": 16674,
+      "byte_offset": 2193033,
+      "pid": 551,
+      "tag": "am_anr",
+      "text": "10-23 08:21:39.396   551  1298 I am_anr  : [0,796,com.android.systemui,818462221,executing service com.android.systemui/.SystemUIService, waited 20224ms]\n"
+    },
+    {
+      "kinds": [
+        "ANR-or-crash-record"
+      ],
+      "line": 17765,
+      "byte_offset": 2349134,
+      "pid": 551,
+      "tag": "ActivityManager",
+      "text": "10-23 08:21:42.922   551  1298 E ActivityManager: ANR in com.android.systemui\n"
+    },
+    {
+      "kinds": [
+        "ANR-or-crash-record"
+      ],
+      "line": 17975,
+      "byte_offset": 2375283,
+      "pid": 551,
+      "tag": "am_anr",
+      "text": "10-23 08:21:43.296   551  1298 I am_anr  : [0,1422,com.android.phone,952647245,Process ProcessRecord{7471434 1422:com.android.phone/1001} failed to complete startup]\n"
+    },
+    {
+      "kinds": [
+        "ANR-or-crash-record"
+      ],
+      "line": 18010,
+      "byte_offset": 2379426,
+      "pid": 551,
+      "tag": "ActivityManager",
+      "text": "10-23 08:21:43.500   551  1298 E ActivityManager: ANR in com.android.phone\n"
+    }
+  ]
+}

@@ -1,0 +1,2235 @@
+{
+  "createdUtc": "2026-10-22T23:53:02.827510+00:00",
+  "reviewer": "candidate_review_prepare HOST independent",
+  "sourceHead": "92b13711162c5fa56c701267c3a06e5fbceeb6ce",
+  "sourceSha256": "59cf13b4b42b09acbb06f41922c2480844ffa96a7399494b565e718a4a12a05c",
+  "round": "api21-class-only1",
+  "sdk": 21,
+  "script": {
+    "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/independent-runtime1/qualify.py",
+    "bytes": 20893,
+    "sha256": "425a2ce6bdfed2a60046abecdb00fd6f9b687e5e1aeeb08bd7423a41472e0565",
+    "inode": 29786750,
+    "unchangedDuringHash": true
+  },
+  "originalOperatorReport": {
+    "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api21-class-only1/operator1/report.json",
+    "bytes": 66809,
+    "sha256": "6b4912a0018ecd7099c4297c8649d09fabf99a9b1030887fc1d7de63db5c3bee",
+    "inode": 29786486,
+    "unchangedDuringHash": true
+  },
+  "qualificationIsExternal": true,
+  "rawProducerBusinessQualifiedUntouched": false,
+  "physicalDevice": "NOT_RUN",
+  "TalkBack": "NOT_RUN",
+  "nativeCandidateIntegration": "NOT_RUN",
+  "humanImageReviewClaimed": false,
+  "phases": [
+    {
+      "name": "diagnostic-safe",
+      "variant": "safe",
+      "nonProductionDiagnostic": true,
+      "rawPhaseRecord": {
+        "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api21-class-only1/operator1/diagnostic-safe/phase-record.json",
+        "bytes": 7530,
+        "sha256": "ade8fd4e267dff328647f68e30f3c0cd5710bc2c14f68428c21f18b963b99cdc",
+        "inode": 29786585,
+        "unchangedDuringHash": true
+      },
+      "instrumentationStdout": {
+        "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api21-class-only1/operator1/diagnostic-safe/instrumentation.stdout.txt",
+        "bytes": 30190,
+        "sha256": "65ea70b0d1cdb6b00062d0b53312745af336243eecd0de628b1ce52a79de84e5",
+        "inode": 29786538,
+        "unchangedDuringHash": true
+      },
+      "actualInstrumentationCodes": [
+        -1
+      ],
+      "originalReport": {
+        "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api21-class-only1/operator1/diagnostic-safe/original/result.json",
+        "bytes": 45709,
+        "sha256": "4b46139897b706dcd0dfbf33f079ff5cc81e90f13caa3981403ea4c25014f129",
+        "inode": 29786581,
+        "unchangedDuringHash": true
+      },
+      "actualStageCount": 13,
+      "actualPngCount": 39,
+      "stages": [
+        {
+          "name": "constructor",
+          "independentlyPassed": true,
+          "reportedPassed": true,
+          "integrityChecks": [
+            {
+              "check": "hardwarePngHash",
+              "passed": true
+            },
+            {
+              "check": "onDrawBeforeCapture",
+              "passed": true
+            },
+            {
+              "check": "atLeast1000msAfterObservedDraw",
+              "passed": true
+            },
+            {
+              "check": "declaredSettleUnchanged",
+              "passed": true
+            },
+            {
+              "check": "productionSoftwarePngHash",
+              "passed": true
+            },
+            {
+              "check": "productionInScreenBounds",
+              "passed": true
+            },
+            {
+              "check": "productionSoftwareSize",
+              "passed": true
+            },
+            {
+              "check": "productionInkCountsMatch",
+              "passed": true
+            },
+            {
+              "check": "productionReportedOracleMatchesIndependent",
+              "passed": true
+            },
+            {
+              "check": "referenceSoftwarePngHash",
+              "passed": true
+            },
+            {
+              "check": "referenceInScreenBounds",
+              "passed": true
+            },
+            {
+              "check": "referenceSoftwareSize",
+              "passed": true
+            },
+            {
+              "check": "referenceInkCountsMatch",
+              "passed": true
+            },
+            {
+              "check": "referenceReportedOracleMatchesIndependent",
+              "passed": true
+            }
+          ],
+          "labels": {
+            "production": {
+              "passed": true,
+              "oracle": {
+                "textAndLayout": true,
+                "accessibility": true,
+                "glyph": true
+              },
+              "reportedOracle": {
+                "textAndLayout": true,
+                "accessibility": true,
+                "glyph": true
+              },
+              "screenInk": 0,
+              "softwareInk": 0,
+              "expectedText": ""
+            },
+            "reference": {
+              "passed": true,
+              "oracle": {
+                "textAndLayout": true,
+                "accessibility": true,
+                "glyph": true
+              },
+              "reportedOracle": {
+                "textAndLayout": true,
+                "accessibility": true,
+                "glyph": true
+              },
+              "screenInk": 0,
+              "softwareInk": 0,
+              "expectedText": ""
+            }
+          },
+          "mutation": {},
+          "reportMatchesIndependent": true
+        },
+        {
+          "name": "hanzi",
+          "independentlyPassed": true,
+          "reportedPassed": true,
+          "integrityChecks": [
+            {
+              "check": "hardwarePngHash",
+              "passed": true
+            },
+            {
+              "check": "onDrawBeforeCapture",
+              "passed": true
+            },
+            {
+              "check": "atLeast1000msAfterObservedDraw",
+              "passed": true
+            },
+            {
+              "check": "declaredSettleUnchanged",
+              "passed": true
+            },
+            {
+              "check": "productionSoftwarePngHash",
+              "passed": true
+            },
+            {
+              "check": "productionInScreenBounds",
+              "passed": true
+            },
+            {
+              "check": "productionSoftwareSize",
+              "passed": true
+            },
+            {
+              "check": "productionInkCountsMatch",
+              "passed": true
+            },
+            {
+              "check": "productionReportedOracleMatchesIndependent",
+              "passed": true
+            },
+            {
+              "check": "referenceSoftwarePngHash",
+              "passed": true
+            },
+            {
+              "check": "referenceInScreenBounds",
+              "passed": true
+            },
+            {
+              "check": "referenceSoftwareSize",
+              "passed": true
+            },
+            {
+              "check": "referenceInkCountsMatch",
+              "passed": true
+            },
+            {
+              "check": "referenceReportedOracleMatchesIndependent",
+              "passed": true
+            }
+          ],
+          "labels": {
+            "production": {
+              "passed": true,
+              "oracle": {
+                "textAndLayout": true,
+                "accessibility": true,
+                "glyph": true
+              },
+              "reportedOracle": {
+                "textAndLayout": true,
+                "accessibility": true,
+                "glyph": true
+              },
+              "screenInk": 465,
+              "softwareInk": 486,
+              "expectedText": "你"
+            },
+            "reference": {
+              "passed": true,
+              "oracle": {
+                "textAndLayout": true,
+                "accessibility": true,
+                "glyph": true
+              },
+              "reportedOracle": {
+                "textAndLayout": true,
+                "accessibility": true,
+                "glyph": true
+              },
+              "screenInk": 465,
+              "softwareInk": 486,
+              "expectedText": "你"
+            }
+          },
+          "mutation": {},
+          "reportMatchesIndependent": true
+        },
+        {
+          "name": "latin",
+          "independentlyPassed": true,
+          "reportedPassed": true,
+          "integrityChecks": [
+            {
+              "check": "hardwarePngHash",
+              "passed": true
+            },
+            {
+              "check": "onDrawBeforeCapture",
+              "passed": true
+            },
+            {
+              "check": "atLeast1000msAfterObservedDraw",
+              "passed": true
+            },
+            {
+              "check": "declaredSettleUnchanged",
+              "passed": true
+            },
+            {
+              "check": "productionSoftwarePngHash",
+              "passed": true
+            },
+            {
+              "check": "productionInScreenBounds",
+              "passed": true
+            },
+            {
+              "check": "productionSoftwareSize",
+              "passed": true
+            },
+            {
+              "check": "productionInkCountsMatch",
+              "passed": true
+            },
+            {
+              "check": "productionReportedOracleMatchesIndependent",
+              "passed": true
+            },
+            {
+              "check": "referenceSoftwarePngHash",
+              "passed": true
+            },
+            {
+              "check": "referenceInScreenBounds",
+              "passed": true
+            },
+            {
+              "check": "referenceSoftwareSize",
+              "passed": true
+            },
+            {
+              "check": "referenceInkCountsMatch",
+              "passed": true
+            },
+            {
+              "check": "referenceReportedOracleMatchesIndependent",
+              "passed": true
+            }
+          ],
+          "labels": {
+            "production": {
+              "passed": true,
+              "oracle": {
+                "textAndLayout": true,
+                "accessibility": true,
+                "glyph": true
+              },
+              "reportedOracle": {
+                "textAndLayout": true,
+                "accessibility": true,
+                "glyph": true
+              },
+              "screenInk": 272,
+              "softwareInk": 317,
+              "expectedText": "ni"
+            },
+            "reference": {
+              "passed": true,
+              "oracle": {
+                "textAndLayout": true,
+                "accessibility": true,
+                "glyph": true
+              },
+              "reportedOracle": {
+                "textAndLayout": true,
+                "accessibility": true,
+                "glyph": true
+              },
+              "screenInk": 272,
+              "softwareInk": 317,
+              "expectedText": "ni"
+            }
+          },
+          "mutation": {},
+          "reportMatchesIndependent": true
+        },
+        {
+          "name": "null",
+          "independentlyPassed": true,
+          "reportedPassed": true,
+          "integrityChecks": [
+            {
+              "check": "hardwarePngHash",
+              "passed": true
+            },
+            {
+              "check": "onDrawBeforeCapture",
+              "passed": true
+            },
+            {
+              "check": "atLeast1000msAfterObservedDraw",
+              "passed": true
+            },
+            {
+              "check": "declaredSettleUnchanged",
+              "passed": true
+            },
+            {
+              "check": "productionSoftwarePngHash",
+              "passed": true
+            },
+            {
+              "check": "productionInScreenBounds",
+              "passed": true
+            },
+            {
+              "check": "productionSoftwareSize",
+              "passed": true
+            },
+            {
+              "check": "productionInkCountsMatch",
+              "passed": true
+            },
+            {
+              "check": "productionReportedOracleMatchesIndependent",
+              "passed": true
+            },
+            {
+              "check": "referenceSoftwarePngHash",
+              "passed": true
+            },
+            {
+              "check": "referenceInScreenBounds",
+              "passed": true
+            },
+            {
+              "check": "referenceSoftwareSize",
+              "passed": true
+            },
+            {
+              "check": "referenceInkCountsMatch",
+              "passed": true
+            },
+            {
+              "check": "referenceReportedOracleMatchesIndependent",
+              "passed": true
+            }
+          ],
+          "labels": {
+            "production": {
+              "passed": true,
+              "oracle": {
+                "textAndLayout": true,
+                "accessibility": true,
+                "glyph": true
+              },
+              "reportedOracle": {
+                "textAndLayout": true,
+                "accessibility": true,
+                "glyph": true
+              },
+              "screenInk": 0,
+              "softwareInk": 0,
+              "expectedText": ""
+            },
+            "reference": {
+              "passed": true,
+              "oracle": {
+                "textAndLayout": true,
+                "accessibility": true,
+                "glyph": true
+              },
+              "reportedOracle": {
+                "textAndLayout": true,
+                "accessibility": true,
+                "glyph": true
+              },
+              "screenInk": 0,
+              "softwareInk": 0,
+              "expectedText": ""
+            }
+          },
+          "mutation": {},
+          "reportMatchesIndependent": true
+        },
+        {
+          "name": "rebind",
+          "independentlyPassed": true,
+          "reportedPassed": true,
+          "integrityChecks": [
+            {
+              "check": "hardwarePngHash",
+              "passed": true
+            },
+            {
+              "check": "onDrawBeforeCapture",
+              "passed": true
+            },
+            {
+              "check": "atLeast1000msAfterObservedDraw",
+              "passed": true
+            },
+            {
+              "check": "declaredSettleUnchanged",
+              "passed": true
+            },
+            {
+              "check": "productionSoftwarePngHash",
+              "passed": true
+            },
+            {
+              "check": "productionInScreenBounds",
+              "passed": true
+            },
+            {
+              "check": "productionSoftwareSize",
+              "passed": true
+            },
+            {
+              "check": "productionInkCountsMatch",
+              "passed": true
+            },
+            {
+              "check": "productionReportedOracleMatchesIndependent",
+              "passed": true
+            },
+            {
+              "check": "referenceSoftwarePngHash",
+              "passed": true
+            },
+            {
+              "check": "referenceInScreenBounds",
+              "passed": true
+            },
+            {
+              "check": "referenceSoftwareSize",
+              "passed": true
+            },
+            {
+              "check": "referenceInkCountsMatch",
+              "passed": true
+            },
+            {
+              "check": "referenceReportedOracleMatchesIndependent",
+              "passed": true
+            }
+          ],
+          "labels": {
+            "production": {
+              "passed": true,
+              "oracle": {
+                "textAndLayout": true,
+                "accessibility": true,
+                "glyph": true
+              },
+              "reportedOracle": {
+                "textAndLayout": true,
+                "accessibility": true,
+                "glyph": true
+              },
+              "screenInk": 465,
+              "softwareInk": 486,
+              "expectedText": "你"
+            },
+            "reference": {
+              "passed": true,
+              "oracle": {
+                "textAndLayout": true,
+                "accessibility": true,
+                "glyph": true
+              },
+              "reportedOracle": {
+                "textAndLayout": true,
+                "accessibility": true,
+                "glyph": true
+              },
+              "screenInk": 465,
+              "softwareInk": 486,
+              "expectedText": "你"
+            }
+          },
+          "mutation": {},
+          "reportMatchesIndependent": true
+        },
+        {
+          "name": "buffer-normal",
+          "independentlyPassed": true,
+          "reportedPassed": true,
+          "integrityChecks": [
+            {
+              "check": "hardwarePngHash",
+              "passed": true
+            },
+            {
+              "check": "onDrawBeforeCapture",
+              "passed": true
+            },
+            {
+              "check": "atLeast1000msAfterObservedDraw",
+              "passed": true
+            },
+            {
+              "check": "declaredSettleUnchanged",
+              "passed": true
+            },
+            {
+              "check": "productionSoftwarePngHash",
+              "passed": true
+            },
+            {
+              "check": "productionInScreenBounds",
+              "passed": true
+            },
+            {
+              "check": "productionSoftwareSize",
+              "passed": true
+            },
+            {
+              "check": "productionInkCountsMatch",
+              "passed": true
+            },
+            {
+              "check": "productionReportedOracleMatchesIndependent",
+              "passed": true
+            },
+            {
+              "check": "referenceSoftwarePngHash",
+              "passed": true
+            },
+            {
+              "check": "referenceInScreenBounds",
+              "passed": true
+            },
+            {
+              "check": "referenceSoftwareSize",
+              "passed": true
+            },
+            {
+              "check": "referenceInkCountsMatch",
+              "passed": true
+            },
+            {
+              "check": "referenceReportedOracleMatchesIndependent",
+              "passed": true
+            },
+            {
+              "check": "MutationAggregateTruth",
+              "passed": true
+            }
+          ],
+          "labels": {
+            "production": {
+              "passed": true,
+              "oracle": {
+                "textAndLayout": true,
+                "accessibility": true,
+                "glyph": true
+              },
+              "reportedOracle": {
+                "textAndLayout": true,
+                "accessibility": true,
+                "glyph": true
+              },
+              "screenInk": 465,
+              "softwareInk": 486,
+              "expectedText": "你"
+            },
+            "reference": {
+              "passed": true,
+              "oracle": {
+                "textAndLayout": true,
+                "accessibility": true,
+                "glyph": true
+              },
+              "reportedOracle": {
+                "textAndLayout": true,
+                "accessibility": true,
+                "glyph": true
+              },
+              "screenInk": 465,
+              "softwareInk": 486,
+              "expectedText": "你"
+            }
+          },
+          "mutation": {
+            "production": {
+              "passed": true,
+              "calls": [
+                {
+                  "index": 0,
+                  "requested": "NORMAL",
+                  "independentlyPassed": true,
+                  "reportedPassed": true,
+                  "snapshot": {
+                    "text": "你",
+                    "className": "java.lang.String",
+                    "spannable": false,
+                    "editable": false
+                  }
+                }
+              ],
+              "expectedRequests": [
+                "NORMAL"
+              ]
+            },
+            "reference": {
+              "passed": true,
+              "calls": [
+                {
+                  "index": 0,
+                  "requested": "NORMAL",
+                  "independentlyPassed": true,
+                  "reportedPassed": true,
+                  "snapshot": {
+                    "text": "你",
+                    "className": "java.lang.String",
+                    "spannable": false,
+                    "editable": false
+                  }
+                }
+              ],
+              "expectedRequests": [
+                "NORMAL"
+              ]
+            }
+          },
+          "reportMatchesIndependent": true
+        },
+        {
+          "name": "buffer-spannable",
+          "independentlyPassed": true,
+          "reportedPassed": true,
+          "integrityChecks": [
+            {
+              "check": "hardwarePngHash",
+              "passed": true
+            },
+            {
+              "check": "onDrawBeforeCapture",
+              "passed": true
+            },
+            {
+              "check": "atLeast1000msAfterObservedDraw",
+              "passed": true
+            },
+            {
+              "check": "declaredSettleUnchanged",
+              "passed": true
+            },
+            {
+              "check": "productionSoftwarePngHash",
+              "passed": true
+            },
+            {
+              "check": "productionInScreenBounds",
+              "passed": true
+            },
+            {
+              "check": "productionSoftwareSize",
+              "passed": true
+            },
+            {
+              "check": "productionInkCountsMatch",
+              "passed": true
+            },
+            {
+              "check": "productionReportedOracleMatchesIndependent",
+              "passed": true
+            },
+            {
+              "check": "referenceSoftwarePngHash",
+              "passed": true
+            },
+            {
+              "check": "referenceInScreenBounds",
+              "passed": true
+            },
+            {
+              "check": "referenceSoftwareSize",
+              "passed": true
+            },
+            {
+              "check": "referenceInkCountsMatch",
+              "passed": true
+            },
+            {
+              "check": "referenceReportedOracleMatchesIndependent",
+              "passed": true
+            },
+            {
+              "check": "MutationAggregateTruth",
+              "passed": true
+            }
+          ],
+          "labels": {
+            "production": {
+              "passed": true,
+              "oracle": {
+                "textAndLayout": true,
+                "accessibility": true,
+                "glyph": true
+              },
+              "reportedOracle": {
+                "textAndLayout": true,
+                "accessibility": true,
+                "glyph": true
+              },
+              "screenInk": 465,
+              "softwareInk": 486,
+              "expectedText": "你"
+            },
+            "reference": {
+              "passed": true,
+              "oracle": {
+                "textAndLayout": true,
+                "accessibility": true,
+                "glyph": true
+              },
+              "reportedOracle": {
+                "textAndLayout": true,
+                "accessibility": true,
+                "glyph": true
+              },
+              "screenInk": 465,
+              "softwareInk": 486,
+              "expectedText": "你"
+            }
+          },
+          "mutation": {
+            "production": {
+              "passed": true,
+              "calls": [
+                {
+                  "index": 0,
+                  "requested": "NORMAL",
+                  "independentlyPassed": true,
+                  "reportedPassed": true,
+                  "snapshot": {
+                    "text": "你",
+                    "className": "java.lang.String",
+                    "spannable": false,
+                    "editable": false
+                  }
+                },
+                {
+                  "index": 1,
+                  "requested": "SPANNABLE",
+                  "independentlyPassed": true,
+                  "reportedPassed": true,
+                  "snapshot": {
+                    "text": "你",
+                    "className": "android.text.SpannableString",
+                    "spannable": true,
+                    "editable": false
+                  }
+                }
+              ],
+              "expectedRequests": [
+                "NORMAL",
+                "SPANNABLE"
+              ]
+            },
+            "reference": {
+              "passed": true,
+              "calls": [
+                {
+                  "index": 0,
+                  "requested": "NORMAL",
+                  "independentlyPassed": true,
+                  "reportedPassed": true,
+                  "snapshot": {
+                    "text": "你",
+                    "className": "java.lang.String",
+                    "spannable": false,
+                    "editable": false
+                  }
+                },
+                {
+                  "index": 1,
+                  "requested": "SPANNABLE",
+                  "independentlyPassed": true,
+                  "reportedPassed": true,
+                  "snapshot": {
+                    "text": "你",
+                    "className": "android.text.SpannableString",
+                    "spannable": true,
+                    "editable": false
+                  }
+                }
+              ],
+              "expectedRequests": [
+                "NORMAL",
+                "SPANNABLE"
+              ]
+            }
+          },
+          "reportMatchesIndependent": true
+        },
+        {
+          "name": "buffer-editable",
+          "independentlyPassed": true,
+          "reportedPassed": true,
+          "integrityChecks": [
+            {
+              "check": "hardwarePngHash",
+              "passed": true
+            },
+            {
+              "check": "onDrawBeforeCapture",
+              "passed": true
+            },
+            {
+              "check": "atLeast1000msAfterObservedDraw",
+              "passed": true
+            },
+            {
+              "check": "declaredSettleUnchanged",
+              "passed": true
+            },
+            {
+              "check": "productionSoftwarePngHash",
+              "passed": true
+            },
+            {
+              "check": "productionInScreenBounds",
+              "passed": true
+            },
+            {
+              "check": "productionSoftwareSize",
+              "passed": true
+            },
+            {
+              "check": "productionInkCountsMatch",
+              "passed": true
+            },
+            {
+              "check": "productionReportedOracleMatchesIndependent",
+              "passed": true
+            },
+            {
+              "check": "referenceSoftwarePngHash",
+              "passed": true
+            },
+            {
+              "check": "referenceInScreenBounds",
+              "passed": true
+            },
+            {
+              "check": "referenceSoftwareSize",
+              "passed": true
+            },
+            {
+              "check": "referenceInkCountsMatch",
+              "passed": true
+            },
+            {
+              "check": "referenceReportedOracleMatchesIndependent",
+              "passed": true
+            },
+            {
+              "check": "MutationAggregateTruth",
+              "passed": true
+            }
+          ],
+          "labels": {
+            "production": {
+              "passed": true,
+              "oracle": {
+                "textAndLayout": true,
+                "accessibility": true,
+                "glyph": true
+              },
+              "reportedOracle": {
+                "textAndLayout": true,
+                "accessibility": true,
+                "glyph": true
+              },
+              "screenInk": 465,
+              "softwareInk": 486,
+              "expectedText": "你"
+            },
+            "reference": {
+              "passed": true,
+              "oracle": {
+                "textAndLayout": true,
+                "accessibility": true,
+                "glyph": true
+              },
+              "reportedOracle": {
+                "textAndLayout": true,
+                "accessibility": true,
+                "glyph": true
+              },
+              "screenInk": 465,
+              "softwareInk": 486,
+              "expectedText": "你"
+            }
+          },
+          "mutation": {
+            "production": {
+              "passed": true,
+              "calls": [
+                {
+                  "index": 0,
+                  "requested": "NORMAL",
+                  "independentlyPassed": true,
+                  "reportedPassed": true,
+                  "snapshot": {
+                    "text": "你",
+                    "className": "java.lang.String",
+                    "spannable": false,
+                    "editable": false
+                  }
+                },
+                {
+                  "index": 1,
+                  "requested": "SPANNABLE",
+                  "independentlyPassed": true,
+                  "reportedPassed": true,
+                  "snapshot": {
+                    "text": "你",
+                    "className": "android.text.SpannableString",
+                    "spannable": true,
+                    "editable": false
+                  }
+                },
+                {
+                  "index": 2,
+                  "requested": "EDITABLE",
+                  "independentlyPassed": true,
+                  "reportedPassed": true,
+                  "snapshot": {
+                    "text": "你",
+                    "className": "android.text.SpannableStringBuilder",
+                    "spannable": true,
+                    "editable": true
+                  }
+                }
+              ],
+              "expectedRequests": [
+                "NORMAL",
+                "SPANNABLE",
+                "EDITABLE"
+              ]
+            },
+            "reference": {
+              "passed": true,
+              "calls": [
+                {
+                  "index": 0,
+                  "requested": "NORMAL",
+                  "independentlyPassed": true,
+                  "reportedPassed": true,
+                  "snapshot": {
+                    "text": "你",
+                    "className": "java.lang.String",
+                    "spannable": false,
+                    "editable": false
+                  }
+                },
+                {
+                  "index": 1,
+                  "requested": "SPANNABLE",
+                  "independentlyPassed": true,
+                  "reportedPassed": true,
+                  "snapshot": {
+                    "text": "你",
+                    "className": "android.text.SpannableString",
+                    "spannable": true,
+                    "editable": false
+                  }
+                },
+                {
+                  "index": 2,
+                  "requested": "EDITABLE",
+                  "independentlyPassed": true,
+                  "reportedPassed": true,
+                  "snapshot": {
+                    "text": "你",
+                    "className": "android.text.SpannableStringBuilder",
+                    "spannable": true,
+                    "editable": true
+                  }
+                }
+              ],
+              "expectedRequests": [
+                "NORMAL",
+                "SPANNABLE",
+                "EDITABLE"
+              ]
+            }
+          },
+          "reportMatchesIndependent": true
+        },
+        {
+          "name": "buffer-back-normal",
+          "independentlyPassed": true,
+          "reportedPassed": true,
+          "integrityChecks": [
+            {
+              "check": "hardwarePngHash",
+              "passed": true
+            },
+            {
+              "check": "onDrawBeforeCapture",
+              "passed": true
+            },
+            {
+              "check": "atLeast1000msAfterObservedDraw",
+              "passed": true
+            },
+            {
+              "check": "declaredSettleUnchanged",
+              "passed": true
+            },
+            {
+              "check": "productionSoftwarePngHash",
+              "passed": true
+            },
+            {
+              "check": "productionInScreenBounds",
+              "passed": true
+            },
+            {
+              "check": "productionSoftwareSize",
+              "passed": true
+            },
+            {
+              "check": "productionInkCountsMatch",
+              "passed": true
+            },
+            {
+              "check": "productionReportedOracleMatchesIndependent",
+              "passed": true
+            },
+            {
+              "check": "referenceSoftwarePngHash",
+              "passed": true
+            },
+            {
+              "check": "referenceInScreenBounds",
+              "passed": true
+            },
+            {
+              "check": "referenceSoftwareSize",
+              "passed": true
+            },
+            {
+              "check": "referenceInkCountsMatch",
+              "passed": true
+            },
+            {
+              "check": "referenceReportedOracleMatchesIndependent",
+              "passed": true
+            },
+            {
+              "check": "MutationAggregateTruth",
+              "passed": true
+            }
+          ],
+          "labels": {
+            "production": {
+              "passed": true,
+              "oracle": {
+                "textAndLayout": true,
+                "accessibility": true,
+                "glyph": true
+              },
+              "reportedOracle": {
+                "textAndLayout": true,
+                "accessibility": true,
+                "glyph": true
+              },
+              "screenInk": 465,
+              "softwareInk": 486,
+              "expectedText": "你"
+            },
+            "reference": {
+              "passed": true,
+              "oracle": {
+                "textAndLayout": true,
+                "accessibility": true,
+                "glyph": true
+              },
+              "reportedOracle": {
+                "textAndLayout": true,
+                "accessibility": true,
+                "glyph": true
+              },
+              "screenInk": 465,
+              "softwareInk": 486,
+              "expectedText": "你"
+            }
+          },
+          "mutation": {
+            "production": {
+              "passed": true,
+              "calls": [
+                {
+                  "index": 0,
+                  "requested": "NORMAL",
+                  "independentlyPassed": true,
+                  "reportedPassed": true,
+                  "snapshot": {
+                    "text": "你",
+                    "className": "java.lang.String",
+                    "spannable": false,
+                    "editable": false
+                  }
+                },
+                {
+                  "index": 1,
+                  "requested": "SPANNABLE",
+                  "independentlyPassed": true,
+                  "reportedPassed": true,
+                  "snapshot": {
+                    "text": "你",
+                    "className": "android.text.SpannableString",
+                    "spannable": true,
+                    "editable": false
+                  }
+                },
+                {
+                  "index": 2,
+                  "requested": "EDITABLE",
+                  "independentlyPassed": true,
+                  "reportedPassed": true,
+                  "snapshot": {
+                    "text": "你",
+                    "className": "android.text.SpannableStringBuilder",
+                    "spannable": true,
+                    "editable": true
+                  }
+                },
+                {
+                  "index": 3,
+                  "requested": "NORMAL",
+                  "independentlyPassed": true,
+                  "reportedPassed": true,
+                  "snapshot": {
+                    "text": "你",
+                    "className": "java.lang.String",
+                    "spannable": false,
+                    "editable": false
+                  }
+                }
+              ],
+              "expectedRequests": [
+                "NORMAL",
+                "SPANNABLE",
+                "EDITABLE",
+                "NORMAL"
+              ]
+            },
+            "reference": {
+              "passed": true,
+              "calls": [
+                {
+                  "index": 0,
+                  "requested": "NORMAL",
+                  "independentlyPassed": true,
+                  "reportedPassed": true,
+                  "snapshot": {
+                    "text": "你",
+                    "className": "java.lang.String",
+                    "spannable": false,
+                    "editable": false
+                  }
+                },
+                {
+                  "index": 1,
+                  "requested": "SPANNABLE",
+                  "independentlyPassed": true,
+                  "reportedPassed": true,
+                  "snapshot": {
+                    "text": "你",
+                    "className": "android.text.SpannableString",
+                    "spannable": true,
+                    "editable": false
+                  }
+                },
+                {
+                  "index": 2,
+                  "requested": "EDITABLE",
+                  "independentlyPassed": true,
+                  "reportedPassed": true,
+                  "snapshot": {
+                    "text": "你",
+                    "className": "android.text.SpannableStringBuilder",
+                    "spannable": true,
+                    "editable": true
+                  }
+                },
+                {
+                  "index": 3,
+                  "requested": "NORMAL",
+                  "independentlyPassed": true,
+                  "reportedPassed": true,
+                  "snapshot": {
+                    "text": "你",
+                    "className": "java.lang.String",
+                    "spannable": false,
+                    "editable": false
+                  }
+                }
+              ],
+              "expectedRequests": [
+                "NORMAL",
+                "SPANNABLE",
+                "EDITABLE",
+                "NORMAL"
+              ]
+            }
+          },
+          "reportMatchesIndependent": true
+        },
+        {
+          "name": "buffer-repeat-normal",
+          "independentlyPassed": true,
+          "reportedPassed": true,
+          "integrityChecks": [
+            {
+              "check": "hardwarePngHash",
+              "passed": true
+            },
+            {
+              "check": "onDrawBeforeCapture",
+              "passed": true
+            },
+            {
+              "check": "atLeast1000msAfterObservedDraw",
+              "passed": true
+            },
+            {
+              "check": "declaredSettleUnchanged",
+              "passed": true
+            },
+            {
+              "check": "productionSoftwarePngHash",
+              "passed": true
+            },
+            {
+              "check": "productionInScreenBounds",
+              "passed": true
+            },
+            {
+              "check": "productionSoftwareSize",
+              "passed": true
+            },
+            {
+              "check": "productionInkCountsMatch",
+              "passed": true
+            },
+            {
+              "check": "productionReportedOracleMatchesIndependent",
+              "passed": true
+            },
+            {
+              "check": "referenceSoftwarePngHash",
+              "passed": true
+            },
+            {
+              "check": "referenceInScreenBounds",
+              "passed": true
+            },
+            {
+              "check": "referenceSoftwareSize",
+              "passed": true
+            },
+            {
+              "check": "referenceInkCountsMatch",
+              "passed": true
+            },
+            {
+              "check": "referenceReportedOracleMatchesIndependent",
+              "passed": true
+            },
+            {
+              "check": "MutationAggregateTruth",
+              "passed": true
+            }
+          ],
+          "labels": {
+            "production": {
+              "passed": true,
+              "oracle": {
+                "textAndLayout": true,
+                "accessibility": true,
+                "glyph": true
+              },
+              "reportedOracle": {
+                "textAndLayout": true,
+                "accessibility": true,
+                "glyph": true
+              },
+              "screenInk": 465,
+              "softwareInk": 486,
+              "expectedText": "你"
+            },
+            "reference": {
+              "passed": true,
+              "oracle": {
+                "textAndLayout": true,
+                "accessibility": true,
+                "glyph": true
+              },
+              "reportedOracle": {
+                "textAndLayout": true,
+                "accessibility": true,
+                "glyph": true
+              },
+              "screenInk": 465,
+              "softwareInk": 486,
+              "expectedText": "你"
+            }
+          },
+          "mutation": {
+            "production": {
+              "passed": true,
+              "calls": [
+                {
+                  "index": 0,
+                  "requested": "NORMAL",
+                  "independentlyPassed": true,
+                  "reportedPassed": true,
+                  "snapshot": {
+                    "text": "你",
+                    "className": "java.lang.String",
+                    "spannable": false,
+                    "editable": false
+                  }
+                },
+                {
+                  "index": 1,
+                  "requested": "NORMAL",
+                  "independentlyPassed": true,
+                  "reportedPassed": true,
+                  "snapshot": {
+                    "text": "你",
+                    "className": "java.lang.String",
+                    "spannable": false,
+                    "editable": false
+                  }
+                }
+              ],
+              "expectedRequests": [
+                "NORMAL",
+                "NORMAL"
+              ]
+            },
+            "reference": {
+              "passed": true,
+              "calls": [
+                {
+                  "index": 0,
+                  "requested": "NORMAL",
+                  "independentlyPassed": true,
+                  "reportedPassed": true,
+                  "snapshot": {
+                    "text": "你",
+                    "className": "java.lang.String",
+                    "spannable": false,
+                    "editable": false
+                  }
+                },
+                {
+                  "index": 1,
+                  "requested": "NORMAL",
+                  "independentlyPassed": true,
+                  "reportedPassed": true,
+                  "snapshot": {
+                    "text": "你",
+                    "className": "java.lang.String",
+                    "spannable": false,
+                    "editable": false
+                  }
+                }
+              ],
+              "expectedRequests": [
+                "NORMAL",
+                "NORMAL"
+              ]
+            }
+          },
+          "reportMatchesIndependent": true
+        },
+        {
+          "name": "buffer-repeat-spannable",
+          "independentlyPassed": true,
+          "reportedPassed": true,
+          "integrityChecks": [
+            {
+              "check": "hardwarePngHash",
+              "passed": true
+            },
+            {
+              "check": "onDrawBeforeCapture",
+              "passed": true
+            },
+            {
+              "check": "atLeast1000msAfterObservedDraw",
+              "passed": true
+            },
+            {
+              "check": "declaredSettleUnchanged",
+              "passed": true
+            },
+            {
+              "check": "productionSoftwarePngHash",
+              "passed": true
+            },
+            {
+              "check": "productionInScreenBounds",
+              "passed": true
+            },
+            {
+              "check": "productionSoftwareSize",
+              "passed": true
+            },
+            {
+              "check": "productionInkCountsMatch",
+              "passed": true
+            },
+            {
+              "check": "productionReportedOracleMatchesIndependent",
+              "passed": true
+            },
+            {
+              "check": "referenceSoftwarePngHash",
+              "passed": true
+            },
+            {
+              "check": "referenceInScreenBounds",
+              "passed": true
+            },
+            {
+              "check": "referenceSoftwareSize",
+              "passed": true
+            },
+            {
+              "check": "referenceInkCountsMatch",
+              "passed": true
+            },
+            {
+              "check": "referenceReportedOracleMatchesIndependent",
+              "passed": true
+            },
+            {
+              "check": "MutationAggregateTruth",
+              "passed": true
+            }
+          ],
+          "labels": {
+            "production": {
+              "passed": true,
+              "oracle": {
+                "textAndLayout": true,
+                "accessibility": true,
+                "glyph": true
+              },
+              "reportedOracle": {
+                "textAndLayout": true,
+                "accessibility": true,
+                "glyph": true
+              },
+              "screenInk": 465,
+              "softwareInk": 486,
+              "expectedText": "你"
+            },
+            "reference": {
+              "passed": true,
+              "oracle": {
+                "textAndLayout": true,
+                "accessibility": true,
+                "glyph": true
+              },
+              "reportedOracle": {
+                "textAndLayout": true,
+                "accessibility": true,
+                "glyph": true
+              },
+              "screenInk": 465,
+              "softwareInk": 486,
+              "expectedText": "你"
+            }
+          },
+          "mutation": {
+            "production": {
+              "passed": true,
+              "calls": [
+                {
+                  "index": 0,
+                  "requested": "NORMAL",
+                  "independentlyPassed": true,
+                  "reportedPassed": true,
+                  "snapshot": {
+                    "text": "你",
+                    "className": "java.lang.String",
+                    "spannable": false,
+                    "editable": false
+                  }
+                },
+                {
+                  "index": 1,
+                  "requested": "SPANNABLE",
+                  "independentlyPassed": true,
+                  "reportedPassed": true,
+                  "snapshot": {
+                    "text": "你",
+                    "className": "android.text.SpannableString",
+                    "spannable": true,
+                    "editable": false
+                  }
+                },
+                {
+                  "index": 2,
+                  "requested": "SPANNABLE",
+                  "independentlyPassed": true,
+                  "reportedPassed": true,
+                  "snapshot": {
+                    "text": "你",
+                    "className": "android.text.SpannableString",
+                    "spannable": true,
+                    "editable": false
+                  }
+                }
+              ],
+              "expectedRequests": [
+                "NORMAL",
+                "SPANNABLE",
+                "SPANNABLE"
+              ]
+            },
+            "reference": {
+              "passed": true,
+              "calls": [
+                {
+                  "index": 0,
+                  "requested": "NORMAL",
+                  "independentlyPassed": true,
+                  "reportedPassed": true,
+                  "snapshot": {
+                    "text": "你",
+                    "className": "java.lang.String",
+                    "spannable": false,
+                    "editable": false
+                  }
+                },
+                {
+                  "index": 1,
+                  "requested": "SPANNABLE",
+                  "independentlyPassed": true,
+                  "reportedPassed": true,
+                  "snapshot": {
+                    "text": "你",
+                    "className": "android.text.SpannableString",
+                    "spannable": true,
+                    "editable": false
+                  }
+                },
+                {
+                  "index": 2,
+                  "requested": "SPANNABLE",
+                  "independentlyPassed": true,
+                  "reportedPassed": true,
+                  "snapshot": {
+                    "text": "你",
+                    "className": "android.text.SpannableString",
+                    "spannable": true,
+                    "editable": false
+                  }
+                }
+              ],
+              "expectedRequests": [
+                "NORMAL",
+                "SPANNABLE",
+                "SPANNABLE"
+              ]
+            }
+          },
+          "reportMatchesIndependent": true
+        },
+        {
+          "name": "granularity-selectable-precondition",
+          "independentlyPassed": true,
+          "reportedPassed": true,
+          "integrityChecks": [
+            {
+              "check": "hardwarePngHash",
+              "passed": true
+            },
+            {
+              "check": "onDrawBeforeCapture",
+              "passed": true
+            },
+            {
+              "check": "atLeast1000msAfterObservedDraw",
+              "passed": true
+            },
+            {
+              "check": "declaredSettleUnchanged",
+              "passed": true
+            },
+            {
+              "check": "productionSoftwarePngHash",
+              "passed": true
+            },
+            {
+              "check": "productionInScreenBounds",
+              "passed": true
+            },
+            {
+              "check": "productionSoftwareSize",
+              "passed": true
+            },
+            {
+              "check": "productionInkCountsMatch",
+              "passed": true
+            },
+            {
+              "check": "productionReportedOracleMatchesIndependent",
+              "passed": true
+            },
+            {
+              "check": "referenceSoftwarePngHash",
+              "passed": true
+            },
+            {
+              "check": "referenceInScreenBounds",
+              "passed": true
+            },
+            {
+              "check": "referenceSoftwareSize",
+              "passed": true
+            },
+            {
+              "check": "referenceInkCountsMatch",
+              "passed": true
+            },
+            {
+              "check": "referenceReportedOracleMatchesIndependent",
+              "passed": true
+            },
+            {
+              "check": "MutationAggregateTruth",
+              "passed": true
+            }
+          ],
+          "labels": {
+            "production": {
+              "passed": true,
+              "oracle": {
+                "textAndLayout": true,
+                "accessibility": true,
+                "glyph": true
+              },
+              "reportedOracle": {
+                "textAndLayout": true,
+                "accessibility": true,
+                "glyph": true
+              },
+              "screenInk": 950,
+              "softwareInk": 991,
+              "expectedText": "你好"
+            },
+            "reference": {
+              "passed": true,
+              "oracle": {
+                "textAndLayout": true,
+                "accessibility": true,
+                "glyph": true
+              },
+              "reportedOracle": {
+                "textAndLayout": true,
+                "accessibility": true,
+                "glyph": true
+              },
+              "screenInk": 950,
+              "softwareInk": 991,
+              "expectedText": "你好"
+            }
+          },
+          "mutation": {
+            "production": {
+              "passed": true,
+              "checks": {
+                "text": true,
+                "spannable": true,
+                "selectable": true,
+                "focusable": true,
+                "touchFocus": true,
+                "movement": true,
+                "reportedPassed": true
+              },
+              "observed": {
+                "text": "你好",
+                "className": "android.text.SpannableString",
+                "spannable": true,
+                "editable": false,
+                "textIsSelectable": true,
+                "focusable": true,
+                "focusableInTouchMode": true,
+                "movementMethodClass": "android.text.method.ArrowKeyMovementMethod",
+                "passed": true
+              }
+            },
+            "reference": {
+              "passed": true,
+              "checks": {
+                "text": true,
+                "spannable": true,
+                "selectable": true,
+                "focusable": true,
+                "touchFocus": true,
+                "movement": true,
+                "reportedPassed": true
+              },
+              "observed": {
+                "text": "你好",
+                "className": "android.text.SpannableString",
+                "spannable": true,
+                "editable": false,
+                "textIsSelectable": true,
+                "focusable": true,
+                "focusableInTouchMode": true,
+                "movementMethodClass": "android.text.method.ArrowKeyMovementMethod",
+                "passed": true
+              }
+            }
+          },
+          "reportMatchesIndependent": true
+        },
+        {
+          "name": "granularity-line-next-previous",
+          "independentlyPassed": true,
+          "reportedPassed": true,
+          "integrityChecks": [
+            {
+              "check": "hardwarePngHash",
+              "passed": true
+            },
+            {
+              "check": "onDrawBeforeCapture",
+              "passed": true
+            },
+            {
+              "check": "atLeast1000msAfterObservedDraw",
+              "passed": true
+            },
+            {
+              "check": "declaredSettleUnchanged",
+              "passed": true
+            },
+            {
+              "check": "productionSoftwarePngHash",
+              "passed": true
+            },
+            {
+              "check": "productionInScreenBounds",
+              "passed": true
+            },
+            {
+              "check": "productionSoftwareSize",
+              "passed": true
+            },
+            {
+              "check": "productionInkCountsMatch",
+              "passed": true
+            },
+            {
+              "check": "productionReportedOracleMatchesIndependent",
+              "passed": true
+            },
+            {
+              "check": "referenceSoftwarePngHash",
+              "passed": true
+            },
+            {
+              "check": "referenceInScreenBounds",
+              "passed": true
+            },
+            {
+              "check": "referenceSoftwareSize",
+              "passed": true
+            },
+            {
+              "check": "referenceInkCountsMatch",
+              "passed": true
+            },
+            {
+              "check": "referenceReportedOracleMatchesIndependent",
+              "passed": true
+            },
+            {
+              "check": "MutationAggregateTruth",
+              "passed": true
+            }
+          ],
+          "labels": {
+            "production": {
+              "passed": true,
+              "oracle": {
+                "textAndLayout": true,
+                "accessibility": true,
+                "glyph": true
+              },
+              "reportedOracle": {
+                "textAndLayout": true,
+                "accessibility": true,
+                "glyph": true
+              },
+              "screenInk": 950,
+              "softwareInk": 991,
+              "expectedText": "你好"
+            },
+            "reference": {
+              "passed": true,
+              "oracle": {
+                "textAndLayout": true,
+                "accessibility": true,
+                "glyph": true
+              },
+              "reportedOracle": {
+                "textAndLayout": true,
+                "accessibility": true,
+                "glyph": true
+              },
+              "screenInk": 950,
+              "softwareInk": 991,
+              "expectedText": "你好"
+            }
+          },
+          "mutation": {
+            "production": {
+              "passed": true,
+              "checks": {
+                "focus": true,
+                "initialZero": true,
+                "nextTrueAndAtTwo": true,
+                "previousTrueAndAtZero": true,
+                "actionsAdvertised": true,
+                "lineAdvertised": true,
+                "beforeAndAfterText": true,
+                "reportedPassed": true
+              },
+              "observed": {
+                "before": {
+                  "text": "你好",
+                  "className": "android.text.SpannableString",
+                  "spannable": true,
+                  "editable": false
+                },
+                "requestFocusReturned": true,
+                "focusedBeforeActions": true,
+                "initialSelectionStart": 0,
+                "initialSelectionEnd": 0,
+                "advertisedActionIds": [
+                  4,
+                  8,
+                  2,
+                  64,
+                  16,
+                  32,
+                  256,
+                  512,
+                  131072
+                ],
+                "movementGranularities": 31,
+                "lineAdvertised": true,
+                "nextReturned": true,
+                "nextSelectionStart": 2,
+                "nextSelectionEnd": 2,
+                "previousReturned": true,
+                "previousSelectionStart": 0,
+                "previousSelectionEnd": 0,
+                "after": {
+                  "text": "你好",
+                  "className": "android.text.SpannableString",
+                  "spannable": true,
+                  "editable": false
+                },
+                "passed": true,
+                "semantics": "Public framework LINE NEXT/PREVIOUS actions, cursor 0->2->0. No TalkBack service, binder-node action routing, gesture, or candidate activation claim."
+              }
+            },
+            "reference": {
+              "passed": true,
+              "checks": {
+                "focus": true,
+                "initialZero": true,
+                "nextTrueAndAtTwo": true,
+                "previousTrueAndAtZero": true,
+                "actionsAdvertised": true,
+                "lineAdvertised": true,
+                "beforeAndAfterText": true,
+                "reportedPassed": true
+              },
+              "observed": {
+                "before": {
+                  "text": "你好",
+                  "className": "android.text.SpannableString",
+                  "spannable": true,
+                  "editable": false
+                },
+                "requestFocusReturned": true,
+                "focusedBeforeActions": true,
+                "initialSelectionStart": 0,
+                "initialSelectionEnd": 0,
+                "advertisedActionIds": [
+                  4,
+                  8,
+                  2,
+                  64,
+                  16,
+                  32,
+                  256,
+                  512,
+                  131072
+                ],
+                "movementGranularities": 31,
+                "lineAdvertised": true,
+                "nextReturned": true,
+                "nextSelectionStart": 2,
+                "nextSelectionEnd": 2,
+                "previousReturned": true,
+                "previousSelectionStart": 0,
+                "previousSelectionEnd": 0,
+                "after": {
+                  "text": "你好",
+                  "className": "android.text.SpannableString",
+                  "spannable": true,
+                  "editable": false
+                },
+                "passed": true,
+                "semantics": "Public framework LINE NEXT/PREVIOUS actions, cursor 0->2->0. No TalkBack service, binder-node action routing, gesture, or candidate activation claim."
+              }
+            }
+          },
+          "reportMatchesIndependent": true
+        }
+      ],
+      "issues": [],
+      "sourceApkSha256": "4b9a6d5c2b69073f733b60b9c35bdd7f587804a522d64612725c8af801dc1539",
+      "sourceApkPath": "/data/app/org.x2m7.trime.readiness.candidatediagnostic-1/base.apk",
+      "selfReportedPid": 2390,
+      "osIdentity": {
+        "self_reported_pid": 2390,
+        "os_pid_start": "NOT_OBSERVED"
+      },
+      "nativeFalseNotProcessEvidence": true,
+      "fileManifestIndependent": {
+        "null-reference.png": {
+          "bytes": 133,
+          "sha256": "d6f433514884f3242887f352c3ccfdadfddfd52fd0f03497b37c17940cf05965"
+        },
+        "latin-production.png": {
+          "bytes": 529,
+          "sha256": "698459c57d3922e7cb03744ea79758bdd98ba29e71a904b882ede5cd9df14722"
+        },
+        "granularity-line-next-previous-production.png": {
+          "bytes": 1900,
+          "sha256": "6badec77a7740cef4db90a9016c4da078b3a14fe7cd356fd9d9bf59f65516430"
+        },
+        "buffer-repeat-spannable-screen.png": {
+          "bytes": 24181,
+          "sha256": "dcb387b91d0c3dcee3cd2792f2acc889a0ea1fbe8a44df5e945803a5080c81c1"
+        },
+        "buffer-editable-reference.png": {
+          "bytes": 1170,
+          "sha256": "07d416b1bc312430e41e08332c725fb8bb9424929cb04b64e44cc5f721baa318"
+        },
+        "hanzi-reference.png": {
+          "bytes": 1170,
+          "sha256": "07d416b1bc312430e41e08332c725fb8bb9424929cb04b64e44cc5f721baa318"
+        },
+        "buffer-repeat-spannable-reference.png": {
+          "bytes": 1170,
+          "sha256": "07d416b1bc312430e41e08332c725fb8bb9424929cb04b64e44cc5f721baa318"
+        },
+        "hanzi-production.png": {
+          "bytes": 1169,
+          "sha256": "319e1ad411bd42ce8b33fe20d19eee535497d5be2c2d7b87ebef3cd412c1cd07"
+        },
+        "granularity-selectable-precondition-reference.png": {
+          "bytes": 1900,
+          "sha256": "3559ab4ed113c5ce6ea09eb8b96516ba9dc7277a070bf78acecd2f4cd02b9d1f"
+        },
+        "buffer-repeat-normal-production.png": {
+          "bytes": 1169,
+          "sha256": "319e1ad411bd42ce8b33fe20d19eee535497d5be2c2d7b87ebef3cd412c1cd07"
+        },
+        "buffer-normal-screen.png": {
+          "bytes": 22510,
+          "sha256": "8e87f31eddd69f8d2d8eba97d6586ff663e92c2c4389111de2f76a6753a5560b"
+        },
+        "granularity-selectable-precondition-production.png": {
+          "bytes": 1900,
+          "sha256": "6badec77a7740cef4db90a9016c4da078b3a14fe7cd356fd9d9bf59f65516430"
+        },
+        "null-production.png": {
+          "bytes": 133,
+          "sha256": "d6f433514884f3242887f352c3ccfdadfddfd52fd0f03497b37c17940cf05965"
+        },
+        "buffer-spannable-production.png": {
+          "bytes": 1169,
+          "sha256": "319e1ad411bd42ce8b33fe20d19eee535497d5be2c2d7b87ebef3cd412c1cd07"
+        },
+        "granularity-line-next-previous-screen.png": {
+          "bytes": 29175,
+          "sha256": "6aa9395c1a6558e0e915655633fa945f867761651349e795abd2cf0aa89f144a"
+        },
+        "buffer-repeat-spannable-production.png": {
+          "bytes": 1169,
+          "sha256": "319e1ad411bd42ce8b33fe20d19eee535497d5be2c2d7b87ebef3cd412c1cd07"
+        },
+        "buffer-normal-reference.png": {
+          "bytes": 1170,
+          "sha256": "07d416b1bc312430e41e08332c725fb8bb9424929cb04b64e44cc5f721baa318"
+        },
+        "buffer-editable-screen.png": {
+          "bytes": 22729,
+          "sha256": "17abce18b3140ade8b5e0b32b4f30adf3436086eb7576ad3a6bf2bb7536944b0"
+        },
+        "latin-reference.png": {
+          "bytes": 532,
+          "sha256": "be237562604aa6e1222364df4d3c3940c604799247d8c73f421642bf7ebefc0f"
+        },
+        "constructor-screen.png": {
+          "bytes": 27662,
+          "sha256": "cddaecc1c5f2b0ba3811fc031a2e026ac623b77f0dc91f78bd38755186e6896f"
+        },
+        "buffer-back-normal-reference.png": {
+          "bytes": 1170,
+          "sha256": "07d416b1bc312430e41e08332c725fb8bb9424929cb04b64e44cc5f721baa318"
+        },
+        "buffer-repeat-normal-screen.png": {
+          "bytes": 22949,
+          "sha256": "5cf775ed5fc207dfd977801b5f96702dde09e4af00149aab3a1c960d458fb128"
+        },
+        "rebind-production.png": {
+          "bytes": 1169,
+          "sha256": "319e1ad411bd42ce8b33fe20d19eee535497d5be2c2d7b87ebef3cd412c1cd07"
+        },
+        "constructor-reference.png": {
+          "bytes": 133,
+          "sha256": "d6f433514884f3242887f352c3ccfdadfddfd52fd0f03497b37c17940cf05965"
+        },
+        "null-screen.png": {
+          "bytes": 18863,
+          "sha256": "ce41e9d2c73aae6ae29a16b750dd1f7c8117c374e60b4c9235bcecee07c07803"
+        },
+        "buffer-spannable-reference.png": {
+          "bytes": 1170,
+          "sha256": "07d416b1bc312430e41e08332c725fb8bb9424929cb04b64e44cc5f721baa318"
+        },
+        "buffer-normal-production.png": {
+          "bytes": 1169,
+          "sha256": "319e1ad411bd42ce8b33fe20d19eee535497d5be2c2d7b87ebef3cd412c1cd07"
+        },
+        "rebind-reference.png": {
+          "bytes": 1170,
+          "sha256": "07d416b1bc312430e41e08332c725fb8bb9424929cb04b64e44cc5f721baa318"
+        },
+        "granularity-line-next-previous-reference.png": {
+          "bytes": 1900,
+          "sha256": "3559ab4ed113c5ce6ea09eb8b96516ba9dc7277a070bf78acecd2f4cd02b9d1f"
+        },
+        "hanzi-screen.png": {
+          "bytes": 22140,
+          "sha256": "e77c4c6e8a90d21c41aacf4618a45d883f9ff87d46162c7b6ef5c0ce94a60924"
+        },
+        "buffer-editable-production.png": {
+          "bytes": 1169,
+          "sha256": "319e1ad411bd42ce8b33fe20d19eee535497d5be2c2d7b87ebef3cd412c1cd07"
+        },
+        "buffer-repeat-normal-reference.png": {
+          "bytes": 1170,
+          "sha256": "07d416b1bc312430e41e08332c725fb8bb9424929cb04b64e44cc5f721baa318"
+        },
+        "buffer-back-normal-screen.png": {
+          "bytes": 22949,
+          "sha256": "0ba73be899cf44ad5f175c40b2fd21c6e7b297816f2e35740c80a988d41c3895"
+        },
+        "rebind-screen.png": {
+          "bytes": 22377,
+          "sha256": "7f00f69ec5f875ec2f354da463e52b393f5912d75dbf2ca83b6286b755b0f8e6"
+        },
+        "result.json": {
+          "bytes": 45709,
+          "sha256": "4b46139897b706dcd0dfbf33f079ff5cc81e90f13caa3981403ea4c25014f129"
+        },
+        "buffer-back-normal-production.png": {
+          "bytes": 1169,
+          "sha256": "319e1ad411bd42ce8b33fe20d19eee535497d5be2c2d7b87ebef3cd412c1cd07"
+        },
+        "granularity-selectable-precondition-screen.png": {
+          "bytes": 28138,
+          "sha256": "d8ab4d3b9d865f858b3b005835c7af5792e5f6c76a93322fdbf58e7944b5339d"
+        },
+        "buffer-spannable-screen.png": {
+          "bytes": 23265,
+          "sha256": "d34fef480ae1d48708e8b2a6eb4f5dcfe33fc459c4753a7cd53b1677389dee87"
+        },
+        "constructor-production.png": {
+          "bytes": 133,
+          "sha256": "d6f433514884f3242887f352c3ccfdadfddfd52fd0f03497b37c17940cf05965"
+        },
+        "latin-screen.png": {
+          "bytes": 19871,
+          "sha256": "4a7a2d046fcc76438dd89cea8581fe86ce96c45f85ba86673f581719cf996d80"
+        }
+      },
+      "positiveQualified": true,
+      "disposition": "QUALIFIED_SCOPED_POSITIVE"
+    }
+  ],
+  "log": {
+    "source": {
+      "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api21-class-only1/device-logcat.txt",
+      "bytes": 746991,
+      "sha256": "935e627344bb09fc00940a9ccaeb57b811715d3c436e97caf23704a891733700",
+      "inode": 29786443,
+      "unchangedDuringHash": true
+    },
+    "lineCount": 5770,
+    "priorities": {
+      "V": 111,
+      "D": 2536,
+      "I": 1122,
+      "W": 1548,
+      "E": 422,
+      "F": 0
+    },
+    "actualTrimeStartRecords": [],
+    "actualDiagnosticStartRecords": [
+      {
+        "line": 5406,
+        "raw": "10-23 07:46:32.991  1480  1843 I am_proc_start: [0,2390,10053,org.x2m7.trime.readiness.candidatediagnostic,added application,org.x2m7.trime.readiness.candidatediagnostic]\n"
+      },
+      {
+        "line": 5407,
+        "raw": "10-23 07:46:32.991  1480  1843 I ActivityManager: Start proc org.x2m7.trime.readiness.candidatediagnostic for added application org.x2m7.trime.readiness.candidatediagnostic: pid=2390 uid=10053 gids={50053, 9997} abi=x86_64\n"
+      },
+      {
+        "line": 5534,
+        "raw": "10-23 07:46:51.342  1480  1660 I am_proc_start: [0,2444,10053,org.x2m7.trime.readiness.candidatediagnostic,added application,org.x2m7.trime.readiness.candidatediagnostic]\n"
+      },
+      {
+        "line": 5535,
+        "raw": "10-23 07:46:51.342  1480  1660 I ActivityManager: Start proc org.x2m7.trime.readiness.candidatediagnostic for added application org.x2m7.trime.readiness.candidatediagnostic: pid=2444 uid=10053 gids={50053, 9997} abi=x86_64\n"
+      }
+    ],
+    "fatalContexts": [
+      {
+        "line": 5555,
+        "rawContext": "--------- beginning of crash\n10-23 07:46:51.598  2444  2444 E AndroidRuntime: FATAL EXCEPTION: main\n10-23 07:46:51.598  2444  2444 E AndroidRuntime: Process: org.x2m7.trime.readiness.candidatediagnostic, PID: 2444\n10-23 07:46:51.598  2444  2444 E AndroidRuntime: java.lang.NullPointerException: Attempt to invoke interface method 'int java.lang.CharSequence.length()' on a null object reference\n10-23 07:46:51.598  2444  2444 E AndroidRuntime: \tat android.text.BoringLayout.isBoring(BoringLayout.java:256)\n10-23 07:46:51.598  2444  2444 E AndroidRuntime: \tat android.widget.TextView.makeSingleLayout(TextView.java:6395)\n10-23 07:46:51.598  2444  2444 E AndroidRuntime: \tat android.widget.TextView.makeNewLayout(TextView.java:6287)\n10-23 07:46:51.598  2444  2444 E AndroidRuntime: \tat android.widget.TextView.onMeasure(TextView.java:6644)\n10-23 07:46:51.598  2444  2444 E AndroidRuntime: \tat org.x2m7.trime.diagnostic.equal_return.AutoScaleTextView.onMeasure(AutoScaleTextView.kt:77)\n10-23 07:46:51.598  2444  2444 E AndroidRuntime: \tat android.view.View.measure(View.java:17430)\n10-23 07:46:51.598  2444  2444 E AndroidRuntime: \tat android.view.ViewGroup.measureChildWithMargins(ViewGroup.java:5463)\n10-23 07:46:51.598  2444  2444 E AndroidRuntime: \tat android.widget.LinearLayout.measureChildBeforeLayout(LinearLayout.java:1436)\n10-23 07:46:51.598  2444  2444 E AndroidRuntime: \tat android.widget.LinearLayout.measureHorizontal(LinearLayout.java:1083)\n10-23 07:46:51.598  2444  2444 E AndroidRuntime: \tat android.widget.LinearLayout.onMeasure(LinearLayout.java:615)\n10-23 07:46:51.598  2444  2444 E AndroidRuntime: \tat android.view.View.measure(View.java:17430)\n10-23 07:46:51.598  2444  2444 E AndroidRuntime: \tat android.view.ViewGroup.measureChildWithMargins(ViewGroup.java:5463)\n10-23 07:46:51.598  2444  2444 E AndroidRuntime: \tat android.widget.LinearLayout.measureChildBeforeLayout(LinearLayout.java:1436)\n10-23 07:46:51.598  2444  2444 E AndroidRuntime: \tat android.widget.LinearLayout.measureVertical(LinearLayout.java:722)\n10-23 07:46:51.598  2444  2444 E AndroidRuntime: \tat android.widget.LinearLayout.onMeasure(LinearLayout.java:613)\n10-23 07:46:51.598  2444  2444 E AndroidRuntime: \tat android.view.View.measure(View.java:17430)\n10-23 07:46:51.598  2444  2444 E AndroidRuntime: \tat android.view.ViewGroup.measureChildWithMargins(ViewGroup.java:5463)\n10-23 07:46:51.598  2444  2444 E AndroidRuntime: \tat android.widget.FrameLayout.onMeasure(FrameLayout.java:430)\n10-23 07:46:51.598  2444  2444 E AndroidRuntime: \tat android.view.View.measure(View.java:17430)\n10-23 07:46:51.598  2444  2444 E AndroidRuntime: \tat android.view.ViewGroup.measureChildWithMargins(ViewGroup.java:5463)\n10-23 07:46:51.598  2444  2444 E AndroidRuntime: \tat android.widget.LinearLayout.measureChildBeforeLayout(LinearLayout.java:1436)\n10-23 07:46:51.598  2444  2444 E AndroidRuntime: \tat android.widget.LinearLayout.measureVertical(LinearLayout.java:722)\n10-23 07:46:51.598  2444  2444 E AndroidRuntime: \tat android.widget.LinearLayout.onMeasure(LinearLayout.java:613)\n10-23 07:46:51.598  2444  2444 E AndroidRuntime: \tat android.view.View.measure(View.java:17430)\n10-23 07:46:51.598  2444  2444 E AndroidRuntime: \tat android.view.ViewGroup.measureChildWithMargins(ViewGroup.java:5463)\n10-23 07:46:51.598  2444  2444 E AndroidRuntime: \tat android.widget.FrameLayout.onMeasure(FrameLayout.java:430)\n10-23 07:46:51.598  2444  2444 E AndroidRuntime: \tat com.android.internal.policy.impl.PhoneWindow$DecorView.onMeasure(PhoneWindow.java:2560)\n10-23 07:46:51.598  2444  2444 E AndroidRuntime: \tat android.view.View.measure(View.java:17430)\n10-23 07:46:51.598  2444  2444 E AndroidRuntime: \tat android.view.ViewRootImpl.performMeasure(ViewRootImpl.java:2001)\n10-23 07:46:51.598  2444  2444 E AndroidRuntime: \tat android.view.ViewRootImpl.measureHierarchy(ViewRootImpl.java:1166)\n10-23 07:46:51.598  2444  2444 E AndroidRuntime: \tat android.view.ViewRootImpl.performTraversals(ViewRootImpl.java:1372)\n10-23 07:46:51.598  2444  2444 E AndroidRuntime: \tat android.view.ViewRootImpl.doTraversal(ViewRootImpl.java:1054)\n10-23 07:46:51.598  2444  2444 E AndroidRuntime: \tat android.view.ViewRootImpl$TraversalRunnable.run(ViewRootImpl.java:5779)\n10-23 07:46:51.598  2444  2444 E AndroidRuntime: \tat android.view.Choreographer$CallbackRecord.run(Choreographer.java:767)\n10-23 07:46:51.598  2444  2444 E AndroidRuntime: \tat android.view.Choreographer.doCallbacks(Choreographer.java:580)\n10-23 07:46:51.598  2444  2444 E AndroidRuntime: \tat android.view.Choreographer.doFrame(Choreographer.java:550)\n"
+      }
+    ],
+    "limits": "Collected log and sampled ps only. Hardcoded native/Application false is not process proof. No all-system absence/zero-warning claim."
+  },
+  "scope": "SINGLE HISTORICAL PHASE ONLY. Does not qualify aborted round or unexecuted production phase.",
+  "positiveEvidenceQualified": false,
+  "roundTerminalQualified": false,
+  "overallQualified": false
+}

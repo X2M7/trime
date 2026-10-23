@@ -1,0 +1,63 @@
+{
+  "commands": [
+    {
+      "argv": [
+        "pm"
+      ],
+      "remote_returncode": 0,
+      "stderr": "/home/xumin/Public/Trime/build/pr2187-review-20261023/runtime-plan4/host-check1/api21-stopped-change-reject/stderr"
+    },
+    {
+      "argv": [
+        "pm",
+        "hide",
+        "--user",
+        "0",
+        "com.android.documentsui"
+      ],
+      "remote_returncode": 0,
+      "stderr": "/home/xumin/Public/Trime/build/pr2187-review-20261023/runtime-plan4/host-check1/api21-stopped-change-reject/stderr"
+    },
+    {
+      "argv": [
+        "pm",
+        "unhide",
+        "--user",
+        "0",
+        "com.android.documentsui"
+      ],
+      "remote_returncode": 0,
+      "stderr": "/home/xumin/Public/Trime/build/pr2187-review-20261023/runtime-plan4/host-check1/api21-stopped-change-reject/stderr"
+    }
+  ],
+  "documents_before": {
+    "package": "com.android.documentsui",
+    "present": true,
+    "installed": true,
+    "apk_path": "/system/priv-app/DocumentsUI/DocumentsUI.apk",
+    "enabled": 0,
+    "stopped": false,
+    "hidden": false
+  },
+  "help_command": {
+    "argv": [
+      "pm"
+    ],
+    "remote_returncode": 0,
+    "stderr": "/home/xumin/Public/Trime/build/pr2187-review-20261023/runtime-plan4/host-check1/api21-stopped-change-reject/stderr"
+  },
+  "help_text_sha256": "26367b42c38536c22e9bb64f9444f1fa1ed04638cdb262339ea327943558e3c9",
+  "fixture_failure": {
+    "type": "AssertionError",
+    "message": "Isolation unexpectedly changed stopped precondition"
+  },
+  "cleanup_errors": [
+    {
+      "stage": "restore-DocumentsUI",
+      "message": "Stopped state changed and no supported public restoration command exists"
+    }
+  ],
+  "finished": "2026-10-23T00:10:08.100119+00:00",
+  "fixture_operator_completed": false,
+  "actual_exit": 1
+}

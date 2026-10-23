@@ -1,0 +1,134 @@
+Activity Resolver Table:
+  Non-Data Actions:
+      android.intent.action.MAIN:
+        3aea401c com.osfans.trime.debug/com.osfans.trime.MainLauncherAlias filter 31933e54
+          Action: "android.intent.action.MAIN"
+          Category: "android.intent.category.DEFAULT"
+          Category: "android.intent.category.LAUNCHER"
+
+Receiver Resolver Table:
+  Non-Data Actions:
+      android.intent.action.BATTERY_OKAY:
+        26ee0425 com.osfans.trime.debug/androidx.work.impl.background.systemalarm.ConstraintProxy$BatteryNotLowProxy filter 1b2a669a
+          Action: "android.intent.action.BATTERY_OKAY"
+          Action: "android.intent.action.BATTERY_LOW"
+      android.intent.action.ACTION_POWER_DISCONNECTED:
+        323939fa com.osfans.trime.debug/androidx.work.impl.background.systemalarm.ConstraintProxy$BatteryChargingProxy filter 31ab7f45
+          Action: "android.intent.action.ACTION_POWER_CONNECTED"
+          Action: "android.intent.action.ACTION_POWER_DISCONNECTED"
+      android.intent.action.DEVICE_STORAGE_LOW:
+        23640bab com.osfans.trime.debug/androidx.work.impl.background.systemalarm.ConstraintProxy$StorageNotLowProxy filter 316ccbcb
+          Action: "android.intent.action.DEVICE_STORAGE_LOW"
+          Action: "android.intent.action.DEVICE_STORAGE_OK"
+      android.net.conn.CONNECTIVITY_CHANGE:
+        3e694208 com.osfans.trime.debug/androidx.work.impl.background.systemalarm.ConstraintProxy$NetworkStateProxy filter 1b6ccfa8
+          Action: "android.net.conn.CONNECTIVITY_CHANGE"
+      android.intent.action.DEVICE_STORAGE_OK:
+        23640bab com.osfans.trime.debug/androidx.work.impl.background.systemalarm.ConstraintProxy$StorageNotLowProxy filter 316ccbcb
+          Action: "android.intent.action.DEVICE_STORAGE_LOW"
+          Action: "android.intent.action.DEVICE_STORAGE_OK"
+      android.intent.action.BATTERY_LOW:
+        26ee0425 com.osfans.trime.debug/androidx.work.impl.background.systemalarm.ConstraintProxy$BatteryNotLowProxy filter 1b2a669a
+          Action: "android.intent.action.BATTERY_OKAY"
+          Action: "android.intent.action.BATTERY_LOW"
+      android.intent.action.TIMEZONE_CHANGED:
+        3f1fbda1 com.osfans.trime.debug/androidx.work.impl.background.systemalarm.RescheduleReceiver filter 1889cac1
+          Action: "android.intent.action.BOOT_COMPLETED"
+          Action: "android.intent.action.TIME_SET"
+          Action: "android.intent.action.TIMEZONE_CHANGED"
+      android.intent.action.TIME_SET:
+        3f1fbda1 com.osfans.trime.debug/androidx.work.impl.background.systemalarm.RescheduleReceiver filter 1889cac1
+          Action: "android.intent.action.BOOT_COMPLETED"
+          Action: "android.intent.action.TIME_SET"
+          Action: "android.intent.action.TIMEZONE_CHANGED"
+      android.intent.action.BOOT_COMPLETED:
+        3f1fbda1 com.osfans.trime.debug/androidx.work.impl.background.systemalarm.RescheduleReceiver filter 1889cac1
+          Action: "android.intent.action.BOOT_COMPLETED"
+          Action: "android.intent.action.TIME_SET"
+          Action: "android.intent.action.TIMEZONE_CHANGED"
+      android.intent.action.ACTION_POWER_CONNECTED:
+        323939fa com.osfans.trime.debug/androidx.work.impl.background.systemalarm.ConstraintProxy$BatteryChargingProxy filter 31ab7f45
+          Action: "android.intent.action.ACTION_POWER_CONNECTED"
+          Action: "android.intent.action.ACTION_POWER_DISCONNECTED"
+      androidx.work.diagnostics.REQUEST_DIAGNOSTICS:
+        17d0fbc6 com.osfans.trime.debug/androidx.work.impl.diagnostics.DiagnosticsReceiver filter 187a59a7
+          Action: "androidx.work.diagnostics.REQUEST_DIAGNOSTICS"
+      androidx.work.impl.background.systemalarm.UpdateProxies:
+        11d5b787 com.osfans.trime.debug/androidx.work.impl.background.systemalarm.ConstraintProxyUpdateReceiver filter b85266
+          Action: "androidx.work.impl.background.systemalarm.UpdateProxies"
+
+Service Resolver Table:
+  Non-Data Actions:
+      android.view.InputMethod:
+        2f5476b4 com.osfans.trime.debug/com.osfans.trime.ime.core.TrimeInputMethodService filter 21d233bc
+          Action: "android.view.InputMethod"
+
+Provider Resolver Table:
+  Non-Data Actions:
+      android.content.action.DOCUMENTS_PROVIDER:
+        265992dd com.osfans.trime.debug/com.osfans.trime.provider.RimeDataProvider filter 34bfa3af
+          Action: "android.content.action.DOCUMENTS_PROVIDER"
+
+Permissions:
+  Permission [com.osfans.trime.debug.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION] (12d10e52):
+    sourcePackage=com.osfans.trime.debug
+    uid=10076 gids=[] type=0 prot=signature
+    packageSetting=PackageSetting{1acc4523 com.osfans.trime.debug/10076}
+    perm=Permission{21c4a20 com.osfans.trime.debug.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION}
+
+Registered ContentProviders:
+  com.osfans.trime.debug/com.osfans.trime.provider.RimeDataProvider:
+    Provider{265992dd com.osfans.trime.debug/com.osfans.trime.provider.RimeDataProvider}
+  com.osfans.trime.debug/androidx.startup.InitializationProvider:
+    Provider{39617fd9 com.osfans.trime.debug/androidx.startup.InitializationProvider}
+  com.osfans.trime.debug/androidx.core.content.FileProvider:
+    Provider{1e4dbd9e com.osfans.trime.debug/androidx.core.content.FileProvider}
+
+ContentProvider Authorities:
+  [com.osfans.trime.debug.provider]:
+    Provider{265992dd com.osfans.trime.debug/com.osfans.trime.provider.RimeDataProvider}
+      applicationInfo=ApplicationInfo{1d14107f com.osfans.trime.debug}
+  [com.osfans.trime.debug.fileprovider]:
+    Provider{1e4dbd9e com.osfans.trime.debug/androidx.core.content.FileProvider}
+      applicationInfo=ApplicationInfo{1d14107f com.osfans.trime.debug}
+  [com.osfans.trime.debug.androidx-startup]:
+    Provider{39617fd9 com.osfans.trime.debug/androidx.startup.InitializationProvider}
+      applicationInfo=ApplicationInfo{1d14107f com.osfans.trime.debug}
+
+Key Set Manager:
+  [com.osfans.trime.debug]
+      Signing KeySets: 27
+
+Packages:
+  Package [com.osfans.trime.debug] (1acc4523):
+    userId=10076 gids=[]
+    pkg=Package{3fcbe84c com.osfans.trime.debug}
+    codePath=/data/app/com.osfans.trime.debug-1
+    resourcePath=/data/app/com.osfans.trime.debug-1
+    legacyNativeLibraryDir=/data/app/com.osfans.trime.debug-1/lib
+    primaryCpuAbi=x86_64
+    secondaryCpuAbi=null
+    versionCode=20261101 targetSdk=37
+    versionName=3.3.13
+    applicationInfo=ApplicationInfo{1d14107f com.osfans.trime.debug}
+    flags=[ DEBUGGABLE HAS_CODE ALLOW_CLEAR_USER_DATA ALLOW_BACKUP ]
+    dataDir=/data/data/com.osfans.trime.debug
+    supportsScreens=[small, medium, large, xlarge, resizeable, anyDensity]
+    usesOptionalLibraries:
+      androidx.window.extensions
+      androidx.window.sidecar
+    timeStamp=2026-10-23 08:18:30
+    firstInstallTime=2026-10-23 08:18:31
+    lastUpdateTime=2026-10-23 08:18:31
+    signatures=PackageSignatures{1614095 [5415aa]}
+    permissionsFixed=true haveGids=true installStatus=1
+    pkgFlags=[ DEBUGGABLE HAS_CODE ALLOW_CLEAR_USER_DATA ALLOW_BACKUP ]
+    User 0:  installed=true hidden=false stopped=true notLaunched=true enabled=0
+    grantedPermissions:
+      android.permission.RECEIVE_BOOT_COMPLETED
+      android.permission.WAKE_LOCK
+      com.osfans.trime.debug.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION
+      android.permission.ACCESS_NETWORK_STATE
+      android.permission.VIBRATE
+
+__TRIME_T12_REMOTE_RC_451ed908186865ad75dbca55d0116023:0

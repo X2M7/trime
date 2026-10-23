@@ -1,0 +1,20 @@
+{
+  "utc": "2026-10-22T23:31:03.644372+00:00",
+  "scope": "Root captured independent source-only review, not runtime qualification",
+  "reviewer_agent": "candidate_review_prepare",
+  "PR": 2187,
+  "remote_review_id": 5616507916,
+  "inline_comment_id": 4350112633,
+  "original_head": "7a45cf29c8e112a4081a5e72cb465447d847e1c1",
+  "source_path": "app/src/main/java/com/osfans/trime/ime/core/AutoScaleTextView.kt",
+  "source_sha256": "59cf13b4b42b09acbb06f41922c2480844ffa96a7399494b565e718a4a12a05c",
+  "diff_sha256": "0563e1883387d6e396b10a0283b43d11dcc5dc8bdea15ab83e0183c3c900398f",
+  "verdict": "NO_NEW_SOURCE_REVIEW_BLOCKER",
+  "reasons": [
+    "Primitive dirty flags set before superclass text update without constructor-time paint-cache access",
+    "Framework normalizes nullable text and retains same-content BufferType conversion",
+    "Keep onMeasure for framework Layout; remove unnecessary super.onLayout",
+    "Custom measuring, scaling and drawing calculations unchanged"
+  ],
+  "actual_runtime_validation": "PENDING"
+}

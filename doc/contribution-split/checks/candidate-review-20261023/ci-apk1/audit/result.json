@@ -1,0 +1,557 @@
+{
+  "passed": true,
+  "head": "92b13711162c5fa56c701267c3a06e5fbceeb6ce",
+  "source_head": "92b13711162c5fa56c701267c3a06e5fbceeb6ce",
+  "run_id": 39872383227,
+  "artifact_id": 12466769415,
+  "producer": "Original X2M7/trime push CI Ubuntu artifact",
+  "commands": [
+    {
+      "label": "source-head",
+      "argv": [
+        "git",
+        "-C",
+        "/home/xumin/Public/Trime-pr-candidate-text-layout",
+        "rev-parse",
+        "HEAD"
+      ],
+      "exit": 0,
+      "stdoutSha256": "9871b9d77af451562efb5730b4646f622001043e58dc21d5438cca9fd97a4725",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "source-clean",
+      "argv": [
+        "git",
+        "-C",
+        "/home/xumin/Public/Trime-pr-candidate-text-layout",
+        "status",
+        "--porcelain=v1"
+      ],
+      "exit": 0,
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "source-tree",
+      "argv": [
+        "git",
+        "-C",
+        "/home/xumin/Public/Trime-pr-candidate-text-layout",
+        "rev-parse",
+        "92b13711162c5fa56c701267c3a06e5fbceeb6ce^{tree}"
+      ],
+      "exit": 0,
+      "stdoutSha256": "ed3c05397bd22c1f698d422ad8e50d2e2f0e656248273026e5a4fafbbe74ed52",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "arm64-v8a-elf-0",
+      "argv": [
+        "/home/xumin/Public/android-toolchain/android-sdk/ndk/28.0.13004108/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-readelf",
+        "-h",
+        "/home/xumin/Public/Trime/build/pr2187-review-20261023/ci-apk1/audit/native/arm64-v8a/librime_jni.so"
+      ],
+      "exit": 0,
+      "stdoutSha256": "efdfbb4727e96b01a50808b5053fb094c627aaa11735421ebd8431dd2db3d11e",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "arm64-v8a-badging",
+      "argv": [
+        "/home/xumin/Public/android-toolchain/android-sdk/build-tools/36.0.0/aapt",
+        "dump",
+        "badging",
+        "/home/xumin/Public/Trime/build/pr2187-review-20261023/ci-apk1/files/com.osfans.trime-92b13711-arm64-v8a-debug.apk"
+      ],
+      "exit": 0,
+      "stdoutSha256": "f79be78f3445ab9c6250aa6d7515483fbaa751dcef7042e9af20b9d93926ed92",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "arm64-v8a-signer",
+      "argv": [
+        "/home/xumin/Public/android-toolchain/jdk-17.0.19+10/bin/java",
+        "-Xmx256m",
+        "-jar",
+        "/home/xumin/Public/android-toolchain/android-sdk/build-tools/36.0.0/lib/apksigner.jar",
+        "verify",
+        "--verbose",
+        "--print-certs",
+        "/home/xumin/Public/Trime/build/pr2187-review-20261023/ci-apk1/files/com.osfans.trime-92b13711-arm64-v8a-debug.apk"
+      ],
+      "exit": 0,
+      "stdoutSha256": "d2051a5b6b5daa3d7b35920c01343250ca2261a7e6f64fcb81429ca9990b20c4",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "arm64-v8a-buildconfig",
+      "argv": [
+        "/home/xumin/Public/android-toolchain/android-sdk/cmdline-tools/latest/bin/apkanalyzer",
+        "dex",
+        "code",
+        "--class",
+        "com.osfans.trime.BuildConfig",
+        "/home/xumin/Public/Trime/build/pr2187-review-20261023/ci-apk1/files/com.osfans.trime-92b13711-arm64-v8a-debug.apk"
+      ],
+      "exit": 0,
+      "stdoutSha256": "023784dca44b4da30c4eb2b440f69c3c5c95a01f957a4b9f049490225962d34c",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "armeabi-v7a-elf-0",
+      "argv": [
+        "/home/xumin/Public/android-toolchain/android-sdk/ndk/28.0.13004108/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-readelf",
+        "-h",
+        "/home/xumin/Public/Trime/build/pr2187-review-20261023/ci-apk1/audit/native/armeabi-v7a/librime_jni.so"
+      ],
+      "exit": 0,
+      "stdoutSha256": "83e6a92e8f29f94323f0c9f2985e72281628d9c10be07cf2c797e769d8367ada",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "armeabi-v7a-badging",
+      "argv": [
+        "/home/xumin/Public/android-toolchain/android-sdk/build-tools/36.0.0/aapt",
+        "dump",
+        "badging",
+        "/home/xumin/Public/Trime/build/pr2187-review-20261023/ci-apk1/files/com.osfans.trime-92b13711-armeabi-v7a-debug.apk"
+      ],
+      "exit": 0,
+      "stdoutSha256": "52b02b11cd7327fee072373381ab54151fb767ca478b9ab7d0ceb5860726e25f",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "armeabi-v7a-signer",
+      "argv": [
+        "/home/xumin/Public/android-toolchain/jdk-17.0.19+10/bin/java",
+        "-Xmx256m",
+        "-jar",
+        "/home/xumin/Public/android-toolchain/android-sdk/build-tools/36.0.0/lib/apksigner.jar",
+        "verify",
+        "--verbose",
+        "--print-certs",
+        "/home/xumin/Public/Trime/build/pr2187-review-20261023/ci-apk1/files/com.osfans.trime-92b13711-armeabi-v7a-debug.apk"
+      ],
+      "exit": 0,
+      "stdoutSha256": "d2051a5b6b5daa3d7b35920c01343250ca2261a7e6f64fcb81429ca9990b20c4",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "armeabi-v7a-buildconfig",
+      "argv": [
+        "/home/xumin/Public/android-toolchain/android-sdk/cmdline-tools/latest/bin/apkanalyzer",
+        "dex",
+        "code",
+        "--class",
+        "com.osfans.trime.BuildConfig",
+        "/home/xumin/Public/Trime/build/pr2187-review-20261023/ci-apk1/files/com.osfans.trime-92b13711-armeabi-v7a-debug.apk"
+      ],
+      "exit": 0,
+      "stdoutSha256": "023784dca44b4da30c4eb2b440f69c3c5c95a01f957a4b9f049490225962d34c",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "x86-elf-0",
+      "argv": [
+        "/home/xumin/Public/android-toolchain/android-sdk/ndk/28.0.13004108/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-readelf",
+        "-h",
+        "/home/xumin/Public/Trime/build/pr2187-review-20261023/ci-apk1/audit/native/x86/librime_jni.so"
+      ],
+      "exit": 0,
+      "stdoutSha256": "902cb4952e65305cd3d93af79d66a791a46b828463fe2ee7dc7e0eb1e4e93f07",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "x86-badging",
+      "argv": [
+        "/home/xumin/Public/android-toolchain/android-sdk/build-tools/36.0.0/aapt",
+        "dump",
+        "badging",
+        "/home/xumin/Public/Trime/build/pr2187-review-20261023/ci-apk1/files/com.osfans.trime-92b13711-x86-debug.apk"
+      ],
+      "exit": 0,
+      "stdoutSha256": "c20b7b400bb2762ca0e105a627bf6dac83a1e34450c418452009810682a87831",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "x86-signer",
+      "argv": [
+        "/home/xumin/Public/android-toolchain/jdk-17.0.19+10/bin/java",
+        "-Xmx256m",
+        "-jar",
+        "/home/xumin/Public/android-toolchain/android-sdk/build-tools/36.0.0/lib/apksigner.jar",
+        "verify",
+        "--verbose",
+        "--print-certs",
+        "/home/xumin/Public/Trime/build/pr2187-review-20261023/ci-apk1/files/com.osfans.trime-92b13711-x86-debug.apk"
+      ],
+      "exit": 0,
+      "stdoutSha256": "d2051a5b6b5daa3d7b35920c01343250ca2261a7e6f64fcb81429ca9990b20c4",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "x86-buildconfig",
+      "argv": [
+        "/home/xumin/Public/android-toolchain/android-sdk/cmdline-tools/latest/bin/apkanalyzer",
+        "dex",
+        "code",
+        "--class",
+        "com.osfans.trime.BuildConfig",
+        "/home/xumin/Public/Trime/build/pr2187-review-20261023/ci-apk1/files/com.osfans.trime-92b13711-x86-debug.apk"
+      ],
+      "exit": 0,
+      "stdoutSha256": "023784dca44b4da30c4eb2b440f69c3c5c95a01f957a4b9f049490225962d34c",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "x86_64-elf-0",
+      "argv": [
+        "/home/xumin/Public/android-toolchain/android-sdk/ndk/28.0.13004108/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-readelf",
+        "-h",
+        "/home/xumin/Public/Trime/build/pr2187-review-20261023/ci-apk1/audit/native/x86_64/librime_jni.so"
+      ],
+      "exit": 0,
+      "stdoutSha256": "33fe48c83874451fb1e06131a6062c93e273f2901138dcabfba34a96a8e1d174",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "x86_64-badging",
+      "argv": [
+        "/home/xumin/Public/android-toolchain/android-sdk/build-tools/36.0.0/aapt",
+        "dump",
+        "badging",
+        "/home/xumin/Public/Trime/build/pr2187-review-20261023/ci-apk1/files/com.osfans.trime-92b13711-x86_64-debug.apk"
+      ],
+      "exit": 0,
+      "stdoutSha256": "b5c63744569115a6029a29566e29f3897ea694f26cdbc427d6d8374909e9ae6d",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "x86_64-signer",
+      "argv": [
+        "/home/xumin/Public/android-toolchain/jdk-17.0.19+10/bin/java",
+        "-Xmx256m",
+        "-jar",
+        "/home/xumin/Public/android-toolchain/android-sdk/build-tools/36.0.0/lib/apksigner.jar",
+        "verify",
+        "--verbose",
+        "--print-certs",
+        "/home/xumin/Public/Trime/build/pr2187-review-20261023/ci-apk1/files/com.osfans.trime-92b13711-x86_64-debug.apk"
+      ],
+      "exit": 0,
+      "stdoutSha256": "d2051a5b6b5daa3d7b35920c01343250ca2261a7e6f64fcb81429ca9990b20c4",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "x86_64-buildconfig",
+      "argv": [
+        "/home/xumin/Public/android-toolchain/android-sdk/cmdline-tools/latest/bin/apkanalyzer",
+        "dex",
+        "code",
+        "--class",
+        "com.osfans.trime.BuildConfig",
+        "/home/xumin/Public/Trime/build/pr2187-review-20261023/ci-apk1/files/com.osfans.trime-92b13711-x86_64-debug.apk"
+      ],
+      "exit": 0,
+      "stdoutSha256": "023784dca44b4da30c4eb2b440f69c3c5c95a01f957a4b9f049490225962d34c",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "x86_64-autoscale-dex",
+      "argv": [
+        "/home/xumin/Public/android-toolchain/android-sdk/cmdline-tools/latest/bin/apkanalyzer",
+        "dex",
+        "code",
+        "--class",
+        "com.osfans.trime.ime.core.AutoScaleTextView",
+        "/home/xumin/Public/Trime/build/pr2187-review-20261023/ci-apk1/files/com.osfans.trime-92b13711-x86_64-debug.apk"
+      ],
+      "exit": 0,
+      "stdoutSha256": "3676f0579fa1b86c738717c4df6106c234365c57d51e468c285bd3f4ec86d631",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "source-head-after",
+      "argv": [
+        "git",
+        "-C",
+        "/home/xumin/Public/Trime-pr-candidate-text-layout",
+        "rev-parse",
+        "HEAD"
+      ],
+      "exit": 0,
+      "stdoutSha256": "9871b9d77af451562efb5730b4646f622001043e58dc21d5438cca9fd97a4725",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "source-clean-after",
+      "argv": [
+        "git",
+        "-C",
+        "/home/xumin/Public/Trime-pr-candidate-text-layout",
+        "status",
+        "--porcelain=v1"
+      ],
+      "exit": 0,
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "apks": [
+    {
+      "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/ci-apk1/files/com.osfans.trime-92b13711-arm64-v8a-debug.apk",
+      "bytes": 20462249,
+      "sha256": "cd87472a8a00fb4f23544998f47b41d7bd70c9acf2cdef029fb7e2e406cf1333",
+      "abi": "arm64-v8a",
+      "signerCertificateSha256": "3a9003f52ba2aa9045d5ba320df1f2e04277c001420e05b8b8f0c69183b18458",
+      "buildCommit": "92b13711162c5fa56c701267c3a06e5fbceeb6ce",
+      "native": [
+        {
+          "entry": "lib/arm64-v8a/librime_jni.so",
+          "bytes": 14773872,
+          "sha256": "22c0affa0af12ea12857a4e54d2f9e771bf20640f77f8bea460ea5e79d6f2410",
+          "elfClass": "ELF64",
+          "machine": "AArch64"
+        }
+      ],
+      "signer_certificate_sha256": "3a9003f52ba2aa9045d5ba320df1f2e04277c001420e05b8b8f0c69183b18458",
+      "buildconfig_commit_hash": "92b13711162c5fa56c701267c3a06e5fbceeb6ce",
+      "signatureWarnings": [
+        "WARNING: META-INF/services/kotlinx.coroutines.CoroutineExceptionHandler not protected by signature. Unauthorized modifications to this JAR entry will not be detected. Delete or move the entry outside of META-INF/.",
+        "WARNING: META-INF/services/kotlinx.coroutines.internal.MainDispatcherFactory not protected by signature. Unauthorized modifications to this JAR entry will not be detected. Delete or move the entry outside of META-INF/."
+      ]
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/ci-apk1/files/com.osfans.trime-92b13711-armeabi-v7a-debug.apk",
+      "bytes": 19289416,
+      "sha256": "4a00b0cfad5a7bb01a9b07b1ab79f78ba9b7937e03cefdb6e653791a6eb0ff49",
+      "abi": "armeabi-v7a",
+      "signerCertificateSha256": "3a9003f52ba2aa9045d5ba320df1f2e04277c001420e05b8b8f0c69183b18458",
+      "buildCommit": "92b13711162c5fa56c701267c3a06e5fbceeb6ce",
+      "native": [
+        {
+          "entry": "lib/armeabi-v7a/librime_jni.so",
+          "bytes": 8923964,
+          "sha256": "01fb43926520e6ea54d73edd1884ebb1800de220e70ce4eac8a2a753af6589c9",
+          "elfClass": "ELF32",
+          "machine": "ARM"
+        }
+      ],
+      "signer_certificate_sha256": "3a9003f52ba2aa9045d5ba320df1f2e04277c001420e05b8b8f0c69183b18458",
+      "buildconfig_commit_hash": "92b13711162c5fa56c701267c3a06e5fbceeb6ce",
+      "signatureWarnings": [
+        "WARNING: META-INF/services/kotlinx.coroutines.CoroutineExceptionHandler not protected by signature. Unauthorized modifications to this JAR entry will not be detected. Delete or move the entry outside of META-INF/.",
+        "WARNING: META-INF/services/kotlinx.coroutines.internal.MainDispatcherFactory not protected by signature. Unauthorized modifications to this JAR entry will not be detected. Delete or move the entry outside of META-INF/."
+      ]
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/ci-apk1/files/com.osfans.trime-92b13711-x86-debug.apk",
+      "bytes": 20958121,
+      "sha256": "c362da9f251bc26445a716f4bb3d6682b6778bab4be4b6e8635cd5056825a82c",
+      "abi": "x86",
+      "signerCertificateSha256": "3a9003f52ba2aa9045d5ba320df1f2e04277c001420e05b8b8f0c69183b18458",
+      "buildCommit": "92b13711162c5fa56c701267c3a06e5fbceeb6ce",
+      "native": [
+        {
+          "entry": "lib/x86/librime_jni.so",
+          "bytes": 15515640,
+          "sha256": "ac5b686df701ffe9985062788808018ecfa7106edb7af97c4da7899e618335c7",
+          "elfClass": "ELF32",
+          "machine": "Intel 80386"
+        }
+      ],
+      "signer_certificate_sha256": "3a9003f52ba2aa9045d5ba320df1f2e04277c001420e05b8b8f0c69183b18458",
+      "buildconfig_commit_hash": "92b13711162c5fa56c701267c3a06e5fbceeb6ce",
+      "signatureWarnings": [
+        "WARNING: META-INF/services/kotlinx.coroutines.CoroutineExceptionHandler not protected by signature. Unauthorized modifications to this JAR entry will not be detected. Delete or move the entry outside of META-INF/.",
+        "WARNING: META-INF/services/kotlinx.coroutines.internal.MainDispatcherFactory not protected by signature. Unauthorized modifications to this JAR entry will not be detected. Delete or move the entry outside of META-INF/."
+      ]
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/ci-apk1/files/com.osfans.trime-92b13711-x86_64-debug.apk",
+      "bytes": 20533654,
+      "sha256": "36ede385eac30511f3c600dbc059a196e1ac462f173b154643a54f79b3af7d3a",
+      "abi": "x86_64",
+      "signerCertificateSha256": "3a9003f52ba2aa9045d5ba320df1f2e04277c001420e05b8b8f0c69183b18458",
+      "buildCommit": "92b13711162c5fa56c701267c3a06e5fbceeb6ce",
+      "native": [
+        {
+          "entry": "lib/x86_64/librime_jni.so",
+          "bytes": 14435520,
+          "sha256": "775f2f4b905b7ec4cfb00b0722015175cc77f8ffabfb6e600b55a8fd7e31492e",
+          "elfClass": "ELF64",
+          "machine": "Advanced Micro Devices X86-64"
+        }
+      ],
+      "signer_certificate_sha256": "3a9003f52ba2aa9045d5ba320df1f2e04277c001420e05b8b8f0c69183b18458",
+      "buildconfig_commit_hash": "92b13711162c5fa56c701267c3a06e5fbceeb6ce",
+      "signatureWarnings": [
+        "WARNING: META-INF/services/kotlinx.coroutines.CoroutineExceptionHandler not protected by signature. Unauthorized modifications to this JAR entry will not be detected. Delete or move the entry outside of META-INF/.",
+        "WARNING: META-INF/services/kotlinx.coroutines.internal.MainDispatcherFactory not protected by signature. Unauthorized modifications to this JAR entry will not be detected. Delete or move the entry outside of META-INF/."
+      ]
+    }
+  ],
+  "notResignedOrModified": true,
+  "warningExemptions": [],
+  "scope": "HOST original Debug APK audit only; no install, behavior, Release or fresh-native-compilation claim.",
+  "source_tree": "64afb38768dee019ce136d4673996ccbe36c3784",
+  "output_metadata": {
+    "sha256": "cc9e45ca6d7f96026eb5900169b03b1f0b3eced546352805c376f7721dbef843",
+    "content": {
+      "version": 3,
+      "artifactType": {
+        "type": "APK",
+        "kind": "Directory"
+      },
+      "applicationId": "com.osfans.trime.debug",
+      "variantName": "debug",
+      "elements": [
+        {
+          "type": "ONE_OF_MANY",
+          "filters": [
+            {
+              "filterType": "ABI",
+              "value": "armeabi-v7a"
+            }
+          ],
+          "attributes": [],
+          "versionCode": 20261101,
+          "versionName": "3.3.13",
+          "outputFile": "com.osfans.trime-92b13711-armeabi-v7a-debug.apk"
+        },
+        {
+          "type": "ONE_OF_MANY",
+          "filters": [
+            {
+              "filterType": "ABI",
+              "value": "x86_64"
+            }
+          ],
+          "attributes": [],
+          "versionCode": 20261101,
+          "versionName": "3.3.13",
+          "outputFile": "com.osfans.trime-92b13711-x86_64-debug.apk"
+        },
+        {
+          "type": "ONE_OF_MANY",
+          "filters": [
+            {
+              "filterType": "ABI",
+              "value": "x86"
+            }
+          ],
+          "attributes": [],
+          "versionCode": 20261101,
+          "versionName": "3.3.13",
+          "outputFile": "com.osfans.trime-92b13711-x86-debug.apk"
+        },
+        {
+          "type": "ONE_OF_MANY",
+          "filters": [
+            {
+              "filterType": "ABI",
+              "value": "arm64-v8a"
+            }
+          ],
+          "attributes": [],
+          "versionCode": 20261101,
+          "versionName": "3.3.13",
+          "outputFile": "com.osfans.trime-92b13711-arm64-v8a-debug.apk"
+        }
+      ],
+      "elementType": "File",
+      "minSdkVersionForDexing": 21
+    }
+  },
+  "runtime_arm64_v8a": {
+    "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/ci-apk1/files/com.osfans.trime-92b13711-arm64-v8a-debug.apk",
+    "bytes": 20462249,
+    "sha256": "cd87472a8a00fb4f23544998f47b41d7bd70c9acf2cdef029fb7e2e406cf1333",
+    "abi": "arm64-v8a",
+    "signerCertificateSha256": "3a9003f52ba2aa9045d5ba320df1f2e04277c001420e05b8b8f0c69183b18458",
+    "buildCommit": "92b13711162c5fa56c701267c3a06e5fbceeb6ce",
+    "native": [
+      {
+        "entry": "lib/arm64-v8a/librime_jni.so",
+        "bytes": 14773872,
+        "sha256": "22c0affa0af12ea12857a4e54d2f9e771bf20640f77f8bea460ea5e79d6f2410",
+        "elfClass": "ELF64",
+        "machine": "AArch64"
+      }
+    ],
+    "signer_certificate_sha256": "3a9003f52ba2aa9045d5ba320df1f2e04277c001420e05b8b8f0c69183b18458",
+    "buildconfig_commit_hash": "92b13711162c5fa56c701267c3a06e5fbceeb6ce",
+    "signatureWarnings": [
+      "WARNING: META-INF/services/kotlinx.coroutines.CoroutineExceptionHandler not protected by signature. Unauthorized modifications to this JAR entry will not be detected. Delete or move the entry outside of META-INF/.",
+      "WARNING: META-INF/services/kotlinx.coroutines.internal.MainDispatcherFactory not protected by signature. Unauthorized modifications to this JAR entry will not be detected. Delete or move the entry outside of META-INF/."
+    ]
+  },
+  "runtime_x86_64": {
+    "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/ci-apk1/files/com.osfans.trime-92b13711-x86_64-debug.apk",
+    "bytes": 20533654,
+    "sha256": "36ede385eac30511f3c600dbc059a196e1ac462f173b154643a54f79b3af7d3a",
+    "abi": "x86_64",
+    "signerCertificateSha256": "3a9003f52ba2aa9045d5ba320df1f2e04277c001420e05b8b8f0c69183b18458",
+    "buildCommit": "92b13711162c5fa56c701267c3a06e5fbceeb6ce",
+    "native": [
+      {
+        "entry": "lib/x86_64/librime_jni.so",
+        "bytes": 14435520,
+        "sha256": "775f2f4b905b7ec4cfb00b0722015175cc77f8ffabfb6e600b55a8fd7e31492e",
+        "elfClass": "ELF64",
+        "machine": "Advanced Micro Devices X86-64"
+      }
+    ],
+    "signer_certificate_sha256": "3a9003f52ba2aa9045d5ba320df1f2e04277c001420e05b8b8f0c69183b18458",
+    "buildconfig_commit_hash": "92b13711162c5fa56c701267c3a06e5fbceeb6ce",
+    "signatureWarnings": [
+      "WARNING: META-INF/services/kotlinx.coroutines.CoroutineExceptionHandler not protected by signature. Unauthorized modifications to this JAR entry will not be detected. Delete or move the entry outside of META-INF/.",
+      "WARNING: META-INF/services/kotlinx.coroutines.internal.MainDispatcherFactory not protected by signature. Unauthorized modifications to this JAR entry will not be detected. Delete or move the entry outside of META-INF/."
+    ]
+  },
+  "x86_64_dex_checks": {
+    "setterAllNormalReturnsReachSuper": true,
+    "setterNullableInputP1Forwarded": true,
+    "setterDoesNotNormalizeNullToEmpty": true,
+    "measureDirtyWrittenBeforeSuper": true,
+    "transformDirtyWrittenBeforeSuper": true,
+    "noDirtyWritesAfterSuper": true,
+    "superOnMeasureRetained": true,
+    "superOnLayoutRemoved": true
+  },
+  "x86_64_setter_cfg": {
+    "allNormalReturnsReachSuperclassSetter": true,
+    "visitedStates": 21,
+    "normalReturnStates": [
+      {
+        "returnInstruction": 20,
+        "superclassSetterReached": true
+      }
+    ],
+    "instructions": [
+      "const-string v0, \"bufferType\"",
+      "invoke-static {p2, v0}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullParameter(Ljava/lang/Object;Ljava/lang/String;)V",
+      "const/4 v0, 0x1",
+      "if-eqz p1, :cond_15",
+      "invoke-virtual {p0}, Lcom/osfans/trime/ime/core/AutoScaleTextView;->getText()Ljava/lang/CharSequence;",
+      "move-result-object v1",
+      "invoke-static {v1, p1}, Lkotlin/text/StringsKt;->contentEquals(Ljava/lang/CharSequence;Ljava/lang/CharSequence;)Z",
+      "move-result v1",
+      "if-nez v1, :cond_13",
+      "goto :goto_15",
+      "const/4 v1, 0x0",
+      "goto :goto_16",
+      "const/4 v1, 0x1",
+      "if-eqz v1, :cond_1c",
+      "iput-boolean v0, p0, Lcom/osfans/trime/ime/core/AutoScaleTextView;->needsMeasureText:Z",
+      "iput-boolean v0, p0, Lcom/osfans/trime/ime/core/AutoScaleTextView;->needsCalculateTransform:Z",
+      "invoke-super {p0, p1, p2}, Landroid/widget/TextView;->setText(Ljava/lang/CharSequence;Landroid/widget/TextView$BufferType;)V",
+      "if-eqz v1, :cond_27",
+      "invoke-virtual {p0}, Lcom/osfans/trime/ime/core/AutoScaleTextView;->requestLayout()V",
+      "invoke-virtual {p0}, Lcom/osfans/trime/ime/core/AutoScaleTextView;->invalidate()V",
+      "return-void"
+    ]
+  },
+  "shared_actual_ci_debug_certificate_sha256": "3a9003f52ba2aa9045d5ba320df1f2e04277c001420e05b8b8f0c69183b18458"
+}

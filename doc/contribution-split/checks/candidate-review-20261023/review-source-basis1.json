@@ -1,0 +1,33 @@
+{
+  "reviewUrl": "https://github.com/osfans/trime/pull/2187#pullrequestreview-5616507916",
+  "reviewId": 5616507916,
+  "reviewer": "WhiredPlanck",
+  "reviewState": "CHANGES_REQUESTED",
+  "reviewedCommit": "7a45cf29c8e112a4081a5e72cb465447d847e1c1",
+  "inlineCommentId": 4350112633,
+  "inlineSuggestion": "```suggestion\n        if (charSequence == null || !text.contentEquals(charSequence)) {\n            needsMeasureText = true\n            needsCalculateTransform = true\n            super.setText(charSequence, bufferType)\n            requestLayout()\n            invalidate()\n        }\n```",
+  "separateCommentId": 6344186578,
+  "separateCommentBody": "This improvement seems really make sense. Not sure if `super.onLayout` and `super.onMeasure` is really need.",
+  "newSourceHead": "92b13711162c5fa56c701267c3a06e5fbceeb6ce",
+  "newSourceTree": "64afb38768dee019ce136d4673996ccbe36c3784",
+  "newSourceSha256": "59cf13b4b42b09acbb06f41922c2480844ffa96a7399494b565e718a4a12a05c",
+  "newSourceBlob": "112473f4fa10ce236caa900c074cce8372b8d4ce",
+  "sourceChangedPathsInReviewCommit": [
+    "app/src/main/java/com/osfans/trime/ime/core/AutoScaleTextView.kt"
+  ],
+  "latestCommitMessage": "fix(ime): preserve candidate text buffer conversions\n\nMark custom text measurements dirty before forwarding setText to TextView.\nPreserve same-content buffer changes used by accessibility traversal and let\nthe framework normalize null. Remove redundant layout forwarding while\nretaining TextView measurement to keep its Layout synchronized.",
+  "actionsTaken": [
+    "Dirty custom measurement caches before framework setText.",
+    "Forward nullable CharSequence directly to TextView.",
+    "Retain unconditional superclass setText for equal-content BufferType transitions.",
+    "Remove superclass onLayout forwarding introduced by the previous patch.",
+    "Retain superclass onMeasure to update TextView Layout; Android control still pending."
+  ],
+  "notClaimed": [
+    "Review approval",
+    "Review thread resolution",
+    "TalkBack acceptance",
+    "Release or zero warnings",
+    "Other PR changes"
+  ]
+}

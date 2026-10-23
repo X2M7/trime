@@ -1,6 +1,14 @@
 # 上游贡献拆分清单
 
-## 当前整改状态（2026-10-23）
+## #2187 审阅修改（2026-10-23）
+
+[#2187](https://github.com/osfans/trime/pull/2187) 已按 Collaborator 审阅推送 `92b13711`，仍仅一个应用文件。重复文本只减少自有缓存失效及显式刷新，原 nullable 值与 BufferType 始终交给父类；删除新增的 `super.onLayout`，保留带说明的 `super.onMeasure`。Android 5.0 对照中，删除父类测量导致前 11 项框架 Layout 为 null、后两项可选择／按行移动通过；将整个父类 setter 放进内容比较分支则在初次测量崩溃，未导出 BufferType 测试结果，不能照搬该写法。
+
+当前源码的 **301 项应用 JVM 新执行通过，fork CI 4/4、上游 CI 5/5 成功**。未修改、未重签的原始 Ubuntu x86_64 Debug APK 类在 API21 通过 13 阶段／39 张原图；Root 实际看 7 张硬件原图，独立核验覆盖全部文件及文本／Layout／节点／类型／像素和公开 LINE 动作。API35 本轮 **未通过前置，0 阶段**：safe 诊断 Activity 的 8 秒焦点／可见性／正宽度组合前置未满足（原件未分别记录三项），已有先发 SystemUI ANR，恢复图显示系统 ANR 弹窗；不能证明唯一因果，原 APK 及其余对照完全未运行，也不借旧源通过。两轮设置与 DocumentsUI 状态精确恢复、SDK 10／25 项不变、VM 正常退出；API35 collector 实际 255 原样保留。
+
+见[本轮说明与原件](checks/candidate-review-20261023/README.md)及[Root 限定总表](checks/candidate-review-20261023/root-qualified-scope.json)。原始依赖、构建、运行及 META-INF 警告和所有失败轮保留。控件级外部 Activity 检查不代表真实 TalkBack、候选点击、原生输入法、真机或 Release 验收；当前仍待维护者复审，未解决审阅线程、自动合并或发布。#2183、主 develop 及其余贡献分支未改。
+
+## #2183 当前整改状态（2026-10-23）
 
 [#2183](https://github.com/osfans/trime/pull/2183) 保持 **Draft，等待真机验收**。源码 `c4b613f7` 已推至原贡献分支，基线为上游 `19b04849`，五条 Conventional Commits、零 merge。[补丁范围](checks/pr2183-rebase-20261022/schema-layout-regression/current-c4-patch-shape-root1.json)为 62 个应用代码／测试及九键说明文件，没有 fork 发布、Pages 或此索引配置。方案切换恢复旧九键、数字框转邮箱时强制 ASCII 被布局附着覆盖的两个真实缺陷已修复；这两次后续修复未改 JNI、主题资产或子模块 pin，原失败保留。
 

@@ -1,0 +1,578 @@
+{
+  "createdUtc": "2026-10-23T00:20:37.653398+00:00",
+  "reviewer": "candidate_review_prepare HOST independent",
+  "sourceHead": "92b13711162c5fa56c701267c3a06e5fbceeb6ce",
+  "sourceSha256": "59cf13b4b42b09acbb06f41922c2480844ffa96a7399494b565e718a4a12a05c",
+  "sdk": 21,
+  "round": "api21-class-only4",
+  "script": {
+    "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/independent-runtime1/qualify_fixture.py",
+    "bytes": 12667,
+    "sha256": "de73baa3a11be14271a240bd2044f33241e93b0e3646af8bd1816ec136f8124b",
+    "inode": 29787096,
+    "unchangedDuringHash": true
+  },
+  "childAudit": {
+    "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/independent-runtime1/api21-round4-child-terminal1.json",
+    "bytes": 247572,
+    "sha256": "242c40de9d07c1637b89c56ebdb0630ad9c41b43abbafa910280698bd98ee9e8",
+    "inode": 29787900,
+    "unchangedDuringHash": true
+  },
+  "overallScopedQualified": false,
+  "humanImageReviewClaimed": false,
+  "physicalDevice": "NOT_RUN",
+  "TalkBack": "NOT_RUN",
+  "nativeCandidateIntegration": "NOT_RUN",
+  "scope": "Strict unique BEGIN..END class-only interval plus separately retained whole-VM process/fatal records. No global Application-never-started or zero-warning claim.",
+  "actualFixtureReport": {
+    "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api21-class-only4/fixture1/report.json",
+    "bytes": 31064,
+    "sha256": "d32c160de592026f4f6b403c86abe082903a295f739e41f05aa5066c82dc6a3a",
+    "inode": 29787240,
+    "unchangedDuringHash": true
+  },
+  "actualOperatorReport": {
+    "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api21-class-only4/operator1/report.json",
+    "bytes": 160066,
+    "sha256": "fac48b339f8e85af3e834c1e77acae682bbeb3a485d4fadf2e55d0e35f207902",
+    "inode": 29787280,
+    "unchangedDuringHash": true
+  },
+  "beginCommandAudit": {
+    "passed": true,
+    "checks": {
+      "stdoutHash": true,
+      "stderrHash": true,
+      "hostExit0": true,
+      "completed": true,
+      "noncePresent": true,
+      "actualRemoteAllowed": true,
+      "exactMarkerCommandPayload": true
+    },
+    "stdout": {
+      "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api21-class-only4/fixture1/commands/0013.stdout",
+      "bytes": 60,
+      "sha256": "47838d0f7498f479ece56950b73b57ec24777ec3064bcf852df551e66ae82f45",
+      "inode": 29787274,
+      "unchangedDuringHash": true
+    },
+    "stderr": {
+      "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api21-class-only4/fixture1/commands/0013.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "inode": 29787275,
+      "unchangedDuringHash": true
+    },
+    "actualRemoteStatuses": [
+      0
+    ]
+  },
+  "endCommandAudit": {
+    "passed": true,
+    "checks": {
+      "stdoutHash": true,
+      "stderrHash": true,
+      "hostExit0": true,
+      "completed": true,
+      "noncePresent": true,
+      "actualRemoteAllowed": true,
+      "exactMarkerCommandPayload": true
+    },
+    "stdout": {
+      "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api21-class-only4/fixture1/commands/0014.stdout",
+      "bytes": 60,
+      "sha256": "b198a85d8c3c14ac095eaefc402f9107c45f9e19481ffa378a549a914d02813e",
+      "inode": 29787849,
+      "unchangedDuringHash": true
+    },
+    "stderr": {
+      "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api21-class-only4/fixture1/commands/0014.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "inode": 29787850,
+      "unchangedDuringHash": true
+    },
+    "actualRemoteStatuses": [
+      0
+    ]
+  },
+  "exactLogBookend": {
+    "source": {
+      "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api21-class-only4/device-logcat.txt",
+      "bytes": 804358,
+      "sha256": "9a7eabf49465b73a3ec29e0b1cec73c84ae61fbec7f9a46a8469d2730f87f715",
+      "inode": 29787237,
+      "stableDuringRead": true
+    },
+    "exactBeginMatches": [],
+    "exactEndMatches": [],
+    "wholeLogTargetProcessStarts": [],
+    "scope": "Whole-log starts are retained even outside the strict interval. Empty interval starts never means Application never started in this VM.",
+    "strictRangeQualified": false,
+    "state": "UNQUALIFIED_MISSING_DUPLICATE_OR_REVERSED_MARKERS"
+  },
+  "actualDocumentsStates": {
+    "before": {
+      "passed": true,
+      "checks": {
+        "present": true,
+        "installed": true,
+        "enabled": true,
+        "stopped": true,
+        "installedRecord": true,
+        "hidden": true,
+        "exactPackageHeader": true,
+        "actualPathQueryCommand": true,
+        "presentPathTruthful": true
+      },
+      "state": {
+        "package": "com.android.documentsui",
+        "present": true,
+        "apk_path": "/system/app/DocumentsUI/DocumentsUI.apk",
+        "apk_path_query": "PRESENT",
+        "installed": true,
+        "hidden": false,
+        "enabled": 0,
+        "stopped": false,
+        "user0_raw": "installed=true hidden=false stopped=false notLaunched=false enabled=0\r",
+        "pm_path_command": {
+          "at": "2026-10-23T00:17:38.724403+00:00",
+          "argv": [
+            "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+            "-s",
+            "emulator-5582",
+            "shell",
+            "sh -c 'pm path com.android.documentsui'; _trime_t12_status=$?; echo ''; echo \"__TRIME_T12_REMOTE_RC_5612c431ff2e1e1c629133da62f2ac14:$_trime_t12_status\""
+          ],
+          "stdout": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api21-class-only4/fixture1/commands/0002.stdout",
+          "stderr": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api21-class-only4/fixture1/commands/0002.stderr",
+          "timeout_seconds": 60,
+          "completed": true,
+          "returncode": 0,
+          "finished": "2026-10-23T00:17:39.089545+00:00",
+          "stdout_sha256": "4121c12705b0ec1bc522fb9c7a870a3541984a8ea8fc9c25cf04f702aa92d3ce",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "shell_protocol_nonce": "5612c431ff2e1e1c629133da62f2ac14",
+          "remote_returncode": 0,
+          "remote_stdout_bytes": 49,
+          "remote_stdout_sha256": "6139739fb636d87f2c3980b108af9376fa3139d9edb95ebddfeb96b7aa21fff0"
+        }
+      },
+      "stateFile": {
+        "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api21-class-only4/fixture1/before-com.android.documentsui-state.json",
+        "bytes": 1458,
+        "sha256": "26caef0dedaf437893e834fc41a29a5855b22e6bc662b7fbc13ac7e9580285b0",
+        "inode": 29787249,
+        "unchangedDuringHash": true
+      },
+      "actualPackageDump": {
+        "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api21-class-only4/fixture1/before-com.android.documentsui-package.raw.txt",
+        "bytes": 6001,
+        "sha256": "e1512ead80b60f6889a2493794dfde3104b9c0fedb03427c999e4dd1fa7e49b3",
+        "inode": 29787248,
+        "unchangedDuringHash": true
+      },
+      "user0Lines": [
+        "installed=true hidden=false stopped=false notLaunched=false enabled=0"
+      ]
+    },
+    "disabled": {
+      "passed": true,
+      "checks": {
+        "present": true,
+        "installed": true,
+        "enabled": true,
+        "stopped": true,
+        "installedRecord": true,
+        "hidden": true,
+        "exactPackageHeader": true,
+        "actualPathQueryCommand": true,
+        "hiddenAbsenceTruthful": true
+      },
+      "state": {
+        "package": "com.android.documentsui",
+        "present": true,
+        "apk_path": null,
+        "apk_path_query": "absent_due_to_hidden",
+        "installed": true,
+        "hidden": true,
+        "enabled": 0,
+        "stopped": false,
+        "user0_raw": "installed=true hidden=true stopped=false notLaunched=false enabled=0\r",
+        "pm_path_command": {
+          "at": "2026-10-23T00:17:40.262530+00:00",
+          "argv": [
+            "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+            "-s",
+            "emulator-5582",
+            "shell",
+            "sh -c 'pm path com.android.documentsui'; _trime_t12_status=$?; echo ''; echo \"__TRIME_T12_REMOTE_RC_aeba38b3cb50b94447513fabf34a96f6:$_trime_t12_status\""
+          ],
+          "stdout": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api21-class-only4/fixture1/commands/0008.stdout",
+          "stderr": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api21-class-only4/fixture1/commands/0008.stderr",
+          "timeout_seconds": 60,
+          "completed": true,
+          "returncode": 0,
+          "finished": "2026-10-23T00:17:40.631137+00:00",
+          "stdout_sha256": "b973c6215a2389e56033795ae6ed9425190e478df260ccce8eb238bb6a1c005a",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "shell_protocol_nonce": "aeba38b3cb50b94447513fabf34a96f6",
+          "remote_returncode": 0,
+          "remote_stdout_bytes": 0,
+          "remote_stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "stateFile": {
+        "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api21-class-only4/fixture1/isolated-state.json",
+        "bytes": 1431,
+        "sha256": "0f12a6d9ac2496f3328897fe71e0a549d681b258a4e82d774bf550dd078e77c0",
+        "inode": 29787265,
+        "unchangedDuringHash": true
+      },
+      "actualPackageDump": {
+        "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api21-class-only4/fixture1/isolated-package.raw.txt",
+        "bytes": 6000,
+        "sha256": "54337b6d81a7ecd6e0c91d372acfde3c20b299777b1662d141136a97d96618bd",
+        "inode": 29787264,
+        "unchangedDuringHash": true
+      },
+      "user0Lines": [
+        "installed=true hidden=true stopped=false notLaunched=false enabled=0"
+      ]
+    },
+    "restored": {
+      "passed": true,
+      "checks": {
+        "present": true,
+        "installed": true,
+        "enabled": true,
+        "stopped": true,
+        "installedRecord": true,
+        "hidden": true,
+        "exactPackageHeader": true,
+        "actualPathQueryCommand": true,
+        "presentPathTruthful": true
+      },
+      "state": {
+        "package": "com.android.documentsui",
+        "present": true,
+        "apk_path": "/system/app/DocumentsUI/DocumentsUI.apk",
+        "apk_path_query": "PRESENT",
+        "installed": true,
+        "hidden": false,
+        "enabled": 0,
+        "stopped": false,
+        "user0_raw": "installed=true hidden=false stopped=false notLaunched=false enabled=0\r",
+        "pm_path_command": {
+          "at": "2026-10-23T00:19:25.180829+00:00",
+          "argv": [
+            "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+            "-s",
+            "emulator-5582",
+            "shell",
+            "sh -c 'pm path com.android.documentsui'; _trime_t12_status=$?; echo ''; echo \"__TRIME_T12_REMOTE_RC_df25c4892c3eea9f54fdf55b7371424c:$_trime_t12_status\""
+          ],
+          "stdout": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api21-class-only4/fixture1/commands/0016.stdout",
+          "stderr": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api21-class-only4/fixture1/commands/0016.stderr",
+          "timeout_seconds": 60,
+          "completed": true,
+          "returncode": 0,
+          "finished": "2026-10-23T00:19:25.756345+00:00",
+          "stdout_sha256": "824e12fef6dcddae14f815e07f1285a83652b234000a7e35863dbd7911203bbe",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "shell_protocol_nonce": "df25c4892c3eea9f54fdf55b7371424c",
+          "remote_returncode": 0,
+          "remote_stdout_bytes": 49,
+          "remote_stdout_sha256": "6139739fb636d87f2c3980b108af9376fa3139d9edb95ebddfeb96b7aa21fff0"
+        }
+      },
+      "stateFile": {
+        "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api21-class-only4/fixture1/restore-isolation-state.json",
+        "bytes": 1458,
+        "sha256": "aa215e26175b66b3334547a0ab16741701965d3ad6da00a2cd45407e903d75ad",
+        "inode": 29787858,
+        "unchangedDuringHash": true
+      },
+      "actualPackageDump": {
+        "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api21-class-only4/fixture1/restore-isolation-package.raw.txt",
+        "bytes": 6001,
+        "sha256": "e1512ead80b60f6889a2493794dfde3104b9c0fedb03427c999e4dd1fa7e49b3",
+        "inode": 29787857,
+        "unchangedDuringHash": true
+      },
+      "user0Lines": [
+        "installed=true hidden=false stopped=false notLaunched=false enabled=0"
+      ]
+    }
+  },
+  "actualIsolationMethod": "API21_PUBLIC_PM_HIDE_UNHIDE",
+  "actualChildStreams": [
+    {
+      "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api21-class-only4/fixture1/child.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "inode": 29787276,
+      "unchangedDuringHash": true,
+      "matchesRecorded": true
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api21-class-only4/fixture1/child.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "inode": 29787277,
+      "unchangedDuringHash": true,
+      "matchesRecorded": true
+    }
+  ],
+  "actualDeviceReadbackApks": [
+    {
+      "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api21-class-only4/operator1/diagnostic-installed-apk.bin",
+      "bytes": 668134,
+      "sha256": "4b9a6d5c2b69073f733b60b9c35bdd7f587804a522d64612725c8af801dc1539",
+      "inode": 29787346,
+      "unchangedDuringHash": true,
+      "expectedSha256": "4b9a6d5c2b69073f733b60b9c35bdd7f587804a522d64612725c8af801dc1539",
+      "matchesExpected": true
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api21-class-only4/operator1/production-original-installed-apk.bin",
+      "bytes": 20533654,
+      "sha256": "36ede385eac30511f3c600dbc059a196e1ac462f173b154643a54f79b3af7d3a",
+      "inode": 29787659,
+      "unchangedDuringHash": true,
+      "expectedSha256": "36ede385eac30511f3c600dbc059a196e1ac462f173b154643a54f79b3af7d3a",
+      "matchesExpected": true
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api21-class-only4/operator1/production-probe-installed-apk.bin",
+      "bytes": 24979,
+      "sha256": "831e2a7da97c6880671108b628372655818c9dd3f19ad014118b2e34d2eac080",
+      "inode": 29787757,
+      "unchangedDuringHash": true,
+      "expectedSha256": "831e2a7da97c6880671108b628372655818c9dd3f19ad014118b2e34d2eac080",
+      "matchesExpected": true
+    }
+  ],
+  "strictActualPsSamples": {
+    "qualified": true,
+    "samples": [
+      {
+        "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api21-class-only4/operator1/baseline-ps.raw.txt",
+        "bytes": 5985,
+        "sha256": "c07111bb792ac5a9a836855bbc7051ee26aac85a506f9771f0424463c91819ab",
+        "qualified": true,
+        "actualTargetProcesses": []
+      },
+      {
+        "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api21-class-only4/operator1/restored-ps.raw.txt",
+        "bytes": 6138,
+        "sha256": "e904f22d2c8182b070e32d34f516dc58cbddab3c73b84a75467c234c586ca3ac",
+        "qualified": true,
+        "actualTargetProcesses": []
+      },
+      {
+        "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api21-class-only4/fixture1/after-explicit-old-target-stop-ps.raw.txt",
+        "bytes": 5985,
+        "sha256": "061cc62b314d6f003cfd08557d51c808bb8620d60b4cd50cee7d89c125ed29e8",
+        "qualified": true,
+        "actualTargetProcesses": []
+      },
+      {
+        "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api21-class-only4/operator1/diagnostic-safe-before.raw.txt",
+        "bytes": 6138,
+        "sha256": "a1f399b6b65d8a3f7e53e4e2a43b9ba7bbd0bf2262af3ce37afe311d42058900",
+        "qualified": true,
+        "actualTargetProcesses": []
+      },
+      {
+        "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api21-class-only4/operator1/diagnostic-safe-after.raw.txt",
+        "bytes": 6138,
+        "sha256": "809f28f0d2dcaf2393e66e4860aa9f73325ae6c9b5ec7e14cf20c9981ac1a475",
+        "qualified": true,
+        "actualTargetProcesses": []
+      },
+      {
+        "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api21-class-only4/operator1/diagnostic-equal_return-before.raw.txt",
+        "bytes": 6138,
+        "sha256": "1c0517b186bfd441fee232d519ce2f5f70924a19a270c33f6c1ca8a5ac37c447",
+        "qualified": true,
+        "actualTargetProcesses": []
+      },
+      {
+        "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api21-class-only4/operator1/diagnostic-equal_return-after.raw.txt",
+        "bytes": 6138,
+        "sha256": "c5a03faa9615dc98bedfb5ba0b60686169d119acb063b6a2f79881b8399e2079",
+        "qualified": true,
+        "actualTargetProcesses": []
+      },
+      {
+        "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api21-class-only4/operator1/diagnostic-no_super_measure-before.raw.txt",
+        "bytes": 6138,
+        "sha256": "6f79236c6ba4795ea01620a2304bfe99617e825e9e20b0eba0359efd0735aee8",
+        "qualified": true,
+        "actualTargetProcesses": []
+      },
+      {
+        "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api21-class-only4/operator1/diagnostic-no_super_measure-after.raw.txt",
+        "bytes": 6138,
+        "sha256": "a232c8f6f96aaf1f27b200701f69bfffb6f95a59dc86a5828af08d3739939ad9",
+        "qualified": true,
+        "actualTargetProcesses": []
+      },
+      {
+        "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api21-class-only4/operator1/production-class-only-before.raw.txt",
+        "bytes": 6138,
+        "sha256": "c9e4a7d17f75fd45c0660960b35d79599de237fb25171482a1a2c76dd8c046eb",
+        "qualified": true,
+        "actualTargetProcesses": []
+      },
+      {
+        "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api21-class-only4/operator1/production-class-only-after.raw.txt",
+        "bytes": 6138,
+        "sha256": "615b0bc2d3ee8116c36e2af117fa028f3c70be2d38d6659de86b25719ad300fe",
+        "qualified": true,
+        "actualTargetProcesses": []
+      },
+      {
+        "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api21-class-only4/operator1/diagnostic-no-Trime-process.raw.txt",
+        "bytes": 6138,
+        "sha256": "25144fe019bd0dea6f93fda0d85e64aedac35e9901352267e827d008754eb780",
+        "qualified": true,
+        "actualTargetProcesses": []
+      },
+      {
+        "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api21-class-only4/operator1/diagnostic-no_super_measure-probe-identity.raw.txt",
+        "bytes": 6138,
+        "sha256": "53222240bab3c4beb05f7ee691b42ef9a84b22e6fe6e8a94c3e00a95deb44d02",
+        "qualified": true,
+        "actualTargetProcesses": []
+      },
+      {
+        "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api21-class-only4/operator1/diagnostic-safe-probe-identity.raw.txt",
+        "bytes": 6138,
+        "sha256": "d5c51742069b9da1428331de2779b9a85c880367af4344eb18742d8033222aaf",
+        "qualified": true,
+        "actualTargetProcesses": []
+      },
+      {
+        "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api21-class-only4/operator1/production-class-only-probe-identity.raw.txt",
+        "bytes": 6138,
+        "sha256": "4ef47fd1d7956482ea00d17edc3db3bdb6fcbcb21390b739fcb197cc3a440beb",
+        "qualified": true,
+        "actualTargetProcesses": []
+      },
+      {
+        "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api21-class-only4/operator1/production-original-no-Trime-process.raw.txt",
+        "bytes": 6138,
+        "sha256": "355cf7155c87b4784b68a444337c77dcadbdd2999148479a7d2f24142e961780",
+        "qualified": true,
+        "actualTargetProcesses": []
+      },
+      {
+        "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api21-class-only4/operator1/production-probe-no-Trime-process.raw.txt",
+        "bytes": 6138,
+        "sha256": "909c1c09b34165195bf90330c6bc492fd4edcaf4e06f76df44079ed5404a7b7a",
+        "qualified": true,
+        "actualTargetProcesses": []
+      }
+    ],
+    "limit": "Only these actual ps samples. Not proof of process absence at unsampled times; continuous log checked separately."
+  },
+  "outsideActualFixturePsSamples": {
+    "qualified": true,
+    "samples": [
+      {
+        "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api21-class-only4/fixture1/before-fixture-ps.raw.txt",
+        "bytes": 5985,
+        "sha256": "ea59abf6aafe959e61e7d629e49999be6d18aa165f92b453428a2e9cf3c702dc",
+        "qualified": true,
+        "actualTargetProcesses": []
+      },
+      {
+        "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api21-class-only4/fixture1/before-explicit-old-target-stop-ps.raw.txt",
+        "bytes": 5985,
+        "sha256": "486d8b190536e17427b9ab1a6db90656c3044961f3d30aa7c192f92dba21a5d7",
+        "qualified": true,
+        "actualTargetProcesses": []
+      },
+      {
+        "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api21-class-only4/fixture1/after-fixture-restoration-ps.raw.txt",
+        "bytes": 6138,
+        "sha256": "757c8c5ce5f502d6935b52b7fd4fba7fc00d0b989071e0689f01eb4a89345230",
+        "qualified": true,
+        "actualTargetProcesses": []
+      }
+    ],
+    "limit": "Only these actual ps samples. Not proof of process absence at unsampled times; continuous log checked separately."
+  },
+  "wholeVmActualProcessAndFatalEvidence": {
+    "priorityCounts": {
+      "V": 116,
+      "D": 2793,
+      "I": 1285,
+      "W": 1568,
+      "E": 524,
+      "F": 0
+    },
+    "actualTargetStartRecords": [],
+    "fatalContexts": [
+      {
+        "line": 5639,
+        "rawContext": "--------- beginning of crash\n10-23 08:18:06.025  2584  2584 E AndroidRuntime: FATAL EXCEPTION: main\n10-23 08:18:06.025  2584  2584 E AndroidRuntime: Process: org.x2m7.trime.readiness.candidatediagnostic, PID: 2584\n10-23 08:18:06.025  2584  2584 E AndroidRuntime: java.lang.NullPointerException: Attempt to invoke interface method 'int java.lang.CharSequence.length()' on a null object reference\n10-23 08:18:06.025  2584  2584 E AndroidRuntime: \tat android.text.BoringLayout.isBoring(BoringLayout.java:256)\n10-23 08:18:06.025  2584  2584 E AndroidRuntime: \tat android.widget.TextView.makeSingleLayout(TextView.java:6395)\n10-23 08:18:06.025  2584  2584 E AndroidRuntime: \tat android.widget.TextView.makeNewLayout(TextView.java:6287)\n10-23 08:18:06.025  2584  2584 E AndroidRuntime: \tat android.widget.TextView.onMeasure(TextView.java:6644)\n10-23 08:18:06.025  2584  2584 E AndroidRuntime: \tat org.x2m7.trime.diagnostic.equal_return.AutoScaleTextView.onMeasure(AutoScaleTextView.kt:77)\n10-23 08:18:06.025  2584  2584 E AndroidRuntime: \tat android.view.View.measure(View.java:17430)\n10-23 08:18:06.025  2584  2584 E AndroidRuntime: \tat android.view.ViewGroup.measureChildWithMargins(ViewGroup.java:5463)\n10-23 08:18:06.025  2584  2584 E AndroidRuntime: \tat android.widget.LinearLayout.measureChildBeforeLayout(LinearLayout.java:1436)\n10-23 08:18:06.025  2584  2584 E AndroidRuntime: \tat android.widget.LinearLayout.measureHorizontal(LinearLayout.java:1083)\n10-23 08:18:06.025  2584  2584 E AndroidRuntime: \tat android.widget.LinearLayout.onMeasure(LinearLayout.java:615)\n10-23 08:18:06.025  2584  2584 E AndroidRuntime: \tat android.view.View.measure(View.java:17430)\n10-23 08:18:06.025  2584  2584 E AndroidRuntime: \tat android.view.ViewGroup.measureChildWithMargins(ViewGroup.java:5463)\n10-23 08:18:06.025  2584  2584 E AndroidRuntime: \tat android.widget.LinearLayout.measureChildBeforeLayout(LinearLayout.java:1436)\n10-23 08:18:06.025  2584  2584 E AndroidRuntime: \tat android.widget.LinearLayout.measureVertical(LinearLayout.java:722)\n10-23 08:18:06.025  2584  2584 E AndroidRuntime: \tat android.widget.LinearLayout.onMeasure(LinearLayout.java:613)\n10-23 08:18:06.025  2584  2584 E AndroidRuntime: \tat android.view.View.measure(View.java:17430)\n10-23 08:18:06.025  2584  2584 E AndroidRuntime: \tat android.view.ViewGroup.measureChildWithMargins(ViewGroup.java:5463)\n10-23 08:18:06.025  2584  2584 E AndroidRuntime: \tat android.widget.FrameLayout.onMeasure(FrameLayout.java:430)\n10-23 08:18:06.025  2584  2584 E AndroidRuntime: \tat android.view.View.measure(View.java:17430)\n10-23 08:18:06.025  2584  2584 E AndroidRuntime: \tat android.view.ViewGroup.measureChildWithMargins(ViewGroup.java:5463)\n10-23 08:18:06.025  2584  2584 E AndroidRuntime: \tat android.widget.LinearLayout.measureChildBeforeLayout(LinearLayout.java:1436)\n10-23 08:18:06.025  2584  2584 E AndroidRuntime: \tat android.widget.LinearLayout.measureVertical(LinearLayout.java:722)\n10-23 08:18:06.025  2584  2584 E AndroidRuntime: \tat android.widget.LinearLayout.onMeasure(LinearLayout.java:613)\n10-23 08:18:06.025  2584  2584 E AndroidRuntime: \tat android.view.View.measure(View.java:17430)\n10-23 08:18:06.025  2584  2584 E AndroidRuntime: \tat android.view.ViewGroup.measureChildWithMargins(ViewGroup.java:5463)\n10-23 08:18:06.025  2584  2584 E AndroidRuntime: \tat android.widget.FrameLayout.onMeasure(FrameLayout.java:430)\n10-23 08:18:06.025  2584  2584 E AndroidRuntime: \tat com.android.internal.policy.impl.PhoneWindow$DecorView.onMeasure(PhoneWindow.java:2560)\n10-23 08:18:06.025  2584  2584 E AndroidRuntime: \tat android.view.View.measure(View.java:17430)\n10-23 08:18:06.025  2584  2584 E AndroidRuntime: \tat android.view.ViewRootImpl.performMeasure(ViewRootImpl.java:2001)\n10-23 08:18:06.025  2584  2584 E AndroidRuntime: \tat android.view.ViewRootImpl.measureHierarchy(ViewRootImpl.java:1166)\n10-23 08:18:06.025  2584  2584 E AndroidRuntime: \tat android.view.ViewRootImpl.performTraversals(ViewRootImpl.java:1372)\n10-23 08:18:06.025  2584  2584 E AndroidRuntime: \tat android.view.ViewRootImpl.doTraversal(ViewRootImpl.java:1054)\n10-23 08:18:06.025  2584  2584 E AndroidRuntime: \tat android.view.ViewRootImpl$TraversalRunnable.run(ViewRootImpl.java:5779)\n10-23 08:18:06.025  2584  2584 E AndroidRuntime: \tat android.view.Choreographer$CallbackRecord.run(Choreographer.java:767)\n10-23 08:18:06.025  2584  2584 E AndroidRuntime: \tat android.view.Choreographer.doCallbacks(Choreographer.java:580)\n10-23 08:18:06.025  2584  2584 E AndroidRuntime: \tat android.view.Choreographer.doFrame(Choreographer.java:550)\n"
+      }
+    ],
+    "outsideStartsAreNotErasedOrClassifiedBenign": true
+  },
+  "checks": {
+    "childAuditExactActualOperatorBytes": true,
+    "childAuditExactSourceAPI": true,
+    "childPositiveEvidence": true,
+    "childTerminal": true,
+    "childOriginalPhaseOrder": true,
+    "childSequenceComplete": true,
+    "childAuditOriginalOverall": true,
+    "fixtureActualExit0": true,
+    "fixtureOperatorComplete": true,
+    "fixtureNoFailure": true,
+    "fixtureExactSource": true,
+    "fixtureFrozenBinding": true,
+    "actualWrapperBytes": true,
+    "sameChildDriverBytes": true,
+    "childFrozenBinding": true,
+    "realRandomNonceShape": true,
+    "authenticatedBeginCommand": true,
+    "authenticatedEndCommand": true,
+    "uniqueActualMarkerIntervalComplete": false,
+    "noActualTargetStartInsideStrictInterval": false,
+    "onlyActualAllowlistedDocsUI": true,
+    "allDocsUIDumpsAgreeWithStateRecords": true,
+    "beforeRecordExact": true,
+    "DocsUIOriginallyDefaultOrEnabled": true,
+    "ActualPlatformIsolationPreservesOtherPackageState": true,
+    "DocsUIEnabledStoppedPathExactlyRestored": true,
+    "restoreRecordExact": true,
+    "actualChildWaitStreams": true,
+    "allInstalledOriginalByteReadbacksExact": true,
+    "allStrictActualPsSamplesNoTargetFamily": true
+  },
+  "independentlyQualifiedPositivePhases": [
+    "diagnostic-safe",
+    "production-class-only"
+  ],
+  "diagnosticDispositions": [
+    {
+      "name": "diagnostic-safe",
+      "disposition": "QUALIFIED_SCOPED_POSITIVE"
+    },
+    {
+      "name": "diagnostic-equal_return",
+      "disposition": "UNQUALIFIED_NO_EXPORTED_REPORT"
+    },
+    {
+      "name": "diagnostic-no_super_measure",
+      "disposition": "ACTUAL_DIAGNOSTIC_LAYOUT_DISCRIMINATION"
+    }
+  ],
+  "noAllWarningsOrNoWholeVmApplicationStartClaim": true
+}

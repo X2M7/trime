@@ -1,0 +1,954 @@
+{
+  "host_only": true,
+  "no_VM_ADB_Gradle": true,
+  "passed": true,
+  "checks": [
+    {
+      "name": "run-probes.py-byte-identical",
+      "passed": true
+    },
+    {
+      "name": "runtime_common.py-byte-identical",
+      "passed": true
+    },
+    {
+      "name": "audit-logs.py-byte-identical",
+      "passed": true
+    },
+    {
+      "name": "run-api21.py-only-binding-and-OUT",
+      "passed": true
+    },
+    {
+      "name": "run-api35.py-only-binding-and-OUT",
+      "passed": true
+    },
+    {
+      "name": "all-Python-syntax",
+      "passed": true
+    },
+    {
+      "name": "wrapper-help-no-device",
+      "passed": true
+    },
+    {
+      "name": "UNFROZEN-refused-before-fixture-device",
+      "passed": true
+    },
+    {
+      "name": "aosp-default-success-child-and-mutation-gates",
+      "passed": true
+    },
+    {
+      "name": "aosp-default-success-END-after-actual-wait",
+      "passed": true
+    },
+    {
+      "name": "aosp-default-success-exact-state-and-exit-preserved",
+      "passed": true
+    },
+    {
+      "name": "google-enabled-child-failure-child-and-mutation-gates",
+      "passed": true
+    },
+    {
+      "name": "google-enabled-child-failure-END-after-actual-wait",
+      "passed": true
+    },
+    {
+      "name": "google-enabled-child-failure-exact-state-and-exit-preserved",
+      "passed": true
+    },
+    {
+      "name": "missing-default-support-child-and-mutation-gates",
+      "passed": true
+    },
+    {
+      "name": "missing-default-support-no-BEGIN-no-child",
+      "passed": true
+    },
+    {
+      "name": "two-packages-reject-child-and-mutation-gates",
+      "passed": true
+    },
+    {
+      "name": "two-packages-reject-no-BEGIN-no-child",
+      "passed": true
+    },
+    {
+      "name": "restore-failure-child-and-mutation-gates",
+      "passed": true
+    },
+    {
+      "name": "restore-failure-END-after-actual-wait",
+      "passed": true
+    },
+    {
+      "name": "restore-failure-tool-failure",
+      "passed": true
+    },
+    {
+      "name": "plan2-all-frozen-inputs-unchanged",
+      "passed": true
+    }
+  ],
+  "scenarios": [
+    {
+      "scenario": {
+        "name": "aosp-default-success",
+        "present": [
+          "com.android.documentsui"
+        ],
+        "enabled": 0,
+        "stopped": false,
+        "help": "disable-user default-state",
+        "child_exit": 0
+      },
+      "actual_exit": 0,
+      "events": [
+        [
+          "ps",
+          "before-fixture"
+        ],
+        [
+          "package",
+          "com.android.documentsui",
+          "before-com.android.documentsui"
+        ],
+        [
+          "package",
+          "com.google.android.documentsui",
+          "before-com.google.android.documentsui"
+        ],
+        [
+          "pm",
+          "help"
+        ],
+        [
+          "pm",
+          "disable-user",
+          "--user",
+          "0",
+          "com.android.documentsui"
+        ],
+        [
+          "package",
+          "com.android.documentsui",
+          "disabled"
+        ],
+        [
+          "ps",
+          "before-explicit-old-target-stop"
+        ],
+        [
+          "am",
+          "force-stop",
+          "com.osfans.trime.debug"
+        ],
+        [
+          "ps",
+          "after-explicit-old-target-stop"
+        ],
+        [
+          "log",
+          "-p",
+          "i",
+          "-t",
+          "PR2187_CLASS_ONLY",
+          "BEGIN 32207c26843ffc603c9b84bd32ddc7b2"
+        ],
+        [
+          "Popen",
+          [
+            "/usr/bin/python3",
+            "/home/xumin/Public/Trime/build/pr2187-review-20261023/runtime-plan3/run-probes.py",
+            "--binding",
+            "/home/xumin/Public/Trime/build/pr2187-review-20261023/runtime-plan3/binding-template.json",
+            "--api",
+            "21",
+            "--output",
+            "/home/xumin/Public/Trime/build/pr2187-review-20261023/runtime-plan3/host-check1/aosp-default-success/child",
+            "--adb",
+            "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb"
+          ]
+        ],
+        [
+          "child-wait"
+        ],
+        [
+          "log",
+          "-p",
+          "i",
+          "-t",
+          "PR2187_CLASS_ONLY",
+          "END 32207c26843ffc603c9b84bd32ddc7b2"
+        ],
+        [
+          "pm",
+          "default-state",
+          "--user",
+          "0",
+          "com.android.documentsui"
+        ],
+        [
+          "package",
+          "com.android.documentsui",
+          "restore-enabled"
+        ],
+        [
+          "ps",
+          "after-fixture-restoration"
+        ]
+      ],
+      "report": {
+        "commands": [
+          {
+            "argv": [
+              "pm",
+              "help"
+            ],
+            "remote_returncode": 0,
+            "stderr": "/home/xumin/Public/Trime/build/pr2187-review-20261023/runtime-plan3/host-check1/aosp-default-success/empty-stderr"
+          },
+          {
+            "argv": [
+              "pm",
+              "disable-user",
+              "--user",
+              "0",
+              "com.android.documentsui"
+            ],
+            "remote_returncode": 0,
+            "stderr": "/home/xumin/Public/Trime/build/pr2187-review-20261023/runtime-plan3/host-check1/aosp-default-success/empty-stderr"
+          },
+          {
+            "argv": [
+              "am",
+              "force-stop",
+              "com.osfans.trime.debug"
+            ],
+            "remote_returncode": 0,
+            "stderr": "/home/xumin/Public/Trime/build/pr2187-review-20261023/runtime-plan3/host-check1/aosp-default-success/empty-stderr"
+          },
+          {
+            "argv": [
+              "log",
+              "-p",
+              "i",
+              "-t",
+              "PR2187_CLASS_ONLY",
+              "BEGIN 32207c26843ffc603c9b84bd32ddc7b2"
+            ],
+            "remote_returncode": 0,
+            "stderr": "/home/xumin/Public/Trime/build/pr2187-review-20261023/runtime-plan3/host-check1/aosp-default-success/empty-stderr"
+          },
+          {
+            "argv": [
+              "log",
+              "-p",
+              "i",
+              "-t",
+              "PR2187_CLASS_ONLY",
+              "END 32207c26843ffc603c9b84bd32ddc7b2"
+            ],
+            "remote_returncode": 0,
+            "stderr": "/home/xumin/Public/Trime/build/pr2187-review-20261023/runtime-plan3/host-check1/aosp-default-success/empty-stderr"
+          },
+          {
+            "argv": [
+              "pm",
+              "default-state",
+              "--user",
+              "0",
+              "com.android.documentsui"
+            ],
+            "remote_returncode": 0,
+            "stderr": "/home/xumin/Public/Trime/build/pr2187-review-20261023/runtime-plan3/host-check1/aosp-default-success/empty-stderr"
+          }
+        ],
+        "documents_before": {
+          "package": "com.android.documentsui",
+          "present": true,
+          "enabled": 0,
+          "stopped": false
+        },
+        "help_command": {
+          "argv": [
+            "pm",
+            "help"
+          ],
+          "remote_returncode": 0,
+          "stderr": "/home/xumin/Public/Trime/build/pr2187-review-20261023/runtime-plan3/host-check1/aosp-default-success/empty-stderr"
+        },
+        "help_text_sha256": "cbf0f78e69b48dcdbc87c8772f32afae83f4267436f49ffd3b3687b457c96055",
+        "begin_nonce": "32207c26843ffc603c9b84bd32ddc7b2",
+        "begin_at": "2026-10-23T00:04:30.583075+00:00",
+        "begin_command": {
+          "argv": [
+            "log",
+            "-p",
+            "i",
+            "-t",
+            "PR2187_CLASS_ONLY",
+            "BEGIN 32207c26843ffc603c9b84bd32ddc7b2"
+          ],
+          "remote_returncode": 0,
+          "stderr": "/home/xumin/Public/Trime/build/pr2187-review-20261023/runtime-plan3/host-check1/aosp-default-success/empty-stderr"
+        },
+        "child_argv": [
+          "/usr/bin/python3",
+          "/home/xumin/Public/Trime/build/pr2187-review-20261023/runtime-plan3/run-probes.py",
+          "--binding",
+          "/home/xumin/Public/Trime/build/pr2187-review-20261023/runtime-plan3/binding-template.json",
+          "--api",
+          "21",
+          "--output",
+          "/home/xumin/Public/Trime/build/pr2187-review-20261023/runtime-plan3/host-check1/aosp-default-success/child",
+          "--adb",
+          "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb"
+        ],
+        "child_host_pid": 999999,
+        "child_actual_exit": 0,
+        "child_streams": [
+          {
+            "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/runtime-plan3/host-check1/aosp-default-success/child.stdout",
+            "sha256": "b564f28d1bc03bf69fae574f053673542a9c38e79cb9163db3a3b872120b7932"
+          },
+          {
+            "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/runtime-plan3/host-check1/aosp-default-success/child.stderr",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        ],
+        "end_at": "2026-10-23T00:04:30.584696+00:00",
+        "end_command": {
+          "argv": [
+            "log",
+            "-p",
+            "i",
+            "-t",
+            "PR2187_CLASS_ONLY",
+            "END 32207c26843ffc603c9b84bd32ddc7b2"
+          ],
+          "remote_returncode": 0,
+          "stderr": "/home/xumin/Public/Trime/build/pr2187-review-20261023/runtime-plan3/host-check1/aosp-default-success/empty-stderr"
+        },
+        "documents_restored_exactly": {
+          "package": "com.android.documentsui",
+          "present": true,
+          "enabled": 0,
+          "stopped": false
+        },
+        "cleanup_errors": [],
+        "finished": "2026-10-23T00:04:30.585127+00:00",
+        "fixture_operator_completed": true,
+        "actual_exit": 0
+      },
+      "synthetic_host_only": true
+    },
+    {
+      "scenario": {
+        "name": "google-enabled-child-failure",
+        "present": [
+          "com.google.android.documentsui"
+        ],
+        "enabled": 1,
+        "stopped": true,
+        "help": "disable-user",
+        "child_exit": 7
+      },
+      "actual_exit": 7,
+      "events": [
+        [
+          "ps",
+          "before-fixture"
+        ],
+        [
+          "package",
+          "com.android.documentsui",
+          "before-com.android.documentsui"
+        ],
+        [
+          "package",
+          "com.google.android.documentsui",
+          "before-com.google.android.documentsui"
+        ],
+        [
+          "pm",
+          "help"
+        ],
+        [
+          "pm",
+          "disable-user",
+          "--user",
+          "0",
+          "com.google.android.documentsui"
+        ],
+        [
+          "package",
+          "com.google.android.documentsui",
+          "disabled"
+        ],
+        [
+          "ps",
+          "before-explicit-old-target-stop"
+        ],
+        [
+          "am",
+          "force-stop",
+          "com.osfans.trime.debug"
+        ],
+        [
+          "ps",
+          "after-explicit-old-target-stop"
+        ],
+        [
+          "log",
+          "-p",
+          "i",
+          "-t",
+          "PR2187_CLASS_ONLY",
+          "BEGIN 0aed15950bcd750c1e04355a0ccc2a9f"
+        ],
+        [
+          "Popen",
+          [
+            "/usr/bin/python3",
+            "/home/xumin/Public/Trime/build/pr2187-review-20261023/runtime-plan3/run-probes.py",
+            "--binding",
+            "/home/xumin/Public/Trime/build/pr2187-review-20261023/runtime-plan3/binding-template.json",
+            "--api",
+            "21",
+            "--output",
+            "/home/xumin/Public/Trime/build/pr2187-review-20261023/runtime-plan3/host-check1/google-enabled-child-failure/child",
+            "--adb",
+            "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb"
+          ]
+        ],
+        [
+          "child-wait"
+        ],
+        [
+          "log",
+          "-p",
+          "i",
+          "-t",
+          "PR2187_CLASS_ONLY",
+          "END 0aed15950bcd750c1e04355a0ccc2a9f"
+        ],
+        [
+          "pm",
+          "enable",
+          "--user",
+          "0",
+          "com.google.android.documentsui"
+        ],
+        [
+          "package",
+          "com.google.android.documentsui",
+          "restore-enabled"
+        ],
+        [
+          "ps",
+          "after-fixture-restoration"
+        ]
+      ],
+      "report": {
+        "commands": [
+          {
+            "argv": [
+              "pm",
+              "help"
+            ],
+            "remote_returncode": 0,
+            "stderr": "/home/xumin/Public/Trime/build/pr2187-review-20261023/runtime-plan3/host-check1/google-enabled-child-failure/empty-stderr"
+          },
+          {
+            "argv": [
+              "pm",
+              "disable-user",
+              "--user",
+              "0",
+              "com.google.android.documentsui"
+            ],
+            "remote_returncode": 0,
+            "stderr": "/home/xumin/Public/Trime/build/pr2187-review-20261023/runtime-plan3/host-check1/google-enabled-child-failure/empty-stderr"
+          },
+          {
+            "argv": [
+              "am",
+              "force-stop",
+              "com.osfans.trime.debug"
+            ],
+            "remote_returncode": 0,
+            "stderr": "/home/xumin/Public/Trime/build/pr2187-review-20261023/runtime-plan3/host-check1/google-enabled-child-failure/empty-stderr"
+          },
+          {
+            "argv": [
+              "log",
+              "-p",
+              "i",
+              "-t",
+              "PR2187_CLASS_ONLY",
+              "BEGIN 0aed15950bcd750c1e04355a0ccc2a9f"
+            ],
+            "remote_returncode": 0,
+            "stderr": "/home/xumin/Public/Trime/build/pr2187-review-20261023/runtime-plan3/host-check1/google-enabled-child-failure/empty-stderr"
+          },
+          {
+            "argv": [
+              "log",
+              "-p",
+              "i",
+              "-t",
+              "PR2187_CLASS_ONLY",
+              "END 0aed15950bcd750c1e04355a0ccc2a9f"
+            ],
+            "remote_returncode": 0,
+            "stderr": "/home/xumin/Public/Trime/build/pr2187-review-20261023/runtime-plan3/host-check1/google-enabled-child-failure/empty-stderr"
+          },
+          {
+            "argv": [
+              "pm",
+              "enable",
+              "--user",
+              "0",
+              "com.google.android.documentsui"
+            ],
+            "remote_returncode": 0,
+            "stderr": "/home/xumin/Public/Trime/build/pr2187-review-20261023/runtime-plan3/host-check1/google-enabled-child-failure/empty-stderr"
+          }
+        ],
+        "documents_before": {
+          "package": "com.google.android.documentsui",
+          "present": true,
+          "enabled": 1,
+          "stopped": true
+        },
+        "help_command": {
+          "argv": [
+            "pm",
+            "help"
+          ],
+          "remote_returncode": 0,
+          "stderr": "/home/xumin/Public/Trime/build/pr2187-review-20261023/runtime-plan3/host-check1/google-enabled-child-failure/empty-stderr"
+        },
+        "help_text_sha256": "c7048993314b8fe8f36b4b97598b592ec20141dfcbe08964b2f6f711e0d9fd7a",
+        "begin_nonce": "0aed15950bcd750c1e04355a0ccc2a9f",
+        "begin_at": "2026-10-23T00:04:30.587261+00:00",
+        "begin_command": {
+          "argv": [
+            "log",
+            "-p",
+            "i",
+            "-t",
+            "PR2187_CLASS_ONLY",
+            "BEGIN 0aed15950bcd750c1e04355a0ccc2a9f"
+          ],
+          "remote_returncode": 0,
+          "stderr": "/home/xumin/Public/Trime/build/pr2187-review-20261023/runtime-plan3/host-check1/google-enabled-child-failure/empty-stderr"
+        },
+        "child_argv": [
+          "/usr/bin/python3",
+          "/home/xumin/Public/Trime/build/pr2187-review-20261023/runtime-plan3/run-probes.py",
+          "--binding",
+          "/home/xumin/Public/Trime/build/pr2187-review-20261023/runtime-plan3/binding-template.json",
+          "--api",
+          "21",
+          "--output",
+          "/home/xumin/Public/Trime/build/pr2187-review-20261023/runtime-plan3/host-check1/google-enabled-child-failure/child",
+          "--adb",
+          "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb"
+        ],
+        "child_host_pid": 999999,
+        "child_actual_exit": 7,
+        "child_failure_preserved": true,
+        "child_streams": [
+          {
+            "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/runtime-plan3/host-check1/google-enabled-child-failure/child.stdout",
+            "sha256": "b564f28d1bc03bf69fae574f053673542a9c38e79cb9163db3a3b872120b7932"
+          },
+          {
+            "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/runtime-plan3/host-check1/google-enabled-child-failure/child.stderr",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        ],
+        "end_at": "2026-10-23T00:04:30.588488+00:00",
+        "end_command": {
+          "argv": [
+            "log",
+            "-p",
+            "i",
+            "-t",
+            "PR2187_CLASS_ONLY",
+            "END 0aed15950bcd750c1e04355a0ccc2a9f"
+          ],
+          "remote_returncode": 0,
+          "stderr": "/home/xumin/Public/Trime/build/pr2187-review-20261023/runtime-plan3/host-check1/google-enabled-child-failure/empty-stderr"
+        },
+        "documents_restored_exactly": {
+          "package": "com.google.android.documentsui",
+          "present": true,
+          "enabled": 1,
+          "stopped": true
+        },
+        "cleanup_errors": [],
+        "finished": "2026-10-23T00:04:30.588779+00:00",
+        "fixture_operator_completed": false,
+        "actual_exit": 7
+      },
+      "synthetic_host_only": true
+    },
+    {
+      "scenario": {
+        "name": "missing-default-support",
+        "present": [
+          "com.android.documentsui"
+        ],
+        "enabled": 0,
+        "stopped": false,
+        "help": "disable-user",
+        "child_exit": null
+      },
+      "actual_exit": 1,
+      "events": [
+        [
+          "ps",
+          "before-fixture"
+        ],
+        [
+          "package",
+          "com.android.documentsui",
+          "before-com.android.documentsui"
+        ],
+        [
+          "package",
+          "com.google.android.documentsui",
+          "before-com.google.android.documentsui"
+        ],
+        [
+          "pm",
+          "help"
+        ],
+        [
+          "ps",
+          "after-fixture-restoration"
+        ]
+      ],
+      "report": {
+        "commands": [
+          {
+            "argv": [
+              "pm",
+              "help"
+            ],
+            "remote_returncode": 0,
+            "stderr": "/home/xumin/Public/Trime/build/pr2187-review-20261023/runtime-plan3/host-check1/missing-default-support/empty-stderr"
+          }
+        ],
+        "fixture_failure": {
+          "type": "AssertionError",
+          "message": "Cannot restore DEFAULT; refuse before mutation"
+        },
+        "cleanup_errors": [],
+        "finished": "2026-10-23T00:04:30.590283+00:00",
+        "fixture_operator_completed": false,
+        "actual_exit": 1
+      },
+      "synthetic_host_only": true
+    },
+    {
+      "scenario": {
+        "name": "two-packages-reject",
+        "present": [
+          "com.android.documentsui",
+          "com.google.android.documentsui"
+        ],
+        "enabled": 0,
+        "stopped": false,
+        "help": "disable-user default-state",
+        "child_exit": null
+      },
+      "actual_exit": 1,
+      "events": [
+        [
+          "ps",
+          "before-fixture"
+        ],
+        [
+          "package",
+          "com.android.documentsui",
+          "before-com.android.documentsui"
+        ],
+        [
+          "package",
+          "com.google.android.documentsui",
+          "before-com.google.android.documentsui"
+        ],
+        [
+          "ps",
+          "after-fixture-restoration"
+        ]
+      ],
+      "report": {
+        "commands": [],
+        "fixture_failure": {
+          "type": "AssertionError",
+          "message": "Exactly one actual DocumentsUI package must exist"
+        },
+        "cleanup_errors": [],
+        "finished": "2026-10-23T00:04:30.591446+00:00",
+        "fixture_operator_completed": false,
+        "actual_exit": 1
+      },
+      "synthetic_host_only": true
+    },
+    {
+      "scenario": {
+        "name": "restore-failure",
+        "present": [
+          "com.android.documentsui"
+        ],
+        "enabled": 0,
+        "stopped": false,
+        "help": "disable-user default-state",
+        "child_exit": 0,
+        "restore_fail": true
+      },
+      "actual_exit": 1,
+      "events": [
+        [
+          "ps",
+          "before-fixture"
+        ],
+        [
+          "package",
+          "com.android.documentsui",
+          "before-com.android.documentsui"
+        ],
+        [
+          "package",
+          "com.google.android.documentsui",
+          "before-com.google.android.documentsui"
+        ],
+        [
+          "pm",
+          "help"
+        ],
+        [
+          "pm",
+          "disable-user",
+          "--user",
+          "0",
+          "com.android.documentsui"
+        ],
+        [
+          "package",
+          "com.android.documentsui",
+          "disabled"
+        ],
+        [
+          "ps",
+          "before-explicit-old-target-stop"
+        ],
+        [
+          "am",
+          "force-stop",
+          "com.osfans.trime.debug"
+        ],
+        [
+          "ps",
+          "after-explicit-old-target-stop"
+        ],
+        [
+          "log",
+          "-p",
+          "i",
+          "-t",
+          "PR2187_CLASS_ONLY",
+          "BEGIN 5c13b30bd3ab8f27e46645e290bea25f"
+        ],
+        [
+          "Popen",
+          [
+            "/usr/bin/python3",
+            "/home/xumin/Public/Trime/build/pr2187-review-20261023/runtime-plan3/run-probes.py",
+            "--binding",
+            "/home/xumin/Public/Trime/build/pr2187-review-20261023/runtime-plan3/binding-template.json",
+            "--api",
+            "21",
+            "--output",
+            "/home/xumin/Public/Trime/build/pr2187-review-20261023/runtime-plan3/host-check1/restore-failure/child",
+            "--adb",
+            "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb"
+          ]
+        ],
+        [
+          "child-wait"
+        ],
+        [
+          "log",
+          "-p",
+          "i",
+          "-t",
+          "PR2187_CLASS_ONLY",
+          "END 5c13b30bd3ab8f27e46645e290bea25f"
+        ],
+        [
+          "pm",
+          "default-state",
+          "--user",
+          "0",
+          "com.android.documentsui"
+        ],
+        [
+          "ps",
+          "after-fixture-restoration"
+        ]
+      ],
+      "report": {
+        "commands": [
+          {
+            "argv": [
+              "pm",
+              "help"
+            ],
+            "remote_returncode": 0,
+            "stderr": "/home/xumin/Public/Trime/build/pr2187-review-20261023/runtime-plan3/host-check1/restore-failure/empty-stderr"
+          },
+          {
+            "argv": [
+              "pm",
+              "disable-user",
+              "--user",
+              "0",
+              "com.android.documentsui"
+            ],
+            "remote_returncode": 0,
+            "stderr": "/home/xumin/Public/Trime/build/pr2187-review-20261023/runtime-plan3/host-check1/restore-failure/empty-stderr"
+          },
+          {
+            "argv": [
+              "am",
+              "force-stop",
+              "com.osfans.trime.debug"
+            ],
+            "remote_returncode": 0,
+            "stderr": "/home/xumin/Public/Trime/build/pr2187-review-20261023/runtime-plan3/host-check1/restore-failure/empty-stderr"
+          },
+          {
+            "argv": [
+              "log",
+              "-p",
+              "i",
+              "-t",
+              "PR2187_CLASS_ONLY",
+              "BEGIN 5c13b30bd3ab8f27e46645e290bea25f"
+            ],
+            "remote_returncode": 0,
+            "stderr": "/home/xumin/Public/Trime/build/pr2187-review-20261023/runtime-plan3/host-check1/restore-failure/empty-stderr"
+          },
+          {
+            "argv": [
+              "log",
+              "-p",
+              "i",
+              "-t",
+              "PR2187_CLASS_ONLY",
+              "END 5c13b30bd3ab8f27e46645e290bea25f"
+            ],
+            "remote_returncode": 0,
+            "stderr": "/home/xumin/Public/Trime/build/pr2187-review-20261023/runtime-plan3/host-check1/restore-failure/empty-stderr"
+          },
+          {
+            "argv": [
+              "pm",
+              "default-state",
+              "--user",
+              "0",
+              "com.android.documentsui"
+            ],
+            "remote_returncode": 0,
+            "stderr": "/home/xumin/Public/Trime/build/pr2187-review-20261023/runtime-plan3/host-check1/restore-failure/empty-stderr"
+          }
+        ],
+        "documents_before": {
+          "package": "com.android.documentsui",
+          "present": true,
+          "enabled": 0,
+          "stopped": false
+        },
+        "help_command": {
+          "argv": [
+            "pm",
+            "help"
+          ],
+          "remote_returncode": 0,
+          "stderr": "/home/xumin/Public/Trime/build/pr2187-review-20261023/runtime-plan3/host-check1/restore-failure/empty-stderr"
+        },
+        "help_text_sha256": "cbf0f78e69b48dcdbc87c8772f32afae83f4267436f49ffd3b3687b457c96055",
+        "begin_nonce": "5c13b30bd3ab8f27e46645e290bea25f",
+        "begin_at": "2026-10-23T00:04:30.592906+00:00",
+        "begin_command": {
+          "argv": [
+            "log",
+            "-p",
+            "i",
+            "-t",
+            "PR2187_CLASS_ONLY",
+            "BEGIN 5c13b30bd3ab8f27e46645e290bea25f"
+          ],
+          "remote_returncode": 0,
+          "stderr": "/home/xumin/Public/Trime/build/pr2187-review-20261023/runtime-plan3/host-check1/restore-failure/empty-stderr"
+        },
+        "child_argv": [
+          "/usr/bin/python3",
+          "/home/xumin/Public/Trime/build/pr2187-review-20261023/runtime-plan3/run-probes.py",
+          "--binding",
+          "/home/xumin/Public/Trime/build/pr2187-review-20261023/runtime-plan3/binding-template.json",
+          "--api",
+          "21",
+          "--output",
+          "/home/xumin/Public/Trime/build/pr2187-review-20261023/runtime-plan3/host-check1/restore-failure/child",
+          "--adb",
+          "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb"
+        ],
+        "child_host_pid": 999999,
+        "child_actual_exit": 0,
+        "child_streams": [
+          {
+            "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/runtime-plan3/host-check1/restore-failure/child.stdout",
+            "sha256": "b564f28d1bc03bf69fae574f053673542a9c38e79cb9163db3a3b872120b7932"
+          },
+          {
+            "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/runtime-plan3/host-check1/restore-failure/child.stderr",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        ],
+        "end_at": "2026-10-23T00:04:30.594183+00:00",
+        "end_command": {
+          "argv": [
+            "log",
+            "-p",
+            "i",
+            "-t",
+            "PR2187_CLASS_ONLY",
+            "END 5c13b30bd3ab8f27e46645e290bea25f"
+          ],
+          "remote_returncode": 0,
+          "stderr": "/home/xumin/Public/Trime/build/pr2187-review-20261023/runtime-plan3/host-check1/restore-failure/empty-stderr"
+        },
+        "cleanup_errors": [
+          {
+            "stage": "restore-DocumentsUI",
+            "message": "HOST stub actual restore failure"
+          }
+        ],
+        "finished": "2026-10-23T00:04:30.594222+00:00",
+        "fixture_operator_completed": false,
+        "actual_exit": 1
+      },
+      "synthetic_host_only": true
+    }
+  ],
+  "wrapper_sha256": "14da2c385fae2fedf2ea4f0f5ff33c9c7efff9ec58a8bb5ce5bb075db5f5bbfb"
+}

@@ -1,0 +1,10 @@
+--- safe-production-input
++++ no_super_measure
+@@ -80,7 +80,6 @@
+         heightMeasureSpec: Int,
+     ) {
+         // Update the framework Layout for accessibility before our custom measurement.
+-        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+         val widthMode = MeasureSpec.getMode(widthMeasureSpec)
+         val widthSize = MeasureSpec.getSize(widthMeasureSpec)
+         val heightMode = MeasureSpec.getMode(heightMeasureSpec)

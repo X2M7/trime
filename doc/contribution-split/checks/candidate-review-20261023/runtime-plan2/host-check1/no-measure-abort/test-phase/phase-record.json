@@ -1,0 +1,42 @@
+{
+  "name": "test-phase",
+  "package": "org.x2m7.trime.readiness.candidatediagnostic",
+  "variant": "no_super_measure",
+  "notProductionApk": true,
+  "started": "2026-10-22T23:51:45.679460+00:00",
+  "independently_qualified": false,
+  "state": "CONTROL_ABORTED_UNQUALIFIED",
+  "instrumentation_code": 0,
+  "instrumentation_short_message": "java.lang.NullPointerException",
+  "instrumentation_command": {
+    "at": "2026-10-22T23:46:51.485538+00:00",
+    "argv": [
+      "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+      "-s",
+      "emulator-5582",
+      "shell",
+      "sh -c 'am instrument -w -r -e variant equal_return org.x2m7.trime.readiness.candidatediagnostic/.CandidateProbe'; _trime_t12_status=$?; echo ''; echo \"__TRIME_T12_REMOTE_RC_00fd4050f5dfb6f58dc8861f27c705a6:$_trime_t12_status\""
+    ],
+    "stdout": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api21-class-only1/operator1/commands/0026.stdout",
+    "stderr": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api21-class-only1/operator1/commands/0026.stderr",
+    "timeout_seconds": 180,
+    "completed": true,
+    "returncode": 0,
+    "finished": "2026-10-22T23:46:52.357382+00:00",
+    "stdout_sha256": "87a516a8945bf386e7648442689b78a015954773ff2fa19cb2517e601e05ef35",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "shell_protocol_nonce": "00fd4050f5dfb6f58dc8861f27c705a6",
+    "remote_returncode": 0,
+    "remote_stdout_bytes": 255,
+    "remote_stdout_sha256": "8c5ba66b759c72690365d0c0378d7f9b9f33aeae70f0459d712476f8169faa00"
+  },
+  "instrumentation_output": {
+    "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/runtime-plan2/host-check1/no-measure-abort/test-phase/instrumentation.stdout.txt",
+    "sha256": "2b3d36bd849ba76dbcce3e0988d3a9b4860d7184bb2f1079376883d5643600f2"
+  },
+  "actual_stage_count": "NOT_EXPORTED",
+  "original_png_count": "NOT_EXPORTED",
+  "result_export": "NOT_EXPORTED",
+  "finished": "2026-10-22T23:51:45.679866+00:00",
+  "negative_control_semantics": "Actual instrumentation abort without an exported directory; no stage/BufferType/reference verdict or qualified negative-control result."
+}

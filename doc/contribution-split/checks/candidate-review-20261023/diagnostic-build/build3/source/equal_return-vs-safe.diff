@@ -1,0 +1,21 @@
+--- safe-production-input
++++ equal_return
+@@ -60,16 +60,10 @@
+         charSequence: CharSequence?,
+         bufferType: BufferType,
+     ) {
+-        // TextView also calls this from its constructor. Keep its text, layout and
+-        // accessibility state in sync without touching our not-yet-created paint caches.
+-        val changed = charSequence == null || !text.contentEquals(charSequence)
+-        if (changed) {
++        if (charSequence == null || !text.contentEquals(charSequence)) {
+             needsMeasureText = true
+             needsCalculateTransform = true
+-        }
+-        // Accessibility can request a different buffer type for the same text.
+-        super.setText(charSequence, bufferType)
+-        if (changed) {
++            super.setText(charSequence, bufferType)
+             requestLayout()
+             invalidate()
+         }

@@ -1,0 +1,24 @@
+{
+  "schema": 1,
+  "sdk": 35,
+  "scope": "Root actual inspection of failed diagnostic precondition, not production-class render checks.",
+  "images_actually_viewed": [
+    {
+      "path": "api35-class-only5/operator1/baseline-screen.png",
+      "sha256": "5944db4882ff33b6c581ea253e21b61707f07265ace5a28a4e0b8e0549c95814"
+    },
+    {
+      "path": "api35-class-only5/operator1/restored-screen.png",
+      "sha256": "b1d2bb9dbcb31fb3da7a1a9a2dae98103b0d936b7e0b26c9998dcc712aad361b"
+    }
+  ],
+  "findings": [
+    "Baseline original screen shows Launcher; no ANR dialog visible in that image.",
+    "Restored original screen visibly shows System UI is not responding dialog.",
+    "No diagnostic stage PNG exists; zero-stage focus failure must remain unqualified."
+  ],
+  "limits": [
+    "These before/after images do not establish which window held focus during the failed probe interval or prove a unique cause.",
+    "No original production APK rendering or TalkBack acceptance on API35 is claimed."
+  ]
+}

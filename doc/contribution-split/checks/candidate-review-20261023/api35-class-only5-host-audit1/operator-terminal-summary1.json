@@ -1,0 +1,339 @@
+{
+  "qualification": "API35_NOT_QUALIFIED_ZERO_STAGE_ACTIVITY_FOCUS_PRECONDITION_FAILURE",
+  "operator_facts_only": true,
+  "source_head": "92b13711162c5fa56c701267c3a06e5fbceeb6ce",
+  "binding_sha256": "f771761117ce350889251162499fa4821ce9d50164cddd4c0c341dc62acad00a",
+  "child_actual_exit": 1,
+  "wrapper_actual_exit": 1,
+  "cleanup_errors": [],
+  "operator_failure": {
+    "type": "KeyError",
+    "message": "'sourceApkSha256'"
+  },
+  "operator_restored_exactly": true,
+  "operator_cleanup_errors": [],
+  "documents_restored_exactly": {
+    "package": "com.android.documentsui",
+    "present": true,
+    "apk_path": "/system/priv-app/DocumentsUI/DocumentsUI.apk",
+    "apk_path_query": "PRESENT",
+    "installed": true,
+    "hidden": false,
+    "enabled": 0,
+    "stopped": false,
+    "user0_raw": "ceDataInode=344120 deDataInode=90241 installed=true hidden=false suspended=false distractionFlags=0 stopped=false notLaunched=false enabled=0 instant=false virtual=false quarantined=false",
+    "pm_path_command": {
+      "at": "2026-10-23T00:30:35.514468+00:00",
+      "argv": [
+        "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+        "-s",
+        "emulator-5584",
+        "shell",
+        "sh -c 'pm path com.android.documentsui'; _trime_t12_status=$?; echo ''; echo \"__TRIME_T12_REMOTE_RC_08dc3947245240449913e6960e83d82b:$_trime_t12_status\""
+      ],
+      "stdout": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api35-class-only5/fixture1/commands/0016.stdout",
+      "stderr": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api35-class-only5/fixture1/commands/0016.stderr",
+      "timeout_seconds": 60,
+      "completed": true,
+      "returncode": 0,
+      "finished": "2026-10-23T00:30:35.732490+00:00",
+      "stdout_sha256": "f61499f04d2af576e3e162b1605b4dcd21a89d5b8baf8558dd2123e2e4a97661",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "shell_protocol_nonce": "08dc3947245240449913e6960e83d82b",
+      "remote_returncode": 0,
+      "remote_stdout_bytes": 53,
+      "remote_stdout_sha256": "01b4ee0e2417fcef3649939c6b46b1b8851e432edf7486af178f8d5ece25e6f0"
+    }
+  },
+  "safe_probe_actual_result": {
+    "failure": "java.lang.IllegalStateException: Own Activity did not receive focus within 8 seconds\n\tat org.x2m7.trime.readiness.candidatediagnostic.CandidateProbe.onStart(CandidateProbe.java:303)\n\tat android.app.Instrumentation$InstrumentationThread.run(Instrumentation.java:2594)\n",
+    "passed": false,
+    "stages": [],
+    "expectedStageCount": 13,
+    "originalFiveStageNames": [
+      "constructor",
+      "hanzi",
+      "latin",
+      "null",
+      "rebind"
+    ],
+    "talkBackServiceTested": false,
+    "nativeCandidateIntegrationTested": false,
+    "scope": "Separately compiled NON-PRODUCTION source variant in its own diagnostic APK. Five original render oracles, six equal-content buffer cases, and two independent selectable/public-granularity stages. Does not prove TalkBack, binder-node routing, native candidate integration, physical audio, or whole-app acceptance."
+  },
+  "driver_followup_failure": "KeyError sourceApkSha256 because the actual zero-stage failure result has no source metadata; identity/business never qualified.",
+  "other_three_phases": "NOT_RUN",
+  "production_original_NOT_INSTALLED": true,
+  "controller_actual_exit": 0,
+  "controller_completion": {
+    "argv": [
+      "/home/xumin/Public/android-toolchain/android-sdk/emulator/emulator",
+      "-avd",
+      "trime_readiness_api35_20261022",
+      "-sysdir",
+      "/home/xumin/Public/Trime/build/readiness-20261022/api35/system-images",
+      "-no-snapshot",
+      "-no-window",
+      "-no-boot-anim",
+      "-gpu",
+      "swangle",
+      "-cores",
+      "2",
+      "-memory",
+      "2304",
+      "-port",
+      "5584",
+      "-accel",
+      "on",
+      "-feature",
+      "-Vulkan"
+    ],
+    "serial": "emulator-5584",
+    "started_utc": "2026-10-23T00:28:21.915733+00:00",
+    "memory_floor_kib": 1048576,
+    "source_head": "92b13711162c5fa56c701267c3a06e5fbceeb6ce",
+    "original_apk_sha256": "36ede385eac30511f3c600dbc059a196e1ac462f173b154643a54f79b3af7d3a",
+    "controller_sha256": "25a0724feadb55cabcc87b5ade415752d9e9eef930f0b3eeb53c0d1eecabf086",
+    "session_lifetime_guard": null,
+    "operator_normal_stop_required": true,
+    "prelaunch_memory": {
+      "MemTotal": 16017176,
+      "MemAvailable": 7924964,
+      "SwapFree": 0,
+      "utc": "2026-10-23T00:28:34.255225+00:00"
+    },
+    "pid": 320261,
+    "proc_stat_at_launch": "320261 (emulator) R 320188 320261 320261 0 -1 4194304 16 0 0 0 0 0 0 0 20 0 1 0 4054264 2142208 78 18446744073709551615 94625133769936 94625134710880 140734270610848 0 0 0 0 0 0 0 0 0 17 10 0 0 0 0 0 94625134739056 94625134741632 94625402650624 140734270615100 140734270615392 140734270615392 140734270619573 0\n",
+    "minimum_mem_available_kib": 5628884,
+    "booted": true,
+    "normal_stop": {
+      "exit": 0,
+      "stdout": "OK: killing emulator, bye bye\nOK\n",
+      "stderr": ""
+    },
+    "emulator_exit": 0,
+    "collector_exit": 255,
+    "original_sdk_unchanged": true,
+    "cleanup_errors": [],
+    "reason": "requested-normal-stop",
+    "ended_utc": "2026-10-23T00:31:13.610372+00:00"
+  },
+  "whole_stream_priority_counts": {
+    "W": 3002,
+    "I": 7559,
+    "D": 10796,
+    "E": 1780,
+    "V": 5626
+  },
+  "whole_stream_critical_events": [
+    {
+      "kinds": [
+        "ANR-or-crash-record"
+      ],
+      "line": 15781,
+      "byte_offset": 2046416,
+      "pid": 547,
+      "tag": "am_anr",
+      "text": "10-23 08:29:41.647   547  1274 I am_anr  : [0,905,com.android.phone,952647245,Broadcast of Intent { act=android.safetycenter.action.REFRESH_SAFETY_SOURCES flg=0x10000010 pkg=com.android.phone cmp=com.android.phone/.security.SafetySourceReceiver (has extras) }]\n"
+    },
+    {
+      "kinds": [
+        "ANR-or-crash-record"
+      ],
+      "line": 16195,
+      "byte_offset": 2109575,
+      "pid": 547,
+      "tag": "ActivityManager",
+      "text": "10-23 08:29:43.915   547  1274 E ActivityManager: ANR in com.android.phone\n"
+    },
+    {
+      "kinds": [
+        "ANR-or-crash-record"
+      ],
+      "line": 16994,
+      "byte_offset": 2246717,
+      "pid": 547,
+      "tag": "am_anr",
+      "text": "10-23 08:29:49.840   547  1382 I am_anr  : [0,793,com.android.systemui,818462221,executing service com.android.systemui/.SystemUIService, waited 20564ms]\n"
+    },
+    {
+      "kinds": [
+        "ANR-or-crash-record"
+      ],
+      "line": 17919,
+      "byte_offset": 2372610,
+      "pid": 547,
+      "tag": "ActivityManager",
+      "text": "10-23 08:29:55.347   547  1382 E ActivityManager: ANR in com.android.systemui\n"
+    },
+    {
+      "kinds": [
+        "ANR-or-crash-record"
+      ],
+      "line": 18117,
+      "byte_offset": 2394612,
+      "pid": 547,
+      "tag": "am_anr",
+      "text": "10-23 08:29:55.664   547  1382 I am_anr  : [0,1351,com.android.phone,952647245,Process ProcessRecord{52364e8 1351:com.android.phone/1001} failed to complete startup]\n"
+    },
+    {
+      "kinds": [
+        "ANR-or-crash-record"
+      ],
+      "line": 18162,
+      "byte_offset": 2401272,
+      "pid": 547,
+      "tag": "ActivityManager",
+      "text": "10-23 08:29:55.783   547  1382 E ActivityManager: ANR in com.android.phone\n"
+    },
+    {
+      "kinds": [
+        "ANR-or-crash-record"
+      ],
+      "line": 20043,
+      "byte_offset": 2657563,
+      "pid": 547,
+      "tag": "am_anr",
+      "text": "10-23 08:30:07.432   547  1845 I am_anr  : [0,1617,com.android.phone,952647245,Process ProcessRecord{52364e8 1617:com.android.phone/1001} failed to complete startup]\n"
+    },
+    {
+      "kinds": [
+        "ANR-or-crash-record"
+      ],
+      "line": 20194,
+      "byte_offset": 2686886,
+      "pid": 547,
+      "tag": "ActivityManager",
+      "text": "10-23 08:30:09.752   547  1845 E ActivityManager: ANR in com.android.phone\n"
+    },
+    {
+      "kinds": [
+        "ANR-or-crash-record"
+      ],
+      "line": 21078,
+      "byte_offset": 2821464,
+      "pid": 547,
+      "tag": "am_anr",
+      "text": "10-23 08:30:16.964   547  2005 I am_anr  : [0,1865,com.android.phone,952647245,Process ProcessRecord{52364e8 1865:com.android.phone/1001} failed to complete startup]\n"
+    },
+    {
+      "kinds": [
+        "ANR-or-crash-record"
+      ],
+      "line": 21156,
+      "byte_offset": 2830572,
+      "pid": 547,
+      "tag": "ActivityManager",
+      "text": "10-23 08:30:18.050   547  2005 E ActivityManager: ANR in com.android.phone\n"
+    },
+    {
+      "kinds": [
+        "ANR-or-crash-record"
+      ],
+      "line": 22573,
+      "byte_offset": 3035980,
+      "pid": 547,
+      "tag": "am_anr",
+      "text": "10-23 08:30:30.054   547  2226 I am_anr  : [0,2030,com.android.phone,952647245,Process ProcessRecord{52364e8 2030:com.android.phone/1001} failed to complete startup]\n"
+    },
+    {
+      "kinds": [
+        "ANR-or-crash-record"
+      ],
+      "line": 22614,
+      "byte_offset": 3040214,
+      "pid": 547,
+      "tag": "ActivityManager",
+      "text": "10-23 08:30:31.186   547  2226 E ActivityManager: ANR in com.android.phone\n"
+    },
+    {
+      "kinds": [
+        "ANR-or-crash-record"
+      ],
+      "line": 22852,
+      "byte_offset": 3072796,
+      "pid": 547,
+      "tag": "am_anr",
+      "text": "10-23 08:30:35.149   547  2276 I am_anr  : [0,2240,com.android.phone,952647245,Process ProcessRecord{52364e8 2240:com.android.phone/1001} failed to complete startup]\n"
+    },
+    {
+      "kinds": [
+        "ANR-or-crash-record"
+      ],
+      "line": 22932,
+      "byte_offset": 3082304,
+      "pid": 547,
+      "tag": "ActivityManager",
+      "text": "10-23 08:30:35.998   547  2276 E ActivityManager: ANR in com.android.phone\n"
+    },
+    {
+      "kinds": [
+        "runtime-fatal-or-oom"
+      ],
+      "line": 24176,
+      "byte_offset": 3250942,
+      "pid": 2301,
+      "tag": "AndroidRuntime",
+      "text": "10-23 08:30:40.570  2301  2301 E AndroidRuntime: FATAL EXCEPTION: main\n"
+    },
+    {
+      "kinds": [
+        "ANR-or-crash-record"
+      ],
+      "line": 24198,
+      "byte_offset": 3253846,
+      "pid": 547,
+      "tag": "am_crash",
+      "text": "10-23 08:30:40.572   547  1615 I am_crash: [2301,0,com.android.phone,1015791109,android.app.BackgroundServiceStartNotAllowedException,Not allowed to start service Intent { cmp=com.android.stk/.StkAppService (has extras) }: app is in background uid UidRecord{5caa32d 1001 SVC  bg:+3s163ms idle change:procstate procs:0 seq(1022,981)} caps=-------,ContextImpl.java,1974,0]\n"
+    }
+  ],
+  "whole_stream_target_start_records": [],
+  "scope": "BEGIN..END never qualified; retain entire VM/system events, no whole-VM historical absence claim.",
+  "evidence": [
+    {
+      "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api35-class-only5/fixture1/report.json",
+      "bytes": 31402,
+      "sha256": "0050d382068a3b2c667886285919713eeffe59d4c7f96c8e28f88774fd9141cb"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api35-class-only5/operator1/report.json",
+      "bytes": 51534,
+      "sha256": "98d2dfe98bd0b22475402c686231610345f751cd04698d43a38511a92511e292"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api35-class-only5/completion.json",
+      "bytes": 1751,
+      "sha256": "3087a9895f1583e0cfb42cba6a49deca6dc8ec82426d5b779b67b83cff262da9"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api35-class-only5-host-audit1/audit.json",
+      "bytes": 7763,
+      "sha256": "5734a3cccdb1d8f4793a4e307dbcc5665d2d1e8408b32d523f5cf570932c19b7"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api35-class-only5/operator1/diagnostic-safe/exported/candidate-layout-af77a6b6-bfb5-4b3a-be10-478912f1b5d1/result.json",
+      "bytes": 868,
+      "sha256": "e3daf297d7731d6fc84e254b0f59f58e47f6cb2f8764c948b283f839e6a656f1"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api35-class-only5/operator1/diagnostic-safe/instrumentation.stdout.txt",
+      "bytes": 1013,
+      "sha256": "dad8b49acdc2ed28e14764b9435627748303617c6e63c58652f6e0bd7fb68199"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api35-class-only5/operator1/baseline-screen.png",
+      "bytes": 53591,
+      "sha256": "5944db4882ff33b6c581ea253e21b61707f07265ace5a28a4e0b8e0549c95814"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api35-class-only5/operator1/restored-screen.png",
+      "bytes": 291613,
+      "sha256": "b1d2bb9dbcb31fb3da7a1a9a2dae98103b0d936b7e0b26c9998dcc712aad361b"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api35-class-only5-host-audit1/focus-selected-original-lines.raw.txt",
+      "bytes": 3574,
+      "sha256": "a86f541c03a79e783e6c8d89135281fd7ca33fe7d18e3e7837941c7d19c81829"
+    }
+  ]
+}

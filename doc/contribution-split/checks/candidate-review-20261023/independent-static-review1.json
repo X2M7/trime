@@ -1,0 +1,155 @@
+{
+  "schema": "trime-pr2187-independent-static-review/v1",
+  "generated_utc": "2026-10-22T23:42:18.064431+00:00",
+  "review_mode": "HOST_ONLY_STATIC_NO_ADB_VM_GRADLE_SOURCE_EDIT_OR_PUSH",
+  "verdict": "PASS_STATIC_PROBE_AND_DIAGNOSTIC_DERIVATION_WITH_EXPLICIT_RUNTIME_LIMITS",
+  "device_runtime_status": "NOT_RUN_BY_THIS_REVIEW",
+  "application_identity": {
+    "repository_worktree": "/home/xumin/Public/Trime-pr-candidate-text-layout",
+    "head": "92b13711162c5fa56c701267c3a06e5fbceeb6ce",
+    "tree": "64afb38768dee019ce136d4673996ccbe36c3784",
+    "parent": "7a45cf29c8e112a4081a5e72cb465447d847e1c1",
+    "source": {
+      "path": "/home/xumin/Public/Trime-pr-candidate-text-layout/app/src/main/java/com/osfans/trime/ime/core/AutoScaleTextView.kt",
+      "bytes": 8685,
+      "sha256": "59cf13b4b42b09acbb06f41922c2480844ffa96a7399494b565e718a4a12a05c"
+    },
+    "worktree_status_for_source": ""
+  },
+  "frozen_inputs": {
+    "candidate_probe": {
+      "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/probe-source/CandidateProbe.java",
+      "bytes": 25549,
+      "sha256": "852b57261405bbf3d10efad896d7aa750aaa5c4e82bd2f6b8af93788564d84fe"
+    },
+    "candidate_activity": {
+      "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/probe-source/CandidateActivity.java",
+      "bytes": 2724,
+      "sha256": "2d29b1aeaea42bcb1dced2b9d39788ce7f84d3a463c55f2146594ed1d23c9c93"
+    },
+    "manifest": {
+      "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/probe-source/AndroidManifest.xml",
+      "bytes": 647,
+      "sha256": "a147daa4074a0918066ca73b2f743e13ce6f93c09627fc094ffe33342c3ff535"
+    },
+    "probe_preparation_manifest": {
+      "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/probe-source/preparation-manifest.json",
+      "bytes": 872,
+      "sha256": "ed9d85403ef1c13ab4eed006f70af5209d4e407f73b1fbbd6ee2582b5851432b"
+    },
+    "diagnostic_builder": {
+      "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/diagnostic-build/build_diagnostic.py",
+      "bytes": 16266,
+      "sha256": "4b51ff0fa4549af3449933054d861195e5f159ed89c940cd59f70e4da347c21c"
+    },
+    "diagnostic_apk": {
+      "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/diagnostic-build/build3/diagnostic.apk",
+      "bytes": 668134,
+      "sha256": "4b9a6d5c2b69073f733b60b9c35bdd7f587804a522d64612725c8af801dc1539"
+    },
+    "diagnostic_source_binding": {
+      "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/diagnostic-build/build3/diagnostic-source-binding.json",
+      "bytes": 6228,
+      "sha256": "b373511316ff1e7e79dddd2e6987fada2cb360117895bc509a6c52a1fe01aad1"
+    },
+    "host_qualification_neutral_v2": {
+      "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/diagnostic-build/build3/host-qualification2.json",
+      "bytes": 3941,
+      "sha256": "33e29a100b2a694f83f8c0d7f81c09511838c4cd3f266b7254ef21f574854acf"
+    },
+    "host_build_result": {
+      "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/diagnostic-build/build3/result.json",
+      "bytes": 1760,
+      "sha256": "ec31bf76376d3954cc2f826214330319d69ae5667d018e3459428f9db6c8f7be"
+    },
+    "actual_d8_version_output": {
+      "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/diagnostic-build/build3/d8-version.stdout",
+      "bytes": 119,
+      "sha256": "cdfbe8a19db744bc25708c9b60803d6267a9d56a6060a42935986dcf438abc21"
+    }
+  },
+  "production_change_scope": {
+    "final_diff_from_parent": "dirty flags precede unconditional super.setText(nullable, bufferType); TextView super.onMeasure remains; custom measurement/scaling/drawing otherwise unchanged",
+    "final_diff_from_original_base": "removes the private shadow text/getText override, forwards TextView setText and adds TextView onMeasure synchronization",
+    "onLayout_scope": "No final PR net onLayout change versus base: 92b137 removes only the super.onLayout call temporarily added by 7a45.",
+    "scope_expanded_by_92b137_relative_to_base": false
+  },
+  "three_variant_derivation": {
+    "qualified_static": true,
+    "variants": {
+      "safe": {
+        "className": "org.x2m7.trime.diagnostic.safe.AutoScaleTextView",
+        "sourceSha256": "08c375a4d475c143b2b3e0bfbf8bc35ee50ea494de5543b18303cd0d31444f4d",
+        "sourceChangeBeyondPackage": "none",
+        "diffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "equal_return": {
+        "className": "org.x2m7.trime.diagnostic.equal_return.AutoScaleTextView",
+        "sourceSha256": "d6007069c4830bdcd847c4984d131cbad715987e2750fa78bb926690b6bf6ae6",
+        "sourceChangeBeyondPackage": "literal review comment 4350112633 setter",
+        "diffSha256": "6abc69fc292680c98f9bc354ab2a30371a3a7f2443340d1390d2b8cc6f14741a"
+      },
+      "no_super_measure": {
+        "className": "org.x2m7.trime.diagnostic.no_super_measure.AutoScaleTextView",
+        "sourceSha256": "75c8372386d9500d071e829b16de3ea8fd5a5aee50d52784be93d014b3ff5a3e",
+        "sourceChangeBeyondPackage": "remove exactly one super.onMeasure call",
+        "diffSha256": "ee69441ae5b3e2648cfedad75e235b924b3336df8545962203d202331305bfbe"
+      }
+    },
+    "safe": "production source with package/namespace replacement only",
+    "equal_return": "package replacement plus literal setter from review comment 4350112633 only",
+    "no_super_measure": "package replacement plus deletion of the single super.onMeasure call only",
+    "loader": "diagnostic APK own sourceDir and ClassLoader; Probe and Activity both enforce the same three-value allowlist",
+    "limit": "diagnosticClassSourceSha256 is a generated constant, not a runtime class/dex hash; runtime identity must join selected variant with exact APK SHA and embedded binding."
+  },
+  "probe_logic_review": {
+    "static_blocker_found": false,
+    "original_render_stage_count": 5,
+    "equal_content_buffer_stage_count": 6,
+    "public_granularity_stage_count": 2,
+    "total_stage_count": 13,
+    "buffer_type_reasoning": "Each requested type is applied and inspected immediately in the same main-thread transaction before accessibility-node creation. The sequences cover NORMAL, NORMAL-to-SPANNABLE, NORMAL-to-SPANNABLE-to-EDITABLE, return to NORMAL, repeated NORMAL and repeated SPANNABLE.",
+    "granularity_reasoning": "Uses public View.performAccessibilityAction with advertised NEXT/PREVIOUS LINE actions and requires selection 0 to 2 to 0. It is not TalkBack-service or binder-node routing evidence.",
+    "draw_reasoning": "OnDraw plus one-second settle and hardware/software captures are useful, but ink is only a coarse visibility oracle and cannot identify the exact glyph by itself."
+  },
+  "negative_control_adjudication": {
+    "equal_return": "Do not predeclare an exact failure count. A valid contrast requires at least one same-content buffer transition where diagnostic actual has the wrong immediate type while framework reference passes. If equal_return passes all 13 stages on an API, the early-return difference is not demonstrated there.",
+    "no_super_measure": "No failure is presumed. A layout/granularity failure with framework reference passing supports the need for super.onMeasure. A 13/13 pass means this configuration did not distinguish it and cannot be cited as proof of necessity."
+  },
+  "host_build3": {
+    "qualified_static": true,
+    "apk_sha256": "4b9a6d5c2b69073f733b60b9c35bdd7f587804a522d64612725c8af801dc1539",
+    "apk_bytes": 668134,
+    "source_binding_sha256": "b373511316ff1e7e79dddd2e6987fada2cb360117895bc509a6c52a1fe01aad1",
+    "all_35_host_checks_true": true,
+    "all_ten_stderr_empty": true,
+    "actual_d8_version": "9.4.24",
+    "diagnostic_builder_coordinate": "com.android.tools.build:builder:9.4.1",
+    "pr_agp_version": "9.3.0",
+    "same_agp_toolchain_as_pr": false,
+    "toolchain_limit": "The common 9.4.1/D8 9.4.24 toolchain is traceable for A/B/C source comparison. It is not the PR production AGP toolchain; production acceptance requires original CI APK evidence.",
+    "rejected_build2": "OUT_OF_SCOPE_INPUT_RETAINED; not used by this qualification"
+  },
+  "legacy_label_limit": {
+    "fact": "Generated diagnostic stages retain legacy JSON key and on-screen text containing production for oracle compatibility even though the left view is a namespaced diagnostic copy.",
+    "required_wording": "Every publication or image mapping must say legacy production label means namespaced diagnostic variant and must retain notProductionApk=true."
+  },
+  "hardcoded_statement_limit": "nativeOrTrimeApplicationStartedByProbe=false is a code literal, not observed process evidence. Any no-start claim requires external phase-bounded process and log records.",
+  "required_runtime_qualification": [
+    "Bind exact installed APK SHA, embedded binding SHA, selected variant, PID/start identity, instrumentation return status and raw report for every run.",
+    "Require exactly 13 unique stages and bind every referenced hardware/software PNG by hash; preserve all failures and exceptions.",
+    "Visually inspect constructor empty, hanzi 你, latin ni, null empty and rebind 你 hardware frames plus their software captures; combine with exact text, framework Layout and accessibility-node text.",
+    "Use immediate mutation JSON for BufferType claims; screenshots cannot prove NORMAL/SPANNABLE/EDITABLE.",
+    "Use advertised actions, movement granularity and exact selection 0-to-2-to-0 for public granularity claims; screenshots cannot prove action dispatch.",
+    "Run the exact original CI-built 92b137 production APK separately. The namespaced safe copy cannot qualify production bytecode integration, native candidates, whole-app behavior, TalkBack, binder routing or physical-device behavior."
+  ],
+  "final_assessment": {
+    "static_probe_logic_qualified": true,
+    "static_three_variant_derivation_qualified": true,
+    "host_build3_qualified_for_nonproduction_differential": true,
+    "device_results_qualified": false,
+    "production_apk_qualified": false,
+    "negative_control_outcomes_predetermined": false,
+    "no_additional_static_execution_blocker_found": true
+  }
+}

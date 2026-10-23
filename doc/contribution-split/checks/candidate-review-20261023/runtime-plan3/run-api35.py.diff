@@ -1,0 +1,17 @@
+--- /home/xumin/Public/Trime/build/pr2187-review-20261023/runtime-plan2/run-api35.py
++++ /home/xumin/Public/Trime/build/pr2187-review-20261023/runtime-plan3/run-api35.py
+@@ -12,12 +12,12 @@
+ from runtime_common import ROOT, frozen, sdk_snapshot
+ 
+ ASSET_ROOT = Path('/home/xumin/Public/Trime/build/readiness-20261022')
+-OUT = ROOT / 'api35-class-only2'
++OUT = ROOT / 'api35-class-only3'
+ OUT.mkdir(exist_ok=True)
+ SDK = Path('/home/xumin/Public/android-toolchain/android-sdk')
+ ADB = SDK / 'platform-tools/adb'
+ SERIAL = 'emulator-5584'
+-BINDING = ROOT / 'runtime-plan2/frozen-runtime-binding.json'
++BINDING = ROOT / 'runtime-plan3/frozen-runtime-binding.json'
+ if not BINDING.is_file():
+     raise SystemExit('New source APK is UNFROZEN; do not start a VM')
+ binding = frozen(BINDING)
