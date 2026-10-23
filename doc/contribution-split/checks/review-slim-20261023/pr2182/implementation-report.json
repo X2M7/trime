@@ -1,0 +1,153 @@
+{
+  "checked_at": "2026-10-23T04:13:46.184459+00:00",
+  "worktree": "/home/xumin/Public/Trime-pr-logcat-reliability",
+  "base_head": "e8e4db837d16e00bdbc3d5ab266561ac5a99114c",
+  "working_tree_changes_uncommitted": true,
+  "pushed": false,
+  "pull_request_state_changed": false,
+  "final_patch": {
+    "path": "final-change.diff",
+    "sha256": "72dd7f261ddf7717783d3751f490da5747068b87424116555c74ce681d62e12c",
+    "files": [
+      "app/src/main/java/com/osfans/trime/daemon/RimeDaemon.kt",
+      "app/src/main/java/com/osfans/trime/ui/main/log/LogView.kt",
+      "app/src/main/java/com/osfans/trime/util/Process.kt",
+      "app/src/test/java/com/osfans/trime/util/ProcessLifecycleTest.kt"
+    ],
+    "numstat": "2\t11\tapp/src/main/java/com/osfans/trime/daemon/RimeDaemon.kt\n4\t12\tapp/src/main/java/com/osfans/trime/ui/main/log/LogView.kt\n47\t50\tapp/src/main/java/com/osfans/trime/util/Process.kt\n34\t61\tapp/src/test/java/com/osfans/trime/util/ProcessLifecycleTest.kt\n",
+    "final_source": {
+      "app/src/main/java/com/osfans/trime/daemon/RimeDaemon.kt": {
+        "sha256": "261ae16afcb56ccd8beeb3a6763ea686bc8b4fb2377b39bb5394eae5511fdf31",
+        "bytes": 7755
+      },
+      "app/src/main/java/com/osfans/trime/ui/main/log/LogView.kt": {
+        "sha256": "57315de0888c0b5f3aa18d43db09f9471ca42a74c21e9323beb06b6a4c884d86",
+        "bytes": 2817
+      },
+      "app/src/main/java/com/osfans/trime/util/Process.kt": {
+        "sha256": "e250ee44969170132d8aeedaef1d0a22055fce269859491c7828e91688256c81",
+        "bytes": 4983
+      },
+      "app/src/test/java/com/osfans/trime/util/ProcessLifecycleTest.kt": {
+        "sha256": "0c4d83f94f22c594125476584a27d86a689c0651cb47c1fd4c8fc8862b503d1c",
+        "bytes": 18625
+      }
+    }
+  },
+  "changes": [
+    "Inline LogView collection setup into its sole setLogcat caller; remove always-false job/source guards and redundant cancelled-scope precheck, preserving lifecycle-owner handling and stop/detach cleanup.",
+    "Restore public Process.asFlow/readText/readLines helpers byte-for-byte from upstream baseline; only actual Logcat consumeOutput paths receive owned-process lifecycle changes.",
+    "Replace two unconditional process releases, AtomicReference and production IdentityHashMap error graph with local releaseOnce state and a short CancellationException cause chain only. The watcher and outer finally are both retained because they cover blocked reads and cancellation before IO dispatch respectively.",
+    "Keep the original bufferedReader.use scope; it manages reader resource lifetime and adds close failures to the actual original read exception before coroutine recovery. One process destroy/release operation does not imply exactly one underlying input.close call.",
+    "Remove newly introduced arbitrary 2s clear / 5s deploy-log timeout policies and their duplicated timeout branches; keep cancellation propagation, IO-owned log collection and error fallback/diagnostics.",
+    "Retarget process tests at the actual owned consumeOutput primitive instead of the reverted generic helper behavior. Remove redundant generic flow/double-destroy cases; add cancellation-before-IO and original-read-plus-single-cleanup-failure contracts. Strengthen shared fake process destruction checks to exactly one."
+  ],
+  "required_boundaries": [
+    "A cancellation watcher must release the actual process on an independent elastic cleanup view while a read blocks, including when the normal IO dispatcher has parallelism one.",
+    "The outer finally must also own a process created immediately before cancellation prevents the IO reader from starting.",
+    "releaseOnce marks state before suspending. withContext(IO) structurally waits for its watcher child before the outer finally; limitedParallelism(1) alone is not a mutex spanning suspensions.",
+    "The NonCancellable job boundary must surround the dispatcher switch and its return, so a cancelled caller cannot skip diagnostic attachment on a normal cross-dispatch return.",
+    "With assertions/debug recovery enabled, the short CancellationException cause restoration is necessary to attach cleanup failure to the stable original cancellation seen by async.await.",
+    "Actual process release still attempts other stream closes after a destroy/getter/close failure and observes child exit with the existing bounded cooperative wait.",
+    "Keep subscriber-before-producer ordering, stale job identity checks, API21 short command/PID-column/LF framing behavior, display/pending capacity budgets and explicit export omission notice."
+  ],
+  "verification": {
+    "host5": {
+      "path": "host5/result.json",
+      "sha256": "dbbab88aef6f2c0c99f87ce7cbe2ac4ecdc8b838bc055325303fa8203427fe0c",
+      "assertions_enabled": true,
+      "kotlin": "2.3.21",
+      "jvm_target": 11,
+      "compiler_werror": true,
+      "focused_tests": 46,
+      "successful": 46,
+      "failed": 0,
+      "skipped": 0,
+      "process_tests": 13,
+      "logcat_tests": 17,
+      "buffer_tests": 16,
+      "freshly_compiled": true,
+      "compiler_stderr_bytes": 0,
+      "launcher_stderr_bytes": 0,
+      "test_stderr_bytes": 0,
+      "source_bytes_unchanged_after_tests": true
+    },
+    "ktlint": {
+      "version": "1.8.0",
+      "path": "ktlint-command.json",
+      "sha256": "60276665f02c01251be1600eb34e1b5f5d9c9e3eb04f81bbe5e6c8af63c97195",
+      "exit": 0,
+      "stdout_bytes": 0,
+      "stderr_bytes": 0
+    },
+    "git_diff_check": {
+      "path": "diff-check-command.json",
+      "exit": 0
+    },
+    "negative_controls": {
+      "default_assertions": "cancel-diagnostic1/result.json",
+      "assertions_enabled": "cancel-diagnostic1/assertions-enabled-result.json",
+      "source_identity_and_actual_exception_graphs_saved": true,
+      "default_results": {
+        "host1_original": 1,
+        "fixed_return_no_cause_restore": 0,
+        "fixed_return_with_cause_restore": 0
+      },
+      "ea_results": {
+        "host1_original": 1,
+        "fixed_return_no_cause_restore": 1,
+        "fixed_return_with_cause_restore": 0
+      },
+      "notes": "Diagnostic source variants precede restoration of the preexisting reader.use statement. Exact final host5 source separately passes the same strict caught-exception graph contract and original read/close contract."
+    }
+  },
+  "failed_rounds_and_corrected_interpretation": [
+    {
+      "round": "host1",
+      "tests": 45,
+      "passed": 44,
+      "failed": 1,
+      "correction": "The early result.json explanation about recovery copies alone was a preliminary hypothesis. Subsequent full-graph negative control proves diagnostics are absent; prompt cancellation on the normal releaseOnce cross-dispatch return prevents attachment. Original raw files/result bytes remain unchanged."
+    },
+    {
+      "round": "host2",
+      "tests": 46,
+      "passed": 45,
+      "failed": 1,
+      "correction": "The shortened direct-suppressed assertion could miss a recovered cleanup cause, so no unique root cause was inferred from this round."
+    },
+    {
+      "round": "host3",
+      "tests": 46,
+      "passed": 45,
+      "failed": 1,
+      "correction": "Restoring the original full actual-exception graph still failed, eliminating the shortened-test explanation. Return-boundary fix and assertions-enabled negative controls distinguish both necessary production mechanisms."
+    },
+    {
+      "round": "host4",
+      "tests": 46,
+      "passed": 45,
+      "failed": 1,
+      "correction": "Assertions-enabled tests then exposed loss of the preexisting original-read-plus-close guarantee after reader.use was removed. Restoring that original standard resource scope made the unchanged original assertion pass in host5."
+    }
+  ],
+  "limits": [
+    "Host-only focused tests with R/errorState fixtures and the actual Timber JVM classes. RimeDaemon and LogView whole Android compilation/runtime are not claimed by this host run.",
+    "No Gradle build, APK build, Android emulator, real device, TalkBack, native build, general application or whole-system zero-warning acceptance in this subtask.",
+    "Historical e8e4db83 full test/device results remain historical and are not relabeled as validation of this uncommitted source."
+  ],
+  "evidence_artifact_sha256": {
+    "host5/inputs.json": "d95786f0d5d178938221a645a2a1f1b37007bfeb87f7d53dc60f644f5148c0db",
+    "host5/commands.json": "9c4cf9cebc72487146bc10d2883e97445cf725609e2980f955cb41eea4847b51",
+    "host5/compile.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "host5/compile.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "host5/launcher-compile.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "host5/launcher-compile.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "host5/tests.stdout": "2798355c8b9335d526650a8be5169558afd0219c1ded69220d8973f913fd774a",
+    "host5/tests.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "cancel-diagnostic1/result.json": "cd0a73a79172da8d61162de90f1870d43c7019a325e31cc0327bf696b17d6da9",
+    "cancel-diagnostic1/assertions-enabled-result.json": "4d3742fda649d32c53d1a68ceb493a3db8d0e12287a0b6a27bcb913856c3d525",
+    "run_host_tests.py": "bebea72e5509bcdeb1c4a0f9e4f2ef6de943ede8e4be04b68e70b0d12ddb975c",
+    "diagnose_cancel.py": "11450e33e18de1b8e1e61d76980e2ddaf1e517f9e11ef6fed0bed31edb112a86"
+  }
+}

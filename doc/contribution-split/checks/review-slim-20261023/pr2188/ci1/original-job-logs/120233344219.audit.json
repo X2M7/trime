@@ -1,0 +1,80 @@
+{
+  "job": {
+    "id": 120233344219,
+    "name": "build (ubuntu-26.04)",
+    "status": "completed",
+    "conclusion": "success",
+    "started_at": "2026-10-23T04:02:28Z",
+    "completed_at": "2026-10-23T04:05:45Z"
+  },
+  "raw_file": "original-job-logs/120233344219.stdout",
+  "bytes": 280537,
+  "sha256": "646c372f4323befdef9efa05dfb52ffd1e4dc083dd24f4fc0800b69ebe41739e",
+  "escape_sequences_preserved": true,
+  "expected_reviewed_head": "e009dc0b567f9639cf518bc3b35cd172ac627be7",
+  "actual_checkout_merge": "66ebea7c04dab06db9074790331f33687353fdd3",
+  "merge_parents": [
+    "19b048494ffa55cae52d5385dfa6d0611461c27d",
+    "e009dc0b567f9639cf518bc3b35cd172ac627be7"
+  ],
+  "checkout_context": [
+    {
+      "line": 433,
+      "command": "2026-10-23T04:02:53.7099547Z [command]/usr/bin/git log -1 --format=%H",
+      "next_lines": [
+        "2026-10-23T04:02:53.7153371Z 66ebea7c04dab06db9074790331f33687353fdd3",
+        "2026-10-23T04:02:53.7390513Z ##[group]Run echo ${GITHUB_REF#refs/*/}",
+        "2026-10-23T04:02:53.7390917Z \u001b[36;1mecho ${GITHUB_REF#refs/*/}\u001b[0m"
+      ],
+      "sha_candidates": [
+        "66ebea7c04dab06db9074790331f33687353fdd3"
+      ]
+    }
+  ],
+  "app_task_lines": [
+    {
+      "line": 1725,
+      "text": "2026-10-23T04:04:27.3083865Z > Task :app:checkDebugDuplicateClasses"
+    },
+    {
+      "line": 1729,
+      "text": "2026-10-23T04:04:29.2063894Z > Task :app:checkDebugAarMetadata"
+    }
+  ],
+  "warning_candidate_lines": [
+    {
+      "line": 90,
+      "text": "2026-10-23T04:02:31.0436458Z hint: to use in all of your new repositories, which will suppress this warning,"
+    },
+    {
+      "line": 526,
+      "text": "2026-10-23T04:03:07.9992136Z WARNING: The SDK Manager CLI tool (sdkmanager) is deprecated. Use Android CLI instead."
+    },
+    {
+      "line": 1466,
+      "text": "2026-10-23T04:03:13.1702859Z WARNING: The SDK Manager CLI tool (sdkmanager) is deprecated. Use Android CLI instead."
+    },
+    {
+      "line": 1498,
+      "text": "2026-10-23T04:03:14.9465399Z WARNING: The SDK Manager CLI tool (sdkmanager) is deprecated. Use Android CLI instead."
+    },
+    {
+      "line": 1648,
+      "text": "2026-10-23T04:04:09.1482993Z Deprecated Gradle features were used in this build, making it incompatible with Gradle 10."
+    },
+    {
+      "line": 1650,
+      "text": "2026-10-23T04:04:09.1485044Z You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins."
+    },
+    {
+      "line": 1762,
+      "text": "2026-10-23T04:05:37.9948360Z Deprecated Gradle features were used in this build, making it incompatible with Gradle 10."
+    },
+    {
+      "line": 1764,
+      "text": "2026-10-23T04:05:37.9974465Z You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins."
+    }
+  ],
+  "warning_candidate_count": 8,
+  "warning_scope": "Raw mechanically matching lines, including summaries and repeats; not a count of distinct defects. Not zero-warning qualification."
+}

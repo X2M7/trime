@@ -1,0 +1,125 @@
+{
+  "schema": "trime-pr2186-review-slim/v1",
+  "finished_utc": "2026-10-23T03:58:33.373753+00:00",
+  "head_unchanged": "e16ab85f495e5bbf353187c29efbff74526cff9c",
+  "not_committed": true,
+  "not_pushed": true,
+  "source_diff": {
+    "path": "/home/xumin/Public/Trime/build/review-slim-20261023/pr2186/review-slim.diff",
+    "bytes": 2117,
+    "sha256": "eaf09676acd307f4b88ddd44d484178ebc4ae70b9953f75ef79ffc427edec424"
+  },
+  "git_diff_check_exit": 0,
+  "changed_paths": [
+    "app/src/main/jni/librime_jni/jni-utils.h",
+    "app/src/main/jni/librime_jni/key.cc",
+    "app/src/main/jni/librime_jni/objconv.h"
+  ],
+  "diff_summary": {
+    "files": 3,
+    "insertions": 4,
+    "deletions": 5
+  },
+  "source_after": {
+    "app/src/main/jni/librime_jni/jni-utils.h": {
+      "path": "/home/xumin/Public/Trime/build/review-slim-20261023/pr2186/after/app/src/main/jni/librime_jni/jni-utils.h",
+      "bytes": 9209,
+      "sha256": "c0dc433bce8ab46031e8890a2cfe72e1bfaf2f456442e57905fa38ba9529f868"
+    },
+    "app/src/main/jni/librime_jni/key.cc": {
+      "path": "/home/xumin/Public/Trime/build/review-slim-20261023/pr2186/after/app/src/main/jni/librime_jni/key.cc",
+      "bytes": 1403,
+      "sha256": "7851625bd06e7fcc3df2fbcd1c54b808445bb2674d4c8a69c4a4f01296316a8f"
+    },
+    "app/src/main/jni/librime_jni/objconv.h": {
+      "path": "/home/xumin/Public/Trime/build/review-slim-20261023/pr2186/after/app/src/main/jni/librime_jni/objconv.h",
+      "bytes": 5531,
+      "sha256": "df498e3cd85638cd45e5e2a427ef73fa5bc0fa306046870f2f176ddd9d80da6d"
+    }
+  },
+  "changes": [
+    "Use checked utf8to16 once on normal path; only malformed Unicode triggers normalization fallback, clearing partially converted prefix before retry.",
+    "Remove only exception checks after GetStringLength/GetArrayLength and the redundant check when key description is already null-checked."
+  ],
+  "unchanged_required_boundaries": [
+    "CString failure checks before Rime/OpenCC/setenv side effects",
+    "GetStringChars null/error handling and release on all existing paths",
+    "Original pending Java exception identity guards",
+    "Existing strict-warning fixes and all tests"
+  ],
+  "tests": [
+    {
+      "group": "unicode-test1",
+      "actual_fixed_assertions": 115,
+      "fixed_compilation_and_run_exit": 0,
+      "fixed_stderr_bytes": 0,
+      "upstream_baseline_compilation_exit": 0,
+      "upstream_baseline_actual_run_exit": 1,
+      "upstream_baseline_failure": "standard UTF-8 becomes expected UTF-16"
+    },
+    {
+      "group": "utf16-offsets-test1",
+      "actual_fixed_assertions": 46,
+      "fixed_compilation_and_run_exit": 0,
+      "fixed_stderr_bytes": 0,
+      "upstream_baseline_compilation_exit": 0,
+      "upstream_baseline_actual_run_exit": 1,
+      "upstream_baseline_failure": "composition length matches Java UTF-16 length"
+    }
+  ],
+  "native_compile": {
+    "all_six_passed": true,
+    "actual_exit": 0,
+    "logs_bytes": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "target": "x86_64-none-linux-android21",
+    "strict_flags": [
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-Wno-unused-parameter"
+    ],
+    "result": {
+      "path": "/home/xumin/Public/Trime/build/review-slim-20261023/pr2186/ndk-strict1/result.json",
+      "bytes": 29228,
+      "sha256": "68197938f57b0860087a6db20bb2cf8e02da5fa3655efea6c99792fd2536154d"
+    }
+  },
+  "memory": {
+    "floor_kib": 1048576,
+    "minimum_mem_available_kib": 6879384,
+    "floor_triggered": false
+  },
+  "new_tests_added": false,
+  "why_no_new_tests": "Existing five malformed UTF-8 outgoing cases all contain valid prefix a; they detect failure to clear partial conversion before retry and cover invalid/truncated/overlong/surrogate/out-of-range sequences. Existing pending, null, arrays, Java lone-surrogates and explicit UTF16 offsets remain unchanged.",
+  "limits": [
+    "Native production source is current uncommitted worktree, bound by SHA per file, not a clean committed build.",
+    "Real host checked JVM tests, not Android ART/device session.",
+    "All six NDK translation units compiled for Android API21/x86_64 only; no link/package/ABI installation/runtime acceptance.",
+    "No Gradle, emulator, release, full application tests, push, comment or PR state change.",
+    "Source tests use existing library and pinned headers; no claim that all dependency warnings disappear."
+  ],
+  "command_records": [
+    {
+      "path": "/home/xumin/Public/Trime/build/review-slim-20261023/pr2186/host-commands.json",
+      "bytes": 1716,
+      "sha256": "f0f5cf7bd9fea833cde6a0c16edcb81c54ffacc2cd16dcfdeccbf89b27a14c78"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/review-slim-20261023/pr2186/ndk-command.json",
+      "bytes": 573,
+      "sha256": "f271e5a2dcdfb491dcb622b304f06effeb5f7f3266c950c937555c37ee44fa34"
+    }
+  ],
+  "preflight_directory_collision_retained": {
+    "path": "/home/xumin/Public/Trime/build/review-slim-20261023/pr2186/preflight-original-failure.txt",
+    "bytes": 317,
+    "sha256": "22af9d70fd5b421d004d346b04d84246aa5ebae71dd6c00dd936a410db9c3dbf"
+  }
+}

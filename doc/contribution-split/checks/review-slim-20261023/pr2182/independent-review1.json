@@ -1,0 +1,69 @@
+{
+  "schema": "trime-pr2182-independent-slim-review/v1",
+  "reviewed_utc": "2026-10-23T04:00:42.129118+00:00",
+  "read_only": true,
+  "new_tests_builds_devices": false,
+  "source_head": "e8e4db837d16e00bdbc3d5ab266561ac5a99114c",
+  "diff_sha256": "375225a64b1205043c48cecb95bc927c565b787f1949ba1cfb1c29d3b0d5e9b3",
+  "diff_bytes": 20958,
+  "changed_files": {
+    "app/src/main/java/com/osfans/trime/daemon/RimeDaemon.kt": "261ae16afcb56ccd8beeb3a6763ea686bc8b4fb2377b39bb5394eae5511fdf31",
+    "app/src/main/java/com/osfans/trime/ui/main/log/LogView.kt": "57315de0888c0b5f3aa18d43db09f9471ca42a74c21e9323beb06b6a4c884d86",
+    "app/src/main/java/com/osfans/trime/util/Process.kt": "9dbaee87e8d9044041752d8e306faea047c392b082995095935b95850300837a",
+    "app/src/test/java/com/osfans/trime/util/ProcessLifecycleTest.kt": "a769179aac7edbfcf0ed674ab052dab85da7a7bfeae8c5b8385258b6a8ccbc23"
+  },
+  "static_findings": [
+    {
+      "component": "Process.consumeOutput / releaseOnce",
+      "decision": "No proven duplicate-cleanup race in current two call sites",
+      "detail": "limitedParallelism(1) is not a mutex across suspension. Safety instead depends on the watcher being a structured child of withContext(IO), with the outer finally reached only after that child has completed its NonCancellable cleanup; released is set before the first cleanup suspension. Other processes may interleave on cleanup dispatcher but do not share these local flags. Do not reuse this reasoning if additional unstructured callers are introduced."
+    },
+    {
+      "component": "Process.consumeOutput cancellation-before-IO",
+      "decision": "Retained ownership",
+      "detail": "If caller is cancelled before entry to IO block or reader construction fails before its child starts, the outer finally still invokes NonCancellable releaseOnce. If watcher was installed, parent waits for it before second release attempt."
+    },
+    {
+      "component": "Process.releaseProcess",
+      "decision": "Retains important release ordering",
+      "detail": "destroy then independently attempt all three descriptor closes, collect ordinary Exceptions, awaitExit yields rather than blocking worker and has retained 1s stop deadline. An elastic cleanup view can run even if base IO parallelism=1; this does not establish arbitrary platform stream or VM Error behavior."
+    },
+    {
+      "component": "Process.consumeOutput cleanup error suppression",
+      "decision": "Needs actual targeted test result before approval",
+      "detail": "Attaching cleanupFailure to failure returned across withContext may attach it to a stack-recovered CancellationException copy instead of the stable original held by the cancelled Job. Previous code followed CancellationException causes. Existing cancellation/destroyFailure regression must pass unchanged semantically; do not remove/relax assertion to hide a failure. Writer and root notified."
+    },
+    {
+      "component": "LogView.setLogcat",
+      "decision": "No new static defect found in current call path",
+      "detail": "setLogcat cancels prior subscription and shutdown clears previous emitter slot before new collect starts; collectLines finally owns old streaming reference, so late old completion does not cancel a new emitter. Lifecycle main-thread subscription still owns append calls; no unsupported reattach restart logic was added. Existing source identity guard in emittingJob finalizer remains."
+    },
+    {
+      "component": "RimeDaemon removed 2s/5s wrappers",
+      "decision": "Simplifies timeout policy; bounded completion no longer promised",
+      "detail": "Normal logcat -c/-d commands should finish and retain exit/failure reporting. If a child never closes stdout/exits, clearLogAndWait/readDeployLog can suspend indefinitely until caller cancellation; sequential daemon message collection then delays later deploy notifications. withContext IO avoids doing the pipe read on UI, but does not itself impose a deadline. This is a limitation of deliberately removing extra hardening, not evidence of a new observed hang."
+    },
+    {
+      "component": "Restored generic Process.asFlow/readText/readLines",
+      "decision": "Scope intentionally reduced",
+      "detail": "These generic helpers return to original ownership semantics and do not use consumeOutput. Only Logcat-owned processes have the new lifecycle guarantee. Do not state all Process utility paths now close/destroy children."
+    }
+  ],
+  "test_cases_read": [
+    "owned output releases process exactly once",
+    "cancel before IO reader starts",
+    "read failure remains primary",
+    "destroy failure reported after all streams close without retry",
+    "blocked fake pipe cancellation",
+    "blocked pipe close when destroy fails",
+    "cancel while awaitExit suspended",
+    "isolated IO.parallelism=1 without rescue",
+    "failed stdout getter/close does not skip other streams",
+    "real JVM child pipe cancellation and observed exit",
+    "Logcat stop during process creation and new stream identity",
+    "Logcat snapshot/deploy/live failures and first-line delivery"
+  ],
+  "runtime_status": "No test run by independent reviewer; writer is currently running real host checks. Final qualification must bind those command results to unchanged diff.",
+  "approval": "conditional-on-cancellation-suppression-and-real-pipe-host-tests; no proven static blocking defect established yet",
+  "mutations": []
+}

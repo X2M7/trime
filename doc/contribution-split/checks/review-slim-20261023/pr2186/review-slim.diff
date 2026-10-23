@@ -1,0 +1,50 @@
+diff --git a/app/src/main/jni/librime_jni/jni-utils.h b/app/src/main/jni/librime_jni/jni-utils.h
+index 3636b05c..de0a80a4 100644
+--- a/app/src/main/jni/librime_jni/jni-utils.h
++++ b/app/src/main/jni/librime_jni/jni-utils.h
+@@ -17,9 +17,10 @@
+ static inline jstring makeJavaString(JNIEnv* env, std::string_view text) {
+   if (env->ExceptionCheck()) return nullptr;
+   std::u16string result;
+-  if (utf8::is_valid(text.begin(), text.end())) {
++  try {
+     utf8::utf8to16(text.begin(), text.end(), std::back_inserter(result));
+-  } else {
++  } catch (const utf8::exception&) {
++    result.clear();
+     std::string normalized;
+     utf8::replace_invalid(text.begin(), text.end(),
+                           std::back_inserter(normalized));
+@@ -62,7 +63,6 @@ class CString {
+       return;
+     }
+     auto size = env->GetStringLength(str);
+-    if (env->ExceptionCheck()) return;
+     auto chars = env->GetStringChars(str, nullptr);
+     if (!chars) {
+       if (!env->ExceptionCheck())
+diff --git a/app/src/main/jni/librime_jni/key.cc b/app/src/main/jni/librime_jni/key.cc
+index 6954a280..07b3a7c5 100644
+--- a/app/src/main/jni/librime_jni/key.cc
++++ b/app/src/main/jni/librime_jni/key.cc
+@@ -14,7 +14,7 @@ Java_com_osfans_trime_core_RimeKeyEvent_parse(JNIEnv* env, jclass clazz,
+   rime::KeyEvent ke;
+   ke.Parse(*text);
+   JString description(env, ke.repr());
+-  if (!*description || env->ExceptionCheck()) return nullptr;
++  if (!*description) return nullptr;
+   return env->NewObject(GlobalRef->KeyEvent, GlobalRef->KeyEventInit,
+                         ke.keycode(), ke.modifier(), *description);
+ }
+diff --git a/app/src/main/jni/librime_jni/objconv.h b/app/src/main/jni/librime_jni/objconv.h
+index 6d796ee0..4ad98d73 100644
+--- a/app/src/main/jni/librime_jni/objconv.h
++++ b/app/src/main/jni/librime_jni/objconv.h
+@@ -36,7 +36,6 @@ inline std::vector<std::string> stringArrayToStringVector(JNIEnv* env,
+     return {};
+   }
+   auto length = env->GetArrayLength(array);
+-  if (env->ExceptionCheck()) return {};
+   std::vector<std::string> result;
+   result.reserve(length);
+   for (int i = 0; i < length; ++i) {

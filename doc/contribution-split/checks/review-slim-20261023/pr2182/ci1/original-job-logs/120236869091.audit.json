@@ -1,0 +1,104 @@
+{
+  "job": {
+    "id": 120236869091,
+    "name": "check / lint-and-test",
+    "status": "completed",
+    "conclusion": "success",
+    "started_at": "2026-10-23T04:14:49Z",
+    "completed_at": "2026-10-23T04:19:38Z"
+  },
+  "raw_file": "original-job-logs/120236869091.stdout",
+  "bytes": 263531,
+  "sha256": "bec45fdce28c1b760d85fae8a2295e5700e3b5fe95e646e6f6f54b2aee2c0662",
+  "escape_sequences_preserved": true,
+  "expected_reviewed_head": "ec0b81460b9b65d70f6797ac0c1f6d685af64d22",
+  "actual_checkout_merge": "0ae20751b7cc4de626913e08e658780d5800bef1",
+  "merge_parents": [
+    "19b048494ffa55cae52d5385dfa6d0611461c27d",
+    "ec0b81460b9b65d70f6797ac0c1f6d685af64d22"
+  ],
+  "checkout_context": [
+    {
+      "line": 427,
+      "command": "2026-10-23T04:15:10.8660311Z [command]/usr/bin/git log -1 --format=%H",
+      "next_lines": [
+        "2026-10-23T04:15:10.8691097Z 0ae20751b7cc4de626913e08e658780d5800bef1",
+        "2026-10-23T04:15:10.9028738Z ##[group]Run actions/setup-java@v6",
+        "2026-10-23T04:15:10.9029049Z with:"
+      ],
+      "sha_candidates": [
+        "0ae20751b7cc4de626913e08e658780d5800bef1"
+      ]
+    }
+  ],
+  "app_task_lines": [
+    {
+      "line": 1564,
+      "text": "2026-10-23T04:16:42.0473313Z > Task :app:checkDebugAarMetadata"
+    },
+    {
+      "line": 1593,
+      "text": "2026-10-23T04:18:10.5449295Z > Task :app:lintAnalyzeDebugAndroidTest"
+    },
+    {
+      "line": 1598,
+      "text": "2026-10-23T04:18:20.7433510Z > Task :app:lintAnalyzeDebug"
+    },
+    {
+      "line": 1599,
+      "text": "2026-10-23T04:18:27.7440251Z > Task :app:lintAnalyzeDebugUnitTest"
+    },
+    {
+      "line": 1600,
+      "text": "2026-10-23T04:18:31.6447401Z > Task :app:testDebugUnitTest"
+    },
+    {
+      "line": 1603,
+      "text": "2026-10-23T04:19:35.9453771Z > Task :app:lintReportDebug"
+    },
+    {
+      "line": 1607,
+      "text": "2026-10-23T04:19:35.9563704Z > Task :app:lintDebug"
+    },
+    {
+      "line": 1608,
+      "text": "2026-10-23T04:19:35.9627529Z > Task :app:lint"
+    },
+    {
+      "line": 1609,
+      "text": "2026-10-23T04:19:35.9636022Z > Task :app:check"
+    }
+  ],
+  "warning_candidate_lines": [
+    {
+      "line": 88,
+      "text": "2026-10-23T04:14:51.0356050Z hint: to use in all of your new repositories, which will suppress this warning,"
+    },
+    {
+      "line": 502,
+      "text": "2026-10-23T04:15:22.8673318Z WARNING: The SDK Manager CLI tool (sdkmanager) is deprecated. Use Android CLI instead."
+    },
+    {
+      "line": 1442,
+      "text": "2026-10-23T04:15:30.3336488Z WARNING: The SDK Manager CLI tool (sdkmanager) is deprecated. Use Android CLI instead."
+    },
+    {
+      "line": 1507,
+      "text": "2026-10-23T04:16:28.1837803Z Deprecated Gradle features were used in this build, making it incompatible with Gradle 10."
+    },
+    {
+      "line": 1509,
+      "text": "2026-10-23T04:16:28.1840049Z You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins."
+    },
+    {
+      "line": 1613,
+      "text": "2026-10-23T04:19:36.0285177Z Deprecated Gradle features were used in this build, making it incompatible with Gradle 10."
+    },
+    {
+      "line": 1615,
+      "text": "2026-10-23T04:19:36.0290159Z You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins."
+    }
+  ],
+  "warning_candidate_count": 7,
+  "warning_scope": "Raw mechanically matching lines, including summaries and repeats; not a count of distinct defects. Not zero-warning qualification."
+}

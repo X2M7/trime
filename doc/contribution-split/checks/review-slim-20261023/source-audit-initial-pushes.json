@@ -1,0 +1,919 @@
+{
+  "schema": "trime-review-slim-final-source-audit/v1",
+  "created_utc": "2026-10-23T04:16:47.674520+00:00",
+  "read_only_source_audit": true,
+  "all_local_checks_passed": true,
+  "blocking_defects_found": [],
+  "commits": [
+    {
+      "pr": 2188,
+      "worktree": "/home/xumin/Public/Trime-pr-deferred-input-view",
+      "head": "e009dc0b567f9639cf518bc3b35cd172ac627be7",
+      "single_parent": "2d2fbce70b449ec8b6560c844ca5ddbc2e08a4c3",
+      "subject": "refactor(ime): simplify deferred view state handling",
+      "conventional_commit": true,
+      "git_clean_including_untracked": true,
+      "only_expected_paths": [
+        "app/src/main/java/com/osfans/trime/ime/core/TrimeInputMethodService.kt"
+      ],
+      "no_fork_configuration_or_extra_paths": true,
+      "source": {
+        "app/src/main/java/com/osfans/trime/ime/core/TrimeInputMethodService.kt": {
+          "bytes": 40599,
+          "sha256": "1556d4fd121d41154df66a4e0332185c8279b253f348b81054ead0fcea0653c5",
+          "git_blob": "5cc0e29df77926306c401fb338a1fd0967500f23"
+        }
+      },
+      "exact_qualified_patch_sha256": "a7647f9d59d05e35a174032d9d71e6540775dbd25fe7d4ca1a061972e3cde25d",
+      "source_qualification_matched": true,
+      "validation": {
+        "evidence": {
+          "path": "/home/xumin/Public/Trime/build/review-slim-20261023/pr2188/result.json",
+          "bytes": 3282,
+          "sha256": "9dd93c82c5ad70cdcc367bff3aeee8f156de280bc52db8c9945f8435c74f595e"
+        },
+        "kind": "source equivalence and one-file ktlint only",
+        "ktlint_exit": 0,
+        "new_app_compile": false,
+        "new_runtime": false
+      },
+      "existing_normal_push_receipt": {
+        "path": "/home/xumin/Public/Trime/build/review-slim-20261023/pr2188/source-push1/receipt.json",
+        "bytes": 487,
+        "sha256": "f088715e82cd75aebc978b7bb9a9cb1f81f34c3750f6e061503a6c062cbee3a6"
+      },
+      "remote_scope": "Only local existing receipt read; no remote or network operation performed by this audit"
+    },
+    {
+      "pr": 2186,
+      "worktree": "/home/xumin/Public/Trime-pr-jni-unicode-transport",
+      "head": "2ad1865fd97f09ffba231e5c0e23092cd383b059",
+      "single_parent": "e16ab85f495e5bbf353187c29efbff74526cff9c",
+      "subject": "refactor(jni): remove redundant conversion guards",
+      "conventional_commit": true,
+      "git_clean_including_untracked": true,
+      "only_expected_paths": [
+        "app/src/main/jni/librime_jni/jni-utils.h",
+        "app/src/main/jni/librime_jni/key.cc",
+        "app/src/main/jni/librime_jni/objconv.h"
+      ],
+      "no_fork_configuration_or_extra_paths": true,
+      "source": {
+        "app/src/main/jni/librime_jni/jni-utils.h": {
+          "bytes": 9209,
+          "sha256": "c0dc433bce8ab46031e8890a2cfe72e1bfaf2f456442e57905fa38ba9529f868",
+          "git_blob": "de0a80a4a24f7e956c4a8721ee5f8cbb58452ab9"
+        },
+        "app/src/main/jni/librime_jni/key.cc": {
+          "bytes": 1403,
+          "sha256": "7851625bd06e7fcc3df2fbcd1c54b808445bb2674d4c8a69c4a4f01296316a8f",
+          "git_blob": "07b3a7c5c730294542b7f5ed4b1d55035bbe8e88"
+        },
+        "app/src/main/jni/librime_jni/objconv.h": {
+          "bytes": 5531,
+          "sha256": "df498e3cd85638cd45e5e2a427ef73fa5bc0fa306046870f2f176ddd9d80da6d",
+          "git_blob": "4ad98d738b4404fa80999c72d13dba521b5ceddd"
+        }
+      },
+      "exact_qualified_patch_sha256": "eaf09676acd307f4b88ddd44d484178ebc4ae70b9953f75ef79ffc427edec424",
+      "source_qualification_matched": true,
+      "validation": {
+        "evidence": {
+          "path": "/home/xumin/Public/Trime/build/review-slim-20261023/pr2186/result.json",
+          "bytes": 5099,
+          "sha256": "d4302000d9c7c4507a6db6eb1952ff02d2e623861ce4a78619b729485bc14d70"
+        },
+        "kind": "real checked-JVM Unicode and UTF16 positions plus six compile-only NDK units",
+        "unicode_assertions": 115,
+        "utf16_position_assertions": 46,
+        "two_upstream_expected_failure_controls": true,
+        "ndk_compile_units_passed": 6,
+        "new_app_compile": false,
+        "new_runtime": false
+      },
+      "existing_normal_push_receipt": {
+        "path": "/home/xumin/Public/Trime/build/review-slim-20261023/pr2186/source-push1/receipt.json",
+        "bytes": 827,
+        "sha256": "2954c7b61f18154c30d37859bc73a8848f5688aa0ae182ffb37d287f7425c4ba"
+      },
+      "remote_scope": "Only local existing receipt read; no remote or network operation performed by this audit"
+    },
+    {
+      "pr": 2182,
+      "worktree": "/home/xumin/Public/Trime-pr-logcat-reliability",
+      "head": "ec0b81460b9b65d70f6797ac0c1f6d685af64d22",
+      "single_parent": "e8e4db837d16e00bdbc3d5ab266561ac5a99114c",
+      "subject": "refactor(log): simplify process cleanup ownership",
+      "conventional_commit": true,
+      "git_clean_including_untracked": true,
+      "only_expected_paths": [
+        "app/src/main/java/com/osfans/trime/daemon/RimeDaemon.kt",
+        "app/src/main/java/com/osfans/trime/ui/main/log/LogView.kt",
+        "app/src/main/java/com/osfans/trime/util/Process.kt",
+        "app/src/test/java/com/osfans/trime/util/ProcessLifecycleTest.kt"
+      ],
+      "no_fork_configuration_or_extra_paths": true,
+      "source": {
+        "app/src/main/java/com/osfans/trime/daemon/RimeDaemon.kt": {
+          "bytes": 7755,
+          "sha256": "261ae16afcb56ccd8beeb3a6763ea686bc8b4fb2377b39bb5394eae5511fdf31",
+          "git_blob": "0bfc7bb051d0472d419b70d42c1a0829fc7dffc5"
+        },
+        "app/src/main/java/com/osfans/trime/ui/main/log/LogView.kt": {
+          "bytes": 2817,
+          "sha256": "57315de0888c0b5f3aa18d43db09f9471ca42a74c21e9323beb06b6a4c884d86",
+          "git_blob": "a677d5013289e01cf977029487597729c71047b7"
+        },
+        "app/src/main/java/com/osfans/trime/util/Process.kt": {
+          "bytes": 4983,
+          "sha256": "e250ee44969170132d8aeedaef1d0a22055fce269859491c7828e91688256c81",
+          "git_blob": "5072e2869cf655384b28c609d9b763f45f4d250d"
+        },
+        "app/src/test/java/com/osfans/trime/util/ProcessLifecycleTest.kt": {
+          "bytes": 18625,
+          "sha256": "0c4d83f94f22c594125476584a27d86a689c0651cb47c1fd4c8fc8862b503d1c",
+          "git_blob": "df69e6624fc42512277147d8c8dc920f79a01f4d"
+        }
+      },
+      "exact_qualified_patch_sha256": "72dd7f261ddf7717783d3751f490da5747068b87424116555c74ce681d62e12c",
+      "source_qualification_matched": true,
+      "validation": {
+        "evidence": {
+          "path": "/home/xumin/Public/Trime/build/review-slim-20261023/pr2182/implementation-report.json",
+          "bytes": 9442,
+          "sha256": "b5076e856e4f270b3a3982db8cb988cc508a35607c13ea6f83dab15cb48c2ef2"
+        },
+        "independent_review": {
+          "path": "/home/xumin/Public/Trime/build/review-slim-20261023/pr2182/independent-review2.json",
+          "bytes": 8437,
+          "sha256": "a1a4245eb77b70a7c9525b47ac5a8d4976a1e2337916ae5ee23c5f6effb034ee"
+        },
+        "kind": "46 fresh focused host tests with assertions enabled, exact selected production/test bytes",
+        "host_tests_passed": 46,
+        "host_failed": 0,
+        "host_skipped": 0,
+        "new_full_app_compile": false,
+        "new_runtime": false
+      },
+      "existing_normal_push_receipt": {
+        "path": "/home/xumin/Public/Trime/build/review-slim-20261023/pr2182/source-push1/receipt.json",
+        "bytes": 1187,
+        "sha256": "720898bacd4f3b181da5d694a6199a82a7a54a4d537500619e8d245f3d85831c"
+      },
+      "remote_scope": "Only local existing receipt read; no remote or network operation performed by this audit"
+    }
+  ],
+  "specific_checks": {
+    "pr2182_generic_Process_helpers_byte_exact_to_upstream_12ffd16f": true,
+    "pr2182_generic_helpers_segment_sha256": "ebcefd3bad46b1e9c869154462accfd31f235fa6a8abbd53a8aba4533e7037de",
+    "pr2182_outer_NonCancellable_dispatcher_return_boundary_retained": true,
+    "pr2182_structured_watcher_plus_outer_finally_retained": true,
+    "pr2182_original_reader_use_and_short_cancellation_cause_restore_retained": true,
+    "pr2182_destroy_once_does_not_imply_stdout_close_once": true,
+    "pr2186_necessary_pending_exception_resource_release_and_side_effect_guards_retained": true,
+    "pr2186_other_JNI_boundary_files_byte_unchanged_from_parent": true
+  },
+  "limits": [
+    "This audits local committed trees and existing local qualification/push receipts; it does not freshly read remote refs or CI.",
+    "No new build/test/VM, network request, push, comment or PR mutation was triggered.",
+    "The three scoped qualifications do not collectively establish new whole-app Android runtime, real-device, performance or zero-warning acceptance.",
+    "PR2182 has no replacement 2/5-second deployment-log deadline after removing added timeout policy; only current cleanup exit observation remains bounded."
+  ],
+  "commands": [
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/home/xumin/Public/Trime-pr-deferred-input-view",
+        "rev-parse",
+        "HEAD"
+      ],
+      "exit": 0,
+      "stdout_sha256": "3260a097fdb5988b44417f85e9d0be284c51bd72ff70bab002f18c88761f2a0f",
+      "stdout_bytes": 41,
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/home/xumin/Public/Trime-pr-deferred-input-view",
+        "show",
+        "-s",
+        "--format=%P",
+        "e009dc0b567f9639cf518bc3b35cd172ac627be7"
+      ],
+      "exit": 0,
+      "stdout_sha256": "7b7665c5b19da57c7bd8274bf69a4b48f389fcab7b7ad3667cd66e452033d292",
+      "stdout_bytes": 41,
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/home/xumin/Public/Trime-pr-deferred-input-view",
+        "show",
+        "-s",
+        "--format=%s",
+        "e009dc0b567f9639cf518bc3b35cd172ac627be7"
+      ],
+      "exit": 0,
+      "stdout_sha256": "0795992ae5d215ced7c372d7425cf7c698ef9e749bbe0f8ec6d6702bcb608632",
+      "stdout_bytes": 53,
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/home/xumin/Public/Trime-pr-deferred-input-view",
+        "status",
+        "--porcelain=v1",
+        "--untracked-files=all"
+      ],
+      "exit": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 0,
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/home/xumin/Public/Trime-pr-deferred-input-view",
+        "diff",
+        "--name-only",
+        "2d2fbce70b449ec8b6560c844ca5ddbc2e08a4c3",
+        "e009dc0b567f9639cf518bc3b35cd172ac627be7"
+      ],
+      "exit": 0,
+      "stdout_sha256": "e7ef645f77fac3598b3dd6780b6598c419fdbbc484fb062a2cf2a9bf77f08802",
+      "stdout_bytes": 71,
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/home/xumin/Public/Trime-pr-deferred-input-view",
+        "diff",
+        "--check",
+        "2d2fbce70b449ec8b6560c844ca5ddbc2e08a4c3",
+        "e009dc0b567f9639cf518bc3b35cd172ac627be7"
+      ],
+      "exit": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 0,
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/home/xumin/Public/Trime-pr-deferred-input-view",
+        "diff",
+        "--binary",
+        "2d2fbce70b449ec8b6560c844ca5ddbc2e08a4c3",
+        "e009dc0b567f9639cf518bc3b35cd172ac627be7"
+      ],
+      "exit": 0,
+      "stdout_sha256": "a7647f9d59d05e35a174032d9d71e6540775dbd25fe7d4ca1a061972e3cde25d",
+      "stdout_bytes": 1522,
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/home/xumin/Public/Trime-pr-deferred-input-view",
+        "show",
+        "e009dc0b567f9639cf518bc3b35cd172ac627be7:app/src/main/java/com/osfans/trime/ime/core/TrimeInputMethodService.kt"
+      ],
+      "exit": 0,
+      "stdout_sha256": "1556d4fd121d41154df66a4e0332185c8279b253f348b81054ead0fcea0653c5",
+      "stdout_bytes": 40599,
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/home/xumin/Public/Trime-pr-deferred-input-view",
+        "rev-parse",
+        "e009dc0b567f9639cf518bc3b35cd172ac627be7:app/src/main/java/com/osfans/trime/ime/core/TrimeInputMethodService.kt"
+      ],
+      "exit": 0,
+      "stdout_sha256": "4859706a0b25a580e76243631759a572939379cde8d80819554252d6cb4cdb25",
+      "stdout_bytes": 41,
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/home/xumin/Public/Trime-pr-jni-unicode-transport",
+        "rev-parse",
+        "HEAD"
+      ],
+      "exit": 0,
+      "stdout_sha256": "62aa94cd795fb472451e58ba822081dcdc8a0e025e88c36a753bf1277306b347",
+      "stdout_bytes": 41,
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/home/xumin/Public/Trime-pr-jni-unicode-transport",
+        "show",
+        "-s",
+        "--format=%P",
+        "2ad1865fd97f09ffba231e5c0e23092cd383b059"
+      ],
+      "exit": 0,
+      "stdout_sha256": "e6197c8ba3f1fa024cd26e943030d8c6155792831d59cb83087efb7e2c41107f",
+      "stdout_bytes": 41,
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/home/xumin/Public/Trime-pr-jni-unicode-transport",
+        "show",
+        "-s",
+        "--format=%s",
+        "2ad1865fd97f09ffba231e5c0e23092cd383b059"
+      ],
+      "exit": 0,
+      "stdout_sha256": "2b8ca603a2d43efb2ec778e1c5afc7cceeb316204e0f6d6b5b439995c0240ef4",
+      "stdout_bytes": 50,
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/home/xumin/Public/Trime-pr-jni-unicode-transport",
+        "status",
+        "--porcelain=v1",
+        "--untracked-files=all"
+      ],
+      "exit": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 0,
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/home/xumin/Public/Trime-pr-jni-unicode-transport",
+        "diff",
+        "--name-only",
+        "e16ab85f495e5bbf353187c29efbff74526cff9c",
+        "2ad1865fd97f09ffba231e5c0e23092cd383b059"
+      ],
+      "exit": 0,
+      "stdout_sha256": "adc69451a64ba8128d998ecf758214686c624fa13acd9cf39e178e4e900d69ec",
+      "stdout_bytes": 116,
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/home/xumin/Public/Trime-pr-jni-unicode-transport",
+        "diff",
+        "--check",
+        "e16ab85f495e5bbf353187c29efbff74526cff9c",
+        "2ad1865fd97f09ffba231e5c0e23092cd383b059"
+      ],
+      "exit": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 0,
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/home/xumin/Public/Trime-pr-jni-unicode-transport",
+        "diff",
+        "--binary",
+        "e16ab85f495e5bbf353187c29efbff74526cff9c",
+        "2ad1865fd97f09ffba231e5c0e23092cd383b059"
+      ],
+      "exit": 0,
+      "stdout_sha256": "eaf09676acd307f4b88ddd44d484178ebc4ae70b9953f75ef79ffc427edec424",
+      "stdout_bytes": 2117,
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/home/xumin/Public/Trime-pr-jni-unicode-transport",
+        "show",
+        "2ad1865fd97f09ffba231e5c0e23092cd383b059:app/src/main/jni/librime_jni/jni-utils.h"
+      ],
+      "exit": 0,
+      "stdout_sha256": "c0dc433bce8ab46031e8890a2cfe72e1bfaf2f456442e57905fa38ba9529f868",
+      "stdout_bytes": 9209,
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/home/xumin/Public/Trime-pr-jni-unicode-transport",
+        "rev-parse",
+        "2ad1865fd97f09ffba231e5c0e23092cd383b059:app/src/main/jni/librime_jni/jni-utils.h"
+      ],
+      "exit": 0,
+      "stdout_sha256": "2e5850d6739b022733fce7b78d226c0d089f9db459ccc1d7358517b5af4c545f",
+      "stdout_bytes": 41,
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/home/xumin/Public/Trime-pr-jni-unicode-transport",
+        "show",
+        "2ad1865fd97f09ffba231e5c0e23092cd383b059:app/src/main/jni/librime_jni/key.cc"
+      ],
+      "exit": 0,
+      "stdout_sha256": "7851625bd06e7fcc3df2fbcd1c54b808445bb2674d4c8a69c4a4f01296316a8f",
+      "stdout_bytes": 1403,
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/home/xumin/Public/Trime-pr-jni-unicode-transport",
+        "rev-parse",
+        "2ad1865fd97f09ffba231e5c0e23092cd383b059:app/src/main/jni/librime_jni/key.cc"
+      ],
+      "exit": 0,
+      "stdout_sha256": "0c170c743115f89a58ef72b8f2a0b2052d9ced0b2681628032edae6482a5b3fe",
+      "stdout_bytes": 41,
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/home/xumin/Public/Trime-pr-jni-unicode-transport",
+        "show",
+        "2ad1865fd97f09ffba231e5c0e23092cd383b059:app/src/main/jni/librime_jni/objconv.h"
+      ],
+      "exit": 0,
+      "stdout_sha256": "df498e3cd85638cd45e5e2a427ef73fa5bc0fa306046870f2f176ddd9d80da6d",
+      "stdout_bytes": 5531,
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/home/xumin/Public/Trime-pr-jni-unicode-transport",
+        "rev-parse",
+        "2ad1865fd97f09ffba231e5c0e23092cd383b059:app/src/main/jni/librime_jni/objconv.h"
+      ],
+      "exit": 0,
+      "stdout_sha256": "94a3f5e963be46dfb1d78c0036c4444a8c901d5957f066cae0fc87e212ce95d4",
+      "stdout_bytes": 41,
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/home/xumin/Public/Trime-pr-logcat-reliability",
+        "rev-parse",
+        "HEAD"
+      ],
+      "exit": 0,
+      "stdout_sha256": "09bc201693ed42bf158a60c71e29122c166d1ee56e7012117dc7de6fd87a472d",
+      "stdout_bytes": 41,
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/home/xumin/Public/Trime-pr-logcat-reliability",
+        "show",
+        "-s",
+        "--format=%P",
+        "ec0b81460b9b65d70f6797ac0c1f6d685af64d22"
+      ],
+      "exit": 0,
+      "stdout_sha256": "abfbce34556e25f3e5079f36343867c04d8b2ee4a114584e8e4639abc16b5c6b",
+      "stdout_bytes": 41,
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/home/xumin/Public/Trime-pr-logcat-reliability",
+        "show",
+        "-s",
+        "--format=%s",
+        "ec0b81460b9b65d70f6797ac0c1f6d685af64d22"
+      ],
+      "exit": 0,
+      "stdout_sha256": "ee9fb37d17463e39d895efaa33b364a632e86a913397813399d4e65fc624c6a2",
+      "stdout_bytes": 50,
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/home/xumin/Public/Trime-pr-logcat-reliability",
+        "status",
+        "--porcelain=v1",
+        "--untracked-files=all"
+      ],
+      "exit": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 0,
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/home/xumin/Public/Trime-pr-logcat-reliability",
+        "diff",
+        "--name-only",
+        "e8e4db837d16e00bdbc3d5ab266561ac5a99114c",
+        "ec0b81460b9b65d70f6797ac0c1f6d685af64d22"
+      ],
+      "exit": 0,
+      "stdout_sha256": "fdf38207811d96830ee5491f3804a281f29f4bd59cc47d53690fe2b0d8ba78d7",
+      "stdout_bytes": 229,
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/home/xumin/Public/Trime-pr-logcat-reliability",
+        "diff",
+        "--check",
+        "e8e4db837d16e00bdbc3d5ab266561ac5a99114c",
+        "ec0b81460b9b65d70f6797ac0c1f6d685af64d22"
+      ],
+      "exit": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 0,
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/home/xumin/Public/Trime-pr-logcat-reliability",
+        "diff",
+        "--binary",
+        "e8e4db837d16e00bdbc3d5ab266561ac5a99114c",
+        "ec0b81460b9b65d70f6797ac0c1f6d685af64d22"
+      ],
+      "exit": 0,
+      "stdout_sha256": "72dd7f261ddf7717783d3751f490da5747068b87424116555c74ce681d62e12c",
+      "stdout_bytes": 20509,
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/home/xumin/Public/Trime-pr-logcat-reliability",
+        "show",
+        "ec0b81460b9b65d70f6797ac0c1f6d685af64d22:app/src/main/java/com/osfans/trime/daemon/RimeDaemon.kt"
+      ],
+      "exit": 0,
+      "stdout_sha256": "261ae16afcb56ccd8beeb3a6763ea686bc8b4fb2377b39bb5394eae5511fdf31",
+      "stdout_bytes": 7755,
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/home/xumin/Public/Trime-pr-logcat-reliability",
+        "rev-parse",
+        "ec0b81460b9b65d70f6797ac0c1f6d685af64d22:app/src/main/java/com/osfans/trime/daemon/RimeDaemon.kt"
+      ],
+      "exit": 0,
+      "stdout_sha256": "5220ba64903f4a61b6fd57573b475e17ed1361199581e7f4cbf04c5f987196e5",
+      "stdout_bytes": 41,
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/home/xumin/Public/Trime-pr-logcat-reliability",
+        "show",
+        "ec0b81460b9b65d70f6797ac0c1f6d685af64d22:app/src/main/java/com/osfans/trime/ui/main/log/LogView.kt"
+      ],
+      "exit": 0,
+      "stdout_sha256": "57315de0888c0b5f3aa18d43db09f9471ca42a74c21e9323beb06b6a4c884d86",
+      "stdout_bytes": 2817,
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/home/xumin/Public/Trime-pr-logcat-reliability",
+        "rev-parse",
+        "ec0b81460b9b65d70f6797ac0c1f6d685af64d22:app/src/main/java/com/osfans/trime/ui/main/log/LogView.kt"
+      ],
+      "exit": 0,
+      "stdout_sha256": "da50a2c3fe9f281ab89282d9000c8caf8944031c756e58b2c7808ce94c8302bd",
+      "stdout_bytes": 41,
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/home/xumin/Public/Trime-pr-logcat-reliability",
+        "show",
+        "ec0b81460b9b65d70f6797ac0c1f6d685af64d22:app/src/main/java/com/osfans/trime/util/Process.kt"
+      ],
+      "exit": 0,
+      "stdout_sha256": "e250ee44969170132d8aeedaef1d0a22055fce269859491c7828e91688256c81",
+      "stdout_bytes": 4983,
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/home/xumin/Public/Trime-pr-logcat-reliability",
+        "rev-parse",
+        "ec0b81460b9b65d70f6797ac0c1f6d685af64d22:app/src/main/java/com/osfans/trime/util/Process.kt"
+      ],
+      "exit": 0,
+      "stdout_sha256": "188b31a425f93c4dcec16e41f66939460b02fc37c9520cc70e9eee598a31d8ab",
+      "stdout_bytes": 41,
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/home/xumin/Public/Trime-pr-logcat-reliability",
+        "show",
+        "ec0b81460b9b65d70f6797ac0c1f6d685af64d22:app/src/test/java/com/osfans/trime/util/ProcessLifecycleTest.kt"
+      ],
+      "exit": 0,
+      "stdout_sha256": "0c4d83f94f22c594125476584a27d86a689c0651cb47c1fd4c8fc8862b503d1c",
+      "stdout_bytes": 18625,
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/home/xumin/Public/Trime-pr-logcat-reliability",
+        "rev-parse",
+        "ec0b81460b9b65d70f6797ac0c1f6d685af64d22:app/src/test/java/com/osfans/trime/util/ProcessLifecycleTest.kt"
+      ],
+      "exit": 0,
+      "stdout_sha256": "eef88c5e8f91fdcce6a1ebc15287c1dee8268a65ed2d11c582759c04dc0e7f2e",
+      "stdout_bytes": 41,
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/home/xumin/Public/Trime-pr-logcat-reliability",
+        "show",
+        "ec0b81460b9b65d70f6797ac0c1f6d685af64d22:app/src/main/java/com/osfans/trime/util/Process.kt"
+      ],
+      "exit": 0,
+      "stdout_sha256": "e250ee44969170132d8aeedaef1d0a22055fce269859491c7828e91688256c81",
+      "stdout_bytes": 4983,
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/home/xumin/Public/Trime-pr-logcat-reliability",
+        "show",
+        "ec0b81460b9b65d70f6797ac0c1f6d685af64d22:app/src/main/java/com/osfans/trime/util/Logcat.kt"
+      ],
+      "exit": 0,
+      "stdout_sha256": "675da61a06b8c923690f4fb40d2a4953986d2837317c2f9ea998dd6e9a70952c",
+      "stdout_bytes": 8275,
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/home/xumin/Public/Trime-pr-logcat-reliability",
+        "show",
+        "ec0b81460b9b65d70f6797ac0c1f6d685af64d22:app/src/main/java/com/osfans/trime/ui/main/log/LogBuffer.kt"
+      ],
+      "exit": 0,
+      "stdout_sha256": "0d3c4d4aae5cf17b38b0b5102219cf66b378c12a4c604e1653f916378a8420d6",
+      "stdout_bytes": 4434,
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/home/xumin/Public/Trime-pr-logcat-reliability",
+        "show",
+        "ec0b81460b9b65d70f6797ac0c1f6d685af64d22:app/src/test/java/com/osfans/trime/util/ProcessLifecycleTest.kt"
+      ],
+      "exit": 0,
+      "stdout_sha256": "0c4d83f94f22c594125476584a27d86a689c0651cb47c1fd4c8fc8862b503d1c",
+      "stdout_bytes": 18625,
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/home/xumin/Public/Trime-pr-logcat-reliability",
+        "show",
+        "ec0b81460b9b65d70f6797ac0c1f6d685af64d22:app/src/test/java/com/osfans/trime/util/LogcatLifecycleTest.kt"
+      ],
+      "exit": 0,
+      "stdout_sha256": "eba0efae3b197f25a697d9b74824de37aa8cfb5f02335f4ba196a47f2589ee6a",
+      "stdout_bytes": 15121,
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/home/xumin/Public/Trime-pr-logcat-reliability",
+        "show",
+        "ec0b81460b9b65d70f6797ac0c1f6d685af64d22:app/src/test/java/com/osfans/trime/ui/main/log/LogBufferTest.kt"
+      ],
+      "exit": 0,
+      "stdout_sha256": "79798369d9f42a5c7c1a9353941920efba3ba9974973df76143827b02716f315",
+      "stdout_bytes": 8615,
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/home/xumin/Public/Trime-pr-logcat-reliability",
+        "show",
+        "12ffd16fe03537b6d0ed9716c71cbc33608c2a33:app/src/main/java/com/osfans/trime/util/Process.kt"
+      ],
+      "exit": 0,
+      "stdout_sha256": "517137f5c0748df6be634d8e5a352c0962d805d88c29d58303d2ab43d8f7ce65",
+      "stdout_bytes": 832,
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/home/xumin/Public/Trime-pr-logcat-reliability",
+        "show",
+        "ec0b81460b9b65d70f6797ac0c1f6d685af64d22:app/src/main/java/com/osfans/trime/util/Process.kt"
+      ],
+      "exit": 0,
+      "stdout_sha256": "e250ee44969170132d8aeedaef1d0a22055fce269859491c7828e91688256c81",
+      "stdout_bytes": 4983,
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/home/xumin/Public/Trime-pr-jni-unicode-transport",
+        "show",
+        "2ad1865fd97f09ffba231e5c0e23092cd383b059:app/src/main/jni/librime_jni/jni-utils.h"
+      ],
+      "exit": 0,
+      "stdout_sha256": "c0dc433bce8ab46031e8890a2cfe72e1bfaf2f456442e57905fa38ba9529f868",
+      "stdout_bytes": 9209,
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/home/xumin/Public/Trime-pr-jni-unicode-transport",
+        "show",
+        "2ad1865fd97f09ffba231e5c0e23092cd383b059:app/src/main/jni/librime_jni/config.cc"
+      ],
+      "exit": 0,
+      "stdout_sha256": "5f629dcd42bbe47f025f9bb2fa3f0531bf56d5e46f9289057ddcf82e00211c98",
+      "stdout_bytes": 4410,
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/home/xumin/Public/Trime-pr-jni-unicode-transport",
+        "show",
+        "e16ab85f495e5bbf353187c29efbff74526cff9c:app/src/main/jni/librime_jni/config.cc"
+      ],
+      "exit": 0,
+      "stdout_sha256": "5f629dcd42bbe47f025f9bb2fa3f0531bf56d5e46f9289057ddcf82e00211c98",
+      "stdout_bytes": 4410,
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/home/xumin/Public/Trime-pr-jni-unicode-transport",
+        "show",
+        "2ad1865fd97f09ffba231e5c0e23092cd383b059:app/src/main/jni/librime_jni/levers.cc"
+      ],
+      "exit": 0,
+      "stdout_sha256": "10b47921575f89214126a0803a50d525d3eebe66e507f6904991de93e5543eb7",
+      "stdout_bytes": 5348,
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/home/xumin/Public/Trime-pr-jni-unicode-transport",
+        "show",
+        "e16ab85f495e5bbf353187c29efbff74526cff9c:app/src/main/jni/librime_jni/levers.cc"
+      ],
+      "exit": 0,
+      "stdout_sha256": "10b47921575f89214126a0803a50d525d3eebe66e507f6904991de93e5543eb7",
+      "stdout_bytes": 5348,
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/home/xumin/Public/Trime-pr-jni-unicode-transport",
+        "show",
+        "2ad1865fd97f09ffba231e5c0e23092cd383b059:app/src/main/jni/librime_jni/opencc.cc"
+      ],
+      "exit": 0,
+      "stdout_sha256": "f9a8bcfd34e223181bc9756ed39211948199f502dc323a498910d214ac4765a0",
+      "stdout_bytes": 1519,
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/home/xumin/Public/Trime-pr-jni-unicode-transport",
+        "show",
+        "e16ab85f495e5bbf353187c29efbff74526cff9c:app/src/main/jni/librime_jni/opencc.cc"
+      ],
+      "exit": 0,
+      "stdout_sha256": "f9a8bcfd34e223181bc9756ed39211948199f502dc323a498910d214ac4765a0",
+      "stdout_bytes": 1519,
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/home/xumin/Public/Trime-pr-jni-unicode-transport",
+        "show",
+        "2ad1865fd97f09ffba231e5c0e23092cd383b059:app/src/main/jni/librime_jni/rime_jni.cc"
+      ],
+      "exit": 0,
+      "stdout_sha256": "107074c7739aa514b90418c476fac15ecf22e223e4ac540ac1ba211311e510a9",
+      "stdout_bytes": 16523,
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/home/xumin/Public/Trime-pr-jni-unicode-transport",
+        "show",
+        "e16ab85f495e5bbf353187c29efbff74526cff9c:app/src/main/jni/librime_jni/rime_jni.cc"
+      ],
+      "exit": 0,
+      "stdout_sha256": "107074c7739aa514b90418c476fac15ecf22e223e4ac540ac1ba211311e510a9",
+      "stdout_bytes": 16523,
+      "stderr": ""
+    }
+  ]
+}

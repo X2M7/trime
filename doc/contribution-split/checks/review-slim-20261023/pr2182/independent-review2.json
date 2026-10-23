@@ -1,0 +1,130 @@
+{
+  "schema": "trime-pr2182-independent-slim-review/v2",
+  "reviewed_utc": "2026-10-23T04:14:30.720960+00:00",
+  "read_only": true,
+  "no_new_build_test_or_device_run_by_reviewer": true,
+  "source_head": "e8e4db837d16e00bdbc3d5ab266561ac5a99114c",
+  "diff_sha256": "72dd7f261ddf7717783d3751f490da5747068b87424116555c74ce681d62e12c",
+  "diff_bytes": 20509,
+  "changed_files": {
+    "app/src/main/java/com/osfans/trime/daemon/RimeDaemon.kt": "261ae16afcb56ccd8beeb3a6763ea686bc8b4fb2377b39bb5394eae5511fdf31",
+    "app/src/main/java/com/osfans/trime/ui/main/log/LogView.kt": "57315de0888c0b5f3aa18d43db09f9471ca42a74c21e9323beb06b6a4c884d86",
+    "app/src/main/java/com/osfans/trime/util/Process.kt": "e250ee44969170132d8aeedaef1d0a22055fce269859491c7828e91688256c81",
+    "app/src/test/java/com/osfans/trime/util/ProcessLifecycleTest.kt": "0c4d83f94f22c594125476584a27d86a689c0651cb47c1fd4c8fc8862b503d1c"
+  },
+  "decision": "No blocking source defect found in current scoped patch; exact current process/logcat/buffer sources match writer host5 passing run.",
+  "source_review": [
+    {
+      "component": "releaseOnce cancellation context boundary",
+      "qualified": true,
+      "detail": "Outer withContext(NonCancellable) does not change dispatcher. Inner withContext(cleanupDispatcher) returns to the still-active NonCancellable context, rather than directly to the cancelled original context. Outer return has no dispatcher change, so documented prompt-cancellation delivery does not overwrite cleanup completion/error bookkeeping. Saved kotlinx.coroutines 1.10.2 Builders.common.kt lines131-138 directly state this contract."
+    },
+    {
+      "component": "releaseOnce serialized ownership",
+      "qualified": true,
+      "detail": "Correctness is not based on limitedParallelism being a lock across suspension. The cancellation watcher is a structured child of the IO withContext. The outer finally runs after child completion, released is set before cleanup suspends, and only these two invocation-local paths call releaseOnce. Other process cleanup can interleave without sharing released/cleanupFailure. The updated ownership comment states the necessary structured ordering."
+    },
+    {
+      "component": "failure suppression / original cancellation",
+      "qualified": true,
+      "detail": "Linear CancellationException cause unwrapping attaches cleanup failure to original cancellation retained by Job, avoiding attachment only to a recovered copy. The original primary read/cancellation is rethrown. The final test traverses actual caught cause/suppressed graph and still requires identity of the original synthetic destroyFailure; it was not changed to inspecting unrelated external state."
+    },
+    {
+      "component": "reader.use restored",
+      "qualified": true,
+      "detail": "The original BufferedReader.use keeps Kotlin standard close-on-success/close-on-failure semantics and preserves the read failure with close failure suppressed on that read exception. Process cleanup remains an independent finally that attempts destroy and all three descriptor closes. Thus process destruction is guarded once, but stdout may be closed through reader.use and then again by releaseProcess; do not claim all stream close methods run exactly once."
+    },
+    {
+      "component": "cancellation before IO and blocked pipes",
+      "qualified": true,
+      "detail": "Outer NonCancellable releaseOnce retains process ownership when cancellation prevents entering IO/watcher. Active watcher can unblock a read via destruction/descriptor closure. Final writer host5 includes cancellation-before-IO, blocking fake pipe, real JVM child pipe, IO.parallelism=1 no-rescue child, failed getter/close, EOF-before-exit, read+cleanup and cancel+cleanup failure tests. This is host proof, not Android ART/OEM proof."
+    },
+    {
+      "component": "LogView current collection switch",
+      "qualified": true,
+      "detail": "Unchanged from review1: stopping clears/cancels old emitter/subscription, collectLines finalizer retains its own old stream reference, and old emittingJob finalizer checks identity. No supported reattach/restart guarantee beyond current setLogcat path is claimed."
+    },
+    {
+      "component": "RimeDaemon timeout removal",
+      "qualified": true,
+      "detail": "Normal logcat -c/-d operations still wait for completion and report errors. Removed 2s/5s guards mean a child that never closes stdout/exits may suspend daemon message collection until cancellation. Source change intentionally removes added timeout policy; this review does not establish a bounded deployment-log deadline or a new observed hang."
+    },
+    {
+      "component": "generic Process helper scope",
+      "qualified": true,
+      "detail": "asFlow/readText/readLines return to upstream generic behavior. New ownership/cancellation guarantees apply to Logcat.consumeOutput callers, not automatically every generic Process helper."
+    }
+  ],
+  "positive_test_readback": {
+    "runner_scope": "Writer host5, real Kotlin/JVM focused tests, no Gradle or Android runtime",
+    "tests": 46,
+    "passed": 46,
+    "failed": 0,
+    "skipped": 0,
+    "assertions_enabled": true,
+    "tests_actual_exit": 0,
+    "input_hashes_match_current_files": true,
+    "stderr_bytes": 0,
+    "result": {
+      "path": "/home/xumin/Public/Trime/build/review-slim-20261023/pr2182/host5/result.json",
+      "bytes": 13137,
+      "sha256": "dbbab88aef6f2c0c99f87ce7cbe2ac4ecdc8b838bc055325303fa8203427fe0c"
+    },
+    "inputs": {
+      "path": "/home/xumin/Public/Trime/build/review-slim-20261023/pr2182/host5/inputs.json",
+      "bytes": 793,
+      "sha256": "d95786f0d5d178938221a645a2a1f1b37007bfeb87f7d53dc60f644f5148c0db"
+    },
+    "stdout": {
+      "path": "/home/xumin/Public/Trime/build/review-slim-20261023/pr2182/host5/tests.stdout",
+      "bytes": 4199,
+      "sha256": "2798355c8b9335d526650a8be5169558afd0219c1ded69220d8973f913fd774a"
+    },
+    "stderr": {
+      "path": "/home/xumin/Public/Trime/build/review-slim-20261023/pr2182/host5/tests.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "diagnostic_readback": {
+    "original_no_boundary_no_cause_exit": 1,
+    "new_boundary_no_cause_exit": 1,
+    "new_boundary_and_cause_exit": 0,
+    "result": {
+      "path": "/home/xumin/Public/Trime/build/review-slim-20261023/pr2182/cancel-diagnostic1/assertions-enabled-result.json",
+      "bytes": 11418,
+      "sha256": "4d3742fda649d32c53d1a68ceb493a3db8d0e12287a0b6a27bcb913856c3d525"
+    },
+    "causal_limits": "new-boundary/no-cause and new-boundary/cause differ by only three cause-unwrapping lines, so that recovery need has a clean control. Original lacks both outer boundary and cause restoration; its failure alone is not an isolated boundary-only negative control. Outer boundary is independently supported by the documented withContext cancellation contract. Diagnostic sources precede restoration of reader.use; final host5 is current source proof."
+  },
+  "standard_contracts": {
+    "saved_sources_manifest": {
+      "path": "/home/xumin/Public/Trime/build/review-slim-20261023/pr2182/coroutine-contracts/manifest.json",
+      "bytes": 670,
+      "sha256": "54b3c30eeb9cfa2072daa2591d68915eefd080478ab8e6ccdf156ac9dd6dd807"
+    },
+    "withContext_source": {
+      "path": "/home/xumin/Public/Trime/build/review-slim-20261023/pr2182/coroutine-contracts/Builders.common.kt",
+      "bytes": 12172,
+      "sha256": "13b583301147d7629d79fd1f2544e0e8e58b5afee22b29be526bd01c84cd487e"
+    },
+    "limitedParallelism_source": {
+      "path": "/home/xumin/Public/Trime/build/review-slim-20261023/pr2182/coroutine-contracts/CoroutineDispatcher.kt",
+      "bytes": 15645,
+      "sha256": "e435a0636acc79ac0319fa61207d02dab55ea515367fb6a59e68a4d8676e5c0c"
+    }
+  },
+  "prior_failures_retained": [
+    "host1",
+    "host2",
+    "host3",
+    "host4",
+    "cancel-diagnostic1"
+  ],
+  "limits": [
+    "Host5 only compiles selected production Kotlin and focused tests with host fixtures; no full Android UI/daemon application compile, Lint, APK, runtime, TalkBack or zero-warning acceptance is claimed.",
+    "No new builds, tests or devices were run by this independent reader.",
+    "This snapshot binds the uncommitted diff. Any later production/test edits require matching hashes or new qualification."
+  ],
+  "no_source_or_remote_mutations": true
+}

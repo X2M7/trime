@@ -1,0 +1,35 @@
+NODE identity=1457226878 class=kotlinx.coroutines.JobCancellationException message=DeferredCoroutine was cancelled cause=null suppressed=[] originalDestroy=false
+DESTROY originalIdentity=1712230656 actualDestructions=1 reachable=false
+kotlinx.coroutines.JobCancellationException: DeferredCoroutine was cancelled; job=DeferredCoroutine{Cancelled}@6f70f32f
+FAILED actual cancelled await retains the original cleanup failure
+
+Test run finished after 698 ms
+[         2 containers found      ]
+[         0 containers skipped    ]
+[         2 containers started    ]
+[         0 containers aborted    ]
+[         2 containers successful ]
+[         0 containers failed     ]
+[         1 tests found           ]
+[         0 tests skipped         ]
+[         1 tests started         ]
+[         0 tests aborted         ]
+[         0 tests successful      ]
+[         1 tests failed          ]
+
+
+Failures (1):
+  Kotest:CancellationCleanupDiagnostic:actual cancelled await retains the original cleanup failure
+    MethodSource [className = 'com.osfans.trime.util.CancellationCleanupDiagnostic', methodName = 'actual cancelled await retains the original cleanup failure', methodParameterTypes = null]
+    => org.opentest4j.AssertionFailedError: expected:<true> but was:<false>
+       com.osfans.trime.util.CancellationCleanupDiagnostic$1$1$1.invokeSuspend(CancellationCleanupDiagnostic.kt:32)
+       kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith(ContinuationImpl.kt:34)
+       kotlinx.coroutines.internal.ScopeCoroutine.afterResume(Scopes.kt:35)
+       kotlinx.coroutines.AbstractCoroutine.resumeWith(AbstractCoroutine.kt:101)
+       kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith(ContinuationImpl.kt:47)
+       kotlinx.coroutines.DispatchedTask.run(DispatchedTask.kt:100)
+       kotlinx.coroutines.EventLoopImplBase.processNextEvent(EventLoop.common.kt:263)
+       kotlinx.coroutines.BlockingCoroutine.joinBlocking(Builders.kt:94)
+       kotlinx.coroutines.BuildersKt__BuildersKt.runBlocking(Builders.kt:70)
+       kotlinx.coroutines.BuildersKt.runBlocking(Unknown Source)
+       [...]

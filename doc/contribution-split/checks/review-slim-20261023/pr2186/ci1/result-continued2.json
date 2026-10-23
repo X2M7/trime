@@ -1,0 +1,1733 @@
+{
+  "run_id": 39897889043,
+  "expected_reviewed_head": "2ad1865fd97f09ffba231e5c0e23092cd383b059",
+  "head_sha": "2ad1865fd97f09ffba231e5c0e23092cd383b059",
+  "run_url": "https://github.com/osfans/trime/actions/runs/39897889043",
+  "status": "completed",
+  "conclusion": "success",
+  "job_count": 5,
+  "all_jobs_success": true,
+  "all_job_logs_collected": true,
+  "jobs": [
+    {
+      "job": {
+        "id": 120232438506,
+        "name": "check / lint-and-test",
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-10-23T03:59:16Z",
+        "completed_at": "2026-10-23T04:03:51Z"
+      },
+      "download_exit": 0,
+      "log_qualified": true,
+      "bytes": 263617,
+      "sha256": "dd62fb7b218c7ce94cefaf20d97265625caedef8c14644a125c581a253ffbd6e",
+      "warning_candidates": [
+        {
+          "line": 88,
+          "text": "2026-10-23T03:59:18.3622280Z hint: to use in all of your new repositories, which will suppress this warning,"
+        },
+        {
+          "line": 503,
+          "text": "2026-10-23T03:59:49.3955598Z WARNING: The SDK Manager CLI tool (sdkmanager) is deprecated. Use Android CLI instead."
+        },
+        {
+          "line": 1443,
+          "text": "2026-10-23T03:59:53.5882554Z WARNING: The SDK Manager CLI tool (sdkmanager) is deprecated. Use Android CLI instead."
+        },
+        {
+          "line": 1508,
+          "text": "2026-10-23T04:00:51.4748081Z Deprecated Gradle features were used in this build, making it incompatible with Gradle 10."
+        },
+        {
+          "line": 1510,
+          "text": "2026-10-23T04:00:51.4750599Z You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins."
+        },
+        {
+          "line": 1512,
+          "text": "2026-10-23T04:00:51.4752643Z For more on this, please refer to https://docs.gradle.org/9.8.1/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation."
+        },
+        {
+          "line": 1614,
+          "text": "2026-10-23T04:03:49.1871683Z Deprecated Gradle features were used in this build, making it incompatible with Gradle 10."
+        },
+        {
+          "line": 1616,
+          "text": "2026-10-23T04:03:49.1913697Z You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins."
+        },
+        {
+          "line": 1618,
+          "text": "2026-10-23T04:03:49.1919020Z For more on this, please refer to https://docs.gradle.org/9.8.1/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation."
+        }
+      ],
+      "app_task_lines": [
+        {
+          "line": 1565,
+          "text": "2026-10-23T04:01:05.9275063Z > Task :app:checkDebugAarMetadata"
+        },
+        {
+          "line": 1594,
+          "text": "2026-10-23T04:02:34.0190825Z > Task :app:lintAnalyzeDebugAndroidTest"
+        },
+        {
+          "line": 1599,
+          "text": "2026-10-23T04:02:43.7196683Z > Task :app:lintAnalyzeDebug"
+        },
+        {
+          "line": 1600,
+          "text": "2026-10-23T04:02:50.1201125Z > Task :app:testDebugUnitTest"
+        },
+        {
+          "line": 1602,
+          "text": "2026-10-23T04:02:50.6211142Z > Task :app:lintAnalyzeDebugUnitTest"
+        },
+        {
+          "line": 1604,
+          "text": "2026-10-23T04:03:49.1275763Z > Task :app:lintReportDebug"
+        },
+        {
+          "line": 1608,
+          "text": "2026-10-23T04:03:49.1295902Z > Task :app:lintDebug"
+        },
+        {
+          "line": 1609,
+          "text": "2026-10-23T04:03:49.1296523Z > Task :app:lint"
+        },
+        {
+          "line": 1610,
+          "text": "2026-10-23T04:03:49.1297108Z > Task :app:check"
+        }
+      ],
+      "checkout_lines": [
+        {
+          "line": 51,
+          "text": "2026-10-23T03:59:18.1503565Z Uses: osfans/trime/.github/workflows/check-ci.yml@refs/pull/2186/merge (009a6e643ead0da836102df02370ed5901c938d2)"
+        },
+        {
+          "line": 122,
+          "text": "2026-10-23T03:59:18.5114593Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +009a6e643ead0da836102df02370ed5901c938d2:refs/remotes/pull/2186/merge"
+        },
+        {
+          "line": 124,
+          "text": "2026-10-23T03:59:18.8523667Z  * [new ref]         009a6e643ead0da836102df02370ed5901c938d2 -> pull/2186/merge"
+        },
+        {
+          "line": 427,
+          "text": "2026-10-23T03:59:39.2285907Z [command]/usr/bin/git log -1 --format=%H"
+        },
+        {
+          "line": 428,
+          "text": "2026-10-23T03:59:39.2315448Z 009a6e643ead0da836102df02370ed5901c938d2"
+        }
+      ],
+      "checkout_context": [
+        {
+          "line": 425,
+          "text": "2026-10-23T03:59:39.2180992Z Entering 'app/src/main/jni/snappy/third_party/googletest'"
+        },
+        {
+          "line": 426,
+          "text": "2026-10-23T03:59:39.2233645Z ##[endgroup]"
+        },
+        {
+          "line": 427,
+          "text": "2026-10-23T03:59:39.2285907Z [command]/usr/bin/git log -1 --format=%H"
+        },
+        {
+          "line": 428,
+          "text": "2026-10-23T03:59:39.2315448Z 009a6e643ead0da836102df02370ed5901c938d2"
+        },
+        {
+          "line": 429,
+          "text": "2026-10-23T03:59:39.2651796Z ##[group]Run actions/setup-java@v6"
+        },
+        {
+          "line": 430,
+          "text": "2026-10-23T03:59:39.2652092Z with:"
+        },
+        {
+          "line": 431,
+          "text": "2026-10-23T03:59:39.2652293Z   distribution: temurin"
+        },
+        {
+          "line": 432,
+          "text": "2026-10-23T03:59:39.2652516Z   java-version: 25"
+        },
+        {
+          "line": 433,
+          "text": "2026-10-23T03:59:39.2652714Z   cache: gradle"
+        },
+        {
+          "line": 434,
+          "text": "2026-10-23T03:59:39.2652917Z   java-package: jdk"
+        }
+      ],
+      "warning_limit": "Mechanical matching preserves summaries and duplicate lines, not distinct defects or zero-warning qualification."
+    },
+    {
+      "job": {
+        "id": 120233739065,
+        "name": "build (macos-26)",
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-10-23T04:03:55Z",
+        "completed_at": "2026-10-23T04:24:32Z"
+      },
+      "download_exit": 0,
+      "log_qualified": true,
+      "bytes": 320194,
+      "sha256": "b5c8c7a6ce56db93ea836715774d59076de8c5d7eaaf2548c8f49a97d9c467fd",
+      "warning_candidates": [
+        {
+          "line": 91,
+          "text": "2026-10-23T04:04:01.4152290Z hint: to use in all of your new repositories, which will suppress this warning,"
+        },
+        {
+          "line": 536,
+          "text": "2026-10-23T04:05:17.1620690Z WARNING: The SDK Manager CLI tool (sdkmanager) is deprecated. Use Android CLI instead."
+        },
+        {
+          "line": 1476,
+          "text": "2026-10-23T04:05:21.6828320Z WARNING: The SDK Manager CLI tool (sdkmanager) is deprecated. Use Android CLI instead."
+        },
+        {
+          "line": 1508,
+          "text": "2026-10-23T04:05:23.4308760Z WARNING: The SDK Manager CLI tool (sdkmanager) is deprecated. Use Android CLI instead."
+        },
+        {
+          "line": 1654,
+          "text": "2026-10-23T04:07:14.7954880Z Deprecated Gradle features were used in this build, making it incompatible with Gradle 10."
+        },
+        {
+          "line": 1656,
+          "text": "2026-10-23T04:07:14.7956910Z You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins."
+        },
+        {
+          "line": 1658,
+          "text": "2026-10-23T04:07:14.7958250Z For more on this, please refer to https://docs.gradle.org/9.8.1/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation."
+        },
+        {
+          "line": 1745,
+          "text": "2026-10-23T04:09:51.0506850Z C/C++: CMake Deprecation Warning at librime/deps/leveldb/CMakeLists.txt:5 (cmake_minimum_required):"
+        },
+        {
+          "line": 1756,
+          "text": "2026-10-23T04:10:36.0626320Z C/C++: /Users/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4026:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1760,
+          "text": "2026-10-23T04:10:36.1050670Z C/C++: /Users/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4028:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1764,
+          "text": "2026-10-23T04:10:36.1485850Z C/C++: /Users/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4033:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1768,
+          "text": "2026-10-23T04:10:36.1894170Z C/C++: /Users/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4035:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1772,
+          "text": "2026-10-23T04:10:36.2303570Z C/C++: /Users/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4040:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1776,
+          "text": "2026-10-23T04:10:36.2719010Z C/C++: /Users/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4042:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1780,
+          "text": "2026-10-23T04:10:36.3127320Z C/C++: /Users/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4047:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1784,
+          "text": "2026-10-23T04:10:36.3532380Z C/C++: /Users/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4049:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1788,
+          "text": "2026-10-23T04:10:36.3964850Z C/C++: /Users/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4054:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1792,
+          "text": "2026-10-23T04:10:36.3980880Z C/C++: /Users/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4056:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1796,
+          "text": "2026-10-23T04:10:36.3989700Z C/C++: /Users/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4061:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1800,
+          "text": "2026-10-23T04:10:36.4003780Z C/C++: /Users/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4063:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1804,
+          "text": "2026-10-23T04:10:36.4013150Z C/C++: 12 warnings generated."
+        },
+        {
+          "line": 1813,
+          "text": "2026-10-23T04:16:15.7135960Z C/C++: CMake Deprecation Warning at librime/deps/leveldb/CMakeLists.txt:5 (cmake_minimum_required):"
+        },
+        {
+          "line": 1823,
+          "text": "2026-10-23T04:16:33.4631480Z C/C++: /Users/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4026:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1827,
+          "text": "2026-10-23T04:16:33.5085700Z C/C++: /Users/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4028:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1831,
+          "text": "2026-10-23T04:16:33.5325170Z C/C++: /Users/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4033:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1835,
+          "text": "2026-10-23T04:16:33.5756100Z C/C++: /Users/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4035:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1839,
+          "text": "2026-10-23T04:16:33.6172120Z C/C++: /Users/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4040:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1843,
+          "text": "2026-10-23T04:16:33.6585340Z C/C++: /Users/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4042:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1847,
+          "text": "2026-10-23T04:16:33.6999350Z C/C++: /Users/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4047:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1851,
+          "text": "2026-10-23T04:16:33.7407070Z C/C++: /Users/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4049:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1855,
+          "text": "2026-10-23T04:16:33.7813720Z C/C++: /Users/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4054:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1859,
+          "text": "2026-10-23T04:16:33.8249010Z C/C++: /Users/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4056:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1863,
+          "text": "2026-10-23T04:16:33.8639210Z C/C++: /Users/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4061:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1867,
+          "text": "2026-10-23T04:16:33.9070830Z C/C++: /Users/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4063:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1871,
+          "text": "2026-10-23T04:16:33.9383780Z C/C++: 12 warnings generated."
+        },
+        {
+          "line": 1872,
+          "text": "2026-10-23T04:17:24.6207500Z C/C++: /Users/runner/work/trime/trime/app/src/main/jni/librime/plugins/librime-lua/src/types.cc:1959:26: warning: implicit conversion from 'unsigned long long' to 'size_t' (aka 'unsigned int') changes value from 18446744073709551615 to 4294967295 [-Wconstant-conversion]"
+        },
+        {
+          "line": 1875,
+          "text": "2026-10-23T04:17:24.6514200Z C/C++: 1 warning generated."
+        },
+        {
+          "line": 1878,
+          "text": "2026-10-23T04:19:22.2096380Z C/C++: CMake Deprecation Warning at librime/deps/leveldb/CMakeLists.txt:5 (cmake_minimum_required):"
+        },
+        {
+          "line": 1888,
+          "text": "2026-10-23T04:19:37.5252760Z C/C++: /Users/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4026:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1892,
+          "text": "2026-10-23T04:19:37.5658690Z C/C++: /Users/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4028:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1896,
+          "text": "2026-10-23T04:19:37.6063900Z C/C++: /Users/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4033:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1900,
+          "text": "2026-10-23T04:19:37.6481710Z C/C++: /Users/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4035:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1904,
+          "text": "2026-10-23T04:19:37.6875710Z C/C++: /Users/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4040:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1908,
+          "text": "2026-10-23T04:19:37.7288150Z C/C++: /Users/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4042:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1912,
+          "text": "2026-10-23T04:19:37.7611530Z C/C++: /Users/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4047:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1916,
+          "text": "2026-10-23T04:19:37.8022420Z C/C++: /Users/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4049:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1920,
+          "text": "2026-10-23T04:19:37.8434540Z C/C++: /Users/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4054:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1924,
+          "text": "2026-10-23T04:19:37.8844790Z C/C++: /Users/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4056:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1928,
+          "text": "2026-10-23T04:19:37.9263960Z C/C++: /Users/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4061:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1932,
+          "text": "2026-10-23T04:19:37.9632890Z C/C++: /Users/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4063:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1936,
+          "text": "2026-10-23T04:19:38.0046010Z C/C++: 12 warnings generated."
+        },
+        {
+          "line": 1937,
+          "text": "2026-10-23T04:20:17.7943850Z C/C++: /Users/runner/work/trime/trime/app/src/main/jni/librime/plugins/librime-lua/src/types.cc:1959:26: warning: implicit conversion from 'unsigned long long' to 'size_t' (aka 'unsigned int') changes value from 18446744073709551615 to 4294967295 [-Wconstant-conversion]"
+        },
+        {
+          "line": 1940,
+          "text": "2026-10-23T04:20:17.8171620Z C/C++: 1 warning generated."
+        },
+        {
+          "line": 1943,
+          "text": "2026-10-23T04:21:59.3251600Z C/C++: CMake Deprecation Warning at librime/deps/leveldb/CMakeLists.txt:5 (cmake_minimum_required):"
+        },
+        {
+          "line": 1953,
+          "text": "2026-10-23T04:22:14.6936040Z C/C++: /Users/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4026:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1957,
+          "text": "2026-10-23T04:22:14.7250890Z C/C++: /Users/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4028:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1961,
+          "text": "2026-10-23T04:22:14.7672280Z C/C++: /Users/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4033:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1965,
+          "text": "2026-10-23T04:22:14.8081600Z C/C++: /Users/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4035:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1969,
+          "text": "2026-10-23T04:22:14.8490660Z C/C++: /Users/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4040:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1973,
+          "text": "2026-10-23T04:22:14.8900920Z C/C++: /Users/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4042:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1977,
+          "text": "2026-10-23T04:22:14.9330510Z C/C++: /Users/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4047:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1981,
+          "text": "2026-10-23T04:22:14.9740230Z C/C++: /Users/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4049:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1985,
+          "text": "2026-10-23T04:22:15.0136460Z C/C++: /Users/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4054:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1989,
+          "text": "2026-10-23T04:22:15.0546910Z C/C++: /Users/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4056:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1993,
+          "text": "2026-10-23T04:22:15.0968630Z C/C++: /Users/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4061:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1997,
+          "text": "2026-10-23T04:22:15.1278980Z C/C++: /Users/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4063:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 2001,
+          "text": "2026-10-23T04:22:15.1687590Z C/C++: 12 warnings generated."
+        },
+        {
+          "line": 2015,
+          "text": "2026-10-23T04:24:10.6799830Z Deprecated Gradle features were used in this build, making it incompatible with Gradle 10."
+        },
+        {
+          "line": 2017,
+          "text": "2026-10-23T04:24:10.6803620Z You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins."
+        },
+        {
+          "line": 2019,
+          "text": "2026-10-23T04:24:10.6808720Z For more on this, please refer to https://docs.gradle.org/9.8.1/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation."
+        }
+      ],
+      "app_task_lines": [
+        {
+          "line": 1725,
+          "text": "2026-10-23T04:08:07.1717720Z > Task :app:checkDebugDuplicateClasses"
+        },
+        {
+          "line": 1728,
+          "text": "2026-10-23T04:08:13.0104110Z > Task :app:checkDebugAarMetadata"
+        }
+      ],
+      "checkout_lines": [
+        {
+          "line": 125,
+          "text": "2026-10-23T04:04:02.3610760Z [command]/opt/homebrew/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules origin +refs/heads/*:refs/remotes/origin/* +refs/tags/*:refs/tags/* +009a6e643ead0da836102df02370ed5901c938d2:refs/remotes/pull/2186/merge"
+        },
+        {
+          "line": 169,
+          "text": "2026-10-23T04:04:04.6862540Z  * [new ref]           009a6e643ead0da836102df02370ed5901c938d2 -> pull/2186/merge"
+        },
+        {
+          "line": 417,
+          "text": "2026-10-23T04:04:41.6481350Z [command]/opt/homebrew/bin/git log -1 --format=%H"
+        },
+        {
+          "line": 418,
+          "text": "2026-10-23T04:04:41.6482440Z 009a6e643ead0da836102df02370ed5901c938d2"
+        }
+      ],
+      "checkout_context": [
+        {
+          "line": 415,
+          "text": "2026-10-23T04:04:41.5724530Z Entering 'app/src/main/jni/snappy/third_party/googletest'"
+        },
+        {
+          "line": 416,
+          "text": "2026-10-23T04:04:41.6219940Z ##[endgroup]"
+        },
+        {
+          "line": 417,
+          "text": "2026-10-23T04:04:41.6481350Z [command]/opt/homebrew/bin/git log -1 --format=%H"
+        },
+        {
+          "line": 418,
+          "text": "2026-10-23T04:04:41.6482440Z 009a6e643ead0da836102df02370ed5901c938d2"
+        },
+        {
+          "line": 419,
+          "text": "2026-10-23T04:04:41.8253120Z ##[group]Run echo ${GITHUB_REF#refs/*/}"
+        },
+        {
+          "line": 420,
+          "text": "2026-10-23T04:04:41.8253620Z \u001b[36;1mecho ${GITHUB_REF#refs/*/}\u001b[0m"
+        },
+        {
+          "line": 421,
+          "text": "2026-10-23T04:04:41.8253980Z \u001b[36;1mecho CI_BRANCH=${GITHUB_REF#refs/*/} >> $GITHUB_ENV\u001b[0m"
+        },
+        {
+          "line": 422,
+          "text": "2026-10-23T04:04:41.8947380Z shell: /bin/bash --noprofile --norc -e -o pipefail {0}"
+        },
+        {
+          "line": 423,
+          "text": "2026-10-23T04:04:41.8948340Z env:"
+        },
+        {
+          "line": 424,
+          "text": "2026-10-23T04:04:41.8948930Z   CI_NAME: Pull Request CI"
+        }
+      ],
+      "warning_limit": "Mechanical matching preserves summaries and duplicate lines, not distinct defects or zero-warning qualification."
+    },
+    {
+      "job": {
+        "id": 120233739067,
+        "name": "build (ubuntu-26.04)",
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-10-23T04:03:54Z",
+        "completed_at": "2026-10-23T04:18:06Z"
+      },
+      "download_exit": 0,
+      "log_qualified": true,
+      "bytes": 315220,
+      "sha256": "5338afb7f08826a5a4490403b6d70ec91005c925c7a313e0d9c5f673411e5711",
+      "warning_candidates": [
+        {
+          "line": 90,
+          "text": "2026-10-23T04:03:57.3793153Z hint: to use in all of your new repositories, which will suppress this warning,"
+        },
+        {
+          "line": 525,
+          "text": "2026-10-23T04:04:35.1977538Z WARNING: The SDK Manager CLI tool (sdkmanager) is deprecated. Use Android CLI instead."
+        },
+        {
+          "line": 1465,
+          "text": "2026-10-23T04:04:40.6147287Z WARNING: The SDK Manager CLI tool (sdkmanager) is deprecated. Use Android CLI instead."
+        },
+        {
+          "line": 1497,
+          "text": "2026-10-23T04:04:42.5277330Z WARNING: The SDK Manager CLI tool (sdkmanager) is deprecated. Use Android CLI instead."
+        },
+        {
+          "line": 1647,
+          "text": "2026-10-23T04:05:35.7256479Z Deprecated Gradle features were used in this build, making it incompatible with Gradle 10."
+        },
+        {
+          "line": 1649,
+          "text": "2026-10-23T04:05:35.7258323Z You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins."
+        },
+        {
+          "line": 1651,
+          "text": "2026-10-23T04:05:35.7260671Z For more on this, please refer to https://docs.gradle.org/9.8.1/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation."
+        },
+        {
+          "line": 1732,
+          "text": "2026-10-23T04:06:15.3312267Z C/C++: CMake Deprecation Warning at librime/deps/leveldb/CMakeLists.txt:5 (cmake_minimum_required):"
+        },
+        {
+          "line": 1749,
+          "text": "2026-10-23T04:06:42.0472806Z C/C++: /home/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4026:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1753,
+          "text": "2026-10-23T04:06:42.0479996Z C/C++: /home/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4028:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1757,
+          "text": "2026-10-23T04:06:42.0608775Z C/C++: /home/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4033:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1761,
+          "text": "2026-10-23T04:06:42.0615533Z C/C++: /home/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4035:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1765,
+          "text": "2026-10-23T04:06:42.0722724Z C/C++: /home/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4040:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1769,
+          "text": "2026-10-23T04:06:42.0730309Z C/C++: /home/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4042:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1773,
+          "text": "2026-10-23T04:06:42.0796497Z C/C++: /home/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4047:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1777,
+          "text": "2026-10-23T04:06:42.0804310Z C/C++: /home/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4049:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1781,
+          "text": "2026-10-23T04:06:42.0811109Z C/C++: /home/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4054:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1785,
+          "text": "2026-10-23T04:06:42.0818024Z C/C++: /home/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4056:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1789,
+          "text": "2026-10-23T04:06:42.0824559Z C/C++: /home/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4061:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1793,
+          "text": "2026-10-23T04:06:42.0925014Z C/C++: /home/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4063:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1797,
+          "text": "2026-10-23T04:06:42.0930512Z C/C++: 12 warnings generated."
+        },
+        {
+          "line": 1802,
+          "text": "2026-10-23T04:09:16.3357292Z C/C++: CMake Deprecation Warning at librime/deps/leveldb/CMakeLists.txt:5 (cmake_minimum_required):"
+        },
+        {
+          "line": 1814,
+          "text": "2026-10-23T04:09:48.6548491Z C/C++: /home/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4026:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1818,
+          "text": "2026-10-23T04:09:48.6768420Z C/C++: /home/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4028:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1822,
+          "text": "2026-10-23T04:09:48.6878191Z C/C++: /home/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4033:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1826,
+          "text": "2026-10-23T04:09:48.7048322Z C/C++: /home/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4035:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1830,
+          "text": "2026-10-23T04:09:48.7204619Z C/C++: /home/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4040:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1834,
+          "text": "2026-10-23T04:09:48.7388383Z C/C++: /home/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4042:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1838,
+          "text": "2026-10-23T04:09:48.7558319Z C/C++: /home/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4047:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1842,
+          "text": "2026-10-23T04:09:48.7737683Z C/C++: /home/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4049:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1846,
+          "text": "2026-10-23T04:09:48.7958548Z C/C++: /home/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4054:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1850,
+          "text": "2026-10-23T04:09:48.8118261Z C/C++: /home/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4056:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1854,
+          "text": "2026-10-23T04:09:48.8241837Z C/C++: /home/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4061:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1858,
+          "text": "2026-10-23T04:09:48.8418213Z C/C++: /home/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4063:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1862,
+          "text": "2026-10-23T04:09:48.8576430Z C/C++: 12 warnings generated."
+        },
+        {
+          "line": 1863,
+          "text": "2026-10-23T04:10:47.4318972Z C/C++: /home/runner/work/trime/trime/app/src/main/jni/librime/plugins/librime-lua/src/types.cc:1959:26: warning: implicit conversion from 'unsigned long long' to 'size_t' (aka 'unsigned int') changes value from 18446744073709551615 to 4294967295 [-Wconstant-conversion]"
+        },
+        {
+          "line": 1866,
+          "text": "2026-10-23T04:10:47.4456557Z C/C++: 1 warning generated."
+        },
+        {
+          "line": 1875,
+          "text": "2026-10-23T04:12:36.4304766Z C/C++: CMake Deprecation Warning at librime/deps/leveldb/CMakeLists.txt:5 (cmake_minimum_required):"
+        },
+        {
+          "line": 1885,
+          "text": "2026-10-23T04:12:52.7518447Z C/C++: /home/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4026:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1889,
+          "text": "2026-10-23T04:12:52.7618311Z C/C++: /home/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4028:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1893,
+          "text": "2026-10-23T04:12:52.7729259Z C/C++: /home/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4033:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1897,
+          "text": "2026-10-23T04:12:52.7799665Z C/C++: /home/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4035:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1901,
+          "text": "2026-10-23T04:12:52.7918326Z C/C++: /home/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4040:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1905,
+          "text": "2026-10-23T04:12:52.7950153Z C/C++: /home/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4042:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1909,
+          "text": "2026-10-23T04:12:52.7981004Z C/C++: /home/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4047:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1913,
+          "text": "2026-10-23T04:12:52.7987931Z C/C++: /home/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4049:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1917,
+          "text": "2026-10-23T04:12:52.7994414Z C/C++: /home/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4054:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1921,
+          "text": "2026-10-23T04:12:52.8011914Z C/C++: /home/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4056:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1925,
+          "text": "2026-10-23T04:12:52.8018821Z C/C++: /home/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4061:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1929,
+          "text": "2026-10-23T04:12:52.8025164Z C/C++: /home/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4063:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1933,
+          "text": "2026-10-23T04:12:52.8030393Z C/C++: 12 warnings generated."
+        },
+        {
+          "line": 1934,
+          "text": "2026-10-23T04:13:35.3328764Z C/C++: /home/runner/work/trime/trime/app/src/main/jni/librime/plugins/librime-lua/src/types.cc:1959:26: warning: implicit conversion from 'unsigned long long' to 'size_t' (aka 'unsigned int') changes value from 18446744073709551615 to 4294967295 [-Wconstant-conversion]"
+        },
+        {
+          "line": 1937,
+          "text": "2026-10-23T04:13:35.3417660Z C/C++: 1 warning generated."
+        },
+        {
+          "line": 1940,
+          "text": "2026-10-23T04:15:17.0305342Z C/C++: CMake Deprecation Warning at librime/deps/leveldb/CMakeLists.txt:5 (cmake_minimum_required):"
+        },
+        {
+          "line": 1950,
+          "text": "2026-10-23T04:15:32.8428265Z C/C++: /home/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4026:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1954,
+          "text": "2026-10-23T04:15:32.8518242Z C/C++: /home/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4028:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1958,
+          "text": "2026-10-23T04:15:32.8600185Z C/C++: /home/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4033:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1962,
+          "text": "2026-10-23T04:15:32.8689388Z C/C++: /home/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4035:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1966,
+          "text": "2026-10-23T04:15:32.8818267Z C/C++: /home/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4040:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1970,
+          "text": "2026-10-23T04:15:32.8898072Z C/C++: /home/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4042:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1974,
+          "text": "2026-10-23T04:15:32.8999909Z C/C++: /home/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4047:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1978,
+          "text": "2026-10-23T04:15:32.9088281Z C/C++: /home/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4049:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1982,
+          "text": "2026-10-23T04:15:32.9178391Z C/C++: /home/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4054:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1986,
+          "text": "2026-10-23T04:15:32.9268779Z C/C++: /home/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4056:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1990,
+          "text": "2026-10-23T04:15:32.9358355Z C/C++: /home/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4061:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1994,
+          "text": "2026-10-23T04:15:32.9391409Z C/C++: /home/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4063:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1998,
+          "text": "2026-10-23T04:15:32.9395631Z C/C++: 12 warnings generated."
+        },
+        {
+          "line": 2012,
+          "text": "2026-10-23T04:17:52.2242910Z Deprecated Gradle features were used in this build, making it incompatible with Gradle 10."
+        },
+        {
+          "line": 2014,
+          "text": "2026-10-23T04:17:52.2244682Z You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins."
+        },
+        {
+          "line": 2016,
+          "text": "2026-10-23T04:17:52.2247290Z For more on this, please refer to https://docs.gradle.org/9.8.1/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation."
+        }
+      ],
+      "app_task_lines": [
+        {
+          "line": 1718,
+          "text": "2026-10-23T04:05:51.9357265Z > Task :app:checkDebugDuplicateClasses"
+        },
+        {
+          "line": 1722,
+          "text": "2026-10-23T04:05:53.8366943Z > Task :app:checkDebugAarMetadata"
+        }
+      ],
+      "checkout_lines": [
+        {
+          "line": 124,
+          "text": "2026-10-23T04:03:57.5289839Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules origin +refs/heads/*:refs/remotes/origin/* +refs/tags/*:refs/tags/* +009a6e643ead0da836102df02370ed5901c938d2:refs/remotes/pull/2186/merge"
+        },
+        {
+          "line": 168,
+          "text": "2026-10-23T04:03:59.4293508Z  * [new ref]           009a6e643ead0da836102df02370ed5901c938d2 -> pull/2186/merge"
+        },
+        {
+          "line": 433,
+          "text": "2026-10-23T04:04:20.3221769Z [command]/usr/bin/git log -1 --format=%H"
+        },
+        {
+          "line": 434,
+          "text": "2026-10-23T04:04:20.3250564Z 009a6e643ead0da836102df02370ed5901c938d2"
+        }
+      ],
+      "checkout_context": [
+        {
+          "line": 431,
+          "text": "2026-10-23T04:04:20.3116896Z Entering 'app/src/main/jni/snappy/third_party/googletest'"
+        },
+        {
+          "line": 432,
+          "text": "2026-10-23T04:04:20.3169358Z ##[endgroup]"
+        },
+        {
+          "line": 433,
+          "text": "2026-10-23T04:04:20.3221769Z [command]/usr/bin/git log -1 --format=%H"
+        },
+        {
+          "line": 434,
+          "text": "2026-10-23T04:04:20.3250564Z 009a6e643ead0da836102df02370ed5901c938d2"
+        },
+        {
+          "line": 435,
+          "text": "2026-10-23T04:04:20.3502345Z ##[group]Run echo ${GITHUB_REF#refs/*/}"
+        },
+        {
+          "line": 436,
+          "text": "2026-10-23T04:04:20.3502737Z \u001b[36;1mecho ${GITHUB_REF#refs/*/}\u001b[0m"
+        },
+        {
+          "line": 437,
+          "text": "2026-10-23T04:04:20.3503089Z \u001b[36;1mecho CI_BRANCH=${GITHUB_REF#refs/*/} >> $GITHUB_ENV\u001b[0m"
+        },
+        {
+          "line": 438,
+          "text": "2026-10-23T04:04:20.3696652Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}"
+        },
+        {
+          "line": 439,
+          "text": "2026-10-23T04:04:20.3697145Z env:"
+        },
+        {
+          "line": 440,
+          "text": "2026-10-23T04:04:20.3697426Z   CI_NAME: Pull Request CI"
+        }
+      ],
+      "warning_limit": "Mechanical matching preserves summaries and duplicate lines, not distinct defects or zero-warning qualification."
+    },
+    {
+      "job": {
+        "id": 120233739091,
+        "name": "build (windows-2025)",
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-10-23T04:03:54Z",
+        "completed_at": "2026-10-23T04:34:25Z"
+      },
+      "download_exit": 0,
+      "log_qualified": true,
+      "bytes": 218203,
+      "sha256": "b5a42a36fa454374f08f08ab42b75f2125745a5930592b2f9dab7666c299aedd",
+      "warning_candidates": [
+        {
+          "line": 495,
+          "text": "2026-10-23T04:05:05.5132837Z WARNING: The SDK Manager CLI tool (sdkmanager) is deprecated. Use Android CLI instead."
+        },
+        {
+          "line": 503,
+          "text": "2026-10-23T04:05:11.3328995Z WARNING: A restricted method in java.lang.System has been called"
+        },
+        {
+          "line": 504,
+          "text": "2026-10-23T04:05:11.3331096Z WARNING: java.lang.System::load has been called by com.sun.jna.Native in an unnamed module (file:/C:/Program%20Files%20(x86)/Android/android-sdk/cmdline-tools/22.0/lib/external/net/java/dev/jna/jna/5.14.0/jna-5.14.0.jar)"
+        },
+        {
+          "line": 505,
+          "text": "2026-10-23T04:05:11.3333694Z WARNING: Use --enable-native-access=ALL-UNNAMED to avoid a warning for callers in this module"
+        },
+        {
+          "line": 506,
+          "text": "2026-10-23T04:05:11.3334823Z WARNING: Restricted methods will be blocked in a future release unless native access is enabled"
+        },
+        {
+          "line": 810,
+          "text": "2026-10-23T04:05:12.3578757Z WARNING: The SDK Manager CLI tool (sdkmanager) is deprecated. Use Android CLI instead."
+        },
+        {
+          "line": 819,
+          "text": "2026-10-23T04:05:13.5615357Z WARNING: A restricted method in java.lang.System has been called"
+        },
+        {
+          "line": 820,
+          "text": "2026-10-23T04:05:13.5617996Z WARNING: java.lang.System::load has been called by com.sun.jna.Native in an unnamed module (file:/C:/Program%20Files%20(x86)/Android/android-sdk/cmdline-tools/22.0/lib/external/net/java/dev/jna/jna/5.14.0/jna-5.14.0.jar)"
+        },
+        {
+          "line": 821,
+          "text": "2026-10-23T04:05:13.5620135Z WARNING: Use --enable-native-access=ALL-UNNAMED to avoid a warning for callers in this module"
+        },
+        {
+          "line": 822,
+          "text": "2026-10-23T04:05:13.5621338Z WARNING: Restricted methods will be blocked in a future release unless native access is enabled"
+        },
+        {
+          "line": 848,
+          "text": "2026-10-23T04:05:14.8039585Z WARNING: The SDK Manager CLI tool (sdkmanager) is deprecated. Use Android CLI instead."
+        },
+        {
+          "line": 856,
+          "text": "2026-10-23T04:05:16.0316814Z WARNING: A restricted method in java.lang.System has been called"
+        },
+        {
+          "line": 857,
+          "text": "2026-10-23T04:05:16.0318132Z WARNING: java.lang.System::load has been called by com.sun.jna.Native in an unnamed module (file:/C:/Program%20Files%20(x86)/Android/android-sdk/cmdline-tools/22.0/lib/external/net/java/dev/jna/jna/5.14.0/jna-5.14.0.jar)"
+        },
+        {
+          "line": 858,
+          "text": "2026-10-23T04:05:16.0319293Z WARNING: Use --enable-native-access=ALL-UNNAMED to avoid a warning for callers in this module"
+        },
+        {
+          "line": 859,
+          "text": "2026-10-23T04:05:16.0320019Z WARNING: Restricted methods will be blocked in a future release unless native access is enabled"
+        },
+        {
+          "line": 1031,
+          "text": "2026-10-23T04:08:03.7795034Z Deprecated Gradle features were used in this build, making it incompatible with Gradle 10."
+        },
+        {
+          "line": 1033,
+          "text": "2026-10-23T04:08:03.7800184Z You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins."
+        },
+        {
+          "line": 1035,
+          "text": "2026-10-23T04:08:03.7807634Z For more on this, please refer to https://docs.gradle.org/9.8.1/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation."
+        },
+        {
+          "line": 1121,
+          "text": "2026-10-23T04:11:45.8496017Z C/C++: CMake Deprecation Warning at librime/deps/leveldb/CMakeLists.txt:5 (cmake_minimum_required):"
+        },
+        {
+          "line": 1132,
+          "text": "2026-10-23T04:12:43.1468967Z C/C++: D:/a/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4026:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1136,
+          "text": "2026-10-23T04:12:43.3976960Z C/C++: D:/a/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4028:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1140,
+          "text": "2026-10-23T04:12:43.6370411Z C/C++: D:/a/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4033:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1144,
+          "text": "2026-10-23T04:12:43.8307770Z C/C++: D:/a/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4035:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1148,
+          "text": "2026-10-23T04:12:43.9851322Z C/C++: D:/a/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4040:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1152,
+          "text": "2026-10-23T04:12:43.9860064Z C/C++: D:/a/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4042:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1156,
+          "text": "2026-10-23T04:12:43.9866948Z C/C++: D:/a/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4047:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1160,
+          "text": "2026-10-23T04:12:43.9872430Z C/C++: D:/a/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4049:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1164,
+          "text": "2026-10-23T04:12:43.9878246Z C/C++: D:/a/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4054:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1168,
+          "text": "2026-10-23T04:12:44.0266220Z C/C++: D:/a/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4056:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1172,
+          "text": "2026-10-23T04:12:44.3989436Z C/C++: D:/a/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4061:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1176,
+          "text": "2026-10-23T04:12:44.6648271Z C/C++: D:/a/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4063:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1180,
+          "text": "2026-10-23T04:12:45.0515137Z C/C++: 12 warnings generated."
+        },
+        {
+          "line": 1187,
+          "text": "2026-10-23T04:18:03.4497123Z C/C++: CMake Deprecation Warning at librime/deps/leveldb/CMakeLists.txt:5 (cmake_minimum_required):"
+        },
+        {
+          "line": 1197,
+          "text": "2026-10-23T04:18:41.8173794Z C/C++: D:/a/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4026:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1201,
+          "text": "2026-10-23T04:18:41.9574737Z C/C++: D:/a/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4028:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1205,
+          "text": "2026-10-23T04:18:42.1099524Z C/C++: D:/a/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4033:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1209,
+          "text": "2026-10-23T04:18:42.2264407Z C/C++: D:/a/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4035:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1213,
+          "text": "2026-10-23T04:18:42.3464566Z C/C++: D:/a/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4040:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1217,
+          "text": "2026-10-23T04:18:42.4866119Z C/C++: D:/a/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4042:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1221,
+          "text": "2026-10-23T04:18:42.6002862Z C/C++: D:/a/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4047:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1225,
+          "text": "2026-10-23T04:18:42.7243999Z C/C++: D:/a/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4049:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1229,
+          "text": "2026-10-23T04:18:42.8274007Z C/C++: D:/a/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4054:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1233,
+          "text": "2026-10-23T04:18:42.9692086Z C/C++: D:/a/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4056:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1237,
+          "text": "2026-10-23T04:18:43.1327502Z C/C++: D:/a/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4061:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1241,
+          "text": "2026-10-23T04:18:43.2865737Z C/C++: D:/a/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4063:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1245,
+          "text": "2026-10-23T04:18:43.4143478Z C/C++: 12 warnings generated."
+        },
+        {
+          "line": 1246,
+          "text": "2026-10-23T04:20:05.5773753Z C/C++: D:/a/trime/trime/app/src/main/jni/librime/plugins/librime-lua/src/types.cc:1959:26: warning: implicit conversion from 'unsigned long long' to 'size_t' (aka 'unsigned int') changes value from 18446744073709551615 to 4294967295 [-Wconstant-conversion]"
+        },
+        {
+          "line": 1249,
+          "text": "2026-10-23T04:20:05.6591983Z C/C++: 1 warning generated."
+        },
+        {
+          "line": 1252,
+          "text": "2026-10-23T04:23:11.4484913Z C/C++: CMake Deprecation Warning at librime/deps/leveldb/CMakeLists.txt:5 (cmake_minimum_required):"
+        },
+        {
+          "line": 1262,
+          "text": "2026-10-23T04:23:41.8546794Z C/C++: D:/a/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4026:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1266,
+          "text": "2026-10-23T04:23:41.9024421Z C/C++: D:/a/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4028:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1270,
+          "text": "2026-10-23T04:23:41.9936472Z C/C++: D:/a/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4033:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1274,
+          "text": "2026-10-23T04:23:42.0786945Z C/C++: D:/a/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4035:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1278,
+          "text": "2026-10-23T04:23:42.1753192Z C/C++: D:/a/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4040:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1282,
+          "text": "2026-10-23T04:23:42.2632998Z C/C++: D:/a/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4042:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1286,
+          "text": "2026-10-23T04:23:42.3713075Z C/C++: D:/a/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4047:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1290,
+          "text": "2026-10-23T04:23:42.4663066Z C/C++: D:/a/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4049:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1294,
+          "text": "2026-10-23T04:23:42.5544088Z C/C++: D:/a/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4054:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1298,
+          "text": "2026-10-23T04:23:42.7350674Z C/C++: D:/a/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4056:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1302,
+          "text": "2026-10-23T04:23:42.8410862Z C/C++: D:/a/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4061:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1306,
+          "text": "2026-10-23T04:23:42.9500961Z C/C++: D:/a/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4063:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1310,
+          "text": "2026-10-23T04:23:43.0469484Z C/C++: 12 warnings generated."
+        },
+        {
+          "line": 1311,
+          "text": "2026-10-23T04:24:54.4689583Z C/C++: D:/a/trime/trime/app/src/main/jni/librime/plugins/librime-lua/src/types.cc:1959:26: warning: implicit conversion from 'unsigned long long' to 'size_t' (aka 'unsigned int') changes value from 18446744073709551615 to 4294967295 [-Wconstant-conversion]"
+        },
+        {
+          "line": 1314,
+          "text": "2026-10-23T04:24:54.5765106Z C/C++: 1 warning generated."
+        },
+        {
+          "line": 1317,
+          "text": "2026-10-23T04:27:59.7469727Z C/C++: CMake Deprecation Warning at librime/deps/leveldb/CMakeLists.txt:5 (cmake_minimum_required):"
+        },
+        {
+          "line": 1327,
+          "text": "2026-10-23T04:28:35.1977917Z C/C++: D:/a/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4026:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1331,
+          "text": "2026-10-23T04:28:35.2682403Z C/C++: D:/a/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4028:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1335,
+          "text": "2026-10-23T04:28:35.3431053Z C/C++: D:/a/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4033:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1339,
+          "text": "2026-10-23T04:28:35.4485875Z C/C++: D:/a/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4035:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1343,
+          "text": "2026-10-23T04:28:35.5777606Z C/C++: D:/a/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4040:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1347,
+          "text": "2026-10-23T04:28:35.6887593Z C/C++: D:/a/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4042:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1351,
+          "text": "2026-10-23T04:28:35.8179396Z C/C++: D:/a/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4047:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1355,
+          "text": "2026-10-23T04:28:35.9301410Z C/C++: D:/a/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4049:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1359,
+          "text": "2026-10-23T04:28:36.0388250Z C/C++: D:/a/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4054:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1363,
+          "text": "2026-10-23T04:28:36.1556214Z C/C++: D:/a/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4056:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1367,
+          "text": "2026-10-23T04:28:36.2625587Z C/C++: D:/a/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4061:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1371,
+          "text": "2026-10-23T04:28:36.4025746Z C/C++: D:/a/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4063:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1375,
+          "text": "2026-10-23T04:28:36.5115658Z C/C++: 12 warnings generated."
+        },
+        {
+          "line": 1392,
+          "text": "2026-10-23T04:32:54.1576506Z Deprecated Gradle features were used in this build, making it incompatible with Gradle 10."
+        },
+        {
+          "line": 1394,
+          "text": "2026-10-23T04:32:54.1776432Z You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins."
+        },
+        {
+          "line": 1396,
+          "text": "2026-10-23T04:32:54.1779957Z For more on this, please refer to https://docs.gradle.org/9.8.1/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation."
+        },
+        {
+          "line": 1471,
+          "text": "2026-10-23T04:34:12.4714281Z ##[warning]Failed to save: \"C:\\Program failed with error: The process 'C:\\Program Files\\Git\\usr\\bin\\tar.exe' failed with exit code 2"
+        }
+      ],
+      "app_task_lines": [
+        {
+          "line": 1102,
+          "text": "2026-10-23T04:09:34.6529019Z > Task :app:checkDebugDuplicateClasses"
+        },
+        {
+          "line": 1111,
+          "text": "2026-10-23T04:10:44.3702313Z > Task :app:checkDebugAarMetadata"
+        }
+      ],
+      "checkout_lines": [
+        {
+          "line": 111,
+          "text": "2026-10-23T04:04:02.0313467Z [command]\"C:\\Program Files\\Git\\bin\\git.exe\" -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules origin +refs/heads/*:refs/remotes/origin/* +refs/tags/*:refs/tags/* +009a6e643ead0da836102df02370ed5901c938d2:refs/remotes/pull/2186/merge"
+        },
+        {
+          "line": 155,
+          "text": "2026-10-23T04:04:04.8142443Z  * [new ref]           009a6e643ead0da836102df02370ed5901c938d2 -> pull/2186/merge"
+        },
+        {
+          "line": 420,
+          "text": "2026-10-23T04:04:54.5788894Z [command]\"C:\\Program Files\\Git\\bin\\git.exe\" log -1 --format=%H"
+        },
+        {
+          "line": 421,
+          "text": "2026-10-23T04:04:54.6225999Z 009a6e643ead0da836102df02370ed5901c938d2"
+        }
+      ],
+      "checkout_context": [
+        {
+          "line": 418,
+          "text": "2026-10-23T04:04:54.4579078Z Entering 'app/src/main/jni/snappy/third_party/googletest'"
+        },
+        {
+          "line": 419,
+          "text": "2026-10-23T04:04:54.5270116Z ##[endgroup]"
+        },
+        {
+          "line": 420,
+          "text": "2026-10-23T04:04:54.5788894Z [command]\"C:\\Program Files\\Git\\bin\\git.exe\" log -1 --format=%H"
+        },
+        {
+          "line": 421,
+          "text": "2026-10-23T04:04:54.6225999Z 009a6e643ead0da836102df02370ed5901c938d2"
+        },
+        {
+          "line": 422,
+          "text": "2026-10-23T04:04:54.6746527Z ##[group]Run echo ${GITHUB_REF#refs/*/}"
+        },
+        {
+          "line": 423,
+          "text": "2026-10-23T04:04:54.6746944Z \u001b[36;1mecho ${GITHUB_REF#refs/*/}\u001b[0m"
+        },
+        {
+          "line": 424,
+          "text": "2026-10-23T04:04:54.6747280Z \u001b[36;1mecho CI_BRANCH=${GITHUB_REF#refs/*/} >> $GITHUB_ENV\u001b[0m"
+        },
+        {
+          "line": 425,
+          "text": "2026-10-23T04:04:54.6766752Z shell: C:\\Program Files\\Git\\bin\\bash.EXE --noprofile --norc -e -o pipefail {0}"
+        },
+        {
+          "line": 426,
+          "text": "2026-10-23T04:04:54.6767156Z env:"
+        },
+        {
+          "line": 427,
+          "text": "2026-10-23T04:04:54.6767333Z   CI_NAME: Pull Request CI"
+        }
+      ],
+      "warning_limit": "Mechanical matching preserves summaries and duplicate lines, not distinct defects or zero-warning qualification."
+    },
+    {
+      "job": {
+        "id": 120233739201,
+        "name": "build (macos-26-intel)",
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-10-23T04:03:55Z",
+        "completed_at": "2026-10-23T04:28:17Z"
+      },
+      "download_exit": 0,
+      "log_qualified": true,
+      "bytes": 319155,
+      "sha256": "930d25cb4b6ce040d50ce7a6002235e4b66c08a788a3528450c8d2c687656e42",
+      "warning_candidates": [
+        {
+          "line": 90,
+          "text": "2026-10-23T04:03:59.6095890Z hint: to use in all of your new repositories, which will suppress this warning,"
+        },
+        {
+          "line": 511,
+          "text": "2026-10-23T04:05:14.1959730Z WARNING: The SDK Manager CLI tool (sdkmanager) is deprecated. Use Android CLI instead."
+        },
+        {
+          "line": 519,
+          "text": "2026-10-23T04:05:16.7319700Z WARNING: A restricted method in java.lang.System has been called"
+        },
+        {
+          "line": 520,
+          "text": "2026-10-23T04:05:16.7323320Z WARNING: java.lang.System::load has been called by com.sun.jna.Native in an unnamed module (file:/Users/runner/Library/Android/sdk/cmdline-tools/22.0/lib/external/net/java/dev/jna/jna/5.14.0/jna-5.14.0.jar)"
+        },
+        {
+          "line": 521,
+          "text": "2026-10-23T04:05:16.7327710Z WARNING: Use --enable-native-access=ALL-UNNAMED to avoid a warning for callers in this module"
+        },
+        {
+          "line": 522,
+          "text": "2026-10-23T04:05:16.7330800Z WARNING: Restricted methods will be blocked in a future release unless native access is enabled"
+        },
+        {
+          "line": 1456,
+          "text": "2026-10-23T04:05:17.8450370Z WARNING: The SDK Manager CLI tool (sdkmanager) is deprecated. Use Android CLI instead."
+        },
+        {
+          "line": 1465,
+          "text": "2026-10-23T04:05:18.8144330Z WARNING: A restricted method in java.lang.System has been called"
+        },
+        {
+          "line": 1466,
+          "text": "2026-10-23T04:05:18.8260120Z WARNING: java.lang.System::load has been called by com.sun.jna.Native in an unnamed module (file:/Users/runner/Library/Android/sdk/cmdline-tools/22.0/lib/external/net/java/dev/jna/jna/5.14.0/jna-5.14.0.jar)"
+        },
+        {
+          "line": 1467,
+          "text": "2026-10-23T04:05:18.8262250Z WARNING: Use --enable-native-access=ALL-UNNAMED to avoid a warning for callers in this module"
+        },
+        {
+          "line": 1468,
+          "text": "2026-10-23T04:05:18.8447990Z WARNING: Restricted methods will be blocked in a future release unless native access is enabled"
+        },
+        {
+          "line": 1493,
+          "text": "2026-10-23T04:05:20.0496800Z WARNING: The SDK Manager CLI tool (sdkmanager) is deprecated. Use Android CLI instead."
+        },
+        {
+          "line": 1501,
+          "text": "2026-10-23T04:05:21.0127410Z WARNING: A restricted method in java.lang.System has been called"
+        },
+        {
+          "line": 1502,
+          "text": "2026-10-23T04:05:21.0132100Z WARNING: java.lang.System::load has been called by com.sun.jna.Native in an unnamed module (file:/Users/runner/Library/Android/sdk/cmdline-tools/22.0/lib/external/net/java/dev/jna/jna/5.14.0/jna-5.14.0.jar)"
+        },
+        {
+          "line": 1503,
+          "text": "2026-10-23T04:05:21.0135300Z WARNING: Use --enable-native-access=ALL-UNNAMED to avoid a warning for callers in this module"
+        },
+        {
+          "line": 1504,
+          "text": "2026-10-23T04:05:21.0137460Z WARNING: Restricted methods will be blocked in a future release unless native access is enabled"
+        },
+        {
+          "line": 1654,
+          "text": "2026-10-23T04:06:48.1519730Z Deprecated Gradle features were used in this build, making it incompatible with Gradle 10."
+        },
+        {
+          "line": 1656,
+          "text": "2026-10-23T04:06:48.1524090Z You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins."
+        },
+        {
+          "line": 1658,
+          "text": "2026-10-23T04:06:48.1527120Z For more on this, please refer to https://docs.gradle.org/9.8.1/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation."
+        },
+        {
+          "line": 1739,
+          "text": "2026-10-23T04:08:14.4711480Z C/C++: CMake Deprecation Warning at librime/deps/leveldb/CMakeLists.txt:5 (cmake_minimum_required):"
+        },
+        {
+          "line": 1754,
+          "text": "2026-10-23T04:08:39.7037570Z C/C++: /Users/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4026:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1758,
+          "text": "2026-10-23T04:08:40.0059040Z C/C++: /Users/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4028:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1762,
+          "text": "2026-10-23T04:08:40.2790030Z C/C++: /Users/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4033:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1766,
+          "text": "2026-10-23T04:08:40.6796190Z C/C++: /Users/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4035:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1770,
+          "text": "2026-10-23T04:08:41.0807330Z C/C++: /Users/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4040:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1774,
+          "text": "2026-10-23T04:08:41.4814590Z C/C++: /Users/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4042:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1778,
+          "text": "2026-10-23T04:08:41.8332320Z C/C++: /Users/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4047:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1782,
+          "text": "2026-10-23T04:08:42.2347960Z C/C++: /Users/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4049:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1786,
+          "text": "2026-10-23T04:08:42.5998780Z C/C++: /Users/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4054:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1790,
+          "text": "2026-10-23T04:08:42.9708180Z C/C++: /Users/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4056:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1794,
+          "text": "2026-10-23T04:08:43.3716850Z C/C++: /Users/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4061:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1798,
+          "text": "2026-10-23T04:08:43.7938560Z C/C++: /Users/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4063:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1802,
+          "text": "2026-10-23T04:08:44.1635000Z C/C++: 12 warnings generated."
+        },
+        {
+          "line": 1807,
+          "text": "2026-10-23T04:11:40.6026110Z C/C++: CMake Deprecation Warning at librime/deps/leveldb/CMakeLists.txt:5 (cmake_minimum_required):"
+        },
+        {
+          "line": 1817,
+          "text": "2026-10-23T04:12:09.5285120Z C/C++: /Users/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4026:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1821,
+          "text": "2026-10-23T04:12:10.0172730Z C/C++: /Users/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4028:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1825,
+          "text": "2026-10-23T04:12:10.2932310Z C/C++: /Users/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4033:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1829,
+          "text": "2026-10-23T04:12:10.6947480Z C/C++: /Users/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4035:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1833,
+          "text": "2026-10-23T04:12:11.0225130Z C/C++: /Users/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4040:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1837,
+          "text": "2026-10-23T04:12:11.3561150Z C/C++: /Users/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4042:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1841,
+          "text": "2026-10-23T04:12:11.7093150Z C/C++: /Users/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4047:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1845,
+          "text": "2026-10-23T04:12:12.0825380Z C/C++: /Users/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4049:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1849,
+          "text": "2026-10-23T04:12:12.3837890Z C/C++: /Users/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4054:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1853,
+          "text": "2026-10-23T04:12:12.7840750Z C/C++: /Users/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4056:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1857,
+          "text": "2026-10-23T04:12:13.1849160Z C/C++: /Users/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4061:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1861,
+          "text": "2026-10-23T04:12:13.5309530Z C/C++: /Users/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4063:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1865,
+          "text": "2026-10-23T04:12:13.8649830Z C/C++: 12 warnings generated."
+        },
+        {
+          "line": 1866,
+          "text": "2026-10-23T04:13:46.1759100Z C/C++: /Users/runner/work/trime/trime/app/src/main/jni/librime/plugins/librime-lua/src/types.cc:1959:26: warning: implicit conversion from 'unsigned long long' to 'size_t' (aka 'unsigned int') changes value from 18446744073709551615 to 4294967295 [-Wconstant-conversion]"
+        },
+        {
+          "line": 1869,
+          "text": "2026-10-23T04:13:46.4554100Z C/C++: 1 warning generated."
+        },
+        {
+          "line": 1875,
+          "text": "2026-10-23T04:17:07.9983870Z C/C++: CMake Deprecation Warning at librime/deps/leveldb/CMakeLists.txt:5 (cmake_minimum_required):"
+        },
+        {
+          "line": 1885,
+          "text": "2026-10-23T04:17:36.0248840Z C/C++: /Users/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4026:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1889,
+          "text": "2026-10-23T04:17:36.3406420Z C/C++: /Users/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4028:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1893,
+          "text": "2026-10-23T04:17:36.7413640Z C/C++: /Users/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4033:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1897,
+          "text": "2026-10-23T04:17:37.1424170Z C/C++: /Users/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4035:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1901,
+          "text": "2026-10-23T04:17:37.5212250Z C/C++: /Users/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4040:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1905,
+          "text": "2026-10-23T04:17:37.9218810Z C/C++: /Users/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4042:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1909,
+          "text": "2026-10-23T04:17:38.2918370Z C/C++: /Users/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4047:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1913,
+          "text": "2026-10-23T04:17:38.5343220Z C/C++: /Users/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4049:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1917,
+          "text": "2026-10-23T04:17:38.7463940Z C/C++: /Users/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4054:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1921,
+          "text": "2026-10-23T04:17:38.9851070Z C/C++: /Users/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4056:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1925,
+          "text": "2026-10-23T04:17:39.2870460Z C/C++: /Users/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4061:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1929,
+          "text": "2026-10-23T04:17:39.6886970Z C/C++: /Users/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4063:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1933,
+          "text": "2026-10-23T04:17:40.0872020Z C/C++: 12 warnings generated."
+        },
+        {
+          "line": 1934,
+          "text": "2026-10-23T04:18:36.3381490Z C/C++: /Users/runner/work/trime/trime/app/src/main/jni/librime/plugins/librime-lua/src/types.cc:1959:26: warning: implicit conversion from 'unsigned long long' to 'size_t' (aka 'unsigned int') changes value from 18446744073709551615 to 4294967295 [-Wconstant-conversion]"
+        },
+        {
+          "line": 1937,
+          "text": "2026-10-23T04:18:36.4802070Z C/C++: 1 warning generated."
+        },
+        {
+          "line": 1940,
+          "text": "2026-10-23T04:21:31.8906320Z C/C++: CMake Deprecation Warning at librime/deps/leveldb/CMakeLists.txt:5 (cmake_minimum_required):"
+        },
+        {
+          "line": 1950,
+          "text": "2026-10-23T04:22:08.9436770Z C/C++: /Users/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4026:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1954,
+          "text": "2026-10-23T04:22:09.3519120Z C/C++: /Users/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4028:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1958,
+          "text": "2026-10-23T04:22:09.7431490Z C/C++: /Users/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4033:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1962,
+          "text": "2026-10-23T04:22:10.0228410Z C/C++: /Users/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4035:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1966,
+          "text": "2026-10-23T04:22:10.4248070Z C/C++: /Users/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4040:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1970,
+          "text": "2026-10-23T04:22:10.7445170Z C/C++: /Users/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4042:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1974,
+          "text": "2026-10-23T04:22:11.1076860Z C/C++: /Users/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4047:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1978,
+          "text": "2026-10-23T04:22:11.5098280Z C/C++: /Users/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4049:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1982,
+          "text": "2026-10-23T04:22:11.8730430Z C/C++: /Users/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4054:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1986,
+          "text": "2026-10-23T04:22:12.2760130Z C/C++: /Users/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4056:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1990,
+          "text": "2026-10-23T04:22:12.5172980Z C/C++: /Users/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4061:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1994,
+          "text": "2026-10-23T04:22:12.8523290Z C/C++: /Users/runner/work/trime/trime/app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h:4063:32: warning: 'constexpr' non-static member function will not be implicitly 'const' in C++14; add 'const' to avoid a change in behavior [-Wconstexpr-not-const]"
+        },
+        {
+          "line": 1998,
+          "text": "2026-10-23T04:22:13.2526230Z C/C++: 12 warnings generated."
+        },
+        {
+          "line": 2015,
+          "text": "2026-10-23T04:27:52.3147700Z Deprecated Gradle features were used in this build, making it incompatible with Gradle 10."
+        },
+        {
+          "line": 2017,
+          "text": "2026-10-23T04:27:52.3166360Z You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins."
+        },
+        {
+          "line": 2019,
+          "text": "2026-10-23T04:27:52.3179430Z For more on this, please refer to https://docs.gradle.org/9.8.1/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation."
+        }
+      ],
+      "app_task_lines": [
+        {
+          "line": 1725,
+          "text": "2026-10-23T04:07:10.8728550Z > Task :app:checkDebugDuplicateClasses"
+        },
+        {
+          "line": 1730,
+          "text": "2026-10-23T04:07:13.0473710Z > Task :app:checkDebugAarMetadata"
+        }
+      ],
+      "checkout_lines": [
+        {
+          "line": 124,
+          "text": "2026-10-23T04:04:00.3509860Z [command]/usr/local/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules origin +refs/heads/*:refs/remotes/origin/* +refs/tags/*:refs/tags/* +009a6e643ead0da836102df02370ed5901c938d2:refs/remotes/pull/2186/merge"
+        },
+        {
+          "line": 168,
+          "text": "2026-10-23T04:04:02.5403940Z  * [new ref]           009a6e643ead0da836102df02370ed5901c938d2 -> pull/2186/merge"
+        },
+        {
+          "line": 416,
+          "text": "2026-10-23T04:04:37.6408640Z [command]/usr/local/bin/git log -1 --format=%H"
+        },
+        {
+          "line": 417,
+          "text": "2026-10-23T04:04:37.6521860Z 009a6e643ead0da836102df02370ed5901c938d2"
+        }
+      ],
+      "checkout_context": [
+        {
+          "line": 414,
+          "text": "2026-10-23T04:04:37.5988890Z Entering 'app/src/main/jni/snappy/third_party/googletest'"
+        },
+        {
+          "line": 415,
+          "text": "2026-10-23T04:04:37.6273650Z ##[endgroup]"
+        },
+        {
+          "line": 416,
+          "text": "2026-10-23T04:04:37.6408640Z [command]/usr/local/bin/git log -1 --format=%H"
+        },
+        {
+          "line": 417,
+          "text": "2026-10-23T04:04:37.6521860Z 009a6e643ead0da836102df02370ed5901c938d2"
+        },
+        {
+          "line": 418,
+          "text": "2026-10-23T04:04:37.6887980Z ##[group]Run echo ${GITHUB_REF#refs/*/}"
+        },
+        {
+          "line": 419,
+          "text": "2026-10-23T04:04:37.6888540Z \u001b[36;1mecho ${GITHUB_REF#refs/*/}\u001b[0m"
+        },
+        {
+          "line": 420,
+          "text": "2026-10-23T04:04:37.6889090Z \u001b[36;1mecho CI_BRANCH=${GITHUB_REF#refs/*/} >> $GITHUB_ENV\u001b[0m"
+        },
+        {
+          "line": 421,
+          "text": "2026-10-23T04:04:37.6956850Z shell: /bin/bash --noprofile --norc -e -o pipefail {0}"
+        },
+        {
+          "line": 422,
+          "text": "2026-10-23T04:04:37.6957400Z env:"
+        },
+        {
+          "line": 423,
+          "text": "2026-10-23T04:04:37.6957710Z   CI_NAME: Pull Request CI"
+        }
+      ],
+      "warning_limit": "Mechanical matching preserves summaries and duplicate lines, not distinct defects or zero-warning qualification."
+    }
+  ],
+  "scope": "Read-only monitoring and original job-log collection. No APK downloads, reruns, dispatches, settings changes, local build, VM, PR metadata or comments. CI build producer is synthetic merge to be independently bound from checkout logs; app testcase count not inferred from old tests."
+}

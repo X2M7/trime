@@ -1,0 +1,955 @@
+{
+  "scope": "Mechanical warning/deprecation/standard compiler w:/Note: scan across completed raw CI job logs. Categories locate emitting source/tool; no baseline comparison performed to prove whether any diagnostic is newly introduced. Repeats and summaries are not unique defects.",
+  "modified_pr_paths": [
+    "app/src/main/java/com/osfans/trime/daemon/RimeDaemon.kt",
+    "app/src/main/java/com/osfans/trime/ui/main/LogActivity.kt",
+    "app/src/main/java/com/osfans/trime/ui/main/log/LogAdapter.kt",
+    "app/src/main/java/com/osfans/trime/ui/main/log/LogBuffer.kt",
+    "app/src/main/java/com/osfans/trime/ui/main/log/LogView.kt",
+    "app/src/main/java/com/osfans/trime/util/Logcat.kt",
+    "app/src/main/java/com/osfans/trime/util/Process.kt",
+    "app/src/main/res/values-zh-rCN/strings.xml",
+    "app/src/main/res/values-zh-rTW/strings.xml",
+    "app/src/main/res/values/strings.xml",
+    "app/src/test/java/com/osfans/trime/ui/main/log/LogBufferTest.kt",
+    "app/src/test/java/com/osfans/trime/util/LogcatLifecycleTest.kt",
+    "app/src/test/java/com/osfans/trime/util/ProcessLifecycleTest.kt"
+  ],
+  "logs": [
+    {
+      "raw_log": "original-job-logs/120240711271.stdout",
+      "raw_sha256": "fff090dff76f0459e08d8e661fdcb1c863a5031047f960b9d425b137ffca98e7",
+      "candidate_count": 8,
+      "categories": {
+        "git init hint mentioning warning": 1,
+        "Git checkout note, not compiler warning": 1,
+        "toolchain: sdkmanager deprecation": 2,
+        "toolchain/build: unexpanded Gradle deprecation summary": 4
+      },
+      "app_own_source_candidates": [],
+      "unclassified": [],
+      "candidates": [
+        {
+          "line": 88,
+          "text": "2026-10-23T04:28:25.0423251Z hint: to use in all of your new repositories, which will suppress this warning,",
+          "category": "git init hint mentioning warning",
+          "modified_paths_matched": [],
+          "context": [
+            "2026-10-23T04:28:25.0419255Z hint: Using 'master' as the name for the initial branch. This default branch name",
+            "2026-10-23T04:28:25.0421384Z hint: will change to \"main\" in Git 3.0. To configure the initial branch name",
+            "2026-10-23T04:28:25.0423251Z hint: to use in all of your new repositories, which will suppress this warning,",
+            "2026-10-23T04:28:25.0424749Z hint: call:",
+            "2026-10-23T04:28:25.0425569Z hint:"
+          ]
+        },
+        {
+          "line": 132,
+          "text": "2026-10-23T04:28:25.6333092Z Note: switching to 'refs/remotes/pull/2182/merge'.",
+          "category": "Git checkout note, not compiler warning",
+          "modified_paths_matched": [],
+          "context": [
+            "2026-10-23T04:28:25.6023860Z ##[group]Checking out the ref",
+            "2026-10-23T04:28:25.6026253Z [command]/usr/bin/git checkout --progress --force refs/remotes/pull/2182/merge",
+            "2026-10-23T04:28:25.6333092Z Note: switching to 'refs/remotes/pull/2182/merge'.",
+            "2026-10-23T04:28:25.6334568Z ",
+            "2026-10-23T04:28:25.6335798Z You are in 'detached HEAD' state. You can look around, make experimental"
+          ]
+        },
+        {
+          "line": 514,
+          "text": "2026-10-23T04:29:09.6828553Z WARNING: The SDK Manager CLI tool (sdkmanager) is deprecated. Use Android CLI instead.",
+          "category": "toolchain: sdkmanager deprecation",
+          "modified_paths_matched": [],
+          "context": [
+            "2026-10-23T04:29:09.4651461Z Accepting Android SDK licenses",
+            "2026-10-23T04:29:09.4655894Z [command]/usr/local/lib/android/sdk/cmdline-tools/22.0/bin/sdkmanager --licenses",
+            "2026-10-23T04:29:09.6828553Z WARNING: The SDK Manager CLI tool (sdkmanager) is deprecated. Use Android CLI instead.",
+            "2026-10-23T04:29:09.6840100Z The 'android' binary can also be found in the cmdline-tools directory, and 'android sdk' is the replacement for 'sdkmanager'.",
+            "2026-10-23T04:29:09.6842163Z To learn more about the Android CLI and how to use it, see the documentation (https://d.android.com/tools/agents/android-cli)"
+          ]
+        },
+        {
+          "line": 1454,
+          "text": "2026-10-23T04:29:12.7670907Z WARNING: The SDK Manager CLI tool (sdkmanager) is deprecated. Use Android CLI instead.",
+          "category": "toolchain: sdkmanager deprecation",
+          "modified_paths_matched": [],
+          "context": [
+            "2026-10-23T04:29:12.7405121Z ",
+            "2026-10-23T04:29:12.7405577Z [command]/usr/local/lib/android/sdk/cmdline-tools/22.0/bin/sdkmanager platform-tools",
+            "2026-10-23T04:29:12.7670907Z WARNING: The SDK Manager CLI tool (sdkmanager) is deprecated. Use Android CLI instead.",
+            "2026-10-23T04:29:12.7673679Z The 'android' binary can also be found in the cmdline-tools directory, and 'android sdk' is the replacement for 'sdkmanager'.",
+            "2026-10-23T04:29:12.7675768Z To learn more about the Android CLI and how to use it, see the documentation (https://d.android.com/tools/agents/android-cli)"
+          ]
+        },
+        {
+          "line": 1519,
+          "text": "2026-10-23T04:30:09.5464741Z Deprecated Gradle features were used in this build, making it incompatible with Gradle 10.",
+          "category": "toolchain/build: unexpanded Gradle deprecation summary",
+          "modified_paths_matched": [],
+          "context": [
+            "2026-10-23T04:30:09.5460349Z [Incubating] Problems report is available at: file:///home/runner/work/trime/trime/build/reports/problems/problems-report.html",
+            "2026-10-23T04:30:09.5461578Z ",
+            "2026-10-23T04:30:09.5464741Z Deprecated Gradle features were used in this build, making it incompatible with Gradle 10.",
+            "2026-10-23T04:30:09.5465613Z ",
+            "2026-10-23T04:30:09.5466861Z You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins."
+          ]
+        },
+        {
+          "line": 1521,
+          "text": "2026-10-23T04:30:09.5466861Z You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.",
+          "category": "toolchain/build: unexpanded Gradle deprecation summary",
+          "modified_paths_matched": [],
+          "context": [
+            "2026-10-23T04:30:09.5464741Z Deprecated Gradle features were used in this build, making it incompatible with Gradle 10.",
+            "2026-10-23T04:30:09.5465613Z ",
+            "2026-10-23T04:30:09.5466861Z You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.",
+            "2026-10-23T04:30:09.5468051Z ",
+            "2026-10-23T04:30:09.5469651Z For more on this, please refer to https://docs.gradle.org/9.8.1/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation."
+          ]
+        },
+        {
+          "line": 1625,
+          "text": "2026-10-23T04:32:57.4930527Z Deprecated Gradle features were used in this build, making it incompatible with Gradle 10.",
+          "category": "toolchain/build: unexpanded Gradle deprecation summary",
+          "modified_paths_matched": [],
+          "context": [
+            "2026-10-23T04:32:57.4928872Z [Incubating] Problems report is available at: file:///home/runner/work/trime/trime/build/reports/problems/problems-report.html",
+            "2026-10-23T04:32:57.4929826Z ",
+            "2026-10-23T04:32:57.4930527Z Deprecated Gradle features were used in this build, making it incompatible with Gradle 10.",
+            "2026-10-23T04:32:57.4931229Z ",
+            "2026-10-23T04:32:57.4932307Z You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins."
+          ]
+        },
+        {
+          "line": 1627,
+          "text": "2026-10-23T04:32:57.4932307Z You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.",
+          "category": "toolchain/build: unexpanded Gradle deprecation summary",
+          "modified_paths_matched": [],
+          "context": [
+            "2026-10-23T04:32:57.4930527Z Deprecated Gradle features were used in this build, making it incompatible with Gradle 10.",
+            "2026-10-23T04:32:57.4931229Z ",
+            "2026-10-23T04:32:57.4932307Z You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.",
+            "2026-10-23T04:32:57.4933299Z ",
+            "2026-10-23T04:32:57.4934577Z For more on this, please refer to https://docs.gradle.org/9.8.1/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation."
+          ]
+        }
+      ]
+    },
+    {
+      "raw_log": "original-job-logs/120242025568.stdout",
+      "raw_sha256": "df7a147cca65acbec4e2279c0c1ee354c96f8dc324472a7f0d79337cc7a8dea3",
+      "candidate_count": 21,
+      "categories": {
+        "Git checkout note, not compiler warning": 1,
+        "toolchain: sdkmanager deprecation": 3,
+        "toolchain: JNA/Java native access": 12,
+        "toolchain/build: unexpanded Gradle deprecation summary": 4,
+        "toolchain: Windows cache save tar failure": 1
+      },
+      "app_own_source_candidates": [],
+      "unclassified": [],
+      "candidates": [
+        {
+          "line": 163,
+          "text": "2026-10-23T04:33:15.5120699Z Note: switching to 'refs/remotes/pull/2182/merge'.",
+          "category": "Git checkout note, not compiler warning",
+          "modified_paths_matched": [],
+          "context": [
+            "2026-10-23T04:33:15.3339183Z ##[group]Checking out the ref",
+            "2026-10-23T04:33:15.3347189Z [command]\"C:\\Program Files\\Git\\bin\\git.exe\" checkout --progress --force refs/remotes/pull/2182/merge",
+            "2026-10-23T04:33:15.5120699Z Note: switching to 'refs/remotes/pull/2182/merge'.",
+            "2026-10-23T04:33:15.5121152Z ",
+            "2026-10-23T04:33:15.5121514Z You are in 'detached HEAD' state. You can look around, make experimental"
+          ]
+        },
+        {
+          "line": 495,
+          "text": "2026-10-23T04:34:13.0874940Z WARNING: The SDK Manager CLI tool (sdkmanager) is deprecated. Use Android CLI instead.",
+          "category": "toolchain: sdkmanager deprecation",
+          "modified_paths_matched": [],
+          "context": [
+            "2026-10-23T04:34:10.2718127Z Accepting Android SDK licenses",
+            "2026-10-23T04:34:10.2730374Z [command]C:\\Windows\\system32\\cmd.exe /D /S /C \"C:\\Android\\android-sdk\\cmdline-tools\\22.0\\bin\\sdkmanager.bat --licenses\"",
+            "2026-10-23T04:34:13.0874940Z WARNING: The SDK Manager CLI tool (sdkmanager) is deprecated. Use Android CLI instead.",
+            "2026-10-23T04:34:13.0876352Z The 'android' binary can also be found in the cmdline-tools directory, and 'android sdk' is the replacement for 'sdkmanager'.",
+            "2026-10-23T04:34:13.0877741Z To learn more about the Android CLI and how to use it, see the documentation (https://d.android.com/tools/agents/android-cli)"
+          ]
+        },
+        {
+          "line": 503,
+          "text": "2026-10-23T04:34:19.0104174Z WARNING: A restricted method in java.lang.System has been called",
+          "category": "toolchain: JNA/Java native access",
+          "modified_paths_matched": [],
+          "context": [
+            "2026-10-23T04:34:18.5533277Z [=========                              ] 25% Fetch remote repository...        ",
+            "2026-10-23T04:34:19.0103042Z [==========                             ] 26% Fetch remote repository...        ",
+            "2026-10-23T04:34:19.0104174Z WARNING: A restricted method in java.lang.System has been called",
+            "2026-10-23T04:34:19.0105806Z WARNING: java.lang.System::load has been called by com.sun.jna.Native in an unnamed module (file:/C:/Program%20Files%20(x86)/Android/android-sdk/cmdline-tools/22.0/lib/external/net/java/dev/jna/jna/5.14.0/jna-5.14.0.jar)",
+            "2026-10-23T04:34:19.0108902Z WARNING: Use --enable-native-access=ALL-UNNAMED to avoid a warning for callers in this module"
+          ]
+        },
+        {
+          "line": 504,
+          "text": "2026-10-23T04:34:19.0105806Z WARNING: java.lang.System::load has been called by com.sun.jna.Native in an unnamed module (file:/C:/Program%20Files%20(x86)/Android/android-sdk/cmdline-tools/22.0/lib/external/net/java/dev/jna/jna/5.14.0/jna-5.14.0.jar)",
+          "category": "toolchain: JNA/Java native access",
+          "modified_paths_matched": [],
+          "context": [
+            "2026-10-23T04:34:19.0103042Z [==========                             ] 26% Fetch remote repository...        ",
+            "2026-10-23T04:34:19.0104174Z WARNING: A restricted method in java.lang.System has been called",
+            "2026-10-23T04:34:19.0105806Z WARNING: java.lang.System::load has been called by com.sun.jna.Native in an unnamed module (file:/C:/Program%20Files%20(x86)/Android/android-sdk/cmdline-tools/22.0/lib/external/net/java/dev/jna/jna/5.14.0/jna-5.14.0.jar)",
+            "2026-10-23T04:34:19.0108902Z WARNING: Use --enable-native-access=ALL-UNNAMED to avoid a warning for callers in this module",
+            "2026-10-23T04:34:19.0109592Z WARNING: Restricted methods will be blocked in a future release unless native access is enabled"
+          ]
+        },
+        {
+          "line": 505,
+          "text": "2026-10-23T04:34:19.0108902Z WARNING: Use --enable-native-access=ALL-UNNAMED to avoid a warning for callers in this module",
+          "category": "toolchain: JNA/Java native access",
+          "modified_paths_matched": [],
+          "context": [
+            "2026-10-23T04:34:19.0104174Z WARNING: A restricted method in java.lang.System has been called",
+            "2026-10-23T04:34:19.0105806Z WARNING: java.lang.System::load has been called by com.sun.jna.Native in an unnamed module (file:/C:/Program%20Files%20(x86)/Android/android-sdk/cmdline-tools/22.0/lib/external/net/java/dev/jna/jna/5.14.0/jna-5.14.0.jar)",
+            "2026-10-23T04:34:19.0108902Z WARNING: Use --enable-native-access=ALL-UNNAMED to avoid a warning for callers in this module",
+            "2026-10-23T04:34:19.0109592Z WARNING: Restricted methods will be blocked in a future release unless native access is enabled",
+            "2026-10-23T04:34:19.0109983Z "
+          ]
+        },
+        {
+          "line": 506,
+          "text": "2026-10-23T04:34:19.0109592Z WARNING: Restricted methods will be blocked in a future release unless native access is enabled",
+          "category": "toolchain: JNA/Java native access",
+          "modified_paths_matched": [],
+          "context": [
+            "2026-10-23T04:34:19.0105806Z WARNING: java.lang.System::load has been called by com.sun.jna.Native in an unnamed module (file:/C:/Program%20Files%20(x86)/Android/android-sdk/cmdline-tools/22.0/lib/external/net/java/dev/jna/jna/5.14.0/jna-5.14.0.jar)",
+            "2026-10-23T04:34:19.0108902Z WARNING: Use --enable-native-access=ALL-UNNAMED to avoid a warning for callers in this module",
+            "2026-10-23T04:34:19.0109592Z WARNING: Restricted methods will be blocked in a future release unless native access is enabled",
+            "2026-10-23T04:34:19.0109983Z ",
+            "2026-10-23T04:34:19.1294635Z [============                           ] 31% Fetch remote repository...        "
+          ]
+        },
+        {
+          "line": 810,
+          "text": "2026-10-23T04:34:19.8158906Z WARNING: The SDK Manager CLI tool (sdkmanager) is deprecated. Use Android CLI instead.",
+          "category": "toolchain: sdkmanager deprecation",
+          "modified_paths_matched": [],
+          "context": [
+            "2026-10-23T04:34:19.6287093Z ",
+            "2026-10-23T04:34:19.6336975Z [command]C:\\Windows\\system32\\cmd.exe /D /S /C \"C:\\Android\\android-sdk\\cmdline-tools\\22.0\\bin\\sdkmanager.bat platform-tools\"",
+            "2026-10-23T04:34:19.8158906Z WARNING: The SDK Manager CLI tool (sdkmanager) is deprecated. Use Android CLI instead.",
+            "2026-10-23T04:34:19.8160078Z The 'android' binary can also be found in the cmdline-tools directory, and 'android sdk' is the replacement for 'sdkmanager'.",
+            "2026-10-23T04:34:19.8160927Z To learn more about the Android CLI and how to use it, see the documentation (https://d.android.com/tools/agents/android-cli)"
+          ]
+        },
+        {
+          "line": 819,
+          "text": "2026-10-23T04:34:20.9656131Z WARNING: A restricted method in java.lang.System has been called",
+          "category": "toolchain: JNA/Java native access",
+          "modified_paths_matched": [],
+          "context": [
+            "2026-10-23T04:34:20.7798981Z [                                       ] 3% Fetch remote repository...         ",
+            "2026-10-23T04:34:20.9654735Z [=                                      ] 3% Fetch remote repository...         ",
+            "2026-10-23T04:34:20.9656131Z WARNING: A restricted method in java.lang.System has been called",
+            "2026-10-23T04:34:20.9658259Z WARNING: java.lang.System::load has been called by com.sun.jna.Native in an unnamed module (file:/C:/Program%20Files%20(x86)/Android/android-sdk/cmdline-tools/22.0/lib/external/net/java/dev/jna/jna/5.14.0/jna-5.14.0.jar)",
+            "2026-10-23T04:34:20.9660550Z WARNING: Use --enable-native-access=ALL-UNNAMED to avoid a warning for callers in this module"
+          ]
+        },
+        {
+          "line": 820,
+          "text": "2026-10-23T04:34:20.9658259Z WARNING: java.lang.System::load has been called by com.sun.jna.Native in an unnamed module (file:/C:/Program%20Files%20(x86)/Android/android-sdk/cmdline-tools/22.0/lib/external/net/java/dev/jna/jna/5.14.0/jna-5.14.0.jar)",
+          "category": "toolchain: JNA/Java native access",
+          "modified_paths_matched": [],
+          "context": [
+            "2026-10-23T04:34:20.9654735Z [=                                      ] 3% Fetch remote repository...         ",
+            "2026-10-23T04:34:20.9656131Z WARNING: A restricted method in java.lang.System has been called",
+            "2026-10-23T04:34:20.9658259Z WARNING: java.lang.System::load has been called by com.sun.jna.Native in an unnamed module (file:/C:/Program%20Files%20(x86)/Android/android-sdk/cmdline-tools/22.0/lib/external/net/java/dev/jna/jna/5.14.0/jna-5.14.0.jar)",
+            "2026-10-23T04:34:20.9660550Z WARNING: Use --enable-native-access=ALL-UNNAMED to avoid a warning for callers in this module",
+            "2026-10-23T04:34:20.9661585Z WARNING: Restricted methods will be blocked in a future release unless native access is enabled"
+          ]
+        },
+        {
+          "line": 821,
+          "text": "2026-10-23T04:34:20.9660550Z WARNING: Use --enable-native-access=ALL-UNNAMED to avoid a warning for callers in this module",
+          "category": "toolchain: JNA/Java native access",
+          "modified_paths_matched": [],
+          "context": [
+            "2026-10-23T04:34:20.9656131Z WARNING: A restricted method in java.lang.System has been called",
+            "2026-10-23T04:34:20.9658259Z WARNING: java.lang.System::load has been called by com.sun.jna.Native in an unnamed module (file:/C:/Program%20Files%20(x86)/Android/android-sdk/cmdline-tools/22.0/lib/external/net/java/dev/jna/jna/5.14.0/jna-5.14.0.jar)",
+            "2026-10-23T04:34:20.9660550Z WARNING: Use --enable-native-access=ALL-UNNAMED to avoid a warning for callers in this module",
+            "2026-10-23T04:34:20.9661585Z WARNING: Restricted methods will be blocked in a future release unless native access is enabled",
+            "2026-10-23T04:34:20.9662203Z "
+          ]
+        },
+        {
+          "line": 822,
+          "text": "2026-10-23T04:34:20.9661585Z WARNING: Restricted methods will be blocked in a future release unless native access is enabled",
+          "category": "toolchain: JNA/Java native access",
+          "modified_paths_matched": [],
+          "context": [
+            "2026-10-23T04:34:20.9658259Z WARNING: java.lang.System::load has been called by com.sun.jna.Native in an unnamed module (file:/C:/Program%20Files%20(x86)/Android/android-sdk/cmdline-tools/22.0/lib/external/net/java/dev/jna/jna/5.14.0/jna-5.14.0.jar)",
+            "2026-10-23T04:34:20.9660550Z WARNING: Use --enable-native-access=ALL-UNNAMED to avoid a warning for callers in this module",
+            "2026-10-23T04:34:20.9661585Z WARNING: Restricted methods will be blocked in a future release unless native access is enabled",
+            "2026-10-23T04:34:20.9662203Z ",
+            "2026-10-23T04:34:21.2473761Z [=                                      ] 4% Fetch remote repository...         "
+          ]
+        },
+        {
+          "line": 848,
+          "text": "2026-10-23T04:34:22.0934949Z WARNING: The SDK Manager CLI tool (sdkmanager) is deprecated. Use Android CLI instead.",
+          "category": "toolchain: sdkmanager deprecation",
+          "modified_paths_matched": [],
+          "context": [
+            "2026-10-23T04:34:21.6267058Z   ANDROID_SDK_ROOT: C:\\Android\\android-sdk",
+            "2026-10-23T04:34:21.6267416Z ##[endgroup]",
+            "2026-10-23T04:34:22.0934949Z WARNING: The SDK Manager CLI tool (sdkmanager) is deprecated. Use Android CLI instead.",
+            "2026-10-23T04:34:22.0935953Z The 'android' binary can also be found in the cmdline-tools directory, and 'android sdk' is the replacement for 'sdkmanager'.",
+            "2026-10-23T04:34:22.0937212Z To learn more about the Android CLI and how to use it, see the documentation (https://d.android.com/tools/agents/android-cli)"
+          ]
+        },
+        {
+          "line": 856,
+          "text": "2026-10-23T04:34:23.2081989Z WARNING: A restricted method in java.lang.System has been called",
+          "category": "toolchain: JNA/Java native access",
+          "modified_paths_matched": [],
+          "context": [
+            "2026-10-23T04:34:23.0604381Z [                                       ] 3% Loading local repository...        ",
+            "2026-10-23T04:34:23.0635153Z [                                       ] 3% Fetch remote repository...         ",
+            "2026-10-23T04:34:23.2081989Z WARNING: A restricted method in java.lang.System has been called",
+            "2026-10-23T04:34:23.2084051Z WARNING: java.lang.System::load has been called by com.sun.jna.Native in an unnamed module (file:/C:/Program%20Files%20(x86)/Android/android-sdk/cmdline-tools/22.0/lib/external/net/java/dev/jna/jna/5.14.0/jna-5.14.0.jar)",
+            "2026-10-23T04:34:23.2085894Z WARNING: Use --enable-native-access=ALL-UNNAMED to avoid a warning for callers in this module"
+          ]
+        },
+        {
+          "line": 857,
+          "text": "2026-10-23T04:34:23.2084051Z WARNING: java.lang.System::load has been called by com.sun.jna.Native in an unnamed module (file:/C:/Program%20Files%20(x86)/Android/android-sdk/cmdline-tools/22.0/lib/external/net/java/dev/jna/jna/5.14.0/jna-5.14.0.jar)",
+          "category": "toolchain: JNA/Java native access",
+          "modified_paths_matched": [],
+          "context": [
+            "2026-10-23T04:34:23.0635153Z [                                       ] 3% Fetch remote repository...         ",
+            "2026-10-23T04:34:23.2081989Z WARNING: A restricted method in java.lang.System has been called",
+            "2026-10-23T04:34:23.2084051Z WARNING: java.lang.System::load has been called by com.sun.jna.Native in an unnamed module (file:/C:/Program%20Files%20(x86)/Android/android-sdk/cmdline-tools/22.0/lib/external/net/java/dev/jna/jna/5.14.0/jna-5.14.0.jar)",
+            "2026-10-23T04:34:23.2085894Z WARNING: Use --enable-native-access=ALL-UNNAMED to avoid a warning for callers in this module",
+            "2026-10-23T04:34:23.2087076Z WARNING: Restricted methods will be blocked in a future release unless native access is enabled"
+          ]
+        },
+        {
+          "line": 858,
+          "text": "2026-10-23T04:34:23.2085894Z WARNING: Use --enable-native-access=ALL-UNNAMED to avoid a warning for callers in this module",
+          "category": "toolchain: JNA/Java native access",
+          "modified_paths_matched": [],
+          "context": [
+            "2026-10-23T04:34:23.2081989Z WARNING: A restricted method in java.lang.System has been called",
+            "2026-10-23T04:34:23.2084051Z WARNING: java.lang.System::load has been called by com.sun.jna.Native in an unnamed module (file:/C:/Program%20Files%20(x86)/Android/android-sdk/cmdline-tools/22.0/lib/external/net/java/dev/jna/jna/5.14.0/jna-5.14.0.jar)",
+            "2026-10-23T04:34:23.2085894Z WARNING: Use --enable-native-access=ALL-UNNAMED to avoid a warning for callers in this module",
+            "2026-10-23T04:34:23.2087076Z WARNING: Restricted methods will be blocked in a future release unless native access is enabled",
+            "2026-10-23T04:34:23.2087707Z "
+          ]
+        },
+        {
+          "line": 859,
+          "text": "2026-10-23T04:34:23.2087076Z WARNING: Restricted methods will be blocked in a future release unless native access is enabled",
+          "category": "toolchain: JNA/Java native access",
+          "modified_paths_matched": [],
+          "context": [
+            "2026-10-23T04:34:23.2084051Z WARNING: java.lang.System::load has been called by com.sun.jna.Native in an unnamed module (file:/C:/Program%20Files%20(x86)/Android/android-sdk/cmdline-tools/22.0/lib/external/net/java/dev/jna/jna/5.14.0/jna-5.14.0.jar)",
+            "2026-10-23T04:34:23.2085894Z WARNING: Use --enable-native-access=ALL-UNNAMED to avoid a warning for callers in this module",
+            "2026-10-23T04:34:23.2087076Z WARNING: Restricted methods will be blocked in a future release unless native access is enabled",
+            "2026-10-23T04:34:23.2087707Z ",
+            "2026-10-23T04:34:23.4590871Z [=                                      ] 3% Fetch remote repository...         "
+          ]
+        },
+        {
+          "line": 1031,
+          "text": "2026-10-23T04:37:09.5832524Z Deprecated Gradle features were used in this build, making it incompatible with Gradle 10.",
+          "category": "toolchain/build: unexpanded Gradle deprecation summary",
+          "modified_paths_matched": [],
+          "context": [
+            "2026-10-23T04:37:09.5830663Z [Incubating] Problems report is available at: file:///D:/a/trime/trime/build/reports/problems/problems-report.html",
+            "2026-10-23T04:37:09.5831612Z ",
+            "2026-10-23T04:37:09.5832524Z Deprecated Gradle features were used in this build, making it incompatible with Gradle 10.",
+            "2026-10-23T04:37:09.5833571Z ",
+            "2026-10-23T04:37:09.5834739Z You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins."
+          ]
+        },
+        {
+          "line": 1033,
+          "text": "2026-10-23T04:37:09.5834739Z You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.",
+          "category": "toolchain/build: unexpanded Gradle deprecation summary",
+          "modified_paths_matched": [],
+          "context": [
+            "2026-10-23T04:37:09.5832524Z Deprecated Gradle features were used in this build, making it incompatible with Gradle 10.",
+            "2026-10-23T04:37:09.5833571Z ",
+            "2026-10-23T04:37:09.5834739Z You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.",
+            "2026-10-23T04:37:09.5835462Z ",
+            "2026-10-23T04:37:09.5836093Z For more on this, please refer to https://docs.gradle.org/9.8.1/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation."
+          ]
+        },
+        {
+          "line": 1145,
+          "text": "2026-10-23T04:41:23.1645953Z Deprecated Gradle features were used in this build, making it incompatible with Gradle 10.",
+          "category": "toolchain/build: unexpanded Gradle deprecation summary",
+          "modified_paths_matched": [],
+          "context": [
+            "2026-10-23T04:41:23.1644352Z [Incubating] Problems report is available at: file:///D:/a/trime/trime/build/reports/problems/problems-report.html",
+            "2026-10-23T04:41:23.1645278Z ",
+            "2026-10-23T04:41:23.1645953Z Deprecated Gradle features were used in this build, making it incompatible with Gradle 10.",
+            "2026-10-23T04:41:23.1646640Z ",
+            "2026-10-23T04:41:23.1652319Z You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins."
+          ]
+        },
+        {
+          "line": 1147,
+          "text": "2026-10-23T04:41:23.1652319Z You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.",
+          "category": "toolchain/build: unexpanded Gradle deprecation summary",
+          "modified_paths_matched": [],
+          "context": [
+            "2026-10-23T04:41:23.1645953Z Deprecated Gradle features were used in this build, making it incompatible with Gradle 10.",
+            "2026-10-23T04:41:23.1646640Z ",
+            "2026-10-23T04:41:23.1652319Z You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.",
+            "2026-10-23T04:41:23.1653818Z ",
+            "2026-10-23T04:41:23.1655019Z For more on this, please refer to https://docs.gradle.org/9.8.1/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation."
+          ]
+        },
+        {
+          "line": 1207,
+          "text": "2026-10-23T04:41:36.8340261Z ##[warning]Failed to save: \"C:\\Program failed with error: The process 'C:\\Program Files\\Git\\usr\\bin\\tar.exe' failed with exit code 2",
+          "category": "toolchain: Windows cache save tar failure",
+          "modified_paths_matched": [],
+          "context": [
+            "2026-10-23T04:41:36.8135635Z /usr/bin/tar: C\\:/Users/runneradmin/.gradle/caches/modules-2/modules-2.lock: Read error at byte 0, while reading 38 bytes: Device or resource busy",
+            "2026-10-23T04:41:36.8295165Z /usr/bin/tar: Exiting with failure status due to previous errors",
+            "2026-10-23T04:41:36.8340261Z ##[warning]Failed to save: \"C:\\Program failed with error: The process 'C:\\Program Files\\Git\\usr\\bin\\tar.exe' failed with exit code 2",
+            "2026-10-23T04:41:36.9449642Z Post job cleanup.",
+            "2026-10-23T04:41:37.4110135Z [command]\"C:\\Program Files\\Git\\bin\\git.exe\" version"
+          ]
+        }
+      ]
+    },
+    {
+      "raw_log": "original-job-logs/120242025575.stdout",
+      "raw_sha256": "720a26164ba91b0c1f8695f72185da9ec308456d786644536a7f92beaa9f16ca",
+      "candidate_count": 8,
+      "categories": {
+        "git init hint mentioning warning": 1,
+        "toolchain: sdkmanager deprecation": 3,
+        "toolchain/build: unexpanded Gradle deprecation summary": 4
+      },
+      "app_own_source_candidates": [],
+      "unclassified": [],
+      "candidates": [
+        {
+          "line": 91,
+          "text": "2026-10-23T04:33:08.9847010Z hint: to use in all of your new repositories, which will suppress this warning,",
+          "category": "git init hint mentioning warning",
+          "modified_paths_matched": [],
+          "context": [
+            "2026-10-23T04:33:08.9845660Z hint: Using 'master' as the name for the initial branch. This default branch name",
+            "2026-10-23T04:33:08.9846450Z hint: will change to \"main\" in Git 3.0. To configure the initial branch name",
+            "2026-10-23T04:33:08.9847010Z hint: to use in all of your new repositories, which will suppress this warning,",
+            "2026-10-23T04:33:08.9847610Z hint: call:",
+            "2026-10-23T04:33:08.9847920Z hint:"
+          ]
+        },
+        {
+          "line": 527,
+          "text": "2026-10-23T04:33:56.4058110Z WARNING: The SDK Manager CLI tool (sdkmanager) is deprecated. Use Android CLI instead.",
+          "category": "toolchain: sdkmanager deprecation",
+          "modified_paths_matched": [],
+          "context": [
+            "2026-10-23T04:33:56.0471800Z Accepting Android SDK licenses",
+            "2026-10-23T04:33:56.0475770Z [command]/Users/runner/Library/Android/sdk/cmdline-tools/22.0/bin/sdkmanager --licenses",
+            "2026-10-23T04:33:56.4058110Z WARNING: The SDK Manager CLI tool (sdkmanager) is deprecated. Use Android CLI instead.",
+            "2026-10-23T04:33:56.4059220Z The 'android' binary can also be found in the cmdline-tools directory, and 'android sdk' is the replacement for 'sdkmanager'.",
+            "2026-10-23T04:33:56.4060240Z To learn more about the Android CLI and how to use it, see the documentation (https://d.android.com/tools/agents/android-cli)"
+          ]
+        },
+        {
+          "line": 1467,
+          "text": "2026-10-23T04:33:58.2650820Z WARNING: The SDK Manager CLI tool (sdkmanager) is deprecated. Use Android CLI instead.",
+          "category": "toolchain: sdkmanager deprecation",
+          "modified_paths_matched": [],
+          "context": [
+            "2026-10-23T04:33:58.2461440Z ",
+            "2026-10-23T04:33:58.2461750Z [command]/Users/runner/Library/Android/sdk/cmdline-tools/22.0/bin/sdkmanager platform-tools",
+            "2026-10-23T04:33:58.2650820Z WARNING: The SDK Manager CLI tool (sdkmanager) is deprecated. Use Android CLI instead.",
+            "2026-10-23T04:33:58.2653270Z The 'android' binary can also be found in the cmdline-tools directory, and 'android sdk' is the replacement for 'sdkmanager'.",
+            "2026-10-23T04:33:58.2654220Z To learn more about the Android CLI and how to use it, see the documentation (https://d.android.com/tools/agents/android-cli)"
+          ]
+        },
+        {
+          "line": 1499,
+          "text": "2026-10-23T04:33:59.2347250Z WARNING: The SDK Manager CLI tool (sdkmanager) is deprecated. Use Android CLI instead.",
+          "category": "toolchain: sdkmanager deprecation",
+          "modified_paths_matched": [],
+          "context": [
+            "2026-10-23T04:33:59.1073930Z   ANDROID_SDK_ROOT: /Users/runner/Library/Android/sdk",
+            "2026-10-23T04:33:59.1074170Z ##[endgroup]",
+            "2026-10-23T04:33:59.2347250Z WARNING: The SDK Manager CLI tool (sdkmanager) is deprecated. Use Android CLI instead.",
+            "2026-10-23T04:33:59.2357190Z The 'android' binary can also be found in the cmdline-tools directory, and 'android sdk' is the replacement for 'sdkmanager'.",
+            "2026-10-23T04:33:59.2361590Z To learn more about the Android CLI and how to use it, see the documentation (https://d.android.com/tools/agents/android-cli)"
+          ]
+        },
+        {
+          "line": 1645,
+          "text": "2026-10-23T04:34:54.1334250Z Deprecated Gradle features were used in this build, making it incompatible with Gradle 10.",
+          "category": "toolchain/build: unexpanded Gradle deprecation summary",
+          "modified_paths_matched": [],
+          "context": [
+            "2026-10-23T04:34:54.1333050Z [Incubating] Problems report is available at: file:///Users/runner/work/trime/trime/build/reports/problems/problems-report.html",
+            "2026-10-23T04:34:54.1333720Z ",
+            "2026-10-23T04:34:54.1334250Z Deprecated Gradle features were used in this build, making it incompatible with Gradle 10.",
+            "2026-10-23T04:34:54.1334680Z ",
+            "2026-10-23T04:34:54.1335440Z You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins."
+          ]
+        },
+        {
+          "line": 1647,
+          "text": "2026-10-23T04:34:54.1335440Z You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.",
+          "category": "toolchain/build: unexpanded Gradle deprecation summary",
+          "modified_paths_matched": [],
+          "context": [
+            "2026-10-23T04:34:54.1334250Z Deprecated Gradle features were used in this build, making it incompatible with Gradle 10.",
+            "2026-10-23T04:34:54.1334680Z ",
+            "2026-10-23T04:34:54.1335440Z You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.",
+            "2026-10-23T04:34:54.1336080Z ",
+            "2026-10-23T04:34:54.1336980Z For more on this, please refer to https://docs.gradle.org/9.8.1/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation."
+          ]
+        },
+        {
+          "line": 1759,
+          "text": "2026-10-23T04:36:21.3690690Z Deprecated Gradle features were used in this build, making it incompatible with Gradle 10.",
+          "category": "toolchain/build: unexpanded Gradle deprecation summary",
+          "modified_paths_matched": [],
+          "context": [
+            "2026-10-23T04:36:21.3689190Z [Incubating] Problems report is available at: file:///Users/runner/work/trime/trime/build/reports/problems/problems-report.html",
+            "2026-10-23T04:36:21.3690120Z ",
+            "2026-10-23T04:36:21.3690690Z Deprecated Gradle features were used in this build, making it incompatible with Gradle 10.",
+            "2026-10-23T04:36:21.3691150Z ",
+            "2026-10-23T04:36:21.3691810Z You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins."
+          ]
+        },
+        {
+          "line": 1761,
+          "text": "2026-10-23T04:36:21.3691810Z You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.",
+          "category": "toolchain/build: unexpanded Gradle deprecation summary",
+          "modified_paths_matched": [],
+          "context": [
+            "2026-10-23T04:36:21.3690690Z Deprecated Gradle features were used in this build, making it incompatible with Gradle 10.",
+            "2026-10-23T04:36:21.3691150Z ",
+            "2026-10-23T04:36:21.3691810Z You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.",
+            "2026-10-23T04:36:21.3692310Z ",
+            "2026-10-23T04:36:21.3693020Z For more on this, please refer to https://docs.gradle.org/9.8.1/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation."
+          ]
+        }
+      ]
+    },
+    {
+      "raw_log": "original-job-logs/120242025600.stdout",
+      "raw_sha256": "597c2713e2952204b60ba5b350dab12d24d15292a03579622bde95b20b54f9ed",
+      "candidate_count": 20,
+      "categories": {
+        "git init hint mentioning warning": 1,
+        "toolchain: sdkmanager deprecation": 3,
+        "toolchain: JNA/Java native access": 12,
+        "toolchain/build: unexpanded Gradle deprecation summary": 4
+      },
+      "app_own_source_candidates": [],
+      "unclassified": [],
+      "candidates": [
+        {
+          "line": 90,
+          "text": "2026-10-23T04:33:09.7917490Z hint: to use in all of your new repositories, which will suppress this warning,",
+          "category": "git init hint mentioning warning",
+          "modified_paths_matched": [],
+          "context": [
+            "2026-10-23T04:33:09.7913020Z hint: Using 'master' as the name for the initial branch. This default branch name",
+            "2026-10-23T04:33:09.7915830Z hint: will change to \"main\" in Git 3.0. To configure the initial branch name",
+            "2026-10-23T04:33:09.7917490Z hint: to use in all of your new repositories, which will suppress this warning,",
+            "2026-10-23T04:33:09.7920770Z hint: call:",
+            "2026-10-23T04:33:09.7921650Z hint:"
+          ]
+        },
+        {
+          "line": 514,
+          "text": "2026-10-23T04:34:16.9973660Z WARNING: The SDK Manager CLI tool (sdkmanager) is deprecated. Use Android CLI instead.",
+          "category": "toolchain: sdkmanager deprecation",
+          "modified_paths_matched": [],
+          "context": [
+            "2026-10-23T04:34:16.2919330Z Accepting Android SDK licenses",
+            "2026-10-23T04:34:16.2920470Z [command]/Users/runner/Library/Android/sdk/cmdline-tools/22.0/bin/sdkmanager --licenses",
+            "2026-10-23T04:34:16.9973660Z WARNING: The SDK Manager CLI tool (sdkmanager) is deprecated. Use Android CLI instead.",
+            "2026-10-23T04:34:16.9976630Z The 'android' binary can also be found in the cmdline-tools directory, and 'android sdk' is the replacement for 'sdkmanager'.",
+            "2026-10-23T04:34:16.9978420Z To learn more about the Android CLI and how to use it, see the documentation (https://d.android.com/tools/agents/android-cli)"
+          ]
+        },
+        {
+          "line": 522,
+          "text": "2026-10-23T04:34:19.4811250Z WARNING: A restricted method in java.lang.System has been called",
+          "category": "toolchain: JNA/Java native access",
+          "modified_paths_matched": [],
+          "context": [
+            "2026-10-23T04:34:19.0110230Z [=========                              ] 25% Fetch remote repository...        ",
+            "2026-10-23T04:34:19.4800930Z [==========                             ] 26% Fetch remote repository...        ",
+            "2026-10-23T04:34:19.4811250Z WARNING: A restricted method in java.lang.System has been called",
+            "2026-10-23T04:34:19.4814360Z WARNING: java.lang.System::load has been called by com.sun.jna.Native in an unnamed module (file:/Users/runner/Library/Android/sdk/cmdline-tools/22.0/lib/external/net/java/dev/jna/jna/5.14.0/jna-5.14.0.jar)",
+            "2026-10-23T04:34:19.4817370Z WARNING: Use --enable-native-access=ALL-UNNAMED to avoid a warning for callers in this module"
+          ]
+        },
+        {
+          "line": 523,
+          "text": "2026-10-23T04:34:19.4814360Z WARNING: java.lang.System::load has been called by com.sun.jna.Native in an unnamed module (file:/Users/runner/Library/Android/sdk/cmdline-tools/22.0/lib/external/net/java/dev/jna/jna/5.14.0/jna-5.14.0.jar)",
+          "category": "toolchain: JNA/Java native access",
+          "modified_paths_matched": [],
+          "context": [
+            "2026-10-23T04:34:19.4800930Z [==========                             ] 26% Fetch remote repository...        ",
+            "2026-10-23T04:34:19.4811250Z WARNING: A restricted method in java.lang.System has been called",
+            "2026-10-23T04:34:19.4814360Z WARNING: java.lang.System::load has been called by com.sun.jna.Native in an unnamed module (file:/Users/runner/Library/Android/sdk/cmdline-tools/22.0/lib/external/net/java/dev/jna/jna/5.14.0/jna-5.14.0.jar)",
+            "2026-10-23T04:34:19.4817370Z WARNING: Use --enable-native-access=ALL-UNNAMED to avoid a warning for callers in this module",
+            "2026-10-23T04:34:19.4818780Z WARNING: Restricted methods will be blocked in a future release unless native access is enabled"
+          ]
+        },
+        {
+          "line": 524,
+          "text": "2026-10-23T04:34:19.4817370Z WARNING: Use --enable-native-access=ALL-UNNAMED to avoid a warning for callers in this module",
+          "category": "toolchain: JNA/Java native access",
+          "modified_paths_matched": [],
+          "context": [
+            "2026-10-23T04:34:19.4811250Z WARNING: A restricted method in java.lang.System has been called",
+            "2026-10-23T04:34:19.4814360Z WARNING: java.lang.System::load has been called by com.sun.jna.Native in an unnamed module (file:/Users/runner/Library/Android/sdk/cmdline-tools/22.0/lib/external/net/java/dev/jna/jna/5.14.0/jna-5.14.0.jar)",
+            "2026-10-23T04:34:19.4817370Z WARNING: Use --enable-native-access=ALL-UNNAMED to avoid a warning for callers in this module",
+            "2026-10-23T04:34:19.4818780Z WARNING: Restricted methods will be blocked in a future release unless native access is enabled",
+            "2026-10-23T04:34:19.4819600Z "
+          ]
+        },
+        {
+          "line": 525,
+          "text": "2026-10-23T04:34:19.4818780Z WARNING: Restricted methods will be blocked in a future release unless native access is enabled",
+          "category": "toolchain: JNA/Java native access",
+          "modified_paths_matched": [],
+          "context": [
+            "2026-10-23T04:34:19.4814360Z WARNING: java.lang.System::load has been called by com.sun.jna.Native in an unnamed module (file:/Users/runner/Library/Android/sdk/cmdline-tools/22.0/lib/external/net/java/dev/jna/jna/5.14.0/jna-5.14.0.jar)",
+            "2026-10-23T04:34:19.4817370Z WARNING: Use --enable-native-access=ALL-UNNAMED to avoid a warning for callers in this module",
+            "2026-10-23T04:34:19.4818780Z WARNING: Restricted methods will be blocked in a future release unless native access is enabled",
+            "2026-10-23T04:34:19.4819600Z ",
+            "2026-10-23T04:34:19.5280790Z [============                           ] 31% Fetch remote repository...        "
+          ]
+        },
+        {
+          "line": 1459,
+          "text": "2026-10-23T04:34:20.5666640Z WARNING: The SDK Manager CLI tool (sdkmanager) is deprecated. Use Android CLI instead.",
+          "category": "toolchain: sdkmanager deprecation",
+          "modified_paths_matched": [],
+          "context": [
+            "2026-10-23T04:34:20.4315090Z ",
+            "2026-10-23T04:34:20.4315630Z [command]/Users/runner/Library/Android/sdk/cmdline-tools/22.0/bin/sdkmanager platform-tools",
+            "2026-10-23T04:34:20.5666640Z WARNING: The SDK Manager CLI tool (sdkmanager) is deprecated. Use Android CLI instead.",
+            "2026-10-23T04:34:20.5668750Z The 'android' binary can also be found in the cmdline-tools directory, and 'android sdk' is the replacement for 'sdkmanager'.",
+            "2026-10-23T04:34:20.5672100Z To learn more about the Android CLI and how to use it, see the documentation (https://d.android.com/tools/agents/android-cli)"
+          ]
+        },
+        {
+          "line": 1468,
+          "text": "2026-10-23T04:34:21.6573030Z WARNING: A restricted method in java.lang.System has been called",
+          "category": "toolchain: JNA/Java native access",
+          "modified_paths_matched": [],
+          "context": [
+            "2026-10-23T04:34:21.5415570Z [                                       ] 3% Fetch remote repository...         ",
+            "2026-10-23T04:34:21.6533180Z [=                                      ] 3% Fetch remote repository...         ",
+            "2026-10-23T04:34:21.6573030Z WARNING: A restricted method in java.lang.System has been called",
+            "2026-10-23T04:34:21.6627390Z WARNING: java.lang.System::load has been called by com.sun.jna.Native in an unnamed module (file:/Users/runner/Library/Android/sdk/cmdline-tools/22.0/lib/external/net/java/dev/jna/jna/5.14.0/jna-5.14.0.jar)",
+            "2026-10-23T04:34:21.6685150Z WARNING: Use --enable-native-access=ALL-UNNAMED to avoid a warning for callers in this module"
+          ]
+        },
+        {
+          "line": 1469,
+          "text": "2026-10-23T04:34:21.6627390Z WARNING: java.lang.System::load has been called by com.sun.jna.Native in an unnamed module (file:/Users/runner/Library/Android/sdk/cmdline-tools/22.0/lib/external/net/java/dev/jna/jna/5.14.0/jna-5.14.0.jar)",
+          "category": "toolchain: JNA/Java native access",
+          "modified_paths_matched": [],
+          "context": [
+            "2026-10-23T04:34:21.6533180Z [=                                      ] 3% Fetch remote repository...         ",
+            "2026-10-23T04:34:21.6573030Z WARNING: A restricted method in java.lang.System has been called",
+            "2026-10-23T04:34:21.6627390Z WARNING: java.lang.System::load has been called by com.sun.jna.Native in an unnamed module (file:/Users/runner/Library/Android/sdk/cmdline-tools/22.0/lib/external/net/java/dev/jna/jna/5.14.0/jna-5.14.0.jar)",
+            "2026-10-23T04:34:21.6685150Z WARNING: Use --enable-native-access=ALL-UNNAMED to avoid a warning for callers in this module",
+            "2026-10-23T04:34:21.6686520Z WARNING: Restricted methods will be blocked in a future release unless native access is enabled"
+          ]
+        },
+        {
+          "line": 1470,
+          "text": "2026-10-23T04:34:21.6685150Z WARNING: Use --enable-native-access=ALL-UNNAMED to avoid a warning for callers in this module",
+          "category": "toolchain: JNA/Java native access",
+          "modified_paths_matched": [],
+          "context": [
+            "2026-10-23T04:34:21.6573030Z WARNING: A restricted method in java.lang.System has been called",
+            "2026-10-23T04:34:21.6627390Z WARNING: java.lang.System::load has been called by com.sun.jna.Native in an unnamed module (file:/Users/runner/Library/Android/sdk/cmdline-tools/22.0/lib/external/net/java/dev/jna/jna/5.14.0/jna-5.14.0.jar)",
+            "2026-10-23T04:34:21.6685150Z WARNING: Use --enable-native-access=ALL-UNNAMED to avoid a warning for callers in this module",
+            "2026-10-23T04:34:21.6686520Z WARNING: Restricted methods will be blocked in a future release unless native access is enabled",
+            "2026-10-23T04:34:21.6687280Z "
+          ]
+        },
+        {
+          "line": 1471,
+          "text": "2026-10-23T04:34:21.6686520Z WARNING: Restricted methods will be blocked in a future release unless native access is enabled",
+          "category": "toolchain: JNA/Java native access",
+          "modified_paths_matched": [],
+          "context": [
+            "2026-10-23T04:34:21.6627390Z WARNING: java.lang.System::load has been called by com.sun.jna.Native in an unnamed module (file:/Users/runner/Library/Android/sdk/cmdline-tools/22.0/lib/external/net/java/dev/jna/jna/5.14.0/jna-5.14.0.jar)",
+            "2026-10-23T04:34:21.6685150Z WARNING: Use --enable-native-access=ALL-UNNAMED to avoid a warning for callers in this module",
+            "2026-10-23T04:34:21.6686520Z WARNING: Restricted methods will be blocked in a future release unless native access is enabled",
+            "2026-10-23T04:34:21.6687280Z ",
+            "2026-10-23T04:34:22.0757250Z [=                                      ] 4% Fetch remote repository...         "
+          ]
+        },
+        {
+          "line": 1496,
+          "text": "2026-10-23T04:34:22.8112270Z WARNING: The SDK Manager CLI tool (sdkmanager) is deprecated. Use Android CLI instead.",
+          "category": "toolchain: sdkmanager deprecation",
+          "modified_paths_matched": [],
+          "context": [
+            "2026-10-23T04:34:22.4710170Z   ANDROID_SDK_ROOT: /Users/runner/Library/Android/sdk",
+            "2026-10-23T04:34:22.4710740Z ##[endgroup]",
+            "2026-10-23T04:34:22.8112270Z WARNING: The SDK Manager CLI tool (sdkmanager) is deprecated. Use Android CLI instead.",
+            "2026-10-23T04:34:22.8334050Z The 'android' binary can also be found in the cmdline-tools directory, and 'android sdk' is the replacement for 'sdkmanager'.",
+            "2026-10-23T04:34:22.8388190Z To learn more about the Android CLI and how to use it, see the documentation (https://d.android.com/tools/agents/android-cli)"
+          ]
+        },
+        {
+          "line": 1504,
+          "text": "2026-10-23T04:34:24.3008680Z WARNING: A restricted method in java.lang.System has been called",
+          "category": "toolchain: JNA/Java native access",
+          "modified_paths_matched": [],
+          "context": [
+            "2026-10-23T04:34:24.2080040Z [                                       ] 3% Loading local repository...        ",
+            "2026-10-23T04:34:24.2114650Z [                                       ] 3% Fetch remote repository...         ",
+            "2026-10-23T04:34:24.3008680Z WARNING: A restricted method in java.lang.System has been called",
+            "2026-10-23T04:34:24.3012650Z WARNING: java.lang.System::load has been called by com.sun.jna.Native in an unnamed module (file:/Users/runner/Library/Android/sdk/cmdline-tools/22.0/lib/external/net/java/dev/jna/jna/5.14.0/jna-5.14.0.jar)",
+            "2026-10-23T04:34:24.3016360Z WARNING: Use --enable-native-access=ALL-UNNAMED to avoid a warning for callers in this module"
+          ]
+        },
+        {
+          "line": 1505,
+          "text": "2026-10-23T04:34:24.3012650Z WARNING: java.lang.System::load has been called by com.sun.jna.Native in an unnamed module (file:/Users/runner/Library/Android/sdk/cmdline-tools/22.0/lib/external/net/java/dev/jna/jna/5.14.0/jna-5.14.0.jar)",
+          "category": "toolchain: JNA/Java native access",
+          "modified_paths_matched": [],
+          "context": [
+            "2026-10-23T04:34:24.2114650Z [                                       ] 3% Fetch remote repository...         ",
+            "2026-10-23T04:34:24.3008680Z WARNING: A restricted method in java.lang.System has been called",
+            "2026-10-23T04:34:24.3012650Z WARNING: java.lang.System::load has been called by com.sun.jna.Native in an unnamed module (file:/Users/runner/Library/Android/sdk/cmdline-tools/22.0/lib/external/net/java/dev/jna/jna/5.14.0/jna-5.14.0.jar)",
+            "2026-10-23T04:34:24.3016360Z WARNING: Use --enable-native-access=ALL-UNNAMED to avoid a warning for callers in this module",
+            "2026-10-23T04:34:24.3018810Z WARNING: Restricted methods will be blocked in a future release unless native access is enabled"
+          ]
+        },
+        {
+          "line": 1506,
+          "text": "2026-10-23T04:34:24.3016360Z WARNING: Use --enable-native-access=ALL-UNNAMED to avoid a warning for callers in this module",
+          "category": "toolchain: JNA/Java native access",
+          "modified_paths_matched": [],
+          "context": [
+            "2026-10-23T04:34:24.3008680Z WARNING: A restricted method in java.lang.System has been called",
+            "2026-10-23T04:34:24.3012650Z WARNING: java.lang.System::load has been called by com.sun.jna.Native in an unnamed module (file:/Users/runner/Library/Android/sdk/cmdline-tools/22.0/lib/external/net/java/dev/jna/jna/5.14.0/jna-5.14.0.jar)",
+            "2026-10-23T04:34:24.3016360Z WARNING: Use --enable-native-access=ALL-UNNAMED to avoid a warning for callers in this module",
+            "2026-10-23T04:34:24.3018810Z WARNING: Restricted methods will be blocked in a future release unless native access is enabled",
+            "2026-10-23T04:34:24.3020420Z "
+          ]
+        },
+        {
+          "line": 1507,
+          "text": "2026-10-23T04:34:24.3018810Z WARNING: Restricted methods will be blocked in a future release unless native access is enabled",
+          "category": "toolchain: JNA/Java native access",
+          "modified_paths_matched": [],
+          "context": [
+            "2026-10-23T04:34:24.3012650Z WARNING: java.lang.System::load has been called by com.sun.jna.Native in an unnamed module (file:/Users/runner/Library/Android/sdk/cmdline-tools/22.0/lib/external/net/java/dev/jna/jna/5.14.0/jna-5.14.0.jar)",
+            "2026-10-23T04:34:24.3016360Z WARNING: Use --enable-native-access=ALL-UNNAMED to avoid a warning for callers in this module",
+            "2026-10-23T04:34:24.3018810Z WARNING: Restricted methods will be blocked in a future release unless native access is enabled",
+            "2026-10-23T04:34:24.3020420Z ",
+            "2026-10-23T04:34:24.6658400Z [=                                      ] 3% Fetch remote repository...         "
+          ]
+        },
+        {
+          "line": 1657,
+          "text": "2026-10-23T04:35:43.3108690Z Deprecated Gradle features were used in this build, making it incompatible with Gradle 10.",
+          "category": "toolchain/build: unexpanded Gradle deprecation summary",
+          "modified_paths_matched": [],
+          "context": [
+            "2026-10-23T04:35:43.3102350Z [Incubating] Problems report is available at: file:///Users/runner/work/trime/trime/build/reports/problems/problems-report.html",
+            "2026-10-23T04:35:43.3104940Z ",
+            "2026-10-23T04:35:43.3108690Z Deprecated Gradle features were used in this build, making it incompatible with Gradle 10.",
+            "2026-10-23T04:35:43.3112490Z ",
+            "2026-10-23T04:35:43.3114790Z You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins."
+          ]
+        },
+        {
+          "line": 1659,
+          "text": "2026-10-23T04:35:43.3114790Z You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.",
+          "category": "toolchain/build: unexpanded Gradle deprecation summary",
+          "modified_paths_matched": [],
+          "context": [
+            "2026-10-23T04:35:43.3108690Z Deprecated Gradle features were used in this build, making it incompatible with Gradle 10.",
+            "2026-10-23T04:35:43.3112490Z ",
+            "2026-10-23T04:35:43.3114790Z You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.",
+            "2026-10-23T04:35:43.3115980Z ",
+            "2026-10-23T04:35:43.3117750Z For more on this, please refer to https://docs.gradle.org/9.8.1/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation."
+          ]
+        },
+        {
+          "line": 1772,
+          "text": "2026-10-23T04:37:38.0270950Z Deprecated Gradle features were used in this build, making it incompatible with Gradle 10.",
+          "category": "toolchain/build: unexpanded Gradle deprecation summary",
+          "modified_paths_matched": [],
+          "context": [
+            "2026-10-23T04:37:38.0268370Z [Incubating] Problems report is available at: file:///Users/runner/work/trime/trime/build/reports/problems/problems-report.html",
+            "2026-10-23T04:37:38.0269610Z ",
+            "2026-10-23T04:37:38.0270950Z Deprecated Gradle features were used in this build, making it incompatible with Gradle 10.",
+            "2026-10-23T04:37:38.0271760Z ",
+            "2026-10-23T04:37:38.0273110Z You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins."
+          ]
+        },
+        {
+          "line": 1774,
+          "text": "2026-10-23T04:37:38.0273110Z You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.",
+          "category": "toolchain/build: unexpanded Gradle deprecation summary",
+          "modified_paths_matched": [],
+          "context": [
+            "2026-10-23T04:37:38.0270950Z Deprecated Gradle features were used in this build, making it incompatible with Gradle 10.",
+            "2026-10-23T04:37:38.0271760Z ",
+            "2026-10-23T04:37:38.0273110Z You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.",
+            "2026-10-23T04:37:38.0274260Z ",
+            "2026-10-23T04:37:38.0275770Z For more on this, please refer to https://docs.gradle.org/9.8.1/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation."
+          ]
+        }
+      ]
+    },
+    {
+      "raw_log": "original-job-logs/120242025613.stdout",
+      "raw_sha256": "0ad83cd0d1ee2c68aedc30144b94538bb610de811f5f24d37ddd601dfd8a1ff4",
+      "candidate_count": 9,
+      "categories": {
+        "git init hint mentioning warning": 1,
+        "Git checkout note, not compiler warning": 1,
+        "toolchain: sdkmanager deprecation": 3,
+        "toolchain/build: unexpanded Gradle deprecation summary": 4
+      },
+      "app_own_source_candidates": [],
+      "unclassified": [],
+      "candidates": [
+        {
+          "line": 90,
+          "text": "2026-10-23T04:33:08.0442777Z hint: to use in all of your new repositories, which will suppress this warning,",
+          "category": "git init hint mentioning warning",
+          "modified_paths_matched": [],
+          "context": [
+            "2026-10-23T04:33:08.0441419Z hint: Using 'master' as the name for the initial branch. This default branch name",
+            "2026-10-23T04:33:08.0442162Z hint: will change to \"main\" in Git 3.0. To configure the initial branch name",
+            "2026-10-23T04:33:08.0442777Z hint: to use in all of your new repositories, which will suppress this warning,",
+            "2026-10-23T04:33:08.0443256Z hint: call:",
+            "2026-10-23T04:33:08.0443614Z hint:"
+          ]
+        },
+        {
+          "line": 176,
+          "text": "2026-10-23T04:33:09.6911703Z Note: switching to 'refs/remotes/pull/2182/merge'.",
+          "category": "Git checkout note, not compiler warning",
+          "modified_paths_matched": [],
+          "context": [
+            "2026-10-23T04:33:09.6654168Z ##[group]Checking out the ref",
+            "2026-10-23T04:33:09.6658330Z [command]/usr/bin/git checkout --progress --force refs/remotes/pull/2182/merge",
+            "2026-10-23T04:33:09.6911703Z Note: switching to 'refs/remotes/pull/2182/merge'.",
+            "2026-10-23T04:33:09.6912067Z ",
+            "2026-10-23T04:33:09.6912249Z You are in 'detached HEAD' state. You can look around, make experimental"
+          ]
+        },
+        {
+          "line": 522,
+          "text": "2026-10-23T04:33:39.8894727Z WARNING: The SDK Manager CLI tool (sdkmanager) is deprecated. Use Android CLI instead.",
+          "category": "toolchain: sdkmanager deprecation",
+          "modified_paths_matched": [],
+          "context": [
+            "2026-10-23T04:33:38.2443186Z Accepting Android SDK licenses",
+            "2026-10-23T04:33:38.2446753Z [command]/usr/local/lib/android/sdk/cmdline-tools/22.0/bin/sdkmanager --licenses",
+            "2026-10-23T04:33:39.8894727Z WARNING: The SDK Manager CLI tool (sdkmanager) is deprecated. Use Android CLI instead.",
+            "2026-10-23T04:33:39.8895404Z The 'android' binary can also be found in the cmdline-tools directory, and 'android sdk' is the replacement for 'sdkmanager'.",
+            "2026-10-23T04:33:39.8896308Z To learn more about the Android CLI and how to use it, see the documentation (https://d.android.com/tools/agents/android-cli)"
+          ]
+        },
+        {
+          "line": 1462,
+          "text": "2026-10-23T04:33:44.9734947Z WARNING: The SDK Manager CLI tool (sdkmanager) is deprecated. Use Android CLI instead.",
+          "category": "toolchain: sdkmanager deprecation",
+          "modified_paths_matched": [],
+          "context": [
+            "2026-10-23T04:33:44.9276318Z ",
+            "2026-10-23T04:33:44.9276471Z [command]/usr/local/lib/android/sdk/cmdline-tools/22.0/bin/sdkmanager platform-tools",
+            "2026-10-23T04:33:44.9734947Z WARNING: The SDK Manager CLI tool (sdkmanager) is deprecated. Use Android CLI instead.",
+            "2026-10-23T04:33:44.9735694Z The 'android' binary can also be found in the cmdline-tools directory, and 'android sdk' is the replacement for 'sdkmanager'.",
+            "2026-10-23T04:33:44.9743406Z To learn more about the Android CLI and how to use it, see the documentation (https://d.android.com/tools/agents/android-cli)"
+          ]
+        },
+        {
+          "line": 1494,
+          "text": "2026-10-23T04:33:46.0446361Z WARNING: The SDK Manager CLI tool (sdkmanager) is deprecated. Use Android CLI instead.",
+          "category": "toolchain: sdkmanager deprecation",
+          "modified_paths_matched": [],
+          "context": [
+            "2026-10-23T04:33:45.9262097Z   ANDROID_SDK_ROOT: /usr/local/lib/android/sdk",
+            "2026-10-23T04:33:45.9262275Z ##[endgroup]",
+            "2026-10-23T04:33:46.0446361Z WARNING: The SDK Manager CLI tool (sdkmanager) is deprecated. Use Android CLI instead.",
+            "2026-10-23T04:33:46.0447633Z The 'android' binary can also be found in the cmdline-tools directory, and 'android sdk' is the replacement for 'sdkmanager'.",
+            "2026-10-23T04:33:46.0448741Z To learn more about the Android CLI and how to use it, see the documentation (https://d.android.com/tools/agents/android-cli)"
+          ]
+        },
+        {
+          "line": 1644,
+          "text": "2026-10-23T04:34:31.0492177Z Deprecated Gradle features were used in this build, making it incompatible with Gradle 10.",
+          "category": "toolchain/build: unexpanded Gradle deprecation summary",
+          "modified_paths_matched": [],
+          "context": [
+            "2026-10-23T04:34:31.0490887Z [Incubating] Problems report is available at: file:///home/runner/work/trime/trime/build/reports/problems/problems-report.html",
+            "2026-10-23T04:34:31.0491668Z ",
+            "2026-10-23T04:34:31.0492177Z Deprecated Gradle features were used in this build, making it incompatible with Gradle 10.",
+            "2026-10-23T04:34:31.0492649Z ",
+            "2026-10-23T04:34:31.0493291Z You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins."
+          ]
+        },
+        {
+          "line": 1646,
+          "text": "2026-10-23T04:34:31.0493291Z You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.",
+          "category": "toolchain/build: unexpanded Gradle deprecation summary",
+          "modified_paths_matched": [],
+          "context": [
+            "2026-10-23T04:34:31.0492177Z Deprecated Gradle features were used in this build, making it incompatible with Gradle 10.",
+            "2026-10-23T04:34:31.0492649Z ",
+            "2026-10-23T04:34:31.0493291Z You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.",
+            "2026-10-23T04:34:31.0493913Z ",
+            "2026-10-23T04:34:31.0494709Z For more on this, please refer to https://docs.gradle.org/9.8.1/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation."
+          ]
+        },
+        {
+          "line": 1758,
+          "text": "2026-10-23T04:35:33.4168007Z Deprecated Gradle features were used in this build, making it incompatible with Gradle 10.",
+          "category": "toolchain/build: unexpanded Gradle deprecation summary",
+          "modified_paths_matched": [],
+          "context": [
+            "2026-10-23T04:35:33.4167443Z [Incubating] Problems report is available at: file:///home/runner/work/trime/trime/build/reports/problems/problems-report.html",
+            "2026-10-23T04:35:33.4167772Z ",
+            "2026-10-23T04:35:33.4168007Z Deprecated Gradle features were used in this build, making it incompatible with Gradle 10.",
+            "2026-10-23T04:35:33.4168222Z ",
+            "2026-10-23T04:35:33.4168711Z You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins."
+          ]
+        },
+        {
+          "line": 1760,
+          "text": "2026-10-23T04:35:33.4168711Z You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.",
+          "category": "toolchain/build: unexpanded Gradle deprecation summary",
+          "modified_paths_matched": [],
+          "context": [
+            "2026-10-23T04:35:33.4168007Z Deprecated Gradle features were used in this build, making it incompatible with Gradle 10.",
+            "2026-10-23T04:35:33.4168222Z ",
+            "2026-10-23T04:35:33.4168711Z You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.",
+            "2026-10-23T04:35:33.4169036Z ",
+            "2026-10-23T04:35:33.4169406Z For more on this, please refer to https://docs.gradle.org/9.8.1/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation."
+          ]
+        }
+      ]
+    }
+  ],
+  "all_app_own_source_candidates": [],
+  "all_unclassified_candidates": []
+}

@@ -1,0 +1,77 @@
+SUCCESSFUL the default window retains the newest ten thousand records in order
+SUCCESSFUL character pressure evicts whole oldest records and budgets joining newlines
+SUCCESSFUL ring indexing remains ordered after repeated wraparound and mixed eviction
+SUCCESSFUL empty records consume a row and their joining newlines consume characters
+SUCCESSFUL an oversized record keeps a bounded tail without splitting a surrogate pair
+SUCCESSFUL an entire supplementary character fits when its pair and suffix fit
+SUCCESSFUL oversized records cannot leave an unreported internal gap after older records
+SUCCESSFUL later eviction of a truncated record counts the original text only once
+SUCCESSFUL clear removes the omission notice and does not reuse previously visible IDs
+SUCCESSFUL a pending batch extends the retained records without losing order or metadata
+SUCCESSFUL a pending batch that lost its prefix also evicts all older displayed records
+SUCCESSFUL a partially clipped pending record cannot follow older displayed content
+SUCCESSFUL existing omission history and a lost pending prefix are counted once
+SUCCESSFUL clearing both windows discards queued records and their omission history
+SUCCESSFUL exports contain the omission notice once and remain immutable after appends
+SUCCESSFUL budgets must be positive and a buffer cannot drain into itself
+SUCCESSFUL snapshot retains its command arguments and releases its child
+SUCCESSFUL a failed snapshot command returns failure instead of empty success
+SUCCESSFUL clear command waits for completion and closes all streams
+SUCCESSFUL legacy snapshots filter the PID column without accepting tag or payload lookalikes
+SUCCESSFUL modern snapshots use native PID filtering from API24 onwards
+SUCCESSFUL unfiltered snapshots omit a PID argument on old and new Android
+SUCCESSFUL legacy live collection applies the same PID filter as snapshots
+SUCCESSFUL owned clear reports nonzero exit after releasing its child
+SUCCESSFUL priority parsing accepts time and threadtime but safely rejects short lines
+SUCCESSFUL bare CR in another process payload cannot forge a legacy PID header
+SUCCESSFUL bound collection subscribes before a child emits its first lines
+SUCCESSFUL cancelling bound collection also finishes its blocked child cleanup
+SUCCESSFUL deployment snapshots retain the tag filter and release their child
+SUCCESSFUL deployment snapshot command failure is not returned as empty successful text
+SUCCESSFUL a live read failure stays primary when closing stdout also fails
+SUCCESSFUL stop during process creation releases that late child and allows another stream
+SUCCESSFUL a completed stream can start again without keeping a stale process
+SUCCESSFUL owned output preserves all lines and releases the process once
+SUCCESSFUL cancellation before the IO reader starts still releases its process
+SUCCESSFUL reader failure retains its original exception and closes the other streams
+SUCCESSFUL reader failure stays primary when the single cleanup also fails
+SUCCESSFUL destruction failure is reported after closing every stream without a retry
+SUCCESSFUL cancelling a blocked snapshot stops the child and unblocks its pipe read
+FAILED cancellation closes a blocked pipe even when destroying the child fails
+SUCCESSFUL exit waiting yields to its caller and remains cancellable
+SUCCESSFUL a child still running after stdout EOF can be cancelled even when destruction fails
+SUCCESSFUL cancellation cleanup runs when the base IO dispatcher has only one worker
+SUCCESSFUL a failed stdout close cannot prevent closing stderr and stdin
+SUCCESSFUL a failed stdout getter cannot prevent closing the other descriptors
+SUCCESSFUL real child pipe cancellation terminates and observes the child exit
+
+Test run finished after 2391 ms
+[         4 containers found      ]
+[         0 containers skipped    ]
+[         4 containers started    ]
+[         0 containers aborted    ]
+[         4 containers successful ]
+[         0 containers failed     ]
+[        46 tests found           ]
+[         0 tests skipped         ]
+[        46 tests started         ]
+[         0 tests aborted         ]
+[        45 tests successful      ]
+[         1 tests failed          ]
+
+
+Failures (1):
+  Kotest:ProcessLifecycleTest:cancellation closes a blocked pipe even when destroying the child fails
+    MethodSource [className = 'com.osfans.trime.util.ProcessLifecycleTest', methodName = 'cancellation closes a blocked pipe even when destroying the child fails', methodParameterTypes = null]
+    => org.opentest4j.AssertionFailedError: expected:<true> but was:<false>
+       com.osfans.trime.util.ProcessLifecycleTest$1$7$1.invokeSuspend(ProcessLifecycleTest.kt:197)
+       kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith(ContinuationImpl.kt:34)
+       kotlinx.coroutines.internal.ScopeCoroutine.afterResume(Scopes.kt:35)
+       kotlinx.coroutines.AbstractCoroutine.resumeWith(AbstractCoroutine.kt:101)
+       kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith(ContinuationImpl.kt:47)
+       kotlinx.coroutines.DispatchedTask.run(DispatchedTask.kt:100)
+       kotlinx.coroutines.EventLoopImplBase.processNextEvent(EventLoop.common.kt:263)
+       kotlinx.coroutines.BlockingCoroutine.joinBlocking(Builders.kt:94)
+       kotlinx.coroutines.BuildersKt__BuildersKt.runBlocking(Builders.kt:70)
+       kotlinx.coroutines.BuildersKt.runBlocking(Unknown Source)
+       [...]

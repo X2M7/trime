@@ -1,0 +1,1504 @@
+﻿2026-10-23T04:19:43.6022009Z Current runner version: '2.338.0'
+2026-10-23T04:19:43.6087747Z ##[group]Runner Image Provisioner
+2026-10-23T04:19:43.6088542Z Hosted Compute Agent
+2026-10-23T04:19:43.6089101Z Version: 20261002.596
+2026-10-23T04:19:43.6089684Z Commit: c3d12f3313a95f25162a1503be624f3b0617f8c0
+2026-10-23T04:19:43.6090362Z Build Date: 2026-10-02T22:28:27Z
+2026-10-23T04:19:43.6090988Z Worker ID: {00ee2952-fb40-4627-95a4-87ca779dd9d2}
+2026-10-23T04:19:43.6091631Z Region: northcentralus
+2026-10-23T04:19:43.6092173Z Cloud: Azure
+2026-10-23T04:19:43.6092654Z ##[endgroup]
+2026-10-23T04:19:43.6094013Z ##[group]Operating System
+2026-10-23T04:19:43.6094636Z Microsoft Windows Server 2025
+2026-10-23T04:19:43.6095195Z 10.0.26100
+2026-10-23T04:19:43.6095684Z Datacenter
+2026-10-23T04:19:43.6096143Z ##[endgroup]
+2026-10-23T04:19:43.6096632Z ##[group]Runner Image
+2026-10-23T04:19:43.6097190Z Image: windows-2025-vs2026
+2026-10-23T04:19:43.6097739Z Version: 20261007.264.1
+2026-10-23T04:19:43.6099183Z Included Software: https://github.com/actions/runner-images/blob/win25-vs2026/20261007.264/images/windows/Windows2025-VS2026-Readme.md
+2026-10-23T04:19:43.6100840Z Image Release: https://github.com/actions/runner-images/releases/tag/win25-vs2026%2F20261007.264
+2026-10-23T04:19:43.6101803Z ##[endgroup]
+2026-10-23T04:19:43.6105136Z ##[group]GITHUB_TOKEN Permissions
+2026-10-23T04:19:43.6107180Z Actions: read
+2026-10-23T04:19:43.6107765Z ArtifactMetadata: read
+2026-10-23T04:19:43.6108361Z Attestations: read
+2026-10-23T04:19:43.6108861Z Checks: read
+2026-10-23T04:19:43.6109341Z CodeQuality: read
+2026-10-23T04:19:43.6109855Z Contents: read
+2026-10-23T04:19:43.6110340Z Deployments: read
+2026-10-23T04:19:43.6110883Z Discussions: read
+2026-10-23T04:19:43.6111375Z Drives: read
+2026-10-23T04:19:43.6111843Z Issues: read
+2026-10-23T04:19:43.6112326Z Metadata: read
+2026-10-23T04:19:43.6112857Z Models: read
+2026-10-23T04:19:43.6113355Z Packages: read
+2026-10-23T04:19:43.6113839Z Pages: read
+2026-10-23T04:19:43.6114316Z PullRequests: read
+2026-10-23T04:19:43.6114865Z RepositoryProjects: read
+2026-10-23T04:19:43.6115438Z SecurityEvents: read
+2026-10-23T04:19:43.6115950Z Statuses: read
+2026-10-23T04:19:43.6116449Z VulnerabilityAlerts: read
+2026-10-23T04:19:43.6116976Z ##[endgroup]
+2026-10-23T04:19:43.6119026Z Secret source: None
+2026-10-23T04:19:43.6119880Z Cache mode: write
+2026-10-23T04:19:43.6120572Z Prepare workflow directory
+2026-10-23T04:19:43.6578285Z Prepare all required actions
+2026-10-23T04:19:43.6635329Z Getting action download info
+2026-10-23T04:19:43.8730081Z Download action repository 'actions/checkout@v7' (SHA:3d3c42e5aac5ba805825da76410c181273ba90b1)
+2026-10-23T04:19:44.0024254Z Download action repository 'actions/setup-java@v6' (SHA:b843ebf9b913146b38da2eaa7aeddf76074ae1ad)
+2026-10-23T04:19:44.5533670Z Download action repository 'android-actions/setup-android@v4' (SHA:be39fa834029ff78f1a44aa3bb0819b8fc2bd8fd)
+2026-10-23T04:19:44.7488111Z Download action repository 'actions/cache@v6' (SHA:55cc8345863c7cc4c66a329aec7e433d2d1c52a9)
+2026-10-23T04:19:44.9021187Z Download action repository 'actions/upload-artifact@v7' (SHA:cf430e030ddbb5b0abf93d22962f4752f3646cd9)
+2026-10-23T04:19:45.3630756Z Complete job name: build (windows-2025)
+2026-10-23T04:19:45.5264182Z ##[group]Run actions/checkout@v7
+2026-10-23T04:19:45.5265589Z with:
+2026-10-23T04:19:45.5266329Z   submodules: recursive
+2026-10-23T04:19:45.5267146Z   fetch-depth: 0
+2026-10-23T04:19:45.5267936Z   repository: osfans/trime
+2026-10-23T04:19:45.5276506Z   token: ***
+2026-10-23T04:19:45.5277267Z   ssh-strict: true
+2026-10-23T04:19:45.5278036Z   ssh-user: git
+2026-10-23T04:19:45.5278806Z   persist-credentials: true
+2026-10-23T04:19:45.5279668Z   clean: true
+2026-10-23T04:19:45.5280453Z   sparse-checkout-cone-mode: true
+2026-10-23T04:19:45.5281408Z   fetch-tags: false
+2026-10-23T04:19:45.5282171Z   show-progress: true
+2026-10-23T04:19:45.5282935Z   lfs: false
+2026-10-23T04:19:45.5283657Z   set-safe-directory: true
+2026-10-23T04:19:45.5284525Z   allow-unsafe-pr-checkout: false
+2026-10-23T04:19:45.5287521Z env:
+2026-10-23T04:19:45.5288220Z   CI_NAME: Pull Request CI
+2026-10-23T04:19:45.5289128Z   BUILD_ABI: armeabi-v7a,arm64-v8a,x86,x86_64
+2026-10-23T04:19:45.5290173Z ##[endgroup]
+2026-10-23T04:19:45.6846383Z Syncing repository: osfans/trime
+2026-10-23T04:19:45.6850495Z ##[group]Getting Git version info
+2026-10-23T04:19:45.6852498Z Working directory is 'D:\a\trime\trime'
+2026-10-23T04:19:45.7779681Z [command]"C:\Program Files\Git\bin\git.exe" version
+2026-10-23T04:19:46.0672611Z git version 2.56.0.windows.2
+2026-10-23T04:19:46.0725720Z ##[endgroup]
+2026-10-23T04:19:46.0744474Z Temporarily overriding HOME='D:\a\_temp\e6f2a395-6413-42d8-95f5-fad77920a4ad' before making global git config changes
+2026-10-23T04:19:46.0747758Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-23T04:19:46.0754810Z [command]"C:\Program Files\Git\bin\git.exe" config --global --add safe.directory D:\a\trime\trime
+2026-10-23T04:19:46.1442674Z Deleting the contents of 'D:\a\trime\trime'
+2026-10-23T04:19:46.1448123Z ##[group]Determining repository object format
+2026-10-23T04:19:46.1450941Z ##[endgroup]
+2026-10-23T04:19:46.1452255Z ##[group]Initializing the repository
+2026-10-23T04:19:46.1459511Z [command]"C:\Program Files\Git\bin\git.exe" init D:\a\trime\trime
+2026-10-23T04:19:46.2339204Z Initialized empty Git repository in D:/a/trime/trime/.git/
+2026-10-23T04:19:46.2386605Z [command]"C:\Program Files\Git\bin\git.exe" remote add origin https://github.com/osfans/trime
+2026-10-23T04:19:46.3052637Z ##[endgroup]
+2026-10-23T04:19:46.3054170Z ##[group]Disabling automatic garbage collection
+2026-10-23T04:19:46.3064663Z [command]"C:\Program Files\Git\bin\git.exe" config --local gc.auto 0
+2026-10-23T04:19:46.3445608Z ##[endgroup]
+2026-10-23T04:19:46.3447488Z ##[group]Setting up auth
+2026-10-23T04:19:46.3448905Z Removing SSH command configuration
+2026-10-23T04:19:46.3457879Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp core\.sshCommand
+2026-10-23T04:19:46.3836453Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :\""
+2026-10-23T04:19:47.7146868Z Removing HTTP extra header
+2026-10-23T04:19:47.7155031Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-23T04:19:47.7540309Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :\""
+2026-10-23T04:19:48.3054863Z Removing includeIf entries pointing to credentials config files
+2026-10-23T04:19:48.3066573Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-23T04:19:48.3465212Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "git config --local --show-origin --name-only --get-regexp remote.origin.url"
+2026-10-23T04:19:48.9161976Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:\a\_temp\git-credentials-915c58d2-d283-4994-854e-3227453a681f.config http.https://github.com/.extraheader "AUTHORIZATION: basic ***"
+2026-10-23T04:19:48.9563266Z [command]"C:\Program Files\Git\bin\git.exe" config --local includeIf.gitdir:D:/a/trime/trime/.git.path D:\a\_temp\git-credentials-915c58d2-d283-4994-854e-3227453a681f.config
+2026-10-23T04:19:48.9942581Z [command]"C:\Program Files\Git\bin\git.exe" config --local includeIf.gitdir:D:/a/trime/trime/.git/worktrees/*.path D:\a\_temp\git-credentials-915c58d2-d283-4994-854e-3227453a681f.config
+2026-10-23T04:19:49.0371553Z [command]"C:\Program Files\Git\bin\git.exe" config --local includeIf.gitdir:/github/workspace/.git.path /github/runner_temp/git-credentials-915c58d2-d283-4994-854e-3227453a681f.config
+2026-10-23T04:19:49.0760390Z [command]"C:\Program Files\Git\bin\git.exe" config --local includeIf.gitdir:/github/workspace/.git/worktrees/*.path /github/runner_temp/git-credentials-915c58d2-d283-4994-854e-3227453a681f.config
+2026-10-23T04:19:49.1144571Z ##[endgroup]
+2026-10-23T04:19:49.1145190Z ##[group]Fetching the repository
+2026-10-23T04:19:49.1159612Z [command]"C:\Program Files\Git\bin\git.exe" -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules origin +refs/heads/*:refs/remotes/origin/* +refs/tags/*:refs/tags/* +0ae20751b7cc4de626913e08e658780d5800bef1:refs/remotes/pull/2182/merge
+2026-10-23T04:19:51.3456637Z From https://github.com/osfans/trime
+2026-10-23T04:19:51.3457463Z  * [new branch]        develop    -> origin/develop
+2026-10-23T04:19:51.3458077Z  * [new branch]        main       -> origin/main
+2026-10-23T04:19:51.3458926Z  * [new tag]           3.1.1      -> 3.1.1
+2026-10-23T04:19:51.3459341Z  * [new tag]           3.1.2      -> 3.1.2
+2026-10-23T04:19:51.3459769Z  * [new tag]           3.1.3      -> 3.1.3
+2026-10-23T04:19:51.3460212Z  * [new tag]           nightly    -> nightly
+2026-10-23T04:19:51.3460601Z  * [new tag]           v3.0       -> v3.0
+2026-10-23T04:19:51.3461079Z  * [new tag]           v3.0.1     -> v3.0.1
+2026-10-23T04:19:51.3461656Z  * [new tag]           v3.1       -> v3.1
+2026-10-23T04:19:51.3462080Z  * [new tag]           v3.2.0     -> v3.2.0
+2026-10-23T04:19:51.3462523Z  * [new tag]           v3.2.1     -> v3.2.1
+2026-10-23T04:19:51.3463023Z  * [new tag]           v3.2.10    -> v3.2.10
+2026-10-23T04:19:51.3463519Z  * [new tag]           v3.2.11    -> v3.2.11
+2026-10-23T04:19:51.3464028Z  * [new tag]           v3.2.12    -> v3.2.12
+2026-10-23T04:19:51.3464529Z  * [new tag]           v3.2.13    -> v3.2.13
+2026-10-23T04:19:51.3465059Z  * [new tag]           v3.2.14    -> v3.2.14
+2026-10-23T04:19:51.3465523Z  * [new tag]           v3.2.15    -> v3.2.15
+2026-10-23T04:19:51.3465983Z  * [new tag]           v3.2.16    -> v3.2.16
+2026-10-23T04:19:51.3466455Z  * [new tag]           v3.2.17    -> v3.2.17
+2026-10-23T04:19:51.3466904Z  * [new tag]           v3.2.18    -> v3.2.18
+2026-10-23T04:19:51.3467340Z  * [new tag]           v3.2.19    -> v3.2.19
+2026-10-23T04:19:51.3467834Z  * [new tag]           v3.2.2     -> v3.2.2
+2026-10-23T04:19:51.3468287Z  * [new tag]           v3.2.3     -> v3.2.3
+2026-10-23T04:19:51.3469319Z  * [new tag]           v3.2.4     -> v3.2.4
+2026-10-23T04:19:51.3469773Z  * [new tag]           v3.2.5     -> v3.2.5
+2026-10-23T04:19:51.3470175Z  * [new tag]           v3.2.6     -> v3.2.6
+2026-10-23T04:19:51.3470592Z  * [new tag]           v3.2.7     -> v3.2.7
+2026-10-23T04:19:51.3470994Z  * [new tag]           v3.2.8     -> v3.2.8
+2026-10-23T04:19:51.3471381Z  * [new tag]           v3.2.9     -> v3.2.9
+2026-10-23T04:19:51.3471752Z  * [new tag]           v3.3.0     -> v3.3.0
+2026-10-23T04:19:51.3472629Z  * [new tag]           v3.3.1     -> v3.3.1
+2026-10-23T04:19:51.3473008Z  * [new tag]           v3.3.10    -> v3.3.10
+2026-10-23T04:19:51.3473417Z  * [new tag]           v3.3.11    -> v3.3.11
+2026-10-23T04:19:51.3473835Z  * [new tag]           v3.3.12    -> v3.3.12
+2026-10-23T04:19:51.3474771Z  * [new tag]           v3.3.2     -> v3.3.2
+2026-10-23T04:19:51.3476248Z  * [new tag]           v3.3.3     -> v3.3.3
+2026-10-23T04:19:51.3476746Z  * [new tag]           v3.3.4     -> v3.3.4
+2026-10-23T04:19:51.3477143Z  * [new tag]           v3.3.5     -> v3.3.5
+2026-10-23T04:19:51.3477523Z  * [new tag]           v3.3.6     -> v3.3.6
+2026-10-23T04:19:51.3477930Z  * [new tag]           v3.3.7     -> v3.3.7
+2026-10-23T04:19:51.3478341Z  * [new tag]           v3.3.8     -> v3.3.8
+2026-10-23T04:19:51.3478741Z  * [new tag]           v3.3.9     -> v3.3.9
+2026-10-23T04:19:51.3479301Z  * [new ref]           0ae20751b7cc4de626913e08e658780d5800bef1 -> pull/2182/merge
+2026-10-23T04:19:51.3513752Z ##[endgroup]
+2026-10-23T04:19:51.3514645Z ##[group]Determining the checkout info
+2026-10-23T04:19:51.3515612Z ##[endgroup]
+2026-10-23T04:19:51.3530673Z [command]"C:\Program Files\Git\bin\git.exe" sparse-checkout disable
+2026-10-23T04:19:51.4082044Z [command]"C:\Program Files\Git\bin\git.exe" config --local --unset-all extensions.worktreeConfig
+2026-10-23T04:19:51.4488034Z ##[group]Checking out the ref
+2026-10-23T04:19:51.4497865Z [command]"C:\Program Files\Git\bin\git.exe" checkout --progress --force refs/remotes/pull/2182/merge
+2026-10-23T04:19:51.6636792Z Note: switching to 'refs/remotes/pull/2182/merge'.
+2026-10-23T04:19:51.6637310Z 
+2026-10-23T04:19:51.6637645Z You are in 'detached HEAD' state. You can look around, make experimental
+2026-10-23T04:19:51.6638496Z changes and commit them, and you can discard any commits you make in this
+2026-10-23T04:19:51.6639130Z state without impacting any branches by switching back to a branch.
+2026-10-23T04:19:51.6639588Z 
+2026-10-23T04:19:51.6639863Z If you want to create a new branch to retain commits you create, you may
+2026-10-23T04:19:51.6640372Z do so (now or later) by using -c with the switch command. Example:
+2026-10-23T04:19:51.6640640Z 
+2026-10-23T04:19:51.6640739Z   git switch -c <new-branch-name>
+2026-10-23T04:19:51.6640910Z 
+2026-10-23T04:19:51.6640994Z Or undo this operation with:
+2026-10-23T04:19:51.6641154Z 
+2026-10-23T04:19:51.6641222Z   git switch -
+2026-10-23T04:19:51.6641329Z 
+2026-10-23T04:19:51.6641529Z Turn off this advice by setting config variable advice.detachedHead to false
+2026-10-23T04:19:51.6641958Z 
+2026-10-23T04:19:51.6642516Z HEAD is now at 0ae20751 Merge ec0b81460b9b65d70f6797ac0c1f6d685af64d22 into 19b048494ffa55cae52d5385dfa6d0611461c27d
+2026-10-23T04:19:51.6748645Z ##[endgroup]
+2026-10-23T04:19:51.6749241Z ##[group]Setting up auth for fetching submodules
+2026-10-23T04:19:51.6759992Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:\a\_temp\git-credentials-915c58d2-d283-4994-854e-3227453a681f.config http.https://github.com/.extraheader "AUTHORIZATION: basic ***"
+2026-10-23T04:19:51.7166421Z [command]"C:\Program Files\Git\bin\git.exe" config --global include.path D:\a\_temp\git-credentials-915c58d2-d283-4994-854e-3227453a681f.config
+2026-10-23T04:19:51.7568826Z [command]"C:\Program Files\Git\bin\git.exe" config --global --unset-all url.https://github.com/.insteadOf
+2026-10-23T04:19:51.7953461Z [command]"C:\Program Files\Git\bin\git.exe" config --global --add url.https://github.com/.insteadOf git@github.com:
+2026-10-23T04:19:51.8347115Z [command]"C:\Program Files\Git\bin\git.exe" config --global --add url.https://github.com/.insteadOf org-7677088@github.com:
+2026-10-23T04:19:51.8732013Z ##[endgroup]
+2026-10-23T04:19:51.8732720Z ##[group]Fetching submodules
+2026-10-23T04:19:51.8751350Z [command]"C:\Program Files\Git\bin\git.exe" submodule sync --recursive
+2026-10-23T04:19:52.4673013Z [command]"C:\Program Files\Git\bin\git.exe" -c protocol.version=2 submodule update --init --force --recursive
+2026-10-23T04:19:53.0240452Z Submodule 'essay' (https://github.com/rime/rime-essay) registered for path 'app/data/rime/essay'
+2026-10-23T04:19:53.0264234Z Submodule 'luna-pinyin' (https://github.com/rime/rime-luna-pinyin) registered for path 'app/data/rime/luna-pinyin'
+2026-10-23T04:19:53.0290408Z Submodule 'prelude' (https://github.com/rime/rime-prelude) registered for path 'app/data/rime/prelude'
+2026-10-23T04:19:53.0323912Z Submodule 'stroke' (https://github.com/rime/rime-stroke) registered for path 'app/data/rime/stroke'
+2026-10-23T04:19:53.0352200Z Submodule 'librime' (https://github.com/rime/librime.git) registered for path 'app/src/main/jni/librime'
+2026-10-23T04:19:53.0378653Z Submodule 'librime-lua' (https://github.com/hchunhui/librime-lua) registered for path 'app/src/main/jni/librime-lua'
+2026-10-23T04:19:53.0404531Z Submodule 'librime-lua-deps' (https://github.com/hchunhui/librime-lua) registered for path 'app/src/main/jni/librime-lua-deps'
+2026-10-23T04:19:53.0431538Z Submodule 'librime-octagram' (https://github.com/lotem/librime-octagram.git) registered for path 'app/src/main/jni/librime-octagram'
+2026-10-23T04:19:53.0458720Z Submodule 'librime-predict' (https://github.com/rime/librime-predict) registered for path 'app/src/main/jni/librime-predict'
+2026-10-23T04:19:53.0485743Z Submodule 'snappy' (https://github.com/google/snappy.git) registered for path 'app/src/main/jni/snappy'
+2026-10-23T04:19:53.0925745Z Cloning into 'D:/a/trime/trime/app/data/rime/essay'...
+2026-10-23T04:19:57.1155653Z Cloning into 'D:/a/trime/trime/app/data/rime/luna-pinyin'...
+2026-10-23T04:19:58.0657953Z Cloning into 'D:/a/trime/trime/app/data/rime/prelude'...
+2026-10-23T04:19:58.5727872Z Cloning into 'D:/a/trime/trime/app/data/rime/stroke'...
+2026-10-23T04:19:59.5220595Z Cloning into 'D:/a/trime/trime/app/src/main/jni/librime'...
+2026-10-23T04:20:00.6152156Z Cloning into 'D:/a/trime/trime/app/src/main/jni/librime-lua'...
+2026-10-23T04:20:01.2963704Z Cloning into 'D:/a/trime/trime/app/src/main/jni/librime-lua-deps'...
+2026-10-23T04:20:01.9136556Z Cloning into 'D:/a/trime/trime/app/src/main/jni/librime-octagram'...
+2026-10-23T04:20:02.3257214Z Cloning into 'D:/a/trime/trime/app/src/main/jni/librime-predict'...
+2026-10-23T04:20:02.7844242Z Cloning into 'D:/a/trime/trime/app/src/main/jni/snappy'...
+2026-10-23T04:20:03.5793869Z Submodule path 'app/data/rime/essay': checked out '0766c929ec3e578c2c80861e988decd3703a1c3d'
+2026-10-23T04:20:03.6950581Z Submodule path 'app/data/rime/luna-pinyin': checked out '46acf03142c12b5aeed7002675046bf7255eed35'
+2026-10-23T04:20:03.7835868Z Submodule path 'app/data/rime/prelude': checked out '3803f09458072e03b9ed396692ce7e1d35c88c95'
+2026-10-23T04:20:03.8970740Z Submodule path 'app/data/rime/stroke': checked out '7c9874c6b2e0b94947653e9a7de6f99623ff27e4'
+2026-10-23T04:20:04.1291573Z Submodule path 'app/src/main/jni/librime': checked out '7bc3fb0005a03aff1c086611e4d52bb7f6444fdd'
+2026-10-23T04:20:04.1444799Z Submodule 'glog' (https://github.com/google/glog.git) registered for path 'app/src/main/jni/librime/deps/glog'
+2026-10-23T04:20:04.1458710Z Submodule 'googletest' (https://github.com/google/googletest.git) registered for path 'app/src/main/jni/librime/deps/googletest'
+2026-10-23T04:20:04.1474505Z Submodule 'leveldb' (https://github.com/google/leveldb.git) registered for path 'app/src/main/jni/librime/deps/leveldb'
+2026-10-23T04:20:04.1490370Z Submodule 'marisa-trie' (https://github.com/s-yata/marisa-trie.git) registered for path 'app/src/main/jni/librime/deps/marisa-trie'
+2026-10-23T04:20:04.1509306Z Submodule 'opencc' (https://github.com/BYVoid/OpenCC.git) registered for path 'app/src/main/jni/librime/deps/opencc'
+2026-10-23T04:20:04.1525564Z Submodule 'yaml-cpp' (https://github.com/jbeder/yaml-cpp.git) registered for path 'app/src/main/jni/librime/deps/yaml-cpp'
+2026-10-23T04:20:04.1795612Z Cloning into 'D:/a/trime/trime/app/src/main/jni/librime/deps/glog'...
+2026-10-23T04:20:04.9231247Z Cloning into 'D:/a/trime/trime/app/src/main/jni/librime/deps/googletest'...
+2026-10-23T04:20:06.8898469Z Cloning into 'D:/a/trime/trime/app/src/main/jni/librime/deps/leveldb'...
+2026-10-23T04:20:07.4122985Z Cloning into 'D:/a/trime/trime/app/src/main/jni/librime/deps/marisa-trie'...
+2026-10-23T04:20:07.8876080Z Cloning into 'D:/a/trime/trime/app/src/main/jni/librime/deps/opencc'...
+2026-10-23T04:20:09.4403388Z Cloning into 'D:/a/trime/trime/app/src/main/jni/librime/deps/yaml-cpp'...
+2026-10-23T04:20:10.3706334Z Submodule path 'app/src/main/jni/librime/deps/glog': checked out '7b134a5c82c0c0b5698bb6bf7a835b230c5638e4'
+2026-10-23T04:20:10.5403512Z Submodule path 'app/src/main/jni/librime/deps/googletest': checked out 'f8d7d77c06936315286eb55f8de22cd23c188571'
+2026-10-23T04:20:10.6842453Z Submodule path 'app/src/main/jni/librime/deps/leveldb': checked out '99b3c03b3284f5886f9ef9a4ef703d57373e61be'
+2026-10-23T04:20:10.7003689Z Submodule 'third_party/benchmark' (https://github.com/google/benchmark) registered for path 'app/src/main/jni/librime/deps/leveldb/third_party/benchmark'
+2026-10-23T04:20:10.7018300Z Submodule 'third_party/googletest' (https://github.com/google/googletest.git) registered for path 'app/src/main/jni/librime/deps/leveldb/third_party/googletest'
+2026-10-23T04:20:10.7393844Z Cloning into 'D:/a/trime/trime/app/src/main/jni/librime/deps/leveldb/third_party/benchmark'...
+2026-10-23T04:20:11.4843524Z Cloning into 'D:/a/trime/trime/app/src/main/jni/librime/deps/leveldb/third_party/googletest'...
+2026-10-23T04:20:13.6124297Z Submodule path 'app/src/main/jni/librime/deps/leveldb/third_party/benchmark': checked out 'bf585a2789e30585b4e3ce6baf11ef2750b54677'
+2026-10-23T04:20:13.8109087Z Submodule path 'app/src/main/jni/librime/deps/leveldb/third_party/googletest': checked out 'c27acebba3b3c7d94209e0467b0a801db4af73ed'
+2026-10-23T04:20:13.9264248Z Submodule path 'app/src/main/jni/librime/deps/marisa-trie': checked out '3e87d53b78e15f2f43783d5e376561a8c9722051'
+2026-10-23T04:20:14.6149250Z Submodule path 'app/src/main/jni/librime/deps/opencc': checked out '025f371dc76b598d77384fbdab90c937471844d8'
+2026-10-23T04:20:14.8385663Z Submodule path 'app/src/main/jni/librime/deps/yaml-cpp': checked out '2f86d13775d119edbb69af52e5f566fd65c6953b'
+2026-10-23T04:20:14.9328349Z Submodule path 'app/src/main/jni/librime-lua': checked out '68f9c364a2d25a04c7d4794981d7c796b05ab627'
+2026-10-23T04:20:15.0524134Z Submodule path 'app/src/main/jni/librime-lua-deps': checked out '9c53b362229766a97b83683b9541c46679118a90'
+2026-10-23T04:20:15.1465148Z Submodule path 'app/src/main/jni/librime-octagram': checked out 'bd12863f45fbbd5c7db06d5ec8be8987b10253bf'
+2026-10-23T04:20:15.2432647Z Submodule path 'app/src/main/jni/librime-predict': checked out '67c2881914a0242fc14ec7d6877782771b75800c'
+2026-10-23T04:20:15.3780236Z Submodule path 'app/src/main/jni/snappy': checked out '9c28114a38866f6deeaa826db918293bc28ae410'
+2026-10-23T04:20:15.3927898Z Submodule 'third_party/benchmark' (https://github.com/google/benchmark.git) registered for path 'app/src/main/jni/snappy/third_party/benchmark'
+2026-10-23T04:20:15.3945875Z Submodule 'third_party/googletest' (https://github.com/google/googletest.git) registered for path 'app/src/main/jni/snappy/third_party/googletest'
+2026-10-23T04:20:15.4311379Z Cloning into 'D:/a/trime/trime/app/src/main/jni/snappy/third_party/benchmark'...
+2026-10-23T04:20:16.0648486Z Cloning into 'D:/a/trime/trime/app/src/main/jni/snappy/third_party/googletest'...
+2026-10-23T04:20:18.2061632Z Submodule path 'app/src/main/jni/snappy/third_party/benchmark': checked out 'b20cea674170b2ba45da0dfaf03953cdea473d0d'
+2026-10-23T04:20:18.4168986Z Submodule path 'app/src/main/jni/snappy/third_party/googletest': checked out 'b796f7d44681514f58a683a3a71ff17c94edb0c1'
+2026-10-23T04:20:18.4485237Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "git config --local gc.auto 0"
+2026-10-23T04:20:19.0722852Z Entering 'app/data/rime/essay'
+2026-10-23T04:20:19.1300497Z Entering 'app/data/rime/luna-pinyin'
+2026-10-23T04:20:19.1923549Z Entering 'app/data/rime/prelude'
+2026-10-23T04:20:19.2530451Z Entering 'app/data/rime/stroke'
+2026-10-23T04:20:19.3214436Z Entering 'app/src/main/jni/librime'
+2026-10-23T04:20:19.3871540Z Entering 'app/src/main/jni/librime/deps/glog'
+2026-10-23T04:20:19.4506585Z Entering 'app/src/main/jni/librime/deps/googletest'
+2026-10-23T04:20:19.5088959Z Entering 'app/src/main/jni/librime/deps/leveldb'
+2026-10-23T04:20:19.5615396Z Entering 'app/src/main/jni/librime/deps/leveldb/third_party/benchmark'
+2026-10-23T04:20:19.6227719Z Entering 'app/src/main/jni/librime/deps/leveldb/third_party/googletest'
+2026-10-23T04:20:19.6913882Z Entering 'app/src/main/jni/librime/deps/marisa-trie'
+2026-10-23T04:20:19.7589851Z Entering 'app/src/main/jni/librime/deps/opencc'
+2026-10-23T04:20:19.8213628Z Entering 'app/src/main/jni/librime/deps/yaml-cpp'
+2026-10-23T04:20:19.8770838Z Entering 'app/src/main/jni/librime-lua'
+2026-10-23T04:20:19.9324177Z Entering 'app/src/main/jni/librime-lua-deps'
+2026-10-23T04:20:19.9933975Z Entering 'app/src/main/jni/librime-octagram'
+2026-10-23T04:20:20.0671633Z Entering 'app/src/main/jni/librime-predict'
+2026-10-23T04:20:20.1553760Z Entering 'app/src/main/jni/snappy'
+2026-10-23T04:20:20.2211579Z Entering 'app/src/main/jni/snappy/third_party/benchmark'
+2026-10-23T04:20:20.2816001Z Entering 'app/src/main/jni/snappy/third_party/googletest'
+2026-10-23T04:20:20.3556451Z ##[endgroup]
+2026-10-23T04:20:20.3557082Z ##[group]Persisting credentials for submodules
+2026-10-23T04:20:20.3570350Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'url\.https\:\/\/github\.com\/\.insteadOf' && git config --local --unset-all 'url.https://github.com/.insteadOf' || :\""
+2026-10-23T04:20:20.9424222Z Entering 'app/data/rime/essay'
+2026-10-23T04:20:21.0405624Z Entering 'app/data/rime/luna-pinyin'
+2026-10-23T04:20:21.1476604Z Entering 'app/data/rime/prelude'
+2026-10-23T04:20:21.2459172Z Entering 'app/data/rime/stroke'
+2026-10-23T04:20:21.3453510Z Entering 'app/src/main/jni/librime'
+2026-10-23T04:20:21.4295624Z Entering 'app/src/main/jni/librime/deps/glog'
+2026-10-23T04:20:21.5162498Z Entering 'app/src/main/jni/librime/deps/googletest'
+2026-10-23T04:20:21.6053710Z Entering 'app/src/main/jni/librime/deps/leveldb'
+2026-10-23T04:20:21.6998171Z Entering 'app/src/main/jni/librime/deps/leveldb/third_party/benchmark'
+2026-10-23T04:20:21.7901295Z Entering 'app/src/main/jni/librime/deps/leveldb/third_party/googletest'
+2026-10-23T04:20:21.8812572Z Entering 'app/src/main/jni/librime/deps/marisa-trie'
+2026-10-23T04:20:21.9680126Z Entering 'app/src/main/jni/librime/deps/opencc'
+2026-10-23T04:20:22.0634684Z Entering 'app/src/main/jni/librime/deps/yaml-cpp'
+2026-10-23T04:20:22.1534373Z Entering 'app/src/main/jni/librime-lua'
+2026-10-23T04:20:22.2521004Z Entering 'app/src/main/jni/librime-lua-deps'
+2026-10-23T04:20:22.3452981Z Entering 'app/src/main/jni/librime-octagram'
+2026-10-23T04:20:22.4399478Z Entering 'app/src/main/jni/librime-predict'
+2026-10-23T04:20:22.5336286Z Entering 'app/src/main/jni/snappy'
+2026-10-23T04:20:22.6279794Z Entering 'app/src/main/jni/snappy/third_party/benchmark'
+2026-10-23T04:20:22.7202800Z Entering 'app/src/main/jni/snappy/third_party/googletest'
+2026-10-23T04:20:22.8462333Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "git config --local --show-origin --name-only --get-regexp remote.origin.url"
+2026-10-23T04:20:23.5496624Z Entering 'app/data/rime/essay'
+2026-10-23T04:20:23.5946668Z file:D:/a/trime/trime/.git/modules/essay/config	remote.origin.url
+2026-10-23T04:20:23.6165512Z Entering 'app/data/rime/luna-pinyin'
+2026-10-23T04:20:23.6634665Z file:D:/a/trime/trime/.git/modules/luna-pinyin/config	remote.origin.url
+2026-10-23T04:20:23.6864416Z Entering 'app/data/rime/prelude'
+2026-10-23T04:20:23.7284822Z file:D:/a/trime/trime/.git/modules/prelude/config	remote.origin.url
+2026-10-23T04:20:23.7490314Z Entering 'app/data/rime/stroke'
+2026-10-23T04:20:23.7902340Z file:D:/a/trime/trime/.git/modules/stroke/config	remote.origin.url
+2026-10-23T04:20:23.8102529Z Entering 'app/src/main/jni/librime'
+2026-10-23T04:20:23.8558058Z file:D:/a/trime/trime/.git/modules/librime/config	remote.origin.url
+2026-10-23T04:20:23.8795228Z Entering 'app/src/main/jni/librime/deps/glog'
+2026-10-23T04:20:23.9219199Z file:D:/a/trime/trime/.git/modules/librime/modules/glog/config	remote.origin.url
+2026-10-23T04:20:23.9425209Z Entering 'app/src/main/jni/librime/deps/googletest'
+2026-10-23T04:20:23.9842428Z file:D:/a/trime/trime/.git/modules/librime/modules/googletest/config	remote.origin.url
+2026-10-23T04:20:24.0053448Z Entering 'app/src/main/jni/librime/deps/leveldb'
+2026-10-23T04:20:24.0461297Z file:D:/a/trime/trime/.git/modules/librime/modules/leveldb/config	remote.origin.url
+2026-10-23T04:20:24.0668366Z Entering 'app/src/main/jni/librime/deps/leveldb/third_party/benchmark'
+2026-10-23T04:20:24.1094310Z file:D:/a/trime/trime/.git/modules/librime/modules/leveldb/modules/third_party/benchmark/config	remote.origin.url
+2026-10-23T04:20:24.1313622Z Entering 'app/src/main/jni/librime/deps/leveldb/third_party/googletest'
+2026-10-23T04:20:24.1725607Z file:D:/a/trime/trime/.git/modules/librime/modules/leveldb/modules/third_party/googletest/config	remote.origin.url
+2026-10-23T04:20:24.1958348Z Entering 'app/src/main/jni/librime/deps/marisa-trie'
+2026-10-23T04:20:24.2398751Z file:D:/a/trime/trime/.git/modules/librime/modules/marisa-trie/config	remote.origin.url
+2026-10-23T04:20:24.2618441Z Entering 'app/src/main/jni/librime/deps/opencc'
+2026-10-23T04:20:24.3047695Z file:D:/a/trime/trime/.git/modules/librime/modules/opencc/config	remote.origin.url
+2026-10-23T04:20:24.3271062Z Entering 'app/src/main/jni/librime/deps/yaml-cpp'
+2026-10-23T04:20:24.3686478Z file:D:/a/trime/trime/.git/modules/librime/modules/yaml-cpp/config	remote.origin.url
+2026-10-23T04:20:24.3938553Z Entering 'app/src/main/jni/librime-lua'
+2026-10-23T04:20:24.4376373Z file:D:/a/trime/trime/.git/modules/librime-lua/config	remote.origin.url
+2026-10-23T04:20:24.4618092Z Entering 'app/src/main/jni/librime-lua-deps'
+2026-10-23T04:20:24.5054708Z file:D:/a/trime/trime/.git/modules/librime-lua-deps/config	remote.origin.url
+2026-10-23T04:20:24.5289683Z Entering 'app/src/main/jni/librime-octagram'
+2026-10-23T04:20:24.5710767Z file:D:/a/trime/trime/.git/modules/librime-octagram/config	remote.origin.url
+2026-10-23T04:20:24.5929849Z Entering 'app/src/main/jni/librime-predict'
+2026-10-23T04:20:24.6346350Z file:D:/a/trime/trime/.git/modules/librime-predict/config	remote.origin.url
+2026-10-23T04:20:24.6602200Z Entering 'app/src/main/jni/snappy'
+2026-10-23T04:20:24.7025498Z file:D:/a/trime/trime/.git/modules/snappy/config	remote.origin.url
+2026-10-23T04:20:24.7242374Z Entering 'app/src/main/jni/snappy/third_party/benchmark'
+2026-10-23T04:20:24.7683569Z file:D:/a/trime/trime/.git/modules/snappy/modules/third_party/benchmark/config	remote.origin.url
+2026-10-23T04:20:24.7903043Z Entering 'app/src/main/jni/snappy/third_party/googletest'
+2026-10-23T04:20:24.8329160Z file:D:/a/trime/trime/.git/modules/snappy/modules/third_party/googletest/config	remote.origin.url
+2026-10-23T04:20:24.8723861Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/essay/config includeIf.gitdir:D:/a/trime/trime/.git/modules/essay.path D:\a\_temp\git-credentials-915c58d2-d283-4994-854e-3227453a681f.config
+2026-10-23T04:20:24.9187289Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/essay/config includeIf.gitdir:/github/workspace/.git/modules/essay.path /github/runner_temp/git-credentials-915c58d2-d283-4994-854e-3227453a681f.config
+2026-10-23T04:20:24.9778671Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/luna-pinyin/config includeIf.gitdir:D:/a/trime/trime/.git/modules/luna-pinyin.path D:\a\_temp\git-credentials-915c58d2-d283-4994-854e-3227453a681f.config
+2026-10-23T04:20:25.0374445Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/luna-pinyin/config includeIf.gitdir:/github/workspace/.git/modules/luna-pinyin.path /github/runner_temp/git-credentials-915c58d2-d283-4994-854e-3227453a681f.config
+2026-10-23T04:20:25.0963725Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/prelude/config includeIf.gitdir:D:/a/trime/trime/.git/modules/prelude.path D:\a\_temp\git-credentials-915c58d2-d283-4994-854e-3227453a681f.config
+2026-10-23T04:20:25.1557361Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/prelude/config includeIf.gitdir:/github/workspace/.git/modules/prelude.path /github/runner_temp/git-credentials-915c58d2-d283-4994-854e-3227453a681f.config
+2026-10-23T04:20:25.2140030Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/stroke/config includeIf.gitdir:D:/a/trime/trime/.git/modules/stroke.path D:\a\_temp\git-credentials-915c58d2-d283-4994-854e-3227453a681f.config
+2026-10-23T04:20:25.2881038Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/stroke/config includeIf.gitdir:/github/workspace/.git/modules/stroke.path /github/runner_temp/git-credentials-915c58d2-d283-4994-854e-3227453a681f.config
+2026-10-23T04:20:25.3469586Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/librime/config includeIf.gitdir:D:/a/trime/trime/.git/modules/librime.path D:\a\_temp\git-credentials-915c58d2-d283-4994-854e-3227453a681f.config
+2026-10-23T04:20:25.4181651Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/librime/config includeIf.gitdir:/github/workspace/.git/modules/librime.path /github/runner_temp/git-credentials-915c58d2-d283-4994-854e-3227453a681f.config
+2026-10-23T04:20:25.4760506Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/librime/modules/glog/config includeIf.gitdir:D:/a/trime/trime/.git/modules/librime/modules/glog.path D:\a\_temp\git-credentials-915c58d2-d283-4994-854e-3227453a681f.config
+2026-10-23T04:20:25.5379274Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/librime/modules/glog/config includeIf.gitdir:/github/workspace/.git/modules/librime/modules/glog.path /github/runner_temp/git-credentials-915c58d2-d283-4994-854e-3227453a681f.config
+2026-10-23T04:20:25.5968905Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/librime/modules/googletest/config includeIf.gitdir:D:/a/trime/trime/.git/modules/librime/modules/googletest.path D:\a\_temp\git-credentials-915c58d2-d283-4994-854e-3227453a681f.config
+2026-10-23T04:20:25.6548308Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/librime/modules/googletest/config includeIf.gitdir:/github/workspace/.git/modules/librime/modules/googletest.path /github/runner_temp/git-credentials-915c58d2-d283-4994-854e-3227453a681f.config
+2026-10-23T04:20:25.6998959Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/librime/modules/leveldb/config includeIf.gitdir:D:/a/trime/trime/.git/modules/librime/modules/leveldb.path D:\a\_temp\git-credentials-915c58d2-d283-4994-854e-3227453a681f.config
+2026-10-23T04:20:25.7574592Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/librime/modules/leveldb/config includeIf.gitdir:/github/workspace/.git/modules/librime/modules/leveldb.path /github/runner_temp/git-credentials-915c58d2-d283-4994-854e-3227453a681f.config
+2026-10-23T04:20:25.8195971Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/librime/modules/leveldb/modules/third_party/benchmark/config includeIf.gitdir:D:/a/trime/trime/.git/modules/librime/modules/leveldb/modules/third_party/benchmark.path D:\a\_temp\git-credentials-915c58d2-d283-4994-854e-3227453a681f.config
+2026-10-23T04:20:25.8836731Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/librime/modules/leveldb/modules/third_party/benchmark/config includeIf.gitdir:/github/workspace/.git/modules/librime/modules/leveldb/modules/third_party/benchmark.path /github/runner_temp/git-credentials-915c58d2-d283-4994-854e-3227453a681f.config
+2026-10-23T04:20:25.9379566Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/librime/modules/leveldb/modules/third_party/googletest/config includeIf.gitdir:D:/a/trime/trime/.git/modules/librime/modules/leveldb/modules/third_party/googletest.path D:\a\_temp\git-credentials-915c58d2-d283-4994-854e-3227453a681f.config
+2026-10-23T04:20:25.9994880Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/librime/modules/leveldb/modules/third_party/googletest/config includeIf.gitdir:/github/workspace/.git/modules/librime/modules/leveldb/modules/third_party/googletest.path /github/runner_temp/git-credentials-915c58d2-d283-4994-854e-3227453a681f.config
+2026-10-23T04:20:26.0657328Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/librime/modules/marisa-trie/config includeIf.gitdir:D:/a/trime/trime/.git/modules/librime/modules/marisa-trie.path D:\a\_temp\git-credentials-915c58d2-d283-4994-854e-3227453a681f.config
+2026-10-23T04:20:26.1295285Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/librime/modules/marisa-trie/config includeIf.gitdir:/github/workspace/.git/modules/librime/modules/marisa-trie.path /github/runner_temp/git-credentials-915c58d2-d283-4994-854e-3227453a681f.config
+2026-10-23T04:20:26.1931945Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/librime/modules/opencc/config includeIf.gitdir:D:/a/trime/trime/.git/modules/librime/modules/opencc.path D:\a\_temp\git-credentials-915c58d2-d283-4994-854e-3227453a681f.config
+2026-10-23T04:20:26.2464326Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/librime/modules/opencc/config includeIf.gitdir:/github/workspace/.git/modules/librime/modules/opencc.path /github/runner_temp/git-credentials-915c58d2-d283-4994-854e-3227453a681f.config
+2026-10-23T04:20:26.3017135Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/librime/modules/yaml-cpp/config includeIf.gitdir:D:/a/trime/trime/.git/modules/librime/modules/yaml-cpp.path D:\a\_temp\git-credentials-915c58d2-d283-4994-854e-3227453a681f.config
+2026-10-23T04:20:26.3630441Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/librime/modules/yaml-cpp/config includeIf.gitdir:/github/workspace/.git/modules/librime/modules/yaml-cpp.path /github/runner_temp/git-credentials-915c58d2-d283-4994-854e-3227453a681f.config
+2026-10-23T04:20:26.4094104Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/librime-lua/config includeIf.gitdir:D:/a/trime/trime/.git/modules/librime-lua.path D:\a\_temp\git-credentials-915c58d2-d283-4994-854e-3227453a681f.config
+2026-10-23T04:20:26.4592998Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/librime-lua/config includeIf.gitdir:/github/workspace/.git/modules/librime-lua.path /github/runner_temp/git-credentials-915c58d2-d283-4994-854e-3227453a681f.config
+2026-10-23T04:20:26.5187852Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/librime-lua-deps/config includeIf.gitdir:D:/a/trime/trime/.git/modules/librime-lua-deps.path D:\a\_temp\git-credentials-915c58d2-d283-4994-854e-3227453a681f.config
+2026-10-23T04:20:26.5710471Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/librime-lua-deps/config includeIf.gitdir:/github/workspace/.git/modules/librime-lua-deps.path /github/runner_temp/git-credentials-915c58d2-d283-4994-854e-3227453a681f.config
+2026-10-23T04:20:26.6306923Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/librime-octagram/config includeIf.gitdir:D:/a/trime/trime/.git/modules/librime-octagram.path D:\a\_temp\git-credentials-915c58d2-d283-4994-854e-3227453a681f.config
+2026-10-23T04:20:26.6808112Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/librime-octagram/config includeIf.gitdir:/github/workspace/.git/modules/librime-octagram.path /github/runner_temp/git-credentials-915c58d2-d283-4994-854e-3227453a681f.config
+2026-10-23T04:20:26.7388877Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/librime-predict/config includeIf.gitdir:D:/a/trime/trime/.git/modules/librime-predict.path D:\a\_temp\git-credentials-915c58d2-d283-4994-854e-3227453a681f.config
+2026-10-23T04:20:26.7987385Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/librime-predict/config includeIf.gitdir:/github/workspace/.git/modules/librime-predict.path /github/runner_temp/git-credentials-915c58d2-d283-4994-854e-3227453a681f.config
+2026-10-23T04:20:26.8589021Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/snappy/config includeIf.gitdir:D:/a/trime/trime/.git/modules/snappy.path D:\a\_temp\git-credentials-915c58d2-d283-4994-854e-3227453a681f.config
+2026-10-23T04:20:26.9194049Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/snappy/config includeIf.gitdir:/github/workspace/.git/modules/snappy.path /github/runner_temp/git-credentials-915c58d2-d283-4994-854e-3227453a681f.config
+2026-10-23T04:20:26.9806905Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/snappy/modules/third_party/benchmark/config includeIf.gitdir:D:/a/trime/trime/.git/modules/snappy/modules/third_party/benchmark.path D:\a\_temp\git-credentials-915c58d2-d283-4994-854e-3227453a681f.config
+2026-10-23T04:20:27.0362167Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/snappy/modules/third_party/benchmark/config includeIf.gitdir:/github/workspace/.git/modules/snappy/modules/third_party/benchmark.path /github/runner_temp/git-credentials-915c58d2-d283-4994-854e-3227453a681f.config
+2026-10-23T04:20:27.0790640Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/snappy/modules/third_party/googletest/config includeIf.gitdir:D:/a/trime/trime/.git/modules/snappy/modules/third_party/googletest.path D:\a\_temp\git-credentials-915c58d2-d283-4994-854e-3227453a681f.config
+2026-10-23T04:20:27.1375314Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/snappy/modules/third_party/googletest/config includeIf.gitdir:/github/workspace/.git/modules/snappy/modules/third_party/googletest.path /github/runner_temp/git-credentials-915c58d2-d283-4994-854e-3227453a681f.config
+2026-10-23T04:20:27.1972759Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "git config --local --add 'url.https://github.com/.insteadOf' 'git@github.com:'"
+2026-10-23T04:20:27.9853525Z Entering 'app/data/rime/essay'
+2026-10-23T04:20:28.0612429Z Entering 'app/data/rime/luna-pinyin'
+2026-10-23T04:20:28.1288425Z Entering 'app/data/rime/prelude'
+2026-10-23T04:20:28.1905713Z Entering 'app/data/rime/stroke'
+2026-10-23T04:20:28.2729846Z Entering 'app/src/main/jni/librime'
+2026-10-23T04:20:28.3328161Z Entering 'app/src/main/jni/librime/deps/glog'
+2026-10-23T04:20:28.4077805Z Entering 'app/src/main/jni/librime/deps/googletest'
+2026-10-23T04:20:28.4935777Z Entering 'app/src/main/jni/librime/deps/leveldb'
+2026-10-23T04:20:28.5605861Z Entering 'app/src/main/jni/librime/deps/leveldb/third_party/benchmark'
+2026-10-23T04:20:28.6344425Z Entering 'app/src/main/jni/librime/deps/leveldb/third_party/googletest'
+2026-10-23T04:20:28.7133680Z Entering 'app/src/main/jni/librime/deps/marisa-trie'
+2026-10-23T04:20:28.7856145Z Entering 'app/src/main/jni/librime/deps/opencc'
+2026-10-23T04:20:28.8499614Z Entering 'app/src/main/jni/librime/deps/yaml-cpp'
+2026-10-23T04:20:28.9175754Z Entering 'app/src/main/jni/librime-lua'
+2026-10-23T04:20:28.9831788Z Entering 'app/src/main/jni/librime-lua-deps'
+2026-10-23T04:20:29.0458134Z Entering 'app/src/main/jni/librime-octagram'
+2026-10-23T04:20:29.1227534Z Entering 'app/src/main/jni/librime-predict'
+2026-10-23T04:20:29.1818426Z Entering 'app/src/main/jni/snappy'
+2026-10-23T04:20:29.2433407Z Entering 'app/src/main/jni/snappy/third_party/benchmark'
+2026-10-23T04:20:29.3071268Z Entering 'app/src/main/jni/snappy/third_party/googletest'
+2026-10-23T04:20:29.3993018Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "git config --local --add 'url.https://github.com/.insteadOf' 'org-7677088@github.com:'"
+2026-10-23T04:20:30.0844872Z Entering 'app/data/rime/essay'
+2026-10-23T04:20:30.1835142Z Entering 'app/data/rime/luna-pinyin'
+2026-10-23T04:20:30.2633182Z Entering 'app/data/rime/prelude'
+2026-10-23T04:20:30.3337146Z Entering 'app/data/rime/stroke'
+2026-10-23T04:20:30.4050084Z Entering 'app/src/main/jni/librime'
+2026-10-23T04:20:30.4800874Z Entering 'app/src/main/jni/librime/deps/glog'
+2026-10-23T04:20:30.6091157Z Entering 'app/src/main/jni/librime/deps/googletest'
+2026-10-23T04:20:30.7632527Z Entering 'app/src/main/jni/librime/deps/leveldb'
+2026-10-23T04:20:30.9281321Z Entering 'app/src/main/jni/librime/deps/leveldb/third_party/benchmark'
+2026-10-23T04:20:31.0013852Z Entering 'app/src/main/jni/librime/deps/leveldb/third_party/googletest'
+2026-10-23T04:20:31.0950443Z Entering 'app/src/main/jni/librime/deps/marisa-trie'
+2026-10-23T04:20:31.1673269Z Entering 'app/src/main/jni/librime/deps/opencc'
+2026-10-23T04:20:31.2363496Z Entering 'app/src/main/jni/librime/deps/yaml-cpp'
+2026-10-23T04:20:31.3079367Z Entering 'app/src/main/jni/librime-lua'
+2026-10-23T04:20:31.4140102Z Entering 'app/src/main/jni/librime-lua-deps'
+2026-10-23T04:20:31.4881028Z Entering 'app/src/main/jni/librime-octagram'
+2026-10-23T04:20:31.6778228Z Entering 'app/src/main/jni/librime-predict'
+2026-10-23T04:20:31.7465385Z Entering 'app/src/main/jni/snappy'
+2026-10-23T04:20:31.8077981Z Entering 'app/src/main/jni/snappy/third_party/benchmark'
+2026-10-23T04:20:31.8706831Z Entering 'app/src/main/jni/snappy/third_party/googletest'
+2026-10-23T04:20:31.9455127Z ##[endgroup]
+2026-10-23T04:20:34.5664501Z [command]"C:\Program Files\Git\bin\git.exe" log -1 --format=%H
+2026-10-23T04:20:35.0178869Z 0ae20751b7cc4de626913e08e658780d5800bef1
+2026-10-23T04:20:35.6045914Z ##[group]Run echo ${GITHUB_REF#refs/*/}
+2026-10-23T04:20:35.6046539Z [36;1mecho ${GITHUB_REF#refs/*/}[0m
+2026-10-23T04:20:35.6046863Z [36;1mecho CI_BRANCH=${GITHUB_REF#refs/*/} >> $GITHUB_ENV[0m
+2026-10-23T04:20:35.6068834Z shell: C:\Program Files\Git\bin\bash.EXE --noprofile --norc -e -o pipefail {0}
+2026-10-23T04:20:35.6069227Z env:
+2026-10-23T04:20:35.6069435Z   CI_NAME: Pull Request CI
+2026-10-23T04:20:35.6069688Z   BUILD_ABI: armeabi-v7a,arm64-v8a,x86,x86_64
+2026-10-23T04:20:35.6069960Z ##[endgroup]
+2026-10-23T04:20:43.4465606Z 2182/merge
+2026-10-23T04:20:43.4912355Z ##[group]Run actions/setup-java@v6
+2026-10-23T04:20:43.4912877Z with:
+2026-10-23T04:20:43.4913184Z   distribution: temurin
+2026-10-23T04:20:43.4913537Z   java-version: 25
+2026-10-23T04:20:43.4913850Z   cache: gradle
+2026-10-23T04:20:43.4914154Z   java-package: jdk
+2026-10-23T04:20:43.4914476Z   check-latest: false
+2026-10-23T04:20:43.4914842Z   force-download: false
+2026-10-23T04:20:43.4915179Z   set-default: true
+2026-10-23T04:20:43.4915495Z   server-id: github
+2026-10-23T04:20:43.4915852Z   mvn-repositories-include-central: true
+2026-10-23T04:20:43.4916357Z   mvn-repositories-prioritize-central: true
+2026-10-23T04:20:43.4916853Z   overwrite-settings: true
+2026-10-23T04:20:43.4917228Z   cache-read-only: false
+2026-10-23T04:20:43.4917584Z   job-status: success
+2026-10-23T04:20:43.4922414Z   token: ***
+2026-10-23T04:20:43.4922762Z   show-download-progress: false
+2026-10-23T04:20:43.4923166Z   problem-matcher: true
+2026-10-23T04:20:43.4923503Z env:
+2026-10-23T04:20:43.4923851Z   CI_NAME: Pull Request CI
+2026-10-23T04:20:43.4924273Z   BUILD_ABI: armeabi-v7a,arm64-v8a,x86,x86_64
+2026-10-23T04:20:43.4924740Z   CI_BRANCH: 2182/merge
+2026-10-23T04:20:43.4925066Z ##[endgroup]
+2026-10-23T04:20:43.6566916Z ##[group]Installed distributions
+2026-10-23T04:20:43.7825562Z Resolved Java 25.0.4+101.0 from tool-cache
+2026-10-23T04:20:43.7825959Z Setting Java 25.0.4+101.0 as the default
+2026-10-23T04:20:43.7846182Z 
+2026-10-23T04:20:43.7846804Z Java configuration:
+2026-10-23T04:20:43.7847865Z   Distribution: temurin
+2026-10-23T04:20:43.7848263Z   Version: 25.0.4+101.0
+2026-10-23T04:20:43.7848656Z   Path: C:\hostedtoolcache\windows\Java_Temurin-Hotspot_jdk\25.0.4-101.0\x64
+2026-10-23T04:20:43.7849034Z 
+2026-10-23T04:20:43.7920879Z ##[endgroup]
+2026-10-23T04:20:43.7997526Z Creating settings.xml with server-id: github
+2026-10-23T04:20:43.8001998Z Creating toolchains.xml for JDK version 25 from temurin
+2026-10-23T04:20:43.8025386Z Writing to C:\Users\runneradmin\.m2\settings.xml
+2026-10-23T04:20:43.8035243Z Writing to C:\Users\runneradmin\.m2\toolchains.xml
+2026-10-23T04:20:43.8049480Z Configured MAVEN_ARGS to include -ntp to suppress Maven transfer progress logs. Set 'show-download-progress: true' to keep the download progress output.
+2026-10-23T04:20:45.7103363Z Cache hit for: setup-java-Windows-x64-gradle-wrapper-e3b846ddaada9f54e16334398593835a8b0f2a47f66ab158c0be2025503c5c97
+2026-10-23T04:20:45.7348356Z gradle cache is not found
+2026-10-23T04:20:46.9281904Z Received 134217728 of 150731669 (89.0%), 118.8 MBs/sec
+2026-10-23T04:20:47.0926676Z Received 150731669 of 150731669 (100.0%), 115.6 MBs/sec
+2026-10-23T04:20:47.0929194Z Cache Size: ~144 MB (150731669 B)
+2026-10-23T04:20:47.1037404Z [command]"C:\Program Files\Git\usr\bin\tar.exe" -xf D:/a/_temp/792928a8-9a3f-4a10-bdbf-399a173eee99/cache.tzst -P -C D:/a/trime/trime --force-local --use-compress-program "zstd -d"
+2026-10-23T04:20:49.6976714Z Cache restored successfully
+2026-10-23T04:20:49.7081590Z gradle-wrapper cache restored from key: setup-java-Windows-x64-gradle-wrapper-e3b846ddaada9f54e16334398593835a8b0f2a47f66ab158c0be2025503c5c97
+2026-10-23T04:20:49.7620057Z ##[group]Run android-actions/setup-android@v4
+2026-10-23T04:20:49.7620706Z with:
+2026-10-23T04:20:49.7621139Z   packages: platform-tools
+2026-10-23T04:20:49.7621610Z   cmdline-tools-version: 15859902
+2026-10-23T04:20:49.7622040Z   accept-android-sdk-licenses: true
+2026-10-23T04:20:49.7622354Z   log-accepted-android-sdk-licenses: true
+2026-10-23T04:20:49.7622638Z env:
+2026-10-23T04:20:49.7622824Z   CI_NAME: Pull Request CI
+2026-10-23T04:20:49.7623103Z   BUILD_ABI: armeabi-v7a,arm64-v8a,x86,x86_64
+2026-10-23T04:20:49.7623400Z   CI_BRANCH: 2182/merge
+2026-10-23T04:20:49.7623778Z   JAVA_HOME: C:\hostedtoolcache\windows\Java_Temurin-Hotspot_jdk\25.0.4-101.0\x64
+2026-10-23T04:20:49.7624370Z   JAVA_HOME_25_X64: C:\hostedtoolcache\windows\Java_Temurin-Hotspot_jdk\25.0.4-101.0\x64
+2026-10-23T04:20:49.7624846Z   MAVEN_ARGS: -ntp
+2026-10-23T04:20:49.7625052Z ##[endgroup]
+2026-10-23T04:20:50.2377457Z Downloading commandline tools from https://dl.google.com/android/repository/commandlinetools-win-15859902_latest.zip
+2026-10-23T04:20:51.5339335Z [command]"C:\Program Files\PowerShell\7\pwsh.exe" -NoLogo -NoProfile -NonInteractive -ExecutionPolicy Unrestricted -Command "$ErrorActionPreference = 'Stop' ; try { Add-Type -AssemblyName System.IO.Compression.ZipFile } catch { } ; try { [System.IO.Compression.ZipFile]::ExtractToDirectory('D:\a\_temp\27c8c71f-af9d-46e9-a2bc-1e7ebdc8ed5e', 'C:\Android\android-sdk\cmdline-tools', $true) } catch { if (($_.Exception.GetType().FullName -eq 'System.Management.Automation.MethodException') -or ($_.Exception.GetType().FullName -eq 'System.Management.Automation.RuntimeException') ){ Expand-Archive -LiteralPath 'D:\a\_temp\27c8c71f-af9d-46e9-a2bc-1e7ebdc8ed5e' -DestinationPath 'C:\Android\android-sdk\cmdline-tools' -Force } else { throw $_ } } ;"
+2026-10-23T04:20:53.4808786Z Accepting Android SDK licenses
+2026-10-23T04:20:53.4821952Z [command]C:\Windows\system32\cmd.exe /D /S /C "C:\Android\android-sdk\cmdline-tools\22.0\bin\sdkmanager.bat --licenses"
+2026-10-23T04:20:55.9169308Z WARNING: The SDK Manager CLI tool (sdkmanager) is deprecated. Use Android CLI instead.
+2026-10-23T04:20:55.9175360Z The 'android' binary can also be found in the cmdline-tools directory, and 'android sdk' is the replacement for 'sdkmanager'.
+2026-10-23T04:20:55.9176868Z To learn more about the Android CLI and how to use it, see the documentation (https://d.android.com/tools/agents/android-cli)
+2026-10-23T04:20:55.9177689Z 
+2026-10-23T04:21:02.3720761Z Loading local repository...                                                     
+2026-10-23T04:21:02.3721584Z [=========                              ] 25% Loading local repository...       
+2026-10-23T04:21:20.8758988Z [=========                              ] 25% Fetch remote repository...        
+2026-10-23T04:21:21.6525576Z [==========                             ] 26% Fetch remote repository...        
+2026-10-23T04:21:21.6526767Z WARNING: A restricted method in java.lang.System has been called
+2026-10-23T04:21:21.6528581Z WARNING: java.lang.System::load has been called by com.sun.jna.Native in an unnamed module (file:/C:/Program%20Files%20(x86)/Android/android-sdk/cmdline-tools/22.0/lib/external/net/java/dev/jna/jna/5.14.0/jna-5.14.0.jar)
+2026-10-23T04:21:21.6530790Z WARNING: Use --enable-native-access=ALL-UNNAMED to avoid a warning for callers in this module
+2026-10-23T04:21:21.6532232Z WARNING: Restricted methods will be blocked in a future release unless native access is enabled
+2026-10-23T04:21:21.6532994Z 
+2026-10-23T04:21:21.8818427Z [============                           ] 31% Fetch remote repository...        
+2026-10-23T04:21:21.9073301Z [============                           ] 32% Fetch remote repository...        
+2026-10-23T04:21:21.9074256Z [=============                          ] 33% Fetch remote repository...        
+2026-10-23T04:21:21.9490382Z [=============                          ] 35% Fetch remote repository...        
+2026-10-23T04:21:21.9502113Z [==============                         ] 36% Fetch remote repository...        
+2026-10-23T04:21:22.0506781Z [==============                         ] 37% Fetch remote repository...        
+2026-10-23T04:21:22.0513513Z [===============                        ] 38% Fetch remote repository...        
+2026-10-23T04:21:22.2848529Z [===============                        ] 39% Fetch remote repository...        
+2026-10-23T04:21:22.2959162Z [================                       ] 40% Fetch remote repository...        
+2026-10-23T04:21:22.3464591Z [================                       ] 41% Fetch remote repository...        
+2026-10-23T04:21:22.3487788Z [================                       ] 42% Fetch remote repository...        
+2026-10-23T04:21:22.4374629Z [=================                      ] 44% Fetch remote repository...        
+2026-10-23T04:21:22.4531854Z [=================                      ] 45% Fetch remote repository...        
+2026-10-23T04:21:22.5139953Z [==================                     ] 46% Fetch remote repository...        
+2026-10-23T04:21:22.5202202Z [==================                     ] 47% Fetch remote repository...        
+2026-10-23T04:21:22.5532288Z [===================                    ] 48% Fetch remote repository...        
+2026-10-23T04:21:22.5542799Z [===================                    ] 49% Fetch remote repository...        
+2026-10-23T04:21:22.6036771Z [====================                   ] 50% Fetch remote repository...        
+2026-10-23T04:21:22.6154175Z [====================                   ] 51% Fetch remote repository...        
+2026-10-23T04:21:22.6156088Z [====================                   ] 53% Fetch remote repository...        
+2026-10-23T04:21:22.6159571Z [=====================                  ] 54% Fetch remote repository...        
+2026-10-23T04:21:22.6837074Z [=====================                  ] 55% Fetch remote repository...        
+2026-10-23T04:21:22.6948961Z [======================                 ] 56% Fetch remote repository...        
+2026-10-23T04:21:22.6957528Z [======================                 ] 57% Fetch remote repository...        
+2026-10-23T04:21:22.6985421Z [=======================                ] 58% Fetch remote repository...        
+2026-10-23T04:21:22.6997338Z [=======================                ] 59% Fetch remote repository...        
+2026-10-23T04:21:22.7004267Z [========================               ] 60% Fetch remote repository...        
+2026-10-23T04:21:22.7170147Z [========================               ] 61% Fetch remote repository...        
+2026-10-23T04:21:22.7183173Z [=========================              ] 63% Fetch remote repository...        
+2026-10-23T04:21:22.8025050Z [=========================              ] 64% Fetch remote repository...        
+2026-10-23T04:21:22.8120780Z [=========================              ] 65% Fetch remote repository...        
+2026-10-23T04:21:22.8171994Z [==========================             ] 66% Fetch remote repository...        
+2026-10-23T04:21:22.8315353Z [==========================             ] 67% Fetch remote repository...        
+2026-10-23T04:21:22.8364826Z [===========================            ] 68% Fetch remote repository...        
+2026-10-23T04:21:22.8547076Z [===========================            ] 69% Fetch remote repository...        
+2026-10-23T04:21:22.8612377Z [============================           ] 70% Fetch remote repository...        
+2026-10-23T04:21:22.8774410Z [============================           ] 72% Fetch remote repository...        
+2026-10-23T04:21:22.8860671Z [=============================          ] 73% Fetch remote repository...        
+2026-10-23T04:21:22.8862291Z [=============================          ] 74% Fetch remote repository...        
+2026-10-23T04:21:22.9157751Z [=============================          ] 75% Fetch remote repository...        
+2026-10-23T04:21:22.9375804Z [=============================          ] 75% Computing updates...              
+2026-10-23T04:21:22.9378065Z [=======================================] 100% Computing updates...             
+2026-10-23T04:21:22.9378741Z 
+2026-10-23T04:21:23.0591360Z 2 of 8 SDK package licenses not accepted.
+2026-10-23T04:21:23.0607660Z Review licenses that have not been accepted (y/N)? 
+2026-10-23T04:21:23.0646273Z 1/2: License android-googlexr-license:
+2026-10-23T04:21:23.0658553Z ---------------------------------------
+2026-10-23T04:21:23.0662198Z To get started with the Android XR Emulator System Image SDK, you must agree to the following terms and conditions. As described below, please note that this is a preview, emulated version of the Android XR OS, subject to change, that you use at your own risk.
+2026-10-23T04:21:23.0693634Z 
+2026-10-23T04:21:23.0697999Z This is the Android XR Emulator System Image SDK License Agreement
+2026-10-23T04:21:23.0698516Z 
+2026-10-23T04:21:23.0698783Z 1. Introduction
+2026-10-23T04:21:23.0699064Z 
+2026-10-23T04:21:23.0701710Z 1.1 The Android Android XR Emulator System Image SDK (referred to in the License Agreement as the "SDK" and specifically including the Android system files,, packaged APIs, library files (if and when they are made available), and Google applications and APIs add-ons) is licensed to you subject to the terms of the License Agreement. The License Agreement forms a legally binding contract between you and Google in relation to your use of the SDK.
+2026-10-23T04:21:23.0715317Z 
+2026-10-23T04:21:23.0716761Z 1.2 "Android" means the Android software stack for devices, as made available under the Android Open Source Project, which is located at the following URL: https://source.android.com/, as updated from time to time.
+2026-10-23T04:21:23.0719024Z 
+2026-10-23T04:21:23.0720444Z 1.3 "Google" means Google LLC, organized under the laws of the State of Delaware, USA, and operating under the laws of the USA with principal place of business at 1600 Amphitheatre Parkway, Mountain View, CA 94043, USA.
+2026-10-23T04:21:23.0722386Z 
+2026-10-23T04:21:23.0722575Z 2. Accepting this License Agreement
+2026-10-23T04:21:23.0722886Z 
+2026-10-23T04:21:23.0723612Z 2.1 In order to use the SDK, you must first agree to the License Agreement. You may not use the SDK if you do not accept the License Agreement.
+2026-10-23T04:21:23.0724733Z 
+2026-10-23T04:21:23.0725262Z 2.2 By clicking to accept and/or using this SDK, you hereby agree to the terms of the License Agreement.
+2026-10-23T04:21:23.0725936Z 
+2026-10-23T04:21:23.0727322Z 2.3 You may not use the SDK and may not accept the License Agreement if you are a person barred from receiving the SDK under the laws of the United States or other countries, including the country in which you are resident or from which you use the SDK.
+2026-10-23T04:21:23.0728469Z 
+2026-10-23T04:21:23.0730893Z 2.4 If you are agreeing to be bound by the License Agreement on behalf of your employer or other entity, you represent and warrant that you have full legal authority to bind your employer or such entity to the License Agreement. If you do not have the requisite authority, you may not accept the License Agreement or use the SDK on behalf of your employer or other entity.
+2026-10-23T04:21:23.0733130Z 
+2026-10-23T04:21:23.0733298Z 3. SDK License from Google
+2026-10-23T04:21:23.0733557Z 
+2026-10-23T04:21:23.0735330Z 3.1 Subject to the terms of the License Agreement, Google grants you a limited, worldwide, royalty-free, non-assignable, non-exclusive, and non-sublicensable license to use the SDK solely to develop applications for Android XR.
+2026-10-23T04:21:23.0737770Z 
+2026-10-23T04:21:23.0739922Z 3.2 You may not use this SDK to develop applications for other platforms or to develop another SDK. You are of course free to develop applications for other platforms provided that this SDK is not used for that purpose.
+2026-10-23T04:21:23.0741293Z 
+2026-10-23T04:21:23.0743765Z 3.3 You agree that Google or third parties own all legal right, title and interest in and to the SDK, including any Intellectual Property Rights that subsist in the SDK. "Intellectual Property Rights" means any and all rights under patent law, copyright law, trade secret law, trademark law, and any and all other proprietary rights. Google reserves all rights not expressly granted to you.
+2026-10-23T04:21:23.0746331Z 
+2026-10-23T04:21:23.0749567Z 3.4 You may not use the SDK for any purpose not expressly permitted by the License Agreement. Except to the extent required by applicable third party licenses, you may not (a) copy (except for backup purposes), modify, adapt, redistribute, decompile, reverse engineer, disassemble, or create derivative works of the SDK or any part of the SDK; or (b) load any part of the SDK onto a mobile handset or any other hardware device except a personal computer, combine any part of the SDK with other software, or distribute any software or device incorporating a part of the SDK.
+2026-10-23T04:21:23.0752914Z 
+2026-10-23T04:21:23.0756002Z 3.5 Use, reproduction and distribution of components of the SDK licensed under an open source software license are governed solely by the terms of that open source software license and not the License Agreement. You agree to remain a licensee in good standing in regard to such open source software licenses under all the rights granted and to refrain from any actions that may terminate, suspend, or breach such rights.
+2026-10-23T04:21:23.0758781Z 
+2026-10-23T04:21:23.0761176Z 3.6 You agree that the form and nature of the SDK that Google provides may change without prior notice to you and that future versions of the SDK may be incompatible with applications developed on previous versions of the SDK. You agree that Google may stop (permanently or temporarily) providing the SDK (or any features within the SDK) to you or to users generally at Google's sole discretion, without prior notice to you.
+2026-10-23T04:21:23.0763689Z 
+2026-10-23T04:21:23.0764602Z 3.7 Nothing in the License Agreement gives you a right to use any of Google's trade names, trademarks, service marks, logos, domain names, or other distinctive brand features.
+2026-10-23T04:21:23.0766030Z 
+2026-10-23T04:21:23.0767021Z 3.8 You agree that you will not remove, obscure, or alter any proprietary rights notices (including copyright and trademark notices) that may be affixed to or contained within the SDK.
+2026-10-23T04:21:23.0768186Z 
+2026-10-23T04:21:23.0768335Z 4. Use of the SDK by You
+2026-10-23T04:21:23.0768567Z 
+2026-10-23T04:21:23.0770024Z 4.1 Google agrees that it obtains no right, title or interest from you (or your licensors) under the License Agreement in or to any software applications that you develop using the SDK, including any intellectual property rights that subsist in those applications.
+2026-10-23T04:21:23.0771633Z 
+2026-10-23T04:21:23.0773614Z 4.2 You agree to use the SDK and write applications only for purposes that are permitted by (a) the License Agreement and (b) any applicable law, regulation or generally accepted practices or guidelines in the relevant jurisdictions (including any laws regarding the export of data or software to and from the United States or other relevant countries).
+2026-10-23T04:21:23.0775751Z 
+2026-10-23T04:21:23.0780247Z 4.3 You agree that if you use the SDK to develop applications for general public users, you will protect the privacy and legal rights of those users. If the users provide you with user names, passwords, or other login information or personal information, you must make the users aware that the information will be available to your application, and you must provide legally adequate privacy notice and protection for those users. If your application stores personal or sensitive information provided by users, it must do so securely. If the user provides your application with Google Account information, your application may only use that information to access the user's Google Account when, and for the limited purposes for which, the user has given you permission to do so.
+2026-10-23T04:21:23.0785439Z 
+2026-10-23T04:21:23.0787643Z 4.4 You agree that you will not engage in any activity with the SDK, including the development or distribution of an application, that interferes with, disrupts, damages, or accesses in an unauthorized manner the servers, networks, or other properties or services of any third party including, but not limited to, Google or any mobile communications carrier.
+2026-10-23T04:21:23.0789828Z 
+2026-10-23T04:21:23.0791744Z 4.5 You agree that you are solely responsible for (and that Google has no responsibility to you or to any third party for) any data, content, or resources that you create, transmit or display through Android and/or applications for Android, and for the consequences of your actions (including any loss or damage which Google may suffer) by doing so.
+2026-10-23T04:21:23.0793824Z 
+2026-10-23T04:21:23.0796016Z 4.6 You agree that you are solely responsible for (and that Google has no responsibility to you or to any third party for) any breach of your obligations under the License Agreement, any applicable third party contract or Terms of Service, or any applicable law or regulation, and for the consequences (including any loss or damage which Google or any third party may suffer) of any such breach.
+2026-10-23T04:21:23.0798363Z 
+2026-10-23T04:21:23.0800005Z 4.7 The SDK is in development, and your testing and feedback are an important part of the development process. By using the SDK, you acknowledge that implementation of some features are still under development and that you should not rely on the SDK having the full functionality of a stable release.
+2026-10-23T04:21:23.0801810Z 
+2026-10-23T04:21:23.0801968Z 5. Your Developer Credentials
+2026-10-23T04:21:23.0802237Z 
+2026-10-23T04:21:23.0803817Z 5.1 You agree that you are responsible for maintaining the confidentiality of any developer credentials that may be issued to you by Google or which you may choose yourself and that you will be solely responsible for all applications that are developed under your developer credentials.
+2026-10-23T04:21:23.0805832Z 
+2026-10-23T04:21:23.0805984Z 6. Privacy and Information
+2026-10-23T04:21:23.0806220Z 
+2026-10-23T04:21:23.0808930Z 6.1 In order to continually innovate and improve the SDK, Google may collect certain usage statistics from the software including but not limited to a unique identifier, associated IP address, version number of the software, and information on which tools and/or services in the SDK are being used and how they are being used. Before any of this information is collected, the SDK will notify you and seek your consent. If you withhold consent, the information will not be collected.
+2026-10-23T04:21:23.0811773Z 
+2026-10-23T04:21:23.0812896Z 6.2 The data collected is examined in the aggregate to improve the SDK and is maintained in accordance with Google's Privacy Policy, which is located at the following URL: https://policies.google.com/privacy
+2026-10-23T04:21:23.0814171Z 
+2026-10-23T04:21:23.0814659Z 6.3 Anonymized and aggregated sets of the data may be shared with Google partners to improve the SDK.
+2026-10-23T04:21:23.0815317Z 
+2026-10-23T04:21:23.0815461Z 7. Third Party Applications
+2026-10-23T04:21:23.0815714Z 
+2026-10-23T04:21:23.0819051Z 7.1 If you use the SDK to run applications developed by a third party or that access data, content or resources provided by a third party, you agree that Google is not responsible for those applications, data, content, or resources. You understand that all data, content or resources which you may access through such third party applications are the sole responsibility of the person from which they originated and that Google is not liable for any loss or damage that you may experience as a result of the use or access of any of those third party applications, data, content, or resources.
+2026-10-23T04:21:23.0823864Z 
+2026-10-23T04:21:23.0827698Z 7.2 You should be aware that the data, content, and resources presented to you through such a third party application may be protected by intellectual property rights which are owned by the providers (or by other persons or companies on their behalf). You may not modify, rent, lease, loan, sell, distribute or create derivative works based on these data, content, or resources (either in whole or in part) unless you have been specifically given permission to do so by the relevant owners.
+2026-10-23T04:21:23.0830644Z 
+2026-10-23T04:21:23.0832165Z 7.3 You acknowledge that your use of such third party applications, data, content, or resources may be subject to separate terms between you and the relevant third party. In that case, the License Agreement does not affect your legal relationship with these third parties.
+2026-10-23T04:21:23.0833822Z 
+2026-10-23T04:21:23.0833951Z 8. Using Android APIs
+2026-10-23T04:21:23.0834174Z 
+2026-10-23T04:21:23.0834307Z 8.1 Google Data APIs
+2026-10-23T04:21:23.0834505Z 
+2026-10-23T04:21:23.0837264Z 8.1.1 If you use any API to retrieve data from Google, you acknowledge that the data may be protected by intellectual property rights which are owned by Google or those parties that provide the data (or by other persons or companies on their behalf). Your use of any such API may be subject to additional Terms of Service. You may not modify, rent, lease, loan, sell, distribute or create derivative works based on this data (either in whole or in part) unless allowed by the relevant Terms of Service.
+2026-10-23T04:21:23.0840264Z 
+2026-10-23T04:21:23.0845084Z 8.1.2 If you use any API to retrieve a user's data from Google, you acknowledge and agree that you shall retrieve data only with the user's explicit consent and only when, and for the limited purposes for which, the user has given you permission to do so. If you use the Android Recognition Service API, documented at the following URL: https://developer.android.com/reference/android/speech/RecognitionService, as updated from time to time, you acknowledge that the use of the API is subject to the Data Processing Addendum for Products where Google is a Data Processor, which is located at the following URL: https://privacy.google.com/businesses/gdprprocessorterms/, as updated from time to time. By clicking to accept, you hereby agree to the terms of the Data Processing Addendum for Products where Google is a Data Processor.
+2026-10-23T04:21:23.0850341Z 
+2026-10-23T04:21:23.0850516Z 9. Terminating this License Agreement
+2026-10-23T04:21:23.0850819Z 
+2026-10-23T04:21:23.0851348Z 9.1 The License Agreement will continue to apply until terminated by either you or Google as set out below.
+2026-10-23T04:21:23.0852053Z 
+2026-10-23T04:21:23.0852712Z 9.2 If you want to terminate the License Agreement, you may do so by ceasing your use of the SDK and any relevant developer credentials.
+2026-10-23T04:21:23.0853531Z 
+2026-10-23T04:21:23.0857085Z 9.3 Google may at any time, terminate the License Agreement with you if: (A) you have breached any provision of the License Agreement; or (B) Google is required to do so by law; or (C) the partner with whom Google offered certain parts of SDK (such as APIs) to you has terminated its relationship with Google or ceased to offer certain parts of the SDK to you; or (D) Google decides to no longer provide the SDK or certain parts of the SDK to users in the country in which you are resident or from which you use the service, or the provision of the SDK or certain SDK services to you by Google is, in Google's sole discretion, no longer commercially viable.
+2026-10-23T04:21:23.0860968Z 
+2026-10-23T04:21:23.0863457Z 9.4 When the License Agreement comes to an end, all of the legal rights, obligations and liabilities that you and Google have benefited from, been subject to (or which have accrued over time whilst the License Agreement has been in force) or which are expressed to continue indefinitely, shall be unaffected by this cessation, and the provisions of paragraph 14.7 shall continue to apply to such rights, obligations and liabilities indefinitely.
+2026-10-23T04:21:23.0866360Z 
+2026-10-23T04:21:23.0866509Z 10. DISCLAIMER OF WARRANTIES
+2026-10-23T04:21:23.0866769Z 
+2026-10-23T04:21:23.0867838Z 10.1 YOU EXPRESSLY UNDERSTAND AND AGREE THAT YOUR USE OF THE SDK IS AT YOUR SOLE RISK AND THAT THE SDK IS PROVIDED "AS IS" AND "AS AVAILABLE" WITHOUT WARRANTY OF ANY KIND FROM GOOGLE.
+2026-10-23T04:21:23.0868908Z 
+2026-10-23T04:21:23.0870324Z 10.2 YOUR USE OF THE SDK AND ANY MATERIAL DOWNLOADED OR OTHERWISE OBTAINED THROUGH THE USE OF THE SDK IS AT YOUR OWN DISCRETION AND RISK AND YOU ARE SOLELY RESPONSIBLE FOR ANY DAMAGE TO YOUR COMPUTER SYSTEM OR OTHER DEVICE OR LOSS OF DATA THAT RESULTS FROM SUCH USE.
+2026-10-23T04:21:23.0871914Z 
+2026-10-23T04:21:23.0873334Z 10.3 GOOGLE FURTHER EXPRESSLY DISCLAIMS ALL WARRANTIES AND CONDITIONS OF ANY KIND, WHETHER EXPRESS OR IMPLIED, INCLUDING, BUT NOT LIMITED TO THE IMPLIED WARRANTIES AND CONDITIONS OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT.
+2026-10-23T04:21:23.0874922Z 
+2026-10-23T04:21:23.0875134Z 11. LIMITATION OF LIABILITY
+2026-10-23T04:21:23.0875381Z 
+2026-10-23T04:21:23.0877847Z 11.1 YOU EXPRESSLY UNDERSTAND AND AGREE THAT GOOGLE, ITS SUBSIDIARIES AND AFFILIATES, AND ITS LICENSORS SHALL NOT BE LIABLE TO YOU UNDER ANY THEORY OF LIABILITY FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL OR EXEMPLARY DAMAGES THAT MAY BE INCURRED BY YOU, INCLUDING ANY LOSS OF DATA, WHETHER OR NOT GOOGLE OR ITS REPRESENTATIVES HAVE BEEN ADVISED OF OR SHOULD HAVE BEEN AWARE OF THE POSSIBILITY OF ANY SUCH LOSSES ARISING.
+2026-10-23T04:21:23.0880458Z 
+2026-10-23T04:21:23.0880584Z 12. Indemnification
+2026-10-23T04:21:23.0880786Z 
+2026-10-23T04:21:23.0884875Z 12.1 To the maximum extent permitted by law, you agree to defend, indemnify and hold harmless Google, its affiliates and their respective directors, officers, employees and agents from and against any and all claims, actions, suits or proceedings, as well as any and all losses, liabilities, damages, costs and expenses (including reasonable attorneys fees) arising out of or accruing from (a) your use of the SDK, (b) any application you develop on the SDK that infringes any copyright, trademark, trade secret, trade dress, patent or other intellectual property right of any person or defames any person or violates their rights of publicity or privacy, and (c) any non-compliance by you with the License Agreement.
+2026-10-23T04:21:23.0889340Z 
+2026-10-23T04:21:23.0889494Z 13. Changes to the License Agreement
+2026-10-23T04:21:23.0890012Z 
+2026-10-23T04:21:23.0891296Z 13.1 Google may make changes to the License Agreement as it distributes new versions of the SDK. When these changes are made, Google will make a new version of the License Agreement available on the website where the SDK is made available.
+2026-10-23T04:21:23.0892735Z 
+2026-10-23T04:21:23.0892864Z 14. General Legal Terms
+2026-10-23T04:21:23.0893093Z 
+2026-10-23T04:21:23.0894793Z 14.1 The License Agreement constitutes the whole legal agreement between you and Google and governs your use of the SDK (excluding any services which Google may provide to you under a separate written agreement), and completely replaces any prior agreements between you and Google in relation to the SDK.
+2026-10-23T04:21:23.0896646Z 
+2026-10-23T04:21:23.0898382Z 14.2 You agree that if Google does not exercise or enforce any legal right or remedy which is contained in the License Agreement (or which Google has the benefit of under any applicable law), this will not be taken to be a formal waiver of Google's rights and that those rights or remedies will still be available to Google.
+2026-10-23T04:21:23.0900464Z 
+2026-10-23T04:21:23.0902383Z 14.3 If any court of law, having the jurisdiction to decide on this matter, rules that any provision of the License Agreement is invalid, then that provision will be removed from the License Agreement without affecting the rest of the License Agreement. The remaining provisions of the License Agreement will continue to be valid and enforceable.
+2026-10-23T04:21:23.0904448Z 
+2026-10-23T04:21:23.0907397Z 14.4 You acknowledge and agree that each member of the group of companies of which Google is the parent shall be third party beneficiaries to the License Agreement and that such other companies shall be entitled to directly enforce, and rely upon, any provision of the License Agreement that confers a benefit on (or rights in favor of) them. Other than this, no other person or company shall be third party beneficiaries to the License Agreement.
+2026-10-23T04:21:23.0910059Z 
+2026-10-23T04:21:23.0911785Z 14.5 EXPORT RESTRICTIONS. THE SDK IS SUBJECT TO UNITED STATES EXPORT LAWS AND REGULATIONS. YOU MUST COMPLY WITH ALL DOMESTIC AND INTERNATIONAL EXPORT LAWS AND REGULATIONS THAT APPLY TO THE SDK. THESE LAWS INCLUDE RESTRICTIONS ON DESTINATIONS, END USERS AND END USE.
+2026-10-23T04:21:23.0913408Z 
+2026-10-23T04:21:23.0915314Z 14.6 The rights granted in the License Agreement may not be assigned or transferred by either you or Google without the prior written approval of the other party. Neither you nor Google shall be permitted to delegate their responsibilities or obligations under the License Agreement without the prior written approval of the other party.
+2026-10-23T04:21:23.0918143Z 
+2026-10-23T04:21:23.0921380Z 14.7 The License Agreement, and your relationship with Google under the License Agreement, shall be governed by the laws of the State of California without regard to its conflict of laws provisions. You and Google agree to submit to the exclusive jurisdiction of the courts located within the county of Santa Clara, California to resolve any legal matter arising from the License Agreement. Notwithstanding this, you agree that Google shall still be allowed to apply for injunctive remedies (or an equivalent type of urgent legal relief) in any jurisdiction.
+2026-10-23T04:21:23.0925400Z ---------------------------------------
+2026-10-23T04:21:23.0925867Z Accept? (y/N): 
+2026-10-23T04:21:23.0926234Z 2/2: License microxr-sysimage-license:
+2026-10-23T04:21:23.0926678Z ---------------------------------------
+2026-10-23T04:21:23.0928344Z To get started with the microXR Emulator System Image SDK, you must agree to the following terms and conditions. As described below, please note that this is a preview, emulated version of microXR, subject to change, that you use at your own risk.
+2026-10-23T04:21:23.0929879Z 
+2026-10-23T04:21:23.0930259Z This is the microXR Emulator System Image SDK License Agreement 1. Introduction
+2026-10-23T04:21:23.0930833Z 
+2026-10-23T04:21:23.0933238Z 1.1 The microXR Emulator System Image SDK (referred to in the License Agreement as the "SDK" and specifically including the Android system files,, packaged APIs, library files (if and when they are made available), and Google applications and APIs add-ons) is licensed to you subject to the terms of the License Agreement. The License Agreement forms a legally binding contract between you and Google in relation to your use of the SDK.
+2026-10-23T04:21:23.0936028Z 
+2026-10-23T04:21:23.0937571Z 1.2 "Android" means the Android software stack for devices, as made available under the Android Open Source Project, which is located at the following URL: https://source.android.com/, as updated from time to time.
+2026-10-23T04:21:23.0938847Z 
+2026-10-23T04:21:23.0939999Z 1.3 "Google" means Google LLC, organized under the laws of the State of Delaware, USA, and operating under the laws of the USA with principal place of business at 1600 Amphitheatre Parkway, Mountain View, CA 94043, USA.
+2026-10-23T04:21:23.0941898Z 
+2026-10-23T04:21:23.0941908Z 
+2026-10-23T04:21:23.0942091Z 2. Accepting this License Agreement
+2026-10-23T04:21:23.0942406Z 
+2026-10-23T04:21:23.0943666Z 2.1 In order to use the SDK, you must first agree to the License Agreement. You may not use the SDK if you do not accept the License Agreement.
+2026-10-23T04:21:23.0944456Z 
+2026-10-23T04:21:23.0944924Z 2.2 By clicking to accept and/or using this SDK, you hereby agree to the terms of the License Agreement.
+2026-10-23T04:21:23.0945580Z 
+2026-10-23T04:21:23.0948576Z 2.3 You may not use the SDK and may not accept the License Agreement if you are a person barred from receiving the SDK under the laws of the United States or other countries, including the country in which you are resident or from which you use the SDK.
+2026-10-23T04:21:23.0949534Z 
+2026-10-23T04:21:23.0950777Z 2.4 If you are agreeing to be bound by the License Agreement on behalf of your employer or other entity, you represent and warrant that you have full legal authority to bind your employer or such entity to the License Agreement. If you do not have the requisite authority, you may not accept the License Agreement or use the SDK on behalf of your employer or other entity. 3. SDK License from Google
+2026-10-23T04:21:23.0952082Z 
+2026-10-23T04:21:23.0952847Z 3.1 Subject to the terms of the License Agreement, Google grants you a limited, worldwide, royalty-free, non-assignable, non-exclusive, and non-sublicensable license to use the SDK solely to develop applications for microXR and/or Android XR.
+2026-10-23T04:21:23.0953734Z 
+2026-10-23T04:21:23.0955003Z 3.2 You may not use this SDK to develop applications for other platforms or to develop another SDK. You are of course free to develop applications for other platforms provided that this SDK is not used for that purpose.
+2026-10-23T04:21:23.0955779Z 
+2026-10-23T04:21:23.0957691Z 3.3 You agree that Google or third parties own all legal right, title and interest in and to the SDK, including any Intellectual Property Rights that subsist in the SDK. "Intellectual Property Rights" means any and all rights under patent law, copyright law, trade secret law, trademark law, and any and all other proprietary rights. Google reserves all rights not expressly granted to you.
+2026-10-23T04:21:23.0959025Z 
+2026-10-23T04:21:23.0960828Z 3.4 You may not use the SDK for any purpose not expressly permitted by the License Agreement. Except to the extent required by applicable third party licenses, you may not (a) copy (except for backup purposes), modify, adapt, redistribute, decompile, reverse engineer, disassemble, or create derivative works of the SDK or any part of the SDK; or (b) load any part of the SDK onto a mobile handset or any other hardware device except a personal computer, combine any part of the SDK with other software, or distribute any software or device incorporating a part of the SDK.
+2026-10-23T04:21:23.0963202Z 
+2026-10-23T04:21:23.0965644Z 3.5 Use, reproduction and distribution of components of the SDK licensed under an open source software license are governed solely by the terms of that open source software license and not the License Agreement. You agree to remain a licensee in good standing in regard to such open source software licenses under all the rights granted and to refrain from any actions that may terminate, suspend, or breach such rights.
+2026-10-23T04:21:23.0968245Z 
+2026-10-23T04:21:23.0970907Z 3.6 You agree that the form and nature of the SDK that Google provides may change without prior notice to you and that future versions of the SDK may be incompatible with applications developed on previous versions of the SDK. You agree that Google may stop (permanently or temporarily) providing the SDK (or any features within the SDK) to you or to users generally at Google's sole discretion, without prior notice to you.
+2026-10-23T04:21:23.0973072Z 
+2026-10-23T04:21:23.0974006Z 3.7 Nothing in the License Agreement gives you a right to use any of Google's trade names, trademarks, service marks, logos, domain names, or other distinctive brand features.
+2026-10-23T04:21:23.0975925Z 
+2026-10-23T04:21:23.0976908Z 3.8 You agree that you will not remove, obscure, or alter any proprietary rights notices (including copyright and trademark notices) that may be affixed to or contained within the SDK.
+2026-10-23T04:21:23.0978096Z 
+2026-10-23T04:21:23.0978244Z 4. Use of the SDK by You
+2026-10-23T04:21:23.0978471Z 
+2026-10-23T04:21:23.0979943Z 4.1 Google agrees that it obtains no right, title or interest from you (or your licensors) under the License Agreement in or to any software applications that you develop using the SDK, including any intellectual property rights that subsist in those applications.
+2026-10-23T04:21:23.0981548Z 
+2026-10-23T04:21:23.0984527Z 4.2 You agree to use the SDK and write applications only for purposes that are permitted by (a) the License Agreement and (b) any applicable law, regulation or generally accepted practices or guidelines in the relevant jurisdictions (including any laws regarding the export of data or software to and from the United States or other relevant countries).
+2026-10-23T04:21:23.0986703Z 
+2026-10-23T04:21:23.0991201Z 4.3 You agree that if you use the SDK to develop applications for general public users, you will protect the privacy and legal rights of those users. If the users provide you with user names, passwords, or other login information or personal information, you must make the users aware that the information will be available to your application, and you must provide legally adequate privacy notice and protection for those users. If your application stores personal or sensitive information provided by users, it must do so securely. If the user provides your application with Google Account information, your application may only use that information to access the user's Google Account when, and for the limited purposes for which, the user has given you permission to do so.
+2026-10-23T04:21:23.0996142Z 
+2026-10-23T04:21:23.0998132Z 4.4 You agree that you will not engage in any activity with the SDK, including the development or distribution of an application, that interferes with, disrupts, damages, or accesses in an unauthorized manner the servers, networks, or other properties or services of any third party including, but not limited to, Google or any mobile communications carrier.
+2026-10-23T04:21:23.1000689Z 
+2026-10-23T04:21:23.1003032Z 4.5 You agree that you are solely responsible for (and that Google has no responsibility to you or to any third party for) any data, content, or resources that you create, transmit or display through Android and/or applications for Android, and for the consequences of your actions (including any loss or damage which Google may suffer) by doing so.
+2026-10-23T04:21:23.1005167Z 
+2026-10-23T04:21:23.1007408Z 4.6 You agree that you are solely responsible for (and that Google has no responsibility to you or to any third party for) any breach of your obligations under the License Agreement, any applicable third party contract or Terms of Service, or any applicable law or regulation, and for the consequences (including any loss or damage which Google or any third party may suffer) of any such breach.
+2026-10-23T04:21:23.1009776Z 
+2026-10-23T04:21:23.1011430Z 4.7 The SDK is in development, and your testing and feedback are an important part of the development process. By using the SDK, you acknowledge that implementation of some features are still under development and that you should not rely on the SDK having the full functionality of a stable release.
+2026-10-23T04:21:23.1013219Z 
+2026-10-23T04:21:23.1013380Z 5. Your Developer Credentials
+2026-10-23T04:21:23.1013644Z 
+2026-10-23T04:21:23.1015389Z 5.1 You agree that you are responsible for maintaining the confidentiality of any developer credentials that may be issued to you by Google or which you may choose yourself and that you will be solely responsible for all applications that are developed under your developer credentials. 6. Privacy and Information
+2026-10-23T04:21:23.1019026Z 
+2026-10-23T04:21:23.1021639Z 6.1 In order to continually innovate and improve the SDK, Google may collect certain usage statistics from the software including but not limited to a unique identifier, associated IP address, version number of the software, and information on which tools and/or services in the SDK are being used and how they are being used. Before any of this information is collected, the SDK will notify you and seek your consent. If you withhold consent, the information will not be collected.
+2026-10-23T04:21:23.1024510Z 
+2026-10-23T04:21:23.1025631Z 6.2 The data collected is examined in the aggregate to improve the SDK and is maintained in accordance with Google's Privacy Policy, which is located at the following URL: https://policies.google.com/privacy
+2026-10-23T04:21:23.1027200Z 
+2026-10-23T04:21:23.1027892Z 6.3 Anonymized and aggregated sets of the data may be shared with Google partners to improve the SDK. 7. Third Party Applications
+2026-10-23T04:21:23.1028696Z 
+2026-10-23T04:21:23.1031878Z 7.1 If you use the SDK to run applications developed by a third party or that access data, content or resources provided by a third party, you agree that Google is not responsible for those applications, data, content, or resources. You understand that all data, content or resources which you may access through such third party applications are the sole responsibility of the person from which they originated and that Google is not liable for any loss or damage that you may experience as a result of the use or access of any of those third party applications, data, content, or resources.
+2026-10-23T04:21:23.1034653Z 
+2026-10-23T04:21:23.1037083Z 7.2 You should be aware that the data, content, and resources presented to you through such a third party application may be protected by intellectual property rights which are owned by the providers (or by other persons or companies on their behalf). You may not modify, rent, lease, loan, sell, distribute or create derivative works based on these data, content, or resources (either in whole or in part) unless you have been specifically given permission to do so by the relevant owners.
+2026-10-23T04:21:23.1039380Z 
+2026-10-23T04:21:23.1040323Z 7.3 You acknowledge that your use of such third party applications, data, content, or resources may be subject to separate terms between you and the relevant third party. In that case, the License Agreement does not affect your legal relationship with these third parties. 8. Using Android APIs
+2026-10-23T04:21:23.1041739Z 
+2026-10-23T04:21:23.1041875Z 8.1 Google Data APIs
+2026-10-23T04:21:23.1042079Z 
+2026-10-23T04:21:23.1044379Z 8.1.1 If you use any API to retrieve data from Google, you acknowledge that the data may be protected by intellectual property rights which are owned by Google or those parties that provide the data (or by other persons or companies on their behalf). Your use of any such API may be subject to additional Terms of Service. You may not modify, rent, lease, loan, sell, distribute or create derivative works based on this data (either in whole or in part) unless allowed by the relevant Terms of Service.
+2026-10-23T04:21:23.1046026Z 
+2026-10-23T04:21:23.1048915Z 8.1.2 If you use any API to retrieve a user's data from Google, you acknowledge and agree that you shall retrieve data only with the user's explicit consent and only when, and for the limited purposes for which, the user has given you permission to do so. If you use the Android Recognition Service API, documented at the following URL: https://developer.android.com/reference/android/speech/RecognitionService, as updated from time to time, you acknowledge that the use of the API is subject to the Data Processing Addendum for Products where Google is a Data Processor, which is located at the following URL: https://privacy.google.com/businesses/gdprprocessorterms/, as updated from time to time. By clicking to accept, you hereby agree to the terms of the Data Processing Addendum for Products where Google is a Data Processor.
+2026-10-23T04:21:23.1052315Z 
+2026-10-23T04:21:23.1052421Z 9. Terminating this License Agreement
+2026-10-23T04:21:23.1052602Z 
+2026-10-23T04:21:23.1052912Z 9.1 The License Agreement will continue to apply until terminated by either you or Google as set out below.
+2026-10-23T04:21:23.1053305Z 
+2026-10-23T04:21:23.1053678Z 9.2 If you want to terminate the License Agreement, you may do so by ceasing your use of the SDK and any relevant developer credentials.
+2026-10-23T04:21:23.1054142Z 
+2026-10-23T04:21:23.1056508Z 9.3 Google may at any time, terminate the License Agreement with you if: (A) you have breached any provision of the License Agreement; or (B) Google is required to do so by law; or (C) the partner with whom Google offered certain parts of SDK (such as APIs) to you has terminated its relationship with Google or ceased to offer certain parts of the SDK to you; or (D) Google decides to no longer provide the SDK or certain parts of the SDK to users in the country in which you are resident or from which you use the service, or the provision of the SDK or certain SDK services to you by Google is, in Google's sole discretion, no longer commercially viable.
+2026-10-23T04:21:23.1058854Z 
+2026-10-23T04:21:23.1060539Z 9.4 When the License Agreement comes to an end, all of the legal rights, obligations and liabilities that you and Google have benefited from, been subject to (or which have accrued over time whilst the License Agreement has been in force) or which are expressed to continue indefinitely, shall be unaffected by this cessation, and the provisions of paragraph 14.7 shall continue to apply to such rights, obligations and liabilities indefinitely.
+2026-10-23T04:21:23.1062271Z 
+2026-10-23T04:21:23.1062375Z 10. DISCLAIMER OF WARRANTIES
+2026-10-23T04:21:23.1062527Z 
+2026-10-23T04:21:23.1063049Z 10.1 YOU EXPRESSLY UNDERSTAND AND AGREE THAT YOUR USE OF THE SDK IS AT YOUR SOLE RISK AND THAT THE SDK IS PROVIDED "AS IS" AND "AS AVAILABLE" WITHOUT WARRANTY OF ANY KIND FROM GOOGLE.
+2026-10-23T04:21:23.1063803Z 
+2026-10-23T04:21:23.1064601Z 10.2 YOUR USE OF THE SDK AND ANY MATERIAL DOWNLOADED OR OTHERWISE OBTAINED THROUGH THE USE OF THE SDK IS AT YOUR OWN DISCRETION AND RISK AND YOU ARE SOLELY RESPONSIBLE FOR ANY DAMAGE TO YOUR COMPUTER SYSTEM OR OTHER DEVICE OR LOSS OF DATA THAT RESULTS FROM SUCH USE.
+2026-10-23T04:21:23.1065489Z 
+2026-10-23T04:21:23.1066376Z 10.3 GOOGLE FURTHER EXPRESSLY DISCLAIMS ALL WARRANTIES AND CONDITIONS OF ANY KIND, WHETHER EXPRESS OR IMPLIED, INCLUDING, BUT NOT LIMITED TO THE IMPLIED WARRANTIES AND CONDITIONS OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. 11. LIMITATION OF LIABILITY
+2026-10-23T04:21:23.1067356Z 
+2026-10-23T04:21:23.1068728Z 11.1 YOU EXPRESSLY UNDERSTAND AND AGREE THAT GOOGLE, ITS SUBSIDIARIES AND AFFILIATES, AND ITS LICENSORS SHALL NOT BE LIABLE TO YOU UNDER ANY THEORY OF LIABILITY FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL OR EXEMPLARY DAMAGES THAT MAY BE INCURRED BY YOU, INCLUDING ANY LOSS OF DATA, WHETHER OR NOT GOOGLE OR ITS REPRESENTATIVES HAVE BEEN ADVISED OF OR SHOULD HAVE BEEN AWARE OF THE POSSIBILITY OF ANY SUCH LOSSES ARISING.
+2026-10-23T04:21:23.1070384Z 
+2026-10-23T04:21:23.1070478Z 12. Indemnification
+2026-10-23T04:21:23.1070604Z 
+2026-10-23T04:21:23.1072928Z 12.1 To the maximum extent permitted by law, you agree to defend, indemnify and hold harmless Google, its affiliates and their respective directors, officers, employees and agents from and against any and all claims, actions, suits or proceedings, as well as any and all losses, liabilities, damages, costs and expenses (including reasonable attorneys fees) arising out of or accruing from (a) your use of the SDK, (b) any application you develop on the SDK that infringes any copyright, trademark, trade secret, trade dress, patent or other intellectual property right of any person or defames any person or violates their rights of publicity or privacy, and (c) any non-compliance by you with the License Agreement.
+2026-10-23T04:21:23.1076327Z 
+2026-10-23T04:21:23.1076613Z 13. Changes to the License Agreement
+2026-10-23T04:21:23.1076796Z 
+2026-10-23T04:21:23.1077519Z 13.1 Google may make changes to the License Agreement as it distributes new versions of the SDK. When these changes are made, Google will make a new version of the License Agreement available on the website where the SDK is made available.
+2026-10-23T04:21:23.1078849Z 
+2026-10-23T04:21:23.1078955Z 14. General Legal Terms
+2026-10-23T04:21:23.1079094Z 
+2026-10-23T04:21:23.1080112Z 14.1 The License Agreement constitutes the whole legal agreement between you and Google and governs your use of the SDK (excluding any services which Google may provide to you under a separate written agreement), and completely replaces any prior agreements between you and Google in relation to the SDK.
+2026-10-23T04:21:23.1081514Z 
+2026-10-23T04:21:23.1082505Z 14.2 You agree that if Google does not exercise or enforce any legal right or remedy which is contained in the License Agreement (or which Google has the benefit of under any applicable law), this will not be taken to be a formal waiver of Google's rights and that those rights or remedies will still be available to Google.
+2026-10-23T04:21:23.1083561Z 
+2026-10-23T04:21:23.1084838Z 14.3 If any court of law, having the jurisdiction to decide on this matter, rules that any provision of the License Agreement is invalid, then that provision will be removed from the License Agreement without affecting the rest of the License Agreement. The remaining provisions of the License Agreement will continue to be valid and enforceable.
+2026-10-23T04:21:23.1086918Z 
+2026-10-23T04:21:23.1089517Z 14.4 You acknowledge and agree that each member of the group of companies of which Google is the parent shall be third party beneficiaries to the License Agreement and that such other companies shall be entitled to directly enforce, and rely upon, any provision of the License Agreement that confers a benefit on (or rights in favor of) them. Other than this, no other person or company shall be third party beneficiaries to the License Agreement.
+2026-10-23T04:21:23.1092190Z 
+2026-10-23T04:21:23.1093677Z 14.5 EXPORT RESTRICTIONS. THE SDK IS SUBJECT TO UNITED STATES EXPORT LAWS AND REGULATIONS. YOU MUST COMPLY WITH ALL DOMESTIC AND INTERNATIONAL EXPORT LAWS AND REGULATIONS THAT APPLY TO THE SDK. THESE LAWS INCLUDE RESTRICTIONS ON DESTINATIONS, END USERS AND END USE.
+2026-10-23T04:21:23.1095257Z 
+2026-10-23T04:21:23.1097355Z 14.6 The rights granted in the License Agreement may not be assigned or transferred by either you or Google without the prior written approval of the other party. Neither you nor Google shall be permitted to delegate their responsibilities or obligations under the License Agreement without the prior written approval of the other party.
+2026-10-23T04:21:23.1099397Z 
+2026-10-23T04:21:23.1102590Z 14.7 The License Agreement, and your relationship with Google under the License Agreement, shall be governed by the laws of the State of California without regard to its conflict of laws provisions. You and Google agree to submit to the exclusive jurisdiction of the courts located within the county of Santa Clara, California to resolve any legal matter arising from the License Agreement. Notwithstanding this, you agree that Google shall still be allowed to apply for injunctive remedies (or an equivalent type of urgent legal relief) in any jurisdiction.
+2026-10-23T04:21:23.1106203Z ---------------------------------------
+2026-10-23T04:21:23.1106725Z Accept? (y/N): All SDK package licenses accepted
+2026-10-23T04:21:23.1107100Z 
+2026-10-23T04:21:23.1107737Z [command]C:\Windows\system32\cmd.exe /D /S /C "C:\Android\android-sdk\cmdline-tools\22.0\bin\sdkmanager.bat platform-tools"
+2026-10-23T04:21:23.3101509Z WARNING: The SDK Manager CLI tool (sdkmanager) is deprecated. Use Android CLI instead.
+2026-10-23T04:21:23.3106657Z The 'android' binary can also be found in the cmdline-tools directory, and 'android sdk' is the replacement for 'sdkmanager'.
+2026-10-23T04:21:23.3108542Z To learn more about the Android CLI and how to use it, see the documentation (https://d.android.com/tools/agents/android-cli)
+2026-10-23T04:21:23.3109892Z 
+2026-10-23T04:21:24.5752094Z Loading package information...                                                  
+2026-10-23T04:21:24.8269693Z Loading local repository...                                                     
+2026-10-23T04:21:24.8272487Z [                                       ] 3% Loading local repository...        
+2026-10-23T04:21:24.8355914Z [                                       ] 3% Fetch remote repository...         
+2026-10-23T04:21:25.2134231Z [=                                      ] 3% Fetch remote repository...         
+2026-10-23T04:21:25.2135181Z WARNING: A restricted method in java.lang.System has been called
+2026-10-23T04:21:25.2137487Z WARNING: java.lang.System::load has been called by com.sun.jna.Native in an unnamed module (file:/C:/Program%20Files%20(x86)/Android/android-sdk/cmdline-tools/22.0/lib/external/net/java/dev/jna/jna/5.14.0/jna-5.14.0.jar)
+2026-10-23T04:21:25.2139737Z WARNING: Use --enable-native-access=ALL-UNNAMED to avoid a warning for callers in this module
+2026-10-23T04:21:25.2141196Z WARNING: Restricted methods will be blocked in a future release unless native access is enabled
+2026-10-23T04:21:25.2145491Z 
+2026-10-23T04:21:25.9438456Z [=                                      ] 4% Fetch remote repository...         
+2026-10-23T04:21:26.0048052Z [=                                      ] 5% Fetch remote repository...         
+2026-10-23T04:21:26.1570144Z [==                                     ] 5% Fetch remote repository...         
+2026-10-23T04:21:26.3338948Z [==                                     ] 6% Fetch remote repository...         
+2026-10-23T04:21:26.5024726Z [==                                     ] 7% Fetch remote repository...         
+2026-10-23T04:21:26.5025446Z [==                                     ] 7% Computing updates...               
+2026-10-23T04:21:26.5282445Z [===                                    ] 8% Computing updates...               
+2026-10-23T04:21:26.5639794Z [===                                    ] 10% Computing updates...              
+2026-10-23T04:21:26.5640517Z [=======================================] 100% Computing updates...             
+2026-10-23T04:21:26.5640915Z 
+2026-10-23T04:21:26.5640924Z 
+2026-10-23T04:21:26.6309304Z ##[group]Run sdkmanager --install "cmake;3.31.6"
+2026-10-23T04:21:26.6309819Z [36;1msdkmanager --install "cmake;3.31.6"[0m
+2026-10-23T04:21:28.3618945Z shell: C:\Program Files\PowerShell\7\pwsh.EXE -command ". '{0}'"
+2026-10-23T04:21:28.3619306Z env:
+2026-10-23T04:21:28.3619485Z   CI_NAME: Pull Request CI
+2026-10-23T04:21:28.3619735Z   BUILD_ABI: armeabi-v7a,arm64-v8a,x86,x86_64
+2026-10-23T04:21:28.3620019Z   CI_BRANCH: 2182/merge
+2026-10-23T04:21:28.3620358Z   JAVA_HOME: C:\hostedtoolcache\windows\Java_Temurin-Hotspot_jdk\25.0.4-101.0\x64
+2026-10-23T04:21:28.3621444Z   JAVA_HOME_25_X64: C:\hostedtoolcache\windows\Java_Temurin-Hotspot_jdk\25.0.4-101.0\x64
+2026-10-23T04:21:28.3621871Z   MAVEN_ARGS: -ntp
+2026-10-23T04:21:28.3622075Z   ANDROID_HOME: C:\Android\android-sdk
+2026-10-23T04:21:28.3622330Z   ANDROID_SDK_ROOT: C:\Android\android-sdk
+2026-10-23T04:21:28.3622570Z ##[endgroup]
+2026-10-23T04:21:29.1745042Z WARNING: The SDK Manager CLI tool (sdkmanager) is deprecated. Use Android CLI instead.
+2026-10-23T04:21:29.1746821Z The 'android' binary can also be found in the cmdline-tools directory, and 'android sdk' is the replacement for 'sdkmanager'.
+2026-10-23T04:21:29.1749460Z To learn more about the Android CLI and how to use it, see the documentation (https://d.android.com/tools/agents/android-cli)
+2026-10-23T04:21:29.1750545Z 
+2026-10-23T04:21:30.5186657Z Loading package information...                                                  
+2026-10-23T04:21:30.7913516Z Loading local repository...                                                     
+2026-10-23T04:21:30.7943388Z [                                       ] 3% Loading local repository...        
+2026-10-23T04:21:30.8003439Z [                                       ] 3% Fetch remote repository...         
+2026-10-23T04:21:31.0607587Z WARNING: A restricted method in java.lang.System has been called
+2026-10-23T04:21:31.0610451Z WARNING: java.lang.System::load has been called by com.sun.jna.Native in an unnamed module (file:/C:/Program%20Files%20(x86)/Android/android-sdk/cmdline-tools/22.0/lib/external/net/java/dev/jna/jna/5.14.0/jna-5.14.0.jar)
+2026-10-23T04:21:31.0612687Z WARNING: Use --enable-native-access=ALL-UNNAMED to avoid a warning for callers in this module
+2026-10-23T04:21:31.0614124Z WARNING: Restricted methods will be blocked in a future release unless native access is enabled
+2026-10-23T04:21:31.0614919Z 
+2026-10-23T04:21:31.7811101Z [=                                      ] 3% Fetch remote repository...         
+2026-10-23T04:21:31.8930794Z [=                                      ] 4% Fetch remote repository...         
+2026-10-23T04:21:31.9596854Z [=                                      ] 5% Fetch remote repository...         
+2026-10-23T04:21:32.0297651Z [==                                     ] 5% Fetch remote repository...         
+2026-10-23T04:21:32.1613698Z [==                                     ] 6% Fetch remote repository...         
+2026-10-23T04:21:32.3026074Z [==                                     ] 7% Fetch remote repository...         
+2026-10-23T04:21:32.3033947Z [==                                     ] 7% Computing updates...               
+2026-10-23T04:21:32.3302049Z [===                                    ] 8% Computing updates...               
+2026-10-23T04:21:32.3553756Z [===                                    ] 10% Computing updates...              
+2026-10-23T04:21:33.5028047Z [===                                    ] 10% Installing CMake 3.31.6           
+2026-10-23T04:21:33.5698190Z [===                                    ] 10% Downloading cmake-3.31.6-windows.z
+2026-10-23T04:21:33.6061694Z [====                                   ] 10% Downloading cmake-3.31.6-windows.z
+2026-10-23T04:21:33.6624273Z [====                                   ] 11% Downloading cmake-3.31.6-windows.z
+2026-10-23T04:21:33.6850371Z [====                                   ] 12% Downloading cmake-3.31.6-windows.z
+2026-10-23T04:21:33.7056514Z [=====                                  ] 13% Downloading cmake-3.31.6-windows.z
+2026-10-23T04:21:33.7202084Z [=====                                  ] 14% Downloading cmake-3.31.6-windows.z
+2026-10-23T04:21:33.7250080Z [=====                                  ] 15% Downloading cmake-3.31.6-windows.z
+2026-10-23T04:21:33.7279390Z [======                                 ] 15% Downloading cmake-3.31.6-windows.z
+2026-10-23T04:21:33.7352639Z [======                                 ] 16% Downloading cmake-3.31.6-windows.z
+2026-10-23T04:21:33.7425400Z [======                                 ] 17% Downloading cmake-3.31.6-windows.z
+2026-10-23T04:21:33.7489018Z [=======                                ] 18% Downloading cmake-3.31.6-windows.z
+2026-10-23T04:21:33.7585457Z [=======                                ] 19% Downloading cmake-3.31.6-windows.z
+2026-10-23T04:21:33.7610289Z [=======                                ] 20% Downloading cmake-3.31.6-windows.z
+2026-10-23T04:21:33.7651433Z [========                               ] 20% Downloading cmake-3.31.6-windows.z
+2026-10-23T04:21:33.7830860Z [========                               ] 21% Downloading cmake-3.31.6-windows.z
+2026-10-23T04:21:33.7887624Z [========                               ] 22% Downloading cmake-3.31.6-windows.z
+2026-10-23T04:21:33.7963081Z [=========                              ] 23% Downloading cmake-3.31.6-windows.z
+2026-10-23T04:21:33.8122811Z [=========                              ] 24% Downloading cmake-3.31.6-windows.z
+2026-10-23T04:21:33.8123950Z [=========                              ] 25% Downloading cmake-3.31.6-windows.z
+2026-10-23T04:21:33.8147345Z [==========                             ] 25% Downloading cmake-3.31.6-windows.z
+2026-10-23T04:21:33.8247413Z [==========                             ] 26% Downloading cmake-3.31.6-windows.z
+2026-10-23T04:21:33.8324810Z [==========                             ] 27% Downloading cmake-3.31.6-windows.z
+2026-10-23T04:21:33.8422323Z [===========                            ] 28% Downloading cmake-3.31.6-windows.z
+2026-10-23T04:21:33.8529501Z [===========                            ] 29% Downloading cmake-3.31.6-windows.z
+2026-10-23T04:21:33.8575391Z [===========                            ] 30% Downloading cmake-3.31.6-windows.z
+2026-10-23T04:21:33.8666741Z [============                           ] 30% Downloading cmake-3.31.6-windows.z
+2026-10-23T04:21:33.8690287Z [============                           ] 31% Downloading cmake-3.31.6-windows.z
+2026-10-23T04:21:33.8718953Z [============                           ] 32% Downloading cmake-3.31.6-windows.z
+2026-10-23T04:21:33.8735050Z [============                           ] 33% Downloading cmake-3.31.6-windows.z
+2026-10-23T04:21:34.4102529Z [============                           ] 33% Unzipping...                      
+2026-10-23T04:21:34.4107332Z [============                           ] 33% Unzipping... bin/                 
+2026-10-23T04:21:34.4110806Z [============                           ] 33% Unzipping... doc/                 
+2026-10-23T04:21:34.4114213Z [============                           ] 33% Unzipping... share/               
+2026-10-23T04:21:34.4151700Z [============                           ] 33% Unzipping... source.properties    
+2026-10-23T04:21:34.4162059Z [=============                          ] 33% Unzipping... source.properties    
+2026-10-23T04:21:34.4463009Z [=============                          ] 33% Unzipping... bin/cmake.exe        
+2026-10-23T04:21:34.4803402Z [=============                          ] 34% Unzipping... bin/cmake.exe        
+2026-10-23T04:21:34.4892500Z [=============                          ] 35% Unzipping... bin/cmake.exe        
+2026-10-23T04:21:34.5135112Z [==============                         ] 35% Unzipping... bin/cmake.exe        
+2026-10-23T04:21:34.5315788Z [==============                         ] 36% Unzipping... bin/cmake.exe        
+2026-10-23T04:21:34.5527229Z [==============                         ] 37% Unzipping... bin/cmake.exe        
+2026-10-23T04:21:34.5680000Z [===============                        ] 38% Unzipping... bin/cmake.exe        
+2026-10-23T04:21:34.5802593Z [===============                        ] 38% Unzipping... bin/cmcldeps.exe     
+2026-10-23T04:21:34.5930679Z [===============                        ] 39% Unzipping... bin/cmcldeps.exe     
+2026-10-23T04:21:34.6017358Z [===============                        ] 39% Unzipping... bin/cpack.exe        
+2026-10-23T04:21:34.6089501Z [===============                        ] 40% Unzipping... bin/cpack.exe        
+2026-10-23T04:21:34.6185624Z [================                       ] 40% Unzipping... bin/cpack.exe        
+2026-10-23T04:21:34.6388977Z [================                       ] 41% Unzipping... bin/cpack.exe        
+2026-10-23T04:21:34.6713450Z [================                       ] 42% Unzipping... bin/cpack.exe        
+2026-10-23T04:21:34.6994908Z [=================                      ] 43% Unzipping... bin/cpack.exe        
+2026-10-23T04:21:34.7047139Z [=================                      ] 44% Unzipping... bin/cpack.exe        
+2026-10-23T04:21:34.7083133Z [=================                      ] 45% Unzipping... bin/cpack.exe        
+2026-10-23T04:21:34.7137090Z [=================                      ] 45% Unzipping... bin/ctest.exe        
+2026-10-23T04:21:34.7223361Z [==================                     ] 45% Unzipping... bin/ctest.exe        
+2026-10-23T04:21:34.7395960Z [==================                     ] 46% Unzipping... bin/ctest.exe        
+2026-10-23T04:21:34.7550699Z [==================                     ] 47% Unzipping... bin/ctest.exe        
+2026-10-23T04:21:34.7723329Z [===================                    ] 48% Unzipping... bin/ctest.exe        
+2026-10-23T04:21:34.7858980Z [===================                    ] 49% Unzipping... bin/ctest.exe        
+2026-10-23T04:21:34.7913662Z [===================                    ] 50% Unzipping... bin/ctest.exe        
+2026-10-23T04:21:34.7986678Z [====================                   ] 50% Unzipping... bin/ctest.exe        
+2026-10-23T04:21:34.8026033Z [====================                   ] 51% Unzipping... bin/ctest.exe        
+2026-10-23T04:21:34.8110686Z [====================                   ] 51% Unzipping... bin/ninja.exe        
+2026-10-23T04:21:34.8115268Z [====================                   ] 51% Unzipping... doc/cmake-3.31/      
+2026-10-23T04:21:34.8119114Z [====================                   ] 51% Unzipping... doc/ninja/           
+2026-10-23T04:21:34.8123464Z [====================                   ] 51% Unzipping... doc/cmake-3.31/cmcppd
+2026-10-23T04:21:34.8127521Z [====================                   ] 51% Unzipping... doc/cmake-3.31/cmcurl
+2026-10-23T04:21:34.8131506Z [====================                   ] 51% Unzipping... doc/cmake-3.31/cmliba
+2026-10-23T04:21:34.8135474Z [====================                   ] 51% Unzipping... doc/cmake-3.31/cmlibl
+2026-10-23T04:21:34.8387082Z [====================                   ] 51% Unzipping... doc/cmake-3.31/cmlibr
+2026-10-23T04:21:34.8391566Z [====================                   ] 51% Unzipping... doc/cmake-3.31/cmlibu
+2026-10-23T04:21:34.8394980Z [====================                   ] 51% Unzipping... doc/cmake-3.31/cmnght
+2026-10-23T04:21:34.8398215Z [====================                   ] 51% Unzipping... doc/cmake-3.31/cmsys/
+2026-10-23T04:21:34.8401417Z [====================                   ] 51% Unzipping... doc/cmake-3.31/cmzlib
+2026-10-23T04:21:34.8404613Z [====================                   ] 51% Unzipping... doc/cmake-3.31/cmzstd
+2026-10-23T04:21:34.8415305Z [====================                   ] 51% Unzipping... doc/cmake-3.31/cmake.
+2026-10-23T04:21:34.8427981Z [====================                   ] 51% Unzipping... doc/cmake-3.31/Copyri
+2026-10-23T04:21:34.8438272Z [====================                   ] 51% Unzipping... doc/cmake-3.31/cmcppd
+2026-10-23T04:21:34.8448669Z [====================                   ] 51% Unzipping... doc/cmake-3.31/cmcurl
+2026-10-23T04:21:34.8459038Z [====================                   ] 51% Unzipping... doc/cmake-3.31/cmliba
+2026-10-23T04:21:34.8468237Z [====================                   ] 51% Unzipping... doc/cmake-3.31/cmlibl
+2026-10-23T04:21:34.8479079Z [====================                   ] 51% Unzipping... doc/cmake-3.31/cmlibr
+2026-10-23T04:21:34.8488528Z [====================                   ] 51% Unzipping... doc/cmake-3.31/cmlibu
+2026-10-23T04:21:34.8500896Z [====================                   ] 51% Unzipping... doc/cmake-3.31/cmnght
+2026-10-23T04:21:34.8511965Z [====================                   ] 51% Unzipping... doc/cmake-3.31/cmsys/
+2026-10-23T04:21:34.8522992Z [====================                   ] 51% Unzipping... doc/cmake-3.31/cmzlib
+2026-10-23T04:21:34.8533397Z [====================                   ] 51% Unzipping... doc/cmake-3.31/cmzstd
+2026-10-23T04:21:34.8549162Z [====================                   ] 51% Unzipping... doc/ninja/LICENSE    
+2026-10-23T04:21:34.8552285Z [====================                   ] 51% Unzipping... share/aclocal/       
+2026-10-23T04:21:34.8555852Z [====================                   ] 51% Unzipping... share/bash-completion
+2026-10-23T04:21:34.8560197Z [====================                   ] 51% Unzipping... share/cmake-3.31/    
+2026-10-23T04:21:34.8563914Z [====================                   ] 51% Unzipping... share/emacs/         
+2026-10-23T04:21:34.8568826Z [====================                   ] 51% Unzipping... share/vim/           
+2026-10-23T04:21:34.8577377Z [====================                   ] 51% Unzipping... share/aclocal/cmake.m
+2026-10-23T04:21:34.8612886Z [====================                   ] 51% Unzipping... share/bash-completion
+2026-10-23T04:21:34.8616665Z [====================                   ] 51% Unzipping... share/cmake-3.31/Help
+2026-10-23T04:21:34.8621103Z [====================                   ] 51% Unzipping... share/cmake-3.31/Modu
+2026-10-23T04:21:34.8625093Z [====================                   ] 51% Unzipping... share/cmake-3.31/Temp
+2026-10-23T04:21:34.8628717Z [====================                   ] 51% Unzipping... share/cmake-3.31/incl
+2026-10-23T04:21:36.5425367Z [====================                   ] 51% Unzipping... share/cmake-3.31/Help
+2026-10-23T04:21:40.9328537Z [====================                   ] 52% Unzipping... share/cmake-3.31/Help
+2026-10-23T04:21:40.9336885Z [====================                   ] 52% Unzipping... share/cmake-3.31/incl
+2026-10-23T04:21:40.9574935Z [====================                   ] 52% Unzipping... share/cmake-3.31/Modu
+2026-10-23T04:21:41.8711237Z [=====================                  ] 53% Unzipping... share/cmake-3.31/Modu
+2026-10-23T04:21:44.1080842Z [=====================                  ] 54% Unzipping... share/cmake-3.31/Modu
+2026-10-23T04:21:44.1941621Z [=====================                  ] 54% Unzipping... share/cmake-3.31/Temp
+2026-10-23T04:21:44.1952040Z [=====================                  ] 54% Unzipping... share/emacs/site-lisp
+2026-10-23T04:21:44.1955280Z [=====================                  ] 54% Unzipping... share/vim/vimfiles/  
+2026-10-23T04:21:44.1959526Z [=====================                  ] 54% Unzipping... share/vim/vimfiles/in
+2026-10-23T04:21:44.1962632Z [=====================                  ] 54% Unzipping... share/vim/vimfiles/sy
+2026-10-23T04:21:44.1969675Z [=====================                  ] 54% Unzipping... share/vim/vimfiles/in
+2026-10-23T04:21:44.1982766Z [=====================                  ] 54% Unzipping... share/vim/vimfiles/sy
+2026-10-23T04:21:44.2152691Z [=====================                  ] 55% Unzipping... share/vim/vimfiles/sy
+2026-10-23T04:21:44.2153510Z [=======================================] 100% Unzipping... share/vim/vimfiles/s
+2026-10-23T04:21:44.2153958Z 
+2026-10-23T04:21:44.9986243Z 
+2026-10-23T04:21:45.1240401Z ##[group]Run ./gradlew :app:calculateNativeCacheHash
+2026-10-23T04:21:45.1240881Z [36;1m./gradlew :app:calculateNativeCacheHash[0m
+2026-10-23T04:21:45.1328107Z shell: C:\Program Files\PowerShell\7\pwsh.EXE -command ". '{0}'"
+2026-10-23T04:21:45.1328456Z env:
+2026-10-23T04:21:45.1328629Z   CI_NAME: Pull Request CI
+2026-10-23T04:21:45.1328879Z   BUILD_ABI: armeabi-v7a,arm64-v8a,x86,x86_64
+2026-10-23T04:21:45.1329150Z   CI_BRANCH: 2182/merge
+2026-10-23T04:21:45.1329480Z   JAVA_HOME: C:\hostedtoolcache\windows\Java_Temurin-Hotspot_jdk\25.0.4-101.0\x64
+2026-10-23T04:21:45.1330013Z   JAVA_HOME_25_X64: C:\hostedtoolcache\windows\Java_Temurin-Hotspot_jdk\25.0.4-101.0\x64
+2026-10-23T04:21:45.1330401Z   MAVEN_ARGS: -ntp
+2026-10-23T04:21:45.1330608Z   ANDROID_HOME: C:\Android\android-sdk
+2026-10-23T04:21:45.1330863Z   ANDROID_SDK_ROOT: C:\Android\android-sdk
+2026-10-23T04:21:45.1331116Z ##[endgroup]
+2026-10-23T04:21:46.5393560Z 
+2026-10-23T04:21:46.5398746Z Welcome to Gradle 9.8.1!
+2026-10-23T04:21:46.5399583Z 
+2026-10-23T04:21:46.5402246Z Here are the highlights of this release:
+2026-10-23T04:21:46.5403534Z  - Java 27 support
+2026-10-23T04:21:46.5405176Z  - Maven mirror settings reuse
+2026-10-23T04:21:46.5408193Z  - Linked problem locations in build output
+2026-10-23T04:21:46.5409239Z 
+2026-10-23T04:21:46.5424175Z For more details see https://docs.gradle.org/9.8.1/release-notes.html
+2026-10-23T04:21:46.5425031Z 
+2026-10-23T04:21:46.8381196Z Starting a Gradle Daemon (subsequent builds will be faster)
+2026-10-23T04:23:03.9384537Z > Task :build-logic:convention:checkKotlinGradlePluginConfigurationErrors SKIPPED
+2026-10-23T04:23:17.8384155Z > Task :build-logic:convention:pluginDescriptors
+2026-10-23T04:23:17.8384956Z > Task :build-logic:convention:processResources
+2026-10-23T04:23:30.8400277Z > Task :build-logic:convention:compileKotlin
+2026-10-23T04:23:30.8401776Z > Task :build-logic:convention:compileJava NO-SOURCE
+2026-10-23T04:23:30.8402683Z > Task :build-logic:convention:classes
+2026-10-23T04:23:30.9367498Z > Task :build-logic:convention:jar
+2026-10-23T04:23:41.0400382Z 
+2026-10-23T04:23:41.0401341Z > Configure project :app
+2026-10-23T04:23:41.0402709Z Checking the license for package NDK (Side by side) 28.0.13004108 in C:\Program Files (x86)\Android\android-sdk\licenses
+2026-10-23T04:23:41.0404055Z License for package NDK (Side by side) 28.0.13004108 accepted.
+2026-10-23T04:23:41.0405450Z Preparing "Install NDK (Side by side) 28.0.13004108 v.28.0.13004108".
+2026-10-23T04:24:16.3379097Z "Install NDK (Side by side) 28.0.13004108 v.28.0.13004108" ready.
+2026-10-23T04:24:16.3379911Z Installing NDK (Side by side) 28.0.13004108 in C:\Program Files (x86)\Android\android-sdk\ndk\28.0.13004108
+2026-10-23T04:24:16.3380538Z "Install NDK (Side by side) 28.0.13004108 v.28.0.13004108" complete.
+2026-10-23T04:24:16.5395186Z "Install NDK (Side by side) 28.0.13004108 v.28.0.13004108" finished.
+2026-10-23T04:24:19.6385063Z 
+2026-10-23T04:24:19.6394310Z > Task :app:calculateNativeCacheHash
+2026-10-23T04:24:19.6394996Z 
+2026-10-23T04:24:19.6395952Z [Incubating] Problems report is available at: file:///D:/a/trime/trime/build/reports/problems/problems-report.html
+2026-10-23T04:24:19.6396872Z 
+2026-10-23T04:24:19.6397746Z Deprecated Gradle features were used in this build, making it incompatible with Gradle 10.
+2026-10-23T04:24:19.6398792Z 
+2026-10-23T04:24:19.6399827Z You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
+2026-10-23T04:24:19.6400823Z 
+2026-10-23T04:24:19.6402012Z For more on this, please refer to https://docs.gradle.org/9.8.1/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
+2026-10-23T04:24:19.6403941Z 
+2026-10-23T04:24:19.6404274Z BUILD SUCCESSFUL in 2m 34s
+2026-10-23T04:24:19.6405281Z 5 actionable tasks: 5 executed
+2026-10-23T04:24:19.9141464Z ##[group]Run actions/cache@v6
+2026-10-23T04:24:19.9141779Z with:
+2026-10-23T04:24:19.9141972Z   path: app/prebuilt
+2026-10-23T04:24:19.9142448Z   key: windows-2025-trime-jni-debug-0e32165396a86a2a7d6d87e9dee9d9df8dc8a0f237cc760c85791bad2cc828c3
+2026-10-23T04:24:19.9142970Z   enableCrossOsArchive: false
+2026-10-23T04:24:19.9143223Z   fail-on-cache-miss: false
+2026-10-23T04:24:19.9143450Z   lookup-only: false
+2026-10-23T04:24:19.9143664Z   save-always: false
+2026-10-23T04:24:19.9143841Z env:
+2026-10-23T04:24:19.9144012Z   CI_NAME: Pull Request CI
+2026-10-23T04:24:19.9144269Z   BUILD_ABI: armeabi-v7a,arm64-v8a,x86,x86_64
+2026-10-23T04:24:19.9144559Z   CI_BRANCH: 2182/merge
+2026-10-23T04:24:19.9144900Z   JAVA_HOME: C:\hostedtoolcache\windows\Java_Temurin-Hotspot_jdk\25.0.4-101.0\x64
+2026-10-23T04:24:19.9145418Z   JAVA_HOME_25_X64: C:\hostedtoolcache\windows\Java_Temurin-Hotspot_jdk\25.0.4-101.0\x64
+2026-10-23T04:24:19.9145813Z   MAVEN_ARGS: -ntp
+2026-10-23T04:24:19.9146085Z   ANDROID_HOME: C:\Android\android-sdk
+2026-10-23T04:24:19.9146351Z   ANDROID_SDK_ROOT: C:\Android\android-sdk
+2026-10-23T04:24:19.9146597Z ##[endgroup]
+2026-10-23T04:24:20.3004923Z Cache hit for: windows-2025-trime-jni-debug-0e32165396a86a2a7d6d87e9dee9d9df8dc8a0f237cc760c85791bad2cc828c3
+2026-10-23T04:24:21.3345491Z Received 105370079 of 105370079 (100.0%), 110.8 MBs/sec
+2026-10-23T04:24:21.3350088Z Cache Size: ~100 MB (105370079 B)
+2026-10-23T04:24:21.3441410Z [command]"C:\Program Files\Git\usr\bin\tar.exe" -xf D:/a/_temp/8a97e869-35a5-41cd-9c87-5a4f62ed09f0/cache.tzst -P -C D:/a/trime/trime --force-local --use-compress-program "zstd -d"
+2026-10-23T04:24:22.5523230Z Cache restored successfully
+2026-10-23T04:24:22.5820004Z Cache restored from key: windows-2025-trime-jni-debug-0e32165396a86a2a7d6d87e9dee9d9df8dc8a0f237cc760c85791bad2cc828c3
+2026-10-23T04:24:22.6287708Z ##[group]Run make debug
+2026-10-23T04:24:22.6288159Z [36;1mmake debug[0m
+2026-10-23T04:24:22.6410315Z shell: C:\Program Files\PowerShell\7\pwsh.EXE -command ". '{0}'"
+2026-10-23T04:24:22.6410891Z env:
+2026-10-23T04:24:22.6411428Z   CI_NAME: Pull Request CI
+2026-10-23T04:24:22.6411845Z   BUILD_ABI: armeabi-v7a,arm64-v8a,x86,x86_64
+2026-10-23T04:24:22.6412313Z   CI_BRANCH: 2182/merge
+2026-10-23T04:24:22.6412876Z   JAVA_HOME: C:\hostedtoolcache\windows\Java_Temurin-Hotspot_jdk\25.0.4-101.0\x64
+2026-10-23T04:24:22.6413805Z   JAVA_HOME_25_X64: C:\hostedtoolcache\windows\Java_Temurin-Hotspot_jdk\25.0.4-101.0\x64
+2026-10-23T04:24:22.6414498Z   MAVEN_ARGS: -ntp
+2026-10-23T04:24:22.6414842Z   ANDROID_HOME: C:\Android\android-sdk
+2026-10-23T04:24:22.6415289Z   ANDROID_SDK_ROOT: C:\Android\android-sdk
+2026-10-23T04:24:22.6415717Z ##[endgroup]
+2026-10-23T04:24:23.0629110Z git apply --directory=app/src/main/jni/librime-lua-deps patches/lua.patch
+2026-10-23T04:24:23.1298479Z gradlew.bat :app:assembleDebug
+2026-10-23T04:24:25.0151152Z > Task :build-logic:convention:checkKotlinGradlePluginConfigurationErrors SKIPPED
+2026-10-23T04:24:25.0162155Z > Task :build-logic:convention:compileKotlin UP-TO-DATE
+2026-10-23T04:24:25.0171607Z > Task :build-logic:convention:compileJava NO-SOURCE
+2026-10-23T04:24:25.0176295Z > Task :build-logic:convention:pluginDescriptors UP-TO-DATE
+2026-10-23T04:24:25.0182284Z > Task :build-logic:convention:processResources UP-TO-DATE
+2026-10-23T04:24:25.0183349Z > Task :build-logic:convention:classes UP-TO-DATE
+2026-10-23T04:24:25.1139745Z > Task :build-logic:convention:jar UP-TO-DATE
+2026-10-23T04:24:26.2535374Z > Task :app:preBuild UP-TO-DATE
+2026-10-23T04:24:26.2721926Z > Task :app:preDebugBuild UP-TO-DATE
+2026-10-23T04:24:26.3416707Z > Task :app:mergeDebugNativeDebugMetadata NO-SOURCE
+2026-10-23T04:24:48.7156294Z > Task :app:dataBindingMergeDependencyArtifactsDebug
+2026-10-23T04:24:48.7161268Z > Task :app:generateDebugResValues
+2026-10-23T04:24:48.7208355Z > Task :app:generateDebugResources
+2026-10-23T04:24:51.0284971Z > Task :app:prepareLibraryDefinitionsDebug
+2026-10-23T04:24:56.4474583Z > Task :app:packageDebugResources
+2026-10-23T04:24:56.6124483Z > Task :app:mergeDebugResources
+2026-10-23T04:24:58.1123682Z > Task :app:processDebugNavigationResources
+2026-10-23T04:25:20.7144283Z > Task :app:generateDebugBuildConfig
+2026-10-23T04:25:20.7146499Z > Task :codegen:checkKotlinGradlePluginConfigurationErrors SKIPPED
+2026-10-23T04:25:20.9129971Z > Task :app:parseDebugLocalResources
+2026-10-23T04:25:27.1133703Z > Task :app:dataBindingGenBaseClassesDebug
+2026-10-23T04:25:27.2196841Z > Task :codegen:processResources
+2026-10-23T04:25:27.2210589Z > Task :app:generateDebugRFile
+2026-10-23T04:25:29.0136773Z > Task :app:installOpenCCData
+2026-10-23T04:25:29.1645686Z > Task :app:generateDataChecksums
+2026-10-23T04:25:29.1648772Z > Task :app:generateDebugAssets UP-TO-DATE
+2026-10-23T04:25:29.7727210Z > Task :app:mergeDebugAssets
+2026-10-23T04:25:30.7885743Z > Task :app:compressDebugAssets
+2026-10-23T04:25:34.4264898Z > Task :app:generateDebugGlobalSynthetics
+2026-10-23T04:25:36.9576967Z > Task :app:checkDebugDuplicateClasses
+2026-10-23T04:25:40.2196470Z > Task :app:desugarDebugFileDependencies
+2026-10-23T04:25:50.7605538Z > Task :codegen:compileKotlin
+2026-10-23T04:26:10.2175972Z > Task :app:mergeExtDexDebug
+2026-10-23T04:26:39.9616110Z > Task :codegen:compileJava NO-SOURCE
+2026-10-23T04:26:39.9653619Z > Task :codegen:classes
+2026-10-23T04:26:40.0427105Z > Task :codegen:jar
+2026-10-23T04:26:54.3492154Z > Task :app:javaPreCompileDebug
+2026-10-23T04:26:54.8198289Z > Task :app:mergeLibDexDebug
+2026-10-23T04:26:54.8349536Z > Task :app:mapDebugSourceSetPaths
+2026-10-23T04:26:54.8350777Z > Task :app:checkDebugAarMetadata
+2026-10-23T04:26:55.2624270Z > Task :app:compileDebugNavigationResources
+2026-10-23T04:26:55.2666140Z > Task :app:createDebugCompatibleScreenManifests
+2026-10-23T04:26:55.2793270Z > Task :app:extractDeepLinksDebug
+2026-10-23T04:26:57.2252764Z > Task :app:processDebugMainManifest
+2026-10-23T04:26:57.6314114Z > Task :app:processDebugManifest
+2026-10-23T04:27:00.3517893Z > Task :app:mergeDebugJniLibFolders
+2026-10-23T04:27:04.0222843Z > Task :app:validateSigningDebug
+2026-10-23T04:27:04.0239399Z > Task :app:writeDebugAppMetadata
+2026-10-23T04:27:04.0240549Z > Task :app:writeDebugSigningConfigVersions
+2026-10-23T04:27:04.0241420Z > Task :app:processDebugManifestForPackage
+2026-10-23T04:27:04.1786048Z > Task :app:mergeDebugNativeLibs
+2026-10-23T04:27:09.2323528Z > Task :app:stripDebugDebugSymbols
+2026-10-23T04:27:10.0796262Z > Task :app:kspDebugKotlin
+2026-10-23T04:27:12.8156773Z > Task :app:processDebugResources
+2026-10-23T04:27:45.4088552Z > Task :app:compileDebugKotlin
+2026-10-23T04:28:12.2126030Z > Task :app:compileDebugJavaWithJavac
+2026-10-23T04:28:12.3199761Z > Task :app:processDebugJavaRes
+2026-10-23T04:28:16.2477545Z > Task :app:mergeDebugJavaResource
+2026-10-23T04:28:18.6388222Z > Task :app:dexBuilderDebug
+2026-10-23T04:28:19.0135661Z > Task :app:mergeProjectDexDebug
+2026-10-23T04:28:21.3129257Z > Task :app:packageDebug
+2026-10-23T04:28:21.3154085Z > Task :app:createDebugApkListingFileRedirect
+2026-10-23T04:28:21.3155245Z > Task :app:assembleDebug
+2026-10-23T04:28:21.3159467Z 
+2026-10-23T04:28:21.3165009Z [Incubating] Problems report is available at: file:///D:/a/trime/trime/build/reports/problems/problems-report.html
+2026-10-23T04:28:21.3167517Z 
+2026-10-23T04:28:21.3168411Z Deprecated Gradle features were used in this build, making it incompatible with Gradle 10.
+2026-10-23T04:28:21.3169269Z 
+2026-10-23T04:28:21.3170521Z You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
+2026-10-23T04:28:21.3172532Z 
+2026-10-23T04:28:21.3173892Z For more on this, please refer to https://docs.gradle.org/9.8.1/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
+2026-10-23T04:28:21.3175163Z 
+2026-10-23T04:28:21.3175570Z BUILD SUCCESSFUL in 3m 58s
+2026-10-23T04:28:21.3176398Z 52 actionable tasks: 48 executed, 4 up-to-date
+2026-10-23T04:28:21.3848810Z Consider enabling configuration cache to speed up this build: https://docs.gradle.org/9.8.1/userguide/configuration_cache_enabling.html
+2026-10-23T04:28:21.7717672Z ##[group]Run actions/upload-artifact@v7
+2026-10-23T04:28:21.7718140Z with:
+2026-10-23T04:28:21.7718396Z   name: trime-windows-2025
+2026-10-23T04:28:21.7718729Z   path: app/build/outputs/apk/debug/
+2026-10-23T04:28:21.7719062Z   retention-days: 30
+2026-10-23T04:28:21.7719379Z   if-no-files-found: warn
+2026-10-23T04:28:21.7719633Z   compression-level: 6
+2026-10-23T04:28:21.7719864Z   overwrite: false
+2026-10-23T04:28:21.7720072Z   include-hidden-files: false
+2026-10-23T04:28:21.7720304Z   archive: true
+2026-10-23T04:28:21.7720491Z env:
+2026-10-23T04:28:21.7720663Z   CI_NAME: Pull Request CI
+2026-10-23T04:28:21.7720922Z   BUILD_ABI: armeabi-v7a,arm64-v8a,x86,x86_64
+2026-10-23T04:28:21.7721207Z   CI_BRANCH: 2182/merge
+2026-10-23T04:28:21.7721548Z   JAVA_HOME: C:\hostedtoolcache\windows\Java_Temurin-Hotspot_jdk\25.0.4-101.0\x64
+2026-10-23T04:28:21.7722450Z   JAVA_HOME_25_X64: C:\hostedtoolcache\windows\Java_Temurin-Hotspot_jdk\25.0.4-101.0\x64
+2026-10-23T04:28:21.7722906Z   MAVEN_ARGS: -ntp
+2026-10-23T04:28:21.7723117Z   ANDROID_HOME: C:\Android\android-sdk
+2026-10-23T04:28:21.7723393Z   ANDROID_SDK_ROOT: C:\Android\android-sdk
+2026-10-23T04:28:21.7723648Z ##[endgroup]
+2026-10-23T04:28:21.9658959Z With the provided path, there will be 5 files uploaded
+2026-10-23T04:28:21.9664877Z Artifact name is valid!
+2026-10-23T04:28:21.9666033Z Root directory input is valid!
+2026-10-23T04:28:22.1983039Z Uploading artifact: trime-windows-2025.zip
+2026-10-23T04:28:22.2024918Z Beginning upload of artifact content to blob storage
+2026-10-23T04:28:22.9859213Z Uploaded bytes 8388608
+2026-10-23T04:28:23.2670074Z Uploaded bytes 16777216
+2026-10-23T04:28:23.3993473Z Uploaded bytes 25165824
+2026-10-23T04:28:23.6100810Z Uploaded bytes 33554432
+2026-10-23T04:28:23.9711346Z Uploaded bytes 41943040
+2026-10-23T04:28:24.1861590Z Uploaded bytes 50331648
+2026-10-23T04:28:24.5417666Z Uploaded bytes 58720256
+2026-10-23T04:28:24.8881375Z Uploaded bytes 67108864
+2026-10-23T04:28:25.0399692Z Uploaded bytes 75497472
+2026-10-23T04:28:25.1113697Z Uploaded bytes 77630745
+2026-10-23T04:28:25.1430420Z Finished uploading artifact content to blob storage!
+2026-10-23T04:28:25.1434369Z SHA256 digest of uploaded artifact is 7a598218e418e3f1e97aba00ecd1b15b39ab5d5edc1e11f08515c043383b4022
+2026-10-23T04:28:25.1436826Z Finalizing artifact upload
+2026-10-23T04:28:25.5980660Z Artifact trime-windows-2025 successfully finalized. Artifact ID 12478622099
+2026-10-23T04:28:25.5981666Z Artifact trime-windows-2025 has been successfully uploaded! Final size is 77630745 bytes. Artifact ID is 12478622099
+2026-10-23T04:28:25.5991544Z Artifact download URL: https://github.com/osfans/trime/actions/runs/39899291724/artifacts/12478622099
+2026-10-23T04:28:25.6367570Z Post job cleanup.
+2026-10-23T04:28:25.7954882Z Cache hit occurred on the primary key windows-2025-trime-jni-debug-0e32165396a86a2a7d6d87e9dee9d9df8dc8a0f237cc760c85791bad2cc828c3, not saving cache.
+2026-10-23T04:28:25.8295992Z Post job cleanup.
+2026-10-23T04:28:26.0323968Z Cache hit occurred on the gradle-wrapper primary key setup-java-Windows-x64-gradle-wrapper-e3b846ddaada9f54e16334398593835a8b0f2a47f66ab158c0be2025503c5c97, not saving cache.
+2026-10-23T04:28:26.1459441Z [command]"C:\Program Files\Git\usr\bin\tar.exe" --posix -cf cache.tzst --exclude cache.tzst -P -C D:/a/trime/trime --files-from manifest.txt --force-local --use-compress-program "zstd -T0"
+2026-10-23T04:28:26.4471900Z /usr/bin/tar: C\:/Users/runneradmin/.gradle/caches/9.8.1/fileContent/fileContent.lock: Read error at byte 0, while reading 38 bytes: Device or resource busy
+2026-10-23T04:28:26.4492496Z /usr/bin/tar: C\:/Users/runneradmin/.gradle/caches/9.8.1/fileHashes/fileHashes.lock: Read error at byte 0, while reading 38 bytes: Device or resource busy
+2026-10-23T04:28:26.4511473Z /usr/bin/tar: C\:/Users/runneradmin/.gradle/caches/9.8.1/generated-gradle-jars/generated-gradle-jars.lock: Read error at byte 0, while reading 38 bytes: Device or resource busy
+2026-10-23T04:28:34.8404663Z /usr/bin/tar: C\:/Users/runneradmin/.gradle/caches/9.8.1/javaCompile/javaCompile.lock: Read error at byte 0, while reading 38 bytes: Device or resource busy
+2026-10-23T04:29:11.1912878Z /usr/bin/tar: C\:/Users/runneradmin/.gradle/caches/journal-1/journal-1.lock: Read error at byte 0, while reading 38 bytes: Device or resource busy
+2026-10-23T04:29:31.5259173Z /usr/bin/tar: C\:/Users/runneradmin/.gradle/caches/modules-2/modules-2.lock: Read error at byte 0, while reading 38 bytes: Device or resource busy
+2026-10-23T04:29:31.5402153Z /usr/bin/tar: Exiting with failure status due to previous errors
+2026-10-23T04:29:31.5452075Z ##[warning]Failed to save: "C:\Program failed with error: The process 'C:\Program Files\Git\usr\bin\tar.exe' failed with exit code 2
+2026-10-23T04:29:31.6461425Z Post job cleanup.
+2026-10-23T04:29:31.8895696Z [command]"C:\Program Files\Git\bin\git.exe" version
+2026-10-23T04:29:31.9358955Z git version 2.56.0.windows.2
+2026-10-23T04:29:31.9442067Z Temporarily overriding HOME='D:\a\_temp\496df4ed-6c4b-4f3c-8fd1-cc263542d87f' before making global git config changes
+2026-10-23T04:29:31.9443612Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-23T04:29:31.9455305Z [command]"C:\Program Files\Git\bin\git.exe" config --global --add safe.directory D:\a\trime\trime
+2026-10-23T04:29:31.9891435Z Removing SSH command configuration
+2026-10-23T04:29:31.9903605Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp core\.sshCommand
+2026-10-23T04:29:32.0345965Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :\""
+2026-10-23T04:29:32.6116593Z Entering 'app/data/rime/essay'
+2026-10-23T04:29:32.7096369Z Entering 'app/data/rime/luna-pinyin'
+2026-10-23T04:29:32.8056452Z Entering 'app/data/rime/prelude'
+2026-10-23T04:29:32.9073706Z Entering 'app/data/rime/stroke'
+2026-10-23T04:29:33.0175660Z Entering 'app/src/main/jni/librime'
+2026-10-23T04:29:33.1108955Z Entering 'app/src/main/jni/librime/deps/glog'
+2026-10-23T04:29:33.2100103Z Entering 'app/src/main/jni/librime/deps/googletest'
+2026-10-23T04:29:33.3104975Z Entering 'app/src/main/jni/librime/deps/leveldb'
+2026-10-23T04:29:33.4051761Z Entering 'app/src/main/jni/librime/deps/leveldb/third_party/benchmark'
+2026-10-23T04:29:33.5056145Z Entering 'app/src/main/jni/librime/deps/leveldb/third_party/googletest'
+2026-10-23T04:29:33.6052416Z Entering 'app/src/main/jni/librime/deps/marisa-trie'
+2026-10-23T04:29:33.7002254Z Entering 'app/src/main/jni/librime/deps/opencc'
+2026-10-23T04:29:33.7962557Z Entering 'app/src/main/jni/librime/deps/yaml-cpp'
+2026-10-23T04:29:33.8952057Z Entering 'app/src/main/jni/librime-lua'
+2026-10-23T04:29:33.9910294Z Entering 'app/src/main/jni/librime-lua-deps'
+2026-10-23T04:29:34.0999030Z Entering 'app/src/main/jni/librime-octagram'
+2026-10-23T04:29:34.1990889Z Entering 'app/src/main/jni/librime-predict'
+2026-10-23T04:29:34.2983239Z Entering 'app/src/main/jni/snappy'
+2026-10-23T04:29:34.3892997Z Entering 'app/src/main/jni/snappy/third_party/benchmark'
+2026-10-23T04:29:34.4858818Z Entering 'app/src/main/jni/snappy/third_party/googletest'
+2026-10-23T04:29:34.5980630Z Removing HTTP extra header
+2026-10-23T04:29:34.5994844Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-23T04:29:34.6548634Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :\""
+2026-10-23T04:29:35.2147373Z Entering 'app/data/rime/essay'
+2026-10-23T04:29:35.3082344Z Entering 'app/data/rime/luna-pinyin'
+2026-10-23T04:29:35.4049931Z Entering 'app/data/rime/prelude'
+2026-10-23T04:29:35.5017866Z Entering 'app/data/rime/stroke'
+2026-10-23T04:29:35.5942921Z Entering 'app/src/main/jni/librime'
+2026-10-23T04:29:35.6907525Z Entering 'app/src/main/jni/librime/deps/glog'
+2026-10-23T04:29:35.7908944Z Entering 'app/src/main/jni/librime/deps/googletest'
+2026-10-23T04:29:35.8863960Z Entering 'app/src/main/jni/librime/deps/leveldb'
+2026-10-23T04:29:35.9770961Z Entering 'app/src/main/jni/librime/deps/leveldb/third_party/benchmark'
+2026-10-23T04:29:36.0700112Z Entering 'app/src/main/jni/librime/deps/leveldb/third_party/googletest'
+2026-10-23T04:29:36.1630504Z Entering 'app/src/main/jni/librime/deps/marisa-trie'
+2026-10-23T04:29:36.2654198Z Entering 'app/src/main/jni/librime/deps/opencc'
+2026-10-23T04:29:36.3600257Z Entering 'app/src/main/jni/librime/deps/yaml-cpp'
+2026-10-23T04:29:36.4519939Z Entering 'app/src/main/jni/librime-lua'
+2026-10-23T04:29:36.5409611Z Entering 'app/src/main/jni/librime-lua-deps'
+2026-10-23T04:29:36.6328598Z Entering 'app/src/main/jni/librime-octagram'
+2026-10-23T04:29:36.7238015Z Entering 'app/src/main/jni/librime-predict'
+2026-10-23T04:29:36.8281840Z Entering 'app/src/main/jni/snappy'
+2026-10-23T04:29:36.9175633Z Entering 'app/src/main/jni/snappy/third_party/benchmark'
+2026-10-23T04:29:37.0148015Z Entering 'app/src/main/jni/snappy/third_party/googletest'
+2026-10-23T04:29:37.1165478Z Removing includeIf entries pointing to credentials config files
+2026-10-23T04:29:37.1178085Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-23T04:29:37.1650566Z includeif.gitdir:D:/a/trime/trime/.git.path
+2026-10-23T04:29:37.1651342Z includeif.gitdir:D:/a/trime/trime/.git/worktrees/*.path
+2026-10-23T04:29:37.1652021Z includeif.gitdir:/github/workspace/.git.path
+2026-10-23T04:29:37.1652733Z includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-10-23T04:29:37.1706342Z [command]"C:\Program Files\Git\bin\git.exe" config --local --get-all includeif.gitdir:D:/a/trime/trime/.git.path
+2026-10-23T04:29:37.2072814Z D:\a\_temp\git-credentials-915c58d2-d283-4994-854e-3227453a681f.config
+2026-10-23T04:29:37.2130037Z [command]"C:\Program Files\Git\bin\git.exe" config --local --unset includeif.gitdir:D:/a/trime/trime/.git.path D\:\\a\\_temp\\git\-credentials\-915c58d2\-d283\-4994\-854e\-3227453a681f\.config
+2026-10-23T04:29:37.2647541Z [command]"C:\Program Files\Git\bin\git.exe" config --local --get-all includeif.gitdir:D:/a/trime/trime/.git/worktrees/*.path
+2026-10-23T04:29:37.3019357Z D:\a\_temp\git-credentials-915c58d2-d283-4994-854e-3227453a681f.config
+2026-10-23T04:29:37.3072648Z [command]"C:\Program Files\Git\bin\git.exe" config --local --unset includeif.gitdir:D:/a/trime/trime/.git/worktrees/*.path D\:\\a\\_temp\\git\-credentials\-915c58d2\-d283\-4994\-854e\-3227453a681f\.config
+2026-10-23T04:29:37.3497523Z [command]"C:\Program Files\Git\bin\git.exe" config --local --get-all includeif.gitdir:/github/workspace/.git.path
+2026-10-23T04:29:37.3858800Z /github/runner_temp/git-credentials-915c58d2-d283-4994-854e-3227453a681f.config
+2026-10-23T04:29:37.3904571Z [command]"C:\Program Files\Git\bin\git.exe" config --local --unset includeif.gitdir:/github/workspace/.git.path \/github\/runner_temp\/git\-credentials\-915c58d2\-d283\-4994\-854e\-3227453a681f\.config
+2026-10-23T04:29:37.4336484Z [command]"C:\Program Files\Git\bin\git.exe" config --local --get-all includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-10-23T04:29:37.4699461Z /github/runner_temp/git-credentials-915c58d2-d283-4994-854e-3227453a681f.config
+2026-10-23T04:29:37.4748112Z [command]"C:\Program Files\Git\bin\git.exe" config --local --unset includeif.gitdir:/github/workspace/.git/worktrees/*.path \/github\/runner_temp\/git\-credentials\-915c58d2\-d283\-4994\-854e\-3227453a681f\.config
+2026-10-23T04:29:37.5183322Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "git config --local --show-origin --name-only --get-regexp remote.origin.url"
+2026-10-23T04:29:38.0827649Z Entering 'app/data/rime/essay'
+2026-10-23T04:29:38.1222580Z file:D:/a/trime/trime/.git/modules/essay/config	remote.origin.url
+2026-10-23T04:29:38.1427528Z Entering 'app/data/rime/luna-pinyin'
+2026-10-23T04:29:38.1824086Z file:D:/a/trime/trime/.git/modules/luna-pinyin/config	remote.origin.url
+2026-10-23T04:29:38.2021184Z Entering 'app/data/rime/prelude'
+2026-10-23T04:29:38.2424831Z file:D:/a/trime/trime/.git/modules/prelude/config	remote.origin.url
+2026-10-23T04:29:38.2625168Z Entering 'app/data/rime/stroke'
+2026-10-23T04:29:38.3032782Z file:D:/a/trime/trime/.git/modules/stroke/config	remote.origin.url
+2026-10-23T04:29:38.3247079Z Entering 'app/src/main/jni/librime'
+2026-10-23T04:29:38.3660743Z file:D:/a/trime/trime/.git/modules/librime/config	remote.origin.url
+2026-10-23T04:29:38.3850543Z Entering 'app/src/main/jni/librime/deps/glog'
+2026-10-23T04:29:38.4276589Z file:D:/a/trime/trime/.git/modules/librime/modules/glog/config	remote.origin.url
+2026-10-23T04:29:38.4523442Z Entering 'app/src/main/jni/librime/deps/googletest'
+2026-10-23T04:29:38.4920703Z file:D:/a/trime/trime/.git/modules/librime/modules/googletest/config	remote.origin.url
+2026-10-23T04:29:38.5110527Z Entering 'app/src/main/jni/librime/deps/leveldb'
+2026-10-23T04:29:38.5508660Z file:D:/a/trime/trime/.git/modules/librime/modules/leveldb/config	remote.origin.url
+2026-10-23T04:29:38.5690626Z Entering 'app/src/main/jni/librime/deps/leveldb/third_party/benchmark'
+2026-10-23T04:29:38.6071154Z file:D:/a/trime/trime/.git/modules/librime/modules/leveldb/modules/third_party/benchmark/config	remote.origin.url
+2026-10-23T04:29:38.6254291Z Entering 'app/src/main/jni/librime/deps/leveldb/third_party/googletest'
+2026-10-23T04:29:38.6625516Z file:D:/a/trime/trime/.git/modules/librime/modules/leveldb/modules/third_party/googletest/config	remote.origin.url
+2026-10-23T04:29:38.6825191Z Entering 'app/src/main/jni/librime/deps/marisa-trie'
+2026-10-23T04:29:38.7185712Z file:D:/a/trime/trime/.git/modules/librime/modules/marisa-trie/config	remote.origin.url
+2026-10-23T04:29:38.7366136Z Entering 'app/src/main/jni/librime/deps/opencc'
+2026-10-23T04:29:38.7733623Z file:D:/a/trime/trime/.git/modules/librime/modules/opencc/config	remote.origin.url
+2026-10-23T04:29:38.7920708Z Entering 'app/src/main/jni/librime/deps/yaml-cpp'
+2026-10-23T04:29:38.8290832Z file:D:/a/trime/trime/.git/modules/librime/modules/yaml-cpp/config	remote.origin.url
+2026-10-23T04:29:38.8504324Z Entering 'app/src/main/jni/librime-lua'
+2026-10-23T04:29:38.8882106Z file:D:/a/trime/trime/.git/modules/librime-lua/config	remote.origin.url
+2026-10-23T04:29:38.9073685Z Entering 'app/src/main/jni/librime-lua-deps'
+2026-10-23T04:29:38.9443503Z file:D:/a/trime/trime/.git/modules/librime-lua-deps/config	remote.origin.url
+2026-10-23T04:29:38.9631216Z Entering 'app/src/main/jni/librime-octagram'
+2026-10-23T04:29:39.0021476Z file:D:/a/trime/trime/.git/modules/librime-octagram/config	remote.origin.url
+2026-10-23T04:29:39.0211982Z Entering 'app/src/main/jni/librime-predict'
+2026-10-23T04:29:39.0577314Z file:D:/a/trime/trime/.git/modules/librime-predict/config	remote.origin.url
+2026-10-23T04:29:39.0761190Z Entering 'app/src/main/jni/snappy'
+2026-10-23T04:29:39.1121518Z file:D:/a/trime/trime/.git/modules/snappy/config	remote.origin.url
+2026-10-23T04:29:39.1290797Z Entering 'app/src/main/jni/snappy/third_party/benchmark'
+2026-10-23T04:29:39.1653728Z file:D:/a/trime/trime/.git/modules/snappy/modules/third_party/benchmark/config	remote.origin.url
+2026-10-23T04:29:39.1837159Z Entering 'app/src/main/jni/snappy/third_party/googletest'
+2026-10-23T04:29:39.2194326Z file:D:/a/trime/trime/.git/modules/snappy/modules/third_party/googletest/config	remote.origin.url
+2026-10-23T04:29:39.2538791Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/essay/config --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-23T04:29:39.2880579Z includeif.gitdir:D:/a/trime/trime/.git/modules/essay.path
+2026-10-23T04:29:39.2882300Z includeif.gitdir:/github/workspace/.git/modules/essay.path
+2026-10-23T04:29:39.2921227Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/essay/config --get-all includeif.gitdir:D:/a/trime/trime/.git/modules/essay.path
+2026-10-23T04:29:39.3254985Z D:\a\_temp\git-credentials-915c58d2-d283-4994-854e-3227453a681f.config
+2026-10-23T04:29:39.3296567Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/essay/config --unset includeif.gitdir:D:/a/trime/trime/.git/modules/essay.path D\:\\a\\_temp\\git\-credentials\-915c58d2\-d283\-4994\-854e\-3227453a681f\.config
+2026-10-23T04:29:39.3686099Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/essay/config --get-all includeif.gitdir:/github/workspace/.git/modules/essay.path
+2026-10-23T04:29:39.4026911Z /github/runner_temp/git-credentials-915c58d2-d283-4994-854e-3227453a681f.config
+2026-10-23T04:29:39.4071844Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/essay/config --unset includeif.gitdir:/github/workspace/.git/modules/essay.path \/github\/runner_temp\/git\-credentials\-915c58d2\-d283\-4994\-854e\-3227453a681f\.config
+2026-10-23T04:29:39.4474258Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/luna-pinyin/config --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-23T04:29:39.4821994Z includeif.gitdir:D:/a/trime/trime/.git/modules/luna-pinyin.path
+2026-10-23T04:29:39.4822809Z includeif.gitdir:/github/workspace/.git/modules/luna-pinyin.path
+2026-10-23T04:29:39.4863404Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/luna-pinyin/config --get-all includeif.gitdir:D:/a/trime/trime/.git/modules/luna-pinyin.path
+2026-10-23T04:29:39.5257547Z D:\a\_temp\git-credentials-915c58d2-d283-4994-854e-3227453a681f.config
+2026-10-23T04:29:39.5307460Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/luna-pinyin/config --unset includeif.gitdir:D:/a/trime/trime/.git/modules/luna-pinyin.path D\:\\a\\_temp\\git\-credentials\-915c58d2\-d283\-4994\-854e\-3227453a681f\.config
+2026-10-23T04:29:39.5717981Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/luna-pinyin/config --get-all includeif.gitdir:/github/workspace/.git/modules/luna-pinyin.path
+2026-10-23T04:29:39.6054313Z /github/runner_temp/git-credentials-915c58d2-d283-4994-854e-3227453a681f.config
+2026-10-23T04:29:39.6099820Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/luna-pinyin/config --unset includeif.gitdir:/github/workspace/.git/modules/luna-pinyin.path \/github\/runner_temp\/git\-credentials\-915c58d2\-d283\-4994\-854e\-3227453a681f\.config
+2026-10-23T04:29:39.6497772Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/prelude/config --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-23T04:29:39.6849184Z includeif.gitdir:D:/a/trime/trime/.git/modules/prelude.path
+2026-10-23T04:29:39.6849926Z includeif.gitdir:/github/workspace/.git/modules/prelude.path
+2026-10-23T04:29:39.6894803Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/prelude/config --get-all includeif.gitdir:D:/a/trime/trime/.git/modules/prelude.path
+2026-10-23T04:29:39.7239849Z D:\a\_temp\git-credentials-915c58d2-d283-4994-854e-3227453a681f.config
+2026-10-23T04:29:39.7287470Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/prelude/config --unset includeif.gitdir:D:/a/trime/trime/.git/modules/prelude.path D\:\\a\\_temp\\git\-credentials\-915c58d2\-d283\-4994\-854e\-3227453a681f\.config
+2026-10-23T04:29:39.7701620Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/prelude/config --get-all includeif.gitdir:/github/workspace/.git/modules/prelude.path
+2026-10-23T04:29:39.8055058Z /github/runner_temp/git-credentials-915c58d2-d283-4994-854e-3227453a681f.config
+2026-10-23T04:29:39.8100531Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/prelude/config --unset includeif.gitdir:/github/workspace/.git/modules/prelude.path \/github\/runner_temp\/git\-credentials\-915c58d2\-d283\-4994\-854e\-3227453a681f\.config
+2026-10-23T04:29:39.8501370Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/stroke/config --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-23T04:29:39.8858754Z includeif.gitdir:D:/a/trime/trime/.git/modules/stroke.path
+2026-10-23T04:29:39.8859841Z includeif.gitdir:/github/workspace/.git/modules/stroke.path
+2026-10-23T04:29:39.8912736Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/stroke/config --get-all includeif.gitdir:D:/a/trime/trime/.git/modules/stroke.path
+2026-10-23T04:29:39.9258200Z D:\a\_temp\git-credentials-915c58d2-d283-4994-854e-3227453a681f.config
+2026-10-23T04:29:39.9304516Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/stroke/config --unset includeif.gitdir:D:/a/trime/trime/.git/modules/stroke.path D\:\\a\\_temp\\git\-credentials\-915c58d2\-d283\-4994\-854e\-3227453a681f\.config
+2026-10-23T04:29:39.9694569Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/stroke/config --get-all includeif.gitdir:/github/workspace/.git/modules/stroke.path
+2026-10-23T04:29:40.0054541Z /github/runner_temp/git-credentials-915c58d2-d283-4994-854e-3227453a681f.config
+2026-10-23T04:29:40.0108237Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/stroke/config --unset includeif.gitdir:/github/workspace/.git/modules/stroke.path \/github\/runner_temp\/git\-credentials\-915c58d2\-d283\-4994\-854e\-3227453a681f\.config
+2026-10-23T04:29:40.0614088Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/librime/config --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-23T04:29:40.0985620Z includeif.gitdir:D:/a/trime/trime/.git/modules/librime.path
+2026-10-23T04:29:40.0986777Z includeif.gitdir:/github/workspace/.git/modules/librime.path
+2026-10-23T04:29:40.1029212Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/librime/config --get-all includeif.gitdir:D:/a/trime/trime/.git/modules/librime.path
+2026-10-23T04:29:40.1366765Z D:\a\_temp\git-credentials-915c58d2-d283-4994-854e-3227453a681f.config
+2026-10-23T04:29:40.1409979Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/librime/config --unset includeif.gitdir:D:/a/trime/trime/.git/modules/librime.path D\:\\a\\_temp\\git\-credentials\-915c58d2\-d283\-4994\-854e\-3227453a681f\.config
+2026-10-23T04:29:40.1803251Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/librime/config --get-all includeif.gitdir:/github/workspace/.git/modules/librime.path
+2026-10-23T04:29:40.2138532Z /github/runner_temp/git-credentials-915c58d2-d283-4994-854e-3227453a681f.config
+2026-10-23T04:29:40.2180154Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/librime/config --unset includeif.gitdir:/github/workspace/.git/modules/librime.path \/github\/runner_temp\/git\-credentials\-915c58d2\-d283\-4994\-854e\-3227453a681f\.config
+2026-10-23T04:29:40.2575194Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/librime/modules/glog/config --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-23T04:29:40.2909469Z includeif.gitdir:D:/a/trime/trime/.git/modules/librime/modules/glog.path
+2026-10-23T04:29:40.2910219Z includeif.gitdir:/github/workspace/.git/modules/librime/modules/glog.path
+2026-10-23T04:29:40.2949743Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/librime/modules/glog/config --get-all includeif.gitdir:D:/a/trime/trime/.git/modules/librime/modules/glog.path
+2026-10-23T04:29:40.3283932Z D:\a\_temp\git-credentials-915c58d2-d283-4994-854e-3227453a681f.config
+2026-10-23T04:29:40.3326415Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/librime/modules/glog/config --unset includeif.gitdir:D:/a/trime/trime/.git/modules/librime/modules/glog.path D\:\\a\\_temp\\git\-credentials\-915c58d2\-d283\-4994\-854e\-3227453a681f\.config
+2026-10-23T04:29:40.3719868Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/librime/modules/glog/config --get-all includeif.gitdir:/github/workspace/.git/modules/librime/modules/glog.path
+2026-10-23T04:29:40.4073295Z /github/runner_temp/git-credentials-915c58d2-d283-4994-854e-3227453a681f.config
+2026-10-23T04:29:40.4118892Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/librime/modules/glog/config --unset includeif.gitdir:/github/workspace/.git/modules/librime/modules/glog.path \/github\/runner_temp\/git\-credentials\-915c58d2\-d283\-4994\-854e\-3227453a681f\.config
+2026-10-23T04:29:40.4503261Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/librime/modules/googletest/config --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-23T04:29:40.4849736Z includeif.gitdir:D:/a/trime/trime/.git/modules/librime/modules/googletest.path
+2026-10-23T04:29:40.4851610Z includeif.gitdir:/github/workspace/.git/modules/librime/modules/googletest.path
+2026-10-23T04:29:40.4901007Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/librime/modules/googletest/config --get-all includeif.gitdir:D:/a/trime/trime/.git/modules/librime/modules/googletest.path
+2026-10-23T04:29:40.5256643Z D:\a\_temp\git-credentials-915c58d2-d283-4994-854e-3227453a681f.config
+2026-10-23T04:29:40.5304036Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/librime/modules/googletest/config --unset includeif.gitdir:D:/a/trime/trime/.git/modules/librime/modules/googletest.path D\:\\a\\_temp\\git\-credentials\-915c58d2\-d283\-4994\-854e\-3227453a681f\.config
+2026-10-23T04:29:40.5704455Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/librime/modules/googletest/config --get-all includeif.gitdir:/github/workspace/.git/modules/librime/modules/googletest.path
+2026-10-23T04:29:40.6047414Z /github/runner_temp/git-credentials-915c58d2-d283-4994-854e-3227453a681f.config
+2026-10-23T04:29:40.6102867Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/librime/modules/googletest/config --unset includeif.gitdir:/github/workspace/.git/modules/librime/modules/googletest.path \/github\/runner_temp\/git\-credentials\-915c58d2\-d283\-4994\-854e\-3227453a681f\.config
+2026-10-23T04:29:40.6529809Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/librime/modules/leveldb/config --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-23T04:29:40.6898804Z includeif.gitdir:D:/a/trime/trime/.git/modules/librime/modules/leveldb.path
+2026-10-23T04:29:40.6899533Z includeif.gitdir:/github/workspace/.git/modules/librime/modules/leveldb.path
+2026-10-23T04:29:40.6939141Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/librime/modules/leveldb/config --get-all includeif.gitdir:D:/a/trime/trime/.git/modules/librime/modules/leveldb.path
+2026-10-23T04:29:40.7277329Z D:\a\_temp\git-credentials-915c58d2-d283-4994-854e-3227453a681f.config
+2026-10-23T04:29:40.7319769Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/librime/modules/leveldb/config --unset includeif.gitdir:D:/a/trime/trime/.git/modules/librime/modules/leveldb.path D\:\\a\\_temp\\git\-credentials\-915c58d2\-d283\-4994\-854e\-3227453a681f\.config
+2026-10-23T04:29:40.7710992Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/librime/modules/leveldb/config --get-all includeif.gitdir:/github/workspace/.git/modules/librime/modules/leveldb.path
+2026-10-23T04:29:40.8046625Z /github/runner_temp/git-credentials-915c58d2-d283-4994-854e-3227453a681f.config
+2026-10-23T04:29:40.8089818Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/librime/modules/leveldb/config --unset includeif.gitdir:/github/workspace/.git/modules/librime/modules/leveldb.path \/github\/runner_temp\/git\-credentials\-915c58d2\-d283\-4994\-854e\-3227453a681f\.config
+2026-10-23T04:29:40.8474051Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/librime/modules/leveldb/modules/third_party/benchmark/config --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-23T04:29:40.8810412Z includeif.gitdir:D:/a/trime/trime/.git/modules/librime/modules/leveldb/modules/third_party/benchmark.path
+2026-10-23T04:29:40.8811997Z includeif.gitdir:/github/workspace/.git/modules/librime/modules/leveldb/modules/third_party/benchmark.path
+2026-10-23T04:29:40.8854126Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/librime/modules/leveldb/modules/third_party/benchmark/config --get-all includeif.gitdir:D:/a/trime/trime/.git/modules/librime/modules/leveldb/modules/third_party/benchmark.path
+2026-10-23T04:29:40.9193617Z D:\a\_temp\git-credentials-915c58d2-d283-4994-854e-3227453a681f.config
+2026-10-23T04:29:40.9235712Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/librime/modules/leveldb/modules/third_party/benchmark/config --unset includeif.gitdir:D:/a/trime/trime/.git/modules/librime/modules/leveldb/modules/third_party/benchmark.path D\:\\a\\_temp\\git\-credentials\-915c58d2\-d283\-4994\-854e\-3227453a681f\.config
+2026-10-23T04:29:40.9625507Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/librime/modules/leveldb/modules/third_party/benchmark/config --get-all includeif.gitdir:/github/workspace/.git/modules/librime/modules/leveldb/modules/third_party/benchmark.path
+2026-10-23T04:29:41.0009576Z /github/runner_temp/git-credentials-915c58d2-d283-4994-854e-3227453a681f.config
+2026-10-23T04:29:41.0055758Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/librime/modules/leveldb/modules/third_party/benchmark/config --unset includeif.gitdir:/github/workspace/.git/modules/librime/modules/leveldb/modules/third_party/benchmark.path \/github\/runner_temp\/git\-credentials\-915c58d2\-d283\-4994\-854e\-3227453a681f\.config
+2026-10-23T04:29:41.0453470Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/librime/modules/leveldb/modules/third_party/googletest/config --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-23T04:29:41.0795347Z includeif.gitdir:D:/a/trime/trime/.git/modules/librime/modules/leveldb/modules/third_party/googletest.path
+2026-10-23T04:29:41.0797366Z includeif.gitdir:/github/workspace/.git/modules/librime/modules/leveldb/modules/third_party/googletest.path
+2026-10-23T04:29:41.0838566Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/librime/modules/leveldb/modules/third_party/googletest/config --get-all includeif.gitdir:D:/a/trime/trime/.git/modules/librime/modules/leveldb/modules/third_party/googletest.path
+2026-10-23T04:29:41.1181102Z D:\a\_temp\git-credentials-915c58d2-d283-4994-854e-3227453a681f.config
+2026-10-23T04:29:41.1223523Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/librime/modules/leveldb/modules/third_party/googletest/config --unset includeif.gitdir:D:/a/trime/trime/.git/modules/librime/modules/leveldb/modules/third_party/googletest.path D\:\\a\\_temp\\git\-credentials\-915c58d2\-d283\-4994\-854e\-3227453a681f\.config
+2026-10-23T04:29:41.1645767Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/librime/modules/leveldb/modules/third_party/googletest/config --get-all includeif.gitdir:/github/workspace/.git/modules/librime/modules/leveldb/modules/third_party/googletest.path
+2026-10-23T04:29:41.2001428Z /github/runner_temp/git-credentials-915c58d2-d283-4994-854e-3227453a681f.config
+2026-10-23T04:29:41.2047004Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/librime/modules/leveldb/modules/third_party/googletest/config --unset includeif.gitdir:/github/workspace/.git/modules/librime/modules/leveldb/modules/third_party/googletest.path \/github\/runner_temp\/git\-credentials\-915c58d2\-d283\-4994\-854e\-3227453a681f\.config
+2026-10-23T04:29:41.2532328Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/librime/modules/marisa-trie/config --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-23T04:29:41.2874932Z includeif.gitdir:D:/a/trime/trime/.git/modules/librime/modules/marisa-trie.path
+2026-10-23T04:29:41.2876549Z includeif.gitdir:/github/workspace/.git/modules/librime/modules/marisa-trie.path
+2026-10-23T04:29:41.2921176Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/librime/modules/marisa-trie/config --get-all includeif.gitdir:D:/a/trime/trime/.git/modules/librime/modules/marisa-trie.path
+2026-10-23T04:29:41.3275648Z D:\a\_temp\git-credentials-915c58d2-d283-4994-854e-3227453a681f.config
+2026-10-23T04:29:41.3321041Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/librime/modules/marisa-trie/config --unset includeif.gitdir:D:/a/trime/trime/.git/modules/librime/modules/marisa-trie.path D\:\\a\\_temp\\git\-credentials\-915c58d2\-d283\-4994\-854e\-3227453a681f\.config
+2026-10-23T04:29:41.3716466Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/librime/modules/marisa-trie/config --get-all includeif.gitdir:/github/workspace/.git/modules/librime/modules/marisa-trie.path
+2026-10-23T04:29:41.4060410Z /github/runner_temp/git-credentials-915c58d2-d283-4994-854e-3227453a681f.config
+2026-10-23T04:29:41.4105562Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/librime/modules/marisa-trie/config --unset includeif.gitdir:/github/workspace/.git/modules/librime/modules/marisa-trie.path \/github\/runner_temp\/git\-credentials\-915c58d2\-d283\-4994\-854e\-3227453a681f\.config
+2026-10-23T04:29:41.4500367Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/librime/modules/opencc/config --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-23T04:29:41.4843711Z includeif.gitdir:D:/a/trime/trime/.git/modules/librime/modules/opencc.path
+2026-10-23T04:29:41.4844545Z includeif.gitdir:/github/workspace/.git/modules/librime/modules/opencc.path
+2026-10-23T04:29:41.4888071Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/librime/modules/opencc/config --get-all includeif.gitdir:D:/a/trime/trime/.git/modules/librime/modules/opencc.path
+2026-10-23T04:29:41.5231440Z D:\a\_temp\git-credentials-915c58d2-d283-4994-854e-3227453a681f.config
+2026-10-23T04:29:41.5274399Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/librime/modules/opencc/config --unset includeif.gitdir:D:/a/trime/trime/.git/modules/librime/modules/opencc.path D\:\\a\\_temp\\git\-credentials\-915c58d2\-d283\-4994\-854e\-3227453a681f\.config
+2026-10-23T04:29:41.5687109Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/librime/modules/opencc/config --get-all includeif.gitdir:/github/workspace/.git/modules/librime/modules/opencc.path
+2026-10-23T04:29:41.6045442Z /github/runner_temp/git-credentials-915c58d2-d283-4994-854e-3227453a681f.config
+2026-10-23T04:29:41.6091499Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/librime/modules/opencc/config --unset includeif.gitdir:/github/workspace/.git/modules/librime/modules/opencc.path \/github\/runner_temp\/git\-credentials\-915c58d2\-d283\-4994\-854e\-3227453a681f\.config
+2026-10-23T04:29:41.6498225Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/librime/modules/yaml-cpp/config --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-23T04:29:41.6869872Z includeif.gitdir:D:/a/trime/trime/.git/modules/librime/modules/yaml-cpp.path
+2026-10-23T04:29:41.6871211Z includeif.gitdir:/github/workspace/.git/modules/librime/modules/yaml-cpp.path
+2026-10-23T04:29:41.6916803Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/librime/modules/yaml-cpp/config --get-all includeif.gitdir:D:/a/trime/trime/.git/modules/librime/modules/yaml-cpp.path
+2026-10-23T04:29:41.7274929Z D:\a\_temp\git-credentials-915c58d2-d283-4994-854e-3227453a681f.config
+2026-10-23T04:29:41.7321043Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/librime/modules/yaml-cpp/config --unset includeif.gitdir:D:/a/trime/trime/.git/modules/librime/modules/yaml-cpp.path D\:\\a\\_temp\\git\-credentials\-915c58d2\-d283\-4994\-854e\-3227453a681f\.config
+2026-10-23T04:29:41.7716853Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/librime/modules/yaml-cpp/config --get-all includeif.gitdir:/github/workspace/.git/modules/librime/modules/yaml-cpp.path
+2026-10-23T04:29:41.8058876Z /github/runner_temp/git-credentials-915c58d2-d283-4994-854e-3227453a681f.config
+2026-10-23T04:29:41.8100994Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/librime/modules/yaml-cpp/config --unset includeif.gitdir:/github/workspace/.git/modules/librime/modules/yaml-cpp.path \/github\/runner_temp\/git\-credentials\-915c58d2\-d283\-4994\-854e\-3227453a681f\.config
+2026-10-23T04:29:41.8491435Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/librime-lua/config --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-23T04:29:41.8834966Z includeif.gitdir:D:/a/trime/trime/.git/modules/librime-lua.path
+2026-10-23T04:29:41.8835682Z includeif.gitdir:/github/workspace/.git/modules/librime-lua.path
+2026-10-23T04:29:41.8877552Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/librime-lua/config --get-all includeif.gitdir:D:/a/trime/trime/.git/modules/librime-lua.path
+2026-10-23T04:29:41.9218797Z D:\a\_temp\git-credentials-915c58d2-d283-4994-854e-3227453a681f.config
+2026-10-23T04:29:41.9262072Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/librime-lua/config --unset includeif.gitdir:D:/a/trime/trime/.git/modules/librime-lua.path D\:\\a\\_temp\\git\-credentials\-915c58d2\-d283\-4994\-854e\-3227453a681f\.config
+2026-10-23T04:29:41.9657612Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/librime-lua/config --get-all includeif.gitdir:/github/workspace/.git/modules/librime-lua.path
+2026-10-23T04:29:42.0002852Z /github/runner_temp/git-credentials-915c58d2-d283-4994-854e-3227453a681f.config
+2026-10-23T04:29:42.0046592Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/librime-lua/config --unset includeif.gitdir:/github/workspace/.git/modules/librime-lua.path \/github\/runner_temp\/git\-credentials\-915c58d2\-d283\-4994\-854e\-3227453a681f\.config
+2026-10-23T04:29:42.0451463Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/librime-lua-deps/config --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-23T04:29:42.0800800Z includeif.gitdir:D:/a/trime/trime/.git/modules/librime-lua-deps.path
+2026-10-23T04:29:42.0802337Z includeif.gitdir:/github/workspace/.git/modules/librime-lua-deps.path
+2026-10-23T04:29:42.0844263Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/librime-lua-deps/config --get-all includeif.gitdir:D:/a/trime/trime/.git/modules/librime-lua-deps.path
+2026-10-23T04:29:42.1190192Z D:\a\_temp\git-credentials-915c58d2-d283-4994-854e-3227453a681f.config
+2026-10-23T04:29:42.1236645Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/librime-lua-deps/config --unset includeif.gitdir:D:/a/trime/trime/.git/modules/librime-lua-deps.path D\:\\a\\_temp\\git\-credentials\-915c58d2\-d283\-4994\-854e\-3227453a681f\.config
+2026-10-23T04:29:42.1643190Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/librime-lua-deps/config --get-all includeif.gitdir:/github/workspace/.git/modules/librime-lua-deps.path
+2026-10-23T04:29:42.1991909Z /github/runner_temp/git-credentials-915c58d2-d283-4994-854e-3227453a681f.config
+2026-10-23T04:29:42.2037129Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/librime-lua-deps/config --unset includeif.gitdir:/github/workspace/.git/modules/librime-lua-deps.path \/github\/runner_temp\/git\-credentials\-915c58d2\-d283\-4994\-854e\-3227453a681f\.config
+2026-10-23T04:29:42.2505708Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/librime-octagram/config --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-23T04:29:42.2868085Z includeif.gitdir:D:/a/trime/trime/.git/modules/librime-octagram.path
+2026-10-23T04:29:42.2869212Z includeif.gitdir:/github/workspace/.git/modules/librime-octagram.path
+2026-10-23T04:29:42.2910975Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/librime-octagram/config --get-all includeif.gitdir:D:/a/trime/trime/.git/modules/librime-octagram.path
+2026-10-23T04:29:42.3256657Z D:\a\_temp\git-credentials-915c58d2-d283-4994-854e-3227453a681f.config
+2026-10-23T04:29:42.3301498Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/librime-octagram/config --unset includeif.gitdir:D:/a/trime/trime/.git/modules/librime-octagram.path D\:\\a\\_temp\\git\-credentials\-915c58d2\-d283\-4994\-854e\-3227453a681f\.config
+2026-10-23T04:29:42.3708192Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/librime-octagram/config --get-all includeif.gitdir:/github/workspace/.git/modules/librime-octagram.path
+2026-10-23T04:29:42.4050442Z /github/runner_temp/git-credentials-915c58d2-d283-4994-854e-3227453a681f.config
+2026-10-23T04:29:42.4092026Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/librime-octagram/config --unset includeif.gitdir:/github/workspace/.git/modules/librime-octagram.path \/github\/runner_temp\/git\-credentials\-915c58d2\-d283\-4994\-854e\-3227453a681f\.config
+2026-10-23T04:29:42.4481931Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/librime-predict/config --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-23T04:29:42.4822617Z includeif.gitdir:D:/a/trime/trime/.git/modules/librime-predict.path
+2026-10-23T04:29:42.4823639Z includeif.gitdir:/github/workspace/.git/modules/librime-predict.path
+2026-10-23T04:29:42.4864759Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/librime-predict/config --get-all includeif.gitdir:D:/a/trime/trime/.git/modules/librime-predict.path
+2026-10-23T04:29:42.5204798Z D:\a\_temp\git-credentials-915c58d2-d283-4994-854e-3227453a681f.config
+2026-10-23T04:29:42.5246503Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/librime-predict/config --unset includeif.gitdir:D:/a/trime/trime/.git/modules/librime-predict.path D\:\\a\\_temp\\git\-credentials\-915c58d2\-d283\-4994\-854e\-3227453a681f\.config
+2026-10-23T04:29:42.5639379Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/librime-predict/config --get-all includeif.gitdir:/github/workspace/.git/modules/librime-predict.path
+2026-10-23T04:29:42.5981369Z /github/runner_temp/git-credentials-915c58d2-d283-4994-854e-3227453a681f.config
+2026-10-23T04:29:42.6026764Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/librime-predict/config --unset includeif.gitdir:/github/workspace/.git/modules/librime-predict.path \/github\/runner_temp\/git\-credentials\-915c58d2\-d283\-4994\-854e\-3227453a681f\.config
+2026-10-23T04:29:42.6436378Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/snappy/config --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-23T04:29:42.6793753Z includeif.gitdir:D:/a/trime/trime/.git/modules/snappy.path
+2026-10-23T04:29:42.6794732Z includeif.gitdir:/github/workspace/.git/modules/snappy.path
+2026-10-23T04:29:42.6840023Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/snappy/config --get-all includeif.gitdir:D:/a/trime/trime/.git/modules/snappy.path
+2026-10-23T04:29:42.7201286Z D:\a\_temp\git-credentials-915c58d2-d283-4994-854e-3227453a681f.config
+2026-10-23T04:29:42.7246796Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/snappy/config --unset includeif.gitdir:D:/a/trime/trime/.git/modules/snappy.path D\:\\a\\_temp\\git\-credentials\-915c58d2\-d283\-4994\-854e\-3227453a681f\.config
+2026-10-23T04:29:42.7646825Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/snappy/config --get-all includeif.gitdir:/github/workspace/.git/modules/snappy.path
+2026-10-23T04:29:42.8033688Z /github/runner_temp/git-credentials-915c58d2-d283-4994-854e-3227453a681f.config
+2026-10-23T04:29:42.8086853Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/snappy/config --unset includeif.gitdir:/github/workspace/.git/modules/snappy.path \/github\/runner_temp\/git\-credentials\-915c58d2\-d283\-4994\-854e\-3227453a681f\.config
+2026-10-23T04:29:42.8487526Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/snappy/modules/third_party/benchmark/config --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-23T04:29:42.8831887Z includeif.gitdir:D:/a/trime/trime/.git/modules/snappy/modules/third_party/benchmark.path
+2026-10-23T04:29:42.8832796Z includeif.gitdir:/github/workspace/.git/modules/snappy/modules/third_party/benchmark.path
+2026-10-23T04:29:42.8874519Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/snappy/modules/third_party/benchmark/config --get-all includeif.gitdir:D:/a/trime/trime/.git/modules/snappy/modules/third_party/benchmark.path
+2026-10-23T04:29:42.9212953Z D:\a\_temp\git-credentials-915c58d2-d283-4994-854e-3227453a681f.config
+2026-10-23T04:29:42.9256502Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/snappy/modules/third_party/benchmark/config --unset includeif.gitdir:D:/a/trime/trime/.git/modules/snappy/modules/third_party/benchmark.path D\:\\a\\_temp\\git\-credentials\-915c58d2\-d283\-4994\-854e\-3227453a681f\.config
+2026-10-23T04:29:42.9650951Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/snappy/modules/third_party/benchmark/config --get-all includeif.gitdir:/github/workspace/.git/modules/snappy/modules/third_party/benchmark.path
+2026-10-23T04:29:42.9989790Z /github/runner_temp/git-credentials-915c58d2-d283-4994-854e-3227453a681f.config
+2026-10-23T04:29:43.0034155Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/snappy/modules/third_party/benchmark/config --unset includeif.gitdir:/github/workspace/.git/modules/snappy/modules/third_party/benchmark.path \/github\/runner_temp\/git\-credentials\-915c58d2\-d283\-4994\-854e\-3227453a681f\.config
+2026-10-23T04:29:43.0431839Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/snappy/modules/third_party/googletest/config --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-23T04:29:43.0779330Z includeif.gitdir:D:/a/trime/trime/.git/modules/snappy/modules/third_party/googletest.path
+2026-10-23T04:29:43.0781280Z includeif.gitdir:/github/workspace/.git/modules/snappy/modules/third_party/googletest.path
+2026-10-23T04:29:43.0825626Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/snappy/modules/third_party/googletest/config --get-all includeif.gitdir:D:/a/trime/trime/.git/modules/snappy/modules/third_party/googletest.path
+2026-10-23T04:29:43.1181300Z D:\a\_temp\git-credentials-915c58d2-d283-4994-854e-3227453a681f.config
+2026-10-23T04:29:43.1229090Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/snappy/modules/third_party/googletest/config --unset includeif.gitdir:D:/a/trime/trime/.git/modules/snappy/modules/third_party/googletest.path D\:\\a\\_temp\\git\-credentials\-915c58d2\-d283\-4994\-854e\-3227453a681f\.config
+2026-10-23T04:29:43.1639944Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/snappy/modules/third_party/googletest/config --get-all includeif.gitdir:/github/workspace/.git/modules/snappy/modules/third_party/googletest.path
+2026-10-23T04:29:43.2004178Z /github/runner_temp/git-credentials-915c58d2-d283-4994-854e-3227453a681f.config
+2026-10-23T04:29:43.2050538Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:/a/trime/trime/.git/modules/snappy/modules/third_party/googletest/config --unset includeif.gitdir:/github/workspace/.git/modules/snappy/modules/third_party/googletest.path \/github\/runner_temp\/git\-credentials\-915c58d2\-d283\-4994\-854e\-3227453a681f\.config
+2026-10-23T04:29:43.2430480Z Removing credentials config 'D:\a\_temp\git-credentials-915c58d2-d283-4994-854e-3227453a681f.config'
+2026-10-23T04:29:43.2667999Z Cleaning up orphan processes
+2026-10-23T04:29:43.3803500Z Terminate orphan process: pid (7676) (java)
+2026-10-23T04:29:43.3936147Z Terminate orphan process: pid (2256) (java)
+2026-10-23T04:29:43.4065733Z Terminate orphan process: pid (2416) (conhost)
+2026-10-23T04:29:43.4260241Z Terminate orphan process: pid (7220) (java)
+2026-10-23T04:29:43.4359985Z Terminate orphan process: pid (7216) (conhost)

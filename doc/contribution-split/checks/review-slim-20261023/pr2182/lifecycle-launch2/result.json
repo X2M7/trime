@@ -1,0 +1,78 @@
+{
+  "checked_utc": "2026-10-23T04:27:24.302881+00:00",
+  "base_head": "ec0b81460b9b65d70f6797ac0c1f6d685af64d22",
+  "committed": false,
+  "pushed": false,
+  "new_build_or_device_session": false,
+  "source_path": "app/src/main/java/com/osfans/trime/ui/main/log/LogView.kt",
+  "changed_paths": [
+    "app/src/main/java/com/osfans/trime/ui/main/log/LogView.kt"
+  ],
+  "change": "Remove only the outer LogView CoroutineStart.UNDISPATCHED argument and its now-unused import; use launch default start with the existing lifecycleScope.",
+  "before_sha256": "57315de0888c0b5f3aa18d43db09f9471ca42a74c21e9323beb06b6a4c884d86",
+  "after_sha256": "aa5d49fb6e6494cfab7414cd071f369f599b556bda4115a4367f406b1aa995f4",
+  "patch_sha256": "65eab89dc28ff579d2391d9cc4d3106269d730638b3282b6387525c0522022dc",
+  "semantics": [
+    "Official kotlinx.coroutines 1.10.2 CoroutineStart.DEFAULT refuses to execute the block when its Job is already cancelled; UNDISPATCHED explicitly starts despite cancellation.",
+    "Official AndroidX lifecycle-common-jvm 2.9.0 source defines lifecycle.coroutineScope with SupervisorJob + Dispatchers.Main.immediate and cancels it on lifecycle destruction.",
+    "Official coroutine Android HandlerDispatcher immediate avoids redispatch on the same Main Looper. The actual two setLogcat calls are synchronous in LogActivity.onCreate on the Main thread, so current normal startup still begins immediately.",
+    "The private implementation Logcat.collectLines still launches its subscriber with UNDISPATCHED before initLogFlow; only the outer UI launch changed, so producer/subscriber ordering remains intact.",
+    "For a caller that supplies an already-cancelled lifecycleScope, DEFAULT prevents entering collectLines and therefore avoids the previously possible transient independent Logcat IO job/process startup.",
+    "This corrects the earlier overly broad claim that any launch already duplicates an isActive guard. The intended cancellation behavior is now supplied by DEFAULT rather than adding a separate guard."
+  ],
+  "call_graph": {
+    "paths": [
+      {
+        "path": "app/src/main/java/com/osfans/trime/ui/main/LogActivity.kt",
+        "line": 86,
+        "case": "FROM_CRASH onCreate branch"
+      },
+      {
+        "path": "app/src/main/java/com/osfans/trime/ui/main/LogActivity.kt",
+        "line": 97,
+        "case": "normal logs onCreate branch"
+      }
+    ],
+    "current_on_destroy_or_asynchronous_rebind_found": false,
+    "evidence": "callers.stdout"
+  },
+  "checks": {
+    "ktlint_exit": 0,
+    "ktlint_stdout_bytes": 0,
+    "ktlint_stderr_bytes": 0,
+    "diff_check_exit": 0,
+    "internal_subscription_evidence": "internal-subscription.stdout",
+    "six_host_input_sha256_unchanged": true,
+    "host_input_reuse": "host-input-reuse.json",
+    "host_tests_newly_rerun": false,
+    "reused_host_test_count": 46,
+    "LogView_compiled_by_host_tests": false
+  },
+  "limits": [
+    "This source/official-contract review and one-file style check are not Android compilation/runtime acceptance.",
+    "The previous ec0b8146 formal CI and Android historical results are not validation of this changed LogView; a new-head formal CI is required by root.",
+    "Main.immediate reasoning applies to the present two Main-thread onCreate callers. No claim of unconditional immediate execution for hypothetical off-Main/nested-event-loop callers."
+  ],
+  "evidence_sha256": {
+    "HandlerDispatcher.kt": "6bd1b65863c9df78a8c9c993d55fa158aa48142f9ee38765655bf5d8c91ba862",
+    "HandlerDispatcher.kt.source.json": "14de76006f4e69612ac50fa641490c32fa151c8633b55bf115d4d3e36352e685",
+    "Lifecycle.kt": "ba077fecac60b6f5116e2ace57ad0b4559bf5d94d005defb4612f00e0aac49f0",
+    "MainCoroutineDispatcher.kt": "4ffe3b8f3aef6fdd87e88e12cb072a79f67b5780f2e6c03f6d3d1d07fd0f8bed",
+    "MainCoroutineDispatcher.kt.source.json": "acaa785f47207454127a2752218801f4cf18718c2ecb28269593f3e7acadb757",
+    "after-LogView.kt": "aa5d49fb6e6494cfab7414cd071f369f599b556bda4115a4367f406b1aa995f4",
+    "before-LogView.kt": "57315de0888c0b5f3aa18d43db09f9471ca42a74c21e9323beb06b6a4c884d86",
+    "callers.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "callers.stdout": "16a3156d44c26cb1666ee61573f8dc04031a135dc42ff99ec9b70068ff82fc5d",
+    "change.diff": "65eab89dc28ff579d2391d9cc4d3106269d730638b3282b6387525c0522022dc",
+    "commands.json": "b85f3f39fdc36a4a2434eaaa4934c6e608fc74c4fb2308964064ea18e26beee9",
+    "diff-check.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "diff-check.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "host-input-reuse.json": "324d4bbaa424fe61c4213485e1f7fb6fe4406e35037ca37006b362b1f3d7450d",
+    "internal-subscription.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "internal-subscription.stdout": "0179458bb39985b8d606b8ca1f1ad3dff16bb626dc82f297cc0eacb34dc36583",
+    "ktlint.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "ktlint.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "lifecycle-common-jvm-2.9.0-sources.jar": "5764b2618dfb88b98668e5e84bec8e5af0e0c168d714687a0a3b3591f669846c",
+    "lifecycle-official-source.json": "c6c18c04b1546b7e324a422d9b32928109200dec30f583f4c33438aee9f527bc"
+  }
+}

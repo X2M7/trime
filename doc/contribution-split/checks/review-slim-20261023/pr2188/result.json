@@ -1,0 +1,55 @@
+{
+  "created_utc": "2026-10-23T03:57:02.456995+00:00",
+  "worktree": "/home/xumin/Public/Trime-pr-deferred-input-view",
+  "original_head": "2d2fbce70b449ec8b6560c844ca5ddbc2e08a4c3",
+  "committed": false,
+  "pushed": false,
+  "pr_or_review_mutations": false,
+  "source": {
+    "path": "app/src/main/java/com/osfans/trime/ime/core/TrimeInputMethodService.kt",
+    "sha256": "1556d4fd121d41154df66a4e0332185c8279b253f348b81054ead0fcea0653c5",
+    "git_blob": "5cc0e29df77926306c401fb338a1fd0967500f23",
+    "patch_sha256": "a7647f9d59d05e35a174032d9d71e6540775dbd25fe7d4ca1a061972e3cde25d"
+  },
+  "change": [
+    "Removed inputViewCreationDeferred=false and inputViewStartPending=false at onDestroy entry. Service-owned lifecycleScope cancellation and existing teardown remain unchanged.",
+    "Flattened replaceInputView pending/virtual nested if into short-circuit pending && current virtual mode; cleared pending immediately afterward."
+  ],
+  "equivalence_review": [
+    "When pending=false, old code skips body and new code only writes false to the same private plain Boolean. useVirtualKeyboard is not read in either path.",
+    "When pending=true/virtual=false, both versions clear pending without startInput.",
+    "When pending=true/virtual=true, both call startInput with currentInputEditorInfo then clear pending. If startInput throws, neither version reaches clear; exception behavior unchanged.",
+    "Removed destroy resets have no subsequent necessary state consumer: this Service instance is not reused, listeners are still removed and superclass signals ON_DESTROY to cancel the owned startup coroutine. No new unowned job was introduced."
+  ],
+  "retained": [
+    "inputViewCreationDeferred request flag and readiness recovery",
+    "inputViewStartPending state and onFinishInputView clearing",
+    "latest currentInputEditorInfo and current virtual-mode replay",
+    "replaceExisting=false preserves missing-only construction",
+    "normal theme replacement behavior",
+    "no explicit showWindow/showSoftInput/forceShowSelf added"
+  ],
+  "validation": {
+    "ktlint": {
+      "version": "1.8.0",
+      "jvm_heap": "256m",
+      "metaspace": "128m",
+      "exit": 0,
+      "stdout_bytes": 0,
+      "stderr_bytes": 0,
+      "commands": "commands.json"
+    },
+    "git_diff_check_exit": 0,
+    "full_application_compile_run": false,
+    "application_tests_run": false,
+    "device_run": false,
+    "compile_limit": "No local.properties and all ten top-level submodules uninitialized. Did not attempt Gradle or create stubs; root will use formal upstream CI."
+  },
+  "recommended_minimum_runtime_regression": [
+    "Cold requested input before ThemeScope exists: latest editor is applied when view is later constructed without another IME toggle.",
+    "Start then finish/hide before ThemeScope ready: a delayed tree may be built but must not restart finished editor or force-show.",
+    "Change active editor or physical-to-touch mode before readiness: initialize the final editor and current mode only.",
+    "Destroy while waiting for readiness: no later tree creation on destroyed Service."
+  ],
+  "scope_limit": "Source equivalence and one-file style verification only; no new whole-application compile/device pass, performance, full-warning or release claim."
+}

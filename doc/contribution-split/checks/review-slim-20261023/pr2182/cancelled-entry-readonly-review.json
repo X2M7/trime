@@ -1,0 +1,49 @@
+{
+  "observed_utc": "2026-10-23T04:25:24.127069+00:00",
+  "read_only": true,
+  "new_build_or_test": false,
+  "worktree_head": "ec0b81460b9b65d70f6797ac0c1f6d685af64d22",
+  "correction": "The earlier general statement that scope.isActive duplicates launch cancellation semantics was incorrect for CoroutineStart.UNDISPATCHED. The original report is retained unchanged; this read-only addendum records the correction.",
+  "production_calls": [
+    {
+      "path": "app/src/main/java/com/osfans/trime/ui/main/LogActivity.kt",
+      "line": 86,
+      "context": "Synchronous LogActivity.onCreate after super.onCreate and setContentView; FROM_CRASH branch."
+    },
+    {
+      "path": "app/src/main/java/com/osfans/trime/ui/main/LogActivity.kt",
+      "line": 97,
+      "context": "Synchronous LogActivity.onCreate after super.onCreate and setContentView; ordinary logs branch."
+    }
+  ],
+  "call_graph_assessment": "No production call from destroy, a delayed callback, reattach or asynchronous rebinding was found. The current two Activity.onCreate paths run on the Main thread while the Activity lifecycle scope is active. This is a call-graph invariant, not a general guarantee from launch cancellation.",
+  "cancelled_caller_assessment": "UNDISPATCHED starts its block even if its Job was already cancelled. collectLines enters coroutineScope undispatched, creates the cancelled collecting child, then still calls initLogFlow in the independent Logcat IO scope before collecting.join/finally cancels that stream. Source semantics permit a transient independent job or process to start. Existing finally cleanup prevents claiming this is necessarily a lasting leak; no such runtime session was measured here.",
+  "recommendation": "Retain the one-line scope.isActive check if preserving setLogcat’s prior no-start-for-already-cancelled-lifecycle behavior. Its elimination can only be justified by the present synchronous onCreate callers, not by UNDISPATCHED respecting initial cancellation. Do not claim a demonstrated product after-destroy regression based on this source-only review.",
+  "official_1_10_2_sources": {
+    "CoroutineStart.kt": {
+      "sha256": "9df59f4965653b91ae93440ea1b3e9a546d1acbb2bb3037fef4ba8ec4b038a58",
+      "lines": "244–249,324–333,356–361",
+      "supports": "UNDISPATCHED starts even in cancelled coroutine."
+    },
+    "CoroutineScope.kt": {
+      "sha256": "32c4f340101ff1b85f33c23cf3f3bcc9ea67177bd98692274b93efe7c3519451",
+      "lines": "280–287",
+      "supports": "coroutineScope directly starts its body undispatched."
+    },
+    "Undispatched.kt": {
+      "sha256": "29c9f865dd956041677a5f2cbac7ef063e8ec9b5155140ae849ff2cf8e30df87",
+      "lines": "41–43,61 onward",
+      "supports": "Undispatched body starts before completion/cancellation is propagated."
+    },
+    "SharedFlow.kt": {
+      "sha256": "2a833275e436112e797084ac92d602126f397880801a36e7f67a3d70ad933d78",
+      "lines": "384–400",
+      "supports": "Collect may cancel/finish at its suspension but does not skip caller statements after launch returns."
+    }
+  },
+  "current_application_source_sha256": {
+    "app/src/main/java/com/osfans/trime/ui/main/LogActivity.kt": "57b96c1782eb5efe98a69275e07b88df30dc02ab0273e2f1fdf00df579870ae6",
+    "app/src/main/java/com/osfans/trime/ui/main/log/LogView.kt": "57315de0888c0b5f3aa18d43db09f9471ca42a74c21e9323beb06b6a4c884d86",
+    "app/src/main/java/com/osfans/trime/util/Logcat.kt": "675da61a06b8c923690f4fb40d2a4953986d2837317c2f9ea998dd6e9a70952c"
+  }
+}

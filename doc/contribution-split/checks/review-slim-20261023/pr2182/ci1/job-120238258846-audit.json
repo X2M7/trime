@@ -1,0 +1,127 @@
+{
+  "job": {
+    "id": 120238258846,
+    "name": "build (macos-26)",
+    "status": "completed",
+    "conclusion": "success",
+    "started_at": "2026-10-23T04:19:42Z",
+    "completed_at": "2026-10-23T04:25:08Z"
+  },
+  "download_exit": 0,
+  "log_qualified": true,
+  "bytes": 286108,
+  "sha256": "71e17161485968e3befe698b4d150b0a6fa60bf8a8c026044844d5aa6e9ba62e",
+  "warning_candidates": [
+    {
+      "line": 91,
+      "text": "2026-10-23T04:19:48.0163410Z hint: to use in all of your new repositories, which will suppress this warning,"
+    },
+    {
+      "line": 541,
+      "text": "2026-10-23T04:20:59.1779740Z WARNING: The SDK Manager CLI tool (sdkmanager) is deprecated. Use Android CLI instead."
+    },
+    {
+      "line": 1481,
+      "text": "2026-10-23T04:21:02.2011830Z WARNING: The SDK Manager CLI tool (sdkmanager) is deprecated. Use Android CLI instead."
+    },
+    {
+      "line": 1513,
+      "text": "2026-10-23T04:21:03.5971090Z WARNING: The SDK Manager CLI tool (sdkmanager) is deprecated. Use Android CLI instead."
+    },
+    {
+      "line": 1659,
+      "text": "2026-10-23T04:22:18.9578020Z Deprecated Gradle features were used in this build, making it incompatible with Gradle 10."
+    },
+    {
+      "line": 1661,
+      "text": "2026-10-23T04:22:18.9581160Z You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins."
+    },
+    {
+      "line": 1663,
+      "text": "2026-10-23T04:22:18.9584500Z For more on this, please refer to https://docs.gradle.org/9.8.1/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation."
+    },
+    {
+      "line": 1777,
+      "text": "2026-10-23T04:24:53.7770100Z Deprecated Gradle features were used in this build, making it incompatible with Gradle 10."
+    },
+    {
+      "line": 1779,
+      "text": "2026-10-23T04:24:53.7777650Z You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins."
+    },
+    {
+      "line": 1781,
+      "text": "2026-10-23T04:24:53.7784310Z For more on this, please refer to https://docs.gradle.org/9.8.1/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation."
+    }
+  ],
+  "app_task_lines": [
+    {
+      "line": 1740,
+      "text": "2026-10-23T04:22:58.7401650Z > Task :app:checkDebugDuplicateClasses"
+    },
+    {
+      "line": 1743,
+      "text": "2026-10-23T04:23:00.9823990Z > Task :app:checkDebugAarMetadata"
+    }
+  ],
+  "checkout_lines": [
+    {
+      "line": 125,
+      "text": "2026-10-23T04:19:48.6018900Z [command]/opt/homebrew/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules origin +refs/heads/*:refs/remotes/origin/* +refs/tags/*:refs/tags/* +0ae20751b7cc4de626913e08e658780d5800bef1:refs/remotes/pull/2182/merge"
+    },
+    {
+      "line": 169,
+      "text": "2026-10-23T04:19:50.7695670Z  * [new ref]           0ae20751b7cc4de626913e08e658780d5800bef1 -> pull/2182/merge"
+    },
+    {
+      "line": 417,
+      "text": "2026-10-23T04:20:24.9214830Z [command]/opt/homebrew/bin/git log -1 --format=%H"
+    },
+    {
+      "line": 418,
+      "text": "2026-10-23T04:20:24.9311130Z 0ae20751b7cc4de626913e08e658780d5800bef1"
+    }
+  ],
+  "checkout_context": [
+    {
+      "line": 415,
+      "text": "2026-10-23T04:20:24.8793060Z Entering 'app/src/main/jni/snappy/third_party/googletest'"
+    },
+    {
+      "line": 416,
+      "text": "2026-10-23T04:20:24.9031370Z ##[endgroup]"
+    },
+    {
+      "line": 417,
+      "text": "2026-10-23T04:20:24.9214830Z [command]/opt/homebrew/bin/git log -1 --format=%H"
+    },
+    {
+      "line": 418,
+      "text": "2026-10-23T04:20:24.9311130Z 0ae20751b7cc4de626913e08e658780d5800bef1"
+    },
+    {
+      "line": 419,
+      "text": "2026-10-23T04:20:25.0467080Z ##[group]Run echo ${GITHUB_REF#refs/*/}"
+    },
+    {
+      "line": 420,
+      "text": "2026-10-23T04:20:25.0467420Z \u001b[36;1mecho ${GITHUB_REF#refs/*/}\u001b[0m"
+    },
+    {
+      "line": 421,
+      "text": "2026-10-23T04:20:25.0467690Z \u001b[36;1mecho CI_BRANCH=${GITHUB_REF#refs/*/} >> $GITHUB_ENV\u001b[0m"
+    },
+    {
+      "line": 422,
+      "text": "2026-10-23T04:20:25.0828150Z shell: /bin/bash --noprofile --norc -e -o pipefail {0}"
+    },
+    {
+      "line": 423,
+      "text": "2026-10-23T04:20:25.0828420Z env:"
+    },
+    {
+      "line": 424,
+      "text": "2026-10-23T04:20:25.0828590Z   CI_NAME: Pull Request CI"
+    }
+  ],
+  "warning_limit": "Mechanical matching preserves summaries and duplicate lines, not distinct defects or zero-warning qualification."
+}

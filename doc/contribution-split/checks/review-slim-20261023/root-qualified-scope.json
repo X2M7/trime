@@ -1,0 +1,145 @@
+{
+  "recorded_utc": "2026-10-23T04:44:00.499002+00:00",
+  "task": "Simplify existing PR2188/2186/2182 after redundant-guard comments.",
+  "current": {
+    "2188": {
+      "head": "e009dc0b567f9639cf518bc3b35cd172ac627be7",
+      "current_ci": {
+        "path": "pr2188/ci1/qualification.json",
+        "run_id": 39897773613,
+        "url": "https://github.com/osfans/trime/actions/runs/39897773613",
+        "successful_jobs": 5,
+        "actual_producer_merge": "66ebea7c04dab06db9074790331f33687353fdd3",
+        "app_test_task_executed": true,
+        "exact_app_testcase_count": null
+      },
+      "warning_categories": [
+        "Git init hint",
+        "Android sdkmanager deprecation",
+        "Android SDK JNA native access on Java25 (Windows/macOS Intel)",
+        "Unexpanded Gradle10 deprecation summaries",
+        "Windows Gradle cache save tar exit2 warning after build"
+      ],
+      "new_device_acceptance": false
+    },
+    "2186": {
+      "head": "2ad1865fd97f09ffba231e5c0e23092cd383b059",
+      "current_ci": {
+        "path": "pr2186/ci1/qualification.json",
+        "run_id": 39897889043,
+        "url": "https://github.com/osfans/trime/actions/runs/39897889043",
+        "successful_jobs": 5,
+        "actual_producer_merge": "009a6e643ead0da836102df02370ed5901c938d2",
+        "app_test_task_executed": true,
+        "exact_app_testcase_count": null
+      },
+      "warning_categories": [
+        "git init hint mentioning warning",
+        "Git checkout note, not compiler warning",
+        "toolchain: sdkmanager deprecation",
+        "toolchain/build: unexpanded Gradle deprecation summary",
+        "unchanged dependency: leveldb CMake",
+        "unchanged dependency: yaml-cpp dragonbox",
+        "unchanged dependency: librime-lua",
+        "compiler warning summary, detailed diagnostics separately retained",
+        "toolchain: JNA/Java native access",
+        "toolchain: Windows cache save tar failure"
+      ],
+      "new_device_acceptance": false
+    },
+    "2182": {
+      "head": "9f95cb574a820f61482cc41c49362317cce1df38",
+      "current_ci": {
+        "path": "pr2182/ci2/qualification.json",
+        "run_id": 39900491225,
+        "url": "https://github.com/osfans/trime/actions/runs/39900491225",
+        "successful_jobs": 5,
+        "actual_producer_merge": "3d4817ec4540b3bfefffded8f1757888da0dfcc4",
+        "app_test_task_executed": true,
+        "exact_app_testcase_count": null
+      },
+      "warning_categories": [
+        "git init hint mentioning warning",
+        "Git checkout note, not compiler warning",
+        "toolchain: sdkmanager deprecation",
+        "toolchain/build: unexpanded Gradle deprecation summary",
+        "toolchain: JNA/Java native access",
+        "toolchain: Windows cache save tar failure"
+      ],
+      "new_device_acceptance": false
+    }
+  },
+  "current_successful_jobs": 15,
+  "host_checks": {
+    "pr2188": "Single-file style and source review; whole-app compilation/tests are CI only.",
+    "pr2186": "115 checked-JVM Unicode plus46 UTF16 assertions; both upstream negative controls fail as expected; six NDK28/API21 x86_64 translation units strict compile with existing unused-parameter exclusion.",
+    "pr2182": "host5 executed46 cases with -ea. Its six code/test inputs are unchanged at final9f95 and the result is hash-bound reuse, not rerun. LogView follow-up is outside host5; current CI/style and official lifecycle contracts are separate."
+  },
+  "logging_boundaries": [
+    "Process destruction/release operation is once; reader.use and cancellation fallback may close an underlying stream more than once.",
+    "Outer NonCancellable boundary surrounds dispatcher return. LimitedParallelism(1) alone is not a mutex across suspensions.",
+    "Assertions-enabled controls support the retained short cancellation-cause handling; early mixed variants are not described as isolated boundary controls.",
+    "UNDISPATCHED can enter a cancelled scope. Final LogView uses DEFAULT; only the internal subscriber retains UNDISPATCHED. No observed post-destroy product leak is claimed."
+  ],
+  "historical": [
+    "ec0b8146 CI in pr2182/ci1 succeeded but is NOT current9f95 acceptance.",
+    "All earlier device and application testcase counts remain attached to their previous heads.",
+    "Initial host1-4 failures, original bytes and later interpretation corrections remain retained."
+  ],
+  "limits": [
+    "No new emulator, physical-device, TalkBack, Release/upgrade, APK signature/ABI runtime or performance acceptance.",
+    "Original fixed-dependency and toolchain warnings remain; no zero-warning claim.",
+    "No new upstream PR, review comment, resolve, review request, status transition, merge or release action; three original source branches pushed normally to X2M7/trime.",
+    "Main develop, T9 and other application contribution branches are unchanged."
+  ],
+  "references": [
+    {
+      "path": "source-audit-final.json",
+      "sha256": "28e17c1ffea6d6a9b6eb430651684b7d3a8450ace746ef60d5d326d7692e37ec"
+    },
+    {
+      "path": "pr2188/ci1/qualification.json",
+      "sha256": "04b38d7578d93292bf03b265b4eff9b23a363992573d19e274db88d8c56998d1"
+    },
+    {
+      "path": "pr2188/source-push1/receipt.json",
+      "sha256": "f088715e82cd75aebc978b7bb9a9cb1f81f34c3750f6e061503a6c062cbee3a6"
+    },
+    {
+      "path": "pr2186/ci1/qualification.json",
+      "sha256": "3acb0b41a1439bf2e5e28691d32d26b6160c2c766e7f4d7a3eca2761061512d7"
+    },
+    {
+      "path": "pr2186/source-push1/receipt.json",
+      "sha256": "2954c7b61f18154c30d37859bc73a8848f5688aa0ae182ffb37d287f7425c4ba"
+    },
+    {
+      "path": "pr2182/ci2/qualification.json",
+      "sha256": "d59ed430c954a6f303efd830aaf25deff2f21f4dc9f7b979d84deb18d61f9f81"
+    },
+    {
+      "path": "pr2182/source-push2/receipt.json",
+      "sha256": "ed403583f58d4549ea46699451dd2f4b08afbc6ffa5f60020a91631cc5c461d1"
+    },
+    {
+      "path": "pr2188/result.json",
+      "sha256": "9dd93c82c5ad70cdcc367bff3aeee8f156de280bc52db8c9945f8435c74f595e"
+    },
+    {
+      "path": "pr2186/result.json",
+      "sha256": "d4302000d9c7c4507a6db6eb1952ff02d2e623861ce4a78619b729485bc14d70"
+    },
+    {
+      "path": "pr2182/implementation-report.json",
+      "sha256": "b5076e856e4f270b3a3982db8cb988cc508a35607c13ea6f83dab15cb48c2ef2"
+    },
+    {
+      "path": "pr2182/lifecycle-launch2/result.json",
+      "sha256": "d397b708dd7c24ff2cd66775eb2cd5c7e2634626ca472e57c38d65b0608310fb"
+    },
+    {
+      "path": "pr2182/independent-review2.json",
+      "sha256": "a1a4245eb77b70a7c9525b47ac5a8d4976a1e2337916ae5ee23c5f6effb034ee"
+    }
+  ]
+}

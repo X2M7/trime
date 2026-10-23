@@ -1,0 +1,31 @@
+diff --git a/app/src/main/java/com/osfans/trime/ime/core/TrimeInputMethodService.kt b/app/src/main/java/com/osfans/trime/ime/core/TrimeInputMethodService.kt
+index af74f764..5cc0e29d 100644
+--- a/app/src/main/java/com/osfans/trime/ime/core/TrimeInputMethodService.kt
++++ b/app/src/main/java/com/osfans/trime/ime/core/TrimeInputMethodService.kt
+@@ -312,13 +312,11 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
+         setInputView(newInputView)
+         inputDeviceManager.setInputView(newInputView)
+         inputView = newInputView
+-        if (inputViewStartPending) {
+-            if (inputDeviceManager.useVirtualKeyboard) {
+-                // A new tree needs the latest editor, even if its start callback arrived earlier.
+-                newInputView.startInput(currentInputEditorInfo)
+-            }
+-            inputViewStartPending = false
++        if (inputViewStartPending && inputDeviceManager.useVirtualKeyboard) {
++            // A new tree needs the latest editor, even if its start callback arrived earlier.
++            newInputView.startInput(currentInputEditorInfo)
+         }
++        inputViewStartPending = false
+         return newInputView
+     }
+ 
+@@ -348,8 +346,6 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
+     }
+ 
+     override fun onDestroy() {
+-        inputViewCreationDeferred = false
+-        inputViewStartPending = false
+         InputFeedbackManager.destroy()
+         inputView = null
+         recreateInputViewPrefs.forEach {
