@@ -6,7 +6,7 @@
 
 当前源码的 **301 项应用 JVM 新执行通过，fork CI 4/4、上游 CI 5/5 成功**。未修改、未重签的原始 Ubuntu x86_64 Debug APK 类在 API21 通过 13 阶段／39 张原图；Root 实际看 7 张硬件原图，独立核验覆盖全部文件及文本／Layout／节点／类型／像素和公开 LINE 动作。API35 本轮 **未通过前置，0 阶段**：safe 诊断 Activity 的 8 秒焦点／可见性／正宽度组合前置未满足（原件未分别记录三项），已有先发 SystemUI ANR，恢复图显示系统 ANR 弹窗；不能证明唯一因果，原 APK 及其余对照完全未运行，也不借旧源通过。两轮设置与 DocumentsUI 状态精确恢复、SDK 10／25 项不变、VM 正常退出；API35 collector 实际 255 原样保留。
 
-见[本轮说明与原件](checks/candidate-review-20261023/README.md)及[Root 限定总表](checks/candidate-review-20261023/root-qualified-scope.json)。原始依赖、构建、运行及 META-INF 警告和所有失败轮保留。控件级外部 Activity 检查不代表真实 TalkBack、候选点击、原生输入法、真机或 Release 验收；当前仍待维护者复审，未解决审阅线程、自动合并或发布。#2183、主 develop 及其余贡献分支未改。
+见[本轮说明与原件](checks/candidate-review-20261023/README.md)及[Root 限定总表](checks/candidate-review-20261023/root-qualified-scope.json)。原始依赖、构建、运行及 META-INF 警告和所有失败轮保留。控件级外部 Activity 检查不代表真实 TalkBack、候选点击、原生输入法、真机或 Release 验收；[原 PR 正文更新回执](checks/candidate-review-20261023/pr-body-update1/receipt.json)确认正文逐字读回、源码与 Open／非 Draft 状态未变，正文证据固定引用 `9eb3810a`。当前仍待维护者复审，未解决审阅线程、自动合并或发布。#2183、主 develop 及其余贡献分支未改。
 
 ## #2183 当前整改状态（2026-10-23）
 
