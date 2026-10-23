@@ -8,6 +8,8 @@
 
 输入法／屏幕／字体与DocumentsUI状态精确恢复、10项SDK不变，child／wrapper／controller／VM／collector实际全0；最低可用6,693,528KiB。W1553／E408完整保留，既有构建／依赖与签名警告未冒称消除。本轮不重跑API35；真机、TalkBack、原生候选点击、Release及性能仍未验收。[本轮说明和原件](checks/candidate-setter-order-20261023/README.md)与所有旧轮记录分开。原PR等待维护者复审，#2183与主develop未改。
 
+[原 PR 正文更新回执](checks/candidate-setter-order-20261023/pr-body-update1/receipt.json)确认正文逐字读回，证据固定引用 `748af2a4`；源码、标题、base、Open／非 Draft 均未改变，未发送审阅回复或自动解决线程。
+
 ## #2187 上一轮92b审阅修改（2026-10-23，历史记录）
 
 [#2187](https://github.com/osfans/trime/pull/2187) 已按 Collaborator 审阅推送 `92b13711`，仍仅一个应用文件。重复文本只减少自有缓存失效及显式刷新，原 nullable 值与 BufferType 始终交给父类；删除新增的 `super.onLayout`，保留带说明的 `super.onMeasure`。Android 5.0 对照中，删除父类测量导致前 11 项框架 Layout 为 null、后两项可选择／按行移动通过；将整个父类 setter 放进内容比较分支则在初次测量崩溃，未导出 BufferType 测试结果，不能照搬该写法。

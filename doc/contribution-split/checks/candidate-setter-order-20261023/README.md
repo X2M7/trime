@@ -37,3 +37,7 @@ The private API21 AVD uses the same strict unique BEGIN/END/process checks and e
 Current artifacts and all original warnings are retained separately from the one-file PR. The upstream check log contains SDK warnings and unexpanded Gradle deprecation summaries; each APK has two META-INF/services signature warnings. This is not zero-warning or all-native-rebuilt acceptance. Actual runtime diagnostics and tool exit values remain visible.
 
 The local `.gitattributes` preserves original line endings and terminal spaces. Publication omits APKs, private backups, binary command streams and signing material. The manifest binds the published original bytes and lossless gzip records. No review comment is posted, thread resolved, review dismissed, PR status changed, merge made or release published by this follow-up.
+
+## PR metadata publication
+
+The [body-only update receipt](pr-body-update1/receipt.json) confirms exact readback of the revised investigation and validation scope. The body links immutable evidence commit `748af2a46a23e01559e9700d5d8c1f8961eecbc0`; source head, title, base, Open/non-Draft state remain unchanged. The [normal evidence push receipt](index-evidence-push1/receipt.json) verifies that commit on the fork. No review comment, resolve or re-request was sent.
