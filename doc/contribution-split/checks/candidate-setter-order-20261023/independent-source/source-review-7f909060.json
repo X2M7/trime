@@ -1,0 +1,261 @@
+{
+  "schema": 1,
+  "reviewed_at_utc": "2026-10-23T02:22:18.144495+00:00",
+  "scope": "Independent HOST source review for PR 2187 comment 4354993843; no app edits, compilation, device, ADB, GitHub mutation, or push by this reviewer.",
+  "result": "NO_NEW_SOURCE_BLOCKER_IDENTIFIED",
+  "recommendation": "The one-file simplification is suitable to push for CI and reviewer consideration. This report is source analysis, not an exact-source runtime or whole-app pass.",
+  "binding": {
+    "repository": "/home/xumin/Public/Trime-pr-candidate-text-layout",
+    "base_commit": "92b13711162c5fa56c701267c3a06e5fbceeb6ce",
+    "base_class_sha256": "59cf13b4b42b09acbb06f41922c2480844ffa96a7399494b565e718a4a12a05c",
+    "reviewed_commit": "7f909060a1d42198e749eb1f9a66399f76bf8710",
+    "reviewed_tree": "2da497746bf3997515b816629ae92e6d2ffef0fb",
+    "reviewed_class": "app/src/main/java/com/osfans/trime/ime/core/AutoScaleTextView.kt",
+    "reviewed_class_sha256": "c92ded471c62aa2a773510784237d60ac822d831bda9298929a6f99b5d3db8c1",
+    "changed_files": [
+      "app/src/main/java/com/osfans/trime/ime/core/AutoScaleTextView.kt"
+    ],
+    "saved_diff_sha256": "2074cdf67e57faafb7ebbfd3987e262bc5a71f3a232cd659d31d15692590ffe7"
+  },
+  "actual_setter": {
+    "lines": [
+      59,
+      69
+    ],
+    "first_executable_statement_line": 63,
+    "first_executable_statement": "super.setText(charSequence, bufferType)",
+    "after_super": [
+      "needsMeasureText = true",
+      "needsCalculateTransform = true",
+      "requestLayout()",
+      "invalidate()"
+    ],
+    "branch_or_text_comparison": "none",
+    "onMeasure_super_line": 76,
+    "onLayout_unchanged_by_this_commit": true
+  },
+  "findings": [
+    {
+      "topic": "Parent-first semantics",
+      "conclusion": "super.setText is unconditionally the first statement. No old text read or comparison precedes it. Nullable normalization and BufferType conversions remain delegated to TextView on every call, including equal-content calls.",
+      "evidence": [
+        "new class lines 59-69",
+        "API21 TextView lines 3904-3965, 4002-4009",
+        "API35 TextView lines 7281-7349, 7415-7425"
+      ]
+    },
+    {
+      "topic": "Constructor virtual dispatch",
+      "conclusion": "The override invokes the parent and then writes only primitive dirty flags; it never reads or dereferences the subclass Paint.FontMetrics or Rect caches during TextView construction. The subclass flag initializers are also true after superclass construction. No new constructor cache dereference was introduced.",
+      "evidence": [
+        "new class lines 49-57, 59-69"
+      ]
+    },
+    {
+      "topic": "Measurement and draw order in ordinary framework paths",
+      "conclusion": "The reviewed API21 and API35 setText paths may synchronously normalize/filter text, update TextView text/transformation state, initialize movement, rebuild its framework Layout, and notify listeners. Their ordinary relayout/invalidation paths request later traversal; no direct call to AutoScaleTextView.onMeasure or onDraw was found in those ordinary paths. The post-super flags therefore conservatively invalidate custom caches before the requested traversal on the current call paths.",
+      "evidence": [
+        "API21 TextView lines 3912-4060, 6807-6857",
+        "API35 TextView lines 7289-7494, 11630-11682",
+        "API21 View requestLayout lines 17345-17365, ViewRootImpl requestLayout lines 865-870 and scheduleTraversals lines 1021-1026",
+        "API35 View requestLayout lines 27995-28021, ViewRootImpl requestLayout lines 2471-2477 and scheduleTraversals lines 2888-2893"
+      ]
+    },
+    {
+      "topic": "Current app callback registrations",
+      "conclusion": "Search of current app/src/main plus the AutoScale consumer implementations found no project TextWatcher, InputFilter, custom TransformationMethod, MovementMethod, or platform auto-size registration on these labels. The only doAfterTextChanged found is on the independent TestInputPanel editor. Standard TextView single-line transformation is used by some labels; this is not a claim that all framework transformations or callbacks are absent.",
+      "evidence": [
+        "current-consumers-search.txt",
+        "consumer_files entries"
+      ]
+    },
+    {
+      "topic": "Scope and reentry limit",
+      "conclusion": "This is not a universal no-reentrancy guarantee: TextWatcher/filter/transformation/movement callbacks execute synchronously and can run arbitrary client code. A future custom callback that explicitly measures or draws inside super.setText would need its own analysis. No such registration was found in the current AutoScale consumers, and no existing-path need for dirty-before-super was identified.",
+      "evidence": [
+        "API21 TextView filter line 3939, transformation line 4008, movement lines 4034-4035, notifications lines 4050-4056",
+        "API35 TextView filter line 7320, transformation line 7421, movement lines 7454-7455, notifications lines 7470-7486"
+      ]
+    },
+    {
+      "topic": "Repeated equal text and performance",
+      "conclusion": "Removing the content comparison intentionally dirties both custom caches and requests layout/redraw even for equal content. This is simpler and conservative for correctness, including buffer-only calls. It may add work on repeated equal assignments; no zero-cost or performance-improvement claim is supported by this source review. Existing measured performance on the previous commit is not automatically evidence for this commit.",
+      "evidence": [
+        "old-to-new diff",
+        "new class lines 63-68, 101-128, 141-151, 224-227"
+      ]
+    },
+    {
+      "topic": "Rejected unnecessary alternatives",
+      "conclusion": "Saving an old-content comparison before super would conflict with the literal parent-first request and preserve optional equality logic without a demonstrated need. Comparing content after the parent usually compares against its new value, so it is not a reliable substitute for an old-content comparison. Unconditional dirty flags avoid that issue.",
+      "evidence": [
+        "new class lines 63-68",
+        "API21 TextView mText assignment line 4003",
+        "API35 TextView setTextInternal line 7416"
+      ]
+    },
+    {
+      "topic": "Unchanged earlier measurement fix",
+      "conclusion": "This commit does not change custom measurement/drawing or the retained super.onMeasure and absent super.onLayout. The current review does not relabel prior evidence for those choices as a new execution.",
+      "evidence": [
+        "one-file exact diff",
+        "new class lines 71-89, 141-152"
+      ]
+    }
+  ],
+  "consumer_files": {
+    "app/src/main/java/com/osfans/trime/ime/candidates/CandidateItemUi.kt": {
+      "construction_lines": [
+        67,
+        77
+      ],
+      "text_update_lines": [
+        172,
+        176
+      ],
+      "sha256": "98c33b91e1b562a0f017920e79d882abbac67677be0b148eda413a0ac6161448",
+      "bytes": 6760
+    },
+    "app/src/main/java/com/osfans/trime/ime/bar/ui/ToolButton.kt": {
+      "construction_lines": [
+        45
+      ],
+      "text_update_lines": [
+        231
+      ],
+      "sha256": "603880204cf9eb4d2e04997ddf8f35dce986479385fb57fb46d35a46393ed072",
+      "bytes": 7444
+    },
+    "app/src/main/java/com/osfans/trime/ime/popup/PopupKeyboardUi.kt": {
+      "construction_lines": [
+        73
+      ],
+      "text_update_lines": [
+        108
+      ],
+      "sha256": "053481ac0be3ed3231e9463f55d1956020520acbb92402c7e067f4bf88cae365",
+      "bytes": 10591
+    },
+    "app/src/main/java/com/osfans/trime/ime/popup/PopupEntryUi.kt": {
+      "construction_lines": [
+        42
+      ],
+      "text_update_lines": [
+        98
+      ],
+      "sha256": "cf1b0e53b6ed0c4e689c2059d72a0125b16e5e4d0d67b0fa88872f146058221d",
+      "bytes": 3414
+    },
+    "app/src/main/java/com/osfans/trime/ime/symbol/LiquidItemUi.kt": {
+      "construction_lines": [
+        31
+      ],
+      "sha256": "2a12760f44d47c26f807385bbcc2e53ba248456e43aa2a0dd5210242b47d967f",
+      "bytes": 2129
+    },
+    "app/src/main/java/com/osfans/trime/ime/symbol/LiquidAdapter.kt": {
+      "config_lines": [
+        33,
+        34,
+        35,
+        36,
+        37,
+        38
+      ],
+      "text_update_lines": [
+        50
+      ],
+      "sha256": "c751bf3d7ed4c024515d3a07e128614a6632ebaff1ad75c0d6a1bf1cdfb86196",
+      "bytes": 1684
+    },
+    "app/src/main/java/com/osfans/trime/ime/switches/SwitchOptionEntryUi.kt": {
+      "construction_lines": [
+        62
+      ],
+      "text_update_lines": [
+        142
+      ],
+      "sha256": "cfe76d9274574e04056ebe8f16da873b0818dc43a4d098edf009f22eb6936ffa",
+      "bytes": 5293
+    },
+    "app/src/main/java/com/osfans/trime/ui/main/TestInputPanel.kt": {
+      "non_AutoScale_editor_doAfterTextChanged_line": 219,
+      "sha256": "367467ec34e6f0ff3c628b8e6c13898a22d07d6b2e3f3c23bfbdf6ee114c331c",
+      "bytes": 11309
+    }
+  },
+  "official_sources": [
+    {
+      "url": "https://android.googlesource.com/platform/frameworks/base/+/android-5.0.0_r1/core/java/android/widget/TextView.java?format=TEXT",
+      "path": "/home/xumin/Public/Trime/build/pr2187-settext-order-20261023/independent-source/android-5.0.0_r1-TextView.java",
+      "bytes": 353162,
+      "sha256": "0985a714e12bd75da938b16a810552cd0d1f5f442bcffe427a054bd4be3db783"
+    },
+    {
+      "url": "https://android.googlesource.com/platform/frameworks/base/+/android-5.0.0_r1/core/java/android/widget/Editor.java?format=TEXT",
+      "path": "/home/xumin/Public/Trime/build/pr2187-settext-order-20261023/independent-source/android-5.0.0_r1-Editor.java",
+      "bytes": 176681,
+      "sha256": "c31777431261e1c32b44bbe143b25660568bb170517332b0268a18ad035ecc14"
+    },
+    {
+      "url": "https://android.googlesource.com/platform/frameworks/base/+/android-5.0.0_r1/core/java/android/view/View.java?format=TEXT",
+      "path": "/home/xumin/Public/Trime/build/pr2187-settext-order-20261023/independent-source/android-5.0.0_r1-View.java",
+      "bytes": 814127,
+      "sha256": "a5981c7a5832d1c3c851bbcd93fd202a1012012c73595759776cd539f32748c5"
+    },
+    {
+      "url": "https://android.googlesource.com/platform/frameworks/base/+/android-15.0.0_r1/core/java/android/widget/TextView.java?format=TEXT",
+      "path": "/home/xumin/Public/Trime/build/pr2187-settext-order-20261023/independent-source/android-15.0.0_r1-TextView.java",
+      "bytes": 665892,
+      "sha256": "28df78f28a87faafd48906c2f36de0ec4bfaafe0c1fe8451d86daa432ea1759a"
+    },
+    {
+      "url": "https://android.googlesource.com/platform/frameworks/base/+/android-15.0.0_r1/core/java/android/widget/Editor.java?format=TEXT",
+      "path": "/home/xumin/Public/Trime/build/pr2187-settext-order-20261023/independent-source/android-15.0.0_r1-Editor.java",
+      "bytes": 356753,
+      "sha256": "bc9815cca4cd32fbc0fe3429a31a43b95bb3bbf757beb949a8c5b5bb5a739848"
+    },
+    {
+      "url": "https://android.googlesource.com/platform/frameworks/base/+/android-15.0.0_r1/core/java/android/view/View.java?format=TEXT",
+      "path": "/home/xumin/Public/Trime/build/pr2187-settext-order-20261023/independent-source/android-15.0.0_r1-View.java",
+      "bytes": 1398620,
+      "sha256": "66c6b9875036a782bf07508cbca5cfc69df794f8b38f1d996874f79ebff995e7"
+    },
+    {
+      "url": "https://android.googlesource.com/platform/frameworks/base/+/android-5.0.0_r1/core/java/android/view/ViewRootImpl.java?format=TEXT",
+      "path": "/home/xumin/Public/Trime/build/pr2187-settext-order-20261023/independent-source/android-5.0.0_r1-ViewRootImpl.java",
+      "bytes": 284707,
+      "sha256": "653b631253ab34c7fd6e2c987cf9af23339cac3c6e5bdb8bf9f9f926b9138e23"
+    },
+    {
+      "url": "https://android.googlesource.com/platform/frameworks/base/+/android-15.0.0_r1/core/java/android/view/ViewRootImpl.java?format=TEXT",
+      "path": "/home/xumin/Public/Trime/build/pr2187-settext-order-20261023/independent-source/android-15.0.0_r1-ViewRootImpl.java",
+      "bytes": 570670,
+      "sha256": "62b40f6df0f2d8a54efb7678afbe4cbe12f9b2ee8bd276ee5709d6853d568753"
+    }
+  ],
+  "evidence_files": [
+    {
+      "path": "/home/xumin/Public/Trime/build/pr2187-settext-order-20261023/independent-source/reviewed-AutoScaleTextView-7f909060.kt",
+      "sha256": "c92ded471c62aa2a773510784237d60ac822d831bda9298929a6f99b5d3db8c1"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/pr2187-settext-order-20261023/independent-source/reviewed-diff-92b13711-to-7f909060.patch",
+      "sha256": "2074cdf67e57faafb7ebbfd3987e262bc5a71f3a232cd659d31d15692590ffe7"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/pr2187-settext-order-20261023/independent-source/current-consumers-search.txt",
+      "sha256": "40dcda547c365f6cf690f58667303131a99d039c09b496faa677c75550aeef28"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/pr2187-settext-order-20261023/independent-source/official-source-manifest.json",
+      "sha256": "7f1781a7efb6276a3c4d3dc48ad28ccbffa027d5d8b49a932f26949aa7760097"
+    }
+  ],
+  "limitations": [
+    "No assertion that the previous dirty-before-super order caused an observed product bug.",
+    "No assertion that arbitrary future synchronous callbacks or reentrant client code are safe.",
+    "No exact-source runtime/CI execution claimed by this reviewer. The root independently owns compilation/CI evidence.",
+    "No global warning-free, performance-neutral, or zero-risk claim."
+  ]
+}

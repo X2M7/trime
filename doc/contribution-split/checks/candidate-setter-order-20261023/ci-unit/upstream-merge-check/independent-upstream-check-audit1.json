@@ -1,0 +1,160 @@
+{
+  "schema": 1,
+  "reviewed_at_utc": "2026-10-23T02:29:32.178282+00:00",
+  "result": "QUALIFIED_UPSTREAM_SYNTHETIC_MERGE_CHECK_JOB_ONLY",
+  "workflow_run_id": 39889136561,
+  "workflow_run_url": "https://github.com/osfans/trime/actions/runs/39889136561",
+  "run_status_at_initial_observation": "in_progress",
+  "run_conclusion_at_initial_observation": null,
+  "job_id": 120204395239,
+  "job_name": "check / lint-and-test",
+  "job_terminal_conclusion": "success",
+  "job_started_at": "2026-10-23T02:21:41Z",
+  "job_completed_at": "2026-10-23T02:25:27Z",
+  "request_head": "7f909060a1d42198e749eb1f9a66399f76bf8710",
+  "checked_out_producer": "9ff9572f2ed289d8af198f81ce08bdac66d8a69c",
+  "producer_tree": "10f5abd560dc4d365553d8edadc62f47986cb7da",
+  "fork_full_tree": "2da497746bf3997515b816629ae92e6d2ffef0fb",
+  "full_tree_matches_fork": false,
+  "reviewed_class_path": "app/src/main/java/com/osfans/trime/ime/core/AutoScaleTextView.kt",
+  "producer_class_git_blob": "901d7fb59a70f5c87dee958fa0db94cbdd25629c",
+  "producer_and_fork_class_sha256": "c92ded471c62aa2a773510784237d60ac822d831bda9298929a6f99b5d3db8c1",
+  "producer_class_matches_exact_fork_reviewed_class": true,
+  "source_identity_evidence": [
+    "Uses check-ci.yml at refs/pull/2187/merge and exact producer SHA in original job log",
+    "checkout HEAD plus git log -1 printed exact producer",
+    "Git commit object lists producer tree and 7f909060 parent",
+    "Remote producer class bytes independently matched fork-reviewed class SHA"
+  ],
+  "recursive_submodule_checkout_count": 20,
+  "checkout_submodule_pins_match_source7f_gitlinks": true,
+  "observed_job_execution": {
+    "code_style_step": {
+      "name": "Check code style",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 5,
+      "started_at": "2026-10-23T02:22:26Z",
+      "completed_at": "2026-10-23T02:23:18Z"
+    },
+    "unit_and_lint_step": {
+      "name": "Run unit tests and lint",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 6,
+      "started_at": "2026-10-23T02:23:18Z",
+      "completed_at": "2026-10-23T02:25:24Z"
+    },
+    "producer_make_check_command": "./gradlew :app:check",
+    "actual_test_task_lines": [
+      "2026-10-23T02:24:40.0157754Z > Task :app:testDebugUnitTest"
+    ],
+    "actual_lint_and_check_task_lines": [
+      "2026-10-23T02:25:24.6180832Z > Task :app:lintReportDebug",
+      "2026-10-23T02:25:24.7274835Z > Task :app:lintDebug",
+      "2026-10-23T02:25:24.7314933Z > Task :app:lint",
+      "2026-10-23T02:25:24.7315308Z > Task :app:check"
+    ],
+    "test_task_cache_status": "No FROM-CACHE, UP-TO-DATE, SKIPPED or NO-SOURCE suffix observed on testDebugUnitTest; successful task execution logged.",
+    "build_successful_occurrences": 2
+  },
+  "junit": {
+    "xml_available_for_this_job": false,
+    "xml_upload_step_in_producer_workflow": false,
+    "individual_test_count": "NOT_OBSERVED",
+    "may_claim_301_tests": false,
+    "reason": "The check job succeeds and logs the unit-test task, but publishes no original JUnit XML or individual test totals. Previous-source 301 XML is not reused."
+  },
+  "warnings": {
+    "candidate_line_count": 9,
+    "candidate_definition": "Case-insensitive warning|deprecated; includes explanatory guidance, not 9 distinct actionable warnings.",
+    "observed_categories": {
+      "git_init_default_branch_hint_line": 1,
+      "sdkmanager_deprecated_warning_lines": 2,
+      "gradle_deprecation_summary_groups": 2,
+      "gradle_summary_guidance_lines": 4
+    },
+    "unresolved_attribution": "The upstream workflow did not request --warning-mode=all; individual Gradle deprecations and their origin are not present, so this report does not classify them as harmless or prove project warnings eliminated.",
+    "all_original_bytes_retained": true,
+    "zero_warning_claim": false
+  },
+  "fork_dedicated_jvm_execution": "NOT_RUN; control b713021b has no run, explicit dispatch was rejected by GitHub with HTTP422 Actions disabled. No old fork success is claimed for new source.",
+  "limits": [
+    "This is the terminal lint-and-test job of the upstream pull-request synthetic merge; it is not a whole fork tree acceptance or a claim that the entire workflow has already finished.",
+    "Identical AutoScale source blob does not imply identical whole trees.",
+    "No Android rendering, accessibility interaction, TalkBack, APK identity, Release, native or device test acceptance is inferred from this job.",
+    "No individual new-source JVM test count or JUnit result artifact is claimed."
+  ],
+  "evidence": [
+    {
+      "path": "run-initial.json",
+      "bytes": 11820,
+      "sha256": "391c2bf64e2d0a9e271d16fde4b8ccdc586e28fba5ee05f18e6a54b07c6a94a4"
+    },
+    {
+      "path": "jobs-initial.json",
+      "bytes": 12998,
+      "sha256": "9221d706713189d86ac7ed4c48b91e720b3b7756dc4a263d576e670824fbc4e2"
+    },
+    {
+      "path": "workflow-producer.json",
+      "bytes": 2168,
+      "sha256": "328f52182d90b6d7893c33751399b4146816214f7204e8d3d61981b9b502cd7f"
+    },
+    {
+      "path": "check-ci-producer.yml",
+      "bytes": 820,
+      "sha256": "52b07401138967e4490482d68549f429da7f3867e50a398d4c6992ba80ecfdb5"
+    },
+    {
+      "path": "producer-Makefile",
+      "bytes": 2180,
+      "sha256": "6c8e1ea62d8c492a5b4ab16ad0b935ecdc5edb4b2b8e4a03c0dd313d86d5e18b"
+    },
+    {
+      "path": "producer-makefile.json",
+      "bytes": 3905,
+      "sha256": "47a07dc7e53c82c75b5eeb4ff692d907cd7fbf6d5b71e104ae788007a90cf5b9"
+    },
+    {
+      "path": "producer-commit.json",
+      "bytes": 2575,
+      "sha256": "9755394cce08cb0ba0d4c75830c273b3c57e35f28481cbad6e5e798c04a5b4d7"
+    },
+    {
+      "path": "producer-class.json",
+      "bytes": 12763,
+      "sha256": "95cfb011bb138dd7c739228f072a1a9ec1660d6bdc6aed15bf59d858b0a9b90e"
+    },
+    {
+      "path": "producer-AutoScaleTextView.kt",
+      "bytes": 8358,
+      "sha256": "c92ded471c62aa2a773510784237d60ac822d831bda9298929a6f99b5d3db8c1"
+    },
+    {
+      "path": "lint-and-test-terminal.json",
+      "bytes": 2311,
+      "sha256": "41cd159c57ef574874bba1f88770d97e120f95fb016b686334349fda3139869f"
+    },
+    {
+      "path": "lint-and-test-original-allowescape.log",
+      "bytes": 263623,
+      "sha256": "3c948dea301becd40a6d843feab8abd9e708f6892b55e2a3dcacbcd9488d37f2"
+    },
+    {
+      "path": "checkout-submodules.json",
+      "bytes": 5411,
+      "sha256": "a8378cb6a4b4f8f4053197bd7c07eb36733b247f5ee2ab6e8b006b9a4ce7f2e1"
+    },
+    {
+      "path": "retained-warning-candidate-lines.json",
+      "bytes": 1719,
+      "sha256": "c2fe84dbb413f7e5958cd3242423767c36f0bdc2c07711a98769dfe2a5054a04"
+    },
+    {
+      "path": "artifacts-initial.json",
+      "bytes": 32,
+      "sha256": "244563f989470892c537c9a4622920af0d228ee4528f7d00c64a06d6cd95856c"
+    }
+  ]
+}

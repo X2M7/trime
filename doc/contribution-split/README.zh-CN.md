@@ -1,6 +1,14 @@
 # 上游贡献拆分清单
 
-## #2187 审阅修改（2026-10-23）
+## #2187 追加审阅：父类 setter 放在首句（2026-10-23）
+
+已按 [新审阅意见](https://github.com/osfans/trime/pull/2187#discussion_r4354993843) 正常推送 `7f909060`，仍仅一个应用文件。`super.setText(charSequence, bufferType)` 现在是第一条执行语句，之后无条件标记两类自有缓存失效并请求布局／重绘，不再读取旧文本或比较内容。AOSP 21／35 与当前标签使用点核查未发现提前置脏的现有路径要求；构造期间不读未初始化绘图缓存，同内容 BufferType 转换仍交给父类。此前顺序未被描述成已发生 bug；重复赋值成本没有性能中性保证。
+
+[限定总表](checks/candidate-setter-order-20261023/root-qualified-scope.json)记录本地 Kotlin2.3.21／JVM11 严格编译、字节码顺序通过，上游 CI **5/5 成功**，测试及 Lint 任务实际完成；没有导出 JUnit XML，不借旧301项当新源结果。fork Actions 未触发，显式 dispatch 返回422禁用错误，原件保留。上游实际构建是 `9ff9572f`／`10f5abd5`，与 fork `7f909060`／`2da49774` 整树相差33路径；待审控件源码 `c92ded47…` 完全一致。四ABI原包身份及DEX检查通过，未改动／重签的上游原x86_64 APK在API21通过 **13阶段／39原图**，Root实际看7张，独立核全字段／类型／像素和终态。该结果是实际merge的同生产类检查，不是fork或merge全树输入法验收。
+
+输入法／屏幕／字体与DocumentsUI状态精确恢复、10项SDK不变，child／wrapper／controller／VM／collector实际全0；最低可用6,693,528KiB。W1553／E408完整保留，既有构建／依赖与签名警告未冒称消除。本轮不重跑API35；真机、TalkBack、原生候选点击、Release及性能仍未验收。[本轮说明和原件](checks/candidate-setter-order-20261023/README.md)与所有旧轮记录分开。原PR等待维护者复审，#2183与主develop未改。
+
+## #2187 上一轮92b审阅修改（2026-10-23，历史记录）
 
 [#2187](https://github.com/osfans/trime/pull/2187) 已按 Collaborator 审阅推送 `92b13711`，仍仅一个应用文件。重复文本只减少自有缓存失效及显式刷新，原 nullable 值与 BufferType 始终交给父类；删除新增的 `super.onLayout`，保留带说明的 `super.onMeasure`。Android 5.0 对照中，删除父类测量导致前 11 项框架 Layout 为 null、后两项可选择／按行移动通过；将整个父类 setter 放进内容比较分支则在初次测量崩溃，未导出 BufferType 测试结果，不能照搬该写法。
 

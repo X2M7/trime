@@ -1,0 +1,60 @@
+{
+  "allPassed": true,
+  "checks": {
+    "runExactReviewedHead": true,
+    "upstreamOnlyRunExact": true,
+    "runAndAllFiveJobsCompletedSuccess": true,
+    "runAndJobsJsonHashesExact": true,
+    "allJobLogsHashesExact": true,
+    "mechanicalWarningRowsHashExact": true,
+    "workflowZipHashExact": true,
+    "actualOriginalApkAuditPassed": true,
+    "actualBuildCommitAndTreeExact": true,
+    "reviewedSourceSeparateAndWholeTreeNotEquivalent": true,
+    "actualClassSourceHashExact": true,
+    "allFourOriginalApkHashesAndActualBuildCommitsExact": true,
+    "originalArtifactDigestMatchesServer": true,
+    "workflowZipCrcPassed": true
+  },
+  "reviewed_source_head": "7f909060a1d42198e749eb1f9a66399f76bf8710",
+  "reviewed_source_tree": "2da497746bf3997515b816629ae92e6d2ffef0fb",
+  "actual_build_commit": "9ff9572f2ed289d8af198f81ce08bdac66d8a69c",
+  "actual_build_tree": "10f5abd560dc4d365553d8edadc62f47986cb7da",
+  "whole_tree_equivalent": false,
+  "actual_class_source_sha256": "c92ded471c62aa2a773510784237d60ac822d831bda9298929a6f99b5d3db8c1",
+  "producer": "osfans/trime upstream pull_request synthetic merge, run39889136561",
+  "upstream_qualification": {
+    "path": "/home/xumin/Public/Trime/build/pr2187-settext-order-20261023/ci-formal/upstream/terminal/qualification.json",
+    "sha256": "4bc0bb0bb15162325957d3176574005ca623a68fe3576caf407d6f6f590ce457"
+  },
+  "original_apk_audit": {
+    "path": "/home/xumin/Public/Trime/build/pr2187-settext-order-20261023/ci-apk/audit/result.json",
+    "sha256": "9724b539d157e6f6dda6a32b14c6747dad6ae036747258bed1a1dc79224eb7ba"
+  },
+  "mechanical_warning_matched_rows": 57,
+  "signature_warning_rows_by_abi": {
+    "arm64-v8a": [
+      "WARNING: META-INF/services/kotlinx.coroutines.CoroutineExceptionHandler not protected by signature. Unauthorized modifications to this JAR entry will not be detected. Delete or move the entry outside of META-INF/.",
+      "WARNING: META-INF/services/kotlinx.coroutines.internal.MainDispatcherFactory not protected by signature. Unauthorized modifications to this JAR entry will not be detected. Delete or move the entry outside of META-INF/."
+    ],
+    "armeabi-v7a": [
+      "WARNING: META-INF/services/kotlinx.coroutines.CoroutineExceptionHandler not protected by signature. Unauthorized modifications to this JAR entry will not be detected. Delete or move the entry outside of META-INF/.",
+      "WARNING: META-INF/services/kotlinx.coroutines.internal.MainDispatcherFactory not protected by signature. Unauthorized modifications to this JAR entry will not be detected. Delete or move the entry outside of META-INF/."
+    ],
+    "x86": [
+      "WARNING: META-INF/services/kotlinx.coroutines.CoroutineExceptionHandler not protected by signature. Unauthorized modifications to this JAR entry will not be detected. Delete or move the entry outside of META-INF/.",
+      "WARNING: META-INF/services/kotlinx.coroutines.internal.MainDispatcherFactory not protected by signature. Unauthorized modifications to this JAR entry will not be detected. Delete or move the entry outside of META-INF/."
+    ],
+    "x86_64": [
+      "WARNING: META-INF/services/kotlinx.coroutines.CoroutineExceptionHandler not protected by signature. Unauthorized modifications to this JAR entry will not be detected. Delete or move the entry outside of META-INF/.",
+      "WARNING: META-INF/services/kotlinx.coroutines.internal.MainDispatcherFactory not protected by signature. Unauthorized modifications to this JAR entry will not be detected. Delete or move the entry outside of META-INF/."
+    ]
+  },
+  "fork_ci_status": "UNAVAILABLE_NOT_PASSED: Root retained actual Actions-disabled422 and conflicting GET enabledtrue. No fork producer is substituted or claimed.",
+  "limits": [
+    "Only actual upstream CI, original logs and HOST artifact provenance are qualified here.",
+    "Reviewed head7f909 and actual merge9ff have the same candidate-class source but different full Git trees.",
+    "No zero-warning, fresh-all-native-compile, whole-fork-tree, install, runtime, Release or physical-device claim.",
+    "Mechanical warning rows are not tests, distinct defect counts, or exemptions."
+  ]
+}

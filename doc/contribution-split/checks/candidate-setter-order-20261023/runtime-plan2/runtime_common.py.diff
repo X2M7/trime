@@ -1,0 +1,45 @@
+--- /home/xumin/Public/Trime/build/pr2187-settext-order-20261023/runtime-plan1/runtime_common.py
++++ /home/xumin/Public/Trime/build/pr2187-settext-order-20261023/runtime-plan2/runtime_common.py
+@@ -6,6 +6,9 @@
+ ROOT = Path(__file__).resolve().parent.parent
+ HEAD = '7f909060a1d42198e749eb1f9a66399f76bf8710'
+ SOURCE = 'c92ded471c62aa2a773510784237d60ac822d831bda9298929a6f99b5d3db8c1'
++BUILD_HEAD = '9ff9572f2ed289d8af198f81ce08bdac66d8a69c'
++REVIEWED_TREE = '2da497746bf3997515b816629ae92e6d2ffef0fb'
++BUILD_TREE = '10f5abd560dc4d365553d8edadc62f47986cb7da'
+ 
+ 
+ def sha(path):
+@@ -16,8 +19,15 @@
+ def frozen(path):
+     value = json.loads(Path(path).read_bytes())
+     assert value['state'] == 'FROZEN_PR2187_ORIGINAL_CLOUD_AND_DIAGNOSTIC', 'UNFROZEN'
+-    assert value['source_head'] == value['actual_build_commit'] == HEAD
+-    assert value['production_view_source_sha256'] == SOURCE
++    assert value['source_head'] == HEAD  # Legacy operator field means reviewed PR head only.
++    assert value['actual_build_commit'] == BUILD_HEAD
++    assert value['reviewed_source_tree'] == REVIEWED_TREE
++    assert value['source_tree'] == BUILD_TREE and BUILD_TREE != REVIEWED_TREE
++    assert value['whole_tree_equivalent'] is False
++    assert value['production_view_source_sha256'] == value['actual_class_source_sha256'] == SOURCE
++    assert value['expected_producer']['repository'] == 'osfans/trime'
++    assert value['expected_producer']['run'] == 39889136561
++    assert value['legacy_operator_source_head_semantics'] == 'reviewed_PR_head_not_actual_build_commit'
+     for record in value['frozen_files']:
+         p = Path(record['path'])
+         assert p.is_file() and not p.is_symlink() and sha(p) == record['sha256'], p
+@@ -26,11 +36,12 @@
+     audit = Path(value['original_artifact_audit_path'])
+     assert sha(audit) == value['original_artifact_audit_sha256']
+     qualification = json.loads(audit.read_bytes())
+-    assert qualification['passed'] is True and qualification['source_head'] == HEAD
++    assert qualification['passed'] is True and qualification['source_head'] == BUILD_HEAD
++    assert qualification['actual_class_source_sha256'] == SOURCE
+     assert qualification['source_tree'] == value['source_tree']
+     matches = [x for x in qualification['apks'] if x['abi'] == 'x86_64']
+     assert len(matches) == 1 and matches[0]['sha256'] == value['original_apk_sha256']
+-    assert matches[0]['buildconfig_commit_hash'] == HEAD
++    assert matches[0]['buildconfig_commit_hash'] == BUILD_HEAD
+     return value
+ 
+ 

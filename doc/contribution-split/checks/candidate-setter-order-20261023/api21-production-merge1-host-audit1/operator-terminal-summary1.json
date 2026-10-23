@@ -1,0 +1,192 @@
+{
+  "operator_facts_only": true,
+  "independent_and_actual_root_images_qualification": "SEPARATE",
+  "reviewed_PR_head": "7f909060a1d42198e749eb1f9a66399f76bf8710",
+  "reviewed_source_tree": "2da497746bf3997515b816629ae92e6d2ffef0fb",
+  "legacy_operator_source_head": "7f909060a1d42198e749eb1f9a66399f76bf8710",
+  "legacy_operator_source_head_semantics": "reviewed_PR_head_not_actual_build_commit",
+  "actual_build_commit": "9ff9572f2ed289d8af198f81ce08bdac66d8a69c",
+  "actual_build_tree": "10f5abd560dc4d365553d8edadc62f47986cb7da",
+  "actual_APK_sha256": "1c674f4365ccdf77b52570fa55a16c3c8010e7ed2c737aabdcab2dc5b896b1c9",
+  "producer": {
+    "repository": "osfans/trime",
+    "run": 39889136561,
+    "actual_merge_commit_required": true,
+    "not_fork_direct_build": true
+  },
+  "whole_tree_equivalent": false,
+  "same_class_source_sha256": "c92ded471c62aa2a773510784237d60ac822d831bda9298929a6f99b5d3db8c1",
+  "accepted_scope": "Same-production-class source regression only; neither full fork-tree nor full upstream-merge-tree acceptance.",
+  "fixture_actual_exit": 0,
+  "child_actual_exit": 0,
+  "fixture_cleanup_errors": [],
+  "documents_restored_exactly": {
+    "package": "com.android.documentsui",
+    "present": true,
+    "apk_path": "/system/app/DocumentsUI/DocumentsUI.apk",
+    "apk_path_query": "PRESENT",
+    "installed": true,
+    "hidden": false,
+    "enabled": 0,
+    "stopped": false,
+    "user0_raw": "installed=true hidden=false stopped=false notLaunched=false enabled=0",
+    "pm_path_command": {
+      "at": "2026-10-23T02:35:47.002534+00:00",
+      "argv": [
+        "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+        "-s",
+        "emulator-5582",
+        "shell",
+        "sh -c 'pm path com.android.documentsui'; _trime_t12_status=$?; echo ''; echo \"__TRIME_T12_REMOTE_RC_05f71773583aa65855904f696b48776f:$_trime_t12_status\""
+      ],
+      "stdout": "/home/xumin/Public/Trime/build/pr2187-settext-order-20261023/api21-production-merge1/fixture1/commands/0016.stdout",
+      "stderr": "/home/xumin/Public/Trime/build/pr2187-settext-order-20261023/api21-production-merge1/fixture1/commands/0016.stderr",
+      "timeout_seconds": 60,
+      "completed": true,
+      "returncode": 0,
+      "finished": "2026-10-23T02:35:47.368324+00:00",
+      "stdout_sha256": "f23ce9bd86b7ebdce2252ca062af44a4e95c847d6de9fcbad9ad60be57f6475c",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "shell_protocol_nonce": "05f71773583aa65855904f696b48776f",
+      "remote_returncode": 0,
+      "remote_stdout_bytes": 49,
+      "remote_stdout_sha256": "6139739fb636d87f2c3980b108af9376fa3139d9edb95ebddfeb96b7aa21fff0"
+    }
+  },
+  "operator_sequence_completed": true,
+  "operator_restored_exactly": true,
+  "operator_cleanup_errors": [],
+  "phases": [
+    {
+      "name": "production-class-only",
+      "instrumentation_code": -1,
+      "reported_passed": true,
+      "actual_stage_count": 13,
+      "original_png_count": 39,
+      "original_folder": "/home/xumin/Public/Trime/build/pr2187-settext-order-20261023/api21-production-merge1/operator1/production-class-only/original",
+      "result_sha256": "c1b736531e328afccde21612f1a730807be16fce838ce35cd9c18d663b3e7f08",
+      "actual_probe_process_identity": {
+        "self_reported_pid": 2623,
+        "os_pid_start": "NOT_OBSERVED"
+      }
+    }
+  ],
+  "controller_actual_exit": 0,
+  "controller_completion": {
+    "argv": [
+      "/home/xumin/Public/android-toolchain/android-sdk/emulator/emulator",
+      "-avd",
+      "trime_readiness_api21_20261022",
+      "-sysdir",
+      "/home/xumin/Public/Trime/build/readiness-20261022/api21/system-images",
+      "-no-snapshot",
+      "-no-window",
+      "-no-boot-anim",
+      "-gpu",
+      "swangle",
+      "-cores",
+      "1",
+      "-memory",
+      "2048",
+      "-port",
+      "5582",
+      "-accel",
+      "on",
+      "-feature",
+      "-Vulkan"
+    ],
+    "serial": "emulator-5582",
+    "started_utc": "2026-10-23T02:33:32.497569+00:00",
+    "memory_floor_kib": 1048576,
+    "source_head": "7f909060a1d42198e749eb1f9a66399f76bf8710",
+    "original_apk_sha256": "1c674f4365ccdf77b52570fa55a16c3c8010e7ed2c737aabdcab2dc5b896b1c9",
+    "controller_sha256": "0cba9b79993de6633b8c654842e3933e901faf16de06eab33ad7e3416122a5d0",
+    "session_lifetime_guard": null,
+    "operator_normal_stop_required": true,
+    "prelaunch_memory": {
+      "MemTotal": 16017176,
+      "MemAvailable": 8102560,
+      "SwapFree": 0,
+      "utc": "2026-10-23T02:33:54.753406+00:00"
+    },
+    "pid": 332140,
+    "proc_stat_at_launch": "332140 (emulator) R 332089 332140 332140 0 -1 4194304 2 0 0 0 0 0 0 0 20 0 1 0 4806314 1552384 0 18446744073709551615 0 0 140724341866044 0 0 0 0 0 0 0 0 0 17 8 0 0 0 0 0 0 0 0 140724341866044 0 0 0 0\n",
+    "minimum_mem_available_kib": 6693528,
+    "booted": true,
+    "normal_stop": {
+      "exit": 0,
+      "stdout": "OK: killing emulator, bye bye\nOK\n",
+      "stderr": ""
+    },
+    "emulator_exit": 0,
+    "collector_exit": 0,
+    "original_sdk_unchanged": true,
+    "cleanup_errors": [],
+    "reason": "requested-normal-stop",
+    "ended_utc": "2026-10-23T02:36:31.572579+00:00"
+  },
+  "all_original_SDK_files_unchanged": true,
+  "active_VMs_after_reap": [],
+  "markers": [
+    {
+      "line": 5435,
+      "byte_offset": 707787,
+      "bytes": 93,
+      "sha256": "0b2b726b29b448ea5d43a9649b088d0888952fcbf683a08f8b32b46d7d6156bd",
+      "raw": "10-23 10:34:43.389  2295  2295 I PR2187_CLASS_ONLY: BEGIN 92f839776162c4349c7725142df15ffd \r\n"
+    },
+    {
+      "line": 5906,
+      "byte_offset": 757231,
+      "bytes": 91,
+      "sha256": "0ccdc5602521fe0c5fa7abe1d328a8aad65a37608c489db98736060816141e44",
+      "raw": "10-23 10:35:45.699  2766  2766 I PR2187_CLASS_ONLY: END 92f839776162c4349c7725142df15ffd \r\n"
+    }
+  ],
+  "whole_stream_priority_counts": {
+    "I": 1162,
+    "D": 2706,
+    "E": 408,
+    "V": 113,
+    "W": 1553
+  },
+  "whole_stream_critical_events": [],
+  "whole_stream_actual_target_start_records": [],
+  "scope": "Only unique BEGIN..END/actual child baseline and phase ps; not whole-VM historical Trime Application absence.",
+  "physical_device": "NOT_RUN",
+  "TalkBack": "NOT_RUN",
+  "native_candidate_integration": "NOT_RUN",
+  "API35": "NOT_RERUN; previous zero-stage focus failure retained",
+  "evidence": [
+    {
+      "path": "/home/xumin/Public/Trime/build/pr2187-settext-order-20261023/api21-production-merge1/fixture1/report.json",
+      "bytes": 31770,
+      "sha256": "13ae8bdca6624c03af92c3958b18bdb5b9ce5a6ea5e5787a647f3890ab3912ad"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/pr2187-settext-order-20261023/api21-production-merge1/operator1/report.json",
+      "bytes": 92677,
+      "sha256": "2f0a6fcb5ddbe40b22a0f35a5a33338311ba4e5a326dbd62372a265981435982"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/pr2187-settext-order-20261023/api21-production-merge1/completion.json",
+      "bytes": 1639,
+      "sha256": "3a52afb2de052e0b56d1f77491d456513149a802881c19fe50a4c460b0322747"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/pr2187-settext-order-20261023/api21-production-merge1/sdk-before.json",
+      "bytes": 2899,
+      "sha256": "2fd500e21c33954436be0e329ffa4f8314142f3fd50ac3df52c9fdac1536e9d5"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/pr2187-settext-order-20261023/api21-production-merge1/sdk-after.json",
+      "bytes": 2913,
+      "sha256": "f44c523d9491eaf809acbb1c80c287f53edf4698d8bf6bccb4215f0df273b717"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/pr2187-settext-order-20261023/api21-production-merge1-host-audit1/audit.json",
+      "bytes": 2504,
+      "sha256": "cde7ce59a19b47353e599d08712854c01c5eac8762b385442dcff0bd00b2a43a"
+    }
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "state": "FROZEN_PR2187_ORIGINAL_CLOUD_AND_DIAGNOSTIC",
+  "source_head": "7f909060a1d42198e749eb1f9a66399f76bf8710",
+  "actual_build_commit": "9ff9572f2ed289d8af198f81ce08bdac66d8a69c",
+  "source_tree": "10f5abd560dc4d365553d8edadc62f47986cb7da",
+  "production_view_source_sha256": "c92ded471c62aa2a773510784237d60ac822d831bda9298929a6f99b5d3db8c1",
+  "original_apk_path": "/home/xumin/Public/Trime/build/pr2187-settext-order-20261023/runtime-plan2/host-check1/HOST_SYNTHETIC_NOT_AN_APK.bin",
+  "original_apk_sha256": "de01b76928aeef6cb663264ca261209408de0fb923673c6b33335aa2a538f618",
+  "original_artifact_audit_path": "/home/xumin/Public/Trime/build/pr2187-settext-order-20261023/runtime-plan2/host-check1/reject-class-source-mismatch/synthetic-audit.json",
+  "original_artifact_audit_sha256": "4742068476647c17aa16b65c449d9230eedfc2a3d5ea381602a6370ec9147cdf",
+  "production_probe_path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/probe-build1/probe.apk",
+  "production_probe_sha256": "831e2a7da97c6880671108b628372655818c9dd3f19ad014118b2e34d2eac080",
+  "sdk_references": {
+    "21": {
+      "path": "/home/xumin/Public/Trime/build/pr2187-review-20261023/api21-class-only4/sdk-after.json",
+      "sha256": "4004b65bd464f2cda7626fa28bcf279ae8ac24713337fd71b496c518611cfab0"
+    }
+  },
+  "frozen_files": [],
+  "scope": {
+    "only_platform": "API21",
+    "only_phase": "Same-production-class regression from actual upstream merge APK; not full reviewed-fork tree acceptance",
+    "expected_stages": 13,
+    "expected_PNGs": 39,
+    "old_13_oracles_unchanged": true,
+    "diagnostic_variants": "NOT_RERUN",
+    "API35": "NOT_RERUN prior focus failure retained",
+    "no_new_probe_or_private_flags_tests": true,
+    "actual_process_claim": "Only BEGIN..END and actual baseline/phase ps; whole-VM historical Application absence not claimed",
+    "physical_device": "NOT_RUN",
+    "TalkBack": "NOT_RUN",
+    "native_candidate_integration": "NOT_RUN",
+    "whole_tree_equivalent": false,
+    "reviewed_fork_branch_runtime_acceptance": "NOT_CLAIMED",
+    "actual_merge_tree_full_regression": "NOT_CLAIMED"
+  },
+  "root_freeze_instructions": [
+    "Bind the original upstream merge9ff APK and exact audited10f5 tree, producer osfans/trime run39889136561; never call it a direct fork7f artifact.",
+    "Audit source_head must be actual9ff and actual_class_source_sha256 must equal reviewed c92; whole trees differ and remain explicitly false.",
+    "Legacy operator report source_head=7f denotes reviewed PR head only; actual APK source identity stays in binding/audit/probe APK SHA.",
+    "Freeze reviewed narrow identity changes, immutable original probe and tools after actual artifact audit, then grant one API21 production13 lease."
+  ],
+  "reviewed_source_tree": "2da497746bf3997515b816629ae92e6d2ffef0fb",
+  "whole_tree_equivalent": false,
+  "actual_class_source_sha256": "c92ded471c62aa2a773510784237d60ac822d831bda9298929a6f99b5d3db8c1",
+  "legacy_operator_source_head_semantics": "reviewed_PR_head_not_actual_build_commit",
+  "expected_producer": {
+    "repository": "osfans/trime",
+    "run": 39889136561,
+    "actual_merge_commit_required": true,
+    "not_fork_direct_build": true
+  }
+}

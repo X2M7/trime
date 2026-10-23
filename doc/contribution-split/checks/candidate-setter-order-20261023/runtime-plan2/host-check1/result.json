@@ -1,0 +1,195 @@
+{
+  "host_only": true,
+  "no_VM_ADB_APK_compilation": true,
+  "passed": true,
+  "checks": [
+    {
+      "name": "run-probes.py-byte-exact",
+      "passed": true
+    },
+    {
+      "name": "run-isolated-probes.py-byte-exact",
+      "passed": true
+    },
+    {
+      "name": "audit-logs.py-byte-exact",
+      "passed": true
+    },
+    {
+      "name": "controller-only-new-path-and-OUT",
+      "passed": true
+    },
+    {
+      "name": "all-syntax",
+      "passed": true
+    },
+    {
+      "name": "expected-reviewed-vs-build-trees-are-distinct",
+      "passed": true
+    },
+    {
+      "name": "correct-distinct-tree-same-class",
+      "passed": true
+    },
+    {
+      "name": "reject-fork-as-actual-APK",
+      "passed": true
+    },
+    {
+      "name": "reject-merge-as-reviewed-head",
+      "passed": true
+    },
+    {
+      "name": "reject-whole-tree-equivalence-label",
+      "passed": true
+    },
+    {
+      "name": "reject-reviewed-tree-as-build-tree",
+      "passed": true
+    },
+    {
+      "name": "reject-audit-reviewed-head-as-build",
+      "passed": true
+    },
+    {
+      "name": "reject-class-source-mismatch",
+      "passed": true
+    },
+    {
+      "name": "reject-APK-BuildConfig-reviewed-head",
+      "passed": true
+    },
+    {
+      "name": "reject-fork-producer-label",
+      "passed": true
+    },
+    {
+      "name": "reject-legacy-field-as-actual-label",
+      "passed": true
+    },
+    {
+      "name": "help-actual0",
+      "passed": true
+    },
+    {
+      "name": "actual-UNFROZEN-before-device",
+      "passed": true
+    }
+  ],
+  "identity_controls": [
+    {
+      "name": "correct-distinct-tree-same-class",
+      "expected_identity_acceptance": true,
+      "error": null,
+      "binding_sha256": "fc2a5afb7f95138d941adc8290183aec6c1eee7a16760314e33390748b41646f",
+      "audit_sha256": "f66fc913dad222640ad16cd7e46d4e55366c13b44cdb3f24084de2ca0ef11f60",
+      "HOST_SYNTHETIC_NOT_DEVICE_OR_APK_ACCEPTANCE": true
+    },
+    {
+      "name": "reject-fork-as-actual-APK",
+      "expected_identity_acceptance": false,
+      "error": {
+        "type": "AssertionError",
+        "message": ""
+      },
+      "binding_sha256": "61c76c7dce51058690cd3531f8dd650ac8398d4c48b9e32c8f54d001922f0475",
+      "audit_sha256": "f66fc913dad222640ad16cd7e46d4e55366c13b44cdb3f24084de2ca0ef11f60",
+      "HOST_SYNTHETIC_NOT_DEVICE_OR_APK_ACCEPTANCE": true
+    },
+    {
+      "name": "reject-merge-as-reviewed-head",
+      "expected_identity_acceptance": false,
+      "error": {
+        "type": "AssertionError",
+        "message": ""
+      },
+      "binding_sha256": "a044903c23e7e4472eeee2710fb7b036ff3653295f9941e12c9e11d061eab2c8",
+      "audit_sha256": "f66fc913dad222640ad16cd7e46d4e55366c13b44cdb3f24084de2ca0ef11f60",
+      "HOST_SYNTHETIC_NOT_DEVICE_OR_APK_ACCEPTANCE": true
+    },
+    {
+      "name": "reject-whole-tree-equivalence-label",
+      "expected_identity_acceptance": false,
+      "error": {
+        "type": "AssertionError",
+        "message": ""
+      },
+      "binding_sha256": "ed72dd3edf7d429319ca7168735e3562a60744ce1724cf80c791a0cc32521f89",
+      "audit_sha256": "f66fc913dad222640ad16cd7e46d4e55366c13b44cdb3f24084de2ca0ef11f60",
+      "HOST_SYNTHETIC_NOT_DEVICE_OR_APK_ACCEPTANCE": true
+    },
+    {
+      "name": "reject-reviewed-tree-as-build-tree",
+      "expected_identity_acceptance": false,
+      "error": {
+        "type": "AssertionError",
+        "message": ""
+      },
+      "binding_sha256": "88994ff1c3e2e1a293a3c6db55a0ea29c45dcbc49e071402762aa273162a9a0a",
+      "audit_sha256": "f66fc913dad222640ad16cd7e46d4e55366c13b44cdb3f24084de2ca0ef11f60",
+      "HOST_SYNTHETIC_NOT_DEVICE_OR_APK_ACCEPTANCE": true
+    },
+    {
+      "name": "reject-audit-reviewed-head-as-build",
+      "expected_identity_acceptance": false,
+      "error": {
+        "type": "AssertionError",
+        "message": ""
+      },
+      "binding_sha256": "17ce8a2e1e1ba402c184b1ab1cb3497811f58f5685dab8a587977ffc6bdef080",
+      "audit_sha256": "233cb6f2c4ceb9c9094abcc1287115e586d00bab9d44bbd8b378c97d89790107",
+      "HOST_SYNTHETIC_NOT_DEVICE_OR_APK_ACCEPTANCE": true
+    },
+    {
+      "name": "reject-class-source-mismatch",
+      "expected_identity_acceptance": false,
+      "error": {
+        "type": "AssertionError",
+        "message": ""
+      },
+      "binding_sha256": "21bb287bb3106f67bb760641a0cf37d559c9c2861ddbfee8c8d3d304b4dd48d0",
+      "audit_sha256": "4742068476647c17aa16b65c449d9230eedfc2a3d5ea381602a6370ec9147cdf",
+      "HOST_SYNTHETIC_NOT_DEVICE_OR_APK_ACCEPTANCE": true
+    },
+    {
+      "name": "reject-APK-BuildConfig-reviewed-head",
+      "expected_identity_acceptance": false,
+      "error": {
+        "type": "AssertionError",
+        "message": ""
+      },
+      "binding_sha256": "8592b03fbbb2538c0e9a5446cecdec913b34e1ad85f6bd7b7b1fe920f4a27baa",
+      "audit_sha256": "c875f1bc0b48df99eeb7b42e630cea73235f0ca90faeca36673f4e5e1fceb9fc",
+      "HOST_SYNTHETIC_NOT_DEVICE_OR_APK_ACCEPTANCE": true
+    },
+    {
+      "name": "reject-fork-producer-label",
+      "expected_identity_acceptance": false,
+      "error": {
+        "type": "AssertionError",
+        "message": ""
+      },
+      "binding_sha256": "ff8c6f57df1527b4cd0c69594932ae95ae6dd55a04d96759ebf8b770c4ba49a4",
+      "audit_sha256": "f66fc913dad222640ad16cd7e46d4e55366c13b44cdb3f24084de2ca0ef11f60",
+      "HOST_SYNTHETIC_NOT_DEVICE_OR_APK_ACCEPTANCE": true
+    },
+    {
+      "name": "reject-legacy-field-as-actual-label",
+      "expected_identity_acceptance": false,
+      "error": {
+        "type": "AssertionError",
+        "message": ""
+      },
+      "binding_sha256": "cf9525d157fbce9944b662829ecaa8759d2e0f2ba0762d813087eb2eb9037c64",
+      "audit_sha256": "f66fc913dad222640ad16cd7e46d4e55366c13b44cdb3f24084de2ca0ef11f60",
+      "HOST_SYNTHETIC_NOT_DEVICE_OR_APK_ACCEPTANCE": true
+    }
+  ],
+  "synthetic_controls_are_not_real_APK_or_device_tests": true,
+  "expected_reviewed_head": "7f909060a1d42198e749eb1f9a66399f76bf8710",
+  "expected_reviewed_tree": "2da497746bf3997515b816629ae92e6d2ffef0fb",
+  "expected_actual_build": "9ff9572f2ed289d8af198f81ce08bdac66d8a69c",
+  "expected_actual_tree": "10f5abd560dc4d365553d8edadc62f47986cb7da",
+  "whole_tree_equivalent": false,
+  "actual_artifact_audit": "PENDING_ROOT"
+}
