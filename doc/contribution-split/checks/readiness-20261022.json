@@ -270,7 +270,7 @@
     "pr": 2183,
     "url": "https://github.com/osfans/trime/pull/2183",
     "draft": true,
-    "status": "OPEN_DRAFT_CODE_CI_TARGETED_EMULATORS_QUALIFIED_PHYSICAL_DEVICE_PENDING",
+    "status": "OPEN_DRAFT_S24_USER_REPORTED_TEST_ADDED_READY_TRANSITION_AUTHORIZED",
     "source": "8a1ee0ea6538e220fcddf31ed6fd491f5bc3cca7",
     "tree": "b022a1e810e231af9f9776c2b5414faf6b5bd615",
     "base": "a047f74757fae0d7b5ef64e54f0b957dee2bf8f3",
@@ -504,11 +504,11 @@
     },
     "runtime_runner_binding": "pr2183-update-20261027/runtime/original-apk-binding-8a1e-v10.json",
     "runtime_sequence_review": "pr2183-update-20261027/runtime/sequence-independent-review1.json",
-    "physical_device_acceptance": "NOT_RUN",
+    "physical_device_acceptance": "USER_REPORTED_MANUAL_TEST_NO_ISSUES",
     "physical_recursive_status_fields": 44,
     "physical_device_plan": "pr2183-update-20261027/device-delivery-8a-reviewed/REAL-DEVICE-ACCEPTANCE.md",
     "physical_device_template": "pr2183-update-20261027/device-delivery-8a-reviewed/device-result-template.json",
-    "physical_device_core_cases": "Original17 + R1/R2/R4; R3 actual available and enabled feedback capabilities. All44 physical status fields NOT_RUN.",
+    "physical_device_core_cases": "Original detailed checklist retained; per-case coverage was not itemized in the S24 user report. Its frozen44-status blank template stays NOT_RUN as a historical template, not as evidence that no physical test occurred.",
     "old_head_emulator_results_are_historical": true,
     "no_zero_warning_claim": true,
     "merge_or_release_action": false,
@@ -613,8 +613,8 @@
       },
       "zero_warning_claim": false
     },
-    "current_state_receipt": "pr2183-update-20261027/pr-body-final1/receipt.json",
-    "current_qualified_scope": "pr2183-update-20261027/root-current-qualified-scope.json",
+    "current_state_receipt": "pr2183-s24-ultra-20261028/preflight.json",
+    "current_qualified_scope": "pr2183-s24-ultra-20261028/review-scope.json",
     "runtime_controllers": {
       "API21": "pr2183-update-20261027/runtime/run-api21-8a1e-v10.py",
       "API35_failed_r1": "pr2183-update-20261027/runtime/run-api35-8a1e-v10.py",
@@ -627,7 +627,17 @@
       "content_SHA_permissions_mtime_unchanged": true,
       "qualification": "pr2183-update-20261027/runtime/protected-inputs-comparison1.json"
     },
-    "actual_first_evidence_push": "pr2183-update-20261027/index-push1/receipt.json"
+    "actual_first_evidence_push": "pr2183-update-20261027/index-push1/receipt.json",
+    "physical_device_report": "pr2183-s24-ultra-20261028/report.json",
+    "physical_device_environment_reported": {
+      "manufacturer": "SAMSUNG",
+      "model": "Galaxy S24 Ultra",
+      "Android_version": null,
+      "One_UI_version": null,
+      "on_device_APK_sha256": null
+    },
+    "physical_full_checklist_results": "NOT_ITEMIZED; original44-status template preserved unchanged as historical blank template",
+    "ready_transition_authorized_by_user": true
   },
   "historical_logcat_before_review_slim_20261023": {
     "pr": 2182,
@@ -1047,7 +1057,7 @@
     "current_pr_state": "MERGED",
     "merged_by_maintainer_not_this_run": true
   },
-  "updated_utc": "2026-10-27T17:37:24.322207+00:00",
+  "updated_utc": "2026-10-27T22:18:20.605287+00:00",
   "historical_unicode_foundation_before_review_slim_20261023": {
     "branch": "contrib/pr-jni-unicode-transport",
     "source": "e16ab85f495e5bbf353187c29efbff74526cff9c",
@@ -1661,7 +1671,7 @@
     "body_evidence_commit": "9eb3810a0a578b786e4d9cb92835a2c186f9073c",
     "source_and_non_draft_state_unchanged_by_body_update": true
   },
-  "update_scope": "Only #2183 source8a rebase, finalCI/host/targeted API21+API35r2 evidence and retained limits updated; other PR status/count/history unchanged.",
+  "update_scope": "Only #2183 physical user report and explicit Ready request added; other PR metadata/counts and frozen validation records unchanged.",
   "historical_t9_c4_before_rebase_20261027": {
     "pr": 2183,
     "draft": true,
@@ -1775,5 +1785,368 @@
     "body_exact_readback": true,
     "body_sha256": "fa0160bf8497d3bae0388f734bc14d624739e874a019f2a4963fe2425eff6b93",
     "body_evidence_index_commit": "9b8d747227eb6c40f18a36a78dd9bdef6a77a8ce"
+  },
+  "historical_t9_before_s24_user_report_20261028": {
+    "pr": 2183,
+    "url": "https://github.com/osfans/trime/pull/2183",
+    "draft": true,
+    "status": "OPEN_DRAFT_CODE_CI_TARGETED_EMULATORS_QUALIFIED_PHYSICAL_DEVICE_PENDING",
+    "source": "8a1ee0ea6538e220fcddf31ed6fd491f5bc3cca7",
+    "tree": "b022a1e810e231af9f9776c2b5414faf6b5bd615",
+    "base": "a047f74757fae0d7b5ef64e54f0b957dee2bf8f3",
+    "linear_commits": [
+      {
+        "sha": "e05efc8897c5d2c40aa0036311d589ff2e060fa5",
+        "subject": "feat: add nine-key Pinyin input with syllable selection"
+      },
+      {
+        "sha": "cf3ed91f563c7445bdeeb6bd9c433b2d4e55ef18",
+        "subject": "fix: create deferred input views after theme initialization"
+      },
+      {
+        "sha": "aa33c0bdfd326fe82baf7db5c80528885c57a000",
+        "subject": "fix: reset remembered keyboard when changing input schemes"
+      },
+      {
+        "sha": "8a1ee0ea6538e220fcddf31ed6fd491f5bc3cca7",
+        "subject": "fix: keep editor-required ASCII mode when attaching keyboards"
+      }
+    ],
+    "merge_commit_count": 0,
+    "source_review": "pr2183-update-20261027/source-review1.json",
+    "source_push_receipt": "pr2183-update-20261027/source-push1/receipt.json",
+    "body_pending_update_receipt": "pr2183-update-20261027/pr-body-pending1/receipt.json",
+    "candidate_dependency": {
+      "separate_pr": 2187,
+      "status": "ALREADY_MERGED_UPSTREAM_OLD_LOCAL_COPY_DROPPED",
+      "upstream_commit": "57edd25ea275d192ae9a340ee1b0c43c8cfd2eff",
+      "obsolete_local_commit_dropped": "aeae918a711b727697d543032f8d286590fd3946",
+      "AutoScaleTextView_equals_upstream_base": true
+    },
+    "unicode_dependency": {
+      "separate_pr": 2186,
+      "reviewed_source": "2ad1865fd97f09ffba231e5c0e23092cd383b059",
+      "relationship": "Reviewed production Unicode base synchronized inside T9 feature commit; T9-specific rime_jni.cc hooks retained. This SHA is not claimed as an ancestor.",
+      "offset_tests_synchronized": true
+    },
+    "startup_dependency": {
+      "separate_pr": 2188,
+      "reviewed_source": "e009dc0b567f9639cf518bc3b35cd172ac627be7",
+      "rebased_commit": "cf3ed91f563c7445bdeeb6bd9c433b2d4e55ef18",
+      "relationship": "Deferred missing-view creation and reviewed simplification synchronized; not identical commit ancestry."
+    },
+    "current_host_execution": {
+      "t9_native_assertions": 743,
+      "jni_unicode_CheckJNI_assertions": 115,
+      "UTF16_offset_assertions": 46,
+      "scope": "pr2183-update-20261027/host-checks1/qualified-scope.json",
+      "native_engine_recompiled_this_round": false,
+      "host_librime_reused_from_recorded_Oct20_build": true,
+      "current_T9_test_programs_compiled_this_round": true,
+      "JNI_host_not_Android_ART_or_NDK30_production_compile": true,
+      "first_missing_fixture_prerequisite_rejection_retained": true,
+      "not_application_JVM_case_count": true
+    },
+    "current_cloud": {
+      "source_head": "8a1ee0ea6538e220fcddf31ed6fd491f5bc3cca7",
+      "actual_build_commit": "0ef0eb551a6f8d000266d4446348b2d2ab2823e9",
+      "source_tree": "b022a1e810e231af9f9776c2b5414faf6b5bd615",
+      "actual_build_tree": "b022a1e810e231af9f9776c2b5414faf6b5bd615",
+      "run": 40527129836,
+      "repository": "osfans/trime",
+      "producer_kind": "UPSTREAM_PR_SYNTHETIC_MERGE",
+      "producer_job_id": 122272383005,
+      "artifact_id": 12745502662,
+      "state": "ALL_FIVE_JOBS_COMPLETED_SUCCESS_ORIGINAL_LOGS_QUALIFIED",
+      "jobs": [
+        {
+          "id": 122269627825,
+          "name": "check / lint-and-test",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 122272383005,
+          "name": "build (ubuntu-26.04)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 122272383015,
+          "name": "build (macos-26)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 122272383025,
+          "name": "build (windows-2025)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 122272383193,
+          "name": "build (macos-26-intel)",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ],
+      "same_complete_git_tree_not_same_commit_or_APK_bytes": true,
+      "tree_equivalence_proof": "pr2183-update-20261027/runtime/merge-producer-proof-v1.json",
+      "original_producer_validation": "pr2183-update-20261027/runtime/actual-producer-validation1.json",
+      "fork_push_matching_run_observed": false,
+      "fork_nontrigger_cause": "UNKNOWN_NOT_ASSUMED",
+      "final_CI_qualification": "PASS_FIVE_OF_FIVE_WITH_RETAINED_WARNINGS",
+      "qualification": "pr2183-update-20261027/cloud-upstream1/qualification.json",
+      "qualification_sha256": "8bf761c243aad7947a3a197680f8a3e23c04a8b2d53bf6b51af737ea155a3bcc",
+      "exact_testcase_count": null,
+      "junit_xml_exported_by_workflow": false,
+      "actual_testDebugUnitTest_executed_without_cache_suffix": true,
+      "actual_app_lint_executed_without_cache_suffix": true,
+      "warning_candidate_lines": 313,
+      "unexpanded_Gradle_deprecation_origin": "UNRESOLVED"
+    },
+    "current_apk": {
+      "state": "AUDITED_ORIGINAL_UPSTREAM_MERGE_DEBUG_FOUR_ABI",
+      "audit": "pr2183-update-20261027/apk-audit1/result.json",
+      "arm64_sha256": "7cb4e071373ef7506010120c845e243dfc00ac54e7b5e24860f90c1730743cde",
+      "x86_64_sha256": "12ad11114e2db508e8b9946d410d035f41f0facf70603dce0ec22ae7f841bcda",
+      "certificate_sha256": "9188374217845103a7ca723f430ae446223ffbb7b48115b4cf65c6e7c59af2f4",
+      "package": "com.osfans.trime.debug",
+      "version_name": "3.3.13",
+      "version_code": 20261101,
+      "filename_Git_describe": "v3.3.12-110-g0ef0eb55",
+      "signature_warning_count_per_APK": 2,
+      "no_resigning": true,
+      "not_release_or_stable": true
+    },
+    "current_emulator_regression": {
+      "API21": {
+        "state": "CLOSED_ROUND_RECORDS_QUALIFIED_WITH_WARNINGS_AND_PHYSICAL_DEVICE_LIMITS_RETAINED",
+        "actual_completed_sessions": 12,
+        "mapped_logical_items": 14,
+        "strict_Editable_pairs": 110,
+        "recorded_captures": 134,
+        "source_head": "8a1ee0ea6538e220fcddf31ed6fd491f5bc3cca7",
+        "actual_build_commit": "0ef0eb551a6f8d000266d4446348b2d2ab2823e9",
+        "terminal_qualification": "pr2183-update-20261027/runtime/api21-native-independent1/terminal-qualification1.json",
+        "terminal_qualification_sha256": "42e83930d51c3c1129fbfd818ea464c7265aa620fd471ef1d1471bb45de76bf2",
+        "actual_terminal": {
+          "reason": "requested-normal-stop",
+          "emulator_pid": 21846,
+          "emulator_exit": 0,
+          "collector_exit": 0,
+          "normal_stop_exit": 0,
+          "cleanup_errors": [],
+          "old_API21_proc_path_absent_at_review": true,
+          "no_claim_about_other_current_VMs": true
+        },
+        "min_host_MemAvailable_KiB": 3783796,
+        "root_frozen_original_PNG_review_count": 43,
+        "peer_standard_original_PNG_review_count": 51,
+        "review_counts_overlap_not_added": true
+      },
+      "API35_r1": {
+        "state": "FAILED_BEFORE_BUSINESS_WITH_SYSTEM_BOOT_ANR_AND_GUEST_LMK_RETAINED",
+        "business_sessions_executed": 0,
+        "failure_qualification": "pr2183-update-20261027/runtime/api35-boot-anr-independent1/qualification.json",
+        "original_ANR_traces": 3,
+        "actual_stopped_completion": "pr2183-update-20261027/runtime/api35-8a1e-v10-run1/completion.json",
+        "not_replaced_or_hidden_by_r2": true
+      },
+      "API35_r2": {
+        "state": "EXISTING_TWELVE_SESSION_LIMITED_SCOPE_QUALIFIED_WARNINGS_AND_COLLECTOR_LIMIT_RETAINED",
+        "native_deployment": "OBSERVED_START_SUCCESS_AND_TARGETED_BUSINESS_SEPARATELY_QUALIFIED",
+        "native_deployment_qualification": "pr2183-update-20261027/runtime/api35-r2-native-independent1/qualification.json",
+        "native_deployment_qualification_sha256": "606d8d1dd7bf62f131daca6ad59a456ea12e4cc42ecc50aefd82f7faa5f3b1b9",
+        "native_elapsed_seconds": 306.401,
+        "PID": 2047,
+        "starttime": "15638",
+        "boot_id": "f9d7b95a-5e59-4e78-a476-b4b10291c7bb",
+        "guest_RAM_MiB": 3072,
+        "guest_cores": 4,
+        "r1_disks_not_reused": true,
+        "qualification": "pr2183-update-20261027/runtime/api35-r2-independent1/terminal-qualification1.json",
+        "qualification_sha256": "9aad8b7d231ff89577d7356574da5f2debaec505cdd73a92ec4354a37f9b66ec",
+        "sessions": 12,
+        "logical_items": 14,
+        "recorded_captures": 134,
+        "strict_Editable_pairs": 110,
+        "actual_terminal": {
+          "completion": {
+            "path": "/home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/api35-8a1e-v11-run2/completion.json",
+            "sha256": "469615dcf88d1f4020b74ef356b502a5ee419601d826d2efd613b96004f7bdc0"
+          },
+          "reason": "requested-normal-stop",
+          "VM_exit": 0,
+          "normal_stop_exit": 0,
+          "collector_exit": 255,
+          "cleanup_errors": [],
+          "controller_tool_exit": 0,
+          "controller_exit_evidence": "Root actual exec51881 wait result communicated after normal stop; no invented additional local command receipt.",
+          "lease_release": {
+            "path": "/home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/device-lease-release.json",
+            "sha256": "248279a98d1da37347b9caa1cffd3142635916818a8ef720f25c22315fbbe572"
+          },
+          "observer_pidof_exit": 1,
+          "observer_pidof_empty": true,
+          "collector_limitation": "Collector255 is nonzero and retained. This qualifies the final captured file and authenticated complete business sessions, not gap-free logs outside captured bytes or every shutdown event."
+        },
+        "minimum_MemAvailable_KiB": 1597940,
+        "memory_samples": 1938,
+        "target_WEF": {
+          "W": 262,
+          "E": 149,
+          "F": 0
+        },
+        "all_PID_WEF": {
+          "W": 9429,
+          "E": 2166,
+          "F": 0
+        },
+        "critical_marker_candidates_in_captured_file": 0,
+        "collector255_not_gap_free_lifetime_logging": true,
+        "peer_actual_viewed_PNG_paths": 97,
+        "peer_distinct_PNG_SHA": 95,
+        "Root_actual_viewed_PNG_paths": 15,
+        "image_counts_overlap_not_summed": true,
+        "target_actual_Shift_intervals_ms": [
+          168,
+          134,
+          142
+        ],
+        "warnings_unresolved": [
+          "193 preset-vocabulary encoding gaps and12 missing native config probes, including3 optional grammar lookups, remain; successful Debug deployment does not fix those warnings.",
+          "77 KeyCode errors,8 ignored preview-key warnings and2 unresolved candidate-border-color warnings retain unchanged source-contract/parser limitations from the separately preserved source audit.",
+          "70 IPCThreadState errors,2 SurfaceSyncGroup timeouts,6 disposed-receiver warnings and4 RemoteInputConnection DeadObject warnings remain unresolved in cause. Process/framework-emitter membership does not prove a purely system fault or establish that Trime is blameless.",
+          "Back-dispatch, ART/hidden-API/CPU-verifier, HWUI and ziparchive diagnostics are retained; no blanket harmless/system-only or zero-warning claim."
+        ]
+      }
+    },
+    "runtime_runner_binding": "pr2183-update-20261027/runtime/original-apk-binding-8a1e-v10.json",
+    "runtime_sequence_review": "pr2183-update-20261027/runtime/sequence-independent-review1.json",
+    "physical_device_acceptance": "NOT_RUN",
+    "physical_recursive_status_fields": 44,
+    "physical_device_plan": "pr2183-update-20261027/device-delivery-8a-reviewed/REAL-DEVICE-ACCEPTANCE.md",
+    "physical_device_template": "pr2183-update-20261027/device-delivery-8a-reviewed/device-result-template.json",
+    "physical_device_core_cases": "Original17 + R1/R2/R4; R3 actual available and enabled feedback capabilities. All44 physical status fields NOT_RUN.",
+    "old_head_emulator_results_are_historical": true,
+    "no_zero_warning_claim": true,
+    "merge_or_release_action": false,
+    "ready_transition": false,
+    "final_body_update_after_qualification": {
+      "state": "DONE_BODY_ONLY_EXACT_READBACK_OPEN_DRAFT_SOURCE_UNCHANGED",
+      "receipt": "pr2183-update-20261027/pr-body-final1/receipt.json",
+      "immutable_evidence_commit": "d31d91830653e946bc0b1ec782c70d7cb0421c15"
+    },
+    "current_runtime_warning_audit": {
+      "historical_source_mapping": {
+        "audit": "pr2183-update-20261027/runtime/warning-source-audit1/source-attribution1.json",
+        "scope": "FIXED90_227_936_BYTE_API21_PREFIX_ONLY",
+        "target_W": 231,
+        "target_E": 8,
+        "not_final_counts": true
+      },
+      "API21_complete_closed_log": {
+        "qualification": "pr2183-update-20261027/runtime/api21-native-independent1/terminal-qualification1.json",
+        "bytes": 92246421,
+        "sha256": "c16f6c8e3172ea2412dd4b688d16e81c6305dfef3c2d10c25e2faf1d68e5ed69",
+        "target_W": 237,
+        "target_E": 80,
+        "all_PID_W": 2022,
+        "all_PID_E": 2374,
+        "all_PID_F": 16,
+        "target_F": 0,
+        "disposed_receiver_W": 6,
+        "disposed_receiver_cause": "UNRESOLVED_application_window_framework_ordering",
+        "actual_critical_interpretation": {
+          "original_candidate_rows": 16,
+          "wider_probe_rows": 17,
+          "actual_target_F_rows": 0,
+          "observed_target_Java_fatal_or_native_signal_or_ANR_markers": 0,
+          "observed_all_PID_LMK_kill_OOM_ANR_markers": 0,
+          "all_PID_F_preserved": 16,
+          "all_F_context": "Two startup-preparation InputMethodManagerService PID1480 unknown-IME-id stack groups at23:30:01.463 and23:30:01.830, before Trime nativeStart23:34:09.850. These remain real F diagnostics; no system-death or pure-platform-cause inference.",
+          "wider_probe_extra": "One informational lowmemorykiller ActivityManager connected at23:27:22.818, not an observed kill.",
+          "disposed_receiver_final_count": 6,
+          "disposed_receiver_cause": "Unresolved application/window/framework input-event disposal ordering; framework tag or emitter is insufficient to classify as purely system fault. No zero-warning claim.",
+          "no_absence_claim_outside_captured_all_buffer_log": true
+        }
+      },
+      "API35_r1": "REAL_ENVIRONMENT_ANR_AND_LMK_FAILURE_RETAINED",
+      "API35_r2": {
+        "qualification": "pr2183-update-20261027/runtime/api35-r2-independent1/terminal-qualification1.json",
+        "qualification_sha256": "9aad8b7d231ff89577d7356574da5f2debaec505cdd73a92ec4354a37f9b66ec",
+        "state": "EXISTING_TWELVE_SESSION_LIMITED_SCOPE_QUALIFIED_WARNINGS_AND_COLLECTOR_LIMIT_RETAINED",
+        "sessions": 12,
+        "logical_items": 14,
+        "recorded_captures": 134,
+        "strict_Editable_pairs": 110,
+        "actual_terminal": {
+          "completion": {
+            "path": "/home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/api35-8a1e-v11-run2/completion.json",
+            "sha256": "469615dcf88d1f4020b74ef356b502a5ee419601d826d2efd613b96004f7bdc0"
+          },
+          "reason": "requested-normal-stop",
+          "VM_exit": 0,
+          "normal_stop_exit": 0,
+          "collector_exit": 255,
+          "cleanup_errors": [],
+          "controller_tool_exit": 0,
+          "controller_exit_evidence": "Root actual exec51881 wait result communicated after normal stop; no invented additional local command receipt.",
+          "lease_release": {
+            "path": "/home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/device-lease-release.json",
+            "sha256": "248279a98d1da37347b9caa1cffd3142635916818a8ef720f25c22315fbbe572"
+          },
+          "observer_pidof_exit": 1,
+          "observer_pidof_empty": true,
+          "collector_limitation": "Collector255 is nonzero and retained. This qualifies the final captured file and authenticated complete business sessions, not gap-free logs outside captured bytes or every shutdown event."
+        },
+        "minimum_MemAvailable_KiB": 1597940,
+        "memory_samples": 1938,
+        "target_WEF": {
+          "W": 262,
+          "E": 149,
+          "F": 0
+        },
+        "all_PID_WEF": {
+          "W": 9429,
+          "E": 2166,
+          "F": 0
+        },
+        "critical_marker_candidates_in_captured_file": 0,
+        "collector255_not_gap_free_lifetime_logging": true,
+        "peer_actual_viewed_PNG_paths": 97,
+        "peer_distinct_PNG_SHA": 95,
+        "Root_actual_viewed_PNG_paths": 15,
+        "image_counts_overlap_not_summed": true,
+        "target_actual_Shift_intervals_ms": [
+          168,
+          134,
+          142
+        ],
+        "warnings_unresolved": [
+          "193 preset-vocabulary encoding gaps and12 missing native config probes, including3 optional grammar lookups, remain; successful Debug deployment does not fix those warnings.",
+          "77 KeyCode errors,8 ignored preview-key warnings and2 unresolved candidate-border-color warnings retain unchanged source-contract/parser limitations from the separately preserved source audit.",
+          "70 IPCThreadState errors,2 SurfaceSyncGroup timeouts,6 disposed-receiver warnings and4 RemoteInputConnection DeadObject warnings remain unresolved in cause. Process/framework-emitter membership does not prove a purely system fault or establish that Trime is blameless.",
+          "Back-dispatch, ART/hidden-API/CPU-verifier, HWUI and ziparchive diagnostics are retained; no blanket harmless/system-only or zero-warning claim."
+        ]
+      },
+      "zero_warning_claim": false
+    },
+    "current_state_receipt": "pr2183-update-20261027/pr-body-final1/receipt.json",
+    "current_qualified_scope": "pr2183-update-20261027/root-current-qualified-scope.json",
+    "runtime_controllers": {
+      "API21": "pr2183-update-20261027/runtime/run-api21-8a1e-v10.py",
+      "API35_failed_r1": "pr2183-update-20261027/runtime/run-api35-8a1e-v10.py",
+      "API35_r2": "pr2183-update-20261027/runtime/run-api35-8a1e-v11.py",
+      "r2_change": "Fresh original49-file disks;4cores/3072MiB. Original binding/sequence/Observer limits/business assertions/1GiB floor unchanged."
+    },
+    "protected_originals": {
+      "files": 63,
+      "bytes_streamed": 16123230075,
+      "content_SHA_permissions_mtime_unchanged": true,
+      "qualification": "pr2183-update-20261027/runtime/protected-inputs-comparison1.json"
+    },
+    "actual_first_evidence_push": "pr2183-update-20261027/index-push1/receipt.json"
   }
 }

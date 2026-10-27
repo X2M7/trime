@@ -1,0 +1,67 @@
+{
+  "schema": "trime-user-reported-physical-device-test/v1",
+  "recorded_utc": "2026-10-27T22:18:20.605287+00:00",
+  "report_received_date": "2026-10-28",
+  "report_received_timezone": "Asia/Shanghai",
+  "classification": "USER_REPORTED_MANUAL_SMOKE_TEST",
+  "result": "NO_ISSUES_REPORTED",
+  "reported_by": "Repository owner in the testing conversation",
+  "user_statement_original": "我用我的SAMSUNG Galaxy S24 Ultra测试了，没有问题，写好真机测试，进行正式的PR吧",
+  "device": {
+    "manufacturer_reported": "SAMSUNG",
+    "model_reported": "Galaxy S24 Ultra",
+    "Android_version": null,
+    "API_level": null,
+    "One_UI_version": null,
+    "security_patch": null,
+    "actual_process_ABI": null,
+    "actual_test_date_and_time": null,
+    "unknown_fields": "Not provided; not inferred from model, screen appearance or status-bar clock."
+  },
+  "candidate_context": {
+    "PR": 2183,
+    "current_source_head": "8a1ee0ea6538e220fcddf31ed6fd491f5bc3cca7",
+    "actual_delivered_APK_build_commit": "0ef0eb551a6f8d000266d4446348b2d2ab2823e9",
+    "complete_Git_tree": "b022a1e810e231af9f9776c2b5414faf6b5bd615",
+    "previously_delivered_filename": "com.osfans.trime-v3.3.12-110-g0ef0eb55-arm64-v8a-debug.apk",
+    "previously_delivered_APK_sha256": "7cb4e071373ef7506010120c845e243dfc00ac54e7b5e24860f90c1730743cde",
+    "expected_package": "com.osfans.trime.debug",
+    "on_device_APK_hash_version_signature_or_package_measurement": "NOT_CAPTURED",
+    "identity_scope": "This report followed delivery of that candidate; exact installed APK identity was not independently read from the phone."
+  },
+  "screenshot_evidence": {
+    "count_supplied_in_chat": 1,
+    "viewed_by_assistant": true,
+    "repository_image_file": null,
+    "original_image_sha256": null,
+    "availability": "Supplied in this conversation; no transferable original image file is available in the workspace and no screenshot image is published with this report.",
+    "visible_observations": [
+      "Trime settings/input-test screen with truncated Debug branding.",
+      "Text input mode selected and nine-key letter groups visible.",
+      "Pinyin syllables ce and shi visible, with shi highlighted.",
+      "Chinese candidates visible, including 測試, 側室, 側視 and 測時.",
+      "Unlock, undo and cancel controls visible."
+    ],
+    "not_demonstrated_by_static_screenshot": [
+      "Successful candidate commit into the editor after this frame.",
+      "Activation or correctness of every visible control.",
+      "Both themes, every editor type, Shift timing, feedback/TTS, upgrade data preservation or full checklist completion."
+    ]
+  },
+  "execution_scope": {
+    "manual_test": "User reports using their physical S24 Ultra and finding no problems.",
+    "individual_checklist_results": "NOT_ITEMIZED_BY_TESTER",
+    "both_theme_case_coverage": "NOT_INDIVIDUALLY_RECORDED",
+    "return_shift_feedback_schema_switch_coverage": "NOT_INDIVIDUALLY_RECORDED",
+    "ADB_automation_or_device_log_collection": "NOT_PERFORMED_BY_ASSISTANT",
+    "performance_or_warning_free_result": "NOT_MEASURED",
+    "frozen_44_status_template": "Unmodified historical blank template. No automatic conversion to PASS from this overall report."
+  },
+  "conclusion": "Record the real-device feedback as user-reported manual testing with no issues reported. Submit the existing PR for maintainer review at the explicit request of the tester. This is not full protocol, every-device, upgrade, TTS, performance or zero-warning certification.",
+  "user_authorized_actions": [
+    "Publish this physical-device test report",
+    "Update existing osfans/trime#2183 body",
+    "Mark existing PR ready for review"
+  ],
+  "merge_or_release_authorized_by_this_record": false
+}
