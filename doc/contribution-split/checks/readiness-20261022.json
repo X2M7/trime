@@ -513,7 +513,11 @@
     "no_zero_warning_claim": true,
     "merge_or_release_action": false,
     "ready_transition": false,
-    "final_body_update_after_qualification": "PENDING_AFTER_FIRST_IMMUTABLE_EVIDENCE_COMMIT",
+    "final_body_update_after_qualification": {
+      "state": "DONE_BODY_ONLY_EXACT_READBACK_OPEN_DRAFT_SOURCE_UNCHANGED",
+      "receipt": "pr2183-update-20261027/pr-body-final1/receipt.json",
+      "immutable_evidence_commit": "d31d91830653e946bc0b1ec782c70d7cb0421c15"
+    },
     "current_runtime_warning_audit": {
       "historical_source_mapping": {
         "audit": "pr2183-update-20261027/runtime/warning-source-audit1/source-attribution1.json",
@@ -609,7 +613,7 @@
       },
       "zero_warning_claim": false
     },
-    "current_state_receipt": "pr2183-update-20261027/pr-publication-preflight2/summary.json",
+    "current_state_receipt": "pr2183-update-20261027/pr-body-final1/receipt.json",
     "current_qualified_scope": "pr2183-update-20261027/root-current-qualified-scope.json",
     "runtime_controllers": {
       "API21": "pr2183-update-20261027/runtime/run-api21-8a1e-v10.py",
@@ -622,7 +626,8 @@
       "bytes_streamed": 16123230075,
       "content_SHA_permissions_mtime_unchanged": true,
       "qualification": "pr2183-update-20261027/runtime/protected-inputs-comparison1.json"
-    }
+    },
+    "actual_first_evidence_push": "pr2183-update-20261027/index-push1/receipt.json"
   },
   "historical_logcat_before_review_slim_20261023": {
     "pr": 2182,
@@ -1042,7 +1047,7 @@
     "current_pr_state": "MERGED",
     "merged_by_maintainer_not_this_run": true
   },
-  "updated_utc": "2026-10-27T17:33:16.720375+00:00",
+  "updated_utc": "2026-10-27T17:37:24.322207+00:00",
   "historical_unicode_foundation_before_review_slim_20261023": {
     "branch": "contrib/pr-jni-unicode-transport",
     "source": "e16ab85f495e5bbf353187c29efbff74526cff9c",
