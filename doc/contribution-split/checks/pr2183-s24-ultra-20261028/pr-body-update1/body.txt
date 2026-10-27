@@ -1,0 +1,20 @@
+Add Chinese nine-key Pinyin using the existing `luna_pinyin` dictionary and user dictionary. Enable `luna_pinyin_t9` through the existing scheme selector; both stock themes provide the layout.
+
+Support syllable selection/locking, focus changes, unlock, undo, cancel, literal digits/symbols and editor-boundary reset. Native revisions reject stale spelling actions. Responses keep one bounded spelling snapshot alongside the existing batched candidate response. Related #1464, #1299 and #459.
+
+**Physical-device feedback (received 2026-10-28):** The contributor tested nine-key input on their Samsung Galaxy S24 Ultra and reported no issues. [Manual test record](https://github.com/X2M7/trime/blob/24d72b1708ff753127155ea00fb32d309b6daa50/doc/contribution-split/checks/pr2183-s24-ultra-20261028/report.json).
+
+Head `8a1ee0ea` is rebased onto upstream `a047f747`, with four linear Conventional Commits. The obsolete local #2187 candidate change was dropped in favor of the version merged upstream. Included Unicode and deferred-view dependencies match the reviewed #2186 and #2188 changes. The scheme-restoration and editor-required ASCII fixes remain. Fork release/Pages configuration, prediction, privacy policy and candidate pinning remain outside this PR.
+
+Validation for this source:
+
+- [Upstream CI](https://github.com/osfans/trime/actions/runs/40527129836): all five jobs succeeded, including unit-test and Lint tasks. The workflow did not export a precise application test count.
+- Fresh host checks passed 743 T9 assertions, 115 Unicode CheckJNI assertions and 46 UTF-16 offset assertions. The recorded host librime engine was reused; the current T9 test programs were rebuilt.
+- Original four-ABI Debug APKs were audited without modification or re-signing. Their actual producer is merge `0ef0eb55`, whose complete Git tree equals head `8a1ee0ea`; build metadata and APK bytes are not claimed to be direct-head builds.
+- The same original x86_64 Debug APK completed the targeted 12 sessions/14 logical checks on Android 5.0 and Android 15 r2, with 134 captures and 110 strict editor-text pairs per system. Both VMs shut down normally; the Android 15 log collector returned 255 on ADB disconnect, a retained capture limitation. The earlier API35 attempt had system startup ANRs and two low-watermark kills before Trime startup; that failed attempt remains recorded.
+
+Dependency/tool, Debug-signature and runtime diagnostics remain documented; no zero-warning, Release or performance result is claimed. The S24 Ultra feedback is a user-reported manual test: Android/One UI details, on-device APK identity and individual results for the full checklist were not recorded. The frozen 44-field blank template is unchanged and is not presented as a completed test log.
+
+[Input behavior and switching contract](https://github.com/X2M7/trime/blob/8a1ee0ea6538e220fcddf31ed6fd491f5bc3cca7/doc/t9-input.md).
+
+[Current validation scope and retained evidence](https://github.com/X2M7/trime/blob/d31d91830653e946bc0b1ec782c70d7cb0421c15/doc/contribution-split/checks/pr2183-update-20261027/root-current-qualified-scope.json).

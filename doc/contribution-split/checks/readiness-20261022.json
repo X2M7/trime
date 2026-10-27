@@ -269,8 +269,8 @@
   "t9": {
     "pr": 2183,
     "url": "https://github.com/osfans/trime/pull/2183",
-    "draft": true,
-    "status": "OPEN_DRAFT_S24_USER_REPORTED_TEST_ADDED_READY_TRANSITION_AUTHORIZED",
+    "draft": false,
+    "status": "OPEN_READY_FOR_REVIEW_WITH_USER_REPORTED_S24_ULTRA_MANUAL_TEST",
     "source": "8a1ee0ea6538e220fcddf31ed6fd491f5bc3cca7",
     "tree": "b022a1e810e231af9f9776c2b5414faf6b5bd615",
     "base": "a047f74757fae0d7b5ef64e54f0b957dee2bf8f3",
@@ -512,11 +512,12 @@
     "old_head_emulator_results_are_historical": true,
     "no_zero_warning_claim": true,
     "merge_or_release_action": false,
-    "ready_transition": false,
+    "ready_transition": true,
     "final_body_update_after_qualification": {
-      "state": "DONE_BODY_ONLY_EXACT_READBACK_OPEN_DRAFT_SOURCE_UNCHANGED",
-      "receipt": "pr2183-update-20261027/pr-body-final1/receipt.json",
-      "immutable_evidence_commit": "d31d91830653e946bc0b1ec782c70d7cb0421c15"
+      "state": "DONE_BODY_UPDATE_AND_READY_CONFIRMED",
+      "body_receipt": "pr2183-s24-ultra-20261028/pr-body-update1/receipt.json",
+      "Ready_receipt": "pr2183-s24-ultra-20261028/ready-transition1/receipt.json",
+      "physical_report_commit": "24d72b1708ff753127155ea00fb32d309b6daa50"
     },
     "current_runtime_warning_audit": {
       "historical_source_mapping": {
@@ -613,7 +614,7 @@
       },
       "zero_warning_claim": false
     },
-    "current_state_receipt": "pr2183-s24-ultra-20261028/preflight.json",
+    "current_state_receipt": "pr2183-s24-ultra-20261028/ready-transition1/receipt.json",
     "current_qualified_scope": "pr2183-s24-ultra-20261028/review-scope.json",
     "runtime_controllers": {
       "API21": "pr2183-update-20261027/runtime/run-api21-8a1e-v10.py",
@@ -637,7 +638,8 @@
       "on_device_APK_sha256": null
     },
     "physical_full_checklist_results": "NOT_ITEMIZED; original44-status template preserved unchanged as historical blank template",
-    "ready_transition_authorized_by_user": true
+    "ready_transition_authorized_by_user": true,
+    "ready_transition_receipt": "pr2183-s24-ultra-20261028/ready-transition1/receipt.json"
   },
   "historical_logcat_before_review_slim_20261023": {
     "pr": 2182,
@@ -944,9 +946,7 @@
     "body_sha256": "03f60bf2492e84dda9972965a3eacf2e651a3684d3203fbe50b3b2858e8e55d5",
     "source_and_status_unchanged_by_body_update": true
   },
-  "still_draft": [
-    2183
-  ],
+  "still_draft": [],
   "warnings_and_limits": [
     "Readyforreview is not maintainer approval, automaticmerge, universalbugfree or fullapplication acceptance.",
     "OriginalDebugAPKs retain2META-INF/services signaturewarnings; SDK/Gradle/nativeaccess and dependency/presetvocabulary warnings are retained, notsilenced.",
@@ -1057,7 +1057,7 @@
     "current_pr_state": "MERGED",
     "merged_by_maintainer_not_this_run": true
   },
-  "updated_utc": "2026-10-27T22:18:20.605287+00:00",
+  "updated_utc": "2026-10-27T22:20:46.527615+00:00",
   "historical_unicode_foundation_before_review_slim_20261023": {
     "branch": "contrib/pr-jni-unicode-transport",
     "source": "e16ab85f495e5bbf353187c29efbff74526cff9c",
@@ -1422,8 +1422,8 @@
   "historical_ready_transition_count": 9,
   "open_ready_prs": [
     2182,
+    2183,
     2186,
-    2187,
     2188
   ],
   "merged_from_previous_nine_ready": [
@@ -1432,7 +1432,7 @@
     2179,
     2180
   ],
-  "current_state_receipt": "pr2183-rebase-20261022/original-pr-update5/receipt.json",
+  "current_state_receipt": "pr2183-s24-ultra-20261028/tracked-readiness-snapshot.json",
   "ready_for_review_transitions_scope": "Historical transitions at their recorded timestamps; not current PR state.",
   "historical_t9_initial_rebase_1754": {
     "pr": 2183,
@@ -1671,7 +1671,7 @@
     "body_evidence_commit": "9eb3810a0a578b786e4d9cb92835a2c186f9073c",
     "source_and_non_draft_state_unchanged_by_body_update": true
   },
-  "update_scope": "Only #2183 physical user report and explicit Ready request added; other PR metadata/counts and frozen validation records unchanged.",
+  "update_scope": "Update #2183 physical user report/body/Ready. Refresh read-only state snapshot for the five explicitly tracked PRs; other PR source/test objects unchanged. Historical template, logs, warnings and old state snapshots retained.",
   "historical_t9_c4_before_rebase_20261027": {
     "pr": 2183,
     "draft": true,
@@ -2148,5 +2148,25 @@
       "qualification": "pr2183-update-20261027/runtime/protected-inputs-comparison1.json"
     },
     "actual_first_evidence_push": "pr2183-update-20261027/index-push1/receipt.json"
-  }
+  },
+  "historical_global_ready_state_before_s24_transition": {
+    "open_ready_prs": [
+      2182,
+      2186,
+      2187,
+      2188
+    ],
+    "ready_for_review_count": 4,
+    "still_draft": [
+      2183
+    ],
+    "current_state_receipt": "pr2183-rebase-20261022/original-pr-update5/receipt.json"
+  },
+  "tracked_PR_state_scope": [
+    2182,
+    2183,
+    2186,
+    2187,
+    2188
+  ]
 }
