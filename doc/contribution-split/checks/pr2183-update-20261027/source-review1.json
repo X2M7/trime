@@ -1,0 +1,271 @@
+{
+  "reviewed_at_utc": "2026-10-27T15:02:02.813999+00:00",
+  "role": "Independent source-only review; no builds, test execution, worktree/index writes, or pushes",
+  "repository": "/home/xumin/Public/Trime-pr-t9-update-20261027",
+  "head": "8a1ee0ea6538e220fcddf31ed6fd491f5bc3cca7",
+  "upstream": "a047f74757fae0d7b5ef64e54f0b957dee2bf8f3",
+  "old_t9_head": "c4b613f78835e7b914e02447955c6b89fe9839ab",
+  "status": "PASS_SOURCE_SCOPE",
+  "worktree_clean": true,
+  "commits": [
+    {
+      "sha": "e05efc8897c5d2c40aa0036311d589ff2e060fa5",
+      "parent": "a047f74757fae0d7b5ef64e54f0b957dee2bf8f3",
+      "subject": "feat: add nine-key Pinyin input with syllable selection",
+      "paths": [
+        "app/src/main/assets/shared/luna_pinyin_t9.schema.yaml",
+        "app/src/main/assets/shared/tongwenfeng.trime.yaml",
+        "app/src/main/assets/shared/trime.yaml",
+        "app/src/main/java/com/osfans/trime/core/EditorPreeditResponse.kt",
+        "app/src/main/java/com/osfans/trime/core/KeySequenceFallback.kt",
+        "app/src/main/java/com/osfans/trime/core/Rime.kt",
+        "app/src/main/java/com/osfans/trime/core/RimeApi.kt",
+        "app/src/main/java/com/osfans/trime/core/RimeMessage.kt",
+        "app/src/main/java/com/osfans/trime/core/RimeProto.kt",
+        "app/src/main/java/com/osfans/trime/core/RimeSchema.kt",
+        "app/src/main/java/com/osfans/trime/core/data/UserDataManager.kt",
+        "app/src/main/java/com/osfans/trime/data/theme/model/TextKeyboard.kt",
+        "app/src/main/java/com/osfans/trime/ime/composition/CandidatesView.kt",
+        "app/src/main/java/com/osfans/trime/ime/composition/PreeditCursor.kt",
+        "app/src/main/java/com/osfans/trime/ime/composition/PreeditDelegate.kt",
+        "app/src/main/java/com/osfans/trime/ime/composition/PreeditTextView.kt",
+        "app/src/main/java/com/osfans/trime/ime/composition/PreeditUi.kt",
+        "app/src/main/java/com/osfans/trime/ime/composition/T9ActionBinding.kt",
+        "app/src/main/java/com/osfans/trime/ime/composition/T9DisambiguationView.kt",
+        "app/src/main/java/com/osfans/trime/ime/core/InputView.kt",
+        "app/src/main/java/com/osfans/trime/ime/core/TrimeInputMethodService.kt",
+        "app/src/main/java/com/osfans/trime/ime/keyboard/CommonKeyboardActionListener.kt",
+        "app/src/main/java/com/osfans/trime/ime/keyboard/Keyboard.kt",
+        "app/src/main/java/com/osfans/trime/ime/keyboard/KeyboardWindow.kt",
+        "app/src/main/jni/librime_jni/config.cc",
+        "app/src/main/jni/librime_jni/helper-types.h",
+        "app/src/main/jni/librime_jni/jni-utils.h",
+        "app/src/main/jni/librime_jni/key.cc",
+        "app/src/main/jni/librime_jni/levers.cc",
+        "app/src/main/jni/librime_jni/objconv.h",
+        "app/src/main/jni/librime_jni/opencc.cc",
+        "app/src/main/jni/librime_jni/rime_jni.cc",
+        "app/src/main/jni/librime_jni/t9.cc",
+        "app/src/main/jni/librime_jni/t9.h",
+        "app/src/main/jni/librime_jni/t9_assist.cc",
+        "app/src/main/jni/librime_jni/t9_assist.h",
+        "app/src/main/res/values-zh-rCN/strings_t9.xml",
+        "app/src/main/res/values-zh-rTW/strings_t9.xml",
+        "app/src/main/res/values/strings_t9.xml",
+        "app/src/test/java/com/osfans/trime/core/EditorPreeditResponseTest.kt",
+        "app/src/test/java/com/osfans/trime/core/KeySequenceFallbackTest.kt",
+        "app/src/test/java/com/osfans/trime/core/T9ProtocolTest.kt",
+        "app/src/test/java/com/osfans/trime/data/theme/T9KeyboardAssetTest.kt",
+        "app/src/test/java/com/osfans/trime/data/theme/ThemeGoldenTest.kt",
+        "app/src/test/java/com/osfans/trime/ime/composition/PreeditCursorTest.kt",
+        "app/src/test/java/com/osfans/trime/ime/composition/T9ActionBindingTest.kt",
+        "app/src/test/native/jni/README.md",
+        "app/src/test/native/jni/offset_test.cc",
+        "app/src/test/native/jni/run_unicode.py",
+        "app/src/test/native/jni/unicode_test.cc",
+        "app/src/test/native/t9/README.md",
+        "app/src/test/native/t9/assist_test.cc",
+        "app/src/test/native/t9/controller_test.cc",
+        "app/src/test/native/t9/fixtures/assist/luna_pinyin_t9.custom.yaml",
+        "app/src/test/native/t9/fixtures/assist/t9_test.dict.yaml",
+        "app/src/test/native/t9/fixtures/common/default.yaml",
+        "app/src/test/native/t9/fixtures/common/double_pinyin.custom.yaml",
+        "app/src/test/native/t9/fixtures/common/luna_pinyin.custom.yaml",
+        "app/src/test/native/t9/fixtures/controller/luna_pinyin_t9.custom.yaml",
+        "app/src/test/native/t9/fixtures/controller/t9_test.dict.yaml",
+        "app/src/test/native/t9/run.py",
+        "doc/t9-input.md"
+      ]
+    },
+    {
+      "sha": "cf3ed91f563c7445bdeeb6bd9c433b2d4e55ef18",
+      "parent": "e05efc8897c5d2c40aa0036311d589ff2e060fa5",
+      "subject": "fix: create deferred input views after theme initialization",
+      "paths": [
+        "app/src/main/java/com/osfans/trime/ime/core/TrimeInputMethodService.kt"
+      ]
+    },
+    {
+      "sha": "aa33c0bdfd326fe82baf7db5c80528885c57a000",
+      "parent": "cf3ed91f563c7445bdeeb6bd9c433b2d4e55ef18",
+      "subject": "fix: reset remembered keyboard when changing input schemes",
+      "paths": [
+        "app/src/main/java/com/osfans/trime/ime/keyboard/KeyboardWindow.kt",
+        "doc/t9-input.md"
+      ]
+    },
+    {
+      "sha": "8a1ee0ea6538e220fcddf31ed6fd491f5bc3cca7",
+      "parent": "aa33c0bdfd326fe82baf7db5c80528885c57a000",
+      "subject": "fix: keep editor-required ASCII mode when attaching keyboards",
+      "paths": [
+        "app/src/main/java/com/osfans/trime/ime/keyboard/KeyboardWindow.kt",
+        "doc/t9-input.md"
+      ]
+    }
+  ],
+  "upstream_six_commits_retained": [
+    "57edd25ea275d192ae9a340ee1b0c43c8cfd2eff",
+    "7195206640cfc6522ccc9f43be1566d0e76c9b8a",
+    "c8b3a50c4ffaa959b0ff2e34b7b59e934308b16b",
+    "f27ea93b966574c096994f1b44132b5f26b81686",
+    "c0df6d07bf1c91dbdcee4438f345653bb1128418",
+    "a047f74757fae0d7b5ef64e54f0b957dee2bf8f3"
+  ],
+  "upstream_changed_files_exact_except_theme_additions": [
+    {
+      "path": ".github/workflows/commit-ci.yml",
+      "sha256": "18e8745c9365fa5a282dd4fde7f3217e008297fef653821f61730da10d91beb4"
+    },
+    {
+      "path": ".github/workflows/nightly-ci.yml",
+      "sha256": "305a43d40fef08983c25069ca5801efd004d2cd17176c145327b2353cfb7dae5"
+    },
+    {
+      "path": ".github/workflows/pull-request-ci.yml",
+      "sha256": "54e012e47bf2627f5e3dd9044370d789b7ae1691e8a2c19b2e752b116be09fee"
+    },
+    {
+      "path": ".github/workflows/release-ci.yml",
+      "sha256": "c083cc92254669b6665dbf0fe4b510af3eabec07c35ede00dce45afe0ebe7cb2"
+    },
+    {
+      "path": "app/build.gradle.kts",
+      "sha256": "76ea13027bb31baa47e15800c6321629ab41dd62b069c1279c25b2498609ac97"
+    },
+    {
+      "path": "app/src/main/java/com/osfans/trime/ime/core/AutoScaleTextView.kt",
+      "sha256": "c92ded471c62aa2a773510784237d60ac822d831bda9298929a6f99b5d3db8c1"
+    },
+    {
+      "path": "app/src/main/jni/CMakeLists.txt",
+      "sha256": "687d4b19837f729d5428bf3c015c390f02befd4a1675fb08fdc9828d9ca861f5"
+    },
+    {
+      "path": "build-logic/convention/src/main/kotlin/Versions.kt",
+      "sha256": "fe2b6de7e3bb228e5030483a6117f2fa0295136f89eb2f8ea0974025a833674d"
+    },
+    {
+      "path": "gradle/libs.versions.toml",
+      "sha256": "525db33e479d7c248b5c4030bbf3c525cf5e6171219d4f1324d934035414c135"
+    }
+  ],
+  "theme_symbol_fix": {
+    "path": "app/src/main/assets/shared/tongwenfeng.trime.yaml",
+    "assertion": "exact old T9 theme plus three upstream Return macro removals; no other theme drift",
+    "sha256": "d9e03ce4c938bcecc1e7a0c6967ba2afc590b3cc010547ca21bddc9e2bcf2679"
+  },
+  "jni": [
+    {
+      "path": "app/src/main/jni/librime_jni/config.cc",
+      "assertion": "byte-identical to reviewed JNI head 2ad1865fd97f09ffba231e5c0e23092cd383b059",
+      "sha256": "5f629dcd42bbe47f025f9bb2fa3f0531bf56d5e46f9289057ddcf82e00211c98"
+    },
+    {
+      "path": "app/src/main/jni/librime_jni/helper-types.h",
+      "assertion": "byte-identical to reviewed JNI head 2ad1865fd97f09ffba231e5c0e23092cd383b059",
+      "sha256": "a3b5cc0ff5aa795af583edf7eb619a279d1f8a544621d74ef5ccd4a62989bc15"
+    },
+    {
+      "path": "app/src/main/jni/librime_jni/jni-utils.h",
+      "assertion": "byte-identical to reviewed JNI head 2ad1865fd97f09ffba231e5c0e23092cd383b059",
+      "sha256": "c0dc433bce8ab46031e8890a2cfe72e1bfaf2f456442e57905fa38ba9529f868"
+    },
+    {
+      "path": "app/src/main/jni/librime_jni/key.cc",
+      "assertion": "byte-identical to reviewed JNI head 2ad1865fd97f09ffba231e5c0e23092cd383b059",
+      "sha256": "7851625bd06e7fcc3df2fbcd1c54b808445bb2674d4c8a69c4a4f01296316a8f"
+    },
+    {
+      "path": "app/src/main/jni/librime_jni/levers.cc",
+      "assertion": "byte-identical to reviewed JNI head 2ad1865fd97f09ffba231e5c0e23092cd383b059",
+      "sha256": "10b47921575f89214126a0803a50d525d3eebe66e507f6904991de93e5543eb7"
+    },
+    {
+      "path": "app/src/main/jni/librime_jni/objconv.h",
+      "assertion": "byte-identical to reviewed JNI head 2ad1865fd97f09ffba231e5c0e23092cd383b059",
+      "sha256": "df498e3cd85638cd45e5e2a427ef73fa5bc0fa306046870f2f176ddd9d80da6d"
+    },
+    {
+      "path": "app/src/main/jni/librime_jni/opencc.cc",
+      "assertion": "byte-identical to reviewed JNI head 2ad1865fd97f09ffba231e5c0e23092cd383b059",
+      "sha256": "f9a8bcfd34e223181bc9756ed39211948199f502dc323a498910d214ac4765a0"
+    },
+    {
+      "path": "app/src/main/jni/librime_jni/rime_jni.cc",
+      "assertion": "byte-identical to previous T9 head; all T9 hook changes retained",
+      "sha256": "8698012656ee6664eb3fbc9c9a54375449e7f21dfa96c83fd84294b9c4fa384d"
+    },
+    {
+      "path": "app/src/test/native/jni/README.md",
+      "assertion": "byte-identical to reviewed JNI head 2ad1865fd97f09ffba231e5c0e23092cd383b059",
+      "sha256": "81db7f20a3d503deed1ebae1bbd9cfa1aeb3b757e1d005becee3116b761bcfa9"
+    },
+    {
+      "path": "app/src/test/native/jni/offset_test.cc",
+      "assertion": "byte-identical to reviewed JNI head 2ad1865fd97f09ffba231e5c0e23092cd383b059",
+      "sha256": "87ab5a74b885a40ed8304acc367afb0704374837c2e21ea17c8845db80c03062"
+    },
+    {
+      "path": "app/src/test/native/jni/run_unicode.py",
+      "assertion": "byte-identical to reviewed JNI head 2ad1865fd97f09ffba231e5c0e23092cd383b059",
+      "sha256": "45d01c847cd5df62e3d403cbf8ae8c98b6c434a5b5bdff6d10f860967a8f892b"
+    },
+    {
+      "path": "app/src/test/native/jni/unicode_test.cc",
+      "assertion": "byte-identical to reviewed JNI head 2ad1865fd97f09ffba231e5c0e23092cd383b059",
+      "sha256": "aa2e336a8bad5faa2e8f362fe11a35490fbdd9fbf4ff62617e9349a99f9a1da4"
+    }
+  ],
+  "deferred_sync": {
+    "path": "app/src/main/java/com/osfans/trime/ime/core/TrimeInputMethodService.kt",
+    "source_sha256": "6088290ef279d25487da91446e4a916a27a327d3866b508be60d8db406ec0084",
+    "assertion": "exact previous T9 service plus e009 pending condition flattening and removal of two onDestroy flag resets; T9 composing tracking unchanged"
+  },
+  "preserved_regression_commits": [
+    {
+      "old": "b14a2f1e0565cec4953f5a974bfcea023875369f",
+      "new": "aa33c0bdfd326fe82baf7db5c80528885c57a000",
+      "stable_patch_id": "561118b7dbddabdda29659b9901fb2f2c3553783",
+      "patch_identical": true
+    },
+    {
+      "old": "c4b613f78835e7b914e02447955c6b89fe9839ab",
+      "new": "8a1ee0ea6538e220fcddf31ed6fd491f5bc3cca7",
+      "stable_patch_id": "a101fd1a9e01138fb615faf75d82cc3991f6f663",
+      "patch_identical": true
+    }
+  ],
+  "exact_old_to_new_delta_paths": [
+    ".github/workflows/commit-ci.yml",
+    ".github/workflows/nightly-ci.yml",
+    ".github/workflows/pull-request-ci.yml",
+    ".github/workflows/release-ci.yml",
+    "app/build.gradle.kts",
+    "app/src/main/assets/shared/tongwenfeng.trime.yaml",
+    "app/src/main/java/com/osfans/trime/ime/core/AutoScaleTextView.kt",
+    "app/src/main/java/com/osfans/trime/ime/core/TrimeInputMethodService.kt",
+    "app/src/main/jni/CMakeLists.txt",
+    "app/src/main/jni/librime_jni/jni-utils.h",
+    "app/src/main/jni/librime_jni/key.cc",
+    "app/src/main/jni/librime_jni/objconv.h",
+    "app/src/test/native/jni/README.md",
+    "app/src/test/native/jni/offset_test.cc",
+    "app/src/test/native/jni/run_unicode.py",
+    "build-logic/convention/src/main/kotlin/Versions.kt",
+    "gradle/libs.versions.toml"
+  ],
+  "submodules_identical_to_upstream": true,
+  "no_unmerged_paths": true,
+  "git_diff_check_exit": 0,
+  "theme_test_review": {
+    "ThemeGoldenTest_unchanged": true,
+    "T9KeyboardAssetTest_unchanged": true,
+    "finding": "No expected @/*/& Return string, whole-file checksum, or affected symbol-count assertion exists. Upstream changes only literal token values; keyboard/preset-key/color counts are unchanged. Existing symbols inheritance equality remains valid because inherited and original source share the same changed keys. No golden update is needed from source inspection. Actual Kotlin/theme tests remain required."
+  },
+  "limitations": [
+    "Source audit does not establish compilation, JNI execution, Android acceptance, or real-device verification.",
+    "Existing separate PR dependency history is represented by synchronized code, not identical Git ancestry."
+  ],
+  "bugs_found": []
+}

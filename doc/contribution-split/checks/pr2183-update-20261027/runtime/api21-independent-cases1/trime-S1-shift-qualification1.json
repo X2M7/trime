@@ -1,0 +1,211 @@
+{
+  "schema": "trime-targeted-shift-continuous-log-qualification/v1",
+  "utc": "2026-10-27T16:03:06.079671+00:00",
+  "verdict": "PASS_THIS_SESSION_PLAIN_SHIFT_CLICK_CLICK_143MS_TARGET_GAP_AND_EXACT_LOWERCASE_aa",
+  "case": "S1",
+  "theme": "trime",
+  "api": 21,
+  "source_head": "8a1ee0ea6538e220fcddf31ed6fd491f5bc3cca7",
+  "actual_build_commit": "0ef0eb551a6f8d000266d4446348b2d2ab2823e9",
+  "Trime_frozen_PID": {
+    "pid": 2457,
+    "starttime": "27184"
+  },
+  "boot_id": "139a40bc-7c10-4ffa-affd-3657c4fa391a",
+  "continuous_log_fixed_prefix": {
+    "path": "/home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/api21-8a1e-v10-run1/device-logcat.txt",
+    "inode": 28878678,
+    "device": 66306,
+    "bytes": 91501561,
+    "sha256": "ffa6e371687b74837783e7eb9f2caf6db4d018b75dd9b2bebc04cc66873e2e17",
+    "not_modified_by_reviewer": true
+  },
+  "bounded_case_window_UTC_with_2second_clock_margin": {
+    "start": "2026-10-27T15:56:13.130713+00:00",
+    "end": "2026-10-27T15:56:51.326588+00:00",
+    "explanation": "Used only to find the unique two target Shift releases within this real case; target timing is measured from the single device continuous clock, not host clock."
+  },
+  "exact_original_target_rows": [
+    {
+      "line_number_1based": 1201478,
+      "byte_start_0based": 90929881,
+      "byte_end_exclusive": 90930012,
+      "device_timestamp": "10-27 23:56:34.102",
+      "text": "10-27 23:56:34.102  2457  2457 D [main] KeyView: KeyView.kt:91] KeyView release: label=Shift, behavior=CLICK, fromLongPress=false",
+      "raw_sha256": "8b1c0d0d6cecaf5e26efcfe1e02d808a47ce183a1b85dc4da4a28992f7805710"
+    },
+    {
+      "line_number_1based": 1201479,
+      "byte_start_0based": 90930012,
+      "byte_end_exclusive": 90930129,
+      "device_timestamp": "10-27 23:56:34.103",
+      "text": "10-27 23:56:34.103  2457  2457 D [main] KeyView: KeyView.kt:196] processKeyAction: label=Shift, code=59, type=COMBO",
+      "raw_sha256": "27d7ce4dbf2548bcd36f57f78735c03dd3f4b2f39e717a1e32c33a7063fa9ca7"
+    },
+    {
+      "line_number_1based": 1201480,
+      "byte_start_0based": 90930129,
+      "byte_end_exclusive": 90930260,
+      "device_timestamp": "10-27 23:56:34.245",
+      "text": "10-27 23:56:34.245  2457  2457 D [main] KeyView: KeyView.kt:91] KeyView release: label=Shift, behavior=CLICK, fromLongPress=false",
+      "raw_sha256": "b053a6d4a868a984fc544d0b12ab45d2d6dabae4c51771465bd8488fbf4aa155"
+    },
+    {
+      "line_number_1based": 1201481,
+      "byte_start_0based": 90930260,
+      "byte_end_exclusive": 90930377,
+      "device_timestamp": "10-27 23:56:34.254",
+      "text": "10-27 23:56:34.254  2457  2457 D [main] KeyView: KeyView.kt:196] processKeyAction: label=Shift, code=59, type=COMBO",
+      "raw_sha256": "7d436169a7b90b0535ac40d60fff9640a959ab179b1142870f4996e6b7acf5eb"
+    }
+  ],
+  "actual_target_release_delta_ms": 143.0,
+  "required_timeout_ms": 300,
+  "target_release_behaviors": [
+    "CLICK",
+    "CLICK"
+  ],
+  "DOUBLE_CLICK_rows_in_bounded_case": 0,
+  "actual_injection_command": {
+    "at": "2026-10-27T15:56:34.730780+00:00",
+    "argv": [
+      "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+      "-s",
+      "emulator-5582",
+      "shell",
+      "sh -c 'sh -c '\"'\"'CLASSPATH=/data/local/tmp/trime-real-doubletap.jar exec app_process /system/bin org.x2m7.trime.readiness.input.TrimeRealDoubleTap 36 1134 60'\"'\"''; _trime_t12_status=$?; echo ''; echo \"__TRIME_T12_REMOTE_RC_69c0d28e999038efa30380d487b9c363:$_trime_t12_status\""
+    ],
+    "stdout": "/home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/api21-8a-trime-S1/commands/0143.stdout",
+    "stderr": "/home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/api21-8a-trime-S1/commands/0143.stderr",
+    "timeout_seconds": 60,
+    "completed": true,
+    "returncode": 0,
+    "finished": "2026-10-27T15:56:35.453326+00:00",
+    "stdout_sha256": "2be629c1c6071748e6030fcdae1742fb2f809f2e6360cebea20f90668bf8b478",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "shell_protocol_nonce": "69c0d28e999038efa30380d487b9c363",
+    "remote_returncode": 0,
+    "remote_stdout_bytes": 1076,
+    "remote_stdout_sha256": "25871b7c20e2a891bb9a087b7054ac51da1a00beb356c96e0e18d0c1fe144b52"
+  },
+  "actual_injector_four_events": [
+    {
+      "index": "1",
+      "action": "DOWN_1",
+      "down_uptime_ms": "1759753",
+      "event_uptime_ms": "1759753",
+      "call_start_uptime_ms": "1759755",
+      "call_end_uptime_ms": "1759757",
+      "pid": "16569",
+      "uid": "0",
+      "accepted": "true",
+      "source": "4098",
+      "display_id": "0",
+      "x": "36.0",
+      "y": "1134.0"
+    },
+    {
+      "index": "2",
+      "action": "UP_1",
+      "down_uptime_ms": "1759753",
+      "event_uptime_ms": "1759818",
+      "call_start_uptime_ms": "1759818",
+      "call_end_uptime_ms": "1759827",
+      "pid": "16569",
+      "uid": "0",
+      "accepted": "true",
+      "source": "4098",
+      "display_id": "0",
+      "x": "36.0",
+      "y": "1134.0"
+    },
+    {
+      "index": "3",
+      "action": "DOWN_2",
+      "down_uptime_ms": "1759887",
+      "event_uptime_ms": "1759887",
+      "call_start_uptime_ms": "1759887",
+      "call_end_uptime_ms": "1759900",
+      "pid": "16569",
+      "uid": "0",
+      "accepted": "true",
+      "source": "4098",
+      "display_id": "0",
+      "x": "36.0",
+      "y": "1134.0"
+    },
+    {
+      "index": "4",
+      "action": "UP_2",
+      "down_uptime_ms": "1759887",
+      "event_uptime_ms": "1759960",
+      "call_start_uptime_ms": "1759961",
+      "call_end_uptime_ms": "1759979",
+      "pid": "16569",
+      "uid": "0",
+      "accepted": "true",
+      "source": "4098",
+      "display_id": "0",
+      "x": "36.0",
+      "y": "1134.0"
+    }
+  ],
+  "actual_injector_summary": {
+    "completed": "true",
+    "pid": "16569",
+    "uid": "0",
+    "backend": "android.hardware.input.InputManager",
+    "attempted": "4",
+    "accepted": "4",
+    "gap_ms": "60",
+    "injector_up_call_delta_ms": "143",
+    "x": "36.0",
+    "y": "1134.0"
+  },
+  "injector_raw_stdout": {
+    "path": "/home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/api21-8a-trime-S1/trime-S1-injector-stdout.raw.txt",
+    "sha256": "a2d5cb5a9f5d8dc282ddac842770449fe7084f9b76fc1734f0f3d51462b6790e"
+  },
+  "selected_original_rows": {
+    "path": "/home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/api21-independent-cases1/trime-S1-actual-target-shift.raw.txt",
+    "sha256": "91579abf288ba6a65e5d6c36509455cae6ac7ac44c8f128cd1285ddb60257373",
+    "preserves_original_CRLF": true
+  },
+  "source_UP_dispatch_path": {
+    "KeyView.kt_sha256": "288fdb6b8aa4d2788996fa1480b1b98072dfba3117ef9ec36c7151c06e086f61",
+    "GestureFrame.kt_sha256": "db81f52b6e9a65b471e92eda7febbf415576ca37acfddf90c5ace4de8aa6048c",
+    "explanation": "Frozen GestureFrame ACTION_UP dispatches CLICK immediately when no explicit double/lazy-double binding. KeyView onRelease logs these rows. Four accepted injector events and two target ACTION_UP-derived release rows are stated separately; target ACTION_DOWN is not independently logged."
+  },
+  "strict_Editable_and_stop_audit": {
+    "path": "/home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/api21-independent-cases1/trime-S1-record-audit1.json",
+    "sha256": "3927633e2195ef3dd3396617a80000bc0e54b78f963bef30b1ecbd7c1b6ef148",
+    "expected_committed_text": "aa",
+    "selection": [
+      2,
+      2
+    ]
+  },
+  "actual_original_image_review": [
+    {
+      "label": "trime-S1-plain-double-shift",
+      "original_PNG": "/home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/api21-8a-trime-S1/captures/trime-S1-plain-double-shift/observer-in-connection.png",
+      "sha256": "c549112cba65664c3cb45c90d083b4e4ab611fab721cdc547de4aa19fe46b11a",
+      "actually_viewed_by_independent_agent": true,
+      "observation": "Actual lower-case letter layout remains after two rapid Shift contacts"
+    },
+    {
+      "label": "trime-S1-plain-aa",
+      "original_PNG": "/home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/api21-8a-trime-S1/captures/trime-S1-plain-aa/observer-in-connection.png",
+      "sha256": "30db891031404a50c69f8ff590ea0f80d577de85ff6602bbaefe8a4124f9fc5a",
+      "actually_viewed_by_independent_agent": true,
+      "observation": "Actual editor visibly contains exact lower-case aa"
+    }
+  ],
+  "raw_business_flags_not_modified": true,
+  "no_ADB_device_controller_access": true,
+  "retained_audit_attempt": "First extraction used host injection-command wall interval as if emulator wall clock were exact, found no matching release rows and raised an audit AssertionError. This was a clock-assumption rejection, not a device/business failure; no raw evidence or acceptance threshold changed.",
+  "limits": [
+    "One actual emulator session and exact original log prefix only; no later events, other theme or physical device acceptance.",
+    "No target input DOWN log is invented; evidence is four real injector events plus two corresponding target release rows, real timing and exact Editable aa."
+  ]
+}

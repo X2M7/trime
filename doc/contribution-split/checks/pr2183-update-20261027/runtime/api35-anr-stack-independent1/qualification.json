@@ -1,0 +1,532 @@
+{
+  "schema": "trime-api35-original-anr-stack-independent-review/v1",
+  "created_utc": "2026-10-27T16:20:46.752726+00:00",
+  "mode": "READ_ONLY_ORIGINAL_TRACES_NO_ADB_VM_CONTROLLER_OR_SOURCE_MUTATION",
+  "source_head": "8a1ee0ea6538e220fcddf31ed6fd491f5bc3cca7",
+  "producer_merge": "0ef0eb551a6f8d000266d4446348b2d2ab2823e9",
+  "traces": [
+    {
+      "path": "/home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/api35-preparation-anr1/anr_2026-10-28-00-13-31-366.raw.txt",
+      "bytes": 50423,
+      "sha256": "b73032a461d27001431fadf5b55548e5b8e88a4c53578b273905b25b0c594e1c",
+      "copy_exit": 0,
+      "subject": "Subject: Broadcast of Intent { act=android.safetycenter.action.REFRESH_SAFETY_SOURCES flg=0x10000010 pkg=com.android.phone cmp=com.android.phone/.security.SafetySourceReceiver (has extras) }",
+      "target_pid": 939,
+      "main_trace_state_line": "\"main\" prio=5 tid=1 Native",
+      "kernel_main_state": "S",
+      "main_stack_original_rows": [
+        {
+          "line": 35,
+          "text": "\"main\" prio=5 tid=1 Native"
+        },
+        {
+          "line": 36,
+          "text": "  | group=\"main\" sCount=1 ucsCount=0 flags=1 obj=0x73366270 self=0x70d80de2dbe0"
+        },
+        {
+          "line": 37,
+          "text": "  | sysTid=939 nice=0 cgrp=foreground sched=0/0 handle=0x70d98cdddd18"
+        },
+        {
+          "line": 38,
+          "text": "  | state=S schedstat=( 716330792 10468665115 1256 ) utm=43 stm=28 core=1 HZ=100"
+        },
+        {
+          "line": 39,
+          "text": "  | stack=0x7ffc93ffa000-0x7ffc93ffc000 stackSize=8188KB"
+        },
+        {
+          "line": 40,
+          "text": "  | held mutexes="
+        },
+        {
+          "line": 41,
+          "text": "  native: #00 pc 000cd777  /apex/com.android.runtime/lib64/bionic/libc.so (__ioctl+7) (BuildId: eb58b4d427279994f00c0e1818477e4f)"
+        },
+        {
+          "line": 42,
+          "text": "  native: #01 pc 00068a48  /apex/com.android.runtime/lib64/bionic/libc.so (ioctl+216) (BuildId: eb58b4d427279994f00c0e1818477e4f)"
+        },
+        {
+          "line": 43,
+          "text": "  native: #02 pc 0007e678  /system/lib64/libbinder.so (android::IPCThreadState::transact+1832) (BuildId: 9787e923a8c93596d3c1f09a7fc9023a)"
+        },
+        {
+          "line": 44,
+          "text": "  native: #03 pc 00067f67  /system/lib64/libbinder.so (android::BpBinder::transact+151) (BuildId: 9787e923a8c93596d3c1f09a7fc9023a)"
+        },
+        {
+          "line": 45,
+          "text": "  native: #04 pc 001950a7  /system/lib64/libandroid_runtime.so (android_os_BinderProxy_transact+215) (BuildId: 74e467b22a4c3107eac51948743c9977)"
+        },
+        {
+          "line": 46,
+          "text": "  at android.os.BinderProxy.transactNative(Native method)"
+        },
+        {
+          "line": 47,
+          "text": "  at android.os.BinderProxy.transact(BinderProxy.java:586)"
+        },
+        {
+          "line": 48,
+          "text": "  at android.app.IActivityManager$Stub$Proxy.registerReceiverWithFeature(IActivityManager.java:6091)"
+        },
+        {
+          "line": 49,
+          "text": "  at android.app.ContextImpl.registerReceiverInternal(ContextImpl.java:1881)"
+        },
+        {
+          "line": 50,
+          "text": "  at android.app.ContextImpl.registerReceiver(ContextImpl.java:1821)"
+        },
+        {
+          "line": 51,
+          "text": "  at android.app.ContextImpl.registerReceiver(ContextImpl.java:1809)"
+        },
+        {
+          "line": 52,
+          "text": "  at android.content.ContextWrapper.registerReceiver(ContextWrapper.java:757)"
+        },
+        {
+          "line": 53,
+          "text": "  at android.content.ContextWrapper.registerReceiver(ContextWrapper.java:757)"
+        },
+        {
+          "line": 54,
+          "text": "  at com.android.phone.PhoneGlobals.onCreate(PhoneGlobals.java:678)"
+        },
+        {
+          "line": 55,
+          "text": "  at com.android.phone.PhoneApp.onCreate(PhoneApp.java:39)"
+        },
+        {
+          "line": 56,
+          "text": "  at android.app.Instrumentation.callApplicationOnCreate(Instrumentation.java:1386)"
+        },
+        {
+          "line": 57,
+          "text": "  at android.app.ActivityThread.handleBindApplication(ActivityThread.java:7504)"
+        },
+        {
+          "line": 58,
+          "text": "  at android.app.ActivityThread.-$$Nest$mhandleBindApplication(unavailable:0)"
+        },
+        {
+          "line": 59,
+          "text": "  at android.app.ActivityThread$H.handleMessage(ActivityThread.java:2416)"
+        },
+        {
+          "line": 60,
+          "text": "  at android.os.Handler.dispatchMessage(Handler.java:107)"
+        },
+        {
+          "line": 61,
+          "text": "  at android.os.Looper.loopOnce(Looper.java:232)"
+        },
+        {
+          "line": 62,
+          "text": "  at android.os.Looper.loop(Looper.java:317)"
+        },
+        {
+          "line": 63,
+          "text": "  at android.app.ActivityThread.main(ActivityThread.java:8705)"
+        },
+        {
+          "line": 64,
+          "text": "  at java.lang.reflect.Method.invoke(Native method)"
+        },
+        {
+          "line": 65,
+          "text": "  at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:580)"
+        },
+        {
+          "line": 66,
+          "text": "  at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:886)"
+        },
+        {
+          "line": 67,
+          "text": "DumpLatencyMs: 291.432"
+        }
+      ],
+      "schedstat_cumulative": {
+        "cpu_running_ns": 716330792,
+        "runqueue_wait_ns": 10468665115,
+        "timeslices": 1256,
+        "cpu_running_seconds": 0.716330792,
+        "runqueue_wait_seconds": 10.468665115,
+        "not_an_ANR_window_latency_measurement": true
+      },
+      "main_waiting_to_lock_rows": [],
+      "Trime_application_or_JNI_frame_rows": [],
+      "main_observation": "Native Binder synchronous transact through registerReceiverWithFeature during PhoneGlobals.onCreate / ActivityThread.handleBindApplication.",
+      "blocking_inference": "Snapshot is waiting in Binder; system_server peer stacks/transaction causal chain are absent. Cannot infer a Binder deadlock or unique remote blocker."
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/api35-preparation-anr1/anr_2026-10-28-00-13-34-072.raw.txt",
+      "bytes": 70846,
+      "sha256": "9b1288249bdc90cb3f6617a4e3d461845d1bf5f386307a4c7a75f3c2809324ba",
+      "copy_exit": 0,
+      "subject": "Subject: executing service com.android.systemui/.keyguard.KeyguardService, waited 21590ms",
+      "target_pid": 796,
+      "main_trace_state_line": "\"main\" prio=5 tid=1 Runnable",
+      "kernel_main_state": "R",
+      "main_stack_original_rows": [
+        {
+          "line": 39,
+          "text": "\"main\" prio=5 tid=1 Runnable"
+        },
+        {
+          "line": 40,
+          "text": "  | group=\"main\" sCount=0 ucsCount=0 flags=0 obj=0x73366270 self=0x70d80de2dbe0"
+        },
+        {
+          "line": 41,
+          "text": "  | sysTid=796 nice=0 cgrp=foreground sched=0/0 handle=0x70d98cdddd18"
+        },
+        {
+          "line": 42,
+          "text": "  | state=R schedstat=( 1612084413 21888369849 1478 ) utm=120 stm=40 core=1 HZ=100"
+        },
+        {
+          "line": 43,
+          "text": "  | stack=0x7ffc93ffa000-0x7ffc93ffc000 stackSize=8188KB"
+        },
+        {
+          "line": 44,
+          "text": "  | held mutexes= \"mutator lock\"(shared held)"
+        },
+        {
+          "line": 45,
+          "text": "  at com.android.systemui.dagger.DaggerReferenceGlobalRootComponent$ReferenceSysUIComponentImpl$SwitchingProvider.get3(go/retraceme 1eef83acd5dd625ddc70e6d8730670fe0bab79abe671b088947e053e97f0b06a:5313)"
+        },
+        {
+          "line": 46,
+          "text": "  at com.android.systemui.dagger.DaggerReferenceGlobalRootComponent$ReferenceSysUIComponentImpl$SwitchingProvider.get(go/retraceme 1eef83acd5dd625ddc70e6d8730670fe0bab79abe671b088947e053e97f0b06a:66)"
+        },
+        {
+          "line": 47,
+          "text": "  at dagger.internal.DoubleCheck.get(go/retraceme 1eef83acd5dd625ddc70e6d8730670fe0bab79abe671b088947e053e97f0b06a:14)"
+        },
+        {
+          "line": 48,
+          "text": "  - locked <@addr=0x14038768> (a dagger.internal.DoubleCheck)"
+        },
+        {
+          "line": 49,
+          "text": "  at com.android.systemui.dagger.DaggerReferenceGlobalRootComponent$ReferenceSysUIComponentImpl$SwitchingProvider.get4(go/retraceme 1eef83acd5dd625ddc70e6d8730670fe0bab79abe671b088947e053e97f0b06a:4064)"
+        },
+        {
+          "line": 50,
+          "text": "  at com.android.systemui.dagger.DaggerReferenceGlobalRootComponent$ReferenceSysUIComponentImpl$SwitchingProvider.get(go/retraceme 1eef83acd5dd625ddc70e6d8730670fe0bab79abe671b088947e053e97f0b06a:61)"
+        },
+        {
+          "line": 51,
+          "text": "  at dagger.internal.DoubleCheck.get(go/retraceme 1eef83acd5dd625ddc70e6d8730670fe0bab79abe671b088947e053e97f0b06a:14)"
+        },
+        {
+          "line": 52,
+          "text": "  - locked <@addr=0x14039870> (a dagger.internal.DoubleCheck)"
+        },
+        {
+          "line": 53,
+          "text": "  at com.android.systemui.dagger.DaggerReferenceGlobalRootComponent$ReferenceSysUIComponentImpl$SwitchingProvider.get5(go/retraceme 1eef83acd5dd625ddc70e6d8730670fe0bab79abe671b088947e053e97f0b06a:68)"
+        },
+        {
+          "line": 54,
+          "text": "  at com.android.systemui.dagger.DaggerReferenceGlobalRootComponent$ReferenceSysUIComponentImpl$SwitchingProvider.get(go/retraceme 1eef83acd5dd625ddc70e6d8730670fe0bab79abe671b088947e053e97f0b06a:56)"
+        },
+        {
+          "line": 55,
+          "text": "  at dagger.internal.DoubleCheck.get(go/retraceme 1eef83acd5dd625ddc70e6d8730670fe0bab79abe671b088947e053e97f0b06a:14)"
+        },
+        {
+          "line": 56,
+          "text": "  - locked <@addr=0x1403c688> (a dagger.internal.DoubleCheck)"
+        },
+        {
+          "line": 57,
+          "text": "  at dagger.internal.DelegateFactory.get(go/retraceme 1eef83acd5dd625ddc70e6d8730670fe0bab79abe671b088947e053e97f0b06a:5)"
+        },
+        {
+          "line": 58,
+          "text": "  at com.android.systemui.shade.ShadeModule_Companion_ProvidePanelExpansionInteractorFactory.providePanelExpansionInteractor(go/retraceme 1eef83acd5dd625ddc70e6d8730670fe0bab79abe671b088947e053e97f0b06a:1)"
+        },
+        {
+          "line": 59,
+          "text": "  at com.android.systemui.dagger.DaggerReferenceGlobalRootComponent$ReferenceSysUIComponentImpl$SwitchingProvider.get7(go/retraceme 1eef83acd5dd625ddc70e6d8730670fe0bab79abe671b088947e053e97f0b06a:2926)"
+        },
+        {
+          "line": 60,
+          "text": "  at com.android.systemui.dagger.DaggerReferenceGlobalRootComponent$ReferenceSysUIComponentImpl$SwitchingProvider.get(go/retraceme 1eef83acd5dd625ddc70e6d8730670fe0bab79abe671b088947e053e97f0b06a:46)"
+        },
+        {
+          "line": 61,
+          "text": "  at dagger.internal.DoubleCheck.get(go/retraceme 1eef83acd5dd625ddc70e6d8730670fe0bab79abe671b088947e053e97f0b06a:14)"
+        },
+        {
+          "line": 62,
+          "text": "  - locked <@addr=0x1403ccd8> (a dagger.internal.DoubleCheck)"
+        },
+        {
+          "line": 63,
+          "text": "  at com.android.systemui.accessibility.SystemActions.registerOrUnregisterDismissNotificationShadeAction(go/retraceme 1eef83acd5dd625ddc70e6d8730670fe0bab79abe671b088947e053e97f0b06a:6)"
+        },
+        {
+          "line": 64,
+          "text": "  at com.android.systemui.accessibility.SystemActions.registerActions(go/retraceme 1eef83acd5dd625ddc70e6d8730670fe0bab79abe671b088947e053e97f0b06a:253)"
+        },
+        {
+          "line": 65,
+          "text": "  at com.android.systemui.accessibility.SystemActions.start(go/retraceme 1eef83acd5dd625ddc70e6d8730670fe0bab79abe671b088947e053e97f0b06a:121)"
+        },
+        {
+          "line": 66,
+          "text": "  at com.android.systemui.SystemUIApplication.startStartable(go/retraceme 1eef83acd5dd625ddc70e6d8730670fe0bab79abe671b088947e053e97f0b06a:26)"
+        },
+        {
+          "line": 67,
+          "text": "  at com.android.systemui.SystemUIApplication$$ExternalSyntheticLambda0.run(go/retraceme 1eef83acd5dd625ddc70e6d8730670fe0bab79abe671b088947e053e97f0b06a:56)"
+        },
+        {
+          "line": 68,
+          "text": "  at com.android.systemui.SystemUIApplication.timeInitialization(go/retraceme 1eef83acd5dd625ddc70e6d8730670fe0bab79abe671b088947e053e97f0b06a:28)"
+        },
+        {
+          "line": 69,
+          "text": "  at com.android.systemui.SystemUIApplication.startServicesIfNeeded(go/retraceme 1eef83acd5dd625ddc70e6d8730670fe0bab79abe671b088947e053e97f0b06a:183)"
+        },
+        {
+          "line": 70,
+          "text": "  at com.android.systemui.SystemUIApplication.startSystemUserServicesIfNeeded(go/retraceme 1eef83acd5dd625ddc70e6d8730670fe0bab79abe671b088947e053e97f0b06a:64)"
+        },
+        {
+          "line": 71,
+          "text": "  at com.android.systemui.SystemUIService.onCreate(go/retraceme 1eef83acd5dd625ddc70e6d8730670fe0bab79abe671b088947e053e97f0b06a:10)"
+        },
+        {
+          "line": 72,
+          "text": "  at android.app.ActivityThread.handleCreateService(ActivityThread.java:4977)"
+        },
+        {
+          "line": 73,
+          "text": "  at android.app.ActivityThread.-$$Nest$mhandleCreateService(unavailable:0)"
+        },
+        {
+          "line": 74,
+          "text": "  at android.app.ActivityThread$H.handleMessage(ActivityThread.java:2444)"
+        },
+        {
+          "line": 75,
+          "text": "  at android.os.Handler.dispatchMessage(Handler.java:107)"
+        },
+        {
+          "line": 76,
+          "text": "  at android.os.Looper.loopOnce(Looper.java:232)"
+        },
+        {
+          "line": 77,
+          "text": "  at android.os.Looper.loop(Looper.java:317)"
+        },
+        {
+          "line": 78,
+          "text": "  at android.app.ActivityThread.main(ActivityThread.java:8705)"
+        },
+        {
+          "line": 79,
+          "text": "  at java.lang.reflect.Method.invoke(Native method)"
+        },
+        {
+          "line": 80,
+          "text": "  at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:580)"
+        },
+        {
+          "line": 81,
+          "text": "  at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:886)"
+        },
+        {
+          "line": 82,
+          "text": "DumpLatencyMs: 158.96"
+        }
+      ],
+      "schedstat_cumulative": {
+        "cpu_running_ns": 1612084413,
+        "runqueue_wait_ns": 21888369849,
+        "timeslices": 1478,
+        "cpu_running_seconds": 1.612084413,
+        "runqueue_wait_seconds": 21.888369849,
+        "not_an_ANR_window_latency_measurement": true
+      },
+      "main_waiting_to_lock_rows": [],
+      "Trime_application_or_JNI_frame_rows": [],
+      "main_observation": "Runnable in Dagger provider graph initialization reached by SystemActions.start -> SystemUIApplication.startServicesIfNeeded -> SystemUIService.onCreate.",
+      "blocking_inference": "Main thread is runnable with held DoubleCheck guards, not shown waiting to acquire a Java monitor. Held locks do not alone establish a deadlock."
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/api35-preparation-anr1/anr_2026-10-28-00-13-39-983.raw.txt",
+      "bytes": 20725,
+      "sha256": "e47068755a201a7930908249ab594b63938cb3971bcb8e1831872b964068fc28",
+      "copy_exit": 0,
+      "subject": "Subject: Process ProcessRecord{45f3aae 1372:com.android.phone/1001} failed to complete startup",
+      "target_pid": 1372,
+      "main_trace_state_line": "\"main\" prio=5 tid=1 Native",
+      "kernel_main_state": "R",
+      "main_stack_original_rows": [
+        {
+          "line": 55,
+          "text": "\"main\" prio=5 tid=1 Native"
+        },
+        {
+          "line": 56,
+          "text": "  | group=\"main\" sCount=1 ucsCount=0 flags=1 obj=0x73366270 self=0x70d80de2dbe0"
+        },
+        {
+          "line": 57,
+          "text": "  | sysTid=1372 nice=0 cgrp=foreground sched=0/0 handle=0x70d98cdddd18"
+        },
+        {
+          "line": 58,
+          "text": "  | state=R schedstat=( 59902897 807134397 41 ) utm=2 stm=3 core=0 HZ=100"
+        },
+        {
+          "line": 59,
+          "text": "  | stack=0x7ffc93ffa000-0x7ffc93ffc000 stackSize=8188KB"
+        },
+        {
+          "line": 60,
+          "text": "  | held mutexes="
+        },
+        {
+          "line": 61,
+          "text": "  native: #00 pc 00208710  /system/lib64/libhwui.so (android::android_view_ThreadedRenderer_setIsSystemOrPersistent ) (BuildId: 35d37af4b0a83cc5d3a054e91ea6e9af)"
+        },
+        {
+          "line": 62,
+          "text": "  at android.graphics.HardwareRenderer.nSetIsSystemOrPersistent(Native method)"
+        },
+        {
+          "line": 63,
+          "text": "  at android.graphics.HardwareRenderer.setIsSystemOrPersistent(HardwareRenderer.java:1219)"
+        },
+        {
+          "line": 64,
+          "text": "  at android.app.ActivityThread.handleBindApplication(ActivityThread.java:7368)"
+        },
+        {
+          "line": 65,
+          "text": "  at android.app.ActivityThread.-$$Nest$mhandleBindApplication(unavailable:0)"
+        },
+        {
+          "line": 66,
+          "text": "  at android.app.ActivityThread$H.handleMessage(ActivityThread.java:2416)"
+        },
+        {
+          "line": 67,
+          "text": "  at android.os.Handler.dispatchMessage(Handler.java:107)"
+        },
+        {
+          "line": 68,
+          "text": "  at android.os.Looper.loopOnce(Looper.java:232)"
+        },
+        {
+          "line": 69,
+          "text": "  at android.os.Looper.loop(Looper.java:317)"
+        },
+        {
+          "line": 70,
+          "text": "  at android.app.ActivityThread.main(ActivityThread.java:8705)"
+        },
+        {
+          "line": 71,
+          "text": "  at java.lang.reflect.Method.invoke(Native method)"
+        },
+        {
+          "line": 72,
+          "text": "  at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:580)"
+        },
+        {
+          "line": 73,
+          "text": "  at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:886)"
+        },
+        {
+          "line": 74,
+          "text": "DumpLatencyMs: 78.5064"
+        }
+      ],
+      "schedstat_cumulative": {
+        "cpu_running_ns": 59902897,
+        "runqueue_wait_ns": 807134397,
+        "timeslices": 41,
+        "cpu_running_seconds": 0.059902897,
+        "runqueue_wait_seconds": 0.807134397,
+        "not_an_ANR_window_latency_measurement": true
+      },
+      "main_waiting_to_lock_rows": [],
+      "Trime_application_or_JNI_frame_rows": [],
+      "main_observation": "Native nSetIsSystemOrPersistent in HardwareRenderer during ActivityThread.handleBindApplication; startup has not completed.",
+      "blocking_inference": "Runnable native startup snapshot; no lock-wait chain proves a unique renderer/driver bug."
+    }
+  ],
+  "mapper_reference": {
+    "path": "/home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/api35-boot-anr-independent1/qualification.json",
+    "sha256": "ad02eeca96bf40659bec893f1da64bb20be7c7ca8bfaedb8cb91d7ec539634cb",
+    "continuous_log_prefix_bytes": 3882151,
+    "continuous_log_prefix_sha256": "1a349b440fd25105eae2a97d0d74ac6397b8440e3e00cf49ba238abf33f2e349"
+  },
+  "observed_guest_cpu_pressure": {
+    "CPU_PSI_some_avg10": 82.26,
+    "CPU_report_TOTAL_percent": 100,
+    "load": [
+      10.65,
+      2.9,
+      0.99
+    ],
+    "memory_PSI_some_avg10": 1.42,
+    "memory_PSI_full_avg10": 0.0
+  },
+  "observed_guest_LMK_actual_kills": [
+    {
+      "line_number_1based": 24896,
+      "byte_start_0based": 3487223,
+      "byte_end_exclusive": 3487413,
+      "raw_sha256": "87ddbe10762069201e3e04edd4ea20db66b91fd97aed6f556c65e19a60629d26",
+      "timestamp": "10-28 00:14:13.667",
+      "utc": "2026-10-27T16:14:13.667000+00:00",
+      "pid": 144,
+      "tid": 144,
+      "level": "I",
+      "tag": "lowmemorykiller",
+      "text": "Kill 'com.android.quicksearchbox' (1360), uid 10103, oom_score_adj 945 to free 101756kB rss, 3072kB swap; reason: low watermark is breached"
+    },
+    {
+      "line_number_1based": 24904,
+      "byte_start_0based": 3488186,
+      "byte_end_exclusive": 3488367,
+      "raw_sha256": "9557dbe223c046ccc93576104ae6416ed6d251b4be6b0adb7ba8873c17495220",
+      "timestamp": "10-28 00:14:13.694",
+      "utc": "2026-10-27T16:14:13.694000+00:00",
+      "pid": 144,
+      "tid": 144,
+      "level": "I",
+      "tag": "lowmemorykiller",
+      "text": "Kill 'com.android.music' (1344), uid 10105, oom_score_adj 925 to free 100860kB rss, 2816kB swap; reason: low watermark is breached"
+    }
+  ],
+  "host_memory_sample_min_MemAvailable_kib": 2696028,
+  "host_OOM_conclusion": "Not established. Host available-memory samples are not a complete host OOM/dmesg proof and are distinct from guest LMK.",
+  "temporal_constraint": "All3 ANR target snapshots/events predate observed new Trime PID2102 startup00:14:35.567 local; no native deploy occurred in mapped prefix. The3 traces contain no current Trime or librime_jni frames. This constrains attribution to the not-yet-started current T9 native work; it does not prove there are no other defects.",
+  "resource_retry_basis": "The measured guest CPU pressure plus large accumulated runnable wait provide a reviewable basis for testing a fresh4-vCPU guest. The2 real guest low-watermark kills provide a basis for modest guest RAM increase. These are scoped experiment adjustments, not a proven unique fix or guaranteed absence of ANRs. Keep business assertions, original failed round and host memory guard unchanged.",
+  "business_status": "NOT_RUN; current API35 r1 remains a failed pre-business environment round even though root normal VM/controller cleanup exit0.",
+  "unique_root_cause": "UNRESOLVED; Binder peer stacks and causal CPU/driver trace are insufficient to name a unique cause.",
+  "primary_semantic_references": [
+    {
+      "title": "Linux scheduler statistics",
+      "url": "https://docs.kernel.org/scheduler/sched-stats.html",
+      "interpretation": "Per-process schedstat reports CPU time, runqueue waiting time and timeslices; these are cumulative counters, not a standalone latency measurement."
+    },
+    {
+      "title": "Linux PSI",
+      "url": "https://docs.kernel.org/accounting/psi.html",
+      "interpretation": "some is the share of time tasks are stalled on a resource; avg10/60/300 are percentage trends. CPU and memory pressure measure distinct resource contention."
+    }
+  ]
+}

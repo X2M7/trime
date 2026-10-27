@@ -1,0 +1,81 @@
+{
+  "schema": "trime-api35-r2-prelaunch-independent-readonly-review/v1",
+  "created_utc": "2026-10-27T16:23:18.799304+00:00",
+  "verdict": "PASS_PROPOSAL_SCOPE_BEFORE_ROOT_LAUNCH_NOT_RUNTIME_ACCEPTANCE",
+  "mapper_result": {
+    "path": "/home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/vm-assets-api35-r2-copy1/result.json",
+    "sha256": "1b6e3df50b18f995fb879fa1e26b90b5ffd49921c4ea6c88307f7a771af24824"
+  },
+  "controller": {
+    "path": "/home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/run-api35-8a1e-v11.py",
+    "sha256": "e92394f8b4f9052a5307c24ba42550b8463302ef945f52477b268fd43489d81c",
+    "exact_four_substitution_inversion_to_v10": true,
+    "AST_parse_only_no_import_or_execution": true,
+    "binding_business_assertions_1GiB_guard_cleanup_unchanged_by_exact_text_comparison": true
+  },
+  "source_metadata_pre_post_exactly_equal": true,
+  "source_file_count": 49,
+  "source_declared_logical_bytes": 5163707826,
+  "destination_initial_SHA_metadata_matches_all49_sources": true,
+  "destination_final_SHA_metadata_changed_only_two_controls": [
+    "avd/config.ini",
+    "avd/hardware-qemu.ini"
+  ],
+  "all_live_source_target_files_regular_distinct_inodes_target_nlink1_paths_inside_new_asset_root": true,
+  "current_controls": [
+    {
+      "name": "config.ini",
+      "changed_keys": [
+        "avd.id",
+        "avd.name",
+        "disk.dataPartition.path",
+        "hw.cpu.ncore",
+        "hw.ramSize",
+        "image.sysdir.1"
+      ],
+      "current_sha256": "fbe0b52aab67265f1607c77ffd4abb9b9b20f1ebf60951030a2549eddd0e318d"
+    },
+    {
+      "name": "hardware-qemu.ini",
+      "changed_keys": [
+        "avd.id",
+        "avd.name",
+        "disk.cachePartition.path",
+        "disk.dataPartition.path",
+        "disk.encryptionKeyPartition.path",
+        "disk.ramdisk.path",
+        "disk.systemPartition.initPath",
+        "disk.vendorPartition.initPath",
+        "hw.cpu.ncore",
+        "hw.ramSize",
+        "kernel.path"
+      ],
+      "current_sha256": "a9ce249a8e6a93e8c94d89e158805161ea213f821f52d2696b1c1b3c31ef1cfb"
+    }
+  ],
+  "registration": {
+    "path": "/home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/vm-assets-api35-r2/avd/trime_pr2183_api35_20261027_r2.ini",
+    "sha256": "8199392b5c2afd815dfe724e2c24a00ee0c2a73a1567c61d401dd8963731aeb2",
+    "target": "/home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/vm-assets-api35-r2/api35/avd"
+  },
+  "qcow_backing_headers_independently_read": [
+    {
+      "path": "/home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/vm-assets-api35-r2/api35/avd/cache.img.qcow2",
+      "backing_filename": "cache.img",
+      "resolved_backing": "/home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/vm-assets-api35-r2/api35/avd/cache.img"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/vm-assets-api35-r2/api35/avd/encryptionkey.img.qcow2",
+      "backing_filename": "encryptionkey.img",
+      "resolved_backing": "/home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/vm-assets-api35-r2/api35/avd/encryptionkey.img"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/vm-assets-api35-r2/api35/avd/userdata-qemu.img.qcow2",
+      "backing_filename": "userdata-qemu.img",
+      "resolved_backing": "/home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/vm-assets-api35-r2/api35/avd/userdata-qemu.img"
+    }
+  ],
+  "byte_hash_scope": "Independently verified hash-bound complete pre/post/destination metadata and successful copy receipts. Did not repeat the source agent actual5.16GB file hashing; current controller/control/registration bytes and all live image inodes/paths checked.",
+  "launch_result": "NOT_RUN_BY_REVIEWER; root may proceed with the already-authorized serial emulator retry. This is not approval of runtime business results, a guarantee of no ANRs, or a zero-warning claim.",
+  "no_ADB_VM_controller_import_source_SDK_or_failed_r1_mutations": true
+}

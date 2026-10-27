@@ -1,0 +1,71 @@
+{
+  "utc": "2026-10-27T16:16:07.341982+00:00",
+  "commands": [
+    {
+      "name": "anr-directory",
+      "argv": [
+        "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+        "-s",
+        "emulator-5584",
+        "shell",
+        "su",
+        "0",
+        "ls",
+        "-l",
+        "/data/anr"
+      ],
+      "exit": 0
+    },
+    {
+      "name": "processes",
+      "argv": [
+        "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+        "-s",
+        "emulator-5584",
+        "shell",
+        "ps",
+        "-A"
+      ],
+      "exit": 0
+    },
+    {
+      "name": "memory",
+      "argv": [
+        "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+        "-s",
+        "emulator-5584",
+        "shell",
+        "cat",
+        "/proc/meminfo"
+      ],
+      "exit": 0
+    },
+    {
+      "name": "systemui-exit-info",
+      "argv": [
+        "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+        "-s",
+        "emulator-5584",
+        "shell",
+        "dumpsys",
+        "activity",
+        "exit-info",
+        "com.android.systemui"
+      ],
+      "exit": 0
+    },
+    {
+      "name": "activities",
+      "argv": [
+        "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+        "-s",
+        "emulator-5584",
+        "shell",
+        "dumpsys",
+        "activity",
+        "activities"
+      ],
+      "exit": 0
+    }
+  ]
+}

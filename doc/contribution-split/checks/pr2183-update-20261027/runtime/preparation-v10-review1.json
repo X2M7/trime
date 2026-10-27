@@ -1,0 +1,87 @@
+{
+  "state": "STATIC_PREPARATION_ONLY_REAL_ARTIFACT_AND_RUNTIME_PENDING",
+  "created_utc": "2026-10-27T15:20:38.120924+00:00",
+  "source_head": "8a1ee0ea6538e220fcddf31ed6fd491f5bc3cca7",
+  "actual_build_commit": "0ef0eb551a6f8d000266d4446348b2d2ab2823e9",
+  "source_tree": "b022a1e810e231af9f9776c2b5414faf6b5bd615",
+  "actual_build_tree": "b022a1e810e231af9f9776c2b5414faf6b5bd615",
+  "helper": {
+    "path": "/home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/t9_smoke_helper_v7.py",
+    "sha256": "2ac89ea6b1f9c6a96dc2232500d1a205e1f80f768323536f4dc5d59083c82ceb",
+    "all_existing_Smoke_methods_except_constructor_AST_identical": true,
+    "constructor_delta": "Replace direct-head equality gate with exact, distinct PR-head and merge-producer proof validation; persist proof identity and clarify Git metadata distinction."
+  },
+  "sequence": {
+    "path": "/home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/t9_case_sequences_v10.py",
+    "sha256": "0a479cf3f3c7682b335cffc68bae3ca1e2a62ee34e068c8a151c90e022249a0e",
+    "all_case_functions_AST_identical_to_v9": true,
+    "run_and_stop_tail_after_source_gate_byte_identical": true,
+    "run_and_stop_delta": "Require exact source8a and actualbuild0ef; call read-only proof validator and record distinct identities. Original APK/theme/geometry/session/oracle/cleanup gates retained."
+  },
+  "controllers": [
+    {
+      "api": 21,
+      "path": "/home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/run-api21-8a1e-v10.py",
+      "sha256": "2f96577bc9b43f7b040b4e085a214cfc319a95832090f065c5a60369d983ddc9",
+      "all_controller_functions_AST_identical_to_v9": true,
+      "helper_hash_and_full_proof_gate_before_Popen": true,
+      "launched": false
+    },
+    {
+      "api": 35,
+      "path": "/home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/run-api35-8a1e-v10.py",
+      "sha256": "019b8f41a519f46a3c0b4a20b15c2e1a400a4f498c5c05a8d142905e4fdf43ec",
+      "all_controller_functions_AST_identical_to_v9": true,
+      "helper_hash_and_full_proof_gate_before_Popen": true,
+      "launched": false
+    }
+  ],
+  "binding": {
+    "path": "/home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/original-apk-binding-8a1e-v10.json",
+    "sha256_at_preparation": "cdc0396a96efb2c901be2def0794a9ee6e09ddfeebda88c9b8839cf9a967c536",
+    "state": "PENDING_ORIGINAL_PR_MERGE_PRODUCER_AUDIT_DO_NOT_START_VM"
+  },
+  "proof": {
+    "path": "/home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/merge-producer-proof-v1.json",
+    "state": "PENDING_ORIGINAL_CLOUD_ARTIFACT_AUDIT_NOT_FROZEN",
+    "raw_refs_required": [
+      "pull_request",
+      "source_commit",
+      "merge_commit",
+      "workflow_run",
+      "producer_job",
+      "checkout_log",
+      "artifact_metadata",
+      "artifact_audit"
+    ],
+    "audit_raw_roles_required": [
+      "manifest",
+      "signer",
+      "elf"
+    ],
+    "source_and_merge_not_same_commit": true,
+    "tree_equality_does_not_equate_git_metadata_or_APK_bytes": true
+  },
+  "pure_fixture_controls": {
+    "path": "/home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/producer-guard-static-cases1.json",
+    "sha256": "35d074816fab6603c04583b6fdac589219c1a56ca76650ad459998e859581cfd",
+    "test_script": "/home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/producer_guard_static_cases1.py",
+    "fixture_only": true,
+    "tests": 33,
+    "positive_controls": 1,
+    "rejection_controls": 32,
+    "real_producer_acceptance": false
+  },
+  "business_scope_unchanged": {
+    "sessions_per_API": 12,
+    "logical_checks_per_API": 14,
+    "memory_floor_kib": 1048576,
+    "single_VM": true,
+    "Observer_hard_minutes": 28,
+    "idle_seconds": 90,
+    "max_requests": 400,
+    "real_authenticated_stop_wait_per_case": true
+  },
+  "no_ADB_VM_or_real_APK_acceptance_in_preparation": true,
+  "no_repository_or_old_evidence_modification": true
+}

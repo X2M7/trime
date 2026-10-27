@@ -1,0 +1,63 @@
+{
+  "schema": "trime-native-deployment-bounded-prefix-review/v1",
+  "utc": "2026-10-27T15:45:27.904794+00:00",
+  "verdict": "PASS_OBSERVED_TARGET_NATIVE_START_THEN_SUCCESS_IN_FIXED_LOG_PREFIX",
+  "source_head": "8a1ee0ea6538e220fcddf31ed6fd491f5bc3cca7",
+  "actual_build_commit": "0ef0eb551a6f8d000266d4446348b2d2ab2823e9",
+  "binding": {
+    "path": "/home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/original-apk-binding-8a1e-v10.json",
+    "sha256": "233e4858bf2301f966028d554751a96d817918b456f9a40cc1616f0bc2df3d90"
+  },
+  "original_log": {
+    "path": "/home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/api21-8a1e-v10-run1/device-logcat.txt",
+    "device": 66306,
+    "inode": 28878678,
+    "fixed_byte_prefix_length": 89959826,
+    "fixed_byte_prefix_sha256": "fb6725f0a2c5cc8e6a1bbf8c7d7b3b743dc5da01064312c2cefdfa3e14c02d00",
+    "prefix_line_count_including_possible_final_fragment": 1192802,
+    "stat_size_after_review": 89981970,
+    "append_after_frozen_prefix_allowed": true,
+    "file_not_modified_by_reviewer": true
+  },
+  "exact_events": [
+    {
+      "line_number_1based": 6244,
+      "byte_start_0based": 802302,
+      "byte_end_exclusive": 802414,
+      "raw_sha256": "cd774c584aeacbb836713f2b5612b901c72a689f3c6237ce43f0dd0417574eec",
+      "text": "10-27 23:34:09.850  2457  2583 D [Thread-156] Rime$Companion: Rime.kt:650] Handling DeployMessage(state=Start)",
+      "device_timestamp": "10-27 23:34:09.850",
+      "pid": 2457,
+      "tid": 2583,
+      "state": "Start"
+    },
+    {
+      "line_number_1based": 1189675,
+      "byte_start_0based": 89635037,
+      "byte_end_exclusive": 89635151,
+      "raw_sha256": "aa30f8fe48452a06f7c6ec8757ca977f3f4334bbf22022ee68ae6b65b18f1c8c",
+      "text": "10-27 23:38:20.482  2457  2583 D [Thread-158] Rime$Companion: Rime.kt:650] Handling DeployMessage(state=Success)",
+      "device_timestamp": "10-27 23:38:20.482",
+      "pid": 2457,
+      "tid": 2583,
+      "state": "Success"
+    }
+  ],
+  "elapsed_seconds": 250.632,
+  "selected_context": {
+    "path": "/home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/api21-native-independent1/selected-deploy-context.raw.txt",
+    "sha256": "445161a3353a33884a50fe010e6d8200e22682c02fbe00adecddf8c00e224d3b",
+    "rows_index_path": "/home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/api21-native-independent1/selected-deploy-context-lines.json",
+    "rows_index_sha256": "ff41dcbecbc6f845a6c32daf5f32a064d34fd6c60456e12b460abcbadafb4cbc",
+    "preserved_original_CRLF": true,
+    "discontinuous_selected_original_lines_not_a_continuous_log": true
+  },
+  "not_Release_startup_performance": true,
+  "not_business_or_device_acceptance": true,
+  "no_ADB_or_device_or_controller_access": true,
+  "limits": [
+    "Only target PID2457 Start/Success ordering in this exact frozen log prefix; no claim about later events or all runtime warnings.",
+    "Source/producer/APK/process lifetime must also remain bound by per-session evidence.",
+    "Debug maintenance deployment elapsed250.632 seconds is not a release startup or keyboard latency benchmark."
+  ]
+}

@@ -1,0 +1,25 @@
+--- /home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/run-api35-8a1e-v10.py
++++ /home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/run-api35-8a1e-v11.py
+@@ -10,8 +10,8 @@
+ import time
+ 
+ ROOT = Path(__file__).resolve().parent
+-ASSET_ROOT = ROOT / 'vm-assets'
+-OUT = ROOT / 'api35-8a1e-v10-run1'
++ASSET_ROOT = ROOT / 'vm-assets-api35-r2'
++OUT = ROOT / 'api35-8a1e-v11-run2'
+ OUT.mkdir(exist_ok=True)
+ SDK = Path('/home/xumin/Public/android-toolchain/android-sdk')
+ ADB = SDK / 'platform-tools/adb'
+@@ -51,9 +51,9 @@
+ env.update(ANDROID_HOME=str(SDK), ANDROID_SDK_ROOT=str(SDK),
+            ANDROID_USER_HOME=str(ASSET_ROOT / 'android-user'),
+            ANDROID_AVD_HOME=str(ASSET_ROOT / 'avd'))
+-argv = [str(SDK / 'emulator/emulator'), '-avd', 'trime_pr2183_api35_20261027',
++argv = [str(SDK / 'emulator/emulator'), '-avd', 'trime_pr2183_api35_20261027_r2',
+         '-sysdir', str(ASSET_ROOT / 'api35' / 'system-images'), '-no-snapshot', '-no-window',
+-        '-no-boot-anim', '-gpu', 'swangle', '-cores', '2', '-memory', '2304',
++        '-no-boot-anim', '-gpu', 'swangle', '-cores', '4', '-memory', '3072',
+         '-port', '5584', '-accel', 'on', '-feature', '-Vulkan']
+ record = {'argv': argv, 'serial': SERIAL, 'started_utc': datetime.datetime.now(
+     datetime.timezone.utc).isoformat(), 'memory_floor_kib': 1048576,

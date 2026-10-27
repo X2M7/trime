@@ -1,0 +1,466 @@
+{
+  "schema": "trime-warning-source-attribution-bounded-prefix/v1",
+  "mode": "Read-only source/log audit; no ADB, VM, product-source/Git edits or tests",
+  "reviewed_utc": "2026-10-27T15:59:37.616513+00:00",
+  "source_head": "8a1ee0ea6538e220fcddf31ed6fd491f5bc3cca7",
+  "base": "a047f74757fae0d7b5ef64e54f0b957dee2bf8f3",
+  "actual_build_commit": "0ef0eb551a6f8d000266d4446348b2d2ab2823e9",
+  "target_PID": 2457,
+  "scope": {
+    "path": "/home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/api21-8a1e-v10-run1/device-logcat.txt",
+    "inode": 28878678,
+    "device": 66306,
+    "fixed_byte_prefix_length": 90227936,
+    "fixed_byte_prefix_sha256": "8530f51a4a013599e1cfe93c290dc1bd333945555292e448c2088e2afdf3e12b",
+    "original_line_count_including_possible_final_fragment": 1195309,
+    "parsed_threadtime_rows": 1195305,
+    "unparsed_rows": 4,
+    "stat_size_after_read": 90322019
+  },
+  "target_warning_error_counts": {
+    "W": 231,
+    "E": 8
+  },
+  "classification_reference": {
+    "path": "/home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/api21-native-independent1/warning-prefix-classification1.json",
+    "sha256": "0616d625df00f107aacc08ef05cd7aab5022b4d6153875f482074b326db768ad"
+  },
+  "new_confirmed_T9_or_deferred_product_failure": false,
+  "not_an_all_warnings_resolved_or_no_bugs_claim": true,
+  "categories": [
+    {
+      "id": "preset_vocabulary_encode_gaps",
+      "level_counts": {
+        "W": 193
+      },
+      "attribution": "PREEXISTING_SHARED_DICTIONARY_COVERAGE_GAPS_NOT_T9_COMPILATION_FAILURE",
+      "source": [
+        "pinned librime src/rime/dict/entry_collector.cc:144-152",
+        "pinned luna-pinyin luna_pinyin.dict.yaml:34 use_preset_vocabulary:true"
+      ],
+      "facts": "All193 warnings occur after original luna_pinyin Pass2 and before its Pass3; T9 dictionary/prism compile starts later. LOG(WARNING) is preset vocabulary EncodePhrase failure, whereas explicit queued dictionary entries use LOG(ERROR) at139. No native source or dictionary pin changed from upstream.",
+      "remaining_issue": "These193 preset phrases failed automatic pronunciation encoding and can be absent from that constructed vocabulary. Do not call harmless or all dictionary entries supported. This does not prove a new T9 regression; proper dictionary correction is separate work, not log suppression.",
+      "raw_scope": {
+        "first": 450714,
+        "last": 450916
+      }
+    },
+    {
+      "id": "optional_grammar_patch",
+      "level_counts": {
+        "W": 3
+      },
+      "attribution": "TWO_UPSTREAM_SCHEMA_LOOKUPS_PLUS_ONE_NEW_T9_OPTIONAL_LOOKUP",
+      "source": [
+        "app/src/main/assets/shared/luna_pinyin_t9.schema.yaml:126-128",
+        "pinned luna-pinyin luna_pinyin.schema.yaml:103-107",
+        "pinned librime src/rime/config/config_data.cc:64-71",
+        "pinned librime src/rime/config/config_compiler.cc:82-92,337-349,475-489"
+      ],
+      "facts": "NewT9 copies upstream optional grammar:/hant? reference. Native compiler logs missing grammar.yaml before returning optional success; each missing warning is followed by optional resource not loaded: grammar. Existing full/simplified schemas issue two lookups; T9 adds the third. No grammar.yaml is supplied by this default artifact.",
+      "remaining_issue": "NewT9 does make one extra optional-file warning reachable. Removing the line removes support for an externally supplied grammar.yaml hant patch, which may alter translator/grammar or other schema settings. It is behavior scope change, not proven warning-only cleanup. Basic script_translator and enable_sentence stay configured, but installed user grammar behavior could change. No edit recommended during an active frozen-runtime round."
+    },
+    {
+      "id": "other_first_deployment_missing_configs",
+      "level_counts": {
+        "W": 9
+      },
+      "attribution": "NATIVE_FIRST_DEPLOYMENT_PROBES_WITH_NEW_T9_CACHE_PATH",
+      "source": [
+        "pinned librime src/rime/config/config_data.cc:64-71",
+        "pinned librime src/rime/lever/deployment_tasks.cc:72-74,93-143",
+        "app/src/main/java/com/osfans/trime/core/data/UserDataManager.kt:46-49"
+      ],
+      "facts": "installation.yaml, user.yaml and initial build/default/schema caches are read before generating deployment outputs. New T9 adds its own missing build/luna_pinyin_t9.schema.yaml probe; actual later T9 compilation and overall native Start->Success are present.",
+      "remaining_issue": "Prefix proves deployment success ordering, not every final output file or future recovery. Current business/session evidence must confirm the selected schema works; do not suppress missing-file warnings generically."
+    },
+    {
+      "id": "ignored_theme_preview_keys",
+      "level_counts": {
+        "W": 8
+      },
+      "attribution": "PREEXISTING_BUILTIN_THEME_AND_DECODER_DIAGNOSTICS",
+      "source": [
+        "app/src/main/assets/shared/trime.yaml:44-47",
+        "app/src/main/java/com/osfans/trime/data/theme/ThemeDiagnostics.kt:142-155,171-180",
+        "app/src/main/java/com/osfans/trime/data/theme/model/GeneralStyle.kt"
+      ],
+      "facts": "preview_font/height/offset/text_size are unchanged upstream theme entries; GeneralStyle/diagnostics unchanged. Four unknown style keys were logged on two theme loads.",
+      "remaining_issue": "The runtime ignores these settings. That is an actual theme/model consistency issue, not a new T9/deferred modification or a guarantee preview customization works."
+    },
+    {
+      "id": "unresolved_candidate_border_color",
+      "level_counts": {
+        "W": 1
+      },
+      "attribution": "PREEXISTING_COLOR_TABLE_CONTRACT_GAP",
+      "source": [
+        "app/src/main/java/com/osfans/trime/data/theme/ThemeScope.kt:40-49",
+        "app/src/main/java/com/osfans/trime/data/theme/ColorKey.kt:20,93-154",
+        "app/src/main/java/com/osfans/trime/data/theme/ColorTable.kt:124-139",
+        "app/src/main/java/com/osfans/trime/data/theme/ThemeColors.kt:29,85-89"
+      ],
+      "facts": "Unchanged ColorTable eagerly resolves every enum key; CANDIDATE_BORDER_COLOR lacks a built-in fallback and is missing from the selected scheme. Current main-source search finds the typed property only at its declaration; unresolved typed color reads throw rather than silently becoming transparent.",
+      "remaining_issue": "Do not dismiss the warning as an automatic transparent-color fallback. No current consumer or observed rendering failure was identified, but the unresolved color remains real configuration debt."
+    },
+    {
+      "id": "storage_not_available_startup",
+      "level_counts": {
+        "W": 1
+      },
+      "attribution": "UNCHANGED_STORAGE_GATE_DURING_FRESH_SETUP",
+      "source": [
+        "app/src/main/java/com/osfans/trime/core/Rime.kt:482-486",
+        "app/src/main/java/com/osfans/trime/core/data/UserDataManager.kt:114-126",
+        "app/src/main/java/com/osfans/trime/data/prefs/AppPrefs.kt:378"
+      ],
+      "facts": "startup() body is byte-identical upstream: EXTERNAL_SYNC without persisted permission returnsfalse. The isolated fresh preparation later records an actual setup UI APP_STORAGE selection and native successful deployment in the same target PID.",
+      "remaining_issue": "This is a real startup refusal before storage choice, not proof of lost input after completed setup. Normal post-setup behavior and deferred recovery remain subject to the current runtime tests."
+    },
+    {
+      "id": "key_parser_diagnostic_fallbacks",
+      "level_counts": {
+        "E": 5
+      },
+      "attribution": "PREEXISTING_PARSE_FIRST_LOGGING_FOR_SUPPORTED_LITERAL_OR_MACRO_FALLBACKS",
+      "source": [
+        "app/src/main/java/com/osfans/trime/ime/keyboard/KeyCode.kt:74-114",
+        "app/src/main/java/com/osfans/trime/ime/keyboard/KeyAction.kt:209-228",
+        "app/src/main/java/com/osfans/trime/ime/keyboard/CommonKeyboardActionListener.kt:442-470",
+        "app/src/main/java/com/osfans/trime/core/Rime.kt:207-230",
+        "app/src/main/java/com/osfans/trime/core/KeySequenceFallback.kt:9-13"
+      ],
+      "facts": "Unchanged parser logs E for (){Left}, []{Left}, {}{Left}, ± and empty modifier (plain + attempt) before KeyAction falls back to text/sequence; tokens already exist in upstream themes. onText is unchanged, splits control macros and commits nonASCII characters directly. T9 does change the native sequence no-output fallback, so identical parser warnings alone cannot prove macro behavior unchanged.",
+      "remaining_issue": "These E lines do not themselves prove broken keys, but actual bracket/caret behavior has not been exercised by this audit. Keep a separate parser diagnostic cleanup/control test if pursued; no new T9 token or new parser emitter was found."
+    },
+    {
+      "id": "emulator_graphics_decoder_and_swap_fallback",
+      "level_counts": {
+        "E": 3,
+        "W": 1
+      },
+      "attribution": "PLATFORM_EMULATOR_GRAPHICS_EMITTER_MATCH_NOT_APP_NATIVE_JNI_CODE",
+      "source": [
+        "AOSP platform/development f84558cf... tools/emulator/opengl/shared/OpenglCodecCommon/glUtils.cpp:78-324",
+        "Android framework OpenGLRenderer EGL config selection warning"
+      ],
+      "facts": "Exact glUtilsParamSize diagnostic matches the emulator codec default unknown-param branch; OpenGLRenderer explicitly reports retry without EGL_SWAP_BEHAVIOR_PRESERVED. APK contains librime_jni.so, not a shipped emulator GLES codec. There is no T9 change to EGL/native rendering code.",
+      "remaining_issue": "Exact loaded driver build and unique trigger were not mapped. Emitter attribution is not proof every graphics effect is harmless or all layout/visual tests passed; actual new PNG review remains required."
+    },
+    {
+      "id": "ART_dependency_verifier_and_pause",
+      "level_counts": {
+        "W": 13
+      },
+      "attribution": "PLATFORM_RUNTIME_AND_UNCHANGED_ANDROIDX_DEPENDENCY_DIAGNOSTICS",
+      "source": [
+        "Raw VectorDrawableCompat updateTintFilter verifier message",
+        "Raw12 Suspending all threads timing lines"
+      ],
+      "facts": "One verifier diagnostic describes behavior before Android4.2 for AndroidX VectorDrawableCompat; current minimumAPI21 does not itself reproduce that historical override. Twelve actual pause warnings remain. T9 source does not replace the AndroidX class.",
+      "remaining_issue": "Actual runtime pauses are performance observations, not eliminated warnings. Exact causal contribution of deployment/classloading/UI is not isolated; no release P95/performance conclusion."
+    },
+    {
+      "id": "disposed_input_event_receiver",
+      "level_counts": {
+        "W": 2
+      },
+      "attribution": "FRAMEWORK_EMITTER_WITH_APPLICATION_WINDOW_LIFECYCLE_CAUSE_UNRESOLVED",
+      "source": [
+        "AOSP android-5.0.2_r1 core/java/android/view/InputEventReceiver.java:92-104,138-156"
+      ],
+      "facts": "Framework logs this only when finishInputEvent observes receiver pointer already disposed. Independent validator correlated both with R4 public current-schema readback dialog windows (23:44:31.751 and23:46:08.400), before the next Back operation; only read-only Observer downloads/identity checks were executing at those times.",
+      "remaining_issue": "Cannot classify as pure system fault or infer a unique app cause from tag/PID alone. Keep as unresolved window/input event disposal ordering; compare actual R4 final text, same-PID state and dialog transitions. This prefix does not prove a newly introduced deferred-view regression."
+    }
+  ],
+  "shared_native_and_dictionary_inputs": {
+    "librime_pin": "7bc3fb0005a03aff1c086611e4d52bb7f6444fdd",
+    "luna_pinyin_pin": "46acf03142c12b5aeed7002675046bf7255eed35",
+    "both_identical_to_upstream": true,
+    "librime_read_source": "/home/xumin/Public/Trime-upstream-pr/app/src/main/jni/librime",
+    "luna_read_source": "/home/xumin/Public/Trime-upstream-pr/app/data/rime/luna-pinyin"
+  },
+  "source_files_byte_identical_to_upstream": [
+    {
+      "path": "app/src/main/java/com/osfans/trime/ime/keyboard/KeyCode.kt",
+      "upstream_equals_current": true,
+      "sha256": "fa91b33a82ef927afb61e97d5df3abba2fdf5f28ef1d4373616b7436f844151e"
+    },
+    {
+      "path": "app/src/main/java/com/osfans/trime/ime/keyboard/KeyAction.kt",
+      "upstream_equals_current": true,
+      "sha256": "3500c212a6caad6f4298d3dcff41b422d7676323b8795837dde0bdf679ae52c1"
+    },
+    {
+      "path": "app/src/main/java/com/osfans/trime/data/theme/ThemeDiagnostics.kt",
+      "upstream_equals_current": true,
+      "sha256": "9746c9f0a6bbae97a7cdaf87e2e6177175fe69d55064e1fbec4782e8a7ceb5b0"
+    },
+    {
+      "path": "app/src/main/java/com/osfans/trime/data/theme/ThemeScope.kt",
+      "upstream_equals_current": true,
+      "sha256": "0fae0da5293f40e2f92b61dd3280ce56f44516dcd7a86e7f4e14da13786aca20"
+    },
+    {
+      "path": "app/src/main/java/com/osfans/trime/data/theme/ColorTable.kt",
+      "upstream_equals_current": true,
+      "sha256": "4e23688f39c17bad383de44a913f8e22e3b0b1401134e82997cdce512d392043"
+    },
+    {
+      "path": "app/src/main/java/com/osfans/trime/data/theme/ColorKey.kt",
+      "upstream_equals_current": true,
+      "sha256": "d047a6db6df45aa2b2f177387ba5432c5e12c46437fab0c4affdbb6a18c05fa5"
+    },
+    {
+      "path": "app/src/main/java/com/osfans/trime/data/theme/ThemeColors.kt",
+      "upstream_equals_current": true,
+      "sha256": "e7667dff97efd86db2e2dfc0174864e39e5ca2dcb09f81d6f30af4ba56d3ce53"
+    },
+    {
+      "path": "app/src/main/java/com/osfans/trime/data/theme/model/GeneralStyle.kt",
+      "upstream_equals_current": true,
+      "sha256": "6a7712390dec5ac3251ce458def74f537b95f8f27e558381c768667d0ae96681"
+    },
+    {
+      "path": "app/src/main/java/com/osfans/trime/data/prefs/AppPrefs.kt",
+      "upstream_equals_current": true,
+      "sha256": "aab8298a5e28f221d356d8b4ea11d59a352b8233850e52ab11aa8e06b88af091"
+    }
+  ],
+  "startup_method_body_identical_to_upstream": true,
+  "precise_dictionary_and_optional_config_markers": {
+    "luna_compile": {
+      "line": 7920,
+      "byte_start": 943867,
+      "byte_end": 944031,
+      "raw_sha256": "f8ade69a0a170c4bdef2434903c60e7c2aab5f3e4a4c59bc847876dfb9d16dde",
+      "pid": 2457,
+      "level": "I",
+      "tag": "rime.trime",
+      "message": "compiling dictionary for /storage/sdcard/Android/data/com.osfans.trime.debug/files/rime/build/luna_pinyin.schema.yaml",
+      "raw": "10-27 23:34:14.743  2457  2583 I rime.trime: compiling dictionary for /storage/sdcard/Android/data/com.osfans.trime.debug/files/rime/build/luna_pinyin.schema.yaml"
+    },
+    "preset_vocabulary": {
+      "line": 7924,
+      "byte_start": 944492,
+      "byte_end": 944571,
+      "raw_sha256": "cfd2169cb34f9679ef9887c6fe17b46e9d64d705a9c2eaefd44fadb54e43d988",
+      "pid": 2457,
+      "level": "I",
+      "tag": "rime.trime",
+      "message": "loading preset vocabulary: essay",
+      "raw": "10-27 23:34:14.875  2457  2583 I rime.trime: loading preset vocabulary: essay"
+    },
+    "pass2": {
+      "line": 450703,
+      "byte_start": 36057924,
+      "byte_end": 36058009,
+      "raw_sha256": "c021e04ebcfb4c0fad5fc52f772b783c921cb7c7cab96dcc250d2fc92209030b",
+      "pid": 2457,
+      "level": "I",
+      "tag": "rime.trime",
+      "message": "Pass 2: total 70803 entries collected.",
+      "raw": "10-27 23:35:34.476  2457  2583 I rime.trime: Pass 2: total 70803 entries collected."
+    },
+    "pass3": {
+      "line": 450917,
+      "byte_start": 36076207,
+      "byte_end": 36076293,
+      "raw_sha256": "0ef25b6bc13742489059bca2e2fadbda8c1d57bb40a0cbd93b64f776b6fa5530",
+      "pid": 2457,
+      "level": "I",
+      "tag": "rime.trime",
+      "message": "Pass 3: total 498737 entries collected.",
+      "raw": "10-27 23:36:01.602  2457  2583 I rime.trime: Pass 3: total 498737 entries collected."
+    },
+    "t9_compile": {
+      "line": 1189642,
+      "byte_start": 89631661,
+      "byte_end": 89631828,
+      "raw_sha256": "45cb001f167050e442fadb54963e5fa80c032da15a00a697e0fc9b2e336352c0",
+      "pid": 2457,
+      "level": "I",
+      "tag": "rime.trime",
+      "message": "compiling dictionary for /storage/sdcard/Android/data/com.osfans.trime.debug/files/rime/build/luna_pinyin_t9.schema.yaml",
+      "raw": "10-27 23:38:19.914  2457  2583 I rime.trime: compiling dictionary for /storage/sdcard/Android/data/com.osfans.trime.debug/files/rime/build/luna_pinyin_t9.schema.yaml"
+    },
+    "success": {
+      "line": 1189675,
+      "byte_start": 89635037,
+      "byte_end": 89635151,
+      "raw_sha256": "aa30f8fe48452a06f7c6ec8757ca977f3f4334bbf22022ee68ae6b65b18f1c8c",
+      "pid": 2457,
+      "level": "D",
+      "tag": "[Thread-158] Rime$Companion",
+      "message": "Rime.kt:650] Handling DeployMessage(state=Success)",
+      "raw": "10-27 23:38:20.482  2457  2583 D [Thread-158] Rime$Companion: Rime.kt:650] Handling DeployMessage(state=Success)"
+    }
+  },
+  "system_F16": {
+    "count": 16,
+    "tag": "InputMethodManagerService",
+    "actual_diagnostic_incidents": 2,
+    "not_target_PID_fatal": true,
+    "raw_errors": [
+      "Unknown id: com.android.inputmethod.latin/.LatinIME",
+      "Unknown id: com.osfans.trime.debug/.ime.core.TrimeInputMethodService"
+    ],
+    "classification": "PREPARATION_COMPONENT_OR_STALE_CLONE_DEFAULT_IME_FAILURES_BEFORE_ACTUAL_ENUMERATION",
+    "facts": "Preparation1 records invalid Debug-short component attempts and both Error: Unknown id outputs; preparation2 correctly rejects enabled-only ime list as incomplete; preparation3 enumerates all installed IMEs and selects actual com.osfans.trime.debug/com.osfans.trime.ime.core.TrimeInputMethodService. F stack rows remain real raw evidence. First LatinIME-id error is not equated to an app process crash or silently excused.",
+    "unresolved": "Unique mechanism linking the first enable attempt to the stale LatinIME ID is not established by source/PID membership alone. The operator preparation failure is retained and not counted as a business pass."
+  },
+  "action_recommendation": "Continue the frozen current-source acceptance, preserving all warnings. No source change justified by these logs alone. A decision to remove optional T9 grammar or fix inherited parser/theme diagnostics requires an explicit scoped code change and new artifact/runtime qualification. Keep InputEventReceiver ordering and dictionary/theme gaps listed as unresolved.",
+  "references": [
+    {
+      "path": "/home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/api21-native-independent1/warning-prefix-classification1.json",
+      "sha256": "0616d625df00f107aacc08ef05cd7aab5022b4d6153875f482074b326db768ad"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/api21-native-independent1/qualification.json",
+      "sha256": "cfd8ff0262ca57899689476fa24f3426d52d26f87f96dd07aa924cefda3e51fd"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/api21-device-preparation1/result.json",
+      "sha256": "c73ff5053618c09f93fd738c44407bed0b5e5ce3f05e273d632dd69951fdf081"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/api21-device-preparation1/enable-ime.stdout",
+      "sha256": "0415bd329ae09b8ff05fabdab616df37fb3f9c4126637db578bc864d23d90d18"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/api21-device-preparation1/select-ime.stdout",
+      "sha256": "7c4efdbeea61591fcfe5078c6f0fe256a72c107b57f633ed9294877c4d8c7bab"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/api21-device-preparation2/preparation-qualification.json",
+      "sha256": "b06544b0d1be215511772df60f1d610e39a04ad8dcbcc1b7495b4d45db65acca"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/api21-device-preparation3/result.json",
+      "sha256": "bdbc32270d7eec379bdda73db36268b1eb04aaf6422cdd6cbe16ffded2d73370"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/api21-device-preparation3/initialized-prefs.xml",
+      "sha256": "1d16ae230a576b5c0def5464cf26c8ea164394117536859a7fddfe15a1923610"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/warning-source-audit1/selected-warning-context.raw.txt",
+      "sha256": "c605004dcf499e859161497d7d809606eef79fcac3009c65f2d968484d6484cc"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/warning-source-audit1/selected-warning-context-index.json",
+      "sha256": "c48e5693d994aaa8b1f01c2df8a238ab7ec52ce82aee8f814821506e0d710021"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/warning-source-audit1/official-source-references.json",
+      "sha256": "4a42cdf77cf4361d365fd73103d2f6bc9d3acb7d98429293dc6fb070c8de5b10"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/api21-8a-trime-R4/report.json",
+      "sha256": "b19615a13543b648a5a3dd3b19d259256e348ca39b183bb748900428f1de1857"
+    }
+  ],
+  "limits": [
+    "Exactly the prior fixed90227936-byte prefix, not the growing live suffix or terminal warning totals.",
+    "No suppression/filtering or rewriting of original W/E/F logs.",
+    "Shared source emitter equality does not prove identical runtime behavior.",
+    "No zero-warning, physical-device, Release, upgrade, complete macro/graphics or performance acceptance claim."
+  ],
+  "default_artifact_grammar_probe": {
+    "original_apk_path": "/home/xumin/Public/Trime/build/pr2183-update-20261027/cloud-upstream1/linux-original-artifact/com.osfans.trime-v3.3.12-110-g0ef0eb55-x86_64-debug.apk",
+    "original_apk_sha256": "12ad11114e2db508e8b9946d410d035f41f0facf70603dce0ec22ae7f841bcda",
+    "matching_grammar_yaml_zip_entries": [],
+    "scope": "APK ZIP member names checked read-only; this does not enumerate optional future user-installed grammar config."
+  },
+  "disposed_receiver_context": {
+    "source_report": "/home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/api21-8a-trime-R4/report.json",
+    "source_report_sha256": "b19615a13543b648a5a3dd3b19d259256e348ca39b183bb748900428f1de1857",
+    "scope": "Host action times and source log device time differ by+08:00; temporal correlation, not causal proof.",
+    "intervals": [
+      {
+        "warning_device_time": "10-27 23:44:31.751",
+        "warning_UTC": "2026-10-27T15:44:31.751+00:00",
+        "prior_action": {
+          "action": "longpress",
+          "x": 45,
+          "y": 1124,
+          "duration_ms": 750,
+          "at": "2026-10-27T15:44:28.100413+00:00"
+        },
+        "following_action": {
+          "action": "tap",
+          "x": 160,
+          "y": 1232,
+          "at": "2026-10-27T15:44:32.935946+00:00"
+        },
+        "readback_binding": {
+          "action": "sequence_current_schema_readback",
+          "expected": "朙月拼音",
+          "actual": {
+            "index": "0",
+            "text": "朙月拼音",
+            "resource-id": "android:id/text1",
+            "content-desc": "",
+            "package": "com.osfans.trime.debug",
+            "class": "android.widget.CheckedTextView",
+            "enabled": "true",
+            "password": "false",
+            "focused": "false",
+            "focusable": "false",
+            "checkable": "true",
+            "checked": "true",
+            "clickable": "true",
+            "long-clickable": "false",
+            "selected": "false",
+            "scrollable": "false",
+            "text-selection-start": "-1",
+            "text-selection-end": "-1",
+            "bounds": "[50,454][670,550]"
+          }
+        }
+      },
+      {
+        "warning_device_time": "10-27 23:46:08.400",
+        "warning_UTC": "2026-10-27T15:46:08.400+00:00",
+        "prior_action": {
+          "action": "longpress",
+          "x": 45,
+          "y": 1124,
+          "duration_ms": 750,
+          "at": "2026-10-27T15:46:02.218609+00:00"
+        },
+        "following_action": {
+          "action": "tap",
+          "x": 160,
+          "y": 1232,
+          "at": "2026-10-27T15:46:09.630215+00:00"
+        },
+        "readback_binding": {
+          "action": "sequence_current_schema_readback",
+          "expected": "朙月拼音·简化字",
+          "actual": {
+            "index": "1",
+            "text": "朙月拼音·简化字",
+            "resource-id": "android:id/text1",
+            "content-desc": "",
+            "package": "com.osfans.trime.debug",
+            "class": "android.widget.CheckedTextView",
+            "enabled": "true",
+            "password": "false",
+            "focused": "false",
+            "focusable": "false",
+            "checkable": "true",
+            "checked": "true",
+            "clickable": "true",
+            "long-clickable": "false",
+            "selected": "false",
+            "scrollable": "false",
+            "text-selection-start": "-1",
+            "text-selection-end": "-1",
+            "bounds": "[50,550][670,646]"
+          }
+        }
+      }
+    ]
+  }
+}

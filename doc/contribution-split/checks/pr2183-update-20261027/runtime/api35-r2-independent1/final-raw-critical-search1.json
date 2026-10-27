@@ -1,0 +1,50 @@
+{
+  "utc": "2026-10-27T17:30:35.318241+00:00",
+  "scope": "Independent raw all-lines critical marker search, including the five lines not parsed by threadtime classifier; no device calls",
+  "closed_log_bytes": 113094007,
+  "closed_log_inode": 29229158,
+  "source_stat_unchanged": true,
+  "records": [
+    {
+      "name": "critical",
+      "argv": [
+        "rg",
+        "--text",
+        "--line-number",
+        "--ignore-case",
+        "--",
+        "FATAL EXCEPTION|Fatal signal [0-9]+|signal [0-9]+ \\(SIG|ANR in |am_anr|Out of memory:|Killed process |(lowmemorykiller|lmkd).*\\b(Kill|Killing)\\b|Disabling IRQ",
+        "/home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/api35-8a1e-v11-run2/device-logcat.txt"
+      ],
+      "returncode": 1,
+      "stdout_path": "/home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/api35-r2-independent1/final-raw-critical.stdout",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 0,
+      "stderr_path": "/home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/api35-r2-independent1/final-raw-critical.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_utf8": ""
+    },
+    {
+      "name": "unparsed",
+      "argv": [
+        "rg",
+        "--text",
+        "--line-number",
+        "--ignore-case",
+        "--invert-match",
+        "--",
+        "^[0-9][0-9]-[0-9][0-9] [0-9][0-9]:[0-9][0-9]:[0-9][0-9]\\.[0-9]{3}\\s+[0-9]+\\s+[0-9]+\\s+[VDIWEF]\\s+.*?:",
+        "/home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/api35-8a1e-v11-run2/device-logcat.txt"
+      ],
+      "returncode": 0,
+      "stdout_path": "/home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/api35-r2-independent1/final-raw-unparsed.stdout",
+      "stdout_sha256": "6f9db71b407836c3fc08f90550287807ec85a3957330235e0b6ef5c0e9fd9a64",
+      "stdout_bytes": 164,
+      "stderr_path": "/home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/api35-r2-independent1/final-raw-unparsed.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_utf8": "1:--------- beginning of main\n7:--------- beginning of events\n12:--------- beginning of kernel\n1032:--------- beginning of system\n3004:--------- beginning of radio\n"
+    }
+  ],
+  "critical_rg_exit1_is_no_matches_not_execution_error": true,
+  "not_absence_outside_captured_log": true
+}

@@ -1,0 +1,130 @@
+[
+  {
+    "name": "stop-old-clone",
+    "utc": "2026-10-27T16:26:18.557937+00:00",
+    "argv": [
+      "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+      "-s",
+      "emulator-5584",
+      "shell",
+      "am",
+      "force-stop",
+      "com.osfans.trime.debug"
+    ],
+    "exit": 0
+  },
+  {
+    "name": "remove-old-clone",
+    "utc": "2026-10-27T16:26:18.831102+00:00",
+    "argv": [
+      "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+      "-s",
+      "emulator-5584",
+      "uninstall",
+      "com.osfans.trime.debug"
+    ],
+    "exit": 0
+  },
+  {
+    "name": "install-original",
+    "utc": "2026-10-27T16:26:19.273769+00:00",
+    "argv": [
+      "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+      "-s",
+      "emulator-5584",
+      "install",
+      "-r",
+      "-t",
+      "/home/xumin/Public/Trime/build/pr2183-update-20261027/cloud-upstream1/linux-original-artifact/com.osfans.trime-v3.3.12-110-g0ef0eb55-x86_64-debug.apk"
+    ],
+    "exit": 0
+  },
+  {
+    "name": "install-fixed-oracle",
+    "utc": "2026-10-27T16:26:20.834899+00:00",
+    "argv": [
+      "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+      "-s",
+      "emulator-5584",
+      "install",
+      "-r",
+      "-t",
+      "/home/xumin/Public/Trime/build/t10/editor-oracle-fixture-build2/editor-fixture.apk"
+    ],
+    "exit": 0
+  },
+  {
+    "name": "actual-all-ime",
+    "utc": "2026-10-27T16:26:21.431547+00:00",
+    "argv": [
+      "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+      "-s",
+      "emulator-5584",
+      "shell",
+      "ime",
+      "list",
+      "-a",
+      "-s"
+    ],
+    "exit": 0
+  },
+  {
+    "name": "enable-exact-ime",
+    "utc": "2026-10-27T16:26:21.700816+00:00",
+    "argv": [
+      "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+      "-s",
+      "emulator-5584",
+      "shell",
+      "ime",
+      "enable",
+      "com.osfans.trime.debug/com.osfans.trime.ime.core.TrimeInputMethodService"
+    ],
+    "exit": 0
+  },
+  {
+    "name": "select-exact-ime",
+    "utc": "2026-10-27T16:26:21.963807+00:00",
+    "argv": [
+      "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+      "-s",
+      "emulator-5584",
+      "shell",
+      "ime",
+      "set",
+      "com.osfans.trime.debug/com.osfans.trime.ime.core.TrimeInputMethodService"
+    ],
+    "exit": 0
+  },
+  {
+    "name": "selected-ime-readback",
+    "utc": "2026-10-27T16:26:22.225131+00:00",
+    "argv": [
+      "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+      "-s",
+      "emulator-5584",
+      "shell",
+      "settings",
+      "get",
+      "secure",
+      "default_input_method"
+    ],
+    "exit": 0
+  },
+  {
+    "name": "launch-exact-main",
+    "utc": "2026-10-27T16:26:22.514335+00:00",
+    "argv": [
+      "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+      "-s",
+      "emulator-5584",
+      "shell",
+      "am",
+      "start",
+      "-W",
+      "-n",
+      "com.osfans.trime.debug/com.osfans.trime.ui.main.MainActivity"
+    ],
+    "exit": 0
+  }
+]

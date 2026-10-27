@@ -1,0 +1,61 @@
+{
+  "utc": "2026-10-27T16:29:13.980464+00:00",
+  "boot_id": "f9d7b95a-5e59-4e78-a476-b4b10291c7bb",
+  "target_pid": 2047,
+  "target_starttime": "15638",
+  "commands": [
+    {
+      "name": "boot-id",
+      "argv": [
+        "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+        "-s",
+        "emulator-5584",
+        "exec-out",
+        "cat",
+        "/proc/sys/kernel/random/boot_id"
+      ],
+      "exit": 0
+    },
+    {
+      "name": "target-stat",
+      "argv": [
+        "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+        "-s",
+        "emulator-5584",
+        "exec-out",
+        "cat",
+        "/proc/2047/stat"
+      ],
+      "exit": 0
+    },
+    {
+      "name": "target-cmdline",
+      "argv": [
+        "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+        "-s",
+        "emulator-5584",
+        "exec-out",
+        "cat",
+        "/proc/2047/cmdline"
+      ],
+      "exit": 0
+    },
+    {
+      "name": "actual-prefs",
+      "argv": [
+        "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+        "-s",
+        "emulator-5584",
+        "exec-out",
+        "su",
+        "0",
+        "cat",
+        "/data/data/com.osfans.trime.debug/shared_prefs/com.osfans.trime.debug_preferences.xml"
+      ],
+      "exit": 0
+    }
+  ],
+  "source_head": "8a1ee0ea6538e220fcddf31ed6fd491f5bc3cca7",
+  "actual_build_commit": "0ef0eb551a6f8d000266d4446348b2d2ab2823e9",
+  "state": "NativeStartobserved00:28:21.790; SuccessPENDING; no businesscases"
+}

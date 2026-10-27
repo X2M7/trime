@@ -1,0 +1,126 @@
+{
+  "recorded_utc": "2026-10-27T15:30:03.708351+00:00",
+  "scope": "Dedicated new clone API21 preparation, fresh Debug app test; no upgrade or existing-user data preservation claim. Old VM/source SDK untouched. No product APK/cache/native library edits.",
+  "source_head": "8a1ee0ea6538e220fcddf31ed6fd491f5bc3cca7",
+  "actual_build_commit": "0ef0eb551a6f8d000266d4446348b2d2ab2823e9",
+  "apk_sha256": "12ad11114e2db508e8b9946d410d035f41f0facf70603dce0ec22ae7f841bcda",
+  "records": [
+    {
+      "name": "api",
+      "args": [
+        "shell",
+        "getprop",
+        "ro.build.version.sdk"
+      ],
+      "exit": 0
+    },
+    {
+      "name": "abi",
+      "args": [
+        "shell",
+        "getprop",
+        "ro.product.cpu.abi"
+      ],
+      "exit": 0
+    },
+    {
+      "name": "shell-id",
+      "args": [
+        "shell",
+        "id"
+      ],
+      "exit": 0
+    },
+    {
+      "name": "old-test-package",
+      "args": [
+        "shell",
+        "pm",
+        "path",
+        "com.osfans.trime.debug"
+      ],
+      "exit": 0
+    },
+    {
+      "name": "stop-old-clone-test-app",
+      "args": [
+        "shell",
+        "am",
+        "force-stop",
+        "com.osfans.trime.debug"
+      ],
+      "exit": 0
+    },
+    {
+      "name": "remove-old-clone-test-app",
+      "args": [
+        "uninstall",
+        "com.osfans.trime.debug"
+      ],
+      "exit": 0
+    },
+    {
+      "name": "install-new-original-apk",
+      "args": [
+        "install",
+        "-r",
+        "-t",
+        "/home/xumin/Public/Trime/build/pr2183-update-20261027/cloud-upstream1/linux-original-artifact/com.osfans.trime-v3.3.12-110-g0ef0eb55-x86_64-debug.apk"
+      ],
+      "exit": 0
+    },
+    {
+      "name": "install-fixed-independent-oracle",
+      "args": [
+        "install",
+        "-r",
+        "-t",
+        "/home/xumin/Public/Trime/build/t10/editor-oracle-fixture-build2/editor-fixture.apk"
+      ],
+      "exit": 0
+    },
+    {
+      "name": "enable-ime",
+      "args": [
+        "shell",
+        "ime",
+        "enable",
+        "com.osfans.trime.debug/.ime.core.TrimeInputMethodService"
+      ],
+      "exit": 0
+    },
+    {
+      "name": "select-ime",
+      "args": [
+        "shell",
+        "ime",
+        "set",
+        "com.osfans.trime.debug/.ime.core.TrimeInputMethodService"
+      ],
+      "exit": 0
+    },
+    {
+      "name": "start-new-main",
+      "args": [
+        "shell",
+        "am",
+        "start",
+        "-W",
+        "-n",
+        "com.osfans.trime.debug/.ui.main.MainActivity"
+      ],
+      "exit": 0
+    },
+    {
+      "name": "current-ime",
+      "args": [
+        "shell",
+        "settings",
+        "get",
+        "secure",
+        "default_input_method"
+      ],
+      "exit": 0
+    }
+  ]
+}

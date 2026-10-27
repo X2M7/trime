@@ -1,0 +1,95 @@
+{
+  "created_utc": "2026-10-27T17:24:10.939727+00:00",
+  "status": "PASS_CRITICAL_ORIGINAL_IMAGES_AND_STRICT_RECORDED_SCOPE",
+  "case": "S1",
+  "theme_key": "standard",
+  "selected_theme": "tongwenfeng.trime",
+  "source_head": "8a1ee0ea6538e220fcddf31ed6fd491f5bc3cca7",
+  "actual_producer_merge": "0ef0eb551a6f8d000266d4446348b2d2ab2823e9",
+  "actual_apk_sha256": "12ad11114e2db508e8b9946d410d035f41f0facf70603dce0ec22ae7f841bcda",
+  "api": 35,
+  "boot_id": "f9d7b95a-5e59-4e78-a476-b4b10291c7bb",
+  "frozen_pid": {
+    "pid": 2047,
+    "starttime": "15638"
+  },
+  "original_images_actually_viewed": [
+    {
+      "label": "standard-S1-plain-letter-before",
+      "original_png": "/home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/api35-8a-standard-S1/captures/standard-S1-plain-letter-before/observer-in-connection.png",
+      "png_sha256": "d739dafb286b0981c303a8d1ccd30114cebd688ba9cd805fe65e4f75f5f94365",
+      "actual_view_image_inspected": true,
+      "visual_observation": "Fresh empty multiline editor shows lowercase letter keyboard and En state.",
+      "before_xml_sha256": "31c3a66a1a644f52c1ecaa81f7b4b02eeea3c3a467b7afdd422baa89e073f97c",
+      "after_xml_sha256": "31c3a66a1a644f52c1ecaa81f7b4b02eeea3c3a467b7afdd422baa89e073f97c"
+    },
+    {
+      "label": "standard-S1-plain-double-shift",
+      "original_png": "/home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/api35-8a-standard-S1/captures/standard-S1-plain-double-shift/observer-in-connection.png",
+      "png_sha256": "d739dafb286b0981c303a8d1ccd30114cebd688ba9cd805fe65e4f75f5f94365",
+      "actual_view_image_inspected": true,
+      "visual_observation": "After paired Shift touches, the keyboard remains lowercase.",
+      "before_xml_sha256": "31c3a66a1a644f52c1ecaa81f7b4b02eeea3c3a467b7afdd422baa89e073f97c",
+      "after_xml_sha256": "31c3a66a1a644f52c1ecaa81f7b4b02eeea3c3a467b7afdd422baa89e073f97c"
+    },
+    {
+      "label": "standard-S1-plain-aa",
+      "original_png": "/home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/api35-8a-standard-S1/captures/standard-S1-plain-aa/observer-in-connection.png",
+      "png_sha256": "939781f3b7cb9ceab8d9a71073eb08847ccf8aee1f188e5434630455666aaa89",
+      "actual_view_image_inspected": true,
+      "visual_observation": "Editor contains exactly aa; lowercase keyboard remains.",
+      "before_xml_sha256": "5e3c50ecaa2180da270809bb350fde11b31322578f4bcfcf0aa4b236aafd9ff9",
+      "after_xml_sha256": "5e3c50ecaa2180da270809bb350fde11b31322578f4bcfcf0aa4b236aafd9ff9"
+    }
+  ],
+  "actual_viewed_count": 3,
+  "strict_oracle_pairs": [
+    {
+      "label": "standard-S1-initial",
+      "expected_and_actual_editable": "",
+      "before_sha256": "9751cd6dd24f35f67c0136cb09d10f5e6c262f520d2830860aae905b6793ed1f",
+      "after_sha256": "c1cdf8928be4e535e1c02fd5f37d3fad9b75f244f4d37b6e27c0d3d65227c941"
+    },
+    {
+      "label": "standard-S1-plain-letter-before",
+      "expected_and_actual_editable": "",
+      "before_sha256": "c2b63b4149dce10fa375af8d8960f5db4277cb2196bc0cd9781fa7f66a769904",
+      "after_sha256": "740f289a554f98d39a3e16425b813b49b4364fc6390de8ac8b16fdfe44f074f4"
+    },
+    {
+      "label": "standard-S1-plain-double-shift",
+      "expected_and_actual_editable": "",
+      "before_sha256": "5e8c10e7e6059278e186cf80b1412d0d1e8f3ae0c18eba31262c92a12b6c32e1",
+      "after_sha256": "9bc6392c49561387e87a669aa1df139912423b2e2779198846c5d47231ab7810"
+    },
+    {
+      "label": "standard-S1-plain-aa",
+      "expected_and_actual_editable": "aa",
+      "before_sha256": "49769101c877da6f137214c683d29a3251e047ff60b616cad253dce3b89f3934",
+      "after_sha256": "f2b5aab58d0703212224ccd81f16b91e8c4d3f8db5fd5b992cb3bca4451923a4"
+    }
+  ],
+  "strict_xml_expectations_checked_both_snapshots": [],
+  "extra_case_checks": [
+    {
+      "current_session_target_release_log": "api35-independent-cases1/standard-S1-shift-qualification1.json",
+      "sha256": "4639e91888fe607f670bea2fd4843e7561b881f71bfffb217ed013406f56b98c",
+      "actual_target_release_behaviors": [
+        "CLICK",
+        "CLICK"
+      ],
+      "same_device_clock_release_gap_ms": 134,
+      "required_timeout_ms": 300,
+      "scope": "New r2 continuous target release rows, not merely injector acceptance; exact committed aa."
+    }
+  ],
+  "observer_normal_authenticated_stop_wait0_remote0": true,
+  "observer_capture_count": 4,
+  "common_record_audit": {
+    "path": "/home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/api35-independent-cases1/standard-S1-record-audit1.json",
+    "sha256": "17a2236e2c5170f2d8ffc7923c95ea05fc9d8e6909fd73b861b307916d729f09"
+  },
+  "original_report_passed_flag_retained": false,
+  "original_sequence_business_passed_flag_retained": false,
+  "scope": "Independent actual original-PNG visual review plus strict XML and Editable cross-checks for this completed API35 standard S1 case only. Original false flags unchanged pending root aggregate qualification. No whole-XML byte-equality gate added. No physical-device/TTS/upgrade/timing or full-T9 acceptance claim."
+}

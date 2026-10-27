@@ -1,5 +1,28 @@
 # 上游贡献拆分清单
 
+## #2183 上游同步与限定验收（2026-10-28）
+
+[#2183](https://github.com/osfans/trime/pull/2183) 原贡献分支已推送 `8a1ee0ea`，基于上游 `a047f747`，四条线性 Conventional Commits、零 merge。旧 #2187 副本已删除，采用上游合入版本；#2186／#2188 审阅精简同步到对应依赖，保留九键功能及方案恢复／编辑器强制 ASCII 修复。补丁仍为 62 个应用、测试及说明路径，不含 fork 发布或 Pages 配置。
+
+[上游 CI](https://github.com/osfans/trime/actions/runs/40527129836) **5/5 成功**，测试与 Lint 任务实际执行；工作流未导出精确应用用例 XML，不报告应用用例数。新执行宿主检查为 **743 项 T9、115 项 Unicode CheckJNI、46 项 UTF-16 位移断言**；当前 T9 程序重新编译，host librime 引擎按既有 SHA 复用。首次缺少 fixture 的前置失败保留。
+
+原签四 ABI **Debug** APK 的实际 producer 为 `0ef0eb55`，与源码 `8a1ee0ea` 的完整 Git tree 同为 `b022a1e8`；不把不同 commit、构建元数据或 APK 字节混同。manifest 为 `3.3.13`／`20261101`，文件名 `v3.3.12-110-g0ef0eb55` 是 Git describe。未改包或重签。
+
+同一原始 x86_64 APK 在 **Android 5.0 和 Android 15 r2 各完成 12 个会话／14 个逻辑项、134 个捕获记录和 110 组严格 Editable 核验**。覆盖两主题的方案与强制模式恢复、拼音锁定选词、回车、符号混输、编辑器隔离及真实触摸 Shift；K1 仅在各主题 R4 内执行一次。图像实际查看范围、进程身份和认证 Observer stop／wait 单列，不宣称全帧人工审阅。见[当前限定总表](checks/pr2183-update-20261027/root-current-qualified-scope.json)。
+
+| 实际终态 | Android 5.0 | Android 15 r2 |
+| --- | --- | --- |
+| VM／正常关闭 | 0／0 | 0／0 |
+| 日志采集器 | 0 | **255，ADB 断开后返回，限制保留** |
+| 最低可用宿主内存 | 3.61 GiB | 1.52 GiB |
+| Trime 日志 W／E／F | 237／80／0 | 262／149／0 |
+
+两轮清理均无错误；本轮进程无残留，63 个原 SDK／AVD／工具文件的内容、权限和修改时间前后相同。Android 15 r2 最终已采集文件未匹配既定 fatal／ANR／LMK kill／OOM 标记；collector255 不代表设备全生命周期无日志空缺。Android 5.0 的全 PID F16 是两组未知输入法 ID 的准备诊断，仍保留。
+
+**警告未全部消除**：工具、依赖、未展开 Gradle 废弃项及每个 Debug APK 两条 META-INF 提示保留。词库编码、配置探测、主题／KeyCode 诊断和 disposed receiver 警告仍存在；Android 15 的 IPCThreadState、SurfaceSyncGroup 与 DeadObject 等因果未决，不能统称系统原因。较早 Android 15 r1 在业务前发生真实 SystemUI／phone ANR 和两次 guest 低水位回收，整轮失败、三份 ANR 原栈及关闭回执保留。手工空参数命令255及改正后0的准备记录同样保留。
+
+[真机清单](checks/pr2183-update-20261027/device-delivery-8a-reviewed/REAL-DEVICE-ACCEPTANCE.md)与[模板](checks/pr2183-update-20261027/device-delivery-8a-reviewed/device-result-template.json)的 **44 个状态均为 NOT_RUN**。用户目前无真机，PR 保持 **Draft**，未转 Ready、合并或发布。x86_64 Debug 限定验收不替代真机 ARM64／OEM／TalkBack、Release、性能或全应用验收。索引只提交所选文字证据及 SHA，不提交 APK、大日志、PNG 或模拟器磁盘，遗漏与原始引用另列。
+
 ## 三项 PR 审阅精简（2026-10-23）
 
 #2188 `e009dc0b`、#2186 `2ad1865f`、#2182 最终 `9f95cb57` 已正常推送到原分支，当前上游 CI 各 **5/5 成功**。删重复重置／检查／扫描、精简日志所有权与 UI 启动，保留有依据的取消、原异常及资源边界。日志严格 host5 的46项按不变输入绑定到最终head；LogView后续启动小修另经源码、style及最终head CI，不借旧ec0结果。JNI115＋46项及六个严格编译单元通过。
@@ -24,7 +47,7 @@
 
 见[本轮说明与原件](checks/candidate-review-20261023/README.md)及[Root 限定总表](checks/candidate-review-20261023/root-qualified-scope.json)。原始依赖、构建、运行及 META-INF 警告和所有失败轮保留。控件级外部 Activity 检查不代表真实 TalkBack、候选点击、原生输入法、真机或 Release 验收；[原 PR 正文更新回执](checks/candidate-review-20261023/pr-body-update1/receipt.json)确认正文逐字读回、源码与 Open／非 Draft 状态未变，正文证据固定引用 `9eb3810a`。当前仍待维护者复审，未解决审阅线程、自动合并或发布。#2183、主 develop 及其余贡献分支未改。
 
-## #2183 当前整改状态（2026-10-23）
+## #2183 历史整改状态（2026-10-23，c4b613f7）
 
 [#2183](https://github.com/osfans/trime/pull/2183) 保持 **Draft，等待真机验收**。源码 `c4b613f7` 已推至原贡献分支，基线为上游 `19b04849`，五条 Conventional Commits、零 merge。[补丁范围](checks/pr2183-rebase-20261022/schema-layout-regression/current-c4-patch-shape-root1.json)为 62 个应用代码／测试及九键说明文件，没有 fork 发布、Pages 或此索引配置。方案切换恢复旧九键、数字框转邮箱时强制 ASCII 被布局附着覆盖的两个真实缺陷已修复；这两次后续修复未改 JNI、主题资产或子模块 pin，原失败保留。
 

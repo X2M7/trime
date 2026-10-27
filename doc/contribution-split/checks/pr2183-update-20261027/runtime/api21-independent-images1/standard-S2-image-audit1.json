@@ -1,0 +1,127 @@
+{
+  "created_utc": "2026-10-27T16:12:30.001538+00:00",
+  "status": "PASS_CRITICAL_ORIGINAL_IMAGES_AND_STRICT_RECORDED_SCOPE",
+  "case": "S2",
+  "theme_key": "standard",
+  "selected_theme": "tongwenfeng.trime",
+  "source_head": "8a1ee0ea6538e220fcddf31ed6fd491f5bc3cca7",
+  "actual_producer_merge": "0ef0eb551a6f8d000266d4446348b2d2ab2823e9",
+  "actual_apk_sha256": "12ad11114e2db508e8b9946d410d035f41f0facf70603dce0ec22ae7f841bcda",
+  "api": 21,
+  "boot_id": "139a40bc-7c10-4ffa-affd-3657c4fa391a",
+  "frozen_pid": {
+    "pid": 2457,
+    "starttime": "27184"
+  },
+  "original_images_actually_viewed": [
+    {
+      "label": "standard-S2-to-full-current-schema-readback",
+      "original_png": "/home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/api21-8a-standard-S2/captures/standard-S2-to-full-current-schema-readback/observer-in-connection.png",
+      "png_sha256": "766d55c5a748a4c146fe0e5e44dd5ed18714797f0f8d49b60868b5e3ab7ebc69",
+      "actual_view_image_inspected": true,
+      "visual_observation": "Public schema chooser visibly checks exact 朙月拼音, distinguishing full default from the T9-derived letter layout.",
+      "before_xml_sha256": "4f6bd4a6cf9b861ec29657ac724017a21d558a5f3c8c7d4bb25bebd0944e6bee",
+      "after_xml_sha256": "4f6bd4a6cf9b861ec29657ac724017a21d558a5f3c8c7d4bb25bebd0944e6bee"
+    },
+    {
+      "label": "standard-S2-full-default-before",
+      "original_png": "/home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/api21-8a-standard-S2/captures/standard-S2-full-default-before/observer-in-connection.png",
+      "png_sha256": "cf25135faf0a00c0d259294a9cd3ae1f21deaabbb4d2b58e91e6cc131861707d",
+      "actual_view_image_inspected": true,
+      "visual_observation": "Fresh full default QWERTY remains lowercase Chinese-mode layout with empty Editable.",
+      "before_xml_sha256": "10ccb600e1841d7a81305e4be3ebb0862041240fb6834eed400a89f2367142eb",
+      "after_xml_sha256": "10ccb600e1841d7a81305e4be3ebb0862041240fb6834eed400a89f2367142eb"
+    },
+    {
+      "label": "standard-S2-full-default-ascii",
+      "original_png": "/home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/api21-8a-standard-S2/captures/standard-S2-full-default-ascii/observer-in-connection.png",
+      "png_sha256": "ba1d73be0b5ddfc8177a0546830ba814781db767ed0466a7cb47281e1d7ab54c",
+      "actual_view_image_inspected": true,
+      "visual_observation": "Long-space Mode_switch yields En indicator and lowercase full default QWERTY, without changing to the T9 letter layout.",
+      "before_xml_sha256": "0b0963f2ece6351e03249e781f703227347b028ba354522b0c16a371d7f918c6",
+      "after_xml_sha256": "0b0963f2ece6351e03249e781f703227347b028ba354522b0c16a371d7f918c6"
+    },
+    {
+      "label": "standard-S2-explicit-double-shift",
+      "original_png": "/home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/api21-8a-standard-S2/captures/standard-S2-explicit-double-shift/observer-in-connection.png",
+      "png_sha256": "3c468fa1275173a3a87cfc81d3eb72ac1af7adb0dfd12c98f503214bc0520b0d",
+      "actual_view_image_inspected": true,
+      "visual_observation": "After real rapid double Shift, Shift is visibly selected blue and the full default letter keys are uppercase.",
+      "before_xml_sha256": "0b0963f2ece6351e03249e781f703227347b028ba354522b0c16a371d7f918c6",
+      "after_xml_sha256": "0b0963f2ece6351e03249e781f703227347b028ba354522b0c16a371d7f918c6"
+    },
+    {
+      "label": "standard-S2-explicit-AA",
+      "original_png": "/home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/api21-8a-standard-S2/captures/standard-S2-explicit-AA/observer-in-connection.png",
+      "png_sha256": "a39f1cf8526e3210dd33cee9073eb5a112bd48711b0e9ae2a8da3de0109ffa52",
+      "actual_view_image_inspected": true,
+      "visual_observation": "Two a activations produce exactly uppercase AA in Editable; Caps Lock state remains visibly selected, matching the explicit theme double_click control.",
+      "before_xml_sha256": "9054a12ed3ce3c5f8cf9dba88318058c2ed3e62a1ffe9dbf3d6745d59dd24022",
+      "after_xml_sha256": "9054a12ed3ce3c5f8cf9dba88318058c2ed3e62a1ffe9dbf3d6745d59dd24022"
+    }
+  ],
+  "actual_viewed_count": 5,
+  "strict_oracle_pairs": [
+    {
+      "label": "standard-S2-initial-t9",
+      "expected_and_actual_editable": "",
+      "before_sha256": "4d6ef9d0f6f80494ba4d020b60fdafc2f065442eb419ad3ecaf9900a374f24b5",
+      "after_sha256": "681695f39ce0c12b85139252dd6e0115ba4350c41ac0f6a081eb29bd6660908a"
+    },
+    {
+      "label": "standard-S2-full-default-before",
+      "expected_and_actual_editable": "",
+      "before_sha256": "4b1517612da0ed1f5f4aa59136eef361d1d613bfac45c686c297b6974f3f51a2",
+      "after_sha256": "d2194715b8820ba8467ea32f930639e9e93c1e1393741569207d81d69de054aa"
+    },
+    {
+      "label": "standard-S2-full-default-ascii",
+      "expected_and_actual_editable": "",
+      "before_sha256": "8d350d710d7fb1275b482354fdfac69ac4193e5a626b8d740ea5cb52779ec70f",
+      "after_sha256": "e8bcb8a8323f8086de9ad4e884d6816fac4b121957535bbe82411de8bcb5e1bc"
+    },
+    {
+      "label": "standard-S2-explicit-double-shift",
+      "expected_and_actual_editable": "",
+      "before_sha256": "07e105a3ccdccb70d8436e6d90181d0e4307cdb96312b1fea6a037843cc43ac7",
+      "after_sha256": "aebfba6ab7ef40d1bc742564cd8d50a22eea9d422ffceeff1f5a400329fe8a42"
+    },
+    {
+      "label": "standard-S2-explicit-AA",
+      "expected_and_actual_editable": "AA",
+      "before_sha256": "a70e9e275fd3dabda8c22a1045e854566a3337cb2f21f9f7013f987712cf3655",
+      "after_sha256": "a653359f8f14b906941dbf3eb8b7a726e96d9a89674a11e355cb944adecc37cc"
+    }
+  ],
+  "strict_xml_expectations_checked_both_snapshots": [
+    {
+      "suffix": "to-full-current-schema-readback",
+      "attributes": {
+        "text": "朙月拼音",
+        "class": "android.widget.CheckedTextView",
+        "checked": "true"
+      }
+    }
+  ],
+  "extra_case_checks": [
+    {
+      "timing_audit": "/home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/api21-independent-cases1/standard-S2-shift-qualification1.json",
+      "target_release_behaviors": [
+        "CLICK",
+        "DOUBLE_CLICK"
+      ],
+      "target_release_gap_ms": 134,
+      "scope": "Separate independent same-session continuous-log timing qualification; actual image observations are separately listed.",
+      "timing_audit_sha256": "5664b124ab751accf80a3690128c922b216c6c44207b8164e49420a779b2f8f4"
+    }
+  ],
+  "observer_normal_authenticated_stop_wait0_remote0": true,
+  "observer_capture_count": 9,
+  "common_record_audit": {
+    "path": "/home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/api21-independent-cases1/standard-S2-record-audit1.json",
+    "sha256": "9640a37c3e05329e2654bc09ea6fd359ed2099362e1a2fa3816eb16e912cb698"
+  },
+  "original_report_passed_flag_retained": false,
+  "original_sequence_business_passed_flag_retained": false,
+  "scope": "Independent actual original-PNG visual review plus strict XML and Editable cross-checks for this completed API21 standard S2 case only. Original false flags unchanged pending root aggregate qualification. No whole-XML byte-equality gate added. No physical-device/TTS/upgrade/timing or full-T9 acceptance claim."
+}

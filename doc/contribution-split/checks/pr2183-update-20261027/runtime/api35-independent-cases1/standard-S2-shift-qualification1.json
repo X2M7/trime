@@ -1,0 +1,178 @@
+{
+  "schema": "trime-targeted-shift-continuous-log-qualification/v1",
+  "utc": "2026-10-27T17:26:37.047537+00:00",
+  "verdict": "PASS_THIS_SESSION_TARGET_RELEASE_TIMING_BEHAVIOR_AND_EXACT_ORACLE",
+  "theme": "standard",
+  "case": "S2",
+  "api": 35,
+  "source_head": "8a1ee0ea6538e220fcddf31ed6fd491f5bc3cca7",
+  "actual_build_commit": "0ef0eb551a6f8d000266d4446348b2d2ab2823e9",
+  "boot_id": "f9d7b95a-5e59-4e78-a476-b4b10291c7bb",
+  "Trime_PID_start": {
+    "pid": 2047,
+    "starttime": "15638"
+  },
+  "fixed_original_continuous_log_prefix": {
+    "path": "/home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/api35-8a1e-v11-run2/device-logcat.txt",
+    "device": 66306,
+    "inode": 29229158,
+    "bytes": 113005342,
+    "sha256": "c4f3c978ff1461455bca7edfd43cc89cc8ba05e9a6fa444a136bb609a65a5532"
+  },
+  "case_lookup_only_clock_margin_seconds": 2,
+  "case_start_UTC": "2026-10-27T17:24:09.567677+00:00",
+  "case_end_UTC": "2026-10-27T17:26:22.165034+00:00",
+  "device_MMDD_and_year_parsed_explicitly_across_midnight": true,
+  "real_target_release_gap_ms": 142.0,
+  "required_timeout_ms": 300,
+  "actual_target_release_behaviors": [
+    "CLICK",
+    "DOUBLE_CLICK"
+  ],
+  "exact_original_target_rows": [
+    {
+      "line_number_1based": 1523532,
+      "byte_start_0based": 112978829,
+      "byte_end_exclusive": 112978959,
+      "device_timestamp": "10-28 01:25:48.639",
+      "device_datetime": "2026-10-28T01:25:48.639000+08:00",
+      "text": "10-28 01:25:48.639  2047  2047 D [main] KeyView: KeyView.kt:91] KeyView release: label=Shift, behavior=CLICK, fromLongPress=false",
+      "raw_sha256": "be907100d843cea570184f21b856a382705dc12c66f64f8ed1483c2641d3740c"
+    },
+    {
+      "line_number_1based": 1523533,
+      "byte_start_0based": 112978959,
+      "byte_end_exclusive": 112979075,
+      "device_timestamp": "10-28 01:25:48.641",
+      "device_datetime": "2026-10-28T01:25:48.641000+08:00",
+      "text": "10-28 01:25:48.641  2047  2047 D [main] KeyView: KeyView.kt:196] processKeyAction: label=Shift, code=59, type=CLICK",
+      "raw_sha256": "b07c21f496e3cc71daf6fae38776077807ed558f25e87e87c6741849f7e6406d"
+    },
+    {
+      "line_number_1based": 1523534,
+      "byte_start_0based": 112979075,
+      "byte_end_exclusive": 112979212,
+      "device_timestamp": "10-28 01:25:48.781",
+      "device_datetime": "2026-10-28T01:25:48.781000+08:00",
+      "text": "10-28 01:25:48.781  2047  2047 D [main] KeyView: KeyView.kt:91] KeyView release: label=Shift, behavior=DOUBLE_CLICK, fromLongPress=false",
+      "raw_sha256": "a126fe8f0edbc7511a11942f9276b45c5751f08c8d7da0335c896b8ff8890121"
+    },
+    {
+      "line_number_1based": 1523535,
+      "byte_start_0based": 112979212,
+      "byte_end_exclusive": 112979335,
+      "device_timestamp": "10-28 01:25:48.782",
+      "device_datetime": "2026-10-28T01:25:48.782000+08:00",
+      "text": "10-28 01:25:48.782  2047  2047 D [main] KeyView: KeyView.kt:196] processKeyAction: label=Shift, code=59, type=DOUBLE_CLICK",
+      "raw_sha256": "3098693508ee6870c9d166711a3a70089b06521024673c92a5525b091ef4fadc"
+    }
+  ],
+  "selected_original_raw_rows": {
+    "path": "/home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/api35-independent-cases1/standard-S2-actual-target-shift.raw.txt",
+    "sha256": "a3e023d83d12f3d3ee70087ea8ae941172b2c1cb8fd657fed206de5dd10bb0bf",
+    "original_line_endings_retained_without_normalization": true
+  },
+  "four_real_injector_events": [
+    {
+      "index": "1",
+      "action": "DOWN_1",
+      "down_uptime_ms": "3723158",
+      "event_uptime_ms": "3723158",
+      "call_start_uptime_ms": "3723161",
+      "call_end_uptime_ms": "3723165",
+      "pid": "32383",
+      "uid": "2000",
+      "accepted": "true",
+      "source": "4098",
+      "display_id": "0",
+      "x": "54.0",
+      "y": "996.0"
+    },
+    {
+      "index": "2",
+      "action": "UP_1",
+      "down_uptime_ms": "3723158",
+      "event_uptime_ms": "3723226",
+      "call_start_uptime_ms": "3723226",
+      "call_end_uptime_ms": "3723237",
+      "pid": "32383",
+      "uid": "2000",
+      "accepted": "true",
+      "source": "4098",
+      "display_id": "0",
+      "x": "54.0",
+      "y": "996.0"
+    },
+    {
+      "index": "3",
+      "action": "DOWN_2",
+      "down_uptime_ms": "3723297",
+      "event_uptime_ms": "3723297",
+      "call_start_uptime_ms": "3723297",
+      "call_end_uptime_ms": "3723302",
+      "pid": "32383",
+      "uid": "2000",
+      "accepted": "true",
+      "source": "4098",
+      "display_id": "0",
+      "x": "54.0",
+      "y": "996.0"
+    },
+    {
+      "index": "4",
+      "action": "UP_2",
+      "down_uptime_ms": "3723297",
+      "event_uptime_ms": "3723366",
+      "call_start_uptime_ms": "3723366",
+      "call_end_uptime_ms": "3723379",
+      "pid": "32383",
+      "uid": "2000",
+      "accepted": "true",
+      "source": "4098",
+      "display_id": "0",
+      "x": "54.0",
+      "y": "996.0"
+    }
+  ],
+  "injector_summary": {
+    "completed": "true",
+    "pid": "32383",
+    "uid": "2000",
+    "backend": "android.hardware.input.InputManagerGlobal",
+    "attempted": "4",
+    "accepted": "4",
+    "gap_ms": "60",
+    "injector_up_call_delta_ms": "140",
+    "x": "54.0",
+    "y": "996.0"
+  },
+  "original_injector_stdout": {
+    "path": "/home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/api35-8a-standard-S2/standard-S2-injector-stdout.raw.txt",
+    "sha256": "df055844131476ebf62e3fcfafa402d68caeab0294882033a1d6689d71af16e2"
+  },
+  "strict_oracle_and_stop_record_audit": {
+    "path": "/home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/api35-independent-cases1/standard-S2-record-audit1.json",
+    "sha256": "ccc2c596280301695762ca877c88421dae41926261e7c0d5422c608e8de51e22",
+    "expected_committed_text": "AA",
+    "selection": [
+      2,
+      2
+    ]
+  },
+  "source_UP_dispatch_path": {
+    "KeyView.kt_sha256": "288fdb6b8aa4d2788996fa1480b1b98072dfba3117ef9ec36c7151c06e086f61",
+    "GestureFrame.kt_sha256": "db81f52b6e9a65b471e92eda7febbf415576ca37acfddf90c5ace4de8aa6048c",
+    "scope": "Target release callback is reached from ACTION_UP. Target DOWN is not separately logged; four accepted real touchscreen injection events and two target release rows are kept distinct."
+  },
+  "image_review": "Actual original PNGs have separate Root/agent image ledgers; this script does not view images or mark raw records accepted.",
+  "raw_business_flags_modified": false,
+  "API35r2_frozen_identity": {
+    "path": "/home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/api35-r2-independent1/frozen-target-identity1.json",
+    "sha256": "c09d217b0c132e7684c51e67e34cd915691eb2bcdcb5e6e03c95ee43f6357a24"
+  },
+  "no_ADB_device_controller_network_or_JVM": true,
+  "limitations": [
+    "This exact case only; timing measured exclusively within one continuous device wall clock. Host±2s is only a case-row lookup margin.",
+    "No fictional target DOWN log or global no-warning/whole application/physical-device/Release acceptance."
+  ]
+}

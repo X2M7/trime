@@ -1,0 +1,179 @@
+{
+  "utc": "2026-10-27T16:18:11.941393+00:00",
+  "scope": "Complete stopped API21 all-buffer continuous log; independent wider critical marker search including unparsed rows",
+  "log": {
+    "path": "/home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/api21-8a1e-v10-run1/device-logcat.txt",
+    "bytes": 92246421,
+    "sha256": "c16f6c8e3172ea2412dd4b688d16e81c6305dfef3c2d10c25e2faf1d68e5ed69",
+    "inode": 28878678
+  },
+  "regex": "FATAL EXCEPTION|Fatal signal [0-9]+|signal [0-9]+ \\(SIG|ANR in |am_anr|Out of memory:|Killed process |lowmemorykiller|lmkd|Disabling IRQ",
+  "source_stat_unchanged": true,
+  "critical_or_F_rows": [
+    {
+      "line_number_1based": 1920,
+      "byte_start_0based": 304597,
+      "byte_end_exclusive": 304674,
+      "raw_sha256": "5387616bea01e852aecde85114800c76ec545402143ceba00af510b5afec7845",
+      "raw_utf8": "10-27 23:27:22.818  1118  1118 I lowmemorykiller: ActivityManager connected\r\n"
+    },
+    {
+      "line_number_1based": 5558,
+      "byte_start_0based": 727588,
+      "byte_end_exclusive": 727676,
+      "raw_sha256": "7b71ea9a88d40abaae67ef90c30d36133509bf85e6c182550f183f3c42ce9aa0",
+      "raw_utf8": "10-27 23:30:01.463  1480  1803 F InputMethodManagerService: Input Method Manager Crash\r\n"
+    },
+    {
+      "line_number_1based": 5559,
+      "byte_start_0based": 727676,
+      "byte_end_exclusive": 727825,
+      "raw_sha256": "9d1a3f43d272ff90b9c16280855cebe24d87937f2cc7137a751f43d240a5c7f3",
+      "raw_utf8": "10-27 23:30:01.463  1480  1803 F InputMethodManagerService: java.lang.IllegalArgumentException: Unknown id: com.android.inputmethod.latin/.LatinIME\r\n"
+    },
+    {
+      "line_number_1based": 5560,
+      "byte_start_0based": 727825,
+      "byte_end_exclusive": 728000,
+      "raw_sha256": "b5a9ab3620245ebbe0b87fe374d1dfcd7b07184683185fa1123205fea3f3bf2d",
+      "raw_utf8": "10-27 23:30:01.463  1480  1803 F InputMethodManagerService: \tat com.android.server.InputMethodManagerService.setInputMethodEnabledLocked(InputMethodManagerService.java:3005)\r\n"
+    },
+    {
+      "line_number_1based": 5561,
+      "byte_start_0based": 728000,
+      "byte_end_exclusive": 728169,
+      "raw_sha256": "4c4478c00dfb18271905b7e1fd07e72a98c3d39869f76b19a07fc74f6ec2de8f",
+      "raw_utf8": "10-27 23:30:01.463  1480  1803 F InputMethodManagerService: \tat com.android.server.InputMethodManagerService.setInputMethodEnabled(InputMethodManagerService.java:2994)\r\n"
+    },
+    {
+      "line_number_1based": 5562,
+      "byte_start_0based": 728169,
+      "byte_end_exclusive": 728326,
+      "raw_sha256": "314369e8ed535a8a4c409e5b0f0162f5a46668684b6f3e9b291c151511d8c26e",
+      "raw_utf8": "10-27 23:30:01.463  1480  1803 F InputMethodManagerService: \tat com.android.internal.view.IInputMethodManager$Stub.onTransact(IInputMethodManager.java:425)\r\n"
+    },
+    {
+      "line_number_1based": 5563,
+      "byte_start_0based": 728326,
+      "byte_end_exclusive": 728483,
+      "raw_sha256": "f68e918540bfa6dc2672ab484e5370363b48f3614cdccbf65387e2a0c9b5a4cc",
+      "raw_utf8": "10-27 23:30:01.463  1480  1803 F InputMethodManagerService: \tat com.android.server.InputMethodManagerService.onTransact(InputMethodManagerService.java:867)\r\n"
+    },
+    {
+      "line_number_1based": 5564,
+      "byte_start_0based": 728483,
+      "byte_end_exclusive": 728596,
+      "raw_sha256": "5ba89d9404d544ff4afea93b30453ef7bfdcafcfbee0e7cb00a9263114a998d8",
+      "raw_utf8": "10-27 23:30:01.463  1480  1803 F InputMethodManagerService: \tat android.os.Binder.execTransact(Binder.java:446)\r\n"
+    },
+    {
+      "line_number_1based": 5575,
+      "byte_start_0based": 729528,
+      "byte_end_exclusive": 729616,
+      "raw_sha256": "f409deced792b9a63addede195b83cbc557e09998ab4ac44eaffc7b0e9aefacf",
+      "raw_utf8": "10-27 23:30:01.830  1480  1799 F InputMethodManagerService: Input Method Manager Crash\r\n"
+    },
+    {
+      "line_number_1based": 5576,
+      "byte_start_0based": 729616,
+      "byte_end_exclusive": 729782,
+      "raw_sha256": "1da2b89b8090f6ecfffb320ff350ed5a43400d258fc88d4ff23644b75891d2f8",
+      "raw_utf8": "10-27 23:30:01.830  1480  1799 F InputMethodManagerService: java.lang.IllegalArgumentException: Unknown id: com.osfans.trime.debug/.ime.core.TrimeInputMethodService\r\n"
+    },
+    {
+      "line_number_1based": 5577,
+      "byte_start_0based": 729782,
+      "byte_end_exclusive": 729950,
+      "raw_sha256": "9896df4a12032303a8328d6b29f27f76f444ef23d54948d94637469ec707bdd8",
+      "raw_utf8": "10-27 23:30:01.830  1480  1799 F InputMethodManagerService: \tat com.android.server.InputMethodManagerService.setInputMethodLocked(InputMethodManagerService.java:1749)\r\n"
+    },
+    {
+      "line_number_1based": 5578,
+      "byte_start_0based": 729950,
+      "byte_end_exclusive": 730131,
+      "raw_sha256": "e2b8976d5f9abe7921a467670e0fa7491ecf9926200540385b2ca4d8799aa22f",
+      "raw_utf8": "10-27 23:30:01.830  1480  1799 F InputMethodManagerService: \tat com.android.server.InputMethodManagerService.setInputMethodWithSubtypeIdLocked(InputMethodManagerService.java:2411)\r\n"
+    },
+    {
+      "line_number_1based": 5579,
+      "byte_start_0based": 730131,
+      "byte_end_exclusive": 730306,
+      "raw_sha256": "ab1e7b4300ae087b6152a9d88d50132d26b6f76e39652a8befb83aed21e5f64d",
+      "raw_utf8": "10-27 23:30:01.830  1480  1799 F InputMethodManagerService: \tat com.android.server.InputMethodManagerService.setInputMethodWithSubtypeId(InputMethodManagerService.java:2390)\r\n"
+    },
+    {
+      "line_number_1based": 5580,
+      "byte_start_0based": 730306,
+      "byte_end_exclusive": 730468,
+      "raw_sha256": "5209d266a1de321192bfc14768be899b2198c01d057e9179364f90f9af6c82c6",
+      "raw_utf8": "10-27 23:30:01.830  1480  1799 F InputMethodManagerService: \tat com.android.server.InputMethodManagerService.setInputMethod(InputMethodManagerService.java:2147)\r\n"
+    },
+    {
+      "line_number_1based": 5581,
+      "byte_start_0based": 730468,
+      "byte_end_exclusive": 730625,
+      "raw_sha256": "9520681f794a28e538c205097f536c551077102c870927cd28cb229467e69694",
+      "raw_utf8": "10-27 23:30:01.830  1480  1799 F InputMethodManagerService: \tat com.android.internal.view.IInputMethodManager$Stub.onTransact(IInputMethodManager.java:259)\r\n"
+    },
+    {
+      "line_number_1based": 5582,
+      "byte_start_0based": 730625,
+      "byte_end_exclusive": 730782,
+      "raw_sha256": "3384dcf2726d1e4458cae3a32b7afc130684d3de9499d34c782d0510db607a06",
+      "raw_utf8": "10-27 23:30:01.830  1480  1799 F InputMethodManagerService: \tat com.android.server.InputMethodManagerService.onTransact(InputMethodManagerService.java:867)\r\n"
+    },
+    {
+      "line_number_1based": 5583,
+      "byte_start_0based": 730782,
+      "byte_end_exclusive": 730895,
+      "raw_sha256": "45fb7834dc1aa14b868f286206f5c650f6dcc38f4fef93ad3d81f400b9252114",
+      "raw_utf8": "10-27 23:30:01.830  1480  1799 F InputMethodManagerService: \tat android.os.Binder.execTransact(Binder.java:446)\r\n"
+    }
+  ],
+  "target_disposed_receiver_rows": [
+    {
+      "line_number_1based": 1192191,
+      "byte_start_0based": 89889285,
+      "byte_end_exclusive": 89889430,
+      "raw_sha256": "a81e5d4e2bab664b884797630157db9c31e15a5195022273e039355df5bfb505",
+      "raw_utf8": "10-27 23:44:31.751  2457  2457 W InputEventReceiver: Attempted to finish an input event but the input event receiver has already been disposed.\r\n"
+    },
+    {
+      "line_number_1based": 1194060,
+      "byte_start_0based": 90090608,
+      "byte_end_exclusive": 90090753,
+      "raw_sha256": "e3799cd16bd62a4041bb358c26afe63e54ce7ae107fa2129361f2c8f3d1ba0a8",
+      "raw_utf8": "10-27 23:46:08.400  2457  2457 W InputEventReceiver: Attempted to finish an input event but the input event receiver has already been disposed.\r\n"
+    },
+    {
+      "line_number_1based": 1195938,
+      "byte_start_0based": 90293366,
+      "byte_end_exclusive": 90293511,
+      "raw_sha256": "3290be96264f6e0aeb1765996c06f92b2be5a2857b1e0323e540c6430978d633",
+      "raw_utf8": "10-27 23:48:07.457  2457  2457 W InputEventReceiver: Attempted to finish an input event but the input event receiver has already been disposed.\r\n"
+    },
+    {
+      "line_number_1based": 1203279,
+      "byte_start_0based": 91133151,
+      "byte_end_exclusive": 91133296,
+      "raw_sha256": "34d1d5ea4070c99b86e331341be1bdfa7e6ac2be922ccca0b30b18250dbc89a8",
+      "raw_utf8": "10-27 23:59:43.257  2457  2457 W InputEventReceiver: Attempted to finish an input event but the input event receiver has already been disposed.\r\n"
+    },
+    {
+      "line_number_1based": 1205206,
+      "byte_start_0based": 91346584,
+      "byte_end_exclusive": 91346729,
+      "raw_sha256": "8b7bd9c8ad75f79c8609e375a34ed42836ccf43ccb430c297e6a87972ef6d718",
+      "raw_utf8": "10-28 00:01:16.164  2457  2457 W InputEventReceiver: Attempted to finish an input event but the input event receiver has already been disposed.\r\n"
+    },
+    {
+      "line_number_1based": 1212890,
+      "byte_start_0based": 92195170,
+      "byte_end_exclusive": 92195315,
+      "raw_sha256": "733f65e83cdf86deaf105ade743c58617232e45a98337af1843bd2f255df0210",
+      "raw_utf8": "10-28 00:10:49.066  2457  2457 W InputEventReceiver: Attempted to finish an input event but the input event receiver has already been disposed.\r\n"
+    }
+  ],
+  "causal_attribution": "Process and framework emitter attribution does not establish unique app/system fault; disposed receiver ordering remains unresolved.",
+  "no_ADB_or_device_operations": true
+}

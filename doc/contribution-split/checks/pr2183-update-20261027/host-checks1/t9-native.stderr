@@ -1,0 +1,14 @@
+Traceback (most recent call last):
+  File "/home/xumin/Public/Trime-pr-t9-update-20261027/app/src/test/native/t9/run.py", line 147, in <module>
+    main()
+    ~~~~^^
+  File "/home/xumin/Public/Trime-pr-t9-update-20261027/app/src/test/native/t9/run.py", line 119, in main
+    shutil.copy2(source, shared / filename)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/shutil.py", line 529, in copy2
+    copyfile(src, dst, follow_symlinks=follow_symlinks)
+    ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/shutil.py", line 313, in copyfile
+    with open(src, 'rb') as fsrc:
+         ~~~~^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/home/xumin/Public/Trime-pr-t9-update-20261027/app/src/main/assets/shared/luna_pinyin.schema.yaml'

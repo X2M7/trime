@@ -1,0 +1,160 @@
+{
+  "schema": "trime-t9-sequence-independent-static-review/v1",
+  "utc": "2026-10-27T15:22:12.289082+00:00",
+  "verdict": "PASS_STATIC_PRODUCER_GATES_AND_UNCHANGED_BUSINESS_PENDING_REAL_ARTIFACT_PROOF",
+  "reviewer": "independent t9_validation_plan agent",
+  "source_head": "8a1ee0ea6538e220fcddf31ed6fd491f5bc3cca7",
+  "actual_intended_producer_commit": "0ef0eb551a6f8d000266d4446348b2d2ab2823e9",
+  "source_and_producer_tree": "b022a1e810e231af9f9776c2b5414faf6b5bd615",
+  "checks": {
+    "all_sequence_function_names_retained": true,
+    "all_sequence_business_functions_AST_identical": true,
+    "sequence_exception_handlers_identical": true,
+    "sequence_finally_and_stop_wait_identical": true,
+    "whole_sequence_entrypoint_identical_after_only_producer_gate_reversal": true,
+    "all_helper_method_names_retained": true,
+    "all_helper_methods_other_than_constructor_AST_identical": true,
+    "whole_helper_constructor_identical_after_only_producer_gate_report_limit_reversal": true,
+    "API21_all_controller_functions_AST_identical": true,
+    "API21_entire_controller_AST_identical_after_only_identity_proof_and_output_reversal": true,
+    "API21_helper_hash_then_validator_before_VM_Popen": true,
+    "API35_all_controller_functions_AST_identical": true,
+    "API35_entire_controller_AST_identical_after_only_identity_proof_and_output_reversal": true,
+    "API35_helper_hash_then_validator_before_VM_Popen": true,
+    "mapping_retained_platform_order": true,
+    "mapping_retained_theme_order": true,
+    "mapping_retained_cases": true,
+    "mapping_retained_embedded_K1": true,
+    "mapping_retained_first_case_priority": true,
+    "mapping_retained_fixed_limits": true,
+    "mapping_retained_Shift_qualification": true,
+    "mapping_retained_raw_business_passed_stays_false": true,
+    "mapping_retained_required_external_review": true,
+    "mapping_retained_physical_device": true,
+    "mapping_retained_per_api_observer_sessions": true,
+    "mapping_retained_per_api_logical_checks": true,
+    "mapping_retained_logical_count_rule": true,
+    "mapping_retained_historical_source_plan_reference": true,
+    "all_eight_reused_tools_actual_bytes_match": true,
+    "observer_limits_unchanged": true,
+    "independent_fixture_execution_33_as_expected": true,
+    "synthetic_fixture_scope_explicitly_not_real_acceptance": true
+  },
+  "controller_proof_gate_order": {
+    "21": {
+      "helper_hash_line": 27,
+      "import_line": 29,
+      "validator_line": 30,
+      "VM_Popen_line": 140
+    },
+    "35": {
+      "helper_hash_line": 27,
+      "import_line": 29,
+      "validator_line": 30,
+      "VM_Popen_line": 140
+    }
+  },
+  "fixed_review_findings": [
+    {
+      "finding": "Controller helper source was not authenticated before importing producer guard",
+      "resolution": "Both controllers now compare helper SHA before import, guard call and VM Popen"
+    },
+    {
+      "finding": "Artifact audit references accepted arbitrary three keys",
+      "resolution": "Mandatory manifest/signer/elf roles plus original aapt, certificate/warning text and ELF identity parsing"
+    }
+  ],
+  "independent_negative_execution": {
+    "exit_code": 0,
+    "tests": 33,
+    "synthetic_positive": 1,
+    "rejections": 32,
+    "real_original_artifact_accepted": false,
+    "output_redirects_only": true,
+    "report": "producer-guard-static-cases-independent1.json"
+  },
+  "files": {
+    "t9_smoke_helper_v6.py": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/t9_smoke_helper_v6.py",
+      "bytes": 14339,
+      "sha256": "4f83a98b133a045cef77a77194eb0ad12ed0af0fe25ca0fbebd5678c542b9285"
+    },
+    "t9_smoke_helper_v7.py": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/t9_smoke_helper_v7.py",
+      "bytes": 29383,
+      "sha256": "2ac89ea6b1f9c6a96dc2232500d1a205e1f80f768323536f4dc5d59083c82ceb"
+    },
+    "t9_case_sequences_v9.py": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/t9_case_sequences_v9.py",
+      "bytes": 23025,
+      "sha256": "fc20772ef0032fbe21206aa4d891c2940e9de19fdfc3301baf572a9244b972ab"
+    },
+    "t9_case_sequences_v10.py": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/t9_case_sequences_v10.py",
+      "bytes": 23220,
+      "sha256": "0a479cf3f3c7682b335cffc68bae3ca1e2a62ee34e068c8a151c90e022249a0e"
+    },
+    "run-api21-8a1e-v9.py": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/run-api21-8a1e-v9.py",
+      "bytes": 9962,
+      "sha256": "5eabc97ac249568ffe4d3e1159aebf7244b6e254e5bff7631d4b2017017dbe0c"
+    },
+    "run-api21-8a1e-v10.py": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/run-api21-8a1e-v10.py",
+      "bytes": 10404,
+      "sha256": "2f96577bc9b43f7b040b4e085a214cfc319a95832090f065c5a60369d983ddc9"
+    },
+    "run-api35-8a1e-v9.py": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/run-api35-8a1e-v9.py",
+      "bytes": 9962,
+      "sha256": "45ac816de06ae08844f36f796a4525e12560ae8a76702a689daff2a9803609f7"
+    },
+    "run-api35-8a1e-v10.py": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/run-api35-8a1e-v10.py",
+      "bytes": 10404,
+      "sha256": "019b8f41a519f46a3c0b4a20b15c2e1a400a4f498c5c05a8d142905e4fdf43ec"
+    },
+    "execution-mapping-8a1e-v9.json": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/execution-mapping-8a1e-v9.json",
+      "bytes": 2379,
+      "sha256": "85771509c485dfe3b9dc94566eb2a101ed3c48d949e64a7df0a2dd9621197847"
+    },
+    "execution-mapping-8a1e-v10.json": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/execution-mapping-8a1e-v10.json",
+      "bytes": 2597,
+      "sha256": "093adce13e199c499a65271f6a5cc46eb68316845b22f2ec8ed982c9ce0209c3"
+    },
+    "producer_guard_static_cases1.py": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/producer_guard_static_cases1.py",
+      "bytes": 13524,
+      "sha256": "55c24870f50ac23214986a3914a93076b05334449f58fb6f240d5d49676b8214"
+    },
+    "producer-guard-static-cases-independent1.json": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/producer-guard-static-cases-independent1.json",
+      "bytes": 6579,
+      "sha256": "35d074816fab6603c04583b6fdac589219c1a56ca76650ad459998e859581cfd"
+    },
+    "producer-guard-independent-execution1.json": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/producer-guard-independent-execution1.json",
+      "bytes": 1533,
+      "sha256": "cf05660e4ea172afe3939c575b94ce099fd5a5cd2c27aee33bc6fa6dcf67d84e"
+    },
+    "shared-tools-binding-readonly.json": {
+      "path": "/home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/shared-tools-binding-readonly.json",
+      "bytes": 2394,
+      "sha256": "d4bda8b3fd9ce0698bc7fb9242bdc0845faede31d7d1f3a8a508e1f5e8eaba96"
+    }
+  },
+  "current_binding_state": "PENDING_ORIGINAL_PR_MERGE_PRODUCER_AUDIT_DO_NOT_START_VM",
+  "current_proof_state": "PENDING_ORIGINAL_CLOUD_ARTIFACT_AUDIT_NOT_FROZEN",
+  "real_producer_positive_validation": "NOT_RUN_PENDING_ORIGINAL_ARTIFACT_AUDIT_AND_ROOT_FREEZE",
+  "VM_ADB_Gradle_network_in_this_review": "NOT_RUN",
+  "new_device_business_cases": "NOT_RUN",
+  "limits": [
+    "Static and synthetic validation does not prove a real cloud artifact or device pass.",
+    "Before any VM, Root must provide all original raw API, producer checkout log, artifact archive/APK, successful signer/manifest/ELF audit, asset bytes and exact hashes; then run this real validator on the frozen binding.",
+    "PR source8a and producer0ef are distinct commits with equal complete Git trees; build-time Git metadata and independently produced APK bytes are not equated.",
+    "All existing exact Editable/locked-pinyin/touch-Shift/exception/cleanup/stop-wait assertions remain required, with twelve new sessions and fourteen mapped logical checks per platform; no historical case counted.",
+    "Physical device acceptance remains NOT_RUN; no release or warning-free acceptance."
+  ]
+}

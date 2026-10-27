@@ -1,0 +1,63 @@
+{
+  "recorded_utc": "2026-10-27T15:31:48.906810+00:00",
+  "component_names_read_from_all_actual_ime_list": true,
+  "actual_ime": "com.osfans.trime.debug/com.osfans.trime.ime.core.TrimeInputMethodService",
+  "selection_verified": true,
+  "records": [
+    {
+      "name": "actual-all-ime-list",
+      "argv": [
+        "shell",
+        "ime",
+        "list",
+        "-a",
+        "-s"
+      ],
+      "exit": 0
+    },
+    {
+      "name": "enable-actual-component",
+      "argv": [
+        "shell",
+        "ime",
+        "enable",
+        "com.osfans.trime.debug/com.osfans.trime.ime.core.TrimeInputMethodService"
+      ],
+      "exit": 0
+    },
+    {
+      "name": "set-actual-component",
+      "argv": [
+        "shell",
+        "ime",
+        "set",
+        "com.osfans.trime.debug/com.osfans.trime.ime.core.TrimeInputMethodService"
+      ],
+      "exit": 0
+    },
+    {
+      "name": "verify-selected-ime",
+      "argv": [
+        "shell",
+        "settings",
+        "get",
+        "secure",
+        "default_input_method"
+      ],
+      "exit": 0
+    },
+    {
+      "name": "start-actual-main",
+      "argv": [
+        "shell",
+        "am",
+        "start",
+        "-W",
+        "-n",
+        "com.osfans.trime.debug/com.osfans.trime.ui.main.MainActivity"
+      ],
+      "exit": 0
+    }
+  ],
+  "no_business_test_executed": true
+}

@@ -1,0 +1,49 @@
+--- /home/xumin/Public/Trime/build/readiness-20261022/api35/avd/hardware-qemu.ini
++++ /home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/vm-assets-api35-r2/api35/avd/hardware-qemu.ini
+@@ -1,6 +1,6 @@
+ hw.cpu.arch = x86_64
+-hw.cpu.ncore = 2
+-hw.ramSize = 2304
++hw.cpu.ncore = 4
++hw.ramSize = 3072
+ hw.screen = multi-touch
+ hw.mainKeys = false
+ hw.touchpad0 = false
+@@ -22,7 +22,7 @@
+ hw.audioOutput = true
+ hw.sdCard = true
+ disk.cachePartition = true
+-disk.cachePartition.path = /home/xumin/Public/Trime/build/readiness-20261022/api35/avd/cache.img
++disk.cachePartition.path = /home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/vm-assets-api35-r2/api35/avd/cache.img
+ disk.cachePartition.size = 66m
+ test.quitAfterBootTimeOut = -1
+ test.delayAdbTillBootComplete = 0
+@@ -108,20 +108,20 @@
+ hw.arc = false
+ hw.arc.autologin = false
+ hw.device.name = Nexus 5
+-kernel.path = /home/xumin/Public/Trime/build/readiness-20261022/api35/system-images/kernel-ranchu
++kernel.path = /home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/vm-assets-api35-r2/api35/system-images/kernel-ranchu
+ kernel.newDeviceNaming = yes
+ kernel.supportsYaffs2 = no
+-disk.ramdisk.path = /home/xumin/Public/Trime/build/readiness-20261022/api35/system-images/ramdisk.img
+-disk.systemPartition.initPath = /home/xumin/Public/Trime/build/readiness-20261022/api35/system-images/system.img
++disk.ramdisk.path = /home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/vm-assets-api35-r2/api35/system-images/ramdisk.img
++disk.systemPartition.initPath = /home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/vm-assets-api35-r2/api35/system-images/system.img
+ disk.systemPartition.size = 1547m
+-disk.vendorPartition.initPath = /home/xumin/Public/Trime/build/readiness-20261022/api35/system-images/vendor.img
++disk.vendorPartition.initPath = /home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/vm-assets-api35-r2/api35/system-images/vendor.img
+ disk.vendorPartition.size = 800m
+-disk.dataPartition.path = /home/xumin/Public/Trime/build/readiness-20261022/api35/avd/userdata-qemu.img
++disk.dataPartition.path = /home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/vm-assets-api35-r2/api35/avd/userdata-qemu.img
+ disk.dataPartition.size = 6g
+-disk.encryptionKeyPartition.path = /home/xumin/Public/Trime/build/readiness-20261022/api35/avd/encryptionkey.img
++disk.encryptionKeyPartition.path = /home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/vm-assets-api35-r2/api35/avd/encryptionkey.img
+ PlayStore.enabled = false
+-avd.name = trime_readiness_api35_20261022
+-avd.id = trime_readiness_api35_20261022
++avd.name = trime_pr2183_api35_20261027_r2
++avd.id = trime_pr2183_api35_20261027_r2
+ fastboot.forceColdBoot = true
+ userdata.useQcow2 = true
+ firstboot.bootFromDownloadableSnapshot = true

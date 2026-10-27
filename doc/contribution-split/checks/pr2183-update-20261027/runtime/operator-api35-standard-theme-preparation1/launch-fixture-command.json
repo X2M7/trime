@@ -1,0 +1,26 @@
+{
+  "utc": "2026-10-27T17:02:39.260147+00:00",
+  "argv": [
+    "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+    "-s",
+    "emulator-5584",
+    "shell",
+    "am",
+    "start",
+    "-W",
+    "-S",
+    "-n",
+    "org.x2m7.trime.editorfixture/.EditorActivity",
+    "--es",
+    "mode",
+    "multiline",
+    "--es",
+    "text",
+    ""
+  ],
+  "returncode": 255,
+  "stdout": "",
+  "stderr": "\nException occurred while executing 'start':\njava.lang.IllegalArgumentException: Argument expected after \"text\"\n\tat com.android.modules.utils.BasicShellCommandHandler.getNextArgRequired(BasicShellCommandHandler.java:295)\n\tat android.content.Intent.parseCommandArgs(Intent.java:8573)\n\tat com.android.server.am.ActivityManagerShellCommand.makeIntent(ActivityManagerShellCommand.java:542)\n\tat com.android.server.am.ActivityManagerShellCommand.runStartActivity(ActivityManagerShellCommand.java:676)\n\tat com.android.server.am.ActivityManagerShellCommand.onCommand(ActivityManagerShellCommand.java:246)\n\tat com.android.modules.utils.BasicShellCommandHandler.exec(BasicShellCommandHandler.java:97)\n\tat android.os.ShellCommand.exec(ShellCommand.java:38)\n\tat com.android.server.am.ActivityManagerService.onShellCommand(ActivityManagerService.java:10471)\n\tat android.os.Binder.shellCommand(Binder.java:1230)\n\tat android.os.Binder.onTransact(Binder.java:1043)\n\tat android.app.IActivityManager$Stub.onTransact(IActivityManager.java:5675)\n\tat com.android.server.am.ActivityManagerService.onTransact(ActivityManagerService.java:2812)\n\tat android.os.Binder.execTransactInternal(Binder.java:1505)\n\tat android.os.Binder.execTransact(Binder.java:1444)\n",
+  "purpose": "Independent public fixture only, noTrime stop/prefs write",
+  "business_acceptance": false
+}

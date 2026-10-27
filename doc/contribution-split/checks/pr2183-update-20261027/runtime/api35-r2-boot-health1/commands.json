@@ -1,0 +1,99 @@
+[
+  {
+    "name": "home",
+    "argv": [
+      "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+      "-s",
+      "emulator-5584",
+      "shell",
+      "input",
+      "keyevent",
+      "3"
+    ],
+    "exit": 0,
+    "utc": "2026-10-27T16:25:28.046464+00:00"
+  },
+  {
+    "name": "api",
+    "argv": [
+      "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+      "-s",
+      "emulator-5584",
+      "shell",
+      "getprop",
+      "ro.build.version.sdk"
+    ],
+    "exit": 0,
+    "utc": "2026-10-27T16:25:28.089922+00:00"
+  },
+  {
+    "name": "abi",
+    "argv": [
+      "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+      "-s",
+      "emulator-5584",
+      "shell",
+      "getprop",
+      "ro.product.cpu.abi"
+    ],
+    "exit": 0,
+    "utc": "2026-10-27T16:25:28.123666+00:00"
+  },
+  {
+    "name": "default-ime",
+    "argv": [
+      "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+      "-s",
+      "emulator-5584",
+      "shell",
+      "settings",
+      "get",
+      "secure",
+      "default_input_method"
+    ],
+    "exit": 0,
+    "utc": "2026-10-27T16:25:28.181462+00:00"
+  },
+  {
+    "name": "all-ime-list",
+    "argv": [
+      "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+      "-s",
+      "emulator-5584",
+      "shell",
+      "ime",
+      "list",
+      "-a",
+      "-s"
+    ],
+    "exit": 0,
+    "utc": "2026-10-27T16:25:28.241987+00:00"
+  },
+  {
+    "name": "processes1",
+    "argv": [
+      "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+      "-s",
+      "emulator-5584",
+      "shell",
+      "ps",
+      "-A"
+    ],
+    "exit": 0,
+    "utc": "2026-10-27T16:25:28.354504+00:00"
+  },
+  {
+    "name": "last-anr",
+    "argv": [
+      "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+      "-s",
+      "emulator-5584",
+      "shell",
+      "dumpsys",
+      "activity",
+      "lastanr"
+    ],
+    "exit": 0,
+    "utc": "2026-10-27T16:25:28.406108+00:00"
+  }
+]

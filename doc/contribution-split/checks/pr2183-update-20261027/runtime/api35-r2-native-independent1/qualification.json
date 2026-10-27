@@ -1,0 +1,122 @@
+{
+  "schema": "trime-native-deployment-bounded-prefix-review/v1",
+  "utc": "2026-10-27T16:35:27.755344+00:00",
+  "verdict": "PASS_OBSERVED_CURRENT_API35_R2_TARGET_NATIVE_START_THEN_SUCCESS_IN_FIXED_LOG_PREFIX",
+  "source_head": "8a1ee0ea6538e220fcddf31ed6fd491f5bc3cca7",
+  "actual_build_commit": "0ef0eb551a6f8d000266d4446348b2d2ab2823e9",
+  "binding": {
+    "path": "/home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/original-apk-binding-8a1e-v10.json",
+    "sha256": "233e4858bf2301f966028d554751a96d817918b456f9a40cc1616f0bc2df3d90"
+  },
+  "target_identity": {
+    "PID": 2047,
+    "starttime": "15638",
+    "boot_id": "f9d7b95a-5e59-4e78-a476-b4b10291c7bb",
+    "package": "com.osfans.trime.debug",
+    "original_Debug_x86_64_APK_sha256": "12ad11114e2db508e8b9946d410d035f41f0facf70603dce0ec22ae7f841bcda",
+    "original_native_Start_identity_snapshot_refs": [
+      {
+        "path": "/home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/api35-r2-device-preparation1/native-start-identity.json",
+        "bytes": 1548,
+        "sha256": "b41b5f350b153646519a48d402b8bc6ef837f46fbe974bb5327b8946f4cae0e3"
+      },
+      {
+        "path": "/home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/api35-r2-device-preparation1/boot-id.stdout",
+        "bytes": 37,
+        "sha256": "8c4eee134ccf58109bd89c728fcd853fc977f131e4053195ad4a6cea4e5afa44"
+      },
+      {
+        "path": "/home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/api35-r2-device-preparation1/target-stat.stdout",
+        "bytes": 200,
+        "sha256": "2a1ae39b8a82c623ab3e1a7ca2dea26916fa42b4cdbebc3f87ba4b68ef786593"
+      },
+      {
+        "path": "/home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/api35-r2-device-preparation1/target-cmdline.stdout",
+        "bytes": 99,
+        "sha256": "43d72aea72b8f9c72e63231d79190df4fbfa37e95cfd0e332d614e94416488b2"
+      }
+    ],
+    "no_new_ADB_query_by_reviewer": true
+  },
+  "original_log": {
+    "path": "/home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/api35-8a1e-v11-run2/device-logcat.txt",
+    "device": 66306,
+    "inode": 29229158,
+    "fixed_byte_prefix_length": 108424266,
+    "fixed_byte_prefix_sha256": "709fd4c29c9888989e88078a215e464d312beac87a7084de88a0186ef6e93095",
+    "prefix_complete_lines": 1489031,
+    "stat_size_before": 108424266,
+    "stat_size_after_read": 108430222,
+    "append_after_frozen_prefix_allowed": true,
+    "original_file_not_modified_by_reviewer": true,
+    "last_complete_line_in_prefix": "10-28 00:34:56.394  2047  2067 I HWUI    : Davey! duration=2176ms; Flags=0, FrameTimelineVsyncId=18575, IntendedVsync=668663831602, Vsync=670330498202, InputEventId=0, HandleInputStart=670348993128, AnimationStart=670349007417, PerformTraversalsStart=670349010872, DrawStart=670420671428, FrameDeadline=668930498258, FrameInterval=670334409345, FrameStartTime=16666666, SyncQueued=670512726861, SyncStart=670620959471, IssueDrawCommandsStart=670621894600, SwapBuffers=670667433565, FrameCompleted=670948857205, DequeueBufferDuration=36720, QueueBufferDuration=1156829, GpuCompleted=670948857205, SwapBuffersCompleted=670778010123, DisplayPresentTime=0, CommandSubmissionCompleted=670667433565, "
+  },
+  "exact_events": [
+    {
+      "line_number_1based": 25858,
+      "byte_start_0based": 3570377,
+      "byte_end_exclusive": 3570486,
+      "raw_sha256": "ea38f503d4542fd3ffb3b474809cadf4ff70ae1778b649b37d80eb3f0c6045d5",
+      "device_timestamp": "10-28 00:28:21.790",
+      "pid": 2047,
+      "tid": 2159,
+      "level": "D",
+      "tag": "[Thread-7] Rime$Companion",
+      "text": "Rime.kt:650] Handling DeployMessage(state=Start)",
+      "state": "Start"
+    },
+    {
+      "line_number_1based": 1487405,
+      "byte_start_0based": 108249589,
+      "byte_end_exclusive": 108249700,
+      "raw_sha256": "1955d3f031fb8f77775d0b3357b790cf064d0246a8d0e1de291f1c77b0e05153",
+      "device_timestamp": "10-28 00:33:28.191",
+      "pid": 2047,
+      "tid": 2159,
+      "level": "D",
+      "tag": "[Thread-8] Rime$Companion",
+      "text": "Rime.kt:650] Handling DeployMessage(state=Success)",
+      "state": "Success"
+    }
+  ],
+  "date_parser": "Explicit2026 + MM-DD HH:mm:ss.SSS via %Y %m-%d %H:%M:%S.%f, Asia/Shanghai; no borrowed API21 or1970 timestamps",
+  "actual_start_local": "2026-10-28T00:28:21.790000+08:00",
+  "actual_success_local": "2026-10-28T00:33:28.191000+08:00",
+  "actual_start_UTC": "2026-10-27T16:28:21.790000+00:00",
+  "actual_success_UTC": "2026-10-27T16:33:28.191000+00:00",
+  "elapsed_seconds": 306.401,
+  "selected_context": {
+    "path": "/home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/api35-r2-native-independent1/selected-deploy-context.raw.txt",
+    "sha256": "1fb6050d078c71ceeaf4867b2415118d2cfb1a04fb29100abe7ace44d3ea2d42",
+    "bytes": 2170,
+    "rows": 18,
+    "rows_index_path": "/home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/api35-r2-native-independent1/selected-deploy-context-lines.json",
+    "rows_index_sha256": "3ce067969278eaf499afd80a7a2ad85b35c9727cee533dc955009af33d0fa752",
+    "preserved_original_newline_bytes": true,
+    "discontinuous_original_rows_not_continuous_log": true
+  },
+  "candidate_fatal_ANR_LMK_OOM_scan": {
+    "matched_patterns": [
+      "FATAL EXCEPTION",
+      "Fatal signal",
+      "ANR in ",
+      "am_anr:",
+      "lowmemorykiller: Kill ",
+      "Out of memory: Kill process",
+      "OutOfMemoryError"
+    ],
+    "count": 0,
+    "exact_rows": [],
+    "scope": "Only these explicit patterns within exact captured prefix; no universal absence claim and no whole-round verdict"
+  },
+  "analysis_memory_strategy": "Streaming original complete lines + incremental SHA +4line context deque; no full108MB log or1.5million-row objects loaded",
+  "not_Release_startup_performance": true,
+  "not_business_or_device_acceptance": true,
+  "no_ADB_device_VM_controller_source_or_previous_staging_access_mutation": true,
+  "limits": [
+    "Native deployment only. Current API35 business cases, image oracles, warning counts and terminal stop/wait still require their own real evidence.",
+    "Debug full-check first deployment306.401seconds is not Release keyboard popup or P95 timing.",
+    "Original source8a and actual producer0ef have equal whole tree but distinct commit/build metadata, not direct-head APK.",
+    "Original native-start-identity state says Success PENDING because it is an earlier immutable snapshot; Success here comes from later actual raw log, not edited markers."
+  ]
+}

@@ -1,0 +1,103 @@
+{
+  "schema": "trime-fresh-api35-r2-assets-copy/v1",
+  "started_utc": "2026-10-27T16:19:13.855212+00:00",
+  "finished_utc": "2026-10-27T16:21:41.152414+00:00",
+  "source": "/home/xumin/Public/Trime/build/readiness-20261022/api35",
+  "destination": "/home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/vm-assets-api35-r2",
+  "source_is_original_readiness_api35_not_modified_r1": true,
+  "all_original_source_pre_post_metadata_and_sha_equal": true,
+  "source_file_count": 49,
+  "logical_source_bytes": 5163707826,
+  "all_destination_bytes_equal_before_control_relocation": true,
+  "all_destination_non_control_bytes_still_equal": true,
+  "only_control_files_relocated": [
+    {
+      "path": "/home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/vm-assets-api35-r2/api35/avd/config.ini",
+      "source_relative": "avd/config.ini",
+      "before_sha256": "3836248faaec010f61d10c4b7cef18f79ee0de6559a5c2f1d23d3d501d15eb9f",
+      "after_sha256": "fbe0b52aab67265f1607c77ffd4abb9b9b20f1ebf60951030a2549eddd0e318d",
+      "patch": "/home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/vm-assets-api35-r2-copy1/config.ini.patch"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/vm-assets-api35-r2/api35/avd/hardware-qemu.ini",
+      "source_relative": "avd/hardware-qemu.ini",
+      "before_sha256": "bc5e38e9dd52376fb7b0623a8ad875a2ea32ceb2e9828be9926ad78ae52a29e5",
+      "after_sha256": "a9ce249a8e6a93e8c94d89e158805161ea213f821f52d2696b1c1b3c31ef1cfb",
+      "patch": "/home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/vm-assets-api35-r2-copy1/hardware-qemu.ini.patch"
+    }
+  ],
+  "source_and_destination_no_shared_inodes_no_symlinks_and_destination_nlink1": true,
+  "copy_commands": [
+    {
+      "argv": [
+        "cp",
+        "--reflink=auto",
+        "--sparse=always",
+        "-a",
+        "--no-preserve=links",
+        "/home/xumin/Public/Trime/build/readiness-20261022/api35/avd/.",
+        "/home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/vm-assets-api35-r2/api35/avd"
+      ],
+      "exit": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "cp",
+        "--reflink=auto",
+        "--sparse=always",
+        "-a",
+        "--no-preserve=links",
+        "/home/xumin/Public/Trime/build/readiness-20261022/api35/system-images/.",
+        "/home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/vm-assets-api35-r2/api35/system-images"
+      ],
+      "exit": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "copy_mode": "cp --reflink=auto --sparse=always; actual filesystem may fall back to an independent sparse copy; no hardlink claim",
+  "prior_copy1_non_config_hashes_equal_original_now": true,
+  "registration": {
+    "path": "/home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/vm-assets-api35-r2/avd/trime_pr2183_api35_20261027_r2.ini",
+    "sha256": "8199392b5c2afd815dfe724e2c24a00ee0c2a73a1567c61d401dd8963731aeb2",
+    "name": "trime_pr2183_api35_20261027_r2"
+  },
+  "controller": {
+    "old_path": "/home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/run-api35-8a1e-v10.py",
+    "old_sha256": "019b8f41a519f46a3c0b4a20b15c2e1a400a4f498c5c05a8d142905e4fdf43ec",
+    "new_path": "/home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/run-api35-8a1e-v11.py",
+    "new_sha256": "e92394f8b4f9052a5307c24ba42550b8463302ef945f52477b268fd43489d81c",
+    "patch": "/home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/vm-assets-api35-r2-copy1/controller-v10-to-v11.patch",
+    "exact_four_text_substitutions_inversion_pass": true,
+    "AST_parse_only_no_import_or_execution": true,
+    "changed_fields": [
+      "ASSET_ROOT",
+      "OUT",
+      "AVD_name",
+      "guest_cores_2_to_4_and_memory_2304_to_3072"
+    ],
+    "binding_1GiB_business_cleanup_guards_unchanged": true
+  },
+  "source_before": {
+    "path": "/home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/vm-assets-api35-r2-copy1/source-before.json",
+    "sha256": "7f8e62d691d0417204d53f6bfa7af612b9a7d3032eee64f6a2596bad7fc412a1"
+  },
+  "source_after": {
+    "path": "/home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/vm-assets-api35-r2-copy1/source-after.json",
+    "sha256": "7f8e62d691d0417204d53f6bfa7af612b9a7d3032eee64f6a2596bad7fc412a1"
+  },
+  "destination_before": {
+    "path": "/home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/vm-assets-api35-r2-copy1/destination-before-relocation.json",
+    "sha256": "e34af389212ab61e0af53c7b76586733dc380968debcd205d399185b75f5ff84"
+  },
+  "destination_after": {
+    "path": "/home/xumin/Public/Trime/build/pr2183-update-20261027/runtime/vm-assets-api35-r2-copy1/destination-after-relocation.json",
+    "sha256": "1c835884c049690893bde83e82ef2d8509b3aac957ffe1cea1d65af9d2c3b7e9"
+  },
+  "VM_started": false,
+  "ADB_called": false,
+  "source_or_SDK_or_r1_written": false,
+  "independent_review": "PENDING_ROOT_AND_VALIDATOR_BEFORE_START"
+}

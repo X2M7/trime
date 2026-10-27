@@ -1,0 +1,97 @@
+{
+  "utc": "2026-10-27T15:06:06.873340+00:00",
+  "source_head": "8a1ee0ea6538e220fcddf31ed6fd491f5bc3cca7",
+  "source_tree": "b022a1e810e231af9f9776c2b5414faf6b5bd615",
+  "source_tracked_clean": true,
+  "inputs_unchanged": true,
+  "state": "PASS_CURRENT_HEAD_HOST_JNI_AND_T9_WITH_RETAINED_INITIAL_FIXTURE_PREREQUISITE_REJECTION",
+  "jni_unicode": {
+    "actual_assertions": 115,
+    "baseline_compile_exit": 0,
+    "baseline_run_exit": 1,
+    "baseline_expected_failure": "FAIL: standard UTF-8 becomes expected UTF-16",
+    "fixed_compile_exit": 0,
+    "fixed_run_exit": 0,
+    "fixed_compiler_and_runtime_stderr_bytes": 0
+  },
+  "jni_offsets": {
+    "actual_assertions": 46,
+    "baseline_compile_exit": 0,
+    "baseline_run_exit": 1,
+    "baseline_expected_failure": "FAIL: composition length matches Java UTF-16 length",
+    "fixed_compile_exit": 0,
+    "fixed_run_exit": 0,
+    "fixed_compiler_and_runtime_stderr_bytes": 0
+  },
+  "t9_native_first_attempt": {
+    "exit_code": 1,
+    "actual_compile_or_run_commands": 0,
+    "reason": "Explicit supplied new worktree shared-data directory lacks luna_pinyin.schema.yaml; stopped before compile, no source repair or silent fallback.",
+    "result_path": "/home/xumin/Public/Trime/build/pr2183-update-20261027/host-checks1/t9-native/result.json"
+  },
+  "minimum_mem_available_kib": 6969948,
+  "memory_guard_triggered": false,
+  "remaining_owned_processes": [],
+  "limits": [
+    "JNI uses production headers and host JDK17 CheckJNI with NDK28 jni.h; not Android ART/NDK30 production compilation.",
+    "Host librime engine3 reused byte-for-byte from its recorded October20 build; only current T9 test programs compile and run in this round.",
+    "Small isolated fixtures and reused natural-code double-pinyin schema; no real dictionary/UI/device acceptance."
+  ],
+  "t9_native": {
+    "exit_code": 0,
+    "all_six_actual_commands_exit_zero": true,
+    "compiler_invocations": 2,
+    "runtime_processes": 4,
+    "assertion_checks": 743,
+    "per_process": [
+      {
+        "program": "controller",
+        "phase": "run.log",
+        "assertion_checks": 376,
+        "path": "/home/xumin/Public/Trime/build/pr2183-update-20261027/host-checks1/t9-native2/controller/run.log",
+        "bytes": 15439,
+        "sha256": "ab6d30879574acebd78d76e2cb5583c5f6c87ba050701930eda403e509145a77",
+        "last_line": "All 376 checks passed"
+      },
+      {
+        "program": "controller",
+        "phase": "verify-learning.log",
+        "assertion_checks": 5,
+        "path": "/home/xumin/Public/Trime/build/pr2183-update-20261027/host-checks1/t9-native2/controller/verify-learning.log",
+        "bytes": 282,
+        "sha256": "ecb8f0fa45dc52900d3e81ab63743619089b621c9202a615cfd2ee3d6a6db12e",
+        "last_line": "PASS 5 private spelling never leaks into learned code"
+      },
+      {
+        "program": "assist",
+        "phase": "run.log",
+        "assertion_checks": 359,
+        "path": "/home/xumin/Public/Trime/build/pr2183-update-20261027/host-checks1/t9-native2/assist/run.log",
+        "bytes": 17684,
+        "sha256": "312fe7bc494893106402aedaeddf0e7373cda3c60a6c67a46292b315a99d8b98",
+        "last_line": "PASS 359 ASCII mode never offers repairs"
+      },
+      {
+        "program": "assist",
+        "phase": "verify-learning.log",
+        "assertion_checks": 3,
+        "path": "/home/xumin/Public/Trime/build/pr2183-update-20261027/host-checks1/t9-native2/assist/verify-learning.log",
+        "bytes": 148,
+        "sha256": "992481322454b3ea4b21259b9a69d9ddb6c8399214cf4a4e331a782019377b8c",
+        "last_line": "PASS 3 wrong digit code and private envelopes are not learned"
+      }
+    ],
+    "compiler_log_bytes": {
+      "controller": 0,
+      "assist": 0
+    },
+    "result": "/home/xumin/Public/Trime/build/pr2183-update-20261027/host-checks1/t9-native2/result.json",
+    "result_sha256": "0f33fb0baacdc255b2aae47b401660e3b7b75dbdb9cc8ad5a989dc35423eff00",
+    "explicit_shared_data_resource_binding": "/home/xumin/Public/Trime/build/pr2183-update-20261027/host-checks1/t9-native2-preflight.json",
+    "explicit_shared_data_resource_binding_sha256": "9142e3ae13ddc28bd03994f66671cd830a67d93e892da9b209f8b362f01b6e44",
+    "engine_recompiled_this_round": false,
+    "engine_library_sha256": "31076e8e7dfc6c2a901ac68b8e592502ea50025bf0e95421449948f5a0968a00",
+    "old_build_provenance": "/home/xumin/Public/Trime/build/upstream-split-20261020/next-pr8/core-native-inventory/host-native-summary.json",
+    "old_library_and_deps_match": true
+  }
+}

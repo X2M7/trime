@@ -1,0 +1,377 @@
+PASS 1 JNI preedit length counts UTF-16 including surrogate pairs
+PASS 2 JNI caret after supplementary Hanzi uses two UTF-16 units
+PASS 3 deploy actual full-pinyin rules
+PASS 4 deploy actual double-pinyin rules
+PASS 5 deploy fixture
+PASS 6 no editor commit from syllable/edit action
+PASS 7 Ctrl-Z uses raw editing history without locks
+PASS 8 editor redo cannot mutate an active Rime composition
+PASS 9 no editor commit from syllable/edit action
+PASS 10 T9 enabled
+PASS 11 syllable index contains ni
+PASS 12 lock ni
+PASS 13 no editor commit from syllable/edit action
+PASS 14 ni excludes mi
+PASS 15 stale tap rejected
+PASS 16 focus raw position 0
+PASS 17 syllable index contains mi
+PASS 18 lock mi
+PASS 19 no editor commit from syllable/edit action
+PASS 20 replace ni with mi
+PASS 21 edit action 2
+PASS 22 no editor commit from syllable/edit action
+PASS 23 unlock restores exact digits
+PASS 24 edit action 3
+PASS 25 no editor commit from syllable/edit action
+PASS 26 undo unlock
+PASS 27 no editor commit from syllable/edit action
+PASS 28 syllable index contains ni
+PASS 29 lock ni
+PASS 30 no editor commit from syllable/edit action
+PASS 31 preserve suffix 426
+PASS 32 constrain first syllable only
+PASS 33 preedit hides private envelope
+PASS 34 focus raw position 0
+PASS 35 current syllable highlight excludes unresolved tail
+PASS 36 display caret maps after digit 4
+PASS 37 no editor commit from syllable/edit action
+PASS 38 insert in middle preserves original digit positions
+PASS 39 delete inserted middle digit
+PASS 40 middle delete leaves lock intact
+PASS 41 home navigation
+PASS 42 right skips atomic lock envelope
+PASS 43 end navigation
+PASS 44 focus raw position 2
+PASS 45 syllable index contains hao
+PASS 46 lock hao
+PASS 47 no editor commit from syllable/edit action
+PASS 48 progressive lock
+PASS 49 no editor commit from syllable/edit action
+PASS 50 continue after locks
+PASS 51 syllable index contains ma
+PASS 52 lock ma
+PASS 53 no editor commit from syllable/edit action
+PASS 54 focus raw position 2
+PASS 55 syllable index contains gao
+PASS 56 lock gao
+PASS 57 no editor commit from syllable/edit action
+PASS 58 replace middle syllable preserves neighbors
+PASS 59 middle focus moves engine caret
+PASS 60 return to sentence end
+PASS 61 middle constraint affects Hanzi
+PASS 62 edit action 3
+PASS 63 no editor commit from syllable/edit action
+PASS 64 undo restores editable middle; navigate to end
+PASS 65 undo middle replacement
+PASS 66 backspace handled
+PASS 67 backspace unlocks last syllable first
+PASS 68 second backspace handled
+PASS 69 second backspace deletes one original digit
+PASS 70 no editor commit from syllable/edit action
+PASS 71 syllable index contains xian
+PASS 72 lock xian
+PASS 73 no editor commit from syllable/edit action
+PASS 74 atomic xian cannot split into xi an
+PASS 75 edit action 2
+PASS 76 no editor commit from syllable/edit action
+PASS 77 syllable index contains xi
+PASS 78 lock xi
+PASS 79 no editor commit from syllable/edit action
+PASS 80 shorter segmentation keeps suffix
+PASS 81 syllable index contains an
+PASS 82 lock an
+PASS 83 no editor commit from syllable/edit action
+PASS 84 xi an remains separately selectable
+PASS 85 no editor commit from syllable/edit action
+PASS 86 syllable index contains ni
+PASS 87 lock ni
+PASS 88 no editor commit from syllable/edit action
+PASS 89 advance to next syllable across explicit separator
+PASS 90 syllable index contains hao
+PASS 91 lock hao
+PASS 92 no editor commit from syllable/edit action
+PASS 93 syllable index contains ma
+PASS 94 lock ma
+PASS 95 no editor commit from syllable/edit action
+PASS 96 explicit separators survive progressive locking
+PASS 97 no editor commit from syllable/edit action
+PASS 98 completion distinguished in engine graph
+PASS 99 syllable index contains ming
+PASS 100 lock ming
+PASS 101 no editor commit from syllable/edit action
+PASS 102 completion queries full syllable
+PASS 103 edit action 2
+PASS 104 no editor commit from syllable/edit action
+PASS 105 unlock completion restores short original input
+PASS 106 no editor commit from syllable/edit action
+PASS 107 syllable index contains ming
+PASS 108 lock ming
+PASS 109 no editor commit from syllable/edit action
+PASS 110 raw API restores completion input
+PASS 111 Return keeps raw-code commit behavior
+PASS 112 raw commit hides exact envelope
+PASS 113 no editor commit from syllable/edit action
+PASS 114 position caret inside raw-code commit input
+PASS 115 Return delegates to the schema editor
+PASS 116 schema handles raw Return
+PASS 117 middle Return commits
+PASS 118 middle Return preserves the entire original input
+PASS 119 middle Return leaves no pending tail
+PASS 120 no editor commit from syllable/edit action
+PASS 121 no editor commit from syllable/edit action
+PASS 122 syllable index contains ni
+PASS 123 lock ni
+PASS 124 no editor commit from syllable/edit action
+PASS 125 position caret inside raw-code commit input
+PASS 126 Return delegates to the schema editor
+PASS 127 schema handles raw Return
+PASS 128 middle Return commits
+PASS 129 middle Return preserves the entire original input
+PASS 130 middle Return leaves no pending tail
+PASS 131 no editor commit from syllable/edit action
+PASS 132 no editor commit from syllable/edit action
+PASS 133 syllable index contains ni
+PASS 134 lock ni
+PASS 135 no editor commit from syllable/edit action
+PASS 136 syllable index contains hao
+PASS 137 lock hao
+PASS 138 no editor commit from syllable/edit action
+PASS 139 normal Hanzi commit is untouched
+PASS 140 ASCII switch sees original digits
+PASS 141 no editor commit from syllable/edit action
+PASS 142 syllable index contains ni
+PASS 143 lock ni
+PASS 144 no editor commit from syllable/edit action
+PASS 145 select Hanzi candidate
+PASS 146 only Hanzi selection commits
+PASS 147 editor receives ni hao Hanzi
+PASS 148 commit clears lock state
+PASS 149 undo cannot cross commit
+PASS 150 no editor commit from syllable/edit action
+PASS 151 syllable index contains ni
+PASS 152 lock ni
+PASS 153 no editor commit from syllable/edit action
+PASS 154 select partial Hanzi directly
+PASS 155 no editor commit from syllable/edit action
+PASS 156 confirmed Hanzi stays visible
+PASS 157 syllable undo cannot cross a Hanzi selection
+PASS 158 syllable index contains hao
+PASS 159 lock hao
+PASS 160 no editor commit from syllable/edit action
+PASS 161 select remaining Hanzi
+PASS 162 partial selections eventually commit
+PASS 163 partial selection preserves whole input
+PASS 164 no editor commit from syllable/edit action
+PASS 165 syllable index contains ni
+PASS 166 lock ni
+PASS 167 no editor commit from syllable/edit action
+PASS 168 select Hanzi prefix before raw Return
+PASS 169 no editor commit from syllable/edit action
+PASS 170 position raw Return after confirmed Hanzi
+PASS 171 raw Return handles a confirmed prefix
+PASS 172 raw Return commits the confirmed prefix and tail
+PASS 173 raw Return preserves confirmed Hanzi without repeating its code
+PASS 174 confirmed raw Return clears the composition
+PASS 175 no editor commit from syllable/edit action
+PASS 176 no editor commit from syllable/edit action
+PASS 177 syllable index contains ni
+PASS 178 lock ni
+PASS 179 no editor commit from syllable/edit action
+PASS 180 partial selection before middle correction
+PASS 181 selected prefix retains original digit tail
+PASS 182 byte caret after selected Hanzi and first tail digit
+PASS 183 no editor commit from syllable/edit action
+PASS 184 middle correction after selected Hanzi preserves codes
+PASS 185 remove middle correction
+PASS 186 finish corrected partial sentence
+PASS 187 choose corrected suffix without resubmitting prefix
+PASS 188 middle correction commits the sentence exactly once
+PASS 189 no editor commit from syllable/edit action
+PASS 190 no editor commit from syllable/edit action
+PASS 191 syllable index contains ni
+PASS 192 lock ni
+PASS 193 no editor commit from syllable/edit action
+PASS 194 select prefix before changing its reading
+PASS 195 move back into selected prefix
+PASS 196 reopen selected prefix constraint
+PASS 197 focus raw position 0
+PASS 198 syllable index contains mi
+PASS 199 lock mi
+PASS 200 no editor commit from syllable/edit action
+PASS 201 return to end after prefix correction
+PASS 202 choose sentence with corrected prefix
+PASS 203 old selected prefix is not duplicated in corrected commit
+PASS 204 no editor commit from syllable/edit action
+PASS 205 no editor commit from syllable/edit action
+PASS 206 syllable index contains ni
+PASS 207 lock ni
+PASS 208 no editor commit from syllable/edit action
+PASS 209 syllable index contains hao
+PASS 210 lock hao
+PASS 211 no editor commit from syllable/edit action
+PASS 212 move before first lock
+PASS 213 forward delete unlocks
+PASS 214 forward unlock retains later lock
+PASS 215 forward delete removes raw digit
+PASS 216 later lock shifts by original input delta
+PASS 217 no editor commit from syllable/edit action
+PASS 218 syllable index contains ni
+PASS 219 lock ni
+PASS 220 no editor commit from syllable/edit action
+PASS 221 syllable index contains hao
+PASS 222 lock hao
+PASS 223 no editor commit from syllable/edit action
+PASS 224 Rime syllable deletion reconciles raw positions
+PASS 225 ASCII mode hides disambiguation
+PASS 226 escape clears disambiguation
+PASS 227 no editor commit from syllable/edit action
+PASS 228 no editor commit from syllable/edit action
+PASS 229 syllable index contains xing
+PASS 230 lock xing
+PASS 231 no editor commit from syllable/edit action
+PASS 232 polyphonic xing reading
+PASS 233 no editor commit from syllable/edit action
+PASS 234 syllable index contains hang
+PASS 235 lock hang
+PASS 236 no editor commit from syllable/edit action
+PASS 237 polyphonic hang reading
+PASS 238 no editor commit from syllable/edit action
+PASS 239 syllable index contains nve
+PASS 240 lock nve
+PASS 241 no editor commit from syllable/edit action
+PASS 242 nue alias maps through prism to nve
+PASS 243 no editor commit from syllable/edit action
+PASS 244 alphabetic input remains usable
+PASS 245 no editor commit from syllable/edit action
+PASS 246 ambiguous digits and incomplete tail never masquerade as pinyin
+PASS 247 syllable index contains ni
+PASS 248 lock ni
+PASS 249 no editor commit from syllable/edit action
+PASS 250 only confirmed constraints become pinyin
+PASS 251 focus raw position 2
+PASS 252 move from middle syllable to unfinished tail
+PASS 253 delete unfinished tail
+PASS 254 one code unit removed
+PASS 255 edit action 3
+PASS 256 no editor commit from syllable/edit action
+PASS 257 undo restores incomplete tail
+PASS 258 edit action 4
+PASS 259 no editor commit from syllable/edit action
+PASS 260 cancel discards composition and its undo, without committing
+PASS 261 no editor commit from syllable/edit action
+PASS 262 unlocked home
+PASS 263 backspace at composition start cannot reach editor
+PASS 264 unlocked display supports moving to the end
+PASS 265 unlocked delete
+PASS 266 delete last code unit
+PASS 267 empty composition retains editing undo
+PASS 268 edit action 3
+PASS 269 no editor commit from syllable/edit action
+PASS 270 undo last code deletion
+PASS 271 edit action 3
+PASS 272 no editor commit from syllable/edit action
+PASS 273 undo unlocked deletion
+PASS 274 edit action 4
+PASS 275 no editor commit from syllable/edit action
+PASS 276 empty backspace reaches editor
+PASS 277 apostrophe outside composition keeps punctuation behavior
+PASS 278 no editor commit from syllable/edit action
+PASS 279 delete last digit before space
+PASS 280 editor space closes the empty-composition undo boundary
+PASS 281 no editor commit from syllable/edit action
+PASS 282 caret inside ambiguous syllable
+PASS 283 syllable index contains ni
+PASS 284 lock ni
+PASS 285 no editor commit from syllable/edit action
+PASS 286 locking snaps an interior caret to the syllable end
+PASS 287 backspace after interior lock only unlocks
+PASS 288 no editor commit from syllable/edit action
+PASS 289 preserve original spelling: xi'an
+PASS 290 dictionary accepts xi'an
+PASS 291 position inside original spelling
+PASS 292 no editor commit from syllable/edit action
+PASS 293 delete middle insertion
+PASS 294 middle edit loses no original input
+PASS 295 edit action 3
+PASS 296 no editor commit from syllable/edit action
+PASS 297 edit action 3
+PASS 298 no editor commit from syllable/edit action
+PASS 299 undo round trip
+PASS 300 no editor commit from syllable/edit action
+PASS 301 no editor commit from syllable/edit action
+PASS 302 preserve original spelling: xian
+PASS 303 dictionary accepts xian
+PASS 304 position inside original spelling
+PASS 305 no editor commit from syllable/edit action
+PASS 306 delete middle insertion
+PASS 307 middle edit loses no original input
+PASS 308 edit action 3
+PASS 309 no editor commit from syllable/edit action
+PASS 310 edit action 3
+PASS 311 no editor commit from syllable/edit action
+PASS 312 undo round trip
+PASS 313 no editor commit from syllable/edit action
+PASS 314 no editor commit from syllable/edit action
+PASS 315 preserve original spelling: nv
+PASS 316 dictionary accepts nv
+PASS 317 position inside original spelling
+PASS 318 no editor commit from syllable/edit action
+PASS 319 delete middle insertion
+PASS 320 middle edit loses no original input
+PASS 321 edit action 3
+PASS 322 no editor commit from syllable/edit action
+PASS 323 edit action 3
+PASS 324 no editor commit from syllable/edit action
+PASS 325 undo round trip
+PASS 326 no editor commit from syllable/edit action
+PASS 327 no editor commit from syllable/edit action
+PASS 328 preserve original spelling: nue
+PASS 329 dictionary accepts nue
+PASS 330 position inside original spelling
+PASS 331 no editor commit from syllable/edit action
+PASS 332 delete middle insertion
+PASS 333 middle edit loses no original input
+PASS 334 edit action 3
+PASS 335 no editor commit from syllable/edit action
+PASS 336 edit action 3
+PASS 337 no editor commit from syllable/edit action
+PASS 338 undo round trip
+PASS 339 no editor commit from syllable/edit action
+PASS 340 no editor commit from syllable/edit action
+PASS 341 preserve original spelling: lv
+PASS 342 dictionary accepts lv
+PASS 343 position inside original spelling
+PASS 344 no editor commit from syllable/edit action
+PASS 345 delete middle insertion
+PASS 346 middle edit loses no original input
+PASS 347 edit action 3
+PASS 348 no editor commit from syllable/edit action
+PASS 349 edit action 3
+PASS 350 no editor commit from syllable/edit action
+PASS 351 undo round trip
+PASS 352 no editor commit from syllable/edit action
+PASS 353 no editor commit from syllable/edit action
+PASS 354 preserve original spelling: lue
+PASS 355 dictionary accepts lue
+PASS 356 position inside original spelling
+PASS 357 no editor commit from syllable/edit action
+PASS 358 delete middle insertion
+PASS 359 middle edit loses no original input
+PASS 360 edit action 3
+PASS 361 no editor commit from syllable/edit action
+PASS 362 edit action 3
+PASS 363 no editor commit from syllable/edit action
+PASS 364 undo round trip
+PASS 365 no editor commit from syllable/edit action
+PASS 366 no editor commit from syllable/edit action
+PASS 367 non-T9 scheme passes through
+PASS 368 switch to full pinyin
+PASS 369 no editor commit from syllable/edit action
+PASS 370 full pinyin unaffected
+PASS 371 switch to double pinyin
+PASS 372 no editor commit from syllable/edit action
+PASS 373 double pinyin unaffected
+PASS 374 learning persisted in Rime user dictionary
+PASS 375 learned record uses canonical syllables
+PASS 376 private spelling never leaks into learned code
+All 376 checks passed
