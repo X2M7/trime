@@ -70,7 +70,7 @@
 
 ### 第三批：标准主题背景回退（2026-10-28，验收完成）
 
-新增 [#2203](https://github.com/osfans/trime/pull/2203)，**Fixes [#2159](https://github.com/osfans/trime/issues/2159)**。源码 `f27e8425`、分支 `contrib/fix-standard-theme-colors`，已 rebase 到上游 `7fedca06`，仅两个生产文件和一个回归测试文件。PR 当前仍为 Draft，下一步根据本轮结果转为正式待审。[本批进度](checks/issue-fixes-batch3-20261028/progress.json)与[静态调查](checks/issue-fixes-batch3-20261028/theme-investigation.json)保留。
+新增 [#2203](https://github.com/osfans/trime/pull/2203)，**Fixes [#2159](https://github.com/osfans/trime/issues/2159)**。源码 `f27e8425`、分支 `contrib/fix-standard-theme-colors`，已 rebase 到上游 `7fedca06`，仅两个生产文件和一个回归测试文件。PR 已为 **Open／Ready for review**；[实际待审回执](checks/issue-fixes-batch3-20261028/publication/ready-receipt.json)确认 head／标题未变、正文逐字读回及五项 CI 通过。[本批进度](checks/issue-fixes-batch3-20261028/progress.json)与[静态调查](checks/issue-fixes-batch3-20261028/theme-investigation.json)保留。
 
 根因是标准主题的部分按键背景别名没有在当前配色中定义；原先 Drawable 路径把无效值当作成功解析的透明背景，阻断了 `Key` 已有回退。现在区分无效值和明确透明色，让缺失背景使用原有默认背景；有效自定义颜色、别名、回退链及图片保持原行为。Google+ 的普通键恢复白底红字，丹青恢复浅灰底黑字；不宣称所有配色都达到可访问性对比度要求。[独立源码复核](checks/issue-fixes-batch3-20261028/production-review.json)记录范围。
 
