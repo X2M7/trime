@@ -1,0 +1,119 @@
+[
+  {
+    "number": 2195,
+    "url": "https://github.com/osfans/trime/pull/2195",
+    "title": "fix(keyboard): keep key content inside key bounds",
+    "author": "x4w2nyhvk8",
+    "state": "open",
+    "draft": false,
+    "head_sha": "ebdcb8c6b02ca8ba0b70dd2ecca5d0656478ec2b",
+    "base_sha": "c0df6d07bf1c91dbdcee4438f345653bb1128418",
+    "direct_issues": [
+      2194
+    ],
+    "partial_issues": [],
+    "scope": "键帽label/symbol/hint测量、溢出收缩与裁剪；PR明确Fixes #2194。",
+    "not_covered": "不增加用户字号设置、不修正整体布局高度或输入动作。",
+    "action": "跟进原PR验收窄键、大字体及正常键回归，不另开相同实现。"
+  },
+  {
+    "number": 2192,
+    "url": "https://github.com/osfans/trime/pull/2192",
+    "title": "feat(keyboard): add pressed scale animation for keys",
+    "author": "x4w2nyhvk8",
+    "state": "open",
+    "draft": false,
+    "head_sha": "b82b6db1e70f47b340a80193e93ed178007df7fc",
+    "base_sha": "c0df6d07bf1c91dbdcee4438f345653bb1128418",
+    "direct_issues": [],
+    "partial_issues": [
+      734
+    ],
+    "scope": "按压/释放缩放，覆盖#734四类动画请求中的按压部分。",
+    "not_covered": "不包含主题参数、弹出键、滑动轨迹或切换动画。",
+    "action": "先评审现有按压动画；其余动画另议行为，不自动关闭#734。"
+  },
+  {
+    "number": 2191,
+    "url": "https://github.com/osfans/trime/pull/2191",
+    "title": "feat(clipboard): add keyword search to clipboard history",
+    "author": "tahodev",
+    "state": "open",
+    "draft": false,
+    "head_sha": "3e0770da95c00aa5ed0009b1d21730d92286ae79",
+    "base_sha": "57edd25ea275d192ae9a340ee1b0c43c8cfd2eff",
+    "direct_issues": [
+      2190
+    ],
+    "partial_issues": [
+      464
+    ],
+    "scope": "剪贴板历史关键词搜索，部分满足#464的查询需求；同#1853标题栏和#2168对话框焦点需协调。",
+    "not_covered": "不提供粘贴后返回快捷开关、多选合并或正则替换；未证明解决Chrome窗口问题。",
+    "action": "跟进原PR搜索、空结果和回原编辑器粘贴验收，避免平行搜索PR。"
+  },
+  {
+    "number": 2188,
+    "url": "https://github.com/osfans/trime/pull/2188",
+    "title": "fix(ime): create deferred input views when the theme is ready",
+    "author": "X2M7",
+    "state": "open",
+    "draft": false,
+    "head_sha": "e009dc0b567f9639cf518bc3b35cd172ac627be7",
+    "base_sha": "12ffd16fe03537b6d0ed9716c71cbc33608c2a33",
+    "direct_issues": [],
+    "partial_issues": [],
+    "scope": "主题就绪后补建InputView；#2145/#1981仅空白输入视图症状可能相关。",
+    "not_covered": "未证明修复hint解析、卡顿、部署主任务阻塞或Chromium主动收起键盘。",
+    "action": "跟进既有启动PR；部署和网页案例按各自因果复现。"
+  },
+  {
+    "number": 2186,
+    "url": "https://github.com/osfans/trime/pull/2186",
+    "title": "fix(jni): handle standard UTF-8 and UTF-16 positions",
+    "author": "X2M7",
+    "state": "open",
+    "draft": false,
+    "head_sha": "2ad1865fd97f09ffba231e5c0e23092cd383b059",
+    "base_sha": "12ffd16fe03537b6d0ed9716c71cbc33608c2a33",
+    "direct_issues": [],
+    "partial_issues": [],
+    "scope": "JNI标准UTF-8与UTF-16位置边界。",
+    "not_covered": "不等于支持任意Unicode字符作Rime编码，不直接解释纯ASCII预编辑点击错位或Shift宏动作。",
+    "action": "跟进原PR，不因Unicode/光标关键词相似就添加Fixes。"
+  },
+  {
+    "number": 2183,
+    "url": "https://github.com/osfans/trime/pull/2183",
+    "title": "feat: add nine-key Pinyin input with syllable selection",
+    "author": "X2M7",
+    "state": "open",
+    "draft": false,
+    "head_sha": "8a1ee0ea6538e220fcddf31ed6fd491f5bc3cca7",
+    "base_sha": "a047f74757fae0d7b5ef64e54f0b957dee2bf8f3",
+    "direct_issues": [
+      1464
+    ],
+    "partial_issues": [
+      1299
+    ],
+    "scope": "原生九键与拼音音节选择；PR正文使用Related，不使用Fixes。",
+    "not_covered": "不覆盖#1299所有字符编辑需求，也未证明修复第三方luna九宫格#1005。",
+    "action": "当前已Ready、保留S24 Ultra用户试用记录，等待维护者评审；不再提交另一套九键。"
+  },
+  {
+    "number": 2182,
+    "url": "https://github.com/osfans/trime/pull/2182",
+    "title": "fix: make logcat collection cancellable across supported Android versions",
+    "author": "X2M7",
+    "state": "open",
+    "draft": false,
+    "head_sha": "9f95cb574a820f61482cc41c49362317cce1df38",
+    "base_sha": "12ffd16fe03537b6d0ed9716c71cbc33608c2a33",
+    "direct_issues": [],
+    "partial_issues": [],
+    "scope": "Logcat采集生命周期、取消和导出；与#779现有崩溃页所用日志路径相邻。",
+    "not_covered": "上游已有Release崩溃报告入口；此PR不代表新建崩溃UI或解决所有native崩溃。",
+    "action": "跟进原PR；先验证当前崩溃报告入口的剩余缺口。"
+  }
+]

@@ -1,0 +1,4605 @@
+{
+  "snapshot": "snapshot.json",
+  "categories": "categories.json",
+  "issues": [
+    {
+      "number": 2194,
+      "title": "Key labels and symbols overflow narrow keys or large font scale",
+      "url": "https://github.com/osfans/trime/issues/2194",
+      "primary_category": "C",
+      "kind": "bug_report",
+      "priority": "P2",
+      "summary": "窄键或大字号下按键标签、符号及提示超出键界。",
+      "evidence": [
+        "正文提供width:5、多字符Shift、字体倍率1.5和横竖屏步骤，并限定普通键显示不变。",
+        "开放PR #2195正文明确写Fixes #2194，覆盖测量、约束与绘制裁剪。",
+        "抓取时无评论，尚无后续维护者或用户验证。"
+      ],
+      "reproduction_status": "本次仅静态分诊，未运行应用。有具体步骤；待审实现尚未合并，不能视为上游已修复。",
+      "next_action": "watch_existing_pr",
+      "related_open_prs": [
+        {
+          "number": 2195,
+          "relation": "covered_by_pending_PR",
+          "url": "https://github.com/osfans/trime/pull/2195",
+          "scope": "PR正文明确Fixes #2194，直接覆盖同一需求。"
+        }
+      ],
+      "proposed_work_unit": "跟踪并验收现有PR #2195的按键内容边界处理，不另开重复实现。",
+      "acceptance": [
+        "窄键、大字号和横屏下标签、符号、hint保持在可见键界内。",
+        "普通按键字号、位置和触摸区域保持原行为。"
+      ],
+      "uncertainty": "PR自述验证仍须与合并后设备行为区分。",
+      "secondary_tags": [
+        "字号",
+        "键界"
+      ],
+      "category_name": "键盘布局、主题与渲染",
+      "original_labels": [],
+      "created_at": "2026-10-25T01:59:28Z",
+      "updated_at": "2026-10-25T01:59:28Z",
+      "comment_count": 0,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/2194"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 2193,
+      "title": "不支持配合Talkback使用",
+      "url": "https://github.com/osfans/trime/issues/2193",
+      "primary_category": "G",
+      "kind": "bug_report",
+      "priority": "P1",
+      "summary": "TalkBack开启后无法正常使用同文键盘。",
+      "evidence": [
+        "正文引用同类历史问题#893，报告Android 17、nightly 3.3.12-99-g19b04849。",
+        "期望具有Gboard/Microsoft键盘类似的TalkBack操作方式，未描述具体焦点或触摸失败环节。",
+        "抓取时无评论，尚无后续维护者或用户验证。"
+      ],
+      "reproduction_status": "本次仅静态分诊，未运行应用。仅用户概括反馈，缺少逐步无障碍操作记录。",
+      "next_action": "needs_information",
+      "related_open_prs": [],
+      "proposed_work_unit": "取得TalkBack导航、探索触摸和激活按键的最小失败流程，随后以可读键名、候选选择及焦点规则作为一个无障碍输入工作单元。",
+      "acceptance": [
+        "记录系统、TalkBack版本和按键/候选至少一项可重复的失败步骤。",
+        "完成方案可在TalkBack下读出并激活字母键、功能键和候选，焦点顺序可预测。"
+      ],
+      "uncertainty": "不能从缺少无障碍支持的概括报告推断单一控件或API根因。",
+      "secondary_tags": [
+        "TalkBack",
+        "关联#893"
+      ],
+      "category_name": "无障碍与系统窗口适配",
+      "original_labels": [
+        "bug"
+      ],
+      "created_at": "2026-10-24T13:14:35Z",
+      "updated_at": "2026-10-24T13:14:35Z",
+      "comment_count": 0,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/2193"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 2190,
+      "title": "[功能请求] 为剪贴板历史增加关键词搜索",
+      "url": "https://github.com/osfans/trime/issues/2190",
+      "primary_category": "E",
+      "kind": "feature_request",
+      "priority": "P2",
+      "summary": "剪贴板历史增加关键词筛选并粘贴回原输入框。",
+      "evidence": [
+        "正文明确中文、英文、数字搜索；清空恢复列表、空结果提示，关键词不写入原应用；收藏夹不在范围。",
+        "开放PR #2191声明实现#2190，并提示对话框焦点切换与延迟粘贴未经真机确认。",
+        "抓取时无评论，尚无后续维护者或用户验证。"
+      ],
+      "reproduction_status": "本次仅静态分诊，未运行应用。需求清晰；已有待审实现，尚无本次运行验收。",
+      "next_action": "watch_existing_pr",
+      "related_open_prs": [
+        {
+          "number": 2191,
+          "relation": "covered_by_pending_PR",
+          "url": "https://github.com/osfans/trime/pull/2191",
+          "scope": "PR正文声明实现#2190，覆盖同一搜索流程。"
+        }
+      ],
+      "proposed_work_unit": "跟踪和验收PR #2191的剪贴板历史搜索，尤其确认对话框关闭后的粘贴目标。",
+      "acceptance": [
+        "中英文数字及含%/_/反斜杠的关键词筛选结果正确。",
+        "清空恢复全部记录，无匹配有提示。",
+        "搜索词不进入原应用；所选记录只提交到原编辑器。"
+      ],
+      "uncertainty": "延迟粘贴在快速切换编辑器、关闭对话框和浏览器内的行为尚需设备确认。",
+      "secondary_tags": [
+        "搜索",
+        "对话框焦点"
+      ],
+      "category_name": "剪贴板、隐私与内容处理",
+      "original_labels": [],
+      "created_at": "2026-10-23T17:38:36Z",
+      "updated_at": "2026-10-23T17:38:36Z",
+      "comment_count": 0,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/2190"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 2168,
+      "title": "使用 Chrome 在网页文本框弹出对话框时会收起键盘",
+      "url": "https://github.com/osfans/trime/issues/2168",
+      "primary_category": "G",
+      "kind": "bug_report",
+      "priority": "P2",
+      "summary": "Chrome网页编辑器打开同文对话框会收起键盘。",
+      "evidence": [
+        "正文列出方案、主题、配色、方案开关及剪贴板菜单，附Chrome GitHub搜索框与普通文本框对照视频。",
+        "2026-10-16 WhiredPlanck评论称其他浏览器含Chromium系无法复现，怀疑Chrome独有问题。"
+      ],
+      "reproduction_status": "本次仅静态分诊，未运行应用。有作者视频和维护者跨浏览器负例，尚未确定归属。",
+      "next_action": "reproduce",
+      "related_open_prs": [
+        {
+          "number": 2191,
+          "relation": "possible_relation",
+          "url": "https://github.com/osfans/trime/pull/2191",
+          "scope": "搜索PR新增同类输入法附属对话框，需把Chrome窗口显隐纳入兼容性验收；不表示覆盖本issue。"
+        }
+      ],
+      "proposed_work_unit": "对同一网页、Chrome版本和普通编辑器记录对话框焦点及IME显隐生命周期，确定可在同文内修复的窗口交互边界。",
+      "acceptance": [
+        "固定Chrome版本复现并与另一个Chromium浏览器、原生编辑器比较。",
+        "方案/配色与剪贴板菜单打开关闭后键盘可继续输入，或形成最小Chrome上游报告。"
+      ],
+      "uncertainty": "评论的Chrome归因是怀疑，尚不能直接当作已确认外部缺陷；与#2191共用对话框路径但没有证据证明其解决本问题。",
+      "secondary_tags": [
+        "Chrome",
+        "窗口焦点"
+      ],
+      "category_name": "无障碍与系统窗口适配",
+      "original_labels": [
+        "bug"
+      ],
+      "created_at": "2026-10-15T23:56:28Z",
+      "updated_at": "2026-10-16T17:39:50Z",
+      "comment_count": 1,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/2168",
+        "https://github.com/osfans/trime/issues/2168#issuecomment-6221226706"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 2159,
+      "title": "软件自带的标准键盘和预设键盘选取配色后表现不一致",
+      "url": "https://github.com/osfans/trime/issues/2159",
+      "primary_category": "C",
+      "kind": "bug_report",
+      "priority": "P2",
+      "summary": "标准主题部分预置配色导致按键文字与背景同色。",
+      "evidence": [
+        "正文在3.3.12正式版/澎湃OS3列出标准主题的Google+、丹青，并给出与预设主题的截图对照。",
+        "a047f747仍包含tongwenfeng标准主题和trime预设配色；主题自定义键色与通用配色的兼容关系应作为复现切入点。",
+        "抓取时无评论，尚无后续维护者或用户验证。"
+      ],
+      "reproduction_status": "本次仅静态分诊，未运行应用。具体主题和配色明确，未在当前上游运行确认。",
+      "next_action": "reproduce",
+      "related_open_prs": [],
+      "proposed_work_unit": "统一标准主题在所有内置配色下的键面与文字可读性，覆盖普通键、功能键与高亮状态。",
+      "acceptance": [
+        "Google+、丹青下标准键盘普通/功能键字母可辨认。",
+        "遍历内置配色并与预设主题核对，不破坏主题显式自定义颜色。"
+      ],
+      "uncertainty": "截图尚未独立测量对比度，不能断定是颜色回退、主题键色覆盖或部署缓存中的哪一种。",
+      "secondary_tags": [
+        "配色",
+        "标准主题"
+      ],
+      "category_name": "键盘布局、主题与渲染",
+      "original_labels": [
+        "bug"
+      ],
+      "created_at": "2026-10-09T15:09:14Z",
+      "updated_at": "2026-10-09T15:09:14Z",
+      "comment_count": 0,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/2159"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 2153,
+      "title": "语音输入法在手机重启后会从同文的首选语音输入法列表中消失",
+      "url": "https://github.com/osfans/trime/issues/2153",
+      "primary_category": "F",
+      "kind": "bug_report",
+      "priority": "P2",
+      "summary": "重启后已启用第三方语音IME不再出现在同文语音列表。",
+      "evidence": [
+        "正文提供ColorOS/Android16、VoiceIME v0.1.2、重启后列表为空、启动语音App后恢复的流程。",
+        "作者附同文enabledInputMethodList仅自身、shell与secure enabled_input_methods仍含第三方IME的对照，称已排除stopped状态及列表重建延迟。",
+        "a047f747 InputMethodUtils.voiceInputMethods仍枚举enabledInputMethodList并按voice subtype筛选；Manifest queries只有TTS_SERVICE，没有android.view.InputMethod查询声明。",
+        "抓取时无评论，尚无后续维护者或用户验证。"
+      ],
+      "reproduction_status": "本次仅静态分诊，未运行应用。用户提供较完整对照；包可见性解释是待验证假设，未由本次重启测试确认。",
+      "next_action": "reproduce",
+      "related_open_prs": [],
+      "proposed_work_unit": "使已启用的语音IME在重启且未启动其App时也能被发现和切换，按需修正查询可见性与筛选逻辑。",
+      "acceptance": [
+        "Android11+至少一台受影响设备冷启动后，语音首选列表仍显示已启用且声明voice subtype的IME。",
+        "VOICE_ASSIST可切换；禁用/卸载的IME不残留。",
+        "用有/无InputMethod查询声明的受控版本确认根因，避免扩大包可见性范围。"
+      ],
+      "uncertainty": "正文另一个App补queries有效不能直接证明同文必然同因；厂商自启动限制与voice subtype声明仍须控制。",
+      "secondary_tags": [
+        "语音IME",
+        "包可见性",
+        "关联#1861"
+      ],
+      "category_name": "手势、光标、按键反馈与语音",
+      "original_labels": [
+        "bug"
+      ],
+      "created_at": "2026-10-05T16:18:42Z",
+      "updated_at": "2026-10-05T16:35:03Z",
+      "comment_count": 0,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/2153"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 2151,
+      "title": "剪贴板提示取消按钮保持",
+      "url": "https://github.com/osfans/trime/issues/2151",
+      "primary_category": "E",
+      "kind": "feature_request",
+      "priority": "P3",
+      "summary": "剪贴板提示取消按钮被修改版语音话筒遮挡。",
+      "evidence": [
+        "正文请求长剪贴板文本时取消按钮固定，所用包为com.osfans.trime.bibi修改版。",
+        "2026-10-06作者自行评论：是说点啥的话筒盖住了，原版没有此问题。"
+      ],
+      "reproduction_status": "本次仅静态分诊，未运行应用。作者确认原版无此问题，不能列为已证实上游缺陷。",
+      "next_action": "configuration_or_docs",
+      "related_open_prs": [],
+      "proposed_work_unit": "在issue中保留修改版来源和作者确认结果，向对应集成版本定位工具栏遮挡。",
+      "acceptance": [
+        "记录原版与修改版的差异和已有结论。",
+        "只有原版也能复现时再以固定取消按钮布局作为上游实现任务。"
+      ],
+      "uncertainty": "未独立检验原版长文本，但已有作者明确纠正。",
+      "secondary_tags": [
+        "修改版",
+        "作者已澄清"
+      ],
+      "category_name": "剪贴板、隐私与内容处理",
+      "original_labels": [
+        "enhancement"
+      ],
+      "created_at": "2026-10-04T14:04:15Z",
+      "updated_at": "2026-10-06T13:04:11Z",
+      "comment_count": 1,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/2151",
+        "https://github.com/osfans/trime/issues/2151#issuecomment-6016883724"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 2145,
+      "title": "昨天的夜版，按键含有`hint`参数，输入法不能唤起。点击app卡在灰色界面不能进入。输入非常卡",
+      "url": "https://github.com/osfans/trime/issues/2145",
+      "primary_category": "A",
+      "kind": "bug_report",
+      "priority": "P1",
+      "summary": "夜版加载部分hint主题失败，伴启动卡住、输入卡顿及符号提交异常。",
+      "evidence": [
+        "正文称删hint可唤起但仍卡顿，部分hint正常、部分异常，并附TGboard-new主题及符号上屏截图。",
+        "报告Android15，仅称新夜版，没有准确构建哈希和日志。",
+        "抓取时无评论，尚无后续维护者或用户验证。"
+      ],
+      "reproduction_status": "本次仅静态分诊，未运行应用。有配置附件但同一报告包含启动、性能和符号三个症状，缺少可定位版本及最小配置。",
+      "next_action": "needs_information",
+      "related_open_prs": [
+        {
+          "number": 2188,
+          "relation": "possible_relation",
+          "url": "https://github.com/osfans/trime/pull/2188",
+          "scope": "待审PR处理主题未就绪时延迟创建输入视图；可能影响空白症状，但未覆盖hint解析或卡顿根因。"
+        }
+      ],
+      "proposed_work_unit": "固定夜版和主题后将导致初始化失败的最小hint配置隔离，保证有效主题可加载、无效主题给出诊断并能退回可用键盘。",
+      "acceptance": [
+        "保存确切APK版本、主题最小片段和启动日志。",
+        "有/无hint受控对照可稳定判断启动和输入是否失败。",
+        "修复后有效hint正常显示，错误配置有可见诊断且不阻断App和键盘启动。"
+      ],
+      "uncertainty": "不能把所有卡顿归于hint或把Markdown符号差异直接归于同一根因；#2188仅可能涉及空白输入视图。",
+      "secondary_tags": [
+        "主题加载",
+        "性能",
+        "信息不足"
+      ],
+      "category_name": "稳定性与性能",
+      "original_labels": [
+        "bug"
+      ],
+      "created_at": "2026-09-26T07:22:08Z",
+      "updated_at": "2026-09-26T07:22:08Z",
+      "comment_count": 0,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/2145"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 2140,
+      "title": "Cannot use external storage",
+      "url": "https://github.com/osfans/trime/issues/2140",
+      "primary_category": "D",
+      "kind": "bug_report",
+      "priority": "P1",
+      "summary": "升级后原外部数据目录无法重新选为同步目录。",
+      "evidence": [
+        "正文报告Android17/F-Droid3.3.12；评论补充LineageOS、GrapheneOS均在升级后首次选原目录失败，重启无效。",
+        "2026-09-21作者称清除应用数据后恢复。",
+        "a047f747已采用UserDataManager外部树同步与持久授权；旧版反馈需要在当前路径上复核。"
+      ],
+      "reproduction_status": "本次仅静态分诊，未运行应用。历史升级故障有两种ROM反馈与清数据恢复结果；无当前上游复现。",
+      "next_action": "historical_retest",
+      "related_open_prs": [],
+      "proposed_work_unit": "在保留数据副本的升级安装场景验证外部树授权恢复与目录迁移，让原目录可继续使用并提供失败诊断。",
+      "acceptance": [
+        "保留旧数据/授权升级到当前版本后原目录可重新关联。",
+        "取消选择和授权失败不会清除工作配置；错误可重试恢复。",
+        "核对LineageOS/GrapheneOS及目录提供者差异。"
+      ],
+      "uncertainty": "清除应用数据只是作者历史结果，不应作为未备份用户的处理建议；不能据此断定授权缓存是唯一根因。",
+      "secondary_tags": [
+        "外部存储",
+        "升级",
+        "关联#2130"
+      ],
+      "category_name": "存储、配置、部署与用户词库",
+      "original_labels": [
+        "bug"
+      ],
+      "created_at": "2026-09-15T18:37:30Z",
+      "updated_at": "2026-09-21T16:22:55Z",
+      "comment_count": 3,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/2140",
+        "https://github.com/osfans/trime/issues/2140#issuecomment-5710541043",
+        "https://github.com/osfans/trime/issues/2140#issuecomment-5710606631",
+        "https://github.com/osfans/trime/issues/2140#issuecomment-5763833726"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 2138,
+      "title": "我在自定义一些功能时遇到的两个问题",
+      "url": "https://github.com/osfans/trime/issues/2138",
+      "primary_category": "C",
+      "kind": "feature_request",
+      "priority": "P2",
+      "summary": "自定义候选窗口需要更易点击的翻页按钮及长候选显示规则。",
+      "evidence": [
+        "正文提供竖排候选翻页按钮太小的截图。",
+        "第二项基于自定义雾凇中英释义方案：窄屏首行过长时开头消失，宽屏正常；附配置仓库链接。",
+        "抓取时无评论，尚无后续维护者或用户验证。"
+      ],
+      "reproduction_status": "本次仅静态分诊，未运行应用。两个可分别验收的UI问题；长候选需要固定方案数据并确认具体候选模式。",
+      "next_action": "reproduce",
+      "related_open_prs": [],
+      "proposed_work_unit": "定义并实现窄屏候选窗口的可用布局：翻页触摸目标足够且不遮挡，长候选开头可识别并保留完整词的访问方式。",
+      "acceptance": [
+        "竖排候选分页按钮在窄屏上可独立准确点击。",
+        "使用最小长释义词条验证首候选开头不被无提示隐藏。",
+        "横竖屏、不同字号下候选选择与翻页索引正确。"
+      ],
+      "uncertainty": "正文在纵向/横向描述上交错，需先确认截图对应overlay或embedded模式；不能归于#2195按键文本边界。",
+      "secondary_tags": [
+        "候选布局",
+        "长文本",
+        "翻页"
+      ],
+      "category_name": "键盘布局、主题与渲染",
+      "original_labels": [
+        "bug"
+      ],
+      "created_at": "2026-09-14T14:24:24Z",
+      "updated_at": "2026-09-14T14:24:24Z",
+      "comment_count": 0,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/2138"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 2120,
+      "title": "剪切板支持图片",
+      "url": "https://github.com/osfans/trime/issues/2120",
+      "primary_category": "E",
+      "kind": "feature_request",
+      "priority": "P2",
+      "summary": "剪贴板历史支持图片记录与提交。",
+      "evidence": [
+        "正文仅请求剪贴板支持图片，Android16、nightly 6cef61bb；未定义图片来源、保存时长或目标编辑器。",
+        "抓取时无评论，尚无后续维护者或用户验证。"
+      ],
+      "reproduction_status": "本次仅静态分诊，未运行应用。需求尚不足以直接实现完整内容生命周期。",
+      "next_action": "design_discussion",
+      "related_open_prs": [],
+      "proposed_work_unit": "设计图片剪贴板的获取、URI权限保存、缩略图、清理和富内容提交完整流程。",
+      "acceptance": [
+        "明确支持的图片来源和MIME类型、持久化策略及容量限制。",
+        "支持commitContent的编辑器可插入，不能接收图片的编辑器有清楚反馈。",
+        "记录删除/清空时同步清理本地图片与授权，重启后行为符合设计。"
+      ],
+      "uncertainty": "Android临时URI授权和编辑器能力差异尚未讨论；不应将字符串存储扩展当作全部工作。",
+      "secondary_tags": [
+        "图片",
+        "富内容",
+        "URI权限"
+      ],
+      "category_name": "剪贴板、隐私与内容处理",
+      "original_labels": [
+        "enhancement"
+      ],
+      "created_at": "2026-09-05T00:37:26Z",
+      "updated_at": "2026-09-05T00:37:26Z",
+      "comment_count": 0,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/2120"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 2112,
+      "title": "编辑中拼音点击错位",
+      "url": "https://github.com/osfans/trime/issues/2112",
+      "primary_category": "B",
+      "kind": "bug_report",
+      "priority": "P2",
+      "summary": "预编辑拼音点击位置与移动后的光标位置不一致。",
+      "evidence": [
+        "正文称不定时或使用较久后发生，附视频，Android16/澎湃OS3。",
+        "应用版本写1.17.0-0-g33e78140，构建信息却是Trime nightly eec06267，身份信息不一致。",
+        "抓取时无评论，尚无后续维护者或用户验证。"
+      ],
+      "reproduction_status": "本次仅静态分诊，未运行应用。缺少固定输入串和起始偏移，需确认所用应用与构建。",
+      "next_action": "needs_information",
+      "related_open_prs": [],
+      "proposed_work_unit": "固定APK及预编辑字符串后验证点击坐标到拼音光标索引的映射，并处理重布局或长时间使用后的状态更新。",
+      "acceptance": [
+        "记录准确APK、主题/字号、输入方案、预编辑串和点击位置。",
+        "字符串首中尾点击均移动到所见位置，长时间使用、横竖屏切换后保持一致。"
+      ],
+      "uncertainty": "不能仅凭光标错位关联#2186；其UTF-8/UTF-16修正是否相关取决于是否含非ASCII及偏移证据。",
+      "secondary_tags": [
+        "预编辑",
+        "光标",
+        "版本信息不一致"
+      ],
+      "category_name": "输入、方案与候选",
+      "original_labels": [
+        "bug"
+      ],
+      "created_at": "2026-09-04T01:11:21Z",
+      "updated_at": "2026-09-04T01:11:21Z",
+      "comment_count": 0,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/2112"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 2107,
+      "title": "Suggestion: add a \"private copy\" that bypasses the system clipboard",
+      "url": "https://github.com/osfans/trime/issues/2107",
+      "primary_category": "E",
+      "kind": "feature_request",
+      "priority": "P2",
+      "summary": "请求选中文本直接存入同文历史，绕开系统剪贴板。",
+      "evidence": [
+        "正文提出getSelectedText直接写ClipboardHelper，新命令private_copy，粘贴沿用commitText。",
+        "维护者两条评论质疑其隐私收益，并明确剪贴板设计意图是系统剪贴板的可见记录，直接写入可能改变为笔记本。"
+      ],
+      "reproduction_status": "本次仅静态分诊，未运行应用。明确功能提议，但维护者对产品语义和隐私前提有异议。",
+      "next_action": "design_discussion",
+      "related_open_prs": [],
+      "proposed_work_unit": "先达成私有选中文本收藏/复制动作的语义，再实现独立动作和清晰命名，完整定义空选择与受限编辑器行为。",
+      "acceptance": [
+        "记录维护者认可的存储位置与是否进入剪贴板历史。",
+        "若采纳，操作不调用系统setPrimaryClip，现有系统复制路径正常。",
+        "无选择、password及getSelectedText不可用时行为明确且不声称额外隔离保证。"
+      ],
+      "uncertainty": "当前没有已证实的系统剪贴板泄漏，隐私收益不能当安全修复结论。",
+      "secondary_tags": [
+        "隐私",
+        "复制",
+        "产品语义"
+      ],
+      "category_name": "剪贴板、隐私与内容处理",
+      "original_labels": [],
+      "created_at": "2026-09-03T01:28:05Z",
+      "updated_at": "2026-09-03T15:58:09Z",
+      "comment_count": 2,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/2107",
+        "https://github.com/osfans/trime/issues/2107#issuecomment-5528245961",
+        "https://github.com/osfans/trime/issues/2107#issuecomment-5528389045"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 2103,
+      "title": "自定义音效无声音",
+      "url": "https://github.com/osfans/trime/issues/2103",
+      "primary_category": "F",
+      "kind": "bug_report",
+      "priority": "P2",
+      "summary": "自定义音效可选但无声，默认音效正常。",
+      "evidence": [
+        "正文报告Android13，soundeffect配置和音频在其他用户处可用，多个版本包括nightly受影响。",
+        "日志仅有A resource failed to call close；2026-09-04评论转述AI的解码缓冲推测，同时作者自己表示可能胡说，不能当根因。",
+        "当前上游已有输入反馈资源延迟初始化重构，需用具体音频样本复测。"
+      ],
+      "reproduction_status": "本次仅静态分诊，未运行应用。差异现象明确但缺少可下载最小音频/配置和解码异常。",
+      "next_action": "needs_information",
+      "related_open_prs": [],
+      "proposed_work_unit": "以同一音效包和设备复现自定义音频加载/播放失败，修正路径、资源关闭或解码错误并提供可诊断日志。",
+      "acceptance": [
+        "收集最小YAML、音频原文件、文件路径及播放时日志。",
+        "默认和自定义音效均可持续播放，切换包和重建键盘后正常。",
+        "不再出现同一加载路径资源泄漏，并验证不支持的音频有明确反馈。"
+      ],
+      "uncertainty": "32768/65536缓冲及CSD说法来自未验证AI评论，不能据此直接修改解码器。",
+      "secondary_tags": [
+        "自定义音效",
+        "待样本"
+      ],
+      "category_name": "手势、光标、按键反馈与语音",
+      "original_labels": [
+        "bug"
+      ],
+      "created_at": "2026-09-01T16:20:44Z",
+      "updated_at": "2026-09-04T19:53:46Z",
+      "comment_count": 1,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/2103",
+        "https://github.com/osfans/trime/issues/2103#issuecomment-5545613765"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 2095,
+      "title": "Configurations Will Be Clear When Switch Stroage Mode from  App-specified to External",
+      "url": "https://github.com/osfans/trime/issues/2095",
+      "primary_category": "D",
+      "kind": "bug_report",
+      "priority": "P1",
+      "summary": "切换存储模式被报告无提示移除原工作配置，需优先核对数据保护。",
+      "evidence": [
+        "正文为空；全部信息来自5条评论。",
+        "WhiredPlanck明确报告App-specific→external会无条件移除内部Rime配置；goofyz称当时属于预期行为，建议增加“工作配置将被所选文件夹替换”警告，维护者赞同。",
+        "a047f747已重构为UserDataManager双向外部树同步，切换设置不等于旧实现的整目录替换，历史结论不能直接视作当前行为。"
+      ],
+      "reproduction_status": "本次仅静态分诊，未运行应用。历史删除行为有维护者讨论支持；当前实现未复现，优先级表示潜在数据保护需先核查。",
+      "next_action": "historical_retest",
+      "related_open_prs": [],
+      "proposed_work_unit": "使用可丢弃目录建立存储切换/首次关联/冲突的数据保护契约，若当前仍可能覆盖独有配置则增加可取消告知和可恢复迁移。",
+      "acceptance": [
+        "临时目录分别含本地独有、外部独有及同名不同内容文件，切换前后逐项核对。",
+        "取消选择、失败和权限撤销均不丢失原工作配置。",
+        "任何确定会替换数据的操作在执行前清晰告知并允许取消；恢复路径可验证。"
+      ],
+      "uncertainty": "尚未确认当前数据丢失；旧版“预期替换”语义可能已被同步重构改变，不能直接另写旧式删除警告补丁。",
+      "secondary_tags": [
+        "潜在数据损失",
+        "正文为空",
+        "迁移",
+        "存储切换"
+      ],
+      "category_name": "存储、配置、部署与用户词库",
+      "original_labels": [
+        "bug"
+      ],
+      "created_at": "2026-08-29T11:51:36Z",
+      "updated_at": "2026-08-29T15:08:28Z",
+      "comment_count": 5,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/2095",
+        "https://github.com/osfans/trime/issues/2095#issuecomment-5462263895",
+        "https://github.com/osfans/trime/issues/2095#issuecomment-5462544781",
+        "https://github.com/osfans/trime/issues/2095#issuecomment-5462791422",
+        "https://github.com/osfans/trime/issues/2095#issuecomment-5462923730",
+        "https://github.com/osfans/trime/issues/2095#issuecomment-5463154624"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 2094,
+      "title": "悬浮键盘和全面屏模式",
+      "url": "https://github.com/osfans/trime/issues/2094",
+      "primary_category": "G",
+      "kind": "feature_request",
+      "priority": "P2",
+      "summary": "请求横屏悬浮键盘及带底部功能区的全面屏模式。",
+      "evidence": [
+        "正文用语燕输入法截图提出横屏悬浮，以及用底部两个功能键垫高键盘的独立开关。",
+        "作者承认后者可通过皮肤修改达成，希望提供设置入口。",
+        "抓取时无评论，尚无后续维护者或用户验证。"
+      ],
+      "reproduction_status": "本次仅静态分诊，未运行应用。产品需求，未提供拖动、尺寸、记忆和窗口insets的具体规则。",
+      "next_action": "design_discussion",
+      "related_open_prs": [],
+      "proposed_work_unit": "分别明确悬浮窗口的定位/大小/切换契约与底部抬高区域的设置语义，再按完整模式验收实现。",
+      "acceptance": [
+        "横屏模式不遮挡关键输入内容，切回竖屏可恢复且窗口边界正确。",
+        "底部功能区的高度、按键与系统导航栏不冲突。",
+        "模式入口、状态保存、外接键盘和多窗口行为有明确定义。"
+      ],
+      "uncertainty": "两个独立模式不宜凭截图合成大改；语燕实现尚未审计，不能假定可直接移植。",
+      "secondary_tags": [
+        "悬浮键盘",
+        "横屏",
+        "导航栏"
+      ],
+      "category_name": "无障碍与系统窗口适配",
+      "original_labels": [
+        "enhancement"
+      ],
+      "created_at": "2026-08-29T09:11:23Z",
+      "updated_at": "2026-08-29T09:12:25Z",
+      "comment_count": 0,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/2094"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 2085,
+      "title": "做了一個線上主題編輯器",
+      "url": "https://github.com/osfans/trime/issues/2085",
+      "primary_category": "I",
+      "kind": "maintenance",
+      "priority": "P3",
+      "summary": "社区在线主题编辑器希望获得官方介绍与反馈。",
+      "evidence": [
+        "正文链接trime-web.outerstudio.com，说明由个人需求开发，希望合适宣传，必要时可转移仓库所有权。",
+        "评论中用户请求注音键盘，作者回复已加入但不会注音，需要用户验证。"
+      ],
+      "reproduction_status": "本次仅静态分诊，未运行应用。生态工具介绍，不是同文运行缺陷。",
+      "next_action": "configuration_or_docs",
+      "related_open_prs": [],
+      "proposed_work_unit": "审核在线编辑器的版本兼容范围和仓库/维护信息后，在生态文档加入清楚的第三方工具入口。",
+      "acceptance": [
+        "工具来源、维护者和适用主题格式可查。",
+        "至少一份导出主题可由当前同文加载，未覆盖功能明确列出。",
+        "若加入文档，标明第三方属性并提供问题反馈位置。"
+      ],
+      "uncertainty": "未对该站点或导出格式作运行验证，仓库转移与官方背书需要维护者决定。",
+      "secondary_tags": [
+        "生态工具",
+        "在线主题编辑器"
+      ],
+      "category_name": "使用咨询、文档与生态工具",
+      "original_labels": [
+        "enhancement"
+      ],
+      "created_at": "2026-08-23T00:19:36Z",
+      "updated_at": "2026-08-30T06:34:21Z",
+      "comment_count": 2,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/2085",
+        "https://github.com/osfans/trime/issues/2085#issuecomment-5465780371",
+        "https://github.com/osfans/trime/issues/2085#issuecomment-5467173830"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 2068,
+      "title": "如何用backspace左滑来实现选择文字并删除？（滑动自由向左选词且松开即删除）",
+      "url": "https://github.com/osfans/trime/issues/2068",
+      "primary_category": "F",
+      "kind": "feature_request",
+      "priority": "P2",
+      "summary": "请求退格左滑先选择、松开后一次删除，并提出触觉反馈差异。",
+      "evidence": [
+        "正文OneUI8.0/3.3.11希望左滑选词后松开删除，另称候选振动弱于按键、最大音效振感偏弱。",
+        "评论建议现有slide_delete；另一评论明确它是边滑边删/恢复，会产生很多撤销/重做步骤，松开一次删除更利于撤销。"
+      ],
+      "reproduction_status": "本次仅静态分诊，未运行应用。现有替代动作与请求语义不同，属于待设计的手势功能。",
+      "next_action": "design_discussion",
+      "related_open_prs": [],
+      "proposed_work_unit": "实现可预览选区、释放一次删除、取消不删除的退格滑动选择流程，并让一次操作可作为一次撤销。",
+      "acceptance": [
+        "拖动时只更新选区，释放仅删除最终选区一次，取消恢复原选区。",
+        "一次撤销恢复本次删除，方向往返和跨中英文/emoji边界行为正确。",
+        "与现有slide_delete及左右swipe配置兼容，触觉强度问题另取设备对照。"
+      ],
+      "uncertainty": "编辑器对选区和撤销的支持不同；该issue的振动/音量反馈不能未经证据并入手势根因。",
+      "secondary_tags": [
+        "滑动删除",
+        "撤销",
+        "触觉反馈"
+      ],
+      "category_name": "手势、光标、按键反馈与语音",
+      "original_labels": [
+        "enhancement"
+      ],
+      "created_at": "2026-08-11T09:45:18Z",
+      "updated_at": "2026-08-14T00:20:09Z",
+      "comment_count": 2,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/2068",
+        "https://github.com/osfans/trime/issues/2068#issuecomment-5267326905",
+        "https://github.com/osfans/trime/issues/2068#issuecomment-5287895337"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 2048,
+      "title": "Bug",
+      "url": "https://github.com/osfans/trime/issues/2048",
+      "primary_category": "A",
+      "kind": "bug_report",
+      "priority": "P1",
+      "summary": "主题部署路径发生librime原生崩溃，现有堆栈不完整。",
+      "evidence": [
+        "正文给出Android16/HyperOS3的__dynamic_cast→ConfigFileUpdate::Run→RimeDeployConfigFile→ThemeManager栈，版本3.3.11-7。",
+        "复现步骤仅“编译输入法”；维护者评论称错误信息不完整，无法分析具体原因。"
+      ],
+      "reproduction_status": "本次仅静态分诊，未运行应用。存在用户原生崩溃栈，缺信号、故障地址、完整tombstone与触发主题。",
+      "next_action": "needs_information",
+      "related_open_prs": [],
+      "proposed_work_unit": "补齐主题部署原生崩溃的最小配置和可符号化tombstone，确定是librime依赖还是同文调用/并发导致后完成修复。",
+      "acceptance": [
+        "取得完整tombstone、对应ABI/符号与准确APK。",
+        "明确触发的是构建、启动还是切换主题，并有最小可重复主题。",
+        "修复后重复部署与主题切换不崩溃，保留依赖回归样本。"
+      ],
+      "uncertainty": "栈在librime ConfigFileUpdate不等于已证实上游库缺陷；与#2186 Unicode转换没有直接证据关联。",
+      "secondary_tags": [
+        "native crash",
+        "部署",
+        "信息不足"
+      ],
+      "category_name": "稳定性与性能",
+      "original_labels": [
+        "bug"
+      ],
+      "created_at": "2026-07-16T11:27:39Z",
+      "updated_at": "2026-07-19T00:48:27Z",
+      "comment_count": 1,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/2048",
+        "https://github.com/osfans/trime/issues/2048#issuecomment-5013569238"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 2044,
+      "title": "滑动空格时通过震动表示光标移动",
+      "url": "https://github.com/osfans/trime/issues/2044",
+      "primary_category": "F",
+      "kind": "feature_request",
+      "priority": "P2",
+      "summary": "空格滑动光标希望每移动一格提供振动反馈。",
+      "evidence": [
+        "正文以Gboard/Fcitx为参照，请求一次光标步进对应一次振动。",
+        "评论补充退格滑动删除也希望有逐步触觉反馈。"
+      ],
+      "reproduction_status": "本次仅静态分诊，未运行应用。功能请求，无现有振动失败的复现结论。",
+      "next_action": "design_discussion",
+      "related_open_prs": [],
+      "proposed_work_unit": "为空格光标拖动及可选的逐步滑动删除提供按实际步进触发的触觉反馈，并遵循既有振动设置。",
+      "acceptance": [
+        "实际移动一个逻辑步进触发一次反馈，停留、回弹或边界无移动时不反复振动。",
+        "快速拖动不过度排队，禁用振动时保持静默。",
+        "光标/删除步进与多码点字符边界定义一致。"
+      ],
+      "uncertainty": "具体反馈强度、是否覆盖删除和配置默认值尚需产品决定；#2192按压缩放动画不覆盖此触觉请求。",
+      "secondary_tags": [
+        "光标",
+        "振动",
+        "手势"
+      ],
+      "category_name": "手势、光标、按键反馈与语音",
+      "original_labels": [
+        "enhancement"
+      ],
+      "created_at": "2026-07-11T13:04:23Z",
+      "updated_at": "2026-07-19T21:00:16Z",
+      "comment_count": 1,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/2044",
+        "https://github.com/osfans/trime/issues/2044#issuecomment-5017357131"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 2033,
+      "title": "popup的label显示不正常",
+      "url": "https://github.com/osfans/trime/issues/2033",
+      "primary_category": "C",
+      "kind": "bug_report",
+      "priority": "P2",
+      "summary": "长按弹出键盘中的多字符动作标签显示不全。",
+      "evidence": [
+        "正文给出Return popup:[TrimeWiki,Settings]与期望“wiki/设置”，称只显示w/设，调整popup_width及popup_text_size无效。",
+        "报告3.3.10；当前上游PopupKeyboardUi已使用AutoScaleTextView，但PopupDelegate直接以keys作为labels，命名动作与显示标签的关系仍需复核。",
+        "抓取时无评论，尚无后续维护者或用户验证。"
+      ],
+      "reproduction_status": "本次仅静态分诊，未运行应用。历史最小配置明确；当前弹出键盘实现已重构，尚未复现。",
+      "next_action": "historical_retest",
+      "related_open_prs": [],
+      "proposed_work_unit": "保证弹出键盘能正确解析动作标签并显示多字符文字，同时保持激活的动作与显示一致。",
+      "acceptance": [
+        "给定Return最小配置显示完整wiki/设置或定义的合理缩放形式。",
+        "选择后仍触发相应动作，不把标签字符串误提交。",
+        "窄屏、不同popup_width和字号下可读且不超出弹出键界。"
+      ],
+      "uncertainty": "当前named-action label语义及旧版单字符截取根因未确定；#2195只处理主按键内容，不应当作此问题已有覆盖。",
+      "secondary_tags": [
+        "popup",
+        "标签",
+        "历史版本"
+      ],
+      "category_name": "键盘布局、主题与渲染",
+      "original_labels": [
+        "bug"
+      ],
+      "created_at": "2026-06-27T03:18:31Z",
+      "updated_at": "2026-06-27T03:18:31Z",
+      "comment_count": 0,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/2033"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 2016,
+      "title": "[BUG] custom preset_keyboards/default not applied after deployment (v3.3.10)",
+      "url": "https://github.com/osfans/trime/issues/2016",
+      "primary_category": "D",
+      "kind": "question",
+      "priority": "P3",
+      "summary": "把裸键盘定义存成mm.yaml后期望出现在主题选择列表。",
+      "evidence": [
+        "正文只有mm.yaml与preset_keyboards/default，期望出现“测试键盘”主题；3.3.5和3.3.10均未识别。",
+        "维护者解释主题和方案部署分离，改主题后重新选择即可部署；用户追问缺少可被新版识别的完整配置文档。",
+        "a047f747 ThemeFilesManager仅枚举name.endsWith(\"trime.yaml\")文件，正文mm.yaml不满足主题文件命名规则。"
+      ],
+      "reproduction_status": "本次仅静态分诊，未运行应用。配置命名/完整主题入口与预期不符，尚无有效主题被忽略的证据。",
+      "next_action": "configuration_or_docs",
+      "related_open_prs": [],
+      "proposed_work_unit": "提供可加载的最小xxx.trime.yaml或基于现有主题的custom patch教程，解释主题、键盘布局与输入方案部署的区别。",
+      "acceptance": [
+        "从干净用户目录按教程可在主题列表选择最小主题并输入a/b/空格。",
+        "说明键盘name不会自行生成新主题入口。",
+        "列明文件命名、必要字段和重选主题步骤。"
+      ],
+      "uncertainty": "尚未运行正文配置的修正版，第三方旧主题兼容问题需要独立最小样本。",
+      "secondary_tags": [
+        "主题配置",
+        "文件命名",
+        "文档"
+      ],
+      "category_name": "存储、配置、部署与用户词库",
+      "original_labels": [
+        "bug"
+      ],
+      "created_at": "2026-06-01T06:53:28Z",
+      "updated_at": "2026-06-03T13:01:18Z",
+      "comment_count": 2,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/2016",
+        "https://github.com/osfans/trime/issues/2016#issuecomment-4604305133",
+        "https://github.com/osfans/trime/issues/2016#issuecomment-4612565295"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 2015,
+      "title": "像preset_keyboards添加键盘布局一样，给liquid_keyboard添加各种不同的布局。",
+      "url": "https://github.com/osfans/trime/issues/2015",
+      "primary_category": "C",
+      "kind": "feature_request",
+      "priority": "P2",
+      "summary": "液态键盘希望像preset_keyboards一样定义多种布局。",
+      "evidence": [
+        "正文仅提出liquid_keyboard支持不同布局，Android15/nightly 277b8ea2；未给出所需行列、跨格或页面示例。",
+        "抓取时无评论，尚无后续维护者或用户验证。"
+      ],
+      "reproduction_status": "本次仅静态分诊，未运行应用。抽象扩展请求，缺少具体布局与兼容契约。",
+      "next_action": "design_discussion",
+      "related_open_prs": [],
+      "proposed_work_unit": "基于实际示例定义液态键盘多布局配置和切换契约，保持旧液态键盘配置兼容。",
+      "acceptance": [
+        "明确至少两种不能由现有液态键盘参数表达的目标布局。",
+        "配置能加载、切换与回到默认布局，现有符号/剪贴板页面无回归。",
+        "有完整主题示例和错误配置诊断。"
+      ],
+      "uncertainty": "不能把“像preset_keyboards”直接转成复制一套配置解析器；需先确认数据页和按键动作模型边界。",
+      "secondary_tags": [
+        "液态键盘",
+        "布局扩展"
+      ],
+      "category_name": "键盘布局、主题与渲染",
+      "original_labels": [
+        "enhancement"
+      ],
+      "created_at": "2026-06-01T00:47:21Z",
+      "updated_at": "2026-06-01T00:47:21Z",
+      "comment_count": 0,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/2015"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 2011,
+      "title": "随浏览器无痕模式一起无痕",
+      "url": "https://github.com/osfans/trime/issues/2011",
+      "primary_category": "E",
+      "kind": "feature_request",
+      "priority": "P2",
+      "summary": "浏览器无痕时希望同文停止输入历史及用户词学习。",
+      "evidence": [
+        "正文明确目标是不记录输入历史和自造词，参考Gboard的浏览器无痕联动。",
+        "维护者2026-05-30称需要librime支持，单靠同文无法做到。"
+      ],
+      "reproduction_status": "本次仅静态分诊，未运行应用。隐私功能需求；没有现成的端到端无学习实现证据。",
+      "next_action": "upstream_dependency",
+      "related_open_prs": [],
+      "proposed_work_unit": "先确认librime对会话禁学习/禁持久化的支持边界，再把编辑器隐私提示连接到可验证的无学习会话策略。",
+      "acceptance": [
+        "进入和退出编辑器隐私模式时会话状态明确，不污染其他编辑器。",
+        "隐私输入不新增用户词或词频学习，重启后词库和相关历史不含该次输入。",
+        "说明浏览器是否提供隐私信号以及不提供时的行为。"
+      ],
+      "uncertainty": "不能仅设置Android标志或隐藏UI就声称词库无痕；需验证引擎实际持久化路径。",
+      "secondary_tags": [
+        "无痕",
+        "用户词学习",
+        "librime依赖"
+      ],
+      "category_name": "剪贴板、隐私与内容处理",
+      "original_labels": [
+        "enhancement",
+        "upstream"
+      ],
+      "created_at": "2026-05-28T09:14:24Z",
+      "updated_at": "2026-05-30T05:05:34Z",
+      "comment_count": 1,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/2011",
+        "https://github.com/osfans/trime/issues/2011#issuecomment-4581747603"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 2009,
+      "title": "關於切換輸入法的問題",
+      "url": "https://github.com/osfans/trime/issues/2009",
+      "primary_category": "I",
+      "kind": "question",
+      "priority": "P3",
+      "summary": "希望显示当前方案，并追问下一方案快捷键定义。",
+      "evidence": [
+        "正文要求用户能知道当前方案；评论给出preset_keys/space/label:\"\"，提问者明确回复有用。",
+        "后续另一用户追问Schema_switch/Schema_switchcn无响应，评论给出Control+Shift+1/6定义，最后仍不清楚如何引入定义。",
+        "当前内置主题有Schema_switch定义，但实际方案快捷键仍取决于方案键绑定。"
+      ],
+      "reproduction_status": "本次仅静态分诊，未运行应用。原始显示问题已有用户确认配置解法，后续命令定义咨询尚未完全解决。",
+      "next_action": "configuration_or_docs",
+      "related_open_prs": [],
+      "proposed_work_unit": "补充空格显示方案名与自定义主题引入方案切换按键的完整配置示例，说明依赖的方案热键。",
+      "acceptance": [
+        "按示例清空空格标签后显示当前方案名。",
+        "使用完整主题patch可触发下一方案，解释无响应时应查的switcher热键。",
+        "区分切换输入法、输入方案和键盘布局。"
+      ],
+      "uncertainty": "评论中的Schema_switchcn并非对所有方案都通用的引擎命令，不能保证任意配置有效。",
+      "secondary_tags": [
+        "方案名",
+        "快捷键",
+        "原问题已有解法"
+      ],
+      "category_name": "使用咨询、文档与生态工具",
+      "original_labels": [
+        "enhancement"
+      ],
+      "created_at": "2026-05-26T13:47:44Z",
+      "updated_at": "2026-05-28T22:57:16Z",
+      "comment_count": 7,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/2009",
+        "https://github.com/osfans/trime/issues/2009#issuecomment-4555145880",
+        "https://github.com/osfans/trime/issues/2009#issuecomment-4560077334",
+        "https://github.com/osfans/trime/issues/2009#issuecomment-4560518471",
+        "https://github.com/osfans/trime/issues/2009#issuecomment-4562376406",
+        "https://github.com/osfans/trime/issues/2009#issuecomment-4562919920",
+        "https://github.com/osfans/trime/issues/2009#issuecomment-4563071315",
+        "https://github.com/osfans/trime/issues/2009#issuecomment-4569010369"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 2008,
+      "title": "在选取配色时会崩溃",
+      "url": "https://github.com/osfans/trime/issues/2008",
+      "primary_category": "A",
+      "kind": "bug_report",
+      "priority": "P1",
+      "summary": "同文未选中时跳过向导后打开配色触发未初始化主题崩溃。",
+      "evidence": [
+        "正文提供万象拼音、切到微信输入法、跳过向导、再次打开配色的稳定步骤，Android16/RedmiK70Ultra。",
+        "已读取附件2008.txt：Crash stacktrace为ThemeManager.activeTheme的lateinit _activeTheme has not been initialized。",
+        "a047f747 ThemeManager.activeTheme getter已调用ensureActiveTheme，静态上不再沿用历史裸访问。",
+        "抓取时无评论，尚无后续维护者或用户验证。"
+      ],
+      "reproduction_status": "本次仅静态分诊，未运行应用。历史日志已证实该异常；当前代码不同，尚未运行原步骤。",
+      "next_action": "historical_retest",
+      "related_open_prs": [],
+      "proposed_work_unit": "按非默认IME、跳过向导、冷启动设置的完整流程回归配色入口；若仍失败再补主题就绪守卫与错误恢复。",
+      "acceptance": [
+        "同文未选中、冷启动、跳过向导时打开配色菜单不抛未初始化异常。",
+        "无有效主题时给出可恢复反馈，有主题时正常切换配色。",
+        "记录当前版本回归结果再决定关闭或修补。"
+      ],
+      "uncertainty": "源码ensureActiveTheme提示历史崩溃路径可能已改变，不等于设备已验证修复；#2188只涉及延迟创建IME视图。",
+      "secondary_tags": [
+        "主题初始化",
+        "历史崩溃",
+        "附件已读"
+      ],
+      "category_name": "稳定性与性能",
+      "original_labels": [
+        "bug"
+      ],
+      "created_at": "2026-05-24T10:22:18Z",
+      "updated_at": "2026-05-24T10:22:18Z",
+      "comment_count": 0,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/2008"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 2003,
+      "title": "移动端虚拟键盘存在响应点击方面的问题",
+      "url": "https://github.com/osfans/trime/issues/2003",
+      "primary_category": "G",
+      "kind": "bug_report",
+      "priority": "P2",
+      "summary": "HarmonyOS下工具菜单滚动到边界后按钮间歇失去点击响应。",
+      "evidence": [
+        "正文给出低键盘高度、三点菜单滚动到顶部/底部按钮不响应，中间位置恢复，HarmonyOS4.3/3.3.10。",
+        "维护者评论称HarmonyOS各版本均有此现象，暂时没有修复办法。"
+      ],
+      "reproduction_status": "本次仅静态分诊，未运行应用。维护者有平台范围确认，但无已定位的事件拦截根因或当前版复测。",
+      "next_action": "reproduce",
+      "related_open_prs": [],
+      "proposed_work_unit": "在HarmonyOS受影响设备记录滚动边界后的触摸事件与父视图拦截，形成可独立复现的菜单点击兼容修复。",
+      "acceptance": [
+        "顶部、底部与中间的菜单项都能在滚动停止后正常点击。",
+        "正常Android对照无回归，惯性滚动和再次拖动响应及时。",
+        "若确认为系统组件缺陷，保留最小平台示例与可行回避策略。"
+      ],
+      "uncertainty": "维护者称暂无法修复不代表已确认上游依赖根因；需平台设备，不宜仅凭模拟器断定关闭。",
+      "secondary_tags": [
+        "HarmonyOS",
+        "滚动边界",
+        "触摸"
+      ],
+      "category_name": "无障碍与系统窗口适配",
+      "original_labels": [
+        "bug",
+        "help-wanted"
+      ],
+      "created_at": "2026-05-11T07:43:46Z",
+      "updated_at": "2026-05-16T14:55:13Z",
+      "comment_count": 1,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/2003",
+        "https://github.com/osfans/trime/issues/2003#issuecomment-4467188468"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 1981,
+      "title": "部署无法结束",
+      "url": "https://github.com/osfans/trime/issues/1981",
+      "primary_category": "D",
+      "kind": "bug_report",
+      "priority": "P1",
+      "summary": "自定义多方案部署长期不结束，切入输入法后出现空白与启动卡住。",
+      "evidence": [
+        "正文给出rime-settings仓库、OnePlusAce5/Android15、3.3.9；评论称3.3.9-54-nightly同样发生。",
+        "已读取nightly附件1981.txt：部署多方案日志在double_pinyin_ziguang准备后未见完成，夹有LOG_FLOWCTRL丢日志，后续多次打开LogActivity，未提供完整线程快照。",
+        "空白输入视图是部署未结束时强行切入的次级症状，不能单独证明输入视图初始化根因。"
+      ],
+      "reproduction_status": "本次仅静态分诊，未运行应用。用户跨正式/夜版复现；日志不足以区分引擎阻塞、状态通知缺失或配置问题。",
+      "next_action": "reproduce",
+      "related_open_prs": [
+        {
+          "number": 2188,
+          "relation": "possible_relation",
+          "url": "https://github.com/osfans/trime/pull/2188",
+          "scope": "仅与部署中切入后空白输入视图症状可能相关，主部署阻塞不在PR覆盖范围。"
+        }
+      ],
+      "proposed_work_unit": "固定该配置仓库版本，逐步缩减方案并采集部署任务/线程状态，保证部署完成或失败能结束通知且键盘可恢复。",
+      "acceptance": [
+        "同一配置可稳定得到成功或明确失败结果，通知与实际部署状态一致。",
+        "部署中切换为同文不会永久卡住App和输入视图。",
+        "保留失败配置的诊断和用户数据，不能通过固定超时冒充部署完成。"
+      ],
+      "uncertainty": "现有#2182处理Logcat取消而非部署引擎超时；#2188可能只改善空白视图，均不能宣称解决部署不结束。",
+      "secondary_tags": [
+        "部署阻塞",
+        "多方案",
+        "附件已读",
+        "关联#1829"
+      ],
+      "category_name": "存储、配置、部署与用户词库",
+      "original_labels": [
+        "bug"
+      ],
+      "created_at": "2026-04-13T16:45:58Z",
+      "updated_at": "2026-04-13T17:34:58Z",
+      "comment_count": 1,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/1981",
+        "https://github.com/osfans/trime/issues/1981#issuecomment-4238399768"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 1942,
+      "title": "中文輸入時字母自動上屏",
+      "url": "https://github.com/osfans/trime/issues/1942",
+      "primary_category": "B",
+      "kind": "bug_report",
+      "priority": "P1",
+      "summary": "中文组合输入中原始字母偶发提前上屏。",
+      "evidence": [
+        "正文报告仓颉、OneUI8/Android16，3.3.7与3.3.9均出现。",
+        "评论补充HyperOS2、明月拼音/简化字/wubi98均偶发，另有鼠须管同现象反馈。",
+        "维护者评论判断看起来是librime的bug，但尚无精确按键序列或引擎追踪。"
+      ],
+      "reproduction_status": "本次仅静态分诊，未运行应用。跨方案、跨前端的用户反馈提高引擎关联可能性，未完成最小复现。",
+      "next_action": "upstream_dependency",
+      "related_open_prs": [],
+      "proposed_work_unit": "捕获触发提前提交的按键序列、方案与引擎事件，在librime最小环境比较并协同修复组合态提交行为。",
+      "acceptance": [
+        "固定按键和方案能复现或采集到提前commit的完整事件链。",
+        "同一序列在修复前后及另一Rime前端对照。",
+        "中文组合期间仅按方案规则提交，不再无意插入原始字母。"
+      ],
+      "uncertainty": "librime归因仍为维护者推测，亦需排除方案自动上屏配置与客户端重复发送。",
+      "secondary_tags": [
+        "提前上屏",
+        "librime疑似",
+        "跨方案"
+      ],
+      "category_name": "输入、方案与候选",
+      "original_labels": [
+        "bug",
+        "upstream"
+      ],
+      "created_at": "2026-03-09T02:56:23Z",
+      "updated_at": "2026-04-14T13:30:55Z",
+      "comment_count": 3,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/1942",
+        "https://github.com/osfans/trime/issues/1942#issuecomment-4035980391",
+        "https://github.com/osfans/trime/issues/1942#issuecomment-4088427294",
+        "https://github.com/osfans/trime/issues/1942#issuecomment-4244264323"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 1938,
+      "title": "文本操作和剪贴板",
+      "url": "https://github.com/osfans/trime/issues/1938",
+      "primary_category": "F",
+      "kind": "feature_request",
+      "priority": "P3",
+      "summary": "请求方向键、全选等文本编辑面板及剪贴板入口。",
+      "evidence": [
+        "正文仅请求类似Gboard的文本操作面板和剪贴板。",
+        "a047f747标准主题已定义Keyboard_editor和工具栏编辑按钮，也有clipboard_window；应先确认作者是否未发现已有入口。",
+        "抓取时无评论，尚无后续维护者或用户验证。"
+      ],
+      "reproduction_status": "本次仅静态分诊，未运行应用。已有功能与请求有明显重合，尚不清楚期望差异。",
+      "next_action": "configuration_or_docs",
+      "related_open_prs": [],
+      "proposed_work_unit": "提供当前标准主题的编辑键盘与剪贴板入口说明；收集已有面板缺少的具体操作后再决定扩展。",
+      "acceptance": [
+        "用户可按说明打开编辑面板，使用方向键、全选和剪贴板。",
+        "若有功能缺口，给出当前行为与期望的明确差异。"
+      ],
+      "uncertainty": "未运行验证标准主题所有文本操作键，不能据源码存在入口便断言完全满足Gboard体验。",
+      "secondary_tags": [
+        "编辑面板",
+        "已有入口",
+        "剪贴板"
+      ],
+      "category_name": "手势、光标、按键反馈与语音",
+      "original_labels": [
+        "enhancement"
+      ],
+      "created_at": "2026-03-05T14:35:12Z",
+      "updated_at": "2026-03-05T14:35:12Z",
+      "comment_count": 0,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/1938"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 1934,
+      "title": "请求支持与「说点啥」语音输入键盘的联动",
+      "url": "https://github.com/osfans/trime/issues/1934",
+      "primary_category": "F",
+      "kind": "feature_request",
+      "priority": "P2",
+      "summary": "希望集成说点啥语音服务，维护者倾向通用SpeechRecognizer接口。",
+      "evidence": [
+        "正文作者提供基于AIDL的同文修改版，希望加入官方，可用开关或新动作调用。",
+        "维护者不倾向为每App专用AIDL适配，倾向恢复通用SpeechRecognizer；作者称已尝试RecognitionService。",
+        "评论有SamsungS20/Android13 demo成功和Flyme12后台录音被截断反馈；2026-07-31作者称官方方案无进展，AIDL仍由修改版维护。"
+      ],
+      "reproduction_status": "本次仅静态分诊，未运行应用。有外部demo和ROM差异，尚无同文官方实现或共识设计。",
+      "next_action": "design_discussion",
+      "related_open_prs": [],
+      "proposed_work_unit": "设计并验证基于系统RecognitionService的通用语音输入集成，包含服务选择、录音UI、取消和结果提交生命周期。",
+      "acceptance": [
+        "至少两个兼容服务可被选择并通过标准接口识别。",
+        "识别中取消、切编辑器、模型未就绪和后台录音受限有明确结果。",
+        "最终文本只提交当前目标，不添加无依据联网权限需求；评估Flyme与三星差异。"
+      ],
+      "uncertainty": "评论关于自动续听的AI建议未经验证；不得直接把专用AIDL分支合入视为维护者已接受。",
+      "secondary_tags": [
+        "SpeechRecognizer",
+        "RecognitionService",
+        "第三方集成"
+      ],
+      "category_name": "手势、光标、按键反馈与语音",
+      "original_labels": [
+        "enhancement"
+      ],
+      "created_at": "2026-02-22T14:24:47Z",
+      "updated_at": "2026-07-31T09:20:47Z",
+      "comment_count": 7,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/1934",
+        "https://github.com/osfans/trime/issues/1934#issuecomment-4012459959",
+        "https://github.com/osfans/trime/issues/1934#issuecomment-4012489193",
+        "https://github.com/osfans/trime/issues/1934#issuecomment-4012519845",
+        "https://github.com/osfans/trime/issues/1934#issuecomment-4275858802",
+        "https://github.com/osfans/trime/issues/1934#issuecomment-4358340425",
+        "https://github.com/osfans/trime/issues/1934#issuecomment-5139005549",
+        "https://github.com/osfans/trime/issues/1934#issuecomment-5141339113"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 1915,
+      "title": "Cannot tap tool bar items after setting `style/keyboard_height`",
+      "url": "https://github.com/osfans/trime/issues/1915",
+      "primary_category": "C",
+      "kind": "bug_report",
+      "priority": "P2",
+      "summary": "设置keyboard_height后工具栏可点击区域与可见位置不一致。",
+      "evidence": [
+        "正文最小配置tongwenfeng.trime.custom.yaml patch style/keyboard_height:280，称工具栏中心不可触发，仅部分区域能点击。",
+        "报告Android16/F-Droid3.3.8，有示意截图；当前上游输入视图布局与主题模型均有后续重构。",
+        "抓取时无评论，尚无后续维护者或用户验证。"
+      ],
+      "reproduction_status": "本次仅静态分诊，未运行应用。配置与预期明确，尚未在a047f747验证。",
+      "next_action": "historical_retest",
+      "related_open_prs": [],
+      "proposed_work_unit": "回归固定键盘高度下工具栏布局和触摸区域，使所有可见工具栏按钮完整命中且不被键盘窗口覆盖。",
+      "acceptance": [
+        "keyboard_height:280及默认值下按钮中心、边缘均触发对应按钮。",
+        "横竖屏、液态窗口切换与重建输入视图后触摸区域仍与显示一致。",
+        "可见区域之外不触发按钮。"
+      ],
+      "uncertainty": "尚不能确定是父窗口覆盖、布局高度还是坐标变换；历史小版本报告需先复测。",
+      "secondary_tags": [
+        "触摸区域",
+        "固定高度"
+      ],
+      "category_name": "键盘布局、主题与渲染",
+      "original_labels": [
+        "bug"
+      ],
+      "created_at": "2026-01-20T01:01:16Z",
+      "updated_at": "2026-01-20T01:01:16Z",
+      "comment_count": 0,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/1915"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 1905,
+      "title": "wiki 里添加对一些参数和功能的说明",
+      "url": "https://github.com/osfans/trime/issues/1905",
+      "primary_category": "I",
+      "kind": "maintenance",
+      "priority": "P3",
+      "summary": "Wiki缺少横屏/液态键盘参数和剪贴板规则说明。",
+      "evidence": [
+        "正文指向仓库doc/Keyboard.md，要求Wiki或默认主题说明landscape_keyboard等参数，可用链接入口。",
+        "另明确提到剪贴板去重规则/过滤规则缺用法，曾查PR #462仍未成功。",
+        "抓取时无评论，尚无后续维护者或用户验证。"
+      ],
+      "reproduction_status": "本次仅静态分诊，未运行应用。文档发现性与示例不足，尚未逐项核对现Wiki。",
+      "next_action": "configuration_or_docs",
+      "related_open_prs": [],
+      "proposed_work_unit": "以当前配置解析和doc/Keyboard.md为准补齐公开文档入口及可执行的横屏、液态键盘、剪贴板正则示例。",
+      "acceptance": [
+        "Wiki或应用帮助有可发现的参数文档链接。",
+        "每个新增说明对应当前源码字段并有最小有效YAML。",
+        "剪贴板去重/过滤规则提供输入、正则和实际期望结果的示例。"
+      ],
+      "uncertainty": "需核对当下Wiki内容再确定缺项，不能把2年前文档中每个参数都默认视作仍受支持。",
+      "secondary_tags": [
+        "Wiki",
+        "参数文档",
+        "剪贴板规则"
+      ],
+      "category_name": "使用咨询、文档与生态工具",
+      "original_labels": [
+        "enhancement"
+      ],
+      "created_at": "2026-01-10T16:05:50Z",
+      "updated_at": "2026-01-10T16:05:50Z",
+      "comment_count": 0,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/1905"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 1897,
+      "title": "收藏夹增加分类",
+      "url": "https://github.com/osfans/trime/issues/1897",
+      "primary_category": "E",
+      "kind": "feature_request",
+      "priority": "P2",
+      "summary": "收藏夹内容较多时希望按分类整理。",
+      "evidence": [
+        "正文仅请求收藏夹分类，HyperOS2/3.3.8-nightly；未描述多分类、移动、排序和导出需求。",
+        "抓取时无评论，尚无后续维护者或用户验证。"
+      ],
+      "reproduction_status": "本次仅静态分诊，未运行应用。信息足以确认目标，数据模型和交互仍待设计。",
+      "next_action": "design_discussion",
+      "related_open_prs": [],
+      "proposed_work_unit": "为收藏夹设计分类创建、重命名、移动和筛选的完整流程，并定义旧数据迁移及分类删除语义。",
+      "acceptance": [
+        "旧收藏完整迁移，未分类项始终可访问。",
+        "可创建/重命名分类并移动收藏，重启后保持。",
+        "删除分类是否保留内容有清楚行为，备份/恢复不丢分类关系。"
+      ],
+      "uncertainty": "收藏分类不在#2191剪贴板历史搜索范围，不可视为已有PR覆盖。",
+      "secondary_tags": [
+        "收藏夹",
+        "分类",
+        "数据迁移"
+      ],
+      "category_name": "剪贴板、隐私与内容处理",
+      "original_labels": [
+        "enhancement"
+      ],
+      "created_at": "2026-01-07T13:56:34Z",
+      "updated_at": "2026-01-07T13:56:34Z",
+      "comment_count": 0,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/1897"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 1883,
+      "title": "加高 style/keyboard_padding_bottom 造成主鍵區底部空隙",
+      "url": "https://github.com/osfans/trime/issues/1883",
+      "primary_category": "G",
+      "kind": "feature_request",
+      "priority": "P2",
+      "summary": "希望独立调整底部导航栏附近区域高度以抬高键盘。",
+      "evidence": [
+        "正文原先建议keyboard_padding_bottom改为调导航栏，评论后作者改为请求新增独立参数。",
+        "评论解释现参数用于键盘底部边距；空白按键替代在Realme出现双下巴，且空键仍会振动，未满足期望。",
+        "当前上游BaseInputView按系统navigationBars/systemGestures inset布局，系统导航栏高度与主题底边距是不同来源。"
+      ],
+      "reproduction_status": "本次仅静态分诊，未运行应用。请求已有语义澄清，ROM导航栏限制与键盘扩展区域边界需设计。",
+      "next_action": "design_discussion",
+      "related_open_prs": [],
+      "proposed_work_unit": "定义用于抬高键盘的无交互底部区域，使其配色与系统导航栏融合，并保留现有padding参数含义。",
+      "acceptance": [
+        "Android14/Realme三键或手势导航下底部高度与配色符合明确定义。",
+        "空白区域不提交内容也不触发振动。",
+        "横竖屏及系统insets变化后不产生额外重叠或双倍留白。"
+      ],
+      "uncertainty": "应用未必能控制系统导航栏实际高度，需说明调整的是IME内区域还是系统窗口；不能直接重定义keyboard_padding_bottom。",
+      "secondary_tags": [
+        "导航栏",
+        "底部留白",
+        "参数设计"
+      ],
+      "category_name": "无障碍与系统窗口适配",
+      "original_labels": [
+        "enhancement"
+      ],
+      "created_at": "2026-01-03T08:14:43Z",
+      "updated_at": "2026-01-05T08:28:00Z",
+      "comment_count": 7,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/1883",
+        "https://github.com/osfans/trime/issues/1883#issuecomment-3706986283",
+        "https://github.com/osfans/trime/issues/1883#issuecomment-3707040044",
+        "https://github.com/osfans/trime/issues/1883#issuecomment-3707079334",
+        "https://github.com/osfans/trime/issues/1883#issuecomment-3707100798",
+        "https://github.com/osfans/trime/issues/1883#issuecomment-3708924302",
+        "https://github.com/osfans/trime/issues/1883#issuecomment-3709098585",
+        "https://github.com/osfans/trime/issues/1883#issuecomment-3709162905"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 1879,
+      "title": "在候选项显示后的短时间内，点击工具栏上的候选项，实际触发的仍然是对应位置的快捷按钮",
+      "url": "https://github.com/osfans/trime/issues/1879",
+      "primary_category": "B",
+      "kind": "bug_report",
+      "priority": "P1",
+      "summary": "候选已显示的瞬间点击仍触发原位置工具栏按钮。",
+      "evidence": [
+        "正文给出关闭浮动候选、中文态快速输入字母并立刻点击第一候选/三点位置的步骤，出现菜单但仍有输入。",
+        "维护者7月要求试新版；作者2026-10-08明确称3.3.12仍出现该状态。",
+        "a047f747 InputBarDelegate用ViewAnimator在工具栏/候选/分页标题间切换，候选列表更新驱动QuickBarStateMachine；需要核对可视与可点击状态更新时序。"
+      ],
+      "reproduction_status": "本次仅静态分诊，未运行应用。当前正式版仍有作者反馈，未由本次时序测试独立复现。",
+      "next_action": "reproduce",
+      "related_open_prs": [],
+      "proposed_work_unit": "使工具栏与候选区的显示、触摸目标和输入状态原子切换，防止候选可见后激活旧快捷按钮。",
+      "acceptance": [
+        "快速字母+候选点击不打开旧菜单，正确提交所选候选。",
+        "高频输入、取消组合、展开/收起候选和切换窗口均无旧目标残留。",
+        "记录事件与候选更新时序，回归验证不靠任意延迟屏蔽正常点击。"
+      ],
+      "uncertainty": "ViewAnimator是排查入口，不代表已定位其动画或线程为根因；父层触摸和候选更新顺序仍需复现。",
+      "secondary_tags": [
+        "时序",
+        "候选选择",
+        "工具栏"
+      ],
+      "category_name": "输入、方案与候选",
+      "original_labels": [
+        "bug"
+      ],
+      "created_at": "2026-01-02T09:08:50Z",
+      "updated_at": "2026-10-08T03:11:15Z",
+      "comment_count": 2,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/1879",
+        "https://github.com/osfans/trime/issues/1879#issuecomment-5096144913",
+        "https://github.com/osfans/trime/issues/1879#issuecomment-6051387280"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 1869,
+      "title": "「導航欄背景」不會立刻「跟隨鍵盤背景色」",
+      "url": "https://github.com/osfans/trime/issues/1869",
+      "primary_category": "G",
+      "kind": "bug_report",
+      "priority": "P2",
+      "summary": "更换配色后系统导航栏背景需再次唤起键盘才更新。",
+      "evidence": [
+        "正文Android14/3.3.7-nightly：YouTube、Maps等不立即变化，Chrome搜索栏正常，点击编辑区或重唤键盘后恢复。",
+        "a047f747 TrimeInputMethodService.onColorChangeListener已在主线程刷新颜色并显式调用navBarManager.evaluate。",
+        "抓取时无评论，尚无后续维护者或用户验证。"
+      ],
+      "reproduction_status": "本次仅静态分诊，未运行应用。历史应用差异明确；当前源码已有主动重评估，尚未设备回归。",
+      "next_action": "historical_retest",
+      "related_open_prs": [],
+      "proposed_work_unit": "在当前上游回归配色切换到系统导航栏背景更新的完整流程，若仍滞后修正窗口颜色刷新时机。",
+      "acceptance": [
+        "YouTube、Maps与Chrome中切换配色后导航栏立即与选定策略一致。",
+        "无需再次点编辑区或隐藏/显示键盘，深浅色图标对比正确。"
+      ],
+      "uncertainty": "当前evaluate调用可能已改变症状，不能据静态存在便宣称已修复；系统边到边策略因Android版本而异。",
+      "secondary_tags": [
+        "导航栏",
+        "配色更新",
+        "历史版本"
+      ],
+      "category_name": "无障碍与系统窗口适配",
+      "original_labels": [
+        "bug"
+      ],
+      "created_at": "2025-12-31T11:19:54Z",
+      "updated_at": "2025-12-31T11:19:54Z",
+      "comment_count": 0,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/1869"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 1865,
+      "title": "数字键盘点击“EN”切换后的中英文键盘和默认中英文键盘不一样",
+      "url": "https://github.com/osfans/trime/issues/1865",
+      "primary_category": "C",
+      "kind": "bug_report",
+      "priority": "P2",
+      "summary": "数字键盘EN入口进入专用英文布局，后续长按空格误入双拼布局。",
+      "evidence": [
+        "正文与评论明确普通用户从数字键盘点EN进入略有差异英文布局，再切中文得到风二十二双拼，无法按全拼输入。",
+        "评论确认该路径来自内置同文风配置，非用户自定义；维护者/贡献者解释英文键盘把空格长按映射为双拼切换，体验有误导。"
+      ],
+      "reproduction_status": "本次仅静态分诊，未运行应用。行为被评论解释为现有主题路由设计，尚需当前配置回归与变更共识。",
+      "next_action": "design_discussion",
+      "related_open_prs": [],
+      "proposed_work_unit": "重整标准主题数字→英文→中文的路由，使EN可预期进入通用英文并返回原中文布局，专用双拼入口保留明确名称。",
+      "acceptance": [
+        "数字页EN进入所标示的英文布局，切回中文恢复原方案/布局。",
+        "从全拼、仓颉及专用双拼进入后均有可预测返回路径。",
+        "主题帮助与标签说明专用布局，现有自定义路由不被误改。"
+      ],
+      "uncertainty": "属于配置设计误导而非已证实引擎切换错误，是否改变主题作者原习惯须达成共识。",
+      "secondary_tags": [
+        "标准主题",
+        "布局切换",
+        "双拼"
+      ],
+      "category_name": "键盘布局、主题与渲染",
+      "original_labels": [
+        "bug"
+      ],
+      "created_at": "2025-12-27T01:55:43Z",
+      "updated_at": "2026-01-07T03:29:33Z",
+      "comment_count": 5,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/1865",
+        "https://github.com/osfans/trime/issues/1865#issuecomment-3709139884",
+        "https://github.com/osfans/trime/issues/1865#issuecomment-3710145324",
+        "https://github.com/osfans/trime/issues/1865#issuecomment-3712304690",
+        "https://github.com/osfans/trime/issues/1865#issuecomment-3714918509",
+        "https://github.com/osfans/trime/issues/1865#issuecomment-3717180286"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 1860,
+      "title": "用户文件夹下“标准”主题出现bug",
+      "url": "https://github.com/osfans/trime/issues/1860",
+      "primary_category": "C",
+      "kind": "bug_report",
+      "priority": "P2",
+      "summary": "复制仓库主题到用户目录后Shift长按和剪贴板动作与内置主题不一致。",
+      "evidence": [
+        "正文在3.3.7正式版使用当时develop主题，出现Shift长按无锁定、剪贴板ActivityNotFoundException(CLIPBOARD_WINDOW)。",
+        "评论解释Shift锁定的long_click/shift_lock机制；作者2026-01-03确认删去long_click后问题1消失。",
+        "a047f747标准主题剪贴板已定义FUNCTION command:clipboard_window，不再沿用正文失败的外部Intent路径；需要对齐APK与主题版本。"
+      ],
+      "reproduction_status": "本次仅静态分诊，未运行应用。Shift项已有作者确认配置解法；剪贴板为历史日志，未证明同版当前主题仍失败。",
+      "next_action": "configuration_or_docs",
+      "related_open_prs": [],
+      "proposed_work_unit": "提供与发行版匹配的主题复制/覆盖说明和Shift锁定示例，并对未知Intent给可恢复错误；仅在同版配置仍失败时修补动作兼容。",
+      "acceptance": [
+        "同一发布版本的内置主题复制到用户目录后Shift及剪贴板行为一致。",
+        "说明不要直接把develop新主题当作旧发行版兼容配置。",
+        "无可处理的外部Intent不会使输入法崩溃，诊断能指向具体动作。"
+      ],
+      "uncertainty": "正文未锁定所下载主题的提交，版本不匹配只是强候选解释；尚未完整验证剪贴板历史崩溃是否另有兼容问题。",
+      "secondary_tags": [
+        "主题兼容",
+        "Shift",
+        "作者已解决一项",
+        "历史崩溃"
+      ],
+      "category_name": "键盘布局、主题与渲染",
+      "original_labels": [
+        "bug"
+      ],
+      "created_at": "2025-12-20T10:21:43Z",
+      "updated_at": "2026-01-03T10:43:28Z",
+      "comment_count": 2,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/1860",
+        "https://github.com/osfans/trime/issues/1860#issuecomment-3698172759",
+        "https://github.com/osfans/trime/issues/1860#issuecomment-3706966583"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 1853,
+      "title": "將【貼上後返回】的開關放在剪貼板上",
+      "url": "https://github.com/osfans/trime/issues/1853",
+      "primary_category": "E",
+      "kind": "feature_request",
+      "priority": "P3",
+      "summary": "在剪贴板面板直接切换“粘贴后返回”，方便临时连续粘贴。",
+      "evidence": [
+        "正文要求把已有设置开关放到剪贴板，Android 14、3.3.7 nightly；无评论。",
+        "a047f747 AppPrefs.kt已有CLIPBOARD_RETURN_AFTER_PASTE设置。"
+      ],
+      "reproduction_status": "功能请求；只读核查设置定义，未做界面或运行验证。",
+      "next_action": "design_discussion",
+      "related_open_prs": [
+        {
+          "number": 2191,
+          "url": "https://github.com/osfans/trime/pull/2191",
+          "relation": "possible_relation",
+          "scope": "同一剪贴板标题栏与粘贴返回偏好；搜索PR不覆盖快捷开关，若后续实现需协调控件布局。"
+        }
+      ],
+      "proposed_work_unit": "在剪贴板标题区域提供一个反映既有“粘贴后返回”偏好的开关，并直接复用同一偏好。",
+      "acceptance": [
+        "面板切换后立即改变下一次粘贴是否返回键盘。",
+        "设置页与面板显示同一状态，重开面板后保持。",
+        "连续粘贴时每次只向原编辑器提交一次文本。"
+      ],
+      "uncertainty": "需确认开关占位与可访问名称；#2191只增加搜索并遵循原偏好，未承诺实现快捷开关。",
+      "category_name": "剪贴板、隐私与内容处理",
+      "secondary_tags": [],
+      "original_labels": [
+        "enhancement"
+      ],
+      "created_at": "2025-12-12T11:44:53Z",
+      "updated_at": "2025-12-12T11:44:53Z",
+      "comment_count": 0,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/1853"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 1812,
+      "title": "Feature Request: Event-based Automatic Keyboard Switching for Multi-layer Input Methods",
+      "url": "https://github.com/osfans/trime/issues/1812",
+      "primary_category": "B",
+      "kind": "feature_request",
+      "priority": "P2",
+      "summary": "声韵分层方案希望按输入状态自动从韵母层返回声母层。",
+      "evidence": [
+        "正文提供声韵两层布局和逐键select的重复配置，Lua调用前端API失败。",
+        "维护者WhiredPlanck说明Lua API只作用于Rime，但在探索前后端通信：https://github.com/osfans/trime/issues/1812#issuecomment-3538002265。",
+        "a047f747 KeyboardWindow.kt:onRimeOptionUpdated已处理_keyboard_<id>切布局与_key_<id>动作；正文“没有沟通方式”不能当作当前事实。"
+      ],
+      "reproduction_status": "作者提供使用案例；上游源码已有部分桥接，未运行验证其是否满足该方案。",
+      "next_action": "configuration_or_docs",
+      "related_open_prs": [],
+      "proposed_work_unit": "用现有_keyboard_选项消息验证“韵母确认后回声母层”的最小声韵配置，并形成可复用的单事件示例。",
+      "acceptance": [
+        "选择一个声母后显示对应韵母层。",
+        "确认一个韵母后只输入一次完整音节并返回声母层。",
+        "明确选项消息复用/复位规则，不依赖不存在的Lua前端API。"
+      ],
+      "uncertainty": "现有选项通知是否每次重复触发、何时代表commit需验证；on_backspace_empty和完整状态机属于后续设计，当前未认定已支持。",
+      "category_name": "输入、方案与候选",
+      "secondary_tags": [],
+      "original_labels": [],
+      "created_at": "2025-11-16T03:18:26Z",
+      "updated_at": "2025-11-24T11:47:52Z",
+      "comment_count": 4,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/1812",
+        "https://github.com/osfans/trime/issues/1812#issuecomment-3537559879",
+        "https://github.com/osfans/trime/issues/1812#issuecomment-3538002265",
+        "https://github.com/osfans/trime/issues/1812#issuecomment-3540056734",
+        "https://github.com/osfans/trime/issues/1812#issuecomment-3570406535"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 1809,
+      "title": "ascii_keyboard似乎無效",
+      "url": "https://github.com/osfans/trime/issues/1809",
+      "primary_category": "C",
+      "kind": "bug_report",
+      "priority": "P2",
+      "summary": "Mode_switch不再按ascii_keyboard自动换布局，且用户希望在工具栏双向切换。",
+      "evidence": [
+        "正文在3.3.7 nightly提供ascii_keyboard: letter配置，点击Mode_switch只换模式不换布局。",
+        "贡献者ENOA-REIAH-UION明确不计划让Mode_switch承担布局切换，建议select: .ascii并表示将来废弃ascii_keyboard：https://github.com/osfans/trime/issues/1809#issuecomment-3713266988、3713343011。",
+        "后续评论确认工具栏可设action: Keyboard_ascii，但最后仍询问双向toggle：https://github.com/osfans/trime/issues/1809#issuecomment-4526841997、4602072754。",
+        "a047f747 KeyboardWindow.kt的.ascii仍读取activeKeyboard.asciiKeyboard，不能把未来废弃意见写成当前已删除。"
+      ],
+      "reproduction_status": "作者及其他用户报告历史行为差异；源码保留显式.ascii路径，未运行复现。",
+      "next_action": "configuration_or_docs",
+      "related_open_prs": [],
+      "proposed_work_unit": "发布并核对一个工具栏中英双布局显式切换配置，说明Mode_switch与布局选择的区别和ascii_keyboard现状。",
+      "acceptance": [
+        "使用两套可见差异布局时，示例能双向切换并保持模式与布局一致。",
+        "明确当前.ascii解析与未来迁移建议，避免承诺Mode_switch自动换布局。"
+      ],
+      "uncertainty": "贡献者的弃用方向不是正式已合并迁移；最后的单按钮toggle要求是否能用现有配置实现尚待验证；与#1477相关但触发入口不同。",
+      "category_name": "键盘布局、主题与渲染",
+      "secondary_tags": [],
+      "original_labels": [
+        "bug"
+      ],
+      "created_at": "2025-11-15T20:20:00Z",
+      "updated_at": "2026-06-02T11:47:22Z",
+      "comment_count": 9,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/1809",
+        "https://github.com/osfans/trime/issues/1809#issuecomment-3703789240",
+        "https://github.com/osfans/trime/issues/1809#issuecomment-3703899814",
+        "https://github.com/osfans/trime/issues/1809#issuecomment-3704390559",
+        "https://github.com/osfans/trime/issues/1809#issuecomment-3707852501",
+        "https://github.com/osfans/trime/issues/1809#issuecomment-3713266988",
+        "https://github.com/osfans/trime/issues/1809#issuecomment-3713343011",
+        "https://github.com/osfans/trime/issues/1809#issuecomment-3765151930",
+        "https://github.com/osfans/trime/issues/1809#issuecomment-4526841997",
+        "https://github.com/osfans/trime/issues/1809#issuecomment-4602072754"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 1791,
+      "title": "Potential UI thread blocking issue",
+      "url": "https://github.com/osfans/trime/issues/1791",
+      "primary_category": "A",
+      "kind": "bug_report",
+      "priority": "P2",
+      "summary": "怀疑字体加载和逐键绘制阻塞UI，但尚无卡顿测量。",
+      "evidence": [
+        "正文为源码分析，重现步骤写nothing；指出LiquidTabsUi/TabUi和旧KeyboardView绘制中的字体访问。",
+        "维护者先表示优化，后确认getTypeface优先取缓存，认为其不是卡顿主因：https://github.com/osfans/trime/issues/1791#issuecomment-3506430936、3507403678。",
+        "a047f747已使用ThemeFonts与KeyView等实现，旧调用路径需要重新对应。"
+      ],
+      "reproduction_status": "静态性能疑虑，维护者否定一个主要假设；没有量化复现或本轮性能测试。",
+      "next_action": "needs_information",
+      "related_open_prs": [],
+      "proposed_work_unit": "获取一个明确的冷启动或切液态页卡顿场景及主线程trace，定位一项可量化热点。",
+      "acceptance": [
+        "记录设备、字体文件、主题、版本及冷/热缓存条件。",
+        "trace给出重复出现的阻塞调用或帧耗时，能区分字体I/O、布局和绘制。",
+        "若定位热点，只围绕该热点给出前后同条件测量。"
+      ],
+      "uncertainty": "不能由同步调用推断实际性能瓶颈；#2195内容适配和#2192动画不是该问题的性能修复。",
+      "category_name": "稳定性与性能",
+      "secondary_tags": [],
+      "original_labels": [
+        "bug"
+      ],
+      "created_at": "2025-11-08T08:18:40Z",
+      "updated_at": "2025-11-09T02:51:39Z",
+      "comment_count": 2,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/1791",
+        "https://github.com/osfans/trime/issues/1791#issuecomment-3506430936",
+        "https://github.com/osfans/trime/issues/1791#issuecomment-3507403678"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 1778,
+      "title": "能否根据现有键盘自定义某一个按键",
+      "url": "https://github.com/osfans/trime/issues/1778",
+      "primary_category": "I",
+      "kind": "question",
+      "priority": "P3",
+      "summary": "询问如何只修改现有键盘的Shift编写态分词动作。",
+      "evidence": [
+        "正文希望将Shift编写态分词键改为双拼辅助码[。",
+        "用户gqqnbig提供preset_keyboards/qwerty/keys/@31/composing补丁及null取消方式：https://github.com/osfans/trime/issues/1778#issuecomment-3532344997。",
+        "作者回复会尝试，未回报结果：https://github.com/osfans/trime/issues/1778#issuecomment-3536292166。"
+      ],
+      "reproduction_status": "已有配置答复，作者未反馈验收；未本地运行。",
+      "next_action": "configuration_or_docs",
+      "related_open_prs": [],
+      "proposed_work_unit": "整理按键列表定点patch示例，把当前布局Shift的composing动作改为所需辅助码。",
+      "acceptance": [
+        "示例明确布局名和实际索引来源，不能假定所有主题都是@31。",
+        "编写时Shift触发辅助码；非编写时原Shift功能保留。"
+      ],
+      "uncertainty": "作者真实方案、辅助码是否被Rime alphabet接收未知；配置答复尚不能视为已解决。",
+      "category_name": "使用咨询、文档与生态工具",
+      "secondary_tags": [],
+      "original_labels": [
+        "enhancement"
+      ],
+      "created_at": "2025-10-29T08:33:50Z",
+      "updated_at": "2025-11-15T10:23:25Z",
+      "comment_count": 2,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/1778",
+        "https://github.com/osfans/trime/issues/1778#issuecomment-3532344997",
+        "https://github.com/osfans/trime/issues/1778#issuecomment-3536292166"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 1777,
+      "title": "请默认开启「点击候选词」功能",
+      "url": "https://github.com/osfans/trime/issues/1777",
+      "primary_category": "B",
+      "kind": "feature_request",
+      "priority": "P3",
+      "summary": "要求默认开启“点击候选词”设置，但维护者称该开关长期没有作用。",
+      "evidence": [
+        "正文要求默认开启虚拟键盘设置中的“点击候选词”。",
+        "维护者两次解释该项是空开关、没有实际作用且难以重新实现：https://github.com/osfans/trime/issues/1777#issuecomment-3469288003、3469380518。",
+        "作者仅确认指的是这个开关，未说明要改变哪种候选交互。"
+      ],
+      "reproduction_status": "需求语义尚不清楚；不能由开关状态推断候选点击功能失效。",
+      "next_action": "needs_information",
+      "related_open_prs": [],
+      "proposed_work_unit": "确定作者希望改变的一个具体候选点击行为，并核对现版本该设置是否仍存在/是否驱动该行为。",
+      "acceptance": [
+        "用“当前操作→当前结果→期望结果”明确单个候选交互。",
+        "确认开关若无作用，给出删除/解释该设置的可审阅方案；若有作用再讨论默认值。"
+      ],
+      "uncertainty": "维护者意见指历史空开关，不代表当前所有候选点击不工作；缺少当前版本与交互实例。",
+      "category_name": "输入、方案与候选",
+      "secondary_tags": [],
+      "original_labels": [
+        "enhancement"
+      ],
+      "created_at": "2025-10-28T06:13:19Z",
+      "updated_at": "2025-10-30T18:08:37Z",
+      "comment_count": 3,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/1777",
+        "https://github.com/osfans/trime/issues/1777#issuecomment-3469288003",
+        "https://github.com/osfans/trime/issues/1777#issuecomment-3469326681",
+        "https://github.com/osfans/trime/issues/1777#issuecomment-3469380518"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 1762,
+      "title": "toolbar上的按钮可否支持长按等不同动作",
+      "url": "https://github.com/osfans/trime/issues/1762",
+      "primary_category": "F",
+      "kind": "feature_request",
+      "priority": "P2",
+      "summary": "工具栏请求长按、连发及滑动动作，当前源码已接入部分能力。",
+      "evidence": [
+        "正文以2025-10-09 nightly为例要求工具栏支持long_click、repeatable和滑动。",
+        "维护者称基础技术已完备、后期接入：https://github.com/osfans/trime/issues/1762#issuecomment-3384288430。",
+        "a047f747 ToolBar.Button已有longPressAction，AlwaysUi/ButtonsBarUi已有接入，ToolButton按action设置isRepeatable。"
+      ],
+      "reproduction_status": "历史功能请求；长按和连发存在源码路径，未运行验收；工具栏滑动映射未由该核查确认。",
+      "next_action": "historical_retest",
+      "related_open_prs": [],
+      "proposed_work_unit": "用现有long_press_action和repeatable预设动作验收一个工具栏按钮的长按行为，并记录剩余滑动需求。",
+      "acceptance": [
+        "同一按钮点击触发click动作，长按触发指定长按动作且无额外点击。",
+        "可连发动作按住重复、松开停止。",
+        "给出对应当前配置名的最小示例，区分已验收行为与尚待设计的滑动。"
+      ],
+      "uncertainty": "原请求覆盖多种手势，源码存在路径不等于完整覆盖；#2192只加普通键按压动画，不实现工具栏动作映射。",
+      "category_name": "手势、光标、按键反馈与语音",
+      "secondary_tags": [],
+      "original_labels": [
+        "enhancement"
+      ],
+      "created_at": "2025-10-09T05:28:57Z",
+      "updated_at": "2026-01-14T21:11:22Z",
+      "comment_count": 1,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/1762",
+        "https://github.com/osfans/trime/issues/1762#issuecomment-3384288430"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 1761,
+      "title": "alternative models for STT voice input",
+      "url": "https://github.com/osfans/trime/issues/1761",
+      "primary_category": "F",
+      "kind": "feature_request",
+      "priority": "P3",
+      "summary": "推荐Kroko本地语音模型作为低延迟离线识别后端。",
+      "evidence": [
+        "正文为模型提供方推荐Kroko.ai与Android演示，未报告Trime现有功能故障。",
+        "维护者明确短期没有支持本地语音识别模型的计划：https://github.com/osfans/trime/issues/1761#issuecomment-3384294434。"
+      ],
+      "reproduction_status": "生态集成建议，无缺陷复现；未核验模型性能与集成效果。",
+      "next_action": "design_discussion",
+      "related_open_prs": [],
+      "proposed_work_unit": "形成一份仅针对外部语音输入法接入边界的决策记录，确认是否通过Android现有语音入口对接。",
+      "acceptance": [
+        "明确维护者是否接受内置模型或外部识别器这一个集成方向。",
+        "若采用外部识别器，给出调用与文字回传的单次流程及无识别器时行为。"
+      ],
+      "uncertainty": "厂商对大小、隐私、速度的描述未经本轮验证；不得将推荐当作Trime已有STT能力或路线承诺。",
+      "category_name": "手势、光标、按键反馈与语音",
+      "secondary_tags": [],
+      "original_labels": [
+        "enhancement"
+      ],
+      "created_at": "2025-10-08T11:16:12Z",
+      "updated_at": "2025-10-09T06:23:55Z",
+      "comment_count": 1,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/1761",
+        "https://github.com/osfans/trime/issues/1761#issuecomment-3384294434"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 1733,
+      "title": "Add option to choose the behavior of keys exactly at the center for the split keyboard",
+      "url": "https://github.com/osfans/trime/issues/1733",
+      "primary_category": "C",
+      "kind": "feature_request",
+      "priority": "P3",
+      "summary": "分割键盘希望可选择中线按键归左半还是右半。",
+      "evidence": [
+        "正文明确当前中线键默认归右，要求提供左右归属选项；Android16、3.3.6。",
+        "a047f747 Keyboard.kt在累计行权重超过50%时插入分割间隙，宽键超过20权重会吸收间隙；没有观察到该归属设置。"
+      ],
+      "reproduction_status": "功能请求，有现有布局算法静态依据；未运行布局验证。",
+      "next_action": "design_discussion",
+      "related_open_prs": [],
+      "proposed_work_unit": "为恰跨中线的一个普通按键定义可配置左右归属规则，并用奇数列最小布局验证。",
+      "acceptance": [
+        "同一奇数列布局切换选项时仅中线键归属改变。",
+        "按键无重叠且触摸区域与显示位置一致。",
+        "默认值保持既有方向，宽空格吸收间隙规则有明确说明。"
+      ],
+      "uncertainty": "“exactly at center”可能指键中心或累计边界，需要维护者确认配置语义；与#1414同算法但不是同一缺陷。",
+      "category_name": "键盘布局、主题与渲染",
+      "secondary_tags": [],
+      "original_labels": [
+        "enhancement"
+      ],
+      "created_at": "2025-09-10T04:41:27Z",
+      "updated_at": "2025-09-10T04:41:27Z",
+      "comment_count": 0,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/1733"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 1732,
+      "title": "Navigation buttons sometimes overlay the soft keyboard",
+      "url": "https://github.com/osfans/trime/issues/1732",
+      "primary_category": "G",
+      "kind": "bug_report",
+      "priority": "P2",
+      "summary": "Android15/16横屏三键导航可能覆盖键盘侧边。",
+      "evidence": [
+        "正文有横屏截图，GrapheneOS Android16开启导航按钮后右侧被覆盖。",
+        "维护者在Android15/16模拟器无法复现；作者指出覆盖宽度像挖孔区域：https://github.com/osfans/trime/issues/1732#issuecomment-3313199403、3313205557、3322633739。",
+        "另一用户报告小米Android15澎湃也受影响、Android14不复现：https://github.com/osfans/trime/issues/1732#issuecomment-3315094782。",
+        "a047f747 KeyboardWindow.computeAllowedWidth和BaseInputView已有systemBars/cutout相关路径，只能作为排查入口。"
+      ],
+      "reproduction_status": "多用户跨ROM报告，维护者模拟器未复现；当前上游/实体设备未本轮验证。",
+      "next_action": "reproduce",
+      "related_open_prs": [],
+      "proposed_work_unit": "在受影响Android15/16横屏三键导航场景记录实际窗口insets并修正侧边可用区域计算。",
+      "acceptance": [
+        "键盘最右列可见可点，导航按钮和挖孔安全区不覆盖按键。",
+        "左右横屏旋转均有效，竖屏与手势导航无新增空白或裁切。",
+        "保存ROM、显示挖孔设置和insets数据以解释设备差异。"
+      ],
+      "uncertainty": "GrapheneOS独有解释已被小米报告削弱，但根因未确认；不能仅凭模拟器正常判为上游系统问题。",
+      "category_name": "无障碍与系统窗口适配",
+      "secondary_tags": [],
+      "original_labels": [
+        "bug",
+        "status: needs reproduce"
+      ],
+      "created_at": "2025-09-10T04:37:42Z",
+      "updated_at": "2025-10-01T06:05:22Z",
+      "comment_count": 9,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/1732",
+        "https://github.com/osfans/trime/issues/1732#issuecomment-3299658696",
+        "https://github.com/osfans/trime/issues/1732#issuecomment-3299663680",
+        "https://github.com/osfans/trime/issues/1732#issuecomment-3307280499",
+        "https://github.com/osfans/trime/issues/1732#issuecomment-3308937128",
+        "https://github.com/osfans/trime/issues/1732#issuecomment-3312399819",
+        "https://github.com/osfans/trime/issues/1732#issuecomment-3313199403",
+        "https://github.com/osfans/trime/issues/1732#issuecomment-3313205557",
+        "https://github.com/osfans/trime/issues/1732#issuecomment-3315094782",
+        "https://github.com/osfans/trime/issues/1732#issuecomment-3322633739"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 1705,
+      "title": "什么时候支持滑行输入？",
+      "url": "https://github.com/osfans/trime/issues/1705",
+      "primary_category": "F",
+      "kind": "feature_request",
+      "priority": "P3",
+      "summary": "希望提供类似商业输入法的连续滑行输入。",
+      "evidence": [
+        "正文仅给搜狗/百度滑行输入参照，无具体识别规则。",
+        "维护者回复目前很难实现：https://github.com/osfans/trime/issues/1705#issuecomment-3354867703。"
+      ],
+      "reproduction_status": "大型功能建议，无可复现缺陷或原型验收。",
+      "next_action": "design_discussion",
+      "related_open_prs": [],
+      "proposed_work_unit": "先确定一个拼音连续轨迹到一个音节的最小滑行原型及其与既有四向swipe的选择规则。",
+      "acceptance": [
+        "给出固定轨迹、预期音节和取消轨迹的样例集合。",
+        "明确单击/长按/既有四向滑动不被误触发的手势边界。",
+        "只有原型达到约定识别结果后才扩展词频与模糊匹配。"
+      ],
+      "uncertainty": "没有候选算法、语料与性能目标；#1653是较窄的跨键事件扩展，不能当作完整滑行已实现。",
+      "category_name": "手势、光标、按键反馈与语音",
+      "secondary_tags": [],
+      "original_labels": [
+        "help-wanted",
+        "long-term",
+        "enhancement"
+      ],
+      "created_at": "2025-08-08T06:37:24Z",
+      "updated_at": "2025-10-01T06:01:51Z",
+      "comment_count": 1,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/1705",
+        "https://github.com/osfans/trime/issues/1705#issuecomment-3354867703"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 1704,
+      "title": "Remember ASCII mode by app",
+      "url": "https://github.com/osfans/trime/issues/1704",
+      "primary_category": "B",
+      "kind": "feature_request",
+      "priority": "P2",
+      "summary": "希望按应用记忆ASCII模式，避免同一应用每次重开键盘都重置。",
+      "evidence": [
+        "正文以Discord每次发送消息后重置模式为例，引用#555关于前台包名可感知的讨论。",
+        "a047f747 KeyboardWindow维护每布局lastAsciiMode及临时ASCII恢复，未见按packageName存储模式的映射。"
+      ],
+      "reproduction_status": "明确功能请求，有操作例子；未运行确认当前重置行为。",
+      "next_action": "design_discussion",
+      "related_open_prs": [],
+      "proposed_work_unit": "添加或设计按前台应用保存普通文本框ASCII模式的策略，覆盖同应用重开键盘这一个行为。",
+      "acceptance": [
+        "同应用关开键盘保留最后中英状态，两个应用各自记忆。",
+        "密码/邮箱/数字输入框的强制ASCII要求优先且离开后可恢复。",
+        "说明是否跨进程重启保存及与reset_ascii_mode_on_focus_change的优先级。"
+      ],
+      "uncertainty": "旧style/reset_ascii_mode与当前reset_ascii_mode_on_focus_change命名不同；不能把每布局记忆当作按应用记忆。",
+      "category_name": "输入、方案与候选",
+      "secondary_tags": [],
+      "original_labels": [
+        "enhancement"
+      ],
+      "created_at": "2025-08-07T04:10:33Z",
+      "updated_at": "2025-08-07T04:10:33Z",
+      "comment_count": 0,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/1704"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 1685,
+      "title": "在3.3.5中，设置了空按键的地方不显示出来",
+      "url": "https://github.com/osfans/trime/issues/1685",
+      "primary_category": "C",
+      "kind": "bug_report",
+      "priority": "P2",
+      "summary": "旧主题空按键占位在3.3.5后没有预期显示或宽度。",
+      "evidence": [
+        "正文的配置和效果主要以图片提供，报告HarmonyOS4.2、3.3.5及当时nightly。",
+        "贡献者本地旧源码build后确认问题，指出click为空时width可能为0：https://github.com/osfans/trime/issues/1685#issuecomment-3153115268；这是他人历史复现。",
+        "a047f747 Keyboard.kt把click.orAbsent==null视为空白占位并跳过创建Key，宽度仍取textKey.width；显式占位与有边框空键需区分。"
+      ],
+      "reproduction_status": "贡献者历史复现；当前布局算法已变化，配置图片未转成最小文本，本轮未运行。",
+      "next_action": "historical_retest",
+      "related_open_prs": [],
+      "proposed_work_unit": "将报告图片中的空键转成文本最小主题，验收显式width空白占位是否保留期望宽度。",
+      "acceptance": [
+        "无click且有width的占位按该宽度缩进下一键。",
+        "说明空白占位是否应绘制背景；若需要可见空键，给出明确可用表达式。",
+        "空占位不改变后续换行、总行高与触摸命中。"
+      ],
+      "uncertainty": "报告“显示空按键”可能意指空白宽度或有边框空键；需先确定期望语义，不宜根据旧代码直接改当前算法。",
+      "category_name": "键盘布局、主题与渲染",
+      "secondary_tags": [],
+      "original_labels": [
+        "bug"
+      ],
+      "created_at": "2025-07-07T03:03:54Z",
+      "updated_at": "2025-08-05T03:07:21Z",
+      "comment_count": 3,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/1685",
+        "https://github.com/osfans/trime/issues/1685#issuecomment-3043432665",
+        "https://github.com/osfans/trime/issues/1685#issuecomment-3043587609",
+        "https://github.com/osfans/trime/issues/1685#issuecomment-3153115268"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 1677,
+      "title": "输入法在特定网页输入框中键盘无法弹出",
+      "url": "https://github.com/osfans/trime/issues/1677",
+      "primary_category": "G",
+      "kind": "bug_report",
+      "priority": "P1",
+      "summary": "Chromium网页contenteditable占位元素可能让键盘弹出后立即关闭，阻断输入。",
+      "evidence": [
+        "正文提供contenteditable=false占位子元素、复现页面及连续onStartInputView/onFinishInputView日志；Android10、3.3.5。",
+        "维护者明确已复现；Brave Chromium140+Trime异常，Brave+fcitx及IceRaven Gecko均正常：https://github.com/osfans/trime/issues/1677#issuecomment-3368620675、3368737654。",
+        "维护者追踪调用栈认为系统通知收起，原因仍未知：https://github.com/osfans/trime/issues/1677#issuecomment-3369198247。"
+      ],
+      "reproduction_status": "维护者已在历史Chromium环境复现，根因未定；本轮未访问动态页面或运行设备。",
+      "next_action": "reproduce",
+      "related_open_prs": [],
+      "proposed_work_unit": "冻结一个包含不可编辑占位子元素的最小HTML，在当前Chromium中追踪导致IME关闭的焦点/窗口事件。",
+      "acceptance": [
+        "点击占位前的可编辑区域后键盘持续打开并可完成一段中文输入。",
+        "同页面删除占位元素的控制组与Gecko控制组结果记录清楚。",
+        "修正后正常失焦仍能收起键盘，不使用全局忽略hide回避。"
+      ],
+      "uncertainty": "浏览器/系统协作问题与Trime窗口实现相关性尚未拆开；#2188针对主题未就绪的延迟视图创建，不可据外观相似声称覆盖此关闭路径。",
+      "category_name": "无障碍与系统窗口适配",
+      "secondary_tags": [],
+      "original_labels": [
+        "bug",
+        "help-wanted"
+      ],
+      "created_at": "2025-06-27T05:11:20Z",
+      "updated_at": "2025-10-05T19:35:46Z",
+      "comment_count": 8,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/1677",
+        "https://github.com/osfans/trime/issues/1677#issuecomment-3368620675",
+        "https://github.com/osfans/trime/issues/1677#issuecomment-3368704308",
+        "https://github.com/osfans/trime/issues/1677#issuecomment-3368737654",
+        "https://github.com/osfans/trime/issues/1677#issuecomment-3368764402",
+        "https://github.com/osfans/trime/issues/1677#issuecomment-3369087500",
+        "https://github.com/osfans/trime/issues/1677#issuecomment-3369198247",
+        "https://github.com/osfans/trime/issues/1677#issuecomment-3369201198",
+        "https://github.com/osfans/trime/issues/1677#issuecomment-3369218361"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 1673,
+      "title": "Introduce WebView Keyboard / WebView 键盘",
+      "url": "https://github.com/osfans/trime/issues/1673",
+      "primary_category": "C",
+      "kind": "feature_request",
+      "priority": "P3",
+      "summary": "维护者探索用WebView渲染键盘以降低主题代码维护成本。",
+      "evidence": [
+        "正文引用fcitx5-keyboard-web和作者实验分支，附实验截图。",
+        "Bambooin关注可用性与现功能对齐，要求社区APK反馈：https://github.com/osfans/trime/issues/1673#issuecomment-3008128769。",
+        "WhiredPlanck提供web-alpha7实验APK和社区反馈：https://github.com/osfans/trime/issues/1673#issuecomment-3008184257；不等于主线实现或正式支持。"
+      ],
+      "reproduction_status": "有维护者实验分支和APK陈述，本轮未安装、未验证功能一致性。",
+      "next_action": "design_discussion",
+      "related_open_prs": [],
+      "proposed_work_unit": "为实验WebView键盘完成一个普通中文输入流程的功能对齐评审，决定是否进入主线试验入口。",
+      "acceptance": [
+        "原型可完成编码→候选→上屏→删除的闭环。",
+        "记录与现主题、手势、无障碍、离线资源及生命周期的差异并由维护者决定接纳范围。",
+        "任何资源加载和JS桥接边界明确，可与现键盘独立选择。"
+      ],
+      "uncertainty": "实验分支不能当上游能力；无完整兼容性/性能/安全评估，不应以替换渲染器顺带解决全部主题问题。",
+      "category_name": "键盘布局、主题与渲染",
+      "secondary_tags": [],
+      "original_labels": [
+        "feature",
+        "enhancement"
+      ],
+      "created_at": "2025-06-21T14:48:03Z",
+      "updated_at": "2025-07-05T03:06:21Z",
+      "comment_count": 2,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/1673",
+        "https://github.com/osfans/trime/issues/1673#issuecomment-3008128769",
+        "https://github.com/osfans/trime/issues/1673#issuecomment-3008184257"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 1661,
+      "title": "Add shortcut for inserting current timestamp in ISO 8601 format (e.g. 2025-06-02T11:10:56+12:00)",
+      "url": "https://github.com/osfans/trime/issues/1661",
+      "primary_category": "I",
+      "kind": "feature_request",
+      "priority": "P3",
+      "summary": "希望一个快捷动作插入含时区的ISO8601时间戳，作者已给配置实现。",
+      "evidence": [
+        "正文想将b下滑设为一次插入完整ISO8601时间。",
+        "作者评论给command: date、option: yyyy-MM-dd'T'HH:mm:ssZ及swipe_down映射，并称已达到效果：https://github.com/osfans/trime/issues/1661#issuecomment-2928356587。"
+      ],
+      "reproduction_status": "作者报告配置方案可用，未本轮运行；是否应加入默认主题尚无维护者决策。",
+      "next_action": "configuration_or_docs",
+      "related_open_prs": [],
+      "proposed_work_unit": "整理现有date命令的最小时间戳按键补丁示例，避免复制整套键盘。",
+      "acceptance": [
+        "一次手势输出当前日期、T、时间及正确本地时区偏移。",
+        "明确Z格式输出±HHmm，与需要冒号的±HH:mm示例区分。",
+        "补丁只修改目标按键，部署后中英状态均不拆散文本。"
+      ],
+      "uncertainty": "ISO8601允许多种偏移表达；正文示例与评论Z格式不同，不能未经验证承诺特定冒号格式兼容所有Android版本。",
+      "category_name": "使用咨询、文档与生态工具",
+      "secondary_tags": [],
+      "original_labels": [
+        "enhancement"
+      ],
+      "created_at": "2025-06-02T00:34:36Z",
+      "updated_at": "2025-06-02T01:33:03Z",
+      "comment_count": 1,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/1661",
+        "https://github.com/osfans/trime/issues/1661#issuecomment-2928356587"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 1657,
+      "title": "主题文件中的longclick无法正常使用花括号{}语法",
+      "url": "https://github.com/osfans/trime/issues/1657",
+      "primary_category": "C",
+      "kind": "bug_report",
+      "priority": "P2",
+      "summary": "内联long_click映射含括号动作时曾被当成Map字符串显示和输出。",
+      "evidence": [
+        "正文有可用与异常inline map对照：long_click: {text: （）{Left}, label: （）[]()}；附完整主题zip。",
+        "a047f747 KeyActionTokenSerializer对YamlMap使用Inline，Key.kt绑定longClick时调用theme.resolveAction(token)，与报告时字符串化路径不同。"
+      ],
+      "reproduction_status": "有最小配置历史报告，当前源码有正式inline action解析；未运行验证具体序列。",
+      "next_action": "historical_retest",
+      "related_open_prs": [],
+      "proposed_work_unit": "在当前上游用正文内联long_click动作验证label显示及括号文本加Left的派发。",
+      "acceptance": [
+        "键帽次标签仅为配置label，不出现{label=..., text=...}。",
+        "长按只输出一对括号且光标在两者之间。",
+        "对照命名preset_key动作与inline map产生相同结果。"
+      ],
+      "uncertainty": "新的inline解析可能覆盖Map字符串化，但光标时序是独立环节；不能从解析器存在推断已修复。",
+      "category_name": "键盘布局、主题与渲染",
+      "secondary_tags": [],
+      "original_labels": [
+        "bug"
+      ],
+      "created_at": "2025-05-25T09:50:40Z",
+      "updated_at": "2025-05-25T09:50:40Z",
+      "comment_count": 0,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/1657"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 1653,
+      "title": "建议增加对swipe_over/in/out的支持",
+      "url": "https://github.com/osfans/trime/issues/1653",
+      "primary_category": "F",
+      "kind": "feature_request",
+      "priority": "P3",
+      "summary": "请求跨键滑动的进入/经过/离开事件，以组合声韵滑行。",
+      "evidence": [
+        "正文详细说明四向swipe难表达斜滑及ang/eng/ing多字母轨迹，提供演示。",
+        "a047f747 TextKeyboard.TextKey与Key.kt仅列四向swipe等既有事件，未见swipe_over/in/out配置。"
+      ],
+      "reproduction_status": "有功能示例和目标，无已实现事件或运行验证。",
+      "next_action": "design_discussion",
+      "related_open_prs": [],
+      "proposed_work_unit": "设计跨两个相邻键的一次连续轨迹事件协议，先实现或演示swipe_in/over/out的去重与取消规则。",
+      "acceptance": [
+        "同一连续轨迹按约定顺序触发进入/经过/离开且每段只发一次。",
+        "滑出键盘或ACTION_CANCEL后停止，普通四向swipe不双发。",
+        "最小方案可将明确三字母韵母轨迹组合为一次预期编码。"
+      ],
+      "uncertainty": "事件协议与完整滑行识别不同；“改动不会太多”为作者估计，未证明实现成本或知识产权边界。",
+      "category_name": "手势、光标、按键反馈与语音",
+      "secondary_tags": [],
+      "original_labels": [
+        "enhancement"
+      ],
+      "created_at": "2025-05-12T13:40:14Z",
+      "updated_at": "2025-05-12T14:10:26Z",
+      "comment_count": 0,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/1653"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 1645,
+      "title": "液态键盘横向移动后，无法点击",
+      "url": "https://github.com/osfans/trime/issues/1645",
+      "primary_category": "F",
+      "kind": "bug_report",
+      "priority": "P2",
+      "summary": "鸿蒙设备横向滑动液态标签或开关栏后失去点击响应。",
+      "evidence": [
+        "正文给完整开关栏操作和HarmonyOS4.2、3.3.2日志，液态tabs同样受影响。",
+        "用户建议更新可解决，但维护者随后表示HarmonyOS似乎均有问题、暂时无解：https://github.com/osfans/trime/issues/1645#issuecomment-2993487011、3367914658。",
+        "与#1556的滚动至边界后RecyclerView点击失效现象相近。"
+      ],
+      "reproduction_status": "作者报告且维护者指出系统关联，评论结论有冲突；未当前版本设备复测。",
+      "next_action": "upstream_dependency",
+      "related_open_prs": [],
+      "proposed_work_unit": "与#1556共用平台排查，冻结一个“横向滚动标签后再点击”的最小RecyclerView复现并区分触摸取消状态。",
+      "acceptance": [
+        "受影响HarmonyOS版本上滚动后每个可见标签可点击一次并响应一次。",
+        "同程序在普通Android控制组结果记录。",
+        "若系统拦截导致，形成包含触摸事件轨迹的系统侧报告或范围清晰的局部规避。"
+      ],
+      "uncertainty": "不能因一条“更新解决”直接结案；是否与Huawei增强拖动/超界效果相同机制未确认，外部依赖定位属于维护者推测。",
+      "category_name": "手势、光标、按键反馈与语音",
+      "secondary_tags": [],
+      "original_labels": [
+        "bug",
+        "help-wanted"
+      ],
+      "created_at": "2025-04-08T12:32:24Z",
+      "updated_at": "2025-10-04T05:19:56Z",
+      "comment_count": 2,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/1645",
+        "https://github.com/osfans/trime/issues/1645#issuecomment-2993487011",
+        "https://github.com/osfans/trime/issues/1645#issuecomment-3367914658"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 1637,
+      "title": "建议支持 SenseVoiceSmall 语音识别模型",
+      "url": "https://github.com/osfans/trime/issues/1637",
+      "primary_category": "F",
+      "kind": "feature_request",
+      "priority": "P3",
+      "summary": "请求内置SenseVoiceSmall离线语音识别，维护者目前无此计划。",
+      "evidence": [
+        "正文提供模型、sherpa-onnx Android/Kotlin移植材料。",
+        "维护者明确无增加离线识别计划，提及外部Sayboard/Vosk：https://github.com/osfans/trime/issues/1637#issuecomment-2919283247。",
+        "用户另推荐言犀键盘并说与Trime联动方法未知：https://github.com/osfans/trime/issues/1637#issuecomment-3448014001。",
+        "a047f747 CommonKeyboardActionListener.switchToVoiceInputMethod已有首选语音输入法及系统切换路径。"
+      ],
+      "reproduction_status": "集成功能请求，有现成外部语音IME入口的源码；未核验模型或第三方应用。",
+      "next_action": "configuration_or_docs",
+      "related_open_prs": [],
+      "proposed_work_unit": "为现有语音按键配置一个外部语音输入法的调用示例，明确它是否可识别并返回原编辑器。",
+      "acceptance": [
+        "安装兼容语音IME后，Trime语音键切至该IME并可在原编辑器提交识别文本。",
+        "未安装兼容IME时显示明确提示。",
+        "文档区分第三方模型支持与Trime自身能力。"
+      ],
+      "uncertainty": "外部言犀是否声明Android voice subtype未知，不能承诺现入口可直接发现；若不能对接再讨论明确组件接口，不自行扩大为内置模型项目。",
+      "category_name": "手势、光标、按键反馈与语音",
+      "secondary_tags": [],
+      "original_labels": [
+        "not-recent"
+      ],
+      "created_at": "2025-03-28T07:30:33Z",
+      "updated_at": "2025-10-26T04:50:16Z",
+      "comment_count": 2,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/1637",
+        "https://github.com/osfans/trime/issues/1637#issuecomment-2919283247",
+        "https://github.com/osfans/trime/issues/1637#issuecomment-3448014001"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 1635,
+      "title": "在 v3.3.3 版本中，keys 里的 ascci 标签失效",
+      "url": "https://github.com/osfans/trime/issues/1635",
+      "primary_category": "B",
+      "kind": "bug_report",
+      "priority": "P2",
+      "summary": "ASCII状态键帽为g却仍输出原韩文ㅎ，出现显示与动作不一致。",
+      "evidence": [
+        "正文给最小键定义{click: ㅎ, ascii: g}，3.3.3、Android12下英文状态仍输出ㅎ。",
+        "a047f747 TextKey保留ascii token，Key.kt.checkKeyAction优先选ASCII，getAction也引用该状态选择；与旧版路径可能不同。"
+      ],
+      "reproduction_status": "有极简历史复现配置；当前源码已有ASCII动作选择，未运行复测。",
+      "next_action": "historical_retest",
+      "related_open_prs": [],
+      "proposed_work_unit": "验收同一键在中文/ASCII两态分别派发click与ascii动作并保持键帽一致。",
+      "acceptance": [
+        "中文态点按输出ㅎ，ASCII态点按输出g且键帽为g。",
+        "切模式后立即生效，无需换布局或重新打开键盘。",
+        "记录send_bindings默认值及显式false时的约定，避免把配置意图误作故障。"
+      ],
+      "uncertainty": "存在状态选择实现不等于运行有效；若仍失败应追踪KeyView到listener的实际动作，不能归咎于Rime韩文方案而无证据。",
+      "category_name": "输入、方案与候选",
+      "secondary_tags": [],
+      "original_labels": [
+        "bug"
+      ],
+      "created_at": "2025-03-26T01:04:28Z",
+      "updated_at": "2025-03-26T01:04:28Z",
+      "comment_count": 0,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/1635"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 1632,
+      "title": "\"preset_keyboards/default/label_transform\" 设置中文模式下自動大寫不好使",
+      "url": "https://github.com/osfans/trime/issues/1632",
+      "primary_category": "I",
+      "kind": "question",
+      "priority": "P3",
+      "summary": "把label_transform误解为输入大小写转换，并要求中文键帽大写。",
+      "evidence": [
+        "正文同时讨论中文键帽大写和实际输入，给label_transform: none；环境填写win10，与Android Trime语境不一致。",
+        "评论明确label仅影响标签：https://github.com/osfans/trime/issues/1632#issuecomment-2748248333。",
+        "a047f747 Keyboard.isLabelUppercase和KeyAction.adjustCase区分显示标签与Shift输入；当前布局节点决定设置是否生效。"
+      ],
+      "reproduction_status": "疑似配置语义/产品环境混淆，未见可确认的当前Android故障。",
+      "next_action": "configuration_or_docs",
+      "related_open_prs": [],
+      "proposed_work_unit": "提供正确目标布局label_transform: uppercase补丁，并解释键帽大写与Shift实际输入的区别。",
+      "acceptance": [
+        "补丁使中文模式字母显示大写，输入仍按方案期望生成中文编码。",
+        "切ASCII后大小写遵循Shift/锁定状态。",
+        "先确认提问对象确为Android Trime，否则转向对应产品说明。"
+      ],
+      "uncertainty": "用户可能把uppercase/none或输入中文流程混在一起；缺少主题、方案与正确应用版本。",
+      "category_name": "使用咨询、文档与生态工具",
+      "secondary_tags": [],
+      "original_labels": [
+        "enhancement"
+      ],
+      "created_at": "2025-03-24T12:04:21Z",
+      "updated_at": "2025-03-24T14:05:23Z",
+      "comment_count": 1,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/1632",
+        "https://github.com/osfans/trime/issues/1632#issuecomment-2748248333"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 1611,
+      "title": "关于按键定义的问题",
+      "url": "https://github.com/osfans/trime/issues/1611",
+      "primary_category": "B",
+      "kind": "bug_report",
+      "priority": "P2",
+      "summary": "按键文本序列把[OK]等字面文本解析为按键，需明确commit与序列语义。",
+      "evidence": [
+        "正文报告nightly中[OK]只输出OK，旧花括号写法也变更。",
+        "作者明确确认preset_key的commit: [OK]解决原始输出需求：https://github.com/osfans/trime/issues/1611#issuecomment-2703058387。",
+        "贡献者指出{#{Left}}依赖解析与异步时序bug，推荐test:{commit: {#}}再{test}{Left}；用户确认好用：https://github.com/osfans/trime/issues/1611#issuecomment-2705553236、2707898980。",
+        "后续sync broadcast偏离原问题，贡献者指API变更及Android14限制并引用#1297：https://github.com/osfans/trime/issues/1611#issuecomment-2726444339。"
+      ],
+      "reproduction_status": "原作者已报告commit配置可用；存在贡献者指出的独立时序风险，本轮未运行。",
+      "next_action": "configuration_or_docs",
+      "related_open_prs": [],
+      "proposed_work_unit": "给字面[OK]输出发布使用commit预设动作的最小迁移说明，清楚区分字面提交和按键序列。",
+      "acceptance": [
+        "命名预设动作commit: [OK]在普通文本框逐字提交[OK]。",
+        "微信是否转为表情由目标应用决定，验收不以表情外观代替文本值。",
+        "文档不推荐嵌套畸形花括号；需要光标动作时用命名commit后串联Left的合法示例另行验证。"
+      ],
+      "uncertainty": "“commit已可用”仅是作者历史反馈，不表示所有花括号时序已修复；同步广播应并入#1297，不把同帖多个现象硬打成单补丁。",
+      "category_name": "输入、方案与候选",
+      "secondary_tags": [],
+      "original_labels": [
+        "bug"
+      ],
+      "created_at": "2025-03-04T14:21:33Z",
+      "updated_at": "2025-03-16T06:11:57Z",
+      "comment_count": 20,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/1611",
+        "https://github.com/osfans/trime/issues/1611#issuecomment-2699560993",
+        "https://github.com/osfans/trime/issues/1611#issuecomment-2699733493",
+        "https://github.com/osfans/trime/issues/1611#issuecomment-2699816683",
+        "https://github.com/osfans/trime/issues/1611#issuecomment-2699852539",
+        "https://github.com/osfans/trime/issues/1611#issuecomment-2699862813",
+        "https://github.com/osfans/trime/issues/1611#issuecomment-2699963936",
+        "https://github.com/osfans/trime/issues/1611#issuecomment-2700463777",
+        "https://github.com/osfans/trime/issues/1611#issuecomment-2700470611",
+        "https://github.com/osfans/trime/issues/1611#issuecomment-2700513984",
+        "https://github.com/osfans/trime/issues/1611#issuecomment-2700521584",
+        "https://github.com/osfans/trime/issues/1611#issuecomment-2701173824",
+        "https://github.com/osfans/trime/issues/1611#issuecomment-2701327142",
+        "https://github.com/osfans/trime/issues/1611#issuecomment-2702811454",
+        "https://github.com/osfans/trime/issues/1611#issuecomment-2702844346",
+        "https://github.com/osfans/trime/issues/1611#issuecomment-2703058387",
+        "https://github.com/osfans/trime/issues/1611#issuecomment-2705553236",
+        "https://github.com/osfans/trime/issues/1611#issuecomment-2707898980",
+        "https://github.com/osfans/trime/issues/1611#issuecomment-2726081069",
+        "https://github.com/osfans/trime/issues/1611#issuecomment-2726444339",
+        "https://github.com/osfans/trime/issues/1611#issuecomment-2727217402"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 1610,
+      "title": "Remove some non-determinism",
+      "url": "https://github.com/osfans/trime/issues/1610",
+      "primary_category": "H",
+      "kind": "maintenance",
+      "priority": "P2",
+      "summary": "构建时间默认取当前时刻，影响F-Droid可复现构建。",
+      "evidence": [
+        "正文链接F-Droid diffoscope报告，指出BUILD_TIMESTAMP随构建变化。",
+        "报告者建议SOURCE_DATE_EPOCH；维护者后确认其他项目由F-Droid元数据设置buildTimestamp：https://github.com/osfans/trime/issues/1610#issuecomment-2959896628、3615289263。",
+        "a047f747 ProjectExtensions.buildTimestamp支持BUILD_TIMESTAMP/buildTimestamp但默认仍System.currentTimeMillis；未见SOURCE_DATE_EPOCH回退。"
+      ],
+      "reproduction_status": "有外部历史差异报告及当前静态非确定默认值；本轮未build或重现APK差异。",
+      "next_action": "configuration_or_docs",
+      "related_open_prs": [],
+      "proposed_work_unit": "明确并提供F-Droid固定buildTimestamp参数的元数据方案，统一时间单位及可追溯来源。",
+      "acceptance": [
+        "同一源码/输入配置两次构建使用相同时间戳，构建信息仍可解析。",
+        "说明SOURCE_DATE_EPOCH秒与应用属性所需单位，避免直接传值导致错误年代。",
+        "用diffoscope确认时间相关差异消除，并单列剩余不可复现原因。"
+      ],
+      "uncertainty": "该默认值不是可复现失败的唯一已确认来源；需查当前F-Droid元数据是否已传属性；不能仅改CI时间戳宣称APK可复现。",
+      "category_name": "构建、发布、安装与平台依赖",
+      "secondary_tags": [],
+      "original_labels": [
+        "build"
+      ],
+      "created_at": "2025-03-04T12:48:36Z",
+      "updated_at": "2025-12-05T04:46:52Z",
+      "comment_count": 3,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/1610",
+        "https://github.com/osfans/trime/issues/1610#issuecomment-2697499684",
+        "https://github.com/osfans/trime/issues/1610#issuecomment-2959896628",
+        "https://github.com/osfans/trime/issues/1610#issuecomment-3615289263"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 1604,
+      "title": "中文狀態下鍵盤的映射與輸出不符",
+      "url": "https://github.com/osfans/trime/issues/1604",
+      "primary_category": "B",
+      "kind": "bug_report",
+      "priority": "P2",
+      "summary": "中文态Shift后长按符号显示已变化，实际输出仍是原符号。",
+      "evidence": [
+        "正文举[显示变为{但输出仍[，仅中文态受影响；MagicOS9/Android15、3.3.2。",
+        "a047f747 KeyAction.getLabel对Shift符号与ASCII状态做条件判断，CommonKeyboardActionListener也有hookShiftSymbol；显示和派发路径需对照。"
+      ],
+      "reproduction_status": "清楚的历史显示/动作不一致报告，当前版本及拦截设置未验证。",
+      "next_action": "historical_retest",
+      "related_open_prs": [],
+      "proposed_work_unit": "用单个长按[符号键验证中文态Shift的键帽与实际派发一致性，并按约定调整一处状态规则。",
+      "acceptance": [
+        "hookShiftSymbol开/关各有明确预期，实际输出与所示符号一致。",
+        "中文模式的Rime标点映射和ASCII模式均有对照记录。",
+        "长按不会意外输入普通字母或双发符号。"
+      ],
+      "uncertainty": "不能忽略Rime标点映射和“拦截Shift符号”设置；#2195只处理内容几何适配，不能修复输出映射。",
+      "category_name": "输入、方案与候选",
+      "secondary_tags": [],
+      "original_labels": [
+        "bug"
+      ],
+      "created_at": "2025-02-25T13:26:22Z",
+      "updated_at": "2025-02-25T13:26:22Z",
+      "comment_count": 0,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/1604"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 1601,
+      "title": "建议中文是键盘字母显示为大写",
+      "url": "https://github.com/osfans/trime/issues/1601",
+      "primary_category": "C",
+      "kind": "feature_request",
+      "priority": "P3",
+      "summary": "希望中文模式默认显示大写字母以提高辨识度。",
+      "evidence": [
+        "正文为默认显示偏好，没有提供可复现缺陷。",
+        "用户建议label_transform配置：https://github.com/osfans/trime/issues/1601#issuecomment-2677380383。",
+        "a047f747 TextKeyboard.labelTransform支持UPPERCASE，默认主题qwerty0已显式设置uppercase，其他布局仍需单独确认。"
+      ],
+      "reproduction_status": "存在配置能力的静态依据，未运行确认作者所用主题。",
+      "next_action": "configuration_or_docs",
+      "related_open_prs": [],
+      "proposed_work_unit": "给实际使用布局增加label_transform: uppercase的最小补丁示例，解释显示效果。",
+      "acceptance": [
+        "中文模式标签为大写且发送给方案的编码保持预期。",
+        "ASCII模式仍按Shift状态显示，主题切换后补丁作用范围清楚。"
+      ],
+      "uncertainty": "要求“默认”还涉及主题设计取舍；不能误把某一qwerty0已有设置概括成全体主题已默认大写。",
+      "category_name": "键盘布局、主题与渲染",
+      "secondary_tags": [],
+      "original_labels": [
+        "enhancement"
+      ],
+      "created_at": "2025-02-24T02:55:49Z",
+      "updated_at": "2025-02-24T03:50:48Z",
+      "comment_count": 1,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/1601",
+        "https://github.com/osfans/trime/issues/1601#issuecomment-2677380383"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 1593,
+      "title": "shift长按（）光标问题",
+      "url": "https://github.com/osfans/trime/issues/1593",
+      "primary_category": "F",
+      "kind": "bug_report",
+      "priority": "P2",
+      "summary": "Shift锁定后长按括号，Left可能选中右括号而非把光标移入。",
+      "evidence": [
+        "正文有两步复现：长按Shift锁定、长按L输出（）后光标落在）上；nightly 5f9947a6、RedmiK50。",
+        "a047f747 CommonKeyboardActionListener对无显式modifier的动作可合并当前keyboard.modifier，导航键可能受Shift影响；这里只是排查线索。"
+      ],
+      "reproduction_status": "有历史步骤与截图，缺实际按键定义和编辑器；本轮未运行确认是选择高亮还是光标偏移。",
+      "next_action": "reproduce",
+      "related_open_prs": [],
+      "proposed_work_unit": "固定“括号文本提交后一次Left”在Shift锁定时的导航语义，避免意外Shift+Left选择。",
+      "acceptance": [
+        "Shift锁定后触发括号动作，编辑器selectionStart==selectionEnd且位于左右括号间。",
+        "普通Left及显式Shift+Left仍保留各自导航/选区功能。",
+        "无Shift时同一宏行为一致。"
+      ],
+      "uncertainty": "截图中的“在）上”可能是选区而非编码单位错误；原括号为BMP字符，#2186的补充字符UTF16修正不构成已覆盖证据。",
+      "category_name": "手势、光标、按键反馈与语音",
+      "secondary_tags": [],
+      "original_labels": [
+        "bug"
+      ],
+      "created_at": "2025-02-17T02:04:33Z",
+      "updated_at": "2025-02-17T02:04:33Z",
+      "comment_count": 0,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/1593"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 1556,
+      "title": "候选列表滚动到最底部时候选项点选无反应",
+      "url": "https://github.com/osfans/trime/issues/1556",
+      "primary_category": "B",
+      "kind": "bug_report",
+      "priority": "P1",
+      "summary": "鸿蒙候选或液态列表滚动越界后大部分项目无法点击。",
+      "evidence": [
+        "正文给滚动到边界后再滑一次的稳定步骤，收起重开可恢复；HarmonyOS4.2。",
+        "作者换到HarmonyOS4.3新机仍复现，普通平板正常；fcitx5-android同样受影响：https://github.com/osfans/trime/issues/1556#issuecomment-2608661037、2608708673。",
+        "维护者称构造为简单RecyclerView，研究后认为需向鸿蒙开发方反馈：https://github.com/osfans/trime/issues/1556#issuecomment-2646107227；这是依赖方向判断。"
+      ],
+      "reproduction_status": "作者多设备历史复现、另用户同现象，维护者自己未复现且判断系统关联；当前受影响ROM未重测。",
+      "next_action": "upstream_dependency",
+      "related_open_prs": [],
+      "proposed_work_unit": "与#1645共享一份超界滚动后点击失效最小RecyclerView复现，定位被系统吞掉或未复位的触摸事件。",
+      "acceptance": [
+        "越界上/下/左/右滑动后可见候选/标签仍响应一次点击。",
+        "记录受影响华为ROM和普通Android控制组的DOWN/MOVE/UP/CANCEL差异。",
+        "若只能系统侧修正，给出可提交的最小案例与临时恢复操作，避免盲改Rime候选逻辑。"
+      ],
+      "uncertainty": "跨应用同现象支持系统关联但尚非根因证明；不要把屏幕更换假设或旧版本更新建议当结论；P1表示核心选择被阻断的调查优先级。",
+      "category_name": "输入、方案与候选",
+      "secondary_tags": [],
+      "original_labels": [
+        "bug",
+        "help-wanted"
+      ],
+      "created_at": "2025-01-14T01:59:08Z",
+      "updated_at": "2025-10-04T05:22:31Z",
+      "comment_count": 9,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/1556",
+        "https://github.com/osfans/trime/issues/1556#issuecomment-2589229963",
+        "https://github.com/osfans/trime/issues/1556#issuecomment-2590070092",
+        "https://github.com/osfans/trime/issues/1556#issuecomment-2594666882",
+        "https://github.com/osfans/trime/issues/1556#issuecomment-2600863966",
+        "https://github.com/osfans/trime/issues/1556#issuecomment-2602774376",
+        "https://github.com/osfans/trime/issues/1556#issuecomment-2608661037",
+        "https://github.com/osfans/trime/issues/1556#issuecomment-2608708673",
+        "https://github.com/osfans/trime/issues/1556#issuecomment-2613281459",
+        "https://github.com/osfans/trime/issues/1556#issuecomment-2646107227"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 1529,
+      "title": "在程序中显示预编辑码时不在候选窗口上重复显示",
+      "url": "https://github.com/osfans/trime/issues/1529",
+      "primary_category": "B",
+      "kind": "feature_request",
+      "priority": "P3",
+      "summary": "编辑器已内联显示预编辑码时，希望隐藏候选窗中的重复预编辑码。",
+      "evidence": [
+        "正文要求“在程序中显示撰写文本”选择预编辑码或原始输入码时，候选窗不重复显示同样英文字符；无评论。",
+        "a047f747 PreeditDelegate仍独立根据CompositionProto更新浮窗，隐藏策略需要对照inline模式。"
+      ],
+      "reproduction_status": "清楚的显示策略请求，未验证当前模式组合。",
+      "next_action": "design_discussion",
+      "related_open_prs": [],
+      "proposed_work_unit": "定义并实现内联预编辑开启时隐藏重复浮动预编辑的一条显示规则，保留候选列表。",
+      "acceptance": [
+        "预编辑码/原始码内联模式下，目标应用有内联文本时不重复显示同内容浮窗。",
+        "关闭内联模式后恢复预编辑浮窗，候选始终可选。",
+        "不支持内联或TYPE_NULL编辑器有明确回退，不让用户丢失当前编码可见性。"
+      ],
+      "uncertainty": "Android编辑器可能拒绝composing文本，不能只按设置值全局隐藏；需明确候选窗口与预编辑浮窗的实际指代。",
+      "category_name": "输入、方案与候选",
+      "secondary_tags": [],
+      "original_labels": [
+        "enhancement"
+      ],
+      "created_at": "2024-12-11T00:51:45Z",
+      "updated_at": "2025-03-14T16:19:06Z",
+      "comment_count": 0,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/1529"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 1515,
+      "title": "`\"style/keyboard_height_land\"` has no effect to set landscape keyboard height",
+      "url": "https://github.com/osfans/trime/issues/1515",
+      "primary_category": "C",
+      "kind": "bug_report",
+      "priority": "P2",
+      "summary": "历史nightly横屏键盘高度忽略keyboard_height_land。",
+      "evidence": [
+        "正文给style/keyboard_height_land:100部署后无效、只keyboard_height生效；Android15、2024-11-26 nightly。",
+        "a047f747 Keyboard.kt使用pickLandscape选择布局级和style级keyboardHeightLand，并通过resolvePositive优先布局配置；当前存在正式横屏路径。"
+      ],
+      "reproduction_status": "有历史最小设置，当前源码路径已不同；未运行横竖屏复测。",
+      "next_action": "historical_retest",
+      "related_open_prs": [],
+      "proposed_work_unit": "在未覆盖布局级高度的最小主题验收style横屏高度，并明确布局级覆盖优先级。",
+      "acceptance": [
+        "竖屏用keyboard_height，横屏用keyboard_height_land。",
+        "两个方向切换不遗留缓存高度，重选主题后数值一致。",
+        "若布局单独设高，文档和诊断能说明为何覆盖style值。"
+      ],
+      "uncertainty": "原主题是否设置布局级keyboard_height未知；源码处理存在不等于该报告已修复；#2195不改变键盘总高度。",
+      "category_name": "键盘布局、主题与渲染",
+      "secondary_tags": [],
+      "original_labels": [],
+      "created_at": "2024-11-25T17:58:04Z",
+      "updated_at": "2024-11-25T17:59:20Z",
+      "comment_count": 0,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/1515"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 1477,
+      "title": "不能切換自定義letter keyboard布局",
+      "url": "https://github.com/osfans/trime/issues/1477",
+      "primary_category": "C",
+      "kind": "bug_report",
+      "priority": "P2",
+      "summary": "自定义letter布局切换只改英文模式而仍显示中文布局。",
+      "evidence": [
+        "正文报告3.2.19正常、2024-09 nightly fe9c39dc回归；Keyboard_letter应切换到不同布局。",
+        "a047f747 KeyboardWindow.selectKeyboardConfig会递归处理importPreset，switchKeyboard通过缓存id选择布局；问题可能涉及别名解析或配置继承。"
+      ],
+      "reproduction_status": "历史回归有版本对照，无最小主题附件/当前复测。",
+      "next_action": "historical_retest",
+      "related_open_prs": [],
+      "proposed_work_unit": "用两套差异明显的中文和letter布局复测显式Keyboard_letter切换，并定位配置别名/缓存是否保留错误布局。",
+      "acceptance": [
+        "点击Keyboard_letter后布局和ASCII模式同时符合letter定义。",
+        "返回中文布局后键位恢复，来回切换不被缓存覆盖。",
+        "原配置的import_preset与__include分别记录，避免把有意导入默认布局误判为失效。"
+      ],
+      "uncertainty": "与#1809相关但不是Mode_switch自动选择的同一契约；不能以未来弃用ascii_keyboard代替该显式布局切换验收。",
+      "category_name": "键盘布局、主题与渲染",
+      "secondary_tags": [],
+      "original_labels": [],
+      "created_at": "2024-09-24T10:39:05Z",
+      "updated_at": "2024-09-24T10:39:05Z",
+      "comment_count": 0,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/1477"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 1476,
+      "title": "Trime can't insert uppercase letters when mode \"中文\" is enabled",
+      "url": "https://github.com/osfans/trime/issues/1476",
+      "primary_category": "B",
+      "kind": "bug_report",
+      "priority": "P2",
+      "summary": "中文模式无法输入大写字母的旧回归已有作者后续通过记录。",
+      "evidence": [
+        "正文提供极简foo方案及词典，在3.3.0中文态无法输入大写、ASCII态正常。",
+        "维护者曾称nightly可能已有workaround：https://github.com/osfans/trime/issues/1476#issuecomment-2495230371。",
+        "作者详细回测确认3.3.3、3.3.4与be66f30 nightly可输入大写，3.3.0/3.3.2不行：https://github.com/osfans/trime/issues/1476#issuecomment-2954405333。",
+        "同一回测另报告3.3.4/nightly _activeTheme未初始化崩溃及导航栏覆盖，不能当原大写缺陷仍存在。"
+      ],
+      "reproduction_status": "作者历史跨版本回测显示核心大写行为在后续版本通过；当前上游未本轮运行。",
+      "next_action": "historical_retest",
+      "related_open_prs": [
+        {
+          "number": 2188,
+          "url": "https://github.com/osfans/trime/pull/2188",
+          "relation": "possible_relation",
+          "scope": "仅评论中_activeTheme初始化时序次生崩溃，与PR主题就绪前视图创建相邻；原大写缺陷无覆盖证据。"
+        }
+      ],
+      "proposed_work_unit": "用原foo最小方案在当前上游验收中文模式Shift大写输入，确认是否可结束旧回归追踪。",
+      "acceptance": [
+        "中文态Shift后输入TEST在普通编辑器得到TEST，ASCII态也正常。",
+        "记录方案、主题、版本和editor最终文本，控制“需回车上屏”的语义。",
+        "若原大写问题通过，关联的初始化崩溃与导航栏问题单独跟踪。"
+      ],
+      "uncertainty": "后续作者通过是历史用户证据，不代表当前自动结案；#2188只可能关联其评论中的主题初始化次生问题，未测试覆盖原大写缺陷。",
+      "category_name": "输入、方案与候选",
+      "secondary_tags": [],
+      "original_labels": [],
+      "created_at": "2024-09-23T18:13:03Z",
+      "updated_at": "2025-06-09T01:30:11Z",
+      "comment_count": 13,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/1476",
+        "https://github.com/osfans/trime/issues/1476#issuecomment-2370954075",
+        "https://github.com/osfans/trime/issues/1476#issuecomment-2371881496",
+        "https://github.com/osfans/trime/issues/1476#issuecomment-2371910858",
+        "https://github.com/osfans/trime/issues/1476#issuecomment-2371944301",
+        "https://github.com/osfans/trime/issues/1476#issuecomment-2372769699",
+        "https://github.com/osfans/trime/issues/1476#issuecomment-2373901944",
+        "https://github.com/osfans/trime/issues/1476#issuecomment-2374849229",
+        "https://github.com/osfans/trime/issues/1476#issuecomment-2374903551",
+        "https://github.com/osfans/trime/issues/1476#issuecomment-2446366254",
+        "https://github.com/osfans/trime/issues/1476#issuecomment-2446371502",
+        "https://github.com/osfans/trime/issues/1476#issuecomment-2446455343",
+        "https://github.com/osfans/trime/issues/1476#issuecomment-2495230371",
+        "https://github.com/osfans/trime/issues/1476#issuecomment-2954405333"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 1474,
+      "title": "使用配置文件管理 GUI 中的设置选项",
+      "url": "https://github.com/osfans/trime/issues/1474",
+      "primary_category": "D",
+      "kind": "feature_request",
+      "priority": "P2",
+      "summary": "希望GUI偏好可用配置文件迁移，便于换机。",
+      "evidence": [
+        "正文以按键振动时长为例，希望统一文件管理GUI选项。",
+        "维护者引用历史#1277备份/导入部分应用数据（含GUI设置）方案，但当时未通过审阅：https://github.com/osfans/trime/issues/1474#issuecomment-2422398622。",
+        "当前7个开放PR中没有#1277，不能写为正在合并的重复实现。"
+      ],
+      "reproduction_status": "需求明确；历史设计未获审，当前备份能力未运行核实。",
+      "next_action": "design_discussion",
+      "related_open_prs": [],
+      "proposed_work_unit": "定义一个可导出/导入GUI偏好的有版本文件格式，先以键盘反馈偏好换机恢复完成闭环。",
+      "acceptance": [
+        "在干净安装导入后，示例振动时长等受支持偏好与导出时一致。",
+        "文件带格式版本，未知字段安全忽略或明确报错，非法数值不破坏已有设置。",
+        "明确不迁移设备专属目录授权/绝对路径，预览可恢复项。"
+      ],
+      "uncertainty": "Rime用户目录同步不等于GUI偏好备份；需先核对最新主线是否已有导出功能，避免复活旧PR而绕过评审。",
+      "category_name": "存储、配置、部署与用户词库",
+      "secondary_tags": [],
+      "original_labels": [
+        "feature"
+      ],
+      "created_at": "2024-09-23T08:03:34Z",
+      "updated_at": "2024-10-18T12:46:47Z",
+      "comment_count": 1,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/1474",
+        "https://github.com/osfans/trime/issues/1474#issuecomment-2422398622"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 1469,
+      "title": "按键定义无效",
+      "url": "https://github.com/osfans/trime/issues/1469",
+      "primary_category": "B",
+      "kind": "bug_report",
+      "priority": "P2",
+      "summary": "中文模式下自定义text动作中的中文符号/数字/空白曾不正确派发。",
+      "evidence": [
+        "正文给text: “ ”{Left}类中文配对符号无效、英文符号有效，以及text:1命名动作中英差异；3.3.0。",
+        "评论指可能与#1454相关；另一用户用fe9c39dc仍复现，粘贴宏前后空格消失，3.2.19无此问题：https://github.com/osfans/trime/issues/1469#issuecomment-2366727469、2378991636。",
+        "a047f747 CommonKeyboardActionListener区分commit与text序列，可用相同动作矩阵重新定位。"
+      ],
+      "reproduction_status": "多用户历史回归，有文本最小配置；当前实现已变化，未运行复测。",
+      "next_action": "historical_retest",
+      "related_open_prs": [],
+      "proposed_work_unit": "用同一命名text动作矩阵验证中文模式是否保留文本与末尾导航，定位一次序列派发故障。",
+      "acceptance": [
+        "中文配对引号文本按约定提交，Left后光标位置正确。",
+        "命名数字text与直接数字动作中英两态符合各自约定。",
+        "空白和粘贴动作前后保留规则明确，并记录最终editor文本而非仅键帽。"
+      ],
+      "uncertainty": "几种症状可能不同机制；需先在最小矩阵中拆出同因，不能把#1454推测当确认；#2186未承诺修复BMP符号或宏派发。",
+      "category_name": "输入、方案与候选",
+      "secondary_tags": [],
+      "original_labels": [],
+      "created_at": "2024-09-21T01:17:00Z",
+      "updated_at": "2024-09-27T10:48:20Z",
+      "comment_count": 2,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/1469",
+        "https://github.com/osfans/trime/issues/1469#issuecomment-2366727469",
+        "https://github.com/osfans/trime/issues/1469#issuecomment-2378991636"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 1464,
+      "title": "希望原生支持中文九键输入",
+      "url": "https://github.com/osfans/trime/issues/1464",
+      "primary_category": "B",
+      "kind": "feature_request",
+      "priority": "P2",
+      "summary": "请求原生中文九键，已有直接相关开放PR应优先跟进。",
+      "evidence": [
+        "正文要求九宫格并引用第三方四叶草方案；评论用户希望不用提取第三方输入法配置即可使用。",
+        "开放#2183明确Related #1464，提供luna_pinyin_t9方案、两套内置主题九键布局与音节选择/锁定。",
+        "PR验证包含其作者记录的主机/模拟器及S24Ultra用户反馈，范围与设备APK身份限制已在正文说明；本轮未重跑。"
+      ],
+      "reproduction_status": "功能请求已有直接实现PR和该PR自述验证；尚未合并，不能认作上游a047f747已支持。",
+      "next_action": "watch_existing_pr",
+      "related_open_prs": [
+        {
+          "number": 2183,
+          "url": "https://github.com/osfans/trime/pull/2183",
+          "relation": "covered_by_pending_PR",
+          "scope": "PR明确关联#1464并提供中文九键全拼；已报告的测试仅限PR正文限定范围，本轮未验收、未宣称已覆盖全部评论需求。"
+        }
+      ],
+      "proposed_work_unit": "继续#2183的评审与独立九键验收，避免另起重复九键实现。",
+      "acceptance": [
+        "从现有方案选择器启用luna_pinyin_t9后可用九键完成中文候选上屏。",
+        "音节选择/锁定、改选/撤销与切编辑器重置按PR既定合同验收。",
+        "在目标设备记录APK/源码身份及单项结果，不能把笼统“无问题”当完整验收。"
+      ],
+      "uncertainty": "第三方羽燕/四叶草推荐不等于Trime原生支持；双拼九键等评论扩展不保证包含在#2183全拼范围。",
+      "category_name": "输入、方案与候选",
+      "secondary_tags": [],
+      "original_labels": [
+        "feature",
+        "help-wanted",
+        "long-term"
+      ],
+      "created_at": "2024-09-12T15:15:10Z",
+      "updated_at": "2026-07-19T04:54:07Z",
+      "comment_count": 8,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/1464",
+        "https://github.com/osfans/trime/issues/1464#issuecomment-2347897805",
+        "https://github.com/osfans/trime/issues/1464#issuecomment-2351399639",
+        "https://github.com/osfans/trime/issues/1464#issuecomment-2360186671",
+        "https://github.com/osfans/trime/issues/1464#issuecomment-2373024429",
+        "https://github.com/osfans/trime/issues/1464#issuecomment-2906850899",
+        "https://github.com/osfans/trime/issues/1464#issuecomment-2939303446",
+        "https://github.com/osfans/trime/issues/1464#issuecomment-2942829172",
+        "https://github.com/osfans/trime/issues/1464#issuecomment-5014407534"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 1443,
+      "title": "Version 3.2.16 后面出现 style.key_width 不生效问题",
+      "url": "https://github.com/osfans/trime/issues/1443",
+      "primary_category": "C",
+      "kind": "bug_report",
+      "priority": "P2",
+      "summary": "仅style.key_width无布局width时，3.2.16之后键盘宽度回退失效。",
+      "evidence": [
+        "正文有3.2.16及以前正常、3.2.19错误的对照截图；给布局补width可恢复。",
+        "a047f747 Keyboard.kt布局按selfConfig.width计算无显式width按键；theme.style.keyWidth主要计算keyWidth/proximityThreshold，默认宽度继承契约需核对。"
+      ],
+      "reproduction_status": "有历史版本回归和配置规避；当前静态路径仍值得核对，无运行复现。",
+      "next_action": "reproduce",
+      "related_open_prs": [],
+      "proposed_work_unit": "用省略布局width且只设style.key_width的最小主题确认并明确默认键宽回退契约。",
+      "acceptance": [
+        "按维护者确认的兼容契约，每个未设width可点击键取到有效默认权重。",
+        "单键显式width与布局width优先级明确，正常主题不变成零宽键。",
+        "若正式废弃style.key_width继承，给明确诊断和迁移示例，不能静默布局错乱。"
+      ],
+      "uncertainty": "当前TextKeyboard.width默认0、style.keyWidth用途不同是静态疑点；是否有上游DSL补默认值需进一步确认，不直接宣称确定代码缺陷。",
+      "category_name": "键盘布局、主题与渲染",
+      "secondary_tags": [],
+      "original_labels": [],
+      "created_at": "2024-08-07T00:08:27Z",
+      "updated_at": "2024-08-07T00:08:27Z",
+      "comment_count": 0,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/1443"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 1438,
+      "title": "按键行间距 vertical_gap 不生效",
+      "url": "https://github.com/osfans/trime/issues/1438",
+      "primary_category": "C",
+      "kind": "bug_report",
+      "priority": "P2",
+      "summary": "全局vertical_gap未出现预期间距，可能受布局覆盖或高度配置影响。",
+      "evidence": [
+        "正文horizontal_gap生效而vertical_gap:8无效；Android14、3.2.19。",
+        "贡献者建议设keyboard_height/keyboard_height_land；维护者要求检查当前布局是否单独定义vertical_gap：https://github.com/osfans/trime/issues/1438#issuecomment-2272377168、2531806261。",
+        "a047f747 Keyboard.kt优先布局verticalGap再取style，KeyboardView用一半间距作KeyView内边距。"
+      ],
+      "reproduction_status": "历史报告已有配置排查建议，无作者确认或当前运行验证。",
+      "next_action": "configuration_or_docs",
+      "related_open_prs": [],
+      "proposed_work_unit": "构建无布局级覆盖的最小vertical_gap示例，并解释布局/全局优先级和总高度关系。",
+      "acceptance": [
+        "只调全局vertical_gap时最小布局行间距可测量变化。",
+        "添加布局级vertical_gap后覆盖行为可预期。",
+        "间距增大不产生负键高或触摸区域与可见背景脱节。"
+      ],
+      "uncertainty": "实际主题、总高度及继承节点未给；源码存在间距不等于原报告已修复，先排除设置覆盖。",
+      "category_name": "键盘布局、主题与渲染",
+      "secondary_tags": [],
+      "original_labels": [],
+      "created_at": "2024-07-28T03:58:46Z",
+      "updated_at": "2024-12-10T14:33:59Z",
+      "comment_count": 2,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/1438",
+        "https://github.com/osfans/trime/issues/1438#issuecomment-2272377168",
+        "https://github.com/osfans/trime/issues/1438#issuecomment-2531806261"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 1414,
+      "title": "大宽度下分割键盘比例较大时部分键盘无法正常显示",
+      "url": "https://github.com/osfans/trime/issues/1414",
+      "primary_category": "C",
+      "kind": "bug_report",
+      "priority": "P2",
+      "summary": "折叠屏大宽度下分割比例超过20%时特定数字键盘不显示。",
+      "evidence": [
+        "正文仅给VIVO X Fold3内屏2480×2200、小鹤音形数字键盘、分割比例>20%三个条件；无评论、日志或版本。",
+        "a047f747 Keyboard.kt通过两遍布局与分割权重计算行位置；可能的排查范围是分割/换行，不是键帽文本适配。"
+      ],
+      "reproduction_status": "有阈值和设备信息但配置/版本缺失，未运行复现。",
+      "next_action": "needs_information",
+      "related_open_prs": [],
+      "proposed_work_unit": "取得该数字布局最小配置和当前版本，在20%边界两侧记录分割布局尺寸与显示结果。",
+      "acceptance": [
+        "同一设备或等宽窗口在20%、21%及较大比例显示所有预期数字键。",
+        "布局尺寸、行数、KeyView创建数量有记录，区分零高/越界与视图未创建。",
+        "普通全键盘及折叠到外屏后仍可显示和点击。"
+      ],
+      "uncertainty": "第三方主题是必要输入；不能根据“键盘无法显示”就归为#2188主题未就绪问题；#2195只适配单键内容，不能保证修复布局消失。",
+      "category_name": "键盘布局、主题与渲染",
+      "secondary_tags": [],
+      "original_labels": [],
+      "created_at": "2024-06-28T01:38:26Z",
+      "updated_at": "2024-06-28T01:38:26Z",
+      "comment_count": 0,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/1414"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 1389,
+      "title": "让英文输入法变成默认",
+      "url": "https://github.com/osfans/trime/issues/1389",
+      "primary_category": "I",
+      "kind": "question",
+      "priority": "P3",
+      "summary": "询问默认英文，但所述DefaultIM/profile配置可能来自另一输入法。",
+      "evidence": [
+        "正文编辑exernal/config/profile中的DefaultIM=pinyin→keyboard-us，与Trime常用YAML配置不同。",
+        "两条早期评论显示双方理解不一致：https://github.com/osfans/trime/issues/1389#issuecomment-2163250360、2214343161。",
+        "2026新评论另问挂接第三方方案后能否默认英文：https://github.com/osfans/trime/issues/1389#issuecomment-4562515597。"
+      ],
+      "reproduction_status": "产品与配置来源尚未确认；不应按Trime缺陷处理或假定原作者使用Rime。",
+      "next_action": "needs_information",
+      "related_open_prs": [],
+      "proposed_work_unit": "先确认产品、平台、配置文件所属项目，再为Trime场景给当前布局ascii_mode/reset_ascii_mode最小示例。",
+      "acceptance": [
+        "明确DefaultIM文件实际由哪个软件读取。",
+        "若是Android Trime，用正确主题/方案配置实现在普通输入框初始ASCII，并说明记忆/重置范围。",
+        "第三方方案保持可切中文，密码等系统要求优先。"
+      ],
+      "uncertainty": "原始配置可能属于fcitx等其他项目但未证实；最新追问不应抹去原问题的产品歧义。",
+      "category_name": "使用咨询、文档与生态工具",
+      "secondary_tags": [],
+      "original_labels": [],
+      "created_at": "2024-05-26T17:27:00Z",
+      "updated_at": "2026-05-28T09:19:40Z",
+      "comment_count": 3,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/1389",
+        "https://github.com/osfans/trime/issues/1389#issuecomment-2163250360",
+        "https://github.com/osfans/trime/issues/1389#issuecomment-2214343161",
+        "https://github.com/osfans/trime/issues/1389#issuecomment-4562515597"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 1379,
+      "title": "fixed_key_bar的按键如何设定宽度",
+      "url": "https://github.com/osfans/trime/issues/1379",
+      "primary_category": "C",
+      "kind": "question",
+      "priority": "P3",
+      "summary": "液态固定键栏只接受预设键名，用户希望配置宽度。",
+      "evidence": [
+        "正文：https://github.com/osfans/trime/issues/1379；将 {click: space, width: 16} 放入 fixed_key_bar 后显示 null。",
+        "2024-05-18 shitlime 评论：说明当时只支持 preset_keys 名称，不支持宽度和其他参数。（https://github.com/osfans/trime/issues/1379#issuecomment-2118777171）",
+        "2024-10-06 csjtl 评论：后续只建议 label_text_size，不能证明已支持按键宽度。（https://github.com/osfans/trime/issues/1379#issuecomment-2395458206）",
+        "上游 a047f747 源码：https://github.com/osfans/trime/blob/a047f747/app/src/main/java/com/osfans/trime/data/theme/model/LiquidKeyboard.kt；当前 KeyBar.keys 仍为 List<String>。"
+      ],
+      "reproduction_status": "未运行；历史咨询与当前声明类型一致，未确认当前对错误 map 的具体显示。",
+      "next_action": "configuration_or_docs",
+      "related_open_prs": [],
+      "proposed_work_unit": "补齐 fixed_key_bar 现行格式、预设键标签和尺寸限制说明；以可用示例回答宽度问题。",
+      "acceptance": [
+        "文档示例采用键名列表并展示 label 来源；明确字号不等于按键宽度；若仍需自定义宽度，另行确定布局设计。"
+      ],
+      "uncertainty": "没有当前版本最小主题；不能把调字号当作宽度功能实现。",
+      "category_name": "键盘布局、主题与渲染",
+      "secondary_tags": [],
+      "original_labels": [],
+      "created_at": "2024-05-18T10:12:35Z",
+      "updated_at": "2024-10-06T14:20:07Z",
+      "comment_count": 2,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/1379",
+        "https://github.com/osfans/trime/issues/1379#issuecomment-2118777171",
+        "https://github.com/osfans/trime/issues/1379#issuecomment-2395458206"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 1374,
+      "title": "关于颜色支持material design的设想。",
+      "url": "https://github.com/osfans/trime/issues/1374",
+      "primary_category": "C",
+      "kind": "feature_request",
+      "priority": "P3",
+      "summary": "希望主题能直接引用预置 Material 色彩令牌。",
+      "evidence": [
+        "正文：https://github.com/osfans/trime/issues/1374；作者手工定义 m3c_XXXXX 配色，询问是否可自动预设。",
+        "上游 a047f747 源码：https://github.com/osfans/trime/blob/a047f747/app/src/main/java/com/osfans/trime/data/theme/ColorSchemeResolver.kt；当前查看到的是主题预置配色和日夜方案选择，未见本议题要求的令牌注入。"
+      ],
+      "reproduction_status": "需求讨论；无运行复测，正文未明确静态 Material 色板还是系统动态配色。",
+      "next_action": "design_discussion",
+      "related_open_prs": [],
+      "proposed_work_unit": "定义 Material 色彩令牌来源、命名、日夜切换及旧 Android 回退契约，再实现主题可引用的统一色表。",
+      "acceptance": [
+        "给出一个自定义主题引用令牌的例子；切换日夜和不支持动态色的平台均有明确结果；既有配色不受破坏。"
+      ],
+      "uncertainty": "没有评论澄清；静态令牌与壁纸动态配色的需求不同。",
+      "category_name": "键盘布局、主题与渲染",
+      "secondary_tags": [],
+      "original_labels": [],
+      "created_at": "2024-05-14T07:06:35Z",
+      "updated_at": "2024-05-14T07:06:35Z",
+      "comment_count": 0,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/1374"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 1321,
+      "title": "为[中/西]文模式设置不同配色",
+      "url": "https://github.com/osfans/trime/issues/1321",
+      "primary_category": "C",
+      "kind": "feature_request",
+      "priority": "P2",
+      "summary": "中西文状态需要明显不同配色以减少误输。",
+      "evidence": [
+        "正文：https://github.com/osfans/trime/issues/1321；默认 tongwenfeng 的中西文指示不显眼，期望西文红字或红背景。",
+        "2024-04-02 eric1ee 评论：当时无法配置，建议用中西文标签大小写区分。（https://github.com/osfans/trime/issues/1321#issuecomment-2031477203）",
+        "上游 a047f747 源码：https://github.com/osfans/trime/blob/a047f747/app/src/main/java/com/osfans/trime/ime/keyboard/Key.kt；当前有按键按下/修饰键配色状态，未确认全局 ascii_mode 配色契约。"
+      ],
+      "reproduction_status": "需求未获当前运行验收；评论仅提供标签大小写替代办法。",
+      "next_action": "design_discussion",
+      "related_open_prs": [],
+      "proposed_work_unit": "设计并实现随 ascii_mode 变化的可选主题配色状态，定义全局配色与逐键覆盖的优先级。",
+      "acceptance": [
+        "同一键盘切换中西文立即更新所配置颜色；主题/焦点恢复后状态一致；未配置时沿用原配色。"
+      ],
+      "uncertainty": "需要决定是局部状态键还是整个键盘变色；当前资料不足以确认是否已有等价配置。",
+      "category_name": "键盘布局、主题与渲染",
+      "secondary_tags": [],
+      "original_labels": [],
+      "created_at": "2024-04-02T07:34:50Z",
+      "updated_at": "2024-04-02T09:13:21Z",
+      "comment_count": 1,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/1321",
+        "https://github.com/osfans/trime/issues/1321#issuecomment-2031477203"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 1316,
+      "title": "不写 `keyboard_height` 参数时液态键盘不显示",
+      "url": "https://github.com/osfans/trime/issues/1316",
+      "primary_category": "C",
+      "kind": "bug_report",
+      "priority": "P2",
+      "summary": "省略总键盘高度可能令液态面板和键盘区域为零，旧主题高度语义需复核。",
+      "evidence": [
+        "正文：https://github.com/osfans/trime/issues/1316；3.2.18 nightly 在 tongwenfeng 注释 keyboard_height 后剪贴板不显示；含设备、步骤和日志。",
+        "2024-11-25 WhiredPlanck 评论：维护者解释窗口跟随主键盘高度，键盘级高度优先于 style 高度，至少一处需给高度。（https://github.com/osfans/trime/issues/1316#issuecomment-2496915734）",
+        "2024-11-26 Wenti-D 评论：作者继续指出 keyboard 内 height 与全局高度相互作用不明确，逐键首行 height 才可见效果。（https://github.com/osfans/trime/issues/1316#issuecomment-2501108283）",
+        "上游 a047f747 源码：https://github.com/osfans/trime/blob/a047f747/app/src/main/java/com/osfans/trime/ime/keyboard/Keyboard.kt；当前 keyboardHeight 从键盘/主题取值，按行缩放；上游 a047f747 源码：https://github.com/osfans/trime/blob/a047f747/app/src/main/java/com/osfans/trime/ime/core/InputView.kt；窗口跟随 currentKeyboardHeight。"
+      ],
+      "reproduction_status": "历史有明确复现与维护者确认；本轮未运行。当前高度实现仍有相关路径，不能仅凭源码确认全部窗口现象。",
+      "next_action": "historical_retest",
+      "related_open_prs": [],
+      "proposed_work_unit": "用当前版本重测无全局/无局部/仅 key_height/局部覆盖四种主题高度组合，确定并修复可见键盘高度回退及兼容规则。",
+      "acceptance": [
+        "每种受支持配置打开主键盘、符号与剪贴板均可见；不支持的零高配置给出明确诊断；横竖屏和逐键行高比例一致。"
+      ],
+      "uncertainty": "2024年解释反映当时实现；液态与剪贴板现已分离，需更新最小复现后再编码。",
+      "category_name": "键盘布局、主题与渲染",
+      "secondary_tags": [],
+      "original_labels": [],
+      "created_at": "2024-03-29T07:10:06Z",
+      "updated_at": "2024-11-26T15:17:43Z",
+      "comment_count": 18,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/1316",
+        "https://github.com/osfans/trime/issues/1316#issuecomment-2031075587",
+        "https://github.com/osfans/trime/issues/1316#issuecomment-2031090124",
+        "https://github.com/osfans/trime/issues/1316#issuecomment-2058101633",
+        "https://github.com/osfans/trime/issues/1316#issuecomment-2058106630",
+        "https://github.com/osfans/trime/issues/1316#issuecomment-2058112983",
+        "https://github.com/osfans/trime/issues/1316#issuecomment-2058124744",
+        "https://github.com/osfans/trime/issues/1316#issuecomment-2058136714",
+        "https://github.com/osfans/trime/issues/1316#issuecomment-2058173457",
+        "https://github.com/osfans/trime/issues/1316#issuecomment-2058438892",
+        "https://github.com/osfans/trime/issues/1316#issuecomment-2071786116",
+        "https://github.com/osfans/trime/issues/1316#issuecomment-2085388016",
+        "https://github.com/osfans/trime/issues/1316#issuecomment-2085739468",
+        "https://github.com/osfans/trime/issues/1316#issuecomment-2085846144",
+        "https://github.com/osfans/trime/issues/1316#issuecomment-2105836322",
+        "https://github.com/osfans/trime/issues/1316#issuecomment-2496915734",
+        "https://github.com/osfans/trime/issues/1316#issuecomment-2496979225",
+        "https://github.com/osfans/trime/issues/1316#issuecomment-2499981206",
+        "https://github.com/osfans/trime/issues/1316#issuecomment-2501108283"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 1299,
+      "title": "允许用户调整已输入的字符",
+      "url": "https://github.com/osfans/trime/issues/1299",
+      "primary_category": "B",
+      "kind": "feature_request",
+      "priority": "P2",
+      "summary": "希望通过 UI 编辑预编辑编码，服务九宫格等一键多码方案。",
+      "evidence": [
+        "正文：https://github.com/osfans/trime/issues/1299；希望利用 librime 1.10 新 API 调整已输入字符。",
+        "2024-03-20 MokOopsing 评论：指出 set_input 仍不能区分 xi'an 和 xian，不能直接当最终方案。（https://github.com/osfans/trime/issues/1299#issuecomment-2008713844）",
+        "2024-03-21 tsaiajie 评论：关联 librime PR771。（https://github.com/osfans/trime/issues/1299#issuecomment-2011123661）"
+      ],
+      "reproduction_status": "需求明确；未运行通用编码编辑；现有 T9 PR 仅提供其专用音节选择和锁定。",
+      "next_action": "watch_existing_pr",
+      "related_open_prs": [
+        {
+          "number": 2183,
+          "url": "https://github.com/osfans/trime/pull/2183",
+          "relation": "possible_relation",
+          "scope": "PR正文明确 Related #1299，覆盖T9音节选择/锁定；不等于通用set_input编辑全部实现。"
+        }
+      ],
+      "proposed_work_unit": "先评审并验收 #2183 对九宫格音节修正的覆盖，再单独定义其他方案所需的通用预编辑编辑接口与分词保真。",
+      "acceptance": [
+        "九宫格能修正/锁定/解锁音节；对 xian 与 xi'an、跨分段修改、取消和撤销分别验收；不得把仅支持 T9 当作所有方案完成。"
+      ],
+      "uncertainty": "需求范围超出九宫格；当前上游无本轮运行证据。",
+      "category_name": "输入、方案与候选",
+      "secondary_tags": [],
+      "original_labels": [
+        "feature",
+        "help-wanted"
+      ],
+      "created_at": "2024-03-18T13:02:28Z",
+      "updated_at": "2025-02-02T12:44:07Z",
+      "comment_count": 3,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/1299",
+        "https://github.com/osfans/trime/issues/1299#issuecomment-2008698698",
+        "https://github.com/osfans/trime/issues/1299#issuecomment-2008713844",
+        "https://github.com/osfans/trime/issues/1299#issuecomment-2011123661"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 1269,
+      "title": "[docs] Any document about liquid_keyboard",
+      "url": "https://github.com/osfans/trime/issues/1269",
+      "primary_category": "I",
+      "kind": "question",
+      "priority": "P2",
+      "summary": "缺少液态键盘、剪贴板切换方式及候选栏行为文档。",
+      "evidence": [
+        "正文：https://github.com/osfans/trime/issues/1269；用户希望 schema switches 切换 clipboard/draft，未找到液态键盘说明。",
+        "2024-02-26 goofyz 评论：2024年的解法要求 _key_ 前缀并自建 draft preset_key。（https://github.com/osfans/trime/issues/1269#issuecomment-1963490108）",
+        "2024-02-26 Freed-Wu 评论：用户确认前缀解法后，继续询问如何保留原候选。（https://github.com/osfans/trime/issues/1269#issuecomment-1963536892）",
+        "2024-02-27 goofyz 评论：维护者解释当时切至液态键盘会隐藏 switch/candidate。（https://github.com/osfans/trime/issues/1269#issuecomment-1965585517）",
+        "上游 a047f747 源码：https://github.com/osfans/trime/blob/a047f747/app/src/main/java/com/osfans/trime/ime/keyboard/CommonKeyboardActionListener.kt；当前有 clipboard_window，liquid_keyboard 仅对剪贴板保留兼容分支，需更新旧示例。"
+      ],
+      "reproduction_status": "历史配置咨询已部分回答；当前命令和面板架构变化，未运行旧示例。",
+      "next_action": "configuration_or_docs",
+      "related_open_prs": [],
+      "proposed_work_unit": "编写当前版本液态符号与剪贴板面板迁移说明，提供实际支持的主题入口及候选栏切换示例。",
+      "acceptance": [
+        "从干净当前配置可打开剪贴板/符号并返回输入；示例明确哪些旧 _key_/草稿写法仍支持；说明切换后的候选栏行为。"
+      ],
+      "uncertainty": "旧回答不能未经验证直接复制为当前文档；草稿功能是否迁移需确认。",
+      "category_name": "使用咨询、文档与生态工具",
+      "secondary_tags": [],
+      "original_labels": [],
+      "created_at": "2024-02-24T15:31:47Z",
+      "updated_at": "2024-02-27T00:40:09Z",
+      "comment_count": 5,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/1269",
+        "https://github.com/osfans/trime/issues/1269#issuecomment-1963379623",
+        "https://github.com/osfans/trime/issues/1269#issuecomment-1963445433",
+        "https://github.com/osfans/trime/issues/1269#issuecomment-1963490108",
+        "https://github.com/osfans/trime/issues/1269#issuecomment-1963536892",
+        "https://github.com/osfans/trime/issues/1269#issuecomment-1965585517"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 1267,
+      "title": "添加针对多重剪贴板的新命令",
+      "url": "https://github.com/osfans/trime/issues/1267",
+      "primary_category": "E",
+      "kind": "feature_request",
+      "priority": "P2",
+      "summary": "希望重复粘贴最后选中的历史剪贴项，并提供实体键盘入口。",
+      "evidence": [
+        "正文：https://github.com/osfans/trime/issues/1267；仿 Win+V：选历史项后，若没有新复制，后续粘贴沿用该项且不重排列表；另外请求Win+V和Ctrl+V可选策略。",
+        "上游 a047f747 源码：https://github.com/osfans/trime/blob/a047f747/app/src/main/java/com/osfans/trime/ime/clipboard/ClipboardWindow.kt；当前点击历史项直接 commitText，尚不能据此确认后续系统粘贴目标。"
+      ],
+      "reproduction_status": "未运行；需求包含系统剪贴板、历史选择和快捷键三种语义，正文无设备/现行配置。",
+      "next_action": "design_discussion",
+      "related_open_prs": [],
+      "proposed_work_unit": "实现可配置的“上次选择的历史项”粘贴策略，并统一面板点击与快捷键入口的选择、失效及新复制重置规则。",
+      "acceptance": [
+        "选择旧项后重复粘贴仍是旧项且列表顺序不变；新复制、删除所选项和服务重启后的行为有定义；Ctrl+V开关可恢复现有策略。"
+      ],
+      "uncertainty": "Android快捷键拦截和系统剪贴板改写是否必要尚未决定；不能与剪贴板搜索PR混为同一需求。",
+      "category_name": "剪贴板、隐私与内容处理",
+      "secondary_tags": [],
+      "original_labels": [],
+      "created_at": "2024-02-23T05:37:22Z",
+      "updated_at": "2024-02-23T05:37:22Z",
+      "comment_count": 0,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/1267"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 1251,
+      "title": "在设置界面增加键盘/候选字体微调选项",
+      "url": "https://github.com/osfans/trime/issues/1251",
+      "primary_category": "G",
+      "kind": "feature_request",
+      "priority": "P2",
+      "summary": "为视力较差用户提供设置中的键盘与候选字号微调。",
+      "evidence": [
+        "正文：https://github.com/osfans/trime/issues/1251；正文给出按键 label/symbol/hint 相对偏移与候选单独微调算法，也承认放大会导致重叠溢出。",
+        "上游 a047f747 源码：https://github.com/osfans/trime/blob/a047f747/app/src/main/java/com/osfans/trime/data/prefs/AppPrefs.kt；当前查看的偏好项未见对应 finetune 字号功能。"
+      ],
+      "reproduction_status": "未运行；属于可访问性增强，缺少最终字号度量与溢出策略。",
+      "next_action": "design_discussion",
+      "related_open_prs": [
+        {
+          "number": 2195,
+          "url": "https://github.com/osfans/trime/pull/2195",
+          "relation": "possible_relation",
+          "scope": "同处文字度量与键界限，PR解决越界，并未提供用户字号微调；需协调策略。"
+        }
+      ],
+      "proposed_work_unit": "设计并实现独立于主题的用户字号缩放设置，统一键面/提示/候选的缩放与可读性约束。",
+      "acceptance": [
+        "关闭时按主题原字号；开启后各文本按既定规则缩放，最大系统字体下仍可识别且可恢复默认；候选与按键分别控制。"
+      ],
+      "uncertainty": "先与 #2195 的自动缩放/裁剪策略对齐，避免用户放大立即被自动缩回。",
+      "category_name": "无障碍与系统窗口适配",
+      "secondary_tags": [],
+      "original_labels": [
+        "enhancement"
+      ],
+      "created_at": "2024-02-15T14:48:14Z",
+      "updated_at": "2024-02-15T17:25:54Z",
+      "comment_count": 0,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/1251"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 1200,
+      "title": "自定义按键形状和按键触摸区域，如 typewise 式的蜂窝按键",
+      "url": "https://github.com/osfans/trime/issues/1200",
+      "primary_category": "C",
+      "kind": "feature_request",
+      "priority": "P3",
+      "summary": "希望异形键视觉与真实触摸区域一致，支持蜂窝布局。",
+      "evidence": [
+        "正文：https://github.com/osfans/trime/issues/1200；现有贴图可呈现异形按键但触摸区域仍矩形，参考 Typewise。",
+        "上游 a047f747 源码：https://github.com/osfans/trime/blob/a047f747/app/src/main/java/com/osfans/trime/ime/keyboard/Key.kt；当前 isInside 使用矩形与边缘范围命中。"
+      ],
+      "reproduction_status": "需求明确但未提供具体布局或无障碍/滑动命中规则；本轮未运行。",
+      "next_action": "design_discussion",
+      "related_open_prs": [],
+      "proposed_work_unit": "定义可配置的非矩形键形与命中区域，并把布局、绘制、邻近纠错和手势识别统一到同一几何模型。",
+      "acceptance": [
+        "蜂窝相邻键边界与空隙触摸命中可预测；滑动/长按/预览/无障碍范围一致；矩形旧主题行为保持兼容。"
+      ],
+      "uncertainty": "不是单纯换背景资源；所需主题格式和误触容错策略尚未确定。",
+      "category_name": "键盘布局、主题与渲染",
+      "secondary_tags": [],
+      "original_labels": [
+        "feature",
+        "not-recent"
+      ],
+      "created_at": "2024-01-24T17:43:36Z",
+      "updated_at": "2024-01-25T13:18:02Z",
+      "comment_count": 0,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/1200"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 1148,
+      "title": "改善 UI 跟其他輸入法看齊",
+      "url": "https://github.com/osfans/trime/issues/1148",
+      "primary_category": "C",
+      "kind": "feature_request",
+      "priority": "P2",
+      "summary": "汇总工具栏、候选、emoji、语音、浮窗和图标的 UI 重设计。",
+      "evidence": [
+        "正文：https://github.com/osfans/trime/issues/1148；正文列出六组UI改进并关联多个旧issue，不能作为一个小PR全部实现。",
+        "2023-12-19 Wenti-D 评论：进一步要求连续候选、预览与label一致、滑动提示。（https://github.com/osfans/trime/issues/1148#issuecomment-1862530793）",
+        "2024-02-27 daniuwo 评论：用户以图标字体替代图片label。（https://github.com/osfans/trime/issues/1148#issuecomment-1965573410）",
+        "上游 a047f747 源码：https://github.com/osfans/trime/blob/a047f747/app/src/main/java/com/osfans/trime/data/theme/model/ToolBar.kt；上游 a047f747 源码：https://github.com/osfans/trime/blob/a047f747/app/src/main/java/com/osfans/trime/ime/keyboard/Key.kt；当前已有工具栏和ic@图标字体机制，旧缺口需重列。"
+      ],
+      "reproduction_status": "当前实现已变化；未做现行UI逐项对照或设备验收。",
+      "next_action": "design_discussion",
+      "related_open_prs": [],
+      "proposed_work_unit": "把本议题作为UI追踪入口，基于当前默认主题选定“固定工具入口与候选展开往返”完整用户流程，再完成该流程的设计与实现。",
+      "acceptance": [
+        "给出当前界面差距清单并指向独立工作单元；选定流程在有/无编码时入口一致、能返回候选；其他语音/emoji/浮窗明确单独跟踪。"
+      ],
+      "uncertainty": "议题过宽且部分能力已有实现；不宜按标题开整体重写PR。",
+      "category_name": "键盘布局、主题与渲染",
+      "secondary_tags": [],
+      "original_labels": [
+        "feature",
+        "long-term"
+      ],
+      "created_at": "2023-12-13T13:00:31Z",
+      "updated_at": "2025-01-20T14:02:16Z",
+      "comment_count": 6,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/1148",
+        "https://github.com/osfans/trime/issues/1148#issuecomment-1857570656",
+        "https://github.com/osfans/trime/issues/1148#issuecomment-1862530793",
+        "https://github.com/osfans/trime/issues/1148#issuecomment-1862778887",
+        "https://github.com/osfans/trime/issues/1148#issuecomment-1872437580",
+        "https://github.com/osfans/trime/issues/1148#issuecomment-1965573410",
+        "https://github.com/osfans/trime/issues/1148#issuecomment-2602506428"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 1106,
+      "title": "滑動手指以輸入文字",
+      "url": "https://github.com/osfans/trime/issues/1106",
+      "primary_category": "F",
+      "kind": "feature_request",
+      "priority": "P3",
+      "summary": "希望按连续滑过字母轨迹识别整词的滑行输入。",
+      "evidence": [
+        "正文：https://github.com/osfans/trime/issues/1106；正文明确参考 Gboard/iOS 滑过多个字母后抬手出词，而非单键四向滑动。"
+      ],
+      "reproduction_status": "产品需求；无算法、语言、词库或当前原型，本轮未运行。",
+      "next_action": "design_discussion",
+      "related_open_prs": [],
+      "proposed_work_unit": "先定义一种语言的滑行解码闭环：轨迹采样、词典/语言模型解码、候选修正与普通点按共存。",
+      "acceptance": [
+        "短词、重复字母和近邻轨迹能给可纠正候选；误触可取消；性能与数据来源有可测范围。"
+      ],
+      "uncertainty": "工程规模大且可能依赖新的解码器；既有swipe_up/down不构成实现。",
+      "category_name": "手势、光标、按键反馈与语音",
+      "secondary_tags": [],
+      "original_labels": [],
+      "created_at": "2023-11-19T13:42:11Z",
+      "updated_at": "2023-11-19T14:06:37Z",
+      "comment_count": 0,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/1106"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 1082,
+      "title": "一键两功能",
+      "url": "https://github.com/osfans/trime/issues/1082",
+      "primary_category": "F",
+      "kind": "feature_request",
+      "priority": "P2",
+      "summary": "一键多动作实际涉及等待部署完成及主题/键盘状态刷新。",
+      "evidence": [
+        "正文：https://github.com/osfans/trime/issues/1082；希望“部署后打开主题列表”。",
+        "2023-12-05 goofyz 评论：曾建议组合 {Deploy}{Theme_settings}。（https://github.com/osfans/trime/issues/1082#issuecomment-1840242751）",
+        "2023-12-05 isPoto 评论：用户发现组合打出文本且部署后需等待；同时报告中英布局与模式错乱。（https://github.com/osfans/trime/issues/1082#issuecomment-1841420219）",
+        "2023-12-06 goofyz 评论：回复确认不会等部署完成再打开列表，并指向#1035。（https://github.com/osfans/trime/issues/1082#issuecomment-1842154241）",
+        "上游 a047f747 源码：https://github.com/osfans/trime/blob/a047f747/app/src/main/java/com/osfans/trime/ime/keyboard/CommonKeyboardActionListener.kt；当前命令与宏解析不同于2023版。"
+      ],
+      "reproduction_status": "旧宏失败和模式错乱均未经当前版本复测；不把三个现象合并认定一个缺陷。",
+      "next_action": "historical_retest",
+      "related_open_prs": [],
+      "proposed_work_unit": "用当前配置验证“部署完成后刷新当前主题”这一完整行为；若仍失败，基于部署完成事件刷新，而非加入固定延时宏。",
+      "acceptance": [
+        "修改主题并触发部署后自动呈现新布局；部署失败有明确结果；中西模式与焦点恢复不被意外改变。"
+      ],
+      "uncertainty": "需作者提供现用主题及最小宏；通用多动作、异步部署和#1035模式问题范围应分别确认。",
+      "category_name": "手势、光标、按键反馈与语音",
+      "secondary_tags": [],
+      "original_labels": [
+        "feature"
+      ],
+      "created_at": "2023-09-05T18:26:09Z",
+      "updated_at": "2024-01-25T13:42:06Z",
+      "comment_count": 4,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/1082",
+        "https://github.com/osfans/trime/issues/1082#issuecomment-1840242751",
+        "https://github.com/osfans/trime/issues/1082#issuecomment-1841420219",
+        "https://github.com/osfans/trime/issues/1082#issuecomment-1842154241",
+        "https://github.com/osfans/trime/issues/1082#issuecomment-1842256547"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 1040,
+      "title": "liquid keyboard window 支持「钉住」按钮",
+      "url": "https://github.com/osfans/trime/issues/1040",
+      "primary_category": "E",
+      "kind": "feature_request",
+      "priority": "P3",
+      "summary": "希望收藏剪贴项以便长期复用，原提议为钉住模式。",
+      "evidence": [
+        "正文：https://github.com/osfans/trime/issues/1040；希望点“钉住”后点击多个clipboard item收至bookmark面板。",
+        "上游 a047f747 源码：https://github.com/osfans/trime/blob/a047f747/app/src/main/java/com/osfans/trime/ime/clipboard/ClipboardWindow.kt；当前已有onPin/onUnpin/onCollect、独立收藏页与删除操作。"
+      ],
+      "reproduction_status": "源码显示保存复用的核心能力已有；未运行验证，也未确认是否仍坚持批量钉住交互。",
+      "next_action": "historical_retest",
+      "related_open_prs": [],
+      "proposed_work_unit": "在当前版本验收剪贴项置顶与收藏往返流程，并确认现有逐项操作是否满足原需求；只对剩余批量需求重新设计。",
+      "acceptance": [
+        "剪贴记录可收藏并在收藏页复用；清空普通记录不误删收藏/置顶项；若要求批量模式，先给出现有流程差距。"
+      ],
+      "uncertainty": "“置顶历史”和“复制到收藏”不是同义；不能直接宣称原指定模式已实现。",
+      "category_name": "剪贴板、隐私与内容处理",
+      "secondary_tags": [],
+      "original_labels": [
+        "feature"
+      ],
+      "created_at": "2023-07-18T20:35:50Z",
+      "updated_at": "2024-01-25T14:13:22Z",
+      "comment_count": 0,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/1040"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 1033,
+      "title": "支持打字有编码时，上滑键变化",
+      "url": "https://github.com/osfans/trime/issues/1033",
+      "primary_category": "F",
+      "kind": "feature_request",
+      "priority": "P2",
+      "summary": "希望同一上滑手势随是否有编码切换不同动作。",
+      "evidence": [
+        "正文：https://github.com/osfans/trime/issues/1033；描述“平时上滑大写，有编码时上滑数字”，指出 has_menu 只能控制 click。",
+        "2024-01-30 nopdan 评论：评论认为设计不易。（https://github.com/osfans/trime/issues/1033#issuecomment-1915892682）",
+        "上游 a047f747 源码：https://github.com/osfans/trime/blob/a047f747/app/src/main/java/com/osfans/trime/data/theme/model/TextKeyboard.kt；上游 a047f747 源码：https://github.com/osfans/trime/blob/a047f747/app/src/main/java/com/osfans/trime/ime/keyboard/Key.kt；当前swipe与状态动作是平行字段。"
+      ],
+      "reproduction_status": "未运行；与#674状态×动作模型相同设计问题，当前代码仍没有嵌套状态手势的明显契约。",
+      "next_action": "design_discussion",
+      "related_open_prs": [],
+      "proposed_work_unit": "与#674合并定义兼容旧主题的状态×手势绑定：本工作单元完成有编码/无编码上滑动作切换及可视提示。",
+      "acceptance": [
+        "无编码上滑大写、有编码上滑数字；click仍沿用原绑定；状态并存、缺省继承和禁用动作有确定规则。"
+      ],
+      "uncertainty": "需避免以新键盘分支实现后宣称所有状态手势均已支持。",
+      "category_name": "手势、光标、按键反馈与语音",
+      "secondary_tags": [],
+      "original_labels": [
+        "feature"
+      ],
+      "created_at": "2023-07-08T07:45:36Z",
+      "updated_at": "2024-01-30T01:28:25Z",
+      "comment_count": 1,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/1033",
+        "https://github.com/osfans/trime/issues/1033#issuecomment-1915892682"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 1020,
+      "title": "关于.custom.yaml配置补丁中对按键功能的配置格式问题",
+      "url": "https://github.com/osfans/trime/issues/1020",
+      "primary_category": "D",
+      "kind": "bug_report",
+      "priority": "P2",
+      "summary": "旧版主题补丁的整项map覆盖与逐属性覆盖结果不同。",
+      "evidence": [
+        "正文：https://github.com/osfans/trime/issues/1020；3.2.9–3.2.12提供@33空格、@21Shift补丁，报告顺序变化会影响字体/宽度，逐属性写法有效。",
+        "2023-06-11 controlledentropy 评论：另述3.2.10后输入卡顿，是独立性能现象且无量化。（https://github.com/osfans/trime/issues/1020#issuecomment-1586131838）",
+        "上游 a047f747 源码：https://github.com/osfans/trime/blob/a047f747/app/src/main/java/com/osfans/trime/data/theme/ThemeDslExpander.kt；当前主题补丁由新的DSL展开器处理，不能直接套用旧JNI配置结论。"
+      ],
+      "reproduction_status": "历史最小配置可复测；当前解析器已变化，本轮未运行。",
+      "next_action": "historical_retest",
+      "related_open_prs": [],
+      "proposed_work_unit": "在现行主题加载链对比整项map与逐属性补丁的最终配置，若仍存在差异，修复数组索引替换/合并语义并补齐配置说明。",
+      "acceptance": [
+        "合法YAML的键值次序不改变结果；@索引map替换与逐属性补丁按文档工作；部署后目标键宽度/标签/字号可见。"
+      ],
+      "uncertainty": "示例 key_text_size:30 缺少冒号后空格，可能本身并非预期YAML映射；需先规范最小示例；卡顿需另建复现。",
+      "category_name": "存储、配置、部署与用户词库",
+      "secondary_tags": [],
+      "original_labels": [],
+      "created_at": "2023-06-11T11:41:14Z",
+      "updated_at": "2023-06-11T11:45:25Z",
+      "comment_count": 1,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/1020",
+        "https://github.com/osfans/trime/issues/1020#issuecomment-1586131838"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 1008,
+      "title": "支持 Gboard 那样的悬浮键盘",
+      "url": "https://github.com/osfans/trime/issues/1008",
+      "primary_category": "G",
+      "kind": "feature_request",
+      "priority": "P2",
+      "summary": "希望可拖动、调整尺寸的悬浮键盘，平板与游戏有持续需求。",
+      "evidence": [
+        "正文：https://github.com/osfans/trime/issues/1008；正文参考Gboard浮动软键盘。",
+        "2025-03-17 BH2WFR 评论：2025年平板用户补充需求。（https://github.com/osfans/trime/issues/1008#issuecomment-2728419696）",
+        "2025-11-25 Mikachu2333 评论：2025年游戏使用场景再次请求。（https://github.com/osfans/trime/issues/1008#issuecomment-3576488892）"
+      ],
+      "reproduction_status": "需求持续；未提供窗口/拖动/尺寸规范，未做运行验证。",
+      "next_action": "design_discussion",
+      "related_open_prs": [],
+      "proposed_work_unit": "完成悬浮键盘模式的窗口、拖动、缩放、定位持久化及恢复停靠整体流程。",
+      "acceptance": [
+        "开启后可拖动且不截获键外触摸；候选/弹出键/剪贴面板跟随定位；旋转、分屏、应用切换可恢复可见位置。"
+      ],
+      "uncertainty": "需明确最低Android与输入法窗口边界；这是系统窗口能力，非候选悬浮窗。",
+      "category_name": "无障碍与系统窗口适配",
+      "secondary_tags": [],
+      "original_labels": [
+        "feature",
+        "long-term"
+      ],
+      "created_at": "2023-05-11T08:25:39Z",
+      "updated_at": "2025-11-25T16:23:11Z",
+      "comment_count": 2,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/1008",
+        "https://github.com/osfans/trime/issues/1008#issuecomment-2728419696",
+        "https://github.com/osfans/trime/issues/1008#issuecomment-3576488892"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 1005,
+      "title": "无法使用luna九宫格输入法",
+      "url": "https://github.com/osfans/trime/issues/1005",
+      "primary_category": "B",
+      "kind": "bug_report",
+      "priority": "P2",
+      "summary": "旧版自定义 luna 九宫格只输出英文，需要先确认方案部署与ASCII状态。",
+      "evidence": [
+        "正文：https://github.com/osfans/trime/issues/1005；OnePlus8T Android13、3.2.12，引用外部基础配置和九宫格配置，附onStartInput等日志但无schema加载失败栈。",
+        "2024-01-25 WhiredPlanck 评论：维护者2024年要求最新每夜版复测，未见后续结果。（https://github.com/osfans/trime/issues/1005#issuecomment-1910308265）"
+      ],
+      "reproduction_status": "仅2023版自定义方案报告；当前未复测，不等同于内置T9新方案缺陷。",
+      "next_action": "needs_information",
+      "related_open_prs": [
+        {
+          "number": 2183,
+          "url": "https://github.com/osfans/trime/pull/2183",
+          "relation": "possible_relation",
+          "scope": "都是九宫格输入，但本issue是第三方luna配置失败；需复测区分，不能直接当已覆盖。"
+        }
+      ],
+      "proposed_work_unit": "收集当前版本、完整九宫格schema/主题及部署日志，复现“选中该schema后英文直出”，定位部署失败还是ascii_mode/布局初始化。",
+      "acceptance": [
+        "同一最小配置部署成功并可产生中文候选；切换方案/焦点后模式一致；无效方案有可理解错误。"
+      ],
+      "uncertainty": "外部配置可能已变化；#2183新增原生T9不能自动解决任意第三方九宫格兼容问题。",
+      "category_name": "输入、方案与候选",
+      "secondary_tags": [],
+      "original_labels": [
+        "bug"
+      ],
+      "created_at": "2023-05-03T18:39:02Z",
+      "updated_at": "2024-01-25T14:19:28Z",
+      "comment_count": 1,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/1005",
+        "https://github.com/osfans/trime/issues/1005#issuecomment-1910308265"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 997,
+      "title": "關於 Google Play 版本更新",
+      "url": "https://github.com/osfans/trime/issues/997",
+      "primary_category": "H",
+      "kind": "maintenance",
+      "priority": "P2",
+      "summary": "Google Play 更新工作已于2026年重启，剩余AAB与发布流程需明确。",
+      "evidence": [
+        "正文：https://github.com/osfans/trime/issues/997；最初协调商店权限与签名；2023年上传因MANAGE_EXTERNAL_STORAGE被拒。",
+        "2026-08-27 goofyz 评论：2026-08说明外部存储权限已移除，可重新推进。（https://github.com/osfans/trime/issues/997#issuecomment-5435967527）",
+        "2026-08-27 Bambooin 评论：维护者列出当前Play要求检查、AAB CI、变更记录/截图和账户发布安排。（https://github.com/osfans/trime/issues/997#issuecomment-5437618486）",
+        "上游 a047f747 源码：https://github.com/osfans/trime/blob/a047f747/.github/workflows/release-ci.yml；当前Release工作流产出APK，并非Play商店发布验收。"
+      ],
+      "reproduction_status": "2026年有最新维护者待办；没有本轮商店端或AAB验收。",
+      "next_action": "needs_information",
+      "related_open_prs": [],
+      "proposed_work_unit": "与维护者确定Play发布负责人和包/签名延续要求后，准备可审查的AAB构建及商店资料交付流程。",
+      "acceptance": [
+        "当前平台要求核查有日期和来源；AAB在测试轨验证升级与签名；发布材料齐全；实际上架需账户负责人完成。"
+      ],
+      "uncertainty": "不能继续沿用2023存储权限作为唯一阻塞；不能从issue推断当前Play政策或账户权限；不处理或传播历史私钥信息。",
+      "category_name": "构建、发布、安装与平台依赖",
+      "secondary_tags": [],
+      "original_labels": [
+        "long-term"
+      ],
+      "created_at": "2023-04-14T06:58:08Z",
+      "updated_at": "2026-08-27T10:20:48Z",
+      "comment_count": 17,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/997",
+        "https://github.com/osfans/trime/issues/997#issuecomment-1508038621",
+        "https://github.com/osfans/trime/issues/997#issuecomment-1508082704",
+        "https://github.com/osfans/trime/issues/997#issuecomment-1508118963",
+        "https://github.com/osfans/trime/issues/997#issuecomment-1508153778",
+        "https://github.com/osfans/trime/issues/997#issuecomment-1508173216",
+        "https://github.com/osfans/trime/issues/997#issuecomment-1509458552",
+        "https://github.com/osfans/trime/issues/997#issuecomment-1510637876",
+        "https://github.com/osfans/trime/issues/997#issuecomment-1511338060",
+        "https://github.com/osfans/trime/issues/997#issuecomment-1511710568",
+        "https://github.com/osfans/trime/issues/997#issuecomment-1512423902",
+        "https://github.com/osfans/trime/issues/997#issuecomment-1513295402",
+        "https://github.com/osfans/trime/issues/997#issuecomment-1666757584",
+        "https://github.com/osfans/trime/issues/997#issuecomment-1666779014",
+        "https://github.com/osfans/trime/issues/997#issuecomment-1676205703",
+        "https://github.com/osfans/trime/issues/997#issuecomment-1876362782",
+        "https://github.com/osfans/trime/issues/997#issuecomment-5435967527",
+        "https://github.com/osfans/trime/issues/997#issuecomment-5437618486"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 954,
+      "title": "您好，新升级了3.2.11后配置文件tongwenfeng.trime.ymal的兼容性问题",
+      "url": "https://github.com/osfans/trime/issues/954",
+      "primary_category": "D",
+      "kind": "bug_report",
+      "priority": "P2",
+      "summary": "原候选区消失已有升级缓解，遗留繁简与旧主题高度配置需拆清。",
+      "evidence": [
+        "正文：https://github.com/osfans/trime/issues/954；MIUI13升14后候选区不见，标题指tongwenfeng兼容。",
+        "2023-03-07 ycbrd 评论：作者称原问题已解决，转为繁简都输出繁体及旧高度参数无效，附依赖缺失部署信息。（https://github.com/osfans/trime/issues/954#issuecomment-1458359096）",
+        "2023-04-04 ycbrd 评论：明确原候选问题通过安装新版本解决。（https://github.com/osfans/trime/issues/954#issuecomment-1496285406）",
+        "2024-01-25 WhiredPlanck 评论：2024维护者再次要求新版复测。（https://github.com/osfans/trime/issues/954#issuecomment-1910334294）"
+      ],
+      "reproduction_status": "正文最初症状有作者历史已解决反馈；其余多个症状没有当前版本最小复现。",
+      "next_action": "needs_information",
+      "related_open_prs": [],
+      "proposed_work_unit": "请报告者选择当前仍存在的一个症状并提供现行schema/custom主题和部署日志，再分别排查繁简依赖或高度配置迁移。",
+      "acceptance": [
+        "当前版本能以最小配置重现单一现象；繁简开关实际影响输出；主题高度按现行字段生效，原候选问题单独记录状态。"
+      ],
+      "uncertainty": "不能因为第一症状解决就关闭整帖，也不能把2023旧字段问题当作当前系统回归。",
+      "category_name": "存储、配置、部署与用户词库",
+      "secondary_tags": [],
+      "original_labels": [
+        "compatability"
+      ],
+      "created_at": "2023-03-07T04:42:09Z",
+      "updated_at": "2024-01-25T14:35:39Z",
+      "comment_count": 6,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/954",
+        "https://github.com/osfans/trime/issues/954#issuecomment-1457813549",
+        "https://github.com/osfans/trime/issues/954#issuecomment-1458359096",
+        "https://github.com/osfans/trime/issues/954#issuecomment-1495357161",
+        "https://github.com/osfans/trime/issues/954#issuecomment-1496285406",
+        "https://github.com/osfans/trime/issues/954#issuecomment-1498366152",
+        "https://github.com/osfans/trime/issues/954#issuecomment-1910334294"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 953,
+      "title": "[Dev] Use prebuilt dependencies",
+      "url": "https://github.com/osfans/trime/issues/953",
+      "primary_category": "H",
+      "kind": "maintenance",
+      "priority": "P3",
+      "summary": "希望把原生第三方依赖预构建发布以减少冷构建成本。",
+      "evidence": [
+        "正文：https://github.com/osfans/trime/issues/953；正文建议预构建boost/glog/leveldb/OpenCC等，提供早期trime-prebuilt尝试，无评论验收。",
+        "上游 a047f747 源码：https://github.com/osfans/trime/blob/a047f747/app/src/main/jni/CMakeLists.txt；当前仍通过add_subdirectory构建多项依赖。",
+        "上游 a047f747 源码：https://github.com/osfans/trime/blob/a047f747/.github/workflows/release-ci.yml；现有app/prebuilt按native hash缓存，已部分缓解重复编译。"
+      ],
+      "reproduction_status": "源码显示缓存已有，稳定可下载依赖制品方案未获运行或性能对比。",
+      "next_action": "design_discussion",
+      "related_open_prs": [],
+      "proposed_work_unit": "先对照现有native缓存设计可复现的依赖制品发布/消费契约，涵盖ABI、NDK、构建参数、校验和及源码回退。",
+      "acceptance": [
+        "冷环境可验证下载制品并链接四ABI；依赖/工具链变化自动失效；可回退源码构建；有冷/热构建耗时对比再决定收益。"
+      ],
+      "uncertainty": "仅替换下载地址不构成完整工作；制品维护成本、F-Droid源码构建与缓存命中基线需确认。",
+      "category_name": "构建、发布、安装与平台依赖",
+      "secondary_tags": [],
+      "original_labels": [
+        "long-term"
+      ],
+      "created_at": "2023-03-06T12:22:28Z",
+      "updated_at": "2024-01-25T14:36:47Z",
+      "comment_count": 0,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/953"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 938,
+      "title": "[Feature Request] Add Support for Incognito Mode",
+      "url": "https://github.com/osfans/trime/issues/938",
+      "primary_category": "E",
+      "kind": "feature_request",
+      "priority": "P2",
+      "summary": "希望全局隐身模式同时抑制词库学习和剪贴记录，存在引擎能力限制。",
+      "evidence": [
+        "正文：https://github.com/osfans/trime/issues/938；希望手动/自动根据应用隐身请求启用，避免保存新词和剪贴内容。",
+        "2025-10-06 WhiredPlanck 评论：2025-10维护者说明能检测系统隐身意图，但librime无运行时个人学习开关。（https://github.com/osfans/trime/issues/938#issuecomment-3369737901）",
+        "上游 a047f747 源码：https://github.com/osfans/trime/blob/a047f747/app/src/main/java/com/osfans/trime/data/db/ClipboardHelper.kt；需将引擎学习与前端剪贴记录的控制分别验证。"
+      ],
+      "reproduction_status": "功能请求而非已确认泄露；本轮未测试学习或隐身标志；2025限制需按当前librime复核。",
+      "next_action": "upstream_dependency",
+      "related_open_prs": [],
+      "proposed_work_unit": "核对当前librime停止个人学习的能力，制定并实现隐身状态对词库学习/剪贴监听的完整契约，未覆盖数据路径时不得显示已完全隐身。",
+      "acceptance": [
+        "切入/退出隐身前后对用户词库与剪贴数据库做可比检查；系统标志与手动开关行为明确；无后台延迟写入；状态可见。"
+      ],
+      "uncertainty": "论坛关于“Trime不记录”的说法不等于所有schema不学习；这是P2功能/隐私设计，尚无证据定为P0漏洞。",
+      "category_name": "剪贴板、隐私与内容处理",
+      "secondary_tags": [],
+      "original_labels": [
+        "feature",
+        "help-wanted"
+      ],
+      "created_at": "2023-02-13T09:32:44Z",
+      "updated_at": "2025-12-07T11:36:36Z",
+      "comment_count": 5,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/938",
+        "https://github.com/osfans/trime/issues/938#issuecomment-1429360940",
+        "https://github.com/osfans/trime/issues/938#issuecomment-1430739301",
+        "https://github.com/osfans/trime/issues/938#issuecomment-1431234040",
+        "https://github.com/osfans/trime/issues/938#issuecomment-1431476603",
+        "https://github.com/osfans/trime/issues/938#issuecomment-3369737901"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 924,
+      "title": "液态键盘有些地方是否应该重新设计？",
+      "url": "https://github.com/osfans/trime/issues/924",
+      "primary_category": "C",
+      "kind": "feature_request",
+      "priority": "P2",
+      "summary": "液态面板功能tab混杂，期望固定操作区与独立候选展开流程。",
+      "evidence": [
+        "正文：https://github.com/osfans/trime/issues/924；详细提出返回/更多固定区域、自适应tab和候选页面独立布局。",
+        "2023-01-19 WhiredPlanck 评论：维护者2023年认可需重设计。（https://github.com/osfans/trime/issues/924#issuecomment-1396702923）",
+        "上游 a047f747 源码：https://github.com/osfans/trime/blob/a047f747/app/src/main/java/com/osfans/trime/data/theme/model/LiquidKeyboard.kt；当前DataType已仅含single/symbol/tabs/history；上游 a047f747 源码：https://github.com/osfans/trime/blob/a047f747/app/src/main/java/com/osfans/trime/ime/clipboard/ClipboardWindow.kt；剪贴板已独立。"
+      ],
+      "reproduction_status": "旧架构问题已有部分结构变化；未做当前UI对照。",
+      "next_action": "historical_retest",
+      "related_open_prs": [],
+      "proposed_work_unit": "在当前窗口模型验收符号tab、固定操作区与候选展开之间的完整往返，依据剩余差距更新本议题的设计范围。",
+      "acceptance": [
+        "返回入口在长tab列表中仍可达；候选展开不出现无意义空符号页；更多列表含哪些tab有明确规则；旧主题迁移可理解。"
+      ],
+      "uncertainty": "不能根据2023截图直接重写现行液态面板；部分需求可能已被窗口拆分覆盖。",
+      "category_name": "键盘布局、主题与渲染",
+      "secondary_tags": [],
+      "original_labels": [],
+      "created_at": "2023-01-17T07:39:07Z",
+      "updated_at": "2023-12-17T06:53:12Z",
+      "comment_count": 4,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/924",
+        "https://github.com/osfans/trime/issues/924#issuecomment-1396702923",
+        "https://github.com/osfans/trime/issues/924#issuecomment-1858786882",
+        "https://github.com/osfans/trime/issues/924#issuecomment-1859055059",
+        "https://github.com/osfans/trime/issues/924#issuecomment-1859055287"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 882,
+      "title": "无法直接设置大写字母作为按键？",
+      "url": "https://github.com/osfans/trime/issues/882",
+      "primary_category": "C",
+      "kind": "bug_report",
+      "priority": "P2",
+      "summary": "旧版直接绑定大写字母时键面空白，当前已有相关解析改动待验收。",
+      "evidence": [
+        "正文：https://github.com/osfans/trime/issues/882；3.2.6正常、3.2.7开始A-E空白但点击能输出，3.2.12仍复现；附最小click:A等主题。",
+        "2023-05-22 starriddle 评论：2023-05明确3.2.12仍无法显示大写字母。（https://github.com/osfans/trime/issues/882#issuecomment-1556871390）",
+        "上游 a047f747 源码：https://github.com/osfans/trime/blob/a047f747/app/src/main/java/com/osfans/trime/ime/keyboard/KeyCode.kt；当前A-Z显式解析为字母键+Shift。",
+        "上游 a047f747 源码：https://github.com/osfans/trime/blob/a047f747/app/src/main/java/com/osfans/trime/ime/keyboard/KeyAction.kt；当前标签由code和modifier的字符映射生成。"
+      ],
+      "reproduction_status": "历史回归点较清楚；当前源码已有相关改动但本轮未运行，不能声明修复。",
+      "next_action": "historical_retest",
+      "related_open_prs": [],
+      "proposed_work_unit": "在当前版本以A-Z最小主题验收键面、预览和实际提交一致性；仅对仍失败的字符映射路径修复。",
+      "acceptance": [
+        "无显式label和有label两种配置在中西文模式均可见；输出大写与预览相符；Shift/Caps不会意外反转。"
+      ],
+      "uncertainty": "旧问题可能被新解析路径解决，必须先验收再决定是否需要PR。",
+      "category_name": "键盘布局、主题与渲染",
+      "secondary_tags": [],
+      "original_labels": [],
+      "created_at": "2022-11-26T15:02:26Z",
+      "updated_at": "2023-05-22T09:26:12Z",
+      "comment_count": 2,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/882",
+        "https://github.com/osfans/trime/issues/882#issuecomment-1328156557",
+        "https://github.com/osfans/trime/issues/882#issuecomment-1556871390"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 853,
+      "title": "绑定实体键盘快捷键",
+      "url": "https://github.com/osfans/trime/issues/853",
+      "primary_category": "I",
+      "kind": "question",
+      "priority": "P3",
+      "summary": "用户把实体键盘脚本绑定写在方案内，需澄清主题绑定与fork脚本兼容。",
+      "evidence": [
+        "正文：https://github.com/osfans/trime/issues/853；使用中文输入法fork的3.1.3旧版，蓝牙键盘Ctrl+Shift+E想启动script，虚拟键长按/滑动有效。",
+        "2025-11-16 WhiredPlanck 评论：维护者2025-11明确这些参数放方案里无效，应放主题键盘布局。（https://github.com/osfans/trime/issues/853#issuecomment-3538049323）"
+      ],
+      "reproduction_status": "有维护者配置定位；原运行环境是旧fork，当前上游脚本支持未获验证。",
+      "next_action": "configuration_or_docs",
+      "related_open_prs": [],
+      "proposed_work_unit": "说明当前上游实体键盘快捷键支持边界，给出主题动作与Rime key_binder各自有效的最小例子。",
+      "acceptance": [
+        "支持的物理按键绑定在当前上游可复验；清楚标出fork独有脚本功能；不会要求用户把前端命令写入schema当作有效修复。"
+      ],
+      "uncertainty": "维护者建议主题布局不自动证明实体按键也会触发前端脚本；需要现行版本和真实目标动作。",
+      "category_name": "使用咨询、文档与生态工具",
+      "secondary_tags": [],
+      "original_labels": [],
+      "created_at": "2022-09-26T04:40:10Z",
+      "updated_at": "2025-11-16T06:23:35Z",
+      "comment_count": 2,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/853",
+        "https://github.com/osfans/trime/issues/853#issuecomment-1910474253",
+        "https://github.com/osfans/trime/issues/853#issuecomment-3538049323"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 850,
+      "title": "unicode模式:接受任何字符作为编码手段",
+      "url": "https://github.com/osfans/trime/issues/850",
+      "primary_category": "B",
+      "kind": "feature_request",
+      "priority": "P2",
+      "summary": "希望用任意Unicode字符作Rime编码，主要受引擎输入模型限制。",
+      "evidence": [
+        "正文：https://github.com/osfans/trime/issues/850；正文要求非ASCII字母/汉字等参与编码，并描述多字符Shift变换。",
+        "2022-12-27 MokOopsing 评论：指出rime本身不支持。（https://github.com/osfans/trime/issues/850#issuecomment-1365788263）",
+        "2026-09-21 Bobo-alcazar 评论：2026-09评论链接librime按字节/ASCII限制与Weasel讨论，认为需较大重构。（https://github.com/osfans/trime/issues/850#issuecomment-5753803779）"
+      ],
+      "reproduction_status": "最新评论仍指向引擎层限制；本轮未验证librime现行输入模型。",
+      "next_action": "upstream_dependency",
+      "related_open_prs": [
+        {
+          "number": 2186,
+          "url": "https://github.com/osfans/trime/pull/2186",
+          "relation": "possible_relation",
+          "scope": "处理JNI标准UTF-8/UTF-16边界与位置，相关但不提供Unicode编码引擎。"
+        }
+      ],
+      "proposed_work_unit": "先在librime明确非ASCII编码/分段/按键表示的支持方案，再让Trime传递与显示该能力；把普通Unicode直出与参与编码区分验收。",
+      "acceptance": [
+        "同一schema能用nü等非ASCII编码产生候选，光标/删除/分段按Unicode边界正确；普通字符直出继续可用。"
+      ],
+      "uncertainty": "JNI Unicode传输修复不改变引擎编码字母表，不能把#2186视作本需求已实现。",
+      "category_name": "输入、方案与候选",
+      "secondary_tags": [],
+      "original_labels": [],
+      "created_at": "2022-09-21T04:32:15Z",
+      "updated_at": "2026-09-21T00:17:12Z",
+      "comment_count": 2,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/850",
+        "https://github.com/osfans/trime/issues/850#issuecomment-1365788263",
+        "https://github.com/osfans/trime/issues/850#issuecomment-5753803779"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 846,
+      "title": "草稿箱建议设置白名单模式",
+      "url": "https://github.com/osfans/trime/issues/846",
+      "primary_category": "E",
+      "kind": "feature_request",
+      "priority": "P2",
+      "summary": "旧草稿箱希望应用白名单控制收集范围，当前功能存在性先核实。",
+      "evidence": [
+        "正文：https://github.com/osfans/trime/issues/846；作者称黑名单难以覆盖所有应用，只有少量App需要缓存草稿。",
+        "2022-11-09 Vinfall 评论：临时建议ADB导出包名列表拼黑名单，未提供白名单实现。（https://github.com/osfans/trime/issues/846#issuecomment-1308331545）",
+        "上游 a047f747 源码：https://github.com/osfans/trime/blob/a047f747/app/src/main/java/com/osfans/trime/data/prefs/AppPrefs.kt；当前已查看偏好项无草稿收集/白名单，需确认功能迁移状态。"
+      ],
+      "reproduction_status": "未运行；上游当前源码未见原草稿缓存入口，不能继续假设当年的自动收集存在。",
+      "next_action": "historical_retest",
+      "related_open_prs": [],
+      "proposed_work_unit": "确认现行版本是否仍收集编辑草稿；若保留或恢复该能力，为应用范围提供显式白名单/禁用策略并验证只收集授权App。",
+      "acceptance": [
+        "白名单外编辑内容不会进入草稿持久化；空白名单语义明确；模式切换与应用切换不误收集；若功能已移除则更新文档/议题结论。"
+      ],
+      "uncertainty": "这是旧隐私偏好需求，无现行泄露证据；不应先恢复收集功能来满足旧issue。",
+      "category_name": "剪贴板、隐私与内容处理",
+      "secondary_tags": [],
+      "original_labels": [
+        "enhancement"
+      ],
+      "created_at": "2022-09-17T01:16:21Z",
+      "updated_at": "2024-05-07T16:24:10Z",
+      "comment_count": 1,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/846",
+        "https://github.com/osfans/trime/issues/846#issuecomment-1308331545"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 827,
+      "title": "剥离方案、键盘配列和键盘label的对应关系",
+      "url": "https://github.com/osfans/trime/issues/827",
+      "primary_category": "C",
+      "kind": "feature_request",
+      "priority": "P2",
+      "summary": "希望方案、配列、label分离，让主题更容易适配不同方案。",
+      "evidence": [
+        "正文：https://github.com/osfans/trime/issues/827；建议独立yaml存储按键label，由schema指定布局和label名称。",
+        "2022-08-13 tumuyan 评论：提出qwerty/qwerty0/qwerty_等有限预置布局，常规键不写label。（https://github.com/osfans/trime/issues/827#issuecomment-1214174362）",
+        "2022-08-20 InfinityLoop1308 评论：评论指出旧主题迁移仍依赖主题作者。（https://github.com/osfans/trime/issues/827#issuecomment-1221408902）",
+        "上游 a047f747 源码：https://github.com/osfans/trime/blob/a047f747/app/src/main/java/com/osfans/trime/ime/keyboard/KeyboardWindow.kt；当前已有基于schema alphabet的smartMatchKeyboard，属于部分布局适配，非独立label完整方案。"
+      ],
+      "reproduction_status": "当前布局自动匹配已有部分能力；未运行多方案/label矩阵。",
+      "next_action": "design_discussion",
+      "related_open_prs": [],
+      "proposed_work_unit": "统一#738的label解析与现有smartMatchKeyboard，定义schema可声明布局与label集、主题覆盖和旧主题回退的契约。",
+      "acceptance": [
+        "未定制方案布局的两个主题可显示同一方案对应label；自定义主题显式label优先；未知方案回退明确；旧主题无需全部重写。"
+      ],
+      "uncertainty": "布局、显示label与实际键码必须分层；不能只抽出CSV就声称解决所有语言布局。",
+      "category_name": "键盘布局、主题与渲染",
+      "secondary_tags": [],
+      "original_labels": [
+        "enhancement"
+      ],
+      "created_at": "2022-08-13T14:58:55Z",
+      "updated_at": "2024-05-07T15:54:04Z",
+      "comment_count": 3,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/827",
+        "https://github.com/osfans/trime/issues/827#issuecomment-1214174362",
+        "https://github.com/osfans/trime/issues/827#issuecomment-1214339735",
+        "https://github.com/osfans/trime/issues/827#issuecomment-1221408902"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 814,
+      "title": "增强开箱即用性：重定义主键盘⌘键以快速切换输入法",
+      "url": "https://github.com/osfans/trime/issues/814",
+      "primary_category": "F",
+      "kind": "feature_request",
+      "priority": "P3",
+      "summary": "希望默认键盘提供易发现的输入法切换入口。",
+      "evidence": [
+        "正文：https://github.com/osfans/trime/issues/814；请求默认⌘长按弹IME选择、左右滑切上一/下一输入法，以代替低频配色入口。",
+        "2022-07-29 InfinityLoop1308 评论：多语言用户支持此需求。（https://github.com/osfans/trime/issues/814#issuecomment-1198889309）",
+        "上游 a047f747 源码：https://github.com/osfans/trime/blob/a047f747/app/src/main/assets/shared/trime.yaml；当前有IME_switch/IME_last/IME_next预设键，但是否默认可达需按现行布局验收。"
+      ],
+      "reproduction_status": "底层动作已有；旧默认⌘入口与当前工具栏/主题差异未运行确认。",
+      "next_action": "historical_retest",
+      "related_open_prs": [],
+      "proposed_work_unit": "验收两个默认主题的输入法切换可达性，并在维护者确定默认交互后补齐一致、可发现的键盘入口。",
+      "acceptance": [
+        "普通与密码输入框中均能调出系统IME选择；上一/下一支持时可用；标签和手势说明一致；没有支持时有明确降级。"
+      ],
+      "uncertainty": "需要检查当前工具栏是否已经满足目标，不能只因预设动作存在就判默认入口已完成。",
+      "category_name": "手势、光标、按键反馈与语音",
+      "secondary_tags": [],
+      "original_labels": [],
+      "created_at": "2022-07-24T14:54:46Z",
+      "updated_at": "2022-11-17T21:03:21Z",
+      "comment_count": 2,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/814",
+        "https://github.com/osfans/trime/issues/814#issuecomment-1198889309",
+        "https://github.com/osfans/trime/issues/814#issuecomment-1316026399"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 779,
+      "title": "Add crash report UI",
+      "url": "https://github.com/osfans/trime/issues/779",
+      "primary_category": "A",
+      "kind": "feature_request",
+      "priority": "P3",
+      "summary": "希望普通用户通过崩溃报告界面导出诊断，当前已有实现需验收。",
+      "evidence": [
+        "正文：https://github.com/osfans/trime/issues/779；正文希望一键报崩溃，提出ACRA；评论另推荐beetle库。",
+        "上游 a047f747 源码：https://github.com/osfans/trime/blob/a047f747/app/src/main/java/com/osfans/trime/TrimeApplication.kt；Release已有默认uncaught exception handler转到LogActivity，含10秒崩溃循环保护和栈截断。",
+        "上游 a047f747 源码：https://github.com/osfans/trime/blob/a047f747/app/src/main/java/com/osfans/trime/ui/main/LogActivity.kt；有crash标题、堆栈显示和文件导出。"
+      ],
+      "reproduction_status": "源码显示核心崩溃UI已存在；本轮未触发崩溃，native crash和一键分享不保证覆盖。",
+      "next_action": "historical_retest",
+      "related_open_prs": [
+        {
+          "number": 2182,
+          "url": "https://github.com/osfans/trime/pull/2182",
+          "relation": "possible_relation",
+          "scope": "与崩溃页所用日志读取/导出路径相关；不等于新增一键崩溃上报。"
+        }
+      ],
+      "proposed_work_unit": "验收当前Release崩溃→诊断页→导出完整流程，更新本议题剩余的native崩溃/分享需求边界。",
+      "acceptance": [
+        "受控Java异常显示对应栈并可导出；重复崩溃不会循环启动UI；正常启动不丢键盘；仅记录实际支持的异常范围。"
+      ],
+      "uncertainty": "Debug构建刻意不安装同一handler，不能据Debug行为判缺失；#2182是日志生命周期修复并非新增崩溃报告。",
+      "category_name": "稳定性与性能",
+      "secondary_tags": [],
+      "original_labels": [
+        "enhancement"
+      ],
+      "created_at": "2022-06-20T15:07:53Z",
+      "updated_at": "2024-01-25T15:47:21Z",
+      "comment_count": 1,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/779",
+        "https://github.com/osfans/trime/issues/779#issuecomment-1257222015"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 763,
+      "title": "trime.yaml中的英文鍵盤Bug",
+      "url": "https://github.com/osfans/trime/issues/763",
+      "primary_category": "B",
+      "kind": "bug_report",
+      "priority": "P2",
+      "summary": "默认英文键盘入口及返回键可能指向不一致布局。",
+      "evidence": [
+        "正文：https://github.com/osfans/trime/issues/763；正文给出Keyboard_letter/select:letter与letter键盘返回Keyboard_default补丁，涉及进入和返回两个方向。",
+        "上游 a047f747 源码：https://github.com/osfans/trime/blob/a047f747/app/src/main/assets/shared/trime.yaml；当前Keyboard_letter仍select:default，letter布局存在。",
+        "上游 a047f747 源码：https://github.com/osfans/trime/blob/a047f747/app/src/main/java/com/osfans/trime/ime/keyboard/KeyboardWindow.kt；当前evalKeyboard区分literal default与.default智能布局，旧style/keyboards机制已变。"
+      ],
+      "reproduction_status": "当前源码仍有相关默认值，但旧论证依赖已变化的style/keyboards；未运行确认真实故障。",
+      "next_action": "historical_retest",
+      "related_open_prs": [],
+      "proposed_work_unit": "用两个当前默认主题完成中文布局→明确英文布局→原中文布局往返，若不一致再统一预设入口和返回动作。",
+      "acceptance": [
+        "从方案专用布局和通用qwerty均可进入英文直输；返回原中文布局和模式；不依赖用户补丁；重复切换无状态错乱。"
+      ],
+      "uncertainty": "不能照搬旧行号或仅改单个select就认定修复；letter副键盘与default布局的现行意图需确认。",
+      "category_name": "输入、方案与候选",
+      "secondary_tags": [],
+      "original_labels": [],
+      "created_at": "2022-06-07T14:37:13Z",
+      "updated_at": "2022-06-13T03:34:40Z",
+      "comment_count": 0,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/763"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 753,
+      "title": "Make settings modification more user-friendly",
+      "url": "https://github.com/osfans/trime/issues/753",
+      "primary_category": "I",
+      "kind": "feature_request",
+      "priority": "P2",
+      "summary": "希望无需外部编辑YAML即可调节常见主题参数。",
+      "evidence": [
+        "正文：https://github.com/osfans/trime/issues/753；正文建议设置页增加键盘高度/字号，或提供带指导的内置主题编辑器。",
+        "2022-06-24 InfinityLoop1308 评论：2022评论建议加入路线图，未形成具体实现约定。（https://github.com/osfans/trime/issues/753#issuecomment-1165285223）",
+        "上游 a047f747 源码：https://github.com/osfans/trime/blob/a047f747/app/src/main/java/com/osfans/trime/ui/main/settings/theme/ThemeSettingsFragment.kt；当前可选主题/配色并有诊断入口，未见主题常见尺寸可视化编辑闭环。"
+      ],
+      "reproduction_status": "通用易用性需求；没有当前用户操作录像或最小已选范围。",
+      "next_action": "design_discussion",
+      "related_open_prs": [],
+      "proposed_work_unit": "选定“可视调整当前主题键盘高度并预览/恢复”一个完整入门流程，定义覆盖主题配置的保存与迁移规则。",
+      "acceptance": [
+        "用户能从设置调整、预览和恢复高度；切换主题后覆盖范围明确；不破坏原主题文件；文档解释高级配置入口。"
+      ],
+      "uncertainty": "字号功能与#1251、主题编辑器本身是不同规模；不应先建设任意YAML编辑器而无确定用户流程。",
+      "category_name": "使用咨询、文档与生态工具",
+      "secondary_tags": [],
+      "original_labels": [
+        "enhancement"
+      ],
+      "created_at": "2022-05-31T08:37:47Z",
+      "updated_at": "2024-01-25T15:53:17Z",
+      "comment_count": 1,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/753",
+        "https://github.com/osfans/trime/issues/753#issuecomment-1165285223"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 743,
+      "title": "使用输入法辅助发图的功能",
+      "url": "https://github.com/osfans/trime/issues/743",
+      "primary_category": "E",
+      "kind": "feature_request",
+      "priority": "P2",
+      "summary": "希望输入法浏览本地表情图片并向支持的编辑器发送媒体。",
+      "evidence": [
+        "正文：https://github.com/osfans/trime/issues/743；正文同时包含缩略图、GIF/WebP、目录分组、图片发送、emoji搜索及图片剪贴板。",
+        "2025-12-07 WhiredPlanck 评论：2025-12维护者指出微信近期支持IME媒体发送，链接Android CommitContentSampleIME作为参考。（https://github.com/osfans/trime/issues/743#issuecomment-3621940790）"
+      ],
+      "reproduction_status": "需求有较新宿主App场景；本轮未测试MIME协商、文件访问或媒体发送。",
+      "next_action": "design_discussion",
+      "related_open_prs": [],
+      "proposed_work_unit": "先完成本地表情图从选取/缩略图到commitContent发送的闭环，并处理不支持的编辑器、内容URI授权与格式范围。",
+      "acceptance": [
+        "支持的编辑器收到图片而非文本路径；不支持时反馈明确；静态/动画支持范围可测；切应用不沿用过期授权。"
+      ],
+      "uncertainty": "图片剪贴板和emoji搜索不应与首个媒体发送PR捆绑；需先确定Android最低版本与受支持MIME。",
+      "category_name": "剪贴板、隐私与内容处理",
+      "secondary_tags": [],
+      "original_labels": [
+        "feature"
+      ],
+      "created_at": "2022-05-13T04:54:20Z",
+      "updated_at": "2025-12-07T13:46:01Z",
+      "comment_count": 1,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/743",
+        "https://github.com/osfans/trime/issues/743#issuecomment-3621940790"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 738,
+      "title": "同文内置多语言键盘label",
+      "url": "https://github.com/osfans/trime/issues/738",
+      "primary_category": "C",
+      "kind": "feature_request",
+      "priority": "P3",
+      "summary": "希望内置多语言键面和提示，解耦主题固定label。",
+      "evidence": [
+        "正文：https://github.com/osfans/trime/issues/738；正文涉及label、滑动提示、keyname-keycode、语音读键等多条需求。",
+        "2022-06-10 tumuyan 评论：作者指出不同语言有额外键位和Shift/AltGr问题，缩小到翻译与ASCII布局。（https://github.com/osfans/trime/issues/738#issuecomment-1152599924）",
+        "2022-06-17 tumuyan 评论：作者一度考虑搁置。（https://github.com/osfans/trime/issues/738#issuecomment-1158760602）",
+        "2022-08-01 tumuyan 评论：后又提出按键名/方案读音的有限实现。（https://github.com/osfans/trime/issues/738#issuecomment-1200652835）",
+        "上游 a047f747 源码：https://github.com/osfans/trime/blob/a047f747/app/src/main/java/com/osfans/trime/ime/keyboard/KeyCode.kt；当前用Android KeyCharacterMap作默认标签回退，未证明有可选多语言label表。"
+      ],
+      "reproduction_status": "范围多次变化；当前有标签回退机制，未做多语言布局/读音验收。",
+      "next_action": "design_discussion",
+      "related_open_prs": [],
+      "proposed_work_unit": "与#827统一定义多语言label回退链，首批覆盖功能键与一种额外语言的显示，不同时重写物理键码与语音系统。",
+      "acceptance": [
+        "主题显式label优先；语言回退可预测；label、预览和实际输出区分清楚；无对应label的旧主题照常工作。"
+      ],
+      "uncertainty": "语音读键和实际键盘布局本地化有额外设计，不能由键名翻译推断完成。",
+      "category_name": "键盘布局、主题与渲染",
+      "secondary_tags": [],
+      "original_labels": [],
+      "created_at": "2022-05-08T09:57:30Z",
+      "updated_at": "2022-08-01T03:28:18Z",
+      "comment_count": 5,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/738",
+        "https://github.com/osfans/trime/issues/738#issuecomment-1133807418",
+        "https://github.com/osfans/trime/issues/738#issuecomment-1139200186",
+        "https://github.com/osfans/trime/issues/738#issuecomment-1152599924",
+        "https://github.com/osfans/trime/issues/738#issuecomment-1158760602",
+        "https://github.com/osfans/trime/issues/738#issuecomment-1200652835"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 734,
+      "title": "为按键增加动画效果",
+      "url": "https://github.com/osfans/trime/issues/734",
+      "primary_category": "F",
+      "kind": "feature_request",
+      "priority": "P3",
+      "summary": "希望按键按压、弹出、滑动和键盘切换动画，已有按压动画PR。",
+      "evidence": [
+        "正文：https://github.com/osfans/trime/issues/734；正文要求主题可配动画参数，也提出资源开销与操作观感风险。",
+        "2022-05-04 tumuyan 评论：旧评论要求JNI离开UI线程。（https://github.com/osfans/trime/issues/734#issuecomment-1116853156）",
+        "2024-12-01 WhiredPlanck 评论：2024维护者确认JNI已在独立线程。（https://github.com/osfans/trime/issues/734#issuecomment-2509654141）"
+      ],
+      "reproduction_status": "功能请求；#2192实现按下缩放/释放回弹，设备验收仍待，不覆盖全部动画与主题参数。",
+      "next_action": "watch_existing_pr",
+      "related_open_prs": [
+        {
+          "number": 2192,
+          "url": "https://github.com/osfans/trime/pull/2192",
+          "relation": "possible_relation",
+          "scope": "直接覆盖按压缩放/释放回弹子需求；未覆盖弹出字符/滑动轨迹/切换动画或主题参数。"
+        }
+      ],
+      "proposed_work_unit": "先评审#2192的按键按压/释放动画完整生命周期及设备流畅性；其余滑动/弹出/切换动画再按明确设计单独推进。",
+      "acceptance": [
+        "快速点按/滑动/长按无残留缩放；视图分离清理；系统关闭动画时尊重设置；不改变按键触摸范围；真实设备确认时延可接受。"
+      ],
+      "uncertainty": "现有PR不提供原帖全部主题参数与动画种类；避免重复按压动画PR。",
+      "category_name": "手势、光标、按键反馈与语音",
+      "secondary_tags": [],
+      "original_labels": [
+        "feature"
+      ],
+      "created_at": "2022-05-02T15:27:53Z",
+      "updated_at": "2025-12-07T13:46:32Z",
+      "comment_count": 2,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/734",
+        "https://github.com/osfans/trime/issues/734#issuecomment-1116853156",
+        "https://github.com/osfans/trime/issues/734#issuecomment-2509654141"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 708,
+      "title": "更改同文風主題到36鍵",
+      "url": "https://github.com/osfans/trime/issues/708",
+      "primary_category": "I",
+      "kind": "question",
+      "priority": "P3",
+      "summary": "咨询同文风增加数字行和独立注音符号键盘的方法。",
+      "evidence": [
+        "正文：https://github.com/osfans/trime/issues/708；设计学生希望26键改36/40键并单独输入注音文。",
+        "2022-11-27 richardwhip 评论：另一用户也请求36/40键教程，未见解决配置。（https://github.com/osfans/trime/issues/708#issuecomment-1328320115）",
+        "上游 a047f747 源码：https://github.com/osfans/trime/blob/a047f747/app/src/main/assets/shared/trime.yaml；当前有多种qwerty类布局，适合按现行配置写教程。"
+      ],
+      "reproduction_status": "使用咨询，未提供现行主题补丁；不能当产品缺陷。",
+      "next_action": "configuration_or_docs",
+      "related_open_prs": [],
+      "proposed_work_unit": "提供适配当前主题格式的增加数字行与注音直出键盘示例，说明导入预设、宽高和返回入口。",
+      "acceptance": [
+        "用户能部署示例并显示数字行；注音符号按直接提交/方案编码两种意图区分；横竖屏键盘仍可见。"
+      ],
+      "uncertainty": "36/40键只是俗称，具体需保留哪些功能键未知；不能直接用旧行号修改用户主题。",
+      "category_name": "使用咨询、文档与生态工具",
+      "secondary_tags": [],
+      "original_labels": [],
+      "created_at": "2022-04-05T08:40:11Z",
+      "updated_at": "2022-11-27T19:14:55Z",
+      "comment_count": 1,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/708",
+        "https://github.com/osfans/trime/issues/708#issuecomment-1328320115"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 674,
+      "title": "设计：区分键盘按键的状态",
+      "url": "https://github.com/osfans/trime/issues/674",
+      "primary_category": "F",
+      "kind": "feature_request",
+      "priority": "P2",
+      "summary": "希望将状态与手势动作分离，支持按状态替换上滑等非点击动作。",
+      "evidence": [
+        "正文：https://github.com/osfans/trime/issues/674；正文提出兼容现有composing字符串并新增嵌套行为或when规则；关联#578。",
+        "2022-01-13 iovxw 评论：作者明确未定多状态优先级、缺省继承和禁用动作规则。（https://github.com/osfans/trime/issues/674#issuecomment-1011858629）",
+        "2022-01-14 tumuyan 评论：评论反对过度套娃并建议独立ASCII键盘。（https://github.com/osfans/trime/issues/674#issuecomment-1012763558）",
+        "2024-01-25 nopdan 评论：2024评论仍希望跟进。（https://github.com/osfans/trime/issues/674#issuecomment-1909686783）",
+        "上游 a047f747 源码：https://github.com/osfans/trime/blob/a047f747/app/src/main/java/com/osfans/trime/data/theme/model/TextKeyboard.kt；上游 a047f747 源码：https://github.com/osfans/trime/blob/a047f747/app/src/main/java/com/osfans/trime/ime/keyboard/Key.kt；当前状态动作和swipe为平行字段。"
+      ],
+      "reproduction_status": "设计问题仍有相关代码路径；没有最终协议和当前运行验收。",
+      "next_action": "design_discussion",
+      "related_open_prs": [],
+      "proposed_work_unit": "作为#1033/#578的统一工作单元制定状态×动作规则，先确定优先级、继承、显式禁用及旧主题兼容，再实现解析与运行分派。",
+      "acceptance": [
+        "ascii/composing/paging/修饰键组合下每种手势结果唯一；未定义动作可预测；显式NoOperation可禁用；原字符串配置保持原行为。"
+      ],
+      "uncertainty": "缺少维护者选定的配置格式；新内联action能力不等于可嵌套整套手势。",
+      "category_name": "手势、光标、按键反馈与语音",
+      "secondary_tags": [],
+      "original_labels": [],
+      "created_at": "2022-01-13T06:56:36Z",
+      "updated_at": "2024-01-25T08:55:19Z",
+      "comment_count": 6,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/674",
+        "https://github.com/osfans/trime/issues/674#issuecomment-1011858629",
+        "https://github.com/osfans/trime/issues/674#issuecomment-1012720049",
+        "https://github.com/osfans/trime/issues/674#issuecomment-1012746162",
+        "https://github.com/osfans/trime/issues/674#issuecomment-1012763558",
+        "https://github.com/osfans/trime/issues/674#issuecomment-1022019556",
+        "https://github.com/osfans/trime/issues/674#issuecomment-1909686783"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 667,
+      "title": "在配置文件中针对用户指定App进行优化",
+      "url": "https://github.com/osfans/trime/issues/667",
+      "primary_category": "D",
+      "kind": "feature_request",
+      "priority": "P2",
+      "summary": "希望按App应用输入偏好，后续又提出App专属词频。",
+      "evidence": [
+        "正文：https://github.com/osfans/trime/issues/667；最初希望终端类App默认英文，配置按包名指定初始化参数。",
+        "2022-01-13 tumuyan 评论：补充嵌入、草稿收集、全屏等前端属性。（https://github.com/osfans/trime/issues/667#issuecomment-1011690211）",
+        "2026-09-10 gqqnbig 评论：2026-09提出不同App有不同词频偏好，是引擎学习/词库隔离的新范围。（https://github.com/osfans/trime/issues/667#issuecomment-5612636270）"
+      ],
+      "reproduction_status": "原需求持续但范围扩展；未运行验证当前按App能力。",
+      "next_action": "design_discussion",
+      "related_open_prs": [],
+      "proposed_work_unit": "先定义按App前端偏好配置及焦点切换恢复闭环，以ASCII模式为首个属性；词频隔离作为独立引擎设计议题。",
+      "acceptance": [
+        "指定App使用指定初始模式；切到其他App恢复规则明确；同App多输入框与系统inputType冲突有确定优先级；不泄露App间编辑状态。"
+      ],
+      "uncertainty": "不能以切换ascii_mode实现后宣称完成App专属词频；配置名称、包名匹配与覆盖层级待定。",
+      "category_name": "存储、配置、部署与用户词库",
+      "secondary_tags": [],
+      "original_labels": [
+        "enhancement"
+      ],
+      "created_at": "2022-01-10T15:40:52Z",
+      "updated_at": "2026-09-10T03:53:35Z",
+      "comment_count": 2,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/667",
+        "https://github.com/osfans/trime/issues/667#issuecomment-1011690211",
+        "https://github.com/osfans/trime/issues/667#issuecomment-5612636270"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 578,
+      "title": "Custom the key select mapping for Shift or Alt when English mode.",
+      "url": "https://github.com/osfans/trime/issues/578",
+      "primary_category": "B",
+      "kind": "feature_request",
+      "priority": "P2",
+      "summary": "希望英语模式自定义Shift/Alt键面和符号映射。",
+      "evidence": [
+        "正文：https://github.com/osfans/trime/issues/578；希望小屏不用换布局即可自定义1/!等映射，建议类似punctuator引擎。",
+        "上游 a047f747 源码：https://github.com/osfans/trime/blob/a047f747/app/src/main/java/com/osfans/trime/ime/keyboard/KeyAction.kt；当前标准符号可通过Android字符映射处理Shift，但用户定义任意映射的格式仍需确认。"
+      ],
+      "reproduction_status": "标准Shift映射已有相关实现；无当前自定义映射最小配置，未运行。",
+      "next_action": "design_discussion",
+      "related_open_prs": [],
+      "proposed_work_unit": "纳入#674状态×动作模型，定义用户可覆盖的Shift/Alt映射表以及键面、预览和实际提交的一致规则。",
+      "acceptance": [
+        "自定义1↔!与非ASCII符号映射均按配置显示/输出；普通Shift大写保持正确；Alt与Shift并按的优先级明确。"
+      ],
+      "uncertainty": "不能把标准US映射存在当作自定义表需求已解决；需要作者给出目标布局示例。",
+      "category_name": "输入、方案与候选",
+      "secondary_tags": [],
+      "original_labels": [],
+      "created_at": "2021-11-01T06:56:45Z",
+      "updated_at": "2021-11-01T06:56:45Z",
+      "comment_count": 0,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/578"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    },
+    {
+      "number": 464,
+      "title": "增加悬浮窗:输入和剪贴板历史/文本编辑/可滚动易编辑的符号键盘",
+      "url": "https://github.com/osfans/trime/issues/464",
+      "primary_category": "E",
+      "kind": "feature_request",
+      "priority": "P2",
+      "summary": "剪贴板管理与文本编辑总议题已部分实现，搜索有现有PR。",
+      "evidence": [
+        "正文：https://github.com/osfans/trime/issues/464；原帖滚动符号和历史已勾选完成；剩余查询、编辑、删除、合并、分享与文本操作。",
+        "2021-08-28 tumuyan 评论：2021作者说明#508已有滚动符号/简单剪贴列表，更多操作待做。（https://github.com/osfans/trime/issues/464#issuecomment-907617015）",
+        "2022-07-02 tumuyan 评论：作者明确长按多选、单项编辑/分割、多项合并的原构想。（https://github.com/osfans/trime/issues/464#issuecomment-1172918287）",
+        "上游 a047f747 源码：https://github.com/osfans/trime/blob/a047f747/app/src/main/java/com/osfans/trime/ime/clipboard/ClipboardWindow.kt；当前已有编辑、分享、分词、收藏、删除/清空，不能重做全部。"
+      ],
+      "reproduction_status": "源码显示多项已覆盖；未做现行功能清单验收；搜索处于#2191待评审。",
+      "next_action": "watch_existing_pr",
+      "related_open_prs": [
+        {
+          "number": 2191,
+          "url": "https://github.com/osfans/trime/pull/2191",
+          "relation": "possible_relation",
+          "scope": "直接覆盖历史查询子需求；焦点恢复与粘贴时序仍需设备验收，其他编辑功能不在PR范围。"
+        }
+      ],
+      "proposed_work_unit": "先验收现行剪贴管理功能并评审#2191搜索；余下若仍需要，以多选→合并→编辑→粘贴完整流程单独设计。",
+      "acceptance": [
+        "记录各原需求现行入口；搜索关键字不写入宿主、粘贴恢复原输入目标、清空过滤恢复列表；多选合并如开工需保持顺序且可取消。"
+      ],
+      "uncertainty": "旧checkbox未同步当前实现；搜索PR未覆盖多选、合并、正则替换和富文本。",
+      "category_name": "剪贴板、隐私与内容处理",
+      "secondary_tags": [],
+      "original_labels": [],
+      "created_at": "2021-08-03T06:33:52Z",
+      "updated_at": "2022-07-02T18:41:57Z",
+      "comment_count": 9,
+      "source_links": [
+        "https://github.com/osfans/trime/issues/464",
+        "https://github.com/osfans/trime/issues/464#issuecomment-892832273",
+        "https://github.com/osfans/trime/issues/464#issuecomment-893078678",
+        "https://github.com/osfans/trime/issues/464#issuecomment-896717447",
+        "https://github.com/osfans/trime/issues/464#issuecomment-898797350",
+        "https://github.com/osfans/trime/issues/464#issuecomment-907617015",
+        "https://github.com/osfans/trime/issues/464#issuecomment-1005237933",
+        "https://github.com/osfans/trime/issues/464#issuecomment-1115769612",
+        "https://github.com/osfans/trime/issues/464#issuecomment-1172873668",
+        "https://github.com/osfans/trime/issues/464#issuecomment-1172918287"
+      ],
+      "runtime_validation_this_task": "NOT_RUN"
+    }
+  ]
+}

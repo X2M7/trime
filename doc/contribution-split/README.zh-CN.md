@@ -1,5 +1,56 @@
 # 上游贡献拆分清单
 
+## 开放 issue 分类与修复排程（2026-10-28）
+
+按 [osfans/trime 的开放 issue](https://github.com/osfans/trime/issues) 抓取时状态，完整分类 **117 条 issue、286 条评论**；**7 个开放 PR 单列**。快照为 2026-10-28 09:34（Asia/Shanghai），源码核对基线 `a047f747`。此表不含已关闭 issue；不代表本轮已复现或修复 117 个缺陷。
+
+完整清单：[CSV](checks/issue-triage-20261028/issues.csv)／[逐条证据、状态与验收 JSON](checks/issue-triage-20261028/issues.json)。每条仅一个主类，保留原标签、评论链接、待补信息、现有 PR 关系和建议工作单元。[快照与方法](checks/issue-triage-20261028/snapshot.json)、[覆盖检查](checks/issue-triage-20261028/coverage.json)及 [SHA-256](checks/issue-triage-20261028/SHA256SUMS)同目录保存。
+
+| 类别 | 数量 | 处理重点 |
+| --- | ---: | --- |
+| A 稳定性与性能 | 5 | 崩溃、初始化与卡顿证据 |
+| B 输入、方案与候选 | 19 | 组合态、动作一致性、候选点击 |
+| C 键盘布局、主题与渲染 | 29 | 尺寸回退、配色、键面和旧主题兼容 |
+| D 存储、配置、部署与用户词库 | 8 | 数据保护、目录授权、部署完成状态 |
+| E 剪贴板、隐私与内容处理 | 13 | 现有搜索 PR、历史管理、真实学习控制 |
+| F 手势、光标、按键反馈与语音 | 19 | 语音 IME 可见性、状态与手势分派 |
+| G 无障碍与系统窗口适配 | 10 | TalkBack、浏览器焦点、导航栏与浮窗 |
+| H 构建、发布、安装与平台依赖 | 3 | 可复现构建、Google Play、原生依赖 |
+| I 使用咨询、文档与生态工具 | 11 | 现行配置示例、旧入口迁移与文档 |
+| **合计** | **117** | |
+
+事项性质为 **46 条缺陷报告、57 条功能请求、9 条咨询、5 条维护事项**。优先级是调查顺序：P1 11 条、P2 74 条、P3 32 条。没有把尚未当前复现的历史存储替换行为标成 P0 故障。下一步分流为：当前复现 11、历史回归 25、补信息 12、已有 PR 跟进 6、配置/文档 21、设计讨论 36、依赖协作 6。缺陷标签和历史日志都不等于当前版本已确认仍存在。
+
+### 首批处理顺序
+
+详细边界、前置条件和验收见[修复/PR 排程](checks/issue-triage-20261028/pr-queue.json)。
+
+1. **先核查数据保护**：[#2095](https://github.com/osfans/trime/issues/2095)、[#2140](https://github.com/osfans/trime/issues/2140)。用临时目录验证切换、重新授权、冲突、取消和失败；尊重维护者对预期替换的说明，当前同步架构已变化。两个复现场景分别保留，不能先认定同因，更不能以清数据/卸载作为保留用户数据的方案。
+2. **首个新修复 PR 候选**：[#2153](https://github.com/osfans/trime/issues/2153)，重启后语音 IME 不可见。已对照当前 manifest、枚举/切换路径和官方包可见性契约；下一步做受控重启 A/B，验证后再补精确查询声明。[静态调查与未完成范围](checks/issue-triage-20261028/first-fix-investigation.json)明确区分。
+3. **候选与工具栏触摸一致性**：[#1879](https://github.com/osfans/trime/issues/1879)。记录候选显示与点击目标时序，防止显示候选后触发旧菜单；不靠任意延迟屏蔽点击。
+4. **浏览器窗口兼容**：[#1677](https://github.com/osfans/trime/issues/1677)、[#2168](https://github.com/osfans/trime/issues/2168)分别建立最小网页与对话框案例，确认共同根因前分别处理。
+5. **主题可读性与尺寸回归**：先看 [#2159](https://github.com/osfans/trime/issues/2159) 配色，再复测旧高度/宽度/命中区域报告；配色和尺寸不是预定同一个 PR。
+6. **TalkBack 完整输入行为**：[#2193](https://github.com/osfans/trime/issues/2193) 先记录探索、激活和焦点失败步骤，再定义键、候选及动态回车语义。普通九键真机试用不能充当 TalkBack 验收。
+
+隐私 [#938](https://github.com/osfans/trime/issues/938)/[#2011](https://github.com/osfans/trime/issues/2011) 需先核对 librime 学习控制能力；[#1556](https://github.com/osfans/trime/issues/1556)/[#1645](https://github.com/osfans/trime/issues/1645)/[#2003](https://github.com/osfans/trime/issues/2003) 可共享鸿蒙超界触摸调查，但系统归因仍待证明。配置文档 [#1905](https://github.com/osfans/trime/issues/1905)/[#1269](https://github.com/osfans/trime/issues/1269) 可与设备调查并行。
+
+### 先跟进已有 PR，避免重复
+
+[7 项 PR 的源码身份、覆盖与排除范围](checks/issue-triage-20261028/existing-pr-overlap.json)已核对正文；待审不等于已合并。
+
+| Issue/需求 | 已有 PR | 本轮判断 |
+| --- | --- | --- |
+| #2194 按键内容越界 | [#2195](https://github.com/osfans/trime/pull/2195) | 正文明确 Fixes；跟进原 PR |
+| #2190 剪贴板关键词搜索 | [#2191](https://github.com/osfans/trime/pull/2191) | 直接实现；也仅部分覆盖 #464 |
+| #1464 原生九键 | [#2183](https://github.com/osfans/trime/pull/2183) | 直接相关，#1299 仅部分相关；当前 Ready |
+| #734 动画 | [#2192](https://github.com/osfans/trime/pull/2192) | 仅按压/释放缩放，非四类动画全实现 |
+| 部署后空白视图 | [#2188](https://github.com/osfans/trime/pull/2188) | 仅可能涉及视图补建，不证明修复部署阻塞 |
+| Unicode/光标与崩溃日志 | [#2186](https://github.com/osfans/trime/pull/2186)、[#2182](https://github.com/osfans/trime/pull/2182) | 各自限定 JNI 与日志生命周期，不能泛化关闭相关 issue |
+
+**拆分规则**：类别是排期桶；一个 PR 交付一个完整用户行为和回归。多条 issue 只有在同因、同修复、同验收被证明后才合并，不按一行/一个文件机械拆分，也不把整个类别打包成巨型 PR。新修复从最新上游 develop 建干净分支，清掉 fork 发布/Pages 配置；完整解决用 `Fixes`，局部支持用 `Related`。
+
+本轮只做分诊和静态调查，没有运行构建、模拟器、真机或新测试；没有更改上游 issue 标签/状态、发送评论或创建新 PR。旧源码已有能力与历史反馈仍需当前回归；不把缺少信息、第三方修改版或预期配置行为写成已确认缺陷。以下保留既有 PR 验收与评审记录。
+
 ## #2183 Galaxy S24 Ultra 真机反馈（2026-10-28）
 
 用户在收到候选包与验收清单后，报告使用自己的 **SAMSUNG Galaxy S24 Ultra** 测试，“没有问题”，并明确要求正式提交评审。[真机记录](checks/pr2183-s24-ultra-20261028/report.json)按**用户报告的手动试用**保存；附图在本会话中可见九键、`ce`／`shi` 拼音筛选与“測試”等候选。原图没有可转存的工作区文件，因此报告不声称已向仓库上传截图。

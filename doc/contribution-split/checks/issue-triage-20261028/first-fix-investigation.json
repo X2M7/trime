@@ -1,0 +1,48 @@
+{
+  "issue": 2153,
+  "url": "https://github.com/osfans/trime/issues/2153",
+  "baseline": "a047f74757fae0d7b5ef64e54f0b957dee2bf8f3",
+  "status": "STATIC_SOURCE_AND_OFFICIAL_API_CONTRACT_CHECKED; RUNTIME_REPRODUCTION_NOT_RUN",
+  "source_findings": [
+    {
+      "path": "app/src/main/AndroidManifest.xml",
+      "finding": "queries仅声明TTS_SERVICE，未声明InputMethod.SERVICE_INTERFACE意图可见性。"
+    },
+    {
+      "path": "app/src/main/java/com/osfans/trime/util/InputMethodUtils.kt",
+      "finding": "voiceInputMethods遍历enabledInputMethodList，筛选voice subtype，firstVoiceInput从该列表选取。"
+    },
+    {
+      "path": "app/src/main/java/com/osfans/trime/ime/keyboard/CommonKeyboardActionListener.kt",
+      "finding": "VOICE_ASSIST按首选包或firstVoiceInput切换，没有可见语音IME时提示失败。"
+    }
+  ],
+  "official_sources": [
+    {
+      "url": "https://developer.android.com/reference/android/view/inputmethod/InputMethodManager",
+      "finding": "target Android 11起，IME列表API受包可见性过滤；InputMethod.SERVICE_INTERFACE queries可开放对应IME列表。"
+    },
+    {
+      "url": "https://developer.android.com/training/package-visibility/declaring",
+      "finding": "可以按intent签名声明所需包可见性，避免广泛查询所有包。"
+    }
+  ],
+  "hypothesis": "当前可见性声明可能不足以发现重启后尚未建立交互可见性的已启用语音IME；源码与API契约支持排查，尚未证明是ColorOS个案唯一原因。",
+  "candidate_change": "若A/B复现支持假设，在现有queries中补精确android.view.InputMethod intent，保持TTS声明与原语音选择策略。",
+  "planned_control": [
+    "固定voice subtype辅助IME和APK哈希，启用后重启，不启动辅助IME的Activity。",
+    "比较基线/单一queries变更的首选列表、enabledInputMethodList与VOICE_ASSIST行为。",
+    "测试禁用、卸载、无可用语音IME、已有首选失效以及冷启动/正常交互后结果。"
+  ],
+  "completed_this_task": [
+    "阅读用户报告和评论",
+    "核对固定上游三个源码入口",
+    "核对官方API契约"
+  ],
+  "not_completed_this_task": [
+    "A/B安装与重启复现",
+    "应用补丁",
+    "针对性构建和运行验收",
+    "新分支推送或上游PR"
+  ]
+}

@@ -1,0 +1,185 @@
+{
+  "purpose": "首批调查和PR候选排程，不是8个已完成修复，也不是已授权自动批量关闭issue的清单。",
+  "policy": [
+    "一个PR交付一个完整行为和相应回归；类别仅用于排期。",
+    "同类issue只有在同根因、同修复和同验收被证实后才合并；不按文件或行数机械拆分。",
+    "复现、最小修复、针对性测试、清理补丁和Conventional Commit齐备后，再推fork并向上游提PR。",
+    "Fixes仅用于确认完整解决的issue；局部支持用Related，已有PR优先跟进而非复制。",
+    "源码从最新上游develop创建干净分支，不整包搬入fork发布、Pages或未经验证的旧实现。"
+  ],
+  "queue": [
+    {
+      "id": "Q01",
+      "order": 1,
+      "issues": [
+        2095,
+        2140
+      ],
+      "phase": "investigation",
+      "work_unit": "存储切换与外部目录重新关联的数据保护",
+      "why": "先排除用户配置不可恢复风险；两条同属存储路径，仍保留不同复现，未证实同一根因。",
+      "first_step": "使用可丢弃目录建立本地独有/外部独有/同名冲突矩阵；记录模式切换、升级重关联、取消和授权失败后的文件、偏好与授权。",
+      "pr_boundary": "尊重维护者对预期替换的说明；如仍有替换则先明确告知、可取消和可恢复。授权恢复若为独立原因则另一个PR。",
+      "gate": "当前同步架构回归在先；不能直接移植fork完整T12，也不能建议清数据或卸载作为保留数据方案。",
+      "acceptance": [
+        "取消及失败保留原工作配置、设置和授权。",
+        "确有替换行为时执行前可知、可取消；升级后原目录可恢复关联。"
+      ],
+      "related_open_prs": []
+    },
+    {
+      "id": "Q02",
+      "order": 2,
+      "issues": [
+        2153
+      ],
+      "phase": "reproduction_candidate",
+      "work_unit": "重启后发现并切换已启用的语音输入法",
+      "why": "有明确重启步骤、官方API可见性契约和当前源码缺口；是首个范围清楚的新修复PR候选。",
+      "first_step": "固定带voice subtype的辅助IME，启用后重启但不启动其Activity，比较基线与精确InputMethod queries对照的枚举及语音切换。",
+      "pr_boundary": "仅输入法可见性与选择/失败回退，不引入新语音模型或特定厂商AIDL；保留现有TTS查询。",
+      "gate": "先验证包可见性假设，若不能复现则如实记录，不以静态推断宣称已修复重启问题。",
+      "acceptance": [
+        "重启后首选列表能显示已启用语音IME，VOICE_ASSIST能切换。",
+        "禁用、卸载和无语音IME时不崩溃、不保留无效选择。",
+        "不用QUERY_ALL_PACKAGES。"
+      ],
+      "related_open_prs": [],
+      "investigation": "first-fix-investigation.json"
+    },
+    {
+      "id": "Q03",
+      "order": 3,
+      "issues": [
+        1879
+      ],
+      "phase": "reproduce",
+      "work_unit": "候选可见状态与工具栏触摸目标同步",
+      "why": "作者2026年10月仍在3.3.12报告误触旧工具栏，有具体快速点击序列。",
+      "first_step": "记录候选更新、显示、输入栏状态及DOWN/UP目标，建立快/慢输入和候选刷新交错的可重复案例。",
+      "pr_boundary": "一个完整的输入栏显示与触摸一致性修复；与#2183共享候选路径需协调，但九键PR不提供此修复。",
+      "gate": "先确认真实事件分派原因，不加任意固定延迟屏蔽正常点击。",
+      "acceptance": [
+        "候选可见后点选不会打开旧菜单或误提交另一候选。",
+        "取消组合、展开/收起及窗口切换后无旧触摸目标残留。"
+      ],
+      "related_open_prs": [
+        2183
+      ]
+    },
+    {
+      "id": "Q04",
+      "order": 4,
+      "issues": [
+        1677,
+        2168
+      ],
+      "phase": "separate_reproducers",
+      "work_unit": "Chromium编辑器焦点与IME窗口兼容性",
+      "why": "维护者历史复现过#1677；#2168是打开对话框后收起，两者不能仅凭浏览器相同认定同因。",
+      "first_step": "分别冻结contenteditable占位案例和同文对话框案例，比较Chromium/Gecko、正常失焦和系统hide回调。",
+      "pr_boundary": "每个已确认根因一个PR；仅在相同修复与验收覆盖两条时才合并引用。",
+      "gate": "不全局忽略hide；与#2191搜索对话框焦点设计协调。",
+      "acceptance": [
+        "编辑区保持可输入，正常失焦仍能收键盘。",
+        "关闭对话框后输入和粘贴返回正确编辑器。"
+      ],
+      "related_open_prs": [
+        2191
+      ]
+    },
+    {
+      "id": "Q05",
+      "order": 5,
+      "issues": [
+        2159,
+        1316,
+        1443,
+        1515,
+        1915
+      ],
+      "phase": "independent_regression_matrix",
+      "work_unit": "主题可读性与布局尺寸契约",
+      "why": "收敛可复用主题矩阵，但配色、宽度、高度和命中区域不预设同因。",
+      "first_step": "先复测标准主题同色文字#2159；分别固定省略高度、style.key_width、横屏高度及工具栏坐标案例。",
+      "pr_boundary": "配色可读性一个PR；布局兼容只有证实共享尺寸解析原因才合并，不以整个C类开大PR。",
+      "gate": "对照当前主题DSL和默认回退；#2195仅防单键内容溢出，不能替代整体布局修复。",
+      "acceptance": [
+        "受支持主题配置下主键盘与附属面板可见、键面可读。",
+        "视觉边界和点击区域一致，横竖屏/大字体均有对照。"
+      ],
+      "related_open_prs": [
+        2195
+      ]
+    },
+    {
+      "id": "Q06",
+      "order": 6,
+      "issues": [
+        2193
+      ],
+      "phase": "needs_reproduction_and_design",
+      "work_unit": "TalkBack下独立完成输入与候选选择",
+      "why": "核心可达性被阻断；不能把TTS按键朗读当作无障碍交互。",
+      "first_step": "记录TalkBack/系统版本、探索触摸与双击激活的失败步骤，定义按键、候选、功能键的名称/角色/状态/操作。",
+      "pr_boundary": "完整可达输入行为与焦点规则；字号设置#1251另行定义，先协调KeyView待审溢出和动画改动。",
+      "gate": "需要真实TalkBack使用记录；S24 Ultra普通九键试用不算此项验收。",
+      "acceptance": [
+        "TalkBack能读出并激活普通键、动态回车和候选。",
+        "焦点可预测，输入、筛拼音与选词可独立完成。"
+      ],
+      "related_open_prs": [
+        2195,
+        2192,
+        2183
+      ]
+    },
+    {
+      "id": "Q07",
+      "order": 7,
+      "issues": [
+        938,
+        2011
+      ],
+      "phase": "dependency_design",
+      "work_unit": "禁止个性化学习与隐私会话契约",
+      "why": "维护者指出librime运行时学习控制缺口；浏览器隐私和手动隐私需控制真实写入。",
+      "first_step": "核对当前librime能力与EditorInfo标记，先和维护者确认学习控制入口、上下文清理及普通会话恢复。",
+      "pr_boundary": "引擎能力与前端策略分清；剪贴板敏感标记或旧草稿箱需求另行核对，不将所有隐私issue一锅端。",
+      "gate": "只隐藏UI不能视为隐私完成；无引擎能力时先形成方案而非不实Fixes。",
+      "acceptance": [
+        "虚构口令/验证码不进入应禁止的词库学习、历史或日志。",
+        "退出隐私后恢复普通模式学习和原设置，覆盖所有启用方案。"
+      ],
+      "related_open_prs": []
+    },
+    {
+      "id": "Q08",
+      "order": 8,
+      "issues": [
+        1905,
+        1269
+      ],
+      "phase": "documentation",
+      "work_unit": "当前主题参数与液态/剪贴板入口说明",
+      "why": "可与设备调查并行，减少因旧配置文档造成的重复报告。",
+      "first_step": "按当前上游核对横屏、字号、剪贴板规则及已拆分的液态入口，提供可直接使用的合法示例。",
+      "pr_boundary": "一个连贯的配置文档主题；仓库文档和Wiki归属先确认，不改功能假装修咨询。",
+      "gate": "示例需当前版本解析/试用；不能把旧API当作仍支持。",
+      "acceptance": [
+        "文档示例与当前解析类型和设置入口一致。",
+        "明确旧版本迁移及不支持项，避免用户靠猜测修改配置。"
+      ],
+      "related_open_prs": []
+    }
+  ],
+  "parallel_investigation": {
+    "issues": [
+      1556,
+      1645,
+      2003
+    ],
+    "scope": "共享HarmonyOS超界滚动触摸调查；需受影响ROM及普通Android控制。当前仅依赖方向，非系统责任已证实。"
+  },
+  "remaining_issues": "issues.json逐条记录next_action、proposed_work_unit与acceptance；未列首批不代表遗漏。"
+}
