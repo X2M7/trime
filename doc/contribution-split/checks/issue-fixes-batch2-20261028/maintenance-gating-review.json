@@ -1,0 +1,234 @@
+{
+  "created_at_utc": "2026-10-28T12:16:59.672699+00:00",
+  "status": "DESIGN_REVIEW_ONLY_NOT_IMPLEMENTED_NOT_TESTED",
+  "issue": {
+    "number": 1981,
+    "url": "https://github.com/osfans/trime/issues/1981",
+    "relation": "Related only",
+    "claim_limit": "The original logs do not provide a main-thread/ANR stack. Long custom prism compilation and resource growth remain plausible separate causes. Neither a daemon shutdown change nor delayed READY proves this issue fully fixed."
+  },
+  "conclusion": {
+    "this_batch_recommendation": "Keep the maintenance lifecycle worktree unchanged; deliver this design review. Do not add JNI join in isolation and do not copy #2188.",
+    "independent_behavior_is_possible": "A single background reconciler for daemon-owned start/last-session-close/explicit-stop/restart can keep the current READY timing and remove the source-proven main-thread wait for native finalize.",
+    "size_and_readiness": "A compact implementation near 200 production lines is plausible, not measured or verified. It needs at least daemon, Rime, lifecycle and direct-boot caller changes plus a testable coordinator. A daemon-only launch(IO) patch preserving Rime/Lifecycle unchanged is unsafe.",
+    "full_startup_gate": "Defer a complete maintenance-ready/UI gate. Existing deferred-input-view PR #2188 overlaps keyboard recovery after a delayed READY; it is not a prerequisite for the narrower shutdown-only behavior.",
+    "startup_failure_limit": "The baseline can remain STARTING after a startup exception. A reconciler that only awaits READY inherits a permanently blocked worker and stop completion. Either explicitly retain this as an existing excluded failure case or first add a separate observable startup completion/failure contract; do not claim complete lifecycle recovery without it."
+  },
+  "reviewed_source": {
+    "worktree": "/home/xumin/Public/Trime-pr-maintenance-lifecycle-20261028",
+    "branch": "contrib/fix-maintenance-startup-lifecycle",
+    "head_sha": "a047f74757fae0d7b5ef64e54f0b957dee2bf8f3",
+    "status_porcelain": "",
+    "files": [
+      {
+        "path": "app/src/main/java/com/osfans/trime/core/RimeDispatcher.kt",
+        "sha256": "6d545011afeeac2f2132e84bf673868e3b82fb2bf0349b3e63912f8ddd25cd70",
+        "equals_base": true
+      },
+      {
+        "path": "app/src/main/java/com/osfans/trime/core/RimeLifecycle.kt",
+        "sha256": "3f299ac5815e590612c4ead9c0d3e5cf88e5d9d518a8e191495757d80577c282",
+        "equals_base": true
+      },
+      {
+        "path": "app/src/main/java/com/osfans/trime/core/Rime.kt",
+        "sha256": "da3f4dfe2bebe2dd0399cf27b2113e73dc9fad11acd4a2575991642557d43bef",
+        "equals_base": true
+      },
+      {
+        "path": "app/src/main/java/com/osfans/trime/daemon/RimeDaemon.kt",
+        "sha256": "8783c75c9ff574ecc89b900e437cf856e7c0963f81e5e102fe92aeecd9c4c681",
+        "equals_base": true
+      },
+      {
+        "path": "app/src/main/java/com/osfans/trime/ime/core/TrimeInputMethodService.kt",
+        "sha256": "113f1db8725e5cba8491a505533ea1a145fd4e9f85c73c18f284ddca00199cc4",
+        "equals_base": true
+      },
+      {
+        "path": "app/src/main/java/com/osfans/trime/data/theme/ThemeLoader.kt",
+        "sha256": "25146c7cc2e66e266e6d26495271e51cd35d36750d83b691f181a367101124a6",
+        "equals_base": true
+      },
+      {
+        "path": "app/src/main/java/com/osfans/trime/data/theme/ThemeManager.kt",
+        "sha256": "a89b077527ae246c7d146d7cd874b0444a88407bfd3467595e69f211c08716ea",
+        "equals_base": true
+      },
+      {
+        "path": "app/src/main/java/com/osfans/trime/TrimeApplication.kt",
+        "sha256": "a6a90620e3623c8b6c1376d86201ca1a7e4eb1b0ecd6be5c0c1039e7297bf59f",
+        "equals_base": true
+      },
+      {
+        "path": "app/src/main/jni/librime_jni/rime_jni.cc",
+        "sha256": "5b0d097a610fd8084fa50a2488ad32836035a92e087a10de00d459f5c1a068f5",
+        "equals_base": true
+      }
+    ],
+    "librime_gitlink": "160000 commit 7bc3fb0005a03aff1c086611e4d52bb7f6444fdd\tapp/src/main/jni/librime",
+    "pinned_native_reference_checkout": "/home/xumin/Public/Trime/app/src/main/jni/librime"
+  },
+  "source_proven_paths": [
+    {
+      "id": "main_thread_finalization_wait",
+      "certainty": "source-proven conditional blocking path; not confirmed reporter root cause",
+      "steps": [
+        "MainViewModel.onCleared and TrimeInputMethodService.onDestroy call RimeDaemon.destroySession on the main thread.",
+        "RimeDaemon.kt:99-108 holds the session lock and calls realRime.finalize when the final client leaves.",
+        "Rime.kt:457-470 permits shutdown only at READY, emits ON_STOP, and synchronously calls dispatcher.stop.",
+        "RimeDispatcher.kt:108-121 uses runBlocking and waits for the worker mutex; nativeFinalize runs before that worker releases it.",
+        "rime_jni.cc:201-204 calls librime finalize. At pinned librime 7bc3fb0, src/rime_api_impl.h:58-63 first joins maintenance; deployer.cc:141-147 waits with future.get.",
+        "a047 startup only starts maintenance asynchronously, so Java READY can coexist with active native maintenance; destroying the last session can therefore wait on its completion on Main."
+      ]
+    },
+    {
+      "id": "premature_ready_theme_work",
+      "certainty": "source-proven conditional native work on Main; no demonstrated native mutex deadlock",
+      "steps": [
+        "rime_jni.cc:39-59 starts maintenance without joining; Rime.kt:64-66 then emits ON_READY.",
+        "IME.kt:198-203 launches runOnReady from lifecycleScope on Main. whenReady uses stateFlow.first and does not move the caller to a worker.",
+        "ThemeManager.kt:144-146 synchronously ensures a theme; ThemeLoader.kt:95 falls back to deployed native configuration for unreadable/unsupported source.",
+        "ThemeLoader.kt:283-286 directly calls deployRimeConfigFile; pinned librime deploy_config_file runs config_file_update synchronously.",
+        "This call can overlap asynchronous maintenance. Delaying READY gates this one path, but other theme getters/deploy-message paths and direct native calls also need separate review."
+      ]
+    }
+  ],
+  "why_minimal_obvious_changes_are_incomplete": [
+    {
+      "change": "Only add join_maintenance_thread to JNI startup",
+      "problem": "STARTING last-session destruction is currently ignored by Rime.finalize. A longer STARTING window can leave an ownerless engine READY. The IME also lacks #2188 deferred view recovery; a longer delay exposes that separate window."
+    },
+    {
+      "change": "Run each finalize independently in launch(IO)",
+      "problem": "A stale zero-client stop can finalize an engine after a new session arrives; a new session created during STOPPING can miss subsequent startup. Independent launches do not serialize restart/stop ownership."
+    },
+    {
+      "change": "One worker snapshots sessions then calls unchanged Rime.finalize outside the registry lock",
+      "problem": "A session can join after the snapshot and observe old READY before ON_STOP. Its new work is then cancelled by the old stop. A precise stop-commit boundary is required."
+    },
+    {
+      "change": "Accept new clients during STOPPING while keeping lifecycle registry unchanged",
+      "problem": "RimeLifecycle.kt:57 cancels children for both STOPPING and STOPPED. The second cancellation kills new global-scope waiters that joined during STOPPING."
+    },
+    {
+      "change": "Await READY after any startup() call",
+      "problem": "startup returns false for unavailable storage or a non-STOPPED state; no READY is then promised. Startup exceptions also have no existing terminal state. The worker must not silently wait forever for a refused start."
+    },
+    {
+      "change": "Make stopRime fire-and-forget without changing its caller",
+      "problem": "TrimeApplication.kt:50-59 invokes stopRime and immediately exitProcess(0) on user unlock. It would exit before asynchronous graceful shutdown completes."
+    }
+  ],
+  "narrow_proposed_contract": {
+    "scope": "Only daemon-owned lifecycle intent. Preserve a047 native startup and READY timing. No JNI change, theme/UI rewrite, prediction/import/privacy code, storage polling, or #2188 code.",
+    "worker": "Exactly one application-lifetime background worker consumes conflated wakeups and reconciles current session ownership plus monotonic stop/restart intent. No per-request uncoordinated launch. Never use the Rime lifecycleScope for the owning worker because ON_STOP cancels that scope.",
+    "registry": "Session create/destroy/get/identity validation use one short lock. Registry critical sections contain no JNI, blocking wait, engine startup I/O, or notification wait.",
+    "start": "Before executing a queued initial start, re-read ownership so create-then-close before admission does not start an ownerless engine. Check startup() acceptance. After a successful start reaches existing READY, re-read latest ownership before committing a stop; do not act on an earlier zero-client snapshot.",
+    "stop_commit": "Under the same short registry lock, re-check owners and mark/emit STOPPING using a fast beginShutdown() operation. This is the linearization point: an earlier reopen may cancel automatic idle shutdown; a later reopen waits for old native teardown and the next start.",
+    "stop_finish": "After beginShutdown commits, finishShutdown() runs on the sole background owner and retains ownership through native finalize, unregistering the old handler, and STOPPED publication. Complete shutdown signals only afterward. Cancellation must not abandon a committed native teardown halfway through.",
+    "new_clients": "Only cancel children at the start of old shutdown, not again on ON_STOPPED. A new client created during STOPPING waits for the next existing READY and survives old-cycle completion. Session validity checks must use lock/identity rather than unsynchronized mutable-map reads if touched in this patch.",
+    "restart": "Use an epoch captured at start admission; a restart arriving while STARTING must not be swallowed by marking the latest epoch handled after startup. Notification completion must correspond to the requested cycle, not old READY. Define no-client restart as no persistent ownerless engine. Do not accidentally redesign fullCheck, which the baseline daemon currently does not pass into startup.",
+    "explicit_stop": "Explicit stop is a retained barrier/override distinct from automatic zero-owner stop; sessions remaining registered must not immediately restart it. Return an awaitable completion. Define whether a later new client or explicit restart lifts that override; if it does, mandatory stop must finish before the next startup.",
+    "direct_boot": "The user-unlock receiver must asynchronously await that completion before process exit, preserving an explicit error/termination policy. Use the application scope/goAsync as appropriate. Never move a blocking wait back to the Main receiver.",
+    "unavailable_storage": "An unaccepted start must settle the current attempt without busy polling. Only a new supported intent should trigger another attempt unless a separately reviewed storage retry policy is added.",
+    "failure_boundary": "A normal-successful-startup-only PR must say so. Full startup failure/restart recovery needs a separate completion/failure contract and dispatcher cleanup review; a timeout is not proof native cleanup is finished."
+  },
+  "minimum_change_surface": [
+    {
+      "file": "new pure-JVM lifecycle intent coordinator",
+      "purpose": "Single owner/reconciler and deterministic production-code tests; no Android/JNI dependencies."
+    },
+    {
+      "file": "daemon/RimeDaemon.kt",
+      "purpose": "Short registry lock, all daemon lifecycle requests through the coordinator, intent/epoch-aware notification completion."
+    },
+    {
+      "file": "core/Rime.kt",
+      "purpose": "Fast beginShutdown boundary plus background finishShutdown; existing startup/READY timing unchanged."
+    },
+    {
+      "file": "core/RimeLifecycle.kt",
+      "purpose": "Cancel old lifecycle children only once on stop beginning so STOPPING new-client waiters survive."
+    },
+    {
+      "file": "TrimeApplication.kt",
+      "purpose": "Await explicit shutdown off Main before existing unlock-triggered process exit."
+    }
+  ],
+  "all_engine_requests_boundary": {
+    "can_serialize_in_narrow_pr": "The four daemon entry paths createSession/destroySession/restartRime/stopRime can share one background intent owner. Registry mutations remain immediate.",
+    "not_equivalent_to_all_native_api_transactions": "Rime.deploy and updateConfig already perform exit/start on the existing native dispatcher; a new daemon coordinator does not itself gate their maintenance lifetime or every direct JNI caller. ThemeLoader native fallback and delayed native context reads are outside this coordinator. Do not claim global native transaction atomicity or maintenance-safe UI from a daemon shutdown patch.",
+    "dispatcher_scope": "By waiting for accepted startup to reach existing READY before normal shutdown, the coordinator can avoid relying on stop-before-worker-admission behavior. If changing queue admission, failure recovery, rejected continuations, or NonCancellable fallback, treat the historical dispatcher/lifecycle design as a separate reviewed unit rather than copying fragments."
+  },
+  "necessary_tests_not_run": [
+    {
+      "id": "pre_admission_create_close",
+      "test": "Pause the actual production coordinator executor before its first task; create and close the only owner, then run it. Assert no startup/finalize and no live ownerless engine. No sleep-based scheduling assumptions."
+    },
+    {
+      "id": "starting_last_close",
+      "test": "Hold fake startup before READY; close last owner and prove caller returns without release. If no reopen, release READY and assert one finalization. If reopened before stop commit, assert shutdown is cancelled and engine retained."
+    },
+    {
+      "id": "stopping_reopen",
+      "test": "Hold native finalize after beginShutdown; register a new owner and launch an actual lifecycleScope whenReady waiter. Finish old shutdown. Assert waiter is not cancelled by STOPPED, old handler cleanup precedes exactly one new startup, and new client reaches READY."
+    },
+    {
+      "id": "restart_epochs",
+      "test": "Request restart during startup and again after a restart begins. Verify requested generations are not consumed by old READY, teardown never overlaps start, and notification cleanup happens on the proper terminal outcome."
+    },
+    {
+      "id": "explicit_stop_exit",
+      "test": "With registered owners, request explicit stop in READY and STARTING. Assert no automatic restart solely because owners remain, stop completion waits for native teardown, and the injected exit action occurs only after completion. A later new-owner intent must not let old finalize stop its engine."
+    },
+    {
+      "id": "startup_refusal",
+      "test": "Return false from startup to model unavailable storage. Assert the coordinator settles without awaiting nonexistent READY, does not spin, and can accept a later explicit attempt."
+    },
+    {
+      "id": "main_thread_latency",
+      "test": "Use a latch-held fake finalize, call the actual public close/restart request from a designated caller thread, and assert it returns before releasing finalize. Pure coordinator tests alone do not verify application wiring."
+    },
+    {
+      "id": "failure_claim_guard",
+      "test": "If failure recovery is claimed, throw during actual startup/finalize and prove terminal completion/retry/handler cleanup. Otherwise preserve a prominent exclusion and do not label the entire lifecycle safe."
+    }
+  ],
+  "overlap_and_remote_snapshot": {
+    "source_report": "/home/xumin/Public/Trime/build/issue-fixes-batch2-20261028/remote-status.json",
+    "source_report_sha256": "2a8fd565798569140dedeb549b43bffe4252d8d9e85f0de5c509e7db98b9c2a8",
+    "captured_at_utc": "2026-10-28T12:00:48.527Z",
+    "new_duplicate_or_maintainer_feedback_in_snapshot": {
+      "duplicate_pr": false,
+      "maintainer_opinion": false
+    },
+    "pr_2188": [
+      {
+        "number": 2188,
+        "url": "https://github.com/osfans/trime/pull/2188",
+        "title": "fix(ime): create deferred input views when the theme is ready",
+        "state": "open",
+        "head_sha": "e009dc0b567f9639cf518bc3b35cd172ac627be7"
+      }
+    ],
+    "pr_2188_overlap": "It defers input-view/start-input work until theme readiness. a047 returns null from onCreateInputView without the pending recovery. Delaying READY increases that window. Do not copy it; stack/wait for that PR before claiming complete gated keyboard startup.",
+    "pr_2183": "The local 8a1ee0ea6538e220fcddf31ed6fd491f5bc3cca7 native startup still lacks join; it is not an existing maintenance-complete READY fix.",
+    "historical_design": "/home/xumin/Public/Trime-split-index/doc/contribution-split/scopes/rime-startup-failure.md documents a separate dispatcher/failure package. It is design-only, not proof of an upstream implementation."
+  },
+  "evidence_limits": [
+    "This report is a source review; no maintenance reproduction, thread dump, unit test, APK build or runtime validation was performed.",
+    "The reporter logs do not identify the blocked thread or establish that asynchronous stop would resolve the long custom-prism work itself.",
+    "No line-count claim is based on a finished patch. The narrower design still needs a compact production implementation and tests before deciding to open a PR.",
+    "The independent design critic agreed that unchanged Rime/Lifecycle plus only a daemon worker has the STOPPING cancellation gap; the final recommendation remains design-only this batch."
+  ],
+  "mutations": {
+    "source_code": false,
+    "worktree": false,
+    "github": false,
+    "adb": false,
+    "builds": false,
+    "process_control": false,
+    "only_local_report_written": true
+  }
+}

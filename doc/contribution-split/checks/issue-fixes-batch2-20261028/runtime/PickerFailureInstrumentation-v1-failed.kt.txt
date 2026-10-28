@@ -1,0 +1,384 @@
+/* SPDX-License-Identifier: GPL-3.0-or-later */
+package com.osfans.trime
+
+import android.accessibilityservice.AccessibilityServiceInfo
+import android.app.Activity
+import android.app.Instrumentation
+import android.content.Intent
+import android.content.IntentFilter
+import android.net.Uri
+import android.os.Build
+import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.os.Process
+import android.os.SystemClock
+import android.view.accessibility.AccessibilityEvent
+import android.view.accessibility.AccessibilityNodeInfo
+import com.osfans.trime.core.data.DataStorageMode
+import com.osfans.trime.data.prefs.AppPrefs
+import com.osfans.trime.ui.main.MainActivity
+import com.osfans.trime.ui.setup.SetupActivity
+import org.json.JSONArray
+import org.json.JSONObject
+import java.io.File
+import java.security.MessageDigest
+import java.util.concurrent.ConcurrentLinkedQueue
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
+import java.util.concurrent.atomic.AtomicBoolean
+import java.util.concurrent.atomic.AtomicReference
+
+/**
+ * Disposable-emulator integration probe. Register this Instrumentation in androidTest.
+ * Arguments: mode=settings|setup, expect=fixed|baseline, seed_setup=true|false,
+ * setup_entry=ui|direct. Root must not run another UiAutomation/uiautomator client.
+ *
+ * Settings requires an existing EXTERNAL_SYNC selection with a valid retained tree grant.
+ * Setup UI requires EXTERNAL_SYNC with an EMPTY URI: upstream considers a nonempty URI
+ * completed even if it has no grant. seed_setup=true explicitly prepares that fixture.
+ * setup_entry=direct calls the public SetupActivity.pickDataPath() if UI setup is complete.
+ *
+ * The monitor synthesizes a picker RESULT_OK with an ungranted URI. The real app result
+ * contract and StorageAccess.parseResult execute; no real DocumentsUI/provider picker
+ * returns this result. This is NOT a real provider failure or an InputDispatcher touch test.
+ * Baseline is expected to die from an asynchronously uncaught production coroutine error;
+ * pre-action checkpoint status and host logcat must be retained to establish that outcome.
+ */
+class PickerFailureInstrumentation : Instrumentation() {
+    companion object {
+        private const val WAIT_MS = 20_000L
+        private const val TOTAL_MS = 120_000L
+        private const val BAD_TREE = "content://com.android.externalstorage.documents/tree/primary%3ADocuments%2FTrimeNeverGrantedBatch2"
+        private const val SENTINEL_NAME = "batch2-picker-probe-private-sentinel.txt"
+        private const val SENTINEL_TEXT = "Trime batch2 picker failure private sentinel\n"
+    }
+
+    private var args = Bundle()
+    private val report = JSONObject()
+    private val reportLock = Any()
+    private val events = ConcurrentLinkedQueue<String>()
+    private val clicks = JSONArray()
+    private val finished = AtomicBoolean(false)
+    private val mainHandler = Handler(Looper.getMainLooper())
+    private val watchdog = Executors.newSingleThreadScheduledExecutor { runnable ->
+        Thread(runnable, "PickerProbeDeadline").apply { isDaemon = true }
+    }
+    @Volatile private var resumedActivity: Activity? = null
+    @Volatile private var stage = "created"
+    private var deadline = 0L
+    private var monitor: Instrumentation.ActivityMonitor? = null
+
+    override fun onCreate(arguments: Bundle?) {
+        super.onCreate(arguments)
+        args = arguments?.let { Bundle(it) } ?: Bundle()
+        start()
+    }
+
+    override fun callActivityOnResume(activity: Activity) {
+        super.callActivityOnResume(activity)
+        resumedActivity = activity
+    }
+
+    override fun callActivityOnDestroy(activity: Activity) {
+        if (resumedActivity === activity) resumedActivity = null
+        super.callActivityOnDestroy(activity)
+    }
+
+    override fun onStart() {
+        deadline = SystemClock.uptimeMillis() + TOTAL_MS
+        watchdog.schedule({ complete(false, IllegalStateException("Total 120 s deadline exceeded at $stage")) }, TOTAL_MS, TimeUnit.MILLISECONDS)
+        var success = false
+        var failure: Throwable? = null
+        try {
+            val mode = args.getString("mode", "settings")!!
+            val expected = args.getString("expect", "fixed")!!
+            val setupEntry = args.getString("setup_entry", "ui")!!
+            check(mode in setOf("settings", "setup")) { "mode must be settings or setup" }
+            check(expected in setOf("fixed", "baseline")) { "expect must be fixed or baseline" }
+            check(setupEntry in setOf("ui", "direct")) { "setup_entry must be ui or direct" }
+            put("mode", mode)
+            put("expected_target", expected)
+            put("setup_entry", setupEntry)
+            put("pid", Process.myPid())
+            put("uid", Process.myUid())
+            put("api", Build.VERSION.SDK_INT)
+            put("target_package", targetContext.packageName)
+            put("installed_target_apk", targetContext.applicationInfo.sourceDir)
+            put("installed_target_apk_sha256", hash(File(targetContext.applicationInfo.sourceDir)))
+            put("scope", "Synthetic monitored ActivityResult, real production StorageAccess result parsing, real activities and preferences; accessibility CLICK actions or explicitly marked direct public method invocation")
+            put("real_provider_failure", false)
+            put("input_dispatcher_touch_test", false)
+            put("synthetic_result_uri", BAD_TREE)
+            put("picker_monitor_blocks_provider_activity", true)
+            put("baseline_crash_requires_host_logcat", true)
+
+            stage("configure_accessibility")
+            uiAutomation.serviceInfo = uiAutomation.serviceInfo.apply {
+                flags = flags or AccessibilityServiceInfo.FLAG_REPORT_VIEW_IDS or AccessibilityServiceInfo.FLAG_RETRIEVE_INTERACTIVE_WINDOWS
+                eventTypes = AccessibilityEvent.TYPES_ALL_MASK
+            }
+            uiAutomation.setOnAccessibilityEventListener { event ->
+                if (event.eventType == AccessibilityEvent.TYPE_NOTIFICATION_STATE_CHANGED ||
+                    event.eventType == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED
+                ) {
+                    events.add(JSONObject().apply {
+                        put("observed_uptime_ms", SystemClock.uptimeMillis())
+                        put("event_time_ms", event.eventTime)
+                        put("type", event.eventType)
+                        put("package", event.packageName?.toString())
+                        put("class", event.className?.toString())
+                        put("text", JSONArray(event.text.map { it.toString() }))
+                        put("content_description", event.contentDescription?.toString())
+                    }.toString())
+                    while (events.size > 200) events.poll()
+                }
+            }
+
+            stage("prepare_private_sentinel")
+            val sentinel = File(privateContext().filesDir, SENTINEL_NAME)
+            val created = !sentinel.exists()
+            if (created) {
+                check(sentinel.parentFile!!.isDirectory || sentinel.parentFile!!.mkdirs())
+                sentinel.writeText(SENTINEL_TEXT)
+            }
+            check(sentinel.isFile && sentinel.readText() == SENTINEL_TEXT) { "Dedicated sentinel path already contains unexpected content" }
+            put("private_sentinel", JSONObject().put("path", sentinel.absolutePath).put("created_by_fixture", created).put("retained_after_probe", true))
+
+            if (mode == "setup" && args.getString("seed_setup") == "true") {
+                put("before_setup_fixture_preferences", preferences())
+                onMain("seed_setup_preferences") {
+                    AppPrefs.defaultInstance().profile.dataStorageMode.setValue(DataStorageMode.EXTERNAL_SYNC)
+                    AppPrefs.defaultInstance().profile.externalRimeTreeUri.setValue("")
+                }
+                put("after_setup_fixture_preferences", preferences())
+                put("setup_fixture_preparation", "Explicitly set EXTERNAL_SYNC plus empty selected URI before launching Setup; grant list and existing files are not altered by fixture preparation")
+            }
+
+            stage("confirm_ungranted_uri_precondition")
+            check(targetContext.contentResolver.persistedUriPermissions.none { it.uri.toString() == BAD_TREE }) { "Synthetic result URI unexpectedly already has a grant" }
+            val denied = runCatching {
+                targetContext.contentResolver.takePersistableUriPermission(Uri.parse(BAD_TREE), Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
+            }.exceptionOrNull()
+            put("grant_denial_preflight", JSONObject().put("operation", "Direct ContentResolver.takePersistableUriPermission(uri, 3), separately caught before app picker flow").put("exception_class", denied?.javaClass?.name).put("message", denied?.message))
+            check(denied is SecurityException) { "Ungrantable URI did not produce the required SecurityException precondition" }
+
+            if (mode == "settings") {
+                check(AppPrefs.defaultInstance().profile.dataStorageMode.getValue() == DataStorageMode.EXTERNAL_SYNC) { "Settings fixture must start in EXTERNAL_SYNC" }
+                val old = AppPrefs.defaultInstance().profile.externalRimeTreeUri.getValue()
+                check(old.isNotEmpty() && targetContext.contentResolver.persistedUriPermissions.any { it.uri.toString() == old && it.isReadPermission && it.isWritePermission }) { "Settings fixture requires a selected old valid read/write tree grant" }
+            } else if (setupEntry == "ui") {
+                check(AppPrefs.defaultInstance().profile.dataStorageMode.getValue() == DataStorageMode.EXTERNAL_SYNC && AppPrefs.defaultInstance().profile.externalRimeTreeUri.getValue().isEmpty()) { "Setup UI requires EXTERNAL_SYNC plus empty URI; use seed_setup=true, or explicitly choose setup_entry=direct" }
+            }
+
+            val syntheticResult = Intent().setData(Uri.parse(BAD_TREE))
+            monitor = addMonitor(IntentFilter(Intent.ACTION_OPEN_DOCUMENT_TREE), Instrumentation.ActivityResult(Activity.RESULT_OK, syntheticResult), true)
+            stage("launch_${mode}_activity")
+            onMain("start_activity") {
+                val destination = if (mode == "settings") MainActivity::class.java else SetupActivity::class.java
+                targetContext.startActivity(Intent(targetContext, destination).setAction(Intent.ACTION_MAIN).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK))
+            }
+            await("target_activity_resumed") { resumedActivity != null }
+            if (mode == "settings") openProfile()
+            else if (setupEntry == "ui") awaitNode("setup_step_one_action", viewId = "${targetContext.packageName}:id/action_button", text = targetContext.getString(R.string.setup__select_data_path))
+            else await("setup_activity_resumed") { resumedActivity is SetupActivity }
+
+            val before = snapshot(sentinel)
+            put("before_picker_attempts", before)
+            val attempts = JSONArray()
+            val count = if (expected == "baseline") 1 else 2
+            repeat(count) { index ->
+                val number = index + 1
+                val started = SystemClock.uptimeMillis()
+                stage("attempt_${number}_before_picker_launch")
+                sendStatus(0, Bundle().apply {
+                    putString("picker_checkpoint", JSONObject().put("stage", stage).put("attempt", number).put("before", before).put("monitor_hits_before", monitor!!.hits).put("fault", "Synthetic RESULT_OK with ungranted URI; production result parser will request a persistable grant").toString())
+                })
+                when {
+                    mode == "settings" -> {
+                        click("attempt_${number}_user_directory", text = targetContext.getString(R.string.user_data_dir))
+                        // a047/f45ba keep the original change-folder dialog. Also accept an
+                        // immediate monitored launch rather than assuming a second dialog exists.
+                        await("attempt_${number}_picker_or_existing_confirmation") {
+                            monitor!!.hits >= number || node(text = targetContext.getString(R.string.select_another_directory)) != null
+                        }
+                        if (monitor!!.hits < number) {
+                            put("settings_confirmation_path", "Existing promptSelectAnotherDirectory dialog, present in a047 and f45ba; separate from PR2199 storage-mode confirmation")
+                            click("attempt_${number}_existing_change_directory_confirmation", text = targetContext.getString(R.string.select_another_directory))
+                        } else {
+                            put("settings_confirmation_path", "User directory launched the monitored picker immediately")
+                        }
+                    }
+                    setupEntry == "ui" -> click("attempt_${number}_setup_action", viewId = "${targetContext.packageName}:id/action_button", text = targetContext.getString(R.string.setup__select_data_path))
+                    else -> {
+                        recordClick(JSONObject().put("stage", stage).put("kind", "direct_public_method_invocation").put("method", "SetupActivity.pickDataPath"))
+                        onMain("attempt_${number}_direct_pickDataPath") {
+                            (resumedActivity as? SetupActivity ?: error("SetupActivity is not resumed")).pickDataPath()
+                        }
+                    }
+                }
+                await("attempt_${number}_picker_monitor_hit") { monitor!!.hits >= number }
+                val message = targetContext.getString(R.string.setup__data_path_import_failed)
+                await("attempt_${number}_error_feedback") { feedbackSince(started, message).isNotEmpty() }
+                val after = snapshot(sentinel)
+                attempts.put(JSONObject().put("attempt", number).put("monitor_hits", monitor!!.hits).put("error_feedback_events", JSONArray(feedbackSince(started, message))).put("after", after).put("state_unchanged", before.toString() == after.toString()).put("resumed_activity", resumedActivity?.javaClass?.name))
+                put("attempts", attempts)
+                check(before.toString() == after.toString()) { "Storage mode/URI, manifest, private sentinel or persisted grants changed after failed picker attempt $number" }
+                check(resumedActivity?.isFinishing == false && resumedActivity?.isDestroyed == false) { "Activity did not remain alive after failed picker attempt $number" }
+                if (mode == "setup" && setupEntry == "ui") awaitNode("attempt_${number}_setup_retry_available", viewId = "${targetContext.packageName}:id/action_button", text = targetContext.getString(R.string.setup__select_data_path))
+                if (mode == "settings") awaitNode("attempt_${number}_settings_retry_available", text = targetContext.getString(R.string.user_data_dir))
+            }
+            check(expected == "fixed") { "Baseline unexpectedly survived the denied-grant picker flow; inspect installed APK identity and host logcat" }
+            put("production_exception_class_observation", "The fixed caller consumes its exception internally. The probe observes real monitor delivery, the independently confirmed SecurityException grant precondition, error feedback and unchanged state; host baseline logcat supplies the actual production exception stack.")
+            stage("complete")
+            success = true
+        } catch (error: Throwable) {
+            failure = error
+            runCatching { put("ui_at_failure", uiSummary()) }
+        } finally {
+            runCatching { monitor?.let(::removeMonitor) }
+            runCatching { uiAutomation.setOnAccessibilityEventListener(null) }
+            complete(success, failure)
+        }
+    }
+
+    private fun openProfile() {
+        // The selected valid tree completes setup step1; Skip is available if IME steps remain.
+        await("main_or_setup_ready") { node(text = targetContext.getString(R.string.profile)) != null || node(text = targetContext.getString(R.string.setup__skip)) != null }
+        if (node(text = targetContext.getString(R.string.setup__skip)) != null) {
+            click("skip_setup", text = targetContext.getString(R.string.setup__skip))
+            click("confirm_skip_setup", text = targetContext.getString(R.string.setup__skip_hint_yes))
+        }
+        click("open_profile", text = targetContext.getString(R.string.profile))
+        awaitNode("profile_user_directory_ready", text = targetContext.getString(R.string.user_data_dir))
+    }
+
+    private fun privateContext() = if (Build.VERSION.SDK_INT >= 24) targetContext.createDeviceProtectedStorageContext() else targetContext
+
+    private fun preferences() = JSONObject().put("data_storage_mode", AppPrefs.defaultInstance().profile.dataStorageMode.getValue().name).put("external_tree_uri", AppPrefs.defaultInstance().profile.externalRimeTreeUri.getValue())
+
+    private fun snapshot(sentinel: File): JSONObject = preferences().apply {
+        put("manifest", fileState(File(privateContext().dataDir, ".sync-manifest.json")))
+        put("private_sentinel", fileState(sentinel))
+        put("persisted_uri_permissions", JSONArray(targetContext.contentResolver.persistedUriPermissions.sortedBy { it.uri.toString() }.map {
+            JSONObject().put("uri", it.uri.toString()).put("read", it.isReadPermission).put("write", it.isWritePermission).put("persisted_time", it.persistedTime)
+        }))
+    }
+
+    private fun fileState(file: File) = JSONObject().put("path", file.absolutePath).put("exists", file.exists()).apply {
+        if (file.exists()) {
+            check(file.isFile) { "Expected regular file: $file" }
+            put("bytes", file.length())
+            put("sha256", hash(file))
+        }
+    }
+
+    private fun hash(file: File): String {
+        val digest = MessageDigest.getInstance("SHA-256")
+        file.inputStream().use { input ->
+            val buffer = ByteArray(64 * 1024)
+            while (true) {
+                val count = input.read(buffer)
+                if (count < 0) break
+                digest.update(buffer, 0, count)
+            }
+        }
+        return digest.digest().joinToString("") { "%02x".format(it.toInt() and 0xff) }
+    }
+
+    private fun feedbackSince(started: Long, expected: String): List<JSONObject> = events.map(::JSONObject).filter {
+        it.getLong("observed_uptime_ms") >= started && it.optJSONArray("text")?.let { text ->
+            (0 until text.length()).any { index -> text.optString(index).contains(expected) }
+        } == true
+    }
+
+    private fun node(viewId: String? = null, text: String? = null): AccessibilityNodeInfo? {
+        val root = uiAutomation.rootInActiveWindow ?: return null
+        val nodes = if (viewId != null) root.findAccessibilityNodeInfosByViewId(viewId) else root.findAccessibilityNodeInfosByText(text ?: error("Node selector required"))
+        return nodes.firstOrNull { it.isVisibleToUser && it.isEnabled && (text == null || it.text?.toString()?.equals(text, ignoreCase = true) == true) }
+    }
+
+    private fun awaitNode(label: String, viewId: String? = null, text: String? = null): AccessibilityNodeInfo {
+        var found: AccessibilityNodeInfo? = null
+        await(label) { node(viewId, text).also { found = it } != null }
+        return checkNotNull(found)
+    }
+
+    private fun click(label: String, viewId: String? = null, text: String? = null) {
+        val selected = awaitNode(label, viewId, text)
+        var clickable: AccessibilityNodeInfo? = selected
+        while (clickable != null && !clickable.isClickable) clickable = clickable.parent
+        val target = checkNotNull(clickable) { "No clickable ancestor for $label" }
+        recordClick(JSONObject().put("stage", label).put("kind", "accessibility_ACTION_CLICK").put("text", selected.text?.toString()).put("view_id", selected.viewIdResourceName).put("target_class", target.className?.toString()))
+        check(target.performAction(AccessibilityNodeInfo.ACTION_CLICK)) { "Accessibility CLICK failed: $label" }
+    }
+
+    private fun await(label: String, condition: () -> Boolean) {
+        stage(label)
+        val end = minOf(deadline, SystemClock.uptimeMillis() + WAIT_MS)
+        while (SystemClock.uptimeMillis() < end && !finished.get()) {
+            if (condition()) return
+            SystemClock.sleep(100)
+        }
+        error("20 s bounded wait failed: $label; active=${resumedActivity?.javaClass?.name}")
+    }
+
+    private fun <T> onMain(label: String, block: () -> T): T {
+        stage(label)
+        val result = AtomicReference<Result<T>?>(null)
+        val done = CountDownLatch(1)
+        val runnable = Runnable {
+            try {
+                result.set(runCatching(block))
+            } finally {
+                done.countDown()
+            }
+        }
+        check(mainHandler.post(runnable)) { "Could not post main-thread task: $label" }
+        val budget = minOf(WAIT_MS, (deadline - SystemClock.uptimeMillis()).coerceAtLeast(1))
+        if (!done.await(budget, TimeUnit.MILLISECONDS)) {
+            mainHandler.removeCallbacks(runnable)
+            error("Main-thread task exceeded bounded wait: $label")
+        }
+        return checkNotNull(result.get()).getOrThrow()
+    }
+
+    private fun uiSummary(): JSONArray {
+        val result = JSONArray()
+        fun visit(node: AccessibilityNodeInfo?, depth: Int) {
+            if (node == null || depth > 12 || result.length() >= 160) return
+            if (node.isVisibleToUser) result.put(JSONObject().put("text", node.text?.toString()).put("description", node.contentDescription?.toString()).put("id", node.viewIdResourceName).put("class", node.className?.toString()))
+            for (index in 0 until node.childCount) visit(node.getChild(index), depth + 1)
+        }
+        visit(uiAutomation.rootInActiveWindow, 0)
+        return result
+    }
+
+    private fun put(key: String, value: Any?) = synchronized(reportLock) {
+        val detached = when (value) {
+            is JSONObject -> JSONObject(value.toString())
+            is JSONArray -> JSONArray(value.toString())
+            else -> value
+        }
+        report.put(key, detached)
+        Unit
+    }
+    private fun recordClick(value: JSONObject) = synchronized(reportLock) { clicks.put(value); Unit }
+    private fun stage(value: String) { stage = value; put("stage", value) }
+
+    private fun complete(passed: Boolean, error: Throwable?) {
+        if (!finished.compareAndSet(false, true)) return
+        watchdog.shutdownNow()
+        val final = synchronized(reportLock) {
+            JSONObject(report.toString()).put("passed", passed).put("stage", stage).put("clicks", JSONArray(clicks.toString())).put("accessibility_events", JSONArray(events.map(::JSONObject))).apply {
+                error?.let { put("error", android.util.Log.getStackTraceString(it)) }
+            }
+        }
+        finish(if (passed) Activity.RESULT_OK else 1, Bundle().apply {
+            putBoolean("passed", passed)
+            putString("picker_failure_report", final.toString())
+            putString("stream", final.toString(2) + "\n")
+        })
+    }
+}

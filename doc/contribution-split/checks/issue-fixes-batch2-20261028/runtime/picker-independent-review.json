@@ -1,0 +1,1752 @@
+{
+  "created_at_utc": "2026-10-28T12:40:01.012130+00:00",
+  "reviewer": "independent subagent /root/candidate_hit",
+  "status": "PASS_FOR_BOUNDED_SYNTHETIC_PICKER_GRANT_DENIAL_ONLY",
+  "conclusion": "On API35 emulator, both upstream entry points reproducibly die with the actual production grant-denial SecurityException; the PR2201 diagnostic APK handles the same monitored result twice per entry point, emits the failure Toast, preserves the five captured storage-state fields and offers retry while Activity remains alive before instrumentation finishes. Historical issue2140 upgrade failure and real provider behavior are not established.",
+  "independent_actions": "Read files and recompute SHA256/ZIP payload equality/parsed JSON comparisons only; no build, ADB, source edits, device action or GitHub mutation. Wrote only this review JSON.",
+  "product_head": "f45ba68dfc2a4fa6c6877732dc25f094f030b7ac",
+  "baseline_head": "a047f74757fae0d7b5ef64e54f0b957dee2bf8f3",
+  "producer_checkout": "6168da40b6d669f700026e98f4fc3e4d0bd0c6f8",
+  "source_tree_proof": {
+    "file": {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch2-20261028/cloud/pr-2201/ubuntu-original/source-tree-proof.json",
+      "bytes": 589,
+      "sha256": "4d599334f343b27353a8d6172fe448d95bc36921a35085ecec69ca0fef7ebd72"
+    },
+    "record": {
+      "actual_producer_merge_sha": "6168da40b6d669f700026e98f4fc3e4d0bd0c6f8",
+      "actual_producer_sha_source": "/home/xumin/Public/Trime/build/issue-fixes-batch2-20261028/cloud/pr-2201/run-40685899028-job-122809824181.log",
+      "pr_head_sha_at_production": "f45ba68dfc2a4fa6c6877732dc25f094f030b7ac",
+      "producer_merge_tree_sha": "6c6fec42967d889e974c975673cdaa63f33fea41",
+      "pr_head_tree_sha": "6c6fec42967d889e974c975673cdaa63f33fea41",
+      "full_source_trees_identical": true,
+      "producer_response_file": "producer-merge-git-commit.json",
+      "head_response_file": "pr-head-git-commit.json"
+    }
+  },
+  "provenance": {
+    "file": {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch2-20261028/cloud/pr-2201/ubuntu-original/provenance.json",
+      "bytes": 2193,
+      "sha256": "ea52c9d238f25152d915ad63d40023cc29824774836689e14c7fd8d0ee4c874d"
+    },
+    "record": {
+      "captured_at": "2026-10-28T12:25:16.987752+00:00",
+      "repository": "osfans/trime",
+      "pr": 2201,
+      "pr_url": "https://github.com/osfans/trime/pull/2201",
+      "pr_head_sha": "f45ba68dfc2a4fa6c6877732dc25f094f030b7ac",
+      "pr_head_ref": "contrib/fix-folder-picker-errors",
+      "pr_head_repository": "X2M7/trime",
+      "pr_base_sha": "a047f74757fae0d7b5ef64e54f0b957dee2bf8f3",
+      "pr_base_ref": "develop",
+      "pr_base_repository": "osfans/trime",
+      "pr_merge_commit_sha": "6168da40b6d669f700026e98f4fc3e4d0bd0c6f8",
+      "producer_merge_commit_parents": [
+        "a047f74757fae0d7b5ef64e54f0b957dee2bf8f3",
+        "f45ba68dfc2a4fa6c6877732dc25f094f030b7ac"
+      ],
+      "run_id": 40685899028,
+      "run_url": "https://github.com/osfans/trime/actions/runs/40685899028",
+      "run_attempt": 1,
+      "run_event": "pull_request",
+      "run_head_sha": "f45ba68dfc2a4fa6c6877732dc25f094f030b7ac",
+      "run_head_branch": "contrib/fix-folder-picker-errors",
+      "actual_checkout_commit_from_job_log": "6168da40b6d669f700026e98f4fc3e4d0bd0c6f8",
+      "job_id": 122809824181,
+      "job_url": "https://github.com/osfans/trime/actions/runs/40685899028/job/122809824181",
+      "job_conclusion": "success",
+      "artifact_id": 12815646760,
+      "artifact_name": "trime-ubuntu-26.04",
+      "artifact_digest_from_github": "sha256:1112cca70f570775a38a56747bf6eeb863ebd85ebcd22a7562e02b80348f7722",
+      "archive_file": "artifact-12815646760-trime-ubuntu-26.04.zip",
+      "archive_sha256": "1112cca70f570775a38a56747bf6eeb863ebd85ebcd22a7562e02b80348f7722",
+      "original_files": [
+        {
+          "producer_zip_entry": "com.osfans.trime-v3.3.12-107-g6168da40-x86_64-debug.apk",
+          "producer_filename": "com.osfans.trime-v3.3.12-107-g6168da40-x86_64-debug.apk",
+          "path": "extracted/com.osfans.trime-v3.3.12-107-g6168da40-x86_64-debug.apk",
+          "sha256": "f2a997a036332f9e3726983b7d1a55b452459e4f47e49ed65060f8a840c89da1",
+          "size": 20158721
+        },
+        {
+          "producer_zip_entry": "output-metadata.json",
+          "producer_filename": "output-metadata.json",
+          "path": "extracted/output-metadata.json",
+          "sha256": "23353f113090ee71276fe67863a6fab63e01d7838e87812554fac1d7929a1b0c",
+          "size": 1496
+        }
+      ],
+      "original_apk_modified_or_resigned": false
+    }
+  },
+  "apk_identity": {
+    "original": {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch2-20261028/cloud/pr-2201/ubuntu-original/extracted/com.osfans.trime-v3.3.12-107-g6168da40-x86_64-debug.apk",
+      "bytes": 20158721,
+      "sha256": "f2a997a036332f9e3726983b7d1a55b452459e4f47e49ed65060f8a840c89da1"
+    },
+    "diagnostic": {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch2-20261028/device-apks/picker-diagnostic.apk",
+      "bytes": 20158126,
+      "sha256": "7f7a34862275374fb5bf1cd1214377fb6612a84faf46123b3d6d345db797d029"
+    },
+    "baseline_diagnostic": {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-20261028/device-apks/baseline-diagnostic.apk",
+      "bytes": 20158126,
+      "sha256": "7e47545d6c7a2255546389b38cb4365229fd43b53202465f1243b4bd9fa3eb55"
+    },
+    "identity_file": {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch2-20261028/device-apks/picker-identity.json",
+      "bytes": 98363,
+      "sha256": "ef11bdeec4a014ad81906a6aa828f38d057c50cda8c7f54e6a848c72026eaa01"
+    },
+    "non_signature_zip_entry_bytes_identical_independently_recomputed": true,
+    "payload_entry_count": 784,
+    "baseline_identity_file": {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-20261028/device-apks/baseline-identity.json",
+      "bytes": 98263,
+      "sha256": "20e7f8ab1302c509236c4bcebb19929f579086c2c2a70ea962382ab210e9ef5a"
+    }
+  },
+  "helper": {
+    "source_v2": {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch2-20261028/picker-probe/PickerFailureInstrumentation.kt",
+      "bytes": 23983,
+      "sha256": "b9b567d9215604de00ef47b2a1a615183d382dd256a10edfd6afe77db1e0f153"
+    },
+    "source_v1_preserved": {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch2-20261028/picker-probe/previous-v1-navigation-monitor.kt",
+      "bytes": 23393,
+      "sha256": "9e04aa20915100a3a552798ebcf39104586afcd796c2915c1c26b5b62dbbc38b"
+    },
+    "build_record": {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch2-20261028/voice-build2/result.json",
+      "bytes": 10259,
+      "sha256": "bbc21776cc7d29382edce6b32ee37a2a7dfbb02f0373c4c2ab5e3d11eb432425"
+    },
+    "test_apk": {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch2-20261028/voice-build2/com.osfans.trime-v3.3.12-106-gc7501279-debug-androidTest.apk",
+      "bytes": 256332,
+      "sha256": "54215fb587c954d5cf6b00c00f86b0c32dbb8507a7f62f51801eb176531355d5"
+    },
+    "installed_test_apk_command": {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch2-20261028/runtime/run2/commands/install-picker-probe-v2.json",
+      "bytes": 378,
+      "sha256": "07b8b29105860c8e2c54c972143b3b87fc6c7018856c1c7e8d866036330dcd50"
+    },
+    "test_apk_build_exit": 0,
+    "source_and_test_apk_sha_match_build_record": true,
+    "monitor_after_navigation": true,
+    "monitor_limitation": "IntentFilter does not reject null actions; navigation before registration avoids known redirect interception. This remains a bounded harness, not general exact-action monitoring."
+  },
+  "ci": {
+    "record": {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch2-20261028/cloud/pr-2201/ci-summary.json",
+      "bytes": 5792,
+      "sha256": "749b3af54764e5497fd9779e55262c6801f4adc5ab82281d03b98f4494108b55"
+    },
+    "head_sha": "f45ba68dfc2a4fa6c6877732dc25f094f030b7ac",
+    "result": {
+      "run_id": 40685899028,
+      "run_url": "https://github.com/osfans/trime/actions/runs/40685899028",
+      "status": "completed",
+      "conclusion": "success",
+      "passed": 5,
+      "total": 5,
+      "jobs": [
+        {
+          "id": 122808044774,
+          "name": "check / lint-and-test",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 122809824146,
+          "name": "build (macos-26-intel)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 122809824159,
+          "name": "build (windows-2025)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 122809824181,
+          "name": "build (ubuntu-26.04)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 122809824415,
+          "name": "build (macos-26)",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ],
+      "original_logs_saved_and_sha_verified": true,
+      "all_jobs_actual_checkout_merge_sha": "6168da40b6d669f700026e98f4fc3e4d0bd0c6f8",
+      "app_test_tasks": [
+        {
+          "line": 1593,
+          "text": "2026-10-28T12:15:22.6242171Z > Task :app:testDebugUnitTest",
+          "executed_without_cache_suffix": true
+        }
+      ],
+      "app_lint_tasks": [
+        {
+          "line": 1603,
+          "text": "2026-10-28T12:16:09.2251053Z > Task :app:lint",
+          "executed_without_cache_suffix": true
+        }
+      ],
+      "exact_testcase_count": null,
+      "junit_xml_exported_by_workflow": false
+    },
+    "source": "Read captured authoritative CI metadata/log evidence; no new network query."
+  },
+  "cases": [
+    {
+      "name": "baseline-settings-v3",
+      "result": {
+        "path": "/home/xumin/Public/Trime/build/issue-fixes-batch2-20261028/runtime/run2/baseline-settings-v3-result.json",
+        "bytes": 3107,
+        "sha256": "62b5ca75b2ea25a92aac9314b38b9b7370e2347304606b82ef92f5c6737bcb18"
+      },
+      "raw_instrumentation_stdout": {
+        "path": "/home/xumin/Public/Trime/build/issue-fixes-batch2-20261028/runtime/run2/commands/baseline-settings-v3-instrument.stdout",
+        "bytes": 1117,
+        "sha256": "fe1584c8c94efa28a04701468ac5101aee38f82fb98625bdf6128ce4759a2142"
+      },
+      "segment_log": {
+        "path": "/home/xumin/Public/Trime/build/issue-fixes-batch2-20261028/runtime/run2/baseline-settings-v3-logcat.txt",
+        "bytes": 226946,
+        "sha256": "80030fc053976c6b499423a5d2d01c1691124921618d68963b9bb7206a13c3c5"
+      },
+      "install_command": {
+        "path": "/home/xumin/Public/Trime/build/issue-fixes-batch2-20261028/runtime/run2/commands/baseline-settings-v3-install-target.json",
+        "bytes": 343,
+        "sha256": "adc206a58829b6bb6f2b053e38c1c232bb44927f5a5d7863a0ee776e560a5214"
+      },
+      "target_sha256": "7e47545d6c7a2255546389b38cb4365229fd43b53202465f1243b4bd9fa3eb55",
+      "checkpoints_match_raw_stdout": true,
+      "expected": "baseline",
+      "checkpoint_count": 1,
+      "androidruntime_stack": [
+        {
+          "line": 1204,
+          "text": "10-28 20:32:30.308  2321  2321 E AndroidRuntime: FATAL EXCEPTION: main"
+        },
+        {
+          "line": 1205,
+          "text": "10-28 20:32:30.308  2321  2321 E AndroidRuntime: Process: com.osfans.trime.debug, PID: 2321"
+        },
+        {
+          "line": 1206,
+          "text": "10-28 20:32:30.308  2321  2321 E AndroidRuntime: java.lang.SecurityException: No persistable permission grants found for UID 10160 and Uri content://com.android.externalstorage.documents/..."
+        },
+        {
+          "line": 1207,
+          "text": "10-28 20:32:30.308  2321  2321 E AndroidRuntime: \tat android.os.Parcel.createExceptionOrNull(Parcel.java:3242)"
+        },
+        {
+          "line": 1208,
+          "text": "10-28 20:32:30.308  2321  2321 E AndroidRuntime: \tat android.os.Parcel.createException(Parcel.java:3226)"
+        },
+        {
+          "line": 1209,
+          "text": "10-28 20:32:30.308  2321  2321 E AndroidRuntime: \tat android.os.Parcel.readException(Parcel.java:3209)"
+        },
+        {
+          "line": 1210,
+          "text": "10-28 20:32:30.308  2321  2321 E AndroidRuntime: \tat android.os.Parcel.readException(Parcel.java:3151)"
+        },
+        {
+          "line": 1211,
+          "text": "10-28 20:32:30.308  2321  2321 E AndroidRuntime: \tat android.app.IUriGrantsManager$Stub$Proxy.takePersistableUriPermission(IUriGrantsManager.java:273)"
+        },
+        {
+          "line": 1212,
+          "text": "10-28 20:32:30.308  2321  2321 E AndroidRuntime: \tat android.content.ContentResolver.takePersistableUriPermission(ContentResolver.java:2952)"
+        },
+        {
+          "line": 1213,
+          "text": "10-28 20:32:30.308  2321  2321 E AndroidRuntime: \tat io.github.whiredplanck.storageaccess.StorageResultContracts$Companion.takePersistable(StorageResultContracts.kt:203)"
+        },
+        {
+          "line": 1214,
+          "text": "10-28 20:32:30.308  2321  2321 E AndroidRuntime: \tat io.github.whiredplanck.storageaccess.StorageResultContracts$Companion.access$takePersistable(StorageResultContracts.kt:197)"
+        },
+        {
+          "line": 1215,
+          "text": "10-28 20:32:30.308  2321  2321 E AndroidRuntime: \tat io.github.whiredplanck.storageaccess.StorageResultContracts$OpenDirectory.parseResult-gIAlu-s(StorageResultContracts.kt:39)"
+        },
+        {
+          "line": 1216,
+          "text": "10-28 20:32:30.308  2321  2321 E AndroidRuntime: \tat io.github.whiredplanck.storageaccess.StorageResultContracts$OpenDirectory.parseResult(StorageResultContracts.kt:12)"
+        },
+        {
+          "line": 1217,
+          "text": "10-28 20:32:30.308  2321  2321 E AndroidRuntime: \tat androidx.activity.result.ActivityResultRegistry.doDispatch(ActivityResultRegistry.kt:350)"
+        },
+        {
+          "line": 1218,
+          "text": "10-28 20:32:30.308  2321  2321 E AndroidRuntime: \tat androidx.activity.result.ActivityResultRegistry.dispatchResult(ActivityResultRegistry.kt:311)"
+        },
+        {
+          "line": 1219,
+          "text": "10-28 20:32:30.308  2321  2321 E AndroidRuntime: \tat androidx.activity.ComponentActivity.onActivityResult(ComponentActivity.kt:756)"
+        },
+        {
+          "line": 1220,
+          "text": "10-28 20:32:30.308  2321  2321 E AndroidRuntime: \tat androidx.fragment.app.FragmentActivity.onActivityResult(FragmentActivity.java:151)"
+        },
+        {
+          "line": 1221,
+          "text": "10-28 20:32:30.308  2321  2321 E AndroidRuntime: \tat android.app.Activity.onActivityResult(Activity.java:7494)"
+        },
+        {
+          "line": 1222,
+          "text": "10-28 20:32:30.308  2321  2321 E AndroidRuntime: \tat android.app.Activity.internalDispatchActivityResult(Activity.java:9379)"
+        },
+        {
+          "line": 1223,
+          "text": "10-28 20:32:30.308  2321  2321 E AndroidRuntime: \tat android.app.Activity.dispatchActivityResult(Activity.java:9356)"
+        },
+        {
+          "line": 1224,
+          "text": "10-28 20:32:30.308  2321  2321 E AndroidRuntime: \tat android.app.ActivityThread.deliverResults(ActivityThread.java:5867)"
+        },
+        {
+          "line": 1225,
+          "text": "10-28 20:32:30.308  2321  2321 E AndroidRuntime: \tat android.app.ActivityThread.handleSendResult(ActivityThread.java:5917)"
+        },
+        {
+          "line": 1226,
+          "text": "10-28 20:32:30.308  2321  2321 E AndroidRuntime: \tat android.app.servertransaction.ActivityResultItem.execute(ActivityResultItem.java:69)"
+        },
+        {
+          "line": 1227,
+          "text": "10-28 20:32:30.308  2321  2321 E AndroidRuntime: \tat android.app.servertransaction.ActivityTransactionItem.execute(ActivityTransactionItem.java:60)"
+        },
+        {
+          "line": 1228,
+          "text": "10-28 20:32:30.308  2321  2321 E AndroidRuntime: \tat android.app.servertransaction.TransactionExecutor.executeNonLifecycleItem(TransactionExecutor.java:174)"
+        },
+        {
+          "line": 1229,
+          "text": "10-28 20:32:30.308  2321  2321 E AndroidRuntime: \tat android.app.servertransaction.TransactionExecutor.executeTransactionItems(TransactionExecutor.java:109)"
+        },
+        {
+          "line": 1230,
+          "text": "10-28 20:32:30.308  2321  2321 E AndroidRuntime: \tat android.app.servertransaction.TransactionExecutor.execute(TransactionExecutor.java:81)"
+        },
+        {
+          "line": 1231,
+          "text": "10-28 20:32:30.308  2321  2321 E AndroidRuntime: \tat android.app.ActivityThread$H.handleMessage(ActivityThread.java:2636)"
+        },
+        {
+          "line": 1232,
+          "text": "10-28 20:32:30.308  2321  2321 E AndroidRuntime: \tat android.os.Handler.dispatchMessage(Handler.java:107)"
+        },
+        {
+          "line": 1233,
+          "text": "10-28 20:32:30.308  2321  2321 E AndroidRuntime: \tat android.os.Looper.loopOnce(Looper.java:232)"
+        },
+        {
+          "line": 1234,
+          "text": "10-28 20:32:30.308  2321  2321 E AndroidRuntime: \tat android.os.Looper.loop(Looper.java:317)"
+        },
+        {
+          "line": 1235,
+          "text": "10-28 20:32:30.308  2321  2321 E AndroidRuntime: \tat android.app.ActivityThread.main(ActivityThread.java:8705)"
+        },
+        {
+          "line": 1236,
+          "text": "10-28 20:32:30.308  2321  2321 E AndroidRuntime: \tat java.lang.reflect.Method.invoke(Native Method)"
+        },
+        {
+          "line": 1237,
+          "text": "10-28 20:32:30.308  2321  2321 E AndroidRuntime: \tat com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:580)"
+        },
+        {
+          "line": 1238,
+          "text": "10-28 20:32:30.308  2321  2321 E AndroidRuntime: \tat com.android.internal.os.ZygoteInit.main(ZygoteInit.java:886)"
+        },
+        {
+          "line": 1239,
+          "text": "10-28 20:32:30.308  2321  2321 E AndroidRuntime: \tSuppressed: kotlinx.coroutines.internal.DiagnosticCoroutineContextException: [StandaloneCoroutine{Cancelling}@6241a85, Dispatchers.Main.immediate]"
+        },
+        {
+          "line": 1240,
+          "text": "10-28 20:32:30.308  2321  2321 E AndroidRuntime: Caused by: android.os.RemoteException: Remote stack trace:"
+        },
+        {
+          "line": 1241,
+          "text": "10-28 20:32:30.308  2321  2321 E AndroidRuntime: \tat com.android.server.uri.UriGrantsManagerService.takePersistableUriPermission(UriGrantsManagerService.java:403)"
+        },
+        {
+          "line": 1242,
+          "text": "10-28 20:32:30.308  2321  2321 E AndroidRuntime: \tat android.app.IUriGrantsManager$Stub.onTransact(IUriGrantsManager.java:145)"
+        },
+        {
+          "line": 1243,
+          "text": "10-28 20:32:30.308  2321  2321 E AndroidRuntime: \tat android.os.Binder.execTransactInternal(Binder.java:1500)"
+        },
+        {
+          "line": 1244,
+          "text": "10-28 20:32:30.308  2321  2321 E AndroidRuntime: \tat android.os.Binder.execTransact(Binder.java:1444)"
+        },
+        {
+          "line": 1245,
+          "text": "10-28 20:32:30.308  2321  2321 E AndroidRuntime: "
+        }
+      ],
+      "outcome": "EXPECTED_BASELINE_PRODUCT_CRASH_REPRODUCED_NOT_PRODUCT_PASS",
+      "production_grant_security_exception": true,
+      "suppressed_coroutine_context_present": true,
+      "installed_identity_evidence": "Successful host install of independently hashed baseline diagnostic APK; this crashing attempt has checkpoint plus stack but no completed in-process installed-APK hash report. Earlier baseline-settings-v2 completed helper report independently measured the same baseline diagnostic SHA.",
+      "pre_action_checkpoint": {
+        "stage": "attempt_1_before_picker_launch",
+        "attempt": 1,
+        "before": {
+          "data_storage_mode": "EXTERNAL_SYNC",
+          "external_tree_uri": "content://com.android.externalstorage.documents/tree/primary%3ADocuments%2FTrimeIssue2095-20261028",
+          "manifest": {
+            "path": "/data/user_de/0/com.osfans.trime.debug/.sync-manifest.json",
+            "exists": true,
+            "bytes": 1766,
+            "sha256": "800f24a8791f5ab61e1f76b57010fd6f0537ef5d2d92e9a3b0d9fa0869abc73c"
+          },
+          "private_sentinel": {
+            "path": "/data/user_de/0/com.osfans.trime.debug/files/batch2-picker-probe-private-sentinel.txt",
+            "exists": true,
+            "bytes": 45,
+            "sha256": "8b1317d3b9c216e0f8aef63f1ad7ab80086f82bb6227f74f86c03e4706b7ebc5"
+          },
+          "persisted_uri_permissions": [
+            {
+              "uri": "content://com.android.externalstorage.documents/tree/primary%3ADocuments%2FTrimeIssue2095-20261028",
+              "read": true,
+              "write": true,
+              "persisted_time": 1793155072511
+            }
+          ]
+        },
+        "monitor_hits_before": 0,
+        "fault": "Synthetic RESULT_OK with ungranted URI; production result parser will request a persistable grant"
+      }
+    },
+    {
+      "name": "baseline-setup",
+      "result": {
+        "path": "/home/xumin/Public/Trime/build/issue-fixes-batch2-20261028/runtime/run2/baseline-setup-result.json",
+        "bytes": 2902,
+        "sha256": "c9aa7a7cff0e071243b93c9e923d8b27532f43ef71615f8efd63076a8c2429b8"
+      },
+      "raw_instrumentation_stdout": {
+        "path": "/home/xumin/Public/Trime/build/issue-fixes-batch2-20261028/runtime/run2/commands/baseline-setup-instrument.stdout",
+        "bytes": 1015,
+        "sha256": "af85c620bee3c7d252d1d4b448c4c94007310d5b6f5e45419fcd39ac82aeff78"
+      },
+      "segment_log": {
+        "path": "/home/xumin/Public/Trime/build/issue-fixes-batch2-20261028/runtime/run2/baseline-setup-logcat.txt",
+        "bytes": 132659,
+        "sha256": "7d4aa98968ffb83ea6ad857fb57873d4e820c5a35f69d75de882a4d86d245407"
+      },
+      "install_command": {
+        "path": "/home/xumin/Public/Trime/build/issue-fixes-batch2-20261028/runtime/run2/commands/baseline-setup-install-target.json",
+        "bytes": 343,
+        "sha256": "ee4b4cd7af8fe38a915ffa097a93af0f3753ec246c8998b32ddb28c58da91e09"
+      },
+      "target_sha256": "7e47545d6c7a2255546389b38cb4365229fd43b53202465f1243b4bd9fa3eb55",
+      "checkpoints_match_raw_stdout": true,
+      "expected": "baseline",
+      "checkpoint_count": 1,
+      "androidruntime_stack": [
+        {
+          "line": 621,
+          "text": "10-28 20:33:57.766  2604  2604 E AndroidRuntime: FATAL EXCEPTION: main"
+        },
+        {
+          "line": 622,
+          "text": "10-28 20:33:57.766  2604  2604 E AndroidRuntime: Process: com.osfans.trime.debug, PID: 2604"
+        },
+        {
+          "line": 623,
+          "text": "10-28 20:33:57.766  2604  2604 E AndroidRuntime: java.lang.SecurityException: No persistable permission grants found for UID 10160 and Uri content://com.android.externalstorage.documents/..."
+        },
+        {
+          "line": 624,
+          "text": "10-28 20:33:57.766  2604  2604 E AndroidRuntime: \tat android.os.Parcel.createExceptionOrNull(Parcel.java:3242)"
+        },
+        {
+          "line": 625,
+          "text": "10-28 20:33:57.766  2604  2604 E AndroidRuntime: \tat android.os.Parcel.createException(Parcel.java:3226)"
+        },
+        {
+          "line": 626,
+          "text": "10-28 20:33:57.766  2604  2604 E AndroidRuntime: \tat android.os.Parcel.readException(Parcel.java:3209)"
+        },
+        {
+          "line": 627,
+          "text": "10-28 20:33:57.766  2604  2604 E AndroidRuntime: \tat android.os.Parcel.readException(Parcel.java:3151)"
+        },
+        {
+          "line": 628,
+          "text": "10-28 20:33:57.766  2604  2604 E AndroidRuntime: \tat android.app.IUriGrantsManager$Stub$Proxy.takePersistableUriPermission(IUriGrantsManager.java:273)"
+        },
+        {
+          "line": 629,
+          "text": "10-28 20:33:57.766  2604  2604 E AndroidRuntime: \tat android.content.ContentResolver.takePersistableUriPermission(ContentResolver.java:2952)"
+        },
+        {
+          "line": 630,
+          "text": "10-28 20:33:57.766  2604  2604 E AndroidRuntime: \tat io.github.whiredplanck.storageaccess.StorageResultContracts$Companion.takePersistable(StorageResultContracts.kt:203)"
+        },
+        {
+          "line": 631,
+          "text": "10-28 20:33:57.766  2604  2604 E AndroidRuntime: \tat io.github.whiredplanck.storageaccess.StorageResultContracts$Companion.access$takePersistable(StorageResultContracts.kt:197)"
+        },
+        {
+          "line": 632,
+          "text": "10-28 20:33:57.766  2604  2604 E AndroidRuntime: \tat io.github.whiredplanck.storageaccess.StorageResultContracts$OpenDirectory.parseResult-gIAlu-s(StorageResultContracts.kt:39)"
+        },
+        {
+          "line": 633,
+          "text": "10-28 20:33:57.766  2604  2604 E AndroidRuntime: \tat io.github.whiredplanck.storageaccess.StorageResultContracts$OpenDirectory.parseResult(StorageResultContracts.kt:12)"
+        },
+        {
+          "line": 634,
+          "text": "10-28 20:33:57.766  2604  2604 E AndroidRuntime: \tat androidx.activity.result.ActivityResultRegistry.doDispatch(ActivityResultRegistry.kt:350)"
+        },
+        {
+          "line": 635,
+          "text": "10-28 20:33:57.766  2604  2604 E AndroidRuntime: \tat androidx.activity.result.ActivityResultRegistry.dispatchResult(ActivityResultRegistry.kt:311)"
+        },
+        {
+          "line": 636,
+          "text": "10-28 20:33:57.766  2604  2604 E AndroidRuntime: \tat androidx.activity.ComponentActivity.onActivityResult(ComponentActivity.kt:756)"
+        },
+        {
+          "line": 637,
+          "text": "10-28 20:33:57.766  2604  2604 E AndroidRuntime: \tat androidx.fragment.app.FragmentActivity.onActivityResult(FragmentActivity.java:151)"
+        },
+        {
+          "line": 638,
+          "text": "10-28 20:33:57.766  2604  2604 E AndroidRuntime: \tat android.app.Activity.onActivityResult(Activity.java:7494)"
+        },
+        {
+          "line": 639,
+          "text": "10-28 20:33:57.766  2604  2604 E AndroidRuntime: \tat android.app.Activity.internalDispatchActivityResult(Activity.java:9379)"
+        },
+        {
+          "line": 640,
+          "text": "10-28 20:33:57.766  2604  2604 E AndroidRuntime: \tat android.app.Activity.dispatchActivityResult(Activity.java:9356)"
+        },
+        {
+          "line": 641,
+          "text": "10-28 20:33:57.766  2604  2604 E AndroidRuntime: \tat android.app.ActivityThread.deliverResults(ActivityThread.java:5867)"
+        },
+        {
+          "line": 642,
+          "text": "10-28 20:33:57.766  2604  2604 E AndroidRuntime: \tat android.app.ActivityThread.handleSendResult(ActivityThread.java:5917)"
+        },
+        {
+          "line": 643,
+          "text": "10-28 20:33:57.766  2604  2604 E AndroidRuntime: \tat android.app.servertransaction.ActivityResultItem.execute(ActivityResultItem.java:69)"
+        },
+        {
+          "line": 644,
+          "text": "10-28 20:33:57.766  2604  2604 E AndroidRuntime: \tat android.app.servertransaction.ActivityTransactionItem.execute(ActivityTransactionItem.java:60)"
+        },
+        {
+          "line": 645,
+          "text": "10-28 20:33:57.766  2604  2604 E AndroidRuntime: \tat android.app.servertransaction.TransactionExecutor.executeNonLifecycleItem(TransactionExecutor.java:174)"
+        },
+        {
+          "line": 646,
+          "text": "10-28 20:33:57.766  2604  2604 E AndroidRuntime: \tat android.app.servertransaction.TransactionExecutor.executeTransactionItems(TransactionExecutor.java:109)"
+        },
+        {
+          "line": 647,
+          "text": "10-28 20:33:57.766  2604  2604 E AndroidRuntime: \tat android.app.servertransaction.TransactionExecutor.execute(TransactionExecutor.java:81)"
+        },
+        {
+          "line": 648,
+          "text": "10-28 20:33:57.766  2604  2604 E AndroidRuntime: \tat android.app.ActivityThread$H.handleMessage(ActivityThread.java:2636)"
+        },
+        {
+          "line": 649,
+          "text": "10-28 20:33:57.766  2604  2604 E AndroidRuntime: \tat android.os.Handler.dispatchMessage(Handler.java:107)"
+        },
+        {
+          "line": 650,
+          "text": "10-28 20:33:57.766  2604  2604 E AndroidRuntime: \tat android.os.Looper.loopOnce(Looper.java:232)"
+        },
+        {
+          "line": 651,
+          "text": "10-28 20:33:57.766  2604  2604 E AndroidRuntime: \tat android.os.Looper.loop(Looper.java:317)"
+        },
+        {
+          "line": 652,
+          "text": "10-28 20:33:57.766  2604  2604 E AndroidRuntime: \tat android.app.ActivityThread.main(ActivityThread.java:8705)"
+        },
+        {
+          "line": 653,
+          "text": "10-28 20:33:57.766  2604  2604 E AndroidRuntime: \tat java.lang.reflect.Method.invoke(Native Method)"
+        },
+        {
+          "line": 654,
+          "text": "10-28 20:33:57.766  2604  2604 E AndroidRuntime: \tat com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:580)"
+        },
+        {
+          "line": 655,
+          "text": "10-28 20:33:57.766  2604  2604 E AndroidRuntime: \tat com.android.internal.os.ZygoteInit.main(ZygoteInit.java:886)"
+        },
+        {
+          "line": 656,
+          "text": "10-28 20:33:57.766  2604  2604 E AndroidRuntime: \tSuppressed: kotlinx.coroutines.internal.DiagnosticCoroutineContextException: [StandaloneCoroutine{Cancelling}@e99023c, Dispatchers.Main.immediate]"
+        },
+        {
+          "line": 657,
+          "text": "10-28 20:33:57.766  2604  2604 E AndroidRuntime: Caused by: android.os.RemoteException: Remote stack trace:"
+        },
+        {
+          "line": 658,
+          "text": "10-28 20:33:57.766  2604  2604 E AndroidRuntime: \tat com.android.server.uri.UriGrantsManagerService.takePersistableUriPermission(UriGrantsManagerService.java:403)"
+        },
+        {
+          "line": 659,
+          "text": "10-28 20:33:57.766  2604  2604 E AndroidRuntime: \tat android.app.IUriGrantsManager$Stub.onTransact(IUriGrantsManager.java:145)"
+        },
+        {
+          "line": 660,
+          "text": "10-28 20:33:57.766  2604  2604 E AndroidRuntime: \tat android.os.Binder.execTransactInternal(Binder.java:1500)"
+        },
+        {
+          "line": 661,
+          "text": "10-28 20:33:57.766  2604  2604 E AndroidRuntime: \tat android.os.Binder.execTransact(Binder.java:1444)"
+        },
+        {
+          "line": 662,
+          "text": "10-28 20:33:57.766  2604  2604 E AndroidRuntime: "
+        }
+      ],
+      "outcome": "EXPECTED_BASELINE_PRODUCT_CRASH_REPRODUCED_NOT_PRODUCT_PASS",
+      "production_grant_security_exception": true,
+      "suppressed_coroutine_context_present": true,
+      "installed_identity_evidence": "Successful host install of independently hashed baseline diagnostic APK; this crashing attempt has checkpoint plus stack but no completed in-process installed-APK hash report. Earlier baseline-settings-v2 completed helper report independently measured the same baseline diagnostic SHA.",
+      "pre_action_checkpoint": {
+        "stage": "attempt_1_before_picker_launch",
+        "attempt": 1,
+        "before": {
+          "data_storage_mode": "EXTERNAL_SYNC",
+          "external_tree_uri": "",
+          "manifest": {
+            "path": "/data/user_de/0/com.osfans.trime.debug/.sync-manifest.json",
+            "exists": true,
+            "bytes": 1766,
+            "sha256": "800f24a8791f5ab61e1f76b57010fd6f0537ef5d2d92e9a3b0d9fa0869abc73c"
+          },
+          "private_sentinel": {
+            "path": "/data/user_de/0/com.osfans.trime.debug/files/batch2-picker-probe-private-sentinel.txt",
+            "exists": true,
+            "bytes": 45,
+            "sha256": "8b1317d3b9c216e0f8aef63f1ad7ab80086f82bb6227f74f86c03e4706b7ebc5"
+          },
+          "persisted_uri_permissions": [
+            {
+              "uri": "content://com.android.externalstorage.documents/tree/primary%3ADocuments%2FTrimeIssue2095-20261028",
+              "read": true,
+              "write": true,
+              "persisted_time": 1793155072511
+            }
+          ]
+        },
+        "monitor_hits_before": 0,
+        "fault": "Synthetic RESULT_OK with ungranted URI; production result parser will request a persistable grant"
+      }
+    },
+    {
+      "name": "fixed-settings",
+      "result": {
+        "path": "/home/xumin/Public/Trime/build/issue-fixes-batch2-20261028/runtime/run2/fixed-settings-result.json",
+        "bytes": 18682,
+        "sha256": "a9352ac41b4e282417629791d77408a74f2a2e027d342c53b837d1e4c9f5b8ad"
+      },
+      "raw_instrumentation_stdout": {
+        "path": "/home/xumin/Public/Trime/build/issue-fixes-batch2-20261028/runtime/run2/commands/fixed-settings-instrument.stdout",
+        "bytes": 26052,
+        "sha256": "5f20f221cce898c6c6499b3eb91e2598e2618abff3c4a76790d68f72fcc12cfd"
+      },
+      "segment_log": {
+        "path": "/home/xumin/Public/Trime/build/issue-fixes-batch2-20261028/runtime/run2/fixed-settings-logcat.txt",
+        "bytes": 234697,
+        "sha256": "db2a1bdfb803d06ef060136d7ed4a2c00e676874db54099b5bf8427d285dcca7"
+      },
+      "install_command": {
+        "path": "/home/xumin/Public/Trime/build/issue-fixes-batch2-20261028/runtime/run2/commands/fixed-settings-install-target.json",
+        "bytes": 349,
+        "sha256": "f5bcfd91268939489484230a6c68539d102920d6d3d4e049462099d85417065b"
+      },
+      "target_sha256": "7f7a34862275374fb5bf1cd1214377fb6612a84faf46123b3d6d345db797d029",
+      "checkpoints_match_raw_stdout": true,
+      "expected": "fixed",
+      "checkpoint_count": 2,
+      "androidruntime_stack": [],
+      "outcome": "PASS_BOUNDED_GRANT_DENIAL_WITH_TWO_RETRIES",
+      "raw_final_report_matches_result_json": true,
+      "installed_identity_evidence": "Runtime SHA256 of targetContext.applicationInfo.sourceDir independently matches diagnostic APK on disk and provenance chain.",
+      "attempts_verified": [
+        {
+          "attempt": 1,
+          "field_equalities": {
+            "data_storage_mode": true,
+            "external_tree_uri": true,
+            "manifest": true,
+            "private_sentinel": true,
+            "persisted_uri_permissions": true
+          },
+          "monitor_hits": 1,
+          "resumed_activity": "com.osfans.trime.ui.main.MainActivity",
+          "toast": [
+            {
+              "observed_uptime_ms": 290992,
+              "event_time_ms": 290760,
+              "type": 64,
+              "package": "com.osfans.trime.debug",
+              "class": "android.widget.Toast",
+              "text": [
+                "Failed to import data folder",
+                "Trime (Debug)"
+              ]
+            }
+          ]
+        },
+        {
+          "attempt": 2,
+          "field_equalities": {
+            "data_storage_mode": true,
+            "external_tree_uri": true,
+            "manifest": true,
+            "private_sentinel": true,
+            "persisted_uri_permissions": true
+          },
+          "monitor_hits": 2,
+          "resumed_activity": "com.osfans.trime.ui.main.MainActivity",
+          "toast": [
+            {
+              "observed_uptime_ms": 294746,
+              "event_time_ms": 294531,
+              "type": 64,
+              "package": "com.osfans.trime.debug",
+              "class": "android.widget.Toast",
+              "text": [
+                "Failed to import data folder",
+                "Trime (Debug)"
+              ]
+            }
+          ]
+        }
+      ],
+      "pre_finish_liveness": "passed=true requires both per-attempt Activity !isFinishing && !isDestroyed checks, then retry node availability, before complete()/Instrumentation.finish(); report records Activity class, not separate boolean fields.",
+      "helper_report": {
+        "mode": "settings",
+        "expected_target": "fixed",
+        "setup_entry": "ui",
+        "pid": 2465,
+        "uid": 10160,
+        "api": 35,
+        "target_package": "com.osfans.trime.debug",
+        "installed_target_apk": "/data/app/~~FCP43oiKMEmyeAiTOndd1g==/com.osfans.trime.debug-M1I9iufZTCsFRnk1S92MAA==/base.apk",
+        "installed_target_apk_sha256": "7f7a34862275374fb5bf1cd1214377fb6612a84faf46123b3d6d345db797d029",
+        "scope": "Synthetic monitored ActivityResult, real production StorageAccess result parsing, real activities and preferences; accessibility CLICK actions or explicitly marked direct public method invocation",
+        "real_provider_failure": false,
+        "input_dispatcher_touch_test": false,
+        "synthetic_result_uri": "content://com.android.externalstorage.documents/tree/primary%3ADocuments%2FTrimeNeverGrantedBatch2",
+        "picker_monitor_blocks_provider_activity": true,
+        "baseline_crash_requires_host_logcat": true,
+        "stage": "complete",
+        "private_sentinel": {
+          "path": "/data/user_de/0/com.osfans.trime.debug/files/batch2-picker-probe-private-sentinel.txt",
+          "created_by_fixture": false,
+          "retained_after_probe": true
+        },
+        "grant_denial_preflight": {
+          "operation": "Direct ContentResolver.takePersistableUriPermission(uri, 3), separately caught before app picker flow",
+          "exception_class": "java.lang.SecurityException",
+          "message": "No persistable permission grants found for UID 10160 and Uri content://com.android.externalstorage.documents/..."
+        },
+        "monitor_registered_after_navigation": true,
+        "monitor_scope": "Installed only after the target Profile/Setup entry is ready; subsequent monitored launches are the bounded picker attempts. IntentFilter does not itself reject null actions.",
+        "before_picker_attempts": {
+          "data_storage_mode": "EXTERNAL_SYNC",
+          "external_tree_uri": "content://com.android.externalstorage.documents/tree/primary%3ADocuments%2FTrimeIssue2095-20261028",
+          "manifest": {
+            "path": "/data/user_de/0/com.osfans.trime.debug/.sync-manifest.json",
+            "exists": true,
+            "bytes": 1766,
+            "sha256": "800f24a8791f5ab61e1f76b57010fd6f0537ef5d2d92e9a3b0d9fa0869abc73c"
+          },
+          "private_sentinel": {
+            "path": "/data/user_de/0/com.osfans.trime.debug/files/batch2-picker-probe-private-sentinel.txt",
+            "exists": true,
+            "bytes": 45,
+            "sha256": "8b1317d3b9c216e0f8aef63f1ad7ab80086f82bb6227f74f86c03e4706b7ebc5"
+          },
+          "persisted_uri_permissions": [
+            {
+              "uri": "content://com.android.externalstorage.documents/tree/primary%3ADocuments%2FTrimeIssue2095-20261028",
+              "read": true,
+              "write": true,
+              "persisted_time": 1793155072511
+            }
+          ]
+        },
+        "settings_confirmation_path": "Existing promptSelectAnotherDirectory dialog, present in a047 and f45ba; separate from PR2199 storage-mode confirmation",
+        "attempts": [
+          {
+            "attempt": 1,
+            "monitor_hits": 1,
+            "error_feedback_events": [
+              {
+                "observed_uptime_ms": 290992,
+                "event_time_ms": 290760,
+                "type": 64,
+                "package": "com.osfans.trime.debug",
+                "class": "android.widget.Toast",
+                "text": [
+                  "Failed to import data folder",
+                  "Trime (Debug)"
+                ]
+              }
+            ],
+            "after": {
+              "data_storage_mode": "EXTERNAL_SYNC",
+              "external_tree_uri": "content://com.android.externalstorage.documents/tree/primary%3ADocuments%2FTrimeIssue2095-20261028",
+              "manifest": {
+                "path": "/data/user_de/0/com.osfans.trime.debug/.sync-manifest.json",
+                "exists": true,
+                "bytes": 1766,
+                "sha256": "800f24a8791f5ab61e1f76b57010fd6f0537ef5d2d92e9a3b0d9fa0869abc73c"
+              },
+              "private_sentinel": {
+                "path": "/data/user_de/0/com.osfans.trime.debug/files/batch2-picker-probe-private-sentinel.txt",
+                "exists": true,
+                "bytes": 45,
+                "sha256": "8b1317d3b9c216e0f8aef63f1ad7ab80086f82bb6227f74f86c03e4706b7ebc5"
+              },
+              "persisted_uri_permissions": [
+                {
+                  "uri": "content://com.android.externalstorage.documents/tree/primary%3ADocuments%2FTrimeIssue2095-20261028",
+                  "read": true,
+                  "write": true,
+                  "persisted_time": 1793155072511
+                }
+              ]
+            },
+            "state_unchanged": true,
+            "resumed_activity": "com.osfans.trime.ui.main.MainActivity"
+          },
+          {
+            "attempt": 2,
+            "monitor_hits": 2,
+            "error_feedback_events": [
+              {
+                "observed_uptime_ms": 294746,
+                "event_time_ms": 294531,
+                "type": 64,
+                "package": "com.osfans.trime.debug",
+                "class": "android.widget.Toast",
+                "text": [
+                  "Failed to import data folder",
+                  "Trime (Debug)"
+                ]
+              }
+            ],
+            "after": {
+              "data_storage_mode": "EXTERNAL_SYNC",
+              "external_tree_uri": "content://com.android.externalstorage.documents/tree/primary%3ADocuments%2FTrimeIssue2095-20261028",
+              "manifest": {
+                "path": "/data/user_de/0/com.osfans.trime.debug/.sync-manifest.json",
+                "exists": true,
+                "bytes": 1766,
+                "sha256": "800f24a8791f5ab61e1f76b57010fd6f0537ef5d2d92e9a3b0d9fa0869abc73c"
+              },
+              "private_sentinel": {
+                "path": "/data/user_de/0/com.osfans.trime.debug/files/batch2-picker-probe-private-sentinel.txt",
+                "exists": true,
+                "bytes": 45,
+                "sha256": "8b1317d3b9c216e0f8aef63f1ad7ab80086f82bb6227f74f86c03e4706b7ebc5"
+              },
+              "persisted_uri_permissions": [
+                {
+                  "uri": "content://com.android.externalstorage.documents/tree/primary%3ADocuments%2FTrimeIssue2095-20261028",
+                  "read": true,
+                  "write": true,
+                  "persisted_time": 1793155072511
+                }
+              ]
+            },
+            "state_unchanged": true,
+            "resumed_activity": "com.osfans.trime.ui.main.MainActivity"
+          }
+        ],
+        "production_exception_class_observation": "The fixed caller consumes its exception internally. The probe observes real monitor delivery, the independently confirmed SecurityException grant precondition, error feedback and unchanged state; host baseline logcat supplies the actual production exception stack.",
+        "passed": true,
+        "clicks": [
+          {
+            "stage": "skip_setup",
+            "kind": "accessibility_ACTION_CLICK",
+            "text": "SKIP",
+            "view_id": "com.osfans.trime.debug:id/skip_button",
+            "target_class": "android.widget.Button"
+          },
+          {
+            "stage": "confirm_skip_setup",
+            "kind": "accessibility_ACTION_CLICK",
+            "text": "OK, THANKS",
+            "view_id": "android:id/button1",
+            "target_class": "android.widget.Button"
+          },
+          {
+            "stage": "open_profile",
+            "kind": "accessibility_ACTION_CLICK",
+            "text": "Profile",
+            "view_id": "android:id/title",
+            "target_class": "android.widget.LinearLayout"
+          },
+          {
+            "stage": "attempt_1_user_directory",
+            "kind": "accessibility_ACTION_CLICK",
+            "text": "User directory",
+            "view_id": "android:id/title",
+            "target_class": "android.widget.LinearLayout"
+          },
+          {
+            "stage": "attempt_1_existing_change_directory_confirmation",
+            "kind": "accessibility_ACTION_CLICK",
+            "text": "CHANGE",
+            "view_id": "android:id/button1",
+            "target_class": "android.widget.Button"
+          },
+          {
+            "stage": "attempt_2_user_directory",
+            "kind": "accessibility_ACTION_CLICK",
+            "text": "User directory",
+            "view_id": "android:id/title",
+            "target_class": "android.widget.LinearLayout"
+          },
+          {
+            "stage": "attempt_2_existing_change_directory_confirmation",
+            "kind": "accessibility_ACTION_CLICK",
+            "text": "CHANGE",
+            "view_id": "android:id/button1",
+            "target_class": "android.widget.Button"
+          }
+        ],
+        "accessibility_events": [
+          {
+            "observed_uptime_ms": 272285,
+            "event_time_ms": 272245,
+            "type": 32,
+            "package": "com.android.launcher3",
+            "class": "com.android.launcher3.uioverrides.QuickstepLauncher",
+            "text": [
+              "Home screen 1 of 1"
+            ]
+          },
+          {
+            "observed_uptime_ms": 273634,
+            "event_time_ms": 272534,
+            "type": 32,
+            "package": "com.osfans.trime.debug",
+            "class": "android.widget.FrameLayout",
+            "text": [
+              "Application icon"
+            ]
+          },
+          {
+            "observed_uptime_ms": 276371,
+            "event_time_ms": 275583,
+            "type": 32,
+            "package": "com.osfans.trime.debug",
+            "class": "com.osfans.trime.ui.setup.SetupActivity",
+            "text": [
+              "Trime (Debug)"
+            ]
+          },
+          {
+            "observed_uptime_ms": 277009,
+            "event_time_ms": 276645,
+            "type": 32,
+            "package": "com.osfans.trime.debug",
+            "class": "com.osfans.trime.ui.setup.SetupActivity",
+            "text": [
+              "Trime (Debug)"
+            ]
+          },
+          {
+            "observed_uptime_ms": 278431,
+            "event_time_ms": 277966,
+            "type": 32,
+            "package": "com.osfans.trime.debug",
+            "class": "androidx.appcompat.app.AlertDialog",
+            "text": [
+              "Do you want to skip the setup wizard? ",
+              "OK, THANKS",
+              "NO, PLEASE LEAVE ME HERE"
+            ]
+          },
+          {
+            "observed_uptime_ms": 279337,
+            "event_time_ms": 278415,
+            "type": 32,
+            "package": "com.osfans.trime.debug",
+            "class": "androidx.appcompat.app.AlertDialog",
+            "text": [
+              "Do you want to skip the setup wizard? ",
+              "OK, THANKS",
+              "NO, PLEASE LEAVE ME HERE"
+            ]
+          },
+          {
+            "observed_uptime_ms": 283087,
+            "event_time_ms": 279866,
+            "type": 64,
+            "package": "com.osfans.trime.debug",
+            "class": "android.app.Notification",
+            "text": []
+          },
+          {
+            "observed_uptime_ms": 283099,
+            "event_time_ms": 280322,
+            "type": 32,
+            "package": "com.android.systemui",
+            "class": "android.widget.FrameLayout",
+            "text": [
+              "Notification shade."
+            ]
+          },
+          {
+            "observed_uptime_ms": 283102,
+            "event_time_ms": 280382,
+            "type": 32,
+            "package": "com.android.systemui",
+            "class": "android.widget.FrameLayout",
+            "text": [
+              "Notification shade.",
+              "Internet",
+              "AndroidWifi",
+              "Bluetooth",
+              "On",
+              "Flashlight",
+              "Off",
+              "Do Not Disturb",
+              "Off",
+              "Trime (Debug)",
+              "•",
+              "now",
+              "Alerted",
+              "Finish setting up the keyboard",
+              "8:33",
+              "Wed, Oct 28",
+              "No service",
+              "Wifi signal full.,No internet",
+              "100%",
+              "Unlocked"
+            ]
+          },
+          {
+            "observed_uptime_ms": 283769,
+            "event_time_ms": 282847,
+            "type": 32,
+            "package": "com.osfans.trime.debug",
+            "class": "com.osfans.trime.ui.main.MainActivity",
+            "text": [
+              "Trime (Debug)"
+            ]
+          },
+          {
+            "observed_uptime_ms": 287913,
+            "event_time_ms": 286885,
+            "type": 32,
+            "package": "com.android.systemui",
+            "class": "android.widget.FrameLayout",
+            "text": [
+              "Notification shade."
+            ]
+          },
+          {
+            "observed_uptime_ms": 287932,
+            "event_time_ms": 287796,
+            "type": 32,
+            "package": "com.osfans.trime.debug",
+            "class": "com.osfans.trime.ui.main.MainActivity",
+            "text": [
+              "Trime (Debug)"
+            ]
+          },
+          {
+            "observed_uptime_ms": 289221,
+            "event_time_ms": 289000,
+            "type": 32,
+            "package": "com.osfans.trime.debug",
+            "class": "androidx.appcompat.app.AlertDialog",
+            "text": [
+              "Change another directory to import?",
+              "CANCEL",
+              "CHANGE"
+            ]
+          },
+          {
+            "observed_uptime_ms": 290205,
+            "event_time_ms": 289462,
+            "type": 32,
+            "package": "com.osfans.trime.debug",
+            "class": "androidx.appcompat.app.AlertDialog",
+            "text": [
+              "Change another directory to import?",
+              "CANCEL",
+              "CHANGE"
+            ]
+          },
+          {
+            "observed_uptime_ms": 290973,
+            "event_time_ms": 290760,
+            "type": 32,
+            "package": "com.osfans.trime.debug",
+            "class": "com.osfans.trime.ui.main.MainActivity",
+            "text": [
+              "Trime (Debug)"
+            ]
+          },
+          {
+            "observed_uptime_ms": 290992,
+            "event_time_ms": 290760,
+            "type": 64,
+            "package": "com.osfans.trime.debug",
+            "class": "android.widget.Toast",
+            "text": [
+              "Failed to import data folder",
+              "Trime (Debug)"
+            ]
+          },
+          {
+            "observed_uptime_ms": 292903,
+            "event_time_ms": 292239,
+            "type": 32,
+            "package": "com.osfans.trime.debug",
+            "class": "androidx.appcompat.app.AlertDialog",
+            "text": [
+              "Change another directory to import?",
+              "CANCEL",
+              "CHANGE"
+            ]
+          },
+          {
+            "observed_uptime_ms": 293772,
+            "event_time_ms": 292936,
+            "type": 32,
+            "package": "com.osfans.trime.debug",
+            "class": "androidx.appcompat.app.AlertDialog",
+            "text": [
+              "Change another directory to import?",
+              "CANCEL",
+              "CHANGE"
+            ]
+          },
+          {
+            "observed_uptime_ms": 294746,
+            "event_time_ms": 294531,
+            "type": 64,
+            "package": "com.osfans.trime.debug",
+            "class": "android.widget.Toast",
+            "text": [
+              "Failed to import data folder",
+              "Trime (Debug)"
+            ]
+          },
+          {
+            "observed_uptime_ms": 295030,
+            "event_time_ms": 294614,
+            "type": 32,
+            "package": "com.osfans.trime.debug",
+            "class": "com.osfans.trime.ui.main.MainActivity",
+            "text": [
+              "Trime (Debug)"
+            ]
+          }
+        ]
+      },
+      "finished_instrumentation_kill_lines": [
+        {
+          "line": 1300,
+          "text": "10-28 20:33:25.602   552   643 I ActivityManager: Force stopping com.osfans.trime.debug appid=10160 user=0: finished inst"
+        },
+        {
+          "line": 1311,
+          "text": "10-28 20:33:25.696   552   643 I ActivityManager: Killing 2465:com.osfans.trime.debug/u0a160 (adj 0): stop com.osfans.trime.debug due to finished inst"
+        },
+        {
+          "line": 1312,
+          "text": "10-28 20:33:25.709   552   643 I am_kill : [0,2465,com.osfans.trime.debug,0,stop com.osfans.trime.debug due to finished inst,236532]"
+        }
+      ]
+    },
+    {
+      "name": "fixed-setup",
+      "result": {
+        "path": "/home/xumin/Public/Trime/build/issue-fixes-batch2-20261028/runtime/run2/fixed-setup-result.json",
+        "bytes": 12875,
+        "sha256": "0b87224d1e4a8d5e7fc560e714ac3bad3565258936442e7bd85cc2e4875180e1"
+      },
+      "raw_instrumentation_stdout": {
+        "path": "/home/xumin/Public/Trime/build/issue-fixes-batch2-20261028/runtime/run2/commands/fixed-setup-instrument.stdout",
+        "bytes": 17103,
+        "sha256": "7cf336b61f7455ab9d1cddde2703220c2377f47beaf97888ac0a951bf00ae17f"
+      },
+      "segment_log": {
+        "path": "/home/xumin/Public/Trime/build/issue-fixes-batch2-20261028/runtime/run2/fixed-setup-logcat.txt",
+        "bytes": 118353,
+        "sha256": "6fc8d723f2049e9bf8f3dbbc36b58e06d51292a8e38ea8b0978f3cab0023bdb9"
+      },
+      "install_command": {
+        "path": "/home/xumin/Public/Trime/build/issue-fixes-batch2-20261028/runtime/run2/commands/fixed-setup-install-target.json",
+        "bytes": 347,
+        "sha256": "b5cb16efcdd3f2f6adaa47b8d64a0dff45434e813b8f1279b478a1febd3d0c0a"
+      },
+      "target_sha256": "7f7a34862275374fb5bf1cd1214377fb6612a84faf46123b3d6d345db797d029",
+      "checkpoints_match_raw_stdout": true,
+      "expected": "fixed",
+      "checkpoint_count": 2,
+      "androidruntime_stack": [],
+      "outcome": "PASS_BOUNDED_GRANT_DENIAL_WITH_TWO_RETRIES",
+      "raw_final_report_matches_result_json": true,
+      "installed_identity_evidence": "Runtime SHA256 of targetContext.applicationInfo.sourceDir independently matches diagnostic APK on disk and provenance chain.",
+      "attempts_verified": [
+        {
+          "attempt": 1,
+          "field_equalities": {
+            "data_storage_mode": true,
+            "external_tree_uri": true,
+            "manifest": true,
+            "private_sentinel": true,
+            "persisted_uri_permissions": true
+          },
+          "monitor_hits": 1,
+          "resumed_activity": "com.osfans.trime.ui.setup.SetupActivity",
+          "toast": [
+            {
+              "observed_uptime_ms": 376329,
+              "event_time_ms": 376066,
+              "type": 64,
+              "package": "com.osfans.trime.debug",
+              "class": "android.widget.Toast",
+              "text": [
+                "Failed to import data folder",
+                "Trime (Debug)"
+              ]
+            }
+          ]
+        },
+        {
+          "attempt": 2,
+          "field_equalities": {
+            "data_storage_mode": true,
+            "external_tree_uri": true,
+            "manifest": true,
+            "private_sentinel": true,
+            "persisted_uri_permissions": true
+          },
+          "monitor_hits": 2,
+          "resumed_activity": "com.osfans.trime.ui.setup.SetupActivity",
+          "toast": [
+            {
+              "observed_uptime_ms": 378977,
+              "event_time_ms": 378847,
+              "type": 64,
+              "package": "com.osfans.trime.debug",
+              "class": "android.widget.Toast",
+              "text": [
+                "Failed to import data folder",
+                "Trime (Debug)"
+              ]
+            }
+          ]
+        }
+      ],
+      "pre_finish_liveness": "passed=true requires both per-attempt Activity !isFinishing && !isDestroyed checks, then retry node availability, before complete()/Instrumentation.finish(); report records Activity class, not separate boolean fields.",
+      "helper_report": {
+        "mode": "setup",
+        "expected_target": "fixed",
+        "setup_entry": "ui",
+        "pid": 2726,
+        "uid": 10160,
+        "api": 35,
+        "target_package": "com.osfans.trime.debug",
+        "installed_target_apk": "/data/app/~~d_lB-wooTaXK7dNBOae0VQ==/com.osfans.trime.debug-dq9yriuo4Ia3HLWnf3qIPw==/base.apk",
+        "installed_target_apk_sha256": "7f7a34862275374fb5bf1cd1214377fb6612a84faf46123b3d6d345db797d029",
+        "scope": "Synthetic monitored ActivityResult, real production StorageAccess result parsing, real activities and preferences; accessibility CLICK actions or explicitly marked direct public method invocation",
+        "real_provider_failure": false,
+        "input_dispatcher_touch_test": false,
+        "synthetic_result_uri": "content://com.android.externalstorage.documents/tree/primary%3ADocuments%2FTrimeNeverGrantedBatch2",
+        "picker_monitor_blocks_provider_activity": true,
+        "baseline_crash_requires_host_logcat": true,
+        "stage": "complete",
+        "private_sentinel": {
+          "path": "/data/user_de/0/com.osfans.trime.debug/files/batch2-picker-probe-private-sentinel.txt",
+          "created_by_fixture": false,
+          "retained_after_probe": true
+        },
+        "before_setup_fixture_preferences": {
+          "data_storage_mode": "EXTERNAL_SYNC",
+          "external_tree_uri": "content://com.android.externalstorage.documents/tree/primary%3ADocuments%2FTrimeIssue2095-20261028"
+        },
+        "after_setup_fixture_preferences": {
+          "data_storage_mode": "EXTERNAL_SYNC",
+          "external_tree_uri": ""
+        },
+        "setup_fixture_preparation": "Explicitly set EXTERNAL_SYNC plus empty selected URI before launching Setup; grant list and existing files are not altered by fixture preparation",
+        "grant_denial_preflight": {
+          "operation": "Direct ContentResolver.takePersistableUriPermission(uri, 3), separately caught before app picker flow",
+          "exception_class": "java.lang.SecurityException",
+          "message": "No persistable permission grants found for UID 10160 and Uri content://com.android.externalstorage.documents/..."
+        },
+        "monitor_registered_after_navigation": true,
+        "monitor_scope": "Installed only after the target Profile/Setup entry is ready; subsequent monitored launches are the bounded picker attempts. IntentFilter does not itself reject null actions.",
+        "before_picker_attempts": {
+          "data_storage_mode": "EXTERNAL_SYNC",
+          "external_tree_uri": "",
+          "manifest": {
+            "path": "/data/user_de/0/com.osfans.trime.debug/.sync-manifest.json",
+            "exists": true,
+            "bytes": 1766,
+            "sha256": "800f24a8791f5ab61e1f76b57010fd6f0537ef5d2d92e9a3b0d9fa0869abc73c"
+          },
+          "private_sentinel": {
+            "path": "/data/user_de/0/com.osfans.trime.debug/files/batch2-picker-probe-private-sentinel.txt",
+            "exists": true,
+            "bytes": 45,
+            "sha256": "8b1317d3b9c216e0f8aef63f1ad7ab80086f82bb6227f74f86c03e4706b7ebc5"
+          },
+          "persisted_uri_permissions": [
+            {
+              "uri": "content://com.android.externalstorage.documents/tree/primary%3ADocuments%2FTrimeIssue2095-20261028",
+              "read": true,
+              "write": true,
+              "persisted_time": 1793155072511
+            }
+          ]
+        },
+        "attempts": [
+          {
+            "attempt": 1,
+            "monitor_hits": 1,
+            "error_feedback_events": [
+              {
+                "observed_uptime_ms": 376329,
+                "event_time_ms": 376066,
+                "type": 64,
+                "package": "com.osfans.trime.debug",
+                "class": "android.widget.Toast",
+                "text": [
+                  "Failed to import data folder",
+                  "Trime (Debug)"
+                ]
+              }
+            ],
+            "after": {
+              "data_storage_mode": "EXTERNAL_SYNC",
+              "external_tree_uri": "",
+              "manifest": {
+                "path": "/data/user_de/0/com.osfans.trime.debug/.sync-manifest.json",
+                "exists": true,
+                "bytes": 1766,
+                "sha256": "800f24a8791f5ab61e1f76b57010fd6f0537ef5d2d92e9a3b0d9fa0869abc73c"
+              },
+              "private_sentinel": {
+                "path": "/data/user_de/0/com.osfans.trime.debug/files/batch2-picker-probe-private-sentinel.txt",
+                "exists": true,
+                "bytes": 45,
+                "sha256": "8b1317d3b9c216e0f8aef63f1ad7ab80086f82bb6227f74f86c03e4706b7ebc5"
+              },
+              "persisted_uri_permissions": [
+                {
+                  "uri": "content://com.android.externalstorage.documents/tree/primary%3ADocuments%2FTrimeIssue2095-20261028",
+                  "read": true,
+                  "write": true,
+                  "persisted_time": 1793155072511
+                }
+              ]
+            },
+            "state_unchanged": true,
+            "resumed_activity": "com.osfans.trime.ui.setup.SetupActivity"
+          },
+          {
+            "attempt": 2,
+            "monitor_hits": 2,
+            "error_feedback_events": [
+              {
+                "observed_uptime_ms": 378977,
+                "event_time_ms": 378847,
+                "type": 64,
+                "package": "com.osfans.trime.debug",
+                "class": "android.widget.Toast",
+                "text": [
+                  "Failed to import data folder",
+                  "Trime (Debug)"
+                ]
+              }
+            ],
+            "after": {
+              "data_storage_mode": "EXTERNAL_SYNC",
+              "external_tree_uri": "",
+              "manifest": {
+                "path": "/data/user_de/0/com.osfans.trime.debug/.sync-manifest.json",
+                "exists": true,
+                "bytes": 1766,
+                "sha256": "800f24a8791f5ab61e1f76b57010fd6f0537ef5d2d92e9a3b0d9fa0869abc73c"
+              },
+              "private_sentinel": {
+                "path": "/data/user_de/0/com.osfans.trime.debug/files/batch2-picker-probe-private-sentinel.txt",
+                "exists": true,
+                "bytes": 45,
+                "sha256": "8b1317d3b9c216e0f8aef63f1ad7ab80086f82bb6227f74f86c03e4706b7ebc5"
+              },
+              "persisted_uri_permissions": [
+                {
+                  "uri": "content://com.android.externalstorage.documents/tree/primary%3ADocuments%2FTrimeIssue2095-20261028",
+                  "read": true,
+                  "write": true,
+                  "persisted_time": 1793155072511
+                }
+              ]
+            },
+            "state_unchanged": true,
+            "resumed_activity": "com.osfans.trime.ui.setup.SetupActivity"
+          }
+        ],
+        "production_exception_class_observation": "The fixed caller consumes its exception internally. The probe observes real monitor delivery, the independently confirmed SecurityException grant precondition, error feedback and unchanged state; host baseline logcat supplies the actual production exception stack.",
+        "passed": true,
+        "clicks": [
+          {
+            "stage": "attempt_1_setup_action",
+            "kind": "accessibility_ACTION_CLICK",
+            "text": "SELECT EXTERNAL DATA DIRECTORY…",
+            "view_id": "com.osfans.trime.debug:id/action_button",
+            "target_class": "android.widget.Button"
+          },
+          {
+            "stage": "attempt_2_setup_action",
+            "kind": "accessibility_ACTION_CLICK",
+            "text": "SELECT EXTERNAL DATA DIRECTORY…",
+            "view_id": "com.osfans.trime.debug:id/action_button",
+            "target_class": "android.widget.Button"
+          }
+        ],
+        "accessibility_events": [
+          {
+            "observed_uptime_ms": 371851,
+            "event_time_ms": 371804,
+            "type": 32,
+            "package": "com.android.launcher3",
+            "class": "com.android.launcher3.uioverrides.QuickstepLauncher",
+            "text": [
+              "Home screen 1 of 1"
+            ]
+          },
+          {
+            "observed_uptime_ms": 373401,
+            "event_time_ms": 372174,
+            "type": 32,
+            "package": "com.osfans.trime.debug",
+            "class": "android.widget.FrameLayout",
+            "text": [
+              "Application icon"
+            ]
+          },
+          {
+            "observed_uptime_ms": 375394,
+            "event_time_ms": 374352,
+            "type": 32,
+            "package": "com.osfans.trime.debug",
+            "class": "com.osfans.trime.ui.setup.SetupActivity",
+            "text": [
+              "Trime (Debug)"
+            ]
+          },
+          {
+            "observed_uptime_ms": 375410,
+            "event_time_ms": 374817,
+            "type": 32,
+            "package": "com.osfans.trime.debug",
+            "class": "com.osfans.trime.ui.setup.SetupActivity",
+            "text": [
+              "Trime (Debug)"
+            ]
+          },
+          {
+            "observed_uptime_ms": 376329,
+            "event_time_ms": 376066,
+            "type": 64,
+            "package": "com.osfans.trime.debug",
+            "class": "android.widget.Toast",
+            "text": [
+              "Failed to import data folder",
+              "Trime (Debug)"
+            ]
+          },
+          {
+            "observed_uptime_ms": 378977,
+            "event_time_ms": 378847,
+            "type": 64,
+            "package": "com.osfans.trime.debug",
+            "class": "android.widget.Toast",
+            "text": [
+              "Failed to import data folder",
+              "Trime (Debug)"
+            ]
+          }
+        ]
+      },
+      "finished_instrumentation_kill_lines": [
+        {
+          "line": 519,
+          "text": "10-28 20:34:49.619   552  2658 I ActivityManager: Force stopping com.osfans.trime.debug appid=10160 user=0: finished inst"
+        },
+        {
+          "line": 528,
+          "text": "10-28 20:34:49.716   552  2658 I ActivityManager: Killing 2726:com.osfans.trime.debug/u0a160 (adj 0): stop com.osfans.trime.debug due to finished inst"
+        },
+        {
+          "line": 530,
+          "text": "10-28 20:34:49.727   552  2658 I am_kill : [0,2726,com.osfans.trime.debug,0,stop com.osfans.trime.debug due to finished inst,215636]"
+        }
+      ]
+    }
+  ],
+  "failed_attempts_retained": [
+    {
+      "classification": "HARNESS_OR_NAVIGATION_PRECONDITION_FAILURE_NOT_PRODUCT_REGRESSION_OR_PASS",
+      "result": {
+        "path": "/home/xumin/Public/Trime/build/issue-fixes-batch2-20261028/runtime/run1/baseline-settings-result.json",
+        "bytes": 5849,
+        "sha256": "f5abb68e6db623f0d236b8950232bb9b9dbff7cc33fa22c24ac6955db097f6a4"
+      },
+      "segment_log": {
+        "path": "/home/xumin/Public/Trime/build/issue-fixes-batch2-20261028/runtime/run1/baseline-settings-logcat.txt",
+        "bytes": 584753,
+        "sha256": "029fbdb8578c2013c268ebfe2c1a706b13f07125edd98fc0340da94e17055bb2"
+      },
+      "stage": "target_activity_resumed",
+      "error": "java.lang.IllegalStateException: 20 s bounded wait failed: target_activity_resumed; active=null\n\tat com.osfans.trime.PickerFailureInstrumentation.await(PickerFailureInstrumentation.kt:324)\n\tat com.osfans.trime.PickerFailureInstrumentation.onStart(PickerFailureInstrumentation.kt:182)\n\tat android.app.Instrumentation$InstrumentationThread.run(Instrumentation.java:2594)\n",
+      "reason": "v1 monitor was registered before navigation; IntentFilter also matches null-action explicit Setup redirect. System UI ANR dialog was concurrently visible. Never reached picker checkpoint.",
+      "ui_at_failure": [
+        {
+          "class": "android.widget.FrameLayout"
+        },
+        {
+          "class": "android.widget.FrameLayout"
+        },
+        {
+          "id": "android:id/content",
+          "class": "android.widget.FrameLayout"
+        },
+        {
+          "id": "android:id/parentPanel",
+          "class": "android.widget.LinearLayout"
+        },
+        {
+          "id": "android:id/topPanel",
+          "class": "android.widget.LinearLayout"
+        },
+        {
+          "id": "android:id/title_template",
+          "class": "android.widget.LinearLayout"
+        },
+        {
+          "text": "System UI isn't responding",
+          "id": "android:id/alertTitle",
+          "class": "android.widget.TextView"
+        },
+        {
+          "id": "android:id/customPanel",
+          "class": "android.widget.FrameLayout"
+        },
+        {
+          "id": "android:id/custom",
+          "class": "android.widget.FrameLayout"
+        },
+        {
+          "class": "android.widget.LinearLayout"
+        },
+        {
+          "text": "Close app",
+          "id": "android:id/aerr_close",
+          "class": "android.widget.Button"
+        },
+        {
+          "text": "Wait",
+          "id": "android:id/aerr_wait",
+          "class": "android.widget.Button"
+        }
+      ]
+    },
+    {
+      "classification": "HARNESS_OR_NAVIGATION_PRECONDITION_FAILURE_NOT_PRODUCT_REGRESSION_OR_PASS",
+      "result": {
+        "path": "/home/xumin/Public/Trime/build/issue-fixes-batch2-20261028/runtime/run2/baseline-settings-v2-result.json",
+        "bytes": 5965,
+        "sha256": "17a14ecadbb8f84946a75609fc361127e4f14965bcdfc880ad08291f4a58c42c"
+      },
+      "segment_log": {
+        "path": "/home/xumin/Public/Trime/build/issue-fixes-batch2-20261028/runtime/run2/baseline-settings-v2-logcat.txt",
+        "bytes": 301275,
+        "sha256": "4b8b6a5369b6bee79f97d5f6f6e9e8e7a5d3d0b6764383f3276112221a821109"
+      },
+      "stage": "main_or_setup_ready",
+      "error": "java.lang.IllegalStateException: 20 s bounded wait failed: main_or_setup_ready; active=com.osfans.trime.ui.setup.SetupActivity\n\tat com.osfans.trime.PickerFailureInstrumentation.await(PickerFailureInstrumentation.kt:330)\n\tat com.osfans.trime.PickerFailureInstrumentation.openProfile(PickerFailureInstrumentation.kt:254)\n\tat com.osfans.trime.PickerFailureInstrumentation.onStart(PickerFailureInstrumentation.kt:181)\n\tat android.app.Instrumentation$InstrumentationThread.run(Instrumentation.java:2594)\n",
+      "reason": "v2 reached SetupActivity but Quickstep ANR dialog obstructed navigation; main_or_setup_ready wait failed before picker checkpoint.",
+      "ui_at_failure": [
+        {
+          "class": "android.widget.FrameLayout"
+        },
+        {
+          "class": "android.widget.FrameLayout"
+        },
+        {
+          "id": "android:id/content",
+          "class": "android.widget.FrameLayout"
+        },
+        {
+          "id": "android:id/parentPanel",
+          "class": "android.widget.LinearLayout"
+        },
+        {
+          "id": "android:id/topPanel",
+          "class": "android.widget.LinearLayout"
+        },
+        {
+          "id": "android:id/title_template",
+          "class": "android.widget.LinearLayout"
+        },
+        {
+          "text": "Quickstep isn't responding",
+          "id": "android:id/alertTitle",
+          "class": "android.widget.TextView"
+        },
+        {
+          "id": "android:id/customPanel",
+          "class": "android.widget.FrameLayout"
+        },
+        {
+          "id": "android:id/custom",
+          "class": "android.widget.FrameLayout"
+        },
+        {
+          "class": "android.widget.LinearLayout"
+        },
+        {
+          "text": "Close app",
+          "id": "android:id/aerr_close",
+          "class": "android.widget.Button"
+        },
+        {
+          "text": "Wait",
+          "id": "android:id/aerr_wait",
+          "class": "android.widget.Button"
+        }
+      ]
+    }
+  ],
+  "session_logs": [
+    {
+      "review": {
+        "path": "/home/xumin/Public/Trime/build/issue-fixes-batch2-20261028/runtime/run1/log-review.json",
+        "bytes": 3225,
+        "sha256": "816306164cbe4074083314ee9da4798c3ee15e93eccc16ef8a51079bd807e687"
+      },
+      "full_log": {
+        "path": "/home/xumin/Public/Trime/build/issue-fixes-batch2-20261028/runtime/run1/device-logcat.txt",
+        "bytes": 4008913,
+        "sha256": "07359d37e9d33da42b2d42f3e81e2f535e80292e898bd4d40da92025e2a73cdc"
+      },
+      "levels": {
+        "W": 3182,
+        "I": 8556,
+        "D": 9491,
+        "E": 1530,
+        "V": 5637
+      },
+      "anrs": [
+        {
+          "line": 16052,
+          "text": "10-28 20:22:26.830   552  1236 I am_anr  : [0,933,com.android.phone,952647245,Broadcast of Intent { act=android.safetycenter.action.REFRESH_SAFETY_SOURCES flg=0x10000010 pkg=com.android.phone cmp=com.android.phone/.security.SafetySourceReceiver (has extras) }]"
+        },
+        {
+          "line": 16502,
+          "text": "10-28 20:22:31.008   552  1236 I am_anr  : [0,796,com.android.systemui,818462221,executing service com.android.systemui/.keyguard.KeyguardService, waited 22563ms]"
+        },
+        {
+          "line": 19719,
+          "text": "10-28 20:22:48.699   552  1629 I am_anr  : [0,1203,com.android.providers.media.module,684211781,Process ProcessRecord{c92c0f2 1203:com.android.providers.media.module/u0a129} failed to complete startup]"
+        }
+      ],
+      "scope": "Warnings/errors are retained; no zero-warning, zero-error, zero-ANR or all-causes-resolved claim. Bounded fixed case segments have no AndroidRuntime fatal stack; this does not classify every warning."
+    },
+    {
+      "review": {
+        "path": "/home/xumin/Public/Trime/build/issue-fixes-batch2-20261028/runtime/run2/log-review.json",
+        "bytes": 3849,
+        "sha256": "49a64ab22e2fcf029eec234717dad3f9a584633f24721d3c3fa0a078aa93d7c8"
+      },
+      "full_log": {
+        "path": "/home/xumin/Public/Trime/build/issue-fixes-batch2-20261028/runtime/run2/device-logcat.txt",
+        "bytes": 4597593,
+        "sha256": "28a17db66a6cbe0f23c0362b53517b5f76503423bf63eab0d7f08c917601df36"
+      },
+      "levels": {
+        "W": 4805,
+        "I": 11939,
+        "D": 8354,
+        "E": 1850,
+        "V": 6016
+      },
+      "anrs": [
+        {
+          "line": 16217,
+          "text": "10-28 20:29:43.434   552  1282 I am_anr  : [0,930,com.android.phone,952647245,Broadcast of Intent { act=android.safetycenter.action.REFRESH_SAFETY_SOURCES flg=0x10000010 pkg=com.android.phone cmp=com.android.phone/.security.SafetySourceReceiver (has extras) }]"
+        },
+        {
+          "line": 17047,
+          "text": "10-28 20:29:50.374   552  1282 I am_anr  : [0,809,com.android.systemui,818462221,executing service com.android.systemui/.SystemUIService, waited 22652ms]"
+        },
+        {
+          "line": 18861,
+          "text": "10-28 20:29:59.475   552  1282 I am_anr  : [0,1127,com.android.launcher3,885767749,executing service com.android.launcher3/com.android.quickstep.TouchInteractionService, waited 20706ms]"
+        }
+      ],
+      "scope": "Warnings/errors are retained; no zero-warning, zero-error, zero-ANR or all-causes-resolved claim. Bounded fixed case segments have no AndroidRuntime fatal stack; this does not classify every warning."
+    }
+  ],
+  "scope_limits": [
+    "Synthetic Instrumentation.ActivityMonitor RESULT_OK with ungranted tree URI; actual provider activity is blocked. Real production ActivityResultRegistry and StorageAccess parseResult/takePersistable execute. Not an actual DocumentsUI/provider-returned failure and not direct onActivityResult simulation.",
+    "Clicks use accessibility ACTION_CLICK on actual attached activities; no InputDispatcher touch injection, no physical device, API35 emulator only. Setup uses actual step-one action and setup_entry=ui, with explicitly seeded EXT+empty URI. Settings uses existing old valid tree grant and original Change dialog.",
+    "A directly caught resolver SecurityException preflight proves the chosen URI is ungrantable; it is separate from the production attempt. Baseline production log stack independently establishes the actual production exception. Fixed exception type is inferred from equivalent path/preflight because production catches it internally.",
+    "Compared mode, selected URI, manifest path/existence/bytes/SHA256, dedicated private sentinel path/existence/bytes/SHA256 and persisted URI grant records after each failure. This is not a complete hash of all private/external data nor proof that no unrelated file changed.",
+    "Fixture preparation intentionally changes mode/URI before snapshots and may create a dedicated sentinel. Snapshot equality applies to attempted picker failure after fixture preparation. Root cleanup is separately recorded.",
+    "Activity pre-finish checks and second retry prove bounded continued use before finish. Android finishInstrumentation stops the target even on passing tests; absent post-finish PID is not product failure.",
+    "This denial occurs before persistTreeUri. No runtime claim covers post-persist sync/deploy failure rollback, successful selection, null user cancellation, lifecycle cancellation, APP-to-external fallback or historical upgrade cause.",
+    "Source review found CancellationException rethrow and silent null selection cancellation preserved; later persistence/sync failures are not transactional and Setup nonempty-URI completion behavior predates this patch.",
+    "Two earlier pre-picker navigation/precondition failures are retained and excluded from product pass/fail. System phone/SystemUI/Quickstep/media-provider ANRs and warning/error counts are retained; no zero-warning or universal ANR resolution claim."
+  ],
+  "root_aggregate_reference": {
+    "path": "/home/xumin/Public/Trime/build/issue-fixes-batch2-20261028/runtime/picker-validation.json",
+    "bytes": 16598,
+    "sha256": "f38244053c5f947d266b5909df8af491431c99418538d1e1ba3685435bab832a"
+  }
+}

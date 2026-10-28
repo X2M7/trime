@@ -1,0 +1,320 @@
+{
+  "schema_version": 1,
+  "captured_at_utc": "2026-10-28T12:11:26.523188+00:00",
+  "task": "Investigate current storage-selection errors related to historical upgrade report #2140; implement only independently proven picker error boundary after explicit Root authorization.",
+  "result": {
+    "historical_issue_root_cause_established": false,
+    "current_independent_defect_established": true,
+    "current_defect": "Directory-picker exceptions are raised before the existing runCatching in both SetupActivity and ProfileSettingsFragment. StorageAccess 2.0.0 can resume the picker await with SecurityException or a provider/stat exception, so those errors escape the coroutine instead of the existing recoverable selection/import feedback.",
+    "implementation_status": "Two uncommitted production files changed in dedicated worktree; no PR or push performed by this agent.",
+    "issue_linkage": "Related #2140 only. The historical e09ac711 upgrade failure is not reproduced or claimed fixed."
+  },
+  "authorization_and_limits": {
+    "initial_investigation_read_only": true,
+    "later_parent_authorized_two_file_implementation": true,
+    "production_worktree": "/home/xumin/Public/Trime-pr-folder-picker-errors-20261028",
+    "branch": "contrib/fix-folder-picker-errors",
+    "base_sha": "a047f74757fae0d7b5ef64e54f0b957dee2bf8f3",
+    "root_and_ancestor_agents_files_found": [],
+    "tracked_nested_agents_files_found": [],
+    "production_files_changed": [
+      "app/src/main/java/com/osfans/trime/ui/main/settings/ProfileSettingsFragment.kt",
+      "app/src/main/java/com/osfans/trime/ui/setup/SetupActivity.kt"
+    ],
+    "full_android_or_gradle_build_run": false,
+    "adb_or_vm_run": false,
+    "github_writes": false,
+    "sync_algorithm_or_upgrade_migration_changed": false,
+    "pure_jvm_compiler_and_execution_only": true
+  },
+  "github_inputs": {
+    "issue": {
+      "url": "https://github.com/osfans/trime/issues/2140",
+      "state": "OPEN",
+      "updated_at": "2026-09-21T16:22:55Z",
+      "comments_read": 3,
+      "snapshot": {
+        "path": "/home/xumin/Public/Trime/build/issue-fixes-batch2-20261028/storage-inputs/issue-2140.json",
+        "sha256": "cdcb068c3f17c86d96ec94142c1e8f006894a18204e26f5077ea7322b02f6833",
+        "bytes": 2425
+      }
+    },
+    "related_2130_snapshot": {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch2-20261028/storage-inputs/issue-2130.json",
+      "sha256": "ac58c8d02979d2c2f14138488f3410ecc8c99b095a0cffb2fa69aa1d896f32c2",
+      "bytes": 9970
+    },
+    "current_develop": {
+      "sha": "a047f74757fae0d7b5ef64e54f0b957dee2bf8f3",
+      "snapshot": {
+        "path": "/home/xumin/Public/Trime/build/issue-fixes-batch2-20261028/storage-inputs/develop-branch.json",
+        "sha256": "ba0bc5ef5b156a11236d1f8b2f7ef9c1a6a680bb1dcce065ab13a2e24c16f5a0",
+        "bytes": 1901
+      },
+      "source_file_manifest": {
+        "path": "/home/xumin/Public/Trime/build/issue-fixes-batch2-20261028/storage-inputs/source-files.json",
+        "sha256": "f3d6aa3634a525e76665bed58f2b52cfa515306c1c828f05ddbf6cb6a5d4d4fe",
+        "bytes": 1794
+      }
+    },
+    "pr2199": {
+      "url": "https://github.com/osfans/trime/pull/2199",
+      "head": "d6567c253c6dcb149514f01709b40e114a58be64",
+      "state": "OPEN",
+      "is_draft": false,
+      "snapshot": {
+        "path": "/home/xumin/Public/Trime/build/issue-fixes-batch2-20261028/storage-inputs/pr-2199.json",
+        "sha256": "7b3f696f7211a443d812c9cd2f3e62e2c7efad4a51a5490c14e592debb6f4878",
+        "bytes": 3652
+      },
+      "scope": "Confirmation, cancellation and keeping mode unchanged until confirmation/selection for #2095; no picker-await exception boundary or historical #2140 reproducer. This new patch is based directly on a047, without #2199."
+    }
+  },
+  "historical_report": {
+    "reported_version": "v3.3.12-0-ge09ac711-release",
+    "reported_commit": "e09ac7114fa067904ed358e82d499516cb423ff4",
+    "reported_builder": "F-Droid",
+    "reported_build_time": "Sep 2, 2026 12:35:44 (issue text)",
+    "reported_os": "Android 17 (reporter field; not independently verified)",
+    "observations": [
+      "Previously working external user data directory; first launch after update asked to choose a directory; choosing the original directory failed.",
+      "Reporter says LineageOS and GrapheneOS reproduce it; reboot did not help.",
+      "Reporter later says clearing application data fixed it."
+    ],
+    "observation_comment": "https://github.com/osfans/trime/issues/2140#issuecomment-5710606631",
+    "clear_data_comment": "https://github.com/osfans/trime/issues/2140#issuecomment-5763833726",
+    "screenshot": {
+      "proof": {
+        "path": "/home/xumin/Public/Trime/build/issue-fixes-batch2-20261028/storage-inputs/issue-2140-screenshot.png",
+        "sha256": "e5c1d36a85b67e282654d46c3cfe58ca0d914918d1678b6a1aef97462ac03959",
+        "bytes": 105910
+      },
+      "inspected": true,
+      "meaning": "Generic Trime fallback modal: folder selection failed or was cancelled, mode falls back to app-specific storage. Background shows app-specific storage and no selected data folder. This does not identify which permission/import/deployment step failed. It is not the DocumentsUI restricted-folder banner."
+    },
+    "missing_reproduction_information": [
+      "Exact version upgraded from and original signature/package compatibility",
+      "Exact tree URI/document provider and read/write persisted grants before and after update",
+      "Underlying exception/logcat and whether failure occurred in picker result parsing, import or deployment",
+      "A reproducer on current develop"
+    ],
+    "not_inferred": [
+      "No invented from-version or upgrade matrix",
+      "No inference that clearing app data proves persisted permission corruption",
+      "No proof the independent current picker defect caused the original report"
+    ]
+  },
+  "upstream_history": {
+    "commits": [
+      {
+        "sha": "e09ac7114fa067904ed358e82d499516cb423ff4",
+        "author_date": "2026-09-01T20:58:16+08:00",
+        "commit_date": "2026-09-01T20:58:50+08:00",
+        "subject": "chore: add 3.3.12 changelog"
+      },
+      {
+        "sha": "cab86dcc215a17107b09aeb7b08030c3747b1dd8",
+        "author_date": "2026-09-16T17:19:23+08:00",
+        "commit_date": "2026-09-18T05:04:37+08:00",
+        "subject": "fix: recover app dirs and setup after late media"
+      },
+      {
+        "sha": "675d7803a87c618a69160b7791238a908b333a26",
+        "author_date": "2026-09-29T03:47:03+08:00",
+        "commit_date": "2026-10-01T09:16:44+08:00",
+        "subject": "fix(storage): stop forgetting the picked folder and its grant"
+      },
+      {
+        "sha": "03a7380af140476b4be61f96f4721ac3381cd452",
+        "author_date": "2026-10-06T23:21:00+08:00",
+        "commit_date": "2026-10-09T23:12:37+08:00",
+        "subject": "chore: update StorageAccess to 2.0.0"
+      },
+      {
+        "sha": "1e4b99392a0e2509c11a436c1cc20193a0c2cf08",
+        "author_date": "2026-10-13T23:33:49+08:00",
+        "commit_date": "2026-10-15T00:39:48+08:00",
+        "subject": "feat(data): implement UserDataManager sync from external tree"
+      }
+    ],
+    "ancestry_proof": {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch2-20261028/storage-inputs/history-ancestry.json",
+      "sha256": "4d63cdb70859bd7d095b85e1c614bc90f468c8b075f1c3b0846f8f9cfc63b57f",
+      "bytes": 538
+    },
+    "meaning": [
+      "cab86dcc intentionally recovers app-scoped directories after late media and separates completed storage choice from transient accessibility. Do not undo that design based on #2130 speculation.",
+      "675d7803 stops discarding the picked URI/grant before selection, on fallback, and after import failure; old e09ac711 can show the photographed fallback path, but its triggering exception remains unknown.",
+      "03a7380a updates StorageAccess to 2.0.0 and 1e4b9939 rewrites synchronization into UserDataManager. The current caller/library control flow differs from the reported historical release."
+    ]
+  },
+  "current_defect_evidence": {
+    "source_links": [
+      "https://github.com/osfans/trime/blob/a047f74757fae0d7b5ef64e54f0b957dee2bf8f3/app/src/main/java/com/osfans/trime/ui/setup/SetupActivity.kt#L49",
+      "https://github.com/osfans/trime/blob/a047f74757fae0d7b5ef64e54f0b957dee2bf8f3/app/src/main/java/com/osfans/trime/ui/main/settings/ProfileSettingsFragment.kt#L108"
+    ],
+    "library": {
+      "coordinate": "com.github.WhiredPlanck:StorageAccess:2.0.0",
+      "aar": {
+        "path": "/home/xumin/.gradle/caches/modules-2/files-2.1/com.github.WhiredPlanck/StorageAccess/2.0.0/97b0bf9e968d014078f67ef90d8c2c1e68053c14/StorageAccess-2.0.0.aar",
+        "sha256": "7bef03bbb1d428b2ca6686ccc7b2c2b906bfde0de76e014b01ce516790b29278",
+        "bytes": 111112
+      },
+      "open_directory_bytecode": {
+        "path": "/home/xumin/Public/Trime/build/issue-fixes-batch2-20261028/storage-inputs/StorageResultContracts$OpenDirectory.javap.txt",
+        "sha256": "4ef4ca93b5b2354acccae8c2cea27d44f38e21894d3e3c84e383ca1ca4f5fb8a",
+        "bytes": 7995
+      },
+      "permission_bytecode": {
+        "path": "/home/xumin/Public/Trime/build/issue-fixes-batch2-20261028/storage-inputs/StorageResultContracts$Companion.javap.txt",
+        "sha256": "99d51727c3cb66c82404d27407bc4441e4d897ea409318f7ac8ca4989c5f12e4",
+        "bytes": 2270
+      },
+      "await_bytecode": {
+        "path": "/home/xumin/Public/Trime/build/issue-fixes-batch2-20261028/storage-inputs/StorageAccess.javap.txt",
+        "sha256": "7fbb694ae31b626dd995c76a141e938ddc3f8a743e482a1180c87112e61c829e",
+        "bytes": 68739
+      },
+      "path": [
+        "pickDirectory defaults to initialUri=null, writePermission=true, persistablePermission=true.",
+        "OpenDirectory.createIntent uses android.intent.action.OPEN_DOCUMENT_TREE.",
+        "RESULT_OK and nonnull Intent: data!! -> takePersistableUriPermission(uri, READ|WRITE=3) -> StorageDocs.stat(context, uri). Returned Intent flags are not used to compute those permission bits.",
+        "parseResult catches Throwable and returns Result.failure; directoryLauncher resumes directoryContinuation with that Result; suspend caller receives the exception.",
+        "Both upstream UI callers await the picker before runCatching, so picker exceptions bypass existing failure handling."
+      ],
+      "null_result_path": "Non-RESULT_OK or null Intent produces Result.success(null), the normal quiet cancellation path."
+    },
+    "pure_jvm_evidence": {
+      "scope": "Verbatim function bodies extracted from current a047 and #2199, fake UI/storage dependencies, actual kotlinx.coroutines. This demonstrates control flow only; it is not Android/SAF/provider/upgrade execution or proof of an actual app crash.",
+      "initial_probe": {
+        "path": "/home/xumin/Public/Trime/build/issue-fixes-batch2-20261028/storage-picker-jvm-probe/execution.json",
+        "sha256": "cfce23083e93c47fec4ff6519579949bf6e60f12fcf24b443c1af865a8785289",
+        "bytes": 3915
+      },
+      "candidate_probe": {
+        "path": "/home/xumin/Public/Trime/build/issue-fixes-batch2-20261028/storage-picker-jvm-probe/candidate-execution.json",
+        "sha256": "5c81a2f9acc574dd19344f92a78a498b4b711dadcdbe270e8c554bba636733e6",
+        "bytes": 4487
+      },
+      "observation": "Original a047 and #2199 Setup picker SecurityException/IOException reach the uncaught coroutine handler with no failure feedback and zero persistTreeUri calls. Moving the await into runCatching handles both; null and CancellationException stay quiet."
+    }
+  },
+  "patch": {
+    "summary": "Reuse existing failure handling for directory picker exceptions and propagate coroutine cancellation in both UI entrypoints.",
+    "setup": "Move pickDirectory await inside existing runCatching. Keep null return quiet. Rethrow CancellationException before existing setup refresh/failure toast.",
+    "profile": "Capture the pending-first-enable flag before awaiting the picker, clear the internal pending flag, and use one lifecycleScope launch/runCatching covering picker and import. Remove the redundant second launch in the same scope. Null keeps existing silent cancellation behavior. Picker/import errors reuse first-enable APP_STORAGE fallback or reselect failure feedback. Rethrow CancellationException before changing mode, touching preferences or requesting context.",
+    "saved_association_boundary": "Before persistTreeUri is reached, this patch does not clear the saved URI, delete the sync manifest or release the old permission. A successful new grant followed by library stat failure can already have added a grant; this patch does not roll it back or claim all permissions remain unchanged.",
+    "post_confirmation_sync_failure_boundary": "PersistTreeUri and sync/deploy are unchanged. New URI/old grant/manifest mutations can precede sync failure; no transactional rollback is added or promised.",
+    "logging": "Existing feedback and exception boundary are reused; no new logging framework or broader diagnostic refactor.",
+    "independence": "No unmerged #2199 dependency. CancellationException rethrow overlaps a small part of that PR; same-function merge conflicts will need preserving both confirmation and this wider picker boundary.",
+    "diff": {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch2-20261028/folder-picker-errors.patch",
+      "sha256": "541cf8f24046ed6e64110f6f8ea610201c357ae61e361cdabe869a3764e864cc",
+      "bytes": 5579
+    },
+    "diffcheck_exit": 0,
+    "working_files": [
+      {
+        "path": "/home/xumin/Public/Trime-pr-folder-picker-errors-20261028/app/src/main/java/com/osfans/trime/ui/main/settings/ProfileSettingsFragment.kt",
+        "sha256": "a3d5b76327582c00f9a8764fe9e9fc4c0fa8a0fe52c3ddab53fa2806c6cdd261",
+        "bytes": 16768
+      },
+      {
+        "path": "/home/xumin/Public/Trime-pr-folder-picker-errors-20261028/app/src/main/java/com/osfans/trime/ui/setup/SetupActivity.kt",
+        "sha256": "cc378cdc3e74dc9233d19cade1684d825cb23045867c8b260cd0ed70875186e9",
+        "bytes": 7593
+      }
+    ],
+    "suggested_commit": "fix(storage): handle folder picker failures without swallowing cancellation"
+  },
+  "regression": {
+    "type": "Pure JVM source extraction with fake Android/UI/storage dependencies and real coroutine cancellation",
+    "actual_current_functions_extracted_without_changes": true,
+    "production_helper_or_generic_test_abstraction_added": false,
+    "compile_exit": 0,
+    "run_exit": 0,
+    "case_count": 54,
+    "matrix": "upstream/fixed x (Setup, Settings-first-enable, Settings-reselect) x 9 cases = 54",
+    "cases": [
+      "picker SecurityException",
+      "picker IOException",
+      "picker null",
+      "picker CancellationException",
+      "sync IOException",
+      "sync CancellationException",
+      "success",
+      "owner scope cancelled while picker suspended",
+      "owner scope cancelled while sync suspended"
+    ],
+    "outcome": "All expected before/after assertions passed. Fixed picker errors reach existing feedback with zero persist/sync calls. First enable falls back to APP_STORAGE, reselect retains existing mode/saved URI. Null remains quiet. Direct or actual owner-scope cancellation avoids error UI and fallback; sync success/failure semantics remain modeled as before.",
+    "baseline_lifecycle_observation": "Cancelling the owner scope while sync is suspended triggers the old failure UI; first-enable Settings also falls back. The fixed extracted bodies rethrow CancellationException and perform no failure UI or fallback.",
+    "limitations": [
+      "No actual FragmentActivity/PreferenceFragment/Dialog lifecycle or Android main thread is instantiated.",
+      "Fake UI records attempted calls after simulated destruction; it does not prove an Android lifecycle crash.",
+      "No real ContentResolver/provider/grant, manifest or file-byte state is asserted by this harness.",
+      "No checked-in test source or generic production helper was added, per Root direction; this repeatable diagnostic is retained under R."
+    ],
+    "runner": {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch2-20261028/storage-picker-jvm-probe/run-production-boundary-regression.py",
+      "sha256": "7ab3e68a86483d18c5c07dd03e2519e2e4126cb366563e773c5547002298de7c",
+      "bytes": 10674
+    },
+    "execution": {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch2-20261028/storage-picker-jvm-probe/production-regression/execution.json",
+      "sha256": "77279bf300d1cc3e1c3b042ebc4f732bda1fda996bee3f6bf824f3701aa9b33c",
+      "bytes": 12264
+    },
+    "stdout": {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch2-20261028/storage-picker-jvm-probe/production-regression/run.stdout",
+      "sha256": "4626239cd62d0f238cf5a4725ab4da16943f12053788f6aa0bf1cdf2e3432b52",
+      "bytes": 7335
+    },
+    "initial_harness_failure": "First invocation compiled successfully but JVM classpath pointed to the old classes directory, so main class was not found (not a product error). Corrected runner passed; initial execution/stdout/stderr retained as harness-classpath-attempt1-*."
+  },
+  "rejected_or_unproven_hypotheses": [
+    {
+      "hypothesis": "Releasing a revoked old persisted grant throws SecurityException and blocks reassociation.",
+      "status": "Rejected as an asserted defect: actual StorageAccess.Companion.releasePersistedPermission catches SecurityException internally.",
+      "evidence": {
+        "path": "/home/xumin/Public/Trime/build/issue-fixes-batch2-20261028/storage-inputs/StorageAccess$Companion.javap.txt",
+        "sha256": "acb7d928d724602a8ef75591b3c9b2d0224fb69e2da469eee44c53cc13511418",
+        "bytes": 76038
+      }
+    },
+    {
+      "hypothesis": "Storage choice completion should require current grant availability.",
+      "status": "Not proposed: choice versus availability is intentional in late-media recovery. No present reproducer justifies reversing it."
+    },
+    {
+      "hypothesis": "URI alias/canonicalization mismatch after upgrade.",
+      "status": "Unproven: no original provider/tree URI/grant state supplied."
+    },
+    {
+      "hypothesis": "#2140 necessarily caused data loss or requires a sync algorithm rewrite.",
+      "status": "Unsupported. Confirmed-sync rollback is a separate limitation and explicitly outside this patch."
+    }
+  ],
+  "pending_android_acceptance_for_root": [
+    {
+      "entry": "Setup and Settings first external enable and existing-folder reselect",
+      "method": "Instrumentation ActivityMonitor intercept ACTION_OPEN_DOCUMENT_TREE; return synthetic ActivityResult RESULT_OK with a fresh ungranted content tree URI and no real persistable grant. StorageAccess should fail at takePersistableUriPermission(uri,3), before stat. Ensure the URI has no existing persisted grant.",
+      "before": "Baseline should expose the picker error as uncaught; capture actual Android logs rather than assuming crash.",
+      "after": "Setup shows existing import-failure feedback. Settings first-enable uses existing APP_STORAGE fallback; reselect keeps prior association/mode with existing failure feedback."
+    },
+    {
+      "entry": "Cancellation",
+      "method": "RESULT_CANCELED/null result and owner destruction while picker/import is suspended",
+      "after": "Normal cancellation remains quiet. Lifecycle CancellationException does not show failure UI, request detached context or write fallback mode."
+    },
+    {
+      "entry": "Successful real directory association and reselect",
+      "method": "Use a disposable folder and bounded sentinel/manifest checks; authoritative persisted grant readback must use dumpsys activity permissions on this API35 setup, not dumpsys uri_grants.",
+      "after": "Existing success flow remains functional. Do not claim full-directory integrity or original-signature upgrade coverage."
+    },
+    {
+      "entry": "Build/CI",
+      "method": "Root-owned app compilation, formatting/lint and appropriate existing checks. No Android build or device result is supplied by this agent."
+    }
+  ],
+  "historical_issue_followup_needed": "Request exact from-version, provider/tree details, saved preferences and persisted grants around the failing upgrade, and a current-version log/reproduction before claiming an upgrade/permission migration fix."
+}

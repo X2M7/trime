@@ -1,0 +1,75 @@
+{
+  "captured_at_utc": "2026-10-28T12:40:48.799475+00:00",
+  "argv": [
+    "/home/xumin/Public/Trime/build/upstream19/gh-cli-2.102.0/gh",
+    "pr",
+    "view",
+    "2201",
+    "--repo",
+    "osfans/trime",
+    "--json",
+    "url,state,isDraft,headRefOid,baseRefOid,title,body,statusCheckRollup"
+  ],
+  "exit": 0,
+  "response": {
+    "baseRefOid": "a047f74757fae0d7b5ef64e54f0b957dee2bf8f3",
+    "body": "Related to #2140.\n\nThe directory picker can return an exception when persisting its URI grant or inspecting the selected document. Both settings and setup currently await `pickDirectory()` outside their error-handling block, so those failures can escape the lifecycle coroutine instead of reaching the existing failure feedback.\n\nInclude directory selection in the existing error boundary. Keep cancellation silent, rethrow lifecycle `CancellationException`, and retain the existing distinction between first-time external-sync setup and replacing a saved directory. Settings no longer needs a second launch on the same lifecycle scope.\n\nThis does not implement upgrade migration or change the synchronization algorithm. The reporter's old upgrade failure has not been reproduced; #2140 is related, not claimed fully fixed. It is independent of the confirmation UI in #2199.\n\nValidation:\n\n- [All five CI checks](https://github.com/osfans/trime/actions/runs/40685899028) passed: lint/unit tests and four OS builds. The actual Ubuntu producer is synthetic merge `6168da40`; its complete Git tree matches head `f45ba68d`.\n- Android 15 emulator A/B checks covered the settings and setup entry points. A test monitor returned a synthetic picker result with an ungranted URI, exercising the real `StorageAccess` result parser and permission request. Both baseline entry points crashed with the uncaught `SecurityException`. Each fixed entry point displayed the existing failure feedback and allowed a second attempt. The inspected mode/URI, retained read/write grants, sync-manifest bytes and private sentinel stayed unchanged during these pre-persistence failures. Setup's empty-URI fixture was prepared explicitly.\n- 54 extracted-function JVM control-flow checks with stub dependencies and real coroutines covered null results, failures, cancellation and success. These are diagnostic checks, separate from the application CI and Android execution.\n\nThe emulator used local-certificate diagnostic copies; all 784 non-signature APK entries were verified identical to their CI originals. This was an injected result and accessibility-action test, not a real provider-failure reproduction, physical-device, release-signature or upgrade test. Early harness/navigation failures and emulator boot ANRs were retained; CI tool/native-dependency warnings remain.\n\nThe patch does not add transaction rollback after a valid selection has already been persisted and synchronization subsequently fails. First-time APP-to-external setup still uses the existing fallback policy. These limits, and the unverified historical upgrade cause, are why this is **Related to #2140**, not a closing fix.\n",
+    "headRefOid": "f45ba68dfc2a4fa6c6877732dc25f094f030b7ac",
+    "isDraft": false,
+    "state": "OPEN",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-28T12:16:12Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/osfans/trime/actions/runs/40685899028/job/122808044774",
+        "name": "check / lint-and-test",
+        "startedAt": "2026-10-28T12:12:22Z",
+        "status": "COMPLETED",
+        "workflowName": "Pull Request"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-28T12:24:32Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/osfans/trime/actions/runs/40685899028/job/122809824181",
+        "name": "build (ubuntu-26.04)",
+        "startedAt": "2026-10-28T12:16:16Z",
+        "status": "COMPLETED",
+        "workflowName": "Pull Request"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-28T12:22:59Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/osfans/trime/actions/runs/40685899028/job/122809824415",
+        "name": "build (macos-26)",
+        "startedAt": "2026-10-28T12:16:17Z",
+        "status": "COMPLETED",
+        "workflowName": "Pull Request"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-28T12:20:52Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/osfans/trime/actions/runs/40685899028/job/122809824146",
+        "name": "build (macos-26-intel)",
+        "startedAt": "2026-10-28T12:16:16Z",
+        "status": "COMPLETED",
+        "workflowName": "Pull Request"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-28T12:23:11Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/osfans/trime/actions/runs/40685899028/job/122809824159",
+        "name": "build (windows-2025)",
+        "startedAt": "2026-10-28T12:16:16Z",
+        "status": "COMPLETED",
+        "workflowName": "Pull Request"
+      }
+    ],
+    "title": "fix(storage): handle folder picker failures without swallowing cancellation",
+    "url": "https://github.com/osfans/trime/pull/2201"
+  }
+}

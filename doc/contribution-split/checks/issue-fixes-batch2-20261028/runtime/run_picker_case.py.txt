@@ -1,0 +1,95 @@
+import hashlib
+import json
+from pathlib import Path
+import sys
+import time
+import xml.etree.ElementTree as ET
+
+from adb_helper import OUT, run, screenshot
+
+PKG = 'com.osfans.trime.debug'
+PREF = 'shared_prefs/com.osfans.trime.debug_preferences.xml'
+OLD_URI = 'content://com.android.externalstorage.documents/tree/primary%3ADocuments%2FTrimeIssue2095-20261028'
+ROOT = OUT.parent.parent
+label, mode, expected, apk = sys.argv[1:]
+assert mode in ('settings', 'setup') and expected in ('baseline', 'fixed')
+apk = Path(apk)
+assert apk.is_file()
+run(label + '-force-stop-before-install', 'shell', 'am', 'force-stop', PKG)
+run(label + '-install-target', 'install', '-r', '-d', '-t', str(apk), timeout=90)
+original = run(label + '-preferences-before-fixture', 'shell', 'run-as', PKG, 'cat', PREF)
+(OUT / (label + '-preferences-before-fixture.xml')).write_bytes(original)
+
+# Only this intentionally disposable emulator's retained first-batch profile is changed.
+# Restore the saved valid association for each case; Setup then explicitly clears its
+# URI inside the helper as separately reported fixture preparation.
+tree = ET.fromstring(original)
+for name, value in [('profile_data_storage_mode', 'EXTERNAL_SYNC'),
+                    ('profile_external_rime_tree_uri', OLD_URI)]:
+    node = next((n for n in tree if n.get('name') == name), None)
+    if node is None:
+        node = ET.SubElement(tree, 'string', name=name)
+    assert node.tag == 'string'
+    node.text = value
+seed = ET.tostring(tree, encoding='utf-8', xml_declaration=True)
+seed_path = OUT / (label + '-prepared-preferences.xml')
+seed_path.write_bytes(seed)
+remote = '/data/local/tmp/batch2-picker-fixture.xml'
+run(label + '-push-fixture', 'push', str(seed_path), remote)
+run(label + '-apply-fixture', 'shell', 'run-as', PKG, 'cp', remote, PREF)
+run(label + '-fixture-readback', 'shell', 'run-as', PKG, 'cat', PREF)
+assert (OUT / 'commands' / (label + '-fixture-readback.stdout')).read_bytes() == seed
+
+log = OUT / 'device-logcat.txt'
+offset = log.stat().st_size
+run(label + '-marker-start', 'shell', 'log', '-t', 'TrimePickerProbe', 'START_' + label)
+started = time.time()
+argv = ['shell', 'am', 'instrument', '-w', '-r', '-e', 'mode', mode,
+        '-e', 'expect', expected]
+if mode == 'setup':
+    argv += ['-e', 'seed_setup', 'true', '-e', 'setup_entry', 'ui']
+argv += [PKG + '.test/com.osfans.trime.PickerFailureInstrumentation']
+output = run(label + '-instrument', *argv, timeout=155, check=False)
+time.sleep(1)
+run(label + '-marker-end', 'shell', 'log', '-t', 'TrimePickerProbe', 'END_' + label)
+time.sleep(1)
+end = log.stat().st_size
+with log.open('rb') as stream:
+    stream.seek(offset)
+    segment = stream.read(end - offset)
+(OUT / (label + '-logcat.txt')).write_bytes(segment)
+result = {
+    'label': label, 'mode': mode, 'expected': expected,
+    'target_diagnostic_apk': str(apk),
+    'target_diagnostic_sha256': hashlib.file_digest(apk.open('rb'), 'sha256').hexdigest(),
+    'fixture_preparation': 'Explicit EXTERNAL_SYNC plus retained previously granted URI in a reused isolated emulator. Setup additionally seeds an empty URI inside the helper.',
+    'original_preferences_sha256': hashlib.sha256(original).hexdigest(),
+    'prepared_preferences_sha256': hashlib.sha256(seed).hexdigest(),
+    'elapsed_seconds': time.time() - started,
+    'continuous_log_offsets': [offset, end],
+    'continuous_log_segment_sha256': hashlib.sha256(segment).hexdigest(),
+    'baseline_expected_crash_is_not_a_passing_product_run': True,
+    'actual_provider_result': False,
+    'physical_device_test': False,
+}
+for line in output.decode(errors='replace').splitlines():
+    if line.startswith('INSTRUMENTATION_STATUS: picker_checkpoint='):
+        result.setdefault('pre_action_checkpoints', []).append(json.loads(line.split('=', 1)[1]))
+    if line.startswith('INSTRUMENTATION_RESULT: picker_failure_report='):
+        result['helper_report'] = json.loads(line.split('=', 1)[1])
+    if line.startswith('INSTRUMENTATION_RESULT: shortMsg='):
+        result['instrumentation_short_message'] = line.split('=', 1)[1]
+result['target_pid_after'] = run(label + '-pid-after', 'shell', 'pidof', PKG, check=False).decode().strip()
+result['actual_preferences_after'] = run(label + '-preferences-after', 'shell', 'run-as', PKG, 'cat', PREF).decode()
+run(label + '-grants-after', 'shell', 'dumpsys', 'activity', 'permissions')
+screenshot(label + '-terminal-screen')
+(OUT / (label + '-result.json')).write_text(json.dumps(result, ensure_ascii=False, indent=2) + '\n')
+print(json.dumps({k: result.get(k) for k in ('label', 'expected', 'elapsed_seconds', 'target_pid_after', 'instrumentation_short_message')}), flush=True)
+if expected == 'fixed':
+    assert result.get('helper_report', {}).get('passed') is True, result.get('helper_report', output.decode(errors='replace')[-1800:])
+    # Android terminates the instrumented process after finishInstrumentation.
+    # Liveness is asserted by the helper before finish, not by this post-finish pid.
+else:
+    assert result.get('pre_action_checkpoints'), 'No production picker pre-action checkpoint reached'
+    assert 'Process crashed' in result.get('instrumentation_short_message', ''), output.decode(errors='replace')[-1800:]
+    assert b'java.lang.SecurityException: No persistable permission grants found' in segment, 'Baseline did not show the required real contract SecurityException'

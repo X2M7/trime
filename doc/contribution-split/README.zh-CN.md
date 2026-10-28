@@ -50,6 +50,24 @@
 
 **警告未全部消除**：[CI](checks/issue-fixes-20261028/final-ci-review.json)、[run1](checks/issue-fixes-20261028/runtime/run1/log-review.json)、[run2](checks/issue-fixes-20261028/runtime/run2/log-review.json)保留具体归因及范围。旧 helper FATAL、系统 ANR／回收、工具和依赖警告未隐藏；run2 已采集 Trime 生命周期仍有 302 条 W，含 193 条 librime Encode failure，不推导全部来自系统或词库质量已通过。后续优先调查 #2140、#1981 和原生编码／配置警告，再推进窗口、主题与 TalkBack 排程。本索引仅提交所选文字报告和 helper 源码，APK、原图、磁盘与完整日志仍保留于本地构建证据目录。
 
+### 第二批：目录选择异常边界（2026-10-28，已正式待审）
+
+新增独立存储修复 [#2201](https://github.com/osfans/trime/pull/2201)，分支 `contrib/fix-folder-picker-errors`，源码 `f45ba68d`，基于上游 `a047f747`。目录结果解析时取得持久化授权等操作可能抛错，原先两处 `pickDirectory()` 均在错误处理之外；现已纳入现有失败反馈，并重新抛出生命周期取消异常。只改两个生产文件，移除设置页冗余的同作用域协程。PR 为 **Open／Ready for review**，明确 **Related #2140**，没有把历史升级故障直接关闭。[进度](checks/issue-fixes-batch2-20261028/progress.json)与[实际待审回执](checks/issue-fixes-batch2-20261028/publication/ready-receipt.json)保留。
+
+[五项 CI](https://github.com/osfans/trime/actions/runs/40685899028)全部成功；[构建汇总](checks/issue-fixes-batch2-20261028/cloud/pr-2201/ci-summary.json)记录实际执行和警告。Ubuntu 原始 APK 的 producer 是 synthetic merge `6168da40`，与 head 的[完整 Git tree 相同](checks/issue-fixes-batch2-20261028/cloud/pr-2201/ubuntu-original/source-tree-proof.json)。Android 15 模拟器在设置和首次设置两个入口分别复现旧版未捕获的真实 `SecurityException`；修复版各连续两次提示失败并允许重试，所列模式／URI、持久化读写授权、清单字节和私有测试哨兵保持不变。见[限定验收](checks/issue-fixes-batch2-20261028/runtime/picker-validation.json)、[独立复核](checks/issue-fixes-batch2-20261028/runtime/picker-independent-review.json)和[完整 helper 源码](checks/issue-fixes-batch2-20261028/runtime/PickerFailureInstrumentation.kt.txt)。54 项提取函数 JVM 控制流检查仅作诊断，与真实应用 CI 和 Android 执行分列。
+
+设备检查使用合成 ActivityResult 和无障碍 ACTION_CLICK，执行生产结果解析与权限请求；不是实际提供器失败、InputDispatcher 触摸、真机、升级或 Release 签名验收。设置场景起始有旧有效目录，首次设置明确准备为外部同步加空 URI。共同本地证书诊断副本的 784 个非签名 ZIP 条目均与原件相同。原工具过早拦截内部导航、Quickstep 弹窗阻挡导致的两次失败保留；没有补写通过。成功持久化后才发生同步失败的事务回滚、APP→外部同步失败的既有回退和 #2140 原历史升级原因均不由此验收解决。
+
+两个 VM 均正常退出 0、测试包与自建哨兵已清理，恢复测试前的两个目录偏好字段，默认输入法保持 Latin；未回写词库、清单或 native 缓存。两个会话最低宿主可用内存约 1.40／1.27 GiB，1 GiB 保护未触发，文件索引保持运行。[49 个原始 AVD／system-image 源文件复核](checks/issue-fixes-batch2-20261028/runtime/source-assets-final-check.json)未变，[无构建 JVM／模拟器残留](checks/issue-fixes-batch2-20261028/runtime/final-process-check.json)。完整原日志保留 3,182／4,805 条 W、各 3 个系统启动 ANR 和第二轮两次预期旧版崩溃，不称系统零警告。
+
+本批另外完成三项调查，未包装为未验证的大 PR：
+
+- [#1981 维护生命周期](checks/issue-fixes-batch2-20261028/maintenance-gating-review.json)：源码证明主线程停止可能等待 native 维护，但原问题没有阻塞线程栈。安全修复需要停止状态、唯一 worker、取消与退出完成信号，不能仅把等待移到一个协程或声称已修复配置膨胀。
+- [193 条 Encode failure](checks/issue-fixes-batch2-20261028/encoding-investigation.json)：默认词库的合法 UTF-8 零频词缺少部分字符读音映射，静态模型与原警告集合一致；过滤全部零频词还会丢掉 54,215 个可生成词，故不这样消警告。词库策略仍须处理，不称为编码损坏或全部无害。
+- [CI 警告复核](checks/issue-fixes-batch2-20261028/cloud/pr-2201/warning-context-review.json)保留固定原生依赖、SDK／JNA、Gradle 与 Windows 缓存警告，未发现这两处应用源码的编译警告候选。[本地 Gradle 调查](checks/issue-fixes-batch2-20261028/gradle-deprecation-investigation.json)指向 Android 插件上下文的 `Configuration.setVisible(boolean)`，但云端没有具体调用栈，不能据此认定全部云端弃用来源。
+
+本节仅同步 fork 分类索引；没有改写 `develop`、既有 PR 或发布稳定版。APK、原图、磁盘及完整日志继续保留在本地，所选文字原件和 [SHA-256 清单](checks/issue-fixes-batch2-20261028/SHA256SUMS)供复核。
+
 ### 先跟进已有 PR，避免重复
 
 09:34 快照中 [7 项 PR 的源码身份、覆盖与排除范围](checks/issue-triage-20261028/existing-pr-overlap.json)已核对正文；待审不等于已合并。

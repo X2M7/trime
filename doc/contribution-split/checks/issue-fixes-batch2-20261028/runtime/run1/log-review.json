@@ -1,0 +1,132 @@
+{
+  "scope": "Full continuously collected session log; mechanical line counts, not a claim all runtime causes are resolved. Expected baseline crashes and environmental boot ANRs retained.",
+  "levels": {
+    "W": 3182,
+    "I": 8556,
+    "D": 9491,
+    "E": 1530,
+    "V": 5637
+  },
+  "top_warning_tags": [
+    [
+      "ActivityManager",
+      374
+    ],
+    [
+      "BestClock",
+      356
+    ],
+    [
+      "Looper",
+      234
+    ],
+    [
+      "system_server",
+      210
+    ],
+    [
+      "PackageSettings",
+      151
+    ],
+    [
+      "PackageManager",
+      136
+    ],
+    [
+      "IPCThreadState",
+      79
+    ],
+    [
+      "resolv",
+      68
+    ],
+    [
+      "android.hardware.media.c2@1.0-service-goldfish",
+      62
+    ],
+    [
+      "mediaswcodec",
+      60
+    ],
+    [
+      "CarrierConfigManager",
+      58
+    ],
+    [
+      "mediaextractor",
+      57
+    ],
+    [
+      "AppOpService",
+      56
+    ],
+    [
+      "UserSystemPackageInstaller",
+      55
+    ],
+    [
+      "TelephonyRegistry",
+      45
+    ]
+  ],
+  "fatal_exception_markers": [],
+  "activity_manager_anr_markers": [
+    {
+      "line": 16052,
+      "text": "10-28 20:22:26.830   552  1236 I am_anr  : [0,933,com.android.phone,952647245,Broadcast of Intent { act=android.safetycenter.action.REFRESH_SAFETY_SOURCES flg=0x10000010 pkg=com.android.phone cmp=com.android.phone/.security.SafetySourceReceiver (has extras) }]"
+    },
+    {
+      "line": 16502,
+      "text": "10-28 20:22:31.008   552  1236 I am_anr  : [0,796,com.android.systemui,818462221,executing service com.android.systemui/.keyguard.KeyguardService, waited 22563ms]"
+    },
+    {
+      "line": 19719,
+      "text": "10-28 20:22:48.699   552  1629 I am_anr  : [0,1203,com.android.providers.media.module,684211781,Process ProcessRecord{c92c0f2 1203:com.android.providers.media.module/u0a129} failed to complete startup]"
+    }
+  ],
+  "mechanical_lmk_candidates": [
+    {
+      "line": 4,
+      "text": "10-28 20:21:24.588   145   145 I lowmemorykiller: Using psi monitors for memory pressure detection"
+    },
+    {
+      "line": 5,
+      "text": "10-28 20:21:24.590   145   145 I lowmemorykiller: Process polling is supported"
+    },
+    {
+      "line": 6,
+      "text": "10-28 20:21:24.591   145   145 I lowmemorykiller: Process reaper initialized with 2 threads in the pool"
+    },
+    {
+      "line": 7473,
+      "text": "10-28 20:21:55.914   145   145 I lowmemorykiller: lmkd data connection established"
+    },
+    {
+      "line": 14450,
+      "text": "10-28 20:22:15.515   145   145 I lowmemorykiller: lmkd data connection established"
+    },
+    {
+      "line": 14452,
+      "text": "10-28 20:22:15.550   145   145 I lowmemorykiller: Using memevents for direct reclaim and kswapd detection"
+    },
+    {
+      "line": 14453,
+      "text": "10-28 20:22:15.551   145   145 I lowmemorykiller: lmkd data connection dropped"
+    },
+    {
+      "line": 14454,
+      "text": "10-28 20:22:15.551   145   145 I lowmemorykiller: closing lmkd data connection"
+    }
+  ],
+  "memory_samples": 121,
+  "minimum_host_available_kib": 1467412,
+  "guard_triggered": false,
+  "observed_pid_levels": {
+    "2070": {
+      "I": 9,
+      "W": 13,
+      "D": 10,
+      "V": 6
+    }
+  }
+}

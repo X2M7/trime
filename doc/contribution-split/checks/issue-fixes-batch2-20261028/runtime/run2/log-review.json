@@ -1,0 +1,168 @@
+{
+  "scope": "Full continuously collected session log; mechanical line counts, not a claim all runtime causes are resolved. Expected baseline crashes and environmental boot ANRs retained.",
+  "levels": {
+    "W": 4805,
+    "I": 11939,
+    "D": 8354,
+    "E": 1850,
+    "V": 6016
+  },
+  "top_warning_tags": [
+    [
+      "BestClock",
+      687
+    ],
+    [
+      "ActivityManager",
+      393
+    ],
+    [
+      "IPCThreadState",
+      365
+    ],
+    [
+      "Looper",
+      325
+    ],
+    [
+      "system_server",
+      219
+    ],
+    [
+      "PackageSettings",
+      152
+    ],
+    [
+      "AppOpService",
+      147
+    ],
+    [
+      "PackageManager",
+      135
+    ],
+    [
+      "MediaControlGattService",
+      105
+    ],
+    [
+      "android.hardware.audio@7.1-impl.ranchu",
+      83
+    ],
+    [
+      "BtGatt.ScanManager",
+      82
+    ],
+    [
+      "HealthConnectPackageInfoUtils",
+      78
+    ],
+    [
+      "FrameTracker",
+      67
+    ],
+    [
+      "WindowManager",
+      66
+    ],
+    [
+      "android.hardware.media.c2@1.0-service-goldfish",
+      62
+    ]
+  ],
+  "fatal_exception_markers": [
+    {
+      "line": 27822,
+      "text": "10-28 20:32:30.308  2321  2321 E AndroidRuntime: FATAL EXCEPTION: main"
+    },
+    {
+      "line": 30871,
+      "text": "10-28 20:33:57.766  2604  2604 E AndroidRuntime: FATAL EXCEPTION: main"
+    }
+  ],
+  "activity_manager_anr_markers": [
+    {
+      "line": 16217,
+      "text": "10-28 20:29:43.434   552  1282 I am_anr  : [0,930,com.android.phone,952647245,Broadcast of Intent { act=android.safetycenter.action.REFRESH_SAFETY_SOURCES flg=0x10000010 pkg=com.android.phone cmp=com.android.phone/.security.SafetySourceReceiver (has extras) }]"
+    },
+    {
+      "line": 17047,
+      "text": "10-28 20:29:50.374   552  1282 I am_anr  : [0,809,com.android.systemui,818462221,executing service com.android.systemui/.SystemUIService, waited 22652ms]"
+    },
+    {
+      "line": 18861,
+      "text": "10-28 20:29:59.475   552  1282 I am_anr  : [0,1127,com.android.launcher3,885767749,executing service com.android.launcher3/com.android.quickstep.TouchInteractionService, waited 20706ms]"
+    }
+  ],
+  "mechanical_lmk_candidates": [
+    {
+      "line": 4,
+      "text": "10-28 20:28:40.715   144   144 I lowmemorykiller: Using psi monitors for memory pressure detection"
+    },
+    {
+      "line": 5,
+      "text": "10-28 20:28:40.717   144   144 I lowmemorykiller: Process polling is supported"
+    },
+    {
+      "line": 6,
+      "text": "10-28 20:28:40.722   144   144 I lowmemorykiller: Process reaper initialized with 2 threads in the pool"
+    },
+    {
+      "line": 7404,
+      "text": "10-28 20:29:11.875   144   144 I lowmemorykiller: lmkd data connection established"
+    },
+    {
+      "line": 14735,
+      "text": "10-28 20:29:32.363   144   144 I lowmemorykiller: lmkd data connection established"
+    },
+    {
+      "line": 14736,
+      "text": "10-28 20:29:32.374   144   144 I lowmemorykiller: Using memevents for direct reclaim and kswapd detection"
+    },
+    {
+      "line": 14737,
+      "text": "10-28 20:29:32.377   144   144 I lowmemorykiller: lmkd data connection dropped"
+    },
+    {
+      "line": 14738,
+      "text": "10-28 20:29:32.377   144   144 I lowmemorykiller: closing lmkd data connection"
+    }
+  ],
+  "memory_samples": 224,
+  "minimum_host_available_kib": 1329132,
+  "guard_triggered": false,
+  "observed_pid_levels": {
+    "2050": {
+      "I": 50,
+      "W": 15,
+      "D": 15,
+      "V": 6
+    },
+    "2321": {
+      "I": 223,
+      "W": 25,
+      "D": 56,
+      "V": 6,
+      "E": 44
+    },
+    "2465": {
+      "I": 224,
+      "W": 23,
+      "D": 54,
+      "V": 6,
+      "E": 4
+    },
+    "2604": {
+      "I": 22,
+      "W": 14,
+      "D": 13,
+      "V": 6,
+      "E": 42
+    },
+    "2726": {
+      "I": 28,
+      "W": 14,
+      "D": 15,
+      "V": 6
+    }
+  }
+}

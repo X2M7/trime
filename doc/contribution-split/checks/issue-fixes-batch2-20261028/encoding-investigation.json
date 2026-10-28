@@ -1,0 +1,6957 @@
+{
+  "schema_version": 1,
+  "created_at_utc": "2026-10-28T12:09:03.709302+00:00",
+  "scope": "Read-only preserved log, pinned source, dictionary and APK inspection plus a Python source-equivalent data model. No project source changes, build, ADB, emulator/runtime experiments or PR writes.",
+  "conclusion": {
+    "classification": "Pre-existing default-pinyin vocabulary coverage mismatch; 193 exact preset spellings are skipped. Not malformed UTF-8, not system warnings, not introduced by the first-batch app changes.",
+    "reason": "164 terms contain U+00B7 MIDDLE DOT; 29 terms contain fullwidth Latin letters/digits. These21 distinct characters have no single-syllable mapping in luna_pinyin.dict.yaml. ScriptEncoder cannot form a complete pronunciation path.",
+    "real_impact": "The 193 exact spellings are not generated into the default luna_pinyin compiled table. Raw essay rows remain and no user-dictionary deletion/corruption is evidenced.136 dotted terms have existing no-dot essay aliases, but exact punctuated spellings remain skipped.",
+    "limits": "Compiled-table binary lookup was not performed; omission follows from observed EncodePhrase failures and source control flow. This does not describe custom dictionaries, other schemas or manual punctuation output.",
+    "minimal_Trime_PR_recommended": false
+  },
+  "evidence": {
+    "log_review": {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-20261028/runtime/run2/log-review.json",
+      "sha256": "3e49c46d8937fdb57e8f6edcd841cf9ca2b784a432b7156b332dc1a94d197a2a",
+      "bytes": 40610
+    },
+    "device_logcat": {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-20261028/runtime/run2/device-logcat.txt",
+      "sha256": "9b5b2c04f3be9af77be1269451413379d70757ab24e1f1422bf95ceeba7d098c",
+      "bytes": 141514623
+    },
+    "first_warning": {
+      "line": 546163,
+      "text": "10-28 10:32:07.584  2362  2478 W rime.trime: Encode failure: '亞歷山大·杜布切克'."
+    },
+    "last_warning": {
+      "line": 546910,
+      "text": "10-28 10:32:45.541  2362  2478 W rime.trime: Encode failure: 'ｎ遍'."
+    },
+    "all_warning_pid": 2362,
+    "all_warning_tid": 2478,
+    "all_warning_level": "W",
+    "luna_compilation_context": [
+      {
+        "line": 102853,
+        "text": "10-28 10:30:37.424  2362  2478 I rime.trime: compiling dictionary for /storage/emulated/0/Android/data/com.osfans.trime.debug/files/rime/build/luna_pinyin.schema.yaml"
+      },
+      {
+        "line": 102895,
+        "text": "10-28 10:30:39.556  2362  2478 I rime.trime: building table: /storage/emulated/0/Android/data/com.osfans.trime.debug/files/rime/build/luna_pinyin.table.bin"
+      },
+      {
+        "line": 102896,
+        "text": "10-28 10:30:39.556  2362  2478 I rime.trime: loading preset vocabulary: essay"
+      },
+      {
+        "line": 102897,
+        "text": "10-28 10:30:39.558  2362  2478 I rime.trime: reading tsv file: /storage/emulated/0/Android/data/com.osfans.trime.debug/files/shared/essay.txt"
+      },
+      {
+        "line": 546100,
+        "text": "10-28 10:32:02.868  2362  2478 I rime.trime: collecting entries from /storage/emulated/0/Android/data/com.osfans.trime.debug/files/shared/luna_pinyin.dict.yaml"
+      },
+      {
+        "line": 546141,
+        "text": "10-28 10:32:05.972  2362  2478 I rime.trime: Pass 1: total 70803 entries collected."
+      },
+      {
+        "line": 546142,
+        "text": "10-28 10:32:05.972  2362  2478 I rime.trime: num unique syllables: 424"
+      },
+      {
+        "line": 546143,
+        "text": "10-28 10:32:05.972  2362  2478 I rime.trime: num of entries to encode: 0"
+      },
+      {
+        "line": 546144,
+        "text": "10-28 10:32:05.972  2362  2478 I rime.trime: Pass 2: total 70803 entries collected."
+      },
+      {
+        "line": 546911,
+        "text": "10-28 10:32:45.601  2362  2478 I rime.trime: Pass 3: total 498737 entries collected."
+      },
+      {
+        "line": 1117369,
+        "text": "10-28 10:33:54.439  2362  2478 I rime.trime: dictionary 'luna_pinyin' is ready."
+      }
+    ],
+    "earlier_baseline_context": [
+      {
+        "line": 27938,
+        "text": "10-28 10:29:45.184  2086  2250 I rime.trime: compiling dictionary for /storage/emulated/0/Android/data/com.osfans.trime.debug/files/rime/build/luna_pinyin.schema.yaml"
+      },
+      {
+        "line": 27942,
+        "text": "10-28 10:29:46.258  2086  2250 I rime.trime: building table: /storage/emulated/0/Android/data/com.osfans.trime.debug/files/rime/build/luna_pinyin.table.bin"
+      },
+      {
+        "line": 27943,
+        "text": "10-28 10:29:46.276  2086  2250 I rime.trime: loading preset vocabulary: essay"
+      },
+      {
+        "line": 27944,
+        "text": "10-28 10:29:46.318  2086  2250 I rime.trime: reading tsv file: /storage/emulated/0/Android/data/com.osfans.trime.debug/files/shared/essay.txt"
+      }
+    ],
+    "storage_install": {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-20261028/runtime/run2/commands/storage-install.json",
+      "sha256": "8b68207bb49602b5f1655bcd6056d0cb27372b89ac9ec2ae0275dcbb5deef885",
+      "bytes": 332
+    },
+    "attribution": "PID2362/TID2478 belongs to the storage-diagnostic app process. Earlier baseline PID2086 started compilation but was killed for installation before its warning phase; a completed baseline 193-warning runtime replay is not claimed."
+  },
+  "source_provenance": {
+    "baseline_commit": "a047f74757fae0d7b5ef64e54f0b957dee2bf8f3",
+    "matching_gitlinks": {
+      "app/src/main/jni/librime": {
+        "current_source_head": "7bc3fb0005a03aff1c086611e4d52bb7f6444fdd",
+        "baseline_gitlink": "7bc3fb0005a03aff1c086611e4d52bb7f6444fdd",
+        "identical": true
+      },
+      "app/data/rime/essay": {
+        "current_source_head": "0766c929ec3e578c2c80861e988decd3703a1c3d",
+        "baseline_gitlink": "0766c929ec3e578c2c80861e988decd3703a1c3d",
+        "identical": true
+      },
+      "app/data/rime/luna-pinyin": {
+        "current_source_head": "46acf03142c12b5aeed7002675046bf7255eed35",
+        "baseline_gitlink": "46acf03142c12b5aeed7002675046bf7255eed35",
+        "identical": true
+      }
+    },
+    "sources": [
+      {
+        "path": "/home/xumin/Public/Trime/app/src/main/jni/librime/src/rime/dict/entry_collector.cc",
+        "sha256": "39436e8b8e0c7e1cd2cd9406af705c2499d09c77c4b770fe5f9c8ee7d23df291",
+        "bytes": 8478,
+        "line": 134,
+        "finding": "WARNING is the preset-vocabulary Pass3 branch; the explicit-entry failure branch is ERROR and its queue is empty in this deployment."
+      },
+      {
+        "path": "/home/xumin/Public/Trime/app/src/main/jni/librime/src/rime/dict/entry_collector.cc",
+        "sha256": "39436e8b8e0c7e1cd2cd9406af705c2499d09c77c4b770fe5f9c8ee7d23df291",
+        "bytes": 8478,
+        "line": 205,
+        "finding": "Only one-syllable raw codes populate words; TranslateWord filters readings below 5% of the total."
+      },
+      {
+        "path": "/home/xumin/Public/Trime/app/src/main/jni/librime/src/rime/algo/encoder.cc",
+        "sha256": "e638f1b18a269410848d12822d91db324f0741e439ccf2593256a1eb19aa21fe",
+        "bytes": 10554,
+        "line": 292,
+        "finding": "ScriptEncoder emits an entry only when the phrase is completely covered by known mapped words."
+      },
+      {
+        "path": "/home/xumin/Public/Trime/app/src/main/jni/librime/src/rime/dict/preset_vocabulary.cc",
+        "sha256": "b3fc0175aa567c0bbc717a739b1567c77d2c9686ff68c7d591995119610e34a6",
+        "bytes": 3148,
+        "line": 100,
+        "finding": "Zero frequency is accepted unless a positive min_phrase_weight is configured."
+      },
+      {
+        "path": "/home/xumin/Public/Trime/app/src/main/jni/librime/src/rime/dict/text_db.cc",
+        "sha256": "05f9fdc21d0843be6f53164ec052145a5e55d23c0e604f43106b4928707d9d55",
+        "bytes": 5267,
+        "line": 83,
+        "finding": "TextDb::Update uses data_[key]=value, so later duplicate essay rows overwrite earlier weights."
+      },
+      {
+        "path": "/home/xumin/Public/Trime/app/src/main/jni/librime/src/rime/dict/dict_compiler.cc",
+        "sha256": "fdb0dcd1a9bc05077a859c1f72c92407f8d06e2c3939813380960e516871ea83",
+        "bytes": 12964,
+        "line": 257,
+        "finding": "Only collected entries become table entries. Valid zero weights are preserved using DBL_EPSILON."
+      },
+      {
+        "path": "/home/xumin/Public/Trime/app/src/main/jni/librime/src/rime/dict/dict_settings.cc",
+        "sha256": "42cd07fe36a962be20233c4887892aed1882fa197e7149f9f7f6f8deea4fdb07",
+        "bytes": 2870,
+        "line": 60,
+        "finding": "The default vocabulary is essay."
+      },
+      {
+        "path": "/home/xumin/Public/Trime/app/data/rime/luna-pinyin/luna_pinyin.dict.yaml",
+        "sha256": "270b0c6879436d7b0b606aa684507ea7e173c62b6d5df3966804637872d520fd",
+        "bytes": 891247,
+        "line": 33,
+        "finding": "Preset vocabulary is enabled; no positive minimum weight or encoder/rules, so ScriptEncoder is selected."
+      },
+      {
+        "path": "/home/xumin/Public/Trime/app/data/rime/stroke/stroke.dict.yaml",
+        "sha256": "db0b3459545f0299728e14271431b025b58ea530f4d5bf49b7a89dcaf2b9650b",
+        "bytes": 2219276,
+        "line": 21,
+        "finding": "max_phrase_length:1 prevents the same multi-character preset attempts for stroke."
+      }
+    ],
+    "applicable_AGENTS_found": [],
+    "AGENTS_review": "Ancestor and relevant app/data/rime and librime/src trees searched. No applicable AGENTS; unrelated OpenCC/cppjieba dependency AGENTS are outside these files."
+  },
+  "input_identity": {
+    "logged_vocabulary_path": "/storage/emulated/0/Android/data/com.osfans.trime.debug/files/shared/essay.txt",
+    "logged_dictionary_path": "/storage/emulated/0/Android/data/com.osfans.trime.debug/files/shared/luna_pinyin.dict.yaml",
+    "essay_source": {
+      "path": "/home/xumin/Public/Trime/app/data/rime/essay/essay.txt",
+      "sha256": "196d508a9bb12fc6d711eed83f5ddc4d5c2d382d92d15b4e51175e4d3802cfab",
+      "bytes": 5887784
+    },
+    "luna_dictionary_source": {
+      "path": "/home/xumin/Public/Trime/app/data/rime/luna-pinyin/luna_pinyin.dict.yaml",
+      "sha256": "270b0c6879436d7b0b606aa684507ea7e173c62b6d5df3966804637872d520fd",
+      "bytes": 891247
+    },
+    "APKs": {
+      "baseline": {
+        "identity": {
+          "path": "/home/xumin/Public/Trime/build/issue-fixes-20261028/device-apks/baseline-identity.json",
+          "sha256": "20e7f8ab1302c509236c4bcebb19929f579086c2c2a70ea962382ab210e9ef5a",
+          "bytes": 98263
+        },
+        "original_apk": {
+          "path": "/home/xumin/Public/Trime/build/issue-fixes-20261028/voice/com.osfans.trime-v3.3.12-105-ga047f747-x86_64-debug.apk",
+          "sha256": "ee184fb76ad54f17e628f0446a78fa874740b4241b5e9577c2cbd4c77a731343",
+          "bytes": 20158643
+        },
+        "diagnostic_apk": {
+          "path": "/home/xumin/Public/Trime/build/issue-fixes-20261028/device-apks/baseline-diagnostic.apk",
+          "sha256": "7e47545d6c7a2255546389b38cb4365229fd43b53202465f1243b4bd9fa3eb55",
+          "bytes": 20158126
+        },
+        "entry_sha256": {
+          "assets/shared/essay.txt": "196d508a9bb12fc6d711eed83f5ddc4d5c2d382d92d15b4e51175e4d3802cfab",
+          "assets/shared/luna_pinyin.dict.yaml": "270b0c6879436d7b0b606aa684507ea7e173c62b6d5df3966804637872d520fd",
+          "lib/x86_64/librime_jni.so": "0a78e4344568e6033b64ec80ba8c57988349cd1f4ec915647d6ffdfaca39b44f"
+        }
+      },
+      "candidate": {
+        "identity": {
+          "path": "/home/xumin/Public/Trime/build/issue-fixes-20261028/device-apks/candidate-identity.json",
+          "sha256": "f33a009ab74d6f2534942242f44994679beae6123654b0255108ae462e06b766",
+          "bytes": 98336
+        },
+        "original_apk": {
+          "path": "/home/xumin/Public/Trime/build/issue-fixes-20261028/cloud/pr-2198/ubuntu-original/extracted/com.osfans.trime-v3.3.12-107-gc4a09b86-x86_64-debug.apk",
+          "sha256": "984abcf1f90c657864186d2c0cd94f4006f282a73c8099b055fa4d1b3e5426aa",
+          "bytes": 20158770
+        },
+        "diagnostic_apk": {
+          "path": "/home/xumin/Public/Trime/build/issue-fixes-20261028/device-apks/candidate-diagnostic.apk",
+          "sha256": "4699567c44d3259941013a06db18723c738718b82fec43f05a93274db81e1a96",
+          "bytes": 20158126
+        },
+        "entry_sha256": {
+          "assets/shared/essay.txt": "196d508a9bb12fc6d711eed83f5ddc4d5c2d382d92d15b4e51175e4d3802cfab",
+          "assets/shared/luna_pinyin.dict.yaml": "270b0c6879436d7b0b606aa684507ea7e173c62b6d5df3966804637872d520fd",
+          "lib/x86_64/librime_jni.so": "0a78e4344568e6033b64ec80ba8c57988349cd1f4ec915647d6ffdfaca39b44f"
+        }
+      },
+      "storage": {
+        "identity": {
+          "path": "/home/xumin/Public/Trime/build/issue-fixes-20261028/device-apks/storage-identity.json",
+          "sha256": "b7188d20e7084f00ffe95ae1ba3e09ab6746a3054fef6a25ab76a8e05a3391c6",
+          "bytes": 98326
+        },
+        "original_apk": {
+          "path": "/home/xumin/Public/Trime/build/issue-fixes-20261028/cloud/pr-2199/ubuntu-original/extracted/com.osfans.trime-v3.3.12-107-g2c30ba31-x86_64-debug.apk",
+          "sha256": "575e94a9cd5f9d8b637ddde12d76ae7485f47076b071a9a1e31f48c7ff078293",
+          "bytes": 20162103
+        },
+        "diagnostic_apk": {
+          "path": "/home/xumin/Public/Trime/build/issue-fixes-20261028/device-apks/storage-diagnostic.apk",
+          "sha256": "b5e02b220032199f83d13de4899039ac420ce610379059739412a108ee2302fb",
+          "bytes": 20158126
+        },
+        "entry_sha256": {
+          "assets/shared/essay.txt": "196d508a9bb12fc6d711eed83f5ddc4d5c2d382d92d15b4e51175e4d3802cfab",
+          "assets/shared/luna_pinyin.dict.yaml": "270b0c6879436d7b0b606aa684507ea7e173c62b6d5df3966804637872d520fd",
+          "lib/x86_64/librime_jni.so": "0a78e4344568e6033b64ec80ba8c57988349cd1f4ec915647d6ffdfaca39b44f"
+        }
+      },
+      "voice": {
+        "identity": {
+          "path": "/home/xumin/Public/Trime/build/issue-fixes-20261028/device-apks/voice-identity.json",
+          "sha256": "5be91aa3bf33e5bf50606ef190575347cb33978e43e48107615b108fc13c2a56",
+          "bytes": 98316
+        },
+        "original_apk": {
+          "path": "/home/xumin/Public/Trime/build/issue-fixes-20261028/cloud/pr-2200/ubuntu-original/extracted/com.osfans.trime-v3.3.12-107-g9f1eed59-x86_64-debug.apk",
+          "sha256": "ee8845f16c5ca3938168fb50f8a33ff29ccb7d644f20cb6183970b2255b9030a",
+          "bytes": 20158687
+        },
+        "diagnostic_apk": {
+          "path": "/home/xumin/Public/Trime/build/issue-fixes-20261028/device-apks/voice-diagnostic.apk",
+          "sha256": "e97c08c5614496654dd4a076e8c4d6a602ce9182db0b556a2a965f30f29565ae",
+          "bytes": 20158126
+        },
+        "entry_sha256": {
+          "assets/shared/essay.txt": "196d508a9bb12fc6d711eed83f5ddc4d5c2d382d92d15b4e51175e4d3802cfab",
+          "assets/shared/luna_pinyin.dict.yaml": "270b0c6879436d7b0b606aa684507ea7e173c62b6d5df3966804637872d520fd",
+          "lib/x86_64/librime_jni.so": "0a78e4344568e6033b64ec80ba8c57988349cd1f4ec915647d6ffdfaca39b44f"
+        }
+      }
+    },
+    "baseline_and_all_three_patched_APKs_have_identical_relevant_assets_and_native_library": true,
+    "baseline_proof": "All four APKs have byte-identical essay, luna dictionary and librime_jni.so and baseline gitlinks. Exact source-model reproduction proves this rejection condition predates all first-batch patches. This is input/code equivalence, not a completed baseline-runtime replay.",
+    "device_hash_limitation": "No separate hash of deployed shared files was captured. Attribution combines logged paths, matching bundled/source bytes, exact 70803 entry / 424 syllable counts and exact 193-phrase failure-set equality."
+  },
+  "static_model": {
+    "script": {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch2-20261028/analyze-encoding.py",
+      "sha256": "fb484d51c0f35d8d0455742eb5dad9bab5d4eed6afbde2b0e2b88ab34357ac70",
+      "bytes": 15619
+    },
+    "method": "Parse dictionary codes, vocabulary weights and 5% filtering, then model ScriptEncoder reachability. Every learned word is one Unicode character and each retains a reading; therefore a non-explicit essay term fails iff length>32 or any character is unmapped.",
+    "essay_rows": 442720,
+    "essay_unique_terms": 442717,
+    "explicit_dictionary_rows": 70803,
+    "explicit_unique_texts": 62155,
+    "single_syllable_mapped_characters": 41369,
+    "characters_losing_all_readings_to_weight_filter": 0,
+    "syllables": 424,
+    "predicted_failures": 193,
+    "observed_unique_failures": 193,
+    "exact_set_equality": true,
+    "predicted_not_logged": [],
+    "logged_not_predicted": [],
+    "phrase_set_sha256": "46e37b2940640457a784d86ea3fadf84e72f6cd130112e669956c267008682b5",
+    "pass1_entries": 70803,
+    "pass2_entries": 70803,
+    "pass2_encode_queue": 0,
+    "pass3_entries": 498737,
+    "dictionary_ready_observed": true,
+    "groups": {
+      "middle_dot": 164,
+      "fullwidth_mixed_script": 29
+    },
+    "unmapped_characters": [
+      {
+        "character": "·",
+        "codepoint": "U+00B7",
+        "unicode_name": "MIDDLE DOT",
+        "affected_terms": 164
+      },
+      {
+        "character": "Ｂ",
+        "codepoint": "U+FF22",
+        "unicode_name": "FULLWIDTH LATIN CAPITAL LETTER B",
+        "affected_terms": 7
+      },
+      {
+        "character": "Ｌ",
+        "codepoint": "U+FF2C",
+        "unicode_name": "FULLWIDTH LATIN CAPITAL LETTER L",
+        "affected_terms": 1
+      },
+      {
+        "character": "Ｋ",
+        "codepoint": "U+FF2B",
+        "unicode_name": "FULLWIDTH LATIN CAPITAL LETTER K",
+        "affected_terms": 3
+      },
+      {
+        "character": "Ｏ",
+        "codepoint": "U+FF2F",
+        "unicode_name": "FULLWIDTH LATIN CAPITAL LETTER O",
+        "affected_terms": 1
+      },
+      {
+        "character": "１",
+        "codepoint": "U+FF11",
+        "unicode_name": "FULLWIDTH DIGIT ONE",
+        "affected_terms": 1
+      },
+      {
+        "character": "５",
+        "codepoint": "U+FF15",
+        "unicode_name": "FULLWIDTH DIGIT FIVE",
+        "affected_terms": 1
+      },
+      {
+        "character": "Ｑ",
+        "codepoint": "U+FF31",
+        "unicode_name": "FULLWIDTH LATIN CAPITAL LETTER Q",
+        "affected_terms": 2
+      },
+      {
+        "character": "Ａ",
+        "codepoint": "U+FF21",
+        "unicode_name": "FULLWIDTH LATIN CAPITAL LETTER A",
+        "affected_terms": 5
+      },
+      {
+        "character": "Ｃ",
+        "codepoint": "U+FF23",
+        "unicode_name": "FULLWIDTH LATIN CAPITAL LETTER C",
+        "affected_terms": 1
+      },
+      {
+        "character": "Ｄ",
+        "codepoint": "U+FF24",
+        "unicode_name": "FULLWIDTH LATIN CAPITAL LETTER D",
+        "affected_terms": 2
+      },
+      {
+        "character": "Ｎ",
+        "codepoint": "U+FF2E",
+        "unicode_name": "FULLWIDTH LATIN CAPITAL LETTER N",
+        "affected_terms": 2
+      },
+      {
+        "character": "Ｇ",
+        "codepoint": "U+FF27",
+        "unicode_name": "FULLWIDTH LATIN CAPITAL LETTER G",
+        "affected_terms": 1
+      },
+      {
+        "character": "Ｔ",
+        "codepoint": "U+FF34",
+        "unicode_name": "FULLWIDTH LATIN CAPITAL LETTER T",
+        "affected_terms": 1
+      },
+      {
+        "character": "Ｕ",
+        "codepoint": "U+FF35",
+        "unicode_name": "FULLWIDTH LATIN CAPITAL LETTER U",
+        "affected_terms": 3
+      },
+      {
+        "character": "Ｓ",
+        "codepoint": "U+FF33",
+        "unicode_name": "FULLWIDTH LATIN CAPITAL LETTER S",
+        "affected_terms": 2
+      },
+      {
+        "character": "Ｖ",
+        "codepoint": "U+FF36",
+        "unicode_name": "FULLWIDTH LATIN CAPITAL LETTER V",
+        "affected_terms": 1
+      },
+      {
+        "character": "Ｘ",
+        "codepoint": "U+FF38",
+        "unicode_name": "FULLWIDTH LATIN CAPITAL LETTER X",
+        "affected_terms": 2
+      },
+      {
+        "character": "ｅ",
+        "codepoint": "U+FF45",
+        "unicode_name": "FULLWIDTH LATIN SMALL LETTER E",
+        "affected_terms": 1
+      },
+      {
+        "character": "ｋ",
+        "codepoint": "U+FF4B",
+        "unicode_name": "FULLWIDTH LATIN SMALL LETTER K",
+        "affected_terms": 1
+      },
+      {
+        "character": "ｎ",
+        "codepoint": "U+FF4E",
+        "unicode_name": "FULLWIDTH LATIN SMALL LETTER N",
+        "affected_terms": 1
+      }
+    ]
+  },
+  "validity": {
+    "zero_frequency_is_valid": "PresetVocabulary keeps zero at the default minimum. DictCompiler uses DBL_EPSILON for valid zero weights. Missing phonetic mappings do not imply invalid Unicode.",
+    "existing_no_dot_aliases": 136,
+    "missing_no_dot_aliases": 28,
+    "other_duplicate_essay_keys": {
+      "簽合同": [
+        {
+          "line": 306364,
+          "weight": "1103",
+          "text": "簽合同\t1103"
+        },
+        {
+          "line": 306365,
+          "weight": "1103",
+          "text": "簽合同\t1103"
+        }
+      ],
+      "簽押": [
+        {
+          "line": 306410,
+          "weight": "0",
+          "text": "簽押\t0"
+        },
+        {
+          "line": 306411,
+          "weight": "434",
+          "text": "簽押\t434"
+        }
+      ],
+      "軟麪筋": [
+        {
+          "line": 379695,
+          "weight": "0",
+          "text": "軟麪筋\t0"
+        },
+        {
+          "line": 379696,
+          "weight": "66",
+          "text": "軟麪筋\t66"
+        }
+      ]
+    },
+    "duplicate_note": "Three unrelated duplicate keys exist. TextDb retains the last weight; none is one of193 rejected spellings.",
+    "all193_valid_utf8": true,
+    "all193_present_verbatim_in_essay": true,
+    "all193_have_zero_frequency": true
+  },
+  "PR_recommendation": {
+    "decision": "Do not create an independent Trime PR solely to hide these warnings; preserve this as a bundled default-table coverage limitation.",
+    "owners": [
+      "rime/rime-luna-pinyin: explicit phrase pronunciations",
+      "rime/librime: optional clearer missing-mapping diagnostics",
+      "rime/rime-essay: data review, not automatic deletion of valid mixed-script terms"
+    ],
+    "possible_narrow_data_PR": "An independently reviewed rime-luna-pinyin data PR could add explicit, linguistically verified codes for a few common dotted names. Exact collection membership then bypasses preset re-encoding. This repairs selected real candidate coverage, not all 193 terms; mixed Latin/digit pronunciation policy needs maintainer agreement.",
+    "reject_min_phrase_weight_1": {
+      "effective_zero_frequency_terms": 66523,
+      "explicit_zero_frequency_terms": 12115,
+      "additional_currently_generatable_preset_terms_lost": 54215,
+      "reason": "Filtering all zero-frequency preset terms to eliminate 193 warnings also removes these otherwise generatable terms.",
+      "raw_row_count_correction": "An earlier progress count 54217 included two zero rows later overwritten by positive duplicate weights. Source-equivalent effective-key count is 54215."
+    },
+    "reject_generic_normalization": "NFKC changes output spelling and still leaves unmapped ASCII letters/digits; dropping middle dots changes candidate text. Neither is a proven generic fix.",
+    "reject_severity_only_fix": "Demoting or deleting WARNING merely hides skipped spellings.",
+    "not_executed_future_check": "In an isolated fixture compile pinned luna inputs, query a dotted term and plain alias, add one reviewed explicit code and verify the exact spelling appears. Retain valid zero-frequency Chinese terms as controls. No such build/runtime check was executed here."
+  },
+  "warning_details": [
+    {
+      "log_line": 546163,
+      "device_timestamp": "10-28 10:32:07.584",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "亞歷山大·杜布切克",
+      "raw_log": "10-28 10:32:07.584  2362  2478 W rime.trime: Encode failure: '亞歷山大·杜布切克'.",
+      "essay_entry": {
+        "line": 24698,
+        "weight": "0",
+        "text": "亞歷山大·杜布切克\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "亞歷山大杜布切克",
+        "essay_entry": {
+          "line": 24702,
+          "weight": "0",
+          "text": "亞歷山大杜布切克\t0"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546164,
+      "device_timestamp": "10-28 10:32:07.590",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "亞當·斯密",
+      "raw_log": "10-28 10:32:07.590  2362  2478 W rime.trime: Encode failure: '亞當·斯密'.",
+      "essay_entry": {
+        "line": 24774,
+        "weight": "0",
+        "text": "亞當·斯密\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "亞當斯密",
+        "essay_entry": {
+          "line": 24779,
+          "weight": "513",
+          "text": "亞當斯密\t513"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546165,
+      "device_timestamp": "10-28 10:32:07.595",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "亞西爾·阿拉法特",
+      "raw_log": "10-28 10:32:07.595  2362  2478 W rime.trime: Encode failure: '亞西爾·阿拉法特'.",
+      "essay_entry": {
+        "line": 24840,
+        "weight": "0",
+        "text": "亞西爾·阿拉法特\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "亞西爾阿拉法特",
+        "essay_entry": {
+          "line": 24841,
+          "weight": "66",
+          "text": "亞西爾阿拉法特\t66"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546166,
+      "device_timestamp": "10-28 10:32:08.048",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "伊娃·門德斯",
+      "raw_log": "10-28 10:32:08.048  2362  2478 W rime.trime: Encode failure: '伊娃·門德斯'.",
+      "essay_entry": {
+        "line": 30793,
+        "weight": "0",
+        "text": "伊娃·門德斯\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "伊娃門德斯",
+        "essay_entry": {
+          "line": 30794,
+          "weight": "285",
+          "text": "伊娃門德斯\t285"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546167,
+      "device_timestamp": "10-28 10:32:08.082",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "伯納斯·李",
+      "raw_log": "10-28 10:32:08.082  2362  2478 W rime.trime: Encode failure: '伯納斯·李'.",
+      "essay_entry": {
+        "line": 31458,
+        "weight": "0",
+        "text": "伯納斯·李\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "伯納斯李",
+        "essay_entry": {
+          "line": 31459,
+          "weight": "193",
+          "text": "伯納斯李\t193"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546168,
+      "device_timestamp": "10-28 10:32:08.102",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "伽利略·伽利雷",
+      "raw_log": "10-28 10:32:08.102  2362  2478 W rime.trime: Encode failure: '伽利略·伽利雷'.",
+      "essay_entry": {
+        "line": 31809,
+        "weight": "0",
+        "text": "伽利略·伽利雷\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "伽利略伽利雷",
+        "essay_entry": {
+          "line": 31810,
+          "weight": "1",
+          "text": "伽利略伽利雷\t1"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546205,
+      "device_timestamp": "10-28 10:32:08.739",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "傑克·倫敦",
+      "raw_log": "10-28 10:32:08.739  2362  2478 W rime.trime: Encode failure: '傑克·倫敦'.",
+      "essay_entry": {
+        "line": 42245,
+        "weight": "0",
+        "text": "傑克·倫敦\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "傑克倫敦",
+        "essay_entry": {
+          "line": 42246,
+          "weight": "395",
+          "text": "傑克倫敦\t395"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546206,
+      "device_timestamp": "10-28 10:32:08.742",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "傑夫·金尼",
+      "raw_log": "10-28 10:32:08.742  2362  2478 W rime.trime: Encode failure: '傑夫·金尼'.",
+      "essay_entry": {
+        "line": 42274,
+        "weight": "0",
+        "text": "傑夫·金尼\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "傑夫金尼",
+        "essay_entry": null,
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546207,
+      "device_timestamp": "10-28 10:32:08.743",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "傑奎琳·肯尼迪",
+      "raw_log": "10-28 10:32:08.743  2362  2478 W rime.trime: Encode failure: '傑奎琳·肯尼迪'.",
+      "essay_entry": {
+        "line": 42276,
+        "weight": "0",
+        "text": "傑奎琳·肯尼迪\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "傑奎琳肯尼迪",
+        "essay_entry": {
+          "line": 42277,
+          "weight": "275",
+          "text": "傑奎琳肯尼迪\t275"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546208,
+      "device_timestamp": "10-28 10:32:08.745",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "傑瑞·宋飛",
+      "raw_log": "10-28 10:32:08.745  2362  2478 W rime.trime: Encode failure: '傑瑞·宋飛'.",
+      "essay_entry": {
+        "line": 42301,
+        "weight": "0",
+        "text": "傑瑞·宋飛\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "傑瑞宋飛",
+        "essay_entry": {
+          "line": 42302,
+          "weight": "112",
+          "text": "傑瑞宋飛\t112"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546209,
+      "device_timestamp": "10-28 10:32:08.746",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "傑西·歐文斯",
+      "raw_log": "10-28 10:32:08.746  2362  2478 W rime.trime: Encode failure: '傑西·歐文斯'.",
+      "essay_entry": {
+        "line": 42309,
+        "weight": "0",
+        "text": "傑西·歐文斯\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "傑西歐文斯",
+        "essay_entry": {
+          "line": 42313,
+          "weight": "246",
+          "text": "傑西歐文斯\t246"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546210,
+      "device_timestamp": "10-28 10:32:08.746",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "傑西卡·艾爾芭",
+      "raw_log": "10-28 10:32:08.746  2362  2478 W rime.trime: Encode failure: '傑西卡·艾爾芭'.",
+      "essay_entry": {
+        "line": 42311,
+        "weight": "0",
+        "text": "傑西卡·艾爾芭\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "傑西卡艾爾芭",
+        "essay_entry": {
+          "line": 42312,
+          "weight": "236",
+          "text": "傑西卡艾爾芭\t236"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546212,
+      "device_timestamp": "10-28 10:32:08.806",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "傻Ｂ",
+      "raw_log": "10-28 10:32:08.806  2362  2478 W rime.trime: Encode failure: '傻Ｂ'.",
+      "essay_entry": {
+        "line": 43425,
+        "weight": "0",
+        "text": "傻Ｂ\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "Ｂ",
+          "codepoint": "U+FF22",
+          "unicode_name": "FULLWIDTH LATIN CAPITAL LETTER B"
+        }
+      ],
+      "group": "fullwidth_mixed_script",
+      "valid_utf8": true,
+      "model_encode_success": false
+    },
+    {
+      "log_line": 546213,
+      "device_timestamp": "10-28 10:32:08.849",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "儒勒·凡爾納",
+      "raw_log": "10-28 10:32:08.849  2362  2478 W rime.trime: Encode failure: '儒勒·凡爾納'.",
+      "essay_entry": {
+        "line": 44345,
+        "weight": "0",
+        "text": "儒勒·凡爾納\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "儒勒凡爾納",
+        "essay_entry": {
+          "line": 44346,
+          "weight": "279",
+          "text": "儒勒凡爾納\t279"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546214,
+      "device_timestamp": "10-28 10:32:08.971",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "克里斯汀·貝爾",
+      "raw_log": "10-28 10:32:08.971  2362  2478 W rime.trime: Encode failure: '克里斯汀·貝爾'.",
+      "essay_entry": {
+        "line": 46683,
+        "weight": "0",
+        "text": "克里斯汀·貝爾\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "克里斯汀貝爾",
+        "essay_entry": {
+          "line": 46684,
+          "weight": "282",
+          "text": "克里斯汀貝爾\t282"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546215,
+      "device_timestamp": "10-28 10:32:09.443",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "凱茜·弗里曼",
+      "raw_log": "10-28 10:32:09.443  2362  2478 W rime.trime: Encode failure: '凱茜·弗里曼'.",
+      "essay_entry": {
+        "line": 55518,
+        "weight": "0",
+        "text": "凱茜·弗里曼\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "凱茜弗里曼",
+        "essay_entry": {
+          "line": 55519,
+          "weight": "66",
+          "text": "凱茜弗里曼\t66"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546216,
+      "device_timestamp": "10-28 10:32:09.595",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "列夫·托爾斯泰",
+      "raw_log": "10-28 10:32:09.595  2362  2478 W rime.trime: Encode failure: '列夫·托爾斯泰'.",
+      "essay_entry": {
+        "line": 58262,
+        "weight": "0",
+        "text": "列夫·托爾斯泰\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "列夫托爾斯泰",
+        "essay_entry": {
+          "line": 58263,
+          "weight": "380",
+          "text": "列夫托爾斯泰\t380"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546230,
+      "device_timestamp": "10-28 10:32:10.039",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "動Ｌ",
+      "raw_log": "10-28 10:32:10.039  2362  2478 W rime.trime: Encode failure: '動Ｌ'.",
+      "essay_entry": {
+        "line": 65185,
+        "weight": "0",
+        "text": "動Ｌ\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "Ｌ",
+          "codepoint": "U+FF2C",
+          "unicode_name": "FULLWIDTH LATIN CAPITAL LETTER L"
+        }
+      ],
+      "group": "fullwidth_mixed_script",
+      "valid_utf8": true,
+      "model_encode_success": false
+    },
+    {
+      "log_line": 546231,
+      "device_timestamp": "10-28 10:32:10.196",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "北萊茵·威斯特法倫州",
+      "raw_log": "10-28 10:32:10.196  2362  2478 W rime.trime: Encode failure: '北萊茵·威斯特法倫州'.",
+      "essay_entry": {
+        "line": 67226,
+        "weight": "0",
+        "text": "北萊茵·威斯特法倫州\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "北萊茵威斯特法倫州",
+        "essay_entry": {
+          "line": 67227,
+          "weight": "228",
+          "text": "北萊茵威斯特法倫州\t228"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546232,
+      "device_timestamp": "10-28 10:32:10.232",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "十·一",
+      "raw_log": "10-28 10:32:10.232  2362  2478 W rime.trime: Encode failure: '十·一'.",
+      "essay_entry": {
+        "line": 67761,
+        "weight": "0",
+        "text": "十·一\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "十一",
+        "essay_entry": {
+          "line": 67762,
+          "weight": "4026",
+          "text": "十一\t4026"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546233,
+      "device_timestamp": "10-28 10:32:10.523",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "卡拉ＯＫ",
+      "raw_log": "10-28 10:32:10.523  2362  2478 W rime.trime: Encode failure: '卡拉ＯＫ'.",
+      "essay_entry": {
+        "line": 71307,
+        "weight": "0",
+        "text": "卡拉ＯＫ\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "Ｋ",
+          "codepoint": "U+FF2B",
+          "unicode_name": "FULLWIDTH LATIN CAPITAL LETTER K"
+        },
+        {
+          "character": "Ｏ",
+          "codepoint": "U+FF2F",
+          "unicode_name": "FULLWIDTH LATIN CAPITAL LETTER O"
+        }
+      ],
+      "group": "fullwidth_mixed_script",
+      "valid_utf8": true,
+      "model_encode_success": false
+    },
+    {
+      "log_line": 546234,
+      "device_timestamp": "10-28 10:32:10.525",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "卡斯蒂利亞·萊昂",
+      "raw_log": "10-28 10:32:10.525  2362  2478 W rime.trime: Encode failure: '卡斯蒂利亞·萊昂'.",
+      "essay_entry": {
+        "line": 71319,
+        "weight": "0",
+        "text": "卡斯蒂利亞·萊昂\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "卡斯蒂利亞萊昂",
+        "essay_entry": {
+          "line": 71320,
+          "weight": "42",
+          "text": "卡斯蒂利亞萊昂\t42"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546235,
+      "device_timestamp": "10-28 10:32:10.530",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "卡爾·馬克思",
+      "raw_log": "10-28 10:32:10.530  2362  2478 W rime.trime: Encode failure: '卡爾·馬克思'.",
+      "essay_entry": {
+        "line": 71352,
+        "weight": "0",
+        "text": "卡爾·馬克思\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "卡爾馬克思",
+        "essay_entry": {
+          "line": 71367,
+          "weight": "305",
+          "text": "卡爾馬克思\t305"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546251,
+      "device_timestamp": "10-28 10:32:12.135",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "古斯塔夫·多雷",
+      "raw_log": "10-28 10:32:12.135  2362  2478 W rime.trime: Encode failure: '古斯塔夫·多雷'.",
+      "essay_entry": {
+        "line": 76359,
+        "weight": "0",
+        "text": "古斯塔夫·多雷\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "古斯塔夫多雷",
+        "essay_entry": {
+          "line": 76360,
+          "weight": "158",
+          "text": "古斯塔夫多雷\t158"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546256,
+      "device_timestamp": "10-28 10:32:13.252",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "史蒂芬·哈珀",
+      "raw_log": "10-28 10:32:13.252  2362  2478 W rime.trime: Encode failure: '史蒂芬·哈珀'.",
+      "essay_entry": {
+        "line": 79035,
+        "weight": "0",
+        "text": "史蒂芬·哈珀\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "史蒂芬哈珀",
+        "essay_entry": null,
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546296,
+      "device_timestamp": "10-28 10:32:14.668",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "哈克貝利·芬歷險記",
+      "raw_log": "10-28 10:32:14.668  2362  2478 W rime.trime: Encode failure: '哈克貝利·芬歷險記'.",
+      "essay_entry": {
+        "line": 86044,
+        "weight": "0",
+        "text": "哈克貝利·芬歷險記\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "哈克貝利芬歷險記",
+        "essay_entry": {
+          "line": 86045,
+          "weight": "231",
+          "text": "哈克貝利芬歷險記\t231"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546298,
+      "device_timestamp": "10-28 10:32:14.669",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "哈利·波特",
+      "raw_log": "10-28 10:32:14.669  2362  2478 W rime.trime: Encode failure: '哈利·波特'.",
+      "essay_entry": {
+        "line": 86048,
+        "weight": "0",
+        "text": "哈利·波特\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "哈利波特",
+        "essay_entry": {
+          "line": 86051,
+          "weight": "1315",
+          "text": "哈利波特\t1315"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546299,
+      "device_timestamp": "10-28 10:32:14.691",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "哈莉·貝瑞",
+      "raw_log": "10-28 10:32:14.691  2362  2478 W rime.trime: Encode failure: '哈莉·貝瑞'.",
+      "essay_entry": {
+        "line": 86199,
+        "weight": "0",
+        "text": "哈莉·貝瑞\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "哈莉貝瑞",
+        "essay_entry": {
+          "line": 86200,
+          "weight": "373",
+          "text": "哈莉貝瑞\t373"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546300,
+      "device_timestamp": "10-28 10:32:14.785",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "唐納德·川普",
+      "raw_log": "10-28 10:32:14.785  2362  2478 W rime.trime: Encode failure: '唐納德·川普'.",
+      "essay_entry": {
+        "line": 87104,
+        "weight": "0",
+        "text": "唐納德·川普\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "唐納德川普",
+        "essay_entry": {
+          "line": 87105,
+          "weight": "97",
+          "text": "唐納德川普\t97"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546301,
+      "device_timestamp": "10-28 10:32:15.083",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "喬修亞·吉爾菲艾斯",
+      "raw_log": "10-28 10:32:15.083  2362  2478 W rime.trime: Encode failure: '喬修亞·吉爾菲艾斯'.",
+      "essay_entry": {
+        "line": 90053,
+        "weight": "0",
+        "text": "喬修亞·吉爾菲艾斯\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "喬修亞吉爾菲艾斯",
+        "essay_entry": null,
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546302,
+      "device_timestamp": "10-28 10:32:15.087",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "喬治·奧威爾",
+      "raw_log": "10-28 10:32:15.087  2362  2478 W rime.trime: Encode failure: '喬治·奧威爾'.",
+      "essay_entry": {
+        "line": 90093,
+        "weight": "0",
+        "text": "喬治·奧威爾\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "喬治奧威爾",
+        "essay_entry": {
+          "line": 90106,
+          "weight": "295",
+          "text": "喬治奧威爾\t295"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546303,
+      "device_timestamp": "10-28 10:32:15.087",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "喬治·布希",
+      "raw_log": "10-28 10:32:15.087  2362  2478 W rime.trime: Encode failure: '喬治·布希'.",
+      "essay_entry": {
+        "line": 90094,
+        "weight": "0",
+        "text": "喬治·布希\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "喬治布希",
+        "essay_entry": null,
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546304,
+      "device_timestamp": "10-28 10:32:15.087",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "喬治·索羅斯",
+      "raw_log": "10-28 10:32:15.087  2362  2478 W rime.trime: Encode failure: '喬治·索羅斯'.",
+      "essay_entry": {
+        "line": 90095,
+        "weight": "0",
+        "text": "喬治·索羅斯\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "喬治索羅斯",
+        "essay_entry": {
+          "line": 90108,
+          "weight": "304",
+          "text": "喬治索羅斯\t304"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546305,
+      "device_timestamp": "10-28 10:32:15.088",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "喬治·華盛頓",
+      "raw_log": "10-28 10:32:15.088  2362  2478 W rime.trime: Encode failure: '喬治·華盛頓'.",
+      "essay_entry": {
+        "line": 90096,
+        "weight": "0",
+        "text": "喬治·華盛頓\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "喬治華盛頓",
+        "essay_entry": {
+          "line": 90109,
+          "weight": "415",
+          "text": "喬治華盛頓\t415"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546306,
+      "device_timestamp": "10-28 10:32:15.292",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "噶拉·多傑·仁波切",
+      "raw_log": "10-28 10:32:15.292  2362  2478 W rime.trime: Encode failure: '噶拉·多傑·仁波切'.",
+      "essay_entry": {
+        "line": 92066,
+        "weight": "0",
+        "text": "噶拉·多傑·仁波切\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "噶拉多傑仁波切",
+        "essay_entry": {
+          "line": 92067,
+          "weight": "0",
+          "text": "噶拉多傑仁波切\t0"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546323,
+      "device_timestamp": "10-28 10:32:16.466",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "埃克托·柏遼茲",
+      "raw_log": "10-28 10:32:16.466  2362  2478 W rime.trime: Encode failure: '埃克托·柏遼茲'.",
+      "essay_entry": {
+        "line": 101288,
+        "weight": "0",
+        "text": "埃克托·柏遼茲\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "埃克托柏遼茲",
+        "essay_entry": {
+          "line": 101289,
+          "weight": "0",
+          "text": "埃克托柏遼茲\t0"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546324,
+      "device_timestamp": "10-28 10:32:16.470",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "埃德加·愛倫·坡",
+      "raw_log": "10-28 10:32:16.470  2362  2478 W rime.trime: Encode failure: '埃德加·愛倫·坡'.",
+      "essay_entry": {
+        "line": 101325,
+        "weight": "0",
+        "text": "埃德加·愛倫·坡\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "埃德加愛倫坡",
+        "essay_entry": {
+          "line": 101327,
+          "weight": "166",
+          "text": "埃德加愛倫坡\t166"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546325,
+      "device_timestamp": "10-28 10:32:16.470",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "埃德加·斯諾",
+      "raw_log": "10-28 10:32:16.470  2362  2478 W rime.trime: Encode failure: '埃德加·斯諾'.",
+      "essay_entry": {
+        "line": 101326,
+        "weight": "0",
+        "text": "埃德加·斯諾\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "埃德加斯諾",
+        "essay_entry": {
+          "line": 101328,
+          "weight": "266",
+          "text": "埃德加斯諾\t266"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546326,
+      "device_timestamp": "10-28 10:32:16.474",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "埃爾維斯·普雷斯利",
+      "raw_log": "10-28 10:32:16.474  2362  2478 W rime.trime: Encode failure: '埃爾維斯·普雷斯利'.",
+      "essay_entry": {
+        "line": 101366,
+        "weight": "0",
+        "text": "埃爾維斯·普雷斯利\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "埃爾維斯普雷斯利",
+        "essay_entry": {
+          "line": 101367,
+          "weight": "182",
+          "text": "埃爾維斯普雷斯利\t182"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546330,
+      "device_timestamp": "10-28 10:32:16.731",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "夏洛特·勃良特",
+      "raw_log": "10-28 10:32:16.731  2362  2478 W rime.trime: Encode failure: '夏洛特·勃良特'.",
+      "essay_entry": {
+        "line": 105744,
+        "weight": "0",
+        "text": "夏洛特·勃良特\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "夏洛特勃良特",
+        "essay_entry": null,
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546364,
+      "device_timestamp": "10-28 10:32:17.157",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "大衛·米利班德",
+      "raw_log": "10-28 10:32:17.157  2362  2478 W rime.trime: Encode failure: '大衛·米利班德'.",
+      "essay_entry": {
+        "line": 111185,
+        "weight": "0",
+        "text": "大衛·米利班德\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "大衛米利班德",
+        "essay_entry": null,
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546365,
+      "device_timestamp": "10-28 10:32:17.158",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "大衛·艾登堡",
+      "raw_log": "10-28 10:32:17.158  2362  2478 W rime.trime: Encode failure: '大衛·艾登堡'.",
+      "essay_entry": {
+        "line": 111186,
+        "weight": "0",
+        "text": "大衛·艾登堡\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "大衛艾登堡",
+        "essay_entry": {
+          "line": 111191,
+          "weight": "215",
+          "text": "大衛艾登堡\t215"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546367,
+      "device_timestamp": "10-28 10:32:17.882",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "妮可·基德曼",
+      "raw_log": "10-28 10:32:17.882  2362  2478 W rime.trime: Encode failure: '妮可·基德曼'.",
+      "essay_entry": {
+        "line": 119384,
+        "weight": "0",
+        "text": "妮可·基德曼\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "妮可基德曼",
+        "essay_entry": {
+          "line": 119385,
+          "weight": "472",
+          "text": "妮可基德曼\t472"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546368,
+      "device_timestamp": "10-28 10:32:17.932",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "威廉·福克納",
+      "raw_log": "10-28 10:32:17.932  2362  2478 W rime.trime: Encode failure: '威廉·福克納'.",
+      "essay_entry": {
+        "line": 120159,
+        "weight": "0",
+        "text": "威廉·福克納\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "威廉福克納",
+        "essay_entry": {
+          "line": 120167,
+          "weight": "234",
+          "text": "威廉福克納\t234"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546369,
+      "device_timestamp": "10-28 10:32:17.932",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "威廉·莎士比亞",
+      "raw_log": "10-28 10:32:17.932  2362  2478 W rime.trime: Encode failure: '威廉·莎士比亞'.",
+      "essay_entry": {
+        "line": 120160,
+        "weight": "0",
+        "text": "威廉·莎士比亞\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "威廉莎士比亞",
+        "essay_entry": {
+          "line": 120168,
+          "weight": "268",
+          "text": "威廉莎士比亞\t268"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546381,
+      "device_timestamp": "10-28 10:32:18.236",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "安·海瑟薇",
+      "raw_log": "10-28 10:32:18.236  2362  2478 W rime.trime: Encode failure: '安·海瑟薇'.",
+      "essay_entry": {
+        "line": 124141,
+        "weight": "0",
+        "text": "安·海瑟薇\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "安海瑟薇",
+        "essay_entry": {
+          "line": 124712,
+          "weight": "251",
+          "text": "安海瑟薇\t251"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546382,
+      "device_timestamp": "10-28 10:32:18.265",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "安妮·夏菲維",
+      "raw_log": "10-28 10:32:18.265  2362  2478 W rime.trime: Encode failure: '安妮·夏菲維'.",
+      "essay_entry": {
+        "line": 124439,
+        "weight": "0",
+        "text": "安妮·夏菲維\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "安妮夏菲維",
+        "essay_entry": {
+          "line": 124441,
+          "weight": "97",
+          "text": "安妮夏菲維\t97"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546383,
+      "device_timestamp": "10-28 10:32:18.265",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "安妮·海瑟薇",
+      "raw_log": "10-28 10:32:18.265  2362  2478 W rime.trime: Encode failure: '安妮·海瑟薇'.",
+      "essay_entry": {
+        "line": 124440,
+        "weight": "0",
+        "text": "安妮·海瑟薇\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "安妮海瑟薇",
+        "essay_entry": {
+          "line": 124444,
+          "weight": "457",
+          "text": "安妮海瑟薇\t457"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546385,
+      "device_timestamp": "10-28 10:32:19.235",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "尤利婭·季莫申科",
+      "raw_log": "10-28 10:32:19.235  2362  2478 W rime.trime: Encode failure: '尤利婭·季莫申科'.",
+      "essay_entry": {
+        "line": 135384,
+        "weight": "0",
+        "text": "尤利婭·季莫申科\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "尤利婭季莫申科",
+        "essay_entry": {
+          "line": 135385,
+          "weight": "42",
+          "text": "尤利婭季莫申科\t42"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546386,
+      "device_timestamp": "10-28 10:32:19.249",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "尤里斯·伊文思",
+      "raw_log": "10-28 10:32:19.249  2362  2478 W rime.trime: Encode failure: '尤里斯·伊文思'.",
+      "essay_entry": {
+        "line": 135430,
+        "weight": "0",
+        "text": "尤里斯·伊文思\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "尤里斯伊文思",
+        "essay_entry": {
+          "line": 135431,
+          "weight": "75",
+          "text": "尤里斯伊文思\t75"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546408,
+      "device_timestamp": "10-28 10:32:21.107",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "巴登·符騰堡州",
+      "raw_log": "10-28 10:32:21.107  2362  2478 W rime.trime: Encode failure: '巴登·符騰堡州'.",
+      "essay_entry": {
+        "line": 141900,
+        "weight": "0",
+        "text": "巴登·符騰堡州\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "巴登符騰堡州",
+        "essay_entry": {
+          "line": 141901,
+          "weight": "325",
+          "text": "巴登符騰堡州\t325"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546409,
+      "device_timestamp": "10-28 10:32:21.241",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "布萊特妮·墨菲",
+      "raw_log": "10-28 10:32:21.241  2362  2478 W rime.trime: Encode failure: '布萊特妮·墨菲'.",
+      "essay_entry": {
+        "line": 142670,
+        "weight": "0",
+        "text": "布萊特妮·墨菲\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "布萊特妮墨菲",
+        "essay_entry": {
+          "line": 142671,
+          "weight": "97",
+          "text": "布萊特妮墨菲\t97"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546410,
+      "device_timestamp": "10-28 10:32:21.246",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "布蘭妮·斯皮爾斯",
+      "raw_log": "10-28 10:32:21.246  2362  2478 W rime.trime: Encode failure: '布蘭妮·斯皮爾斯'.",
+      "essay_entry": {
+        "line": 142683,
+        "weight": "0",
+        "text": "布蘭妮·斯皮爾斯\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "布蘭妮斯皮爾斯",
+        "essay_entry": {
+          "line": 142684,
+          "weight": "283",
+          "text": "布蘭妮斯皮爾斯\t283"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546411,
+      "device_timestamp": "10-28 10:32:21.289",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "希拉里·克林頓",
+      "raw_log": "10-28 10:32:21.289  2362  2478 W rime.trime: Encode failure: '希拉里·克林頓'.",
+      "essay_entry": {
+        "line": 142896,
+        "weight": "0",
+        "text": "希拉里·克林頓\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "希拉里克林頓",
+        "essay_entry": {
+          "line": 142897,
+          "weight": "360",
+          "text": "希拉里克林頓\t360"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546412,
+      "device_timestamp": "10-28 10:32:21.292",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "希斯·萊傑",
+      "raw_log": "10-28 10:32:21.292  2362  2478 W rime.trime: Encode failure: '希斯·萊傑'.",
+      "essay_entry": {
+        "line": 142901,
+        "weight": "0",
+        "text": "希斯·萊傑\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "希斯萊傑",
+        "essay_entry": {
+          "line": 142906,
+          "weight": "444",
+          "text": "希斯萊傑\t444"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546413,
+      "device_timestamp": "10-28 10:32:21.316",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "希蒙·佩雷斯",
+      "raw_log": "10-28 10:32:21.316  2362  2478 W rime.trime: Encode failure: '希蒙·佩雷斯'.",
+      "essay_entry": {
+        "line": 142996,
+        "weight": "0",
+        "text": "希蒙·佩雷斯\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "希蒙佩雷斯",
+        "essay_entry": {
+          "line": 142997,
+          "weight": "75",
+          "text": "希蒙佩雷斯\t75"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546414,
+      "device_timestamp": "10-28 10:32:21.339",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "帕麗斯·希爾頓",
+      "raw_log": "10-28 10:32:21.339  2362  2478 W rime.trime: Encode failure: '帕麗斯·希爾頓'.",
+      "essay_entry": {
+        "line": 143100,
+        "weight": "0",
+        "text": "帕麗斯·希爾頓\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "帕麗斯希爾頓",
+        "essay_entry": {
+          "line": 143101,
+          "weight": "426",
+          "text": "帕麗斯希爾頓\t426"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546416,
+      "device_timestamp": "10-28 10:32:21.757",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "庫爾特·瓦爾德海姆",
+      "raw_log": "10-28 10:32:21.757  2362  2478 W rime.trime: Encode failure: '庫爾特·瓦爾德海姆'.",
+      "essay_entry": {
+        "line": 147212,
+        "weight": "0",
+        "text": "庫爾特·瓦爾德海姆\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "庫爾特瓦爾德海姆",
+        "essay_entry": null,
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546417,
+      "device_timestamp": "10-28 10:32:21.767",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "康多莉扎·賴斯",
+      "raw_log": "10-28 10:32:21.767  2362  2478 W rime.trime: Encode failure: '康多莉扎·賴斯'.",
+      "essay_entry": {
+        "line": 147346,
+        "weight": "0",
+        "text": "康多莉扎·賴斯\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "康多莉扎賴斯",
+        "essay_entry": {
+          "line": 147347,
+          "weight": "90",
+          "text": "康多莉扎賴斯\t90"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546419,
+      "device_timestamp": "10-28 10:32:21.946",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "弗洛倫蒂諾·佩雷斯",
+      "raw_log": "10-28 10:32:21.946  2362  2478 W rime.trime: Encode failure: '弗洛倫蒂諾·佩雷斯'.",
+      "essay_entry": {
+        "line": 149757,
+        "weight": "0",
+        "text": "弗洛倫蒂諾·佩雷斯\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "弗洛倫蒂諾佩雷斯",
+        "essay_entry": {
+          "line": 149758,
+          "weight": "97",
+          "text": "弗洛倫蒂諾佩雷斯\t97"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546420,
+      "device_timestamp": "10-28 10:32:21.950",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "弗蘭西斯·培根",
+      "raw_log": "10-28 10:32:21.950  2362  2478 W rime.trime: Encode failure: '弗蘭西斯·培根'.",
+      "essay_entry": {
+        "line": 149783,
+        "weight": "0",
+        "text": "弗蘭西斯·培根\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "弗蘭西斯培根",
+        "essay_entry": {
+          "line": 149784,
+          "weight": "107",
+          "text": "弗蘭西斯培根\t107"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546421,
+      "device_timestamp": "10-28 10:32:21.951",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "弗里德里希·席勒",
+      "raw_log": "10-28 10:32:21.951  2362  2478 W rime.trime: Encode failure: '弗里德里希·席勒'.",
+      "essay_entry": {
+        "line": 149791,
+        "weight": "0",
+        "text": "弗里德里希·席勒\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "弗里德里希席勒",
+        "essay_entry": {
+          "line": 149792,
+          "weight": "55",
+          "text": "弗里德里希席勒\t55"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546460,
+      "device_timestamp": "10-28 10:32:23.427",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "怪人奧爾·揚科維奇",
+      "raw_log": "10-28 10:32:23.427  2362  2478 W rime.trime: Encode failure: '怪人奧爾·揚科維奇'.",
+      "essay_entry": {
+        "line": 159685,
+        "weight": "0",
+        "text": "怪人奧爾·揚科維奇\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "怪人奧爾揚科維奇",
+        "essay_entry": null,
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546461,
+      "device_timestamp": "10-28 10:32:23.488",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "恩里科·費米",
+      "raw_log": "10-28 10:32:23.488  2362  2478 W rime.trime: Encode failure: '恩里科·費米'.",
+      "essay_entry": {
+        "line": 160404,
+        "weight": "0",
+        "text": "恩里科·費米\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "恩里科費米",
+        "essay_entry": {
+          "line": 160405,
+          "weight": "55",
+          "text": "恩里科費米\t55"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546462,
+      "device_timestamp": "10-28 10:32:23.717",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "愛德華·達拉第",
+      "raw_log": "10-28 10:32:23.717  2362  2478 W rime.trime: Encode failure: '愛德華·達拉第'.",
+      "essay_entry": {
+        "line": 163290,
+        "weight": "0",
+        "text": "愛德華·達拉第\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "愛德華達拉第",
+        "essay_entry": null,
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546463,
+      "device_timestamp": "10-28 10:32:23.731",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "愛瑪·沃特森",
+      "raw_log": "10-28 10:32:23.731  2362  2478 W rime.trime: Encode failure: '愛瑪·沃特森'.",
+      "essay_entry": {
+        "line": 163455,
+        "weight": "0",
+        "text": "愛瑪·沃特森\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "愛瑪沃特森",
+        "essay_entry": {
+          "line": 163456,
+          "weight": "180",
+          "text": "愛瑪沃特森\t180"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546486,
+      "device_timestamp": "10-28 10:32:24.476",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "托馬斯·阿奎納",
+      "raw_log": "10-28 10:32:24.476  2362  2478 W rime.trime: Encode failure: '托馬斯·阿奎納'.",
+      "essay_entry": {
+        "line": 173687,
+        "weight": "0",
+        "text": "托馬斯·阿奎納\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "托馬斯阿奎納",
+        "essay_entry": {
+          "line": 173688,
+          "weight": "164",
+          "text": "托馬斯阿奎納\t164"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546487,
+      "device_timestamp": "10-28 10:32:24.830",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "拿破崙·波拿巴",
+      "raw_log": "10-28 10:32:24.830  2362  2478 W rime.trime: Encode failure: '拿破崙·波拿巴'.",
+      "essay_entry": {
+        "line": 180476,
+        "weight": "0",
+        "text": "拿破崙·波拿巴\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "拿破崙波拿巴",
+        "essay_entry": null,
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546501,
+      "device_timestamp": "10-28 10:32:25.197",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "提姆·羅賓斯",
+      "raw_log": "10-28 10:32:25.197  2362  2478 W rime.trime: Encode failure: '提姆·羅賓斯'.",
+      "essay_entry": {
+        "line": 186316,
+        "weight": "0",
+        "text": "提姆·羅賓斯\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "提姆羅賓斯",
+        "essay_entry": {
+          "line": 186317,
+          "weight": "262",
+          "text": "提姆羅賓斯\t262"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546502,
+      "device_timestamp": "10-28 10:32:25.432",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "摩亨佐·達羅",
+      "raw_log": "10-28 10:32:25.432  2362  2478 W rime.trime: Encode failure: '摩亨佐·達羅'.",
+      "essay_entry": {
+        "line": 189030,
+        "weight": "0",
+        "text": "摩亨佐·達羅\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "摩亨佐達羅",
+        "essay_entry": {
+          "line": 189031,
+          "weight": "323",
+          "text": "摩亨佐達羅\t323"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546503,
+      "device_timestamp": "10-28 10:32:25.439",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "摩根·弗里曼",
+      "raw_log": "10-28 10:32:25.439  2362  2478 W rime.trime: Encode failure: '摩根·弗里曼'.",
+      "essay_entry": {
+        "line": 189098,
+        "weight": "0",
+        "text": "摩根·弗里曼\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "摩根弗里曼",
+        "essay_entry": {
+          "line": 189102,
+          "weight": "379",
+          "text": "摩根弗里曼\t379"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546504,
+      "device_timestamp": "10-28 10:32:26.057",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "斯文·海定",
+      "raw_log": "10-28 10:32:26.057  2362  2478 W rime.trime: Encode failure: '斯文·海定'.",
+      "essay_entry": {
+        "line": 199682,
+        "weight": "0",
+        "text": "斯文·海定\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "斯文海定",
+        "essay_entry": {
+          "line": 199688,
+          "weight": "135",
+          "text": "斯文海定\t135"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546505,
+      "device_timestamp": "10-28 10:32:26.057",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "斯文·赫定",
+      "raw_log": "10-28 10:32:26.057  2362  2478 W rime.trime: Encode failure: '斯文·赫定'.",
+      "essay_entry": {
+        "line": 199683,
+        "weight": "0",
+        "text": "斯文·赫定\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "斯文赫定",
+        "essay_entry": {
+          "line": 199689,
+          "weight": "400",
+          "text": "斯文赫定\t400"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546506,
+      "device_timestamp": "10-28 10:32:26.063",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "斯蒂芬·哈珀",
+      "raw_log": "10-28 10:32:26.063  2362  2478 W rime.trime: Encode failure: '斯蒂芬·哈珀'.",
+      "essay_entry": {
+        "line": 199764,
+        "weight": "0",
+        "text": "斯蒂芬·哈珀\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "斯蒂芬哈珀",
+        "essay_entry": {
+          "line": 199765,
+          "weight": "107",
+          "text": "斯蒂芬哈珀\t107"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546510,
+      "device_timestamp": "10-28 10:32:26.428",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "普密蓬·阿杜德",
+      "raw_log": "10-28 10:32:26.428  2362  2478 W rime.trime: Encode failure: '普密蓬·阿杜德'.",
+      "essay_entry": {
+        "line": 206782,
+        "weight": "0",
+        "text": "普密蓬·阿杜德\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "普密蓬阿杜德",
+        "essay_entry": {
+          "line": 206783,
+          "weight": "90",
+          "text": "普密蓬阿杜德\t90"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546511,
+      "device_timestamp": "10-28 10:32:26.579",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "曼蘇爾·達杜拉",
+      "raw_log": "10-28 10:32:26.579  2362  2478 W rime.trime: Encode failure: '曼蘇爾·達杜拉'.",
+      "essay_entry": {
+        "line": 209847,
+        "weight": "0",
+        "text": "曼蘇爾·達杜拉\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "曼蘇爾達杜拉",
+        "essay_entry": null,
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546512,
+      "device_timestamp": "10-28 10:32:26.936",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "本·拉登",
+      "raw_log": "10-28 10:32:26.936  2362  2478 W rime.trime: Encode failure: '本·拉登'.",
+      "essay_entry": {
+        "line": 216531,
+        "weight": "0",
+        "text": "本·拉登\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "本拉登",
+        "essay_entry": {
+          "line": 216803,
+          "weight": "514",
+          "text": "本拉登\t514"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546513,
+      "device_timestamp": "10-28 10:32:26.940",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "本傑明·富蘭克林",
+      "raw_log": "10-28 10:32:26.940  2362  2478 W rime.trime: Encode failure: '本傑明·富蘭克林'.",
+      "essay_entry": {
+        "line": 216589,
+        "weight": "0",
+        "text": "本傑明·富蘭克林\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "本傑明富蘭克林",
+        "essay_entry": {
+          "line": 216590,
+          "weight": "261",
+          "text": "本傑明富蘭克林\t261"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546514,
+      "device_timestamp": "10-28 10:32:27.161",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "查爾斯·格雷",
+      "raw_log": "10-28 10:32:27.161  2362  2478 W rime.trime: Encode failure: '查爾斯·格雷'.",
+      "essay_entry": {
+        "line": 221014,
+        "weight": "0",
+        "text": "查爾斯·格雷\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "查爾斯格雷",
+        "essay_entry": {
+          "line": 221016,
+          "weight": "75",
+          "text": "查爾斯格雷\t75"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546515,
+      "device_timestamp": "10-28 10:32:27.162",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "查爾斯·狄更斯",
+      "raw_log": "10-28 10:32:27.162  2362  2478 W rime.trime: Encode failure: '查爾斯·狄更斯'.",
+      "essay_entry": {
+        "line": 221015,
+        "weight": "0",
+        "text": "查爾斯·狄更斯\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "查爾斯狄更斯",
+        "essay_entry": {
+          "line": 221017,
+          "weight": "224",
+          "text": "查爾斯狄更斯\t224"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546516,
+      "device_timestamp": "10-28 10:32:27.172",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "柯南·道爾",
+      "raw_log": "10-28 10:32:27.172  2362  2478 W rime.trime: Encode failure: '柯南·道爾'.",
+      "essay_entry": {
+        "line": 221156,
+        "weight": "0",
+        "text": "柯南·道爾\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "柯南道爾",
+        "essay_entry": {
+          "line": 221157,
+          "weight": "487",
+          "text": "柯南道爾\t487"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546518,
+      "device_timestamp": "10-28 10:32:27.313",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "梅里亞姆·韋伯斯特",
+      "raw_log": "10-28 10:32:27.313  2362  2478 W rime.trime: Encode failure: '梅里亞姆·韋伯斯特'.",
+      "essay_entry": {
+        "line": 223345,
+        "weight": "0",
+        "text": "梅里亞姆·韋伯斯特\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "梅里亞姆韋伯斯特",
+        "essay_entry": {
+          "line": 223346,
+          "weight": "0",
+          "text": "梅里亞姆韋伯斯特\t0"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546554,
+      "device_timestamp": "10-28 10:32:27.801",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "歇洛克·福爾摩斯",
+      "raw_log": "10-28 10:32:27.801  2362  2478 W rime.trime: Encode failure: '歇洛克·福爾摩斯'.",
+      "essay_entry": {
+        "line": 229639,
+        "weight": "0",
+        "text": "歇洛克·福爾摩斯\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "歇洛克福爾摩斯",
+        "essay_entry": {
+          "line": 229640,
+          "weight": "201",
+          "text": "歇洛克福爾摩斯\t201"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546556,
+      "device_timestamp": "10-28 10:32:28.158",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "比爾·蓋茨",
+      "raw_log": "10-28 10:32:28.158  2362  2478 W rime.trime: Encode failure: '比爾·蓋茨'.",
+      "essay_entry": {
+        "line": 234419,
+        "weight": "0",
+        "text": "比爾·蓋茨\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "比爾蓋茨",
+        "essay_entry": {
+          "line": 234421,
+          "weight": "1390",
+          "text": "比爾蓋茨\t1390"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546557,
+      "device_timestamp": "10-28 10:32:28.655",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "沃倫·巴菲特",
+      "raw_log": "10-28 10:32:28.655  2362  2478 W rime.trime: Encode failure: '沃倫·巴菲特'.",
+      "essay_entry": {
+        "line": 239084,
+        "weight": "0",
+        "text": "沃倫·巴菲特\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "沃倫巴菲特",
+        "essay_entry": {
+          "line": 239086,
+          "weight": "391",
+          "text": "沃倫巴菲特\t391"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546571,
+      "device_timestamp": "10-28 10:32:29.037",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "法蘭西斯·培根",
+      "raw_log": "10-28 10:32:29.037  2362  2478 W rime.trime: Encode failure: '法蘭西斯·培根'.",
+      "essay_entry": {
+        "line": 242984,
+        "weight": "0",
+        "text": "法蘭西斯·培根\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "法蘭西斯培根",
+        "essay_entry": {
+          "line": 242986,
+          "weight": "225",
+          "text": "法蘭西斯培根\t225"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546572,
+      "device_timestamp": "10-28 10:32:29.038",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "法蘭西斯·斐迪南",
+      "raw_log": "10-28 10:32:29.038  2362  2478 W rime.trime: Encode failure: '法蘭西斯·斐迪南'.",
+      "essay_entry": {
+        "line": 242985,
+        "weight": "0",
+        "text": "法蘭西斯·斐迪南\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "法蘭西斯斐迪南",
+        "essay_entry": null,
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546573,
+      "device_timestamp": "10-28 10:32:29.110",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "泰格·伍茲",
+      "raw_log": "10-28 10:32:29.110  2362  2478 W rime.trime: Encode failure: '泰格·伍茲'.",
+      "essay_entry": {
+        "line": 243981,
+        "weight": "0",
+        "text": "泰格·伍茲\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "泰格伍茲",
+        "essay_entry": {
+          "line": 243982,
+          "weight": "389",
+          "text": "泰格伍茲\t389"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546574,
+      "device_timestamp": "10-28 10:32:29.113",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "泰特斯·安德洛尼克斯",
+      "raw_log": "10-28 10:32:29.113  2362  2478 W rime.trime: Encode failure: '泰特斯·安德洛尼克斯'.",
+      "essay_entry": {
+        "line": 244001,
+        "weight": "0",
+        "text": "泰特斯·安德洛尼克斯\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "泰特斯安德洛尼克斯",
+        "essay_entry": {
+          "line": 244002,
+          "weight": "0",
+          "text": "泰特斯安德洛尼克斯\t0"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546575,
+      "device_timestamp": "10-28 10:32:29.266",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "海倫·凱勒",
+      "raw_log": "10-28 10:32:29.266  2362  2478 W rime.trime: Encode failure: '海倫·凱勒'.",
+      "essay_entry": {
+        "line": 246588,
+        "weight": "0",
+        "text": "海倫·凱勒\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "海倫凱勒",
+        "essay_entry": {
+          "line": 246589,
+          "weight": "436",
+          "text": "海倫凱勒\t436"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546576,
+      "device_timestamp": "10-28 10:32:29.545",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "湯姆·克蘭西",
+      "raw_log": "10-28 10:32:29.545  2362  2478 W rime.trime: Encode failure: '湯姆·克蘭西'.",
+      "essay_entry": {
+        "line": 251831,
+        "weight": "0",
+        "text": "湯姆·克蘭西\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "湯姆克蘭西",
+        "essay_entry": {
+          "line": 251835,
+          "weight": "451",
+          "text": "湯姆克蘭西\t451"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546577,
+      "device_timestamp": "10-28 10:32:29.546",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "湯姆·克魯斯",
+      "raw_log": "10-28 10:32:29.546  2362  2478 W rime.trime: Encode failure: '湯姆·克魯斯'.",
+      "essay_entry": {
+        "line": 251832,
+        "weight": "0",
+        "text": "湯姆·克魯斯\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "湯姆克魯斯",
+        "essay_entry": {
+          "line": 251836,
+          "weight": "514",
+          "text": "湯姆克魯斯\t514"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546578,
+      "device_timestamp": "10-28 10:32:29.546",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "湯姆·索亞歷險記",
+      "raw_log": "10-28 10:32:29.546  2362  2478 W rime.trime: Encode failure: '湯姆·索亞歷險記'.",
+      "essay_entry": {
+        "line": 251833,
+        "weight": "0",
+        "text": "湯姆·索亞歷險記\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "湯姆索亞歷險記",
+        "essay_entry": {
+          "line": 251843,
+          "weight": "396",
+          "text": "湯姆索亞歷險記\t396"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546579,
+      "device_timestamp": "10-28 10:32:29.546",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "湯姆·羅賓斯",
+      "raw_log": "10-28 10:32:29.546  2362  2478 W rime.trime: Encode failure: '湯姆·羅賓斯'.",
+      "essay_entry": {
+        "line": 251834,
+        "weight": "0",
+        "text": "湯姆·羅賓斯\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "湯姆羅賓斯",
+        "essay_entry": null,
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546581,
+      "device_timestamp": "10-28 10:32:29.713",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "潔西卡·艾芭",
+      "raw_log": "10-28 10:32:29.713  2362  2478 W rime.trime: Encode failure: '潔西卡·艾芭'.",
+      "essay_entry": {
+        "line": 255324,
+        "weight": "0",
+        "text": "潔西卡·艾芭\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "潔西卡艾芭",
+        "essay_entry": {
+          "line": 255325,
+          "weight": "217",
+          "text": "潔西卡艾芭\t217"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546582,
+      "device_timestamp": "10-28 10:32:30.081",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "熱比亞·卡德爾",
+      "raw_log": "10-28 10:32:30.081  2362  2478 W rime.trime: Encode failure: '熱比亞·卡德爾'.",
+      "essay_entry": {
+        "line": 262571,
+        "weight": "0",
+        "text": "熱比亞·卡德爾\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "熱比亞卡德爾",
+        "essay_entry": {
+          "line": 262572,
+          "weight": "83",
+          "text": "熱比亞卡德爾\t83"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546583,
+      "device_timestamp": "10-28 10:32:30.082",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "熱比婭·卡德爾",
+      "raw_log": "10-28 10:32:30.082  2362  2478 W rime.trime: Encode failure: '熱比婭·卡德爾'.",
+      "essay_entry": {
+        "line": 262574,
+        "weight": "0",
+        "text": "熱比婭·卡德爾\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "熱比婭卡德爾",
+        "essay_entry": {
+          "line": 262575,
+          "weight": "124",
+          "text": "熱比婭卡德爾\t124"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546589,
+      "device_timestamp": "10-28 10:32:30.255",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "牛Ｂ",
+      "raw_log": "10-28 10:32:30.255  2362  2478 W rime.trime: Encode failure: '牛Ｂ'.",
+      "essay_entry": {
+        "line": 266031,
+        "weight": "0",
+        "text": "牛Ｂ\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "Ｂ",
+          "codepoint": "U+FF22",
+          "unicode_name": "FULLWIDTH LATIN CAPITAL LETTER B"
+        }
+      ],
+      "group": "fullwidth_mixed_script",
+      "valid_utf8": true,
+      "model_encode_success": false
+    },
+    {
+      "log_line": 546594,
+      "device_timestamp": "10-28 10:32:30.357",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "狄奧多·阿多諾",
+      "raw_log": "10-28 10:32:30.357  2362  2478 W rime.trime: Encode failure: '狄奧多·阿多諾'.",
+      "essay_entry": {
+        "line": 267809,
+        "weight": "0",
+        "text": "狄奧多·阿多諾\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "狄奧多阿多諾",
+        "essay_entry": null,
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546622,
+      "device_timestamp": "10-28 10:32:30.561",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "珍·奧斯汀",
+      "raw_log": "10-28 10:32:30.561  2362  2478 W rime.trime: Encode failure: '珍·奧斯汀'.",
+      "essay_entry": {
+        "line": 271163,
+        "weight": "0",
+        "text": "珍·奧斯汀\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "珍奧斯汀",
+        "essay_entry": {
+          "line": 271168,
+          "weight": "264",
+          "text": "珍奧斯汀\t264"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546623,
+      "device_timestamp": "10-28 10:32:30.628",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "琳·戴維斯",
+      "raw_log": "10-28 10:32:30.628  2362  2478 W rime.trime: Encode failure: '琳·戴維斯'.",
+      "essay_entry": {
+        "line": 272480,
+        "weight": "0",
+        "text": "琳·戴維斯\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "琳戴維斯",
+        "essay_entry": null,
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546625,
+      "device_timestamp": "10-28 10:32:30.646",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "瑪麗蓮·夢露",
+      "raw_log": "10-28 10:32:30.646  2362  2478 W rime.trime: Encode failure: '瑪麗蓮·夢露'.",
+      "essay_entry": {
+        "line": 272899,
+        "weight": "0",
+        "text": "瑪麗蓮·夢露\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "瑪麗蓮夢露",
+        "essay_entry": {
+          "line": 272900,
+          "weight": "498",
+          "text": "瑪麗蓮夢露\t498"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546640,
+      "device_timestamp": "10-28 10:32:31.813",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "碧娜芝·布托",
+      "raw_log": "10-28 10:32:31.813  2362  2478 W rime.trime: Encode failure: '碧娜芝·布托'.",
+      "essay_entry": {
+        "line": 292978,
+        "weight": "0",
+        "text": "碧娜芝·布托\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "碧娜芝布托",
+        "essay_entry": null,
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546641,
+      "device_timestamp": "10-28 10:32:32.206",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "穆罕默德·歐瑪",
+      "raw_log": "10-28 10:32:32.206  2362  2478 W rime.trime: Encode failure: '穆罕默德·歐瑪'.",
+      "essay_entry": {
+        "line": 299153,
+        "weight": "0",
+        "text": "穆罕默德·歐瑪\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "穆罕默德歐瑪",
+        "essay_entry": null,
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546651,
+      "device_timestamp": "10-28 10:32:33.216",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "簡·愛",
+      "raw_log": "10-28 10:32:33.216  2362  2478 W rime.trime: Encode failure: '簡·愛'.",
+      "essay_entry": {
+        "line": 306043,
+        "weight": "0",
+        "text": "簡·愛\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "簡愛",
+        "essay_entry": {
+          "line": 306138,
+          "weight": "614",
+          "text": "簡愛\t614"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546656,
+      "device_timestamp": "10-28 10:32:33.860",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "約瑟夫·斯大林",
+      "raw_log": "10-28 10:32:33.860  2362  2478 W rime.trime: Encode failure: '約瑟夫·斯大林'.",
+      "essay_entry": {
+        "line": 308812,
+        "weight": "0",
+        "text": "約瑟夫·斯大林\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "約瑟夫斯大林",
+        "essay_entry": {
+          "line": 308813,
+          "weight": "128",
+          "text": "約瑟夫斯大林\t128"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546657,
+      "device_timestamp": "10-28 10:32:33.873",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "約翰·厄普代克",
+      "raw_log": "10-28 10:32:33.873  2362  2478 W rime.trime: Encode failure: '約翰·厄普代克'.",
+      "essay_entry": {
+        "line": 308834,
+        "weight": "0",
+        "text": "約翰·厄普代克\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "約翰厄普代克",
+        "essay_entry": {
+          "line": 308843,
+          "weight": "166",
+          "text": "約翰厄普代克\t166"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546658,
+      "device_timestamp": "10-28 10:32:33.873",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "約翰·拉貝",
+      "raw_log": "10-28 10:32:33.873  2362  2478 W rime.trime: Encode failure: '約翰·拉貝'.",
+      "essay_entry": {
+        "line": 308835,
+        "weight": "0",
+        "text": "約翰·拉貝\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "約翰拉貝",
+        "essay_entry": {
+          "line": 308849,
+          "weight": "338",
+          "text": "約翰拉貝\t338"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546659,
+      "device_timestamp": "10-28 10:32:33.874",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "約翰·本仁",
+      "raw_log": "10-28 10:32:33.874  2362  2478 W rime.trime: Encode failure: '約翰·本仁'.",
+      "essay_entry": {
+        "line": 308836,
+        "weight": "0",
+        "text": "約翰·本仁\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "約翰本仁",
+        "essay_entry": {
+          "line": 308851,
+          "weight": "107",
+          "text": "約翰本仁\t107"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546660,
+      "device_timestamp": "10-28 10:32:33.874",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "約翰·霍金斯",
+      "raw_log": "10-28 10:32:33.874  2362  2478 W rime.trime: Encode failure: '約翰·霍金斯'.",
+      "essay_entry": {
+        "line": 308837,
+        "weight": "0",
+        "text": "約翰·霍金斯\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "約翰霍金斯",
+        "essay_entry": {
+          "line": 308859,
+          "weight": "209",
+          "text": "約翰霍金斯\t209"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546662,
+      "device_timestamp": "10-28 10:32:34.067",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "納撒尼爾·霍桑",
+      "raw_log": "10-28 10:32:34.067  2362  2478 W rime.trime: Encode failure: '納撒尼爾·霍桑'.",
+      "essay_entry": {
+        "line": 309630,
+        "weight": "0",
+        "text": "納撒尼爾·霍桑\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "納撒尼爾霍桑",
+        "essay_entry": {
+          "line": 309631,
+          "weight": "102",
+          "text": "納撒尼爾霍桑\t102"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546666,
+      "device_timestamp": "10-28 10:32:34.912",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "綠壩·花季護航",
+      "raw_log": "10-28 10:32:34.912  2362  2478 W rime.trime: Encode failure: '綠壩·花季護航'.",
+      "essay_entry": {
+        "line": 314077,
+        "weight": "0",
+        "text": "綠壩·花季護航\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "綠壩花季護航",
+        "essay_entry": {
+          "line": 314078,
+          "weight": "425",
+          "text": "綠壩花季護航\t425"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546667,
+      "device_timestamp": "10-28 10:32:34.969",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "維克多·雨果",
+      "raw_log": "10-28 10:32:34.969  2362  2478 W rime.trime: Encode failure: '維克多·雨果'.",
+      "essay_entry": {
+        "line": 314358,
+        "weight": "0",
+        "text": "維克多·雨果\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "維克多雨果",
+        "essay_entry": {
+          "line": 314359,
+          "weight": "267",
+          "text": "維克多雨果\t267"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546675,
+      "device_timestamp": "10-28 10:32:36.224",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "羅伯特·伯恩斯",
+      "raw_log": "10-28 10:32:36.224  2362  2478 W rime.trime: Encode failure: '羅伯特·伯恩斯'.",
+      "essay_entry": {
+        "line": 319589,
+        "weight": "0",
+        "text": "羅伯特·伯恩斯\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "羅伯特伯恩斯",
+        "essay_entry": {
+          "line": 319592,
+          "weight": "25",
+          "text": "羅伯特伯恩斯\t25"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546676,
+      "device_timestamp": "10-28 10:32:36.225",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "羅伯特·佛洛斯特",
+      "raw_log": "10-28 10:32:36.225  2362  2478 W rime.trime: Encode failure: '羅伯特·佛洛斯特'.",
+      "essay_entry": {
+        "line": 319590,
+        "weight": "0",
+        "text": "羅伯特·佛洛斯特\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "羅伯特佛洛斯特",
+        "essay_entry": null,
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546677,
+      "device_timestamp": "10-28 10:32:36.226",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "羅伯特·路易斯·斯蒂文森",
+      "raw_log": "10-28 10:32:36.226  2362  2478 W rime.trime: Encode failure: '羅伯特·路易斯·斯蒂文森'.",
+      "essay_entry": {
+        "line": 319591,
+        "weight": "0",
+        "text": "羅伯特·路易斯·斯蒂文森\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "羅伯特路易斯斯蒂文森",
+        "essay_entry": null,
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546684,
+      "device_timestamp": "10-28 10:32:36.300",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "美國５１區",
+      "raw_log": "10-28 10:32:36.300  2362  2478 W rime.trime: Encode failure: '美國５１區'.",
+      "essay_entry": {
+        "line": 320377,
+        "weight": "0",
+        "text": "美國５１區\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "１",
+          "codepoint": "U+FF11",
+          "unicode_name": "FULLWIDTH DIGIT ONE"
+        },
+        {
+          "character": "５",
+          "codepoint": "U+FF15",
+          "unicode_name": "FULLWIDTH DIGIT FIVE"
+        }
+      ],
+      "group": "fullwidth_mixed_script",
+      "valid_utf8": true,
+      "model_encode_success": false
+    },
+    {
+      "log_line": 546715,
+      "device_timestamp": "10-28 10:32:36.644",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "耶萊娜·揚科維奇",
+      "raw_log": "10-28 10:32:36.644  2362  2478 W rime.trime: Encode failure: '耶萊娜·揚科維奇'.",
+      "essay_entry": {
+        "line": 324454,
+        "weight": "0",
+        "text": "耶萊娜·揚科維奇\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "耶萊娜揚科維奇",
+        "essay_entry": null,
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546716,
+      "device_timestamp": "10-28 10:32:37.417",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "艾格尼絲·史沫特萊",
+      "raw_log": "10-28 10:32:37.417  2362  2478 W rime.trime: Encode failure: '艾格尼絲·史沫特萊'.",
+      "essay_entry": {
+        "line": 336508,
+        "weight": "0",
+        "text": "艾格尼絲·史沫特萊\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "艾格尼絲史沫特萊",
+        "essay_entry": null,
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546717,
+      "device_timestamp": "10-28 10:32:37.423",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "艾薩克·牛頓",
+      "raw_log": "10-28 10:32:37.423  2362  2478 W rime.trime: Encode failure: '艾薩克·牛頓'.",
+      "essay_entry": {
+        "line": 336574,
+        "weight": "0",
+        "text": "艾薩克·牛頓\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "艾薩克牛頓",
+        "essay_entry": {
+          "line": 336575,
+          "weight": "166",
+          "text": "艾薩克牛頓\t166"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546731,
+      "device_timestamp": "10-28 10:32:37.753",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "荷莉·貝瑞",
+      "raw_log": "10-28 10:32:37.753  2362  2478 W rime.trime: Encode failure: '荷莉·貝瑞'.",
+      "essay_entry": {
+        "line": 339808,
+        "weight": "0",
+        "text": "荷莉·貝瑞\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "荷莉貝瑞",
+        "essay_entry": {
+          "line": 339809,
+          "weight": "238",
+          "text": "荷莉貝瑞\t238"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546732,
+      "device_timestamp": "10-28 10:32:37.768",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "莎拉·佩林",
+      "raw_log": "10-28 10:32:37.768  2362  2478 W rime.trime: Encode failure: '莎拉·佩林'.",
+      "essay_entry": {
+        "line": 339955,
+        "weight": "0",
+        "text": "莎拉·佩林\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "莎拉佩林",
+        "essay_entry": {
+          "line": 339957,
+          "weight": "213",
+          "text": "莎拉佩林\t213"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546733,
+      "device_timestamp": "10-28 10:32:37.768",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "莎拉·布萊曼",
+      "raw_log": "10-28 10:32:37.768  2362  2478 W rime.trime: Encode failure: '莎拉·布萊曼'.",
+      "essay_entry": {
+        "line": 339956,
+        "weight": "0",
+        "text": "莎拉·布萊曼\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "莎拉布萊曼",
+        "essay_entry": {
+          "line": 339958,
+          "weight": "572",
+          "text": "莎拉布萊曼\t572"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546734,
+      "device_timestamp": "10-28 10:32:37.788",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "莫尼卡·萊溫斯基",
+      "raw_log": "10-28 10:32:37.788  2362  2478 W rime.trime: Encode failure: '莫尼卡·萊溫斯基'.",
+      "essay_entry": {
+        "line": 340117,
+        "weight": "0",
+        "text": "莫尼卡·萊溫斯基\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "莫尼卡萊溫斯基",
+        "essay_entry": {
+          "line": 340118,
+          "weight": "90",
+          "text": "莫尼卡萊溫斯基\t90"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546735,
+      "device_timestamp": "10-28 10:32:37.888",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "菲利克斯·米達麥亞",
+      "raw_log": "10-28 10:32:37.888  2362  2478 W rime.trime: Encode failure: '菲利克斯·米達麥亞'.",
+      "essay_entry": {
+        "line": 340971,
+        "weight": "0",
+        "text": "菲利克斯·米達麥亞\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "菲利克斯米達麥亞",
+        "essay_entry": null,
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546736,
+      "device_timestamp": "10-28 10:32:38.257",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "薩達姆·侯賽因",
+      "raw_log": "10-28 10:32:38.257  2362  2478 W rime.trime: Encode failure: '薩達姆·侯賽因'.",
+      "essay_entry": {
+        "line": 344792,
+        "weight": "0",
+        "text": "薩達姆·侯賽因\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "薩達姆侯賽因",
+        "essay_entry": {
+          "line": 344793,
+          "weight": "255",
+          "text": "薩達姆侯賽因\t255"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546737,
+      "device_timestamp": "10-28 10:32:38.366",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "蘇珊·波伊爾",
+      "raw_log": "10-28 10:32:38.366  2362  2478 W rime.trime: Encode failure: '蘇珊·波伊爾'.",
+      "essay_entry": {
+        "line": 346064,
+        "weight": "0",
+        "text": "蘇珊·波伊爾\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "蘇珊波伊爾",
+        "essay_entry": {
+          "line": 346066,
+          "weight": "218",
+          "text": "蘇珊波伊爾\t218"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546743,
+      "device_timestamp": "10-28 10:32:38.870",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "裘力斯·愷撒",
+      "raw_log": "10-28 10:32:38.870  2362  2478 W rime.trime: Encode failure: '裘力斯·愷撒'.",
+      "essay_entry": {
+        "line": 352954,
+        "weight": "0",
+        "text": "裘力斯·愷撒\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "裘力斯愷撒",
+        "essay_entry": {
+          "line": 352955,
+          "weight": "55",
+          "text": "裘力斯愷撒\t55"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546744,
+      "device_timestamp": "10-28 10:32:38.907",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "裝Ｂ",
+      "raw_log": "10-28 10:32:38.907  2362  2478 W rime.trime: Encode failure: '裝Ｂ'.",
+      "essay_entry": {
+        "line": 353550,
+        "weight": "0",
+        "text": "裝Ｂ\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "Ｂ",
+          "codepoint": "U+FF22",
+          "unicode_name": "FULLWIDTH LATIN CAPITAL LETTER B"
+        }
+      ],
+      "group": "fullwidth_mixed_script",
+      "valid_utf8": true,
+      "model_encode_success": false
+    },
+    {
+      "log_line": 546746,
+      "device_timestamp": "10-28 10:32:39.006",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "西蒙·舒斯特",
+      "raw_log": "10-28 10:32:39.006  2362  2478 W rime.trime: Encode failure: '西蒙·舒斯特'.",
+      "essay_entry": {
+        "line": 355228,
+        "weight": "0",
+        "text": "西蒙·舒斯特\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "西蒙舒斯特",
+        "essay_entry": {
+          "line": 355230,
+          "weight": "226",
+          "text": "西蒙舒斯特\t226"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546778,
+      "device_timestamp": "10-28 10:32:39.485",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "詹姆斯·喬伊斯",
+      "raw_log": "10-28 10:32:39.485  2362  2478 W rime.trime: Encode failure: '詹姆斯·喬伊斯'.",
+      "essay_entry": {
+        "line": 361759,
+        "weight": "0",
+        "text": "詹姆斯·喬伊斯\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "詹姆斯喬伊斯",
+        "essay_entry": {
+          "line": 361761,
+          "weight": "198",
+          "text": "詹姆斯喬伊斯\t198"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546779,
+      "device_timestamp": "10-28 10:32:39.485",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "詹姆斯·龐德",
+      "raw_log": "10-28 10:32:39.485  2362  2478 W rime.trime: Encode failure: '詹姆斯·龐德'.",
+      "essay_entry": {
+        "line": 361760,
+        "weight": "0",
+        "text": "詹姆斯·龐德\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "詹姆斯龐德",
+        "essay_entry": {
+          "line": 361763,
+          "weight": "279",
+          "text": "詹姆斯龐德\t279"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546780,
+      "device_timestamp": "10-28 10:32:39.695",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "諾姆·喬姆斯基",
+      "raw_log": "10-28 10:32:39.695  2362  2478 W rime.trime: Encode failure: '諾姆·喬姆斯基'.",
+      "essay_entry": {
+        "line": 364963,
+        "weight": "0",
+        "text": "諾姆·喬姆斯基\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "諾姆喬姆斯基",
+        "essay_entry": {
+          "line": 364964,
+          "weight": "1",
+          "text": "諾姆喬姆斯基\t1"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546781,
+      "device_timestamp": "10-28 10:32:39.869",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "豪伊杜·比豪爾",
+      "raw_log": "10-28 10:32:39.869  2362  2478 W rime.trime: Encode failure: '豪伊杜·比豪爾'.",
+      "essay_entry": {
+        "line": 368290,
+        "weight": "0",
+        "text": "豪伊杜·比豪爾\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "豪伊杜比豪爾",
+        "essay_entry": null,
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546782,
+      "device_timestamp": "10-28 10:32:39.870",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "豪伊杜·比豪爾州",
+      "raw_log": "10-28 10:32:39.870  2362  2478 W rime.trime: Encode failure: '豪伊杜·比豪爾州'.",
+      "essay_entry": {
+        "line": 368291,
+        "weight": "0",
+        "text": "豪伊杜·比豪爾州\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "豪伊杜比豪爾州",
+        "essay_entry": null,
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546783,
+      "device_timestamp": "10-28 10:32:39.892",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "貝·布托",
+      "raw_log": "10-28 10:32:39.892  2362  2478 W rime.trime: Encode failure: '貝·布托'.",
+      "essay_entry": {
+        "line": 368739,
+        "weight": "0",
+        "text": "貝·布托\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "貝布托",
+        "essay_entry": {
+          "line": 368795,
+          "weight": "423",
+          "text": "貝布托\t423"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546784,
+      "device_timestamp": "10-28 10:32:39.896",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "貝娜齊爾·布托",
+      "raw_log": "10-28 10:32:39.896  2362  2478 W rime.trime: Encode failure: '貝娜齊爾·布托'.",
+      "essay_entry": {
+        "line": 368788,
+        "weight": "0",
+        "text": "貝娜齊爾·布托\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "貝娜齊爾布托",
+        "essay_entry": {
+          "line": 368789,
+          "weight": "124",
+          "text": "貝娜齊爾布托\t124"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546796,
+      "device_timestamp": "10-28 10:32:40.193",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "赫曼·麥爾維爾",
+      "raw_log": "10-28 10:32:40.193  2362  2478 W rime.trime: Encode failure: '赫曼·麥爾維爾'.",
+      "essay_entry": {
+        "line": 373415,
+        "weight": "0",
+        "text": "赫曼·麥爾維爾\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "赫曼麥爾維爾",
+        "essay_entry": {
+          "line": 373416,
+          "weight": "1",
+          "text": "赫曼麥爾維爾\t1"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546797,
+      "device_timestamp": "10-28 10:32:40.199",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "赫爾穆特·科爾",
+      "raw_log": "10-28 10:32:40.199  2362  2478 W rime.trime: Encode failure: '赫爾穆特·科爾'.",
+      "essay_entry": {
+        "line": 373433,
+        "weight": "0",
+        "text": "赫爾穆特·科爾\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "赫爾穆特科爾",
+        "essay_entry": {
+          "line": 373434,
+          "weight": "55",
+          "text": "赫爾穆特科爾\t55"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546799,
+      "device_timestamp": "10-28 10:32:40.422",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "路易·皮埃爾·阿爾都塞",
+      "raw_log": "10-28 10:32:40.422  2362  2478 W rime.trime: Encode failure: '路易·皮埃爾·阿爾都塞'.",
+      "essay_entry": {
+        "line": 376805,
+        "weight": "0",
+        "text": "路易·皮埃爾·阿爾都塞\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "路易皮埃爾阿爾都塞",
+        "essay_entry": null,
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546800,
+      "device_timestamp": "10-28 10:32:40.423",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "路易斯·伊納西奧·盧拉·達席爾瓦",
+      "raw_log": "10-28 10:32:40.423  2362  2478 W rime.trime: Encode failure: '路易斯·伊納西奧·盧拉·達席爾瓦'.",
+      "essay_entry": {
+        "line": 376816,
+        "weight": "0",
+        "text": "路易斯·伊納西奧·盧拉·達席爾瓦\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "路易斯伊納西奧盧拉達席爾瓦",
+        "essay_entry": null,
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546801,
+      "device_timestamp": "10-28 10:32:40.752",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "迪戈·加西亞島",
+      "raw_log": "10-28 10:32:40.752  2362  2478 W rime.trime: Encode failure: '迪戈·加西亞島'.",
+      "essay_entry": {
+        "line": 383385,
+        "weight": "0",
+        "text": "迪戈·加西亞島\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "迪戈加西亞島",
+        "essay_entry": {
+          "line": 383386,
+          "weight": "296",
+          "text": "迪戈加西亞島\t296"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546804,
+      "device_timestamp": "10-28 10:32:41.141",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "道·瓊斯",
+      "raw_log": "10-28 10:32:41.141  2362  2478 W rime.trime: Encode failure: '道·瓊斯'.",
+      "essay_entry": {
+        "line": 390322,
+        "weight": "0",
+        "text": "道·瓊斯\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "道瓊斯",
+        "essay_entry": {
+          "line": 390531,
+          "weight": "809",
+          "text": "道瓊斯\t809"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546805,
+      "device_timestamp": "10-28 10:32:41.143",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "道·瓊斯指數",
+      "raw_log": "10-28 10:32:41.143  2362  2478 W rime.trime: Encode failure: '道·瓊斯指數'.",
+      "essay_entry": {
+        "line": 390323,
+        "weight": "0",
+        "text": "道·瓊斯指數\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "道瓊斯指數",
+        "essay_entry": {
+          "line": 390532,
+          "weight": "573",
+          "text": "道瓊斯指數\t573"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546806,
+      "device_timestamp": "10-28 10:32:41.158",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "道格拉斯·麥克阿瑟",
+      "raw_log": "10-28 10:32:41.158  2362  2478 W rime.trime: Encode failure: '道格拉斯·麥克阿瑟'.",
+      "essay_entry": {
+        "line": 390503,
+        "weight": "0",
+        "text": "道格拉斯·麥克阿瑟\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "道格拉斯麥克阿瑟",
+        "essay_entry": {
+          "line": 390504,
+          "weight": "75",
+          "text": "道格拉斯麥克阿瑟\t75"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546807,
+      "device_timestamp": "10-28 10:32:41.171",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "達·芬奇",
+      "raw_log": "10-28 10:32:41.171  2362  2478 W rime.trime: Encode failure: '達·芬奇'.",
+      "essay_entry": {
+        "line": 390645,
+        "weight": "0",
+        "text": "達·芬奇\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "達芬奇",
+        "essay_entry": {
+          "line": 390786,
+          "weight": "1566",
+          "text": "達芬奇\t1566"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546808,
+      "device_timestamp": "10-28 10:32:41.186",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "達科塔·芬妮",
+      "raw_log": "10-28 10:32:41.186  2362  2478 W rime.trime: Encode failure: '達科塔·芬妮'.",
+      "essay_entry": {
+        "line": 390776,
+        "weight": "0",
+        "text": "達科塔·芬妮\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "達科塔芬妮",
+        "essay_entry": {
+          "line": 390777,
+          "weight": "25",
+          "text": "達科塔芬妮\t25"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546821,
+      "device_timestamp": "10-28 10:32:41.393",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "邁克爾·傑克遜",
+      "raw_log": "10-28 10:32:41.393  2362  2478 W rime.trime: Encode failure: '邁克爾·傑克遜'.",
+      "essay_entry": {
+        "line": 392649,
+        "weight": "0",
+        "text": "邁克爾·傑克遜\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "邁克爾傑克遜",
+        "essay_entry": {
+          "line": 392652,
+          "weight": "666",
+          "text": "邁克爾傑克遜\t666"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546822,
+      "device_timestamp": "10-28 10:32:41.395",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "邁克爾·克萊頓",
+      "raw_log": "10-28 10:32:41.395  2362  2478 W rime.trime: Encode failure: '邁克爾·克萊頓'.",
+      "essay_entry": {
+        "line": 392650,
+        "weight": "0",
+        "text": "邁克爾·克萊頓\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "邁克爾克萊頓",
+        "essay_entry": {
+          "line": 392653,
+          "weight": "296",
+          "text": "邁克爾克萊頓\t296"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546823,
+      "device_timestamp": "10-28 10:32:41.397",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "邁克爾·喬丹",
+      "raw_log": "10-28 10:32:41.397  2362  2478 W rime.trime: Encode failure: '邁克爾·喬丹'.",
+      "essay_entry": {
+        "line": 392651,
+        "weight": "0",
+        "text": "邁克爾·喬丹\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "邁克爾喬丹",
+        "essay_entry": {
+          "line": 392654,
+          "weight": "448",
+          "text": "邁克爾喬丹\t448"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546829,
+      "device_timestamp": "10-28 10:32:41.711",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "那木巴爾·恩赫巴亞爾",
+      "raw_log": "10-28 10:32:41.711  2362  2478 W rime.trime: Encode failure: '那木巴爾·恩赫巴亞爾'.",
+      "essay_entry": {
+        "line": 394400,
+        "weight": "0",
+        "text": "那木巴爾·恩赫巴亞爾\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "那木巴爾恩赫巴亞爾",
+        "essay_entry": {
+          "line": 394401,
+          "weight": "75",
+          "text": "那木巴爾恩赫巴亞爾\t75"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546830,
+      "device_timestamp": "10-28 10:32:42.652",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "錫霍特·阿林",
+      "raw_log": "10-28 10:32:42.652  2362  2478 W rime.trime: Encode failure: '錫霍特·阿林'.",
+      "essay_entry": {
+        "line": 403413,
+        "weight": "0",
+        "text": "錫霍特·阿林\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "錫霍特阿林",
+        "essay_entry": {
+          "line": 403416,
+          "weight": "97",
+          "text": "錫霍特阿林\t97"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546831,
+      "device_timestamp": "10-28 10:32:42.653",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "錫霍特·阿林山脈",
+      "raw_log": "10-28 10:32:42.653  2362  2478 W rime.trime: Encode failure: '錫霍特·阿林山脈'.",
+      "essay_entry": {
+        "line": 403414,
+        "weight": "0",
+        "text": "錫霍特·阿林山脈\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "錫霍特阿林山脈",
+        "essay_entry": null,
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546832,
+      "device_timestamp": "10-28 10:32:42.999",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "阿不來提·阿不都熱西提",
+      "raw_log": "10-28 10:32:42.999  2362  2478 W rime.trime: Encode failure: '阿不來提·阿不都熱西提'.",
+      "essay_entry": {
+        "line": 410165,
+        "weight": "0",
+        "text": "阿不來提·阿不都熱西提\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "阿不來提阿不都熱西提",
+        "essay_entry": {
+          "line": 410166,
+          "weight": "183",
+          "text": "阿不來提阿不都熱西提\t183"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546833,
+      "device_timestamp": "10-28 10:32:43.006",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "阿加莎·克里斯蒂",
+      "raw_log": "10-28 10:32:43.006  2362  2478 W rime.trime: Encode failure: '阿加莎·克里斯蒂'.",
+      "essay_entry": {
+        "line": 410250,
+        "weight": "0",
+        "text": "阿加莎·克里斯蒂\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "阿加莎克里斯蒂",
+        "essay_entry": {
+          "line": 410251,
+          "weight": "392",
+          "text": "阿加莎克里斯蒂\t392"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546835,
+      "device_timestamp": "10-28 10:32:43.029",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "阿斯頓·馬丁",
+      "raw_log": "10-28 10:32:43.029  2362  2478 W rime.trime: Encode failure: '阿斯頓·馬丁'.",
+      "essay_entry": {
+        "line": 410529,
+        "weight": "0",
+        "text": "阿斯頓·馬丁\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "阿斯頓馬丁",
+        "essay_entry": {
+          "line": 410531,
+          "weight": "583",
+          "text": "阿斯頓馬丁\t583"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546836,
+      "device_timestamp": "10-28 10:32:43.043",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "阿爾法·羅密歐",
+      "raw_log": "10-28 10:32:43.043  2362  2478 W rime.trime: Encode failure: '阿爾法·羅密歐'.",
+      "essay_entry": {
+        "line": 410650,
+        "weight": "0",
+        "text": "阿爾法·羅密歐\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "阿爾法羅密歐",
+        "essay_entry": {
+          "line": 410653,
+          "weight": "514",
+          "text": "阿爾法羅密歐\t514"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546837,
+      "device_timestamp": "10-28 10:32:43.063",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "阿諾·施瓦辛格",
+      "raw_log": "10-28 10:32:43.063  2362  2478 W rime.trime: Encode failure: '阿諾·施瓦辛格'.",
+      "essay_entry": {
+        "line": 410838,
+        "weight": "0",
+        "text": "阿諾·施瓦辛格\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "阿諾施瓦辛格",
+        "essay_entry": {
+          "line": 410843,
+          "weight": "364",
+          "text": "阿諾施瓦辛格\t364"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546838,
+      "device_timestamp": "10-28 10:32:43.065",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "阿諾德·施瓦辛格",
+      "raw_log": "10-28 10:32:43.065  2362  2478 W rime.trime: Encode failure: '阿諾德·施瓦辛格'.",
+      "essay_entry": {
+        "line": 410840,
+        "weight": "0",
+        "text": "阿諾德·施瓦辛格\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "阿諾德施瓦辛格",
+        "essay_entry": {
+          "line": 410841,
+          "weight": "306",
+          "text": "阿諾德施瓦辛格\t306"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546839,
+      "device_timestamp": "10-28 10:32:43.068",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "阿道司·赫胥黎",
+      "raw_log": "10-28 10:32:43.068  2362  2478 W rime.trime: Encode failure: '阿道司·赫胥黎'.",
+      "essay_entry": {
+        "line": 410860,
+        "weight": "0",
+        "text": "阿道司·赫胥黎\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "阿道司赫胥黎",
+        "essay_entry": {
+          "line": 410861,
+          "weight": "25",
+          "text": "阿道司赫胥黎\t25"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546840,
+      "device_timestamp": "10-28 10:32:43.078",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "阿Ｑ",
+      "raw_log": "10-28 10:32:43.078  2362  2478 W rime.trime: Encode failure: '阿Ｑ'.",
+      "essay_entry": {
+        "line": 410949,
+        "weight": "0",
+        "text": "阿Ｑ\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "Ｑ",
+          "codepoint": "U+FF31",
+          "unicode_name": "FULLWIDTH LATIN CAPITAL LETTER Q"
+        }
+      ],
+      "group": "fullwidth_mixed_script",
+      "valid_utf8": true,
+      "model_encode_success": false
+    },
+    {
+      "log_line": 546841,
+      "device_timestamp": "10-28 10:32:43.079",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "阿Ｑ正傳",
+      "raw_log": "10-28 10:32:43.079  2362  2478 W rime.trime: Encode failure: '阿Ｑ正傳'.",
+      "essay_entry": {
+        "line": 410950,
+        "weight": "0",
+        "text": "阿Ｑ正傳\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "Ｑ",
+          "codepoint": "U+FF31",
+          "unicode_name": "FULLWIDTH LATIN CAPITAL LETTER Q"
+        }
+      ],
+      "group": "fullwidth_mixed_script",
+      "valid_utf8": true,
+      "model_encode_success": false
+    },
+    {
+      "log_line": 546842,
+      "device_timestamp": "10-28 10:32:43.915",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "雷·羅馬諾",
+      "raw_log": "10-28 10:32:43.915  2362  2478 W rime.trime: Encode failure: '雷·羅馬諾'.",
+      "essay_entry": {
+        "line": 417485,
+        "weight": "0",
+        "text": "雷·羅馬諾\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "雷羅馬諾",
+        "essay_entry": null,
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546880,
+      "device_timestamp": "10-28 10:32:44.620",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "額勒貝格·道爾吉",
+      "raw_log": "10-28 10:32:44.620  2362  2478 W rime.trime: Encode failure: '額勒貝格·道爾吉'.",
+      "essay_entry": {
+        "line": 425040,
+        "weight": "0",
+        "text": "額勒貝格·道爾吉\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "額勒貝格道爾吉",
+        "essay_entry": {
+          "line": 425041,
+          "weight": "371",
+          "text": "額勒貝格道爾吉\t371"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546882,
+      "device_timestamp": "10-28 10:32:44.937",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "馬丁·路德",
+      "raw_log": "10-28 10:32:44.937  2362  2478 W rime.trime: Encode failure: '馬丁·路德'.",
+      "essay_entry": {
+        "line": 429650,
+        "weight": "0",
+        "text": "馬丁·路德\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "馬丁路德",
+        "essay_entry": {
+          "line": 429658,
+          "weight": "481",
+          "text": "馬丁路德\t481"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546883,
+      "device_timestamp": "10-28 10:32:44.937",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "馬丁·路德·金",
+      "raw_log": "10-28 10:32:44.937  2362  2478 W rime.trime: Encode failure: '馬丁·路德·金'.",
+      "essay_entry": {
+        "line": 429651,
+        "weight": "0",
+        "text": "馬丁·路德·金\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "馬丁路德金",
+        "essay_entry": {
+          "line": 429659,
+          "weight": "441",
+          "text": "馬丁路德金\t441"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546884,
+      "device_timestamp": "10-28 10:32:44.943",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "馬克·吐溫",
+      "raw_log": "10-28 10:32:44.943  2362  2478 W rime.trime: Encode failure: '馬克·吐溫'.",
+      "essay_entry": {
+        "line": 429724,
+        "weight": "0",
+        "text": "馬克·吐溫\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "馬克吐溫",
+        "essay_entry": {
+          "line": 429725,
+          "weight": "464",
+          "text": "馬克吐溫\t464"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546885,
+      "device_timestamp": "10-28 10:32:44.944",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "馬克思·列寧主義",
+      "raw_log": "10-28 10:32:44.944  2362  2478 W rime.trime: Encode failure: '馬克思·列寧主義'.",
+      "essay_entry": {
+        "line": 429729,
+        "weight": "0",
+        "text": "馬克思·列寧主義\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "馬克思列寧主義",
+        "essay_entry": {
+          "line": 429733,
+          "weight": "571",
+          "text": "馬克思列寧主義\t571"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546886,
+      "device_timestamp": "10-28 10:32:44.946",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "馬克斯·普朗克",
+      "raw_log": "10-28 10:32:44.946  2362  2478 W rime.trime: Encode failure: '馬克斯·普朗克'.",
+      "essay_entry": {
+        "line": 429738,
+        "weight": "0",
+        "text": "馬克斯·普朗克\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "馬克斯普朗克",
+        "essay_entry": {
+          "line": 429741,
+          "weight": "260",
+          "text": "馬克斯普朗克\t260"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546887,
+      "device_timestamp": "10-28 10:32:45.263",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "鮑勃·伍德沃德",
+      "raw_log": "10-28 10:32:45.263  2362  2478 W rime.trime: Encode failure: '鮑勃·伍德沃德'.",
+      "essay_entry": {
+        "line": 435775,
+        "weight": "0",
+        "text": "鮑勃·伍德沃德\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "鮑勃伍德沃德",
+        "essay_entry": {
+          "line": 435777,
+          "weight": "1",
+          "text": "鮑勃伍德沃德\t1"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546888,
+      "device_timestamp": "10-28 10:32:45.264",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "鮑勃·馬利",
+      "raw_log": "10-28 10:32:45.264  2362  2478 W rime.trime: Encode failure: '鮑勃·馬利'.",
+      "essay_entry": {
+        "line": 435776,
+        "weight": "0",
+        "text": "鮑勃·馬利\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "鮑勃馬利",
+        "essay_entry": {
+          "line": 435778,
+          "weight": "245",
+          "text": "鮑勃馬利\t245"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546889,
+      "device_timestamp": "10-28 10:32:45.495",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "齊內丁·齊達內",
+      "raw_log": "10-28 10:32:45.495  2362  2478 W rime.trime: Encode failure: '齊內丁·齊達內'.",
+      "essay_entry": {
+        "line": 441510,
+        "weight": "0",
+        "text": "齊內丁·齊達內\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "·",
+          "codepoint": "U+00B7",
+          "unicode_name": "MIDDLE DOT"
+        }
+      ],
+      "group": "middle_dot",
+      "valid_utf8": true,
+      "model_encode_success": false,
+      "without_dot_alias": {
+        "phrase": "齊內丁齊達內",
+        "essay_entry": {
+          "line": 441511,
+          "weight": "55",
+          "text": "齊內丁齊達內\t55"
+        },
+        "all_characters_mapped": true
+      }
+    },
+    {
+      "log_line": 546890,
+      "device_timestamp": "10-28 10:32:45.540",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "Ａ咖",
+      "raw_log": "10-28 10:32:45.540  2362  2478 W rime.trime: Encode failure: 'Ａ咖'.",
+      "essay_entry": {
+        "line": 442522,
+        "weight": "0",
+        "text": "Ａ咖\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "Ａ",
+          "codepoint": "U+FF21",
+          "unicode_name": "FULLWIDTH LATIN CAPITAL LETTER A"
+        }
+      ],
+      "group": "fullwidth_mixed_script",
+      "valid_utf8": true,
+      "model_encode_success": false
+    },
+    {
+      "log_line": 546891,
+      "device_timestamp": "10-28 10:32:45.540",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "Ａ片",
+      "raw_log": "10-28 10:32:45.540  2362  2478 W rime.trime: Encode failure: 'Ａ片'.",
+      "essay_entry": {
+        "line": 442523,
+        "weight": "0",
+        "text": "Ａ片\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "Ａ",
+          "codepoint": "U+FF21",
+          "unicode_name": "FULLWIDTH LATIN CAPITAL LETTER A"
+        }
+      ],
+      "group": "fullwidth_mixed_script",
+      "valid_utf8": true,
+      "model_encode_success": false
+    },
+    {
+      "log_line": 546892,
+      "device_timestamp": "10-28 10:32:45.540",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "ＡＡ制",
+      "raw_log": "10-28 10:32:45.540  2362  2478 W rime.trime: Encode failure: 'ＡＡ制'.",
+      "essay_entry": {
+        "line": 442524,
+        "weight": "0",
+        "text": "ＡＡ制\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "Ａ",
+          "codepoint": "U+FF21",
+          "unicode_name": "FULLWIDTH LATIN CAPITAL LETTER A"
+        }
+      ],
+      "group": "fullwidth_mixed_script",
+      "valid_utf8": true,
+      "model_encode_success": false
+    },
+    {
+      "log_line": 546893,
+      "device_timestamp": "10-28 10:32:45.540",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "Ｂ型超聲",
+      "raw_log": "10-28 10:32:45.540  2362  2478 W rime.trime: Encode failure: 'Ｂ型超聲'.",
+      "essay_entry": {
+        "line": 442525,
+        "weight": "0",
+        "text": "Ｂ型超聲\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "Ｂ",
+          "codepoint": "U+FF22",
+          "unicode_name": "FULLWIDTH LATIN CAPITAL LETTER B"
+        }
+      ],
+      "group": "fullwidth_mixed_script",
+      "valid_utf8": true,
+      "model_encode_success": false
+    },
+    {
+      "log_line": 546894,
+      "device_timestamp": "10-28 10:32:45.540",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "Ｂ超",
+      "raw_log": "10-28 10:32:45.540  2362  2478 W rime.trime: Encode failure: 'Ｂ超'.",
+      "essay_entry": {
+        "line": 442526,
+        "weight": "0",
+        "text": "Ｂ超\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "Ｂ",
+          "codepoint": "U+FF22",
+          "unicode_name": "FULLWIDTH LATIN CAPITAL LETTER B"
+        }
+      ],
+      "group": "fullwidth_mixed_script",
+      "valid_utf8": true,
+      "model_encode_success": false
+    },
+    {
+      "log_line": 546895,
+      "device_timestamp": "10-28 10:32:45.540",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "Ｃ盤",
+      "raw_log": "10-28 10:32:45.540  2362  2478 W rime.trime: Encode failure: 'Ｃ盤'.",
+      "essay_entry": {
+        "line": 442527,
+        "weight": "0",
+        "text": "Ｃ盤\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "Ｃ",
+          "codepoint": "U+FF23",
+          "unicode_name": "FULLWIDTH LATIN CAPITAL LETTER C"
+        }
+      ],
+      "group": "fullwidth_mixed_script",
+      "valid_utf8": true,
+      "model_encode_success": false
+    },
+    {
+      "log_line": 546896,
+      "device_timestamp": "10-28 10:32:45.540",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "ＤＮＡ親子鑑定",
+      "raw_log": "10-28 10:32:45.540  2362  2478 W rime.trime: Encode failure: 'ＤＮＡ親子鑑定'.",
+      "essay_entry": {
+        "line": 442528,
+        "weight": "0",
+        "text": "ＤＮＡ親子鑑定\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "Ａ",
+          "codepoint": "U+FF21",
+          "unicode_name": "FULLWIDTH LATIN CAPITAL LETTER A"
+        },
+        {
+          "character": "Ｄ",
+          "codepoint": "U+FF24",
+          "unicode_name": "FULLWIDTH LATIN CAPITAL LETTER D"
+        },
+        {
+          "character": "Ｎ",
+          "codepoint": "U+FF2E",
+          "unicode_name": "FULLWIDTH LATIN CAPITAL LETTER N"
+        }
+      ],
+      "group": "fullwidth_mixed_script",
+      "valid_utf8": true,
+      "model_encode_success": false
+    },
+    {
+      "log_line": 546897,
+      "device_timestamp": "10-28 10:32:45.540",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "ＤＮＡ鑑定",
+      "raw_log": "10-28 10:32:45.540  2362  2478 W rime.trime: Encode failure: 'ＤＮＡ鑑定'.",
+      "essay_entry": {
+        "line": 442529,
+        "weight": "0",
+        "text": "ＤＮＡ鑑定\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "Ａ",
+          "codepoint": "U+FF21",
+          "unicode_name": "FULLWIDTH LATIN CAPITAL LETTER A"
+        },
+        {
+          "character": "Ｄ",
+          "codepoint": "U+FF24",
+          "unicode_name": "FULLWIDTH LATIN CAPITAL LETTER D"
+        },
+        {
+          "character": "Ｎ",
+          "codepoint": "U+FF2E",
+          "unicode_name": "FULLWIDTH LATIN CAPITAL LETTER N"
+        }
+      ],
+      "group": "fullwidth_mixed_script",
+      "valid_utf8": true,
+      "model_encode_success": false
+    },
+    {
+      "log_line": 546898,
+      "device_timestamp": "10-28 10:32:45.540",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "Ｇ點",
+      "raw_log": "10-28 10:32:45.540  2362  2478 W rime.trime: Encode failure: 'Ｇ點'.",
+      "essay_entry": {
+        "line": 442530,
+        "weight": "0",
+        "text": "Ｇ點\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "Ｇ",
+          "codepoint": "U+FF27",
+          "unicode_name": "FULLWIDTH LATIN CAPITAL LETTER G"
+        }
+      ],
+      "group": "fullwidth_mixed_script",
+      "valid_utf8": true,
+      "model_encode_success": false
+    },
+    {
+      "log_line": 546899,
+      "device_timestamp": "10-28 10:32:45.540",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "Ｋ書",
+      "raw_log": "10-28 10:32:45.540  2362  2478 W rime.trime: Encode failure: 'Ｋ書'.",
+      "essay_entry": {
+        "line": 442531,
+        "weight": "0",
+        "text": "Ｋ書\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "Ｋ",
+          "codepoint": "U+FF2B",
+          "unicode_name": "FULLWIDTH LATIN CAPITAL LETTER K"
+        }
+      ],
+      "group": "fullwidth_mixed_script",
+      "valid_utf8": true,
+      "model_encode_success": false
+    },
+    {
+      "log_line": 546900,
+      "device_timestamp": "10-28 10:32:45.540",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "Ｋ粉",
+      "raw_log": "10-28 10:32:45.540  2362  2478 W rime.trime: Encode failure: 'Ｋ粉'.",
+      "essay_entry": {
+        "line": 442532,
+        "weight": "0",
+        "text": "Ｋ粉\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "Ｋ",
+          "codepoint": "U+FF2B",
+          "unicode_name": "FULLWIDTH LATIN CAPITAL LETTER K"
+        }
+      ],
+      "group": "fullwidth_mixed_script",
+      "valid_utf8": true,
+      "model_encode_success": false
+    },
+    {
+      "log_line": 546901,
+      "device_timestamp": "10-28 10:32:45.540",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "Ｔ恤",
+      "raw_log": "10-28 10:32:45.540  2362  2478 W rime.trime: Encode failure: 'Ｔ恤'.",
+      "essay_entry": {
+        "line": 442533,
+        "weight": "0",
+        "text": "Ｔ恤\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "Ｔ",
+          "codepoint": "U+FF34",
+          "unicode_name": "FULLWIDTH LATIN CAPITAL LETTER T"
+        }
+      ],
+      "group": "fullwidth_mixed_script",
+      "valid_utf8": true,
+      "model_encode_success": false
+    },
+    {
+      "log_line": 546902,
+      "device_timestamp": "10-28 10:32:45.540",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "Ｕ形轉彎",
+      "raw_log": "10-28 10:32:45.540  2362  2478 W rime.trime: Encode failure: 'Ｕ形轉彎'.",
+      "essay_entry": {
+        "line": 442534,
+        "weight": "0",
+        "text": "Ｕ形轉彎\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "Ｕ",
+          "codepoint": "U+FF35",
+          "unicode_name": "FULLWIDTH LATIN CAPITAL LETTER U"
+        }
+      ],
+      "group": "fullwidth_mixed_script",
+      "valid_utf8": true,
+      "model_encode_success": false
+    },
+    {
+      "log_line": 546903,
+      "device_timestamp": "10-28 10:32:45.540",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "ＵＳＢ手指",
+      "raw_log": "10-28 10:32:45.540  2362  2478 W rime.trime: Encode failure: 'ＵＳＢ手指'.",
+      "essay_entry": {
+        "line": 442535,
+        "weight": "0",
+        "text": "ＵＳＢ手指\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "Ｂ",
+          "codepoint": "U+FF22",
+          "unicode_name": "FULLWIDTH LATIN CAPITAL LETTER B"
+        },
+        {
+          "character": "Ｓ",
+          "codepoint": "U+FF33",
+          "unicode_name": "FULLWIDTH LATIN CAPITAL LETTER S"
+        },
+        {
+          "character": "Ｕ",
+          "codepoint": "U+FF35",
+          "unicode_name": "FULLWIDTH LATIN CAPITAL LETTER U"
+        }
+      ],
+      "group": "fullwidth_mixed_script",
+      "valid_utf8": true,
+      "model_encode_success": false
+    },
+    {
+      "log_line": 546904,
+      "device_timestamp": "10-28 10:32:45.540",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "ＵＳＢ記憶棒",
+      "raw_log": "10-28 10:32:45.540  2362  2478 W rime.trime: Encode failure: 'ＵＳＢ記憶棒'.",
+      "essay_entry": {
+        "line": 442536,
+        "weight": "0",
+        "text": "ＵＳＢ記憶棒\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "Ｂ",
+          "codepoint": "U+FF22",
+          "unicode_name": "FULLWIDTH LATIN CAPITAL LETTER B"
+        },
+        {
+          "character": "Ｓ",
+          "codepoint": "U+FF33",
+          "unicode_name": "FULLWIDTH LATIN CAPITAL LETTER S"
+        },
+        {
+          "character": "Ｕ",
+          "codepoint": "U+FF35",
+          "unicode_name": "FULLWIDTH LATIN CAPITAL LETTER U"
+        }
+      ],
+      "group": "fullwidth_mixed_script",
+      "valid_utf8": true,
+      "model_encode_success": false
+    },
+    {
+      "log_line": 546905,
+      "device_timestamp": "10-28 10:32:45.541",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "Ｖ溝",
+      "raw_log": "10-28 10:32:45.541  2362  2478 W rime.trime: Encode failure: 'Ｖ溝'.",
+      "essay_entry": {
+        "line": 442537,
+        "weight": "0",
+        "text": "Ｖ溝\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "Ｖ",
+          "codepoint": "U+FF36",
+          "unicode_name": "FULLWIDTH LATIN CAPITAL LETTER V"
+        }
+      ],
+      "group": "fullwidth_mixed_script",
+      "valid_utf8": true,
+      "model_encode_success": false
+    },
+    {
+      "log_line": 546906,
+      "device_timestamp": "10-28 10:32:45.541",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "Ｘ光",
+      "raw_log": "10-28 10:32:45.541  2362  2478 W rime.trime: Encode failure: 'Ｘ光'.",
+      "essay_entry": {
+        "line": 442538,
+        "weight": "0",
+        "text": "Ｘ光\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "Ｘ",
+          "codepoint": "U+FF38",
+          "unicode_name": "FULLWIDTH LATIN CAPITAL LETTER X"
+        }
+      ],
+      "group": "fullwidth_mixed_script",
+      "valid_utf8": true,
+      "model_encode_success": false
+    },
+    {
+      "log_line": 546907,
+      "device_timestamp": "10-28 10:32:45.541",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "Ｘ戰警",
+      "raw_log": "10-28 10:32:45.541  2362  2478 W rime.trime: Encode failure: 'Ｘ戰警'.",
+      "essay_entry": {
+        "line": 442539,
+        "weight": "0",
+        "text": "Ｘ戰警\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "Ｘ",
+          "codepoint": "U+FF38",
+          "unicode_name": "FULLWIDTH LATIN CAPITAL LETTER X"
+        }
+      ],
+      "group": "fullwidth_mixed_script",
+      "valid_utf8": true,
+      "model_encode_success": false
+    },
+    {
+      "log_line": 546908,
+      "device_timestamp": "10-28 10:32:45.541",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "ｅ仔",
+      "raw_log": "10-28 10:32:45.541  2362  2478 W rime.trime: Encode failure: 'ｅ仔'.",
+      "essay_entry": {
+        "line": 442540,
+        "weight": "0",
+        "text": "ｅ仔\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "ｅ",
+          "codepoint": "U+FF45",
+          "unicode_name": "FULLWIDTH LATIN SMALL LETTER E"
+        }
+      ],
+      "group": "fullwidth_mixed_script",
+      "valid_utf8": true,
+      "model_encode_success": false
+    },
+    {
+      "log_line": 546909,
+      "device_timestamp": "10-28 10:32:45.541",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "ｋ他命",
+      "raw_log": "10-28 10:32:45.541  2362  2478 W rime.trime: Encode failure: 'ｋ他命'.",
+      "essay_entry": {
+        "line": 442541,
+        "weight": "0",
+        "text": "ｋ他命\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "ｋ",
+          "codepoint": "U+FF4B",
+          "unicode_name": "FULLWIDTH LATIN SMALL LETTER K"
+        }
+      ],
+      "group": "fullwidth_mixed_script",
+      "valid_utf8": true,
+      "model_encode_success": false
+    },
+    {
+      "log_line": 546910,
+      "device_timestamp": "10-28 10:32:45.541",
+      "pid": 2362,
+      "tid": 2478,
+      "level": "W",
+      "tag": "rime.trime",
+      "phrase": "ｎ遍",
+      "raw_log": "10-28 10:32:45.541  2362  2478 W rime.trime: Encode failure: 'ｎ遍'.",
+      "essay_entry": {
+        "line": 442542,
+        "weight": "0",
+        "text": "ｎ遍\t0"
+      },
+      "explicit_dictionary_term": false,
+      "unmapped_characters": [
+        {
+          "character": "ｎ",
+          "codepoint": "U+FF4E",
+          "unicode_name": "FULLWIDTH LATIN SMALL LETTER N"
+        }
+      ],
+      "group": "fullwidth_mixed_script",
+      "valid_utf8": true,
+      "model_encode_success": false
+    }
+  ]
+}
