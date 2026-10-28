@@ -1,0 +1,155 @@
+{
+  "reviewed_at_utc": "2026-10-28T13:27:06.040680+00:00",
+  "reviewer": "independent subagent /root/candidate_hit",
+  "status": "NO_BLOCKING_CORRECTNESS_FINDING_FROM_STATIC_REVIEW",
+  "base": "a047f74757fae0d7b5ef64e54f0b957dee2bf8f3",
+  "worktree_head_at_review": "a047f74757fae0d7b5ef64e54f0b957dee2bf8f3",
+  "worktree": "/home/xumin/Public/Trime-pr-standard-theme-colors-20261028",
+  "actions": "Read-only review of diff, callers, tests, existing Key state logic and generated pure key-name mapping. No production/helper edits, builds, ADB or device action. Only this review JSON written.",
+  "production_files": [
+    {
+      "path": "/home/xumin/Public/Trime-pr-standard-theme-colors-20261028/app/src/main/java/com/osfans/trime/data/theme/ColorManager.kt",
+      "bytes": 9946,
+      "sha256": "47064eaf7aeab0b96075bf5fe5e67c7014e9d0a4926c6a1e4cb249d64d1f703f"
+    },
+    {
+      "path": "/home/xumin/Public/Trime-pr-standard-theme-colors-20261028/app/src/main/java/com/osfans/trime/data/theme/ColorTable.kt",
+      "bytes": 5014,
+      "sha256": "845f14a63c4e4d8c1ff441ee288434663b3c2b88428aff329ff3c458a6f27dd0"
+    }
+  ],
+  "unit_test": {
+    "path": "/home/xumin/Public/Trime-pr-standard-theme-colors-20261028/app/src/test/java/com/osfans/trime/data/theme/ThemeDrawableFallbackTest.kt",
+    "bytes": 7842,
+    "sha256": "c8f76305cac2d3e587892500d2c0ea2467c1b7f7d62fd7638162501b39cc4fe6"
+  },
+  "instrumentation_helper": {
+    "path": "/home/xumin/Public/Trime/build/issue-fixes-batch3-20261028/theme-probe/ThemeDrawableInstrumentation.kt",
+    "bytes": 24012,
+    "sha256": "74458f38e0d242ead621ba760c4670bc208dd22482981b65d85c330e4720b9fc"
+  },
+  "baseline_Key_unchanged": {
+    "path": "/home/xumin/Public/Trime-pr-standard-theme-colors-20261028/app/src/main/java/com/osfans/trime/ime/keyboard/Key.kt",
+    "bytes": 14473,
+    "sha256": "400f39329ced634460f22e2866728b00f0577ffeafcbb3a471498305bda8d94b"
+  },
+  "production_main_changed_files": [
+    "app/src/main/java/com/osfans/trime/data/theme/ColorManager.kt",
+    "app/src/main/java/com/osfans/trime/data/theme/ColorTable.kt"
+  ],
+  "other_worktree_status_observed": "M app/build.gradle.kts\n M app/src/main/java/com/osfans/trime/data/theme/ColorManager.kt\n M app/src/main/java/com/osfans/trime/data/theme/ColorTable.kt\n?? app/src/test/java/com/osfans/trime/data/theme/ThemeDrawableFallbackTest.kt",
+  "scope_note": "app/build.gradle.kts was also modified during root-owned build preparation. Its contents are outside this two-file production review; no changes were made by reviewer.",
+  "conclusion": "The patch correctly turns unparseable drawable values into null, allowing existing caller fallback, while retaining valid transparent colors including integer zero and the existing image/custom-alias resolution. It does not change Key classification, text-color policy, fallback chain priority or scheme generation. Android runtime behavior remains to be established by the root-run probe; no device pass is claimed.",
+  "confirmed_behavior": [
+    {
+      "case": "Missing or invalid custom alias/literal",
+      "before": "ColorManager.parseDrawable caught the parse exception, used Color.TRANSPARENT and returned non-null GradientDrawable.",
+      "after": "ColorTable.parseValue yields Value.None; parseDrawable returns null, so Key.getDrawable can take its existing Elvis fallback.",
+      "review": "Correct intended behavioral change. A canonical key whose table entry is None also tries literal spelling and now returns null instead of a transparent placeholder."
+    },
+    {
+      "case": "Valid color integer zero / explicit transparent",
+      "mechanism": "parseColor(value)?.let { Value.Color(it) } tests nullability, not numeric truthiness. Int0 therefore remains Value.Color(0), producing a non-null GradientDrawable.",
+      "review": "Preserved. This applies to actual Android parser-accepted transparent forms, not arbitrary malformed strings."
+    },
+    {
+      "case": "Valid named or hex color",
+      "mechanism": "Actual ColorManager still calls the unchanged ColorUtils.parseColor. Successful Int values are passed unchanged to GradientDrawable.setColor.",
+      "review": "Preserved by source; named/zero/hex actual Android rendering is covered by planned device controls, not proven by JVM fake parser."
+    },
+    {
+      "case": "Images",
+      "mechanism": "Same lowercase suffix classification and unchanged imageDrawable/path/cache/NinePatch decoding. Table Image entries and custom image values still use the same loading path. Missing file already returned null before the patch.",
+      "review": "Preserved. Refactoring means injected parseColor is no longer invoked for image strings; current production parser callback is pure and this is not an observable supported-input regression."
+    },
+    {
+      "case": "Custom scheme aliases and theme fallback chains",
+      "mechanism": "resolveRawSource/resolveRaw are unchanged: explicit nonempty scheme value, then theme fallback hop, then canonical built-in fallback. Cycle and empty-value handling are unchanged.",
+      "review": "Preserved. Direct valid/transparent values still beat fallback; absent custom aliases now allow caller fallback rather than blocking it with a transparent drawable."
+    },
+    {
+      "case": "Canonical ColorTable diagnostics",
+      "mechanism": "The baseline ColorTable already classified a failed parse as Value.None and listed invalidValues. New parseValue centralizes the same classification for table and drawable parsing; invalidValues/unresolvedKeys semantics are preserved.",
+      "review": "Do not describe this as fixing ColorTable previously converting invalid values to Color(0); the old transparent conversion was in ColorManager.parseDrawable."
+    },
+    {
+      "case": "Other nullable drawable callers",
+      "mechanism": "Reviewed KeyView, themed view background/image assignments, ToolButton and decorDrawable consumers. KeyView explicitly returns when drawable is null; other inspected theme consumers accept nullable backgrounds/drawables.",
+      "review": "No new null dereference found. Invalid styles can now reveal caller/default/parent backgrounds rather than draw an accidental transparent placeholder; this is intentional and broader than only the two named schemes."
+    }
+  ],
+  "helper_oracle_review": {
+    "status": "MATCHES_CURRENT_KEY_APPEARANCE_TYPES_FOR_THE_EXPLICIT_FIXTURES",
+    "normal_fixture": "Real first TextKey from expanded default layout: click q, bh1/th1. q is nonfunctional, nonmodifier and nonsticky.",
+    "functional_fixture": "The asset declares functional presets but none of its layout keys use them. Helper explicitly copies the real q TextKey, uses real functional Keyboard_letter preset (send Eisu_toggle, nonmodifier/nonsticky), and real bgn/tgn aliases. It reports this construction and does not present it as a declared layout key.",
+    "states": [
+      {
+        "state": "normal",
+        "actual_Key_type": 0,
+        "background": "bh1 if valid, else key_back_color",
+        "text": "th1 if valid, else key_text_color"
+      },
+      {
+        "state": "normal_pressed",
+        "actual_Key_type": 0,
+        "background": "TextKey.hilitedKeyBackColor if valid, else hilited_key_back_color; real q override is empty",
+        "text": "TextKey.hilitedKeyTextColor if valid, else hilited_key_text_color; real q override is empty"
+      },
+      {
+        "state": "normal_on",
+        "actual_Key_type": 2,
+        "background": "on_key_back_color through existing canonical chain",
+        "text": "on_key_text_color through existing canonical chain"
+      },
+      {
+        "state": "normal_on_pressed",
+        "actual_Key_type": 2,
+        "background": "hilited_on_key_back_color through existing canonical chain",
+        "text": "hilited_on_key_text_color through existing canonical chain"
+      },
+      {
+        "state": "functional_off",
+        "actual_Key_type": 1,
+        "background": "Since bgn is explicitly nonempty, Key uses keyBackground: valid bgn, else generic key_back_color. It does not use off_key_back_color for this fixture.",
+        "text": "valid tgn, else off_key_text_color"
+      },
+      {
+        "state": "functional_pressed",
+        "actual_Key_type": 1,
+        "background": "hilited_off_key_back_color through existing canonical chain, with old hlKeyBackground fallback only if absent",
+        "text": "hilited_off_key_text_color through existing canonical chain"
+      }
+    ],
+    "state_reset": "onReleased then setOn(false), optional setOn(true), optional onPressed. q and Keyboard_letter are not sticky, so reset does not create an unintended on state. Same two Key objects persist across all scheme changes; parent modifiers remain0.",
+    "rendering": "Expected color is drawn through ColorDrawable to an 8x8 Canvas before comparing to actual drawable center pixel. This accounts for alpha/premultiplication and is a synthetic swatch, not full KeyView render. Actual text-color Int is compared directly.",
+    "bounds": "46 unique schemes, default revisited at end; 282 state observations. Required original symptom rows specifically google_plus/normal and tantsing/normal. Up to400 violation records, 20s main task bound and120s watchdog.",
+    "public_API_and_native": "Public parsing, ColorManager/ThemeScope, Keyboard and Key APIs only. Key.getLabel/getAction are avoided. Generated key-name mapping is pure when/constant lookup; Eisu_toggle maps to KeyEvent.KEYCODE_EISU. No Rime session or JNI invocation appears in helper path. Application-owned background work is outside this static claim.",
+    "limitations": [
+      "Functional off state with an empty custom background is not one of the 282 real-theme state rows; current Key retains its preexisting offKeyBackground policy.",
+      "The key state oracle assumes shipped standard-theme canonical backgrounds resolve to colors; unit all-palette checks and runtime will validate the actual asset.",
+      "The helper produces expected baseline assertion failure and passed=false, rather than swallowing it as a passing baseline. The actual test runner must inspect targeted observations and expected_observation_matches, not only shell exit.",
+      "Restoration runs in finally for normal failures and records preference readback plus owned PNG deletion. A hard watchdog/process termination can prevent cleanup; root must retain cleanup evidence."
+    ]
+  },
+  "unit_test_review": {
+    "meaningful_coverage": [
+      "Uses real production ThemeTestSupport decoding (ThemeYaml/DSL) and all46 shipped standard palettes; identifies bh1/th1 omissions and concrete Google+/tantsing generic colors.",
+      "Checks explicit key-background overrides versus generic availability across all declared per-key aliases and all palettes, rather than asserting a desired contrast ratio.",
+      "Checks nullable value domain separation for valid0, ordinaryhex, invalid values, images, custom fallback chains and direct-value priority."
+    ],
+    "test_parser_limits": [
+      "parseHex is a test dependency injected into ColorTable classification, not actual Android ColorUtils/Color.parseColor execution and not an Android Drawable test.",
+      "The listed unit fixtures use lowercase hex forms; named colors and framework parsing/Bitmap decode are not proven by these JVM assertions.",
+      "parseHex is not a complete drop-in for ColorUtils for every input: for example its ignore-case 0X acceptance can differ from the existing production normalization regex. The patch does not modify ColorUtils, and no uppercase0X compatibility claim should be made.",
+      "Image suffix/value classification assertions do not verify actual image decoding, image existence or Android NinePatch behavior.",
+      "Actual Android ThemeScope.drawable/ColorManager.getDrawable and Key fallback are the separately planned instrumentation validation. No unit/device test was run by this reviewer."
+    ]
+  },
+  "intentional_behavior_change_and_limits": [
+    "Malformed color values that previously happened to yield transparency now return null; themes intending transparency must use a parser-accepted explicit transparent color.",
+    "No guarantee that all palettes have high contrast, all backgrounds are opaque, or issue2159 historical visual symptoms are fully eliminated.",
+    "Key functional classification/fallback strategy, ThemeColors exceptions for non-color canonical entries, image format/suffix support and generation caching are unchanged.",
+    "No crash or rendered keyboard outcome is established by this static review. Root must bind original/diagnostic APK identity and runtime controls before claiming device validation."
+  ],
+  "blocking_findings": []
+}

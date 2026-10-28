@@ -1,0 +1,841 @@
+{
+  "scope": "Mechanical review of full continuously collected log and explicitly bounded target-PID intervals. Not a claim all Android or Trime warnings are resolved.",
+  "full_log": {
+    "path": "/home/xumin/Public/Trime/build/issue-fixes-batch3-20261028/runtime/run1/device-logcat.txt",
+    "bytes": 3392713,
+    "sha256": "ed22fb2341c37522f612e254cd05c3298fe9e8d0506ea7bbc7d2230665bad823"
+  },
+  "full_session_levels": {
+    "W": 2268,
+    "I": 7250,
+    "D": 8664,
+    "E": 1292,
+    "V": 5372
+  },
+  "top_warning_tags": [
+    [
+      "ActivityManager",
+      181
+    ],
+    [
+      "PackageManager",
+      153
+    ],
+    [
+      "PackageSettings",
+      151
+    ],
+    [
+      "[main] ThemeScope",
+      94
+    ],
+    [
+      "IPCThreadState",
+      86
+    ],
+    [
+      "HealthConnectPackageInfoUtils",
+      78
+    ],
+    [
+      "BestClock",
+      77
+    ],
+    [
+      "AppOpService",
+      77
+    ],
+    [
+      "system_server",
+      67
+    ],
+    [
+      "android.hardware.media.c2@1.0-service-goldfish",
+      62
+    ],
+    [
+      "mediaswcodec",
+      60
+    ],
+    [
+      "Looper  ",
+      58
+    ],
+    [
+      "mediaextractor",
+      57
+    ],
+    [
+      "UserSystemPackageInstaller",
+      55
+    ],
+    [
+      "TelephonyRegistry",
+      43
+    ]
+  ],
+  "fatal_anr_oom_lmk_kill_pattern_matches": [],
+  "cases": {
+    "baseline": {
+      "pid": 1878,
+      "real_log_markers": {
+        "start_line": 22869,
+        "end_line": 23250
+      },
+      "target_pid_levels_within_markers": {
+        "I": 4,
+        "W": 58,
+        "D": 14,
+        "V": 5,
+        "E": 2
+      },
+      "target_pid_warning_error_lines": [
+        {
+          "line": 22896,
+          "level": "W",
+          "tag": "ans.trime.debug",
+          "message": "Unexpected CPU variant for x86: x86_64."
+        },
+        {
+          "line": 22897,
+          "level": "W",
+          "tag": "ans.trime.debug",
+          "message": "Known variants: atom, sandybridge, silvermont, goldmont, goldmont-plus, goldmont-without-sha-xsaves, tremont, kabylake, default"
+        },
+        {
+          "line": 22901,
+          "level": "W",
+          "tag": "ActivityThread",
+          "message": "Package uses different ABI(s) than its instrumentation: package[com.osfans.trime.debug]: x86_64, null instrumentation[com.osfans.trime.debug.test]: null, null"
+        },
+        {
+          "line": 22904,
+          "level": "W",
+          "tag": "ziparchive",
+          "message": "Unable to open '/data/app/~~TxwuZ-cZY24YZ36CUPaaug==/com.osfans.trime.debug.test-h-vX46Cz3VGlsvDNwTHKnw==/base.dm': No such file or directory"
+        },
+        {
+          "line": 22905,
+          "level": "W",
+          "tag": "ziparchive",
+          "message": "Unable to open '/data/app/~~TxwuZ-cZY24YZ36CUPaaug==/com.osfans.trime.debug.test-h-vX46Cz3VGlsvDNwTHKnw==/base.dm': No such file or directory"
+        },
+        {
+          "line": 22906,
+          "level": "W",
+          "tag": "ziparchive",
+          "message": "Unable to open '/data/app/~~cmVfKtt55h5RCOMJ5ubA1Q==/com.osfans.trime.debug-OhAFva70yBHA0cj_cxtdkQ==/base.dm': No such file or directory"
+        },
+        {
+          "line": 22907,
+          "level": "W",
+          "tag": "ziparchive",
+          "message": "Unable to open '/data/app/~~cmVfKtt55h5RCOMJ5ubA1Q==/com.osfans.trime.debug-OhAFva70yBHA0cj_cxtdkQ==/base.dm': No such file or directory"
+        },
+        {
+          "line": 23021,
+          "level": "W",
+          "tag": "ziparchive",
+          "message": "Unable to open '/data/app/~~TxwuZ-cZY24YZ36CUPaaug==/com.osfans.trime.debug.test-h-vX46Cz3VGlsvDNwTHKnw==/base.dm': No such file or directory"
+        },
+        {
+          "line": 23022,
+          "level": "W",
+          "tag": "ziparchive",
+          "message": "Unable to open '/data/app/~~TxwuZ-cZY24YZ36CUPaaug==/com.osfans.trime.debug.test-h-vX46Cz3VGlsvDNwTHKnw==/base.dm': No such file or directory"
+        },
+        {
+          "line": 23023,
+          "level": "W",
+          "tag": "ziparchive",
+          "message": "Unable to open '/data/app/~~cmVfKtt55h5RCOMJ5ubA1Q==/com.osfans.trime.debug-OhAFva70yBHA0cj_cxtdkQ==/base.dm': No such file or directory"
+        },
+        {
+          "line": 23024,
+          "level": "W",
+          "tag": "ziparchive",
+          "message": "Unable to open '/data/app/~~cmVfKtt55h5RCOMJ5ubA1Q==/com.osfans.trime.debug-OhAFva70yBHA0cj_cxtdkQ==/base.dm': No such file or directory"
+        },
+        {
+          "line": 23169,
+          "level": "W",
+          "tag": "[main] ThemeScope",
+          "message": "ThemeScope.kt:52] Unknown color key: candidate_border_color"
+        },
+        {
+          "line": 23173,
+          "level": "W",
+          "tag": "[main] ThemeScope",
+          "message": "ThemeScope.kt:52] Unknown color key: candidate_border_color"
+        },
+        {
+          "line": 23174,
+          "level": "W",
+          "tag": "[main] ThemeScope",
+          "message": "ThemeScope.kt:52] Unknown color key: candidate_border_color"
+        },
+        {
+          "line": 23177,
+          "level": "W",
+          "tag": "[main] ThemeScope",
+          "message": "ThemeScope.kt:52] Unknown color key: candidate_border_color"
+        },
+        {
+          "line": 23178,
+          "level": "W",
+          "tag": "[main] ThemeScope",
+          "message": "ThemeScope.kt:52] Unknown color key: candidate_border_color"
+        },
+        {
+          "line": 23180,
+          "level": "W",
+          "tag": "[main] ThemeScope",
+          "message": "ThemeScope.kt:52] Unknown color key: candidate_border_color"
+        },
+        {
+          "line": 23181,
+          "level": "W",
+          "tag": "[main] ThemeScope",
+          "message": "ThemeScope.kt:52] Unknown color key: candidate_border_color"
+        },
+        {
+          "line": 23182,
+          "level": "W",
+          "tag": "[main] ThemeScope",
+          "message": "ThemeScope.kt:52] Unknown color key: candidate_border_color"
+        },
+        {
+          "line": 23183,
+          "level": "W",
+          "tag": "[main] ThemeScope",
+          "message": "ThemeScope.kt:52] Unknown color key: candidate_border_color"
+        },
+        {
+          "line": 23184,
+          "level": "W",
+          "tag": "[main] ThemeScope",
+          "message": "ThemeScope.kt:52] Unknown color key: candidate_border_color"
+        },
+        {
+          "line": 23185,
+          "level": "W",
+          "tag": "[main] ThemeScope",
+          "message": "ThemeScope.kt:52] Unknown color key: candidate_border_color"
+        },
+        {
+          "line": 23186,
+          "level": "W",
+          "tag": "[main] ThemeScope",
+          "message": "ThemeScope.kt:52] Unknown color key: candidate_border_color"
+        },
+        {
+          "line": 23187,
+          "level": "W",
+          "tag": "[main] ThemeScope",
+          "message": "ThemeScope.kt:52] Unknown color key: candidate_border_color"
+        },
+        {
+          "line": 23188,
+          "level": "W",
+          "tag": "[main] ThemeScope",
+          "message": "ThemeScope.kt:52] Unknown color key: candidate_border_color"
+        },
+        {
+          "line": 23189,
+          "level": "W",
+          "tag": "[main] ThemeScope",
+          "message": "ThemeScope.kt:52] Unknown color key: candidate_border_color"
+        },
+        {
+          "line": 23190,
+          "level": "W",
+          "tag": "[main] ThemeScope",
+          "message": "ThemeScope.kt:52] Unknown color key: candidate_border_color"
+        },
+        {
+          "line": 23191,
+          "level": "W",
+          "tag": "[main] ThemeScope",
+          "message": "ThemeScope.kt:52] Unknown color key: candidate_border_color"
+        },
+        {
+          "line": 23192,
+          "level": "W",
+          "tag": "[main] ThemeScope",
+          "message": "ThemeScope.kt:52] Unknown color key: candidate_border_color"
+        },
+        {
+          "line": 23193,
+          "level": "W",
+          "tag": "[main] ThemeScope",
+          "message": "ThemeScope.kt:52] Unknown color key: candidate_border_color"
+        },
+        {
+          "line": 23194,
+          "level": "W",
+          "tag": "[main] ThemeScope",
+          "message": "ThemeScope.kt:52] Unknown color key: candidate_border_color"
+        },
+        {
+          "line": 23195,
+          "level": "W",
+          "tag": "[main] ThemeScope",
+          "message": "ThemeScope.kt:52] Unknown color key: candidate_border_color"
+        },
+        {
+          "line": 23196,
+          "level": "W",
+          "tag": "[main] ThemeScope",
+          "message": "ThemeScope.kt:52] Unknown color key: candidate_border_color"
+        },
+        {
+          "line": 23197,
+          "level": "W",
+          "tag": "[main] ThemeScope",
+          "message": "ThemeScope.kt:52] Unknown color key: candidate_border_color"
+        },
+        {
+          "line": 23198,
+          "level": "W",
+          "tag": "[main] ThemeScope",
+          "message": "ThemeScope.kt:52] Unknown color key: candidate_border_color"
+        },
+        {
+          "line": 23199,
+          "level": "W",
+          "tag": "[main] ThemeScope",
+          "message": "ThemeScope.kt:52] Unknown color key: candidate_border_color"
+        },
+        {
+          "line": 23200,
+          "level": "W",
+          "tag": "[main] ThemeScope",
+          "message": "ThemeScope.kt:52] Unknown color key: candidate_border_color"
+        },
+        {
+          "line": 23201,
+          "level": "W",
+          "tag": "[main] ThemeScope",
+          "message": "ThemeScope.kt:52] Unknown color key: candidate_border_color"
+        },
+        {
+          "line": 23202,
+          "level": "W",
+          "tag": "[main] ThemeScope",
+          "message": "ThemeScope.kt:52] Unknown color key: candidate_border_color"
+        },
+        {
+          "line": 23203,
+          "level": "W",
+          "tag": "[main] ThemeScope",
+          "message": "ThemeScope.kt:52] Unknown color key: candidate_border_color"
+        },
+        {
+          "line": 23204,
+          "level": "W",
+          "tag": "[main] ThemeScope",
+          "message": "ThemeScope.kt:52] Unknown color key: candidate_border_color"
+        },
+        {
+          "line": 23205,
+          "level": "W",
+          "tag": "[main] ThemeScope",
+          "message": "ThemeScope.kt:52] Unknown color key: candidate_border_color"
+        },
+        {
+          "line": 23206,
+          "level": "W",
+          "tag": "[main] ThemeScope",
+          "message": "ThemeScope.kt:52] Unknown color key: candidate_border_color"
+        },
+        {
+          "line": 23207,
+          "level": "W",
+          "tag": "[main] ThemeScope",
+          "message": "ThemeScope.kt:52] Unknown color key: candidate_border_color"
+        },
+        {
+          "line": 23208,
+          "level": "W",
+          "tag": "[main] ThemeScope",
+          "message": "ThemeScope.kt:52] Unknown color key: candidate_border_color"
+        },
+        {
+          "line": 23209,
+          "level": "W",
+          "tag": "[main] ThemeScope",
+          "message": "ThemeScope.kt:52] Unknown color key: candidate_border_color"
+        },
+        {
+          "line": 23210,
+          "level": "W",
+          "tag": "[main] ThemeScope",
+          "message": "ThemeScope.kt:52] Unknown color key: candidate_border_color"
+        },
+        {
+          "line": 23211,
+          "level": "W",
+          "tag": "[main] ThemeScope",
+          "message": "ThemeScope.kt:52] Unknown color key: candidate_border_color"
+        },
+        {
+          "line": 23212,
+          "level": "W",
+          "tag": "[main] ThemeScope",
+          "message": "ThemeScope.kt:52] Unknown color key: candidate_border_color"
+        },
+        {
+          "line": 23213,
+          "level": "W",
+          "tag": "[main] ThemeScope",
+          "message": "ThemeScope.kt:52] Unknown color key: candidate_border_color"
+        },
+        {
+          "line": 23214,
+          "level": "W",
+          "tag": "[main] ThemeScope",
+          "message": "ThemeScope.kt:52] Unknown color key: candidate_border_color"
+        },
+        {
+          "line": 23215,
+          "level": "W",
+          "tag": "[main] ThemeScope",
+          "message": "ThemeScope.kt:52] Unknown color key: candidate_border_color"
+        },
+        {
+          "line": 23216,
+          "level": "W",
+          "tag": "[main] ThemeScope",
+          "message": "ThemeScope.kt:52] Unknown color key: candidate_border_color"
+        },
+        {
+          "line": 23217,
+          "level": "W",
+          "tag": "[main] ThemeScope",
+          "message": "ThemeScope.kt:52] Unknown color key: candidate_border_color"
+        },
+        {
+          "line": 23218,
+          "level": "W",
+          "tag": "[main] ThemeScope",
+          "message": "ThemeScope.kt:52] Unknown color key: candidate_border_color"
+        },
+        {
+          "line": 23219,
+          "level": "W",
+          "tag": "[main] ThemeScope",
+          "message": "ThemeScope.kt:52] Unknown color key: candidate_border_color"
+        },
+        {
+          "line": 23220,
+          "level": "W",
+          "tag": "[main] ThemeScope",
+          "message": "ThemeScope.kt:52] Unknown color key: candidate_border_color"
+        },
+        {
+          "line": 23221,
+          "level": "W",
+          "tag": "[main] ThemeScope",
+          "message": "ThemeScope.kt:52] Unknown color key: candidate_border_color"
+        },
+        {
+          "line": 23223,
+          "level": "E",
+          "tag": "BitmapFactory",
+          "message": "Unable to decode file: java.io.FileNotFoundException: /storage/emulated/0/Android/data/com.osfans.trime.debug/files/rime/backgrounds/backgrounds/batch3-theme-probe-absent-1878.png: open failed: ENOENT (No such file or directory)"
+        },
+        {
+          "line": 23224,
+          "level": "E",
+          "tag": "BitmapFactory",
+          "message": "Unable to decode file: java.io.FileNotFoundException: /storage/emulated/0/Android/data/com.osfans.trime.debug/files/rime/backgrounds/backgrounds/batch3-theme-probe-absent-1878.png: open failed: ENOENT (No such file or directory)"
+        }
+      ],
+      "fatal_markers_within_markers": []
+    },
+    "fixed": {
+      "pid": 1998,
+      "real_log_markers": {
+        "start_line": 24029,
+        "end_line": 24374
+      },
+      "target_pid_levels_within_markers": {
+        "I": 4,
+        "W": 58,
+        "D": 14,
+        "V": 5,
+        "E": 2
+      },
+      "target_pid_warning_error_lines": [
+        {
+          "line": 24063,
+          "level": "W",
+          "tag": "ans.trime.debug",
+          "message": "Unexpected CPU variant for x86: x86_64."
+        },
+        {
+          "line": 24064,
+          "level": "W",
+          "tag": "ans.trime.debug",
+          "message": "Known variants: atom, sandybridge, silvermont, goldmont, goldmont-plus, goldmont-without-sha-xsaves, tremont, kabylake, default"
+        },
+        {
+          "line": 24068,
+          "level": "W",
+          "tag": "ActivityThread",
+          "message": "Package uses different ABI(s) than its instrumentation: package[com.osfans.trime.debug]: x86_64, null instrumentation[com.osfans.trime.debug.test]: null, null"
+        },
+        {
+          "line": 24071,
+          "level": "W",
+          "tag": "ziparchive",
+          "message": "Unable to open '/data/app/~~TxwuZ-cZY24YZ36CUPaaug==/com.osfans.trime.debug.test-h-vX46Cz3VGlsvDNwTHKnw==/base.dm': No such file or directory"
+        },
+        {
+          "line": 24072,
+          "level": "W",
+          "tag": "ziparchive",
+          "message": "Unable to open '/data/app/~~TxwuZ-cZY24YZ36CUPaaug==/com.osfans.trime.debug.test-h-vX46Cz3VGlsvDNwTHKnw==/base.dm': No such file or directory"
+        },
+        {
+          "line": 24073,
+          "level": "W",
+          "tag": "ziparchive",
+          "message": "Unable to open '/data/app/~~vgdqFOIkU9fRB9cP3cGwDA==/com.osfans.trime.debug-2ZFlFX7Jr2_lvioi8xRAug==/base.dm': No such file or directory"
+        },
+        {
+          "line": 24074,
+          "level": "W",
+          "tag": "ziparchive",
+          "message": "Unable to open '/data/app/~~vgdqFOIkU9fRB9cP3cGwDA==/com.osfans.trime.debug-2ZFlFX7Jr2_lvioi8xRAug==/base.dm': No such file or directory"
+        },
+        {
+          "line": 24185,
+          "level": "W",
+          "tag": "ziparchive",
+          "message": "Unable to open '/data/app/~~TxwuZ-cZY24YZ36CUPaaug==/com.osfans.trime.debug.test-h-vX46Cz3VGlsvDNwTHKnw==/base.dm': No such file or directory"
+        },
+        {
+          "line": 24186,
+          "level": "W",
+          "tag": "ziparchive",
+          "message": "Unable to open '/data/app/~~TxwuZ-cZY24YZ36CUPaaug==/com.osfans.trime.debug.test-h-vX46Cz3VGlsvDNwTHKnw==/base.dm': No such file or directory"
+        },
+        {
+          "line": 24187,
+          "level": "W",
+          "tag": "ziparchive",
+          "message": "Unable to open '/data/app/~~vgdqFOIkU9fRB9cP3cGwDA==/com.osfans.trime.debug-2ZFlFX7Jr2_lvioi8xRAug==/base.dm': No such file or directory"
+        },
+        {
+          "line": 24188,
+          "level": "W",
+          "tag": "ziparchive",
+          "message": "Unable to open '/data/app/~~vgdqFOIkU9fRB9cP3cGwDA==/com.osfans.trime.debug-2ZFlFX7Jr2_lvioi8xRAug==/base.dm': No such file or directory"
+        },
+        {
+          "line": 24301,
+          "level": "W",
+          "tag": "[main] ThemeScope",
+          "message": "ThemeScope.kt:52] Unknown color key: candidate_border_color"
+        },
+        {
+          "line": 24305,
+          "level": "W",
+          "tag": "[main] ThemeScope",
+          "message": "ThemeScope.kt:52] Unknown color key: candidate_border_color"
+        },
+        {
+          "line": 24306,
+          "level": "W",
+          "tag": "[main] ThemeScope",
+          "message": "ThemeScope.kt:52] Unknown color key: candidate_border_color"
+        },
+        {
+          "line": 24307,
+          "level": "W",
+          "tag": "[main] ThemeScope",
+          "message": "ThemeScope.kt:52] Unknown color key: candidate_border_color"
+        },
+        {
+          "line": 24308,
+          "level": "W",
+          "tag": "[main] ThemeScope",
+          "message": "ThemeScope.kt:52] Unknown color key: candidate_border_color"
+        },
+        {
+          "line": 24309,
+          "level": "W",
+          "tag": "[main] ThemeScope",
+          "message": "ThemeScope.kt:52] Unknown color key: candidate_border_color"
+        },
+        {
+          "line": 24310,
+          "level": "W",
+          "tag": "[main] ThemeScope",
+          "message": "ThemeScope.kt:52] Unknown color key: candidate_border_color"
+        },
+        {
+          "line": 24311,
+          "level": "W",
+          "tag": "[main] ThemeScope",
+          "message": "ThemeScope.kt:52] Unknown color key: candidate_border_color"
+        },
+        {
+          "line": 24312,
+          "level": "W",
+          "tag": "[main] ThemeScope",
+          "message": "ThemeScope.kt:52] Unknown color key: candidate_border_color"
+        },
+        {
+          "line": 24313,
+          "level": "W",
+          "tag": "[main] ThemeScope",
+          "message": "ThemeScope.kt:52] Unknown color key: candidate_border_color"
+        },
+        {
+          "line": 24314,
+          "level": "W",
+          "tag": "[main] ThemeScope",
+          "message": "ThemeScope.kt:52] Unknown color key: candidate_border_color"
+        },
+        {
+          "line": 24315,
+          "level": "W",
+          "tag": "[main] ThemeScope",
+          "message": "ThemeScope.kt:52] Unknown color key: candidate_border_color"
+        },
+        {
+          "line": 24316,
+          "level": "W",
+          "tag": "[main] ThemeScope",
+          "message": "ThemeScope.kt:52] Unknown color key: candidate_border_color"
+        },
+        {
+          "line": 24317,
+          "level": "W",
+          "tag": "[main] ThemeScope",
+          "message": "ThemeScope.kt:52] Unknown color key: candidate_border_color"
+        },
+        {
+          "line": 24318,
+          "level": "W",
+          "tag": "[main] ThemeScope",
+          "message": "ThemeScope.kt:52] Unknown color key: candidate_border_color"
+        },
+        {
+          "line": 24319,
+          "level": "W",
+          "tag": "[main] ThemeScope",
+          "message": "ThemeScope.kt:52] Unknown color key: candidate_border_color"
+        },
+        {
+          "line": 24320,
+          "level": "W",
+          "tag": "[main] ThemeScope",
+          "message": "ThemeScope.kt:52] Unknown color key: candidate_border_color"
+        },
+        {
+          "line": 24321,
+          "level": "W",
+          "tag": "[main] ThemeScope",
+          "message": "ThemeScope.kt:52] Unknown color key: candidate_border_color"
+        },
+        {
+          "line": 24322,
+          "level": "W",
+          "tag": "[main] ThemeScope",
+          "message": "ThemeScope.kt:52] Unknown color key: candidate_border_color"
+        },
+        {
+          "line": 24323,
+          "level": "W",
+          "tag": "[main] ThemeScope",
+          "message": "ThemeScope.kt:52] Unknown color key: candidate_border_color"
+        },
+        {
+          "line": 24324,
+          "level": "W",
+          "tag": "[main] ThemeScope",
+          "message": "ThemeScope.kt:52] Unknown color key: candidate_border_color"
+        },
+        {
+          "line": 24325,
+          "level": "W",
+          "tag": "[main] ThemeScope",
+          "message": "ThemeScope.kt:52] Unknown color key: candidate_border_color"
+        },
+        {
+          "line": 24326,
+          "level": "W",
+          "tag": "[main] ThemeScope",
+          "message": "ThemeScope.kt:52] Unknown color key: candidate_border_color"
+        },
+        {
+          "line": 24327,
+          "level": "W",
+          "tag": "[main] ThemeScope",
+          "message": "ThemeScope.kt:52] Unknown color key: candidate_border_color"
+        },
+        {
+          "line": 24328,
+          "level": "W",
+          "tag": "[main] ThemeScope",
+          "message": "ThemeScope.kt:52] Unknown color key: candidate_border_color"
+        },
+        {
+          "line": 24329,
+          "level": "W",
+          "tag": "[main] ThemeScope",
+          "message": "ThemeScope.kt:52] Unknown color key: candidate_border_color"
+        },
+        {
+          "line": 24330,
+          "level": "W",
+          "tag": "[main] ThemeScope",
+          "message": "ThemeScope.kt:52] Unknown color key: candidate_border_color"
+        },
+        {
+          "line": 24331,
+          "level": "W",
+          "tag": "[main] ThemeScope",
+          "message": "ThemeScope.kt:52] Unknown color key: candidate_border_color"
+        },
+        {
+          "line": 24332,
+          "level": "W",
+          "tag": "[main] ThemeScope",
+          "message": "ThemeScope.kt:52] Unknown color key: candidate_border_color"
+        },
+        {
+          "line": 24333,
+          "level": "W",
+          "tag": "[main] ThemeScope",
+          "message": "ThemeScope.kt:52] Unknown color key: candidate_border_color"
+        },
+        {
+          "line": 24334,
+          "level": "W",
+          "tag": "[main] ThemeScope",
+          "message": "ThemeScope.kt:52] Unknown color key: candidate_border_color"
+        },
+        {
+          "line": 24335,
+          "level": "W",
+          "tag": "[main] ThemeScope",
+          "message": "ThemeScope.kt:52] Unknown color key: candidate_border_color"
+        },
+        {
+          "line": 24336,
+          "level": "W",
+          "tag": "[main] ThemeScope",
+          "message": "ThemeScope.kt:52] Unknown color key: candidate_border_color"
+        },
+        {
+          "line": 24337,
+          "level": "W",
+          "tag": "[main] ThemeScope",
+          "message": "ThemeScope.kt:52] Unknown color key: candidate_border_color"
+        },
+        {
+          "line": 24338,
+          "level": "W",
+          "tag": "[main] ThemeScope",
+          "message": "ThemeScope.kt:52] Unknown color key: candidate_border_color"
+        },
+        {
+          "line": 24339,
+          "level": "W",
+          "tag": "[main] ThemeScope",
+          "message": "ThemeScope.kt:52] Unknown color key: candidate_border_color"
+        },
+        {
+          "line": 24340,
+          "level": "W",
+          "tag": "[main] ThemeScope",
+          "message": "ThemeScope.kt:52] Unknown color key: candidate_border_color"
+        },
+        {
+          "line": 24341,
+          "level": "W",
+          "tag": "[main] ThemeScope",
+          "message": "ThemeScope.kt:52] Unknown color key: candidate_border_color"
+        },
+        {
+          "line": 24342,
+          "level": "W",
+          "tag": "[main] ThemeScope",
+          "message": "ThemeScope.kt:52] Unknown color key: candidate_border_color"
+        },
+        {
+          "line": 24343,
+          "level": "W",
+          "tag": "[main] ThemeScope",
+          "message": "ThemeScope.kt:52] Unknown color key: candidate_border_color"
+        },
+        {
+          "line": 24344,
+          "level": "W",
+          "tag": "[main] ThemeScope",
+          "message": "ThemeScope.kt:52] Unknown color key: candidate_border_color"
+        },
+        {
+          "line": 24345,
+          "level": "W",
+          "tag": "[main] ThemeScope",
+          "message": "ThemeScope.kt:52] Unknown color key: candidate_border_color"
+        },
+        {
+          "line": 24346,
+          "level": "W",
+          "tag": "[main] ThemeScope",
+          "message": "ThemeScope.kt:52] Unknown color key: candidate_border_color"
+        },
+        {
+          "line": 24347,
+          "level": "W",
+          "tag": "[main] ThemeScope",
+          "message": "ThemeScope.kt:52] Unknown color key: candidate_border_color"
+        },
+        {
+          "line": 24348,
+          "level": "W",
+          "tag": "[main] ThemeScope",
+          "message": "ThemeScope.kt:52] Unknown color key: candidate_border_color"
+        },
+        {
+          "line": 24349,
+          "level": "W",
+          "tag": "[main] ThemeScope",
+          "message": "ThemeScope.kt:52] Unknown color key: candidate_border_color"
+        },
+        {
+          "line": 24350,
+          "level": "W",
+          "tag": "[main] ThemeScope",
+          "message": "ThemeScope.kt:52] Unknown color key: candidate_border_color"
+        },
+        {
+          "line": 24352,
+          "level": "E",
+          "tag": "BitmapFactory",
+          "message": "Unable to decode file: java.io.FileNotFoundException: /storage/emulated/0/Android/data/com.osfans.trime.debug/files/rime/backgrounds/backgrounds/batch3-theme-probe-absent-1998.png: open failed: ENOENT (No such file or directory)"
+        },
+        {
+          "line": 24353,
+          "level": "E",
+          "tag": "BitmapFactory",
+          "message": "Unable to decode file: java.io.FileNotFoundException: /storage/emulated/0/Android/data/com.osfans.trime.debug/files/rime/backgrounds/backgrounds/batch3-theme-probe-absent-1998.png: open failed: ENOENT (No such file or directory)"
+        }
+      ],
+      "fatal_markers_within_markers": []
+    }
+  },
+  "retained_warning_interpretation": [
+    "Both target PIDs retain ThemeScope unknown candidate_border_color diagnostics while all palette caches are exercised; this patch does not remove those existing warnings.",
+    "Both targets retain ART CPU-variant, bytecode-only instrumentation ABI, and missing optional dex-metadata diagnostics. They are not silently filtered from the original log.",
+    "An intentionally absent image control produces real BitmapFactory/ImageDecoder error lines. It is a negative control, not evidence of a working image failing. Existing-image controls passed.",
+    "Full-system warnings/errors are retained without blanket benign/system-only attribution."
+  ],
+  "not_zero_warning": true
+}

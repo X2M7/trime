@@ -36,7 +36,7 @@
 
 ### 首批修复 PR 进度（2026-10-28，已正式待审）
 
-09:34 分诊快照之后新增三个独立修复 PR，均基于 `a047f747`，现为 **Open／Ready for review**。各 PR 的 `lint-and-test` 和四系统构建检查均成功，共 **15/15 项 CI 检查**；这是检查数，不是应用测试用例数。[本批进度与身份记录](checks/issue-fixes-20261028/progress.json)单列实际构建 commit、原 APK／诊断副本、限定验收与[正式待审回执](checks/issue-fixes-20261028/publication/ready-summary.json)。原 117 条 issue／7 个 PR 统计保留其抓取时含义。
+09:34 分诊快照之后新增三个独立修复 PR，均基于 `a047f747`；下表保留首批发布时的 **Open／Ready for review** 结果。后续 #2198／#2200 已合入上游，最新读回见第三批记录。各 PR 的 `lint-and-test` 和四系统构建检查均成功，共 **15/15 项 CI 检查**；这是检查数，不是应用测试用例数。[本批进度与身份记录](checks/issue-fixes-20261028/progress.json)单列实际构建 commit、原 APK／诊断副本、限定验收与[正式待审回执](checks/issue-fixes-20261028/publication/ready-summary.json)。原 117 条 issue／7 个 PR 统计保留其抓取时含义。
 
 | 类别 | PR／源码 | Issue 关系与修复范围 | CI／Android 15 限定验证 |
 | --- | --- | --- | --- |
@@ -67,6 +67,24 @@
 - [CI 警告复核](checks/issue-fixes-batch2-20261028/cloud/pr-2201/warning-context-review.json)保留固定原生依赖、SDK／JNA、Gradle 与 Windows 缓存警告，未发现这两处应用源码的编译警告候选。[本地 Gradle 调查](checks/issue-fixes-batch2-20261028/gradle-deprecation-investigation.json)指向 Android 插件上下文的 `Configuration.setVisible(boolean)`，但云端没有具体调用栈，不能据此认定全部云端弃用来源。
 
 本节仅同步 fork 分类索引；没有改写 `develop`、既有 PR 或发布稳定版。APK、原图、磁盘及完整日志继续保留在本地，所选文字原件和 [SHA-256 清单](checks/issue-fixes-batch2-20261028/SHA256SUMS)供复核。
+
+### 第三批：标准主题背景回退（2026-10-28，验收完成）
+
+新增 [#2203](https://github.com/osfans/trime/pull/2203)，**Fixes [#2159](https://github.com/osfans/trime/issues/2159)**。源码 `f27e8425`、分支 `contrib/fix-standard-theme-colors`，已 rebase 到上游 `7fedca06`，仅两个生产文件和一个回归测试文件。PR 当前仍为 Draft，下一步根据本轮结果转为正式待审。[本批进度](checks/issue-fixes-batch3-20261028/progress.json)与[静态调查](checks/issue-fixes-batch3-20261028/theme-investigation.json)保留。
+
+根因是标准主题的部分按键背景别名没有在当前配色中定义；原先 Drawable 路径把无效值当作成功解析的透明背景，阻断了 `Key` 已有回退。现在区分无效值和明确透明色，让缺失背景使用原有默认背景；有效自定义颜色、别名、回退链及图片保持原行为。Google+ 的普通键恢复白底红字，丹青恢复浅灰底黑字；不宣称所有配色都达到可访问性对比度要求。[独立源码复核](checks/issue-fixes-batch3-20261028/production-review.json)记录范围。
+
+[CI 五项检查](https://github.com/osfans/trime/actions/runs/40698285331)全部成功；[CI 汇总](checks/issue-fixes-batch3-20261028/cloud/pr-2203/ci-summary.json)与[原 APK 完整源码树证明](checks/issue-fixes-batch3-20261028/cloud/pr-2203/ubuntu-original/source-tree-proof.json)绑定 head。实际 producer 为 synthetic merge `a39bcdef`，完整 Git tree 与 head 一致，不能混称相同 commit 或相同构建元数据。本地两阶段实际执行 **338 项应用 JVM 测试（含新增 7 项）**、格式检查及 Lint；Lint 为 **0 Error／65 Warning**，36 个警告位置文件均与本轮上游基线逐字相同。首次构建在测试完成后因 Metaspace 警告受控停止，第二阶段以较大容量完成；两次原结果与[本地汇总](checks/issue-fixes-batch3-20261028/local-validation.json)均保留，不拼成一次零警告完整构建。
+
+Android 15 模拟器完成真实生产 `ThemeYaml`／`ColorManager`／`ThemeScope`／`Keyboard`／`Key` 对象对照：**46 套配色、282 个状态观察及 16 个 Drawable 控制**。旧版有 94 项预期失败（90 个背景观察、4 个无效值控制），修复版全部通过；文字全部保持一致，其余 192 个背景观察不变。见[限定验收](checks/issue-fixes-batch3-20261028/runtime/theme-validation.json)、[独立终审](checks/issue-fixes-batch3-20261028/runtime/theme-independent-review.json)和[完整 helper](checks/issue-fixes-batch3-20261028/runtime/ThemeDrawableInstrumentation.kt.txt)。这是 Canvas 合成色块与公开颜色 API 验证，未运行完整 `KeyView`／输入法 UI、系统触摸、TalkBack 或真机；功能键使用明确构造的测试键，不冒充资产布局原有功能键。旧基线 APK 为 `a047f747`，与新基线的两项差异只在 Manifest 和工具栏；主题直接输入已逐字复核，未称最新整应用基线。
+
+原 CI APK 保持原签，设备使用共同测试证书的诊断副本；784 个非签名 ZIP 条目逐项一致，不代表正式签名安装或升级验收。两个逻辑主题偏好值恢复，原本缺省的两键被物化、进程 PID 元数据改变，因此不称偏好 XML 全字节一致；其余偏好值、默认 Latin 输入法及旧私有哨兵保持。自建图片与测试包已清理，VM 正常退出 0、采集器按预定 SIGTERM 返回 −15；最低宿主可用内存约 **1.95 GiB**。49 个原始 AVD／system-image 文件未变，无本轮模拟器／构建 JVM 残留，文件索引保持运行。
+
+**仍有警告**：全设备原日志保留 2,268 条 W，两个目标进程各有 47 条 `candidate_border_color` 诊断及故意缺失图片控制产生的错误；未统称为系统原因。CI 的工具、Gradle、JNA 与缓存提示、本地既有 Lint 和 Spotless 依赖警告均单列；这次成功不能解释为依赖 native 警告已修复，四系统本轮均命中 JNI 缓存，未重新验证所有原生编译警告。完整采集日志未匹配既定 fatal／ANR／OOM／LMK kill 模式，结论仅限本轮已采集范围。
+
+上游已实际合入本轮较早两项修复：[#2198](https://github.com/osfans/trime/pull/2198)（merge `e1e0ece9`）和 [#2200](https://github.com/osfans/trime/pull/2200)（merge `7fedca06`）；[读回结果](checks/issue-fixes-batch3-20261028/progress.json)保留。浏览器 [#1677](https://github.com/osfans/trime/issues/1677)／[#2168](https://github.com/osfans/trime/issues/2168) 已完成[独立证据调查](checks/issue-fixes-batch3-20261028/browser-investigation.json)：旧网页失效、报告早于现有焦点修复；窗口 flag 的替换可能影响键盘层级、Back 和无障碍，因此尚无新浏览器修复 PR，不将静态猜测标为修复。
+
+本批没有改写 `develop`、发布稳定版或改动其他 PR 源码。索引仅同步所选文字、XML 与 helper；APK、原图、完整日志及磁盘保留于本地，见本批 [SHA-256 清单](checks/issue-fixes-batch3-20261028/SHA256SUMS)。
 
 ### 先跟进已有 PR，避免重复
 

@@ -1,0 +1,341 @@
+/* SPDX-License-Identifier: GPL-3.0-or-later */
+package com.osfans.trime
+
+import android.app.Activity
+import android.app.Instrumentation
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
+import android.graphics.drawable.Drawable
+import android.os.Build
+import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.os.Process
+import android.os.SystemClock
+import com.osfans.trime.core.data.DataManager
+import com.osfans.trime.data.theme.ColorKey
+import com.osfans.trime.data.theme.ColorManager
+import com.osfans.trime.data.theme.Theme
+import com.osfans.trime.data.theme.ThemeDslExpander
+import com.osfans.trime.data.theme.ThemeManager
+import com.osfans.trime.data.theme.ThemeScope
+import com.osfans.trime.data.theme.ThemeYaml
+import com.osfans.trime.data.theme.model.KeyActionToken
+import com.osfans.trime.data.theme.model.TextKeyboard
+import com.osfans.trime.ime.keyboard.Key
+import com.osfans.trime.ime.keyboard.Keyboard
+import org.json.JSONArray
+import org.json.JSONObject
+import java.io.File
+import java.security.MessageDigest
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
+import java.util.concurrent.atomic.AtomicBoolean
+import java.util.concurrent.atomic.AtomicReference
+
+/**
+ * Disposable-emulator object/renderer probe. Arguments: expect=baseline|fixed.
+ * Real ThemeYaml/DSL, ThemeScope/ColorManager and Key/Keyboard run; no Activity,
+ * UiAutomation, fake Rime session, reflection or direct JNI call is needed.
+ * Does not call Key.getLabel/getAction (those read Rime). Canvas pixels below
+ * are synthetic drawable swatches, not KeyView/full IME/contrast/accessibility tests.
+ * Baseline reports an expected assertion failure, not an uncaught app crash.
+ */
+class ThemeDrawableInstrumentation : Instrumentation() {
+    companion object {
+        private const val WAIT_MS = 20_000L
+        private const val TOTAL_MS = 120_000L
+        private const val MAX_VIOLATIONS = 400
+    }
+
+    private var args = Bundle()
+    private val report = JSONObject()
+    private val lock = Any()
+    private val violations = JSONArray()
+    private val rows = JSONArray()
+    private val controls = JSONArray()
+    private val finished = AtomicBoolean(false)
+    private val mainHandler = Handler(Looper.getMainLooper())
+    private val watchdog = Executors.newSingleThreadScheduledExecutor { work ->
+        Thread(work, "ThemeProbeDeadline").apply { isDaemon = true }
+    }
+    @Volatile private var stage = "created"
+    private var deadline = 0L
+    private var ownedImage: File? = null
+    private var createdBackgroundDirectory: File? = null
+
+    override fun onCreate(arguments: Bundle?) {
+        super.onCreate(arguments)
+        args = arguments?.let(::Bundle) ?: Bundle()
+        start()
+    }
+
+    override fun onStart() {
+        deadline = SystemClock.uptimeMillis() + TOTAL_MS
+        watchdog.schedule({ complete(false, IllegalStateException("120 s deadline exceeded at $stage")) }, TOTAL_MS, TimeUnit.MILLISECONDS)
+        var passed = false
+        var failure: Throwable? = null
+        var oldColor: String? = null
+        var oldFollow: Boolean? = null
+        var oldScope: ThemeScope? = null
+        try {
+            val expected = args.getString("expect", "fixed")!!
+            check(expected in setOf("baseline", "fixed")) { "expect must be baseline or fixed" }
+            put("expected_target", expected)
+            put("pid", Process.myPid())
+            put("api", Build.VERSION.SDK_INT)
+            put("target_package", targetContext.packageName)
+            put("installed_target_apk", targetContext.applicationInfo.sourceDir)
+            put("installed_target_apk_sha256", sha(File(targetContext.applicationInfo.sourceDir)))
+            put("scope", "Real production theme parsing and public Key/Keyboard color APIs, synthetic 8x8 Canvas drawable-center pixels; no Activity, UiAutomation, InputDispatcher, KeyView, full IME or TalkBack validation")
+            put("probe_calls_rime_or_jni", false)
+            put("getLabel_or_getAction_called", false)
+            put("asserts_universal_contrast", false)
+
+            stage("capture_preferences")
+            oldScope = ColorManager.currentScope()
+            oldColor = ThemeManager.prefs.normalModeColor.getValue()
+            oldFollow = ThemeManager.prefs.followSystemDayNight.getValue()
+            put("preferences_before_fixture", prefs())
+            onMain("disable_day_night_fixture") {
+                ThemeManager.prefs.followSystemDayNight.setValue(false)
+            }
+            put("preferences_after_fixture", prefs())
+            put("preference_fixture", "Disable day/night linking so every selected asset scheme is exercised; restore both preferences in finally. No selected-theme preference or theme file is modified.")
+
+            stage("parse_real_standard_theme_asset")
+            val bytes = targetContext.assets.open("shared/tongwenfeng.trime.yaml").use { it.readBytes() }
+            check(bytes.size < 1024 * 1024) { "Unexpectedly large built-in fixture" }
+            val parser = ThemeYaml.parser
+            val expanded = ThemeDslExpander.expand("tongwenfeng.trime", parser.parseToYamlNode(bytes.toString(Charsets.UTF_8))) { resource ->
+                runCatching { targetContext.assets.open("shared/$resource.yaml").bufferedReader().use { parser.parseToYamlNode(it.readText()) } }.getOrNull()
+            }
+            val theme = parser.decodeFromYamlNode<Theme>(expanded)
+            check(theme.presetColorSchemes.size == 46) { "Expected the a047 asset's 46 schemes, got ${theme.presetColorSchemes.size}" }
+            val normalDef = theme.presetKeyboards.getValue("default").keys.first()
+            check(normalDef.keyBackColor == "bh1" && normalDef.keyTextColor == "th1")
+            // This asset declares functional presets but no layout key uses one.
+            // Exercise that public branch with an explicitly constructed TextKey,
+            // retaining real bgn/tgn aliases and the actual functional preset.
+            check(theme.presetKeys.getValue("Keyboard_letter").functional)
+            val functionalDef = normalDef.copy(click = KeyActionToken.Plain("Keyboard_letter"), keyBackColor = "bgn", keyTextColor = "tgn")
+            put("asset", JSONObject().put("path", "shared/tongwenfeng.trime.yaml").put("bytes", bytes.size).put("sha256", sha(bytes)).put("theme", theme.name).put("scheme_count", theme.presetColorSchemes.size))
+            put("functional_fixture_source", JSONObject().put("construction", "Explicit test TextKey copied from default q; click changed to real functional preset Keyboard_letter and real bgn/tgn aliases. Not a functional key declared in an asset layout.").put("click", functionalDef.click.toString()).put("back_alias", functionalDef.keyBackColor).put("text_alias", functionalDef.keyTextColor))
+
+            onMain("activate_standard_theme") {
+                ColorManager.attachTheme(theme)
+                ColorManager.init(targetContext.resources.configuration)
+            }
+            val keys = onMain("construct_real_public_keyboard_and_keys") {
+                val parent = Keyboard(targetContext, theme, 1080, selfConfig = null)
+                Key(parent, theme, normalDef) to Key(parent, theme, functionalDef)
+            }
+            val initialScope = ColorManager.currentScope()
+            put("same_key_identity", JSONObject().put("normal", System.identityHashCode(keys.first)).put("functional", System.identityHashCode(keys.second)).put("construction", "Parent Keyboard(selfConfig=null); normal TextKey from real asset, functional TextKey explicitly constructed as reported. No key layout, label resolution or native session is requested."))
+
+            // Keep these exact two Key objects across every scheme switch.
+            val schemeOrder = (listOf("default", "google_plus", "tantsing") + theme.presetColorSchemes.keys + listOf("default")).distinct().toMutableList().apply { add("default") }
+            for (schemeId in schemeOrder) {
+                onMain("scheme_$schemeId") {
+                    val beforeGeneration = ColorManager.colorGeneration
+                    ColorManager.setColorScheme(schemeId)
+                    check(ColorManager.currentScope() === initialScope) { "Scheme switch replaced the scope" }
+                    check(ColorManager.activeColorScheme == theme.presetColorSchemes.getValue(schemeId)) { "Day/night fixture did not select requested scheme $schemeId" }
+                    checkKey(schemeId, "normal", keys.first, normalDef, pressed = false, on = false, functional = false, beforeGeneration)
+                    checkKey(schemeId, "normal_pressed", keys.first, normalDef, pressed = true, on = false, functional = false, beforeGeneration)
+                    checkKey(schemeId, "normal_on", keys.first, normalDef, pressed = false, on = true, functional = false, beforeGeneration)
+                    checkKey(schemeId, "normal_on_pressed", keys.first, normalDef, pressed = true, on = true, functional = false, beforeGeneration)
+                    checkKey(schemeId, "functional_off", keys.second, functionalDef, pressed = false, on = false, functional = true, beforeGeneration)
+                    checkKey(schemeId, "functional_pressed", keys.second, functionalDef, pressed = true, on = false, functional = true, beforeGeneration)
+                }
+                sendStatus(0, Bundle().apply { putString("theme_checkpoint", JSONObject().put("stage", stage).put("scheme", schemeId).put("observations", rows.length()).put("violations", violations.length()).toString()) })
+            }
+            put("scheme_sequence", JSONArray(schemeOrder))
+            put("unique_schemes_exercised", schemeOrder.toSet().size)
+
+            stage("prepare_owned_image_fixture")
+            val backgrounds = File(DataManager.userDataDir, "backgrounds")
+            if (!backgrounds.exists()) {
+                check(backgrounds.mkdirs())
+                createdBackgroundDirectory = backgrounds
+            }
+            val image = File.createTempFile("batch3-theme-probe-", ".png", backgrounds)
+            ownedImage = image
+            val imageColor = Color.rgb(17, 34, 51)
+            Bitmap.createBitmap(2, 2, Bitmap.Config.ARGB_8888).let { bitmap ->
+                bitmap.eraseColor(imageColor)
+                image.outputStream().use { check(bitmap.compress(Bitmap.CompressFormat.PNG, 100, it)) }
+                bitmap.recycle()
+            }
+            put("owned_image_fixture", JSONObject().put("path", image.absolutePath).put("bytes", image.length()).put("sha256", sha(image)).put("created_with_exclusive_temp_name", true).put("overwrote_existing_file", false).put("retained_after_probe", false))
+            onMain("explicit_custom_transparent_and_image_controls") {
+                val palette = ColorKey.entries.associate { it.key to "#ff334455" }.toMutableMap().apply {
+                    put("key_back_color", "#ff556677")
+                    put("key_text_color", "#ff112233")
+                    put("probe_custom", "#ff123456")
+                    put("probe_red", "red")
+                    put("probe_zero", "0x0")
+                    put("probe_transparent", "#00000000")
+                    put("probe_invalid", "not-a-color")
+                    put("probe_image", image.name)
+                }
+                val controlled = theme.copy(presetColorSchemes = mapOf("probe" to palette), fallbackColors = theme.fallbackColors + ("probe_alias" to "probe_custom"))
+                ColorManager.attachTheme(controlled)
+                ColorManager.setColorScheme("probe")
+                expectDrawable("named_red", "red", Color.RED)
+                expectDrawable("named_red_alias", "probe_red", Color.RED)
+                expectDrawable("literal_argb_zero", "0x0", Color.TRANSPARENT)
+                expectDrawable("hex_transparent", "#00000000", Color.TRANSPARENT)
+                expectDrawable("transparent_alias", "probe_transparent", Color.TRANSPARENT)
+                expectDrawable("valid_zero_alias", "probe_zero", Color.TRANSPARENT)
+                expectDrawable("explicit_custom", "probe_custom", Color.rgb(18, 52, 86))
+                expectDrawable("theme_fallback_alias", "probe_alias", Color.rgb(18, 52, 86))
+                expectDrawable("existing_image_literal", image.name, imageColor)
+                expectDrawable("existing_image_alias", "probe_image", imageColor)
+                expectMissing("unknown_alias", "__theme_probe_missing_alias__")
+                expectMissing("invalid_literal", "not-a-valid-color")
+                expectMissing("invalid_alias", "probe_invalid")
+                expectMissing("empty_literal", "")
+                expectMissing("missing_image", "batch3-theme-probe-absent-${Process.myPid()}.png")
+
+                val parent = Keyboard(targetContext, controlled, 1080, selfConfig = null)
+                val customKey = Key(parent, controlled, normalDef.copy(keyBackColor = "probe_custom", keyTextColor = "probe_red"))
+                check(pixel(customKey.getBackgroundDrawable()) == Color.rgb(18, 52, 86) && customKey.getTextColor() == Color.RED) { "Valid per-key custom colors changed" }
+                val transparentKey = Key(parent, controlled, normalDef.copy(keyBackColor = "probe_zero"))
+                check(transparentKey.getBackgroundDrawable() != null && pixel(transparentKey.getBackgroundDrawable()) == 0) { "Valid transparent key background was treated as missing" }
+                val imageKey = Key(parent, controlled, normalDef.copy(keyBackColor = "probe_image"))
+                check(pixel(imageKey.getBackgroundDrawable()) == imageColor) { "Per-key image background was lost" }
+                val generation = ColorManager.colorGeneration
+                ColorManager.setColorScheme("probe")
+                check(ColorManager.colorGeneration == generation) { "Unchanged scheme unexpectedly bumped generation" }
+                put("valid_key_custom_transparent_image_controls", true)
+                val invalidCanonical = controlled.copy(presetColorSchemes = mapOf("invalid" to (palette + ("key_back_color" to "not-a-color"))))
+                ColorManager.attachTheme(invalidCanonical)
+                ColorManager.setColorScheme("invalid")
+                expectMissing("invalid_canonical_key", "key_back_color")
+            }
+            put("observations", rows)
+            put("controls", controls)
+            put("violations", violations)
+            val issueRows = (0 until rows.length()).map { rows.getJSONObject(it) }.filter {
+                it.getString("scheme") in setOf("google_plus", "tantsing") && it.getString("state") == "normal"
+            }
+            val knownFailure = issueRows.size == 2 && issueRows.all { !it.getBoolean("matches") && it.optString("actual_background_argb") == "0x00000000" }
+            put("issue_2159_targeted_observations", JSONArray(issueRows))
+            put("baseline_expected_assertion_failure_observed", expected == "baseline" && knownFailure)
+            put("expected_observation_matches", if (expected == "baseline") knownFailure else violations.length() == 0)
+            stage("assert_required_alias_fallback")
+            check(violations.length() == 0) { "${violations.length()} required alias-fallback invariants failed; baseline failure is captured by instrumentation, not a product FATAL" }
+            check(expected == "fixed") { "Baseline unexpectedly satisfies fixed invariants; check installed target identity" }
+            passed = true
+            stage("complete")
+        } catch (error: Throwable) {
+            failure = error
+        } finally {
+            val outcomeStage = stage
+            put("observations", rows)
+            put("controls", controls)
+            put("violations", violations)
+            runCatching {
+                onMain("restore_preferences_and_prior_theme") {
+                    oldColor?.let { ThemeManager.prefs.normalModeColor.setValue(it) }
+                    oldFollow?.let { ThemeManager.prefs.followSystemDayNight.setValue(it) }
+                    oldScope?.let {
+                        ColorManager.attachTheme(it.theme)
+                        ColorManager.init(targetContext.resources.configuration)
+                    }
+                }
+                put("preferences_after_restore", prefs())
+                val restored = (oldColor == null || ThemeManager.prefs.normalModeColor.getValue() == oldColor) && (oldFollow == null || ThemeManager.prefs.followSystemDayNight.getValue() == oldFollow)
+                put("preferences_restored", restored)
+                put("prior_theme_restore", if (oldScope == null) "No prior ColorManager scope existed. Probe scope remains process-local until Instrumentation.finish stops the process; preferences restored." else "Prior theme reattached through public API and current system configuration; previous scope object identity is not restored.")
+                check(restored) { "Preference restoration readback differs" }
+            }.onFailure { restoreError -> passed = false; failure = failure?.apply { addSuppressed(restoreError) } ?: restoreError; put("restore_error", restoreError.toString()) }
+            ownedImage?.let { image ->
+                val deleted = !image.exists() || image.delete()
+                put("owned_image_removed", deleted)
+                if (!deleted) { passed = false; failure = failure ?: IllegalStateException("Owned image fixture was not removed") }
+            }
+            createdBackgroundDirectory?.let { directory -> put("owned_empty_background_directory_removed", directory.list()?.isEmpty() == true && directory.delete()) }
+            stage(if (passed) "complete" else outcomeStage)
+            complete(passed, failure)
+        }
+    }
+
+    private fun checkKey(scheme: String, state: String, key: Key, def: TextKeyboard.TextKey, pressed: Boolean, on: Boolean, functional: Boolean, previousGeneration: Long) {
+        key.onReleased()
+        key.setOn(false)
+        if (on) key.setOn(true)
+        if (pressed) key.onPressed()
+        val backFallback = when { on && pressed -> "hilited_on_key_back_color"; on -> "on_key_back_color"; functional && pressed -> "hilited_off_key_back_color"; pressed -> "hilited_key_back_color"; functional && def.keyBackColor.isEmpty() -> "off_key_back_color"; else -> "key_back_color" }
+        val textFallback = when { on && pressed -> "hilited_on_key_text_color"; on -> "on_key_text_color"; functional && pressed -> "hilited_off_key_text_color"; pressed -> "hilited_key_text_color"; functional -> "off_key_text_color"; else -> "key_text_color" }
+        val backAlias = if (!on && !(functional && pressed)) if (pressed) def.hilitedKeyBackColor else def.keyBackColor else ""
+        val textAlias = if (!on && !(functional && pressed)) if (pressed) def.hilitedKeyTextColor else def.keyTextColor else ""
+        val expectedBack = aliasColor(backAlias, backFallback)
+        val expectedText = aliasColor(textAlias, textFallback)
+        val actualBack = pixel(key.getBackgroundDrawable())
+        val expectedBackPixel = pixel(ColorDrawable(expectedBack))
+        val actualText = key.getTextColor()
+        val ok = actualBack == expectedBackPixel && actualText == expectedText
+        val row = JSONObject().put("scheme", scheme).put("state", state).put("key_identity", System.identityHashCode(key)).put("generation", ColorManager.colorGeneration).put("previous_generation", previousGeneration).put("back_alias", backAlias).put("back_fallback", backFallback).put("actual_background_argb", actualBack?.let(::hex)).put("expected_background_argb", hex(expectedBack)).put("expected_background_rendered_argb", expectedBackPixel?.let(::hex)).put("actual_text_argb", hex(actualText)).put("expected_text_argb", hex(expectedText)).put("matches", ok)
+        rows.put(row)
+        if (!ok) violation(row)
+    }
+
+    private fun aliasColor(alias: String, fallback: String): Int = runCatching { ColorManager.getColor(alias) }.getOrElse { ColorManager.getColor(fallback) }
+
+    private fun expectDrawable(name: String, key: String, expected: Int) {
+        val global = ColorManager.getDrawable(key)
+        val scoped = checkNotNull(ColorManager.currentScope()).drawable(key)
+        val ok = global != null && scoped != null && pixel(global) == expected && pixel(scoped) == expected
+        val item = JSONObject().put("name", name).put("key", key).put("expected_argb", hex(expected)).put("global_argb", pixel(global)?.let(::hex)).put("scoped_argb", pixel(scoped)?.let(::hex)).put("matches", ok)
+        controls.put(item)
+        check(ok) { "Valid drawable control failed: $item" }
+    }
+
+    private fun expectMissing(name: String, key: String) {
+        val global = ColorManager.getDrawable(key)
+        val scoped = checkNotNull(ColorManager.currentScope()).drawable(key)
+        val item = JSONObject().put("name", name).put("key", key).put("global_null", global == null).put("scoped_null", scoped == null).put("global_argb", pixel(global)?.let(::hex)).put("matches", global == null && scoped == null)
+        controls.put(item)
+        if (global != null || scoped != null) violation(item)
+    }
+
+    private fun pixel(drawable: Drawable?): Int? {
+        if (drawable == null) return null
+        val bitmap = Bitmap.createBitmap(8, 8, Bitmap.Config.ARGB_8888)
+        return try {
+            drawable.setBounds(0, 0, 8, 8)
+            drawable.draw(Canvas(bitmap))
+            bitmap.getPixel(4, 4)
+        } finally { bitmap.recycle() }
+    }
+
+    private fun violation(item: JSONObject) { if (violations.length() < MAX_VIOLATIONS) violations.put(item) else error("Violation report bound exceeded") }
+    private fun prefs() = JSONObject().put("normal_mode_color", ThemeManager.prefs.normalModeColor.getValue()).put("follow_system_day_night", ThemeManager.prefs.followSystemDayNight.getValue())
+    private fun hex(color: Int) = "0x%08x".format(color)
+    private fun sha(file: File): String = file.inputStream().use { input -> val digest = MessageDigest.getInstance("SHA-256"); val buffer = ByteArray(65536); while (true) { val n = input.read(buffer); if (n < 0) break; digest.update(buffer, 0, n) }; digest.digest().joinToString("") { "%02x".format(it.toInt() and 255) } }
+    private fun sha(bytes: ByteArray) = MessageDigest.getInstance("SHA-256").digest(bytes).joinToString("") { "%02x".format(it.toInt() and 255) }
+    private fun stage(value: String) { stage = value; put("stage", value) }
+    private fun put(key: String, value: Any?) = synchronized(lock) { report.put(key, when (value) { is JSONObject -> JSONObject(value.toString()); is JSONArray -> JSONArray(value.toString()); else -> value }); Unit }
+
+    private fun <T> onMain(label: String, block: () -> T): T {
+        stage(label)
+        val result = AtomicReference<Result<T>?>(null)
+        val latch = CountDownLatch(1)
+        val work = Runnable { try { result.set(runCatching(block)) } finally { latch.countDown() } }
+        check(mainHandler.post(work)) { "Could not post main task $label" }
+        if (!latch.await(minOf(WAIT_MS, (deadline - SystemClock.uptimeMillis()).coerceAtLeast(1)), TimeUnit.MILLISECONDS)) { mainHandler.removeCallbacks(work); error("20 s main-thread bound failed: $label") }
+        return checkNotNull(result.get()).getOrThrow()
+    }
+
+    private fun complete(passed: Boolean, error: Throwable?) {
+        if (!finished.compareAndSet(false, true)) return
+        watchdog.shutdownNow()
+        val final = synchronized(lock) { JSONObject(report.toString()).put("passed", passed).put("stage", stage).apply { error?.let { put("error", android.util.Log.getStackTraceString(it)) } } }
+        finish(if (passed) Activity.RESULT_OK else 1, Bundle().apply { putBoolean("passed", passed); putString("theme_drawable_report", final.toString()); putString("stream", "Theme drawable probe passed=$passed stage=$stage\n") })
+    }
+}

@@ -1,0 +1,405 @@
+{
+  "created_at_utc": "2026-10-28T13:12:13.313083+00:00",
+  "repository": "osfans/trime",
+  "reviewed_base": "a047f74757fae0d7b5ef64e54f0b957dee2bf8f3",
+  "reviewed_worktree": "/home/xumin/Public/Trime-pr-folder-picker-errors-20261028",
+  "worktree_head": "f45ba68dfc2a4fa6c6877732dc25f094f030b7ac",
+  "worktree_clean": true,
+  "ignored_picker_differences": [
+    "app/src/main/java/com/osfans/trime/ui/main/settings/ProfileSettingsFragment.kt",
+    "app/src/main/java/com/osfans/trime/ui/setup/SetupActivity.kt"
+  ],
+  "actions": "Read-only source/history and external issue/source fetches. Saved investigation artifacts only. No source edits, build, ADB, emulator operation, commit, PR or GitHub write.",
+  "applicable_AGENTS": "No AGENTS.md found at /, /home, /home/xumin, /home/xumin/Public, worktree root or non-native worktree subtree. Inspected app Kotlin code only; no native/vendor instructions apply.",
+  "github_fetch_method": "Current GitHub connector fetch_issue plus fetch_issue_comments across all pages. Local gh executable unavailable. Structured tool results saved without assuming missing comment timestamp fields.",
+  "issues": [
+    {
+      "number": 1677,
+      "url": "https://github.com/osfans/trime/issues/1677",
+      "state": "open",
+      "updated_at": "2025-10-05T19:35:46Z",
+      "issue_snapshot": {
+        "path": "/home/xumin/Public/Trime/build/issue-fixes-batch3-20261028/browser-inputs/issue-1677.json",
+        "bytes": 8936,
+        "sha256": "8788aab0436143a452c9293dfc677fa02912b6518372fee068b32f81d58bbe05"
+      },
+      "all_comments_snapshot": {
+        "path": "/home/xumin/Public/Trime/build/issue-fixes-batch3-20261028/browser-inputs/comments-1677.json",
+        "bytes": 9875,
+        "sha256": "d6feef1929729352c31ac14d4f3198543842a3446b3fed6fb22f22011468187f"
+      },
+      "comment_count": 8,
+      "reported_environment": "Android10; release b129b653 and older nightly8a6c9b2e; maintainer later Brave1.82.156/Chromium140 versus IceRaven2.30/Gecko137 comparison",
+      "observed_now": "GitHub body/comments fetched fresh; no device/browser reproduction performed. Current source exists, runtime symptom not confirmed.",
+      "historical_report": "Contenteditable region containing contenteditable=false placeholder, caret before placeholder: keyboard shows then immediately finishes. Maintainer reproduced on Brave140, not IceRaven; alternate IMEs unaffected in that comparison. Maintainer stack experiment identified a system hide request but did not identify original caller/reason."
+    },
+    {
+      "number": 2168,
+      "url": "https://github.com/osfans/trime/issues/2168",
+      "state": "open",
+      "updated_at": "2026-10-16T17:39:50Z",
+      "issue_snapshot": {
+        "path": "/home/xumin/Public/Trime/build/issue-fixes-batch3-20261028/browser-inputs/issue-2168.json",
+        "bytes": 2211,
+        "sha256": "8005ad5197aa3c5da38df5a9ff0ef0809d4874cf52b33d08f5178830bfc21d16"
+      },
+      "all_comments_snapshot": {
+        "path": "/home/xumin/Public/Trime/build/issue-fixes-batch3-20261028/browser-inputs/comments-2168.json",
+        "bytes": 1352,
+        "sha256": "dfab79f4997ca7158c713154b4d57e05b96e7f667de17bc6da0a5b2f4c2259be"
+      },
+      "comment_count": 1,
+      "reported_environment": "Android16; v3.3.12-77-gc7f32b6c-release; Chrome version not specified",
+      "observed_now": "GitHub body/comments fetched fresh; no device/browser reproduction performed. Current source exists, runtime symptom not confirmed.",
+      "historical_report": "Opening IME schema/theme/color dialogs or option/clipboard popup menus from a Chrome web field hides the keyboard. Native editor control shown as working. Maintainer could not reproduce on other browsers, including other Chromium browsers; Chrome-exclusive cause remains a hypothesis."
+    }
+  ],
+  "finding_status": "NO_SHARED_ROOT_CAUSE_CONFIRMED_NO_PRODUCTION_PATCH_JUSTIFIED_BY_READ_ONLY_EVIDENCE",
+  "recommended_next_unit": "Reproduce #2168 independently first: it is recent, has a specific dialog/menu trigger and a simple native-editor comparison. Keep #1677 as a separate reconstructed-contenteditable case until a047 reproduction establishes that the old symptom survived later focus fixes.",
+  "confirmed_static_findings": [
+    {
+      "id": "F1",
+      "source": "ime/core/TrimeInputMethodService.kt:1006",
+      "finding": "All IME-owned AlertDialogs from common keyboard actions, schema/theme/color pickers and SwitchOptionWindow static entries pass through service.showDialog. It attaches the dialog to decorView.windowToken as TYPE_APPLICATION_ATTACHED_DIALOG, adds FLAG_ALT_FOCUSABLE_IM and DIM_BEHIND, and does not set FLAG_NOT_FOCUSABLE. It remains a key-focus-capable separate window.",
+      "implication": "The central showDialog method is a narrow experiment point for the AlertDialog subset of #2168; it is not evidence that these flags are erroneous."
+    },
+    {
+      "id": "F2",
+      "source": "ime/clipboard/ClipboardAdapter.kt:89; ime/switches/SwitchOptionWindow.kt:136; ime/core/BaseInputView.kt:68",
+      "finding": "Clipboard item menus, custom schema-option menus and candidate action menus instantiate PopupMenu directly and never pass through service.showDialog.",
+      "implication": "Changing only showDialog cannot credibly claim all menu cases named in #2168. Any PR must name and test its subset."
+    },
+    {
+      "id": "F3",
+      "source": "ime/core/TrimeInputMethodService.kt:566,592; ime/core/InputDeviceManager.kt:75",
+      "finding": "onStartInputView updates runtime option/UI/cursor monitoring; no unconditional requestHideSelf is in this lifecycle path. onFinishInputView clears composition, dismisses candidate menus and unregisters cursor monitoring after framework finishes input. Explicit requestHideSelf callsites found are hide buttons/commands, not editor-start callbacks.",
+      "implication": "The historical onStartInputView→onFinishInputView log sequence alone does not locate the initiating hide request. Do not remove finishComposingText or ignore system hide as a speculative fix."
+    },
+    {
+      "id": "F4",
+      "source": "upstream history entries below",
+      "finding": "All inspected non-focusable GestureFrame, clipboard close button, compact candidates and keyboard padding fixes postdate the #1677 2025 report/comments and are already in a047; popup-menu dismissal mitigations from 2026-08 are also present.",
+      "implication": "Issue openness and old release logs cannot establish a current a047 bug. These fixes may matter but no evidence here proves they fixed #1677."
+    },
+    {
+      "id": "F5",
+      "source": "browser-inputs/fcitx-FcitxInputMethodService.kt:1077",
+      "finding": "The fixed fcitx5 reference commit fe3a618c8fd18842305d2f8ec2880fcc67ec1679 uses the same attached-token dialog type and ALT_FOCUSABLE_IM|DIM_BEHIND policy.",
+      "implication": "A flag-only difference from the alternate IME is not established. This reference is not asserted to be the exact fcitx0.1.1 binary in the historical comparison."
+    },
+    {
+      "id": "F6",
+      "source": "browser-inputs/chromium140-ImeAdapterImpl.java:865,895,904; ThreadedInputConnectionFactory.java:306",
+      "finding": "Pinned Chromium140 separates window-focus notification from view-focus loss. Window-focus change forwards to the connection factory; view-focus loss with hideKeyboardOnBlur calls resetAndHideKeyboard. Other updateState/type/visibility paths can also hide. Factory invalidates focus checks on window focus loss.",
+      "implication": "Window key focus, served editor focus, DOM selection, and explicit client hide must be traced separately. This is platform implementation evidence, not proof of the reporter Chrome build or runtime path."
+    },
+    {
+      "id": "F7",
+      "source": "browser-inputs/android16-WindowState.java:1079,2424,2821",
+      "finding": "AOSP marks attached children of an IME as IME windows; canBeImeTarget rejects IME windows, while canReceiveKeys independently allows a visible window without FLAG_NOT_FOCUSABLE.",
+      "implication": "Being excluded as an IME target does not mean the dialog cannot take key focus. ALT_FOCUSABLE_IM concerns IME targeting/layering; it does not by itself preserve key focus."
+    },
+    {
+      "id": "F8",
+      "source": "https://bauw2008.github.io/aaa/",
+      "finding": "Both browser open and direct HTTP fetch of the issue-linked reproduction page failed; direct response was HTTP404.",
+      "implication": "Only the issue description is available. A reconstructed fixture must be labelled as reconstruction, not recovered original or exact reporter reproduction."
+    }
+  ],
+  "upstream_history": [
+    {
+      "commit": "6d5ebf67cf258f2e18541fdd3dc5dd9b221bdf57",
+      "metadata": "2025-11-17T01:36:58+08:00 fix(keyboard): resolve GestureFrame gaining focus unexpectedly",
+      "already_in_base": true
+    },
+    {
+      "commit": "623c605ce82c3410ac7bc566b943ad9891251c78",
+      "metadata": "2026-08-25T00:34:42+08:00 fix(ui): prevent the close button of the clipboard prompt from automatically gaining focus",
+      "already_in_base": true
+    },
+    {
+      "commit": "bf8869a60b277a54746b724e38e79023e7c124d3",
+      "metadata": "2026-08-25T00:46:43+08:00 fix(ui): prevent candidate words in the candidate bar from automatically gaining focus",
+      "already_in_base": true
+    },
+    {
+      "commit": "b5125a565b13c17bbf2fe18042427ad342402088",
+      "metadata": "2026-08-25T00:50:52+08:00 fix(ui): prevent the sides and bottom of the keyboard area from automatically gaining focus",
+      "already_in_base": true
+    },
+    {
+      "commit": "4d8a2aff5141314515601be0c1c23c4165aae40b",
+      "metadata": "2026-08-25T01:27:14+08:00 fix(ui): in some apps, the clipboard popupMenu and keyboard stealing focus lead to high-frequency flickering",
+      "already_in_base": true
+    },
+    {
+      "commit": "942a750f31897ed691e62fdee533b35969b02071",
+      "metadata": "2026-08-25T01:34:05+08:00 fix(ui): in some apps, the candidate popupMenu and keyboard stealing focus lead to high-frequency flickering",
+      "already_in_base": true
+    },
+    {
+      "commit": "6f4448ca5b455c224301eebdae256f6f0f732bcb",
+      "metadata": "2025-01-26T21:08:24+08:00 fix: keyboard hides once click input box when the candidates window is always shown",
+      "already_in_base": true
+    }
+  ],
+  "reviewed_sources": [
+    {
+      "path": "/home/xumin/Public/Trime-pr-folder-picker-errors-20261028/app/src/main/java/com/osfans/trime/ime/core/TrimeInputMethodService.kt",
+      "bytes": 39204,
+      "sha256": "113f1db8725e5cba8491a505533ea1a145fd4e9f85c73c18f284ddca00199cc4",
+      "upstream_blob": "d2e71bfe8e274428512cf2ac2ea61ddda5775ff7",
+      "matches_reviewed_upstream_base": true
+    },
+    {
+      "path": "/home/xumin/Public/Trime-pr-folder-picker-errors-20261028/app/src/main/java/com/osfans/trime/ime/core/InputView.kt",
+      "bytes": 13579,
+      "sha256": "b43212ae42192f486be5a95e2f5d78a5974e0b85f863510be9468fc8ca236ada",
+      "upstream_blob": "92ea752158d8db1dd03cc370a9544fbb21d2926d",
+      "matches_reviewed_upstream_base": true
+    },
+    {
+      "path": "/home/xumin/Public/Trime-pr-folder-picker-errors-20261028/app/src/main/java/com/osfans/trime/ime/core/BaseInputView.kt",
+      "bytes": 5501,
+      "sha256": "3f9c0208ee00e5278931fd914022b66640a2b44afd6913757a4a017ab93d50a6",
+      "upstream_blob": "1fc1a68a1730876d596cb2b14174d8855bedcb1e",
+      "matches_reviewed_upstream_base": true
+    },
+    {
+      "path": "/home/xumin/Public/Trime-pr-folder-picker-errors-20261028/app/src/main/java/com/osfans/trime/ime/core/InputDeviceManager.kt",
+      "bytes": 5825,
+      "sha256": "97ae0f3fd35ff0579bc853ac4c953dd03de911df9165435b27db8503af5d6328",
+      "upstream_blob": "ea0fb4774e4d4a22fa1498907b13a4fbd5e3fe38",
+      "matches_reviewed_upstream_base": true
+    },
+    {
+      "path": "/home/xumin/Public/Trime-pr-folder-picker-errors-20261028/app/src/main/java/com/osfans/trime/ime/core/TouchEventReceiverWindow.kt",
+      "bytes": 1583,
+      "sha256": "cde2c906b556fc949da1df24ba78f32886f689b3785d753f1ea9a33c35225daa",
+      "upstream_blob": "555909c0b67ab234b343cf38df982c74a58e6764",
+      "matches_reviewed_upstream_base": true
+    },
+    {
+      "path": "/home/xumin/Public/Trime-pr-folder-picker-errors-20261028/app/src/main/java/com/osfans/trime/ime/core/LifecycleInputMethodService.kt",
+      "bytes": 1126,
+      "sha256": "f86333b0afd0012fa469d30dc1c374adf5941c3b359f0641268be6c242441757",
+      "upstream_blob": "5388e2fec32c389d8fa1fda0ffac02931094800b",
+      "matches_reviewed_upstream_base": true
+    },
+    {
+      "path": "/home/xumin/Public/Trime-pr-folder-picker-errors-20261028/app/src/main/java/com/osfans/trime/ime/keyboard/CommonKeyboardActionListener.kt",
+      "bytes": 19449,
+      "sha256": "51924feb5de8348c1e076d20c62577793af236860d8a1212bd95a94b884feb24",
+      "upstream_blob": "3c9271c94f563a1132202b66581b2d665aee846d",
+      "matches_reviewed_upstream_base": true
+    },
+    {
+      "path": "/home/xumin/Public/Trime-pr-folder-picker-errors-20261028/app/src/main/java/com/osfans/trime/ime/keyboard/GestureFrame.kt",
+      "bytes": 11247,
+      "sha256": "db81f52b6e9a65b471e92eda7febbf415576ca37acfddf90c5ace4de8aa6048c",
+      "upstream_blob": "d767a0e80e254d9d05888445ed1270554f319c28",
+      "matches_reviewed_upstream_base": true
+    },
+    {
+      "path": "/home/xumin/Public/Trime-pr-folder-picker-errors-20261028/app/src/main/java/com/osfans/trime/ime/switches/SwitchOptionWindow.kt",
+      "bytes": 8650,
+      "sha256": "5140bb1a9d4fd98866934a82f756b05d2c3bcb71a60a4b008043ee8faf7dbc7b",
+      "upstream_blob": "dfcd5b0f84cfafc246e948e0503f90d5e2aca585",
+      "matches_reviewed_upstream_base": true
+    },
+    {
+      "path": "/home/xumin/Public/Trime-pr-folder-picker-errors-20261028/app/src/main/java/com/osfans/trime/ime/clipboard/ClipboardAdapter.kt",
+      "bytes": 5282,
+      "sha256": "b8f6be9b798e55ca6bfce4609d324913122ea45caf976a4b10d534333ca680e3",
+      "upstream_blob": "8351a3ebca0f15534ada75eff8805986c5882a75",
+      "matches_reviewed_upstream_base": true
+    },
+    {
+      "path": "/home/xumin/Public/Trime-pr-folder-picker-errors-20261028/app/src/main/java/com/osfans/trime/ime/clipboard/ClipboardWindow.kt",
+      "bytes": 9004,
+      "sha256": "782aa032713d1110089174299217986378deb71fa7d267c7ecfc15761e7c129d",
+      "upstream_blob": "01b7ebcc131db7a992dac69dbfecd976949b141c",
+      "matches_reviewed_upstream_base": true
+    },
+    {
+      "path": "/home/xumin/Public/Trime-pr-folder-picker-errors-20261028/app/src/main/java/com/osfans/trime/ime/candidates/compact/CompactCandidateDelegate.kt",
+      "bytes": 8047,
+      "sha256": "1b2ba5b31d9214e67ae3eaa30986e931e222c3c5957228ba1785745b0258fe2d",
+      "upstream_blob": "93576d6ed1fd67a8d28c0b9299960edc6bfa8825",
+      "matches_reviewed_upstream_base": true
+    },
+    {
+      "path": "/home/xumin/Public/Trime-pr-folder-picker-errors-20261028/app/src/main/java/com/osfans/trime/ime/dialog/EnabledSchemaPickerDialog.kt",
+      "bytes": 1800,
+      "sha256": "e3fa99be3832df71645c9e61bbf4c21557715773c82475d268df2cbe9cfe8a69",
+      "upstream_blob": "dfe7e931f31fc3b115d7ea1941cebc80ce61b7f5",
+      "matches_reviewed_upstream_base": true
+    },
+    {
+      "path": "/home/xumin/Public/Trime-pr-folder-picker-errors-20261028/app/src/main/java/com/osfans/trime/ui/main/settings/ThemePickerDialog.kt",
+      "bytes": 2772,
+      "sha256": "dd5db8b6a3248092600f1d33b3dea9b3a10b38ab68f55cea1c5676b0f3478704",
+      "upstream_blob": "1f29c40b96116e2045fdbc220087f730112bde98",
+      "matches_reviewed_upstream_base": true
+    },
+    {
+      "path": "/home/xumin/Public/Trime-pr-folder-picker-errors-20261028/app/src/main/java/com/osfans/trime/ui/main/settings/ColorPickerDialog.kt",
+      "bytes": 1753,
+      "sha256": "2a02f6a2af3fd93852ca4b19e07beb9e29e382e2b943cdd855f4836b27f59b35",
+      "upstream_blob": "8c4f126152b1a921d0932db65122e6895e464a95",
+      "matches_reviewed_upstream_base": true
+    },
+    {
+      "path": "/home/xumin/Public/Trime-pr-folder-picker-errors-20261028/app/src/main/java/com/osfans/trime/util/InputMethod.kt",
+      "bytes": 1357,
+      "sha256": "922476bad5ba30cc91c21acfe9126b3d79f879c9736a6f0bedd1df035065db8f",
+      "upstream_blob": "c2afd9f175c21ad68458d90a3365370975576432",
+      "matches_reviewed_upstream_base": true
+    }
+  ],
+  "external_sources": [
+    {
+      "file": "chromium140-ImeAdapterImpl.java",
+      "url": "https://chromium.googlesource.com/chromium/src/+/140.0.7339.185/content/public/android/java/src/org/chromium/content/browser/input/ImeAdapterImpl.java?format=TEXT",
+      "bytes": 74549,
+      "sha256": "e246343b094ffcb17a690bf11043a441d6b2245ddf769049d8b9a0f3253e0e4e",
+      "fetched_utc": "2026-10-28T13:08:12.528536+00:00"
+    },
+    {
+      "file": "chromium140-ThreadedInputConnectionFactory.java",
+      "url": "https://chromium.googlesource.com/chromium/src/+/140.0.7339.185/content/public/android/java/src/org/chromium/content/browser/input/ThreadedInputConnectionFactory.java?format=TEXT",
+      "bytes": 14324,
+      "sha256": "3fb002c479a648d32ee3c0405a9438088786611c3334b3ec441b685abae1de3d",
+      "fetched_utc": "2026-10-28T13:08:12.533630+00:00"
+    },
+    {
+      "file": "android16-WindowState.java",
+      "url": "https://android.googlesource.com/platform/frameworks/base/+/refs/tags/android-16.0.0_r1/services/core/java/com/android/server/wm/WindowState.java?format=TEXT",
+      "bytes": 254268,
+      "sha256": "9de7d8fd858683a379470cd6ac634c880737d62d88bc75cbf5027d1273834d01",
+      "fetched_utc": "2026-10-28T13:08:12.858648+00:00"
+    },
+    {
+      "file": "fcitx-FcitxInputMethodService.kt",
+      "url": "https://raw.githubusercontent.com/fcitx5-android/fcitx5-android/fe3a618c8fd18842305d2f8ec2880fcc67ec1679/app/src/main/java/org/fcitx/fcitx5/android/input/FcitxInputMethodService.kt",
+      "bytes": 46146,
+      "sha256": "c2edb6f385c98bd1771dc7149d79cb5eef962fc3ba83a06a25bc04c1d4116280",
+      "fetched_utc": "2026-10-28T13:08:11.604411+00:00"
+    },
+    {
+      "file": "repro-index.html",
+      "url": "https://bauw2008.github.io/aaa/",
+      "error": "HTTP Error 404: Not Found"
+    }
+  ],
+  "external_artifacts": [
+    {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch3-20261028/browser-inputs/android16-WindowState.java",
+      "bytes": 254268,
+      "sha256": "9de7d8fd858683a379470cd6ac634c880737d62d88bc75cbf5027d1273834d01"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch3-20261028/browser-inputs/chromium140-ImeAdapterImpl.java",
+      "bytes": 74549,
+      "sha256": "e246343b094ffcb17a690bf11043a441d6b2245ddf769049d8b9a0f3253e0e4e"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch3-20261028/browser-inputs/chromium140-ThreadedInputConnectionFactory.java",
+      "bytes": 14324,
+      "sha256": "3fb002c479a648d32ee3c0405a9438088786611c3334b3ec441b685abae1de3d"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch3-20261028/browser-inputs/comments-1677.json",
+      "bytes": 9875,
+      "sha256": "d6feef1929729352c31ac14d4f3198543842a3446b3fed6fb22f22011468187f"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch3-20261028/browser-inputs/comments-2168.json",
+      "bytes": 1352,
+      "sha256": "dfab79f4997ca7158c713154b4d57e05b96e7f667de17bc6da0a5b2f4c2259be"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch3-20261028/browser-inputs/external-provenance.json",
+      "bytes": 1729,
+      "sha256": "f7ff6ab788044d9ffc02257ad220761984c1abd0749063621e9167da47e3421a"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch3-20261028/browser-inputs/fcitx-FcitxInputMethodService.kt",
+      "bytes": 46146,
+      "sha256": "c2edb6f385c98bd1771dc7149d79cb5eef962fc3ba83a06a25bc04c1d4116280"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch3-20261028/browser-inputs/issue-1677.json",
+      "bytes": 8936,
+      "sha256": "8788aab0436143a452c9293dfc677fa02912b6518372fee068b32f81d58bbe05"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch3-20261028/browser-inputs/issue-2168.json",
+      "bytes": 2211,
+      "sha256": "8005ad5197aa3c5da38df5a9ff0ef0809d4874cf52b33d08f5178830bfc21d16"
+    }
+  ],
+  "documentation": [
+    {
+      "url": "https://developer.android.com/reference/android/view/WindowManager.LayoutParams#FLAG_ALT_FOCUSABLE_IM",
+      "interpretation": "ALT_FOCUSABLE_IM does not disable ordinary key focus. Adding NOT_FOCUSABLE changes both key handling and the flag-combination IME layering semantics."
+    }
+  ],
+  "cause_hypotheses": [
+    {
+      "issue": 2168,
+      "hypothesis": "Opening a focusable IME-owned dialog/popup changes Chrome focus or input-connection state and the client/system hides IME.",
+      "status": "Plausible, unconfirmed. No current trace identifies which focus/state event or hide origin.",
+      "needed_discriminator": "Observe Chrome window/view/DOM focus and IME hide tracker immediately before/after dialog opens; compare unchanged native EditText and another Chromium/Gecko browser."
+    },
+    {
+      "issue": 1677,
+      "hypothesis": "Caret at boundary before noneditable child leads Chromium to change effective editable state/selection and hide IME, possibly interacting with IME view focus.",
+      "status": "Historic maintainer reproduction exists; a047 survival and exact cause unconfirmed.",
+      "needed_discriminator": "With no IME dialog/menu action, capture editorInfo inputType/restarting, DOM selection/editor identity, active IME target and hide reason from first focus through unexpected finish. Vary only noneditable span/caret boundary."
+    },
+    {
+      "both": "Shared root cause",
+      "status": "Not established; one starts during editor focus with no auxiliary dialog, the other after opening auxiliary UI. Do not merge based on browser/focus vocabulary."
+    }
+  ],
+  "proposed_fix_boundary": {
+    "implementation_ready": false,
+    "first_step": "No unconditional production edit. Establish baseline failure on a047 and trace one of the distinct triggers. Avoid arbitrary delay, forced re-show loops, ignoring framework hide or generic rebuild.",
+    "if_2168_focus_transfer_confirmed": "Smallest cohesive candidate is an explicit focus-preserving presentation policy for the affected non-text IME picker/dialog subset in showDialog, with correctly owned dismissal and back handling. Evaluate a bounded diagnostic variation before choosing implementation. PopupMenu paths require their own proven treatment; do not claim covered by showDialog.",
+    "risks_that_gate_a_flag_change": [
+      "NOT_FOCUSABLE affects back/DPAD/hardware-key delivery, modal/outside-touch behavior, accessibility navigation and ALT_FOCUSABLE_IM layering combination. Existing dialogs include Other IME and settings activity navigation, which must keep working.",
+      "A generic policy must not silently apply to an editable dialog. Another open clipboard search PR adds an input-target handoff; it is outside current upstream and this investigation.",
+      "Changing attached dialog type to TYPE_INPUT_METHOD_DIALOG is not justified here; current attached children are already IME windows in AOSP and permission/token/layering requirements differ."
+    ],
+    "if_1677_still_reproduces": "Fix the specific IME-originated focus/input-connection operation identified by the trace, or prepare a minimal Chromium report if hide originates from renderer state with no distinguishable Trime fault. Do not close issue based on synthetic service callbacks."
+  },
+  "meaningful_test_plan": {
+    "phase1_baseline": [
+      "Pin original a047 APK/diagnostic signature and actual installed SHA, Android API, Chrome package version/channel and renderer version. Preserve full raw logs plus bounded case segments.",
+      "Use actual Chrome, not just WebView: local deterministic page with plain input, textarea, contenteditable text and reconstructed noneditable-span boundary. Also use a native EditText host and one alternate Chromium or Gecko browser; exact GitHub field is an additional live-site check, not the sole fixture.",
+      "For #1677 focus each variant before any keyboard auxiliary UI, first with Trime then alternate IME. Verify caret before span, usable composition/commit and whether IME stays visible. Repeat after hide/reopen; do not attribute normal explicit back/outside dismissal as a bug.",
+      "For #2168 start from stable visible keyboard in ordinary HTML input; open schema picker, color picker, theme picker separately without selection, dismiss/cancel then type to the original field. Separately test schema custom-option PopupMenu, clipboard item PopupMenu and candidate action menu. No schema/theme selection is needed to reproduce mere opening, reducing mutation."
+    ],
+    "trace": [
+      "Capture InputMethodService start/finish/input-view lifecycle with restarting/inputType/target package/field ID metadata, requested/actual show state, current IME window/token and any showDialog show/dismiss events. Avoid recording private text.",
+      "Capture available ImeTracker/show-hide reasons and source client, dumpsys input_method plus dumpsys window focus/IME target immediately around trigger; inspect raw reason rather than guessing from onFinishInputView.",
+      "For local page capture focus/blur/focusin/focusout, selectionchange, beforeinput/input timestamps and active-element/selection offsets. Align with host monotonic/device timestamps. Window focus loss alone is insufficient."
+    ],
+    "phase2_fix_validation": [
+      "Require repeated original baseline failure and fixed success under identical browser/OS/fixture; verify keyboard remains visible and subsequent composition and commit reach the original editor. A passing synthetic direct showDialog test alone is insufficient.",
+      "If changing window focus policy, test back dismissal, cancel/outside tap, DPAD/Enter/hardware keys, accessibility activation, dialog replacement, editor switch, task switch and service destruction; check no stale dialog action is delivered to a different editor.",
+      "Test color/theme/schema selection only after opening/closing controls pass; verify selection works and new input-view creation does not lose target. Test Other IME and settings navigation deliberately.",
+      "API35 can provide a bounded control; #2168 reported Android16 so API36+ or reporter device is required before claiming matching-environment resolution. #1677 reported Android10 so a current/API29 comparison helps distinguish platform behavior."
+    ],
+    "evidence_claims": "Claim only browser/OS/entry point actually reproduced and validated. Use Related #2168 or #1677 until matched baseline/fix evidence supports broader resolution. No shared Fixes for both without both cases.",
+    "reconstructed_fixture_html": "<!doctype html><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>Reconstructed Trime browser fixture</title><p>This reconstructs the issue description; original linked source was unavailable.</p><input id=\"plain\" placeholder=\"plain input control\"><textarea id=\"area\" placeholder=\"textarea control\"></textarea><div id=\"editable\" contenteditable=\"true\" style=\"border:1px solid;padding:16px\"><span contenteditable=\"false\">Message</span></div><div contenteditable=\"true\" style=\"border:1px solid;padding:16px\">editable text control</div><pre id=\"events\"></pre><script>const e=document.getElementById('editable');e.addEventListener('focus',()=>{const r=document.createRange();r.setStart(e,0);r.collapse(true);const s=getSelection();s.removeAllRanges();s.addRange(r)});for(const type of ['focusin','focusout','selectionchange','beforeinput','input'])document.addEventListener(type,x=>{const s=getSelection();const out=document.getElementById('events');out.textContent+=JSON.stringify({time:performance.now(),type,id:x.target.id||x.target.nodeName,active:document.activeElement?.id,anchorNode:s?.anchorNode?.nodeName,anchorOffset:s?.anchorOffset,focusOffset:s?.focusOffset})+'\\n'},true);window.addEventListener('focus',()=>console.log('window focus',performance.now()));window.addEventListener('blur',()=>console.log('window blur',performance.now()));</script>"
+  },
+  "selection_recommendation": "Proceed to a root-owned diagnostic reproduction unit for #2168 only if actual Chrome/version and unobstructed native editor controls are available. Otherwise select a different source-confirmed maintenance bug; do not fabricate a browser fix from static focus flags.",
+  "limitations": [
+    "No new runtime reproduction; no current issue fully confirmed or fixed by this work.",
+    "Reporter #1677 source page unavailable; fixture reconstruction does not establish exact original DOM/CSS/JS.",
+    "Chromium140 source is tied to historical Brave140 comparison, not necessarily current Chrome Android16 binary.",
+    "No code or API-level behavior experiment performed; showDialog and PopupMenu mechanisms remain separate."
+  ]
+}

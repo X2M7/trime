@@ -1,0 +1,822 @@
+{
+  "created_at_utc": "2026-10-28T13:48:24.357913+00:00",
+  "status": "INTERIM_BASELINE_EXPECTED_ASSERTION_REPRODUCED_FIXED_RUNTIME_PENDING",
+  "reviewer": "/root/candidate_hit read-only evidence review",
+  "actions": "Read frozen helper/current public APIs/build records, original stdout/report/completion and bounded log bytes; recomputed hashes, parsed reports, compared Git blobs and APK ZIP payloads. No helper/production/source edit, build, ADB, VM or GitHub action. Wrote only this interim JSON.",
+  "helper_review": {
+    "source": {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch3-20261028/theme-probe/ThemeDrawableInstrumentation.kt",
+      "bytes": 24012,
+      "sha256": "74458f38e0d242ead621ba760c4670bc208dd22482981b65d85c330e4720b9fc"
+    },
+    "build_record": {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch3-20261028/voice-build1/result.json",
+      "bytes": 10260,
+      "sha256": "cba8a605c39e8b31c292ec50a3eb2bda12590b6699dadf1b659383c59f1c7067"
+    },
+    "build_exit": 0,
+    "test_apk": {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch3-20261028/voice-build1/com.osfans.trime-v3.3.12-106-gc7501279-debug-androidTest.apk",
+      "bytes": 258439,
+      "sha256": "2dc8ad254756eb361cbeff0943b048f681f40da214d32efcdb806d5c36cfeef6"
+    },
+    "compiled_source_and_test_apk_sha_recomputed_match": true,
+    "public_APIs_valid": true,
+    "source_notes": [
+      "ThemeYaml.parser and ThemeDslExpander expand actual APK asset; Theme decoding and ThemeScope/ColorManager public APIs execute, not JVM fake parser.",
+      "Keyboard(selfConfig=null) and Key do not request labels/actions; q and constructed Keyboard_letter are nonmodifier/nonsticky. The latter is explicitly a synthetic functional TextKey using real preset/bgn/tgn aliases.",
+      "Normal/off/pressed/on six-state oracle rechecked against unchanged Key.appearanceType/getBackgroundDrawable/getTextColor. Functional off with explicit bgn missing deliberately uses generic key_back_color, not off_key_back_color.",
+      "Same two Key object identities are preserved across47 activations/46 schemes and final default revisit. Expected background comparison uses Canvas ColorDrawable pixels to handle alpha premultiplication.",
+      "Main-thread Runnable catches exceptions internally. Final baseline invariant assertion runs on Instrumentation thread and is serialized, not an app uncaught FATAL.",
+      "20s main-task and120s overall bounds; bounded fixture/report/image dimensions. No Activity navigation, UiAutomation or InputDispatcher."
+    ],
+    "unavoidable_early_failure_found": false,
+    "runtime_preconditions": "46-scheme asset and Keyboard_letter/q fixture assumptions matched actual runtime asset. App preferences initialized and own app-external image path writable in this run. Hard timeout/process kill could still prevent finally cleanup in a different run."
+  },
+  "baseline": {
+    "report": {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch3-20261028/runtime/run1/baseline-probe-report.json",
+      "bytes": 189943,
+      "sha256": "514405aaf305b3977f646ed5c0bac1787187af81296d19024a4d856238af492a"
+    },
+    "completion": {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch3-20261028/runtime/run1/baseline-probe-completion.json",
+      "bytes": 727,
+      "sha256": "1fdd38a1c26ab2650bca53089e2e2cb68a330869ac5b5ad701d1bde56f3cae52"
+    },
+    "raw_stdout": {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch3-20261028/runtime/run1/commands/baseline-instrument.stdout",
+      "bytes": 152995,
+      "sha256": "db9e054891a022889901b2c19c3c1370cf1321e9aeb671cf6b9b28d337e6cbbe"
+    },
+    "instrument_command": {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch3-20261028/runtime/run1/commands/baseline-instrument.json",
+      "bytes": 386,
+      "sha256": "461a653435d560cd24f0a730d739439986833981ae8dc4003893228b29a4c3b9"
+    },
+    "raw_final_report_exactly_matches_parsed_json": true,
+    "instrumentation_result_code": 1,
+    "adb_exit": 0,
+    "passed": false,
+    "expected_observation_matches": true,
+    "classification": "Expected captured helper assertion after reproducing missing-alias transparent drawables; not product FATAL and not a passing product run.",
+    "api": 35,
+    "pid": 1878,
+    "observations": 282,
+    "schemes": 46,
+    "scheme_activations": 47,
+    "checkpoints_match_observation_sequence": true,
+    "state_failures": {
+      "normal": 45,
+      "functional_off": 45
+    },
+    "row_failures": 90,
+    "control_failures": [
+      "unknown_alias",
+      "invalid_literal",
+      "invalid_alias",
+      "invalid_canonical_key"
+    ],
+    "total_violations": 94,
+    "all_text_colors_match": true,
+    "default_rows_initial_and_revisit_all_match": true,
+    "pressed_and_on_rows_all_match": true,
+    "targeted_observations": [
+      {
+        "scheme": "google_plus",
+        "state": "normal",
+        "key_identity": 53208268,
+        "generation": 2,
+        "previous_generation": 1,
+        "back_alias": "bh1",
+        "back_fallback": "key_back_color",
+        "actual_background_argb": "0x00000000",
+        "expected_background_argb": "0xffffffff",
+        "expected_background_rendered_argb": "0xffffffff",
+        "actual_text_argb": "0xffdd4b39",
+        "expected_text_argb": "0xffdd4b39",
+        "matches": false
+      },
+      {
+        "scheme": "tantsing",
+        "state": "normal",
+        "key_identity": 53208268,
+        "generation": 3,
+        "previous_generation": 2,
+        "back_alias": "bh1",
+        "back_fallback": "key_back_color",
+        "actual_background_argb": "0x00000000",
+        "expected_background_argb": "0xffe3e3e3",
+        "expected_background_rendered_argb": "0xffe3e3e3",
+        "actual_text_argb": "0xff000000",
+        "expected_text_argb": "0xff000000",
+        "matches": false
+      }
+    ],
+    "valid_custom_transparent_image_controls": true,
+    "actual_Android_controls": [
+      {
+        "name": "named_red",
+        "key": "red",
+        "expected_argb": "0xffff0000",
+        "global_argb": "0xffff0000",
+        "scoped_argb": "0xffff0000",
+        "matches": true
+      },
+      {
+        "name": "named_red_alias",
+        "key": "probe_red",
+        "expected_argb": "0xffff0000",
+        "global_argb": "0xffff0000",
+        "scoped_argb": "0xffff0000",
+        "matches": true
+      },
+      {
+        "name": "literal_argb_zero",
+        "key": "0x0",
+        "expected_argb": "0x00000000",
+        "global_argb": "0x00000000",
+        "scoped_argb": "0x00000000",
+        "matches": true
+      },
+      {
+        "name": "hex_transparent",
+        "key": "#00000000",
+        "expected_argb": "0x00000000",
+        "global_argb": "0x00000000",
+        "scoped_argb": "0x00000000",
+        "matches": true
+      },
+      {
+        "name": "transparent_alias",
+        "key": "probe_transparent",
+        "expected_argb": "0x00000000",
+        "global_argb": "0x00000000",
+        "scoped_argb": "0x00000000",
+        "matches": true
+      },
+      {
+        "name": "valid_zero_alias",
+        "key": "probe_zero",
+        "expected_argb": "0x00000000",
+        "global_argb": "0x00000000",
+        "scoped_argb": "0x00000000",
+        "matches": true
+      },
+      {
+        "name": "explicit_custom",
+        "key": "probe_custom",
+        "expected_argb": "0xff123456",
+        "global_argb": "0xff123456",
+        "scoped_argb": "0xff123456",
+        "matches": true
+      },
+      {
+        "name": "theme_fallback_alias",
+        "key": "probe_alias",
+        "expected_argb": "0xff123456",
+        "global_argb": "0xff123456",
+        "scoped_argb": "0xff123456",
+        "matches": true
+      },
+      {
+        "name": "existing_image_literal",
+        "key": "batch3-theme-probe-6078451839149764170.png",
+        "expected_argb": "0xff112233",
+        "global_argb": "0xff112233",
+        "scoped_argb": "0xff112233",
+        "matches": true
+      },
+      {
+        "name": "existing_image_alias",
+        "key": "probe_image",
+        "expected_argb": "0xff112233",
+        "global_argb": "0xff112233",
+        "scoped_argb": "0xff112233",
+        "matches": true
+      },
+      {
+        "name": "unknown_alias",
+        "key": "__theme_probe_missing_alias__",
+        "global_null": false,
+        "scoped_null": false,
+        "global_argb": "0x00000000",
+        "matches": false
+      },
+      {
+        "name": "invalid_literal",
+        "key": "not-a-valid-color",
+        "global_null": false,
+        "scoped_null": false,
+        "global_argb": "0x00000000",
+        "matches": false
+      },
+      {
+        "name": "invalid_alias",
+        "key": "probe_invalid",
+        "global_null": false,
+        "scoped_null": false,
+        "global_argb": "0x00000000",
+        "matches": false
+      },
+      {
+        "name": "empty_literal",
+        "key": "",
+        "global_null": true,
+        "scoped_null": true,
+        "matches": true
+      },
+      {
+        "name": "missing_image",
+        "key": "batch3-theme-probe-absent-1878.png",
+        "global_null": true,
+        "scoped_null": true,
+        "matches": true
+      },
+      {
+        "name": "invalid_canonical_key",
+        "key": "key_back_color",
+        "global_null": false,
+        "scoped_null": false,
+        "global_argb": "0x00000000",
+        "matches": false
+      }
+    ]
+  },
+  "installed_identity": {
+    "diagnostic_apk": {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-20261028/device-apks/baseline-diagnostic.apk",
+      "bytes": 20158126,
+      "sha256": "7e47545d6c7a2255546389b38cb4365229fd43b53202465f1243b4bd9fa3eb55"
+    },
+    "original_ci_apk": {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-20261028/voice/com.osfans.trime-v3.3.12-105-ga047f747-x86_64-debug.apk",
+      "bytes": 20158643,
+      "sha256": "ee184fb76ad54f17e628f0446a78fa874740b4241b5e9577c2cbd4c77a731343"
+    },
+    "identity_record": {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-20261028/device-apks/baseline-identity.json",
+      "bytes": 98263,
+      "sha256": "20e7f8ab1302c509236c4bcebb19929f579086c2c2a70ea962382ab210e9ef5a"
+    },
+    "ci_identity": {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-20261028/voice/baseline-ci-identity.json",
+      "bytes": 317,
+      "sha256": "bfd0ccbbe9af10a3f8dc9f371290fdbf37008b914950254f4fffdfa826efb9f1"
+    },
+    "ci_run": {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-20261028/voice/baseline-ci-run.json",
+      "bytes": 13901,
+      "sha256": "eb450bb2f24e182f639678501e8a5273c4a1075f49ad31b15968353de13408aa"
+    },
+    "runtime_installed_sourceDir_sha256": "7e47545d6c7a2255546389b38cb4365229fd43b53202465f1243b4bd9fa3eb55",
+    "runtime_hash_matches_requested_diagnostic_and_disk": true,
+    "non_signature_original_vs_diagnostic_payload_identical_independently_recomputed": true,
+    "payload_entries": 784,
+    "test_apk_is_separate": "voice-build1 main APK is incidental helper compile output and is not the baseline tested target."
+  },
+  "old_vs_current_base_causality": {
+    "old_whole_app_baseline": "a047f74757fae0d7b5ef64e54f0b957dee2bf8f3",
+    "current_pre_patch_base": "7fedca06ba5d2ef761a2ae3d44d8a0917db36994",
+    "fixed_production_head_pending_runtime": "f27e8425d57dc0774e8a576e686e8985499f4fbc",
+    "complete_git_changed_paths": [
+      "app/src/main/AndroidManifest.xml",
+      "app/src/main/java/com/osfans/trime/ime/bar/InputBarDelegate.kt"
+    ],
+    "complete_git_diff": "diff --git a/app/src/main/AndroidManifest.xml b/app/src/main/AndroidManifest.xml\nindex 9cd040df..4d110b99 100644\n--- a/app/src/main/AndroidManifest.xml\n+++ b/app/src/main/AndroidManifest.xml\n@@ -16,6 +16,9 @@ SPDX-License-Identifier: GPL-3.0-or-later\n         <intent>\n             <action android:name=\"android.intent.action.TTS_SERVICE\" />\n         </intent>\n+        <intent>\n+            <action android:name=\"android.view.InputMethod\" />\n+        </intent>\n     </queries>\n \n     <application\ndiff --git a/app/src/main/java/com/osfans/trime/ime/bar/InputBarDelegate.kt b/app/src/main/java/com/osfans/trime/ime/bar/InputBarDelegate.kt\nindex 0867126c..ca2fccef 100644\n--- a/app/src/main/java/com/osfans/trime/ime/bar/InputBarDelegate.kt\n+++ b/app/src/main/java/com/osfans/trime/ime/bar/InputBarDelegate.kt\n@@ -132,6 +132,9 @@ class InputBarDelegate(override val di: DI) :\n \n     private val alwaysUi: AlwaysUi by lazy {\n         AlwaysUi(context, scope) { action ->\n+            // A touch that started on the toolbar can finish after candidates replace it.\n+            // ViewAnimator keeps that touch target even when its child becomes GONE.\n+            if (barStateMachine.currentState != QuickBarStateMachine.State.Always) return@AlwaysUi\n             if (action.isNotEmpty()) {\n                 commonKeyboardActionListener.listener.onAction(theme.resolveAction(action))\n             } else {",
+    "relevant_inputs_byte_identity": [
+      {
+        "path": "app/src/main/assets/shared/tongwenfeng.trime.yaml",
+        "a047_blob": "5da360060f05a98d779ca2bdd37560f9553a478d",
+        "7fed_blob": "5da360060f05a98d779ca2bdd37560f9553a478d",
+        "bytes": 197771,
+        "sha256": "71c8aa73740d268e674c4f6a8242be1d1c5f191593a4c7401e1e3b4ffa4518e6",
+        "byte_identical": true
+      },
+      {
+        "path": "app/src/main/java/com/osfans/trime/ime/keyboard/Key.kt",
+        "a047_blob": "41ee1c0bca588125dc9ffd68642627b5c8473874",
+        "7fed_blob": "41ee1c0bca588125dc9ffd68642627b5c8473874",
+        "bytes": 14473,
+        "sha256": "400f39329ced634460f22e2866728b00f0577ffeafcbb3a471498305bda8d94b",
+        "byte_identical": true
+      },
+      {
+        "path": "app/src/main/java/com/osfans/trime/ime/keyboard/Keyboard.kt",
+        "a047_blob": "0db3fa52695d0a6eabaff1a69e27b6f59b2028e4",
+        "7fed_blob": "0db3fa52695d0a6eabaff1a69e27b6f59b2028e4",
+        "bytes": 18693,
+        "sha256": "cdc21ccb9539f1ba167bc3fa14eba326ee69fc539976a6bc137684aca1069b6a",
+        "byte_identical": true
+      },
+      {
+        "path": "app/src/main/java/com/osfans/trime/ime/keyboard/KeyAction.kt",
+        "a047_blob": "aa388b548cd2a1c6d54daa9474df22fb1738770e",
+        "7fed_blob": "aa388b548cd2a1c6d54daa9474df22fb1738770e",
+        "bytes": 9744,
+        "sha256": "3500c212a6caad6f4298d3dcff41b422d7676323b8795837dde0bdf679ae52c1",
+        "byte_identical": true
+      },
+      {
+        "path": "app/src/main/java/com/osfans/trime/ime/keyboard/KeyCode.kt",
+        "a047_blob": "75dca3cb353a7be962dd4dbfab06b8791b4b350d",
+        "7fed_blob": "75dca3cb353a7be962dd4dbfab06b8791b4b350d",
+        "bytes": 4265,
+        "sha256": "fa91b33a82ef927afb61e97d5df3abba2fdf5f28ef1d4373616b7436f844151e",
+        "byte_identical": true
+      },
+      {
+        "path": "app/src/main/java/com/osfans/trime/data/theme/ColorManager.kt",
+        "a047_blob": "4a883edbf097699c2430e710842989dd9340b87c",
+        "7fed_blob": "4a883edbf097699c2430e710842989dd9340b87c",
+        "bytes": 9834,
+        "sha256": "619df73115d999d41760ce055c275aefd4bf57fa6ed6c3a09f69731c40851fa3",
+        "byte_identical": true
+      },
+      {
+        "path": "app/src/main/java/com/osfans/trime/data/theme/ColorTable.kt",
+        "a047_blob": "6bda96e26286c641ec5ec099023b220957630306",
+        "7fed_blob": "6bda96e26286c641ec5ec099023b220957630306",
+        "bytes": 4915,
+        "sha256": "4e23688f39c17bad383de44a913f8e22e3b0b1401134e82997cdce512d392043",
+        "byte_identical": true
+      },
+      {
+        "path": "app/src/main/java/com/osfans/trime/data/theme/ColorKey.kt",
+        "a047_blob": "db0f4cf2dcadce92f8dec3f71bbfb53fae6c8f0d",
+        "7fed_blob": "db0f4cf2dcadce92f8dec3f71bbfb53fae6c8f0d",
+        "bytes": 5728,
+        "sha256": "d047a6db6df45aa2b2f177387ba5432c5e12c46437fab0c4affdbb6a18c05fa5",
+        "byte_identical": true
+      },
+      {
+        "path": "app/src/main/java/com/osfans/trime/data/theme/ColorScheme.kt",
+        "a047_blob": "d0615d45929a46401c7cf4ada166ff91fad4848d",
+        "7fed_blob": "d0615d45929a46401c7cf4ada166ff91fad4848d",
+        "bytes": 452,
+        "sha256": "bc48a872966d29b41beee34a4b5f459d3aa5b406f681d0c4a9a69e72a248b695",
+        "byte_identical": true
+      },
+      {
+        "path": "app/src/main/java/com/osfans/trime/data/theme/ColorSchemeResolver.kt",
+        "a047_blob": "289becaea73f4503f3bd36a29254d026b81fe615",
+        "7fed_blob": "289becaea73f4503f3bd36a29254d026b81fe615",
+        "bytes": 2829,
+        "sha256": "8a9a9613e597a8ada2b2ac9dd99e569f19d9ee9cddbab42c93850739b00ebb3e",
+        "byte_identical": true
+      },
+      {
+        "path": "app/src/main/java/com/osfans/trime/data/theme/Theme.kt",
+        "a047_blob": "033ac333999cc1fb762851c694f54ffe10992560",
+        "7fed_blob": "033ac333999cc1fb762851c694f54ffe10992560",
+        "bytes": 2384,
+        "sha256": "957056dff5533315285102a2bd806ce17a0b7882c1864481d57805822d4d846f",
+        "byte_identical": true
+      },
+      {
+        "path": "app/src/main/java/com/osfans/trime/data/theme/ThemeScope.kt",
+        "a047_blob": "7ed14d2de4ccf6683716d3b50f811b5741547835",
+        "7fed_blob": "7ed14d2de4ccf6683716d3b50f811b5741547835",
+        "bytes": 2870,
+        "sha256": "0fae0da5293f40e2f92b61dd3280ce56f44516dcd7a86e7f4e14da13786aca20",
+        "byte_identical": true
+      },
+      {
+        "path": "app/src/main/java/com/osfans/trime/data/theme/ThemeColors.kt",
+        "a047_blob": "6c62aa7a5b8c17753fa17214ce05c3e635eb9c4d",
+        "7fed_blob": "6c62aa7a5b8c17753fa17214ce05c3e635eb9c4d",
+        "bytes": 5014,
+        "sha256": "e7667dff97efd86db2e2dfc0174864e39e5ca2dcb09f81d6f30af4ba56d3ce53",
+        "byte_identical": true
+      },
+      {
+        "path": "app/src/main/java/com/osfans/trime/data/theme/ThemePrefs.kt",
+        "a047_blob": "f14bca506d8eeff53ad43bc20bed521872d35127",
+        "7fed_blob": "f14bca506d8eeff53ad43bc20bed521872d35127",
+        "bytes": 2173,
+        "sha256": "66548efe8218092c55155403a001a1d2c9aab519e3db7b8f20f96799ed4d4c81",
+        "byte_identical": true
+      },
+      {
+        "path": "app/src/main/java/com/osfans/trime/data/theme/ThemeYaml.kt",
+        "a047_blob": "e217306776e24a5eadee5cbdce6f45341e7ebff6",
+        "7fed_blob": "e217306776e24a5eadee5cbdce6f45341e7ebff6",
+        "bytes": 2192,
+        "sha256": "198cfeb60ad79d27424ae5b910e841e29e23bb051e89012fd4ed1fd44348a7b5",
+        "byte_identical": true
+      },
+      {
+        "path": "app/src/main/java/com/osfans/trime/data/theme/ThemeDslExpander.kt",
+        "a047_blob": "580a20f3a0e8da2015f866a6a93ff0c036d72771",
+        "7fed_blob": "580a20f3a0e8da2015f866a6a93ff0c036d72771",
+        "bytes": 10230,
+        "sha256": "6ed53fef5802bced7d78e0833211d11647a1d3d98c7de7ed19e4b2cc20e944b5",
+        "byte_identical": true
+      },
+      {
+        "path": "app/src/main/java/com/osfans/trime/data/theme/model/TextKeyboard.kt",
+        "a047_blob": "1ca462597538330a4a679c0dd44c8c7099c687f0",
+        "7fed_blob": "1ca462597538330a4a679c0dd44c8c7099c687f0",
+        "bytes": 3322,
+        "sha256": "79391bd4af59b63f77eb7cbf0843c473a9c5a5482bacee7b687f001bf8fc6692",
+        "byte_identical": true
+      },
+      {
+        "path": "app/src/main/java/com/osfans/trime/data/theme/model/PresetKey.kt",
+        "a047_blob": "9e3e6f6e053bb71d2a36d73c61a1be6757394c93",
+        "7fed_blob": "9e3e6f6e053bb71d2a36d73c61a1be6757394c93",
+        "bytes": 812,
+        "sha256": "393f14bc76ac8aaaad6f8aef34d0950ccef6d7c162060d7383aa2e393124bd9f",
+        "byte_identical": true
+      },
+      {
+        "path": "app/src/main/java/com/osfans/trime/util/ColorUtils.kt",
+        "a047_blob": "0d3ec043742d72975d26b0fb4ca25f6d071e7629",
+        "7fed_blob": "0d3ec043742d72975d26b0fb4ca25f6d071e7629",
+        "bytes": 1494,
+        "sha256": "9a7537e8b1a36b14c7d7d5318fbd5998d30492e1ec38d8103edc89d42c8aeadc",
+        "byte_identical": true
+      }
+    ],
+    "runtime_asset_matches_unchanged_source_sha": true,
+    "why_valid_for_narrow_theme_causality": "Complete old→current-base Git diff changes only manifest package visibility and toolbar action-state guard. Neither is called by this no-window/no-toolbar theme/Key object probe; all theme parsing/color/drawable/Key/Keyboard inputs are byte-identical. Thus old a047 proves the pre-fix theme behavior, subject to fixed-run same-asset/API evidence.",
+    "not_claimed": "This is not a runtime test of the latest7fed whole application, full IME, toolbar or voice interaction. Full-app state and unrelated changes are not controlled by the old baseline."
+  },
+  "cleanup_and_preferences": {
+    "logical_before": {
+      "normal_mode_color": "default",
+      "follow_system_day_night": false
+    },
+    "fixture": {
+      "normal_mode_color": "default",
+      "follow_system_day_night": false
+    },
+    "logical_after": {
+      "normal_mode_color": "default",
+      "follow_system_day_night": false
+    },
+    "both_logical_values_restored": true,
+    "default_ime_before": "com.android.inputmethod.latin/.LatinIME",
+    "default_ime_after": "com.android.inputmethod.latin/.LatinIME",
+    "default_ime_unchanged": true,
+    "own_image": {
+      "path": "/storage/emulated/0/Android/data/com.osfans.trime.debug/files/rime/backgrounds/batch3-theme-probe-6078451839149764170.png",
+      "bytes": 106,
+      "sha256": "6cc03a62e093a8788cb4c3c70bf6c6a28020fb038d5e5a441e29206aaa83a185",
+      "created_with_exclusive_temp_name": true,
+      "overwrote_existing_file": false,
+      "retained_after_probe": false
+    },
+    "own_image_removed_by_helper": true,
+    "own_created_empty_background_directory_removed_by_helper": true,
+    "host_xml_before": {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch3-20261028/runtime/run1/commands/baseline-prefs-before.stdout",
+      "bytes": 627,
+      "sha256": "3646cb7018c5c8ebc16fe84386bd330685b9ca579767927b109796945c026541"
+    },
+    "host_xml_after": {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch3-20261028/runtime/run1/commands/baseline-prefs-after.stdout",
+      "bytes": 761,
+      "sha256": "d288ecbde95bd54d936b88714e8ef475aaf63538b25e4feacc958073fb3d94f2"
+    },
+    "host_xml_differences": {
+      "follow_system_day_night": {
+        "before": null,
+        "after": {
+          "type": "boolean",
+          "value": "false"
+        }
+      },
+      "general__pid": {
+        "before": {
+          "type": "int",
+          "value": "2726"
+        },
+        "after": {
+          "type": "int",
+          "value": "1878"
+        }
+      },
+      "normal_mode_color": {
+        "before": null,
+        "after": {
+          "type": "string",
+          "value": "default"
+        }
+      }
+    },
+    "exact_limitation": "Preference XML is not byte-identical: absent normal_mode_color/follow_system_day_night keys were materialized as logical defaults default/false, and app startup updated general__pid. All other recorded XML entries compare equal. No full preference/file no-change claim."
+  },
+  "bounded_log_review": {
+    "source": "/home/xumin/Public/Trime/build/issue-fixes-batch3-20261028/runtime/run1/device-logcat.txt",
+    "source_active_session_may_append": true,
+    "start_marker": "baseline-start",
+    "end_marker": "baseline-end",
+    "source_line_start_1_based": 22869,
+    "source_line_end_1_based": 23250,
+    "byte_range_half_open": [
+      3121627,
+      3182566
+    ],
+    "segment_bytes": 60939,
+    "segment_sha256": "d1793ef09f993bf573cebf2e8851e1cd92b0a222a0a7f82b6bdd4ee3c841e72e",
+    "product_fatal_or_am_crash_found": false,
+    "all_W_E_lines": [
+      {
+        "segment_line": 13,
+        "text": "10-28 21:44:27.913  1867  1867 W app_process: Unexpected CPU variant for x86: x86_64."
+      },
+      {
+        "segment_line": 14,
+        "text": "10-28 21:44:27.913  1867  1867 W app_process: Known variants: atom, sandybridge, silvermont, goldmont, goldmont-plus, goldmont-without-sha-xsaves, tremont, kabylake, default"
+      },
+      {
+        "segment_line": 28,
+        "text": "10-28 21:44:28.021  1878  1878 W ans.trime.debug: Unexpected CPU variant for x86: x86_64."
+      },
+      {
+        "segment_line": 29,
+        "text": "10-28 21:44:28.021  1878  1878 W ans.trime.debug: Known variants: atom, sandybridge, silvermont, goldmont, goldmont-plus, goldmont-without-sha-xsaves, tremont, kabylake, default"
+      },
+      {
+        "segment_line": 33,
+        "text": "10-28 21:44:28.075  1878  1878 W ActivityThread: Package uses different ABI(s) than its instrumentation: package[com.osfans.trime.debug]: x86_64, null instrumentation[com.osfans.trime.debug.test]: null, null"
+      },
+      {
+        "segment_line": 36,
+        "text": "10-28 21:44:28.077  1878  1878 W ziparchive: Unable to open '/data/app/~~TxwuZ-cZY24YZ36CUPaaug==/com.osfans.trime.debug.test-h-vX46Cz3VGlsvDNwTHKnw==/base.dm': No such file or directory"
+      },
+      {
+        "segment_line": 37,
+        "text": "10-28 21:44:28.077  1878  1878 W ziparchive: Unable to open '/data/app/~~TxwuZ-cZY24YZ36CUPaaug==/com.osfans.trime.debug.test-h-vX46Cz3VGlsvDNwTHKnw==/base.dm': No such file or directory"
+      },
+      {
+        "segment_line": 38,
+        "text": "10-28 21:44:28.086  1878  1878 W ziparchive: Unable to open '/data/app/~~cmVfKtt55h5RCOMJ5ubA1Q==/com.osfans.trime.debug-OhAFva70yBHA0cj_cxtdkQ==/base.dm': No such file or directory"
+      },
+      {
+        "segment_line": 39,
+        "text": "10-28 21:44:28.086  1878  1878 W ziparchive: Unable to open '/data/app/~~cmVfKtt55h5RCOMJ5ubA1Q==/com.osfans.trime.debug-OhAFva70yBHA0cj_cxtdkQ==/base.dm': No such file or directory"
+      },
+      {
+        "segment_line": 153,
+        "text": "10-28 21:44:28.353  1878  1878 W ziparchive: Unable to open '/data/app/~~TxwuZ-cZY24YZ36CUPaaug==/com.osfans.trime.debug.test-h-vX46Cz3VGlsvDNwTHKnw==/base.dm': No such file or directory"
+      },
+      {
+        "segment_line": 154,
+        "text": "10-28 21:44:28.353  1878  1878 W ziparchive: Unable to open '/data/app/~~TxwuZ-cZY24YZ36CUPaaug==/com.osfans.trime.debug.test-h-vX46Cz3VGlsvDNwTHKnw==/base.dm': No such file or directory"
+      },
+      {
+        "segment_line": 155,
+        "text": "10-28 21:44:28.358  1878  1878 W ziparchive: Unable to open '/data/app/~~cmVfKtt55h5RCOMJ5ubA1Q==/com.osfans.trime.debug-OhAFva70yBHA0cj_cxtdkQ==/base.dm': No such file or directory"
+      },
+      {
+        "segment_line": 156,
+        "text": "10-28 21:44:28.358  1878  1878 W ziparchive: Unable to open '/data/app/~~cmVfKtt55h5RCOMJ5ubA1Q==/com.osfans.trime.debug-OhAFva70yBHA0cj_cxtdkQ==/base.dm': No such file or directory"
+      },
+      {
+        "segment_line": 301,
+        "text": "10-28 21:44:32.328  1878  1878 W [main] ThemeScope: ThemeScope.kt:52] Unknown color key: candidate_border_color"
+      },
+      {
+        "segment_line": 305,
+        "text": "10-28 21:44:32.363  1878  1878 W [main] ThemeScope: ThemeScope.kt:52] Unknown color key: candidate_border_color"
+      },
+      {
+        "segment_line": 306,
+        "text": "10-28 21:44:32.376  1878  1878 W [main] ThemeScope: ThemeScope.kt:52] Unknown color key: candidate_border_color"
+      },
+      {
+        "segment_line": 309,
+        "text": "10-28 21:44:32.388  1878  1878 W [main] ThemeScope: ThemeScope.kt:52] Unknown color key: candidate_border_color"
+      },
+      {
+        "segment_line": 310,
+        "text": "10-28 21:44:32.400  1878  1878 W [main] ThemeScope: ThemeScope.kt:52] Unknown color key: candidate_border_color"
+      },
+      {
+        "segment_line": 312,
+        "text": "10-28 21:44:32.411  1878  1878 W [main] ThemeScope: ThemeScope.kt:52] Unknown color key: candidate_border_color"
+      },
+      {
+        "segment_line": 313,
+        "text": "10-28 21:44:32.422  1878  1878 W [main] ThemeScope: ThemeScope.kt:52] Unknown color key: candidate_border_color"
+      },
+      {
+        "segment_line": 314,
+        "text": "10-28 21:44:32.434  1878  1878 W [main] ThemeScope: ThemeScope.kt:52] Unknown color key: candidate_border_color"
+      },
+      {
+        "segment_line": 315,
+        "text": "10-28 21:44:32.445  1878  1878 W [main] ThemeScope: ThemeScope.kt:52] Unknown color key: candidate_border_color"
+      },
+      {
+        "segment_line": 316,
+        "text": "10-28 21:44:32.457  1878  1878 W [main] ThemeScope: ThemeScope.kt:52] Unknown color key: candidate_border_color"
+      },
+      {
+        "segment_line": 317,
+        "text": "10-28 21:44:32.469  1878  1878 W [main] ThemeScope: ThemeScope.kt:52] Unknown color key: candidate_border_color"
+      },
+      {
+        "segment_line": 318,
+        "text": "10-28 21:44:32.480  1878  1878 W [main] ThemeScope: ThemeScope.kt:52] Unknown color key: candidate_border_color"
+      },
+      {
+        "segment_line": 319,
+        "text": "10-28 21:44:32.492  1878  1878 W [main] ThemeScope: ThemeScope.kt:52] Unknown color key: candidate_border_color"
+      },
+      {
+        "segment_line": 320,
+        "text": "10-28 21:44:32.504  1878  1878 W [main] ThemeScope: ThemeScope.kt:52] Unknown color key: candidate_border_color"
+      },
+      {
+        "segment_line": 321,
+        "text": "10-28 21:44:32.515  1878  1878 W [main] ThemeScope: ThemeScope.kt:52] Unknown color key: candidate_border_color"
+      },
+      {
+        "segment_line": 322,
+        "text": "10-28 21:44:32.528  1878  1878 W [main] ThemeScope: ThemeScope.kt:52] Unknown color key: candidate_border_color"
+      },
+      {
+        "segment_line": 323,
+        "text": "10-28 21:44:32.544  1878  1878 W [main] ThemeScope: ThemeScope.kt:52] Unknown color key: candidate_border_color"
+      },
+      {
+        "segment_line": 324,
+        "text": "10-28 21:44:32.565  1878  1878 W [main] ThemeScope: ThemeScope.kt:52] Unknown color key: candidate_border_color"
+      },
+      {
+        "segment_line": 325,
+        "text": "10-28 21:44:32.576  1878  1878 W [main] ThemeScope: ThemeScope.kt:52] Unknown color key: candidate_border_color"
+      },
+      {
+        "segment_line": 326,
+        "text": "10-28 21:44:32.588  1878  1878 W [main] ThemeScope: ThemeScope.kt:52] Unknown color key: candidate_border_color"
+      },
+      {
+        "segment_line": 327,
+        "text": "10-28 21:44:32.599  1878  1878 W [main] ThemeScope: ThemeScope.kt:52] Unknown color key: candidate_border_color"
+      },
+      {
+        "segment_line": 328,
+        "text": "10-28 21:44:32.611  1878  1878 W [main] ThemeScope: ThemeScope.kt:52] Unknown color key: candidate_border_color"
+      },
+      {
+        "segment_line": 329,
+        "text": "10-28 21:44:32.624  1878  1878 W [main] ThemeScope: ThemeScope.kt:52] Unknown color key: candidate_border_color"
+      },
+      {
+        "segment_line": 330,
+        "text": "10-28 21:44:32.637  1878  1878 W [main] ThemeScope: ThemeScope.kt:52] Unknown color key: candidate_border_color"
+      },
+      {
+        "segment_line": 331,
+        "text": "10-28 21:44:32.649  1878  1878 W [main] ThemeScope: ThemeScope.kt:52] Unknown color key: candidate_border_color"
+      },
+      {
+        "segment_line": 332,
+        "text": "10-28 21:44:32.662  1878  1878 W [main] ThemeScope: ThemeScope.kt:52] Unknown color key: candidate_border_color"
+      },
+      {
+        "segment_line": 333,
+        "text": "10-28 21:44:32.675  1878  1878 W [main] ThemeScope: ThemeScope.kt:52] Unknown color key: candidate_border_color"
+      },
+      {
+        "segment_line": 334,
+        "text": "10-28 21:44:32.686  1878  1878 W [main] ThemeScope: ThemeScope.kt:52] Unknown color key: candidate_border_color"
+      },
+      {
+        "segment_line": 335,
+        "text": "10-28 21:44:32.699  1878  1878 W [main] ThemeScope: ThemeScope.kt:52] Unknown color key: candidate_border_color"
+      },
+      {
+        "segment_line": 336,
+        "text": "10-28 21:44:32.710  1878  1878 W [main] ThemeScope: ThemeScope.kt:52] Unknown color key: candidate_border_color"
+      },
+      {
+        "segment_line": 337,
+        "text": "10-28 21:44:32.721  1878  1878 W [main] ThemeScope: ThemeScope.kt:52] Unknown color key: candidate_border_color"
+      },
+      {
+        "segment_line": 338,
+        "text": "10-28 21:44:32.732  1878  1878 W [main] ThemeScope: ThemeScope.kt:52] Unknown color key: candidate_border_color"
+      },
+      {
+        "segment_line": 339,
+        "text": "10-28 21:44:32.743  1878  1878 W [main] ThemeScope: ThemeScope.kt:52] Unknown color key: candidate_border_color"
+      },
+      {
+        "segment_line": 340,
+        "text": "10-28 21:44:32.754  1878  1878 W [main] ThemeScope: ThemeScope.kt:52] Unknown color key: candidate_border_color"
+      },
+      {
+        "segment_line": 341,
+        "text": "10-28 21:44:32.764  1878  1878 W [main] ThemeScope: ThemeScope.kt:52] Unknown color key: candidate_border_color"
+      },
+      {
+        "segment_line": 342,
+        "text": "10-28 21:44:32.776  1878  1878 W [main] ThemeScope: ThemeScope.kt:52] Unknown color key: candidate_border_color"
+      },
+      {
+        "segment_line": 343,
+        "text": "10-28 21:44:32.787  1878  1878 W [main] ThemeScope: ThemeScope.kt:52] Unknown color key: candidate_border_color"
+      },
+      {
+        "segment_line": 344,
+        "text": "10-28 21:44:32.798  1878  1878 W [main] ThemeScope: ThemeScope.kt:52] Unknown color key: candidate_border_color"
+      },
+      {
+        "segment_line": 345,
+        "text": "10-28 21:44:32.810  1878  1878 W [main] ThemeScope: ThemeScope.kt:52] Unknown color key: candidate_border_color"
+      },
+      {
+        "segment_line": 346,
+        "text": "10-28 21:44:32.820  1878  1878 W [main] ThemeScope: ThemeScope.kt:52] Unknown color key: candidate_border_color"
+      },
+      {
+        "segment_line": 347,
+        "text": "10-28 21:44:32.832  1878  1878 W [main] ThemeScope: ThemeScope.kt:52] Unknown color key: candidate_border_color"
+      },
+      {
+        "segment_line": 348,
+        "text": "10-28 21:44:32.843  1878  1878 W [main] ThemeScope: ThemeScope.kt:52] Unknown color key: candidate_border_color"
+      },
+      {
+        "segment_line": 349,
+        "text": "10-28 21:44:32.854  1878  1878 W [main] ThemeScope: ThemeScope.kt:52] Unknown color key: candidate_border_color"
+      },
+      {
+        "segment_line": 350,
+        "text": "10-28 21:44:32.866  1878  1878 W [main] ThemeScope: ThemeScope.kt:52] Unknown color key: candidate_border_color"
+      },
+      {
+        "segment_line": 351,
+        "text": "10-28 21:44:32.877  1878  1878 W [main] ThemeScope: ThemeScope.kt:52] Unknown color key: candidate_border_color"
+      },
+      {
+        "segment_line": 352,
+        "text": "10-28 21:44:32.888  1878  1878 W [main] ThemeScope: ThemeScope.kt:52] Unknown color key: candidate_border_color"
+      },
+      {
+        "segment_line": 353,
+        "text": "10-28 21:44:32.899  1878  1878 W [main] ThemeScope: ThemeScope.kt:52] Unknown color key: candidate_border_color"
+      },
+      {
+        "segment_line": 355,
+        "text": "10-28 21:44:32.938  1878  1878 E BitmapFactory: Unable to decode file: java.io.FileNotFoundException: /storage/emulated/0/Android/data/com.osfans.trime.debug/files/rime/backgrounds/backgrounds/batch3-theme-probe-absent-1878.png: open failed: ENOENT (No such file or directory)"
+      },
+      {
+        "segment_line": 356,
+        "text": "10-28 21:44:32.939  1878  1878 E BitmapFactory: Unable to decode file: java.io.FileNotFoundException: /storage/emulated/0/Android/data/com.osfans.trime.debug/files/rime/backgrounds/backgrounds/batch3-theme-probe-absent-1878.png: open failed: ENOENT (No such file or directory)"
+      },
+      {
+        "segment_line": 360,
+        "text": "10-28 21:44:33.097   885  1025 E CellSignalStrengthLte: convertRssiAsuToDBm: invalid RSSI in ASU=2147483647"
+      },
+      {
+        "segment_line": 367,
+        "text": "10-28 21:44:33.279   540  1547 E ActivityManager: Unable to freeze binder for 1878: -11"
+      }
+    ],
+    "target_pid_W_E_count": 60,
+    "actual_theme_warning_count": 47,
+    "theme_warning_interpretation": "47 demand-driven warnings for candidate_border_color from shipped theme are actual theme diagnostics, not dismissed as system noise; not addressed by this patch.",
+    "missing_image_decode_errors": [
+      {
+        "segment_line": 355,
+        "text": "10-28 21:44:32.938  1878  1878 E BitmapFactory: Unable to decode file: java.io.FileNotFoundException: /storage/emulated/0/Android/data/com.osfans.trime.debug/files/rime/backgrounds/backgrounds/batch3-theme-probe-absent-1878.png: open failed: ENOENT (No such file or directory)"
+      },
+      {
+        "segment_line": 356,
+        "text": "10-28 21:44:32.939  1878  1878 E BitmapFactory: Unable to decode file: java.io.FileNotFoundException: /storage/emulated/0/Android/data/com.osfans.trime.debug/files/rime/backgrounds/backgrounds/batch3-theme-probe-absent-1878.png: open failed: ENOENT (No such file or directory)"
+      }
+    ],
+    "image_error_interpretation": "Two expected BitmapFactory FileNotFoundException error lines from deliberate missing-image global/scoped controls. No zero-error assertion.",
+    "finish_instrumentation_lines": [
+      "10-28 21:44:33.276   540  1547 I ActivityManager: Force stopping com.osfans.trime.debug appid=10160 user=0: finished inst",
+      "10-28 21:44:33.286   540  1547 I ActivityManager: Killing 1878:com.osfans.trime.debug/u0a160 (adj 0): stop com.osfans.trime.debug due to finished inst",
+      "10-28 21:44:33.287   540  1547 I am_kill : [0,1878,com.osfans.trime.debug,0,stop com.osfans.trime.debug due to finished inst,189656]"
+    ],
+    "process_exit_interpretation": "System force-stop/kill after finished inst is instrumentation lifecycle, distinct from product FATAL. No post-finish survival claim.",
+    "limits": "Only these marked baseline bytes were reviewed for FATAL/crash; boot/session warnings, ANRs or later fixed cases are not declared absent."
+  },
+  "previous_production_review_preserved": {
+    "path": "/home/xumin/Public/Trime/build/issue-fixes-batch3-20261028/production-review.json",
+    "bytes": 12734,
+    "sha256": "66d1a73593ad06eb6a3bb5a95286fb1f99fecca9497ad3499d6988099c6073f1"
+  },
+  "remaining_work": [
+    "Receive actual fixed CI artifact/diagnostic provenance and actual device report; compare same helper/assets/target hashes and all controls before final validation.",
+    "Root owns cleanup and final session evidence. This interim review does not infer fixed success from baseline or CI."
+  ],
+  "scope_limits": [
+    "API35 emulator only; no physical-device/report-version coverage.",
+    "Synthetic 8x8 Drawable center pixels and real object-level text colors, not actual KeyView/full keyboard rendering, theme selection UI, InputDispatcher timing or TalkBack.",
+    "No Rime session/JNI is called by helper path; no claim about all application background work or complete input semantics.",
+    "46-scheme alias fallback invariants do not guarantee opacity, contrast, aesthetic readability or every historical issue2159 symptom.",
+    "Valid PNG control is2x2 and created exclusively under own prefix then deleted; other image formats/NinePatch were not device-decoded here.",
+    "Only normal/background/functional state colors in reported six states are measured; functional empty-custom-background branch and all third-party theme structures are not exhaustive.",
+    "Preference cleanup preserves logical values, not XML absence; the old baseline is theme-causally matched, not the latest whole-app baseline."
+  ]
+}

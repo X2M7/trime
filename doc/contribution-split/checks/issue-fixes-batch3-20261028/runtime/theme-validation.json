@@ -1,0 +1,167 @@
+{
+  "created_at_utc": "2026-10-28T13:49:02.365184+00:00",
+  "status": "PASS_SCOPED_PRODUCTION_OBJECT_AB",
+  "repository": "osfans/trime",
+  "pr": 2203,
+  "issue": "#2159",
+  "fixed_head": "f27e8425d57dc0774e8a576e686e8985499f4fbc",
+  "base": "7fedca06ba5d2ef761a2ae3d44d8a0917db36994",
+  "baseline_original_head": "a047f74757fae0d7b5ef64e54f0b957dee2bf8f3",
+  "baseline_base_limitation": "Baseline original APK precedes the two upstream merges. The entire diff to current base is limited to Manifest and InputBarDelegate; theme/Key/asset paths are byte-identical, separately reviewed. Not a newest-whole-app baseline claim.",
+  "fixed_original_apk_identity": {
+    "path": "/home/xumin/Public/Trime/build/issue-fixes-batch3-20261028/device-apks/theme-identity.json",
+    "bytes": 98390,
+    "sha256": "9d056f0dd7a1cb2247b58c9e3d020c9c7f76869ca2315aaca6cf6e7adcbdfe66"
+  },
+  "fixed_source_tree_proof": {
+    "path": "/home/xumin/Public/Trime/build/issue-fixes-batch3-20261028/cloud/run-40698285331/pr-2203/ubuntu-original/source-tree-proof.json",
+    "bytes": 605,
+    "sha256": "af0644834eb721050892b320c16630d011b3d95dbbc715c5254ba0abdd9dcea8"
+  },
+  "helper_source": {
+    "path": "/home/xumin/Public/Trime/build/issue-fixes-batch3-20261028/theme-probe/ThemeDrawableInstrumentation.kt",
+    "bytes": 24012,
+    "sha256": "74458f38e0d242ead621ba760c4670bc208dd22482981b65d85c330e4720b9fc"
+  },
+  "helper_build": {
+    "path": "/home/xumin/Public/Trime/build/issue-fixes-batch3-20261028/voice-build1/result.json",
+    "bytes": 10260,
+    "sha256": "cba8a605c39e8b31c292ec50a3eb2bda12590b6699dadf1b659383c59f1c7067"
+  },
+  "device": {
+    "api": 35,
+    "architecture": "x86_64",
+    "physical": false,
+    "reused_isolated_working_copy": true
+  },
+  "baseline": {
+    "report": {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch3-20261028/runtime/run1/baseline-probe-report.json",
+      "bytes": 189943,
+      "sha256": "514405aaf305b3977f646ed5c0bac1787187af81296d19024a4d856238af492a"
+    },
+    "outcome": "EXPECTED_ASSERTION_FAILURE_CAUGHT_BY_HELPER_NOT_PRODUCT_FATAL",
+    "observations": 282,
+    "violations": 94,
+    "target_issue_rows": [
+      {
+        "scheme": "google_plus",
+        "state": "normal",
+        "key_identity": 53208268,
+        "generation": 2,
+        "previous_generation": 1,
+        "back_alias": "bh1",
+        "back_fallback": "key_back_color",
+        "actual_background_argb": "0x00000000",
+        "expected_background_argb": "0xffffffff",
+        "expected_background_rendered_argb": "0xffffffff",
+        "actual_text_argb": "0xffdd4b39",
+        "expected_text_argb": "0xffdd4b39",
+        "matches": false
+      },
+      {
+        "scheme": "tantsing",
+        "state": "normal",
+        "key_identity": 53208268,
+        "generation": 3,
+        "previous_generation": 2,
+        "back_alias": "bh1",
+        "back_fallback": "key_back_color",
+        "actual_background_argb": "0x00000000",
+        "expected_background_argb": "0xffe3e3e3",
+        "expected_background_rendered_argb": "0xffe3e3e3",
+        "actual_text_argb": "0xff000000",
+        "expected_text_argb": "0xff000000",
+        "matches": false
+      }
+    ],
+    "completion": {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch3-20261028/runtime/run1/baseline-probe-completion.json",
+      "bytes": 727,
+      "sha256": "1fdd38a1c26ab2650bca53089e2e2cb68a330869ac5b5ad701d1bde56f3cae52"
+    }
+  },
+  "fixed": {
+    "report": {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch3-20261028/runtime/run1/fixed-probe-report.json",
+      "bytes": 145260,
+      "sha256": "558f32dd48cdf4ece2303427e4882a381bd5953891ce0ccc95bf60b9064fcf05"
+    },
+    "outcome": "PASS",
+    "observations": 282,
+    "unique_schemes": 46,
+    "violations": 0,
+    "drawable_controls": 16,
+    "target_issue_rows": [
+      {
+        "scheme": "google_plus",
+        "state": "normal",
+        "key_identity": 121384703,
+        "generation": 2,
+        "previous_generation": 1,
+        "back_alias": "bh1",
+        "back_fallback": "key_back_color",
+        "actual_background_argb": "0xffffffff",
+        "expected_background_argb": "0xffffffff",
+        "expected_background_rendered_argb": "0xffffffff",
+        "actual_text_argb": "0xffdd4b39",
+        "expected_text_argb": "0xffdd4b39",
+        "matches": true
+      },
+      {
+        "scheme": "tantsing",
+        "state": "normal",
+        "key_identity": 121384703,
+        "generation": 3,
+        "previous_generation": 2,
+        "back_alias": "bh1",
+        "back_fallback": "key_back_color",
+        "actual_background_argb": "0xffe3e3e3",
+        "expected_background_argb": "0xffe3e3e3",
+        "expected_background_rendered_argb": "0xffe3e3e3",
+        "actual_text_argb": "0xff000000",
+        "expected_text_argb": "0xff000000",
+        "matches": true
+      }
+    ],
+    "completion": {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch3-20261028/runtime/run1/fixed-probe-completion.json",
+      "bytes": 703,
+      "sha256": "b94f9f6a6702e6e8c32e147c5a0b3dc9b7fcfd4b2377c8bb73d9f7d51d9e815c"
+    }
+  },
+  "cleanup": {
+    "path": "/home/xumin/Public/Trime/build/issue-fixes-batch3-20261028/runtime/run1/cleanup.json",
+    "bytes": 1031,
+    "sha256": "4358043e835b91959f5ed99d0604d5927994baab37bf53f1ed0399ea7d171c40"
+  },
+  "runtime_exit": {
+    "path": "/home/xumin/Public/Trime/build/issue-fixes-batch3-20261028/runtime/run1/completion.json",
+    "bytes": 1004,
+    "sha256": "e69ae5bedd75dc662e6d2f8d8771553eb253343e20405a68a21e226ec5674ae5"
+  },
+  "log_review": {
+    "path": "/home/xumin/Public/Trime/build/issue-fixes-batch3-20261028/runtime/run1/log-review.json",
+    "bytes": 27804,
+    "sha256": "ebaa7f44ee3d6acd381b323a34b7bf79ac227aff3b2e90f66024a5a7a338d3ab"
+  },
+  "source_assets": {
+    "path": "/home/xumin/Public/Trime/build/issue-fixes-batch3-20261028/runtime/source-assets-final-check.json",
+    "bytes": 15549,
+    "sha256": "0c34978464b05900f37f70f37d6b8d9fba6bf89502f123a20350fffbee5fb622"
+  },
+  "process_check": {
+    "path": "/home/xumin/Public/Trime/build/issue-fixes-batch3-20261028/runtime/final-process-check.json",
+    "bytes": 163,
+    "sha256": "24745c3f6730e32b70033a3758076129607a8f4d77d4b9f01504aa5eada8c241"
+  },
+  "minimum_available_host_memory_kib": 2044088,
+  "memory_samples": 115,
+  "scope_limits": [
+    "Real production ThemeYaml/DSL, ColorManager/ThemeScope and public Keyboard/Key instances; synthetic Canvas swatches only. No Activity, KeyView, InputDispatcher, full IME, contrast accessibility, physical-device or API21 validation.",
+    "Functional key uses a reported explicit fixture constructed from the actual normal key and real functional preset, not an asset-declared functional layout key.",
+    "Both targets are common-test-certificate diagnostic copies with unchanged non-signature payloads. No release-signature installation, upgrade or Release acceptance claim.",
+    "Logical theme preference values restored; two previously absent defaults materialized and application PID metadata changed, so full preference XML bytes differ. Existing other preference values, default IME and private sentinel retained.",
+    "Compiler/tool/Lint and runtime warnings remain; all original logs retained."
+  ]
+}

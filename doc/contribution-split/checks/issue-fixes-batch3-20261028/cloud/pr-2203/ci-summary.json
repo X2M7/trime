@@ -1,0 +1,205 @@
+{
+  "captured_at_utc": "2026-10-28T13:49:48.466545+00:00",
+  "repository": "osfans/trime",
+  "pr": 2203,
+  "pr_url": "https://github.com/osfans/trime/pull/2203",
+  "head_sha": "f27e8425d57dc0774e8a576e686e8985499f4fbc",
+  "base_sha": "7fedca06ba5d2ef761a2ae3d44d8a0917db36994",
+  "ci": {
+    "run_id": 40698285331,
+    "run_url": "https://github.com/osfans/trime/actions/runs/40698285331",
+    "run_attempt": 1,
+    "status": "completed",
+    "conclusion": "success",
+    "passed": 5,
+    "total": 5,
+    "jobs": [
+      {
+        "id": 122850838247,
+        "name": "check / lint-and-test",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 122852804447,
+        "name": "build (windows-2025)",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 122852804516,
+        "name": "build (ubuntu-26.04)",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 122852804526,
+        "name": "build (macos-26-intel)",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 122852804543,
+        "name": "build (macos-26)",
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ],
+    "original_logs_saved_and_sha_verified": true,
+    "all_jobs_actual_checkout_merge_sha": "a39bcdef50a2089d7dbc9be6e55a9565e71475bb",
+    "app_test_tasks": [
+      {
+        "line": 1592,
+        "text": "2026-10-28T13:41:11.7619435Z > Task :app:testDebugUnitTest",
+        "executed_without_cache_suffix": true
+      }
+    ],
+    "app_lint_tasks": [
+      {
+        "line": 1602,
+        "text": "2026-10-28T13:42:00.2625861Z > Task :app:lint",
+        "executed_without_cache_suffix": true
+      }
+    ],
+    "exact_testcase_count": null,
+    "junit_xml_exported_by_workflow": false
+  },
+  "ubuntu_original": {
+    "artifact_id": 12820438247,
+    "artifact_name": "trime-ubuntu-26.04",
+    "archive_file": "ubuntu-original/artifact-12820438247-trime-ubuntu-26.04.zip",
+    "archive_sha256": "fc835996304be1d416e906446a184b426152601752429efd55f6e9fddcc10814",
+    "archive_digest_matches_github": true,
+    "original_files": [
+      {
+        "producer_zip_entry": "com.osfans.trime-v3.3.12-109-ga39bcdef-x86_64-debug.apk",
+        "producer_filename": "com.osfans.trime-v3.3.12-109-ga39bcdef-x86_64-debug.apk",
+        "path": "ubuntu-original/extracted/com.osfans.trime-v3.3.12-109-ga39bcdef-x86_64-debug.apk",
+        "sha256": "7e3bc9cd9652077d6935a508c6d3e5a5d37f018568442afba2aee46e100047e4",
+        "size": 20158960
+      },
+      {
+        "producer_zip_entry": "output-metadata.json",
+        "producer_filename": "output-metadata.json",
+        "path": "ubuntu-original/extracted/output-metadata.json",
+        "sha256": "bc4a5048c710e10ef7f03519cb5947bb2fc36bf040b469c94bf1ca0f3101080d",
+        "size": 1496
+      }
+    ],
+    "original_apk_modified_or_resigned": false,
+    "actual_producer_merge_sha": "a39bcdef50a2089d7dbc9be6e55a9565e71475bb",
+    "source_git_tree": "89407f15edbb8c73bd343a9b43f153148381c3b6",
+    "producer_git_tree": "89407f15edbb8c73bd343a9b43f153148381c3b6",
+    "full_source_trees_identical": true,
+    "not_a_direct_head_producer_apk": true,
+    "build_time_git_metadata_may_differ_from_direct_head_build": true,
+    "provenance_file": "ubuntu-original/provenance.json",
+    "source_tree_proof_file": "ubuntu-original/source-tree-proof.json"
+  },
+  "diagnostics": {
+    "report": "warning-context-review.json",
+    "report_sha256": "105956d9d4cd700c42ceb0667ca75f1ab92f09e49e77e789298459cd3e816727",
+    "mechanical_candidate_lines": 73,
+    "reviewed_categories": {
+      "git_initialization_hint": 4,
+      "android_sdk_tool": 14,
+      "gradle_deprecation_unexpanded": 20,
+      "gradle_documentation_reference": 10,
+      "jdk_jna_tool": 24,
+      "ci_cache_tool": 1
+    },
+    "application_source_candidate_count": 0,
+    "unresolved_candidate_count": 0,
+    "unexpanded_gradle_deprecation_origin_unknown": true,
+    "not_a_zero_warning_claim": true,
+    "not_baseline_equivalence": true,
+    "native_cache_evidence": [
+      {
+        "job_id": 122850838247,
+        "job_name": "check / lint-and-test",
+        "raw_file": "job-122850838247.log",
+        "raw_sha256": "cf5a295019b87a301bff5c5d7e59c31a79e8ce56572fe37b470deb5d18486b2e",
+        "jni_cache_hit_lines": [],
+        "native_warning_candidate_count": 0
+      },
+      {
+        "job_id": 122852804447,
+        "job_name": "build (windows-2025)",
+        "raw_file": "job-122852804447.log",
+        "raw_sha256": "9dc40e3173ed251af00faf80f256a3d1ea746cc679952e51bd629ef2ec795d3c",
+        "jni_cache_hit_lines": [
+          {
+            "line": 1034,
+            "text": "2026-10-28T13:45:14.9203670Z Cache hit for: windows-2025-trime-jni-debug-5e376acd73aa6cb131775bc13279905ae995ba16998a29bb31b5012ac77e3f7f"
+          }
+        ],
+        "native_warning_candidate_count": 0
+      },
+      {
+        "job_id": 122852804516,
+        "job_name": "build (ubuntu-26.04)",
+        "raw_file": "job-122852804516.log",
+        "raw_sha256": "537fcf8ded3fda391bc8ce0c85a8ebf51455715550a73aa40d82e88b9efbeabb",
+        "jni_cache_hit_lines": [
+          {
+            "line": 1650,
+            "text": "2026-10-28T13:43:24.7191636Z Cache hit for: ubuntu-26.04-trime-jni-debug-7d6d262a9c6e08429f348012e82a1a36ee94f6524afcdfe15b522a39dfbf8e2e"
+          }
+        ],
+        "native_warning_candidate_count": 0
+      },
+      {
+        "job_id": 122852804526,
+        "job_name": "build (macos-26-intel)",
+        "raw_file": "job-122852804526.log",
+        "raw_sha256": "7c9274bd616f1bd2f86e85d4131a1a834d835a89f071f3ee39b8e19c19aaf243",
+        "jni_cache_hit_lines": [
+          {
+            "line": 1676,
+            "text": "2026-10-28T13:45:48.9289000Z Cache hit for: macos-26-intel-trime-jni-debug-4efcdd26db9c09f057c44036e7fbefcab87dd61c14fe3ada6e3b512a912bc9e1"
+          }
+        ],
+        "native_warning_candidate_count": 0
+      },
+      {
+        "job_id": 122852804543,
+        "job_name": "build (macos-26)",
+        "raw_file": "job-122852804543.log",
+        "raw_sha256": "5771c8e80b3005dbd0ed9ecf6c330c9421bb4f16cc0a24a1aa476f739b8bd5d9",
+        "jni_cache_hit_lines": [
+          {
+            "line": 1663,
+            "text": "2026-10-28T13:44:16.7028780Z Cache hit for: macos-26-trime-jni-debug-4efcdd26db9c09f057c44036e7fbefcab87dd61c14fe3ada6e3b512a912bc9e1"
+          }
+        ],
+        "native_warning_candidate_count": 0
+      }
+    ],
+    "native_compiler_warning_limit": "No native dependency compiler-warning candidates were emitted in the current run; all four OS builds restored JNI cache. This does not show that earlier dependency warnings were fixed or that native compilers freshly rebuilt all objects.",
+    "separate_local_lint_reference": {
+      "root_report": "/home/xumin/Public/Trime/build/issue-fixes-batch3-20261028/local-validation.json",
+      "root_report_sha256": "7d4c6797b597309aa8c14efa9fd17dd155f5e8727ec96c1197038caf165fab39",
+      "reported_warning_count": 65,
+      "reported_error_count": 0,
+      "scope": "Root-authored local lint result, separate from cloud log warning-candidate counts. Not a zero-warning lint claim."
+    }
+  },
+  "runtime": {
+    "status": "NOT_CLAIMED_BY_CI_COLLECTOR",
+    "owner": "Root",
+    "root_reported_status": "PASS_SCOPED_PRODUCTION_OBJECT_AB",
+    "root_report": "/home/xumin/Public/Trime/build/issue-fixes-batch3-20261028/runtime/theme-validation.json",
+    "root_report_sha256": "d6429ae3338642d1fc8e0034353557e3e0ee32cfe8d6a39a4901a8e83aad69d8",
+    "independent_device_or_apk_signature_validation_by_ci_collector": false,
+    "scope": "References the completed, restricted production-object A/B report supplied by Root only. This collector performed no device tests and no independent signature acceptance; no full application, original-signature upgrade or Release acceptance is inferred."
+  },
+  "scope": "Read-only collection of an existing run. No build, workflow rerun/dispatch/cancel, source edit, ADB, APK rewriting or signing. Signed redirect headers/URLs are not requested or saved. Warning candidates and unknown Gradle origins remain explicit; local test counts are not substituted for CI results.",
+  "collector_source": {
+    "executed_snapshot": "collector-executed.py",
+    "executed_sha256": "ee80f3a62e385926094c519699fbc6e1c2b4edd7d45658b1885260a9973fbb6d",
+    "current_generic_script": "/home/xumin/Public/Trime/build/issue-fixes-batch3-20261028/cloud/collect_pr_ci.py",
+    "current_generic_sha256": "a846820281bcf2a958a356139f00f9a75742e473e324a9358a1b092a41a1e70e",
+    "post_run_template_change": "Only the future generic runtime default changed from IN_PROGRESS to NOT_CLAIMED_BY_CI_COLLECTOR after this run; exact executed source is preserved."
+  },
+  "finalized_at_utc": "2026-10-28T13:52:30.018511+00:00"
+}

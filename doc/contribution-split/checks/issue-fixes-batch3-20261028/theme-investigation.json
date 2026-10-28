@@ -1,0 +1,1062 @@
+{
+  "captured_at_utc": "2026-10-28T13:20:55.377239+00:00",
+  "status": "SOURCE_FROZEN_ROOT_VALIDATION_PENDING",
+  "selected_unit": {
+    "issue": 2159,
+    "title": "Restore generic key backgrounds when custom theme color aliases cannot be resolved",
+    "issue_relation": "Candidate fix for #2159; no runtime/CI pass or final issue closure claimed here.",
+    "worktree": "/home/xumin/Public/Trime-pr-standard-theme-colors-20261028",
+    "branch": "contrib/fix-standard-theme-colors",
+    "base_sha": "a047f74757fae0d7b5ef64e54f0b957dee2bf8f3",
+    "substantive_user_behavior": "Standard keyboard letters disappear under shipped Google+ and 丹青 palettes because invalid background aliases become successful transparent drawables and prevent the existing generic background fallback.",
+    "one_cohesive_scope": "Distinguish missing/invalid drawable values from valid transparent colors, using one shared classification function in the existing color table and drawable parser. Preserve explicit theme values, image handling, color fallback order, keyboard state routing, and per-scheme caches.",
+    "avoid": "No mass asset alias patch, automatic contrast rewriting, unrelated layout fixes, shader/bitmap changes, native submodules, theme DSL migration or startup gate."
+  },
+  "latest_remote": {
+    "fetch_record": {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch3-20261028/theme-evidence/remote-fetch.json",
+      "bytes": 1853,
+      "sha256": "96aee3cf98d379d0c572d3ed8bb5e313a39fea8b6107cff719d31c74fc5f1d81"
+    },
+    "issues": [
+      {
+        "number": 2159,
+        "url": "https://github.com/osfans/trime/issues/2159",
+        "title": "软件自带的标准键盘和预设键盘选取配色后表现不一致",
+        "state": "open",
+        "updated_at": "2026-10-09T15:09:14Z",
+        "reporter": "iSayLight",
+        "body": "### 摘要 / Summary\n\n软件自带的“标准键盘”很实用，但是提供的部分默认配色（例如Google+、丹青等），标准键盘按键背景和字体颜色一样，看不见字体\n\n### 重现步骤 / Steps to Reproduce\n\n1.切换标准键盘\n2.切换配色（部分配色有问题，例如Google+）\n\n### 预期行为 / Expected Behavior\n\n希望可以和预设键盘保持一致，可以看清字母\n\n### 日志 / Log\n\n_No response_\n\n### 截图 / Screenshot\n\n<img width=\"1220\" height=\"2712\" alt=\"Image\" src=\"https://github.com/user-attachments/assets/0e329bf8-4dce-47a1-983a-a46be87d4926\" />\n<img width=\"1220\" height=\"2712\" alt=\"Image\" src=\"https://github.com/user-attachments/assets/d1a07954-8ca4-436d-81f4-f98ed30653aa\" />\n<img width=\"1220\" height=\"2712\" alt=\"Image\" src=\"https://github.com/user-attachments/assets/9e7873e2-7758-4c2e-887d-7687bb5e0176\" />\n<img width=\"1220\" height=\"2712\" alt=\"Image\" src=\"https://github.com/user-attachments/assets/4e82603f-57b3-4cee-868c-9437e36da8ba\" />\n\n### 附加信息 / Additional Context\n\n_No response_\n\n### 系统版本 / OS Version\n\n澎湃os3\n\n### 应用版本 / App Version\n\nv3.3.12-0-ge09ac711-release\n\n### 构建信息 / Build Information\n\n构建者：Release CI\n构建 Git 哈希：e09ac7114fa067904ed358e82d499516cb423ff4\n构建时间：2026年9月1日 21:03:15",
+        "comments": [],
+        "maintainer_feedback_present": false,
+        "evidence": {
+          "path": "/home/xumin/Public/Trime/build/issue-fixes-batch3-20261028/theme-evidence/issue-2159.json",
+          "bytes": 3911,
+          "sha256": "ca95453c3a128725ab5977f9c61a7ecb5902ccbc0f52fd0b9a3e44c2b20b8ac3"
+        }
+      },
+      {
+        "number": 2033,
+        "url": "https://github.com/osfans/trime/issues/2033",
+        "title": "popup的label显示不正常",
+        "state": "open",
+        "updated_at": "2026-06-27T03:18:31Z",
+        "reporter": "Newdea",
+        "body": "### 摘要 / Summary\n\n目前的popup的label只能显示一个字或字母,无法完整显示定义的label\n\n### 重现步骤 / Steps to Reproduce\n\n1. 默认主题\n2. 长按回车键盘, 应该显示  \"设置\", \"wiki\" ,但实际只显示 \"设\", \"w\"\n```\n- {click: Return, label_symbol: \"wiki\", popup: [\"TrimeWiki\", \"Settings\"], composing: Return1, swipe_up: Escape, width: 15, key_back_color: benter, key_text_color: tenter}\n```\n\n3. 尝试过修改popup的宽度,和字的大小,还是无法完整显示\n```\n  popup_width: 58 #按键提示宽度\n  popup_text_size: 12 #按键提示字号\n```\n\n\n\n### 预期行为 / Expected Behavior\n\n希望能完整显示popup中的label\n\n### 日志 / Log\n\n_No response_\n\n### 截图 / Screenshot\n\n_No response_\n\n### 附加信息 / Additional Context\n\n_No response_\n\n### 系统版本 / OS Version\n\nandroid\n\n### 应用版本 / App Version\n\n3.3.10-g11440ff-release\n\n### 构建信息 / Build Information\n\nBuilder: Release CI\nBuild Git Hash: 11440ffceb618b68deeddf4bdf7497b082cb87ae\nBuild Time: May 1, 2026 09:29:22",
+        "comments": [],
+        "maintainer_feedback_present": false,
+        "evidence": {
+          "path": "/home/xumin/Public/Trime/build/issue-fixes-batch3-20261028/theme-evidence/issue-2033.json",
+          "bytes": 3534,
+          "sha256": "7bd4c1601f2d3586b4b8c21f2d980095a3a9de987679afc8934bc2780658b3b0"
+        }
+      }
+    ],
+    "open_pr_snapshot": {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch3-20261028/theme-evidence/open-prs.json",
+      "bytes": 200023,
+      "sha256": "38d8b548e7d6da5a83feda9749d3da4c59fcda8c4bacb93579187261590f1712"
+    },
+    "open_pr_count": 12,
+    "open_prs": [
+      {
+        "number": 2202,
+        "url": "https://github.com/osfans/trime/pull/2202",
+        "title": "chore: upgrade librime-lua and bundled lua",
+        "head_sha": "5ca3ff88a43157c2caebc130e47f2a9261f580ca"
+      },
+      {
+        "number": 2201,
+        "url": "https://github.com/osfans/trime/pull/2201",
+        "title": "fix(storage): handle folder picker failures without swallowing cancellation",
+        "head_sha": "f45ba68dfc2a4fa6c6877732dc25f094f030b7ac"
+      },
+      {
+        "number": 2200,
+        "url": "https://github.com/osfans/trime/pull/2200",
+        "title": "fix(ime): declare package visibility for voice input methods",
+        "head_sha": "c7501279b1085377b2acbf57e831b8e56c60d816"
+      },
+      {
+        "number": 2199,
+        "url": "https://github.com/osfans/trime/pull/2199",
+        "title": "fix(settings): confirm external synchronization before switching storage",
+        "head_sha": "d6567c253c6dcb149514f01709b40e114a58be64"
+      },
+      {
+        "number": 2198,
+        "url": "https://github.com/osfans/trime/pull/2198",
+        "title": "fix(ime): ignore toolbar actions after candidates replace it",
+        "head_sha": "e1e0ece96921d504cbf20d29bf04b7dbf6536724"
+      },
+      {
+        "number": 2195,
+        "url": "https://github.com/osfans/trime/pull/2195",
+        "title": "fix(keyboard): keep key content inside key bounds",
+        "head_sha": "ebdcb8c6b02ca8ba0b70dd2ecca5d0656478ec2b"
+      },
+      {
+        "number": 2192,
+        "url": "https://github.com/osfans/trime/pull/2192",
+        "title": "feat(keyboard): add pressed scale animation for keys",
+        "head_sha": "b82b6db1e70f47b340a80193e93ed178007df7fc"
+      },
+      {
+        "number": 2191,
+        "url": "https://github.com/osfans/trime/pull/2191",
+        "title": "feat(clipboard): add keyword search to clipboard history",
+        "head_sha": "3e0770da95c00aa5ed0009b1d21730d92286ae79"
+      },
+      {
+        "number": 2188,
+        "url": "https://github.com/osfans/trime/pull/2188",
+        "title": "fix(ime): create deferred input views when the theme is ready",
+        "head_sha": "e009dc0b567f9639cf518bc3b35cd172ac627be7"
+      },
+      {
+        "number": 2186,
+        "url": "https://github.com/osfans/trime/pull/2186",
+        "title": "fix(jni): handle standard UTF-8 and UTF-16 positions",
+        "head_sha": "2ad1865fd97f09ffba231e5c0e23092cd383b059"
+      },
+      {
+        "number": 2183,
+        "url": "https://github.com/osfans/trime/pull/2183",
+        "title": "feat: add nine-key Pinyin input with syllable selection",
+        "head_sha": "8a1ee0ea6538e220fcddf31ed6fd491f5bc3cca7"
+      },
+      {
+        "number": 2182,
+        "url": "https://github.com/osfans/trime/pull/2182",
+        "title": "fix: make logcat collection cancellable across supported Android versions",
+        "head_sha": "9f95cb574a820f61482cc41c49362317cce1df38"
+      }
+    ],
+    "overlap_finding": "No open PR found for missing per-key background fallback or #2159. #2195 addresses key text bounds, #2188 deferred input views; neither is this palette-resolution behavior. #2033 popup truncation/capacity is a separate follow-up unit."
+  },
+  "upstream_source": {
+    "worktree": "/home/xumin/Public/Trime-pr-maintenance-lifecycle-20261028",
+    "head_sha": "a047f74757fae0d7b5ef64e54f0b957dee2bf8f3",
+    "status_porcelain": "",
+    "files": [
+      {
+        "path": "app/src/main/java/com/osfans/trime/data/theme/ColorManager.kt",
+        "sha256": "619df73115d999d41760ce055c275aefd4bf57fa6ed6c3a09f69731c40851fa3",
+        "equals_a047": true
+      },
+      {
+        "path": "app/src/main/java/com/osfans/trime/data/theme/ColorTable.kt",
+        "sha256": "4e23688f39c17bad383de44a913f8e22e3b0b1401134e82997cdce512d392043",
+        "equals_a047": true
+      },
+      {
+        "path": "app/src/main/java/com/osfans/trime/data/theme/ColorKey.kt",
+        "sha256": "d047a6db6df45aa2b2f177387ba5432c5e12c46437fab0c4affdbb6a18c05fa5",
+        "equals_a047": true
+      },
+      {
+        "path": "app/src/main/java/com/osfans/trime/ime/keyboard/Key.kt",
+        "sha256": "400f39329ced634460f22e2866728b00f0577ffeafcbb3a471498305bda8d94b",
+        "equals_a047": true
+      },
+      {
+        "path": "app/src/main/java/com/osfans/trime/ime/popup/PopupKeyboardUi.kt",
+        "sha256": "053481ac0be3ed3231e9463f55d1956020520acbb92402c7e067f4bf88cae365",
+        "equals_a047": true
+      },
+      {
+        "path": "app/src/main/java/com/osfans/trime/data/theme/model/TextKeyboard.kt",
+        "sha256": "79391bd4af59b63f77eb7cbf0843c473a9c5a5482bacee7b687f001bf8fc6692",
+        "equals_a047": true
+      },
+      {
+        "path": "app/src/test/java/com/osfans/trime/data/theme/ThemeTestSupport.kt",
+        "sha256": "e552db2d1eed5107cfc10e6b8329fc65f45d82acfd2f9a6ce248fca7dc9a25b9",
+        "equals_a047": true
+      },
+      {
+        "path": "app/src/main/assets/shared/tongwenfeng.trime.yaml",
+        "sha256": "71c8aa73740d268e674c4f6a8242be1d1c5f191593a4c7401e1e3b4ffa4518e6",
+        "equals_a047": true
+      },
+      {
+        "path": "app/src/main/assets/shared/trime.yaml",
+        "sha256": "44d29a6ace16ca9f59b3d6bc32b457a8ce41f8b080d94fdbe67e8d89900983f6",
+        "equals_a047": true
+      }
+    ]
+  },
+  "cause_chain": [
+    {
+      "source": "tongwenfeng.trime.yaml:1077-1123 and 642-655/731-742",
+      "finding": "The standard keyboard assigns bh1/th1, bbs/tbs, bgn/tgn, benter/tenter and other custom per-key aliases. The Google+ and tantsing schemes omit them; fallback_colors only supplies candidate_text_color -> text_color."
+    },
+    {
+      "source": "ColorTable.resolveRawSource",
+      "finding": "A theme-only alias such as bh1 has neither a scheme value nor theme fallback nor built-in ColorKey fallback. Resolution correctly returns null; this is not a ColorTable chain-order error."
+    },
+    {
+      "source": "Key.kt:99-116, 141-147, 156-161",
+      "finding": "Unresolvable text alias throws through ColorManager and Key falls back to key_text_color. For the background, Key already uses nullable drawable ?: generic key_back_color."
+    },
+    {
+      "source": "ColorManager.kt:169-194 on a047",
+      "finding": "resolveDrawable sends unresolved bh1 to parseDrawable. Its failing parse is converted to Color.TRANSPARENT and wrapped in a non-null GradientDrawable. Key therefore never takes its generic background fallback."
+    },
+    {
+      "source": "ColorKey.kt built-in fallback table",
+      "finding": "keyboard_back_color falls back to border_color. In Google+ that is #dd4b39, also key_text_color -> candidate_text_color. In tantsing it is black, also the generic text color. Transparent keys expose exactly the same color as their letters."
+    },
+    {
+      "source": "Current candidate ColorTable.parseValue and ColorManager.parseDrawable",
+      "finding": "Shared classification maps an invalid string to Value.None, then null Drawable. A successfully parsed integer zero remains Value.Color(0), creates a GradientDrawable and preserves explicit transparency."
+    }
+  ],
+  "named_palette_evidence": {
+    "default": {
+      "scheme": "default",
+      "name": "标准配色！",
+      "bh1_raw": "0xffffffff",
+      "th1_raw": "0xff000000",
+      "normal_key_text_argb": "0xff000000",
+      "keyboard_back_argb": "0xffe1e3e7",
+      "generic_key_back_argb": "0xffffffff",
+      "background_aliases_without_resolution": 1,
+      "baseline_normal_key_effective_background_argb": "0xffffffff",
+      "candidate_normal_key_effective_background_argb": "0xffffffff",
+      "baseline_normal_fg_equals_visible_bg": false
+    },
+    "google_plus": {
+      "scheme": "google_plus",
+      "name": "Google+",
+      "bh1_raw": null,
+      "th1_raw": null,
+      "normal_key_text_argb": "0xffdd4b39",
+      "keyboard_back_argb": "0xffdd4b39",
+      "generic_key_back_argb": "0xffffffff",
+      "background_aliases_without_resolution": 10,
+      "baseline_normal_key_effective_background_argb": "0xffdd4b39",
+      "candidate_normal_key_effective_background_argb": "0xffffffff",
+      "baseline_normal_fg_equals_visible_bg": true
+    },
+    "tantsing": {
+      "scheme": "tantsing",
+      "name": "丹青",
+      "bh1_raw": null,
+      "th1_raw": null,
+      "normal_key_text_argb": "0xff000000",
+      "keyboard_back_argb": "0xff000000",
+      "generic_key_back_argb": "0xffe3e3e3",
+      "background_aliases_without_resolution": 10,
+      "baseline_normal_key_effective_background_argb": "0xff000000",
+      "candidate_normal_key_effective_background_argb": "0xffe3e3e3",
+      "baseline_normal_fg_equals_visible_bg": true
+    }
+  },
+  "screenshots": {
+    "downloads": [
+      {
+        "input_url": "https://github.com/user-attachments/assets/0e329bf8-4dce-47a1-983a-a46be87d4926",
+        "path": "/home/xumin/Public/Trime/build/issue-fixes-batch3-20261028/theme-evidence/issue-2159-screenshot-1.image",
+        "bytes": 479076,
+        "sha256": "c8b1a1e5cae2afd1d72c817b80648dd0d166da7cab36986f4767df44110aab74",
+        "content_type": "image/jpeg",
+        "exit": 0
+      },
+      {
+        "input_url": "https://github.com/user-attachments/assets/d1a07954-8ca4-436d-81f4-f98ed30653aa",
+        "path": "/home/xumin/Public/Trime/build/issue-fixes-batch3-20261028/theme-evidence/issue-2159-screenshot-2.image",
+        "bytes": 269435,
+        "sha256": "4395f24ccdc91caa40da80aaee3a8d1131cff45cd3d49ad3eb8c613f6feaa9e1",
+        "content_type": "image/jpeg",
+        "exit": 0
+      },
+      {
+        "input_url": "https://github.com/user-attachments/assets/9e7873e2-7758-4c2e-887d-7687bb5e0176",
+        "path": "/home/xumin/Public/Trime/build/issue-fixes-batch3-20261028/theme-evidence/issue-2159-screenshot-3.image",
+        "bytes": 312086,
+        "sha256": "a148e6beb9dac6e99ee8c5b177399f53b1d1c872ab2697039a430a8482f98b86",
+        "content_type": "image/jpeg",
+        "exit": 0
+      },
+      {
+        "input_url": "https://github.com/user-attachments/assets/4e82603f-57b3-4cee-868c-9437e36da8ba",
+        "path": "/home/xumin/Public/Trime/build/issue-fixes-batch3-20261028/theme-evidence/issue-2159-screenshot-4.image",
+        "bytes": 146752,
+        "sha256": "23d8fb9fa04f83582d00f5e817248956fd5beba8bbd693d82d5da27f4812be8c",
+        "content_type": "image/jpeg",
+        "exit": 0
+      }
+    ],
+    "visually_reviewed": true,
+    "observations": [
+      "Screenshot 1 shows readable red labels on white preset keys.",
+      "Screenshot 2 shows the standard keyboard area filled red with alphabet labels no longer visible.",
+      "Screenshot 3 shows Google+ selected; screenshot 4 shows 标准 selected."
+    ],
+    "limit": "These are reporter images from release e09ac711, not a047 runtime validation or pixel-accurate color measurement. The a047 static source/asset chain independently matches the reported symptom."
+  },
+  "asset_matrix": {
+    "method": "Read-only PyYAML BaseLoader asset inspection and a source-derived chain walk; not the actual Kotlin test parser and not a runtime/JVM test pass.",
+    "pyyaml_version": "6.0.3",
+    "standard_scheme_count": 46,
+    "preset_scheme_count": 37,
+    "standard_layout_count": 50,
+    "distinct_background_alias_count": 10,
+    "background_alias_examples": {
+      "bh1": {
+        "layout": "default",
+        "key_index": 0,
+        "click": "q",
+        "property": "key_back_color"
+      },
+      "bh2": {
+        "layout": "default",
+        "key_index": 10,
+        "click": null,
+        "property": "key_back_color"
+      },
+      "bbs": {
+        "layout": "default",
+        "key_index": 21,
+        "click": "Shift_L",
+        "property": "key_back_color"
+      },
+      "benter": {
+        "layout": "default",
+        "key_index": 21,
+        "click": "Shift_L",
+        "property": "hilited_key_back_color"
+      },
+      "bh3": {
+        "layout": "default",
+        "key_index": 22,
+        "click": "z",
+        "property": "key_back_color"
+      },
+      "bgn": {
+        "layout": "default",
+        "key_index": 30,
+        "click": "Keyboard_number",
+        "property": "key_back_color"
+      },
+      "bh4": {
+        "layout": "default",
+        "key_index": 32,
+        "click": ",",
+        "property": "key_back_color"
+      },
+      "bkg": {
+        "layout": "default",
+        "key_index": 33,
+        "click": "space",
+        "property": "key_back_color"
+      },
+      "gnb": {
+        "layout": "editor",
+        "key_index": 4,
+        "click": "space1",
+        "property": "key_back_color"
+      },
+      "baoe": {
+        "layout": "fbj",
+        "key_index": 3,
+        "click": "Keyboard_a",
+        "property": "key_back_color"
+      }
+    },
+    "normal_bh1_unresolved_scheme_count": 45,
+    "baseline_same_color_schemes": [
+      "ink",
+      "doraemon",
+      "google_plus",
+      "tantsing",
+      "feng03",
+      "feng05"
+    ],
+    "rows": [
+      {
+        "scheme": "default",
+        "name": "标准配色！",
+        "bh1_raw": "0xffffffff",
+        "th1_raw": "0xff000000",
+        "normal_key_text_argb": "0xff000000",
+        "keyboard_back_argb": "0xffe1e3e7",
+        "generic_key_back_argb": "0xffffffff",
+        "background_aliases_without_resolution": 1,
+        "baseline_normal_key_effective_background_argb": "0xffffffff",
+        "candidate_normal_key_effective_background_argb": "0xffffffff",
+        "baseline_normal_fg_equals_visible_bg": false
+      },
+      {
+        "scheme": "yushe",
+        "name": "預設／default",
+        "bh1_raw": null,
+        "th1_raw": null,
+        "normal_key_text_argb": "0xff37474f",
+        "keyboard_back_argb": "0xffffffff",
+        "generic_key_back_argb": "0xffeceff1",
+        "background_aliases_without_resolution": 10,
+        "baseline_normal_key_effective_background_argb": "0xffffffff",
+        "candidate_normal_key_effective_background_argb": "0xffeceff1",
+        "baseline_normal_fg_equals_visible_bg": false
+      },
+      {
+        "scheme": "aqua",
+        "name": "碧水／Aqua",
+        "bh1_raw": null,
+        "th1_raw": null,
+        "normal_key_text_argb": "0xff000000",
+        "keyboard_back_argb": "0xffe0e0e0",
+        "generic_key_back_argb": "0xffeeeeec",
+        "background_aliases_without_resolution": 10,
+        "baseline_normal_key_effective_background_argb": "0xffe0e0e0",
+        "candidate_normal_key_effective_background_argb": "0xffeeeeec",
+        "baseline_normal_fg_equals_visible_bg": false
+      },
+      {
+        "scheme": "azure",
+        "name": "青天／Azure",
+        "bh1_raw": null,
+        "th1_raw": null,
+        "normal_key_text_argb": "0xffeef8ff",
+        "keyboard_back_argb": "0xff014e8b",
+        "generic_key_back_argb": "0xff014e8b",
+        "background_aliases_without_resolution": 10,
+        "baseline_normal_key_effective_background_argb": "0xff014e8b",
+        "candidate_normal_key_effective_background_argb": "0xff014e8b",
+        "baseline_normal_fg_equals_visible_bg": false
+      },
+      {
+        "scheme": "luna",
+        "name": "明月／Luna",
+        "bh1_raw": null,
+        "th1_raw": null,
+        "normal_key_text_argb": "0xff000000",
+        "keyboard_back_argb": "0xffcccccc",
+        "generic_key_back_argb": "0xffffffff",
+        "background_aliases_without_resolution": 10,
+        "baseline_normal_key_effective_background_argb": "0xffcccccc",
+        "candidate_normal_key_effective_background_argb": "0xffffffff",
+        "baseline_normal_fg_equals_visible_bg": false
+      },
+      {
+        "scheme": "ink",
+        "name": "墨池／Ink",
+        "bh1_raw": null,
+        "th1_raw": null,
+        "normal_key_text_argb": "0xff000000",
+        "keyboard_back_argb": "0xff000000",
+        "generic_key_back_argb": "0xffffffff",
+        "background_aliases_without_resolution": 10,
+        "baseline_normal_key_effective_background_argb": "0xff000000",
+        "candidate_normal_key_effective_background_argb": "0xffffffff",
+        "baseline_normal_fg_equals_visible_bg": true
+      },
+      {
+        "scheme": "lost_temple",
+        "name": "孤寺／Lost Temple",
+        "bh1_raw": null,
+        "th1_raw": null,
+        "normal_key_text_argb": "0xfff6f3e8",
+        "keyboard_back_argb": "0xff444444",
+        "generic_key_back_argb": "0xff444444",
+        "background_aliases_without_resolution": 10,
+        "baseline_normal_key_effective_background_argb": "0xff444444",
+        "candidate_normal_key_effective_background_argb": "0xff444444",
+        "baseline_normal_fg_equals_visible_bg": false
+      },
+      {
+        "scheme": "dark_temple",
+        "name": "暗堂／Dark Temple",
+        "bh1_raw": null,
+        "th1_raw": null,
+        "normal_key_text_argb": "0xffe6e3d8",
+        "keyboard_back_argb": "0xff222222",
+        "generic_key_back_argb": "0xff222222",
+        "background_aliases_without_resolution": 10,
+        "baseline_normal_key_effective_background_argb": "0xff222222",
+        "candidate_normal_key_effective_background_argb": "0xff222222",
+        "baseline_normal_fg_equals_visible_bg": false
+      },
+      {
+        "scheme": "starcraft",
+        "name": "星際我爭霸／StarCraft",
+        "bh1_raw": null,
+        "th1_raw": null,
+        "normal_key_text_argb": "0xff55bb30",
+        "keyboard_back_argb": "0xffa01010",
+        "generic_key_back_argb": "0xff000000",
+        "background_aliases_without_resolution": 10,
+        "baseline_normal_key_effective_background_argb": "0xffa01010",
+        "candidate_normal_key_effective_background_argb": "0xff000000",
+        "baseline_normal_fg_equals_visible_bg": false
+      },
+      {
+        "scheme": "google",
+        "name": "谷歌／Google",
+        "bh1_raw": null,
+        "th1_raw": null,
+        "normal_key_text_argb": "0xff000000",
+        "keyboard_back_argb": "0xffe2e2e2",
+        "generic_key_back_argb": "0xffffffff",
+        "background_aliases_without_resolution": 10,
+        "baseline_normal_key_effective_background_argb": "0xffe2e2e2",
+        "candidate_normal_key_effective_background_argb": "0xffffffff",
+        "baseline_normal_fg_equals_visible_bg": false
+      },
+      {
+        "scheme": "solarized_rock",
+        "name": "曬經石／Solarized Rock",
+        "bh1_raw": null,
+        "th1_raw": null,
+        "normal_key_text_argb": "0xff839496",
+        "keyboard_back_argb": "0xff002b36",
+        "generic_key_back_argb": "0xff002b36",
+        "background_aliases_without_resolution": 10,
+        "baseline_normal_key_effective_background_argb": "0xff002b36",
+        "candidate_normal_key_effective_background_argb": "0xff002b36",
+        "baseline_normal_fg_equals_visible_bg": false
+      },
+      {
+        "scheme": "tintin",
+        "name": "丁丁／ Tintin",
+        "bh1_raw": null,
+        "th1_raw": null,
+        "normal_key_text_argb": "0xffffffff",
+        "keyboard_back_argb": "0xff0095d9",
+        "generic_key_back_argb": "0xff0095d9",
+        "background_aliases_without_resolution": 10,
+        "baseline_normal_key_effective_background_argb": "0xff0095d9",
+        "candidate_normal_key_effective_background_argb": "0xff0095d9",
+        "baseline_normal_fg_equals_visible_bg": false
+      },
+      {
+        "scheme": "dota_2",
+        "name": "DOTA 2",
+        "bh1_raw": null,
+        "th1_raw": null,
+        "normal_key_text_argb": "0xff8f755c",
+        "keyboard_back_argb": "0xff100f12",
+        "generic_key_back_argb": "0xff100f12",
+        "background_aliases_without_resolution": 10,
+        "baseline_normal_key_effective_background_argb": "0xff100f12",
+        "candidate_normal_key_effective_background_argb": "0xff100f12",
+        "baseline_normal_fg_equals_visible_bg": false
+      },
+      {
+        "scheme": "brasil",
+        "name": "笆悉／Brasil",
+        "bh1_raw": null,
+        "th1_raw": null,
+        "normal_key_text_argb": "0xffffffff",
+        "keyboard_back_argb": "0xff119355",
+        "generic_key_back_argb": "0xff119355",
+        "background_aliases_without_resolution": 10,
+        "baseline_normal_key_effective_background_argb": "0xff119355",
+        "candidate_normal_key_effective_background_argb": "0xff119355",
+        "baseline_normal_fg_equals_visible_bg": false
+      },
+      {
+        "scheme": "doraemon",
+        "name": "銅鑼衛門／Doraemon",
+        "bh1_raw": null,
+        "th1_raw": null,
+        "normal_key_text_argb": "0xff009fe8",
+        "keyboard_back_argb": "0xff009fe8",
+        "generic_key_back_argb": "0xffffffff",
+        "background_aliases_without_resolution": 10,
+        "baseline_normal_key_effective_background_argb": "0xff009fe8",
+        "candidate_normal_key_effective_background_argb": "0xffffffff",
+        "baseline_normal_fg_equals_visible_bg": true
+      },
+      {
+        "scheme": "espagna",
+        "name": "埃斯巴尼亞／España",
+        "bh1_raw": null,
+        "th1_raw": null,
+        "normal_key_text_argb": "0xffffffff",
+        "keyboard_back_argb": "0xffc30d23",
+        "generic_key_back_argb": "0xffc30d23",
+        "background_aliases_without_resolution": 10,
+        "baseline_normal_key_effective_background_argb": "0xffc30d23",
+        "candidate_normal_key_effective_background_argb": "0xffc30d23",
+        "baseline_normal_fg_equals_visible_bg": false
+      },
+      {
+        "scheme": "gholabok",
+        "name": "胡蘿菔／Gholabok",
+        "bh1_raw": null,
+        "th1_raw": null,
+        "normal_key_text_argb": "0xffffffff",
+        "keyboard_back_argb": "0xffe83929",
+        "generic_key_back_argb": "0xffe83929",
+        "background_aliases_without_resolution": 10,
+        "baseline_normal_key_effective_background_argb": "0xffe83929",
+        "candidate_normal_key_effective_background_argb": "0xffe83929",
+        "baseline_normal_fg_equals_visible_bg": false
+      },
+      {
+        "scheme": "kuma_shuzboz",
+        "name": "熊出沒／Kuma Shuzboz",
+        "bh1_raw": null,
+        "th1_raw": null,
+        "normal_key_text_argb": "0xffffffff",
+        "keyboard_back_argb": "0xfff8b62d",
+        "generic_key_back_argb": "0xfff8b62d",
+        "background_aliases_without_resolution": 10,
+        "baseline_normal_key_effective_background_argb": "0xfff8b62d",
+        "candidate_normal_key_effective_background_argb": "0xfff8b62d",
+        "baseline_normal_fg_equals_visible_bg": false
+      },
+      {
+        "scheme": "kuon",
+        "name": "琨／Kuon",
+        "bh1_raw": null,
+        "th1_raw": null,
+        "normal_key_text_argb": "0xffffffff",
+        "keyboard_back_argb": "0xff3eb370",
+        "generic_key_back_argb": "0xff3eb370",
+        "background_aliases_without_resolution": 10,
+        "baseline_normal_key_effective_background_argb": "0xff3eb370",
+        "candidate_normal_key_effective_background_argb": "0xff3eb370",
+        "baseline_normal_fg_equals_visible_bg": false
+      },
+      {
+        "scheme": "macau",
+        "name": "澳門／Macau",
+        "bh1_raw": null,
+        "th1_raw": null,
+        "normal_key_text_argb": "0xffffffff",
+        "keyboard_back_argb": "0xff00a381",
+        "generic_key_back_argb": "0xff00a381",
+        "background_aliases_without_resolution": 10,
+        "baseline_normal_key_effective_background_argb": "0xff00a381",
+        "candidate_normal_key_effective_background_argb": "0xff00a381",
+        "baseline_normal_fg_equals_visible_bg": false
+      },
+      {
+        "scheme": "nba",
+        "name": "NBA",
+        "bh1_raw": null,
+        "th1_raw": null,
+        "normal_key_text_argb": "0xffffffff",
+        "keyboard_back_argb": "0xff006ab7",
+        "generic_key_back_argb": "0xff006ab7",
+        "background_aliases_without_resolution": 10,
+        "baseline_normal_key_effective_background_argb": "0xff006ab7",
+        "candidate_normal_key_effective_background_argb": "0xff006ab7",
+        "baseline_normal_fg_equals_visible_bg": false
+      },
+      {
+        "scheme": "ps4",
+        "name": "遊驛四／PS4",
+        "bh1_raw": null,
+        "th1_raw": null,
+        "normal_key_text_argb": "0xffffffff",
+        "keyboard_back_argb": "0xff000000",
+        "generic_key_back_argb": "0xff000000",
+        "background_aliases_without_resolution": 10,
+        "baseline_normal_key_effective_background_argb": "0xff000000",
+        "candidate_normal_key_effective_background_argb": "0xff000000",
+        "baseline_normal_fg_equals_visible_bg": false
+      },
+      {
+        "scheme": "skype",
+        "name": "斯蓋普／Skype",
+        "bh1_raw": null,
+        "th1_raw": null,
+        "normal_key_text_argb": "0xffffffff",
+        "keyboard_back_argb": "0xff00adef",
+        "generic_key_back_argb": "0xff00adef",
+        "background_aliases_without_resolution": 10,
+        "baseline_normal_key_effective_background_argb": "0xff00adef",
+        "candidate_normal_key_effective_background_argb": "0xff00adef",
+        "baseline_normal_fg_equals_visible_bg": false
+      },
+      {
+        "scheme": "xbox_silver",
+        "name": "銀色叉盒／Xbox Silver",
+        "bh1_raw": null,
+        "th1_raw": null,
+        "normal_key_text_argb": "0xff8dc21f",
+        "keyboard_back_argb": "0xffeeeeef",
+        "generic_key_back_argb": "0xffeeeeef",
+        "background_aliases_without_resolution": 10,
+        "baseline_normal_key_effective_background_argb": "0xffeeeeef",
+        "candidate_normal_key_effective_background_argb": "0xffeeeeef",
+        "baseline_normal_fg_equals_visible_bg": false
+      },
+      {
+        "scheme": "youtube",
+        "name": "YouTube",
+        "bh1_raw": null,
+        "th1_raw": null,
+        "normal_key_text_argb": "0xff000000",
+        "keyboard_back_argb": "0xffdedede",
+        "generic_key_back_argb": "0xffdedede",
+        "background_aliases_without_resolution": 10,
+        "baseline_normal_key_effective_background_argb": "0xffdedede",
+        "candidate_normal_key_effective_background_argb": "0xffdedede",
+        "baseline_normal_fg_equals_visible_bg": false
+      },
+      {
+        "scheme": "so_young",
+        "name": "致青春／So Young",
+        "bh1_raw": null,
+        "th1_raw": null,
+        "normal_key_text_argb": "0xff657b83",
+        "keyboard_back_argb": "0xffeee8d5",
+        "generic_key_back_argb": "0xfffdf6e3",
+        "background_aliases_without_resolution": 10,
+        "baseline_normal_key_effective_background_argb": "0xffeee8d5",
+        "candidate_normal_key_effective_background_argb": "0xfffdf6e3",
+        "baseline_normal_fg_equals_visible_bg": false
+      },
+      {
+        "scheme": "smurfs",
+        "name": "藍精靈／Smurfs",
+        "bh1_raw": null,
+        "th1_raw": null,
+        "normal_key_text_argb": "0xfff6f6f6",
+        "keyboard_back_argb": "0xffe0edf5",
+        "generic_key_back_argb": "0xff1778bf",
+        "background_aliases_without_resolution": 10,
+        "baseline_normal_key_effective_background_argb": "0xffe0edf5",
+        "candidate_normal_key_effective_background_argb": "0xff1778bf",
+        "baseline_normal_fg_equals_visible_bg": false
+      },
+      {
+        "scheme": "wii",
+        "name": "Wii",
+        "bh1_raw": null,
+        "th1_raw": null,
+        "normal_key_text_argb": "0xff595757",
+        "keyboard_back_argb": "0xffefefef",
+        "generic_key_back_argb": "0xffefefef",
+        "background_aliases_without_resolution": 10,
+        "baseline_normal_key_effective_background_argb": "0xffefefef",
+        "candidate_normal_key_effective_background_argb": "0xffefefef",
+        "baseline_normal_fg_equals_visible_bg": false
+      },
+      {
+        "scheme": "android",
+        "name": "安卓／Android",
+        "bh1_raw": null,
+        "th1_raw": null,
+        "normal_key_text_argb": "0xffffffff",
+        "keyboard_back_argb": "0xff1c7399",
+        "generic_key_back_argb": "0xff1c7399",
+        "background_aliases_without_resolution": 10,
+        "baseline_normal_key_effective_background_argb": "0xff1c7399",
+        "candidate_normal_key_effective_background_argb": "0xff1c7399",
+        "baseline_normal_fg_equals_visible_bg": false
+      },
+      {
+        "scheme": "cool_breeze",
+        "name": "清風／Cool Breeze",
+        "bh1_raw": null,
+        "th1_raw": null,
+        "normal_key_text_argb": "0xff009100",
+        "keyboard_back_argb": "0xffaaaaff",
+        "generic_key_back_argb": "0xfffbfbff",
+        "background_aliases_without_resolution": 10,
+        "baseline_normal_key_effective_background_argb": "0xffaaaaff",
+        "candidate_normal_key_effective_background_argb": "0xfffbfbff",
+        "baseline_normal_fg_equals_visible_bg": false
+      },
+      {
+        "scheme": "google_plus",
+        "name": "Google+",
+        "bh1_raw": null,
+        "th1_raw": null,
+        "normal_key_text_argb": "0xffdd4b39",
+        "keyboard_back_argb": "0xffdd4b39",
+        "generic_key_back_argb": "0xffffffff",
+        "background_aliases_without_resolution": 10,
+        "baseline_normal_key_effective_background_argb": "0xffdd4b39",
+        "candidate_normal_key_effective_background_argb": "0xffffffff",
+        "baseline_normal_fg_equals_visible_bg": true
+      },
+      {
+        "scheme": "modern_warfare",
+        "name": "現代戰爭／Modern Warfare",
+        "bh1_raw": null,
+        "th1_raw": null,
+        "normal_key_text_argb": "0xffdcfeab",
+        "keyboard_back_argb": "0xff83ad4b",
+        "generic_key_back_argb": "0xff0d1b0a",
+        "background_aliases_without_resolution": 10,
+        "baseline_normal_key_effective_background_argb": "0xff83ad4b",
+        "candidate_normal_key_effective_background_argb": "0xff0d1b0a",
+        "baseline_normal_fg_equals_visible_bg": false
+      },
+      {
+        "scheme": "brisk",
+        "name": "輕盈／Brisk",
+        "bh1_raw": null,
+        "th1_raw": null,
+        "normal_key_text_argb": "0xff575757",
+        "keyboard_back_argb": "0xff333333",
+        "generic_key_back_argb": "0xffffffff",
+        "background_aliases_without_resolution": 10,
+        "baseline_normal_key_effective_background_argb": "0xff333333",
+        "candidate_normal_key_effective_background_argb": "0xffffffff",
+        "baseline_normal_fg_equals_visible_bg": false
+      },
+      {
+        "scheme": "starcraft_ii",
+        "name": "星際爭霸Ⅱ／StarCraft Ⅱ",
+        "bh1_raw": null,
+        "th1_raw": null,
+        "normal_key_text_argb": "0xffffffff",
+        "keyboard_back_argb": "0xff464b53",
+        "generic_key_back_argb": "0xff0a1929",
+        "background_aliases_without_resolution": 10,
+        "baseline_normal_key_effective_background_argb": "0xff464b53",
+        "candidate_normal_key_effective_background_argb": "0xff0a1929",
+        "baseline_normal_fg_equals_visible_bg": false
+      },
+      {
+        "scheme": "steam",
+        "name": "Steam",
+        "bh1_raw": null,
+        "th1_raw": null,
+        "normal_key_text_argb": "0xffffffff",
+        "keyboard_back_argb": "0xff383635",
+        "generic_key_back_argb": "0xff171614",
+        "background_aliases_without_resolution": 10,
+        "baseline_normal_key_effective_background_argb": "0xff383635",
+        "candidate_normal_key_effective_background_argb": "0xff171614",
+        "baseline_normal_fg_equals_visible_bg": false
+      },
+      {
+        "scheme": "flypy",
+        "name": "小鶴飛揚／flypy",
+        "bh1_raw": null,
+        "th1_raw": null,
+        "normal_key_text_argb": "0xff0080ff",
+        "keyboard_back_argb": "0xffc6c6c6",
+        "generic_key_back_argb": "0xffffffff",
+        "background_aliases_without_resolution": 10,
+        "baseline_normal_key_effective_background_argb": "0xffc6c6c6",
+        "candidate_normal_key_effective_background_argb": "0xffffffff",
+        "baseline_normal_fg_equals_visible_bg": false
+      },
+      {
+        "scheme": "tantsing",
+        "name": "丹青",
+        "bh1_raw": null,
+        "th1_raw": null,
+        "normal_key_text_argb": "0xff000000",
+        "keyboard_back_argb": "0xff000000",
+        "generic_key_back_argb": "0xffe3e3e3",
+        "background_aliases_without_resolution": 10,
+        "baseline_normal_key_effective_background_argb": "0xff000000",
+        "candidate_normal_key_effective_background_argb": "0xffe3e3e3",
+        "baseline_normal_fg_equals_visible_bg": true
+      },
+      {
+        "scheme": "yygc",
+        "name": "一葉孤城",
+        "bh1_raw": null,
+        "th1_raw": null,
+        "normal_key_text_argb": "0xff7f7f7f",
+        "keyboard_back_argb": "0xffffffff",
+        "generic_key_back_argb": "0xffffffff",
+        "background_aliases_without_resolution": 10,
+        "baseline_normal_key_effective_background_argb": "0xffffffff",
+        "candidate_normal_key_effective_background_argb": "0xffffffff",
+        "baseline_normal_fg_equals_visible_bg": false
+      },
+      {
+        "scheme": "feng01",
+        "name": "奈々",
+        "bh1_raw": null,
+        "th1_raw": null,
+        "normal_key_text_argb": "0xffa48464",
+        "keyboard_back_argb": "0xfff8edd1",
+        "generic_key_back_argb": "0xfff8edd1",
+        "background_aliases_without_resolution": 10,
+        "baseline_normal_key_effective_background_argb": "0xfff8edd1",
+        "candidate_normal_key_effective_background_argb": "0xfff8edd1",
+        "baseline_normal_fg_equals_visible_bg": false
+      },
+      {
+        "scheme": "feng02",
+        "name": "独立日",
+        "bh1_raw": null,
+        "th1_raw": null,
+        "normal_key_text_argb": "0xfffafaff",
+        "keyboard_back_argb": "0xff537f92",
+        "generic_key_back_argb": "0xff537f92",
+        "background_aliases_without_resolution": 10,
+        "baseline_normal_key_effective_background_argb": "0xff537f92",
+        "candidate_normal_key_effective_background_argb": "0xff537f92",
+        "baseline_normal_fg_equals_visible_bg": false
+      },
+      {
+        "scheme": "feng03",
+        "name": "一叶清荷",
+        "bh1_raw": null,
+        "th1_raw": null,
+        "normal_key_text_argb": "0xff599852",
+        "keyboard_back_argb": "0xff599852",
+        "generic_key_back_argb": "0xffffffff",
+        "background_aliases_without_resolution": 10,
+        "baseline_normal_key_effective_background_argb": "0xff599852",
+        "candidate_normal_key_effective_background_argb": "0xffffffff",
+        "baseline_normal_fg_equals_visible_bg": true
+      },
+      {
+        "scheme": "feng04",
+        "name": "往事回忆",
+        "bh1_raw": null,
+        "th1_raw": null,
+        "normal_key_text_argb": "0xffffffff",
+        "keyboard_back_argb": "0xff7896aa",
+        "generic_key_back_argb": "0xff5289a7",
+        "background_aliases_without_resolution": 10,
+        "baseline_normal_key_effective_background_argb": "0xff7896aa",
+        "candidate_normal_key_effective_background_argb": "0xff5289a7",
+        "baseline_normal_fg_equals_visible_bg": false
+      },
+      {
+        "scheme": "feng05",
+        "name": "黄黑",
+        "bh1_raw": null,
+        "th1_raw": null,
+        "normal_key_text_argb": "0xff000000",
+        "keyboard_back_argb": "0xff000000",
+        "generic_key_back_argb": "0xfffef94d",
+        "background_aliases_without_resolution": 10,
+        "baseline_normal_key_effective_background_argb": "0xff000000",
+        "candidate_normal_key_effective_background_argb": "0xfffef94d",
+        "baseline_normal_fg_equals_visible_bg": true
+      },
+      {
+        "scheme": "feng06",
+        "name": "花香流转",
+        "bh1_raw": null,
+        "th1_raw": null,
+        "normal_key_text_argb": "0xffffffbc",
+        "keyboard_back_argb": "0xff789c80",
+        "generic_key_back_argb": "0xff367272",
+        "background_aliases_without_resolution": 10,
+        "baseline_normal_key_effective_background_argb": "0xff789c80",
+        "candidate_normal_key_effective_background_argb": "0xff367272",
+        "baseline_normal_fg_equals_visible_bg": false
+      },
+      {
+        "scheme": "feng07",
+        "name": "巴黎遗梦",
+        "bh1_raw": null,
+        "th1_raw": null,
+        "normal_key_text_argb": "0xfff5e1b4",
+        "keyboard_back_argb": "0xffdaa14a",
+        "generic_key_back_argb": "0xff2e1707",
+        "background_aliases_without_resolution": 10,
+        "baseline_normal_key_effective_background_argb": "0xffdaa14a",
+        "candidate_normal_key_effective_background_argb": "0xff2e1707",
+        "baseline_normal_fg_equals_visible_bg": false
+      },
+      {
+        "scheme": "hong",
+        "name": "黑橙／hong",
+        "bh1_raw": null,
+        "th1_raw": null,
+        "normal_key_text_argb": "0xffffffff",
+        "keyboard_back_argb": "0xff353638",
+        "generic_key_back_argb": "0xff141617",
+        "background_aliases_without_resolution": 10,
+        "baseline_normal_key_effective_background_argb": "0xff353638",
+        "candidate_normal_key_effective_background_argb": "0xff141617",
+        "baseline_normal_fg_equals_visible_bg": false
+      }
+    ],
+    "limit": "The effective background values model the normal key path and solid shipped palette backgrounds only. Other states, actual Android Drawables, bitmaps, view composition, interaction and rendering require Root tests."
+  },
+  "candidate_patch": {
+    "files": [
+      "app/src/main/java/com/osfans/trime/data/theme/ColorTable.kt",
+      "app/src/main/java/com/osfans/trime/data/theme/ColorManager.kt",
+      "app/src/test/java/com/osfans/trime/data/theme/ThemeDrawableFallbackTest.kt"
+    ],
+    "production_delta": "Two production files, 20 insertions / 16 deletions at initial review; parseValue removes duplicated raw color/image classification and preserves invalidValues reporting. No Key.kt or asset changes.",
+    "functional_state_contract": "Existing Key routing is retained: non-empty per-key functional background override uses keyBackground, whose missing alias falls back to key_back_color. No change to off_key_back_color policy. Functional text keeps its current off_key_text_color fallback. Pressed/on states keep existing generic routing.",
+    "third_party_contract": [
+      "Direct valid custom alias remains higher priority than fallback_colors.",
+      "Custom fallback chains/cycle detection remain unchanged.",
+      "Valid alpha-zero colors including 0x00 remain successful Color(0), never treated as absent.",
+      "Image-valued entries remain Image and use existing loading; a missing file keeps the existing null path.",
+      "Invalid strings cease acting as implicit transparent overrides. Authors wanting transparent backgrounds must use valid transparent color values."
+    ],
+    "tests": "Focused Kotest tests use existing ThemeTestSupport/Kaml parser and actual ColorTable classification. Actual Key drawable fallback is reserved for Root Android verification, not claimed from Android unit-test stubs.",
+    "build_test_commit_push_status": "No build, test execution, commit or push performed by this agent. Source is awaiting Root checks.",
+    "source_frozen": true,
+    "frozen_at_utc": "2026-10-28T13:22:08.138128+00:00",
+    "frozen_files": [
+      {
+        "path": "app/src/main/java/com/osfans/trime/data/theme/ColorTable.kt",
+        "bytes": 5014,
+        "sha256": "845f14a63c4e4d8c1ff441ee288434663b3c2b88428aff329ff3c458a6f27dd0"
+      },
+      {
+        "path": "app/src/main/java/com/osfans/trime/data/theme/ColorManager.kt",
+        "bytes": 9946,
+        "sha256": "47064eaf7aeab0b96075bf5fe5e67c7014e9d0a4926c6a1e4cb249d64d1f703f"
+      },
+      {
+        "path": "app/src/test/java/com/osfans/trime/data/theme/ThemeDrawableFallbackTest.kt",
+        "bytes": 7842,
+        "sha256": "c8f76305cac2d3e587892500d2c0ea2467c1b7f7d62fd7638162501b39cc4fe6"
+      }
+    ],
+    "jvm_tests": {
+      "file": "app/src/test/java/com/osfans/trime/data/theme/ThemeDrawableFallbackTest.kt",
+      "lines": 149,
+      "focused_Then_count": 7,
+      "matrix": "One bounded test loops every actual standard-theme palette and custom background field; no generated per-key or per-palette source and no hardcoded palette-count assertion.",
+      "parser_limit": "The injected parser covers hex fixture forms only; it is not a test of the actual Android ColorUtils parser. Actual production ColorUtils/GradientDrawable/Key behavior is reserved for Root Android probe.",
+      "execution_by_this_agent": "NOT_RUN"
+    },
+    "static_verification": {
+      "git_diff_check_exit": 0,
+      "untracked_test_whitespace_check": "No whitespace diagnostics; git diff --no-index --check exit1 denotes a new file diff.",
+      "test_and_build_execution_by_this_agent": false
+    },
+    "root_checks": {
+      "status": "IN_PROGRESS",
+      "owner": "Root",
+      "ci_or_runtime_acceptance_claimed": false
+    }
+  },
+  "necessary_acceptance": [
+    "Actual production Kotlin ThemeTestSupport decodes the 46 standard palettes; one bounded matrix test checks shipped custom background values and missing aliases with usable generic backgrounds.",
+    "Google+ retains missing bh1/th1 and resolves generic background white/text #dd4b39; tantsing resolves #e3e3e3/black. Default explicit per-key colors are not overridden.",
+    "Test genuine zero-alpha colors, invalid/unresolved strings, image classification and third-party custom fallback/direct override priority using shared production parseValue.",
+    "Root Android probe calls real Key.getBackgroundDrawable/getTextColor for normal/function/pressed/on states; compare standard Google+/tantsing before/after and check a valid explicit transparent custom background remains non-null.",
+    "Reuse the same Key across default -> Google+ -> tantsing -> default to check existing generation cache behavior; verify explicit default palette aliases return unchanged colors.",
+    "CI/lint/unit tests must pass before claiming the candidate ready; no zero-warning or all-palette perceptual-contrast guarantee is intended."
+  ],
+  "nearby_followup": {
+    "issue": 2033,
+    "status": "Separate substantive unit; do not mix into #2159",
+    "evidence": "Latest body reproduces Return popup [TrimeWiki, Settings], expecting full Wiki/设置. a047 ships that exact popup in tongwenfeng.trime.yaml:1123 and PopupKeyboardUi.kt:202 explicitly truncates resolved labels to one code point. rowCount=ceil(n/5), columnCount=round(n/rowCount) also loses the final option for n=13/17/21/22/26.",
+    "proposed_scope": "Preserve complete action labels and guarantee all popup actions have reachable cells. Keep original action tokens; there is no demonstrated dispatch/commit bug.",
+    "tests": "Actual label resolution plus 1..30 count/permutation tests, icon/emoji labels, then Android narrow-screen/large-font and left/right focus selection.",
+    "open_pr_overlap": "No popup fix found in current open PRs; #2195 only covers main KeyView text fitting."
+  },
+  "mutations": {
+    "upstream_review_worktree": false,
+    "candidate_source_edits_authorized_after_investigation": true,
+    "candidate_edits_only_in_selected_worktree": true,
+    "build": false,
+    "tests_executed": false,
+    "adb": false,
+    "github": false,
+    "commit": false,
+    "push": false,
+    "evidence_files_written": true
+  }
+}
