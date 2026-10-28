@@ -1,0 +1,703 @@
+{
+  "schema_version": 1,
+  "reviewed_at_utc": "2026-10-28T02:29:44.366867+00:00",
+  "scope": "只读审查已结束run1的保留日志/命令记录；未运行ADB、模拟器、构建或新版helper。",
+  "overall_result": "normal_shutdown_with_recorded_runtime_failures_and_warnings",
+  "summary": "模拟器按正常stop请求退出0，但run1存在4次系统进程ANR、1次旧instrumentation helper导致的目标进程FATAL及其他应用/平台警告。旧候选触控对照没有形成有效测试结果，不能描述为零警告或全部设备验收通过。",
+  "lifecycle": {
+    "completion_file": "completion.json",
+    "reason": "normal-stop-request",
+    "emulator_exit": 0,
+    "normal_kill_exit": 0,
+    "cleanup_errors": [],
+    "started_utc": "2026-10-28T02:13:33.503684+00:00",
+    "finished_utc": "2026-10-28T02:25:25.189373+00:00",
+    "collector_segments": [
+      {
+        "pid": 243246,
+        "exit": 255
+      },
+      {
+        "pid": 251768,
+        "exit": -15
+      }
+    ],
+    "collector_note": "首段collector退出255，跨命令重启后有第二段收集；最终-15为正常stop清理。保留这些退出值，不把255视为成功或保证重启全程无采集间隙。"
+  },
+  "log_coverage": {
+    "device_logcat_file": "device-logcat.txt",
+    "sha256": "6a9bef71e9ef5530270e532a775f4dc89ab53334b77a8e3aee5c77ef8cc00b93",
+    "bytes": 35666272,
+    "total_lines": 406679,
+    "level_line_counts": {
+      "W": 6767,
+      "I": 364784,
+      "D": 20130,
+      "E": 3300,
+      "V": 11687
+    },
+    "line_count_note": "计数为原始日志行数，不是独立故障次数。device时间为10:xx，与host UTC 02:xx对应。",
+    "top_platform_warning_error_tags": [
+      {
+        "level": "W",
+        "tag": "ActivityManager",
+        "lines": 602
+      },
+      {
+        "level": "W",
+        "tag": "IPCThreadState",
+        "lines": 597
+      },
+      {
+        "level": "W",
+        "tag": "BestClock",
+        "lines": 466
+      },
+      {
+        "level": "E",
+        "tag": "SystemServiceRegistry",
+        "lines": 424
+      },
+      {
+        "level": "E",
+        "tag": "ActivityManager",
+        "lines": 367
+      },
+      {
+        "level": "W",
+        "tag": "Looper",
+        "lines": 357
+      },
+      {
+        "level": "E",
+        "tag": "Overrides",
+        "lines": 307
+      },
+      {
+        "level": "W",
+        "tag": "PackageSettings",
+        "lines": 304
+      },
+      {
+        "level": "W",
+        "tag": "PackageManager",
+        "lines": 275
+      },
+      {
+        "level": "W",
+        "tag": "system_server",
+        "lines": 256
+      },
+      {
+        "level": "W",
+        "tag": "FrameTracker",
+        "lines": 197
+      },
+      {
+        "level": "E",
+        "tag": "StrictMode",
+        "lines": 185
+      },
+      {
+        "level": "W",
+        "tag": "resolv",
+        "lines": 172
+      },
+      {
+        "level": "E",
+        "tag": "libprocessgroup",
+        "lines": 161
+      },
+      {
+        "level": "W",
+        "tag": "AppOpService",
+        "lines": 133
+      },
+      {
+        "level": "W",
+        "tag": "android.hardware.media.c2@1.0-service-goldfish",
+        "lines": 124
+      },
+      {
+        "level": "W",
+        "tag": "mediaswcodec",
+        "lines": 120
+      },
+      {
+        "level": "W",
+        "tag": "app_process",
+        "lines": 118
+      },
+      {
+        "level": "W",
+        "tag": "mediaextractor",
+        "lines": 114
+      },
+      {
+        "level": "W",
+        "tag": "UserSystemPackageInstaller",
+        "lines": 110
+      }
+    ]
+  },
+  "system_anrs": {
+    "count": 4,
+    "by_package": {
+      "com.android.systemui": 2,
+      "com.android.phone": 2
+    },
+    "events": [
+      {
+        "package": "com.android.systemui",
+        "pid": 786,
+        "device_timestamp": "10-28 10:14:23.872",
+        "reason": "executing service com.android.systemui/.SystemUIService, waited 20048ms",
+        "classification": "system_process_anr",
+        "evidence": {
+          "file": "device-logcat.txt",
+          "line": 18608,
+          "text": "10-28 10:14:23.872   546  1386 E ActivityManager: ANR in com.android.systemui"
+        }
+      },
+      {
+        "package": "com.android.phone",
+        "pid": 927,
+        "device_timestamp": "10-28 10:21:56.348",
+        "reason": "Broadcast of Intent { act=android.safetycenter.action.REFRESH_SAFETY_SOURCES flg=0x10000010 pkg=com.android.phone cmp=com.android.phone/.security.SafetySourceReceiver (has extras) }",
+        "classification": "system_process_anr",
+        "evidence": {
+          "file": "device-logcat.txt",
+          "line": 141156,
+          "text": "10-28 10:21:56.348   542  1321 E ActivityManager: ANR in com.android.phone"
+        }
+      },
+      {
+        "package": "com.android.systemui",
+        "pid": 806,
+        "device_timestamp": "10-28 10:22:00.213",
+        "reason": "executing service com.android.systemui/.keyguard.KeyguardService, waited 20078ms",
+        "classification": "system_process_anr",
+        "evidence": {
+          "file": "device-logcat.txt",
+          "line": 142410,
+          "text": "10-28 10:22:00.213   542  1321 E ActivityManager: ANR in com.android.systemui"
+        }
+      },
+      {
+        "package": "com.android.phone",
+        "pid": 1413,
+        "device_timestamp": "10-28 10:22:01.356",
+        "reason": "Process ProcessRecord{6752f31 1413:com.android.phone/1001} failed to complete startup",
+        "classification": "system_process_anr",
+        "evidence": {
+          "file": "device-logcat.txt",
+          "line": 142859,
+          "text": "10-28 10:22:01.356   542  1531 E ActivityManager: ANR in com.android.phone"
+        }
+      }
+    ],
+    "impact": "系统UI两次ANR影响启动/交互时序，重启后电话进程另有两次ANR。首个SystemUI ANR早于首次Trime进程启动。归属由系统日志的package/reason确定；不能仅凭本日志认定所有ANR根因或将其算作Trime业务ANR。"
+  },
+  "legacy_helper_failure": {
+    "fatal_event_count": 1,
+    "process": "com.osfans.trime.debug",
+    "pid": 2021,
+    "thread": "main",
+    "exception": "java.lang.IllegalArgumentException: Array contains more than one matching element.",
+    "top_frame": "CandidateTouchTargetInstrumentation.newThemeScope(CandidateTouchTargetInstrumentation.kt:235)",
+    "call_path": [
+      "newThemeScope:235",
+      "Fixture.<init>:117",
+      "onStart main-thread lambda:65",
+      "Instrumentation.SyncRunnable.run"
+    ],
+    "attribution": "旧测试helper在主线程反射构造ThemeScope fixture时未唯一选中匹配成员；属于测试装置构造失败，并确实使目标Trime进程崩溃。",
+    "affected_validation": "候选触控baseline对照业务与断言尚未执行，run1不能给出#2198触控行为通过/失败结论。TrimeApplication等启动代码已执行；不能据此说整个应用从未运行。",
+    "shell_exit": 0,
+    "instrumentation_stdout": "INSTRUMENTATION_RESULT: shortMsg=Process crashed.\nINSTRUMENTATION_CODE: 0",
+    "shell_exit_note": "am instrument命令exit0不能覆盖stdout中的Process crashed，也不是测试成功代码。",
+    "evidence_files": [
+      "commands/baseline-probe-crash-log.stdout",
+      "commands/baseline-touch-control.stdout",
+      "commands/baseline-touch-control.json"
+    ],
+    "device_logcat_fatal_line": 25886,
+    "same_event_androidruntime_stack_lines": 17,
+    "requires_rerun": "需要修复helper并重新运行有效对照；新版helper不在run1验收范围内。"
+  },
+  "trime_process_review": {
+    "attribution_method": "按am_proc_start/boot_progress_start/am_proc_died/am_kill跟踪PID归属，避免重启后PID复用误归因。",
+    "process_starts": [
+      {
+        "pid": 2021,
+        "line": 25634,
+        "device_timestamp": "10-28 10:16:05.899",
+        "message": "[0,2021,10160,com.osfans.trime.debug,added application,com.osfans.trime.debug]"
+      },
+      {
+        "pid": 2079,
+        "line": 26086,
+        "device_timestamp": "10-28 10:17:39.060",
+        "message": "[0,2079,10160,com.osfans.trime.debug,next-top-activity,{com.osfans.trime.debug/com.osfans.trime.ui.main.MainActivity}]"
+      },
+      {
+        "pid": 1527,
+        "line": 142680,
+        "device_timestamp": "10-28 10:22:00.796",
+        "message": "[0,1527,10160,com.osfans.trime.debug,next-top-activity,{com.osfans.trime.debug/com.osfans.trime.ui.main.MainActivity}]"
+      },
+      {
+        "pid": 2269,
+        "line": 195469,
+        "device_timestamp": "10-28 10:23:03.902",
+        "message": "[0,2269,10160,com.osfans.trime.debug,next-top-activity,{com.osfans.trime.debug/com.osfans.trime.ui.main.MainActivity}]"
+      },
+      {
+        "pid": 2516,
+        "line": 296695,
+        "device_timestamp": "10-28 10:24:11.092",
+        "message": "[0,2516,10160,com.osfans.trime.debug,next-top-activity,{com.osfans.trime.debug/com.osfans.trime.ui.main.MainActivity}]"
+      },
+      {
+        "pid": 2684,
+        "line": 406309,
+        "device_timestamp": "10-28 10:24:57.345",
+        "message": "[0,2684,10160,com.osfans.trime.debug,next-top-activity,{com.osfans.trime.debug/com.osfans.trime.ui.main.MainActivity}]"
+      }
+    ],
+    "process_exit_events": [
+      {
+        "line": 25910,
+        "device_timestamp": "10-28 10:16:07.335",
+        "event": "am_proc_died",
+        "message": "[0,2021,com.osfans.trime.debug,0,4]"
+      },
+      {
+        "line": 195085,
+        "device_timestamp": "10-28 10:23:01.769",
+        "event": "am_kill",
+        "message": "[0,1527,com.osfans.trime.debug,0,stop com.osfans.trime.debug due to installPackageLI,220760]"
+      },
+      {
+        "line": 296576,
+        "device_timestamp": "10-28 10:24:10.424",
+        "event": "am_kill",
+        "message": "[0,2269,com.osfans.trime.debug,0,stop com.osfans.trime.debug due to from pid 2505,225196]"
+      },
+      {
+        "line": 405907,
+        "device_timestamp": "10-28 10:24:54.811",
+        "event": "am_kill",
+        "message": "[0,2516,com.osfans.trime.debug,0,stop com.osfans.trime.debug due to installPackageLI,231696]"
+      }
+    ],
+    "warning_lines": 84,
+    "error_lines": 17,
+    "warning_lines_in_helper_pid": 11,
+    "additional_production_fatal_events_observed": 0,
+    "trime_anr_events_observed": 0,
+    "native_fatal_signal_events_observed": 0,
+    "limitations": "仅限保留日志中的观察；没有额外FATAL不等同于全部功能或完整生产路径验收通过。",
+    "warning_error_groups": [
+      {
+        "level": "E",
+        "tag": "AndroidRuntime",
+        "log_line_count": 17,
+        "classification": "同一个旧CandidateTouchTargetInstrumentation fixture构造FATAL的17行堆栈；事件数为1。",
+        "evidence_samples": [
+          {
+            "file": "device-logcat.txt",
+            "line": 25886,
+            "text": "10-28 10:16:07.298  2021  2021 E AndroidRuntime: FATAL EXCEPTION: main"
+          },
+          {
+            "file": "device-logcat.txt",
+            "line": 25887,
+            "text": "10-28 10:16:07.298  2021  2021 E AndroidRuntime: Process: com.osfans.trime.debug, PID: 2021"
+          },
+          {
+            "file": "device-logcat.txt",
+            "line": 25888,
+            "text": "10-28 10:16:07.298  2021  2021 E AndroidRuntime: java.lang.IllegalArgumentException: Array contains more than one matching element."
+          },
+          {
+            "file": "device-logcat.txt",
+            "line": 25889,
+            "text": "10-28 10:16:07.298  2021  2021 E AndroidRuntime: \tat com.osfans.trime.ime.bar.CandidateTouchTargetInstrumentation.newThemeScope(CandidateTouchTargetInstrumentation.kt:235)"
+          }
+        ]
+      },
+      {
+        "level": "W",
+        "tag": "ActivityThread",
+        "log_line_count": 1,
+        "classification": "旧instrumentation APK与目标APK的ABI元数据差异提示，发生于旧helper启动阶段。",
+        "evidence_samples": [
+          {
+            "file": "device-logcat.txt",
+            "line": 25644,
+            "text": "10-28 10:16:05.981  2021  2021 W ActivityThread: Package uses different ABI(s) than its instrumentation: package[com.osfans.trime.debug]: x86_64, null instrumentation[com.osfans.trime.debug.test]: null, null"
+          }
+        ]
+      },
+      {
+        "level": "W",
+        "tag": "HWUI",
+        "log_line_count": 15,
+        "classification": "模拟器图形配置/色彩空间告警：Unknown dataspace、EGL配置回退和101010-2格式初始化提示。",
+        "evidence_samples": [
+          {
+            "file": "device-logcat.txt",
+            "line": 26287,
+            "text": "10-28 10:17:42.812  2079  2079 W HWUI    : Unknown dataspace 0"
+          },
+          {
+            "file": "device-logcat.txt",
+            "line": 26302,
+            "text": "10-28 10:17:42.952  2079  2114 W HWUI    : Failed to choose config with EGL_SWAP_BEHAVIOR_PRESERVED, retrying without..."
+          },
+          {
+            "file": "device-logcat.txt",
+            "line": 26303,
+            "text": "10-28 10:17:42.957  2079  2114 W HWUI    : Failed to initialize 101010-2 format, error = EGL_SUCCESS"
+          },
+          {
+            "file": "device-logcat.txt",
+            "line": 143989,
+            "text": "10-28 10:22:05.665  1527  1527 W HWUI    : Unknown dataspace 0"
+          }
+        ]
+      },
+      {
+        "level": "W",
+        "tag": "SurfaceComposerClient",
+        "log_line_count": 2,
+        "classification": "命令重启期间surfaceflinger binder端点消失；时间与baseline-reboot命令对应。",
+        "evidence_samples": [
+          {
+            "file": "device-logcat.txt",
+            "line": 123540,
+            "text": "10-28 10:20:58.943  2079  2089 W SurfaceComposerClient: ComposerService remote (surfaceflinger) died [0x79276fae6b20]"
+          },
+          {
+            "file": "device-logcat.txt",
+            "line": 123580,
+            "text": "10-28 10:20:58.953  2079  2089 W SurfaceComposerClient: ComposerService aidl remote (surfaceflinger) died [0x79276faeed10]"
+          }
+        ]
+      },
+      {
+        "level": "W",
+        "tag": "WindowOnBackDispatcher",
+        "log_line_count": 15,
+        "classification": "应用未启用OnBackInvokedCallback的manifest提示及取消回调状态提示；保留为应用集成警告。",
+        "evidence_samples": [
+          {
+            "file": "device-logcat.txt",
+            "line": 26833,
+            "text": "10-28 10:20:19.945  2079  2079 W WindowOnBackDispatcher: sendCancelIfRunning: isInProgress=false callback=android.view.ViewRootImpl$$ExternalSyntheticLambda11@ea82153"
+          },
+          {
+            "file": "device-logcat.txt",
+            "line": 26903,
+            "text": "10-28 10:20:20.965  2079  2079 W WindowOnBackDispatcher: OnBackInvokedCallback is not enabled for the application."
+          },
+          {
+            "file": "device-logcat.txt",
+            "line": 26904,
+            "text": "10-28 10:20:20.965  2079  2079 W WindowOnBackDispatcher: Set 'android:enableOnBackInvokedCallback=\"true\"' in the application manifest."
+          },
+          {
+            "file": "device-logcat.txt",
+            "line": 27177,
+            "text": "10-28 10:20:24.730  2079  2079 W WindowOnBackDispatcher: sendCancelIfRunning: isInProgress=false callback=android.view.ViewRootImpl$$ExternalSyntheticLambda11@9e75f83"
+          }
+        ]
+      },
+      {
+        "level": "W",
+        "tag": "ans.trime.debug",
+        "log_line_count": 25,
+        "classification": "ART在应用进程内的CPU型号、隐藏API反射访问、类校验耗时/GC提示；这些W行不是旧helper的FATAL异常。",
+        "evidence_samples": [
+          {
+            "file": "device-logcat.txt",
+            "line": 25639,
+            "text": "10-28 10:16:05.935  2021  2021 W ans.trime.debug: Unexpected CPU variant for x86: x86_64."
+          },
+          {
+            "file": "device-logcat.txt",
+            "line": 25640,
+            "text": "10-28 10:16:05.935  2021  2021 W ans.trime.debug: Known variants: atom, sandybridge, silvermont, goldmont, goldmont-plus, goldmont-without-sha-xsaves, tremont, kabylake, default"
+          },
+          {
+            "file": "device-logcat.txt",
+            "line": 26097,
+            "text": "10-28 10:17:39.190  2079  2079 W ans.trime.debug: Unexpected CPU variant for x86: x86_64."
+          },
+          {
+            "file": "device-logcat.txt",
+            "line": 26098,
+            "text": "10-28 10:17:39.190  2079  2079 W ans.trime.debug: Known variants: atom, sandybridge, silvermont, goldmont, goldmont-plus, goldmont-without-sha-xsaves, tremont, kabylake, default"
+          }
+        ]
+      },
+      {
+        "level": "W",
+        "tag": "rime.trime",
+        "log_line_count": 8,
+        "classification": "librime在启动/部署阶段报告缺少配置文件；逐项保留，不据此宣称部署或输入验收成功。",
+        "evidence_samples": [
+          {
+            "file": "device-logcat.txt",
+            "line": 27307,
+            "text": "10-28 10:20:25.501  2079  2251 W rime.trime: nonexistent config file '/storage/emulated/0/Android/data/com.osfans.trime.debug/files/rime/installation.yaml'."
+          },
+          {
+            "file": "device-logcat.txt",
+            "line": 27333,
+            "text": "10-28 10:20:25.522  2079  2251 W rime.trime: nonexistent config file '/storage/emulated/0/Android/data/com.osfans.trime.debug/files/rime/user.yaml'."
+          },
+          {
+            "file": "device-logcat.txt",
+            "line": 27395,
+            "text": "10-28 10:20:28.071  2079  2292 W rime.trime: nonexistent config file '/storage/emulated/0/Android/data/com.osfans.trime.debug/files/rime/build/default.yaml'."
+          },
+          {
+            "file": "device-logcat.txt",
+            "line": 27886,
+            "text": "10-28 10:20:28.367  2079  2292 W rime.trime: nonexistent config file '/storage/emulated/0/Android/data/com.osfans.trime.debug/files/rime/build/luna_pinyin.schema.yaml'."
+          }
+        ]
+      },
+      {
+        "level": "W",
+        "tag": "ziparchive",
+        "log_line_count": 18,
+        "classification": "目标/测试APK旁的base.dm dex元数据文件不存在；警告所指文件是base.dm，不是APK文件本身。",
+        "evidence_samples": [
+          {
+            "file": "device-logcat.txt",
+            "line": 25647,
+            "text": "10-28 10:16:05.984  2021  2021 W ziparchive: Unable to open '/data/app/~~3CPl6iVDMvQw6llJLt28hQ==/com.osfans.trime.debug.test-FILbeP4CBUV8uQqApZBrdw==/base.dm': No such file or directory"
+          },
+          {
+            "file": "device-logcat.txt",
+            "line": 25648,
+            "text": "10-28 10:16:05.985  2021  2021 W ziparchive: Unable to open '/data/app/~~3CPl6iVDMvQw6llJLt28hQ==/com.osfans.trime.debug.test-FILbeP4CBUV8uQqApZBrdw==/base.dm': No such file or directory"
+          },
+          {
+            "file": "device-logcat.txt",
+            "line": 25649,
+            "text": "10-28 10:16:05.991  2021  2021 W ziparchive: Unable to open '/data/app/~~pFh_MMCmU5MO0OLJCdeVvQ==/com.osfans.trime.debug-BzTPzYcdvbfw9ZBX0_kBbA==/base.dm': No such file or directory"
+          },
+          {
+            "file": "device-logcat.txt",
+            "line": 25650,
+            "text": "10-28 10:16:05.992  2021  2021 W ziparchive: Unable to open '/data/app/~~pFh_MMCmU5MO0OLJCdeVvQ==/com.osfans.trime.debug-BzTPzYcdvbfw9ZBX0_kBbA==/base.dm': No such file or directory"
+          }
+        ]
+      }
+    ],
+    "rime_missing_config_warnings": {
+      "count": 8,
+      "by_path": {
+        "/storage/emulated/0/Android/data/com.osfans.trime.debug/files/rime/installation.yaml": 1,
+        "/storage/emulated/0/Android/data/com.osfans.trime.debug/files/rime/user.yaml": 4,
+        "/storage/emulated/0/Android/data/com.osfans.trime.debug/files/rime/build/default.yaml": 1,
+        "/storage/emulated/0/Android/data/com.osfans.trime.debug/files/rime/build/luna_pinyin.schema.yaml": 1,
+        "/storage/emulated/0/Android/data/com.osfans.trime.debug/files/rime/grammar.yaml": 1
+      },
+      "all_evidence": [
+        {
+          "file": "device-logcat.txt",
+          "line": 27307,
+          "text": "10-28 10:20:25.501  2079  2251 W rime.trime: nonexistent config file '/storage/emulated/0/Android/data/com.osfans.trime.debug/files/rime/installation.yaml'."
+        },
+        {
+          "file": "device-logcat.txt",
+          "line": 27333,
+          "text": "10-28 10:20:25.522  2079  2251 W rime.trime: nonexistent config file '/storage/emulated/0/Android/data/com.osfans.trime.debug/files/rime/user.yaml'."
+        },
+        {
+          "file": "device-logcat.txt",
+          "line": 27395,
+          "text": "10-28 10:20:28.071  2079  2292 W rime.trime: nonexistent config file '/storage/emulated/0/Android/data/com.osfans.trime.debug/files/rime/build/default.yaml'."
+        },
+        {
+          "file": "device-logcat.txt",
+          "line": 27886,
+          "text": "10-28 10:20:28.367  2079  2292 W rime.trime: nonexistent config file '/storage/emulated/0/Android/data/com.osfans.trime.debug/files/rime/build/luna_pinyin.schema.yaml'."
+        },
+        {
+          "file": "device-logcat.txt",
+          "line": 28049,
+          "text": "10-28 10:20:28.433  2079  2292 W rime.trime: nonexistent config file '/storage/emulated/0/Android/data/com.osfans.trime.debug/files/rime/grammar.yaml'."
+        },
+        {
+          "file": "device-logcat.txt",
+          "line": 150341,
+          "text": "10-28 10:22:42.015  1527  2143 W rime.trime: nonexistent config file '/storage/emulated/0/Android/data/com.osfans.trime.debug/files/rime/user.yaml'."
+        },
+        {
+          "file": "device-logcat.txt",
+          "line": 196258,
+          "text": "10-28 10:23:34.751  2269  2378 W rime.trime: nonexistent config file '/storage/emulated/0/Android/data/com.osfans.trime.debug/files/rime/user.yaml'."
+        },
+        {
+          "file": "device-logcat.txt",
+          "line": 297264,
+          "text": "10-28 10:24:20.370  2516  2562 W rime.trime: nonexistent config file '/storage/emulated/0/Android/data/com.osfans.trime.debug/files/rime/user.yaml'."
+        }
+      ]
+    }
+  },
+  "resource_and_platform_events": {
+    "host_memory_samples": 354,
+    "host_min_available_kib": 1063124,
+    "configured_host_memory_floor_kib": 1048576,
+    "memory_floor_stop_triggered": false,
+    "cached_system_app_lmk_count": 3,
+    "cached_system_app_lmk_events": [
+      {
+        "file": "device-logcat.txt",
+        "line": 24053,
+        "text": "10-28 10:15:06.334   141   141 I lowmemorykiller: Kill 'com.android.quicksearchbox' (1306), uid 10103, oom_score_adj 995 to free 101780kB rss, 3200kB swap; reason: low watermark is breached"
+      },
+      {
+        "file": "device-logcat.txt",
+        "line": 24057,
+        "text": "10-28 10:15:06.369   141   141 I lowmemorykiller: Kill 'com.android.printspooler' (1239), uid 10083, oom_score_adj 985 to free 102548kB rss, 3072kB swap; reason: low watermark is breached"
+      },
+      {
+        "file": "device-logcat.txt",
+        "line": 24078,
+        "text": "10-28 10:15:06.415   141   141 I lowmemorykiller: Kill 'com.android.music' (1329), uid 10105, oom_score_adj 965 to free 100884kB rss, 2944kB swap; reason: low watermark is breached"
+      }
+    ],
+    "lmk_scope": "三个LMK回收对象是quicksearchbox、printspooler、music，发生在首次Trime进程启动前；不能省略该内存压力事件。",
+    "emulator_warning_error_events": [
+      {
+        "file": "emulator.log",
+        "line": 25,
+        "text": "ERROR        | Setting read-only feature 'GLAsyncSwap' to '0'"
+      },
+      {
+        "file": "emulator.log",
+        "line": 57,
+        "text": "pulseaudio: Failed to initialize PA contextCould not init `pa' audio driver"
+      },
+      {
+        "file": "emulator.log",
+        "line": 59,
+        "text": "WARNING      | Requested adb port (5587) is outside the recommended range [5555,5586]. ADB may not function properly for the emulator. See -help-port for details."
+      },
+      {
+        "file": "emulator.log",
+        "line": 72,
+        "text": "WARNING      | Not saving state: RAM not mapped as shared"
+      },
+      {
+        "file": "emulator.log",
+        "line": 74,
+        "text": "ERROR        | stop: Not implemented"
+      },
+      {
+        "file": "emulator.log",
+        "line": 75,
+        "text": "WARNING      | Emulator client has not yet been configured.. Call configure me first!"
+      },
+      {
+        "file": "emulator.log",
+        "line": 76,
+        "text": "WARNING      | Netsim Wifi localhost:36967 is gone due to CANCELLED"
+      }
+    ],
+    "emulator_warning_note": "包括GLAsyncSwap只读设置错误、PulseAudio初始化失败、ADB端口范围提示、关机snapshot/netsim/stop提示；正常退出不抹去这些事件。未在run1验证真实语音录音/播放。"
+  },
+  "command_nonzero_outcomes": [
+    {
+      "command_record": "commands/baseline-fixture-pid.json",
+      "exit": 1,
+      "classification": "pidof未找到voice fixture进程，作为未启动fixture的观察记录；不等同于应用崩溃。",
+      "stdout_file": "commands/baseline-fixture-pid.stdout",
+      "stderr_file": "commands/baseline-fixture-pid.stderr"
+    },
+    {
+      "command_record": "commands/enable-trime-control.json",
+      "exit": 255,
+      "classification": "首次ime enable使用错误的相对组件名；enable-trime-correct-component记录完整组件名重试成功。",
+      "stdout_file": "commands/enable-trime-control.stdout",
+      "stderr_file": "commands/enable-trime-control.stderr"
+    },
+    {
+      "command_record": "commands/install-baseline.json",
+      "exit": 1,
+      "classification": "初始诊断APK与已有debug包签名冲突；install-baseline-after-certificate-reset记录重试成功。",
+      "stdout_file": "commands/install-baseline.stdout",
+      "stderr_file": "commands/install-baseline.stderr"
+    },
+    {
+      "command_record": "commands/voice-fixed-fixture-never-launched-pid.json",
+      "exit": 1,
+      "classification": "pidof未找到voice fixture进程，作为未启动fixture的观察记录；不等同于应用崩溃。",
+      "stdout_file": "commands/voice-fixed-fixture-never-launched-pid.stdout",
+      "stderr_file": "commands/voice-fixed-fixture-never-launched-pid.stderr"
+    },
+    {
+      "command_record": "commands/voice-reboot-fixture-pid2.json",
+      "exit": 1,
+      "classification": "pidof未找到voice fixture进程，作为未启动fixture的观察记录；不等同于应用崩溃。",
+      "stdout_file": "commands/voice-reboot-fixture-pid2.stdout",
+      "stderr_file": "commands/voice-reboot-fixture-pid2.stderr"
+    },
+    {
+      "command_record": "commands/voice-reboot-poll-0.json",
+      "exit": 1,
+      "classification": "命令重启期间ADB device offline；voice-reboot-state随后device，voice-reboot-final-ready返回sys.boot_completed=1。",
+      "stdout_file": "commands/voice-reboot-poll-0.stdout",
+      "stderr_file": "commands/voice-reboot-poll-0.stderr"
+    },
+    {
+      "command_record": "commands/voice-reboot-poll-1.json",
+      "exit": 1,
+      "classification": "命令重启期间ADB device offline；voice-reboot-state随后device，voice-reboot-final-ready返回sys.boot_completed=1。",
+      "stdout_file": "commands/voice-reboot-poll-1.stdout",
+      "stderr_file": "commands/voice-reboot-poll-1.stderr"
+    },
+    {
+      "command_record": "commands/voice-reboot-poll-2.json",
+      "exit": 1,
+      "classification": "命令重启期间ADB device offline；voice-reboot-state随后device，voice-reboot-final-ready返回sys.boot_completed=1。",
+      "stdout_file": "commands/voice-reboot-poll-2.stdout",
+      "stderr_file": "commands/voice-reboot-poll-2.stderr"
+    },
+    {
+      "command_record": "commands/voice-reboot-poll-3.json",
+      "exit": 1,
+      "classification": "命令重启期间ADB device offline；voice-reboot-state随后device，voice-reboot-final-ready返回sys.boot_completed=1。",
+      "stdout_file": "commands/voice-reboot-poll-3.stdout",
+      "stderr_file": "commands/voice-reboot-poll-3.stderr"
+    },
+    {
+      "command_record": "commands/voice-reboot-poll-4.json",
+      "exit": 1,
+      "classification": "命令重启期间ADB device offline；voice-reboot-state随后device，voice-reboot-final-ready返回sys.boot_completed=1。",
+      "stdout_file": "commands/voice-reboot-poll-4.stdout",
+      "stderr_file": "commands/voice-reboot-poll-4.stderr"
+    },
+    {
+      "command_record": "commands/voice-reboot-poll-5.json",
+      "exit": 1,
+      "classification": "命令重启期间ADB device offline；voice-reboot-state随后device，voice-reboot-final-ready返回sys.boot_completed=1。",
+      "stdout_file": "commands/voice-reboot-poll-5.stdout",
+      "stderr_file": "commands/voice-reboot-poll-5.stderr"
+    }
+  ],
+  "reporting_constraints": [
+    "不得称run1运行零警告或零崩溃。",
+    "不得用正常emulator exit0替代业务验收结果。",
+    "必须将旧helper FATAL与生产候选触控路径区分，并保留其导致Trime进程崩溃的事实。",
+    "系统UI/电话ANR与Trime/vendor警告均须保留；原报告设备及其他路径不得据此扩展声明通过。"
+  ]
+}

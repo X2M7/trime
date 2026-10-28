@@ -21,7 +21,7 @@
 
 事项性质为 **46 条缺陷报告、57 条功能请求、9 条咨询、5 条维护事项**。优先级是调查顺序：P1 11 条、P2 74 条、P3 32 条。没有把尚未当前复现的历史存储替换行为标成 P0 故障。下一步分流为：当前复现 11、历史回归 25、补信息 12、已有 PR 跟进 6、配置/文档 21、设计讨论 36、依赖协作 6。缺陷标签和历史日志都不等于当前版本已确认仍存在。
 
-### 首批处理顺序
+### 首批处理顺序（09:34 分诊快照）
 
 详细边界、前置条件和验收见[修复/PR 排程](checks/issue-triage-20261028/pr-queue.json)。
 
@@ -34,9 +34,25 @@
 
 隐私 [#938](https://github.com/osfans/trime/issues/938)/[#2011](https://github.com/osfans/trime/issues/2011) 需先核对 librime 学习控制能力；[#1556](https://github.com/osfans/trime/issues/1556)/[#1645](https://github.com/osfans/trime/issues/1645)/[#2003](https://github.com/osfans/trime/issues/2003) 可共享鸿蒙超界触摸调查，但系统归因仍待证明。配置文档 [#1905](https://github.com/osfans/trime/issues/1905)/[#1269](https://github.com/osfans/trime/issues/1269) 可与设备调查并行。
 
+### 首批修复 PR 进度（2026-10-28，已正式待审）
+
+09:34 分诊快照之后新增三个独立修复 PR，均基于 `a047f747`，现为 **Open／Ready for review**。各 PR 的 `lint-and-test` 和四系统构建检查均成功，共 **15/15 项 CI 检查**；这是检查数，不是应用测试用例数。[本批进度与身份记录](checks/issue-fixes-20261028/progress.json)单列实际构建 commit、原 APK／诊断副本、限定验收与[正式待审回执](checks/issue-fixes-20261028/publication/ready-summary.json)。原 117 条 issue／7 个 PR 统计保留其抓取时含义。
+
+| 类别 | PR／源码 | Issue 关系与修复范围 | CI／Android 15 限定验证 |
+| --- | --- | --- | --- |
+| B 输入、方案与候选 | [#2198](https://github.com/osfans/trime/pull/2198)／`e1e0ece9` | Related [#1879](https://github.com/osfans/trime/issues/1879)；阻止候选替换工具栏后执行旧按钮动作，未覆盖全部时序 | [5/5](https://github.com/osfans/trime/actions/runs/40617988425)；原版复现，修复版三个 View 分派控制通过 |
+| D 存储、配置、部署与用户词库 | [#2199](https://github.com/osfans/trime/pull/2199)／`d6567c25` | Fixes [#2095](https://github.com/osfans/trime/issues/2095)；同步前告知及确认、取消保留选择；[#2140](https://github.com/osfans/trime/issues/2140)／确认后失败事务回滚未解决 | [5/5](https://github.com/osfans/trime/actions/runs/40617995073)；11 项确认／取消、保存关联及单文件导入检查 |
+| F 手势、光标、按键反馈与语音 | [#2200](https://github.com/osfans/trime/pull/2200)／`c7501279` | Fixes [#2153](https://github.com/osfans/trime/issues/2153)；精确声明 IME 包可见性，原报告 ColorOS 设备未复测 | [5/5](https://github.com/osfans/trime/actions/runs/40618431171)；原版空列表、修复版显示／选择及禁用刷新对照通过 |
+
+[候选记录](checks/issue-fixes-20261028/runtime/candidate-validation.json)与[helper 原始源码](checks/issue-fixes-20261028/runtime/CandidateTouchTargetInstrumentation.kt.txt)、[语音记录](checks/issue-fixes-20261028/runtime/voice-validation.json)、[存储记录](checks/issue-fixes-20261028/runtime/storage-validation.json)明确区分实际覆盖与未测试项。候选使用未挂载窗口的生产 View、合成 MotionEvent 与记录型 Rime stub，未执行真实提交或系统 InputDispatcher 时序；语音未测试实际识别／切换、修复包已安装后跨重启和目标 ColorOS；存储仅复核所列字段／单文件，没有推导完整词库质量。早期空 `dumpsys uri_grants` 不能证明授权不变，后续已有关联／重选用 `dumpsys activity permissions` 实际核对持久化读写授权；原失败和采集误判均保留。
+
+原 CI APK 与 PR head 的完整 Git tree 相同，实际构建 commit 单列。模拟器对照使用共同本地证书重签名副本，核对所有非签名 ZIP 条目相同；不代表原签名安装、升级或 Release 验收。两轮 VM 正常退出，测试辅助包已清理、动画设置恢复；[49 个原始 AVD／system-image 源文件](checks/issue-fixes-20261028/runtime/source-assets-final-check.json)未变，无本轮 VM／构建残留，文件索引保持运行。
+
+**警告未全部消除**：[CI](checks/issue-fixes-20261028/final-ci-review.json)、[run1](checks/issue-fixes-20261028/runtime/run1/log-review.json)、[run2](checks/issue-fixes-20261028/runtime/run2/log-review.json)保留具体归因及范围。旧 helper FATAL、系统 ANR／回收、工具和依赖警告未隐藏；run2 已采集 Trime 生命周期仍有 302 条 W，含 193 条 librime Encode failure，不推导全部来自系统或词库质量已通过。后续优先调查 #2140、#1981 和原生编码／配置警告，再推进窗口、主题与 TalkBack 排程。本索引仅提交所选文字报告和 helper 源码，APK、原图、磁盘与完整日志仍保留于本地构建证据目录。
+
 ### 先跟进已有 PR，避免重复
 
-[7 项 PR 的源码身份、覆盖与排除范围](checks/issue-triage-20261028/existing-pr-overlap.json)已核对正文；待审不等于已合并。
+09:34 快照中 [7 项 PR 的源码身份、覆盖与排除范围](checks/issue-triage-20261028/existing-pr-overlap.json)已核对正文；待审不等于已合并。
 
 | Issue/需求 | 已有 PR | 本轮判断 |
 | --- | --- | --- |
@@ -49,7 +65,7 @@
 
 **拆分规则**：类别是排期桶；一个 PR 交付一个完整用户行为和回归。多条 issue 只有在同因、同修复、同验收被证明后才合并，不按一行/一个文件机械拆分，也不把整个类别打包成巨型 PR。新修复从最新上游 develop 建干净分支，清掉 fork 发布/Pages 配置；完整解决用 `Fixes`，局部支持用 `Related`。
 
-本轮只做分诊和静态调查，没有运行构建、模拟器、真机或新测试；没有更改上游 issue 标签/状态、发送评论或创建新 PR。旧源码已有能力与历史反馈仍需当前回归；不把缺少信息、第三方修改版或预期配置行为写成已确认缺陷。以下保留既有 PR 验收与评审记录。
+上述 09:34 分诊快照只做分诊和静态调查，没有运行构建、模拟器、真机或新测试；当时没有更改上游 issue 标签/状态、发送评论或创建新 PR。后续新增 PR、CI 与限定模拟器结果单列于前述首批修复表。旧源码已有能力与历史反馈仍需当前回归；不把缺少信息、第三方修改版或预期配置行为写成已确认缺陷。以下保留既有 PR 验收与评审记录。
 
 ## #2183 Galaxy S24 Ultra 真机反馈（2026-10-28）
 

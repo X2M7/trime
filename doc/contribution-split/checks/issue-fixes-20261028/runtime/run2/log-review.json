@@ -1,0 +1,944 @@
+{
+  "schema_version": 1,
+  "reviewed_at_utc": "2026-10-28T02:47:15.918303+00:00",
+  "scope": "只读审查已结束run2的completion.json、device-logcat.txt、emulator.log、memory.jsonl及428份commands/*.json和对应输出；未执行ADB、VM、构建、源码或PR修改。",
+  "overall_result": "normal_shutdown_with_recorded_system_anrs_vendor_warnings_and_collection_failures",
+  "summary": "run2按normal-stop-request结束，emulator exit0，collector -15为收尾清理且cleanup_errors为空。保留日志记录SystemUI与phone各1次系统ANR，均早于首次Trime进程启动；Trime生命周期内有302条W、0条E/F，未观察到Java FATAL或native fatal signal。193条Encode failure等librime警告、15个非零采集/观察命令以及平台/模拟器警告必须保留；正常退出不能扩大为全部功能通过。",
+  "lifecycle": {
+    "completion_file": "completion.json",
+    "reason": "normal-stop-request",
+    "emulator_exit": 0,
+    "normal_kill_exit": 0,
+    "cleanup_errors": [],
+    "started_utc": "2026-10-28T02:27:06.118758+00:00",
+    "finished_utc": "2026-10-28T02:44:23.142406+00:00",
+    "collector_segments": [
+      {
+        "pid": 258826,
+        "exit": -15
+      }
+    ],
+    "collector_note": "唯一保留collector段exit -15与normal-stop清理一致；这是采集进程终止值，不是应用FATAL或业务通过结果。"
+  },
+  "log_coverage": {
+    "device_logcat_file": "device-logcat.txt",
+    "sha256": "9b5b2c04f3be9af77be1269451413379d70757ab24e1f1422bf95ceeba7d098c",
+    "bytes": 141514623,
+    "total_lines": 1897896,
+    "level_line_counts": {
+      "W": 7305,
+      "I": 1868321,
+      "D": 13972,
+      "E": 1900,
+      "V": 6393
+    },
+    "line_count_note": "计数为日志行数，非独立故障次数；包括多个日志buffer的交织。设备10:xx对应host UTC 02:xx。",
+    "top_platform_warning_error_tags": [
+      {
+        "level": "W",
+        "tag": "IPCThreadState",
+        "lines": 2232
+      },
+      {
+        "level": "W",
+        "tag": "app_process",
+        "lines": 454
+      },
+      {
+        "level": "W",
+        "tag": "ActivityManager",
+        "lines": 364
+      },
+      {
+        "level": "W",
+        "tag": "MagnificationConnectionManager",
+        "lines": 350
+      },
+      {
+        "level": "W",
+        "tag": "Looper",
+        "lines": 267
+      },
+      {
+        "level": "E",
+        "tag": "SystemServiceRegistry",
+        "lines": 218
+      },
+      {
+        "level": "W",
+        "tag": "FrameTracker",
+        "lines": 203
+      },
+      {
+        "level": "W",
+        "tag": "rime.trime",
+        "lines": 201
+      },
+      {
+        "level": "E",
+        "tag": "StrictMode",
+        "lines": 185
+      },
+      {
+        "level": "E",
+        "tag": "Overrides",
+        "lines": 179
+      },
+      {
+        "level": "E",
+        "tag": "ActivityManager",
+        "lines": 168
+      },
+      {
+        "level": "W",
+        "tag": "system_server",
+        "lines": 157
+      },
+      {
+        "level": "W",
+        "tag": "PackageSettings",
+        "lines": 153
+      },
+      {
+        "level": "W",
+        "tag": "PackageManager",
+        "lines": 135
+      },
+      {
+        "level": "W",
+        "tag": "logd",
+        "lines": 126
+      }
+    ],
+    "boot_progress_events": [
+      {
+        "file": "device-logcat.txt",
+        "line": 2887,
+        "text": "10-28 10:27:28.756   345   345 I boot_progress_start: 18129"
+      }
+    ],
+    "slow_reader_prune_warnings": {
+      "line_count": 126,
+      "reader_pid": 459,
+      "reader_identification": [
+        {
+          "file": "device-logcat.txt",
+          "line": 2848,
+          "text": "10-28 10:27:28.418     0     0 I init    : ... started service 'goldfish-logcat' has pid 459"
+        }
+      ],
+      "evidence_samples": [
+        {
+          "file": "device-logcat.txt",
+          "line": 325659,
+          "text": "10-28 10:31:23.862     0     0 W logd    : Skipping entries from slow reader, pid 459, fd 14, from LogBuffer::Prune()"
+        },
+        {
+          "file": "device-logcat.txt",
+          "line": 332742,
+          "text": "10-28 10:31:26.120     0     0 W logd    : Skipping entries from slow reader, pid 459, fd 14, from LogBuffer::Prune()"
+        },
+        {
+          "file": "device-logcat.txt",
+          "line": 1856645,
+          "text": "10-28 10:38:42.839     0     0 W logd    : Skipping entries from slow reader, pid 459, fd 14, from LogBuffer::Prune()"
+        }
+      ],
+      "classification": "logd对goldfish-logcat reader的LogBuffer::Prune警告；PID459由init启动证据识别，不能直接认定为本次ADB collector的丢失。日志覆盖未另行证明完全无遗漏，缺少某事件不能绝对排除未保留事件。"
+    }
+  },
+  "system_anrs": {
+    "count": 2,
+    "by_package": {
+      "com.android.systemui": 1,
+      "com.android.phone": 1
+    },
+    "events": [
+      {
+        "package": "com.android.systemui",
+        "pid": 794,
+        "reason": "executing service com.android.systemui/.keyguard.KeyguardService, waited 20392ms",
+        "classification": "system_process_anr",
+        "am_anr_line": 17045,
+        "evidence": {
+          "file": "device-logcat.txt",
+          "line": 18065,
+          "text": "10-28 10:27:57.467   554  1355 E ActivityManager: ANR in com.android.systemui"
+        }
+      },
+      {
+        "package": "com.android.phone",
+        "pid": 916,
+        "reason": "executing service com.android.phone/.TelephonyDebugService, waited 20216ms",
+        "classification": "system_process_anr",
+        "am_anr_line": 18335,
+        "evidence": {
+          "file": "device-logcat.txt",
+          "line": 18385,
+          "text": "10-28 10:27:57.903   554  1355 E ActivityManager: ANR in com.android.phone"
+        }
+      }
+    ],
+    "impact": "均早于第19048行首次Trime am_proc_start；按系统package/reason归属，不将系统ANR算作Trime业务ANR，也不据此推断ANR根因。ANR backtrace的tombstoned intercept记录不是native fatal signal。"
+  },
+  "helper_and_assertion_outcomes": {
+    "fatal_event_count": 0,
+    "baseline": {
+      "shell_exit": 0,
+      "instrumentation_code": 1,
+      "passed": false,
+      "stage": "cross_switch_toolbar_up",
+      "assertion": "java.lang.IllegalStateException: Hidden toolbar menu opened on stale ACTION_UP",
+      "classification": "新版helper捕获并报告baseline业务断言失败；不是run1的fixture构造FATAL，也未在本日志观察到该断言导致进程崩溃。",
+      "evidence": {
+        "file": "commands/baseline-probe5.stdout",
+        "line": 2,
+        "text": "INSTRUMENTATION_RESULT: passed=false"
+      }
+    },
+    "fixed": {
+      "shell_exit": 0,
+      "instrumentation_code": -1,
+      "passed": true,
+      "stage": "complete",
+      "evidence": {
+        "file": "commands/candidate-fixed-probe5.stdout",
+        "line": 2,
+        "text": "INSTRUMENTATION_RESULT: passed=true"
+      }
+    },
+    "scope": "production View.dispatchTouchEvent + synthetic MotionEvents + unattached views；报告明确input dispatcher、真实渲染帧/视觉时序、物理设备及rime operations未执行。不能扩展为真机完整触控验收。",
+    "process_exit_note": "PID1597和2045分别由finished inst正常结束；Zygote signal9应结合am_kill归属，不能当作native crash。"
+  },
+  "trime_process_review": {
+    "attribution_method": "逐行跟踪boot_progress_start与所有am_proc_start，按am_kill/am_proc_died结束PID归属；W/E/F只计入当时归属com.osfans.trime.debug的PID，避免PID复用误判。",
+    "process_starts": [
+      {
+        "pid": 1597,
+        "line": 19048,
+        "device_timestamp": "10-28 10:28:00.027",
+        "message": "[0,1597,10160,com.osfans.trime.debug,added application,com.osfans.trime.debug]"
+      },
+      {
+        "pid": 2045,
+        "line": 25952,
+        "device_timestamp": "10-28 10:28:38.740",
+        "message": "[0,2045,10160,com.osfans.trime.debug,added application,com.osfans.trime.debug]"
+      },
+      {
+        "pid": 2086,
+        "line": 26608,
+        "device_timestamp": "10-28 10:29:08.904",
+        "message": "[0,2086,10160,com.osfans.trime.debug,next-top-activity,{com.osfans.trime.debug/com.osfans.trime.ui.main.MainActivity}]"
+      },
+      {
+        "pid": 2362,
+        "line": 101745,
+        "device_timestamp": "10-28 10:30:08.462",
+        "message": "[0,2362,10160,com.osfans.trime.debug,next-top-activity,{com.osfans.trime.debug/com.osfans.trime.ui.main.MainActivity}]"
+      },
+      {
+        "pid": 3356,
+        "line": 1452123,
+        "device_timestamp": "10-28 10:35:07.774",
+        "message": "[0,3356,10160,com.osfans.trime.debug,next-top-activity,{com.osfans.trime.debug/com.osfans.trime.ui.main.MainActivity}]"
+      }
+    ],
+    "process_exit_events": [
+      {
+        "line": 25013,
+        "device_timestamp": "10-28 10:28:25.189",
+        "event": "am_kill",
+        "message": "[0,1597,com.osfans.trime.debug,0,stop com.osfans.trime.debug due to finished inst,186624]"
+      },
+      {
+        "line": 26230,
+        "device_timestamp": "10-28 10:28:41.063",
+        "event": "am_kill",
+        "message": "[0,2045,com.osfans.trime.debug,0,stop com.osfans.trime.debug due to finished inst,196352]"
+      },
+      {
+        "line": 101320,
+        "device_timestamp": "10-28 10:30:05.475",
+        "event": "am_kill",
+        "message": "[0,2086,com.osfans.trime.debug,0,stop com.osfans.trime.debug due to installPackageLI,220456]"
+      },
+      {
+        "line": 1452005,
+        "device_timestamp": "10-28 10:35:07.130",
+        "event": "am_kill",
+        "message": "[0,2362,com.osfans.trime.debug,0,stop com.osfans.trime.debug due to from pid 3344,271804]"
+      }
+    ],
+    "per_pid_warning_error_lines": {
+      "1597": {
+        "W": 21
+      },
+      "2045": {
+        "W": 11
+      },
+      "2086": {
+        "W": 14
+      },
+      "2362": {
+        "W": 221
+      },
+      "3356": {
+        "W": 35
+      }
+    },
+    "warning_lines": 302,
+    "error_lines": 0,
+    "fatal_level_lines": 0,
+    "trime_anr_events_observed": 0,
+    "java_fatal_events_observed": 0,
+    "native_fatal_signal_events_observed": 0,
+    "warning_error_groups": [
+      {
+        "level": "W",
+        "tag": "ans.trime.debug",
+        "log_line_count": 31,
+        "evidence_samples": [
+          {
+            "file": "device-logcat.txt",
+            "line": 19086,
+            "text": "10-28 10:28:00.220  1597  1597 W ans.trime.debug: Unexpected CPU variant for x86: x86_64."
+          },
+          {
+            "file": "device-logcat.txt",
+            "line": 19087,
+            "text": "10-28 10:28:00.220  1597  1597 W ans.trime.debug: Known variants: atom, sandybridge, silvermont, goldmont, goldmont-plus, goldmont-without-sha-xsaves, tremont, kabylake, default"
+          },
+          {
+            "file": "device-logcat.txt",
+            "line": 21964,
+            "text": "10-28 10:28:13.310  1597  1597 W ans.trime.debug: Verification of void kotlinx.coroutines.JobSupport.completeStateFinalization(kotlinx.coroutines.Incomplete, java.lang.Object) took 108.347ms (886.04 bytecodes/s) (4304B approximate peak alloc)"
+          },
+          {
+            "file": "device-logcat.txt",
+            "line": 22066,
+            "text": "10-28 10:28:13.625  1597  1597 W ans.trime.debug: Verification of kotlin.sequences.Sequence kotlinx.coroutines.JobSupport.getChildren() took 167.452ms (77.63 bytecodes/s) (2416B approximate peak alloc)"
+          }
+        ],
+        "classification": "ART/x86 CPU variant、隐藏API/类校验耗时等运行时提示；不是FATAL异常。"
+      },
+      {
+        "level": "W",
+        "tag": "ActivityThread",
+        "log_line_count": 2,
+        "evidence_samples": [
+          {
+            "file": "device-logcat.txt",
+            "line": 19168,
+            "text": "10-28 10:28:01.031  1597  1597 W ActivityThread: Package uses different ABI(s) than its instrumentation: package[com.osfans.trime.debug]: x86_64, null instrumentation[com.osfans.trime.debug.test]: null, null"
+          },
+          {
+            "file": "device-logcat.txt",
+            "line": 25962,
+            "text": "10-28 10:28:38.879  2045  2045 W ActivityThread: Package uses different ABI(s) than its instrumentation: package[com.osfans.trime.debug]: x86_64, null instrumentation[com.osfans.trime.debug.test]: null, null"
+          }
+        ],
+        "classification": "两次instrumentation启动的目标/测试APK ABI元数据差异警告。"
+      },
+      {
+        "level": "W",
+        "tag": "ziparchive",
+        "log_line_count": 22,
+        "evidence_samples": [
+          {
+            "file": "device-logcat.txt",
+            "line": 19180,
+            "text": "10-28 10:28:01.092  1597  1597 W ziparchive: Unable to open '/data/app/~~whLhST14HpE76qcUot-IJw==/com.osfans.trime.debug.test-aGkmir_C4p-BJT-t5jKJqw==/base.dm': No such file or directory"
+          },
+          {
+            "file": "device-logcat.txt",
+            "line": 19181,
+            "text": "10-28 10:28:01.092  1597  1597 W ziparchive: Unable to open '/data/app/~~whLhST14HpE76qcUot-IJw==/com.osfans.trime.debug.test-aGkmir_C4p-BJT-t5jKJqw==/base.dm': No such file or directory"
+          },
+          {
+            "file": "device-logcat.txt",
+            "line": 19206,
+            "text": "10-28 10:28:01.235  1597  1597 W ziparchive: Unable to open '/data/app/~~sd-muDyS1ja6BGB-si7mVQ==/com.osfans.trime.debug-HTnijz3V9eEAsY9Jo2uPHw==/base.dm': No such file or directory"
+          },
+          {
+            "file": "device-logcat.txt",
+            "line": 19207,
+            "text": "10-28 10:28:01.235  1597  1597 W ziparchive: Unable to open '/data/app/~~sd-muDyS1ja6BGB-si7mVQ==/com.osfans.trime.debug-HTnijz3V9eEAsY9Jo2uPHw==/base.dm': No such file or directory"
+          }
+        ],
+        "classification": "APK旁base.dm dex元数据文件不存在；警告不表示APK本身不存在。"
+      },
+      {
+        "level": "W",
+        "tag": "HWUI",
+        "log_line_count": 9,
+        "evidence_samples": [
+          {
+            "file": "device-logcat.txt",
+            "line": 26778,
+            "text": "10-28 10:29:12.341  2086  2086 W HWUI    : Unknown dataspace 0"
+          },
+          {
+            "file": "device-logcat.txt",
+            "line": 26794,
+            "text": "10-28 10:29:12.493  2086  2111 W HWUI    : Failed to choose config with EGL_SWAP_BEHAVIOR_PRESERVED, retrying without..."
+          },
+          {
+            "file": "device-logcat.txt",
+            "line": 26795,
+            "text": "10-28 10:29:12.494  2086  2111 W HWUI    : Failed to initialize 101010-2 format, error = EGL_SUCCESS"
+          },
+          {
+            "file": "device-logcat.txt",
+            "line": 101933,
+            "text": "10-28 10:30:12.536  2362  2362 W HWUI    : Unknown dataspace 0"
+          }
+        ],
+        "classification": "模拟器图形配置/色彩空间警告，包括EGL配置回退、Unknown dataspace及101010-2格式提示。"
+      },
+      {
+        "level": "W",
+        "tag": "WindowOnBackDispatcher",
+        "log_line_count": 35,
+        "evidence_samples": [
+          {
+            "file": "device-logcat.txt",
+            "line": 27158,
+            "text": "10-28 10:29:33.798  2086  2086 W WindowOnBackDispatcher: sendCancelIfRunning: isInProgress=false callback=android.view.ViewRootImpl$$ExternalSyntheticLambda11@de86726"
+          },
+          {
+            "file": "device-logcat.txt",
+            "line": 27303,
+            "text": "10-28 10:29:35.542  2086  2086 W WindowOnBackDispatcher: OnBackInvokedCallback is not enabled for the application."
+          },
+          {
+            "file": "device-logcat.txt",
+            "line": 27304,
+            "text": "10-28 10:29:35.542  2086  2086 W WindowOnBackDispatcher: Set 'android:enableOnBackInvokedCallback=\"true\"' in the application manifest."
+          },
+          {
+            "file": "device-logcat.txt",
+            "line": 27653,
+            "text": "10-28 10:29:39.475  2086  2086 W WindowOnBackDispatcher: sendCancelIfRunning: isInProgress=false callback=android.view.ViewRootImpl$$ExternalSyntheticLambda11@44dc697"
+          }
+        ],
+        "classification": "返回回调manifest设置与sendCancelIfRunning状态提示。"
+      },
+      {
+        "level": "W",
+        "tag": "rime.trime",
+        "log_line_count": 201,
+        "evidence_samples": [
+          {
+            "file": "device-logcat.txt",
+            "line": 27482,
+            "text": "10-28 10:29:36.393  2086  2233 W rime.trime: nonexistent config file '/storage/emulated/0/Android/data/com.osfans.trime.debug/files/rime/user.yaml'."
+          },
+          {
+            "file": "device-logcat.txt",
+            "line": 102449,
+            "text": "10-28 10:30:28.265  2362  2468 W rime.trime: nonexistent config file '/storage/emulated/0/Android/data/com.osfans.trime.debug/files/rime/user.yaml'."
+          },
+          {
+            "file": "device-logcat.txt",
+            "line": 546163,
+            "text": "10-28 10:32:07.584  2362  2478 W rime.trime: Encode failure: '亞歷山大·杜布切克'."
+          },
+          {
+            "file": "device-logcat.txt",
+            "line": 546164,
+            "text": "10-28 10:32:07.590  2362  2478 W rime.trime: Encode failure: '亞當·斯密'."
+          }
+        ],
+        "classification": "librime共201条W：193条词条Encode failure、7条缺配置文件、1条Glog已初始化；来自启动和词库部署/编译时段，保留为vendor运行警告。"
+      },
+      {
+        "level": "W",
+        "tag": "InputEventReceiver",
+        "log_line_count": 2,
+        "evidence_samples": [
+          {
+            "file": "device-logcat.txt",
+            "line": 546495,
+            "text": "10-28 10:32:25.076  2362  2362 W InputEventReceiver: Attempted to finish an input event but the input event receiver has already been disposed."
+          },
+          {
+            "file": "device-logcat.txt",
+            "line": 1424141,
+            "text": "10-28 10:35:01.628  2362  2362 W InputEventReceiver: Attempted to finish an input event but the input event receiver has already been disposed."
+          }
+        ],
+        "classification": "两条输入事件receiver已销毁后尝试结束事件提示。"
+      }
+    ],
+    "rime_warning_breakdown": [
+      {
+        "message_group": "nonexistent config file '/storage/emulated/0/Android/data/com.osfans.trime.debug/files/rime/user.yaml'.",
+        "log_line_count": 4,
+        "evidence_sample": {
+          "file": "device-logcat.txt",
+          "line": 27482,
+          "text": "10-28 10:29:36.393  2086  2233 W rime.trime: nonexistent config file '/storage/emulated/0/Android/data/com.osfans.trime.debug/files/rime/user.yaml'."
+        }
+      },
+      {
+        "message_group": "Encode failure",
+        "log_line_count": 193,
+        "evidence_sample": {
+          "file": "device-logcat.txt",
+          "line": 546163,
+          "text": "10-28 10:32:07.584  2362  2478 W rime.trime: Encode failure: '亞歷山大·杜布切克'."
+        }
+      },
+      {
+        "message_group": "nonexistent config file '/storage/emulated/0/Android/data/com.osfans.trime.debug/files/rime/build/stroke.schema.yaml'.",
+        "log_line_count": 1,
+        "evidence_sample": {
+          "file": "device-logcat.txt",
+          "line": 1117377,
+          "text": "10-28 10:33:54.719  2362  2478 W rime.trime: nonexistent config file '/storage/emulated/0/Android/data/com.osfans.trime.debug/files/rime/build/stroke.schema.yaml'."
+        }
+      },
+      {
+        "message_group": "nonexistent config file '/storage/emulated/0/Android/data/com.osfans.trime.debug/files/rime/build/luna_pinyin_simp.schema.yaml'.",
+        "log_line_count": 1,
+        "evidence_sample": {
+          "file": "device-logcat.txt",
+          "line": 1892806,
+          "text": "10-28 10:40:33.140  3356  3781 W rime.trime: nonexistent config file '/storage/emulated/0/Android/data/com.osfans.trime.debug/files/rime/build/luna_pinyin_simp.schema.yaml'."
+        }
+      },
+      {
+        "message_group": "nonexistent config file '/storage/emulated/0/Android/data/com.osfans.trime.debug/files/rime/grammar.yaml'.",
+        "log_line_count": 1,
+        "evidence_sample": {
+          "file": "device-logcat.txt",
+          "line": 1893007,
+          "text": "10-28 10:40:33.445  3356  3781 W rime.trime: nonexistent config file '/storage/emulated/0/Android/data/com.osfans.trime.debug/files/rime/grammar.yaml'."
+        }
+      },
+      {
+        "message_group": "Glog is already initialized.",
+        "log_line_count": 1,
+        "evidence_sample": {
+          "file": "device-logcat.txt",
+          "line": 1893981,
+          "text": "10-28 10:40:37.517  3356  3775 W rime.trime: Glog is already initialized."
+        }
+      }
+    ],
+    "rime_compile_observations": {
+      "classification": "首次/后续启动及存储正向流程触发JNI/librime维护、词库与prism构建，长时间工作期间仍出现Encode failure及缺配置W；日志中编译活动不等于所有词条或功能通过。",
+      "evidence_samples": [
+        {
+          "file": "device-logcat.txt",
+          "line": 27491,
+          "text": "10-28 10:29:36.402  2086  2250 I rime.trime: running deployment tasks:"
+        },
+        {
+          "file": "device-logcat.txt",
+          "line": 27938,
+          "text": "10-28 10:29:45.184  2086  2250 I rime.trime: compiling dictionary for /storage/emulated/0/Android/data/com.osfans.trime.debug/files/rime/build/luna_pinyin.schema.yaml"
+        },
+        {
+          "file": "device-logcat.txt",
+          "line": 102455,
+          "text": "10-28 10:30:28.271  2362  2478 I rime.trime: running deployment tasks:"
+        },
+        {
+          "file": "device-logcat.txt",
+          "line": 102853,
+          "text": "10-28 10:30:37.424  2362  2478 I rime.trime: compiling dictionary for /storage/emulated/0/Android/data/com.osfans.trime.debug/files/rime/build/luna_pinyin.schema.yaml"
+        },
+        {
+          "file": "device-logcat.txt",
+          "line": 1894086,
+          "text": "10-28 10:40:37.636  3356  4182 I rime.trime: running deployment tasks:"
+        },
+        {
+          "file": "device-logcat.txt",
+          "line": 1894502,
+          "text": "10-28 10:40:43.707  3356  4182 I rime.trime: compiling dictionary for /storage/emulated/0/Android/data/com.osfans.trime.debug/files/rime/build/luna_pinyin.schema.yaml"
+        },
+        {
+          "file": "device-logcat.txt",
+          "line": 1894546,
+          "text": "10-28 10:40:45.031  3356  4182 I rime.trime: compiling dictionary for /storage/emulated/0/Android/data/com.osfans.trime.debug/files/rime/build/stroke.schema.yaml"
+        },
+        {
+          "file": "device-logcat.txt",
+          "line": 1894583,
+          "text": "10-28 10:40:47.422  3356  4182 I rime.trime: compiling dictionary for /storage/emulated/0/Android/data/com.osfans.trime.debug/files/rime/build/luna_pinyin_simp.schema.yaml"
+        }
+      ]
+    },
+    "limitations": "0 E/F/FATAL/ANR是保留日志内的观察，不构成无缺陷或所有生产路径通过保证。"
+  },
+  "resource_and_platform_events": {
+    "host_memory_samples": 517,
+    "host_min_available_kib": 1494692,
+    "configured_host_memory_floor_kib": 1048576,
+    "memory_floor_stop_triggered": false,
+    "observed_lowmemorykiller_Kill_line_count": 0,
+    "cached_system_app_lmk_events": [],
+    "memory_note": "未匹配到lowmemorykiller的Kill应用记录；不能把其他am_kill/正常安装、force-stop或收尾的signal9误记为LMK/native crash。",
+    "emulator_warning_error_events": [
+      {
+        "file": "emulator.log",
+        "line": 26,
+        "text": "ERROR        | Setting read-only feature 'GLAsyncSwap' to '0'"
+      },
+      {
+        "file": "emulator.log",
+        "line": 58,
+        "text": "pulseaudio: Failed to initialize PA contextCould not init `pa' audio driver"
+      },
+      {
+        "file": "emulator.log",
+        "line": 70,
+        "text": "WARNING      | Not saving state: RAM not mapped as shared"
+      },
+      {
+        "file": "emulator.log",
+        "line": 72,
+        "text": "ERROR        | stop: Not implemented"
+      },
+      {
+        "file": "emulator.log",
+        "line": 73,
+        "text": "WARNING      | Emulator client has not yet been configured.. Call configure me first!"
+      },
+      {
+        "file": "emulator.log",
+        "line": 74,
+        "text": "WARNING      | Netsim Wifi localhost:42287 is gone due to CANCELLED"
+      }
+    ],
+    "emulator_warning_note": "保留GLAsyncSwap只读设置、PulseAudio初始化失败和关机snapshot/stop/netsim警告；未发生run1使用端口范围警告，本run端口为5582。"
+  },
+  "command_nonzero_outcomes": [
+    {
+      "command_record": "commands/storage-positive-associated-manifest.json",
+      "exit": 1,
+      "classification": "关联进行中的首次manifest读取返回不存在；之后同一路径的authoritative及completed-state采集成功，不能把中间读数当最终同步失败。",
+      "stdout_file": "commands/storage-positive-associated-manifest.stdout",
+      "stderr_file": "commands/storage-positive-associated-manifest.stderr",
+      "stdout": "",
+      "stderr": "cat: /data/user_de/0/com.osfans.trime.debug/.sync-manifest.json: No such file or directory\n"
+    },
+    {
+      "command_record": "commands/storage-positive-work-file-v2.json",
+      "exit": 1,
+      "classification": "run-as读取外部工作目录被Permission denied拒绝，属于采集方式权限失败；随后storage-positive-work-file-shell及storage-positive-imported-working-sentinel用shell读取成功。",
+      "stdout_file": "commands/storage-positive-work-file-v2.stdout",
+      "stderr_file": "commands/storage-positive-work-file-v2.stderr",
+      "stdout": "",
+      "stderr": "cat: /storage/emulated/0/Android/data/com.osfans.trime.debug/files/rime/triage-folder-sentinel.txt: Permission denied\n"
+    },
+    {
+      "command_record": "commands/storage-settings-after-back-manifest.json",
+      "exit": 1,
+      "classification": "初次关联前或取消检查期间manifest不存在；保留exit1及No such file证据，不把文件不存在改写为命令成功。",
+      "stdout_file": "commands/storage-settings-after-back-manifest.stdout",
+      "stderr_file": "commands/storage-settings-after-back-manifest.stderr",
+      "stdout": "",
+      "stderr": "cat: /data/user_de/0/com.osfans.trime.debug/.sync-manifest.json: No such file or directory\n"
+    },
+    {
+      "command_record": "commands/storage-settings-after-cancel-manifest.json",
+      "exit": 1,
+      "classification": "初次关联前或取消检查期间manifest不存在；保留exit1及No such file证据，不把文件不存在改写为命令成功。",
+      "stdout_file": "commands/storage-settings-after-cancel-manifest.stdout",
+      "stderr_file": "commands/storage-settings-after-cancel-manifest.stderr",
+      "stdout": "",
+      "stderr": "cat: /data/user_de/0/com.osfans.trime.debug/.sync-manifest.json: No such file or directory\n"
+    },
+    {
+      "command_record": "commands/storage-settings-after-far-outside-manifest.json",
+      "exit": 1,
+      "classification": "初次关联前或取消检查期间manifest不存在；保留exit1及No such file证据，不把文件不存在改写为命令成功。",
+      "stdout_file": "commands/storage-settings-after-far-outside-manifest.stdout",
+      "stderr_file": "commands/storage-settings-after-far-outside-manifest.stderr",
+      "stdout": "",
+      "stderr": "cat: /data/user_de/0/com.osfans.trime.debug/.sync-manifest.json: No such file or directory\n"
+    },
+    {
+      "command_record": "commands/storage-settings-after-outside-cancel-manifest.json",
+      "exit": 1,
+      "classification": "初次关联前或取消检查期间manifest不存在；保留exit1及No such file证据，不把文件不存在改写为命令成功。",
+      "stdout_file": "commands/storage-settings-after-outside-cancel-manifest.stdout",
+      "stderr_file": "commands/storage-settings-after-outside-cancel-manifest.stderr",
+      "stdout": "",
+      "stderr": "cat: /data/user_de/0/com.osfans.trime.debug/.sync-manifest.json: No such file or directory\n"
+    },
+    {
+      "command_record": "commands/storage-settings-after-outside-still-open-manifest.json",
+      "exit": 1,
+      "classification": "初次关联前或取消检查期间manifest不存在；保留exit1及No such file证据，不把文件不存在改写为命令成功。",
+      "stdout_file": "commands/storage-settings-after-outside-still-open-manifest.stdout",
+      "stderr_file": "commands/storage-settings-after-outside-still-open-manifest.stderr",
+      "stdout": "",
+      "stderr": "cat: /data/user_de/0/com.osfans.trime.debug/.sync-manifest.json: No such file or directory\n"
+    },
+    {
+      "command_record": "commands/storage-settings-after-picker-cancel-manifest.json",
+      "exit": 1,
+      "classification": "初次关联前或取消检查期间manifest不存在；保留exit1及No such file证据，不把文件不存在改写为命令成功。",
+      "stdout_file": "commands/storage-settings-after-picker-cancel-manifest.stdout",
+      "stderr_file": "commands/storage-settings-after-picker-cancel-manifest.stderr",
+      "stdout": "",
+      "stderr": "cat: /data/user_de/0/com.osfans.trime.debug/.sync-manifest.json: No such file or directory\n"
+    },
+    {
+      "command_record": "commands/storage-settings-before-manifest.json",
+      "exit": 1,
+      "classification": "初次关联前或取消检查期间manifest不存在；保留exit1及No such file证据，不把文件不存在改写为命令成功。",
+      "stdout_file": "commands/storage-settings-before-manifest.stdout",
+      "stderr_file": "commands/storage-settings-before-manifest.stderr",
+      "stdout": "",
+      "stderr": "cat: /data/user_de/0/com.osfans.trime.debug/.sync-manifest.json: No such file or directory\n"
+    },
+    {
+      "command_record": "commands/storage-settings-while-picker-manifest.json",
+      "exit": 1,
+      "classification": "初次关联前或取消检查期间manifest不存在；保留exit1及No such file证据，不把文件不存在改写为命令成功。",
+      "stdout_file": "commands/storage-settings-while-picker-manifest.stdout",
+      "stderr_file": "commands/storage-settings-while-picker-manifest.stderr",
+      "stdout": "",
+      "stderr": "cat: /data/user_de/0/com.osfans.trime.debug/.sync-manifest.json: No such file or directory\n"
+    },
+    {
+      "command_record": "commands/storage-setup-after-cancel-manifest.json",
+      "exit": 1,
+      "classification": "初次关联前或取消检查期间manifest不存在；保留exit1及No such file证据，不把文件不存在改写为命令成功。",
+      "stdout_file": "commands/storage-setup-after-cancel-manifest.stdout",
+      "stderr_file": "commands/storage-setup-after-cancel-manifest.stderr",
+      "stdout": "",
+      "stderr": "cat: /data/user_de/0/com.osfans.trime.debug/.sync-manifest.json: No such file or directory\n"
+    },
+    {
+      "command_record": "commands/storage-setup-after-picker-cancel-manifest.json",
+      "exit": 1,
+      "classification": "初次关联前或取消检查期间manifest不存在；保留exit1及No such file证据，不把文件不存在改写为命令成功。",
+      "stdout_file": "commands/storage-setup-after-picker-cancel-manifest.stdout",
+      "stderr_file": "commands/storage-setup-after-picker-cancel-manifest.stderr",
+      "stdout": "",
+      "stderr": "cat: /data/user_de/0/com.osfans.trime.debug/.sync-manifest.json: No such file or directory\n"
+    },
+    {
+      "command_record": "commands/storage-setup-confirmation-pending-manifest.json",
+      "exit": 1,
+      "classification": "初次关联前或取消检查期间manifest不存在；保留exit1及No such file证据，不把文件不存在改写为命令成功。",
+      "stdout_file": "commands/storage-setup-confirmation-pending-manifest.stdout",
+      "stderr_file": "commands/storage-setup-confirmation-pending-manifest.stderr",
+      "stdout": "",
+      "stderr": "cat: /data/user_de/0/com.osfans.trime.debug/.sync-manifest.json: No such file or directory\n"
+    },
+    {
+      "command_record": "commands/storage-setup-while-picker-manifest.json",
+      "exit": 1,
+      "classification": "初次关联前或取消检查期间manifest不存在；保留exit1及No such file证据，不把文件不存在改写为命令成功。",
+      "stdout_file": "commands/storage-setup-while-picker-manifest.stdout",
+      "stderr_file": "commands/storage-setup-while-picker-manifest.stderr",
+      "stdout": "",
+      "stderr": "cat: /data/user_de/0/com.osfans.trime.debug/.sync-manifest.json: No such file or directory\n"
+    },
+    {
+      "command_record": "commands/voice-baseline-r2-fixture-pid.json",
+      "exit": 1,
+      "classification": "pidof未找到未启动的语音fixture进程，作为观察记录；不等同于fixture或Trime崩溃。",
+      "stdout_file": "commands/voice-baseline-r2-fixture-pid.stdout",
+      "stderr_file": "commands/voice-baseline-r2-fixture-pid.stderr",
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "normal_operations_and_cleanup": {
+    "normal_install_and_stop_records": [
+      {
+        "command_record": "commands/candidate-fixed-install.json",
+        "argv": [
+          "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+          "-s",
+          "emulator-5582",
+          "install",
+          "-r",
+          "-t",
+          "/home/xumin/Public/Trime/build/issue-fixes-20261028/device-apks/candidate-diagnostic.apk"
+        ],
+        "exit": 0,
+        "stdout_file": "commands/candidate-fixed-install.stdout",
+        "stderr_file": "commands/candidate-fixed-install.stderr"
+      },
+      {
+        "command_record": "commands/storage-install.json",
+        "argv": [
+          "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+          "-s",
+          "emulator-5582",
+          "install",
+          "-r",
+          "-t",
+          "/home/xumin/Public/Trime/build/issue-fixes-20261028/device-apks/storage-diagnostic.apk"
+        ],
+        "exit": 0,
+        "stdout_file": "commands/storage-install.stdout",
+        "stderr_file": "commands/storage-install.stderr"
+      },
+      {
+        "command_record": "commands/storage-setup-relaunch-stop.json",
+        "argv": [
+          "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+          "-s",
+          "emulator-5582",
+          "shell",
+          "am",
+          "force-stop",
+          "com.osfans.trime.debug"
+        ],
+        "exit": 0,
+        "stdout_file": "commands/storage-setup-relaunch-stop.stdout",
+        "stderr_file": "commands/storage-setup-relaunch-stop.stderr"
+      }
+    ],
+    "storage_observation_recovery": [
+      {
+        "command_record": "commands/storage-positive-associated-authoritative-manifest.json",
+        "argv": [
+          "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+          "-s",
+          "emulator-5582",
+          "shell",
+          "run-as",
+          "com.osfans.trime.debug",
+          "cat",
+          "/data/user_de/0/com.osfans.trime.debug/.sync-manifest.json"
+        ],
+        "exit": 0,
+        "stdout_file": "commands/storage-positive-associated-authoritative-manifest.stdout",
+        "stderr_file": "commands/storage-positive-associated-authoritative-manifest.stderr"
+      },
+      {
+        "command_record": "commands/storage-positive-work-file-shell.json",
+        "argv": [
+          "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+          "-s",
+          "emulator-5582",
+          "shell",
+          "cat",
+          "/sdcard/Android/data/com.osfans.trime.debug/files/rime/triage-folder-sentinel.txt"
+        ],
+        "exit": 0,
+        "stdout_file": "commands/storage-positive-work-file-shell.stdout",
+        "stderr_file": "commands/storage-positive-work-file-shell.stderr"
+      },
+      {
+        "command_record": "commands/storage-positive-imported-working-sentinel.json",
+        "argv": [
+          "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+          "-s",
+          "emulator-5582",
+          "shell",
+          "cat",
+          "/sdcard/Android/data/com.osfans.trime.debug/files/rime/triage-folder-sentinel.txt"
+        ],
+        "exit": 0,
+        "stdout_file": "commands/storage-positive-imported-working-sentinel.stdout",
+        "stderr_file": "commands/storage-positive-imported-working-sentinel.stderr"
+      }
+    ],
+    "final_storage_state": {
+      "file": "storage-final-app-state-snapshot.json",
+      "storage_mode": "APP_STORAGE",
+      "note": "最终prefs回读为APP_STORAGE；保留的外部目录URI、manifest与persisted grant仍存在，不宣称恢复到无授权的全新状态。"
+    },
+    "animation_restoration": [
+      {
+        "command_record": "commands/functional-window_animation_scale-restore.json",
+        "argv": [
+          "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+          "-s",
+          "emulator-5582",
+          "shell",
+          "settings",
+          "put",
+          "global",
+          "window_animation_scale",
+          "1.0"
+        ],
+        "exit": 0,
+        "stdout_file": "commands/functional-window_animation_scale-restore.stdout",
+        "stderr_file": "commands/functional-window_animation_scale-restore.stderr"
+      },
+      {
+        "command_record": "commands/functional-transition_animation_scale-restore.json",
+        "argv": [
+          "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+          "-s",
+          "emulator-5582",
+          "shell",
+          "settings",
+          "put",
+          "global",
+          "transition_animation_scale",
+          "1.0"
+        ],
+        "exit": 0,
+        "stdout_file": "commands/functional-transition_animation_scale-restore.stdout",
+        "stderr_file": "commands/functional-transition_animation_scale-restore.stderr"
+      },
+      {
+        "command_record": "commands/functional-animator_duration_scale-restore.json",
+        "argv": [
+          "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+          "-s",
+          "emulator-5582",
+          "shell",
+          "settings",
+          "delete",
+          "global",
+          "animator_duration_scale"
+        ],
+        "exit": 0,
+        "stdout_file": "commands/functional-animator_duration_scale-restore.stdout",
+        "stderr_file": "commands/functional-animator_duration_scale-restore.stderr"
+      }
+    ],
+    "animation_note": "window/transition原值1.0，恢复命令put 1.0 exit0；animator原值null，delete恢复exit0且输出Deleted 1 rows。未额外运行设备回读。",
+    "fixture_probe_uninstall": [
+      {
+        "command_record": "commands/cleanup-fixture-remove.json",
+        "argv": [
+          "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+          "-s",
+          "emulator-5582",
+          "uninstall",
+          "org.trime.triage.voicefixture"
+        ],
+        "exit": 0,
+        "stdout_file": "commands/cleanup-fixture-remove.stdout",
+        "stderr_file": "commands/cleanup-fixture-remove.stderr"
+      },
+      {
+        "command_record": "commands/cleanup-probe-remove.json",
+        "argv": [
+          "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+          "-s",
+          "emulator-5582",
+          "uninstall",
+          "com.osfans.trime.debug.test"
+        ],
+        "exit": 0,
+        "stdout_file": "commands/cleanup-probe-remove.stdout",
+        "stderr_file": "commands/cleanup-probe-remove.stderr"
+      }
+    ],
+    "uninstall_note": "两份卸载stdout均Success；cleanup-ime-readback为com.android.inputmethod.latin/.LatinIME。"
+  },
+  "reporting_constraints": [
+    "不得把emulator exit0/cleanup_errors为空写作零运行警告或全部设备验收通过。",
+    "不得将本run的baseline captured assertion failure与run1旧helper FATAL混同。",
+    "系统ANR、vendor Encode failure/缺配置、平台slow reader、采集Permission denied与不存在manifest的非零输出必须保留。",
+    "PR的具体功能结论需使用各validation报告与原始证据，不能仅据本日志审查扩大范围。"
+  ]
+}

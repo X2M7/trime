@@ -1,0 +1,235 @@
+/* SPDX-License-Identifier: GPL-3.0-or-later */
+package com.osfans.trime.ime.bar
+
+import android.app.Activity
+import android.app.Instrumentation
+import android.graphics.Color
+import android.graphics.Rect
+import android.os.Bundle
+import android.os.SystemClock
+import android.view.ContextThemeWrapper
+import android.view.MotionEvent
+import android.view.View
+import android.view.ViewGroup
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LifecycleRegistry
+import androidx.lifecycle.setViewTreeLifecycleOwner
+import com.osfans.trime.R
+import com.osfans.trime.core.CandidateProto
+import com.osfans.trime.core.Candidates
+import com.osfans.trime.core.RimeApi
+import com.osfans.trime.daemon.RimeSession
+import com.osfans.trime.data.theme.ColorKey
+import com.osfans.trime.data.theme.Theme
+import com.osfans.trime.data.theme.ThemeScope
+import com.osfans.trime.ime.broadcast.InputBroadcaster
+import com.osfans.trime.ime.candidates.compact.CompactCandidateDelegate
+import com.osfans.trime.ime.window.BoardWindowManager
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.awaitCancellation
+import kotlinx.coroutines.cancel
+import org.json.JSONObject
+import org.kodein.di.DI
+import org.kodein.di.bindInstance
+import org.kodein.di.bindSingleton
+import org.kodein.di.direct
+import org.kodein.di.instance
+
+/**
+ * Local platform probe for issue #1879, intentionally outside source sets.
+ * Copy into androidTest and register the class as an instrumentation component.
+ * Uses production bar views and real MotionEvents; the Rime session only records
+ * scheduled operations and suspends them, so no composition or database changes
+ * are performed by the probe itself. Run in a disposable emulator target app.
+ */
+class CandidateTouchTargetInstrumentation : Instrumentation() {
+    override fun onCreate(arguments: Bundle?) {
+        super.onCreate(arguments)
+        start()
+    }
+
+    override fun onStart() {
+        val report = JSONObject()
+            .put("scope", "Production View.dispatchTouchEvent with synthetic MotionEvents and unattached views")
+            .put("input_dispatcher_tested", false)
+            .put("rendered_frames_or_visual_timing_tested", false)
+            .put("physical_device_tested", false)
+            .put("rime_operations_executed", false)
+        var passed = false
+        try {
+            report.put("stage", "waiting_for_idle")
+            waitForIdleSync()
+            runSafelyOnMain {
+                report.put("stage", "normal_toolbar_fixture")
+                Fixture().use { fixture ->
+                    report.put("stage", "normal_toolbar_tap")
+                    fixture.tapToolbar()
+                    report.put("normal_toolbar_tap_displayed_child", fixture.bar.view.displayedChild)
+                    report.put("normal_toolbar_tap_scheduled_rime_operations", fixture.session.readyCalls)
+                    check(fixture.bar.view.displayedChild == 2) { "Normal toolbar menu did not open" }
+                }
+                report.put("stage", "cross_switch_fixture")
+                Fixture().use { fixture ->
+                    val (x, y) = fixture.toolbarPoint()
+                    report.put("stage", "cross_switch_toolbar_down")
+                    fixture.event(MotionEvent.ACTION_DOWN, x, y)
+                    report.put("stage", "cross_switch_show_candidates")
+                    fixture.showCandidates()
+                    check(fixture.bar.view.displayedChild == 1) { "Candidates did not replace toolbar" }
+                    report.put("stage", "cross_switch_toolbar_up")
+                    fixture.event(MotionEvent.ACTION_UP, x, y)
+                    report.put("cross_switch_tap_displayed_child", fixture.bar.view.displayedChild)
+                    report.put("cross_switch_tap_scheduled_rime_operations", fixture.session.readyCalls)
+                    check(fixture.bar.view.displayedChild == 1) { "Hidden toolbar menu opened on stale ACTION_UP" }
+                    check(fixture.session.readyCalls == 0) { "A hidden toolbar operation was scheduled" }
+                }
+                report.put("stage", "new_candidate_fixture")
+                Fixture().use { fixture ->
+                    report.put("stage", "new_candidate_show_candidates")
+                    fixture.showCandidates()
+                    report.put("new_candidate_adapter_count", fixture.candidates.adapter.itemCount)
+                    val holder = checkNotNull(fixture.candidates.view.findViewHolderForAdapterPosition(0)) {
+                        "Candidate holder unavailable after first-list synchronous measure/layout"
+                    }
+                    val rect = Rect()
+                    holder.itemView.getDrawingRect(rect)
+                    fixture.bar.view.offsetDescendantRectToMyCoords(holder.itemView, rect)
+                    check(rect.width() > 0 && rect.height() > 0) { "Candidate tap rectangle is empty: $rect" }
+                    report.put("stage", "new_candidate_tap")
+                    fixture.event(MotionEvent.ACTION_DOWN, rect.exactCenterX(), rect.exactCenterY())
+                    fixture.event(MotionEvent.ACTION_UP, rect.exactCenterX(), rect.exactCenterY())
+                    report.put("new_candidate_tap_displayed_child", fixture.bar.view.displayedChild)
+                    report.put("new_candidate_tap_scheduled_rime_operations", fixture.session.readyCalls)
+                    check(fixture.bar.view.displayedChild == 1) { "A new candidate tap opened the toolbar menu" }
+                    check(fixture.session.readyCalls == 1) { "A new candidate tap did not schedule selection" }
+                }
+            }
+            report.put("stage", "complete")
+            passed = true
+        } catch (error: Throwable) {
+            report.put("error", android.util.Log.getStackTraceString(error))
+        }
+        report.put("passed", passed)
+        val result = Bundle().apply {
+            putBoolean("passed", passed)
+            putString("candidate_touch_report", report.toString())
+            putString("stream", report.toString(2) + "\n")
+        }
+        finish(if (passed) Activity.RESULT_OK else 1, result)
+    }
+
+    private fun runSafelyOnMain(block: () -> Unit) {
+        var failure: Throwable? = null
+        runOnMainSync {
+            try {
+                block()
+            } catch (error: Throwable) {
+                failure = error
+            }
+        }
+        failure?.let { throw it }
+    }
+
+    private inner class Fixture : AutoCloseable {
+        val session = SuspendedSession()
+        private val viewLifecycleOwner = object : LifecycleOwner {
+            val registry = LifecycleRegistry(this)
+            override val lifecycle: Lifecycle get() = registry
+        }
+        private val context = ContextThemeWrapper(targetContext, R.style.Theme_TrimeAppTheme)
+        private val theme = Theme("Candidate touch probe")
+        private val themeScope = newThemeScope(theme)
+        private val di = DI {
+            bindInstance<ContextThemeWrapper> { context }
+            bindInstance<ThemeScope> { themeScope }
+            bindInstance<RimeSession> { session }
+            bindSingleton { InputBroadcaster() }
+            bindSingleton { BoardWindowManager(di) }
+            bindSingleton { CompactCandidateDelegate(di) }
+            bindSingleton { InputBarDelegate(di) }
+        }
+        val bar: InputBarDelegate = di.direct.instance()
+        val candidates: CompactCandidateDelegate = di.direct.instance()
+        private val broadcaster: InputBroadcaster = di.direct.instance()
+        private val downTime = SystemClock.uptimeMillis()
+
+        init {
+            viewLifecycleOwner.registry.currentState = Lifecycle.State.STARTED
+            bar.view.setViewTreeLifecycleOwner(viewLifecycleOwner)
+            broadcaster.addReceiver(bar)
+            broadcaster.addReceiver(candidates)
+            layout()
+            check(bar.view.displayedChild == 0) { "A new fixture did not start on the toolbar" }
+            check(session.readyCalls == 0) { "Fixture initialization unexpectedly scheduled Rime work" }
+        }
+
+        private fun layout() {
+            bar.view.measure(
+                View.MeasureSpec.makeMeasureSpec(960, View.MeasureSpec.EXACTLY),
+                View.MeasureSpec.makeMeasureSpec(120, View.MeasureSpec.EXACTLY),
+            )
+            bar.view.layout(0, 0, 960, 120)
+        }
+
+        fun toolbarPoint(): Pair<Float, Float> {
+            val button = (bar.view.getChildAt(0) as ViewGroup).getChildAt(0)
+            val rect = Rect()
+            button.getDrawingRect(rect)
+            bar.view.offsetDescendantRectToMyCoords(button, rect)
+            check(rect.width() > 0 && rect.height() > 0) { "Toolbar tap rectangle is empty: $rect" }
+            return rect.exactCenterX() to rect.exactCenterY()
+        }
+
+        fun tapToolbar() {
+            val (x, y) = toolbarPoint()
+            event(MotionEvent.ACTION_DOWN, x, y)
+            event(MotionEvent.ACTION_UP, x, y)
+        }
+
+        fun showCandidates() {
+            broadcaster.onCandidateListUpdate(
+                Candidates.Bulk(
+                    total = 1,
+                    candidates = arrayOf(CandidateProto("候选", "", "1")),
+                ),
+            )
+            layout()
+        }
+
+        fun event(action: Int, x: Float, y: Float) {
+            val event = MotionEvent.obtain(downTime, SystemClock.uptimeMillis(), action, x, y, 0)
+            try {
+                bar.view.dispatchTouchEvent(event)
+            } finally {
+                event.recycle()
+            }
+        }
+
+        override fun close() {
+            broadcaster.clear()
+            viewLifecycleOwner.registry.currentState = Lifecycle.State.DESTROYED
+            session.lifecycleScope.cancel()
+        }
+    }
+
+    private class SuspendedSession : RimeSession {
+        var readyCalls = 0
+        override val lifecycleScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
+        override fun <T> run(block: suspend RimeApi.() -> T): T = error("Unexpected immediate Rime access")
+        override suspend fun <T> runOnReady(block: suspend RimeApi.() -> T): T {
+            readyCalls++
+            return awaitCancellation()
+        }
+        override fun runIfReady(block: suspend RimeApi.() -> Unit) = error("Unexpected Rime access")
+    }
+
+    private fun newThemeScope(theme: Theme): ThemeScope {
+        val scope = ThemeScope(theme) { value: String -> Color.parseColor(value) }
+        val colors = ColorKey.entries.associate { it.key to "#ff333333" }
+        scope.updateScheme(colors)
+        return scope
+    }
+}

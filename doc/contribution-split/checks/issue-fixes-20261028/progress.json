@@ -1,0 +1,695 @@
+{
+  "draft": false,
+  "prepared_at_utc": "2026-10-28T02:26:09.168135+00:00",
+  "evidence_root": "/home/xumin/Public/Trime/build/issue-fixes-20261028",
+  "repository": "osfans/trime",
+  "source_review": {
+    "path": "final-ci-review.json",
+    "sha256": "ad4611206aa11cb8a5c2edc4a19fcdbb19c623ba1217ab2f6277e73fd7016266",
+    "bytes": 16141
+  },
+  "remote_status_snapshot_utc": "2026-10-28T02:20:32.396816+00:00",
+  "upstream_base": "a047f74757fae0d7b5ef64e54f0b957dee2bf8f3",
+  "ci_summary": {
+    "status": "SUCCESS",
+    "passed": 15,
+    "total": 15,
+    "checks_per_pr": 5,
+    "scope": "Each PR: lint-and-test plus four OS build checks. This is a check count, not an application test-case count."
+  },
+  "runtime": {
+    "status": "BOUNDED_CHECKS_PASS",
+    "qualified_checks_passed": true,
+    "overall_release_acceptance": "NOT_PERFORMED",
+    "device": "Android15 API35 x86_64 isolated emulator",
+    "reports": [
+      "runtime/candidate-validation.json",
+      "runtime/voice-validation.json",
+      "runtime/storage-validation.json"
+    ],
+    "limits": [
+      "Candidate probe uses synthetic MotionEvents through unattached production views and a recording Rime stub; no InputDispatcher, native commit or physical device validation.",
+      "Voice fixture enumeration/selection/disable validated; patched APK was installed after reboot, not tested as already installed across reboot. No actual VOICE_ASSIST switch/recognition or ColorOS device test.",
+      "Storage 11 controlled cases; early uri_grants output was non-authoritative, later saved association/reselection persisted grants were actually compared via activity permissions. Single fixture/state checks do not prove complete dictionary/data quality."
+    ],
+    "runs": [
+      {
+        "name": "run1",
+        "emulator_exit": 0,
+        "stop_reason": "normal-stop-request",
+        "collector_segments": [
+          {
+            "pid": 243246,
+            "exit": 255
+          },
+          {
+            "pid": 251768,
+            "exit": -15
+          }
+        ],
+        "cleanup_errors": [],
+        "memory_samples": 354,
+        "min_available_kib": 1063124,
+        "floor_kib": 1048576
+      },
+      {
+        "name": "run2",
+        "emulator_exit": 0,
+        "stop_reason": "normal-stop-request",
+        "collector_segments": [
+          {
+            "pid": 258826,
+            "exit": -15
+          }
+        ],
+        "cleanup_errors": [],
+        "memory_samples": 517,
+        "min_available_kib": 1494692,
+        "floor_kib": 1048576
+      }
+    ]
+  },
+  "warnings": {
+    "status": "REVIEWED_WITH_LIMITS",
+    "zero_warning_claim": false,
+    "reports": [
+      "final-ci-review.json",
+      "runtime/run1/log-review.json",
+      "runtime/run2/log-review.json"
+    ],
+    "items": [
+      "CI SDK/JNA/cache tooling diagnostics and unmodified yaml-cpp/librime-lua compiler warnings remain.",
+      "run1 SystemUI/phone ANRs, system cached-process LMK and one obsolete-helper FATAL remain as failed preparation evidence.",
+      "run2 SystemUI/phone ANR before first Trime launch; captured Trime lifetimes W302/E0/F0 include193 librime Encode failure warnings, missing-config/Glog messages and platform warnings. These warnings are unresolved investigation items.",
+      "Platform goldfish-logcat slow-reader/prune diagnostics do not by themselves establish ADB collector loss; coverage limits remain recorded."
+    ]
+  },
+  "diagnostic_apk_limits": [
+    "For controlled emulator comparisons, original CI APKs were re-signed with one local debug certificate; the original downloaded APKs remain preserved.",
+    "The recorded comparison confirms identical decompressed bytes for every non-signature ZIP entry, including manifest, DEX, resources, assets and native libraries. Signature blocks/entries, signer identity and whole-APK bytes differ.",
+    "Diagnostic APK results must be labelled with their own SHA-256 and signer; they do not establish original-certificate installation, signature-permission behavior, upgrade compatibility or Release acceptance.",
+    "Identical producer and PR-head Git trees establish source-tree equality, not commit-ID, build-metadata, signature or APK-byte equality."
+  ],
+  "prs": [
+    {
+      "number": 2198,
+      "url": "https://github.com/osfans/trime/pull/2198",
+      "title": "fix(ime): ignore toolbar actions after candidates replace it",
+      "state": "OPEN",
+      "draft": false,
+      "head_ref": "contrib/fix-candidate-hit-target",
+      "head_sha": "e1e0ece96921d504cbf20d29bf04b7dbf6536724",
+      "base_ref": "develop",
+      "base_sha_at_production": "a047f74757fae0d7b5ef64e54f0b957dee2bf8f3",
+      "issue_associations": {
+        "fixes": [],
+        "related": [
+          1879
+        ],
+        "not_claimed_fixed": [
+          1879
+        ],
+        "scope": "仅修复候选区替换toolbar后仍执行隐藏按钮动作的跨转换手势路径，不宣称覆盖#1879全部时序。"
+      },
+      "github_closing_issue_numbers": [],
+      "ci": {
+        "success": true,
+        "passed": 5,
+        "total": 5,
+        "run_ids": [
+          "40617988425"
+        ],
+        "run_urls": [
+          "https://github.com/osfans/trime/actions/runs/40617988425"
+        ],
+        "checks": [
+          {
+            "name": "check / lint-and-test",
+            "conclusion": "SUCCESS",
+            "url": "https://github.com/osfans/trime/actions/runs/40617988425/job/122584881385"
+          },
+          {
+            "name": "build (ubuntu-26.04)",
+            "conclusion": "SUCCESS",
+            "url": "https://github.com/osfans/trime/actions/runs/40617988425/job/122585816969"
+          },
+          {
+            "name": "build (macos-26)",
+            "conclusion": "SUCCESS",
+            "url": "https://github.com/osfans/trime/actions/runs/40617988425/job/122585816883"
+          },
+          {
+            "name": "build (macos-26-intel)",
+            "conclusion": "SUCCESS",
+            "url": "https://github.com/osfans/trime/actions/runs/40617988425/job/122585817174"
+          },
+          {
+            "name": "build (windows-2025)",
+            "conclusion": "SUCCESS",
+            "url": "https://github.com/osfans/trime/actions/runs/40617988425/job/122585816912"
+          }
+        ]
+      },
+      "changed_files": [
+        "app/src/main/java/com/osfans/trime/ime/bar/InputBarDelegate.kt"
+      ],
+      "changes_vendor_or_native_sources": false,
+      "category": "B",
+      "runtime": {
+        "status": "BOUNDED_CHECKS_PASS",
+        "passed": true,
+        "results": "runtime/candidate-validation.json",
+        "root_finalization_required": false
+      },
+      "ubuntu_original": {
+        "repository": "osfans/trime",
+        "run_id": 40617988425,
+        "run_url": "https://github.com/osfans/trime/actions/runs/40617988425",
+        "run_attempt": 1,
+        "job_id": 122585816969,
+        "job_url": "https://github.com/osfans/trime/actions/runs/40617988425/job/122585816969",
+        "artifact_id": 12785444901,
+        "artifact_name": "trime-ubuntu-26.04",
+        "artifact_digest_from_github": "sha256:5ef883091dfa0d1e356d2df534c26bedfffef30c02ddf5c435cf48002868d93a",
+        "archive": {
+          "path": "cloud/pr-2198/ubuntu-original/artifact-12785444901-trime-ubuntu-26.04.zip",
+          "sha256": "5ef883091dfa0d1e356d2df534c26bedfffef30c02ddf5c435cf48002868d93a",
+          "bytes": 76041033
+        },
+        "archive_digest_matches_github": true,
+        "original_files": [
+          {
+            "path": "cloud/pr-2198/ubuntu-original/extracted/com.osfans.trime-v3.3.12-107-gc4a09b86-x86_64-debug.apk",
+            "sha256": "984abcf1f90c657864186d2c0cd94f4006f282a73c8099b055fa4d1b3e5426aa",
+            "bytes": 20158770
+          },
+          {
+            "path": "cloud/pr-2198/ubuntu-original/extracted/output-metadata.json",
+            "sha256": "b75b0116d86b7bb3017b803e4a0d566ce4c99ee277918d2277b8dbafad3346c1",
+            "bytes": 1496
+          }
+        ],
+        "original_apk_modified_or_resigned": false,
+        "actual_checkout_commit": "c4a09b86c7e149b1dd173f9a8fa3d4e6a5453bd1",
+        "producer_merge_parents": [
+          "a047f74757fae0d7b5ef64e54f0b957dee2bf8f3",
+          "e1e0ece96921d504cbf20d29bf04b7dbf6536724"
+        ],
+        "pr_head_tree": "2d16db6e14c801858c55e1cb16bc7572702f7a09",
+        "producer_merge_tree": "2d16db6e14c801858c55e1cb16bc7572702f7a09",
+        "full_source_trees_identical": true,
+        "provenance_record": {
+          "path": "cloud/pr-2198/ubuntu-original/provenance.json",
+          "sha256": "e0a5ee27fe825c79b044a964e7a765181cc97ed8cc4f973aeeebd8d741130c50",
+          "bytes": 2193
+        },
+        "source_tree_proof_record": {
+          "path": "cloud/pr-2198/ubuntu-original/source-tree-proof.json",
+          "sha256": "2c5475e36b8452170c67727a3dfc127ba2938d132f3f36052b316710c0b1e48f",
+          "bytes": 582
+        },
+        "producer_git_commit_record": {
+          "path": "cloud/pr-2198/ubuntu-original/producer-merge-git-commit.json",
+          "sha256": "4e0ba0dddf1fdaa3a2979251f2f59ac1cba309ae257b022053462b989c200e66",
+          "bytes": 2778
+        },
+        "head_git_commit_record": {
+          "path": "cloud/pr-2198/ubuntu-original/pr-head-git-commit.json",
+          "sha256": "307068eb22c0b45df0137aabc77c11cd981ad8246a0e01c49ea7cd39e3bed5de",
+          "bytes": 1274
+        },
+        "checkout_log": {
+          "path": "cloud/pr-2198/run-40617988425-job-122585816969.log",
+          "sha256": "88b4466004d5dd076f45be755040a85eec4c209d40b26ae76ea1e5e1555f5aba",
+          "bytes": 278710
+        }
+      },
+      "diagnostic_apk": {
+        "original_apk": {
+          "path": "cloud/pr-2198/ubuntu-original/extracted/com.osfans.trime-v3.3.12-107-gc4a09b86-x86_64-debug.apk",
+          "sha256": "984abcf1f90c657864186d2c0cd94f4006f282a73c8099b055fa4d1b3e5426aa",
+          "bytes": 20158770
+        },
+        "diagnostic_apk": {
+          "path": "device-apks/candidate-diagnostic.apk",
+          "sha256": "4699567c44d3259941013a06db18723c738718b82fec43f05a93274db81e1a96",
+          "bytes": 20158126
+        },
+        "identity_record": {
+          "path": "device-apks/candidate-identity.json",
+          "sha256": "f33a009ab74d6f2534942242f44994679beae6123654b0255108ae462e06b766",
+          "bytes": 98336
+        },
+        "diagnostic_only": true,
+        "resigned": true,
+        "original_preserved": true,
+        "published_as_release": false,
+        "diagnostic_signer_sha256": "c6fb875b1959f56fc6b3992d603b86e2dcd793677d32aba83687b34ef6937dd2",
+        "all_non_signature_zip_entries_identical": true,
+        "payload_entry_count": 784,
+        "critical_payload_sha256": {
+          "lib/x86_64/librime_jni.so": "0a78e4344568e6033b64ec80ba8c57988349cd1f4ec915647d6ffdfaca39b44f",
+          "AndroidManifest.xml": "ac3461211fa94c83316c74ec7b0f060b8829ea65b15fe180a1715564144cbe37",
+          "resources.arsc": "c0a63f4aba5028558f16b4e47926488dd558170cc8a1d3f9ff6e950da60230a2"
+        },
+        "all_recorded_sign_align_verify_commands_exit_zero": true,
+        "payload_comparison_source": "Referenced identity record contains the complete per-entry comparison; this draft rechecks whole-file SHA-256 against it."
+      },
+      "saved_pr_snapshot": {
+        "path": "cloud/final-review-pr-2198.json",
+        "sha256": "08a72401271e1cd83e2276740c31b74334932572791a032618cc94ef1c5898aa",
+        "bytes": 3050
+      },
+      "saved_changed_files": {
+        "path": "cloud/final-review-pr-2198-files.json",
+        "sha256": "abab4a7f86ffb9d1a7a4c7f6484c407774328071feb06f8d4b24c16c490854c9",
+        "bytes": 1405
+      }
+    },
+    {
+      "number": 2199,
+      "url": "https://github.com/osfans/trime/pull/2199",
+      "title": "fix(settings): confirm external synchronization before switching storage",
+      "state": "OPEN",
+      "draft": false,
+      "head_ref": "contrib/fix-storage-switch-safety",
+      "head_sha": "d6567c253c6dcb149514f01709b40e114a58be64",
+      "base_ref": "develop",
+      "base_sha_at_production": "a047f74757fae0d7b5ef64e54f0b957dee2bf8f3",
+      "issue_associations": {
+        "fixes": [
+          2095
+        ],
+        "related": [
+          2140
+        ],
+        "not_claimed_fixed": [
+          2140
+        ],
+        "scope": "外部同步前告知及取消闭环；保持现行双向同步算法。确认新目录后的失败恢复仍未实现；#2140升级故障无独立复现。"
+      },
+      "github_closing_issue_numbers": [
+        2095
+      ],
+      "ci": {
+        "success": true,
+        "passed": 5,
+        "total": 5,
+        "run_ids": [
+          "40617995073"
+        ],
+        "run_urls": [
+          "https://github.com/osfans/trime/actions/runs/40617995073"
+        ],
+        "checks": [
+          {
+            "name": "check / lint-and-test",
+            "conclusion": "SUCCESS",
+            "url": "https://github.com/osfans/trime/actions/runs/40617995073/job/122584901007"
+          },
+          {
+            "name": "build (ubuntu-26.04)",
+            "conclusion": "SUCCESS",
+            "url": "https://github.com/osfans/trime/actions/runs/40617995073/job/122585924331"
+          },
+          {
+            "name": "build (macos-26)",
+            "conclusion": "SUCCESS",
+            "url": "https://github.com/osfans/trime/actions/runs/40617995073/job/122585924214"
+          },
+          {
+            "name": "build (macos-26-intel)",
+            "conclusion": "SUCCESS",
+            "url": "https://github.com/osfans/trime/actions/runs/40617995073/job/122585924259"
+          },
+          {
+            "name": "build (windows-2025)",
+            "conclusion": "SUCCESS",
+            "url": "https://github.com/osfans/trime/actions/runs/40617995073/job/122585924248"
+          }
+        ]
+      },
+      "changed_files": [
+        "app/src/main/java/com/osfans/trime/ui/common/ExternalSyncConfirmationDialog.kt",
+        "app/src/main/java/com/osfans/trime/ui/main/settings/ProfileSettingsFragment.kt",
+        "app/src/main/java/com/osfans/trime/ui/setup/SetupActivity.kt",
+        "app/src/main/java/com/osfans/trime/ui/setup/SetupFragment.kt",
+        "app/src/main/res/values-zh-rCN/strings.xml",
+        "app/src/main/res/values-zh-rTW/strings.xml",
+        "app/src/main/res/values/strings.xml"
+      ],
+      "changes_vendor_or_native_sources": false,
+      "category": "D",
+      "runtime": {
+        "status": "BOUNDED_CHECKS_PASS",
+        "passed": true,
+        "results": "runtime/storage-validation.json",
+        "root_finalization_required": false
+      },
+      "ubuntu_original": {
+        "repository": "osfans/trime",
+        "run_id": 40617995073,
+        "run_url": "https://github.com/osfans/trime/actions/runs/40617995073",
+        "run_attempt": 1,
+        "job_id": 122585924331,
+        "job_url": "https://github.com/osfans/trime/actions/runs/40617995073/job/122585924331",
+        "artifact_id": 12786995401,
+        "artifact_name": "trime-ubuntu-26.04",
+        "artifact_digest_from_github": "sha256:8d1209eaa556be386708be988b4228c832c28b2d7b36574054d34f9404ca94cf",
+        "archive": {
+          "path": "cloud/pr-2199/ubuntu-original/artifact-12786995401-trime-ubuntu-26.04.zip",
+          "sha256": "8d1209eaa556be386708be988b4228c832c28b2d7b36574054d34f9404ca94cf",
+          "bytes": 76050509
+        },
+        "archive_digest_matches_github": true,
+        "original_files": [
+          {
+            "path": "cloud/pr-2199/ubuntu-original/extracted/com.osfans.trime-v3.3.12-107-g2c30ba31-x86_64-debug.apk",
+            "sha256": "575e94a9cd5f9d8b637ddde12d76ae7485f47076b071a9a1e31f48c7ff078293",
+            "bytes": 20162103
+          },
+          {
+            "path": "cloud/pr-2199/ubuntu-original/extracted/output-metadata.json",
+            "sha256": "34a0d54ba7e24d41ca2f23e5cb1f11c098fdd8603d4bb2e32d6733f8963c3075",
+            "bytes": 1496
+          }
+        ],
+        "original_apk_modified_or_resigned": false,
+        "actual_checkout_commit": "2c30ba318f5f578e68c7ce5e272a40b71c2c747b",
+        "producer_merge_parents": [
+          "a047f74757fae0d7b5ef64e54f0b957dee2bf8f3",
+          "d6567c253c6dcb149514f01709b40e114a58be64"
+        ],
+        "pr_head_tree": "5046f76ccd7a2a93e7fe28aa3518fd6be5d17038",
+        "producer_merge_tree": "5046f76ccd7a2a93e7fe28aa3518fd6be5d17038",
+        "full_source_trees_identical": true,
+        "provenance_record": {
+          "path": "cloud/pr-2199/ubuntu-original/provenance.json",
+          "sha256": "647314a9995353ce70a3bc0c0cddea5e60cca76681faff8b5f040db87e346860",
+          "bytes": 2195
+        },
+        "source_tree_proof_record": {
+          "path": "cloud/pr-2199/ubuntu-original/source-tree-proof.json",
+          "sha256": "62dc610239ab18334a3eeecbc9bd177ff1bb64ff15507e4ba229d3ebcf236eb6",
+          "bytes": 582
+        },
+        "producer_git_commit_record": {
+          "path": "cloud/pr-2199/ubuntu-original/producer-merge-git-commit.json",
+          "sha256": "586e5862b198d61131b4c20dd85f54ab8dabc07a61c2443ef4a210cfca6cbec9",
+          "bytes": 2778
+        },
+        "head_git_commit_record": {
+          "path": "cloud/pr-2199/ubuntu-original/pr-head-git-commit.json",
+          "sha256": "0900d45405b443104049c1605b633e698336b11dcb1b34d26b67c9e0de30bdcc",
+          "bytes": 1286
+        },
+        "checkout_log": {
+          "path": "cloud/pr-2199/run-40617995073-job-122585924331.log",
+          "sha256": "e46a7d4193daf20ce685a853a70b7e780f04db38411d6be43d0d5f5fa4514ce6",
+          "bytes": 313328
+        }
+      },
+      "diagnostic_apk": {
+        "original_apk": {
+          "path": "cloud/pr-2199/ubuntu-original/extracted/com.osfans.trime-v3.3.12-107-g2c30ba31-x86_64-debug.apk",
+          "sha256": "575e94a9cd5f9d8b637ddde12d76ae7485f47076b071a9a1e31f48c7ff078293",
+          "bytes": 20162103
+        },
+        "diagnostic_apk": {
+          "path": "device-apks/storage-diagnostic.apk",
+          "sha256": "b5e02b220032199f83d13de4899039ac420ce610379059739412a108ee2302fb",
+          "bytes": 20158126
+        },
+        "identity_record": {
+          "path": "device-apks/storage-identity.json",
+          "sha256": "b7188d20e7084f00ffe95ae1ba3e09ab6746a3054fef6a25ab76a8e05a3391c6",
+          "bytes": 98326
+        },
+        "diagnostic_only": true,
+        "resigned": true,
+        "original_preserved": true,
+        "published_as_release": false,
+        "diagnostic_signer_sha256": "c6fb875b1959f56fc6b3992d603b86e2dcd793677d32aba83687b34ef6937dd2",
+        "all_non_signature_zip_entries_identical": true,
+        "payload_entry_count": 784,
+        "critical_payload_sha256": {
+          "lib/x86_64/librime_jni.so": "0a78e4344568e6033b64ec80ba8c57988349cd1f4ec915647d6ffdfaca39b44f",
+          "AndroidManifest.xml": "d16ccb79e423e38073f99360e9f2576c2ee4dfb6d650f77d9f266c0c6a1a0243",
+          "resources.arsc": "bda7a5deb9972d1c58b43d4dacdbe450d32b7a809301a80a2025ffd042964bbd"
+        },
+        "all_recorded_sign_align_verify_commands_exit_zero": true,
+        "payload_comparison_source": "Referenced identity record contains the complete per-entry comparison; this draft rechecks whole-file SHA-256 against it."
+      },
+      "saved_pr_snapshot": {
+        "path": "cloud/final-review-pr-2199.json",
+        "sha256": "590db35776087e3abe18f62ee1440dc116201655d5792818b7ce8f7943049b3e",
+        "bytes": 3689
+      },
+      "saved_changed_files": {
+        "path": "cloud/final-review-pr-2199-files.json",
+        "sha256": "6621b2e7ec8f4502491c183d5224345bc5d1bc83441deba6bf87998d1b5bc76e",
+        "bytes": 21754
+      }
+    },
+    {
+      "number": 2200,
+      "url": "https://github.com/osfans/trime/pull/2200",
+      "title": "fix(ime): declare package visibility for voice input methods",
+      "state": "OPEN",
+      "draft": false,
+      "head_ref": "contrib/fix-voice-ime-visibility",
+      "head_sha": "c7501279b1085377b2acbf57e831b8e56c60d816",
+      "base_ref": "develop",
+      "base_sha_at_production": "a047f74757fae0d7b5ef64e54f0b957dee2bf8f3",
+      "issue_associations": {
+        "fixes": [
+          2153
+        ],
+        "related": [],
+        "not_claimed_fixed": [],
+        "scope": "声明android.view.InputMethod包可见性查询，使已启用voice IME可被枚举；原报告ColorOS设备未复测。"
+      },
+      "github_closing_issue_numbers": [
+        2153
+      ],
+      "ci": {
+        "success": true,
+        "passed": 5,
+        "total": 5,
+        "run_ids": [
+          "40618431171"
+        ],
+        "run_urls": [
+          "https://github.com/osfans/trime/actions/runs/40618431171"
+        ],
+        "checks": [
+          {
+            "name": "check / lint-and-test",
+            "conclusion": "SUCCESS",
+            "url": "https://github.com/osfans/trime/actions/runs/40618431171/job/122586290570"
+          },
+          {
+            "name": "build (ubuntu-26.04)",
+            "conclusion": "SUCCESS",
+            "url": "https://github.com/osfans/trime/actions/runs/40618431171/job/122587671072"
+          },
+          {
+            "name": "build (macos-26)",
+            "conclusion": "SUCCESS",
+            "url": "https://github.com/osfans/trime/actions/runs/40618431171/job/122587671041"
+          },
+          {
+            "name": "build (macos-26-intel)",
+            "conclusion": "SUCCESS",
+            "url": "https://github.com/osfans/trime/actions/runs/40618431171/job/122587671114"
+          },
+          {
+            "name": "build (windows-2025)",
+            "conclusion": "SUCCESS",
+            "url": "https://github.com/osfans/trime/actions/runs/40618431171/job/122587671070"
+          }
+        ]
+      },
+      "changed_files": [
+        "app/src/main/AndroidManifest.xml"
+      ],
+      "changes_vendor_or_native_sources": false,
+      "category": "F",
+      "runtime": {
+        "status": "BOUNDED_CHECKS_PASS",
+        "passed": true,
+        "results": "runtime/voice-validation.json",
+        "root_finalization_required": false
+      },
+      "ubuntu_original": {
+        "repository": "osfans/trime",
+        "run_id": 40618431171,
+        "run_url": "https://github.com/osfans/trime/actions/runs/40618431171",
+        "run_attempt": 1,
+        "job_id": 122587671072,
+        "job_url": "https://github.com/osfans/trime/actions/runs/40618431171/job/122587671072",
+        "artifact_id": 12786835753,
+        "artifact_name": "trime-ubuntu-26.04",
+        "artifact_digest_from_github": "sha256:6b4a1d7e7901e74b09b5ba55a2b802cb505b755bb6db4c5adb5ceb154414fe41",
+        "archive": {
+          "path": "cloud/pr-2200/ubuntu-original/artifact-12786835753-trime-ubuntu-26.04.zip",
+          "sha256": "6b4a1d7e7901e74b09b5ba55a2b802cb505b755bb6db4c5adb5ceb154414fe41",
+          "bytes": 76040734
+        },
+        "archive_digest_matches_github": true,
+        "original_files": [
+          {
+            "path": "cloud/pr-2200/ubuntu-original/extracted/com.osfans.trime-v3.3.12-107-g9f1eed59-x86_64-debug.apk",
+            "sha256": "ee8845f16c5ca3938168fb50f8a33ff29ccb7d644f20cb6183970b2255b9030a",
+            "bytes": 20158687
+          },
+          {
+            "path": "cloud/pr-2200/ubuntu-original/extracted/output-metadata.json",
+            "sha256": "8c2829f20076b9d7d0f0beb7c45464d4df607f8cf83e86c1142c8c144c922601",
+            "bytes": 1496
+          }
+        ],
+        "original_apk_modified_or_resigned": false,
+        "actual_checkout_commit": "9f1eed5900623839f6522b7f842f2cc8c246eb9b",
+        "producer_merge_parents": [
+          "a047f74757fae0d7b5ef64e54f0b957dee2bf8f3",
+          "c7501279b1085377b2acbf57e831b8e56c60d816"
+        ],
+        "pr_head_tree": "017468c4b6abc9d21e015a88c9d10f7511c2dec2",
+        "producer_merge_tree": "017468c4b6abc9d21e015a88c9d10f7511c2dec2",
+        "full_source_trees_identical": true,
+        "provenance_record": {
+          "path": "cloud/pr-2200/ubuntu-original/provenance.json",
+          "sha256": "ae56cf82cdc281b5b5797110149ed43e9ce3ffbd8f6a06f49df1c0ed1460315a",
+          "bytes": 2193
+        },
+        "source_tree_proof_record": {
+          "path": "cloud/pr-2200/ubuntu-original/source-tree-proof.json",
+          "sha256": "c9e5428c9d1c95df89922da4be39b6136075447abdb3e708870d3d774ff89e79",
+          "bytes": 582
+        },
+        "producer_git_commit_record": {
+          "path": "cloud/pr-2200/ubuntu-original/producer-merge-git-commit.json",
+          "sha256": "ac1682d692e33d0c87d72921d1f436fb81840d5f68585fb68a58aac5b666b037",
+          "bytes": 2778
+        },
+        "head_git_commit_record": {
+          "path": "cloud/pr-2200/ubuntu-original/pr-head-git-commit.json",
+          "sha256": "12c72b83dbd447d70812a841cf2947aa65f65ca60dfef71e657ccba25ca972a7",
+          "bytes": 1274
+        },
+        "checkout_log": {
+          "path": "cloud/pr-2200/run-40618431171-job-122587671072.log",
+          "sha256": "fdfc977b18d42a1aba7bf3ab1e8dcc49b978a5683793aff21651d6db191066d3",
+          "bytes": 278462
+        }
+      },
+      "diagnostic_apk": {
+        "original_apk": {
+          "path": "cloud/pr-2200/ubuntu-original/extracted/com.osfans.trime-v3.3.12-107-g9f1eed59-x86_64-debug.apk",
+          "sha256": "ee8845f16c5ca3938168fb50f8a33ff29ccb7d644f20cb6183970b2255b9030a",
+          "bytes": 20158687
+        },
+        "diagnostic_apk": {
+          "path": "device-apks/voice-diagnostic.apk",
+          "sha256": "e97c08c5614496654dd4a076e8c4d6a602ce9182db0b556a2a965f30f29565ae",
+          "bytes": 20158126
+        },
+        "identity_record": {
+          "path": "device-apks/voice-identity.json",
+          "sha256": "5be91aa3bf33e5bf50606ef190575347cb33978e43e48107615b108fc13c2a56",
+          "bytes": 98316
+        },
+        "diagnostic_only": true,
+        "resigned": true,
+        "original_preserved": true,
+        "published_as_release": false,
+        "diagnostic_signer_sha256": "c6fb875b1959f56fc6b3992d603b86e2dcd793677d32aba83687b34ef6937dd2",
+        "all_non_signature_zip_entries_identical": true,
+        "payload_entry_count": 784,
+        "critical_payload_sha256": {
+          "lib/x86_64/librime_jni.so": "0a78e4344568e6033b64ec80ba8c57988349cd1f4ec915647d6ffdfaca39b44f",
+          "AndroidManifest.xml": "988019a0ef94ff1256b113c20ac9086c4cfffc86e438ba8531aa05750f499775",
+          "resources.arsc": "c0a63f4aba5028558f16b4e47926488dd558170cc8a1d3f9ff6e950da60230a2"
+        },
+        "all_recorded_sign_align_verify_commands_exit_zero": true,
+        "payload_comparison_source": "Referenced identity record contains the complete per-entry comparison; this draft rechecks whole-file SHA-256 against it."
+      },
+      "saved_pr_snapshot": {
+        "path": "cloud/final-review-pr-2200.json",
+        "sha256": "cdbbf7c01811d0cfcdb2bf0f0f89490ed55b0dae2737ddb033f7a63f31153182",
+        "bytes": 3727
+      },
+      "saved_changed_files": {
+        "path": "cloud/final-review-pr-2200-files.json",
+        "sha256": "ab92946750cf004c28cae885221f93688700c2545ae7aa774c9f8a861a52de7b",
+        "bytes": 966
+      }
+    }
+  ],
+  "baseline": {
+    "source_commit": "a047f74757fae0d7b5ef64e54f0b957dee2bf8f3",
+    "run_id": 40156722482,
+    "run_url": "https://github.com/osfans/trime/actions/runs/40156722482",
+    "artifact_id": 12585480958,
+    "identity_record": {
+      "path": "voice/baseline-ci-identity.json",
+      "sha256": "bfd0ccbbe9af10a3f8dc9f371290fdbf37008b914950254f4fffdfa826efb9f1",
+      "bytes": 317
+    },
+    "downloaded_archive": {
+      "path": "voice/baseline-ci-artifact.zip",
+      "sha256": "5125ea0a022420b87b00da6370958efa9cc6c7c85e05e2a15bc4d2e5fcd25463",
+      "bytes": 76040537
+    },
+    "diagnostic_apk": {
+      "original_apk": {
+        "path": "voice/com.osfans.trime-v3.3.12-105-ga047f747-x86_64-debug.apk",
+        "sha256": "ee184fb76ad54f17e628f0446a78fa874740b4241b5e9577c2cbd4c77a731343",
+        "bytes": 20158643
+      },
+      "diagnostic_apk": {
+        "path": "device-apks/baseline-diagnostic.apk",
+        "sha256": "7e47545d6c7a2255546389b38cb4365229fd43b53202465f1243b4bd9fa3eb55",
+        "bytes": 20158126
+      },
+      "identity_record": {
+        "path": "device-apks/baseline-identity.json",
+        "sha256": "20e7f8ab1302c509236c4bcebb19929f579086c2c2a70ea962382ab210e9ef5a",
+        "bytes": 98263
+      },
+      "diagnostic_only": true,
+      "resigned": true,
+      "original_preserved": true,
+      "published_as_release": false,
+      "diagnostic_signer_sha256": "c6fb875b1959f56fc6b3992d603b86e2dcd793677d32aba83687b34ef6937dd2",
+      "all_non_signature_zip_entries_identical": true,
+      "payload_entry_count": 784,
+      "critical_payload_sha256": {
+        "lib/x86_64/librime_jni.so": "0a78e4344568e6033b64ec80ba8c57988349cd1f4ec915647d6ffdfaca39b44f",
+        "AndroidManifest.xml": "ac3461211fa94c83316c74ec7b0f060b8829ea65b15fe180a1715564144cbe37",
+        "resources.arsc": "c0a63f4aba5028558f16b4e47926488dd558170cc8a1d3f9ff6e950da60230a2"
+      },
+      "all_recorded_sign_align_verify_commands_exit_zero": true,
+      "payload_comparison_source": "Referenced identity record contains the complete per-entry comparison; this draft rechecks whole-file SHA-256 against it."
+    },
+    "runtime": {
+      "status": "IN_PROGRESS",
+      "results": null
+    }
+  },
+  "root_remaining_work": [
+    "Investigate upgrade directory authorization/data recovery #2140 separately from #2095 confirmation.",
+    "Reproduce deployment-completion report #1981; do not infer same cause from successful disposable-folder import.",
+    "Investigate librime encoding/config/startup warnings separately; do not classify them all as emulator/system-only.",
+    "Continue queued window/renderer/TalkBack issues with required reproduction and device constraints."
+  ],
+  "finalized_at_utc": "2026-10-28T02:48:13.941502+00:00",
+  "source_assets_final_check": "runtime/source-assets-final-check.json",
+  "publication_receipt": "publication/ready-summary.json",
+  "archived_probe_source": {
+    "path": "runtime/CandidateTouchTargetInstrumentation.kt.txt",
+    "sha256": "5d84bdefb5e9d4f7ddf2b5647529de749ec1d6ee707cb71744bbbe6a0cbef6d4",
+    "note": "Exact helper5 source bytes; .txt suffix keeps archived evidence out of active Kotlin source/format targets."
+  }
+}

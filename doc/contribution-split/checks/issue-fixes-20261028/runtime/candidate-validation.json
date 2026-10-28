@@ -1,0 +1,360 @@
+{
+  "schema_version": 1,
+  "created_at": "2026-10-28T02:30:43.536874+00:00",
+  "issue": {
+    "repository": "osfans/trime",
+    "number": 1879,
+    "url": "https://github.com/osfans/trime/issues/1879"
+  },
+  "pr": {
+    "number": 2198,
+    "url": "https://github.com/osfans/trime/pull/2198",
+    "head_sha": "e1e0ece96921d504cbf20d29bf04b7dbf6536724",
+    "base_sha": "a047f74757fae0d7b5ef64e54f0b957dee2bf8f3",
+    "ci_merge_commit_sha": "c4a09b86c7e149b1dd173f9a8fa3d4e6a5453bd1",
+    "ci_run_id": 40617988425,
+    "ci_provenance": {
+      "path": "cloud/pr-2198/ubuntu-original/provenance.json",
+      "sha256": "e0a5ee27fe825c79b044a964e7a765181cc97ed8cc4f973aeeebd8d741130c50",
+      "size": 2193
+    }
+  },
+  "verdict": "The synthetic View-dispatch comparison reproduces a stale toolbar ACTION_UP on the pure upstream baseline and prevents it with the PR change. The fixed APK passes normal toolbar, stale gesture and fresh candidate controls.",
+  "environment": {
+    "platform": "Android API 35 x86_64 emulator",
+    "serial": "emulator-5582",
+    "run": "run2",
+    "launch": {
+      "path": "runtime/run2/launch.json",
+      "sha256": "bb5f6a37f961f0dca014419584db2fd90a09ec227c7a1e9731101becd33028a9",
+      "size": 666
+    },
+    "api_evidence": {
+      "path": "runtime/run1/commands/device-api.stdout",
+      "sha256": "90d7ec0f0acef104d8b6252794295f661a0149634868d02a1ae0c358099638f5",
+      "size": 3
+    },
+    "same_persistent_avd_across_runs": true,
+    "physical_device": false
+  },
+  "scope": {
+    "production_classes_exercised": [
+      "InputBarDelegate",
+      "AlwaysUi",
+      "ToolButton/GestureFrame",
+      "ViewAnimator/ViewGroup",
+      "CompactCandidateDelegate/RecyclerView",
+      "BoardWindowManager"
+    ],
+    "synthetic_motion_events": true,
+    "event_entry": "Production View.dispatchTouchEvent called on the main thread",
+    "views_attached_to_window": false,
+    "input_dispatcher_tested": false,
+    "rendered_frames_or_visual_timing_tested": false,
+    "physical_device_tested": false,
+    "candidate_population": "One synthetic CandidateProto delivered via production InputBroadcaster; real production candidate adapter and views perform measure/layout.",
+    "rime_session": "Recording stub increments runOnReady invocation count and suspends with awaitCancellation; the operation block is never executed.",
+    "rime_operations_executed_by_probe_session": false,
+    "normal_application_startup_still_runs": true,
+    "not_verified": [
+      "InputDispatcher or multi-touch delivery from the system",
+      "Rendered visual timing or reporter's ColorOS 16 device",
+      "A real rapid letter key plus candidate tap through the full IME/native engine",
+      "Native candidate selection or committed text",
+      "Long-press and repeat action execution on device"
+    ],
+    "state_index_mapping": {
+      "0": "Always toolbar",
+      "1": "Candidate",
+      "2": "Tab/menu"
+    },
+    "baseline_third_control_not_run": true
+  },
+  "artifacts": {
+    "baseline": {
+      "original_apk": {
+        "path": "voice/com.osfans.trime-v3.3.12-105-ga047f747-x86_64-debug.apk",
+        "sha256": "ee184fb76ad54f17e628f0446a78fa874740b4241b5e9577c2cbd4c77a731343",
+        "size": 20158643
+      },
+      "diagnostic_apk_used_on_device": {
+        "path": "device-apks/baseline-diagnostic.apk",
+        "sha256": "7e47545d6c7a2255546389b38cb4365229fd43b53202465f1243b4bd9fa3eb55",
+        "size": 20158126
+      },
+      "diagnostic_identity": {
+        "path": "device-apks/baseline-identity.json",
+        "sha256": "20e7f8ab1302c509236c4bcebb19929f579086c2c2a70ea962382ab210e9ef5a",
+        "size": 98263
+      },
+      "all_non_signature_zip_entries_reverified_identical": true,
+      "payload_entry_count": 784,
+      "original_preserved": true,
+      "diagnostic_only": true,
+      "published_as_release": false,
+      "transformation": "Local debug-certificate signing of a copy for instrumentation compatibility; original APK preserved. DEX, native libraries, resources, manifest and all non-signature ZIP entries match the original."
+    },
+    "candidate": {
+      "original_apk": {
+        "path": "cloud/pr-2198/ubuntu-original/extracted/com.osfans.trime-v3.3.12-107-gc4a09b86-x86_64-debug.apk",
+        "sha256": "984abcf1f90c657864186d2c0cd94f4006f282a73c8099b055fa4d1b3e5426aa",
+        "size": 20158770
+      },
+      "diagnostic_apk_used_on_device": {
+        "path": "device-apks/candidate-diagnostic.apk",
+        "sha256": "4699567c44d3259941013a06db18723c738718b82fec43f05a93274db81e1a96",
+        "size": 20158126
+      },
+      "diagnostic_identity": {
+        "path": "device-apks/candidate-identity.json",
+        "sha256": "f33a009ab74d6f2534942242f44994679beae6123654b0255108ae462e06b766",
+        "size": 98336
+      },
+      "all_non_signature_zip_entries_reverified_identical": true,
+      "payload_entry_count": 784,
+      "original_preserved": true,
+      "diagnostic_only": true,
+      "published_as_release": false,
+      "transformation": "Local debug-certificate signing of a copy for instrumentation compatibility; original APK preserved. DEX, native libraries, resources, manifest and all non-signature ZIP entries match the original."
+    }
+  },
+  "probe": {
+    "source_live_reference": {
+      "path": "/home/xumin/Public/Trime-pr-candidate-hit-20261028/build/issue1879/CandidateTouchTargetInstrumentation.kt",
+      "sha256": "5d84bdefb5e9d4f7ddf2b5647529de749ec1d6ee707cb71744bbbe6a0cbef6d4",
+      "size": 10740
+    },
+    "source_archived": {
+      "path": "runtime/candidate-evidence/CandidateTouchTargetInstrumentation-probe5.kt",
+      "sha256": "5d84bdefb5e9d4f7ddf2b5647529de749ec1d6ee707cb71744bbbe6a0cbef6d4",
+      "size": 10740
+    },
+    "built_source_sha256": "5d84bdefb5e9d4f7ddf2b5647529de749ec1d6ee707cb71744bbbe6a0cbef6d4",
+    "instrumentation_apk": {
+      "path": "voice-build5/com.osfans.trime-v3.3.12-106-gc7501279-debug-androidTest.apk",
+      "sha256": "1b6eb5620312eac00c5ea2a68974fe1ecd235110232abf83a99246ecad7cf0b1",
+      "size": 235839
+    },
+    "build_record": {
+      "path": "voice-build5/result.json",
+      "sha256": "d09dd06df44b11dda268c89af9e4e59a1647eaf416b2d15b22790089b208106c",
+      "size": 10261
+    },
+    "build_exit": 0,
+    "build_tree": "/home/xumin/Public/Trime-pr-voice-ime-20261028",
+    "compile_task": ":app:assembleDebugAndroidTest",
+    "test_target_package": "com.osfans.trime.debug",
+    "component": "com.osfans.trime.debug.test/com.osfans.trime.ime.bar.CandidateTouchTargetInstrumentation",
+    "included_in_PR": false,
+    "note": "The helper APK was compiled in the voice worktree against the shared upstream API; runtime target production classes come from the separately installed baseline/candidate diagnostic APKs. The local voice main APK copied alongside the helper is not the tested app APK.",
+    "install_command": {
+      "path": "runtime/run2/commands/probe5-install.json",
+      "sha256": "13a83b9c8ef043aa3624e3f726620093f793f126e8d9bc6de8a188ecb77531d1",
+      "size": 372
+    }
+  },
+  "baseline_install_chain": {
+    "last_successful_recorded_target_install_before_probe": {
+      "path": "runtime/run1/commands/voice-postboot-baseline-install.json",
+      "sha256": "a9cf8f1899a41af92a261a2b06029fd665bd754c48b462fad4931441acfab341",
+      "size": 334
+    },
+    "retained_on_same_persistent_avd_after_relaunch": true,
+    "probe_only_install_does_not_replace_target_app": true
+  },
+  "fixed_install": {
+    "path": "runtime/run2/commands/candidate-fixed-install.json",
+    "sha256": "fb2464d70a4ddd43a6bcc9805137c0596dd9033680daaf3b66ab591895026a30",
+    "size": 334
+  },
+  "comparison": [
+    {
+      "control": "Normal toolbar DOWN/UP",
+      "baseline": {
+        "displayed_child": 2,
+        "scheduled_rime_operations": 1
+      },
+      "fixed": {
+        "displayed_child": 2,
+        "scheduled_rime_operations": 1
+      },
+      "conclusion": "Normal toolbar menu remains functional."
+    },
+    {
+      "control": "Toolbar DOWN, candidates replace toolbar, original pointer UP",
+      "baseline": {
+        "displayed_child": 2,
+        "scheduled_rime_operations": 1
+      },
+      "fixed": {
+        "displayed_child": 1,
+        "scheduled_rime_operations": 0
+      },
+      "conclusion": "Baseline opens the hidden toolbar menu; fixed app keeps candidates and schedules no hidden toolbar operation."
+    },
+    {
+      "control": "Fresh DOWN/UP after candidates are present",
+      "baseline": {
+        "executed": false,
+        "reason": "Expected stale-gesture failure stops baseline run before this control."
+      },
+      "fixed": {
+        "displayed_child": 1,
+        "scheduled_rime_operations": 1
+      },
+      "conclusion": "Fresh candidate tap still schedules candidate selection on the fixed app; actual native selection/commit is outside scope."
+    }
+  ],
+  "baseline": {
+    "command": {
+      "path": "runtime/run2/commands/baseline-probe5.json",
+      "sha256": "779b2307a515e14b079b5e19cf6543e1e472687d65268f1d3bd8a170e1fa6ea5",
+      "size": 360
+    },
+    "command_metadata": {
+      "argv": [
+        "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+        "-s",
+        "emulator-5582",
+        "shell",
+        "am",
+        "instrument",
+        "-w",
+        "-r",
+        "com.osfans.trime.debug.test/com.osfans.trime.ime.bar.CandidateTouchTargetInstrumentation"
+      ],
+      "exit": 0,
+      "started": 1793154498.492654,
+      "elapsed": 26.961460828781128
+    },
+    "stdout": {
+      "path": "runtime/run2/commands/baseline-probe5.stdout",
+      "sha256": "bc888baaed9387b40e8dfd8e98b050b68621768ae6fb2b6167c1001acc90da20",
+      "size": 3427
+    },
+    "stderr": {
+      "path": "runtime/run2/commands/baseline-probe5.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    "instrumentation_code": 1,
+    "explicit_passed": false,
+    "report": {
+      "scope": "Production View.dispatchTouchEvent with synthetic MotionEvents and unattached views",
+      "input_dispatcher_tested": false,
+      "rendered_frames_or_visual_timing_tested": false,
+      "physical_device_tested": false,
+      "rime_operations_executed": false,
+      "stage": "cross_switch_toolbar_up",
+      "normal_toolbar_tap_displayed_child": 2,
+      "normal_toolbar_tap_scheduled_rime_operations": 1,
+      "cross_switch_tap_displayed_child": 2,
+      "cross_switch_tap_scheduled_rime_operations": 1,
+      "error": "java.lang.IllegalStateException: Hidden toolbar menu opened on stale ACTION_UP\n\tat com.osfans.trime.ime.bar.CandidateTouchTargetInstrumentation.onStart$lambda$0(CandidateTouchTargetInstrumentation.kt:86)\n\tat com.osfans.trime.ime.bar.CandidateTouchTargetInstrumentation$$ExternalSyntheticLambda0.invoke(D8$$SyntheticClass:0)\n\tat com.osfans.trime.ime.bar.CandidateTouchTargetInstrumentation.runSafelyOnMain$lambda$0(CandidateTouchTargetInstrumentation.kt:128)\n\tat com.osfans.trime.ime.bar.CandidateTouchTargetInstrumentation$$ExternalSyntheticLambda2.run(D8$$SyntheticClass:0)\n\tat android.app.Instrumentation$SyncRunnable.run(Instrumentation.java:2612)\n\tat android.os.Handler.handleCallback(Handler.java:959)\n\tat android.os.Handler.dispatchMessage(Handler.java:100)\n\tat android.os.Looper.loopOnce(Looper.java:232)\n\tat android.os.Looper.loop(Looper.java:317)\n\tat android.app.ActivityThread.main(ActivityThread.java:8705)\n\tat java.lang.reflect.Method.invoke(Native Method)\n\tat com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:580)\n\tat com.android.internal.os.ZygoteInit.main(ZygoteInit.java:886)\n",
+      "passed": false
+    },
+    "outcome": "expected_regression_reproduced",
+    "product_crash": false,
+    "failure_classification": "Caught test assertion after reproducing the stale toolbar ACTION_UP path; the test intentionally finishes with instrumentation code 1. This is not a product crash.",
+    "third_control": "Not reached after the expected cross-switch assertion failure."
+  },
+  "fixed": {
+    "command": {
+      "path": "runtime/run2/commands/candidate-fixed-probe5.json",
+      "sha256": "77e37d7d64ea7faecdbe572931e006d998e9ee2e22958dfa0db2ab81564e9272",
+      "size": 361
+    },
+    "command_metadata": {
+      "argv": [
+        "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+        "-s",
+        "emulator-5582",
+        "shell",
+        "am",
+        "instrument",
+        "-w",
+        "-r",
+        "com.osfans.trime.debug.test/com.osfans.trime.ime.bar.CandidateTouchTargetInstrumentation"
+      ],
+      "exit": 0,
+      "started": 1793154538.2582817,
+      "elapsed": 3.0722882747650146
+    },
+    "stdout": {
+      "path": "runtime/run2/commands/candidate-fixed-probe5.stdout",
+      "sha256": "e5542df7798932bce8c24ccfa457356a50a3f419e5c952bfc32973d202f5ac57",
+      "size": 1323
+    },
+    "stderr": {
+      "path": "runtime/run2/commands/candidate-fixed-probe5.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    "instrumentation_code": -1,
+    "explicit_passed": true,
+    "report": {
+      "scope": "Production View.dispatchTouchEvent with synthetic MotionEvents and unattached views",
+      "input_dispatcher_tested": false,
+      "rendered_frames_or_visual_timing_tested": false,
+      "physical_device_tested": false,
+      "rime_operations_executed": false,
+      "stage": "complete",
+      "normal_toolbar_tap_displayed_child": 2,
+      "normal_toolbar_tap_scheduled_rime_operations": 1,
+      "cross_switch_tap_displayed_child": 1,
+      "cross_switch_tap_scheduled_rime_operations": 0,
+      "new_candidate_adapter_count": 1,
+      "new_candidate_tap_displayed_child": 1,
+      "new_candidate_tap_scheduled_rime_operations": 1,
+      "passed": true
+    },
+    "outcome": "all_three_controls_passed",
+    "product_crash": false
+  },
+  "prior_harness_failures": [
+    {
+      "label": "v4 reflection-based helper",
+      "classification": "Harness failure before the business comparison; not evidence of a product regression or of successful candidate validation.",
+      "process_crashed": true,
+      "reason": "IllegalArgumentException: Array contains more than one matching element in newThemeScope; exception escaped runOnMainSync Runnable and killed the main thread.",
+      "instrumentation_stdout": {
+        "path": "runtime/run1/commands/baseline-touch-control.stdout",
+        "sha256": "cc376fcd260b55a01f82c04af5e0a9ead88516f600131a38bdea1a3e05b10a8d",
+        "size": 74
+      },
+      "instrumentation_command": {
+        "path": "runtime/run1/commands/baseline-touch-control.json",
+        "sha256": "75864fe189d8083f2300cdd47e3e9859e3318977a4eaf5035f167116776ed974",
+        "size": 350
+      },
+      "crash_log": {
+        "path": "runtime/run1/commands/baseline-probe-crash-log.stdout",
+        "sha256": "88bd897c7ca5d110536c65cb8d028268b50f2dfae5e75de745a1b5cf61bae66d",
+        "size": 2173
+      },
+      "crash_log_command": {
+        "path": "runtime/run1/commands/baseline-probe-crash-log.json",
+        "sha256": "7ae249b6aafa27a281a545ac169323de7ada91c92c77f4522314f8645b81af95",
+        "size": 294
+      },
+      "source_archived": {
+        "path": "runtime/candidate-evidence/CandidateTouchTargetInstrumentation-v4-failed.kt",
+        "sha256": "19728afa9e482632eb73c095ef5abacbd7fb8269b77c54da0a67fcbf2933b499",
+        "size": 9560
+      },
+      "built_source_sha256": "19728afa9e482632eb73c095ef5abacbd7fb8269b77c54da0a67fcbf2933b499",
+      "instrumentation_apk": {
+        "path": "voice-build4/com.osfans.trime-v3.3.12-106-gc7501279-debug-androidTest.apk",
+        "sha256": "426e4120d4ba9e481686b95be74e980e3c7e9fbc42c0dde71b221bd89b7951db",
+        "size": 235153
+      },
+      "build_record": {
+        "path": "voice-build4/result.json",
+        "sha256": "bdbbdea8051bc4885e59c6bc2a9a236c8aa4593e5749218344137fd9778ccb49",
+        "size": 10261
+      },
+      "correction": "Direct friend-module ThemeScope calls and a Throwable catch inside the main-thread Runnable; corrected probe5 produces an expected baseline failure report and a passing fixed report."
+    }
+  ],
+  "interpretation_limits": "The baseline probe5 passed=false and instrumentation code 1 are the expected regression assertion after actual stale View event dispatch, not a product process crash. adb host exit 0 alone is not treated as a pass. The earlier v4 main-thread harness crash is retained separately. These results validate the identified stale-gesture path, without claiming that every timing variant in issue #1879 has been reproduced or eliminated."
+}

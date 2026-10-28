@@ -1,0 +1,1739 @@
+{
+  "schema_version": 1,
+  "reviewed_at_utc": "2026-10-28T02:33:09.246015+00:00",
+  "issue": 2153,
+  "pr": 2200,
+  "result": "PASS_FOR_API35_PREFERRED_VOICE_IME_ENUMERATION_SELECTION_AND_DISABLED_REFRESH_ONLY",
+  "summary": "API35模拟器中，原版在run1重启前和run2新启动后的有效chooser均为空；在run1重启后的会话安装修复版后，chooser显示voice-only fixture并能保存其包名，禁用fixture并刷新后chooser恢复为空。两次未到chooser的旧导航尝试保留为无效尝试。",
+  "scope": "只读整合已完成命令、XML、原PNG和APK身份记录；此审查未操作ADB、PR或源码。",
+  "environment": {
+    "api_level": 35,
+    "android_version": "15",
+    "abi": "x86_64",
+    "api_query": {
+      "record": {
+        "path": "runtime/run1/commands/device-api.json",
+        "sha256": "a34d4a50b36332aa01336c8af7682c7afdbcf5e45adaf76044ff0925b9629b67",
+        "bytes": 259
+      },
+      "argv": [
+        "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+        "-s",
+        "emulator-5586",
+        "shell",
+        "getprop",
+        "ro.build.version.sdk"
+      ],
+      "exit": 0,
+      "started_utc": "2026-10-28T02:14:27.551170+00:00",
+      "elapsed_seconds": 0.22465729713439941,
+      "stdout_file": {
+        "path": "runtime/run1/commands/device-api.stdout",
+        "sha256": "90d7ec0f0acef104d8b6252794295f661a0149634868d02a1ae0c358099638f5",
+        "bytes": 3
+      },
+      "stdout": "35\n",
+      "stderr_file": {
+        "path": "runtime/run1/commands/device-api.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      },
+      "stderr": ""
+    },
+    "run1_serial": "emulator-5586",
+    "run2_serial": "emulator-5582",
+    "run1_launch": {
+      "path": "runtime/run1/launch.json",
+      "sha256": "333d3d33efb112fd2b1dba726a62fb9198c4b63d96414dd290e449e0ea8b66cd",
+      "bytes": 666
+    },
+    "run2_launch": {
+      "path": "runtime/run2/launch.json",
+      "sha256": "bb5f6a37f961f0dca014419584db2fd90a09ec227c7a1e9731101becd33028a9",
+      "bytes": 666
+    },
+    "same_api35_system_image_path": "/home/xumin/Public/Trime/build/issue-fixes-20261028/runtime/vm-assets/api35/system-images",
+    "run2_api_evidence_note": "run2 launch使用与run1相同的API35 system-image目录；run2未另存ro.build.version.sdk查询。",
+    "run2_boot_ready": {
+      "record": {
+        "path": "runtime/run2/commands/run2-boot-detail.json",
+        "sha256": "d7eb9a352b82b18ec7b76cc06b6516160c03ffc811d1d3572eea9eba5da0f9eb",
+        "bytes": 306
+      },
+      "argv": [
+        "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+        "-s",
+        "emulator-5582",
+        "shell",
+        "getprop sys.boot_completed; getprop init.svc.bootanim; uptime; pidof system_server"
+      ],
+      "exit": 0,
+      "started_utc": "2026-10-28T02:28:01.435421+00:00",
+      "elapsed_seconds": 1.3143513202667236,
+      "stdout_file": {
+        "path": "runtime/run2/commands/run2-boot-detail.stdout",
+        "sha256": "e3258e768bb72258449c116089b03c8688cb8560af393f2589916c70defc17fc",
+        "bytes": 76
+      },
+      "stdout": "1\nstopped\n 10:27:42 up 0 min,  0 users,  load average: 7.13, 1.72, 0.57\n554\n",
+      "stderr_file": {
+        "path": "runtime/run2/commands/run2-boot-detail.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      },
+      "stderr": ""
+    }
+  },
+  "apks": {
+    "baseline": {
+      "identity_record": {
+        "path": "device-apks/baseline-identity.json",
+        "sha256": "20e7f8ab1302c509236c4bcebb19929f579086c2c2a70ea962382ab210e9ef5a",
+        "bytes": 98263
+      },
+      "installed_diagnostic_apk": {
+        "path": "device-apks/baseline-diagnostic.apk",
+        "sha256": "7e47545d6c7a2255546389b38cb4365229fd43b53202465f1243b4bd9fa3eb55",
+        "bytes": 20158126
+      },
+      "original_ci_apk": {
+        "path": "voice/com.osfans.trime-v3.3.12-105-ga047f747-x86_64-debug.apk",
+        "sha256": "ee184fb76ad54f17e628f0446a78fa874740b4241b5e9577c2cbd4c77a731343",
+        "bytes": 20158643
+      },
+      "non_signature_zip_entries_identical_to_original": true,
+      "diagnostic_only": true,
+      "published_as_release": false,
+      "payload_entry_count": 784,
+      "ci": {
+        "run_id": 40156722482,
+        "run_url": "https://github.com/osfans/trime/actions/runs/40156722482",
+        "commit": "a047f74757fae0d7b5ef64e54f0b957dee2bf8f3",
+        "artifact_id": 12585480958,
+        "source_record": {
+          "path": "voice/baseline-ci-identity.json",
+          "sha256": "bfd0ccbbe9af10a3f8dc9f371290fdbf37008b914950254f4fffdfa826efb9f1",
+          "bytes": 317
+        }
+      }
+    },
+    "voice": {
+      "identity_record": {
+        "path": "device-apks/voice-identity.json",
+        "sha256": "5be91aa3bf33e5bf50606ef190575347cb33978e43e48107615b108fc13c2a56",
+        "bytes": 98316
+      },
+      "installed_diagnostic_apk": {
+        "path": "device-apks/voice-diagnostic.apk",
+        "sha256": "e97c08c5614496654dd4a076e8c4d6a602ce9182db0b556a2a965f30f29565ae",
+        "bytes": 20158126
+      },
+      "original_ci_apk": {
+        "path": "cloud/pr-2200/ubuntu-original/extracted/com.osfans.trime-v3.3.12-107-g9f1eed59-x86_64-debug.apk",
+        "sha256": "ee8845f16c5ca3938168fb50f8a33ff29ccb7d644f20cb6183970b2255b9030a",
+        "bytes": 20158687
+      },
+      "non_signature_zip_entries_identical_to_original": true,
+      "diagnostic_only": true,
+      "published_as_release": false,
+      "payload_entry_count": 784,
+      "ci": {
+        "pr": 2200,
+        "head_sha": "c7501279b1085377b2acbf57e831b8e56c60d816",
+        "producer_merge_sha": "9f1eed5900623839f6522b7f842f2cc8c246eb9b",
+        "run_id": 40618431171,
+        "run_url": "https://github.com/osfans/trime/actions/runs/40618431171",
+        "artifact_id": 12786835753,
+        "producer_and_head_source_trees_identical": true,
+        "source_tree_sha": "017468c4b6abc9d21e015a88c9d10f7511c2dec2",
+        "provenance_record": {
+          "path": "cloud/pr-2200/ubuntu-original/provenance.json",
+          "sha256": "ae56cf82cdc281b5b5797110149ed43e9ce3ffbd8f6a06f49df1c0ed1460315a",
+          "bytes": 2193
+        },
+        "source_tree_proof": {
+          "path": "cloud/pr-2200/ubuntu-original/source-tree-proof.json",
+          "sha256": "c9e5428c9d1c95df89922da4be39b6136075447abdb3e708870d3d774ff89e79",
+          "bytes": 582
+        }
+      }
+    }
+  },
+  "fixture": {
+    "package": "org.trime.triage.voicefixture",
+    "component": "org.trime.triage.voicefixture/.VoiceFixtureService",
+    "label": "Trime Voice Fixture",
+    "subtype_mode": "voice",
+    "auxiliary_subtype": true,
+    "apk": {
+      "path": "voice-fixture/voice-fixture.apk",
+      "sha256": "8a172e0a218a2047ab7f2a64b0e0d3115b87cad58ba4ce9abee20c1ed94fd071",
+      "bytes": 12755
+    },
+    "identity_record": {
+      "path": "voice-fixture/identity.json",
+      "sha256": "b90390b820d66f3bb24340567438ffbee0a8f3ad75dc44b3156c9fb0e728e343",
+      "bytes": 1527
+    },
+    "install": {
+      "record": {
+        "path": "runtime/run1/commands/install-voice-fixture.json",
+        "sha256": "25245bb16c5ad6fcf5154d5258ff6ec10b09c8c9e0025d62b6fc26623e6d79f7",
+        "bytes": 320
+      },
+      "argv": [
+        "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+        "-s",
+        "emulator-5586",
+        "install",
+        "-t",
+        "/home/xumin/Public/Trime/build/issue-fixes-20261028/voice-fixture/voice-fixture.apk"
+      ],
+      "exit": 0,
+      "started_utc": "2026-10-28T02:15:33.796532+00:00",
+      "elapsed_seconds": 0.7782998085021973,
+      "stdout_file": {
+        "path": "runtime/run1/commands/install-voice-fixture.stdout",
+        "sha256": "781a31c82430c97897af612ece5e0ca2205e301cb5ff121ce2660541ea5182c7",
+        "bytes": 36
+      },
+      "stdout": "Performing Streamed Install\nSuccess\n",
+      "stderr_file": {
+        "path": "runtime/run1/commands/install-voice-fixture.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      },
+      "stderr": ""
+    },
+    "enable": {
+      "record": {
+        "path": "runtime/run1/commands/enable-voice-fixture.json",
+        "sha256": "edd51476a4f3cae9c92229bbcefe1f9dd915405845763cf829dc8224913bfb25",
+        "bytes": 301
+      },
+      "argv": [
+        "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+        "-s",
+        "emulator-5586",
+        "shell",
+        "ime",
+        "enable",
+        "org.trime.triage.voicefixture/.VoiceFixtureService"
+      ],
+      "exit": 0,
+      "started_utc": "2026-10-28T02:15:34.958030+00:00",
+      "elapsed_seconds": 0.12108159065246582,
+      "stdout_file": {
+        "path": "runtime/run1/commands/enable-voice-fixture.stdout",
+        "sha256": "efc9f9ea3fc852d594746e4d399757c9e31c568e616c2f73aaef31fcf310cf56",
+        "bytes": 89
+      },
+      "stdout": "Input method org.trime.triage.voicefixture/.VoiceFixtureService: now enabled for user #0\n",
+      "stderr_file": {
+        "path": "runtime/run1/commands/enable-voice-fixture.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      },
+      "stderr": ""
+    },
+    "pidof_note": "exit1且stdout为空表示当次采样无运行进程；不据此证明任意历史时刻均未启动。"
+  },
+  "command_reboot_context": {
+    "reboot": {
+      "record": {
+        "path": "runtime/run1/commands/baseline-reboot.json",
+        "sha256": "add5d1a31bf68cce9b91a814fea7cc520489ce00c42e45c2ca40e14f245f9f68",
+        "bytes": 217
+      },
+      "argv": [
+        "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+        "-s",
+        "emulator-5586",
+        "reboot"
+      ],
+      "exit": 0,
+      "started_utc": "2026-10-28T02:20:58.777462+00:00",
+      "elapsed_seconds": 1.8905973434448242,
+      "stdout_file": {
+        "path": "runtime/run1/commands/baseline-reboot.stdout",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      },
+      "stdout": "",
+      "stderr_file": {
+        "path": "runtime/run1/commands/baseline-reboot.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      },
+      "stderr": ""
+    },
+    "ready": {
+      "record": {
+        "path": "runtime/run1/commands/voice-reboot-final-ready.json",
+        "sha256": "f6c24355b846b330401f5af1c1ce6ee8a1ba9c06d4d50f5168cb50d1c9c88579",
+        "bytes": 259
+      },
+      "argv": [
+        "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+        "-s",
+        "emulator-5586",
+        "shell",
+        "getprop",
+        "sys.boot_completed"
+      ],
+      "exit": 0,
+      "started_utc": "2026-10-28T02:21:59.459203+00:00",
+      "elapsed_seconds": 0.22437310218811035,
+      "stdout_file": {
+        "path": "runtime/run1/commands/voice-reboot-final-ready.stdout",
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865",
+        "bytes": 2
+      },
+      "stdout": "1\n",
+      "stderr_file": {
+        "path": "runtime/run1/commands/voice-reboot-final-ready.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      },
+      "stderr": ""
+    },
+    "fixture_pid_after_ready": {
+      "record": {
+        "path": "runtime/run1/commands/voice-reboot-fixture-pid2.json",
+        "sha256": "05f3f8f141a959cee8493835cc9c9c9c0cb3640992e582ff68e4cde979498889",
+        "bytes": 268
+      },
+      "argv": [
+        "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+        "-s",
+        "emulator-5586",
+        "shell",
+        "pidof",
+        "org.trime.triage.voicefixture"
+      ],
+      "exit": 1,
+      "started_utc": "2026-10-28T02:22:00.025573+00:00",
+      "elapsed_seconds": 0.18539667129516602,
+      "stdout_file": {
+        "path": "runtime/run1/commands/voice-reboot-fixture-pid2.stdout",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      },
+      "stdout": "",
+      "stderr_file": {
+        "path": "runtime/run1/commands/voice-reboot-fixture-pid2.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      },
+      "stderr": ""
+    },
+    "timing_note": "重启命令早于voice-patched-install；固定版实际观察发生在重启完成后安装/更新同包的会话。"
+  },
+  "cases": [
+    {
+      "id": "baseline_before_command_reboot",
+      "run": "run1",
+      "apk_identity": "baseline",
+      "boot_context": "run1首次启动；观察发生于baseline-reboot命令之前。",
+      "outcome": "confirmed_empty_actual_chooser_with_enabled_fixture",
+      "evidence": {
+        "xml": {
+          "path": "runtime/run1/baseline-voice-list.xml",
+          "sha256": "1b76ff6fdbf150bb802bc1e0a7e6ec97e5c1b3fb9e74240752f6374a890c07ff",
+          "bytes": 5122
+        },
+        "dialog_titles": [
+          "Preferred voice input"
+        ],
+        "is_actual_voice_chooser": true,
+        "chooser_item_labels": [],
+        "fixture_visible": false,
+        "all_visible_text": [
+          "Preferred voice input",
+          "CANCEL"
+        ],
+        "png": {
+          "path": "runtime/run1/baseline-voice-list-image.png",
+          "sha256": "4dfd82ed83875e0f73116c5c1e3e2206a105ce5058d87983b404a68f8b67e3c1",
+          "bytes": 44445
+        },
+        "original_png_visually_reviewed_by_root_and_reviewer": true
+      },
+      "enabled_ime_list": {
+        "record": {
+          "path": "runtime/run1/commands/baseline-enabled-imes.json",
+          "sha256": "346fdd13c7058b63a773c3a3a737d74a8adfc5ca4eaa8dc5e2b86a2d4b93ccbd",
+          "bytes": 251
+        },
+        "argv": [
+          "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+          "-s",
+          "emulator-5586",
+          "shell",
+          "ime",
+          "list",
+          "-s"
+        ],
+        "exit": 0,
+        "started_utc": "2026-10-28T02:20:58.587808+00:00",
+        "elapsed_seconds": 0.11748814582824707,
+        "stdout_file": {
+          "path": "runtime/run1/commands/baseline-enabled-imes.stdout",
+          "sha256": "0b89aa881e8c29dd513ba83f7f7f37703987077327c0475f68cfe5c90c1dd15a",
+          "bytes": 164
+        },
+        "stdout": "com.android.inputmethod.latin/.LatinIME\norg.trime.triage.voicefixture/.VoiceFixtureService\ncom.osfans.trime.debug/com.osfans.trime.ime.core.TrimeInputMethodService\n",
+        "stderr_file": {
+          "path": "runtime/run1/commands/baseline-enabled-imes.stderr",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        "stderr": ""
+      },
+      "fixture_pid_observation": {
+        "record": {
+          "path": "runtime/run1/commands/baseline-fixture-pid.json",
+          "sha256": "ef6819f70747b8f01b8635bcf4771e44cf7a6286e49afeafcf2e2613f6ccd288",
+          "bytes": 268
+        },
+        "argv": [
+          "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+          "-s",
+          "emulator-5586",
+          "shell",
+          "pidof",
+          "org.trime.triage.voicefixture"
+        ],
+        "exit": 1,
+        "started_utc": "2026-10-28T02:20:58.705652+00:00",
+        "elapsed_seconds": 0.07145404815673828,
+        "stdout_file": {
+          "path": "runtime/run1/commands/baseline-fixture-pid.stdout",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        "stdout": "",
+        "stderr_file": {
+          "path": "runtime/run1/commands/baseline-fixture-pid.stderr",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        "stderr": ""
+      },
+      "commands": [
+        {
+          "record": {
+            "path": "runtime/run1/commands/install-baseline-after-certificate-reset.json",
+            "sha256": "7a9aac0f7313d42376d136c74be56d664980dd6ed510da100ccbbdbdf1cbb3a7",
+            "bytes": 323
+          },
+          "argv": [
+            "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+            "-s",
+            "emulator-5586",
+            "install",
+            "-t",
+            "/home/xumin/Public/Trime/build/issue-fixes-20261028/device-apks/baseline-diagnostic.apk"
+          ],
+          "exit": 0,
+          "started_utc": "2026-10-28T02:15:32.861373+00:00",
+          "elapsed_seconds": 0.9347579479217529,
+          "stdout_file": {
+            "path": "runtime/run1/commands/install-baseline-after-certificate-reset.stdout",
+            "sha256": "517d58d24b80d29e2b295e6aa93f40bf50a1918b460b52e75eed20151fa968a2",
+            "bytes": 85
+          },
+          "stdout": "Serving...\nPerforming Incremental Install\nSuccess\nInstall command complete in 915 ms\n",
+          "stderr_file": {
+            "path": "runtime/run1/commands/install-baseline-after-certificate-reset.stderr",
+            "sha256": "0b43830fe6c70c0556e5d0510aae3e171dc955d86b450f13bedec332ce1af30c",
+            "bytes": 50
+          },
+          "stderr": "All files should be loaded. Notifying the device.\n"
+        },
+        {
+          "record": {
+            "path": "runtime/run1/commands/baseline-open-voice-tap.json",
+            "sha256": "49fa906a41a561dfa9367ba4c177edd1b25724a4cb83063d1567eb07d8410d43",
+            "bytes": 263
+          },
+          "argv": [
+            "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+            "-s",
+            "emulator-5586",
+            "shell",
+            "input",
+            "tap",
+            "180",
+            "610"
+          ],
+          "exit": 0,
+          "started_utc": "2026-10-28T02:20:50.931011+00:00",
+          "elapsed_seconds": 0.10989546775817871,
+          "stdout_file": {
+            "path": "runtime/run1/commands/baseline-open-voice-tap.stdout",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          },
+          "stdout": "",
+          "stderr_file": {
+            "path": "runtime/run1/commands/baseline-open-voice-tap.stderr",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          },
+          "stderr": ""
+        },
+        {
+          "record": {
+            "path": "runtime/run1/commands/baseline-voice-list-dump.json",
+            "sha256": "4dbb1a2f4266df64d4fea7f2284983721a4e8cb90fb0c69f35bdb09a8328b55d",
+            "bytes": 284
+          },
+          "argv": [
+            "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+            "-s",
+            "emulator-5586",
+            "shell",
+            "uiautomator",
+            "dump",
+            "/data/local/tmp/triage-ui.xml"
+          ],
+          "exit": 0,
+          "started_utc": "2026-10-28T02:20:53.741974+00:00",
+          "elapsed_seconds": 3.923213481903076,
+          "stdout_file": {
+            "path": "runtime/run1/commands/baseline-voice-list-dump.stdout",
+            "sha256": "75fb3eed3058d4b5bd851801c0f96cf929317255cb17ec4a75b674c9bfa8851b",
+            "bytes": 54
+          },
+          "stdout": "UI hierchary dumped to: /data/local/tmp/triage-ui.xml\n",
+          "stderr_file": {
+            "path": "runtime/run1/commands/baseline-voice-list-dump.stderr",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          },
+          "stderr": ""
+        },
+        {
+          "record": {
+            "path": "runtime/run1/commands/baseline-voice-list-xml.json",
+            "sha256": "faef16a2d0de79cbed1723fdf78385330cacf826a773ac8a3f4111842037cdd8",
+            "bytes": 266
+          },
+          "argv": [
+            "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+            "-s",
+            "emulator-5586",
+            "shell",
+            "cat",
+            "/data/local/tmp/triage-ui.xml"
+          ],
+          "exit": 0,
+          "started_utc": "2026-10-28T02:20:57.665662+00:00",
+          "elapsed_seconds": 0.09919929504394531,
+          "stdout_file": {
+            "path": "runtime/run1/commands/baseline-voice-list-xml.stdout",
+            "sha256": "1b76ff6fdbf150bb802bc1e0a7e6ec97e5c1b3fb9e74240752f6374a890c07ff",
+            "bytes": 5122
+          },
+          "stderr_file": {
+            "path": "runtime/run1/commands/baseline-voice-list-xml.stderr",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          },
+          "stderr": ""
+        },
+        {
+          "record": {
+            "path": "runtime/run1/commands/baseline-voice-list-image.json",
+            "sha256": "132b60bd646408d8489f8c1e24f28e95157f832854ee79462e9da1404d8de837",
+            "bytes": 246
+          },
+          "argv": [
+            "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+            "-s",
+            "emulator-5586",
+            "exec-out",
+            "screencap",
+            "-p"
+          ],
+          "exit": 0,
+          "started_utc": "2026-10-28T02:20:57.766088+00:00",
+          "elapsed_seconds": 0.8210873603820801,
+          "stdout_file": {
+            "path": "runtime/run1/commands/baseline-voice-list-image.stdout",
+            "sha256": "4dfd82ed83875e0f73116c5c1e3e2206a105ce5058d87983b404a68f8b67e3c1",
+            "bytes": 44445
+          },
+          "stderr_file": {
+            "path": "runtime/run1/commands/baseline-voice-list-image.stderr",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          },
+          "stderr": ""
+        }
+      ],
+      "interpretation": "实际Preferred voice input chooser为空，但系统ime list -s包含已启用fixture；pidof采样未返回fixture PID。"
+    },
+    {
+      "id": "fixed_enumeration_in_post_reboot_session",
+      "run": "run1",
+      "apk_identity": "voice",
+      "boot_context": "设备在原版安装状态下重启并完成启动，随后才安装修复版；不是修复版自身跨重启存活/恢复测试。",
+      "outcome": "confirmed_fixture_visible_and_preference_saved",
+      "evidence": {
+        "xml": {
+          "path": "runtime/run1/voice-fixed-list-0.xml",
+          "sha256": "24f5ca229ef885b67ea75d8dafeee52fc5a5b7053de2002dd3947a2dfc9eb7fe",
+          "bytes": 5872
+        },
+        "dialog_titles": [
+          "Preferred voice input"
+        ],
+        "is_actual_voice_chooser": true,
+        "chooser_item_labels": [
+          "Trime Voice Fixture"
+        ],
+        "fixture_visible": true,
+        "all_visible_text": [
+          "Preferred voice input",
+          "Trime Voice Fixture",
+          "CANCEL"
+        ],
+        "png": {
+          "path": "runtime/run1/voice-fixed-chooser-image.png",
+          "sha256": "8b365ef788c75cc81c281e0ed4c6a2fb276287fc6947131b9fc6053bf4fc790f",
+          "bytes": 52348
+        },
+        "original_png_visually_reviewed_by_root_and_reviewer": true
+      },
+      "selection_tap": {
+        "record": {
+          "path": "runtime/run1/commands/voice-fixed-select-fixture-tap.json",
+          "sha256": "d5dcb65e10b9c0a14505644241b8f6c5b253638e6af564d0d8e653f49380864a",
+          "bytes": 264
+        },
+        "argv": [
+          "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+          "-s",
+          "emulator-5586",
+          "shell",
+          "input",
+          "tap",
+          "360",
+          "613"
+        ],
+        "exit": 0,
+        "started_utc": "2026-10-28T02:24:06.406646+00:00",
+        "elapsed_seconds": 0.09399056434631348,
+        "stdout_file": {
+          "path": "runtime/run1/commands/voice-fixed-select-fixture-tap.stdout",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        "stdout": "",
+        "stderr_file": {
+          "path": "runtime/run1/commands/voice-fixed-select-fixture-tap.stderr",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        "stderr": ""
+      },
+      "selected_preference": {
+        "name": "preferred_voice_input",
+        "value": "org.trime.triage.voicefixture",
+        "command": {
+          "record": {
+            "path": "runtime/run1/commands/voice-fixed-selected-prefs.json",
+            "sha256": "82e48eaf3d164fc477413ac2d259b1d73358e85f8ad3917b94667c2f605126e6",
+            "bytes": 331
+          },
+          "argv": [
+            "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+            "-s",
+            "emulator-5586",
+            "shell",
+            "run-as",
+            "com.osfans.trime.debug",
+            "cat",
+            "shared_prefs/com.osfans.trime.debug_preferences.xml"
+          ],
+          "exit": 0,
+          "started_utc": "2026-10-28T02:24:10.203089+00:00",
+          "elapsed_seconds": 0.13120102882385254,
+          "stdout_file": {
+            "path": "runtime/run1/commands/voice-fixed-selected-prefs.stdout",
+            "sha256": "cc5b048047805e620b4a186e2ecea7156d3ee8763cdc498dc30f0a393853ba4d",
+            "bytes": 426
+          },
+          "stdout": "<?xml version='1.0' encoding='utf-8' standalone='yes' ?>\n<map>\n    <string name=\"inline_preedit_mode\">DISABLE</string>\n    <boolean name=\"inline_suggestions\" value=\"true\" />\n    <string name=\"preferred_voice_input\">org.trime.triage.voicefixture</string>\n    <int name=\"general__pid\" value=\"2269\" />\n    <string name=\"profile_data_storage_mode\">APP_STORAGE</string>\n    <boolean name=\"ascii_switch_tips\" value=\"true\" />\n</map>\n",
+          "stderr_file": {
+            "path": "runtime/run1/commands/voice-fixed-selected-prefs.stderr",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          },
+          "stderr": ""
+        }
+      },
+      "fixture_pid_observation": {
+        "record": {
+          "path": "runtime/run1/commands/voice-fixed-fixture-never-launched-pid.json",
+          "sha256": "c31d6abb2da2025511369e2cffee2681a74cdc0ac9179162ab640d0a565884cd",
+          "bytes": 267
+        },
+        "argv": [
+          "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+          "-s",
+          "emulator-5586",
+          "shell",
+          "pidof",
+          "org.trime.triage.voicefixture"
+        ],
+        "exit": 1,
+        "started_utc": "2026-10-28T02:24:10.334733+00:00",
+        "elapsed_seconds": 0.0957634449005127,
+        "stdout_file": {
+          "path": "runtime/run1/commands/voice-fixed-fixture-never-launched-pid.stdout",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        "stdout": "",
+        "stderr_file": {
+          "path": "runtime/run1/commands/voice-fixed-fixture-never-launched-pid.stderr",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        "stderr": ""
+      },
+      "commands": [
+        {
+          "record": {
+            "path": "runtime/run1/commands/voice-patched-install.json",
+            "sha256": "e00fb5dc5ea6dfdee785d76a0c26e7cc6b7753109e5e40a02ac9296cb4499ae4",
+            "bytes": 331
+          },
+          "argv": [
+            "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+            "-s",
+            "emulator-5586",
+            "install",
+            "-r",
+            "-t",
+            "/home/xumin/Public/Trime/build/issue-fixes-20261028/device-apks/voice-diagnostic.apk"
+          ],
+          "exit": 0,
+          "started_utc": "2026-10-28T02:23:01.188596+00:00",
+          "elapsed_seconds": 2.1571013927459717,
+          "stdout_file": {
+            "path": "runtime/run1/commands/voice-patched-install.stdout",
+            "sha256": "bdda6b10fa2fb6f361ce49030647da757984ce6b95cdc867765a312f8a3e4ab6",
+            "bytes": 86
+          },
+          "stdout": "Serving...\nPerforming Incremental Install\nSuccess\nInstall command complete in 2060 ms\n",
+          "stderr_file": {
+            "path": "runtime/run1/commands/voice-patched-install.stderr",
+            "sha256": "0b43830fe6c70c0556e5d0510aae3e171dc955d86b450f13bedec332ce1af30c",
+            "bytes": 50
+          },
+          "stderr": "All files should be loaded. Notifying the device.\n"
+        },
+        {
+          "record": {
+            "path": "runtime/run1/commands/voice-fixed-voice-pref-tap.json",
+            "sha256": "e95e1282a42a7f7f472923874b1775066ba561ebbeb731262eaffa6ce0503342",
+            "bytes": 264
+          },
+          "argv": [
+            "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+            "-s",
+            "emulator-5586",
+            "shell",
+            "input",
+            "tap",
+            "180",
+            "610"
+          ],
+          "exit": 0,
+          "started_utc": "2026-10-28T02:23:48.107109+00:00",
+          "elapsed_seconds": 0.20830750465393066,
+          "stdout_file": {
+            "path": "runtime/run1/commands/voice-fixed-voice-pref-tap.stdout",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          },
+          "stdout": "",
+          "stderr_file": {
+            "path": "runtime/run1/commands/voice-fixed-voice-pref-tap.stderr",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          },
+          "stderr": ""
+        },
+        {
+          "record": {
+            "path": "runtime/run1/commands/voice-fixed-list-0-dump.json",
+            "sha256": "01716da54bf5a5e71898e04c8a4e80e070606efd11d84e2d147aedde51c9970b",
+            "bytes": 284
+          },
+          "argv": [
+            "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+            "-s",
+            "emulator-5586",
+            "shell",
+            "uiautomator",
+            "dump",
+            "/data/local/tmp/triage-ui.xml"
+          ],
+          "exit": 0,
+          "started_utc": "2026-10-28T02:23:53.017760+00:00",
+          "elapsed_seconds": 3.047118902206421,
+          "stdout_file": {
+            "path": "runtime/run1/commands/voice-fixed-list-0-dump.stdout",
+            "sha256": "75fb3eed3058d4b5bd851801c0f96cf929317255cb17ec4a75b674c9bfa8851b",
+            "bytes": 54
+          },
+          "stdout": "UI hierchary dumped to: /data/local/tmp/triage-ui.xml\n",
+          "stderr_file": {
+            "path": "runtime/run1/commands/voice-fixed-list-0-dump.stderr",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          },
+          "stderr": ""
+        },
+        {
+          "record": {
+            "path": "runtime/run1/commands/voice-fixed-list-0-xml.json",
+            "sha256": "f1124f26bed5dd96a926c4a1d8c9aa37407eebd9d0090fa3cf1db53264f0fe2b",
+            "bytes": 265
+          },
+          "argv": [
+            "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+            "-s",
+            "emulator-5586",
+            "shell",
+            "cat",
+            "/data/local/tmp/triage-ui.xml"
+          ],
+          "exit": 0,
+          "started_utc": "2026-10-28T02:23:56.065186+00:00",
+          "elapsed_seconds": 0.08269166946411133,
+          "stdout_file": {
+            "path": "runtime/run1/commands/voice-fixed-list-0-xml.stdout",
+            "sha256": "24f5ca229ef885b67ea75d8dafeee52fc5a5b7053de2002dd3947a2dfc9eb7fe",
+            "bytes": 5872
+          },
+          "stderr_file": {
+            "path": "runtime/run1/commands/voice-fixed-list-0-xml.stderr",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          },
+          "stderr": ""
+        },
+        {
+          "record": {
+            "path": "runtime/run1/commands/voice-fixed-chooser-image.json",
+            "sha256": "3905c9237739f90211b68d003da4fff745df3121469e01c098e025ea39984c4a",
+            "bytes": 247
+          },
+          "argv": [
+            "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+            "-s",
+            "emulator-5586",
+            "exec-out",
+            "screencap",
+            "-p"
+          ],
+          "exit": 0,
+          "started_utc": "2026-10-28T02:23:56.148822+00:00",
+          "elapsed_seconds": 1.0531690120697021,
+          "stdout_file": {
+            "path": "runtime/run1/commands/voice-fixed-chooser-image.stdout",
+            "sha256": "8b365ef788c75cc81c281e0ed4c6a2fb276287fc6947131b9fc6053bf4fc790f",
+            "bytes": 52348
+          },
+          "stderr_file": {
+            "path": "runtime/run1/commands/voice-fixed-chooser-image.stderr",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          },
+          "stderr": ""
+        }
+      ],
+      "interpretation": "chooser显示Trime Voice Fixture，点击后共享偏好保存其包名；pidof采样仍未返回fixture PID。此处仅验证枚举和选择持久化，不验证IME切换或识别。"
+    },
+    {
+      "id": "fixed_disabled_fixture_after_refresh",
+      "run": "run1",
+      "apk_identity": "voice",
+      "boot_context": "修复版选择fixture后禁用该IME，再force-stop并重新打开Trime以刷新。",
+      "outcome": "confirmed_disabled_fixture_absent_from_actual_chooser",
+      "evidence": {
+        "xml": {
+          "path": "runtime/run1/voice-disabled-list-0.xml",
+          "sha256": "1b76ff6fdbf150bb802bc1e0a7e6ec97e5c1b3fb9e74240752f6374a890c07ff",
+          "bytes": 5122
+        },
+        "dialog_titles": [
+          "Preferred voice input"
+        ],
+        "is_actual_voice_chooser": true,
+        "chooser_item_labels": [],
+        "fixture_visible": false,
+        "all_visible_text": [
+          "Preferred voice input",
+          "CANCEL"
+        ],
+        "png": {
+          "path": "runtime/run1/voice-disabled-list-image.png",
+          "sha256": "c79c575eaf8aca896d7f5b88f45bdea7e3d0f5034c682ac3d21cb194e09c68b2",
+          "bytes": 43942
+        },
+        "original_png_visually_reviewed_by_root_and_reviewer": true
+      },
+      "commands": [
+        {
+          "record": {
+            "path": "runtime/run1/commands/voice-fixed-disable-fixture.json",
+            "sha256": "60d493ba1ca07d55887313d14fdd4788cf4a91af7821020258165d46adb8d9fe",
+            "bytes": 302
+          },
+          "argv": [
+            "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+            "-s",
+            "emulator-5586",
+            "shell",
+            "ime",
+            "disable",
+            "org.trime.triage.voicefixture/.VoiceFixtureService"
+          ],
+          "exit": 0,
+          "started_utc": "2026-10-28T02:24:10.430843+00:00",
+          "elapsed_seconds": 0.07999467849731445,
+          "stdout_file": {
+            "path": "runtime/run1/commands/voice-fixed-disable-fixture.stdout",
+            "sha256": "a2cb819e8fbd7ec343edf44519030f1935d5bc24427894db4d1d5461656b9751",
+            "bytes": 90
+          },
+          "stdout": "Input method org.trime.triage.voicefixture/.VoiceFixtureService: now disabled for user #0\n",
+          "stderr_file": {
+            "path": "runtime/run1/commands/voice-fixed-disable-fixture.stderr",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          },
+          "stderr": ""
+        },
+        {
+          "record": {
+            "path": "runtime/run1/commands/voice-fixed-refresh-main.json",
+            "sha256": "71ea188c260b0bc2481a5870e44a0a5a1cbb3ed3334bc808b09c2a5234fafd6c",
+            "bytes": 275
+          },
+          "argv": [
+            "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+            "-s",
+            "emulator-5586",
+            "shell",
+            "am",
+            "force-stop",
+            "com.osfans.trime.debug"
+          ],
+          "exit": 0,
+          "started_utc": "2026-10-28T02:24:10.511163+00:00",
+          "elapsed_seconds": 0.2395167350769043,
+          "stdout_file": {
+            "path": "runtime/run1/commands/voice-fixed-refresh-main.stdout",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          },
+          "stdout": "",
+          "stderr_file": {
+            "path": "runtime/run1/commands/voice-fixed-refresh-main.stderr",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          },
+          "stderr": ""
+        },
+        {
+          "record": {
+            "path": "runtime/run1/commands/voice-fixed-refresh-start.json",
+            "sha256": "189e2a4f1f709f8821e0201fb48cfe032f731b045cfa6c7b1304ef3f508200ef",
+            "bytes": 317
+          },
+          "argv": [
+            "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+            "-s",
+            "emulator-5586",
+            "shell",
+            "am",
+            "start",
+            "-n",
+            "com.osfans.trime.debug/com.osfans.trime.ui.main.MainActivity"
+          ],
+          "exit": 0,
+          "started_utc": "2026-10-28T02:24:10.751139+00:00",
+          "elapsed_seconds": 0.3515744209289551,
+          "stdout_file": {
+            "path": "runtime/run1/commands/voice-fixed-refresh-start.stdout",
+            "sha256": "1627552306fab73cbe3453b547e0be268d0d83b77035b14796c7361811edb51e",
+            "bytes": 86
+          },
+          "stdout": "Starting: Intent { cmp=com.osfans.trime.debug/com.osfans.trime.ui.main.MainActivity }\n",
+          "stderr_file": {
+            "path": "runtime/run1/commands/voice-fixed-refresh-start.stderr",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          },
+          "stderr": ""
+        },
+        {
+          "record": {
+            "path": "runtime/run1/commands/voice-disabled-start-main-again.json",
+            "sha256": "04965a956b8d11b2127fd4eb0c7bfe07c38a2e656f948ea06cd3fc5e50e8f562",
+            "bytes": 317
+          },
+          "argv": [
+            "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+            "-s",
+            "emulator-5586",
+            "shell",
+            "am",
+            "start",
+            "-n",
+            "com.osfans.trime.debug/com.osfans.trime.ui.main.MainActivity"
+          ],
+          "exit": 0,
+          "started_utc": "2026-10-28T02:24:18.633794+00:00",
+          "elapsed_seconds": 0.1927492618560791,
+          "stdout_file": {
+            "path": "runtime/run1/commands/voice-disabled-start-main-again.stdout",
+            "sha256": "1627552306fab73cbe3453b547e0be268d0d83b77035b14796c7361811edb51e",
+            "bytes": 86
+          },
+          "stdout": "Starting: Intent { cmp=com.osfans.trime.debug/com.osfans.trime.ui.main.MainActivity }\n",
+          "stderr_file": {
+            "path": "runtime/run1/commands/voice-disabled-start-main-again.stderr",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          },
+          "stderr": ""
+        },
+        {
+          "record": {
+            "path": "runtime/run1/commands/voice-disabled-open-pref-tap.json",
+            "sha256": "a2e358d4160c3ab8700c7916aa852b637f231fa254a0b8d0561b761313766873",
+            "bytes": 264
+          },
+          "argv": [
+            "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+            "-s",
+            "emulator-5586",
+            "shell",
+            "input",
+            "tap",
+            "180",
+            "610"
+          ],
+          "exit": 0,
+          "started_utc": "2026-10-28T02:24:34.899601+00:00",
+          "elapsed_seconds": 0.12711572647094727,
+          "stdout_file": {
+            "path": "runtime/run1/commands/voice-disabled-open-pref-tap.stdout",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          },
+          "stdout": "",
+          "stderr_file": {
+            "path": "runtime/run1/commands/voice-disabled-open-pref-tap.stderr",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          },
+          "stderr": ""
+        },
+        {
+          "record": {
+            "path": "runtime/run1/commands/voice-disabled-list-0-dump.json",
+            "sha256": "5abec956a43e1841201b8c88d9c9597636b3fa6d750e6451a98d599e7480706a",
+            "bytes": 284
+          },
+          "argv": [
+            "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+            "-s",
+            "emulator-5586",
+            "shell",
+            "uiautomator",
+            "dump",
+            "/data/local/tmp/triage-ui.xml"
+          ],
+          "exit": 0,
+          "started_utc": "2026-10-28T02:24:38.728664+00:00",
+          "elapsed_seconds": 2.760056734085083,
+          "stdout_file": {
+            "path": "runtime/run1/commands/voice-disabled-list-0-dump.stdout",
+            "sha256": "75fb3eed3058d4b5bd851801c0f96cf929317255cb17ec4a75b674c9bfa8851b",
+            "bytes": 54
+          },
+          "stdout": "UI hierchary dumped to: /data/local/tmp/triage-ui.xml\n",
+          "stderr_file": {
+            "path": "runtime/run1/commands/voice-disabled-list-0-dump.stderr",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          },
+          "stderr": ""
+        },
+        {
+          "record": {
+            "path": "runtime/run1/commands/voice-disabled-list-0-xml.json",
+            "sha256": "889189d538a2302e418188aeab3e49f3fd49a6a61b3d0cca01b00c7603b9337c",
+            "bytes": 262
+          },
+          "argv": [
+            "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+            "-s",
+            "emulator-5586",
+            "shell",
+            "cat",
+            "/data/local/tmp/triage-ui.xml"
+          ],
+          "exit": 0,
+          "started_utc": "2026-10-28T02:24:41.489173+00:00",
+          "elapsed_seconds": 0.0970458984375,
+          "stdout_file": {
+            "path": "runtime/run1/commands/voice-disabled-list-0-xml.stdout",
+            "sha256": "1b76ff6fdbf150bb802bc1e0a7e6ec97e5c1b3fb9e74240752f6374a890c07ff",
+            "bytes": 5122
+          },
+          "stderr_file": {
+            "path": "runtime/run1/commands/voice-disabled-list-0-xml.stderr",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          },
+          "stderr": ""
+        },
+        {
+          "record": {
+            "path": "runtime/run1/commands/voice-disabled-list-image.json",
+            "sha256": "4cd97c3e6bc628b6d4329113948dcc4ecfdfd30556a3bc319f4e0d7602ec32a3",
+            "bytes": 246
+          },
+          "argv": [
+            "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+            "-s",
+            "emulator-5586",
+            "exec-out",
+            "screencap",
+            "-p"
+          ],
+          "exit": 0,
+          "started_utc": "2026-10-28T02:24:41.587187+00:00",
+          "elapsed_seconds": 0.9637627601623535,
+          "stdout_file": {
+            "path": "runtime/run1/commands/voice-disabled-list-image.stdout",
+            "sha256": "c79c575eaf8aca896d7f5b88f45bdea7e3d0f5034c682ac3d21cb194e09c68b2",
+            "bytes": 43942
+          },
+          "stderr_file": {
+            "path": "runtime/run1/commands/voice-disabled-list-image.stderr",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          },
+          "stderr": ""
+        }
+      ],
+      "interpretation": "刷新后实际chooser不再显示已禁用fixture；没有据此声明存储的preferred_voice_input值被清除。"
+    },
+    {
+      "id": "baseline_repeat_on_new_emulator_boot",
+      "run": "run2",
+      "apk_identity": "baseline",
+      "boot_context": "run2为同一已准备API35 AVD数据资产的新模拟器进程，使用-no-snapshot冷启动；不是清除应用数据或全新userdata安装。",
+      "outcome": "confirmed_empty_actual_chooser_with_enabled_fixture",
+      "evidence": {
+        "xml": {
+          "path": "runtime/run2/voice-baseline-r2-chooser-0.xml",
+          "sha256": "1b76ff6fdbf150bb802bc1e0a7e6ec97e5c1b3fb9e74240752f6374a890c07ff",
+          "bytes": 5122
+        },
+        "dialog_titles": [
+          "Preferred voice input"
+        ],
+        "is_actual_voice_chooser": true,
+        "chooser_item_labels": [],
+        "fixture_visible": false,
+        "all_visible_text": [
+          "Preferred voice input",
+          "CANCEL"
+        ],
+        "png": {
+          "path": "runtime/run2/voice-baseline-r2-chooser-image.png",
+          "sha256": "3990a32a2897ebfd0f9e108cdd1ca1605236d06a940f76b6821af4a375c1d4a9",
+          "bytes": 44309
+        },
+        "original_png_visually_reviewed_by_root_and_reviewer": true
+      },
+      "enabled_ime_list": {
+        "record": {
+          "path": "runtime/run2/commands/voice-baseline-r2-enabled-list.json",
+          "sha256": "ffa4238376cd2edb4a941c0ee8f5d18b07da4587c5532b097fa849a7ab0bfd8e",
+          "bytes": 251
+        },
+        "argv": [
+          "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+          "-s",
+          "emulator-5582",
+          "shell",
+          "ime",
+          "list",
+          "-s"
+        ],
+        "exit": 0,
+        "started_utc": "2026-10-28T02:30:18.181935+00:00",
+        "elapsed_seconds": 0.16658997535705566,
+        "stdout_file": {
+          "path": "runtime/run2/commands/voice-baseline-r2-enabled-list.stdout",
+          "sha256": "0d01e4690389d37240b94da691b8ec25bb43f32479c0780aa57d4359cfa55283",
+          "bytes": 164
+        },
+        "stdout": "com.android.inputmethod.latin/.LatinIME\ncom.osfans.trime.debug/com.osfans.trime.ime.core.TrimeInputMethodService\norg.trime.triage.voicefixture/.VoiceFixtureService\n",
+        "stderr_file": {
+          "path": "runtime/run2/commands/voice-baseline-r2-enabled-list.stderr",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        "stderr": ""
+      },
+      "fixture_pid_observation": {
+        "record": {
+          "path": "runtime/run2/commands/voice-baseline-r2-fixture-pid.json",
+          "sha256": "c59669d7042b239ae9e7a941ba09697766ddbfe93b856eaaf3ba323d37525d63",
+          "bytes": 268
+        },
+        "argv": [
+          "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+          "-s",
+          "emulator-5582",
+          "shell",
+          "pidof",
+          "org.trime.triage.voicefixture"
+        ],
+        "exit": 1,
+        "started_utc": "2026-10-28T02:30:18.348829+00:00",
+        "elapsed_seconds": 0.16571474075317383,
+        "stdout_file": {
+          "path": "runtime/run2/commands/voice-baseline-r2-fixture-pid.stdout",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        "stdout": "",
+        "stderr_file": {
+          "path": "runtime/run2/commands/voice-baseline-r2-fixture-pid.stderr",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        "stderr": ""
+      },
+      "commands": [
+        {
+          "record": {
+            "path": "runtime/run2/commands/voice-baseline-r2-install.json",
+            "sha256": "a054e96945a581aa8281fcb84a3f305fc7a801ffca6d396bd7f665104401d932",
+            "bytes": 334
+          },
+          "argv": [
+            "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+            "-s",
+            "emulator-5582",
+            "install",
+            "-r",
+            "-t",
+            "/home/xumin/Public/Trime/build/issue-fixes-20261028/device-apks/baseline-diagnostic.apk"
+          ],
+          "exit": 0,
+          "started_utc": "2026-10-28T02:29:28.175066+00:00",
+          "elapsed_seconds": 0.7043492794036865,
+          "stdout_file": {
+            "path": "runtime/run2/commands/voice-baseline-r2-install.stdout",
+            "sha256": "796b6fe2a5413e6f636363d72890b1c591213a30a801b9adee931eba8df6ebd1",
+            "bytes": 85
+          },
+          "stdout": "Serving...\nPerforming Incremental Install\nSuccess\nInstall command complete in 692 ms\n",
+          "stderr_file": {
+            "path": "runtime/run2/commands/voice-baseline-r2-install.stderr",
+            "sha256": "0b43830fe6c70c0556e5d0510aae3e171dc955d86b450f13bedec332ce1af30c",
+            "bytes": 50
+          },
+          "stderr": "All files should be loaded. Notifying the device.\n"
+        },
+        {
+          "record": {
+            "path": "runtime/run2/commands/voice-baseline-r2-pref-tap.json",
+            "sha256": "2c21b42a66f4c013e4c1b1bafa15dd78e98c065f39bb2f50fd1dd9af5c925b81",
+            "bytes": 263
+          },
+          "argv": [
+            "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+            "-s",
+            "emulator-5582",
+            "shell",
+            "input",
+            "tap",
+            "180",
+            "610"
+          ],
+          "exit": 0,
+          "started_utc": "2026-10-28T02:30:10.364471+00:00",
+          "elapsed_seconds": 0.1844184398651123,
+          "stdout_file": {
+            "path": "runtime/run2/commands/voice-baseline-r2-pref-tap.stdout",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          },
+          "stdout": "",
+          "stderr_file": {
+            "path": "runtime/run2/commands/voice-baseline-r2-pref-tap.stderr",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          },
+          "stderr": ""
+        },
+        {
+          "record": {
+            "path": "runtime/run2/commands/voice-baseline-r2-chooser-0-dump.json",
+            "sha256": "653c057f3a480c92737f45fc37fa4e0dbe9854986f1d64f7effaa47be7a2e7ba",
+            "bytes": 285
+          },
+          "argv": [
+            "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+            "-s",
+            "emulator-5582",
+            "shell",
+            "uiautomator",
+            "dump",
+            "/data/local/tmp/triage-ui.xml"
+          ],
+          "exit": 0,
+          "started_utc": "2026-10-28T02:30:14.249759+00:00",
+          "elapsed_seconds": 2.9980173110961914,
+          "stdout_file": {
+            "path": "runtime/run2/commands/voice-baseline-r2-chooser-0-dump.stdout",
+            "sha256": "75fb3eed3058d4b5bd851801c0f96cf929317255cb17ec4a75b674c9bfa8851b",
+            "bytes": 54
+          },
+          "stdout": "UI hierchary dumped to: /data/local/tmp/triage-ui.xml\n",
+          "stderr_file": {
+            "path": "runtime/run2/commands/voice-baseline-r2-chooser-0-dump.stderr",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          },
+          "stderr": ""
+        },
+        {
+          "record": {
+            "path": "runtime/run2/commands/voice-baseline-r2-chooser-0-xml.json",
+            "sha256": "b0565137f05008cb5e37827b22d002b5d7d6345db2c66ef33137e4e81aa6f35c",
+            "bytes": 266
+          },
+          "argv": [
+            "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+            "-s",
+            "emulator-5582",
+            "shell",
+            "cat",
+            "/data/local/tmp/triage-ui.xml"
+          ],
+          "exit": 0,
+          "started_utc": "2026-10-28T02:30:17.248319+00:00",
+          "elapsed_seconds": 0.08554267883300781,
+          "stdout_file": {
+            "path": "runtime/run2/commands/voice-baseline-r2-chooser-0-xml.stdout",
+            "sha256": "1b76ff6fdbf150bb802bc1e0a7e6ec97e5c1b3fb9e74240752f6374a890c07ff",
+            "bytes": 5122
+          },
+          "stderr_file": {
+            "path": "runtime/run2/commands/voice-baseline-r2-chooser-0-xml.stderr",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          },
+          "stderr": ""
+        },
+        {
+          "record": {
+            "path": "runtime/run2/commands/voice-baseline-r2-chooser-image.json",
+            "sha256": "a3414d8b286aa76d860f470ee759f0c33397253f00589c1e8ce9241e96dc7355",
+            "bytes": 247
+          },
+          "argv": [
+            "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+            "-s",
+            "emulator-5582",
+            "exec-out",
+            "screencap",
+            "-p"
+          ],
+          "exit": 0,
+          "started_utc": "2026-10-28T02:30:17.334735+00:00",
+          "elapsed_seconds": 0.8466758728027344,
+          "stdout_file": {
+            "path": "runtime/run2/commands/voice-baseline-r2-chooser-image.stdout",
+            "sha256": "3990a32a2897ebfd0f9e108cdd1ca1605236d06a940f76b6821af4a375c1d4a9",
+            "bytes": 44309
+          },
+          "stderr_file": {
+            "path": "runtime/run2/commands/voice-baseline-r2-chooser-image.stderr",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          },
+          "stderr": ""
+        }
+      ],
+      "interpretation": "重新安装原版后实际chooser再次为空；系统启用列表仍含fixture且pidof采样无运行PID，支持枚举差异可重复。"
+    }
+  ],
+  "retained_invalid_navigation_attempts": [
+    {
+      "id": "run1_baseline_postreboot_general_page",
+      "apk_identity": "baseline",
+      "observed_screen": {
+        "xml": {
+          "path": "runtime/run1/baseline-postreboot-voice-list.xml",
+          "sha256": "971ad9ea231beef9580d91287484fe3bc12a0db122a8567510b055400b4d6c27",
+          "bytes": 11995
+        },
+        "dialog_titles": [],
+        "is_actual_voice_chooser": false,
+        "chooser_item_labels": [],
+        "fixture_visible": false,
+        "all_visible_text": [
+          "General",
+          "Inline preedit mode",
+          "Disable",
+          "Show tips when switching ASCII mode",
+          "Show inline autofill suggestions",
+          "Preferred voice input",
+          "Not set"
+        ]
+      },
+      "commands": [
+        {
+          "record": {
+            "path": "runtime/run1/commands/baseline-postreboot-voice-tap.json",
+            "sha256": "ca95f6e57e8b218a0dcb956d9fb0fa3e9a840fe8ea2fe7c5c8cbb0ebde0dbbdc",
+            "bytes": 262
+          },
+          "argv": [
+            "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+            "-s",
+            "emulator-5586",
+            "shell",
+            "input",
+            "tap",
+            "180",
+            "610"
+          ],
+          "exit": 0,
+          "started_utc": "2026-10-28T02:22:52.785917+00:00",
+          "elapsed_seconds": 0.2683389186859131,
+          "stdout_file": {
+            "path": "runtime/run1/commands/baseline-postreboot-voice-tap.stdout",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          },
+          "stdout": "",
+          "stderr_file": {
+            "path": "runtime/run1/commands/baseline-postreboot-voice-tap.stderr",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          },
+          "stderr": ""
+        },
+        {
+          "record": {
+            "path": "runtime/run1/commands/baseline-postreboot-voice-list-dump.json",
+            "sha256": "238cda00fa19e5f6938bbc7993c1d3a4337a68acb9316dc845868a1491840990",
+            "bytes": 284
+          },
+          "argv": [
+            "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+            "-s",
+            "emulator-5586",
+            "shell",
+            "uiautomator",
+            "dump",
+            "/data/local/tmp/triage-ui.xml"
+          ],
+          "exit": 0,
+          "started_utc": "2026-10-28T02:22:55.755342+00:00",
+          "elapsed_seconds": 2.851604700088501,
+          "stdout_file": {
+            "path": "runtime/run1/commands/baseline-postreboot-voice-list-dump.stdout",
+            "sha256": "75fb3eed3058d4b5bd851801c0f96cf929317255cb17ec4a75b674c9bfa8851b",
+            "bytes": 54
+          },
+          "stdout": "UI hierchary dumped to: /data/local/tmp/triage-ui.xml\n",
+          "stderr_file": {
+            "path": "runtime/run1/commands/baseline-postreboot-voice-list-dump.stderr",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          },
+          "stderr": ""
+        },
+        {
+          "record": {
+            "path": "runtime/run1/commands/baseline-postreboot-voice-list-xml.json",
+            "sha256": "048da81941dd06c9f12d6d0843e5ef4f337f4157d4e09cd9d75527e9e16307cb",
+            "bytes": 265
+          },
+          "argv": [
+            "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+            "-s",
+            "emulator-5586",
+            "shell",
+            "cat",
+            "/data/local/tmp/triage-ui.xml"
+          ],
+          "exit": 0,
+          "started_utc": "2026-10-28T02:22:58.607429+00:00",
+          "elapsed_seconds": 0.11320114135742188,
+          "stdout_file": {
+            "path": "runtime/run1/commands/baseline-postreboot-voice-list-xml.stdout",
+            "sha256": "971ad9ea231beef9580d91287484fe3bc12a0db122a8567510b055400b4d6c27",
+            "bytes": 11995
+          },
+          "stderr_file": {
+            "path": "runtime/run1/commands/baseline-postreboot-voice-list-xml.stderr",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          },
+          "stderr": ""
+        }
+      ],
+      "outcome": "NO_CHOOSER_REACHED",
+      "exclusion_reason": "XML仍是General设置页，仅出现Preferred voice input设置项，缺少alertTitle chooser；不能作为重启后原版空列表结果。"
+    },
+    {
+      "id": "run1_restored_baseline_setup_page",
+      "apk_identity": "baseline",
+      "observed_screen": {
+        "xml": {
+          "path": "runtime/run1/voice-postboot-baseline-general.xml",
+          "sha256": "e75b2ef2c53dcc1be69901c25c7c7030ae56ba0d62f980a27b6effe957b364bc",
+          "bytes": 5786
+        },
+        "dialog_titles": [],
+        "is_actual_voice_chooser": false,
+        "chooser_item_labels": [],
+        "fixture_visible": false,
+        "all_visible_text": [
+          "Setup 3",
+          "Select Trime as your default input method",
+          "SELECT INPUT METHOD",
+          "PREV",
+          "SKIP"
+        ]
+      },
+      "commands": [
+        {
+          "record": {
+            "path": "runtime/run1/commands/voice-control-reenable-fixture.json",
+            "sha256": "9c9b680844c8d87102ecbdf2770f844a1812e53ac86d59ec8fbcbca2efde0fca",
+            "bytes": 301
+          },
+          "argv": [
+            "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+            "-s",
+            "emulator-5586",
+            "shell",
+            "ime",
+            "enable",
+            "org.trime.triage.voicefixture/.VoiceFixtureService"
+          ],
+          "exit": 0,
+          "started_utc": "2026-10-28T02:24:53.446913+00:00",
+          "elapsed_seconds": 0.24358654022216797,
+          "stdout_file": {
+            "path": "runtime/run1/commands/voice-control-reenable-fixture.stdout",
+            "sha256": "efc9f9ea3fc852d594746e4d399757c9e31c568e616c2f73aaef31fcf310cf56",
+            "bytes": 89
+          },
+          "stdout": "Input method org.trime.triage.voicefixture/.VoiceFixtureService: now enabled for user #0\n",
+          "stderr_file": {
+            "path": "runtime/run1/commands/voice-control-reenable-fixture.stderr",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          },
+          "stderr": ""
+        },
+        {
+          "record": {
+            "path": "runtime/run1/commands/voice-postboot-baseline-install.json",
+            "sha256": "a9cf8f1899a41af92a261a2b06029fd665bd754c48b462fad4931441acfab341",
+            "bytes": 334
+          },
+          "argv": [
+            "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+            "-s",
+            "emulator-5586",
+            "install",
+            "-r",
+            "-t",
+            "/home/xumin/Public/Trime/build/issue-fixes-20261028/device-apks/baseline-diagnostic.apk"
+          ],
+          "exit": 0,
+          "started_utc": "2026-10-28T02:24:53.694866+00:00",
+          "elapsed_seconds": 3.2181575298309326,
+          "stdout_file": {
+            "path": "runtime/run1/commands/voice-postboot-baseline-install.stdout",
+            "sha256": "1d839f273278917eb06b33f03e2677e7c5a6d5de31b753131c33001150919b2a",
+            "bytes": 86
+          },
+          "stdout": "Serving...\nPerforming Incremental Install\nSuccess\nInstall command complete in 3175 ms\n",
+          "stderr_file": {
+            "path": "runtime/run1/commands/voice-postboot-baseline-install.stderr",
+            "sha256": "0b43830fe6c70c0556e5d0510aae3e171dc955d86b450f13bedec332ce1af30c",
+            "bytes": 50
+          },
+          "stderr": "All files should be loaded. Notifying the device.\n"
+        },
+        {
+          "record": {
+            "path": "runtime/run1/commands/voice-postboot-baseline-main1.json",
+            "sha256": "1c861e53f71839fc28289450fe808e8400c179a7cc758ec856f8cda86d50c744",
+            "bytes": 319
+          },
+          "argv": [
+            "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+            "-s",
+            "emulator-5586",
+            "shell",
+            "am",
+            "start",
+            "-n",
+            "com.osfans.trime.debug/com.osfans.trime.ui.main.MainActivity"
+          ],
+          "exit": 0,
+          "started_utc": "2026-10-28T02:24:56.913592+00:00",
+          "elapsed_seconds": 0.41035032272338867,
+          "stdout_file": {
+            "path": "runtime/run1/commands/voice-postboot-baseline-main1.stdout",
+            "sha256": "1627552306fab73cbe3453b547e0be268d0d83b77035b14796c7361811edb51e",
+            "bytes": 86
+          },
+          "stdout": "Starting: Intent { cmp=com.osfans.trime.debug/com.osfans.trime.ui.main.MainActivity }\n",
+          "stderr_file": {
+            "path": "runtime/run1/commands/voice-postboot-baseline-main1.stderr",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          },
+          "stderr": ""
+        },
+        {
+          "record": {
+            "path": "runtime/run1/commands/voice-postboot-baseline-main2.json",
+            "sha256": "bedc317023c98bfef31c1d6fe87d47398abf81dfd2880e6179a169a55365f450",
+            "bytes": 319
+          },
+          "argv": [
+            "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+            "-s",
+            "emulator-5586",
+            "shell",
+            "am",
+            "start",
+            "-n",
+            "com.osfans.trime.debug/com.osfans.trime.ui.main.MainActivity"
+          ],
+          "exit": 0,
+          "started_utc": "2026-10-28T02:25:00.324825+00:00",
+          "elapsed_seconds": 0.18817782402038574,
+          "stdout_file": {
+            "path": "runtime/run1/commands/voice-postboot-baseline-main2.stdout",
+            "sha256": "1627552306fab73cbe3453b547e0be268d0d83b77035b14796c7361811edb51e",
+            "bytes": 86
+          },
+          "stdout": "Starting: Intent { cmp=com.osfans.trime.debug/com.osfans.trime.ui.main.MainActivity }\n",
+          "stderr_file": {
+            "path": "runtime/run1/commands/voice-postboot-baseline-main2.stderr",
+            "sha256": "4b5e424c175a5eb737e1ae792ad1863869435d97f9bee6ef5fb56339d9f44ae4",
+            "bytes": 97
+          },
+          "stderr": "Warning: Activity not started, intent has been delivered to currently running top-most instance.\n"
+        },
+        {
+          "record": {
+            "path": "runtime/run1/commands/voice-postboot-baseline-general-dump.json",
+            "sha256": "1295ef2234ee6d51ad8827c1d17ce9d4f6ad1a5474eb6bdd756d0e6c2337e55e",
+            "bytes": 282
+          },
+          "argv": [
+            "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+            "-s",
+            "emulator-5586",
+            "shell",
+            "uiautomator",
+            "dump",
+            "/data/local/tmp/triage-ui.xml"
+          ],
+          "exit": 0,
+          "started_utc": "2026-10-28T02:25:03.513900+00:00",
+          "elapsed_seconds": 3.5778069496154785,
+          "stdout_file": {
+            "path": "runtime/run1/commands/voice-postboot-baseline-general-dump.stdout",
+            "sha256": "75fb3eed3058d4b5bd851801c0f96cf929317255cb17ec4a75b674c9bfa8851b",
+            "bytes": 54
+          },
+          "stdout": "UI hierchary dumped to: /data/local/tmp/triage-ui.xml\n",
+          "stderr_file": {
+            "path": "runtime/run1/commands/voice-postboot-baseline-general-dump.stderr",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          },
+          "stderr": ""
+        },
+        {
+          "record": {
+            "path": "runtime/run1/commands/voice-postboot-baseline-general-xml.json",
+            "sha256": "bc04a76b03fc40f3d85e4deb6904c5ef4089083d3266de8fde519fd2a8cd3ee5",
+            "bytes": 265
+          },
+          "argv": [
+            "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+            "-s",
+            "emulator-5586",
+            "shell",
+            "cat",
+            "/data/local/tmp/triage-ui.xml"
+          ],
+          "exit": 0,
+          "started_utc": "2026-10-28T02:25:07.092065+00:00",
+          "elapsed_seconds": 0.0533900260925293,
+          "stdout_file": {
+            "path": "runtime/run1/commands/voice-postboot-baseline-general-xml.stdout",
+            "sha256": "e75b2ef2c53dcc1be69901c25c7c7030ae56ba0d62f980a27b6effe957b364bc",
+            "bytes": 5786
+          },
+          "stderr_file": {
+            "path": "runtime/run1/commands/voice-postboot-baseline-general-xml.stderr",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          },
+          "stderr": ""
+        }
+      ],
+      "outcome": "NO_CHOOSER_REACHED",
+      "exclusion_reason": "XML仍是Setup 3，未到General/chooser；不计为有效比较，由run2 fresh-boot有效chooser补充。"
+    }
+  ],
+  "not_tested": [
+    "VOICE_ASSIST实际调用及输入法切换路径",
+    "修复版已安装状态下再次重启后的持久枚举行为",
+    "报告者ColorOS真机",
+    "真实语音识别、音频录制/播放或完整识别后提交文本",
+    "未刷新进程时禁用IME是否立即更新列表"
+  ],
+  "runtime_warnings_and_failures": "run1包含系统UI/电话ANR、旧候选测试helper FATAL和其他平台/Trime警告，详见run1/log-review.json；本语音结果不代表运行零警告或全部业务通过。",
+  "run1_log_review": {
+    "path": "runtime/run1/log-review.json",
+    "sha256": "ec1787fea0ac20193d3f96bd7218c66fb9a43a4b4ef6543b8db40abb9a188c3e",
+    "bytes": 29465
+  },
+  "reporting_limit": "可以声明该API35受控fixture的首选语音IME枚举、选择保存及禁用后刷新得到对照结果；不能据此声明ColorOS原机或完整VOICE_ASSIST/真实语音功能已修复验收。"
+}

@@ -1,0 +1,363 @@
+{
+  "schema_version": 1,
+  "reviewed_at_utc": "2026-10-28T02:20:32.396816+00:00",
+  "review_mode": "read_only_remote_PR_and_saved_CI_evidence",
+  "repository": "osfans/trime",
+  "all_three_heads_unchanged": true,
+  "all_fifteen_checks_successful": true,
+  "prs": [
+    {
+      "number": 2198,
+      "url": "https://github.com/osfans/trime/pull/2198",
+      "title": "fix(ime): ignore toolbar actions after candidates replace it",
+      "state": "OPEN",
+      "draft": true,
+      "head_ref": "contrib/fix-candidate-hit-target",
+      "head_sha": "e1e0ece96921d504cbf20d29bf04b7dbf6536724",
+      "base_ref": "develop",
+      "base_sha_at_production": "a047f74757fae0d7b5ef64e54f0b957dee2bf8f3",
+      "ci": {
+        "success": true,
+        "passed": 5,
+        "total": 5,
+        "run_ids": [
+          "40617988425"
+        ],
+        "run_urls": [
+          "https://github.com/osfans/trime/actions/runs/40617988425"
+        ],
+        "checks": [
+          {
+            "name": "check / lint-and-test",
+            "conclusion": "SUCCESS",
+            "url": "https://github.com/osfans/trime/actions/runs/40617988425/job/122584881385"
+          },
+          {
+            "name": "build (ubuntu-26.04)",
+            "conclusion": "SUCCESS",
+            "url": "https://github.com/osfans/trime/actions/runs/40617988425/job/122585816969"
+          },
+          {
+            "name": "build (macos-26)",
+            "conclusion": "SUCCESS",
+            "url": "https://github.com/osfans/trime/actions/runs/40617988425/job/122585816883"
+          },
+          {
+            "name": "build (macos-26-intel)",
+            "conclusion": "SUCCESS",
+            "url": "https://github.com/osfans/trime/actions/runs/40617988425/job/122585817174"
+          },
+          {
+            "name": "build (windows-2025)",
+            "conclusion": "SUCCESS",
+            "url": "https://github.com/osfans/trime/actions/runs/40617988425/job/122585816912"
+          }
+        ]
+      },
+      "issue_associations": {
+        "fixes": [],
+        "related": [
+          1879
+        ],
+        "not_claimed_fixed": [
+          1879
+        ],
+        "scope": "仅修复候选区替换toolbar后仍执行隐藏按钮动作的跨转换手势路径，不宣称覆盖#1879全部时序。"
+      },
+      "github_closing_issue_numbers": [],
+      "body_review": {
+        "association_matches_body_and_github": true,
+        "scope_limits_explicit": true,
+        "ci_validation_text_needs_refresh": true,
+        "note": "当前body仍写CI待完成；可更新为5项CI全部通过。设备验证由root进行，此次只读复核不补写其结果。",
+        "snapshot": "/home/xumin/Public/Trime/build/issue-fixes-20261028/cloud/final-review-pr-2198.json",
+        "sha256": "ab5c2e2429f09d6612e4a4d8a7161d710d29177ac54784b40f46ecf46f23014c"
+      },
+      "ubuntu_original": {
+        "artifact_id": 12785444901,
+        "producer_merge_sha": "c4a09b86c7e149b1dd173f9a8fa3d4e6a5453bd1",
+        "producer_merge_and_pr_head_trees_equal": true,
+        "source_tree_sha": "2d16db6e14c801858c55e1cb16bc7572702f7a09",
+        "provenance_file": "/home/xumin/Public/Trime/build/issue-fixes-20261028/cloud/pr-2198/ubuntu-original/provenance.json",
+        "source_tree_proof_file": "/home/xumin/Public/Trime/build/issue-fixes-20261028/cloud/pr-2198/ubuntu-original/source-tree-proof.json"
+      },
+      "changed_files": [
+        "app/src/main/java/com/osfans/trime/ime/bar/InputBarDelegate.kt"
+      ],
+      "changed_files_snapshot": "/home/xumin/Public/Trime/build/issue-fixes-20261028/cloud/final-review-pr-2198-files.json",
+      "changes_vendor_or_native_sources": false
+    },
+    {
+      "number": 2199,
+      "url": "https://github.com/osfans/trime/pull/2199",
+      "title": "fix(settings): confirm external synchronization before switching storage",
+      "state": "OPEN",
+      "draft": true,
+      "head_ref": "contrib/fix-storage-switch-safety",
+      "head_sha": "d6567c253c6dcb149514f01709b40e114a58be64",
+      "base_ref": "develop",
+      "base_sha_at_production": "a047f74757fae0d7b5ef64e54f0b957dee2bf8f3",
+      "ci": {
+        "success": true,
+        "passed": 5,
+        "total": 5,
+        "run_ids": [
+          "40617995073"
+        ],
+        "run_urls": [
+          "https://github.com/osfans/trime/actions/runs/40617995073"
+        ],
+        "checks": [
+          {
+            "name": "check / lint-and-test",
+            "conclusion": "SUCCESS",
+            "url": "https://github.com/osfans/trime/actions/runs/40617995073/job/122584901007"
+          },
+          {
+            "name": "build (ubuntu-26.04)",
+            "conclusion": "SUCCESS",
+            "url": "https://github.com/osfans/trime/actions/runs/40617995073/job/122585924331"
+          },
+          {
+            "name": "build (macos-26)",
+            "conclusion": "SUCCESS",
+            "url": "https://github.com/osfans/trime/actions/runs/40617995073/job/122585924214"
+          },
+          {
+            "name": "build (macos-26-intel)",
+            "conclusion": "SUCCESS",
+            "url": "https://github.com/osfans/trime/actions/runs/40617995073/job/122585924259"
+          },
+          {
+            "name": "build (windows-2025)",
+            "conclusion": "SUCCESS",
+            "url": "https://github.com/osfans/trime/actions/runs/40617995073/job/122585924248"
+          }
+        ]
+      },
+      "issue_associations": {
+        "fixes": [
+          2095
+        ],
+        "related": [
+          2140
+        ],
+        "not_claimed_fixed": [
+          2140
+        ],
+        "scope": "外部同步前告知及取消闭环；保持现行双向同步算法。确认新目录后的失败恢复仍未实现；#2140升级故障无独立复现。"
+      },
+      "github_closing_issue_numbers": [
+        2095
+      ],
+      "body_review": {
+        "association_matches_body_and_github": true,
+        "scope_limits_explicit": true,
+        "ci_validation_text_needs_refresh": true,
+        "note": "当前body仍写CI待完成；可更新为5项CI全部通过。设备验证由root进行，此次只读复核不补写其结果。",
+        "snapshot": "/home/xumin/Public/Trime/build/issue-fixes-20261028/cloud/final-review-pr-2199.json",
+        "sha256": "93ef5f65158270b4c78ce79ff2934499122e7a53c75b3cb186bf029b9ecb9f4c"
+      },
+      "ubuntu_original": {
+        "artifact_id": 12786995401,
+        "producer_merge_sha": "2c30ba318f5f578e68c7ce5e272a40b71c2c747b",
+        "producer_merge_and_pr_head_trees_equal": true,
+        "source_tree_sha": "5046f76ccd7a2a93e7fe28aa3518fd6be5d17038",
+        "provenance_file": "/home/xumin/Public/Trime/build/issue-fixes-20261028/cloud/pr-2199/ubuntu-original/provenance.json",
+        "source_tree_proof_file": "/home/xumin/Public/Trime/build/issue-fixes-20261028/cloud/pr-2199/ubuntu-original/source-tree-proof.json"
+      },
+      "changed_files": [
+        "app/src/main/java/com/osfans/trime/ui/common/ExternalSyncConfirmationDialog.kt",
+        "app/src/main/java/com/osfans/trime/ui/main/settings/ProfileSettingsFragment.kt",
+        "app/src/main/java/com/osfans/trime/ui/setup/SetupActivity.kt",
+        "app/src/main/java/com/osfans/trime/ui/setup/SetupFragment.kt",
+        "app/src/main/res/values-zh-rCN/strings.xml",
+        "app/src/main/res/values-zh-rTW/strings.xml",
+        "app/src/main/res/values/strings.xml"
+      ],
+      "changed_files_snapshot": "/home/xumin/Public/Trime/build/issue-fixes-20261028/cloud/final-review-pr-2199-files.json",
+      "changes_vendor_or_native_sources": false
+    },
+    {
+      "number": 2200,
+      "url": "https://github.com/osfans/trime/pull/2200",
+      "title": "fix(ime): declare package visibility for voice input methods",
+      "state": "OPEN",
+      "draft": true,
+      "head_ref": "contrib/fix-voice-ime-visibility",
+      "head_sha": "c7501279b1085377b2acbf57e831b8e56c60d816",
+      "base_ref": "develop",
+      "base_sha_at_production": "a047f74757fae0d7b5ef64e54f0b957dee2bf8f3",
+      "ci": {
+        "success": true,
+        "passed": 5,
+        "total": 5,
+        "run_ids": [
+          "40618431171"
+        ],
+        "run_urls": [
+          "https://github.com/osfans/trime/actions/runs/40618431171"
+        ],
+        "checks": [
+          {
+            "name": "check / lint-and-test",
+            "conclusion": "SUCCESS",
+            "url": "https://github.com/osfans/trime/actions/runs/40618431171/job/122586290570"
+          },
+          {
+            "name": "build (ubuntu-26.04)",
+            "conclusion": "SUCCESS",
+            "url": "https://github.com/osfans/trime/actions/runs/40618431171/job/122587671072"
+          },
+          {
+            "name": "build (macos-26)",
+            "conclusion": "SUCCESS",
+            "url": "https://github.com/osfans/trime/actions/runs/40618431171/job/122587671041"
+          },
+          {
+            "name": "build (macos-26-intel)",
+            "conclusion": "SUCCESS",
+            "url": "https://github.com/osfans/trime/actions/runs/40618431171/job/122587671114"
+          },
+          {
+            "name": "build (windows-2025)",
+            "conclusion": "SUCCESS",
+            "url": "https://github.com/osfans/trime/actions/runs/40618431171/job/122587671070"
+          }
+        ]
+      },
+      "issue_associations": {
+        "fixes": [
+          2153
+        ],
+        "related": [],
+        "not_claimed_fixed": [],
+        "scope": "声明android.view.InputMethod包可见性查询，使已启用voice IME可被枚举；原报告ColorOS设备未复测。"
+      },
+      "github_closing_issue_numbers": [
+        2153
+      ],
+      "body_review": {
+        "association_matches_body_and_github": true,
+        "scope_limits_explicit": true,
+        "ci_validation_text_needs_refresh": true,
+        "note": "当前body仍写CI待完成；可更新为5项CI全部通过。设备验证由root进行，此次只读复核不补写其结果。",
+        "snapshot": "/home/xumin/Public/Trime/build/issue-fixes-20261028/cloud/final-review-pr-2200.json",
+        "sha256": "5bd439688bd3f7f5a3fd5c014c7ac8f40d9209e3b76fc40704edf9caaffa76c4"
+      },
+      "ubuntu_original": {
+        "artifact_id": 12786835753,
+        "producer_merge_sha": "9f1eed5900623839f6522b7f842f2cc8c246eb9b",
+        "producer_merge_and_pr_head_trees_equal": true,
+        "source_tree_sha": "017468c4b6abc9d21e015a88c9d10f7511c2dec2",
+        "provenance_file": "/home/xumin/Public/Trime/build/issue-fixes-20261028/cloud/pr-2200/ubuntu-original/provenance.json",
+        "source_tree_proof_file": "/home/xumin/Public/Trime/build/issue-fixes-20261028/cloud/pr-2200/ubuntu-original/source-tree-proof.json"
+      },
+      "changed_files": [
+        "app/src/main/AndroidManifest.xml"
+      ],
+      "changed_files_snapshot": "/home/xumin/Public/Trime/build/issue-fixes-20261028/cloud/final-review-pr-2200-files.json",
+      "changes_vendor_or_native_sources": false
+    }
+  ],
+  "warning_scope": [
+    {
+      "category": "Android SDK JNA Java native-access warning",
+      "log_line_count": 72,
+      "diagnostic_files": [
+        "pr-2198/run-40617988425-job-122585816912-diagnostics.txt",
+        "pr-2198/run-40617988425-job-122585817174-diagnostics.txt",
+        "pr-2199/run-40617995073-job-122585924248-diagnostics.txt",
+        "pr-2199/run-40617995073-job-122585924259-diagnostics.txt",
+        "pr-2200/run-40618431171-job-122587671070-diagnostics.txt",
+        "pr-2200/run-40618431171-job-122587671114-diagnostics.txt"
+      ],
+      "causes_pr_failure": false,
+      "precise_scope": "三个PR的windows-2025与macos-26-intel共6个job；Android SDK cmdline-tools/22.0内置JNA 5.14.0触发Java native-access限制提示，共72条。"
+    },
+    {
+      "category": "Android SDK sdkmanager deprecation",
+      "log_line_count": 42,
+      "diagnostic_files": [
+        "pr-2198/run-40617988425-job-122584881385-diagnostics.txt",
+        "pr-2198/run-40617988425-job-122585816883-diagnostics.txt",
+        "pr-2198/run-40617988425-job-122585816912-diagnostics.txt",
+        "pr-2198/run-40617988425-job-122585816969-diagnostics.txt",
+        "pr-2198/run-40617988425-job-122585817174-diagnostics.txt",
+        "pr-2199/run-40617995073-job-122584901007-diagnostics.txt",
+        "pr-2199/run-40617995073-job-122585924214-diagnostics.txt",
+        "pr-2199/run-40617995073-job-122585924248-diagnostics.txt",
+        "pr-2199/run-40617995073-job-122585924259-diagnostics.txt",
+        "pr-2199/run-40617995073-job-122585924331-diagnostics.txt",
+        "pr-2200/run-40618431171-job-122586290570-diagnostics.txt",
+        "pr-2200/run-40618431171-job-122587671041-diagnostics.txt",
+        "pr-2200/run-40618431171-job-122587671070-diagnostics.txt",
+        "pr-2200/run-40618431171-job-122587671072-diagnostics.txt",
+        "pr-2200/run-40618431171-job-122587671114-diagnostics.txt"
+      ],
+      "causes_pr_failure": false,
+      "precise_scope": "三个PR全部15个job的Setup Android SDK步骤；sdkmanager CLI弃用提示，共42条。"
+    },
+    {
+      "category": "Unchanged librime-lua vendor 32-bit size_t conversion warning",
+      "log_line_count": 2,
+      "diagnostic_files": [
+        "pr-2199/run-40617995073-job-122585924331-diagnostics.txt"
+      ],
+      "causes_pr_failure": false,
+      "precise_scope": "仅#2199 Ubuntu实际重编JNI时，现有vendor app/src/main/jni/librime/plugins/librime-lua/src/types.cc:1959 的-Wconstant-conversion；UINT64_MAX转32位size_t，共2条。",
+      "vendor_file": "app/src/main/jni/librime/plugins/librime-lua/src/types.cc",
+      "source_lines": [
+        1959
+      ]
+    },
+    {
+      "category": "Unchanged yaml-cpp vendor constexpr warning",
+      "log_line_count": 48,
+      "diagnostic_files": [
+        "pr-2199/run-40617995073-job-122585924331-diagnostics.txt"
+      ],
+      "causes_pr_failure": false,
+      "precise_scope": "仅#2199 Ubuntu实际重编JNI时，现有vendor app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h 的-Wconstexpr-not-const；48条重复编译警告。",
+      "vendor_file": "app/src/main/jni/librime/deps/yaml-cpp/src/contrib/dragonbox.h",
+      "source_lines": [
+        4026,
+        4028,
+        4033,
+        4035,
+        4040,
+        4042,
+        4047,
+        4049,
+        4054,
+        4056,
+        4061,
+        4063
+      ]
+    },
+    {
+      "category": "Windows actions cache save failure",
+      "log_line_count": 3,
+      "diagnostic_files": [
+        "pr-2198/run-40617988425-job-122585816912-diagnostics.txt",
+        "pr-2199/run-40617995073-job-122585924248-diagnostics.txt",
+        "pr-2200/run-40618431171-job-122587671070-diagnostics.txt"
+      ],
+      "causes_pr_failure": false,
+      "precise_scope": "三个windows-2025 job构建成功后的setup-java Gradle缓存保存步骤；tar.exe读取.gradle/caches下锁文件时Device or resource busy，退出码2。JNI cache命中后未保存；三个warning annotation，job均SUCCESS。"
+    }
+  ],
+  "additional_notices": {
+    "count": 3,
+    "scope": "三个macos-26 arm64 job均有runner容量/排队notice；不是源码warning或失败。"
+  },
+  "new_application_source_style_compile_test_failures": [],
+  "warning_details_file": "/home/xumin/Public/Trime/build/issue-fixes-20261028/cloud/warnings.json",
+  "ci_details_file": "/home/xumin/Public/Trime/build/issue-fixes-20261028/cloud/ci-summary.json",
+  "split_index_summary": "新增3个开放Draft PR：#2198（Related #1879，仅跨转换toolbar手势路径）；#2199（Fixes #2095，告知/取消闭环，不声称修复#2140或实现事务回滚）；#2200（Fixes #2153，voice IME包可见性）。三个固定head均通过lint-and-test与4OS构建，共15项；CI Ubuntu原件与PR head全树一致证明已归档。当前body的CI待完成文字需刷新，设备验收结果等待root核实。",
+  "prepared_body_draft_files": [
+    "/home/xumin/Public/Trime/build/issue-fixes-20261028/candidate-pr-body-final-draft.md",
+    "/home/xumin/Public/Trime/build/issue-fixes-20261028/storage-pr-body-final-draft.md",
+    "/home/xumin/Public/Trime/build/issue-fixes-20261028/voice-pr-body-final-draft.md"
+  ]
+}

@@ -1,0 +1,4594 @@
+{
+  "schema_version": 1,
+  "draft": false,
+  "reviewed_at_utc": "2026-10-28T02:46:35.485830+00:00",
+  "issue": 2095,
+  "pr": 2199,
+  "result": "PASS_FOR_REVIEWED_CONFIRMATION_CANCEL_SAVED_ASSOCIATION_AND_SINGLE_SENTINEL_IMPORT_SCOPE",
+  "scope": "Root实际执行API35模拟器11项受控用例：Settings确认Cancel/Back/有效触外/picker取消4例、Setup确认和picker取消2例、有效目录关联及51字节fixture导入1例、保存关联Cancel/OK两例、User directory告知和真实picker取消2例；本agent只读复核命令、快照、原PNG/XML及APK来源并在R内编写报告。",
+  "summary": "API35诊断副本验证完成：Settings与Setup取消保持所测状态；保存关联取消保留真实persisted RW授权，确认仅切换mode；正向关联返回Profile并使51字节fixture在working/remote两侧一致；User directory告知取消和真实picker取消均保持现有关联。早期uri_grants空值不具授权证明力，已明确排除且未补造before记录。",
+  "source_and_apk_binding": {
+    "source_head_sha": "d6567c253c6dcb149514f01709b40e114a58be64",
+    "producer_merge_sha": "2c30ba318f5f578e68c7ce5e272a40b71c2c747b",
+    "producer_and_head_trees_identical": true,
+    "source_tree_sha": "5046f76ccd7a2a93e7fe28aa3518fd6be5d17038",
+    "ci_run_url": "https://github.com/osfans/trime/actions/runs/40617995073",
+    "artifact_id": 12786995401,
+    "original_ci_apk": {
+      "path": "cloud/pr-2199/ubuntu-original/extracted/com.osfans.trime-v3.3.12-107-g2c30ba31-x86_64-debug.apk",
+      "sha256": "575e94a9cd5f9d8b637ddde12d76ae7485f47076b071a9a1e31f48c7ff078293",
+      "bytes": 20162103
+    },
+    "installed_diagnostic_apk": {
+      "path": "device-apks/storage-diagnostic.apk",
+      "sha256": "b5e02b220032199f83d13de4899039ac420ce610379059739412a108ee2302fb",
+      "bytes": 20158126
+    },
+    "identity_record": {
+      "path": "device-apks/storage-identity.json",
+      "sha256": "b7188d20e7084f00ffe95ae1ba3e09ab6746a3054fef6a25ab76a8e05a3391c6",
+      "bytes": 98326
+    },
+    "non_signature_zip_entries_identical": true,
+    "original_preserved": true,
+    "provenance_record": {
+      "path": "cloud/pr-2199/ubuntu-original/provenance.json",
+      "sha256": "647314a9995353ce70a3bc0c0cddea5e60cca76681faff8b5f040db87e346860",
+      "bytes": 2195
+    },
+    "source_tree_proof": {
+      "path": "cloud/pr-2199/ubuntu-original/source-tree-proof.json",
+      "sha256": "62dc610239ab18334a3eeecbc9bd177ff1bb64ff15507e4ba229d3ebcf236eb6",
+      "bytes": 582
+    },
+    "install_command": {
+      "record": {
+        "path": "runtime/run2/commands/storage-install.json",
+        "sha256": "8b68207bb49602b5f1655bcd6056d0cb27372b89ac9ec2ae0275dcbb5deef885",
+        "bytes": 332
+      },
+      "argv": [
+        "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+        "-s",
+        "emulator-5582",
+        "install",
+        "-r",
+        "-t",
+        "/home/xumin/Public/Trime/build/issue-fixes-20261028/device-apks/storage-diagnostic.apk"
+      ],
+      "exit": 0,
+      "started_utc": "2026-10-28T02:30:24.783644+00:00",
+      "stdout_file": {
+        "path": "runtime/run2/commands/storage-install.stdout",
+        "sha256": "5ebab3cde83a95e247c422bf971cf0a800a547d2d3c6397cec101b1022d80559",
+        "bytes": 86
+      },
+      "stderr_file": {
+        "path": "runtime/run2/commands/storage-install.stderr",
+        "sha256": "0b43830fe6c70c0556e5d0510aae3e171dc955d86b450f13bedec332ce1af30c",
+        "bytes": 50
+      }
+    }
+  },
+  "environment": {
+    "run": "run2",
+    "api_level": 35,
+    "abi": "x86_64",
+    "serial": "emulator-5582",
+    "launch": {
+      "path": "runtime/run2/launch.json",
+      "sha256": "bb5f6a37f961f0dca014419584db2fd90a09ec227c7a1e9731101becd33028a9",
+      "bytes": 666
+    },
+    "api_evidence": "run1的ro.build.version.sdk实测35；run2 launch使用相同API35 system-image路径，见runtime/voice-validation.json。",
+    "system_image_note": "同一已准备API35数据资产的新-no-snapshot启动，非全新userdata。"
+  },
+  "snapshot_contract": {
+    "before_snapshot": {
+      "path": "runtime/run2/storage-settings-before-snapshot.json",
+      "sha256": "1ca9817fdc2e7ad33fa0079bd865cf9fd40dc3f6f1c89f983721012fc61b246b",
+      "bytes": 286
+    },
+    "before_state": {
+      "storage_mode": "APP_STORAGE",
+      "directory_uri": "",
+      "sentinel_sha256": "fc23655d05c9d26dcf7a828f670dfc811c65aa54cc8a98283ad4ffa03da4c988",
+      "manifest_exit": 1,
+      "manifest_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "uri_grants_output": ""
+    },
+    "prefs_scope": "只提取profile_data_storage_mode与profile_external_rime_tree_uri；未比较全部SharedPreferences字节。",
+    "private_sentinel_path": "files/triage-sentinel.txt（run-as com.osfans.trime.debug私有目录）",
+    "sentinel_source": {
+      "path": "runtime/storage-sentinel.txt",
+      "sha256": "fc23655d05c9d26dcf7a828f670dfc811c65aa54cc8a98283ad4ffa03da4c988",
+      "bytes": 51
+    },
+    "sentinel_create": {
+      "record": {
+        "path": "runtime/run2/commands/storage-sentinel-create.json",
+        "sha256": "02ff648a9ac38e4b7772b7a2947af2213d4b10f649bde5691a74a2412e42c1ca",
+        "bytes": 346
+      },
+      "argv": [
+        "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+        "-s",
+        "emulator-5582",
+        "shell",
+        "run-as",
+        "com.osfans.trime.debug",
+        "cp",
+        "/data/local/tmp/triage-sentinel.txt",
+        "files/triage-sentinel.txt"
+      ],
+      "exit": 0,
+      "started_utc": "2026-10-28T02:31:28.666669+00:00",
+      "stdout_file": {
+        "path": "runtime/run2/commands/storage-sentinel-create.stdout",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      },
+      "stderr_file": {
+        "path": "runtime/run2/commands/storage-sentinel-create.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      }
+    },
+    "manifest_path": "/data/user_de/0/com.osfans.trime.debug/.sync-manifest.json",
+    "manifest_scope": "各次manifest均不存在；比较的是退出码/空stdout SHA并核对No such file stderr，不是已存在manifest内容保持测试。",
+    "grants_scope": "早期dumpsys uri_grants即使已有授权仍为空，不能作为授权有无/不变的证据；保留原始空输出但从取消授权结论中排除，未补造早期权威before凭证。",
+    "explicit_non_coverage": "未逐项读取或哈希完整工作用户目录，也未核对全部外部文件夹内容。private sentinel并非Rime工作目录文件全集的替代证明。",
+    "raw_equal_field_names": [
+      "storage_mode",
+      "directory_uri",
+      "sentinel_sha256",
+      "manifest_exit",
+      "manifest_sha256",
+      "uri_grants_output"
+    ],
+    "valid_early_observation_field_names": [
+      "storage_mode",
+      "directory_uri",
+      "sentinel_sha256",
+      "manifest_exit",
+      "manifest_sha256"
+    ],
+    "before_grant_status": "NOT_ESTABLISHED_BY_AUTHORITATIVE_READBACK"
+  },
+  "confirmation_copy_evidence": {
+    "ui": {
+      "xml": {
+        "path": "runtime/run2/storage-settings-cancel-confirmation-0.xml",
+        "sha256": "d8e90c3e8b67cb104dd1dbc46a5e5367cfbb284a1d060b8ca12a2436829ac17f",
+        "bytes": 6915
+      },
+      "dialog_titles": [
+        "Sync from external storage"
+      ],
+      "confirmation_visible": true,
+      "packages": [
+        "com.osfans.trime.debug"
+      ],
+      "all_visible_text": [
+        "Sync from external storage",
+        "External sync requires selecting a data folder. Select where trime configuration files will be stored.\n\nTrime will sync its working configuration and the external folder in both directions. Files with the same name may be overwritten based on modification time, and deletions are synced to both locations. Back up both folders before continuing.",
+        "SELECT EXTERNAL DATA DIRECTORY…",
+        "CANCEL"
+      ]
+    },
+    "png": {
+      "path": "runtime/run2/storage-settings-confirmation-image.png",
+      "sha256": "19a1c5c772c6c3567be6a5f1598b5c1bf1c1cbeaaa8cfbe9eb1570d51e95bf7f",
+      "bytes": 114554
+    },
+    "original_png_visually_reviewed": true,
+    "observed_content": "明确说明双向同步、按修改时间覆盖同名文件、删除传播、Back up both folders及可取消按钮。"
+  },
+  "completed_settings_cases": [
+    {
+      "id": "settings_confirmation_cancel",
+      "status": "PASS_FOR_UI_AND_MEASURED_STATE_EARLY_GRANTS_UNPROVEN",
+      "action": {
+        "record": {
+          "path": "runtime/run2/commands/storage-settings-cancel-final-tap.json",
+          "sha256": "095ba0ad5b426eeb913d24765e813063dad65f5a6a9c77478bf097025a8e2669",
+          "bytes": 264
+        },
+        "argv": [
+          "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+          "-s",
+          "emulator-5582",
+          "shell",
+          "input",
+          "tap",
+          "569",
+          "945"
+        ],
+        "exit": 0,
+        "started_utc": "2026-10-28T02:32:22.679404+00:00",
+        "stdout_file": {
+          "path": "runtime/run2/commands/storage-settings-cancel-final-tap.stdout",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        "stderr_file": {
+          "path": "runtime/run2/commands/storage-settings-cancel-final-tap.stderr",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        }
+      },
+      "after_ui": {
+        "xml": {
+          "path": "runtime/run2/storage-settings-after-cancel-ready-0.xml",
+          "sha256": "fc38164a764af68c4067f88b39f0170b05a80b64b2ca26cc9f1ccfe911324827",
+          "bytes": 16879
+        },
+        "dialog_titles": [],
+        "confirmation_visible": false,
+        "packages": [
+          "com.osfans.trime.debug"
+        ],
+        "all_visible_text": [
+          "Profile",
+          "Storage",
+          "Data storage mode",
+          "Use app-specific storage",
+          "User directory",
+          "Synchronization",
+          "Sync user data immediately",
+          "Periodic background sync",
+          "Interval of background syncing (in minutes)",
+          "30 ",
+          "Maintenance",
+          "Browse app data folder",
+          "/storage/emulated/0/Android/data/com.osfans.trime.debug/files/rime"
+        ]
+      },
+      "after_snapshot": "storage-settings-after-cancel",
+      "observation": "点击CANCEL后对话框关闭，五个有效状态字段与before相等（原始六字段也全等，但uri_grants输出无授权证明力）。",
+      "grants_before_after_proven": false
+    },
+    {
+      "id": "settings_confirmation_back",
+      "status": "PASS_FOR_UI_AND_MEASURED_STATE_EARLY_GRANTS_UNPROVEN",
+      "action": {
+        "record": {
+          "path": "runtime/run2/commands/storage-settings-back-key.json",
+          "sha256": "4d3c4f008953a9629ec719e2dce777947698534e09cf4adca627ed38fc077837",
+          "bytes": 267
+        },
+        "argv": [
+          "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+          "-s",
+          "emulator-5582",
+          "shell",
+          "input",
+          "keyevent",
+          "KEYCODE_BACK"
+        ],
+        "exit": 0,
+        "started_utc": "2026-10-28T02:32:45.231966+00:00",
+        "stdout_file": {
+          "path": "runtime/run2/commands/storage-settings-back-key.stdout",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        "stderr_file": {
+          "path": "runtime/run2/commands/storage-settings-back-key.stderr",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        }
+      },
+      "after_ui": {
+        "xml": {
+          "path": "runtime/run2/storage-settings-after-back-ready-0.xml",
+          "sha256": "fc38164a764af68c4067f88b39f0170b05a80b64b2ca26cc9f1ccfe911324827",
+          "bytes": 16879
+        },
+        "dialog_titles": [],
+        "confirmation_visible": false,
+        "packages": [
+          "com.osfans.trime.debug"
+        ],
+        "all_visible_text": [
+          "Profile",
+          "Storage",
+          "Data storage mode",
+          "Use app-specific storage",
+          "User directory",
+          "Synchronization",
+          "Sync user data immediately",
+          "Periodic background sync",
+          "Interval of background syncing (in minutes)",
+          "30 ",
+          "Maintenance",
+          "Browse app data folder",
+          "/storage/emulated/0/Android/data/com.osfans.trime.debug/files/rime"
+        ]
+      },
+      "after_snapshot": "storage-settings-after-back",
+      "observation": "KEYCODE_BACK关闭确认对话框，五个有效状态字段与before相等（原始六字段也全等，但uri_grants输出无授权证明力）。",
+      "grants_before_after_proven": false
+    },
+    {
+      "id": "settings_confirmation_far_outside",
+      "status": "PASS_FOR_UI_AND_MEASURED_STATE_EARLY_GRANTS_UNPROVEN",
+      "action": {
+        "record": {
+          "path": "runtime/run2/commands/storage-settings-far-outside-tap.json",
+          "sha256": "08a9c67193cdc21e1a87688bd9ec34985731914112b67d230a40301fb63ecd1b",
+          "bytes": 263
+        },
+        "argv": [
+          "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+          "-s",
+          "emulator-5582",
+          "shell",
+          "input",
+          "tap",
+          "360",
+          "100"
+        ],
+        "exit": 0,
+        "started_utc": "2026-10-28T02:35:21.756453+00:00",
+        "stdout_file": {
+          "path": "runtime/run2/commands/storage-settings-far-outside-tap.stdout",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        "stderr_file": {
+          "path": "runtime/run2/commands/storage-settings-far-outside-tap.stderr",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        }
+      },
+      "tap_coordinates": [
+        360,
+        100
+      ],
+      "before_bounds_ui": {
+        "xml": {
+          "path": "runtime/run2/storage-settings-far-outside-bounds.xml",
+          "sha256": "d8e90c3e8b67cb104dd1dbc46a5e5367cfbb284a1d060b8ca12a2436829ac17f",
+          "bytes": 6915
+        },
+        "dialog_titles": [
+          "Sync from external storage"
+        ],
+        "confirmation_visible": true,
+        "packages": [
+          "com.osfans.trime.debug"
+        ],
+        "all_visible_text": [
+          "Sync from external storage",
+          "External sync requires selecting a data folder. Select where trime configuration files will be stored.\n\nTrime will sync its working configuration and the external folder in both directions. Files with the same name may be overwritten based on modification time, and deletions are synced to both locations. Back up both folders before continuing.",
+          "SELECT EXTERNAL DATA DIRECTORY…",
+          "CANCEL"
+        ]
+      },
+      "after_ui": {
+        "xml": {
+          "path": "runtime/run2/storage-settings-after-far-outside-ready-0.xml",
+          "sha256": "fc38164a764af68c4067f88b39f0170b05a80b64b2ca26cc9f1ccfe911324827",
+          "bytes": 16879
+        },
+        "dialog_titles": [],
+        "confirmation_visible": false,
+        "packages": [
+          "com.osfans.trime.debug"
+        ],
+        "all_visible_text": [
+          "Profile",
+          "Storage",
+          "Data storage mode",
+          "Use app-specific storage",
+          "User directory",
+          "Synchronization",
+          "Sync user data immediately",
+          "Periodic background sync",
+          "Interval of background syncing (in minutes)",
+          "30 ",
+          "Maintenance",
+          "Browse app data folder",
+          "/storage/emulated/0/Android/data/com.osfans.trime.debug/files/rime"
+        ]
+      },
+      "after_snapshot": "storage-settings-after-far-outside",
+      "observation": "(360,100)实际关闭对话框，五个有效状态字段与before相等（原始六字段也全等，但uri_grants输出无授权证明力）。",
+      "grants_before_after_proven": false
+    },
+    {
+      "id": "settings_real_documentsui_picker_back",
+      "status": "PASS_FOR_UI_AND_MEASURED_STATE_EARLY_GRANTS_UNPROVEN",
+      "confirm_action": {
+        "record": {
+          "path": "runtime/run2/commands/storage-settings-picker-confirm-tap.json",
+          "sha256": "c2847c7a1b6c3e7b92857cfc5754a20d0b0789cc201ae40dd88886d2f667a1fb",
+          "bytes": 264
+        },
+        "argv": [
+          "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+          "-s",
+          "emulator-5582",
+          "shell",
+          "input",
+          "tap",
+          "375",
+          "849"
+        ],
+        "exit": 0,
+        "started_utc": "2026-10-28T02:34:23.944048+00:00",
+        "stdout_file": {
+          "path": "runtime/run2/commands/storage-settings-picker-confirm-tap.stdout",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        "stderr_file": {
+          "path": "runtime/run2/commands/storage-settings-picker-confirm-tap.stderr",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        }
+      },
+      "picker_ui": {
+        "xml": {
+          "path": "runtime/run2/storage-settings-picker-visible.xml",
+          "sha256": "c0d7269d49c716db374676cc12f33708d1b28000f97530b525e68b74bdad8a00",
+          "bytes": 47534
+        },
+        "dialog_titles": [],
+        "confirmation_visible": false,
+        "packages": [
+          "com.android.documentsui"
+        ],
+        "all_visible_text": [
+          "Android SDK built for x86_64",
+          "Files on Android SDK built for x86_64",
+          "Android SDK built for x86_64",
+          "Can’t use this folder",
+          "To protect your privacy, choose another folder",
+          "CREATE NEW FOLDER",
+          "Alarms",
+          "Android",
+          "Audiobooks",
+          "DCIM",
+          "Documents",
+          "Download",
+          "Movies",
+          "Music",
+          "Notifications",
+          "Pictures",
+          "Podcasts",
+          "Recordings",
+          "USE THIS FOLDER"
+        ]
+      },
+      "picker_png": {
+        "path": "runtime/run2/storage-settings-picker-image.png",
+        "sha256": "bcb6d7eebdc4c98923e04255c30f20b94864cae3768bc1b1d9b9876e9578e9f7",
+        "bytes": 75955
+      },
+      "picker_xml_and_original_png_reviewed": true,
+      "while_picker_snapshot": "storage-settings-while-picker",
+      "cancel_action": {
+        "record": {
+          "path": "runtime/run2/commands/storage-settings-picker-back.json",
+          "sha256": "afd5c5815d27830b2e41b767fb6faed5294ecf0febb82816f8a1988c4da4676b",
+          "bytes": 266
+        },
+        "argv": [
+          "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+          "-s",
+          "emulator-5582",
+          "shell",
+          "input",
+          "keyevent",
+          "KEYCODE_BACK"
+        ],
+        "exit": 0,
+        "started_utc": "2026-10-28T02:34:33.659657+00:00",
+        "stdout_file": {
+          "path": "runtime/run2/commands/storage-settings-picker-back.stdout",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        "stderr_file": {
+          "path": "runtime/run2/commands/storage-settings-picker-back.stderr",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        }
+      },
+      "after_ui": {
+        "xml": {
+          "path": "runtime/run2/storage-settings-after-picker-ready-0.xml",
+          "sha256": "fc38164a764af68c4067f88b39f0170b05a80b64b2ca26cc9f1ccfe911324827",
+          "bytes": 16879
+        },
+        "dialog_titles": [],
+        "confirmation_visible": false,
+        "packages": [
+          "com.osfans.trime.debug"
+        ],
+        "all_visible_text": [
+          "Profile",
+          "Storage",
+          "Data storage mode",
+          "Use app-specific storage",
+          "User directory",
+          "Synchronization",
+          "Sync user data immediately",
+          "Periodic background sync",
+          "Interval of background syncing (in minutes)",
+          "30 ",
+          "Maintenance",
+          "Browse app data folder",
+          "/storage/emulated/0/Android/data/com.osfans.trime.debug/files/rime"
+        ]
+      },
+      "after_snapshot": "storage-settings-after-picker-cancel",
+      "observation": "确认告知后真实com.android.documentsui打开；picker期间mode仍APP_STORAGE。Back退出picker后五个有效状态字段与before相等（原始六字段也全等，但uri_grants输出无授权证明力）。",
+      "picker_scope_note": "PNG显示停在不可选根目录（Can’t use this folder / USE THIS FOLDER禁用）；未接受任何目录，仅验证真实picker返回取消，不证明授权或同步成功。",
+      "grants_before_after_proven": false
+    }
+  ],
+  "snapshots": {
+    "storage-settings-before": {
+      "snapshot": {
+        "path": "runtime/run2/storage-settings-before-snapshot.json",
+        "sha256": "1ca9817fdc2e7ad33fa0079bd865cf9fd40dc3f6f1c89f983721012fc61b246b",
+        "bytes": 286
+      },
+      "state": {
+        "storage_mode": "APP_STORAGE",
+        "directory_uri": "",
+        "sentinel_sha256": "fc23655d05c9d26dcf7a828f670dfc811c65aa54cc8a98283ad4ffa03da4c988",
+        "manifest_exit": 1,
+        "manifest_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "uri_grants_output": ""
+      },
+      "capture_commands": [
+        {
+          "record": {
+            "path": "runtime/run2/commands/storage-settings-before-prefs.json",
+            "sha256": "5f82f7e3659f7641e5f83b23bcadfd7a4b17e5fb32cd8540e00ac5152e7a8935",
+            "bytes": 332
+          },
+          "argv": [
+            "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+            "-s",
+            "emulator-5582",
+            "shell",
+            "run-as",
+            "com.osfans.trime.debug",
+            "cat",
+            "shared_prefs/com.osfans.trime.debug_preferences.xml"
+          ],
+          "exit": 0,
+          "started_utc": "2026-10-28T02:31:28.813851+00:00",
+          "stdout_file": {
+            "path": "runtime/run2/commands/storage-settings-before-prefs.stdout",
+            "sha256": "556448286457aa3259dc7d885171257a64fe611d98722754d9cab8cc9d0a5c0b",
+            "bytes": 488
+          },
+          "stderr_file": {
+            "path": "runtime/run2/commands/storage-settings-before-prefs.stderr",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          }
+        },
+        {
+          "record": {
+            "path": "runtime/run2/commands/storage-settings-before-sentinel.json",
+            "sha256": "1e958282651b164b12bccb8447519b17ad37c7664ff5209ea5b275634937afee",
+            "bytes": 306
+          },
+          "argv": [
+            "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+            "-s",
+            "emulator-5582",
+            "shell",
+            "run-as",
+            "com.osfans.trime.debug",
+            "cat",
+            "files/triage-sentinel.txt"
+          ],
+          "exit": 0,
+          "started_utc": "2026-10-28T02:31:28.928240+00:00",
+          "stdout_file": {
+            "path": "runtime/run2/commands/storage-settings-before-sentinel.stdout",
+            "sha256": "fc23655d05c9d26dcf7a828f670dfc811c65aa54cc8a98283ad4ffa03da4c988",
+            "bytes": 51
+          },
+          "stderr_file": {
+            "path": "runtime/run2/commands/storage-settings-before-sentinel.stderr",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          }
+        },
+        {
+          "record": {
+            "path": "runtime/run2/commands/storage-settings-before-manifest.json",
+            "sha256": "ff20e9a4dc4d6d636be8495e61cfb6eec3d3d9bc8c98319c57adc9bd916b438e",
+            "bytes": 339
+          },
+          "argv": [
+            "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+            "-s",
+            "emulator-5582",
+            "shell",
+            "run-as",
+            "com.osfans.trime.debug",
+            "cat",
+            "/data/user_de/0/com.osfans.trime.debug/.sync-manifest.json"
+          ],
+          "exit": 1,
+          "started_utc": "2026-10-28T02:31:29.022557+00:00",
+          "stdout_file": {
+            "path": "runtime/run2/commands/storage-settings-before-manifest.stdout",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          },
+          "stderr_file": {
+            "path": "runtime/run2/commands/storage-settings-before-manifest.stderr",
+            "sha256": "b009fd387c0fc6373c1a1a6e65bb5359972e4a413d1dd6dc1c35b725a83bddaf",
+            "bytes": 91
+          }
+        },
+        {
+          "record": {
+            "path": "runtime/run2/commands/storage-settings-before-grants.json",
+            "sha256": "550823467a52102a94ebed0cf2ab5968220c321522150147fe3253945071c317",
+            "bytes": 250
+          },
+          "argv": [
+            "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+            "-s",
+            "emulator-5582",
+            "shell",
+            "dumpsys",
+            "uri_grants"
+          ],
+          "exit": 0,
+          "started_utc": "2026-10-28T02:31:29.172470+00:00",
+          "stdout_file": {
+            "path": "runtime/run2/commands/storage-settings-before-grants.stdout",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          },
+          "stderr_file": {
+            "path": "runtime/run2/commands/storage-settings-before-grants.stderr",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          }
+        }
+      ],
+      "manifest_interpretation": "cat退出1且stderr明确No such file or directory；基线和此次读取均不存在manifest，empty SHA不是现存manifest的字节哈希。",
+      "raw_snapshot_fields_equal_to_before": true,
+      "grant_evidence_authoritative_for_this_snapshot": false,
+      "uri_grants_output_is_not_authoritative": true,
+      "valid_state_fields_equal_to_before": true
+    },
+    "storage-settings-after-cancel": {
+      "snapshot": {
+        "path": "runtime/run2/storage-settings-after-cancel-snapshot.json",
+        "sha256": "1ca9817fdc2e7ad33fa0079bd865cf9fd40dc3f6f1c89f983721012fc61b246b",
+        "bytes": 286
+      },
+      "state": {
+        "storage_mode": "APP_STORAGE",
+        "directory_uri": "",
+        "sentinel_sha256": "fc23655d05c9d26dcf7a828f670dfc811c65aa54cc8a98283ad4ffa03da4c988",
+        "manifest_exit": 1,
+        "manifest_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "uri_grants_output": ""
+      },
+      "capture_commands": [
+        {
+          "record": {
+            "path": "runtime/run2/commands/storage-settings-after-cancel-prefs.json",
+            "sha256": "bfcb97d3b0542723281058bfe2adf2cd96e32649980ee2dc2b8589f840fb9d6d",
+            "bytes": 332
+          },
+          "argv": [
+            "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+            "-s",
+            "emulator-5582",
+            "shell",
+            "run-as",
+            "com.osfans.trime.debug",
+            "cat",
+            "shared_prefs/com.osfans.trime.debug_preferences.xml"
+          ],
+          "exit": 0,
+          "started_utc": "2026-10-28T02:32:27.986448+00:00",
+          "stdout_file": {
+            "path": "runtime/run2/commands/storage-settings-after-cancel-prefs.stdout",
+            "sha256": "556448286457aa3259dc7d885171257a64fe611d98722754d9cab8cc9d0a5c0b",
+            "bytes": 488
+          },
+          "stderr_file": {
+            "path": "runtime/run2/commands/storage-settings-after-cancel-prefs.stderr",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          }
+        },
+        {
+          "record": {
+            "path": "runtime/run2/commands/storage-settings-after-cancel-sentinel.json",
+            "sha256": "30aba064e71e1ee9483797c88b8af329be69c54893990432260c0ea4b6d59691",
+            "bytes": 305
+          },
+          "argv": [
+            "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+            "-s",
+            "emulator-5582",
+            "shell",
+            "run-as",
+            "com.osfans.trime.debug",
+            "cat",
+            "files/triage-sentinel.txt"
+          ],
+          "exit": 0,
+          "started_utc": "2026-10-28T02:32:28.066164+00:00",
+          "stdout_file": {
+            "path": "runtime/run2/commands/storage-settings-after-cancel-sentinel.stdout",
+            "sha256": "fc23655d05c9d26dcf7a828f670dfc811c65aa54cc8a98283ad4ffa03da4c988",
+            "bytes": 51
+          },
+          "stderr_file": {
+            "path": "runtime/run2/commands/storage-settings-after-cancel-sentinel.stderr",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          }
+        },
+        {
+          "record": {
+            "path": "runtime/run2/commands/storage-settings-after-cancel-manifest.json",
+            "sha256": "266d15789516255c8d965e29142b24367d530a4d041eb18cff16d8cb5337eb35",
+            "bytes": 339
+          },
+          "argv": [
+            "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+            "-s",
+            "emulator-5582",
+            "shell",
+            "run-as",
+            "com.osfans.trime.debug",
+            "cat",
+            "/data/user_de/0/com.osfans.trime.debug/.sync-manifest.json"
+          ],
+          "exit": 1,
+          "started_utc": "2026-10-28T02:32:28.134391+00:00",
+          "stdout_file": {
+            "path": "runtime/run2/commands/storage-settings-after-cancel-manifest.stdout",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          },
+          "stderr_file": {
+            "path": "runtime/run2/commands/storage-settings-after-cancel-manifest.stderr",
+            "sha256": "b009fd387c0fc6373c1a1a6e65bb5359972e4a413d1dd6dc1c35b725a83bddaf",
+            "bytes": 91
+          }
+        },
+        {
+          "record": {
+            "path": "runtime/run2/commands/storage-settings-after-cancel-grants.json",
+            "sha256": "9e61d7f4bde07f17ab03b4e0549a4e029dc7e3027e4d531f0fd6c96f4660788b",
+            "bytes": 250
+          },
+          "argv": [
+            "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+            "-s",
+            "emulator-5582",
+            "shell",
+            "dumpsys",
+            "uri_grants"
+          ],
+          "exit": 0,
+          "started_utc": "2026-10-28T02:32:28.195893+00:00",
+          "stdout_file": {
+            "path": "runtime/run2/commands/storage-settings-after-cancel-grants.stdout",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          },
+          "stderr_file": {
+            "path": "runtime/run2/commands/storage-settings-after-cancel-grants.stderr",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          }
+        }
+      ],
+      "manifest_interpretation": "cat退出1且stderr明确No such file or directory；基线和此次读取均不存在manifest，empty SHA不是现存manifest的字节哈希。",
+      "raw_snapshot_fields_equal_to_before": true,
+      "grant_evidence_authoritative_for_this_snapshot": false,
+      "uri_grants_output_is_not_authoritative": true,
+      "valid_state_fields_equal_to_before": true
+    },
+    "storage-settings-after-back": {
+      "snapshot": {
+        "path": "runtime/run2/storage-settings-after-back-snapshot.json",
+        "sha256": "1ca9817fdc2e7ad33fa0079bd865cf9fd40dc3f6f1c89f983721012fc61b246b",
+        "bytes": 286
+      },
+      "state": {
+        "storage_mode": "APP_STORAGE",
+        "directory_uri": "",
+        "sentinel_sha256": "fc23655d05c9d26dcf7a828f670dfc811c65aa54cc8a98283ad4ffa03da4c988",
+        "manifest_exit": 1,
+        "manifest_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "uri_grants_output": ""
+      },
+      "capture_commands": [
+        {
+          "record": {
+            "path": "runtime/run2/commands/storage-settings-after-back-prefs.json",
+            "sha256": "cce6a9857a516979cdb7c50a0b5c6cb0b041b0c7c580f3f6a60c820a38c3f745",
+            "bytes": 333
+          },
+          "argv": [
+            "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+            "-s",
+            "emulator-5582",
+            "shell",
+            "run-as",
+            "com.osfans.trime.debug",
+            "cat",
+            "shared_prefs/com.osfans.trime.debug_preferences.xml"
+          ],
+          "exit": 0,
+          "started_utc": "2026-10-28T02:32:49.978860+00:00",
+          "stdout_file": {
+            "path": "runtime/run2/commands/storage-settings-after-back-prefs.stdout",
+            "sha256": "556448286457aa3259dc7d885171257a64fe611d98722754d9cab8cc9d0a5c0b",
+            "bytes": 488
+          },
+          "stderr_file": {
+            "path": "runtime/run2/commands/storage-settings-after-back-prefs.stderr",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          }
+        },
+        {
+          "record": {
+            "path": "runtime/run2/commands/storage-settings-after-back-sentinel.json",
+            "sha256": "dc342b465bd16490cb873a09b7cae6f304cc8bb92fe825d87fe11d81381c874c",
+            "bytes": 307
+          },
+          "argv": [
+            "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+            "-s",
+            "emulator-5582",
+            "shell",
+            "run-as",
+            "com.osfans.trime.debug",
+            "cat",
+            "files/triage-sentinel.txt"
+          ],
+          "exit": 0,
+          "started_utc": "2026-10-28T02:32:50.038984+00:00",
+          "stdout_file": {
+            "path": "runtime/run2/commands/storage-settings-after-back-sentinel.stdout",
+            "sha256": "fc23655d05c9d26dcf7a828f670dfc811c65aa54cc8a98283ad4ffa03da4c988",
+            "bytes": 51
+          },
+          "stderr_file": {
+            "path": "runtime/run2/commands/storage-settings-after-back-sentinel.stderr",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          }
+        },
+        {
+          "record": {
+            "path": "runtime/run2/commands/storage-settings-after-back-manifest.json",
+            "sha256": "051856cfbba1c575c1143c06a47b096331fb561a570bcb9469dc6f4e717e7b3a",
+            "bytes": 339
+          },
+          "argv": [
+            "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+            "-s",
+            "emulator-5582",
+            "shell",
+            "run-as",
+            "com.osfans.trime.debug",
+            "cat",
+            "/data/user_de/0/com.osfans.trime.debug/.sync-manifest.json"
+          ],
+          "exit": 1,
+          "started_utc": "2026-10-28T02:32:50.091778+00:00",
+          "stdout_file": {
+            "path": "runtime/run2/commands/storage-settings-after-back-manifest.stdout",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          },
+          "stderr_file": {
+            "path": "runtime/run2/commands/storage-settings-after-back-manifest.stderr",
+            "sha256": "b009fd387c0fc6373c1a1a6e65bb5359972e4a413d1dd6dc1c35b725a83bddaf",
+            "bytes": 91
+          }
+        },
+        {
+          "record": {
+            "path": "runtime/run2/commands/storage-settings-after-back-grants.json",
+            "sha256": "3b3f59af207d60ebd445296bea243b915492d36d35c4daa6a82f58a080b531de",
+            "bytes": 251
+          },
+          "argv": [
+            "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+            "-s",
+            "emulator-5582",
+            "shell",
+            "dumpsys",
+            "uri_grants"
+          ],
+          "exit": 0,
+          "started_utc": "2026-10-28T02:32:50.143629+00:00",
+          "stdout_file": {
+            "path": "runtime/run2/commands/storage-settings-after-back-grants.stdout",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          },
+          "stderr_file": {
+            "path": "runtime/run2/commands/storage-settings-after-back-grants.stderr",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          }
+        }
+      ],
+      "manifest_interpretation": "cat退出1且stderr明确No such file or directory；基线和此次读取均不存在manifest，empty SHA不是现存manifest的字节哈希。",
+      "raw_snapshot_fields_equal_to_before": true,
+      "grant_evidence_authoritative_for_this_snapshot": false,
+      "uri_grants_output_is_not_authoritative": true,
+      "valid_state_fields_equal_to_before": true
+    },
+    "storage-settings-after-outside-still-open": {
+      "snapshot": {
+        "path": "runtime/run2/storage-settings-after-outside-still-open-snapshot.json",
+        "sha256": "1ca9817fdc2e7ad33fa0079bd865cf9fd40dc3f6f1c89f983721012fc61b246b",
+        "bytes": 286
+      },
+      "state": {
+        "storage_mode": "APP_STORAGE",
+        "directory_uri": "",
+        "sentinel_sha256": "fc23655d05c9d26dcf7a828f670dfc811c65aa54cc8a98283ad4ffa03da4c988",
+        "manifest_exit": 1,
+        "manifest_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "uri_grants_output": ""
+      },
+      "capture_commands": [
+        {
+          "record": {
+            "path": "runtime/run2/commands/storage-settings-after-outside-still-open-prefs.json",
+            "sha256": "54463b76ec453964214806a8ae3b736f25edbdc28db04afe55c07c38d6f30746",
+            "bytes": 332
+          },
+          "argv": [
+            "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+            "-s",
+            "emulator-5582",
+            "shell",
+            "run-as",
+            "com.osfans.trime.debug",
+            "cat",
+            "shared_prefs/com.osfans.trime.debug_preferences.xml"
+          ],
+          "exit": 0,
+          "started_utc": "2026-10-28T02:33:52.888632+00:00",
+          "stdout_file": {
+            "path": "runtime/run2/commands/storage-settings-after-outside-still-open-prefs.stdout",
+            "sha256": "556448286457aa3259dc7d885171257a64fe611d98722754d9cab8cc9d0a5c0b",
+            "bytes": 488
+          },
+          "stderr_file": {
+            "path": "runtime/run2/commands/storage-settings-after-outside-still-open-prefs.stderr",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          }
+        },
+        {
+          "record": {
+            "path": "runtime/run2/commands/storage-settings-after-outside-still-open-sentinel.json",
+            "sha256": "2db8dd58b1d7b6f4f30e2ba43434200cbba05f7cb598e79d829f3843b41313e6",
+            "bytes": 306
+          },
+          "argv": [
+            "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+            "-s",
+            "emulator-5582",
+            "shell",
+            "run-as",
+            "com.osfans.trime.debug",
+            "cat",
+            "files/triage-sentinel.txt"
+          ],
+          "exit": 0,
+          "started_utc": "2026-10-28T02:33:52.986196+00:00",
+          "stdout_file": {
+            "path": "runtime/run2/commands/storage-settings-after-outside-still-open-sentinel.stdout",
+            "sha256": "fc23655d05c9d26dcf7a828f670dfc811c65aa54cc8a98283ad4ffa03da4c988",
+            "bytes": 51
+          },
+          "stderr_file": {
+            "path": "runtime/run2/commands/storage-settings-after-outside-still-open-sentinel.stderr",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          }
+        },
+        {
+          "record": {
+            "path": "runtime/run2/commands/storage-settings-after-outside-still-open-manifest.json",
+            "sha256": "2652c7701406a15d1b0579ba7de27402e6af6b4dc7eda8d878da0243580d97e0",
+            "bytes": 339
+          },
+          "argv": [
+            "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+            "-s",
+            "emulator-5582",
+            "shell",
+            "run-as",
+            "com.osfans.trime.debug",
+            "cat",
+            "/data/user_de/0/com.osfans.trime.debug/.sync-manifest.json"
+          ],
+          "exit": 1,
+          "started_utc": "2026-10-28T02:33:53.081321+00:00",
+          "stdout_file": {
+            "path": "runtime/run2/commands/storage-settings-after-outside-still-open-manifest.stdout",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          },
+          "stderr_file": {
+            "path": "runtime/run2/commands/storage-settings-after-outside-still-open-manifest.stderr",
+            "sha256": "b009fd387c0fc6373c1a1a6e65bb5359972e4a413d1dd6dc1c35b725a83bddaf",
+            "bytes": 91
+          }
+        },
+        {
+          "record": {
+            "path": "runtime/run2/commands/storage-settings-after-outside-still-open-grants.json",
+            "sha256": "e1bb7b918d46492d04d26a63f8b65add3823df99794c870e3538d38a2c1c39e1",
+            "bytes": 252
+          },
+          "argv": [
+            "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+            "-s",
+            "emulator-5582",
+            "shell",
+            "dumpsys",
+            "uri_grants"
+          ],
+          "exit": 0,
+          "started_utc": "2026-10-28T02:33:53.175024+00:00",
+          "stdout_file": {
+            "path": "runtime/run2/commands/storage-settings-after-outside-still-open-grants.stdout",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          },
+          "stderr_file": {
+            "path": "runtime/run2/commands/storage-settings-after-outside-still-open-grants.stderr",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          }
+        }
+      ],
+      "manifest_interpretation": "cat退出1且stderr明确No such file or directory；基线和此次读取均不存在manifest，empty SHA不是现存manifest的字节哈希。",
+      "raw_snapshot_fields_equal_to_before": true,
+      "grant_evidence_authoritative_for_this_snapshot": false,
+      "uri_grants_output_is_not_authoritative": true,
+      "valid_state_fields_equal_to_before": true
+    },
+    "storage-settings-after-outside-cancel": {
+      "snapshot": {
+        "path": "runtime/run2/storage-settings-after-outside-cancel-snapshot.json",
+        "sha256": "1ca9817fdc2e7ad33fa0079bd865cf9fd40dc3f6f1c89f983721012fc61b246b",
+        "bytes": 286
+      },
+      "state": {
+        "storage_mode": "APP_STORAGE",
+        "directory_uri": "",
+        "sentinel_sha256": "fc23655d05c9d26dcf7a828f670dfc811c65aa54cc8a98283ad4ffa03da4c988",
+        "manifest_exit": 1,
+        "manifest_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "uri_grants_output": ""
+      },
+      "capture_commands": [
+        {
+          "record": {
+            "path": "runtime/run2/commands/storage-settings-after-outside-cancel-prefs.json",
+            "sha256": "06bd0278af024f3424e739e62af7f85bf9b11ce3099b36ad503cfa7c9c00b67c",
+            "bytes": 332
+          },
+          "argv": [
+            "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+            "-s",
+            "emulator-5582",
+            "shell",
+            "run-as",
+            "com.osfans.trime.debug",
+            "cat",
+            "shared_prefs/com.osfans.trime.debug_preferences.xml"
+          ],
+          "exit": 0,
+          "started_utc": "2026-10-28T02:34:03.154766+00:00",
+          "stdout_file": {
+            "path": "runtime/run2/commands/storage-settings-after-outside-cancel-prefs.stdout",
+            "sha256": "556448286457aa3259dc7d885171257a64fe611d98722754d9cab8cc9d0a5c0b",
+            "bytes": 488
+          },
+          "stderr_file": {
+            "path": "runtime/run2/commands/storage-settings-after-outside-cancel-prefs.stderr",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          }
+        },
+        {
+          "record": {
+            "path": "runtime/run2/commands/storage-settings-after-outside-cancel-sentinel.json",
+            "sha256": "a0e779fd51427858895b450d62d04ce02076ea15223cfa0f8ed5df727c8790b7",
+            "bytes": 306
+          },
+          "argv": [
+            "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+            "-s",
+            "emulator-5582",
+            "shell",
+            "run-as",
+            "com.osfans.trime.debug",
+            "cat",
+            "files/triage-sentinel.txt"
+          ],
+          "exit": 0,
+          "started_utc": "2026-10-28T02:34:03.278378+00:00",
+          "stdout_file": {
+            "path": "runtime/run2/commands/storage-settings-after-outside-cancel-sentinel.stdout",
+            "sha256": "fc23655d05c9d26dcf7a828f670dfc811c65aa54cc8a98283ad4ffa03da4c988",
+            "bytes": 51
+          },
+          "stderr_file": {
+            "path": "runtime/run2/commands/storage-settings-after-outside-cancel-sentinel.stderr",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          }
+        },
+        {
+          "record": {
+            "path": "runtime/run2/commands/storage-settings-after-outside-cancel-manifest.json",
+            "sha256": "f01dcf1eeec73c41b8c650c731e809034974aa7e2e5a2c28d06ff1f029f7ac04",
+            "bytes": 338
+          },
+          "argv": [
+            "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+            "-s",
+            "emulator-5582",
+            "shell",
+            "run-as",
+            "com.osfans.trime.debug",
+            "cat",
+            "/data/user_de/0/com.osfans.trime.debug/.sync-manifest.json"
+          ],
+          "exit": 1,
+          "started_utc": "2026-10-28T02:34:03.394059+00:00",
+          "stdout_file": {
+            "path": "runtime/run2/commands/storage-settings-after-outside-cancel-manifest.stdout",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          },
+          "stderr_file": {
+            "path": "runtime/run2/commands/storage-settings-after-outside-cancel-manifest.stderr",
+            "sha256": "b009fd387c0fc6373c1a1a6e65bb5359972e4a413d1dd6dc1c35b725a83bddaf",
+            "bytes": 91
+          }
+        },
+        {
+          "record": {
+            "path": "runtime/run2/commands/storage-settings-after-outside-cancel-grants.json",
+            "sha256": "9f54aba395890715c35bd543fc511e7dcd7732ff925265a0545a3dbc181ce2a4",
+            "bytes": 250
+          },
+          "argv": [
+            "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+            "-s",
+            "emulator-5582",
+            "shell",
+            "dumpsys",
+            "uri_grants"
+          ],
+          "exit": 0,
+          "started_utc": "2026-10-28T02:34:03.511772+00:00",
+          "stdout_file": {
+            "path": "runtime/run2/commands/storage-settings-after-outside-cancel-grants.stdout",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          },
+          "stderr_file": {
+            "path": "runtime/run2/commands/storage-settings-after-outside-cancel-grants.stderr",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          }
+        }
+      ],
+      "manifest_interpretation": "cat退出1且stderr明确No such file or directory；基线和此次读取均不存在manifest，empty SHA不是现存manifest的字节哈希。",
+      "raw_snapshot_fields_equal_to_before": true,
+      "grant_evidence_authoritative_for_this_snapshot": false,
+      "uri_grants_output_is_not_authoritative": true,
+      "valid_state_fields_equal_to_before": true
+    },
+    "storage-settings-while-picker": {
+      "snapshot": {
+        "path": "runtime/run2/storage-settings-while-picker-snapshot.json",
+        "sha256": "1ca9817fdc2e7ad33fa0079bd865cf9fd40dc3f6f1c89f983721012fc61b246b",
+        "bytes": 286
+      },
+      "state": {
+        "storage_mode": "APP_STORAGE",
+        "directory_uri": "",
+        "sentinel_sha256": "fc23655d05c9d26dcf7a828f670dfc811c65aa54cc8a98283ad4ffa03da4c988",
+        "manifest_exit": 1,
+        "manifest_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "uri_grants_output": ""
+      },
+      "capture_commands": [
+        {
+          "record": {
+            "path": "runtime/run2/commands/storage-settings-while-picker-prefs.json",
+            "sha256": "380d5fc7ab7738a8a3a86fe92f6aa992c846d53c9430368c7e720ab104da51df",
+            "bytes": 331
+          },
+          "argv": [
+            "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+            "-s",
+            "emulator-5582",
+            "shell",
+            "run-as",
+            "com.osfans.trime.debug",
+            "cat",
+            "shared_prefs/com.osfans.trime.debug_preferences.xml"
+          ],
+          "exit": 0,
+          "started_utc": "2026-10-28T02:34:33.312575+00:00",
+          "stdout_file": {
+            "path": "runtime/run2/commands/storage-settings-while-picker-prefs.stdout",
+            "sha256": "556448286457aa3259dc7d885171257a64fe611d98722754d9cab8cc9d0a5c0b",
+            "bytes": 488
+          },
+          "stderr_file": {
+            "path": "runtime/run2/commands/storage-settings-while-picker-prefs.stderr",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          }
+        },
+        {
+          "record": {
+            "path": "runtime/run2/commands/storage-settings-while-picker-sentinel.json",
+            "sha256": "6523ed62b3de283effdb16ce41fbb766f30fe50fca455a98ad42c86edcd13db3",
+            "bytes": 306
+          },
+          "argv": [
+            "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+            "-s",
+            "emulator-5582",
+            "shell",
+            "run-as",
+            "com.osfans.trime.debug",
+            "cat",
+            "files/triage-sentinel.txt"
+          ],
+          "exit": 0,
+          "started_utc": "2026-10-28T02:34:33.452842+00:00",
+          "stdout_file": {
+            "path": "runtime/run2/commands/storage-settings-while-picker-sentinel.stdout",
+            "sha256": "fc23655d05c9d26dcf7a828f670dfc811c65aa54cc8a98283ad4ffa03da4c988",
+            "bytes": 51
+          },
+          "stderr_file": {
+            "path": "runtime/run2/commands/storage-settings-while-picker-sentinel.stderr",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          }
+        },
+        {
+          "record": {
+            "path": "runtime/run2/commands/storage-settings-while-picker-manifest.json",
+            "sha256": "f539247332012efc152392a29b542a8c764579e97ac07adfd4b403e211d51721",
+            "bytes": 338
+          },
+          "argv": [
+            "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+            "-s",
+            "emulator-5582",
+            "shell",
+            "run-as",
+            "com.osfans.trime.debug",
+            "cat",
+            "/data/user_de/0/com.osfans.trime.debug/.sync-manifest.json"
+          ],
+          "exit": 1,
+          "started_utc": "2026-10-28T02:34:33.529191+00:00",
+          "stdout_file": {
+            "path": "runtime/run2/commands/storage-settings-while-picker-manifest.stdout",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          },
+          "stderr_file": {
+            "path": "runtime/run2/commands/storage-settings-while-picker-manifest.stderr",
+            "sha256": "b009fd387c0fc6373c1a1a6e65bb5359972e4a413d1dd6dc1c35b725a83bddaf",
+            "bytes": 91
+          }
+        },
+        {
+          "record": {
+            "path": "runtime/run2/commands/storage-settings-while-picker-grants.json",
+            "sha256": "826e2af02182fc7a6eeb6d5572bd3d40ae35c19f77e6a67bb6e19a546fb022e6",
+            "bytes": 252
+          },
+          "argv": [
+            "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+            "-s",
+            "emulator-5582",
+            "shell",
+            "dumpsys",
+            "uri_grants"
+          ],
+          "exit": 0,
+          "started_utc": "2026-10-28T02:34:33.612310+00:00",
+          "stdout_file": {
+            "path": "runtime/run2/commands/storage-settings-while-picker-grants.stdout",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          },
+          "stderr_file": {
+            "path": "runtime/run2/commands/storage-settings-while-picker-grants.stderr",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          }
+        }
+      ],
+      "manifest_interpretation": "cat退出1且stderr明确No such file or directory；基线和此次读取均不存在manifest，empty SHA不是现存manifest的字节哈希。",
+      "raw_snapshot_fields_equal_to_before": true,
+      "grant_evidence_authoritative_for_this_snapshot": false,
+      "uri_grants_output_is_not_authoritative": true,
+      "valid_state_fields_equal_to_before": true
+    },
+    "storage-settings-after-picker-cancel": {
+      "snapshot": {
+        "path": "runtime/run2/storage-settings-after-picker-cancel-snapshot.json",
+        "sha256": "1ca9817fdc2e7ad33fa0079bd865cf9fd40dc3f6f1c89f983721012fc61b246b",
+        "bytes": 286
+      },
+      "state": {
+        "storage_mode": "APP_STORAGE",
+        "directory_uri": "",
+        "sentinel_sha256": "fc23655d05c9d26dcf7a828f670dfc811c65aa54cc8a98283ad4ffa03da4c988",
+        "manifest_exit": 1,
+        "manifest_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "uri_grants_output": ""
+      },
+      "capture_commands": [
+        {
+          "record": {
+            "path": "runtime/run2/commands/storage-settings-after-picker-cancel-prefs.json",
+            "sha256": "9094fceda287ee4fe6c581c7b3d1811d34ca6bb60f885c67773cff5e423bd8d7",
+            "bytes": 331
+          },
+          "argv": [
+            "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+            "-s",
+            "emulator-5582",
+            "shell",
+            "run-as",
+            "com.osfans.trime.debug",
+            "cat",
+            "shared_prefs/com.osfans.trime.debug_preferences.xml"
+          ],
+          "exit": 0,
+          "started_utc": "2026-10-28T02:34:39.539578+00:00",
+          "stdout_file": {
+            "path": "runtime/run2/commands/storage-settings-after-picker-cancel-prefs.stdout",
+            "sha256": "556448286457aa3259dc7d885171257a64fe611d98722754d9cab8cc9d0a5c0b",
+            "bytes": 488
+          },
+          "stderr_file": {
+            "path": "runtime/run2/commands/storage-settings-after-picker-cancel-prefs.stderr",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          }
+        },
+        {
+          "record": {
+            "path": "runtime/run2/commands/storage-settings-after-picker-cancel-sentinel.json",
+            "sha256": "538897d135b0ab84157e975f5d049f58dffc2ffd2dd43d3967066035d5350f5e",
+            "bytes": 306
+          },
+          "argv": [
+            "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+            "-s",
+            "emulator-5582",
+            "shell",
+            "run-as",
+            "com.osfans.trime.debug",
+            "cat",
+            "files/triage-sentinel.txt"
+          ],
+          "exit": 0,
+          "started_utc": "2026-10-28T02:34:39.668866+00:00",
+          "stdout_file": {
+            "path": "runtime/run2/commands/storage-settings-after-picker-cancel-sentinel.stdout",
+            "sha256": "fc23655d05c9d26dcf7a828f670dfc811c65aa54cc8a98283ad4ffa03da4c988",
+            "bytes": 51
+          },
+          "stderr_file": {
+            "path": "runtime/run2/commands/storage-settings-after-picker-cancel-sentinel.stderr",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          }
+        },
+        {
+          "record": {
+            "path": "runtime/run2/commands/storage-settings-after-picker-cancel-manifest.json",
+            "sha256": "f1df1c962e073f07ea2799906a536091689fb8433cd2944e614200714495568a",
+            "bytes": 339
+          },
+          "argv": [
+            "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+            "-s",
+            "emulator-5582",
+            "shell",
+            "run-as",
+            "com.osfans.trime.debug",
+            "cat",
+            "/data/user_de/0/com.osfans.trime.debug/.sync-manifest.json"
+          ],
+          "exit": 1,
+          "started_utc": "2026-10-28T02:34:39.783949+00:00",
+          "stdout_file": {
+            "path": "runtime/run2/commands/storage-settings-after-picker-cancel-manifest.stdout",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          },
+          "stderr_file": {
+            "path": "runtime/run2/commands/storage-settings-after-picker-cancel-manifest.stderr",
+            "sha256": "b009fd387c0fc6373c1a1a6e65bb5359972e4a413d1dd6dc1c35b725a83bddaf",
+            "bytes": 91
+          }
+        },
+        {
+          "record": {
+            "path": "runtime/run2/commands/storage-settings-after-picker-cancel-grants.json",
+            "sha256": "b7616eb2426c8f53d5d4f8c07eddc58f03352e447b73282c58f2658bb3054c18",
+            "bytes": 251
+          },
+          "argv": [
+            "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+            "-s",
+            "emulator-5582",
+            "shell",
+            "dumpsys",
+            "uri_grants"
+          ],
+          "exit": 0,
+          "started_utc": "2026-10-28T02:34:39.879873+00:00",
+          "stdout_file": {
+            "path": "runtime/run2/commands/storage-settings-after-picker-cancel-grants.stdout",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          },
+          "stderr_file": {
+            "path": "runtime/run2/commands/storage-settings-after-picker-cancel-grants.stderr",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          }
+        }
+      ],
+      "manifest_interpretation": "cat退出1且stderr明确No such file or directory；基线和此次读取均不存在manifest，empty SHA不是现存manifest的字节哈希。",
+      "raw_snapshot_fields_equal_to_before": true,
+      "grant_evidence_authoritative_for_this_snapshot": false,
+      "uri_grants_output_is_not_authoritative": true,
+      "valid_state_fields_equal_to_before": true
+    },
+    "storage-settings-after-far-outside": {
+      "snapshot": {
+        "path": "runtime/run2/storage-settings-after-far-outside-snapshot.json",
+        "sha256": "1ca9817fdc2e7ad33fa0079bd865cf9fd40dc3f6f1c89f983721012fc61b246b",
+        "bytes": 286
+      },
+      "state": {
+        "storage_mode": "APP_STORAGE",
+        "directory_uri": "",
+        "sentinel_sha256": "fc23655d05c9d26dcf7a828f670dfc811c65aa54cc8a98283ad4ffa03da4c988",
+        "manifest_exit": 1,
+        "manifest_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "uri_grants_output": ""
+      },
+      "capture_commands": [
+        {
+          "record": {
+            "path": "runtime/run2/commands/storage-settings-after-far-outside-prefs.json",
+            "sha256": "21e9e98a863c3789d18f89ace5b308732d66e90b0d99c49c1ef0b48971de33c8",
+            "bytes": 332
+          },
+          "argv": [
+            "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+            "-s",
+            "emulator-5582",
+            "shell",
+            "run-as",
+            "com.osfans.trime.debug",
+            "cat",
+            "shared_prefs/com.osfans.trime.debug_preferences.xml"
+          ],
+          "exit": 0,
+          "started_utc": "2026-10-28T02:35:26.932409+00:00",
+          "stdout_file": {
+            "path": "runtime/run2/commands/storage-settings-after-far-outside-prefs.stdout",
+            "sha256": "556448286457aa3259dc7d885171257a64fe611d98722754d9cab8cc9d0a5c0b",
+            "bytes": 488
+          },
+          "stderr_file": {
+            "path": "runtime/run2/commands/storage-settings-after-far-outside-prefs.stderr",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          }
+        },
+        {
+          "record": {
+            "path": "runtime/run2/commands/storage-settings-after-far-outside-sentinel.json",
+            "sha256": "770edc72724663306a87ae2be73fa604c4a6ca403293e34f948bb9661994c31d",
+            "bytes": 306
+          },
+          "argv": [
+            "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+            "-s",
+            "emulator-5582",
+            "shell",
+            "run-as",
+            "com.osfans.trime.debug",
+            "cat",
+            "files/triage-sentinel.txt"
+          ],
+          "exit": 0,
+          "started_utc": "2026-10-28T02:35:27.051337+00:00",
+          "stdout_file": {
+            "path": "runtime/run2/commands/storage-settings-after-far-outside-sentinel.stdout",
+            "sha256": "fc23655d05c9d26dcf7a828f670dfc811c65aa54cc8a98283ad4ffa03da4c988",
+            "bytes": 51
+          },
+          "stderr_file": {
+            "path": "runtime/run2/commands/storage-settings-after-far-outside-sentinel.stderr",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          }
+        },
+        {
+          "record": {
+            "path": "runtime/run2/commands/storage-settings-after-far-outside-manifest.json",
+            "sha256": "bc5033d9140825db95011bd3b0ee09c37ba4b23fb281fc409fda3fdf3b6c6a47",
+            "bytes": 339
+          },
+          "argv": [
+            "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+            "-s",
+            "emulator-5582",
+            "shell",
+            "run-as",
+            "com.osfans.trime.debug",
+            "cat",
+            "/data/user_de/0/com.osfans.trime.debug/.sync-manifest.json"
+          ],
+          "exit": 1,
+          "started_utc": "2026-10-28T02:35:27.156099+00:00",
+          "stdout_file": {
+            "path": "runtime/run2/commands/storage-settings-after-far-outside-manifest.stdout",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          },
+          "stderr_file": {
+            "path": "runtime/run2/commands/storage-settings-after-far-outside-manifest.stderr",
+            "sha256": "b009fd387c0fc6373c1a1a6e65bb5359972e4a413d1dd6dc1c35b725a83bddaf",
+            "bytes": 91
+          }
+        },
+        {
+          "record": {
+            "path": "runtime/run2/commands/storage-settings-after-far-outside-grants.json",
+            "sha256": "b18cb5c52111373bd91648931e7bf84b9d90577557e1066a3a14574dec328ba7",
+            "bytes": 249
+          },
+          "argv": [
+            "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+            "-s",
+            "emulator-5582",
+            "shell",
+            "dumpsys",
+            "uri_grants"
+          ],
+          "exit": 0,
+          "started_utc": "2026-10-28T02:35:27.230690+00:00",
+          "stdout_file": {
+            "path": "runtime/run2/commands/storage-settings-after-far-outside-grants.stdout",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          },
+          "stderr_file": {
+            "path": "runtime/run2/commands/storage-settings-after-far-outside-grants.stderr",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          }
+        }
+      ],
+      "manifest_interpretation": "cat退出1且stderr明确No such file or directory；基线和此次读取均不存在manifest，empty SHA不是现存manifest的字节哈希。",
+      "raw_snapshot_fields_equal_to_before": true,
+      "grant_evidence_authoritative_for_this_snapshot": false,
+      "uri_grants_output_is_not_authoritative": true,
+      "valid_state_fields_equal_to_before": true
+    }
+  },
+  "retained_failed_preparations": [
+    {
+      "id": "legacy_storage_helper_backup_literal_assertion",
+      "status": "HOST_HELPER_ASSERTION_FAILURE_RETAINED",
+      "reported_by": "root任务说明；原始断言堆栈未在R内发现独立持久化文件。",
+      "expected_literal_in_old_helper": "backup",
+      "actual_ui_literal": "Back up",
+      "classification": "旧主机端helper字面匹配失败，不是Android应用FATAL或取消行为失败。",
+      "current_helper": {
+        "path": "runtime/storage_checks.py",
+        "sha256": "f7169010b0e690d992075d0e491bd20dbf43cac5fada9a4739c67ce658eb064f",
+        "bytes": 2678
+      },
+      "current_helper_literal": "back up",
+      "actual_copy_evidence": {
+        "path": "runtime/run2/storage-settings-cancel-confirmation-0.xml",
+        "sha256": "d8e90c3e8b67cb104dd1dbc46a5e5367cfbb284a1d060b8ca12a2436829ac17f",
+        "bytes": 6915
+      },
+      "not_counted_as_pass": true
+    },
+    {
+      "id": "near_edge_outside_tap_did_not_dismiss",
+      "status": "PREPARATION_DID_NOT_DISMISS_DIALOG",
+      "action": {
+        "record": {
+          "path": "runtime/run2/commands/storage-settings-outside-tap.json",
+          "sha256": "529ab3f5a15d7c4247d9cde5d2e58af27435a5e666d729b0abe70062330cd672",
+          "bytes": 261
+        },
+        "argv": [
+          "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+          "-s",
+          "emulator-5582",
+          "shell",
+          "input",
+          "tap",
+          "5",
+          "640"
+        ],
+        "exit": 0,
+        "started_utc": "2026-10-28T02:33:06.756481+00:00",
+        "stdout_file": {
+          "path": "runtime/run2/commands/storage-settings-outside-tap.stdout",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        "stderr_file": {
+          "path": "runtime/run2/commands/storage-settings-outside-tap.stderr",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        }
+      },
+      "tap_coordinates": [
+        5,
+        640
+      ],
+      "after_ui": {
+        "xml": {
+          "path": "runtime/run2/storage-settings-after-outside-ready-2.xml",
+          "sha256": "d8e90c3e8b67cb104dd1dbc46a5e5367cfbb284a1d060b8ca12a2436829ac17f",
+          "bytes": 6915
+        },
+        "dialog_titles": [
+          "Sync from external storage"
+        ],
+        "confirmation_visible": true,
+        "packages": [
+          "com.osfans.trime.debug"
+        ],
+        "all_visible_text": [
+          "Sync from external storage",
+          "External sync requires selecting a data folder. Select where trime configuration files will be stored.\n\nTrime will sync its working configuration and the external folder in both directions. Files with the same name may be overwritten based on modification time, and deletions are synced to both locations. Back up both folders before continuing.",
+          "SELECT EXTERNAL DATA DIRECTORY…",
+          "CANCEL"
+        ]
+      },
+      "still_open_snapshot": "storage-settings-after-outside-still-open",
+      "observation": "输入命令exit0，但确认框仍显示；快照未变不能将此次操作算作触外取消通过。",
+      "recovery_action": {
+        "record": {
+          "path": "runtime/run2/commands/storage-outside-explicit-cancel-tap.json",
+          "sha256": "a4718115ee8c688ecc405830202c6c240cd2de5b8474e717bdc15cf407735ea8",
+          "bytes": 263
+        },
+        "argv": [
+          "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+          "-s",
+          "emulator-5582",
+          "shell",
+          "input",
+          "tap",
+          "569",
+          "945"
+        ],
+        "exit": 0,
+        "started_utc": "2026-10-28T02:33:57.252187+00:00",
+        "stdout_file": {
+          "path": "runtime/run2/commands/storage-outside-explicit-cancel-tap.stdout",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        "stderr_file": {
+          "path": "runtime/run2/commands/storage-outside-explicit-cancel-tap.stderr",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        }
+      },
+      "recovery_after_ui": {
+        "xml": {
+          "path": "runtime/run2/storage-outside-cancel-ready-0.xml",
+          "sha256": "fc38164a764af68c4067f88b39f0170b05a80b64b2ca26cc9f1ccfe911324827",
+          "bytes": 16879
+        },
+        "dialog_titles": [],
+        "confirmation_visible": false,
+        "packages": [
+          "com.osfans.trime.debug"
+        ],
+        "all_visible_text": [
+          "Profile",
+          "Storage",
+          "Data storage mode",
+          "Use app-specific storage",
+          "User directory",
+          "Synchronization",
+          "Sync user data immediately",
+          "Periodic background sync",
+          "Interval of background syncing (in minutes)",
+          "30 ",
+          "Maintenance",
+          "Browse app data folder",
+          "/storage/emulated/0/Android/data/com.osfans.trime.debug/files/rime"
+        ]
+      },
+      "recovery_snapshot": "storage-settings-after-outside-cancel",
+      "recovery_observation": "显式点击CANCEL后关闭，五个有效状态字段仍与before相等；旧uri_grants输出不用于授权结论。后续(360,100)独立用例实际关闭。",
+      "not_counted_as_outside_dismiss_pass": true
+    },
+    {
+      "id": "legacy_uri_grants_folder_assertion",
+      "status": "HOST_COLLECTION_ASSERTION_FAILURE_RETAINED",
+      "reported_by": "root任务说明",
+      "classification": "旧harness要求dumpsys uri_grants包含folder，但该工具在已有授权后仍返回空；断言失败不能判为产品授权失败。",
+      "invalid_snapshot": {
+        "path": "runtime/run2/storage-positive-associated-snapshot.json",
+        "sha256": "8c1ab6b9e755f34e3586ba7f32d610e19239eea9ab5b756c1f66ed0867c1a378",
+        "bytes": 386
+      },
+      "corrected_authoritative_snapshot": {
+        "path": "runtime/run2/storage-positive-associated-authoritative-snapshot.json",
+        "sha256": "c09f0c90f5f2a2e4f711e475eae335abed20503b55499f1b1e9373a9f8899a98",
+        "bytes": 626
+      },
+      "authoritative_command": {
+        "record": {
+          "path": "runtime/run2/commands/storage-authoritative-uri-permissions.json",
+          "sha256": "8e08f5cc3a13a8fa598be07845174e1570bb60da43b862e4ddb3c0df867cab30",
+          "bytes": 268
+        },
+        "argv": [
+          "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+          "-s",
+          "emulator-5582",
+          "shell",
+          "dumpsys",
+          "activity",
+          "permissions"
+        ],
+        "exit": 0,
+        "started_utc": "2026-10-28T02:38:40.468446+00:00",
+        "stdout_file": {
+          "path": "runtime/run2/commands/storage-authoritative-uri-permissions.stdout",
+          "sha256": "c00cb6202de8e3316720e4a34ed0100bbb492b49aa8cc9ff0fa2ba24ce9f8946",
+          "bytes": 687
+        },
+        "stderr_file": {
+          "path": "runtime/run2/commands/storage-authoritative-uri-permissions.stderr",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        }
+      },
+      "early_loading_note": "旧associated snapshot采集时仍Loading，manifest当时未生成；后续部署完成及权威snapshot单独记录。"
+    },
+    {
+      "id": "run_as_external_working_sentinel_permission_denied",
+      "status": "COLLECTION_PERMISSION_FAILURE_RETAINED",
+      "failed_command": {
+        "record": {
+          "path": "runtime/run2/commands/storage-positive-work-file-v2.json",
+          "sha256": "935e8df841f4d38f23e5aed23d6c93c5c651470e83ea8518cb88fe44584d2890",
+          "bytes": 374
+        },
+        "argv": [
+          "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+          "-s",
+          "emulator-5582",
+          "shell",
+          "run-as",
+          "com.osfans.trime.debug",
+          "cat",
+          "/storage/emulated/0/Android/data/com.osfans.trime.debug/files/rime/triage-folder-sentinel.txt"
+        ],
+        "exit": 1,
+        "started_utc": "2026-10-28T02:39:16.965663+00:00",
+        "stdout_file": {
+          "path": "runtime/run2/commands/storage-positive-work-file-v2.stdout",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        "stderr_file": {
+          "path": "runtime/run2/commands/storage-positive-work-file-v2.stderr",
+          "sha256": "affdee77225151570da6627b3b7dfaf87f35299086785685ac9f4617fce60c68",
+          "bytes": 118
+        }
+      },
+      "classification": "run-as采集身份读取外部工作目录Permission denied；随后shell读取同一sentinel成功且字节等于fixture。",
+      "successful_shell_read": {
+        "record": {
+          "path": "runtime/run2/commands/storage-positive-imported-working-sentinel.json",
+          "sha256": "699d2c3251f2ee6eaa61c954633fa2ab0ccd273cccc3d094e8a995430c38848a",
+          "bytes": 318
+        },
+        "argv": [
+          "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+          "-s",
+          "emulator-5582",
+          "shell",
+          "cat",
+          "/sdcard/Android/data/com.osfans.trime.debug/files/rime/triage-folder-sentinel.txt"
+        ],
+        "exit": 0,
+        "started_utc": "2026-10-28T02:41:19.038399+00:00",
+        "stdout_file": {
+          "path": "runtime/run2/commands/storage-positive-imported-working-sentinel.stdout",
+          "sha256": "fc23655d05c9d26dcf7a828f670dfc811c65aa54cc8a98283ad4ffa03da4c988",
+          "bytes": 51
+        },
+        "stderr_file": {
+          "path": "runtime/run2/commands/storage-positive-imported-working-sentinel.stderr",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        }
+      }
+    },
+    {
+      "id": "one_back_assumed_to_exit_nested_documentsui",
+      "status": "HOST_UI_WAIT_ASSUMPTION_FAILURE_RETAINED",
+      "reported_by": "root运行记录；实际XML和命令作为证据保留。",
+      "failed_expectation": "一次Back应立即返回Trime User directory设置页。",
+      "actual_observation": "picker从目标子目录退到Documents父目录，仍为com.android.documentsui；旧wait因此失败，不是应用拒绝取消。",
+      "first_back_action": {
+        "record": {
+          "path": "runtime/run2/commands/storage-reselect-picker-back.json",
+          "sha256": "62a3a49ec86a00a5ed4def2c4e04659d72e52771132f1eb1309500faf5f1c10f",
+          "bytes": 267
+        },
+        "argv": [
+          "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+          "-s",
+          "emulator-5582",
+          "shell",
+          "input",
+          "keyevent",
+          "KEYCODE_BACK"
+        ],
+        "exit": 0,
+        "started_utc": "2026-10-28T02:43:05.931168+00:00",
+        "stdout_file": {
+          "path": "runtime/run2/commands/storage-reselect-picker-back.stdout",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        "stderr_file": {
+          "path": "runtime/run2/commands/storage-reselect-picker-back.stderr",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        }
+      },
+      "first_back_ui": {
+        "xml": {
+          "path": "runtime/run2/storage-reselect-picker-returned-0.xml",
+          "sha256": "6a6d41a2befb6bc56639352021b930700883eff3a41adcaee27aebb7b411a092",
+          "bytes": 17349
+        },
+        "dialog_titles": [],
+        "all_visible_text": [
+          "Android SDK built for x86_64",
+          "Documents",
+          "Files in Documents",
+          "Documents",
+          "TrimeIssue2095-20261028",
+          "USE THIS FOLDER"
+        ],
+        "packages": [
+          "com.android.documentsui"
+        ]
+      },
+      "extra_wait_captures": [
+        {
+          "path": "runtime/run2/storage-reselect-picker-returned-1.xml",
+          "sha256": "6a6d41a2befb6bc56639352021b930700883eff3a41adcaee27aebb7b411a092",
+          "bytes": 17349
+        },
+        {
+          "path": "runtime/run2/storage-reselect-picker-returned-2.xml",
+          "sha256": "6a6d41a2befb6bc56639352021b930700883eff3a41adcaee27aebb7b411a092",
+          "bytes": 17349
+        }
+      ],
+      "state_after_one_back": {
+        "snapshot": {
+          "path": "runtime/run2/storage-reselect-after-one-back-still-picker-snapshot.json",
+          "sha256": "c09f0c90f5f2a2e4f711e475eae335abed20503b55499f1b1e9373a9f8899a98",
+          "bytes": 626
+        },
+        "state": {
+          "storage_mode": "EXTERNAL_SYNC",
+          "directory_uri": "content://com.android.externalstorage.documents/tree/primary%3ADocuments%2FTrimeIssue2095-20261028",
+          "sentinel_sha256": "fc23655d05c9d26dcf7a828f670dfc811c65aa54cc8a98283ad4ffa03da4c988",
+          "manifest_exit": 0,
+          "manifest_sha256": "800f24a8791f5ab61e1f76b57010fd6f0537ef5d2d92e9a3b0d9fa0869abc73c",
+          "persisted_uri_grants": [
+            {
+              "uri": "content://com.android.externalstorage.documents/tree/primary%3ADocuments%2FTrimeIssue2095-20261028",
+              "persisted": "0x3",
+              "persistable": "0x3"
+            }
+          ],
+          "grant_inspection": "dumpsys activity permissions"
+        },
+        "grant_evidence_authoritative_for_this_snapshot": true,
+        "capture_commands": [
+          {
+            "record": {
+              "path": "runtime/run2/commands/storage-reselect-after-one-back-still-picker-prefs.json",
+              "sha256": "b8bbfa75ed171f472f17b12ba4c056ed14e9e43e0f0b2854f270de9ea423b20a",
+              "bytes": 332
+            },
+            "argv": [
+              "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+              "-s",
+              "emulator-5582",
+              "shell",
+              "run-as",
+              "com.osfans.trime.debug",
+              "cat",
+              "shared_prefs/com.osfans.trime.debug_preferences.xml"
+            ],
+            "exit": 0,
+            "started_utc": "2026-10-28T02:43:49.605701+00:00",
+            "stdout_file": {
+              "path": "runtime/run2/commands/storage-reselect-after-one-back-still-picker-prefs.stdout",
+              "sha256": "0631b05e1c8b5f95d5637cba860797c9aab993b726d6d284277d60593e3d2bf7",
+              "bytes": 648
+            },
+            "stderr_file": {
+              "path": "runtime/run2/commands/storage-reselect-after-one-back-still-picker-prefs.stderr",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "bytes": 0
+            }
+          },
+          {
+            "record": {
+              "path": "runtime/run2/commands/storage-reselect-after-one-back-still-picker-sentinel.json",
+              "sha256": "c7f9afd3c3440ce172b27c3f7cfd31352f72e970f9a2f8e9226b82893e12a9ca",
+              "bytes": 306
+            },
+            "argv": [
+              "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+              "-s",
+              "emulator-5582",
+              "shell",
+              "run-as",
+              "com.osfans.trime.debug",
+              "cat",
+              "files/triage-sentinel.txt"
+            ],
+            "exit": 0,
+            "started_utc": "2026-10-28T02:43:49.640293+00:00",
+            "stdout_file": {
+              "path": "runtime/run2/commands/storage-reselect-after-one-back-still-picker-sentinel.stdout",
+              "sha256": "fc23655d05c9d26dcf7a828f670dfc811c65aa54cc8a98283ad4ffa03da4c988",
+              "bytes": 51
+            },
+            "stderr_file": {
+              "path": "runtime/run2/commands/storage-reselect-after-one-back-still-picker-sentinel.stderr",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "bytes": 0
+            }
+          },
+          {
+            "record": {
+              "path": "runtime/run2/commands/storage-reselect-after-one-back-still-picker-manifest.json",
+              "sha256": "879591a42285e788bfb850ac2dcf61a0976f436bb404a54f96eac2a8065eec76",
+              "bytes": 339
+            },
+            "argv": [
+              "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+              "-s",
+              "emulator-5582",
+              "shell",
+              "run-as",
+              "com.osfans.trime.debug",
+              "cat",
+              "/data/user_de/0/com.osfans.trime.debug/.sync-manifest.json"
+            ],
+            "exit": 0,
+            "started_utc": "2026-10-28T02:43:49.678934+00:00",
+            "stdout_file": {
+              "path": "runtime/run2/commands/storage-reselect-after-one-back-still-picker-manifest.stdout",
+              "sha256": "800f24a8791f5ab61e1f76b57010fd6f0537ef5d2d92e9a3b0d9fa0869abc73c",
+              "bytes": 1766
+            },
+            "stderr_file": {
+              "path": "runtime/run2/commands/storage-reselect-after-one-back-still-picker-manifest.stderr",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "bytes": 0
+            }
+          },
+          {
+            "record": {
+              "path": "runtime/run2/commands/storage-reselect-after-one-back-still-picker-grants.json",
+              "sha256": "0f62a4a988a240c057bce649b73c9be4fb3ad02eb1d1ff2674f7960743997f1e",
+              "bytes": 268
+            },
+            "argv": [
+              "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+              "-s",
+              "emulator-5582",
+              "shell",
+              "dumpsys",
+              "activity",
+              "permissions"
+            ],
+            "exit": 0,
+            "started_utc": "2026-10-28T02:43:49.716280+00:00",
+            "stdout_file": {
+              "path": "runtime/run2/commands/storage-reselect-after-one-back-still-picker-grants.stdout",
+              "sha256": "c00cb6202de8e3316720e4a34ed0100bbb492b49aa8cc9ff0fa2ba24ce9f8946",
+              "bytes": 687
+            },
+            "stderr_file": {
+              "path": "runtime/run2/commands/storage-reselect-after-one-back-still-picker-grants.stderr",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "bytes": 0
+            }
+          }
+        ]
+      },
+      "recovery": "按实际UI层级再Back两次，共3次Back后返回Profile，最终权威快照全等。"
+    }
+  ],
+  "pending": [],
+  "limitations": [
+    "早期uri_grants空输出不具授权证明力；没有补造Settings/Setup初始before grant凭证。",
+    "有效授权before/after比较仅来自后续activity permissions快照（UID10160、目标tree、persisted/persistable=0x3）。",
+    "初始取消仅比较模式、URI、private sentinel和manifest存在状态；正向关联另只复核51字节working/remote fixture，不是完整目录字节复核。",
+    "Setup正向关联、权限撤销、同步I/O失败恢复与冲突策略未据本记录证明。",
+    "确认后失败事务回滚不在补丁范围；不声称修复#2140升级问题。",
+    "本PASS仅限列出的受控用例与证据范围，不是任意数据/设备/异常条件的全面保证。"
+  ],
+  "superseded_draft_archive": {
+    "file": "runtime/storage-validation-draft-before-grant-correction.json",
+    "reason": "原draft对空dumpsys uri_grants解释不当，当前已撤回；原始命令/快照不改。"
+  },
+  "grant_observation_correction": {
+    "old_method": "dumpsys uri_grants",
+    "old_result": "空stdout，即使实际授权后仍为空。",
+    "authority": "INVALID_FOR_GRANT_EXISTENCE_OR_EQUALITY",
+    "earlier_before_grant_proof_available": false,
+    "earlier_evidence_rewritten_or_fabricated": false,
+    "new_method": "dumpsys activity permissions，按targetPkg筛选URI并归一化persisted/persistable",
+    "authoritative_readback": {
+      "record": {
+        "path": "runtime/run2/commands/storage-authoritative-uri-permissions.json",
+        "sha256": "8e08f5cc3a13a8fa598be07845174e1570bb60da43b862e4ddb3c0df867cab30",
+        "bytes": 268
+      },
+      "argv": [
+        "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+        "-s",
+        "emulator-5582",
+        "shell",
+        "dumpsys",
+        "activity",
+        "permissions"
+      ],
+      "exit": 0,
+      "started_utc": "2026-10-28T02:38:40.468446+00:00",
+      "stdout_file": {
+        "path": "runtime/run2/commands/storage-authoritative-uri-permissions.stdout",
+        "sha256": "c00cb6202de8e3316720e4a34ed0100bbb492b49aa8cc9ff0fa2ba24ce9f8946",
+        "bytes": 687
+      },
+      "stderr_file": {
+        "path": "runtime/run2/commands/storage-authoritative-uri-permissions.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      }
+    },
+    "target_uid": 10160,
+    "target_package": "com.osfans.trime.debug",
+    "observed_persisted_mask": "0x3",
+    "observed_persistable_mask": "0x3",
+    "impact": "早期Settings/Setup取消仍可验证UI与五个有效状态字段；授权不变只在后续真正采集了before/after的新快照中验证。"
+  },
+  "completed_setup_cases": [
+    {
+      "id": "setup_confirmation_cancel",
+      "status": "PASS_FOR_UI_AND_MEASURED_STATE_EARLY_GRANTS_UNPROVEN",
+      "action": {
+        "record": {
+          "path": "runtime/run2/commands/storage-setup-confirmation-cancel-tap.json",
+          "sha256": "0ecdebcb2db5d32bfb89004412cc54a4cd2a397b2cde6d0c02e1064b3d8f277f",
+          "bytes": 264
+        },
+        "argv": [
+          "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+          "-s",
+          "emulator-5582",
+          "shell",
+          "input",
+          "tap",
+          "569",
+          "945"
+        ],
+        "exit": 0,
+        "started_utc": "2026-10-28T02:36:02.880950+00:00",
+        "stdout_file": {
+          "path": "runtime/run2/commands/storage-setup-confirmation-cancel-tap.stdout",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        "stderr_file": {
+          "path": "runtime/run2/commands/storage-setup-confirmation-cancel-tap.stderr",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        }
+      },
+      "after_ui": {
+        "xml": {
+          "path": "runtime/run2/storage-setup-cancel-ready-0.xml",
+          "sha256": "cb3e53de542aa640cb0c3055a4855563d6f7d625f284c69381f3730868da3817",
+          "bytes": 8025
+        },
+        "dialog_titles": [],
+        "all_visible_text": [
+          "Step 1",
+          "Choose how Trime stores Rime data",
+          "Sync from external storage",
+          "Before each deploy/sync, import configs from specified dir to internal storage, then export back after sync. Requires more storage space. Recommended for experienced users.",
+          "Use app-specific storage",
+          "Use internal private storage; users need a compatible file manager to access. On uninstall, system may ask to keep data — always have backups on hand.",
+          "Done",
+          "SKIP",
+          "NEXT"
+        ],
+        "packages": [
+          "com.osfans.trime.debug"
+        ],
+        "checked_radio_ids": [
+          "com.osfans.trime.debug:id/app_specific_storage_option"
+        ]
+      },
+      "snapshots": [
+        "storage-setup-confirmation-pending",
+        "storage-setup-after-cancel"
+      ],
+      "observation": "取消后app_specific_storage_option仍checked=true；五个有效字段与before相等，未取得早期权威grant before。"
+    },
+    {
+      "id": "setup_real_documentsui_picker_back",
+      "status": "PASS_FOR_UI_AND_MEASURED_STATE_EARLY_GRANTS_UNPROVEN",
+      "confirm_action": {
+        "record": {
+          "path": "runtime/run2/commands/storage-setup-picker-confirm-tap.json",
+          "sha256": "d670ba0cc710fb60eaed120bbc76b7ff2b2579d4b572890832d5820f462d5ee1",
+          "bytes": 265
+        },
+        "argv": [
+          "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+          "-s",
+          "emulator-5582",
+          "shell",
+          "input",
+          "tap",
+          "375",
+          "849"
+        ],
+        "exit": 0,
+        "started_utc": "2026-10-28T02:36:32.806605+00:00",
+        "stdout_file": {
+          "path": "runtime/run2/commands/storage-setup-picker-confirm-tap.stdout",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        "stderr_file": {
+          "path": "runtime/run2/commands/storage-setup-picker-confirm-tap.stderr",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        }
+      },
+      "back_action": {
+        "record": {
+          "path": "runtime/run2/commands/storage-setup-picker-back.json",
+          "sha256": "2020ba0b969bd290c115914daefcb6064969d435fcbc33e5763618d388ada3d9",
+          "bytes": 264
+        },
+        "argv": [
+          "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+          "-s",
+          "emulator-5582",
+          "shell",
+          "input",
+          "keyevent",
+          "KEYCODE_BACK"
+        ],
+        "exit": 0,
+        "started_utc": "2026-10-28T02:36:40.000350+00:00",
+        "stdout_file": {
+          "path": "runtime/run2/commands/storage-setup-picker-back.stdout",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        "stderr_file": {
+          "path": "runtime/run2/commands/storage-setup-picker-back.stderr",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        }
+      },
+      "picker_ui": {
+        "xml": {
+          "path": "runtime/run2/storage-setup-picker-visible.xml",
+          "sha256": "c0d7269d49c716db374676cc12f33708d1b28000f97530b525e68b74bdad8a00",
+          "bytes": 47534
+        },
+        "dialog_titles": [],
+        "all_visible_text": [
+          "Android SDK built for x86_64",
+          "Files on Android SDK built for x86_64",
+          "Android SDK built for x86_64",
+          "Can’t use this folder",
+          "To protect your privacy, choose another folder",
+          "CREATE NEW FOLDER",
+          "Alarms",
+          "Android",
+          "Audiobooks",
+          "DCIM",
+          "Documents",
+          "Download",
+          "Movies",
+          "Music",
+          "Notifications",
+          "Pictures",
+          "Podcasts",
+          "Recordings",
+          "USE THIS FOLDER"
+        ],
+        "packages": [
+          "com.android.documentsui"
+        ],
+        "checked_radio_ids": []
+      },
+      "after_ui": {
+        "xml": {
+          "path": "runtime/run2/storage-setup-after-picker-ready-0.xml",
+          "sha256": "cb3e53de542aa640cb0c3055a4855563d6f7d625f284c69381f3730868da3817",
+          "bytes": 8025
+        },
+        "dialog_titles": [],
+        "all_visible_text": [
+          "Step 1",
+          "Choose how Trime stores Rime data",
+          "Sync from external storage",
+          "Before each deploy/sync, import configs from specified dir to internal storage, then export back after sync. Requires more storage space. Recommended for experienced users.",
+          "Use app-specific storage",
+          "Use internal private storage; users need a compatible file manager to access. On uninstall, system may ask to keep data — always have backups on hand.",
+          "Done",
+          "SKIP",
+          "NEXT"
+        ],
+        "packages": [
+          "com.osfans.trime.debug"
+        ],
+        "checked_radio_ids": [
+          "com.osfans.trime.debug:id/app_specific_storage_option"
+        ]
+      },
+      "snapshots": [
+        "storage-setup-while-picker",
+        "storage-setup-after-picker-cancel"
+      ],
+      "observation": "真实DocumentsUI返回取消后app_specific_storage_option仍checked=true；五个有效字段不变，未取得早期权威grant before。"
+    }
+  ],
+  "setup_snapshots": {
+    "storage-setup-confirmation-pending": {
+      "snapshot": {
+        "path": "runtime/run2/storage-setup-confirmation-pending-snapshot.json",
+        "sha256": "1ca9817fdc2e7ad33fa0079bd865cf9fd40dc3f6f1c89f983721012fc61b246b",
+        "bytes": 286
+      },
+      "state": {
+        "storage_mode": "APP_STORAGE",
+        "directory_uri": "",
+        "sentinel_sha256": "fc23655d05c9d26dcf7a828f670dfc811c65aa54cc8a98283ad4ffa03da4c988",
+        "manifest_exit": 1,
+        "manifest_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "uri_grants_output": ""
+      },
+      "capture_commands": [
+        {
+          "record": {
+            "path": "runtime/run2/commands/storage-setup-confirmation-pending-prefs.json",
+            "sha256": "1f28c262a4f2c2dd87187e37c8e53753e37295cd90a86451d7a18da01787902e",
+            "bytes": 332
+          },
+          "argv": [
+            "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+            "-s",
+            "emulator-5582",
+            "shell",
+            "run-as",
+            "com.osfans.trime.debug",
+            "cat",
+            "shared_prefs/com.osfans.trime.debug_preferences.xml"
+          ],
+          "exit": 0,
+          "started_utc": "2026-10-28T02:36:00.215779+00:00",
+          "stdout_file": {
+            "path": "runtime/run2/commands/storage-setup-confirmation-pending-prefs.stdout",
+            "sha256": "01a6bb1359f2e839c82ae6ed93317d1fb4855d864be3c2f6b5771d2d32c90ede",
+            "bytes": 488
+          },
+          "stderr_file": {
+            "path": "runtime/run2/commands/storage-setup-confirmation-pending-prefs.stderr",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          }
+        },
+        {
+          "record": {
+            "path": "runtime/run2/commands/storage-setup-confirmation-pending-sentinel.json",
+            "sha256": "6ebbde945d4141c2a12c5e6722f926271baf7f764e9da775497228752ec0adc7",
+            "bytes": 306
+          },
+          "argv": [
+            "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+            "-s",
+            "emulator-5582",
+            "shell",
+            "run-as",
+            "com.osfans.trime.debug",
+            "cat",
+            "files/triage-sentinel.txt"
+          ],
+          "exit": 0,
+          "started_utc": "2026-10-28T02:36:00.276474+00:00",
+          "stdout_file": {
+            "path": "runtime/run2/commands/storage-setup-confirmation-pending-sentinel.stdout",
+            "sha256": "fc23655d05c9d26dcf7a828f670dfc811c65aa54cc8a98283ad4ffa03da4c988",
+            "bytes": 51
+          },
+          "stderr_file": {
+            "path": "runtime/run2/commands/storage-setup-confirmation-pending-sentinel.stderr",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          }
+        },
+        {
+          "record": {
+            "path": "runtime/run2/commands/storage-setup-confirmation-pending-manifest.json",
+            "sha256": "c68ff9bca567f5c5074989cc4ccea0a9354d2094c0ad211763d144f4c8db04ac",
+            "bytes": 339
+          },
+          "argv": [
+            "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+            "-s",
+            "emulator-5582",
+            "shell",
+            "run-as",
+            "com.osfans.trime.debug",
+            "cat",
+            "/data/user_de/0/com.osfans.trime.debug/.sync-manifest.json"
+          ],
+          "exit": 1,
+          "started_utc": "2026-10-28T02:36:00.328485+00:00",
+          "stdout_file": {
+            "path": "runtime/run2/commands/storage-setup-confirmation-pending-manifest.stdout",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          },
+          "stderr_file": {
+            "path": "runtime/run2/commands/storage-setup-confirmation-pending-manifest.stderr",
+            "sha256": "b009fd387c0fc6373c1a1a6e65bb5359972e4a413d1dd6dc1c35b725a83bddaf",
+            "bytes": 91
+          }
+        },
+        {
+          "record": {
+            "path": "runtime/run2/commands/storage-setup-confirmation-pending-grants.json",
+            "sha256": "af1abb8ee08700db4dbaeb63ef0f5843ac5a4d9778ae776ebad67f6dcc255a16",
+            "bytes": 251
+          },
+          "argv": [
+            "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+            "-s",
+            "emulator-5582",
+            "shell",
+            "dumpsys",
+            "uri_grants"
+          ],
+          "exit": 0,
+          "started_utc": "2026-10-28T02:36:00.372078+00:00",
+          "stdout_file": {
+            "path": "runtime/run2/commands/storage-setup-confirmation-pending-grants.stdout",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          },
+          "stderr_file": {
+            "path": "runtime/run2/commands/storage-setup-confirmation-pending-grants.stderr",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          }
+        }
+      ],
+      "uri_grants_output_is_not_authoritative": true,
+      "valid_state_fields_equal_to_settings_before": true
+    },
+    "storage-setup-after-cancel": {
+      "snapshot": {
+        "path": "runtime/run2/storage-setup-after-cancel-snapshot.json",
+        "sha256": "1ca9817fdc2e7ad33fa0079bd865cf9fd40dc3f6f1c89f983721012fc61b246b",
+        "bytes": 286
+      },
+      "state": {
+        "storage_mode": "APP_STORAGE",
+        "directory_uri": "",
+        "sentinel_sha256": "fc23655d05c9d26dcf7a828f670dfc811c65aa54cc8a98283ad4ffa03da4c988",
+        "manifest_exit": 1,
+        "manifest_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "uri_grants_output": ""
+      },
+      "capture_commands": [
+        {
+          "record": {
+            "path": "runtime/run2/commands/storage-setup-after-cancel-prefs.json",
+            "sha256": "d22a61ad7909a12cf357e96cc2f4a2026c0319bbfbebe236cc5f2f23bfc4d271",
+            "bytes": 333
+          },
+          "argv": [
+            "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+            "-s",
+            "emulator-5582",
+            "shell",
+            "run-as",
+            "com.osfans.trime.debug",
+            "cat",
+            "shared_prefs/com.osfans.trime.debug_preferences.xml"
+          ],
+          "exit": 0,
+          "started_utc": "2026-10-28T02:36:08.052495+00:00",
+          "stdout_file": {
+            "path": "runtime/run2/commands/storage-setup-after-cancel-prefs.stdout",
+            "sha256": "01a6bb1359f2e839c82ae6ed93317d1fb4855d864be3c2f6b5771d2d32c90ede",
+            "bytes": 488
+          },
+          "stderr_file": {
+            "path": "runtime/run2/commands/storage-setup-after-cancel-prefs.stderr",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          }
+        },
+        {
+          "record": {
+            "path": "runtime/run2/commands/storage-setup-after-cancel-sentinel.json",
+            "sha256": "affb8d0506b0b0c13f8c8925703a0117a01af99b971b3b69298d9bd9a87ed32f",
+            "bytes": 306
+          },
+          "argv": [
+            "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+            "-s",
+            "emulator-5582",
+            "shell",
+            "run-as",
+            "com.osfans.trime.debug",
+            "cat",
+            "files/triage-sentinel.txt"
+          ],
+          "exit": 0,
+          "started_utc": "2026-10-28T02:36:08.080920+00:00",
+          "stdout_file": {
+            "path": "runtime/run2/commands/storage-setup-after-cancel-sentinel.stdout",
+            "sha256": "fc23655d05c9d26dcf7a828f670dfc811c65aa54cc8a98283ad4ffa03da4c988",
+            "bytes": 51
+          },
+          "stderr_file": {
+            "path": "runtime/run2/commands/storage-setup-after-cancel-sentinel.stderr",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          }
+        },
+        {
+          "record": {
+            "path": "runtime/run2/commands/storage-setup-after-cancel-manifest.json",
+            "sha256": "b47539df4858565ee50246d985a3c1a5b339a039013229fdbcf959a51e77e7ad",
+            "bytes": 340
+          },
+          "argv": [
+            "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+            "-s",
+            "emulator-5582",
+            "shell",
+            "run-as",
+            "com.osfans.trime.debug",
+            "cat",
+            "/data/user_de/0/com.osfans.trime.debug/.sync-manifest.json"
+          ],
+          "exit": 1,
+          "started_utc": "2026-10-28T02:36:08.108984+00:00",
+          "stdout_file": {
+            "path": "runtime/run2/commands/storage-setup-after-cancel-manifest.stdout",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          },
+          "stderr_file": {
+            "path": "runtime/run2/commands/storage-setup-after-cancel-manifest.stderr",
+            "sha256": "b009fd387c0fc6373c1a1a6e65bb5359972e4a413d1dd6dc1c35b725a83bddaf",
+            "bytes": 91
+          }
+        },
+        {
+          "record": {
+            "path": "runtime/run2/commands/storage-setup-after-cancel-grants.json",
+            "sha256": "18c037f368eb9720013df821cca427b23863494ac7693c45f1545d9ece548aaf",
+            "bytes": 252
+          },
+          "argv": [
+            "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+            "-s",
+            "emulator-5582",
+            "shell",
+            "dumpsys",
+            "uri_grants"
+          ],
+          "exit": 0,
+          "started_utc": "2026-10-28T02:36:08.136984+00:00",
+          "stdout_file": {
+            "path": "runtime/run2/commands/storage-setup-after-cancel-grants.stdout",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          },
+          "stderr_file": {
+            "path": "runtime/run2/commands/storage-setup-after-cancel-grants.stderr",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          }
+        }
+      ],
+      "uri_grants_output_is_not_authoritative": true,
+      "valid_state_fields_equal_to_settings_before": true
+    },
+    "storage-setup-while-picker": {
+      "snapshot": {
+        "path": "runtime/run2/storage-setup-while-picker-snapshot.json",
+        "sha256": "1ca9817fdc2e7ad33fa0079bd865cf9fd40dc3f6f1c89f983721012fc61b246b",
+        "bytes": 286
+      },
+      "state": {
+        "storage_mode": "APP_STORAGE",
+        "directory_uri": "",
+        "sentinel_sha256": "fc23655d05c9d26dcf7a828f670dfc811c65aa54cc8a98283ad4ffa03da4c988",
+        "manifest_exit": 1,
+        "manifest_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "uri_grants_output": ""
+      },
+      "capture_commands": [
+        {
+          "record": {
+            "path": "runtime/run2/commands/storage-setup-while-picker-prefs.json",
+            "sha256": "35bfa65202d2c842c02a5e4895414be73256faf09059edfefd981e7159b30072",
+            "bytes": 332
+          },
+          "argv": [
+            "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+            "-s",
+            "emulator-5582",
+            "shell",
+            "run-as",
+            "com.osfans.trime.debug",
+            "cat",
+            "shared_prefs/com.osfans.trime.debug_preferences.xml"
+          ],
+          "exit": 0,
+          "started_utc": "2026-10-28T02:36:39.542976+00:00",
+          "stdout_file": {
+            "path": "runtime/run2/commands/storage-setup-while-picker-prefs.stdout",
+            "sha256": "01a6bb1359f2e839c82ae6ed93317d1fb4855d864be3c2f6b5771d2d32c90ede",
+            "bytes": 488
+          },
+          "stderr_file": {
+            "path": "runtime/run2/commands/storage-setup-while-picker-prefs.stderr",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          }
+        },
+        {
+          "record": {
+            "path": "runtime/run2/commands/storage-setup-while-picker-sentinel.json",
+            "sha256": "773a8e1e0d208c6acfdd31bbbaca94325fdff739576df044910e1d8c7cb9fa72",
+            "bytes": 306
+          },
+          "argv": [
+            "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+            "-s",
+            "emulator-5582",
+            "shell",
+            "run-as",
+            "com.osfans.trime.debug",
+            "cat",
+            "files/triage-sentinel.txt"
+          ],
+          "exit": 0,
+          "started_utc": "2026-10-28T02:36:39.666409+00:00",
+          "stdout_file": {
+            "path": "runtime/run2/commands/storage-setup-while-picker-sentinel.stdout",
+            "sha256": "fc23655d05c9d26dcf7a828f670dfc811c65aa54cc8a98283ad4ffa03da4c988",
+            "bytes": 51
+          },
+          "stderr_file": {
+            "path": "runtime/run2/commands/storage-setup-while-picker-sentinel.stderr",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          }
+        },
+        {
+          "record": {
+            "path": "runtime/run2/commands/storage-setup-while-picker-manifest.json",
+            "sha256": "d8c67381beb447cc8b0f542a10973a8e5cd74ccb81971dc807c2eca130b7890f",
+            "bytes": 339
+          },
+          "argv": [
+            "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+            "-s",
+            "emulator-5582",
+            "shell",
+            "run-as",
+            "com.osfans.trime.debug",
+            "cat",
+            "/data/user_de/0/com.osfans.trime.debug/.sync-manifest.json"
+          ],
+          "exit": 1,
+          "started_utc": "2026-10-28T02:36:39.767168+00:00",
+          "stdout_file": {
+            "path": "runtime/run2/commands/storage-setup-while-picker-manifest.stdout",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          },
+          "stderr_file": {
+            "path": "runtime/run2/commands/storage-setup-while-picker-manifest.stderr",
+            "sha256": "b009fd387c0fc6373c1a1a6e65bb5359972e4a413d1dd6dc1c35b725a83bddaf",
+            "bytes": 91
+          }
+        },
+        {
+          "record": {
+            "path": "runtime/run2/commands/storage-setup-while-picker-grants.json",
+            "sha256": "5f9eaa42048b3a44535002daf46870c2e71abca2cabac545991081d845c3b23d",
+            "bytes": 251
+          },
+          "argv": [
+            "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+            "-s",
+            "emulator-5582",
+            "shell",
+            "dumpsys",
+            "uri_grants"
+          ],
+          "exit": 0,
+          "started_utc": "2026-10-28T02:36:39.891596+00:00",
+          "stdout_file": {
+            "path": "runtime/run2/commands/storage-setup-while-picker-grants.stdout",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          },
+          "stderr_file": {
+            "path": "runtime/run2/commands/storage-setup-while-picker-grants.stderr",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          }
+        }
+      ],
+      "uri_grants_output_is_not_authoritative": true,
+      "valid_state_fields_equal_to_settings_before": true
+    },
+    "storage-setup-after-picker-cancel": {
+      "snapshot": {
+        "path": "runtime/run2/storage-setup-after-picker-cancel-snapshot.json",
+        "sha256": "1ca9817fdc2e7ad33fa0079bd865cf9fd40dc3f6f1c89f983721012fc61b246b",
+        "bytes": 286
+      },
+      "state": {
+        "storage_mode": "APP_STORAGE",
+        "directory_uri": "",
+        "sentinel_sha256": "fc23655d05c9d26dcf7a828f670dfc811c65aa54cc8a98283ad4ffa03da4c988",
+        "manifest_exit": 1,
+        "manifest_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "uri_grants_output": ""
+      },
+      "capture_commands": [
+        {
+          "record": {
+            "path": "runtime/run2/commands/storage-setup-after-picker-cancel-prefs.json",
+            "sha256": "fd5432f7ba5a500dcdef6a762ae125acce09a89de140c6fe219aa052e8746e11",
+            "bytes": 332
+          },
+          "argv": [
+            "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+            "-s",
+            "emulator-5582",
+            "shell",
+            "run-as",
+            "com.osfans.trime.debug",
+            "cat",
+            "shared_prefs/com.osfans.trime.debug_preferences.xml"
+          ],
+          "exit": 0,
+          "started_utc": "2026-10-28T02:36:45.260546+00:00",
+          "stdout_file": {
+            "path": "runtime/run2/commands/storage-setup-after-picker-cancel-prefs.stdout",
+            "sha256": "01a6bb1359f2e839c82ae6ed93317d1fb4855d864be3c2f6b5771d2d32c90ede",
+            "bytes": 488
+          },
+          "stderr_file": {
+            "path": "runtime/run2/commands/storage-setup-after-picker-cancel-prefs.stderr",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          }
+        },
+        {
+          "record": {
+            "path": "runtime/run2/commands/storage-setup-after-picker-cancel-sentinel.json",
+            "sha256": "5cf16f9f958c6d64234c80ae2a59d75fafd4d864483be9b3065147099acb25ac",
+            "bytes": 306
+          },
+          "argv": [
+            "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+            "-s",
+            "emulator-5582",
+            "shell",
+            "run-as",
+            "com.osfans.trime.debug",
+            "cat",
+            "files/triage-sentinel.txt"
+          ],
+          "exit": 0,
+          "started_utc": "2026-10-28T02:36:45.299740+00:00",
+          "stdout_file": {
+            "path": "runtime/run2/commands/storage-setup-after-picker-cancel-sentinel.stdout",
+            "sha256": "fc23655d05c9d26dcf7a828f670dfc811c65aa54cc8a98283ad4ffa03da4c988",
+            "bytes": 51
+          },
+          "stderr_file": {
+            "path": "runtime/run2/commands/storage-setup-after-picker-cancel-sentinel.stderr",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          }
+        },
+        {
+          "record": {
+            "path": "runtime/run2/commands/storage-setup-after-picker-cancel-manifest.json",
+            "sha256": "1a2481eea65cc545662874d04d2cd9f7b1500072c21106438e4fa7e9fd6e7d61",
+            "bytes": 338
+          },
+          "argv": [
+            "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+            "-s",
+            "emulator-5582",
+            "shell",
+            "run-as",
+            "com.osfans.trime.debug",
+            "cat",
+            "/data/user_de/0/com.osfans.trime.debug/.sync-manifest.json"
+          ],
+          "exit": 1,
+          "started_utc": "2026-10-28T02:36:45.337799+00:00",
+          "stdout_file": {
+            "path": "runtime/run2/commands/storage-setup-after-picker-cancel-manifest.stdout",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          },
+          "stderr_file": {
+            "path": "runtime/run2/commands/storage-setup-after-picker-cancel-manifest.stderr",
+            "sha256": "b009fd387c0fc6373c1a1a6e65bb5359972e4a413d1dd6dc1c35b725a83bddaf",
+            "bytes": 91
+          }
+        },
+        {
+          "record": {
+            "path": "runtime/run2/commands/storage-setup-after-picker-cancel-grants.json",
+            "sha256": "38f988874f2c2dc3f676f90ddef9e9f3ee6d235765d362295276d5ea9feb3308",
+            "bytes": 252
+          },
+          "argv": [
+            "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+            "-s",
+            "emulator-5582",
+            "shell",
+            "dumpsys",
+            "uri_grants"
+          ],
+          "exit": 0,
+          "started_utc": "2026-10-28T02:36:45.376832+00:00",
+          "stdout_file": {
+            "path": "runtime/run2/commands/storage-setup-after-picker-cancel-grants.stdout",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          },
+          "stderr_file": {
+            "path": "runtime/run2/commands/storage-setup-after-picker-cancel-grants.stderr",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          }
+        }
+      ],
+      "uri_grants_output_is_not_authoritative": true,
+      "valid_state_fields_equal_to_settings_before": true
+    }
+  },
+  "setup_png_evidence": [
+    {
+      "path": "runtime/run2/storage-setup-confirmation-image.png",
+      "sha256": "684dc4a4e81595b516ff9d717fd3db49c36cf7059f4f23889d22f4bdaad78c52",
+      "bytes": 96847
+    },
+    {
+      "path": "runtime/run2/storage-setup-picker-image.png",
+      "sha256": "624aba317f6a3b304ab1cdf698b825d82c415614a3e8b2c3a49a039af5df4a2c",
+      "bytes": 85181
+    },
+    {
+      "path": "runtime/run2/storage-setup-after-picker-cancel-image.png",
+      "sha256": "6f9cc5127bdfe6005611c0962f64a7bd5805574f85817d531e1b235ebec6e2d9",
+      "bytes": 96606
+    }
+  ],
+  "completed_positive_association": {
+    "status": "PASS_FOR_VALID_DIRECTORY_ASSOCIATION_AND_SINGLE_SENTINEL_IMPORT",
+    "after_ui": {
+      "xml": {
+        "path": "runtime/run2/storage-positive-profile-complete-0.xml",
+        "sha256": "132cfd39eecaa3e0d1972f5af26aee651f853bb35720c75e5708d0b2de2d95ae",
+        "bytes": 16846
+      },
+      "dialog_titles": [],
+      "all_visible_text": [
+        "Profile",
+        "Storage",
+        "Data storage mode",
+        "Sync from external storage",
+        "User directory",
+        "/Documents/TrimeIssue2095-20261028",
+        "Synchronization",
+        "Sync user data immediately",
+        "Periodic background sync",
+        "Interval of background syncing (in minutes)",
+        "30 ",
+        "Maintenance",
+        "Browse app data folder"
+      ],
+      "packages": [
+        "com.osfans.trime.debug"
+      ],
+      "checked_radio_ids": []
+    },
+    "png": {
+      "path": "runtime/run2/storage-positive-profile-complete-image.png",
+      "sha256": "03a07903463f756b10febdcd9e896156d402429b8eb5704ac16f073024aec391",
+      "bytes": 75836
+    },
+    "snapshot": {
+      "snapshot": {
+        "path": "runtime/run2/storage-positive-completed-state-snapshot.json",
+        "sha256": "c09f0c90f5f2a2e4f711e475eae335abed20503b55499f1b1e9373a9f8899a98",
+        "bytes": 626
+      },
+      "state": {
+        "storage_mode": "EXTERNAL_SYNC",
+        "directory_uri": "content://com.android.externalstorage.documents/tree/primary%3ADocuments%2FTrimeIssue2095-20261028",
+        "sentinel_sha256": "fc23655d05c9d26dcf7a828f670dfc811c65aa54cc8a98283ad4ffa03da4c988",
+        "manifest_exit": 0,
+        "manifest_sha256": "800f24a8791f5ab61e1f76b57010fd6f0537ef5d2d92e9a3b0d9fa0869abc73c",
+        "persisted_uri_grants": [
+          {
+            "uri": "content://com.android.externalstorage.documents/tree/primary%3ADocuments%2FTrimeIssue2095-20261028",
+            "persisted": "0x3",
+            "persistable": "0x3"
+          }
+        ],
+        "grant_inspection": "dumpsys activity permissions"
+      },
+      "capture_commands": [
+        {
+          "record": {
+            "path": "runtime/run2/commands/storage-positive-completed-state-prefs.json",
+            "sha256": "3413262e71257d565b8a79177acea843adb3abd068bab8d7a429dda72f41a1ca",
+            "bytes": 332
+          },
+          "argv": [
+            "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+            "-s",
+            "emulator-5582",
+            "shell",
+            "run-as",
+            "com.osfans.trime.debug",
+            "cat",
+            "shared_prefs/com.osfans.trime.debug_preferences.xml"
+          ],
+          "exit": 0,
+          "started_utc": "2026-10-28T02:41:18.871477+00:00",
+          "stdout_file": {
+            "path": "runtime/run2/commands/storage-positive-completed-state-prefs.stdout",
+            "sha256": "0631b05e1c8b5f95d5637cba860797c9aab993b726d6d284277d60593e3d2bf7",
+            "bytes": 648
+          },
+          "stderr_file": {
+            "path": "runtime/run2/commands/storage-positive-completed-state-prefs.stderr",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          }
+        },
+        {
+          "record": {
+            "path": "runtime/run2/commands/storage-positive-completed-state-sentinel.json",
+            "sha256": "861f8291894c047cb20cee0f4aef3c4d51863ee3d8a3a0f2240f758a5220d618",
+            "bytes": 306
+          },
+          "argv": [
+            "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+            "-s",
+            "emulator-5582",
+            "shell",
+            "run-as",
+            "com.osfans.trime.debug",
+            "cat",
+            "files/triage-sentinel.txt"
+          ],
+          "exit": 0,
+          "started_utc": "2026-10-28T02:41:18.927119+00:00",
+          "stdout_file": {
+            "path": "runtime/run2/commands/storage-positive-completed-state-sentinel.stdout",
+            "sha256": "fc23655d05c9d26dcf7a828f670dfc811c65aa54cc8a98283ad4ffa03da4c988",
+            "bytes": 51
+          },
+          "stderr_file": {
+            "path": "runtime/run2/commands/storage-positive-completed-state-sentinel.stderr",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          }
+        },
+        {
+          "record": {
+            "path": "runtime/run2/commands/storage-positive-completed-state-manifest.json",
+            "sha256": "c9eeb363c598b9bc724388d79839a84db75e43bca2887770f772246c74c5ee1a",
+            "bytes": 340
+          },
+          "argv": [
+            "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+            "-s",
+            "emulator-5582",
+            "shell",
+            "run-as",
+            "com.osfans.trime.debug",
+            "cat",
+            "/data/user_de/0/com.osfans.trime.debug/.sync-manifest.json"
+          ],
+          "exit": 0,
+          "started_utc": "2026-10-28T02:41:18.968256+00:00",
+          "stdout_file": {
+            "path": "runtime/run2/commands/storage-positive-completed-state-manifest.stdout",
+            "sha256": "800f24a8791f5ab61e1f76b57010fd6f0537ef5d2d92e9a3b0d9fa0869abc73c",
+            "bytes": 1766
+          },
+          "stderr_file": {
+            "path": "runtime/run2/commands/storage-positive-completed-state-manifest.stderr",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          }
+        },
+        {
+          "record": {
+            "path": "runtime/run2/commands/storage-positive-completed-state-grants.json",
+            "sha256": "d16e020e7e1e1c38dfd9e46c974a7ceb4fc27f08a6342900b829c9b919ab67ff",
+            "bytes": 268
+          },
+          "argv": [
+            "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+            "-s",
+            "emulator-5582",
+            "shell",
+            "dumpsys",
+            "activity",
+            "permissions"
+          ],
+          "exit": 0,
+          "started_utc": "2026-10-28T02:41:19.004973+00:00",
+          "stdout_file": {
+            "path": "runtime/run2/commands/storage-positive-completed-state-grants.stdout",
+            "sha256": "c00cb6202de8e3316720e4a34ed0100bbb492b49aa8cc9ff0fa2ba24ce9f8946",
+            "bytes": 687
+          },
+          "stderr_file": {
+            "path": "runtime/run2/commands/storage-positive-completed-state-grants.stderr",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          }
+        }
+      ],
+      "grant_evidence_authoritative_for_this_snapshot": true
+    },
+    "grant_allow_action": {
+      "record": {
+        "path": "runtime/run2/commands/storage-positive-grant-allow-tap.json",
+        "sha256": "7eea2d71c6f1982b2b74a5143b694da6fac8446ce6becd2926cfb6cc32c5f460",
+        "bytes": 264
+      },
+      "argv": [
+        "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+        "-s",
+        "emulator-5582",
+        "shell",
+        "input",
+        "tap",
+        "570",
+        "739"
+      ],
+      "exit": 0,
+      "started_utc": "2026-10-28T02:38:12.359252+00:00",
+      "stdout_file": {
+        "path": "runtime/run2/commands/storage-positive-grant-allow-tap.stdout",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      },
+      "stderr_file": {
+        "path": "runtime/run2/commands/storage-positive-grant-allow-tap.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      }
+    },
+    "observations": "用户确认有效目录及系统授权后，mode为EXTERNAL_SYNC、URI写入，manifest已生成，loading结束并返回Profile。",
+    "sentinel_evidence": {
+      "fixture": {
+        "path": "runtime/storage-sentinel.txt",
+        "sha256": "fc23655d05c9d26dcf7a828f670dfc811c65aa54cc8a98283ad4ffa03da4c988",
+        "bytes": 51
+      },
+      "working_read": {
+        "record": {
+          "path": "runtime/run2/commands/storage-positive-imported-working-sentinel.json",
+          "sha256": "699d2c3251f2ee6eaa61c954633fa2ab0ccd273cccc3d094e8a995430c38848a",
+          "bytes": 318
+        },
+        "argv": [
+          "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+          "-s",
+          "emulator-5582",
+          "shell",
+          "cat",
+          "/sdcard/Android/data/com.osfans.trime.debug/files/rime/triage-folder-sentinel.txt"
+        ],
+        "exit": 0,
+        "started_utc": "2026-10-28T02:41:19.038399+00:00",
+        "stdout_file": {
+          "path": "runtime/run2/commands/storage-positive-imported-working-sentinel.stdout",
+          "sha256": "fc23655d05c9d26dcf7a828f670dfc811c65aa54cc8a98283ad4ffa03da4c988",
+          "bytes": 51
+        },
+        "stderr_file": {
+          "path": "runtime/run2/commands/storage-positive-imported-working-sentinel.stderr",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        }
+      },
+      "remote_read": {
+        "record": {
+          "path": "runtime/run2/commands/storage-positive-preserved-folder-sentinel.json",
+          "sha256": "9c0ba2cd4496a40cfe4541338089609bcb60926e5a07cf880d75e2c93612aedd",
+          "bytes": 306
+        },
+        "argv": [
+          "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+          "-s",
+          "emulator-5582",
+          "shell",
+          "cat",
+          "/sdcard/Documents/TrimeIssue2095-20261028/triage-folder-sentinel.txt"
+        ],
+        "exit": 0,
+        "started_utc": "2026-10-28T02:41:19.068056+00:00",
+        "stdout_file": {
+          "path": "runtime/run2/commands/storage-positive-preserved-folder-sentinel.stdout",
+          "sha256": "fc23655d05c9d26dcf7a828f670dfc811c65aa54cc8a98283ad4ffa03da4c988",
+          "bytes": 51
+        },
+        "stderr_file": {
+          "path": "runtime/run2/commands/storage-positive-preserved-folder-sentinel.stderr",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        }
+      },
+      "all_three_byte_arrays_equal": true,
+      "bytes": 51,
+      "sha256": "fc23655d05c9d26dcf7a828f670dfc811c65aa54cc8a98283ad4ffa03da4c988",
+      "scope": "只验证这一份51字节fixture的工作目录导入和外部副本；不证明完整工作目录或全部双向冲突场景。"
+    }
+  },
+  "completed_saved_association_cases": [
+    {
+      "id": "saved_association_confirmation_cancel",
+      "status": "PASS_WITH_AUTHORITATIVE_GRANT_BEFORE_AFTER",
+      "before": {
+        "snapshot": {
+          "path": "runtime/run2/storage-saved-association-app-before-snapshot.json",
+          "sha256": "2ce59cda4361beef7e0df99e5fde2f1d7ea54560e9072b71dac42a34bcae6389",
+          "bytes": 624
+        },
+        "state": {
+          "storage_mode": "APP_STORAGE",
+          "directory_uri": "content://com.android.externalstorage.documents/tree/primary%3ADocuments%2FTrimeIssue2095-20261028",
+          "sentinel_sha256": "fc23655d05c9d26dcf7a828f670dfc811c65aa54cc8a98283ad4ffa03da4c988",
+          "manifest_exit": 0,
+          "manifest_sha256": "800f24a8791f5ab61e1f76b57010fd6f0537ef5d2d92e9a3b0d9fa0869abc73c",
+          "persisted_uri_grants": [
+            {
+              "uri": "content://com.android.externalstorage.documents/tree/primary%3ADocuments%2FTrimeIssue2095-20261028",
+              "persisted": "0x3",
+              "persistable": "0x3"
+            }
+          ],
+          "grant_inspection": "dumpsys activity permissions"
+        },
+        "capture_commands": [
+          {
+            "record": {
+              "path": "runtime/run2/commands/storage-saved-association-app-before-prefs.json",
+              "sha256": "ff5236cd4339c1903c65125805ef59ad15774c3f12f5399806f8a5acc62742ef",
+              "bytes": 333
+            },
+            "argv": [
+              "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+              "-s",
+              "emulator-5582",
+              "shell",
+              "run-as",
+              "com.osfans.trime.debug",
+              "cat",
+              "shared_prefs/com.osfans.trime.debug_preferences.xml"
+            ],
+            "exit": 0,
+            "started_utc": "2026-10-28T02:41:30.641060+00:00",
+            "stdout_file": {
+              "path": "runtime/run2/commands/storage-saved-association-app-before-prefs.stdout",
+              "sha256": "bbc7b9af42e393d001979bac5a8d521200ace7a5d79061746a53143b2c5fcf2a",
+              "bytes": 646
+            },
+            "stderr_file": {
+              "path": "runtime/run2/commands/storage-saved-association-app-before-prefs.stderr",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "bytes": 0
+            }
+          },
+          {
+            "record": {
+              "path": "runtime/run2/commands/storage-saved-association-app-before-sentinel.json",
+              "sha256": "8177bd4785775f7ae8b495f2c9da3587c4ce34ac296f9f576c12b0a990b0dae0",
+              "bytes": 307
+            },
+            "argv": [
+              "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+              "-s",
+              "emulator-5582",
+              "shell",
+              "run-as",
+              "com.osfans.trime.debug",
+              "cat",
+              "files/triage-sentinel.txt"
+            ],
+            "exit": 0,
+            "started_utc": "2026-10-28T02:41:30.668490+00:00",
+            "stdout_file": {
+              "path": "runtime/run2/commands/storage-saved-association-app-before-sentinel.stdout",
+              "sha256": "fc23655d05c9d26dcf7a828f670dfc811c65aa54cc8a98283ad4ffa03da4c988",
+              "bytes": 51
+            },
+            "stderr_file": {
+              "path": "runtime/run2/commands/storage-saved-association-app-before-sentinel.stderr",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "bytes": 0
+            }
+          },
+          {
+            "record": {
+              "path": "runtime/run2/commands/storage-saved-association-app-before-manifest.json",
+              "sha256": "70c28c6e3f45ae1699446da39a9321f04f3a5f4e230db316093ef0a7aa8e9a82",
+              "bytes": 340
+            },
+            "argv": [
+              "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+              "-s",
+              "emulator-5582",
+              "shell",
+              "run-as",
+              "com.osfans.trime.debug",
+              "cat",
+              "/data/user_de/0/com.osfans.trime.debug/.sync-manifest.json"
+            ],
+            "exit": 0,
+            "started_utc": "2026-10-28T02:41:30.693565+00:00",
+            "stdout_file": {
+              "path": "runtime/run2/commands/storage-saved-association-app-before-manifest.stdout",
+              "sha256": "800f24a8791f5ab61e1f76b57010fd6f0537ef5d2d92e9a3b0d9fa0869abc73c",
+              "bytes": 1766
+            },
+            "stderr_file": {
+              "path": "runtime/run2/commands/storage-saved-association-app-before-manifest.stderr",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "bytes": 0
+            }
+          },
+          {
+            "record": {
+              "path": "runtime/run2/commands/storage-saved-association-app-before-grants.json",
+              "sha256": "ae4116a76d2bfd0231ff5a9aea139c87bc56faeef30ed483635b5995f9f12ed7",
+              "bytes": 268
+            },
+            "argv": [
+              "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+              "-s",
+              "emulator-5582",
+              "shell",
+              "dumpsys",
+              "activity",
+              "permissions"
+            ],
+            "exit": 0,
+            "started_utc": "2026-10-28T02:41:30.720116+00:00",
+            "stdout_file": {
+              "path": "runtime/run2/commands/storage-saved-association-app-before-grants.stdout",
+              "sha256": "c00cb6202de8e3316720e4a34ed0100bbb492b49aa8cc9ff0fa2ba24ce9f8946",
+              "bytes": 687
+            },
+            "stderr_file": {
+              "path": "runtime/run2/commands/storage-saved-association-app-before-grants.stderr",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "bytes": 0
+            }
+          }
+        ],
+        "grant_evidence_authoritative_for_this_snapshot": true
+      },
+      "after": {
+        "snapshot": {
+          "path": "runtime/run2/storage-saved-after-cancel-snapshot.json",
+          "sha256": "2ce59cda4361beef7e0df99e5fde2f1d7ea54560e9072b71dac42a34bcae6389",
+          "bytes": 624
+        },
+        "state": {
+          "storage_mode": "APP_STORAGE",
+          "directory_uri": "content://com.android.externalstorage.documents/tree/primary%3ADocuments%2FTrimeIssue2095-20261028",
+          "sentinel_sha256": "fc23655d05c9d26dcf7a828f670dfc811c65aa54cc8a98283ad4ffa03da4c988",
+          "manifest_exit": 0,
+          "manifest_sha256": "800f24a8791f5ab61e1f76b57010fd6f0537ef5d2d92e9a3b0d9fa0869abc73c",
+          "persisted_uri_grants": [
+            {
+              "uri": "content://com.android.externalstorage.documents/tree/primary%3ADocuments%2FTrimeIssue2095-20261028",
+              "persisted": "0x3",
+              "persistable": "0x3"
+            }
+          ],
+          "grant_inspection": "dumpsys activity permissions"
+        },
+        "capture_commands": [
+          {
+            "record": {
+              "path": "runtime/run2/commands/storage-saved-after-cancel-prefs.json",
+              "sha256": "842bb592993186e7c2477765c2cfa6ddaf9dce04b539264e288340c99337194f",
+              "bytes": 331
+            },
+            "argv": [
+              "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+              "-s",
+              "emulator-5582",
+              "shell",
+              "run-as",
+              "com.osfans.trime.debug",
+              "cat",
+              "shared_prefs/com.osfans.trime.debug_preferences.xml"
+            ],
+            "exit": 0,
+            "started_utc": "2026-10-28T02:41:52.118034+00:00",
+            "stdout_file": {
+              "path": "runtime/run2/commands/storage-saved-after-cancel-prefs.stdout",
+              "sha256": "bbc7b9af42e393d001979bac5a8d521200ace7a5d79061746a53143b2c5fcf2a",
+              "bytes": 646
+            },
+            "stderr_file": {
+              "path": "runtime/run2/commands/storage-saved-after-cancel-prefs.stderr",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "bytes": 0
+            }
+          },
+          {
+            "record": {
+              "path": "runtime/run2/commands/storage-saved-after-cancel-sentinel.json",
+              "sha256": "c2452a7ab74ff4a5609e463346882857cdeccc3afc9e9cf64f3fa94f4d123a09",
+              "bytes": 306
+            },
+            "argv": [
+              "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+              "-s",
+              "emulator-5582",
+              "shell",
+              "run-as",
+              "com.osfans.trime.debug",
+              "cat",
+              "files/triage-sentinel.txt"
+            ],
+            "exit": 0,
+            "started_utc": "2026-10-28T02:41:52.162292+00:00",
+            "stdout_file": {
+              "path": "runtime/run2/commands/storage-saved-after-cancel-sentinel.stdout",
+              "sha256": "fc23655d05c9d26dcf7a828f670dfc811c65aa54cc8a98283ad4ffa03da4c988",
+              "bytes": 51
+            },
+            "stderr_file": {
+              "path": "runtime/run2/commands/storage-saved-after-cancel-sentinel.stderr",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "bytes": 0
+            }
+          },
+          {
+            "record": {
+              "path": "runtime/run2/commands/storage-saved-after-cancel-manifest.json",
+              "sha256": "09d5da4738cfc3a4716f86b347c8f6a9d627d3dd1fe773481d48215278262a38",
+              "bytes": 339
+            },
+            "argv": [
+              "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+              "-s",
+              "emulator-5582",
+              "shell",
+              "run-as",
+              "com.osfans.trime.debug",
+              "cat",
+              "/data/user_de/0/com.osfans.trime.debug/.sync-manifest.json"
+            ],
+            "exit": 0,
+            "started_utc": "2026-10-28T02:41:52.204073+00:00",
+            "stdout_file": {
+              "path": "runtime/run2/commands/storage-saved-after-cancel-manifest.stdout",
+              "sha256": "800f24a8791f5ab61e1f76b57010fd6f0537ef5d2d92e9a3b0d9fa0869abc73c",
+              "bytes": 1766
+            },
+            "stderr_file": {
+              "path": "runtime/run2/commands/storage-saved-after-cancel-manifest.stderr",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "bytes": 0
+            }
+          },
+          {
+            "record": {
+              "path": "runtime/run2/commands/storage-saved-after-cancel-grants.json",
+              "sha256": "141c8c8af101b7f17ca46c59916c6d14e309ebf99a612828025dc8b744d7bf95",
+              "bytes": 269
+            },
+            "argv": [
+              "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+              "-s",
+              "emulator-5582",
+              "shell",
+              "dumpsys",
+              "activity",
+              "permissions"
+            ],
+            "exit": 0,
+            "started_utc": "2026-10-28T02:41:52.247040+00:00",
+            "stdout_file": {
+              "path": "runtime/run2/commands/storage-saved-after-cancel-grants.stdout",
+              "sha256": "c00cb6202de8e3316720e4a34ed0100bbb492b49aa8cc9ff0fa2ba24ce9f8946",
+              "bytes": 687
+            },
+            "stderr_file": {
+              "path": "runtime/run2/commands/storage-saved-after-cancel-grants.stderr",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "bytes": 0
+            }
+          }
+        ],
+        "grant_evidence_authoritative_for_this_snapshot": true
+      },
+      "all_fields_equal": true,
+      "action": {
+        "record": {
+          "path": "runtime/run2/commands/storage-saved-cancel-button-tap.json",
+          "sha256": "d0e7fd29b7c036414da08da484badf2b32961bc915f4fd86e94de04f0b27216b",
+          "bytes": 265
+        },
+        "argv": [
+          "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+          "-s",
+          "emulator-5582",
+          "shell",
+          "input",
+          "tap",
+          "441",
+          "821"
+        ],
+        "exit": 0,
+        "started_utc": "2026-10-28T02:41:48.195328+00:00",
+        "stdout_file": {
+          "path": "runtime/run2/commands/storage-saved-cancel-button-tap.stdout",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        "stderr_file": {
+          "path": "runtime/run2/commands/storage-saved-cancel-button-tap.stderr",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        }
+      },
+      "after_ui": {
+        "xml": {
+          "path": "runtime/run2/storage-saved-cancel-ready-0.xml",
+          "sha256": "7c15f423fe6ecb7e890394e00dc1241d84d721c7d5772a1eced1102955d03f85",
+          "bytes": 16848
+        },
+        "dialog_titles": [],
+        "all_visible_text": [
+          "Profile",
+          "Storage",
+          "Data storage mode",
+          "Use app-specific storage",
+          "User directory",
+          "/Documents/TrimeIssue2095-20261028",
+          "Synchronization",
+          "Sync user data immediately",
+          "Periodic background sync",
+          "Interval of background syncing (in minutes)",
+          "30 ",
+          "Maintenance",
+          "Browse app data folder"
+        ],
+        "packages": [
+          "com.osfans.trime.debug"
+        ],
+        "checked_radio_ids": []
+      }
+    },
+    {
+      "id": "saved_association_confirmation_ok",
+      "status": "PASS_WITH_AUTHORITATIVE_GRANT_BEFORE_AFTER",
+      "before_snapshot": "storage-saved-association-app-before",
+      "after": {
+        "snapshot": {
+          "path": "runtime/run2/storage-saved-after-confirm-snapshot.json",
+          "sha256": "c09f0c90f5f2a2e4f711e475eae335abed20503b55499f1b1e9373a9f8899a98",
+          "bytes": 626
+        },
+        "state": {
+          "storage_mode": "EXTERNAL_SYNC",
+          "directory_uri": "content://com.android.externalstorage.documents/tree/primary%3ADocuments%2FTrimeIssue2095-20261028",
+          "sentinel_sha256": "fc23655d05c9d26dcf7a828f670dfc811c65aa54cc8a98283ad4ffa03da4c988",
+          "manifest_exit": 0,
+          "manifest_sha256": "800f24a8791f5ab61e1f76b57010fd6f0537ef5d2d92e9a3b0d9fa0869abc73c",
+          "persisted_uri_grants": [
+            {
+              "uri": "content://com.android.externalstorage.documents/tree/primary%3ADocuments%2FTrimeIssue2095-20261028",
+              "persisted": "0x3",
+              "persistable": "0x3"
+            }
+          ],
+          "grant_inspection": "dumpsys activity permissions"
+        },
+        "capture_commands": [
+          {
+            "record": {
+              "path": "runtime/run2/commands/storage-saved-after-confirm-prefs.json",
+              "sha256": "d047e8c9a0d85c4e397010658b5c10a5971717817b57e7d4b43119b61a720abd",
+              "bytes": 332
+            },
+            "argv": [
+              "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+              "-s",
+              "emulator-5582",
+              "shell",
+              "run-as",
+              "com.osfans.trime.debug",
+              "cat",
+              "shared_prefs/com.osfans.trime.debug_preferences.xml"
+            ],
+            "exit": 0,
+            "started_utc": "2026-10-28T02:42:36.133382+00:00",
+            "stdout_file": {
+              "path": "runtime/run2/commands/storage-saved-after-confirm-prefs.stdout",
+              "sha256": "0631b05e1c8b5f95d5637cba860797c9aab993b726d6d284277d60593e3d2bf7",
+              "bytes": 648
+            },
+            "stderr_file": {
+              "path": "runtime/run2/commands/storage-saved-after-confirm-prefs.stderr",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "bytes": 0
+            }
+          },
+          {
+            "record": {
+              "path": "runtime/run2/commands/storage-saved-after-confirm-sentinel.json",
+              "sha256": "2c2caa26a78c09cc74d077f41939cb27043dccb29b4bcb2034d199f0f3ea1db7",
+              "bytes": 306
+            },
+            "argv": [
+              "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+              "-s",
+              "emulator-5582",
+              "shell",
+              "run-as",
+              "com.osfans.trime.debug",
+              "cat",
+              "files/triage-sentinel.txt"
+            ],
+            "exit": 0,
+            "started_utc": "2026-10-28T02:42:36.193815+00:00",
+            "stdout_file": {
+              "path": "runtime/run2/commands/storage-saved-after-confirm-sentinel.stdout",
+              "sha256": "fc23655d05c9d26dcf7a828f670dfc811c65aa54cc8a98283ad4ffa03da4c988",
+              "bytes": 51
+            },
+            "stderr_file": {
+              "path": "runtime/run2/commands/storage-saved-after-confirm-sentinel.stderr",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "bytes": 0
+            }
+          },
+          {
+            "record": {
+              "path": "runtime/run2/commands/storage-saved-after-confirm-manifest.json",
+              "sha256": "ddeb36cebd0a7a5d5b821d3c26d54f72bf2c63abc8b9e2977088b1dd72386105",
+              "bytes": 339
+            },
+            "argv": [
+              "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+              "-s",
+              "emulator-5582",
+              "shell",
+              "run-as",
+              "com.osfans.trime.debug",
+              "cat",
+              "/data/user_de/0/com.osfans.trime.debug/.sync-manifest.json"
+            ],
+            "exit": 0,
+            "started_utc": "2026-10-28T02:42:36.244314+00:00",
+            "stdout_file": {
+              "path": "runtime/run2/commands/storage-saved-after-confirm-manifest.stdout",
+              "sha256": "800f24a8791f5ab61e1f76b57010fd6f0537ef5d2d92e9a3b0d9fa0869abc73c",
+              "bytes": 1766
+            },
+            "stderr_file": {
+              "path": "runtime/run2/commands/storage-saved-after-confirm-manifest.stderr",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "bytes": 0
+            }
+          },
+          {
+            "record": {
+              "path": "runtime/run2/commands/storage-saved-after-confirm-grants.json",
+              "sha256": "37fbcd09b6c976c46a51593786586daa959841edac89f04cedb49ee0f54e8551",
+              "bytes": 269
+            },
+            "argv": [
+              "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+              "-s",
+              "emulator-5582",
+              "shell",
+              "dumpsys",
+              "activity",
+              "permissions"
+            ],
+            "exit": 0,
+            "started_utc": "2026-10-28T02:42:36.303358+00:00",
+            "stdout_file": {
+              "path": "runtime/run2/commands/storage-saved-after-confirm-grants.stdout",
+              "sha256": "c00cb6202de8e3316720e4a34ed0100bbb492b49aa8cc9ff0fa2ba24ce9f8946",
+              "bytes": 687
+            },
+            "stderr_file": {
+              "path": "runtime/run2/commands/storage-saved-after-confirm-grants.stderr",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "bytes": 0
+            }
+          }
+        ],
+        "grant_evidence_authoritative_for_this_snapshot": true
+      },
+      "only_changed_field": "storage_mode: APP_STORAGE -> EXTERNAL_SYNC",
+      "other_fields_equal": true,
+      "action": {
+        "record": {
+          "path": "runtime/run2/commands/storage-saved-confirm-ok-tap.json",
+          "sha256": "933963f7d1e9d9ed45bd2f298d5504e806a6d3cc7bccb9d1fb6450f6b58d3817",
+          "bytes": 263
+        },
+        "argv": [
+          "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+          "-s",
+          "emulator-5582",
+          "shell",
+          "input",
+          "tap",
+          "582",
+          "821"
+        ],
+        "exit": 0,
+        "started_utc": "2026-10-28T02:42:31.796976+00:00",
+        "stdout_file": {
+          "path": "runtime/run2/commands/storage-saved-confirm-ok-tap.stdout",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        "stderr_file": {
+          "path": "runtime/run2/commands/storage-saved-confirm-ok-tap.stderr",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        }
+      },
+      "after_ui": {
+        "xml": {
+          "path": "runtime/run2/storage-saved-external-ready-0.xml",
+          "sha256": "132cfd39eecaa3e0d1972f5af26aee651f853bb35720c75e5708d0b2de2d95ae",
+          "bytes": 16846
+        },
+        "dialog_titles": [],
+        "all_visible_text": [
+          "Profile",
+          "Storage",
+          "Data storage mode",
+          "Sync from external storage",
+          "User directory",
+          "/Documents/TrimeIssue2095-20261028",
+          "Synchronization",
+          "Sync user data immediately",
+          "Periodic background sync",
+          "Interval of background syncing (in minutes)",
+          "30 ",
+          "Maintenance",
+          "Browse app data folder"
+        ],
+        "packages": [
+          "com.osfans.trime.debug"
+        ],
+        "checked_radio_ids": []
+      }
+    }
+  ],
+  "reviewed_contract_complete": true,
+  "previous_partial_draft": {
+    "path": "runtime/storage-validation-draft.json",
+    "sha256": "1472f6fb5d311fafa1a7ecb5c9951a74abb45215f12d247eae84a7bfc673060a",
+    "bytes": 139670
+  },
+  "completed_directory_reselection_cases": [
+    {
+      "id": "user_directory_warning_cancel",
+      "status": "PASS_WITH_AUTHORITATIVE_GRANT_BEFORE_AFTER",
+      "before": {
+        "snapshot": {
+          "path": "runtime/run2/storage-saved-after-confirm-snapshot.json",
+          "sha256": "c09f0c90f5f2a2e4f711e475eae335abed20503b55499f1b1e9373a9f8899a98",
+          "bytes": 626
+        },
+        "state": {
+          "storage_mode": "EXTERNAL_SYNC",
+          "directory_uri": "content://com.android.externalstorage.documents/tree/primary%3ADocuments%2FTrimeIssue2095-20261028",
+          "sentinel_sha256": "fc23655d05c9d26dcf7a828f670dfc811c65aa54cc8a98283ad4ffa03da4c988",
+          "manifest_exit": 0,
+          "manifest_sha256": "800f24a8791f5ab61e1f76b57010fd6f0537ef5d2d92e9a3b0d9fa0869abc73c",
+          "persisted_uri_grants": [
+            {
+              "uri": "content://com.android.externalstorage.documents/tree/primary%3ADocuments%2FTrimeIssue2095-20261028",
+              "persisted": "0x3",
+              "persistable": "0x3"
+            }
+          ],
+          "grant_inspection": "dumpsys activity permissions"
+        },
+        "grant_evidence_authoritative_for_this_snapshot": true,
+        "capture_commands": [
+          {
+            "record": {
+              "path": "runtime/run2/commands/storage-saved-after-confirm-prefs.json",
+              "sha256": "d047e8c9a0d85c4e397010658b5c10a5971717817b57e7d4b43119b61a720abd",
+              "bytes": 332
+            },
+            "argv": [
+              "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+              "-s",
+              "emulator-5582",
+              "shell",
+              "run-as",
+              "com.osfans.trime.debug",
+              "cat",
+              "shared_prefs/com.osfans.trime.debug_preferences.xml"
+            ],
+            "exit": 0,
+            "started_utc": "2026-10-28T02:42:36.133382+00:00",
+            "stdout_file": {
+              "path": "runtime/run2/commands/storage-saved-after-confirm-prefs.stdout",
+              "sha256": "0631b05e1c8b5f95d5637cba860797c9aab993b726d6d284277d60593e3d2bf7",
+              "bytes": 648
+            },
+            "stderr_file": {
+              "path": "runtime/run2/commands/storage-saved-after-confirm-prefs.stderr",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "bytes": 0
+            }
+          },
+          {
+            "record": {
+              "path": "runtime/run2/commands/storage-saved-after-confirm-sentinel.json",
+              "sha256": "2c2caa26a78c09cc74d077f41939cb27043dccb29b4bcb2034d199f0f3ea1db7",
+              "bytes": 306
+            },
+            "argv": [
+              "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+              "-s",
+              "emulator-5582",
+              "shell",
+              "run-as",
+              "com.osfans.trime.debug",
+              "cat",
+              "files/triage-sentinel.txt"
+            ],
+            "exit": 0,
+            "started_utc": "2026-10-28T02:42:36.193815+00:00",
+            "stdout_file": {
+              "path": "runtime/run2/commands/storage-saved-after-confirm-sentinel.stdout",
+              "sha256": "fc23655d05c9d26dcf7a828f670dfc811c65aa54cc8a98283ad4ffa03da4c988",
+              "bytes": 51
+            },
+            "stderr_file": {
+              "path": "runtime/run2/commands/storage-saved-after-confirm-sentinel.stderr",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "bytes": 0
+            }
+          },
+          {
+            "record": {
+              "path": "runtime/run2/commands/storage-saved-after-confirm-manifest.json",
+              "sha256": "ddeb36cebd0a7a5d5b821d3c26d54f72bf2c63abc8b9e2977088b1dd72386105",
+              "bytes": 339
+            },
+            "argv": [
+              "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+              "-s",
+              "emulator-5582",
+              "shell",
+              "run-as",
+              "com.osfans.trime.debug",
+              "cat",
+              "/data/user_de/0/com.osfans.trime.debug/.sync-manifest.json"
+            ],
+            "exit": 0,
+            "started_utc": "2026-10-28T02:42:36.244314+00:00",
+            "stdout_file": {
+              "path": "runtime/run2/commands/storage-saved-after-confirm-manifest.stdout",
+              "sha256": "800f24a8791f5ab61e1f76b57010fd6f0537ef5d2d92e9a3b0d9fa0869abc73c",
+              "bytes": 1766
+            },
+            "stderr_file": {
+              "path": "runtime/run2/commands/storage-saved-after-confirm-manifest.stderr",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "bytes": 0
+            }
+          },
+          {
+            "record": {
+              "path": "runtime/run2/commands/storage-saved-after-confirm-grants.json",
+              "sha256": "37fbcd09b6c976c46a51593786586daa959841edac89f04cedb49ee0f54e8551",
+              "bytes": 269
+            },
+            "argv": [
+              "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+              "-s",
+              "emulator-5582",
+              "shell",
+              "dumpsys",
+              "activity",
+              "permissions"
+            ],
+            "exit": 0,
+            "started_utc": "2026-10-28T02:42:36.303358+00:00",
+            "stdout_file": {
+              "path": "runtime/run2/commands/storage-saved-after-confirm-grants.stdout",
+              "sha256": "c00cb6202de8e3316720e4a34ed0100bbb492b49aa8cc9ff0fa2ba24ce9f8946",
+              "bytes": 687
+            },
+            "stderr_file": {
+              "path": "runtime/run2/commands/storage-saved-after-confirm-grants.stderr",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "bytes": 0
+            }
+          }
+        ]
+      },
+      "after": {
+        "snapshot": {
+          "path": "runtime/run2/storage-reselect-after-cancel-snapshot.json",
+          "sha256": "c09f0c90f5f2a2e4f711e475eae335abed20503b55499f1b1e9373a9f8899a98",
+          "bytes": 626
+        },
+        "state": {
+          "storage_mode": "EXTERNAL_SYNC",
+          "directory_uri": "content://com.android.externalstorage.documents/tree/primary%3ADocuments%2FTrimeIssue2095-20261028",
+          "sentinel_sha256": "fc23655d05c9d26dcf7a828f670dfc811c65aa54cc8a98283ad4ffa03da4c988",
+          "manifest_exit": 0,
+          "manifest_sha256": "800f24a8791f5ab61e1f76b57010fd6f0537ef5d2d92e9a3b0d9fa0869abc73c",
+          "persisted_uri_grants": [
+            {
+              "uri": "content://com.android.externalstorage.documents/tree/primary%3ADocuments%2FTrimeIssue2095-20261028",
+              "persisted": "0x3",
+              "persistable": "0x3"
+            }
+          ],
+          "grant_inspection": "dumpsys activity permissions"
+        },
+        "grant_evidence_authoritative_for_this_snapshot": true,
+        "capture_commands": [
+          {
+            "record": {
+              "path": "runtime/run2/commands/storage-reselect-after-cancel-prefs.json",
+              "sha256": "7655f8868815acd1c4581376cb927fa4807172436ae6d9196dc029797a2dd311",
+              "bytes": 332
+            },
+            "argv": [
+              "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+              "-s",
+              "emulator-5582",
+              "shell",
+              "run-as",
+              "com.osfans.trime.debug",
+              "cat",
+              "shared_prefs/com.osfans.trime.debug_preferences.xml"
+            ],
+            "exit": 0,
+            "started_utc": "2026-10-28T02:42:50.812599+00:00",
+            "stdout_file": {
+              "path": "runtime/run2/commands/storage-reselect-after-cancel-prefs.stdout",
+              "sha256": "0631b05e1c8b5f95d5637cba860797c9aab993b726d6d284277d60593e3d2bf7",
+              "bytes": 648
+            },
+            "stderr_file": {
+              "path": "runtime/run2/commands/storage-reselect-after-cancel-prefs.stderr",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "bytes": 0
+            }
+          },
+          {
+            "record": {
+              "path": "runtime/run2/commands/storage-reselect-after-cancel-sentinel.json",
+              "sha256": "255d9985696e5918cb51c321fbdc1c0bb1bc2cec8b80dd577490e948e4eb40e1",
+              "bytes": 306
+            },
+            "argv": [
+              "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+              "-s",
+              "emulator-5582",
+              "shell",
+              "run-as",
+              "com.osfans.trime.debug",
+              "cat",
+              "files/triage-sentinel.txt"
+            ],
+            "exit": 0,
+            "started_utc": "2026-10-28T02:42:50.874325+00:00",
+            "stdout_file": {
+              "path": "runtime/run2/commands/storage-reselect-after-cancel-sentinel.stdout",
+              "sha256": "fc23655d05c9d26dcf7a828f670dfc811c65aa54cc8a98283ad4ffa03da4c988",
+              "bytes": 51
+            },
+            "stderr_file": {
+              "path": "runtime/run2/commands/storage-reselect-after-cancel-sentinel.stderr",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "bytes": 0
+            }
+          },
+          {
+            "record": {
+              "path": "runtime/run2/commands/storage-reselect-after-cancel-manifest.json",
+              "sha256": "c17a0296389b51694a20c3ca09138c564da74e996847dfe8456add0cf2d639b8",
+              "bytes": 339
+            },
+            "argv": [
+              "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+              "-s",
+              "emulator-5582",
+              "shell",
+              "run-as",
+              "com.osfans.trime.debug",
+              "cat",
+              "/data/user_de/0/com.osfans.trime.debug/.sync-manifest.json"
+            ],
+            "exit": 0,
+            "started_utc": "2026-10-28T02:42:50.933879+00:00",
+            "stdout_file": {
+              "path": "runtime/run2/commands/storage-reselect-after-cancel-manifest.stdout",
+              "sha256": "800f24a8791f5ab61e1f76b57010fd6f0537ef5d2d92e9a3b0d9fa0869abc73c",
+              "bytes": 1766
+            },
+            "stderr_file": {
+              "path": "runtime/run2/commands/storage-reselect-after-cancel-manifest.stderr",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "bytes": 0
+            }
+          },
+          {
+            "record": {
+              "path": "runtime/run2/commands/storage-reselect-after-cancel-grants.json",
+              "sha256": "9edd2a693f45cb02f2a3120a04ea0fe9d5b3c86be0b9678d05e1b8b38a90a7a2",
+              "bytes": 267
+            },
+            "argv": [
+              "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+              "-s",
+              "emulator-5582",
+              "shell",
+              "dumpsys",
+              "activity",
+              "permissions"
+            ],
+            "exit": 0,
+            "started_utc": "2026-10-28T02:42:51.003006+00:00",
+            "stdout_file": {
+              "path": "runtime/run2/commands/storage-reselect-after-cancel-grants.stdout",
+              "sha256": "c00cb6202de8e3316720e4a34ed0100bbb492b49aa8cc9ff0fa2ba24ce9f8946",
+              "bytes": 687
+            },
+            "stderr_file": {
+              "path": "runtime/run2/commands/storage-reselect-after-cancel-grants.stderr",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "bytes": 0
+            }
+          }
+        ]
+      },
+      "all_fields_equal": true,
+      "action": {
+        "record": {
+          "path": "runtime/run2/commands/storage-reselect-cancel-tap.json",
+          "sha256": "3dddf55a861df424dc92aadd84301ab50f2a497e88d53695bb37ed0eddc17320",
+          "bytes": 264
+        },
+        "argv": [
+          "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+          "-s",
+          "emulator-5582",
+          "shell",
+          "input",
+          "tap",
+          "408",
+          "859"
+        ],
+        "exit": 0,
+        "started_utc": "2026-10-28T02:42:46.785725+00:00",
+        "stdout_file": {
+          "path": "runtime/run2/commands/storage-reselect-cancel-tap.stdout",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        "stderr_file": {
+          "path": "runtime/run2/commands/storage-reselect-cancel-tap.stderr",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        }
+      },
+      "confirmation_ui": {
+        "xml": {
+          "path": "runtime/run2/storage-reselect-cancel-dialog-0.xml",
+          "sha256": "1674ee73c91a3d18a1863b59f550f8a445023ab20b026288f971189786e2f8ed",
+          "bytes": 6813
+        },
+        "dialog_titles": [
+          "Sync from external storage"
+        ],
+        "all_visible_text": [
+          "Sync from external storage",
+          "Change another directory to import?\n\nTrime will sync its working configuration and the external folder in both directions. Files with the same name may be overwritten based on modification time, and deletions are synced to both locations. Back up both folders before continuing.",
+          "CANCEL",
+          "CHANGE"
+        ],
+        "packages": [
+          "com.osfans.trime.debug"
+        ]
+      },
+      "confirmation_png": {
+        "path": "runtime/run2/storage-reselect-confirmation-image.png",
+        "sha256": "163422730c24fb0e706c92679359969068742f43198efbcfdc0250f5ee09debc",
+        "bytes": 102059
+      },
+      "after_ui": {
+        "xml": {
+          "path": "runtime/run2/storage-reselect-after-cancel-ready-0.xml",
+          "sha256": "132cfd39eecaa3e0d1972f5af26aee651f853bb35720c75e5708d0b2de2d95ae",
+          "bytes": 16846
+        },
+        "dialog_titles": [],
+        "all_visible_text": [
+          "Profile",
+          "Storage",
+          "Data storage mode",
+          "Sync from external storage",
+          "User directory",
+          "/Documents/TrimeIssue2095-20261028",
+          "Synchronization",
+          "Sync user data immediately",
+          "Periodic background sync",
+          "Interval of background syncing (in minutes)",
+          "30 ",
+          "Maintenance",
+          "Browse app data folder"
+        ],
+        "packages": [
+          "com.osfans.trime.debug"
+        ]
+      }
+    },
+    {
+      "id": "user_directory_real_picker_back",
+      "status": "PASS_WITH_AUTHORITATIVE_GRANT_BEFORE_AFTER",
+      "before_snapshot": "storage-saved-after-confirm",
+      "picker_ui": {
+        "xml": {
+          "path": "runtime/run2/storage-reselect-picker-visible.xml",
+          "sha256": "4d6df91ef9ca0fa4cf88cbcd07553bd5c3c15d071a7ccd77de5533bf70f0e7d4",
+          "bytes": 38156
+        },
+        "dialog_titles": [],
+        "all_visible_text": [
+          "Android SDK built for x86_64",
+          "Documents",
+          "TrimeIssue2095-20261028",
+          "Files in TrimeIssue2095-20261028",
+          "TrimeIssue2095-20261028",
+          "build",
+          "opencc",
+          "soundeffect",
+          "default.custom.yaml",
+          "78 B",
+          "10:37 AM",
+          "installation.yaml",
+          "258 B",
+          "10:37 AM",
+          "USE THIS FOLDER"
+        ],
+        "packages": [
+          "com.android.documentsui"
+        ]
+      },
+      "back_actions": [
+        {
+          "record": {
+            "path": "runtime/run2/commands/storage-reselect-picker-back.json",
+            "sha256": "62a3a49ec86a00a5ed4def2c4e04659d72e52771132f1eb1309500faf5f1c10f",
+            "bytes": 267
+          },
+          "argv": [
+            "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+            "-s",
+            "emulator-5582",
+            "shell",
+            "input",
+            "keyevent",
+            "KEYCODE_BACK"
+          ],
+          "exit": 0,
+          "started_utc": "2026-10-28T02:43:05.931168+00:00",
+          "stdout_file": {
+            "path": "runtime/run2/commands/storage-reselect-picker-back.stdout",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          },
+          "stderr_file": {
+            "path": "runtime/run2/commands/storage-reselect-picker-back.stderr",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          }
+        },
+        {
+          "record": {
+            "path": "runtime/run2/commands/storage-reselect-picker-back-2.json",
+            "sha256": "1793f229e58353ba0f764227a9e7d4f41988d982f098600f1533f0f5bec1d590",
+            "bytes": 267
+          },
+          "argv": [
+            "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+            "-s",
+            "emulator-5582",
+            "shell",
+            "input",
+            "keyevent",
+            "KEYCODE_BACK"
+          ],
+          "exit": 0,
+          "started_utc": "2026-10-28T02:43:49.751077+00:00",
+          "stdout_file": {
+            "path": "runtime/run2/commands/storage-reselect-picker-back-2.stdout",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          },
+          "stderr_file": {
+            "path": "runtime/run2/commands/storage-reselect-picker-back-2.stderr",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          }
+        },
+        {
+          "record": {
+            "path": "runtime/run2/commands/storage-reselect-picker-back-3.json",
+            "sha256": "0b0f3e48f9e1a03931c85d1959a83de4e87ff7a3d5a44ba115ed8f92cfc2ebf9",
+            "bytes": 267
+          },
+          "argv": [
+            "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+            "-s",
+            "emulator-5582",
+            "shell",
+            "input",
+            "keyevent",
+            "KEYCODE_BACK"
+          ],
+          "exit": 0,
+          "started_utc": "2026-10-28T02:43:53.306330+00:00",
+          "stdout_file": {
+            "path": "runtime/run2/commands/storage-reselect-picker-back-3.stdout",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          },
+          "stderr_file": {
+            "path": "runtime/run2/commands/storage-reselect-picker-back-3.stderr",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          }
+        }
+      ],
+      "actual_back_count": 3,
+      "navigation": [
+        {
+          "back": 1,
+          "result": "Documents父目录，picker仍打开",
+          "ui": {
+            "xml": {
+              "path": "runtime/run2/storage-reselect-picker-returned-0.xml",
+              "sha256": "6a6d41a2befb6bc56639352021b930700883eff3a41adcaee27aebb7b411a092",
+              "bytes": 17349
+            },
+            "dialog_titles": [],
+            "all_visible_text": [
+              "Android SDK built for x86_64",
+              "Documents",
+              "Files in Documents",
+              "Documents",
+              "TrimeIssue2095-20261028",
+              "USE THIS FOLDER"
+            ],
+            "packages": [
+              "com.android.documentsui"
+            ]
+          }
+        },
+        {
+          "back": 2,
+          "result": "存储根目录，picker仍打开",
+          "ui": {
+            "xml": {
+              "path": "runtime/run2/storage-reselect-picker-return-step-2.xml",
+              "sha256": "c0d7269d49c716db374676cc12f33708d1b28000f97530b525e68b74bdad8a00",
+              "bytes": 47534
+            },
+            "dialog_titles": [],
+            "all_visible_text": [
+              "Android SDK built for x86_64",
+              "Files on Android SDK built for x86_64",
+              "Android SDK built for x86_64",
+              "Can’t use this folder",
+              "To protect your privacy, choose another folder",
+              "CREATE NEW FOLDER",
+              "Alarms",
+              "Android",
+              "Audiobooks",
+              "DCIM",
+              "Documents",
+              "Download",
+              "Movies",
+              "Music",
+              "Notifications",
+              "Pictures",
+              "Podcasts",
+              "Recordings",
+              "USE THIS FOLDER"
+            ],
+            "packages": [
+              "com.android.documentsui"
+            ]
+          }
+        },
+        {
+          "back": 3,
+          "result": "返回Trime Profile",
+          "ui": {
+            "xml": {
+              "path": "runtime/run2/storage-reselect-picker-return-step-3.xml",
+              "sha256": "132cfd39eecaa3e0d1972f5af26aee651f853bb35720c75e5708d0b2de2d95ae",
+              "bytes": 16846
+            },
+            "dialog_titles": [],
+            "all_visible_text": [
+              "Profile",
+              "Storage",
+              "Data storage mode",
+              "Sync from external storage",
+              "User directory",
+              "/Documents/TrimeIssue2095-20261028",
+              "Synchronization",
+              "Sync user data immediately",
+              "Periodic background sync",
+              "Interval of background syncing (in minutes)",
+              "30 ",
+              "Maintenance",
+              "Browse app data folder"
+            ],
+            "packages": [
+              "com.osfans.trime.debug"
+            ]
+          }
+        }
+      ],
+      "while_still_in_picker_snapshot": {
+        "snapshot": {
+          "path": "runtime/run2/storage-reselect-after-one-back-still-picker-snapshot.json",
+          "sha256": "c09f0c90f5f2a2e4f711e475eae335abed20503b55499f1b1e9373a9f8899a98",
+          "bytes": 626
+        },
+        "state": {
+          "storage_mode": "EXTERNAL_SYNC",
+          "directory_uri": "content://com.android.externalstorage.documents/tree/primary%3ADocuments%2FTrimeIssue2095-20261028",
+          "sentinel_sha256": "fc23655d05c9d26dcf7a828f670dfc811c65aa54cc8a98283ad4ffa03da4c988",
+          "manifest_exit": 0,
+          "manifest_sha256": "800f24a8791f5ab61e1f76b57010fd6f0537ef5d2d92e9a3b0d9fa0869abc73c",
+          "persisted_uri_grants": [
+            {
+              "uri": "content://com.android.externalstorage.documents/tree/primary%3ADocuments%2FTrimeIssue2095-20261028",
+              "persisted": "0x3",
+              "persistable": "0x3"
+            }
+          ],
+          "grant_inspection": "dumpsys activity permissions"
+        },
+        "grant_evidence_authoritative_for_this_snapshot": true,
+        "capture_commands": [
+          {
+            "record": {
+              "path": "runtime/run2/commands/storage-reselect-after-one-back-still-picker-prefs.json",
+              "sha256": "b8bbfa75ed171f472f17b12ba4c056ed14e9e43e0f0b2854f270de9ea423b20a",
+              "bytes": 332
+            },
+            "argv": [
+              "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+              "-s",
+              "emulator-5582",
+              "shell",
+              "run-as",
+              "com.osfans.trime.debug",
+              "cat",
+              "shared_prefs/com.osfans.trime.debug_preferences.xml"
+            ],
+            "exit": 0,
+            "started_utc": "2026-10-28T02:43:49.605701+00:00",
+            "stdout_file": {
+              "path": "runtime/run2/commands/storage-reselect-after-one-back-still-picker-prefs.stdout",
+              "sha256": "0631b05e1c8b5f95d5637cba860797c9aab993b726d6d284277d60593e3d2bf7",
+              "bytes": 648
+            },
+            "stderr_file": {
+              "path": "runtime/run2/commands/storage-reselect-after-one-back-still-picker-prefs.stderr",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "bytes": 0
+            }
+          },
+          {
+            "record": {
+              "path": "runtime/run2/commands/storage-reselect-after-one-back-still-picker-sentinel.json",
+              "sha256": "c7f9afd3c3440ce172b27c3f7cfd31352f72e970f9a2f8e9226b82893e12a9ca",
+              "bytes": 306
+            },
+            "argv": [
+              "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+              "-s",
+              "emulator-5582",
+              "shell",
+              "run-as",
+              "com.osfans.trime.debug",
+              "cat",
+              "files/triage-sentinel.txt"
+            ],
+            "exit": 0,
+            "started_utc": "2026-10-28T02:43:49.640293+00:00",
+            "stdout_file": {
+              "path": "runtime/run2/commands/storage-reselect-after-one-back-still-picker-sentinel.stdout",
+              "sha256": "fc23655d05c9d26dcf7a828f670dfc811c65aa54cc8a98283ad4ffa03da4c988",
+              "bytes": 51
+            },
+            "stderr_file": {
+              "path": "runtime/run2/commands/storage-reselect-after-one-back-still-picker-sentinel.stderr",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "bytes": 0
+            }
+          },
+          {
+            "record": {
+              "path": "runtime/run2/commands/storage-reselect-after-one-back-still-picker-manifest.json",
+              "sha256": "879591a42285e788bfb850ac2dcf61a0976f436bb404a54f96eac2a8065eec76",
+              "bytes": 339
+            },
+            "argv": [
+              "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+              "-s",
+              "emulator-5582",
+              "shell",
+              "run-as",
+              "com.osfans.trime.debug",
+              "cat",
+              "/data/user_de/0/com.osfans.trime.debug/.sync-manifest.json"
+            ],
+            "exit": 0,
+            "started_utc": "2026-10-28T02:43:49.678934+00:00",
+            "stdout_file": {
+              "path": "runtime/run2/commands/storage-reselect-after-one-back-still-picker-manifest.stdout",
+              "sha256": "800f24a8791f5ab61e1f76b57010fd6f0537ef5d2d92e9a3b0d9fa0869abc73c",
+              "bytes": 1766
+            },
+            "stderr_file": {
+              "path": "runtime/run2/commands/storage-reselect-after-one-back-still-picker-manifest.stderr",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "bytes": 0
+            }
+          },
+          {
+            "record": {
+              "path": "runtime/run2/commands/storage-reselect-after-one-back-still-picker-grants.json",
+              "sha256": "0f62a4a988a240c057bce649b73c9be4fb3ad02eb1d1ff2674f7960743997f1e",
+              "bytes": 268
+            },
+            "argv": [
+              "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+              "-s",
+              "emulator-5582",
+              "shell",
+              "dumpsys",
+              "activity",
+              "permissions"
+            ],
+            "exit": 0,
+            "started_utc": "2026-10-28T02:43:49.716280+00:00",
+            "stdout_file": {
+              "path": "runtime/run2/commands/storage-reselect-after-one-back-still-picker-grants.stdout",
+              "sha256": "c00cb6202de8e3316720e4a34ed0100bbb492b49aa8cc9ff0fa2ba24ce9f8946",
+              "bytes": 687
+            },
+            "stderr_file": {
+              "path": "runtime/run2/commands/storage-reselect-after-one-back-still-picker-grants.stderr",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "bytes": 0
+            }
+          }
+        ]
+      },
+      "after": {
+        "snapshot": {
+          "path": "runtime/run2/storage-reselect-after-picker-cancel-snapshot.json",
+          "sha256": "c09f0c90f5f2a2e4f711e475eae335abed20503b55499f1b1e9373a9f8899a98",
+          "bytes": 626
+        },
+        "state": {
+          "storage_mode": "EXTERNAL_SYNC",
+          "directory_uri": "content://com.android.externalstorage.documents/tree/primary%3ADocuments%2FTrimeIssue2095-20261028",
+          "sentinel_sha256": "fc23655d05c9d26dcf7a828f670dfc811c65aa54cc8a98283ad4ffa03da4c988",
+          "manifest_exit": 0,
+          "manifest_sha256": "800f24a8791f5ab61e1f76b57010fd6f0537ef5d2d92e9a3b0d9fa0869abc73c",
+          "persisted_uri_grants": [
+            {
+              "uri": "content://com.android.externalstorage.documents/tree/primary%3ADocuments%2FTrimeIssue2095-20261028",
+              "persisted": "0x3",
+              "persistable": "0x3"
+            }
+          ],
+          "grant_inspection": "dumpsys activity permissions"
+        },
+        "grant_evidence_authoritative_for_this_snapshot": true,
+        "capture_commands": [
+          {
+            "record": {
+              "path": "runtime/run2/commands/storage-reselect-after-picker-cancel-prefs.json",
+              "sha256": "e82bbb5cfa11e668f0fea8fdc8776837c13203eae158bd5400ebf8872b63a6e5",
+              "bytes": 331
+            },
+            "argv": [
+              "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+              "-s",
+              "emulator-5582",
+              "shell",
+              "run-as",
+              "com.osfans.trime.debug",
+              "cat",
+              "shared_prefs/com.osfans.trime.debug_preferences.xml"
+            ],
+            "exit": 0,
+            "started_utc": "2026-10-28T02:43:56.823915+00:00",
+            "stdout_file": {
+              "path": "runtime/run2/commands/storage-reselect-after-picker-cancel-prefs.stdout",
+              "sha256": "0631b05e1c8b5f95d5637cba860797c9aab993b726d6d284277d60593e3d2bf7",
+              "bytes": 648
+            },
+            "stderr_file": {
+              "path": "runtime/run2/commands/storage-reselect-after-picker-cancel-prefs.stderr",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "bytes": 0
+            }
+          },
+          {
+            "record": {
+              "path": "runtime/run2/commands/storage-reselect-after-picker-cancel-sentinel.json",
+              "sha256": "ecf9cb67d9cab90860f0f90eda59342f3613cc5d4209af161537c3c875832649",
+              "bytes": 306
+            },
+            "argv": [
+              "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+              "-s",
+              "emulator-5582",
+              "shell",
+              "run-as",
+              "com.osfans.trime.debug",
+              "cat",
+              "files/triage-sentinel.txt"
+            ],
+            "exit": 0,
+            "started_utc": "2026-10-28T02:43:56.941663+00:00",
+            "stdout_file": {
+              "path": "runtime/run2/commands/storage-reselect-after-picker-cancel-sentinel.stdout",
+              "sha256": "fc23655d05c9d26dcf7a828f670dfc811c65aa54cc8a98283ad4ffa03da4c988",
+              "bytes": 51
+            },
+            "stderr_file": {
+              "path": "runtime/run2/commands/storage-reselect-after-picker-cancel-sentinel.stderr",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "bytes": 0
+            }
+          },
+          {
+            "record": {
+              "path": "runtime/run2/commands/storage-reselect-after-picker-cancel-manifest.json",
+              "sha256": "f21690ceb440c4b0125717d1416e060ac4c922cdb56c09ce50ac44639e7ffaac",
+              "bytes": 339
+            },
+            "argv": [
+              "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+              "-s",
+              "emulator-5582",
+              "shell",
+              "run-as",
+              "com.osfans.trime.debug",
+              "cat",
+              "/data/user_de/0/com.osfans.trime.debug/.sync-manifest.json"
+            ],
+            "exit": 0,
+            "started_utc": "2026-10-28T02:43:57.046427+00:00",
+            "stdout_file": {
+              "path": "runtime/run2/commands/storage-reselect-after-picker-cancel-manifest.stdout",
+              "sha256": "800f24a8791f5ab61e1f76b57010fd6f0537ef5d2d92e9a3b0d9fa0869abc73c",
+              "bytes": 1766
+            },
+            "stderr_file": {
+              "path": "runtime/run2/commands/storage-reselect-after-picker-cancel-manifest.stderr",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "bytes": 0
+            }
+          },
+          {
+            "record": {
+              "path": "runtime/run2/commands/storage-reselect-after-picker-cancel-grants.json",
+              "sha256": "76f5e94d26f420c9d58d480e2b54d91ff4b5de68484887482fba79505b46b7d7",
+              "bytes": 269
+            },
+            "argv": [
+              "/home/xumin/Public/android-toolchain/android-sdk/platform-tools/adb",
+              "-s",
+              "emulator-5582",
+              "shell",
+              "dumpsys",
+              "activity",
+              "permissions"
+            ],
+            "exit": 0,
+            "started_utc": "2026-10-28T02:43:57.133553+00:00",
+            "stdout_file": {
+              "path": "runtime/run2/commands/storage-reselect-after-picker-cancel-grants.stdout",
+              "sha256": "c00cb6202de8e3316720e4a34ed0100bbb492b49aa8cc9ff0fa2ba24ce9f8946",
+              "bytes": 687
+            },
+            "stderr_file": {
+              "path": "runtime/run2/commands/storage-reselect-after-picker-cancel-grants.stderr",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "bytes": 0
+            }
+          }
+        ]
+      },
+      "all_fields_equal": true,
+      "after_png": {
+        "path": "runtime/run2/storage-reselect-after-picker-cancel-image.png",
+        "sha256": "b76e106d1185550f2abdaa9aeb50779b8c65019bcd1d9ac9fb8b81b0c0f2cec2",
+        "bytes": 76425
+      },
+      "final_original_png_reviewed_by_root_and_reviewer": true,
+      "observation": "mode保持EXTERNAL_SYNC；旧URI、UID10160目标tree持久读写授权、private sentinel与现存manifest哈希均与保存关联before相同。"
+    }
+  ],
+  "not_tested": [
+    "Setup入口正向目录关联（本次正向关联来自Settings）",
+    "权限撤销与同步I/O失败恢复",
+    "同名冲突、目录类型冲突与全部双向同步/删除策略",
+    "完整工作目录或外部目录逐字节复核",
+    "初始无关联Settings/Setup取消的权威grant before/after（旧uri_grants观察无效）",
+    "完整词库编码/部署质量及实际输入正确性"
+  ],
+  "run_completion": {
+    "record": {
+      "path": "runtime/run2/completion.json",
+      "sha256": "1fe9fc259b8d4396248f6bdec261103e5a2709f81ae04cdc0d0bbed0941711b6",
+      "bytes": 859
+    },
+    "reason": "normal-stop-request",
+    "emulator_exit": 0,
+    "collector_exit": -15,
+    "cleanup_errors": [],
+    "note": "正常停止不代表运行零ANR、零警告或零采集失败；run2/log-review.json单独记录。"
+  },
+  "actors": {
+    "runtime_execution": "root执行ADB、模拟器交互、截图和状态采集。",
+    "review_and_report": "storage_safety agent只读核对持久化证据、查看原PNG，并仅在R内编写报告；未另行操作ADB或源码。"
+  },
+  "reviewed_case_count": 11,
+  "runtime_warning_boundary": "run2确有Trime/vendor警告（包括rime Encode failure），详见run2/log-review.json。返回Profile、manifest生成和单个fixture字节一致不代表完整词库编码/实际输入质量通过。正常VM退出也不代表零警告。",
+  "final_snapshot_helper": {
+    "path": "runtime/storage_checks.py",
+    "sha256": "f7169010b0e690d992075d0e491bd20dbf43cac5fada9a4739c67ce658eb064f",
+    "bytes": 2678
+  },
+  "snapshot_helper_revision_note": "最终helper已将授权观察器修正为dumpsys activity permissions；旧断言/uri_grants原始证据与draft留档未改。",
+  "runtime_log_review": {
+    "path": "runtime/run2/log-review.json",
+    "sha256": "3e49c46d8937fdb57e8f6edcd841cf9ca2b784a432b7156b332dc1a94d197a2a",
+    "bytes": 40610
+  }
+}
