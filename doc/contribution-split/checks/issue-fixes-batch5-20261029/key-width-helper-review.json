@@ -1,0 +1,95 @@
+{
+  "reviewed_at_utc": "2026-10-28T21:11:45.470523+00:00",
+  "reviewer": "Independent popup_review; readonly production/helper source review",
+  "result": "READY_TO_COMPILE_AND_RUN_FROZEN_HELPER; NO_STATIC_BLOCKER_FOUND; ACTUAL_COMPILE_RUNTIME_PENDING",
+  "production_head": "cf5dc640ae0d9305cebdbd0c765fd27ba1179d7f",
+  "production_review": {
+    "path": "/home/xumin/Public/Trime/build/issue-fixes-batch5-20261029/key-width-production-review.json",
+    "bytes": 6720,
+    "sha256": "e58e287a0b91efcbbe684d50ef2b8ecbe1b1a3e8671c6f0c4b36335ba825b9a1"
+  },
+  "helper": {
+    "path": "/home/xumin/Public/Trime/build/issue-fixes-batch5-20261029/key-width-probe/KeyWidthInstrumentation.kt",
+    "bytes": 17343,
+    "sha256": "56caf723268e779b24b817b20cf673f8ae94c7a7e06409d3061ee64bad0dd0c9"
+  },
+  "prior_draft_preserved": {
+    "path": "/home/xumin/Public/Trime/build/issue-fixes-batch5-20261029/key-width-probe/pre-unique-center-draft.kt.txt",
+    "bytes": 16963,
+    "sha256": "9ca7cb884c4fd0c0472e73fd36d6fddf1c0bf535d103e81e10312fb12ebd6a69"
+  },
+  "actual_production_boundary": [
+    "Explicit small YAML is decoded by real ThemeYaml and expanded by real ThemeDslExpander. Missing layout width stays omitted and decoded0 is asserted; helper never copies global width into model data.",
+    "Each scenario calls actual public Keyboard(targetContext,theme,1000,selfConfig=config), reads real Key geometry/index and Keyboard.height/minWidth. Independent expected rectangles do not replace the actual implementation under test. Both existing production geometry passes execute.",
+    "Inline click construction is pure-data branch; Key.init reads click.code. No getAction/getLabel/state/color/nearest lookup, RimeDaemon, session, native initialization or view renderer is requested by helper."
+  ],
+  "oracle_matrix": [
+    {
+      "case": "global_default_wrap_12",
+      "keys": 12,
+      "fixed": "Global10%, omitted layout ->10x100px row0 and2x100px row1.",
+      "baseline": "12 keys x0/width0/row0; first expected failed case summary."
+    },
+    {
+      "case": "layout_and_per_key_override",
+      "keys": 4,
+      "both": "Layout25% overrides global10%; first per-key50% ->500/250/250 row0,250 row1."
+    },
+    {
+      "case": "fractional_global_default_12_5",
+      "keys": 9,
+      "fixed": "Omitted layout/global12.5% ->8x125px row0, ninth125px row1.",
+      "baseline": "9 keys x0/width0/row0; second and final expected failed case summary."
+    },
+    {
+      "case": "fractional_layout_and_key",
+      "keys": 3,
+      "both": "Layout12.5%/per-key2.5% ->125/25/125 widths and0/125/150 x."
+    },
+    {
+      "case": "spacers_do_not_inherit",
+      "keys": 2,
+      "both": "Leading5% spacer -> first20% key x50; null-click0 and empty-click0 create no keys/no inherited gaps; second key x250. Trailing5% is parsed but terminal extent is not separately asserted."
+    },
+    {
+      "case": "right_edge_rounding_33_3",
+      "keys": 4,
+      "both": "333/333/334 widths row0 through existing final-edge correction, fourth333 row1."
+    },
+    {
+      "case": "column_limit_two",
+      "keys": 5,
+      "both": "Positive layout10% overrides global50%; columns2 causes2+2+1 rows independently of available width."
+    }
+  ],
+  "totals": {
+    "scenarios": 7,
+    "Key_objects_per_target": 39,
+    "baseline_expected_failed_case_summaries": 2,
+    "fixed_failed_case_summaries": 0,
+    "unchanged_compatibility_controls": 5,
+    "baseline_zero_width_keys": 21
+  },
+  "geometry_oracles": [
+    "Actual row IDs contiguous; each row shares positive height/y; rows stack exactly; total equals keyboardHeight; equal raw row heights distribute final rounding. Actual y/height and minWidth are recorded, while exact x/width/row/column list is principal width oracle.",
+    "Every positive center calls its actual Key.isInside and enumerates all actual keys.isInside; matched_key_indices must equal only current index. Rectangles are disjoint in these fixtures; existing edge flags extend outward and do not reach another positive rectangle center. expandKeypressArea only adjusts extraWidth fields which this isInside method does not read.",
+    "Zero-width baseline centers explicitly set center_uniqueness_checked=false and skip enumeration. Baseline acceptance requires exact zero geometry/valid heights, without falsely asserting a positive hit.",
+    "All7 cases complete before final width assertion. Baseline must match all independent baseline shapes and exactly2 summary violations. Early parser/constructor/portrait/preference failure cannot count as expected reproduction."
+  ],
+  "lifecycle_and_state": [
+    "First try action is20s main Handler Application.onCreate boundary; no AppPrefs first access before it. This retains v2 initialization-race correction from previous batch.",
+    "Three geometry prefs captured/read back on main. No preference write or global orientation/resource change. Effective portrait required; otherwise fail explicitly instead of silently disabling split.",
+    "Finally only reads prefs after successful beforePrefs capture; barrier/capture failure reports skip without first-touch AppPrefs. No ThemeManager/ColorManager scope or currentKeyboard mutation, no service or native-session teardown.",
+    "One120s watchdog plus20s main task bounds; Runnable catches errors internally. Expected baseline assertion is ordinary result, not main FATAL. Already-running main task cannot be interrupted and remains failed if timed out.",
+    "Bounded7-case YAML/JSON, no image/artifact-directory mutation; installed target APK path/SHA recorded for Root provenance binding."
+  ],
+  "limits": [
+    "No actual compilation, APK inspection or Android geometry run by this reviewer; static consistency is not runtime pass.",
+    "Direct isInside center uniqueness is not InputDispatcher, GestureFrame, nearest-neighbor selection, visual fit, accessibility or full IME acceptance.",
+    "Synthetic configuration is not the missing historical user YAML/screenshot. It exercises source-supported omitted-width contract only.",
+    "Invalid or missing style defaults, negative/NaN/Infinity, tiny values rounding0px, landscape split and arbitrary spacer/layout configurations remain untested.",
+    "Application startup may have independent native/background/framework effects. State helper does not request JNI, not that every target-process effect is absent.",
+    "Root must bind CI original APK/tree and diagnostic copy, require complete7/39 baseline2/fixed0 actual evidence, preferences/sentinel cleanup and raw warning logs. Existing warnings are preserved; no all-warning-free claim."
+  ],
+  "actions": "Read-only committed production/model/history and frozen helper source; wrote review JSON only. No production/helper edit, build, ADB, emulator or push."
+}

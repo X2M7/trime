@@ -1,0 +1,53 @@
+import groovy.json.JsonOutput
+import java.time.Instant
+
+// Test-only observation: never changes target, task dependencies, or source files.
+gradle.projectsEvaluated {
+    def projectPath = System.getProperty('trime.spotless.probe.project')
+    def outputPath = System.getProperty('trime.spotless.probe.out')
+    if (projectPath == null || outputPath == null) {
+        throw new GradleException('Set both trime.spotless.probe.project and trime.spotless.probe.out')
+    }
+    def p = gradle.rootProject
+    if (p.projectDir.canonicalFile != new File(projectPath).canonicalFile) {
+        return // The same init script also sees included builds.
+    }
+    def out = new File(outputPath).canonicalFile
+    if (out.toPath().startsWith(p.projectDir.canonicalFile.toPath())) {
+        throw new GradleException('Probe output must be outside the worktree')
+    }
+    p.tasks.named('spotlessKotlin').configure { task ->
+        task.doFirst {
+            def begin = new File(out, 'target-before.json')
+            if (begin.exists()) {
+                throw new GradleException('Refuse to overwrite existing phase evidence')
+            }
+            out.mkdirs()
+            def files = task.getTarget().files.collect { p.relativePath(it).replace('\\', '/') }.sort()
+            def dirs = [
+                'build-logic/convention/build/classes/kotlin/main',
+                'build-logic/convention/build/pluginDescriptors',
+                'build-logic/convention/build/resources/main'
+            ]
+            def outputs = dirs.collect { relative ->
+                int count = 0
+                def dir = p.file(relative)
+                if (dir.isDirectory()) { dir.eachFileRecurse { f -> if (f.isFile()) { count++ } } }
+                [path: relative, file_count: count]
+            }
+            begin.text = JsonOutput.prettyPrint(JsonOutput.toJson([
+                utc: Instant.now().toString(), task_path: task.path,
+                task_type: task.class.name, project_dir: p.projectDir.canonicalPath,
+                target_count: files.size(), relative_files: files,
+                producer_outputs: outputs
+            ])) + '\n'
+            task.logger.lifecycle('TRIME_SPOTLESS_PROBE_BEFORE target_count={}', files.size())
+        }
+        task.doLast {
+            new File(out, 'target-after.json').text = JsonOutput.prettyPrint(JsonOutput.toJson([
+                utc: Instant.now().toString(), task_path: task.path, main_actions_returned: true
+            ])) + '\n'
+            task.logger.lifecycle('TRIME_SPOTLESS_PROBE_AFTER main_actions_returned=true')
+        }
+    }
+}

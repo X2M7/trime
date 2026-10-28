@@ -1,0 +1,46 @@
+{
+  "mode": "baseline",
+  "apk": "/home/xumin/Public/Trime/build/issue-fixes-20261028/device-apks/baseline-diagnostic.apk",
+  "apk_sha256": "7e47545d6c7a2255546389b38cb4365229fd43b53202465f1243b4bd9fa3eb55",
+  "started": 1793222227.4602149,
+  "default_ime_before": "com.android.inputmethod.latin/.LatinIME",
+  "default_ime_after": "com.android.inputmethod.latin/.LatinIME",
+  "finished": 1793222259.9677205,
+  "report_sha256": "12fb8838b6ff2f2eb8395aa4d59bd10e9b8929ea6e68c47f2f4a0caa5c4a9f51",
+  "report_passed": false,
+  "expected_observation_matches": true,
+  "scenario_count": 7,
+  "violations": 2,
+  "preference_changes": [
+    {
+      "key": "general__pid",
+      "before": {
+        "tag": "int",
+        "attributes": {
+          "name": "general__pid",
+          "value": "2307"
+        },
+        "text": null,
+        "children": []
+      },
+      "after": {
+        "tag": "int",
+        "attributes": {
+          "name": "general__pid",
+          "value": "1747"
+        },
+        "text": null,
+        "children": []
+      }
+    }
+  ],
+  "sentinel_before_sha256": "fc23655d05c9d26dcf7a828f670dfc811c65aa54cc8a98283ad4ffa03da4c988",
+  "sentinel_after_sha256": "fc23655d05c9d26dcf7a828f670dfc811c65aa54cc8a98283ad4ffa03da4c988",
+  "stage": "assert_required_key_width_cascade",
+  "instrumentation_codes": [
+    "1"
+  ],
+  "reported_pid": 1747,
+  "actual_key_count": 39,
+  "required_checks_passed": true
+}

@@ -1,0 +1,79 @@
+#!/usr/bin/env python3
+"""Validate one existing, serial Spotless phase; never executes Gradle or changes source."""
+import argparse
+import collections
+import hashlib
+import json
+from pathlib import Path
+import re
+import subprocess
+
+p = argparse.ArgumentParser(description=__doc__)
+p.add_argument('--worktree', required=True, type=Path)
+p.add_argument('--phase-dir', required=True, type=Path)
+p.add_argument('--mode', required=True, choices=['baseline', 'candidate'])
+p.add_argument('--expected-count', required=True, type=int)
+a = p.parse_args()
+w, out = a.worktree.resolve(), a.phase_dir.resolve()
+def git(*args):
+    return subprocess.check_output(['git', *args], cwd=w)
+def digest(path):
+    h = hashlib.sha256()
+    with path.open('rb') as f:
+        for block in iter(lambda: f.read(1024 * 1024), b''):
+            h.update(block)
+    return h.hexdigest()
+tracked = sorted(x for x in git('ls-files', '-z').decode().split('\0') if x.endswith(('.kt', '.kts')))
+expected_producers = {':build-logic:convention:' + x for x in ['compileKotlin', 'pluginDescriptors', 'processResources']}
+before = json.loads((out / 'target-before.json').read_text())
+after = json.loads((out / 'target-after.json').read_text())
+text = (out / 'gradle.log').read_text()
+warning_lines = [line for line in text.splitlines()
+                 if 'Producing a file in one build and consuming it in another build' in line
+                 and "Task ':spotlessKotlin'" in line]
+producers = set()
+for line in warning_lines:
+    match = re.search(r"output of task '([^']+)'", line)
+    if match:
+        producers.add(match.group(1))
+missing = sorted(set(tracked) - set(before['relative_files']))
+extra = sorted(set(before['relative_files']) - set(tracked))
+failures = []
+def require(condition, message):
+    if not condition:
+        failures.append(message)
+require(int((out / 'exit-code.txt').read_text().strip()) == 0, 'Gradle exit was not zero')
+require(len(tracked) == a.expected_count, 'Tracked count differs from chosen revision/lane')
+require(len(before['relative_files']) == len(set(before['relative_files'])), 'Duplicate target paths')
+require(not missing and not extra, 'Runtime target differs from all tracked Kotlin source paths')
+require(before['target_count'] == len(tracked), 'Runtime target count mismatch')
+require(before['project_dir'] == str(w), 'Observed another project')
+require(before['task_path'] == after['task_path'] == ':spotlessKotlin', 'Unexpected observed task')
+require('SpotlessTaskImpl' in before['task_type'], 'Unexpected formatter task implementation')
+require(after.get('main_actions_returned') is True, 'Formatter did not finish its main actions')
+require(all(x['file_count'] > 0 for x in before['producer_outputs']), 'Included-build outputs were not warm')
+require('Not incremental: removing prior outputs' in text, 'No full/nonincremental Spotless action evidence')
+require('TRIME_SPOTLESS_PROBE_BEFORE' in text and 'TRIME_SPOTLESS_PROBE_AFTER' in text, 'Missing actual task action markers')
+require(re.search(r'^> Task :spotlessKotlinCheck\s*$', text, re.M) is not None, 'Check task did not execute successfully without a skip/cache suffix')
+require('BUILD SUCCESSFUL' in text, 'Build did not report success')
+if a.mode == 'baseline':
+    require(producers == expected_producers, 'Baseline did not reproduce the exact three producer warnings')
+    require(len(warning_lines) >= 3, 'Baseline warning records are incomplete')
+else:
+    require(not warning_lines, 'Candidate retains a root Spotless cross-build implicit-dependency warning')
+result = {
+    'status': 'PASS_SCOPED_PHASE' if not failures else 'FAIL_OR_INCONCLUSIVE',
+    'mode': a.mode, 'head': git('rev-parse', 'HEAD').decode().strip(),
+    'tracked_count': len(tracked), 'tracked_counts_by_top_level': dict(collections.Counter(x.split('/')[0] for x in tracked)),
+    'tracked_paths_sha256': hashlib.sha256(('\n'.join(tracked) + '\n').encode()).hexdigest(),
+    'target_count': before['target_count'], 'missing': missing, 'extra': extra,
+    'implicit_dependency_warning_line_count': len(warning_lines), 'producer_tasks': sorted(producers),
+    'warning_lines': warning_lines, 'all_other_warnings_retained_in_original_log': True,
+    'log_sha256': digest(out / 'gradle.log'),
+    'git_status_porcelain': git('status', '--short').decode(),
+    'git_diff_sha256': hashlib.sha256(git('diff', '--binary')).hexdigest(),
+    'failures': failures, 'scope': 'Existing local formatter phase only; no all-warning, app-build, test, lint, native, device or CI acceptance claim.'
+}
+(out / 'phase-review.json').write_text(json.dumps(result, ensure_ascii=False, indent=2) + '\n')
+print(json.dumps({k: result[k] for k in ['status', 'mode', 'tracked_count', 'target_count', 'missing', 'extra', 'failures']}))
+raise SystemExit(0 if not failures else 1)

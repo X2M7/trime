@@ -1,0 +1,80 @@
+{
+  "status": "FROZEN_FINAL_CANDIDATE_FOR_INDEPENDENT_REVIEW_NOT_COMPILED_BY_AUTHOR",
+  "source": {
+    "path": "/home/xumin/Public/Trime/build/issue-fixes-batch5-20261029/key-width-probe/KeyWidthInstrumentation.kt",
+    "bytes": 17343,
+    "sha256": "56caf723268e779b24b817b20cf673f8ae94c7a7e06409d3061ee64bad0dd0c9",
+    "line_count": 278
+  },
+  "package": "com.osfans.trime",
+  "instrumentation_class": "KeyWidthInstrumentation",
+  "final_result_key": "key_width_report",
+  "checkpoint_key": "key_width_checkpoint",
+  "arguments": {
+    "expect": "baseline|fixed, default fixed"
+  },
+  "bounds_ms": {
+    "overall": 120000,
+    "individual_main_task": 20000
+  },
+  "scenario_names": [
+    "global_default_wrap_12",
+    "layout_and_per_key_override",
+    "fractional_global_default_12_5",
+    "fractional_layout_and_key",
+    "spacers_do_not_inherit",
+    "right_edge_rounding_33_3",
+    "column_limit_two"
+  ],
+  "expected_result": {
+    "baseline": {
+      "passed": false,
+      "expected_observation_matches": true,
+      "all_scenarios_completed": true,
+      "scenario_count": 7,
+      "violating_case_count": 2,
+      "violating_cases": [
+        "global_default_wrap_12",
+        "fractional_global_default_12_5"
+      ],
+      "zero_width_keys": 21,
+      "result_code": 1
+    },
+    "fixed": {
+      "passed": true,
+      "expected_observation_matches": true,
+      "all_scenarios_completed": true,
+      "scenario_count": 7,
+      "violating_case_count": 0,
+      "positive_key_geometries_with_isInside_centers": 39,
+      "result_code": -1
+    }
+  },
+  "public_production_path": "ThemeYaml.parser -> ThemeDslExpander.expand -> decode Theme (omitted layout width remains0) -> Keyboard(targetContext,theme,1000,config) -> public keys geometry and Key.isInside. Inline click definitions use no KeyCode/name/native resolution. Both production layout passes execute.",
+  "initialization": "Existing Handler main-thread barrier is the first statement in try before AppPrefs/KeyboardPrefs access. Captured geometry preference snapshot guards finally readback. No manual initDefault.",
+  "preference_policy": "Helper makes no preference writes and needs no restoration. It records and compares landscape_mode, split_space_percent and expand_keypress_area only. Host remains responsible for full preference mapping/PID metadata/default IME checks. Effective landscape mode must be false, otherwise explicit precondition failure.",
+  "oracle": "Fixed known coordinates/widths/row/column per finite case plus contiguous positive row heights, total height and same-row height, remainder bound. Each positive key center is checked against all production keys.isInside; matched indices must equal exactly its own key.index. No production width resolver is copied to determine expected geometry. Baseline expected zero coordinates/widths in exactly two omitted-default cases; zero geometry explicitly skips uniqueness and is never reported as a passing center control.",
+  "does_not_call": [
+    "RimeDaemon or Rime session APIs (including getFirstSessionOrNull)",
+    "JNI/native methods",
+    "Key.getLabel/getAction/getCode/sendBindings or state appearance",
+    "Keyboard.getNearestKeys",
+    "Activity, UiAutomation, MotionEvent/InputDispatcher",
+    "ThemeManager/ColorManager or selected theme activation",
+    "File/image artifacts beyond the host-provided helper source; no target file fixture is created"
+  ],
+  "scope_limits": [
+    "Actual Android production geometry objects; no real IME/window/View rendering, system touch, full keyboard interaction or visual acceptance",
+    "Own-center uniqueness is checked for the39 positive fixture geometries only. Edge flags expand hit regions elsewhere; no guarantee about all coordinates, nearest-neighbor logic or system touch/selection dispatch.",
+    "Only explicit finite valid portrait/no-split widths and fixtures covered; no universal invalid/negative/NaN/Infinity/tiny-width validation",
+    "A baseline AssertionError is captured inside harness and returned; unexpected constructor errors are caught inside main Runnable to avoid uncaught main-thread FATAL",
+    "120s overall watchdog can finish an incomplete run; a running main task cannot be interrupted and report must not be called a product pass",
+    "Application startup itself can produce platform/database/work logs; no blanket all-platform-JNI absence or zero-warning assertion"
+  ],
+  "mutations": "Only ignored helper/evidence files written by author; no product changes, build/ADB/PR or device execution by author.",
+  "preserved_draft": {
+    "path": "/home/xumin/Public/Trime/build/issue-fixes-batch5-20261029/key-width-probe/pre-unique-center-draft.kt.txt",
+    "sha256": "9ca7cb884c4fd0c0472e73fd36d6fddf1c0bf535d103e81e10312fb12ebd6a69",
+    "note": "Read-only review draft, not a compiled/runtime failed attempt."
+  }
+}

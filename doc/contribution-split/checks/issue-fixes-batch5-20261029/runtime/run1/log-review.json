@@ -1,0 +1,280 @@
+{
+  "scope": "Mechanical review of captured continuous device log, not a blanket warning attribution or whole-device acceptance. Original full log retained locally.",
+  "full_log": {
+    "path": "/home/xumin/Public/Trime/build/issue-fixes-batch5-20261029/runtime/run1/device-logcat.txt",
+    "bytes": 3802267,
+    "sha256": "dfbc91ae41fc79eef7483d638c8f7d698017878f89b9a2c0014a4c90527e031a"
+  },
+  "captured_levels": {
+    "I": 7759,
+    "W": 2553,
+    "D": 9509,
+    "E": 1693,
+    "V": 5552
+  },
+  "warning_tags": [
+    [
+      "ActivityManager",
+      275
+    ],
+    [
+      "PackageSettings",
+      151
+    ],
+    [
+      "system_server",
+      138
+    ],
+    [
+      "PackageManager",
+      136
+    ],
+    [
+      "IPCThreadState",
+      123
+    ],
+    [
+      "Looper  ",
+      103
+    ],
+    [
+      "resolv  ",
+      86
+    ],
+    [
+      "BestClock",
+      79
+    ],
+    [
+      "HealthConnectPackageInfoUtils",
+      78
+    ],
+    [
+      "android.hardware.media.c2@1.0-service-goldfish",
+      62
+    ],
+    [
+      "CarrierConfigManager",
+      62
+    ],
+    [
+      "TelephonyRegistry",
+      62
+    ],
+    [
+      "mediaswcodec",
+      60
+    ],
+    [
+      "mediaextractor",
+      57
+    ],
+    [
+      "UserSystemPackageInstaller",
+      55
+    ],
+    [
+      "AppOpService",
+      49
+    ],
+    [
+      "ContextImpl",
+      42
+    ],
+    [
+      "MediaControlGattService",
+      35
+    ],
+    [
+      "SystemServiceManager",
+      31
+    ],
+    [
+      "Codec2Client",
+      28
+    ]
+  ],
+  "fatal_anr_oom_lmk_pattern_matches": [
+    {
+      "line": 17068,
+      "text": "10-29 05:17:03.741   545  1380 I am_anr  : [0,790,com.android.systemui,818462221,executing service com.android.systemui/.SystemUIService, waited 20006ms]"
+    },
+    {
+      "line": 18395,
+      "text": "10-29 05:17:09.103   545  1380 E ActivityManager: ANR in com.android.systemui"
+    },
+    {
+      "line": 18573,
+      "text": "10-29 05:17:09.170   545  1380 I am_anr  : [0,937,com.android.phone,952647245,Process ProcessRecord{93ac59a 937:com.android.phone/1001} failed to complete startup]"
+    },
+    {
+      "line": 18761,
+      "text": "10-29 05:17:09.757   545  1380 E ActivityManager: ANR in com.android.phone"
+    }
+  ],
+  "cases": {
+    "baseline": {
+      "pid": 1747,
+      "marker_lines": {
+        "start": 20009,
+        "end": 25465
+      },
+      "pid_levels": {
+        "I": 5,
+        "W": 11,
+        "D": 8,
+        "V": 5
+      },
+      "warning_error_lines": [
+        {
+          "line": 20358,
+          "level": "W",
+          "tag": "ans.trime.debug",
+          "text": "Unexpected CPU variant for x86: x86_64."
+        },
+        {
+          "line": 20359,
+          "level": "W",
+          "tag": "ans.trime.debug",
+          "text": "Known variants: atom, sandybridge, silvermont, goldmont, goldmont-plus, goldmont-without-sha-xsaves, tremont, kabylake, default"
+        },
+        {
+          "line": 20482,
+          "level": "W",
+          "tag": "ActivityThread",
+          "text": "Package uses different ABI(s) than its instrumentation: package[com.osfans.trime.debug]: x86_64, null instrumentation[com.osfans.trime.debug.test]: null, null"
+        },
+        {
+          "line": 20497,
+          "level": "W",
+          "tag": "ziparchive",
+          "text": "Unable to open '/data/app/~~oZU7v5WnLviY5uaMRnQbZA==/com.osfans.trime.debug.test-lazlLXMG78T8waj88UUMoA==/base.dm': No such file or directory"
+        },
+        {
+          "line": 20498,
+          "level": "W",
+          "tag": "ziparchive",
+          "text": "Unable to open '/data/app/~~oZU7v5WnLviY5uaMRnQbZA==/com.osfans.trime.debug.test-lazlLXMG78T8waj88UUMoA==/base.dm': No such file or directory"
+        },
+        {
+          "line": 20518,
+          "level": "W",
+          "tag": "ziparchive",
+          "text": "Unable to open '/data/app/~~DVndoSbnMUee5qK3RMXZgg==/com.osfans.trime.debug-PrOMtjnLGRAF9eqq-8cqJg==/base.dm': No such file or directory"
+        },
+        {
+          "line": 20521,
+          "level": "W",
+          "tag": "ziparchive",
+          "text": "Unable to open '/data/app/~~DVndoSbnMUee5qK3RMXZgg==/com.osfans.trime.debug-PrOMtjnLGRAF9eqq-8cqJg==/base.dm': No such file or directory"
+        },
+        {
+          "line": 22860,
+          "level": "W",
+          "tag": "ziparchive",
+          "text": "Unable to open '/data/app/~~oZU7v5WnLviY5uaMRnQbZA==/com.osfans.trime.debug.test-lazlLXMG78T8waj88UUMoA==/base.dm': No such file or directory"
+        },
+        {
+          "line": 22861,
+          "level": "W",
+          "tag": "ziparchive",
+          "text": "Unable to open '/data/app/~~oZU7v5WnLviY5uaMRnQbZA==/com.osfans.trime.debug.test-lazlLXMG78T8waj88UUMoA==/base.dm': No such file or directory"
+        },
+        {
+          "line": 22879,
+          "level": "W",
+          "tag": "ziparchive",
+          "text": "Unable to open '/data/app/~~DVndoSbnMUee5qK3RMXZgg==/com.osfans.trime.debug-PrOMtjnLGRAF9eqq-8cqJg==/base.dm': No such file or directory"
+        },
+        {
+          "line": 22880,
+          "level": "W",
+          "tag": "ziparchive",
+          "text": "Unable to open '/data/app/~~DVndoSbnMUee5qK3RMXZgg==/com.osfans.trime.debug-PrOMtjnLGRAF9eqq-8cqJg==/base.dm': No such file or directory"
+        }
+      ]
+    },
+    "fixed": {
+      "pid": 2083,
+      "marker_lines": {
+        "start": 26275,
+        "end": 26563
+      },
+      "pid_levels": {
+        "I": 4,
+        "W": 11,
+        "D": 8,
+        "V": 5
+      },
+      "warning_error_lines": [
+        {
+          "line": 26305,
+          "level": "W",
+          "tag": "ans.trime.debug",
+          "text": "Unexpected CPU variant for x86: x86_64."
+        },
+        {
+          "line": 26306,
+          "level": "W",
+          "tag": "ans.trime.debug",
+          "text": "Known variants: atom, sandybridge, silvermont, goldmont, goldmont-plus, goldmont-without-sha-xsaves, tremont, kabylake, default"
+        },
+        {
+          "line": 26310,
+          "level": "W",
+          "tag": "ActivityThread",
+          "text": "Package uses different ABI(s) than its instrumentation: package[com.osfans.trime.debug]: x86_64, null instrumentation[com.osfans.trime.debug.test]: null, null"
+        },
+        {
+          "line": 26313,
+          "level": "W",
+          "tag": "ziparchive",
+          "text": "Unable to open '/data/app/~~oZU7v5WnLviY5uaMRnQbZA==/com.osfans.trime.debug.test-lazlLXMG78T8waj88UUMoA==/base.dm': No such file or directory"
+        },
+        {
+          "line": 26314,
+          "level": "W",
+          "tag": "ziparchive",
+          "text": "Unable to open '/data/app/~~oZU7v5WnLviY5uaMRnQbZA==/com.osfans.trime.debug.test-lazlLXMG78T8waj88UUMoA==/base.dm': No such file or directory"
+        },
+        {
+          "line": 26315,
+          "level": "W",
+          "tag": "ziparchive",
+          "text": "Unable to open '/data/app/~~nscLnyopTF0c3h_7SUgbSw==/com.osfans.trime.debug-5RFUT6AwPEnk7CJAiAo0kg==/base.dm': No such file or directory"
+        },
+        {
+          "line": 26316,
+          "level": "W",
+          "tag": "ziparchive",
+          "text": "Unable to open '/data/app/~~nscLnyopTF0c3h_7SUgbSw==/com.osfans.trime.debug-5RFUT6AwPEnk7CJAiAo0kg==/base.dm': No such file or directory"
+        },
+        {
+          "line": 26427,
+          "level": "W",
+          "tag": "ziparchive",
+          "text": "Unable to open '/data/app/~~oZU7v5WnLviY5uaMRnQbZA==/com.osfans.trime.debug.test-lazlLXMG78T8waj88UUMoA==/base.dm': No such file or directory"
+        },
+        {
+          "line": 26428,
+          "level": "W",
+          "tag": "ziparchive",
+          "text": "Unable to open '/data/app/~~oZU7v5WnLviY5uaMRnQbZA==/com.osfans.trime.debug.test-lazlLXMG78T8waj88UUMoA==/base.dm': No such file or directory"
+        },
+        {
+          "line": 26429,
+          "level": "W",
+          "tag": "ziparchive",
+          "text": "Unable to open '/data/app/~~nscLnyopTF0c3h_7SUgbSw==/com.osfans.trime.debug-5RFUT6AwPEnk7CJAiAo0kg==/base.dm': No such file or directory"
+        },
+        {
+          "line": 26430,
+          "level": "W",
+          "tag": "ziparchive",
+          "text": "Unable to open '/data/app/~~nscLnyopTF0c3h_7SUgbSw==/com.osfans.trime.debug-5RFUT6AwPEnk7CJAiAo0kg==/base.dm': No such file or directory"
+        }
+      ]
+    }
+  },
+  "zero_warning_claim": false
+}

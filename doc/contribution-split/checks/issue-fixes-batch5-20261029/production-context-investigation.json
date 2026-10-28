@@ -1,0 +1,245 @@
+{
+  "created_at_utc": "2026-10-28T21:05:41.060552+00:00",
+  "reviewer": "Independent popup_review; read-only investigation and concrete production-context reproduction design",
+  "status": "PRODUCTION_WIDGET_THEME_BUG_UNCONFIRMED; ACTUAL_CONTEXT_REPRO_REQUIRED; NO_PRODUCTION_PATCH_JUSTIFIED_YET",
+  "upstream_source": "7fedca06ba5d2ef761a2ae3d44d8a0917db36994",
+  "prior_warning_report": {
+    "path": "/home/xumin/Public/Trime/build/issue-fixes-batch4-20261028/warning-followup.json",
+    "bytes": 35335,
+    "sha256": "7b5cd38c2435deabefa90325911fe87443b39adffb84db103a23aab076b71a88"
+  },
+  "correction_to_prior_report": {
+    "preserve_old_record": true,
+    "premature_prior_wording": "The prior top-level result FOLLOWUP_FIX_REQUIRED described the contract failure observed in the bare-targetContext object probe. It must not be read as confirmation that the actual production IME popup context fails AppCompat checks.",
+    "known": "Both old/fixed object probes used raw Instrumentation.targetContext and each emitted11 ThemeUtils errors. AppCompat1.7.1 logs that error when its actual widget Context lacks the windowActionBar marker; this fact remains valid for that fixture.",
+    "not_known": "Actual service Context, BaseInputView.themedContext, DI-injected PopupDelegate Context and actual popup ImageView effective themes have never been sampled in those probes. No production long-press ThemeUtils reproduction is established.",
+    "why_platform_style_name_is_insufficient": "AOSP ContextThemeWrapper.initializeTheme creates a Theme, copies baseContext.theme with setTo, then applies the requested style. Applying platform Settings can preserve AppCompat attrs copied from a valid base. Conversely manifest Activity theme alone does not prove service/context attrs.",
+    "required_consequence": "Adjudicate from actual production context attributes and actual path logs. If actual popup contexts are AppCompat-valid and no such error occurs, correct the helper fixture only and do not send a needless platform-ImageView replacement PR."
+  },
+  "primary_source_evidence": {
+    "AOSP_fixed_version": "android-15.0.0_r1; checked only to explain API35 mechanism, not every OEM/framework version",
+    "files": [
+      {
+        "url": "https://android.googlesource.com/platform/frameworks/base/+/refs/tags/android-15.0.0_r1/core/java/android/view/ContextThemeWrapper.java?format=TEXT",
+        "file": "/home/xumin/Public/Trime/build/issue-fixes-batch5-20261029/production-context-primary/ContextThemeWrapper.java",
+        "bytes": 7376,
+        "sha256": "09361c3ffa454c28c326bbadd78ad0b93cf951eda7a9108901d92291d94017ee"
+      },
+      {
+        "url": "https://android.googlesource.com/platform/frameworks/base/+/refs/tags/android-15.0.0_r1/core/java/android/view/inspector/WindowInspector.java?format=TEXT",
+        "file": "/home/xumin/Public/Trime/build/issue-fixes-batch5-20261029/production-context-primary/WindowInspector.java",
+        "bytes": 1181,
+        "sha256": "d2a6ea341c076e75af884b3791a66fc4d2a3f8164808018aca014e93b9abf6e3"
+      },
+      {
+        "url": "https://android.googlesource.com/platform/frameworks/base/+/refs/tags/android-15.0.0_r1/core/java/android/inputmethodservice/InputMethodService.java?format=TEXT",
+        "file": "/home/xumin/Public/Trime/build/issue-fixes-batch5-20261029/production-context-primary/InputMethodService.java",
+        "bytes": 198367,
+        "sha256": "2958a82be8178a2d0a1755cfa89fb075ad06413c5829645c8a35910f1962631d"
+      }
+    ],
+    "wrapper_semantics": "ContextThemeWrapper207-216 copies base theme before applying overlay. Its getThemeResId appears public in source but is @hide; it is absent from public android-35.jar. Do not call it or reflect it in helper.",
+    "window_inspection": "WindowInspector.getGlobalWindowViews is public and returns attached windows in the current process. Available API29+, so use API35 for the minimal reproduction. No WindowManagerGlobal/ActivityThread private reflection required.",
+    "IME_theme_note": "AOSP InputMethodService.onCreate1736-1742 selects its default platform input-method theme and calls super.setTheme. This further shows why an application/Activity AppCompat manifest does not settle the effective service theme; actual snapshots remain required.",
+    "exact_AppCompat_predicate": "Pinned1.7.1 ThemeUtils checks TypedArray.hasValue(AppCompatTheme_windowActionBar), not its boolean truth value. NoActionBar themes may validly define false. Use identical hasValue predicate and recycle TypedArray.",
+    "public_sdk_javap_output": "Compiled from \"WindowInspector.java\"\npublic final class android.view.inspector.WindowInspector {\n  android.view.inspector.WindowInspector();\n  public static java.util.List<android.view.View> getGlobalWindowViews();\n}\nCompiled from \"ContextThemeWrapper.java\"\npublic class android.view.ContextThemeWrapper extends android.content.ContextWrapper {\n  public android.view.ContextThemeWrapper();\n  public android.view.ContextThemeWrapper(android.content.Context, int);\n  public android.view.ContextThemeWrapper(android.content.Context, android.content.res.Resources$Theme);\n  protected void attachBaseContext(android.content.Context);\n  public void applyOverrideConfiguration(android.content.res.Configuration);\n  public android.content.res.AssetManager getAssets();\n  public android.content.res.Resources getResources();\n  public void setTheme(int);\n  public void setTheme(android.content.res.Resources$Theme);\n  public android.content.res.Resources$Theme getTheme();\n  public java.lang.Object getSystemService(java.lang.String);\n  protected void onApplyThemeResource(android.content.res.Resources$Theme, int, boolean);\n}\n"
+  },
+  "public_production_access": [
+    {
+      "goal": "Get the real live service/input view without a new production hook",
+      "path": "After an external editor requests the installed Trime IME, enumerate WindowInspector.getGlobalWindowViews on main, recursively traverse ViewGroup children, select exactly one attached/shown InputView with positive dimensions and non-null windowToken. InputView inherits public service, rime, scope, theme and themedContext from BaseInputView.",
+      "do_not": "TrimeInputMethodService.inputView is private and there is no public singleton getter. Do not instantiate a service, attach a fake base context, reflect ActivityThread.mServices, or manually call onCreateInputView."
+    },
+    {
+      "goal": "Prove framework/real editor lifecycle",
+      "path": "Check inputView.service.currentInputStarted, isInputViewShown, currentInputConnection != null, currentInputEditorInfo.packageName == independent editor host package, inputView.isAttachedToWindow and service.window.window.decorView ownership. Record service/PID/window/token identity and actual onCreateInputView/startInput logs.",
+      "important": "Production onCreateInputView invokes replaceInputViews/setInputView itself and returns null. A null return is not missing UI, and calling it by hand replaces live views/listeners and does not reproduce the original framework callback."
+    },
+    {
+      "goal": "Get the actual DI-injected popup context using only public objects",
+      "path": "Recursively find the shown KeyboardView below the real InputView. KeyboardView.popup is public; PopupDelegate.root is public. Assert popup.root is attached below this InputView and popup.root.context === inputView.themedContext. InputView.di is public if an additional Kodein instance lookup is desired, but no lookup is necessary to prove the injected-context identity through actual PopupDelegate.root.",
+      "source": "InputView binds ContextThemeWrapper to themedContext; PopupDelegate requests this binding and constructs its root/children from that same context."
+    },
+    {
+      "goal": "Identify the real Return popup trigger without labels/accessibility guesses",
+      "path": "Use public KeyboardWindow.currentKeyboard.keys to find popup == [TrimeWiki,Settings]. KeyboardView creates direct KeyView children in the same index order and assigns id=index; getChildAt(index) as KeyView, verify hasPopup, attached/shown bounds and current keyboard child count. Dynamic Return label may differ; do not search displayed text or use an arbitrary resource ID."
+    },
+    {
+      "goal": "Read theme contract precisely",
+      "path": "For targetContext diagnostic control, real service, inputView.context, inputView.themedContext, popup.root.context, and every actual AppCompatImageView.context in newly shown popup subtree, obtainStyledAttributes(androidx.appcompat.R.styleable.AppCompatTheme), record hasValue(index windowActionBar) and peekValue/getBoolean separately, then recycle. Record class/identity/package and bounded ContextWrapper.baseContext chain, theme identity, density/uiMode/display; do not call setTheme/applyStyle.",
+      "resource_check": "Confirm R.attr.windowActionBar resolves to expected resource name through that context to catch accidental helper/target resource ID mismatch. Main fact is hasValue even if bool=false."
+    }
+  ],
+  "minimal_execution_plan": [
+    {
+      "step": 1,
+      "name": "Freeze fixture and evidence boundaries",
+      "actions": [
+        "Use original CI x86_64 APK or a documented payload-identical local diagnostic signing copy; bind installed APK SHA, source tree, native SHA, helper SHA. #2204 has unchanged popup-context path relative to7fed, but if used name its actual producer/head and preserve that difference.",
+        "Use only the owned API35 disposable VM/working copy. Preserve existing preferences, selected/default IME, enabled list and private sentinel. Keep continuous raw logcat from before instrumented process start; Rime deploy may clear ring logs.",
+        "Prepare an independent package editor host, preferably the existing org.x2m7.trime.editorfixture/EditorActivity with chat mode and fictitious draft. Its source requests focus and showSoftInput; it runs in a separate process and cannot accidentally supply an AppCompat Activity Context to Trime views."
+      ]
+    },
+    {
+      "step": 2,
+      "name": "Start observer helper and real IME normally",
+      "actions": [
+        "Start bounded Instrumentation in the installed target process, first main Handler barrier as fixed in v2; no ThemeManager/ColorManager/RimeDaemon read before barrier. Send an explicit READY checkpoint for Root to start editor/IME.",
+        "Root uses adb ime enable/set with the exact installed input-method component and starts/focuses the independent editor. Do not replace a user device default or make any production process itself a synthetic host.",
+        "Helper polls main-thread WindowInspector until the genuine visible InputView/KeyboardView and real editor/session checks pass. Bounded timeout is a precondition failure, not a theme bug. Do not create/destroy an extra Rime session or attach a synthetic ThemeScope. Use existing InputView.rime only for optional cached ready/status observation."
+      ]
+    },
+    {
+      "step": 3,
+      "name": "Capture actual contexts before popup creation",
+      "actions": [
+        "Use public references described above to capture exact theme predicate for service/context/DI root and context chains. Confirm the actual theme exposes the original Return popup tokens; use current real theme if it does.",
+        "If switching theme is truly needed, use public suspend ThemeManager.selectTheme with actual real session ready, assert returned config ID and new attached InputView; preserve/restore original selected theme. Do not use ColorManager.attachTheme from helper to counterfeit the production setup.",
+        "Require popup.root currently has no popup children or explicitly dismiss via public popup.dismissAll before marking the case; record any intentional cleanup and pooled-entry limitations. Do not infer constructor counts from an old cached/pooled view."
+      ]
+    },
+    {
+      "step": 4,
+      "name": "Exercise actual long-press route, not a new PopupKeyboardUi",
+      "actions": [
+        "Place a unique log marker immediately before the real key gesture. Get KeyView center from getLocationOnScreen (not its window-local bounds) and ensure it is inside the shown IME/window on display0.",
+        "From Instrumentation worker use public sendPointerSync with MotionEvent ACTION_DOWN, SOURCE_TOUCHSCREEN, stable downTime and screen coordinates. Allow real main/lifecycle coroutine delay from the captured longPressTimeout preference; poll for newly attached popup container containing2 cells. Do not block main while waiting.",
+        "This executes GestureFrame DOWN -> startLongPressJob -> performLongClick -> actual KeyView.onLongClick -> PopupDelegate.listener ShowKeyboardAction -> actual PopupEntryUi/PopupKeyboardUi. No private call or direct new construction counts as this path.",
+        "Do not use adb input swipe as it ends in ACTION_UP. The default popup action is TrimeWiki, so long-press UP would execute a browser/Settings command. Always send ACTION_CANCEL while held, including failure finally, and verify no external action, no editor draft change, no remaining popup children."
+      ]
+    },
+    {
+      "step": 5,
+      "name": "Snapshot real generated children and log evidence",
+      "actions": [
+        "While pointer is still down and popup exists, traverse popup.root public children. Record runtime class and theme hasValue for every AppCompatImageView.context including invisible controls, context ancestry back to the real DI root, text/image visibility, actual resolved label strings, dimensions and attached/global rectangles.",
+        "Capture actual screen PNG and bounded view/context report. Isolate exact actual phase by unique begin/end markers and PID; collect all ThemeUtils E and other warnings without suppressing them. A zero counter alone cannot prove the path ran: require actual new popup subtree and expected original token/label data.",
+        "Read actual native/session/connection state without stopping the service. Record whether a PopupEntry was pooled versus newly created if distinguishable from object identities; no fixed11-error expectation applies to this real path."
+      ]
+    },
+    {
+      "step": 6,
+      "name": "Cleanup and make the decision",
+      "actions": [
+        "ACTION_CANCEL is mandatory; fallback public popup.dismissAll only if needed and recorded. Restore selected/default IME and helper-owned preference changes through normal APIs/Root-owned adb, verify source preferences/sentinel and no external activity launched. Let system disconnect/stop the real IME normally; do not destroy its Rime session from helper.",
+        "Finalize continuously captured logs and actual process/controller exits. Preserve startup system ANRs and any failed initialization as separate scope limits; do not label the entire device warning-free.",
+        "Optionally run the old bare-targetContext object as separately marked synthetic negative control AFTER production case. If it logs ThemeUtils while actual production contexts pass, it explains prior helper-only evidence. Never mix those artificial E lines into the production count or silently discard them."
+      ]
+    }
+  ],
+  "decision_table": [
+    {
+      "actual_production_image_context": "hasValue=false",
+      "actual_longpress_log": "ThemeUtils E reproduced during actual path",
+      "decision": "Confirmed production widget/theme contract defect in this actual environment. Only then prepare a separate focused production fix (platform ImageView candidate or valid theme contract) and validate appearance/behavior on required APIs."
+    },
+    {
+      "actual_production_image_context": "hasValue=true for every real popup image (boolean may be false)",
+      "actual_longpress_log": "No ThemeUtils E; original popup created correctly",
+      "decision": "No production bug demonstrated. Amend/correct prior classification, fix the helper fixture to use real/equivalent verified production context and do not submit an unnecessary widget replacement PR."
+    },
+    {
+      "actual_production_image_context": "hasValue=true",
+      "actual_longpress_log": "ThemeUtils E still present",
+      "decision": "Do not assume a contradiction or choose a fix. Attribute to other widgets/contexts, class/resource-ID binding or a different construction phase; record actual class/context checks and investigate before patching."
+    },
+    {
+      "actual_production_image_context": "not reached",
+      "actual_longpress_log": "App/Rime/storage/service/keyboard/editor not ready, timeout, startup failure or no visible InputView",
+      "decision": "Invalid precondition/helper/environment run. Preserve failure, fix only the precondition needed and rerun; not product theme reproduction or acceptance."
+    }
+  ],
+  "dangerous_blind_spots": [
+    "Raw targetContext is not equivalent to the actual IME service/DI context; a platform style name is not proof that inherited AppCompat attrs are absent.",
+    "AppCompat predicate is presence, not boolean true. NoActionBar=false is a valid definition. Runtime style resource ID getters are hidden; do not infer absence from their unavailability.",
+    "WindowInspector is API29+. This no-hook exact-context plan is API35-only; do not run it unguarded on API21 or claim API21 context acceptance. API21 can use actual UI/log observations separately but has no equivalent public global-window-object API here.",
+    "Instrumentation startup may kill an already-running target IME. Start instrumentation first, wait Application barrier/READY, then external editor/IME connection, and bind observed PID/window identity. Do not reuse stale KeyView references after theme/layout replacement.",
+    "Service theme/UI creation may follow native ready asynchronously; onCreateInputView can defer with ThemeScope not ready. Require actual attached view, correct editor connection and keyboard; no fixed sleep or manual initDefault/ThemeManager init to mask a race.",
+    "Actual gesture needs a lifecycle-owning attached KeyView. Unattached synthetic Keyboard or direct performLongClick() may exercise a callback but does not establish InputDispatcher/real long-press path.",
+    "MotionEvent must have touchscreen source and correct screen/display coordinates; window-local KeyView.bounds serves PopupDelegate geometry and is not valid injection coordinates.",
+    "Never send ACTION_UP after longpress for this theme: it executes default Wiki/Settings action. CANCEL avoids onRelease dispatch. Verify external host focus/draft afterward and cancel again from finally if necessary.",
+    "PopupEntry objects may be pooled and KeyboardView layouts cached. Same count of E messages is not a required or sufficient real-path oracle. Inspect actual newly visible objects and theme attrs.",
+    "Actual image Context can be a TintContextWrapper; inspect its own effective theme and bounded base chain rather than requiring direct identity with the DI context in all versions.",
+    "Application manifest has an AppCompat Activity theme while InputMethodService selects its own system theme; neither observation alone settles actual attrs after copying/overlays.",
+    "Do not theme only the helper to remove E lines before determining production parity. After real production is proven valid, using equivalent verified context is a legitimate fixture correction, not evidence of a production fix.",
+    "Continuous raw logs, original failures and other Trime warnings including candidate_border remain separate work; this investigation is not a full-warning removal or full IME acceptance."
+  ],
+  "reviewed_sources": [
+    {
+      "path": "app/src/main/java/com/osfans/trime/ime/core/TrimeInputMethodService.kt",
+      "bytes": 39204,
+      "sha256": "113f1db8725e5cba8491a505533ea1a145fd4e9f85c73c18f284ddca00199cc4"
+    },
+    {
+      "path": "app/src/main/java/com/osfans/trime/ime/core/LifecycleInputMethodService.kt",
+      "bytes": 1126,
+      "sha256": "f86333b0afd0012fa469d30dc1c374adf5941c3b359f0641268be6c242441757"
+    },
+    {
+      "path": "app/src/main/java/com/osfans/trime/ime/core/BaseInputView.kt",
+      "bytes": 5501,
+      "sha256": "3f9c0208ee00e5278931fd914022b66640a2b44afd6913757a4a017ab93d50a6"
+    },
+    {
+      "path": "app/src/main/java/com/osfans/trime/ime/core/InputView.kt",
+      "bytes": 13579,
+      "sha256": "b43212ae42192f486be5a95e2f5d78a5974e0b85f863510be9468fc8ca236ada"
+    },
+    {
+      "path": "app/src/main/java/com/osfans/trime/ime/keyboard/Keyboard.kt",
+      "bytes": 18693,
+      "sha256": "cdc21ccb9539f1ba167bc3fa14eba326ee69fc539976a6bc137684aca1069b6a"
+    },
+    {
+      "path": "app/src/main/java/com/osfans/trime/ime/keyboard/KeyboardView.kt",
+      "bytes": 3522,
+      "sha256": "926c6b1839f550974b7afa6ed25b7361cb1d42fee50e1848535b73e6d0460085"
+    },
+    {
+      "path": "app/src/main/java/com/osfans/trime/ime/keyboard/KeyView.kt",
+      "bytes": 14417,
+      "sha256": "288fdb6b8aa4d2788996fa1480b1b98072dfba3117ef9ec36c7151c06e086f61"
+    },
+    {
+      "path": "app/src/main/java/com/osfans/trime/ime/keyboard/GestureFrame.kt",
+      "bytes": 11247,
+      "sha256": "db81f52b6e9a65b471e92eda7febbf415576ca37acfddf90c5ace4de8aa6048c"
+    },
+    {
+      "path": "app/src/main/java/com/osfans/trime/ime/popup/PopupDelegate.kt",
+      "bytes": 7654,
+      "sha256": "99389c9b06bd0d3435aa2cfee0d11c2629f92ae4ed9c55db6843495235370312"
+    },
+    {
+      "path": "app/src/main/java/com/osfans/trime/ime/popup/PopupAction.kt",
+      "bytes": 1034,
+      "sha256": "6d12c01a944101ec66bb0bc0e9d56c4508c1373b68f490f9ba6ec245fac07527"
+    },
+    {
+      "path": "app/src/main/java/com/osfans/trime/ime/popup/PopupKeyboardUi.kt",
+      "bytes": 10591,
+      "sha256": "053481ac0be3ed3231e9463f55d1956020520acbb92402c7e067f4bf88cae365"
+    },
+    {
+      "path": "app/src/main/java/com/osfans/trime/ime/popup/PopupEntryUi.kt",
+      "bytes": 3414,
+      "sha256": "cf1b0e53b6ed0c4e689c2059d72a0125b16e5e4d0d67b0fa88872f146058221d"
+    },
+    {
+      "path": "app/src/main/java/com/osfans/trime/data/theme/ThemeManager.kt",
+      "bytes": 6334,
+      "sha256": "a89b077527ae246c7d146d7cd874b0444a88407bfd3467595e69f211c08716ea"
+    },
+    {
+      "path": "app/src/main/res/values/themes.xml",
+      "bytes": 618,
+      "sha256": "7402e0c4b2857e70b42251e33398d1d84ff1edd1b82d0d877d2715a7f443bf4d"
+    },
+    {
+      "path": "app/src/main/AndroidManifest.xml",
+      "bytes": 5053,
+      "sha256": "f4358cde15e31c4391c242e9cfdddc22eee42b577b760446eac451c0bf6d5e84"
+    }
+  ],
+  "actions": "No production/helper edit, build, adb, emulator operation or push. Read committed source and prior warning report, ran readonly javap against installed public SDK35, fetched3 fixed official AOSP source files and wrote this investigation/primary cache only."
+}

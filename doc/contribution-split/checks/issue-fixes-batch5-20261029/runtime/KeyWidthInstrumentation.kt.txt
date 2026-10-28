@@ -1,0 +1,278 @@
+/* SPDX-License-Identifier: GPL-3.0-or-later */
+package com.osfans.trime
+
+import android.app.Activity
+import android.app.Instrumentation
+import android.os.Build
+import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.os.Process
+import android.os.SystemClock
+import com.osfans.trime.data.prefs.AppPrefs
+import com.osfans.trime.data.theme.Theme
+import com.osfans.trime.data.theme.ThemeDslExpander
+import com.osfans.trime.data.theme.ThemeYaml
+import com.osfans.trime.ime.keyboard.Keyboard
+import com.osfans.trime.ime.keyboard.KeyboardPrefs.isLandscapeMode
+import org.json.JSONArray
+import org.json.JSONObject
+import java.io.File
+import java.security.MessageDigest
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
+import java.util.concurrent.atomic.AtomicBoolean
+import java.util.concurrent.atomic.AtomicReference
+
+/**
+ * Disposable Android object probe, expect=baseline|fixed (default fixed).
+ * Real ThemeYaml/DSL decoding and public Keyboard/Key geometry; inline click
+ * tokens keep construction independent of KeyCode/native label resolution.
+ * No Activity, View rendering, image, RimeDaemon, JNI, label/action getters,
+ * nearest-key lookup, InputDispatcher or simulated touch. No preference writes.
+ * Baseline's two expected geometry assertions are returned, not uncaught FATALs.
+ */
+class KeyWidthInstrumentation : Instrumentation() {
+    companion object {
+        private const val MAIN_MS = 20_000L
+        private const val TOTAL_MS = 120_000L
+        private const val ALLOWED_WIDTH = 1000
+    }
+
+    private data class Geometry(val x: Int, val width: Int, val row: Int, val column: Int)
+    private data class Case(
+        val name: String,
+        val styleWidth: Float,
+        val layoutWidth: Float?,
+        val items: List<String>,
+        val expected: List<Geometry>,
+        val baselineExpected: List<Geometry> = expected,
+        val columns: Int = 30,
+    )
+
+    private var args = Bundle()
+    private val report = JSONObject()
+    private val reportLock = Any()
+    private val scenarios = JSONArray()
+    private val violations = JSONArray()
+    private val finished = AtomicBoolean(false)
+    private val mainHandler = Handler(Looper.getMainLooper())
+    private val watchdog = Executors.newSingleThreadScheduledExecutor { work ->
+        Thread(work, "KeyWidthProbeDeadline").apply { isDaemon = true }
+    }
+    @Volatile private var stage = "created"
+    private var deadline = 0L
+
+    override fun onCreate(arguments: Bundle?) {
+        super.onCreate(arguments)
+        args = arguments?.let(::Bundle) ?: Bundle()
+        start()
+    }
+
+    override fun onStart() {
+        deadline = SystemClock.uptimeMillis() + TOTAL_MS
+        watchdog.schedule({ complete(false, IllegalStateException("120 s deadline exceeded at $stage")) }, TOTAL_MS, TimeUnit.MILLISECONDS)
+        var passed = false
+        var failure: Throwable? = null
+        var beforePrefs: JSONObject? = null
+        try {
+            // Instrumentation starts before Application.onCreate necessarily returns.
+            onMain("await_application_on_create") {}
+            put("application_on_create_barrier_completed", true)
+            val expected = args.getString("expect", "fixed")!!
+            check(expected == "baseline" || expected == "fixed") { "expect must be baseline or fixed" }
+            put("expected_target", expected)
+            put("pid", Process.myPid())
+            put("api", Build.VERSION.SDK_INT)
+            put("target_package", targetContext.packageName)
+            put("installed_target_apk", targetContext.applicationInfo.sourceDir)
+            put("installed_target_apk_sha256", sha(File(targetContext.applicationInfo.sourceDir)))
+            put("scope", "Actual public production Keyboard constructor and Key geometry from parsed YAML fixtures; isInside at positive key centers is a direct geometry call, not touch dispatch/full IME/visual acceptance.")
+            put("helper_requests_native_or_rime", false)
+            put("helper_calls_label_action_or_nearest_key_getters", false)
+            put("fixture_preference_writes", false)
+            put("all_scenarios_completed", false)
+            put("expected_observation_matches", false)
+            put("preferences_unchanged", false)
+            put("allowed_width_px", ALLOWED_WIDTH)
+            beforePrefs = onMain("capture_geometry_preferences") { geometryPrefs() }
+            put("preferences_before", beforePrefs)
+            val landscape = onMain("check_portrait_no_split_precondition") { targetContext.isLandscapeMode() }
+            put("effective_landscape_mode", landscape)
+            check(!landscape) { "Probe requires effective portrait mode; no preference is changed to force it" }
+
+            for (case in cases()) {
+                val yaml = fixture(case)
+                check(yaml.length < 16_384)
+                setStage("parse_${case.name}")
+                val parser = ThemeYaml.parser
+                val expanded = ThemeDslExpander.expand("key-width-probe", parser.parseToYamlNode(yaml)) { null }
+                val theme = parser.decodeFromYamlNode<Theme>(expanded)
+                val config = theme.presetKeyboards.getValue("probe")
+                check(config.width == (case.layoutWidth ?: 0f)) { "Missing width was filled before production construction" }
+                check(theme.style.keyWidth == case.styleWidth && config.keys.size == case.items.size)
+                val result = onMain("construct_and_measure_${case.name}") {
+                    val keyboard = Keyboard(targetContext, theme, ALLOWED_WIDTH, selfConfig = config)
+                    val actual = keyboard.keys.map { Geometry(it.x, it.width, it.row, it.column) }
+                    val actualRows = keyboard.keys.groupBy { it.row }.toSortedMap()
+                    var bottom = 0
+                    var heightsValid = actualRows.keys.toList() == (0 until actualRows.size).toList()
+                    val rowHeights = mutableListOf<Int>()
+                    for ((_, keys) in actualRows) {
+                        val y = keys.first().y
+                        val h = keys.first().height
+                        heightsValid = heightsValid && h > 0 && y == bottom && keys.all { it.y == y && it.height == h }
+                        bottom += h
+                        rowHeights.add(h)
+                    }
+                    heightsValid = heightsValid && bottom == keyboard.height && keyboard.height == keyboard.keyboardHeight
+                    if (rowHeights.isNotEmpty()) heightsValid = heightsValid && rowHeights.max() - rowHeights.min() <= rowHeights.size - 1
+                    val centerResults = keyboard.keys.map { key ->
+                        val positive = key.width > 0 && key.height > 0
+                        val x = key.x + key.width / 2
+                        val y = key.y + key.height / 2
+                        val matches = if (positive) keyboard.keys.filter { it.isInside(x, y) }.map { it.index } else emptyList()
+                        JSONObject().put("key_index", key.index).put("x", key.x).put("y", key.y)
+                            .put("width", key.width).put("height", key.height).put("row", key.row).put("column", key.column)
+                            .put("center_x", x).put("center_y", y).put("positive_geometry", positive)
+                            .put("center_inside", positive && key.isInside(x, y))
+                            .put("center_uniqueness_checked", positive).put("matched_key_indices", JSONArray(matches))
+                            .put("center_is_unique", positive && matches == listOf(key.index))
+                    }
+                    val centersValid = centerResults.all { it.getBoolean("center_inside") && it.getBoolean("center_is_unique") }
+                    val fixedMatches = actual == case.expected && heightsValid && centersValid
+                    val baselineIsZeroControl = case.baselineExpected.any { it.width == 0 }
+                    val baselineMatches = actual == case.baselineExpected && heightsValid && (baselineIsZeroControl || centersValid)
+                    JSONObject().put("name", case.name).put("yaml", yaml).put("yaml_sha256", sha(yaml.toByteArray(Charsets.UTF_8)))
+                        .put("style_width", case.styleWidth.toDouble()).put("layout_width_explicit", case.layoutWidth != null)
+                        .put("decoded_layout_width", config.width.toDouble()).put("columns_limit", config.columns)
+                        .put("input_item_count", case.items.size).put("created_key_count", keyboard.keys.size)
+                        .put("expected_fixed_geometry", geometryJson(case.expected)).put("expected_baseline_geometry", geometryJson(case.baselineExpected))
+                        .put("actual_keys", JSONArray(centerResults)).put("actual_row_count", actualRows.size)
+                        .put("keyboard_height_px", keyboard.height).put("keyboard_min_width_px", keyboard.minWidth)
+                        .put("row_heights_px", JSONArray(rowHeights)).put("row_heights_contiguous_and_absorb_rounding", heightsValid)
+                        .put("all_positive_centers_inside", centersValid)
+                        .put("matches_fixed_geometry", fixedMatches).put("matches_baseline_geometry", baselineMatches)
+                }
+                scenarios.put(result)
+                if (!result.getBoolean("matches_fixed_geometry")) {
+                    violations.put(JSONObject().put("scenario", case.name).put("kind", "geometry_or_center_invariant").put("details_in_scenario", true))
+                }
+                put("scenarios", scenarios)
+                put("violations", violations)
+                sendStatus(0, Bundle().apply { putString("key_width_checkpoint", JSONObject().put("stage", stage).put("completed_cases", scenarios.length()).put("violations", violations.length()).toString()) })
+            }
+            put("all_scenarios_completed", true)
+            check(scenarios.length() == 7)
+            val observations = (0 until scenarios.length()).map { scenarios.getJSONObject(it) }
+            val baselineMatches = observations.all { it.getBoolean("matches_baseline_geometry") } && violations.length() == 2
+            val fixedMatches = violations.length() == 0
+            put("expected_observation_matches", if (expected == "baseline") baselineMatches else fixedMatches)
+            put("baseline_expected_assertion_failure_observed", expected == "baseline" && baselineMatches)
+            put("scenario_count", scenarios.length())
+            put("violation_count", violations.length())
+            setStage("assert_required_key_width_cascade")
+            if (!fixedMatches) {
+                put("failure_kind", if (expected == "baseline" && baselineMatches) "expected_baseline_assertion" else "unexpected_geometry_assertion")
+                throw AssertionError("${violations.length()} case summaries fail required key-width geometry; captured assertion, not product FATAL")
+            }
+            check(expected == "fixed") { "Baseline unexpectedly satisfies fixed geometry; inspect target identity" }
+            passed = true
+            setStage("complete")
+        } catch (error: Throwable) {
+            failure = error
+        } finally {
+            val outcomeStage = stage
+            put("scenarios", scenarios)
+            put("violations", violations)
+            if (beforePrefs != null) {
+                runCatching {
+                    val after = onMain("verify_preferences_unchanged") { geometryPrefs() }
+                    put("preferences_after", after)
+                    val unchanged = beforePrefs.toString() == after.toString()
+                    put("preferences_unchanged", unchanged)
+                    check(unchanged) { "Geometry preference readback changed; helper did not write preferences" }
+                }.onFailure { error -> passed = false; failure = failure?.apply { addSuppressed(error) } ?: error; put("preference_check_error", error.toString()) }
+            } else {
+                put("preference_cleanup_skipped_before_capture", true)
+                put("preference_cleanup_skip_reason", "No preferences were written. If initial application barrier/capture failed, do not first-touch AppPrefs from finally.")
+            }
+            setStage(if (passed) "complete" else outcomeStage)
+            complete(passed, failure)
+        }
+    }
+
+    private fun cases(): List<Case> {
+        fun clicks(count: Int) = List(count) { click(it) }
+        fun zeros(count: Int) = List(count) { Geometry(0, 0, 0, it) }
+        return listOf(
+            Case("global_default_wrap_12", 10f, null, clicks(12), List(12) { Geometry(it % 10 * 100, 100, it / 10, it % 10) }, zeros(12)),
+            Case("layout_and_per_key_override", 10f, 25f, listOf(click(0, 50f), click(1), click(2), click(3)), listOf(Geometry(0, 500, 0, 0), Geometry(500, 250, 0, 1), Geometry(750, 250, 0, 2), Geometry(0, 250, 1, 0))),
+            Case("fractional_global_default_12_5", 12.5f, null, clicks(9), List(9) { Geometry(it % 8 * 125, 125, it / 8, it % 8) }, zeros(9)),
+            Case("fractional_layout_and_key", 10f, 12.5f, listOf(click(0), click(1, 2.5f), click(2)), listOf(Geometry(0, 125, 0, 0), Geometry(125, 25, 0, 1), Geometry(150, 125, 0, 2))),
+            Case("spacers_do_not_inherit", 10f, 20f, listOf("{width: 5}", click(0), "{}", "{click: '', width: 0}", click(1), "{width: 5}"), listOf(Geometry(50, 200, 0, 0), Geometry(250, 200, 0, 1))),
+            Case("right_edge_rounding_33_3", 10f, 33.3f, clicks(4), listOf(Geometry(0, 333, 0, 0), Geometry(333, 333, 0, 1), Geometry(666, 334, 0, 2), Geometry(0, 333, 1, 0))),
+            Case("column_limit_two", 50f, 10f, clicks(5), List(5) { Geometry(it % 2 * 100, 100, it / 2, it % 2) }, columns = 2),
+        )
+    }
+
+    private fun click(index: Int, width: Float? = null): String = "{click: {commit: k$index, label: K$index}${width?.let { ", width: $it" } ?: ""}}"
+
+    private fun fixture(case: Case): String = buildString {
+        appendLine("name: key-width-probe-${case.name}")
+        appendLine("style:")
+        appendLine("  key_width: ${case.styleWidth}")
+        appendLine("  key_height: 40")
+        appendLine("  keyboard_height: 200")
+        appendLine("  horizontal_gap: 0")
+        appendLine("  vertical_gap: 0")
+        appendLine("preset_keyboards:")
+        appendLine("  probe:")
+        case.layoutWidth?.let { appendLine("    width: $it") }
+        appendLine("    columns: ${case.columns}")
+        appendLine("    keys:")
+        case.items.forEach { appendLine("      - $it") }
+    }
+
+    private fun geometryPrefs(): JSONObject {
+        val prefs = AppPrefs.defaultInstance().keyboard
+        return JSONObject().put("landscape_mode", prefs.landscapeMode.getValue().name)
+            .put("split_space_percent", prefs.splitSpacePercent.getValue())
+            .put("expand_keypress_area", prefs.expandKeypressArea.getValue())
+    }
+
+    private fun geometryJson(items: List<Geometry>) = JSONArray(items.map { JSONObject().put("x", it.x).put("width", it.width).put("row", it.row).put("column", it.column) })
+    private fun sha(file: File): String = file.inputStream().use { input -> val digest = MessageDigest.getInstance("SHA-256"); val buffer = ByteArray(65536); while (true) { val n = input.read(buffer); if (n < 0) break; digest.update(buffer, 0, n) }; digest.digest().joinToString("") { "%02x".format(it.toInt() and 255) } }
+    private fun sha(bytes: ByteArray) = MessageDigest.getInstance("SHA-256").digest(bytes).joinToString("") { "%02x".format(it.toInt() and 255) }
+    private fun put(key: String, value: Any?) = synchronized(reportLock) { report.put(key, when (value) { is JSONObject -> JSONObject(value.toString()); is JSONArray -> JSONArray(value.toString()); else -> value }); Unit }
+    private fun setStage(value: String) { stage = value; put("stage", value) }
+
+    private fun <T> onMain(label: String, block: () -> T): T {
+        setStage(label)
+        val result = AtomicReference<Result<T>?>(null)
+        val latch = CountDownLatch(1)
+        val task = Runnable { try { result.set(runCatching(block)) } finally { latch.countDown() } }
+        check(mainHandler.post(task)) { "Could not post main task $label" }
+        if (!latch.await(minOf(MAIN_MS, (deadline - SystemClock.uptimeMillis()).coerceAtLeast(1)), TimeUnit.MILLISECONDS)) {
+            mainHandler.removeCallbacks(task)
+            error("20 s main task bound exceeded at $label; an already running task cannot be interrupted")
+        }
+        return checkNotNull(result.get()).getOrThrow()
+    }
+
+    private fun complete(passed: Boolean, error: Throwable?) {
+        if (!finished.compareAndSet(false, true)) return
+        watchdog.shutdownNow()
+        val final = synchronized(reportLock) {
+            JSONObject(report.toString()).put("passed", passed).put("stage", stage).apply {
+                error?.let { put("error", android.util.Log.getStackTraceString(it)) }
+            }
+        }
+        finish(if (passed) Activity.RESULT_OK else 1, Bundle().apply {
+            putBoolean("passed", passed)
+            putString("key_width_report", final.toString())
+            putString("stream", "Key width geometry passed=$passed stage=$stage\n")
+        })
+    }
+}

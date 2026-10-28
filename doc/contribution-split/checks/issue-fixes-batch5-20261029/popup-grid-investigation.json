@@ -1,0 +1,269 @@
+{
+  "captured_at_utc": "2026-10-28T21:03:19.421095+00:00",
+  "status": "CURRENT_SOURCE_CAPACITY_BUG_CONFIRMED_STATICALLY_DEFERRED_FOR_ISSUE_1443_PRIORITY",
+  "repository": "osfans/trime",
+  "upstream_base": "7fedca06ba5d2ef761a2ae3d44d8a0917db36994",
+  "root_decision": "Parent selected separately issue #1443 as next unit. Do not edit popup grid or mix it into key-width repair.",
+  "issue_relation": {
+    "direct_matching_open_issue_found": false,
+    "related_issue": 2033,
+    "relation": "Related #2033 only if a future PR is created: investigation of that label issue exposed this independent grid bug; #2204 owns Fixes #2033 for complete labels. Do not claim the historical label report itself reported capacity loss."
+  },
+  "live_duplicate_review": {
+    "open_issue_titles_and_bodies_read": 116,
+    "open_prs_read": 12,
+    "queries": [
+      "open issues popup",
+      "open issues 长按",
+      "open issues 弹出",
+      "all 116 current open issue titles and bodies",
+      "all 12 current open PR titles and bodies"
+    ],
+    "result": "No directly matching capacity/grid omission report or active grid fix identified within this snapshot. #2033 is labels and active #2204 changes label truncation only. #2195 changes KeyTextFitter/KeyView and its tests, not popup grid. Comment history of every unrelated issue was not exhaustively read; this is a bounded live duplicate check."
+  },
+  "source_evidence": {
+    "row_count": "ceil(keyCount / 5).toInt()",
+    "column_count": "(keyCount / rowCount).roundToInt()",
+    "enumeration": "keyOrders includes exactly rows*columns indices, via row*columns+permutedColumn. Extra labels construct keyUis but no View is added and onChangeFocus has no address for omitted tail indices.",
+    "examples_1_to_100": [
+      {
+        "items": 13,
+        "rows": 3,
+        "columns": 4,
+        "capacity": 12,
+        "missing_indices": [
+          12
+        ]
+      },
+      {
+        "items": 17,
+        "rows": 4,
+        "columns": 4,
+        "capacity": 16,
+        "missing_indices": [
+          16
+        ]
+      },
+      {
+        "items": 21,
+        "rows": 5,
+        "columns": 4,
+        "capacity": 20,
+        "missing_indices": [
+          20
+        ]
+      },
+      {
+        "items": 22,
+        "rows": 5,
+        "columns": 4,
+        "capacity": 20,
+        "missing_indices": [
+          20,
+          21
+        ]
+      },
+      {
+        "items": 26,
+        "rows": 6,
+        "columns": 4,
+        "capacity": 24,
+        "missing_indices": [
+          24,
+          25
+        ]
+      },
+      {
+        "items": 31,
+        "rows": 7,
+        "columns": 4,
+        "capacity": 28,
+        "missing_indices": [
+          28,
+          29,
+          30
+        ]
+      }
+    ],
+    "inputs": [
+      {
+        "path": "/home/xumin/Public/Trime/build/issue-fixes-batch5-20261029/popup-inputs/PopupKeyboardUi-origin-develop.kt.txt",
+        "bytes": 10591,
+        "sha256": "053481ac0be3ed3231e9463f55d1956020520acbb92402c7e067f4bf88cae365"
+      },
+      {
+        "path": "/home/xumin/Public/Trime/build/issue-fixes-batch5-20261029/popup-inputs/PopupContainerUi-origin-develop.kt.txt",
+        "bytes": 3037,
+        "sha256": "96a94af763b852552478c1d00667fa38a50f1b9cd63a1efc64a6d550e2d4b2bd"
+      }
+    ]
+  },
+  "meaningful_minimal_fix_assessment": {
+    "capacity_step": "Use ceiling for the per-row column count so rows*columns>=itemCount; retain at most five columns and existing center-out ordering.",
+    "one_line_change_is_not_complete": "Static row rendering also drops null cells without width placeholders, while focus hit testing uses fixed logical columns. When a partial row has missing columns at both ends, gravity is overwritten to START by the later missing cell and actual children shift left. Capacity-only invariants do not verify action reachability at visible centers.",
+    "concrete_newly_exposed_case": {
+      "items": 13,
+      "proposed_rows": 3,
+      "proposed_columns": 5,
+      "initial_focus_column": 2,
+      "column_order": [
+        4,
+        2,
+        0,
+        1,
+        3
+      ],
+      "top_row_logical_indices": [
+        14,
+        12,
+        10,
+        11,
+        13
+      ],
+      "top_row_rendered_valid_indices": [
+        12,
+        10,
+        11
+      ],
+      "top_row_actual_child_columns_without_placeholders": [
+        0,
+        1,
+        2
+      ],
+      "top_row_logical_valid_columns": [
+        1,
+        2,
+        3
+      ],
+      "center_hit_result": "Cell12 at actual column0 maps to missing14 and retains prior focus; cell10 at actualcolumn1 returns12; cell11 atactualcolumn2 returns10. This is a source/geometry deduction, not a claimed Android device execution."
+    },
+    "cohesive_repair": "A future single grid PR should both allocate enough slots and preserve logical-to-visible positions for the partial last row, e.g. fixed-width empty slot placeholders rather than dropping slots plus row gravity. Preserve non-empty cell actions and center-out ordering; do not bundle label/font/context changes.",
+    "empty_input": "KeyView.showPopupKeyboard checks key.popup.isEmpty() and returns before sending ShowKeyboardAction; PopupDelegate itself does not check empty. Preserve that normal caller invariant or add only an explicit local nonempty precondition if required; do not invent unrelated empty-popup behavior."
+  },
+  "existing_tests": {
+    "searched": [
+      "app/src/test",
+      "app/src/androidTest (directory absent)"
+    ],
+    "matches_for_PopupKeyboardUi_PopupContainerUi_createColumnOrder_calcInitialFocusedColumn": 0,
+    "android_coupling": "Both helpers are currently instance methods on PopupContainerUi with Context/ThemeScope/Rect. Ordinary JVM tests cannot construct actual View UI without Android runtime; do not pretend a separately copied formula tests production."
+  },
+  "pure_jvm_regression_design": {
+    "production_extraction": "If implemented later, extract only authoritative grid slot/index planning into a small Android-free production type consumed by PopupKeyboardUi rendering and focus selection. Pass bounded focusColumn from existing Rect-based calculation; no JNI, Robolectric or broad UI architecture changes required.",
+    "regression_golden_cases": [
+      {
+        "items": 13,
+        "required_reachable_indices": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12
+        ]
+      },
+      {
+        "items": 21,
+        "required_reachable_indices": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20
+        ]
+      },
+      {
+        "items": 22,
+        "required_reachable_indices": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20,
+          21
+        ]
+      }
+    ],
+    "behavioral_properties": [
+      "For item counts1..100 and every valid focus column, flatten occupied production layout slots; their multiset equals 0 until itemCount exactly, with no missing or duplicate input index. Assert each occupied slot resolves back to that same index through the production focus/index API.",
+      "For partial rows, rendered slot x positions must preserve the same logical column for hit selection; explicitly test central focus and holes on both sides. This catches the source-confirmed shift that a capacity-only formula test misses.",
+      "Golden order cases from the intended center/right/left policy: five columns focus2 gives [4,2,0,1,3]; focus0 gives [0,1,2,3,4]; focus4 gives [4,3,2,1,0]. Index0 remains initial focused item.",
+      "Counts at boundaries1,5,6,10,11,13,17,21,22,25 ensure rectangular capacity and complete reachability without deriving expected values by repeating the implementation ceil formula.",
+      "Do not newly test unchanged Rect fitting by copying its algorithm. Existing focus calculation can remain Android-dependent; separately bounded actual Popup UI tests should cover left/center/right triggers."
+    ],
+    "android_followup": "A bounded actual PopupKeyboardUi probe with one-character ASCII labels avoids KeyAction/Rime reads, creates >1row13/21 items, traverses real child bounds and invokes public onChangeFocus/onTrigger at each nonempty cell center. Require original token exactly; explicitly disclose direct calls and unattached views. Root owns any later compile/device run."
+  },
+  "evidence_bindings": [
+    {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch5-20261029/popup-inputs/all-open-issues.json",
+      "bytes": 179089,
+      "sha256": "756862fc520c02375ce2db713b152e478332bc49e68a345f7c46d313cbb29925"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch5-20261029/popup-inputs/issues-popup.json",
+      "bytes": 1316,
+      "sha256": "c31cb1923c2a50e826546ecc91b050a9e46d62f52d895d9c7e85220c73fcbd85"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch5-20261029/popup-inputs/issues-longpress.json",
+      "bytes": 41209,
+      "sha256": "2ae17c8d4a55ed6c4c7498aecbce93e58161b7ef68dbf7ef6c5742d14aaed251"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch5-20261029/popup-inputs/issues-popup-chinese.json",
+      "bytes": 26475,
+      "sha256": "d5fc5b9e4d774021d5ebc4c1033e8ee6bc97928d1cd6838bd4f90c8f434e7e8f"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch5-20261029/popup-inputs/open-prs.json",
+      "bytes": 25671,
+      "sha256": "18cd7fe1d7c780c355cc67a4ae8716c7b5a6fcdbfa874fc430ec5cd37e40ddb5"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch5-20261029/popup-inputs/pr-2195-files.json",
+      "bytes": 20470,
+      "sha256": "406deeabf9c1c41ae761d40cd281cdc961ecba09f4e497724413eff7df83582d"
+    }
+  ],
+  "actions": "Read-only git/GitHub/source/math investigation; only ignored evidence artifacts written. No production edit, build, ADB, PR creation or GitHub write.",
+  "factual_correction": "Caller empty-list guard attributed precisely to KeyView.showPopupKeyboard, not PopupDelegate. Prior report kept separately; no change to capacity/partial-row findings."
+}

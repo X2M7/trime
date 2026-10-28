@@ -1,0 +1,156 @@
+{
+  "utc": "2026-10-28T21:22:18.632023+00:00",
+  "pr": 2205,
+  "run": 40769057800,
+  "head": "cf5dc640ae0d9305cebdbd0c765fd27ba1179d7f",
+  "base": "7fedca06ba5d2ef761a2ae3d44d8a0917db36994",
+  "collector_exit": 0,
+  "all_five_jobs_success": true,
+  "all_five_actual_checkout_merge_sha": "29cc5d721c6c79b555a8bd324d859d7614a0aa0b",
+  "source_tree": "0c71fa62284c0c9c7038e0cd7b72e544a3e396f6",
+  "all_original_raw_logs_stream_hash_verified": true,
+  "annotation_snapshots": [
+    {
+      "job": "check / lint-and-test",
+      "count": 0,
+      "limit_metadata": {
+        "first_page_count": 0,
+        "may_be_truncated": false
+      }
+    },
+    {
+      "job": "build (windows-2025)",
+      "count": 1,
+      "limit_metadata": {
+        "first_page_count": 1,
+        "may_be_truncated": false
+      }
+    },
+    {
+      "job": "build (macos-26-intel)",
+      "count": 0,
+      "limit_metadata": {
+        "first_page_count": 0,
+        "may_be_truncated": false
+      }
+    },
+    {
+      "job": "build (macos-26)",
+      "count": 1,
+      "limit_metadata": {
+        "first_page_count": 1,
+        "may_be_truncated": false
+      }
+    },
+    {
+      "job": "build (ubuntu-26.04)",
+      "count": 0,
+      "limit_metadata": {
+        "first_page_count": 0,
+        "may_be_truncated": false
+      }
+    }
+  ],
+  "original_collector_manifest_sha256": "6075f26c42391e7fcc9c52d83f4b22dd30c8f07d540477500d109c86f8fce8f1",
+  "original_collector_manifest_entries_verified": 254,
+  "post_collector_additions": [
+    "feedback-final/reviews.json",
+    "feedback-final/issue-comments.json",
+    "feedback-final/review-comments.json",
+    "feedback-final/feedback-summary.json",
+    "final-collection-review.json"
+  ],
+  "final_feedback_utc": "2026-10-28T21:21:46.298144+00:00",
+  "final_feedback_counts": {
+    "reviews": 0,
+    "issue-comments": 0,
+    "review-comments": 0
+  },
+  "final_feedback_maintainer_entries": [],
+  "warnings": {
+    "mechanical_candidate_lines": 133,
+    "reviewed_categories": {
+      "git_initialization_hint": 4,
+      "android_sdk_tool": 14,
+      "gradle_deprecation_unexpanded": 20,
+      "gradle_documentation_reference": 10,
+      "jdk_jna_tool": 24,
+      "ci_cache_tool": 1,
+      "pinned_native_dependency": 54,
+      "pinned_native_dependency_compiler_summary": 6
+    },
+    "application_source_candidate_count": 0,
+    "unresolved_candidate_count": 0,
+    "not_a_zero_warning_or_distinct_bug_count_claim": true,
+    "cloud_unexpanded_gradle_origin_remains_unknown": true
+  },
+  "native_cache": [
+    {
+      "job": "build (ubuntu-26.04)",
+      "jni_primary_cache_miss": true,
+      "jni_cache_hit_message": false,
+      "cmake_build_task_lines": [
+        {
+          "line": 1721,
+          "text": "2026-10-28T21:13:18.5768936Z > Task :app:buildCMakeDebug[arm64-v8a]"
+        },
+        {
+          "line": 1786,
+          "text": "2026-10-28T21:15:19.1728684Z > Task :app:buildCMakeDebug[armeabi-v7a]"
+        },
+        {
+          "line": 1851,
+          "text": "2026-10-28T21:17:02.9708700Z > Task :app:buildCMakeDebug[x86]"
+        },
+        {
+          "line": 1916,
+          "text": "2026-10-28T21:18:46.8718613Z > Task :app:buildCMakeDebug[x86_64]"
+        }
+      ]
+    },
+    {
+      "job": "build (macos-26)",
+      "jni_primary_cache_miss": false,
+      "jni_cache_hit_message": true,
+      "cmake_build_task_lines": []
+    },
+    {
+      "job": "build (windows-2025)",
+      "jni_primary_cache_miss": false,
+      "jni_cache_hit_message": true,
+      "cmake_build_task_lines": []
+    },
+    {
+      "job": "build (macos-26-intel)",
+      "jni_primary_cache_miss": false,
+      "jni_cache_hit_message": true,
+      "cmake_build_task_lines": []
+    }
+  ],
+  "signed_url_candidate_json_files": [],
+  "runtime": {
+    "status": "NOT_CLAIMED_BY_CI_COLLECTOR",
+    "owner": "Root",
+    "scope": "CI evidence only; device validation must be reported separately."
+  },
+  "scope": "Read-only final verification and feedback refresh. Original logs, APK, ZIP, source proofs and collector outputs were not altered; final manifest regenerated to include the separate final feedback snapshots and this review. No builds, ADB, workflow or PR writes. Device, signature and Ready acceptance remain separately owned by Root.",
+  "annotation_context_review": [
+    {
+      "job": "build (windows-2025)",
+      "annotation_source": "job-123102708593-annotations.json",
+      "level": "warning",
+      "message": "Failed to save: \"C:\\Program failed with error: The process 'C:\\Program Files\\Git\\usr\\bin\\tar.exe' failed with exit code 2",
+      "classification": "windows_post_job_cache_archive_warning",
+      "relation_to_log_diagnostics": "Corroborates the existing ci_cache_tool warning candidate; job still succeeded."
+    },
+    {
+      "job": "build (macos-26)",
+      "annotation_source": "job-123102708698-annotations.json",
+      "level": "notice",
+      "message": "Due to capacity constraints, jobs targeting macOS arm64 runners may experience longer queue times.",
+      "classification": "github_runner_capacity_notice",
+      "relation_to_log_diagnostics": "GitHub scheduler notice about possible queue delays, not an application/native compiler diagnostic or a failed job."
+    }
+  ],
+  "unresolved_annotation_count": 0
+}

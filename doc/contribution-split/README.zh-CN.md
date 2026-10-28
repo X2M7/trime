@@ -104,6 +104,20 @@ v2 两次 native 会话正常销毁，逻辑主题偏好、默认 Latin 输入�
 
 本批只推独立源码分支与 fork 分类索引；未发布稳定版或改写 `develop`。索引仅同步所选文字／XML／helper，APK、原 PNG、完整日志与磁盘保留在本地，见 [SHA-256 清单](checks/issue-fixes-batch4-20261028/SHA256SUMS)。
 
+### 第五批：恢复主题默认键宽（2026-10-29）
+
+新增 [#2205](https://github.com/osfans/trime/pull/2205)，**Fixes [#1443](https://github.com/osfans/trime/issues/1443)**。分支 `contrib/fix-default-key-width`、源码 `cf5dc640`、基线 `7fedca06`，仅一个生产文件的一行表达式：布局省略正 `width` 时回退到 `style.key_width`，同一默认值用于行预估和实际按键布局；正布局宽度、每键宽度、空白占位及小数权重沿用原行为。历史实现和现行配置契约已[独立核对](checks/issue-fixes-batch5-20261029/key-width-investigation.json)，未夹带其他布局重构。证据冻结时 PR 仍为 Draft，完成发布校验后更新正式回执。
+
+[本地构建](checks/issue-fixes-batch5-20261029/local-validation.json)通过，331 项应用 JVM 测试新执行成功，Debug Lint 0 错误、65 条既有警告，格式检查通过；警告集合与同基线上一轮一致，36 个涉及文件与基线字节相同。临时 SDK 兼容参数已恢复，本地使用固定原 APK 的 x86_64 库／OpenCC 资源。新 [5/5 上游 CI](https://github.com/osfans/trime/actions/runs/40769057800)全部通过，五作业实际 checkout 均为 `29cc5d72`，完整 Git tree 等于 `cf5dc640`；Ubuntu JNI 缓存未命中并实际编译四 ABI，其他三平台缓存命中。[CI 汇总](checks/issue-fixes-batch5-20261029/cloud/pr-2205/ci-summary.json)不代验设备，也未从不导出 XML 的工作流编造测试用例数。
+
+[Android 15 限定 A/B](checks/issue-fixes-batch5-20261029/runtime/key-width-validation.json)直接调用真实 `ThemeYaml`／DSL、`Keyboard` 构造和 `Key.isInside`。七个 YAML 场景共 39 个 Key；旧 APK 在全局整数及小数默认宽度场景产生 21 个零宽键，两个场景断言按预期捕获；新 CI APK 七场景、39 个正尺寸和唯一中心命中全部通过。另五个兼容控制覆盖布局／每键覆盖、占位、分数宽度、换行／列数和边缘舍入。原 APK、共同本地证书诊断副本的 784 个非签名 ZIP 条目逐一相同；旧 APK 与当前基线仅相差 Manifest／InputBarDelegate 两项无关改动，直接输入源码一致。不是完整 IME 窗口、渲染、系统触摸、中文输入、物理真机、最近邻算法或 Release／升级验收。
+
+测试包已卸载、模拟器正常退出 0，无构建 JVM／模拟器残留，49 个原 AVD／system-image 文件的 SHA、尺寸及状态前后不变；仅使用隔离工作磁盘，文件索引保持运行。默认输入法与私有测试哨兵不变，完整逻辑偏好树仅 `general__pid` 更新；不推导完整词库／缓存字节未变。构建／VM 最低宿主可用内存分别约 1.78／1.60 GiB，1 GiB 保护未触发。
+
+**警告仍保留**：[CI 133 条机械匹配诊断行](checks/issue-fixes-batch5-20261029/cloud/pr-2205/warning-context-review.json)含固定原生依赖、SDK／JNA、Gradle 及缓存等诊断，应用源码候选 0、未归类候选 0，不等于所有警告为零。[完整运行日志复核](checks/issue-fixes-batch5-20261029/runtime/run1/log-review.json)记录 2,553 条 W；两个系统启动 ANR（SystemUI／phone）的事件及明细都在基线起始标记之前，两个目标 PID 在各自检查区间均有 11 条 W、无 E／F。原日志未过滤，不能宣称整个系统无 ANR／警告。此几何工具不创建弹出菜单 ImageView，因而不能用它未出现 ThemeUtils 日志证明旧问题已修好。
+
+另外冻结三项后续调查：[真实 IME 主题上下文](checks/issue-fixes-batch5-20261029/production-context-investigation.json)仍待实际窗口取证，裸测试 Context 的 AppCompat 日志不足以证明生产缺陷；[Spotless 排除 included-build 输出](checks/issue-fixes-batch5-20261029/spotless-plan.json)仅为待执行的 A/B 方案，明确当前基线 293 个 Kotlin 文件与历史分支 294 个文件的差别；[不完整弹出网格](checks/issue-fixes-batch5-20261029/popup-grid-investigation.json)需同时处理可见排列与命中映射，尚未提交推测性的取整修复。这些调查不混入 #2205。
+
 ### 先跟进已有 PR，避免重复
 
 09:34 快照中 [7 项 PR 的源码身份、覆盖与排除范围](checks/issue-triage-20261028/existing-pr-overlap.json)已核对正文；待审不等于已合并。

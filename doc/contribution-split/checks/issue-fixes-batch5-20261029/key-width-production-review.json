@@ -1,0 +1,93 @@
+{
+  "reviewed_at_utc": "2026-10-28T21:09:06.116714+00:00",
+  "reviewer": "Independent popup_review agent; read-only committed production source",
+  "result": "NO_PRODUCTION_PATCH_BLOCKER_FOUND; ACTUAL_BUILD_AND_GEOMETRY_AB_NOT_REVIEWED_YET",
+  "issue": {
+    "number": 1443,
+    "url": "https://github.com/osfans/trime/issues/1443",
+    "contract": "When a keyboard layout omits its width, style.key_width should supply clickable default widths, as in the reported pre3.2.16 behavior. Explicit keyboard/per-key sizes remain stronger overrides.",
+    "issue_snapshot": {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch5-20261029/popup-inputs/issue-1443.json",
+      "bytes": 1372,
+      "sha256": "d1a725241f22787d893b857d8492c688e85a7e4902959886d2217c5930fcb5e3"
+    },
+    "historical_control": {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch5-20261029/key-width-inputs/Keyboard-v3.2.16.java.txt",
+      "bytes": 29972,
+      "sha256": "5298502a5bf61aca3dd9e8c1c9231266a88527fca3320a0dcc8c4977635fbf57"
+    },
+    "historical_source_check": "Read cached3.2.16 Keyboard.java: mDefaultWidth from style.key_width at123, layout defaultWidth fallback to mDefaultWidth at209-211, clickable width-zero fallback in both passes at267/351."
+  },
+  "base": "7fedca06ba5d2ef761a2ae3d44d8a0917db36994",
+  "head": "cf5dc640ae0d9305cebdbd0c765fd27ba1179d7f",
+  "actual_diff": "Exactly1 deletion/1 insertion in Keyboard.kt122; resolve keyboardKeyWidth once as positive layout width else global Float. Independent byte replacement verified against committed parent; no other committed file change.",
+  "two_passes": "The selected variable is reused by both existing keyWidthWeight assignments (row/height precomputation and actual Key geometry construction). Therefore row wrap, row total weights and assigned pixel widths receive the same inherited value. No duplicated independent policy or new public abstraction added.",
+  "contracts_checked": [
+    {
+      "case": "omitted or zero layout width",
+      "finding": "TextKeyboard.width defaults0f and GeneralStyle.keyWidth holds decoded global value. A positive global width now supplies clickable missing/zero per-key widths; old source used raw0 and collapsed them."
+    },
+    {
+      "case": "positive keyboard width",
+      "finding": "Positive selfConfig.width is returned unchanged and still overrides global style. Existing explicitly sized shipped layouts remain on the same value."
+    },
+    {
+      "case": "explicit per-key positive width",
+      "finding": "Both branches still choose the per-key value whenever it is nonzero, so an explicit positive width overrides either selected default unchanged."
+    },
+    {
+      "case": "spacers and empty actions",
+      "finding": "Per-key selection retains key.width==0 && click.orAbsent!=null. Absent click and Plain(empty) remain nonclickable spacers and retain their own0 or explicit positive widths; column increment and Key creation remain unchanged. Inline token is a present action."
+    },
+    {
+      "case": "fractional weights",
+      "finding": "takeIf compares Float and returns original Float. No conversion to Int before existing percentage-to-pixel calculations;12.5/2.5 values preserve precision and existing right-edge correction remains intact."
+    },
+    {
+      "case": "untouched geometry policy",
+      "finding": "No change to allowedWidth, column limits, split ratio/gap insertion, spacer touch expansion, row height fitting, edge flags, nearest-neighbor threshold or key coordinates after width selection."
+    }
+  ],
+  "material_limits": [
+    "Negative and NaN keyboard default widths no longer win over global style because >0f rejects them. This changes invalid layout input and is consistent with positive-wins defaults, but is not general invalid-theme validation.",
+    "Positive infinity remains >0; per-key negative/NaN/Infinity values remain untouched. Do not claim arbitrary invalid themes are normalized or never crash.",
+    "If global style width is0/negative/invalid as well, this one-line repair does not invent a default. Tiny positive percentages may still round to0px under existing pixel conversion.",
+    "No landscape split or InputDispatcher/device/visual acceptance performed by this source review. A successful Key.isInside(center) check is geometry only; edge flags/proximity can overlap and do not prove exclusive selection.",
+    "Current worktree app/build.gradle.kts was temporarily modified by root-controlled build at inspection time. Review binds committed base/head objects and does not treat that temporary SDK adjustment as production diff.",
+    "Root still needs actual local331JVM/Lint comparison, exact-head CI and real production Keyboard-constructor baseline/fixed geometry evidence. No all-warning-free claim."
+  ],
+  "validation_focus": [
+    "Decode omission through real ThemeYaml without filling width in helper; call actual Keyboard constructor with nonempty selfConfig and inline click tokens.",
+    "Capture expected old zero-width overlap failure and fixed positive coordinates/wrapping; complete all compatibility controls instead of aborting on first expected mismatch.",
+    "Check positive keyboard/per-key override, explicit/zero/empty-click spacer, fractional weight, final-edge rounding and independent column-limit wrap.",
+    "Use Application main barrier and guarded cleanup. Do not touch RimeDaemon merely to assert no session; do not read Key label/action-state APIs which consult native state."
+  ],
+  "reviewed_committed_sources": [
+    {
+      "path": "app/src/main/java/com/osfans/trime/ime/keyboard/Keyboard.kt",
+      "bytes": 18736,
+      "sha256": "438074eb02766ad01e1c66f62de1fa78dd6ec5be1cfb63c632b68c234558107b"
+    },
+    {
+      "path": "app/src/main/java/com/osfans/trime/ime/keyboard/Key.kt",
+      "bytes": 14473,
+      "sha256": "400f39329ced634460f22e2866728b00f0577ffeafcbb3a471498305bda8d94b"
+    },
+    {
+      "path": "app/src/main/java/com/osfans/trime/data/theme/model/TextKeyboard.kt",
+      "bytes": 3322,
+      "sha256": "79391bd4af59b63f77eb7cbf0843c473a9c5a5482bacee7b687f001bf8fc6692"
+    },
+    {
+      "path": "app/src/main/java/com/osfans/trime/data/theme/model/GeneralStyle.kt",
+      "bytes": 5466,
+      "sha256": "6a7712390dec5ac3251ce458def74f537b95f8f27e558381c768667d0ae96681"
+    },
+    {
+      "path": "app/src/main/java/com/osfans/trime/data/theme/model/KeyActionToken.kt",
+      "bytes": 943,
+      "sha256": "bd52f9165d61439f260a8681ad2ac1cd2fb380577cb7d6a9ee59bc67707cd95d"
+    }
+  ],
+  "actions": "No production modification, Gradle/build, ADB, emulator or push. Read issue/history and committed model/geometry sources only; wrote this review JSON."
+}

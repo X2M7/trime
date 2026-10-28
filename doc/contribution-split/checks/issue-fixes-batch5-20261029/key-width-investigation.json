@@ -1,0 +1,224 @@
+{
+  "captured_at_utc": "2026-10-28T21:06:25.515465+00:00",
+  "status": "SOURCE_CONFIRMED_CURRENT_DEFAULT_WIDTH_REGRESSION_AND_LEGACY_CONTRACT_SUPPORTED",
+  "repository": "osfans/trime",
+  "base": "7fedca06ba5d2ef761a2ae3d44d8a0917db36994",
+  "issue": {
+    "number": 1443,
+    "url": "https://github.com/osfans/trime/issues/1443",
+    "title": "Version 3.2.16 后面出现 style.key_width 不生效问题",
+    "state": "OPEN",
+    "created_at": "2024-08-07T00:08:27Z",
+    "updated_at": "2024-08-07T00:08:27Z",
+    "comment_count": 0,
+    "reported_app": "3.2.19, F-Droid, e46046abfb030a2687033f74ad00d1b2693af433",
+    "reported_android": "10",
+    "historical_claim": "3.2.16 and earlier worked with only style.key_width; later versions require keyboard width or show disordered layout.",
+    "screenshots": "Attachment URLs are retained in exact issue body; not independently visually inspected here. No missing user theme fixture is invented."
+  },
+  "live_duplicate_check": {
+    "current_open_pr_count": 12,
+    "current_open_issue_count": 116,
+    "search_1443_all_prs": 0,
+    "search_key_width_all_prs": 0,
+    "search_keyboard_width_open_prs": 0,
+    "existing_2195_excluded": "Live PR files are KeyTextFitter.kt, KeyView.kt, KeyTextFitterTest.kt, not Keyboard.kt or default layout width. Other current open PR descriptions do not claim this fallback repair.",
+    "boundedness": "Fresh GitHub CLI responses and commands retained. Search is not a guarantee about unindexed text/private work."
+  },
+  "historical_contract": {
+    "v3_2_16": "Keyboard.java computes mDefaultWidth from style.key_width, keyboardConfig.width defaults0, and if that pixel defaultWidth is0 explicitly selects mDefaultWidth; clickable per-key width0 then selects defaultWidth. This is direct positive evidence of the issue author's expected cascade.",
+    "current_schema_and_models": "doc/trime-schema.json still defines style.key_width as key width percentage; GeneralStyle.keyWidth is a parsed Float default0, TextKeyboard.width is Float default0. ThemeDslExpander only expands includes/patches, and does not copy global style fields into each keyboard.",
+    "refactor_history": "4ef9d817 (2024-01-24 Kotlin conversion) initially retains the legacy fallback assignment but later overwrites defaultWidth from raw keyboardKeyWidth=0. The reported e46046ab source uses raw keyboardKeyWidth without global fallback for both row calculation and actual sizing. Current code preserves this semantic loss.",
+    "e254bd30_not_deprecation": "2024-03-28 commit titled set key width to0 if width not set changes per-key absent width to0, still falling back for clickable keys. This supports spacer semantics and is not documentation that style.key_width was deprecated.",
+    "intent_limit": "No deprecation or replacement contract found in the inspected schema, model, issue comments(empty) or targeted history. We do not infer the intent of every historical refactor from a commit title."
+  },
+  "current_root_cause": {
+    "site": "Keyboard.kt init: val keyboardKeyWidth=selfConfig.width",
+    "model_absent_value": 0.0,
+    "first_pass": "Zero per-key width with nonempty click selects raw keyboardKeyWidth, used for wrapping/row weights.",
+    "second_pass": "The same raw value is used to size actual clickable keys. Positive global theme.style.keyWidth is ignored here. Its other current use computes proximityThreshold, not actual key geometry.",
+    "deterministic_example": "style.key_width10, no keyboard width, allowedWidth1000,12 inline clickable keys with no individual width: current code creates12 keys all x0,width0 in one row. Fixed cascade should create10 keys at x0..900,width100 on row0 and2 keys x0,100,width100 on row1. This is source reasoning pending actual Android object execution."
+  },
+  "minimal_complete_repair": {
+    "expression": "selfConfig.width.takeIf { it > 0f } ?: theme.style.keyWidth",
+    "placement": "Resolve once before both existing passes; preserve existing per-key selection key.width==0 && click.orAbsent!=null and spacer rules.",
+    "relation": "Fixes #1443 once baseline/fixed actual geometry evidence and required checks pass; no grid, popup labels, context/theme warnings or proximity redesign bundled."
+  },
+  "boundaries": [
+    "Positive keyboard layout width wins over global style width; positive explicit per-key width wins over selected default.",
+    "Keep Float weights through selection:12.5,2.5,etc must not truncate toInt before pixel conversion. Existing pixel rounding/right-edge correction remains; tiny positive widths that convert to0px are not newly guaranteed visible.",
+    "Absent click or Plain(empty) remains a spacer: width0 stays0, explicit spacer width remains its own value and never inherits default. Inline action is present even when a Plain(empty) is absent.",
+    "style width also defaults0: if neither level supplies a positive default, this narrow repair does not invent10 or normalize arbitrary invalid themes.",
+    "takeIf>0 treats negative layout defaults as unset too; this is consistent with the project's positive-wins geometry convention, but changes invalid negative-layout input compared with raw negative sizing. Per-key negative widths are untouched; no general NaN/Infinity/negative validation claim.",
+    "Both row estimation and actual key pass consume same selected default. Validate width-based wrapping, column-limit wrapping and right-edge rounding; keep landscape split geometry out of this narrow portrait/no-split fixture unless separately tested.",
+    "Current spacer expansion can enlarge hit areas, so geometric containment of center by isInside does not establish exclusive hit selection or real touch dispatch."
+  ],
+  "actual_no_JNI_probe_feasibility": {
+    "result": "FEASIBLE_WITH_PUBLIC_PRODUCTION_KEYBOARD_OBJECT_ON_ANDROID_NO_RIME_STUB_NEEDED",
+    "initialization": "Start with20s Handler-post main-thread barrier after Application binding; AppPrefs/KeyboardPrefs cannot be first touched off-main while Application.onCreate is running. If preference capture is not complete, finally must not read theme/prefs to clean up.",
+    "fixture_path": "ThemeYaml.parser parse/decode a small explicit Theme YAML with global key_width/key_height/keyboard_height and preset keyboard keys containing inline click {commit:a,label:a}. ThemeDslExpander can run on same node; do not manually fill missing keyboard width before decoding.",
+    "why_no_native": "Keyboard constructor reads Android Context/resources and AppPrefs; Key constructor caches pure theme.resolveAction tokens. KeyAction.Inline constructor does not use KeyCode/Rime; Key.init reads click.code(default0) and calls parent.setModifierKey only. Color/label/state methods are lazy and must not be called.",
+    "read_only_assertions": [
+      "keyboard.keys geometry x/y/width/height/row/column/index and minWidth/height",
+      "key.isInside its positive geometry center",
+      "no getLabel/getAction/getCode/sendBindings/appearance/RimeDaemon access"
+    ],
+    "caution": "Do not call RimeDaemon.getFirstSessionOrNull even just to prove no session: its object initialization itself can initialize native Rime infrastructure. State exactly which helper paths execute, preserve logs and do not claim full IME/no-native effects outside the probe."
+  },
+  "meaningful_validation_design": {
+    "baseline": "Same actual production constructor with omitted keyboard width and positive global width must show captured zero-width regression; baseline assertion is reported, not thrown uncaught on main.",
+    "fixed_controls": [
+      "12 global10% default keys at1000px cause10+2 row wrap and positive widths",
+      "Explicit keyboard25% overrides global10%:4-per-row width250; per-key50% overrides that default",
+      "Global12.5% and per-key fractional2.5% preserve expected125px/25px widths",
+      "Explicit5% spacer shifts next key50px, missing or empty-click spacer with width0 does not inherit; clickable row/column counts remain correct",
+      "Width33.3% at1000px and three keys exercises existing final right-edge correction to333/333/334; fourth key starts next row",
+      "Explicit columns2 with enough horizontal room exercises column wrapping independently of width"
+    ],
+    "pure_JVM_scope": "Existing KeyboardResolveTest covers Int positive-wins, Float nonnegative corners, offsets and landscape pick, but no actual width inheritance or Keyboard objects. Do not add a test that merely copies the one-line resolver; parser regression + actual Android constructor geometry are the meaningful integration boundary. A Float overload of the existing production resolver may have focused policy tests if used, but those alone do not prove both passes consume it.",
+    "execution_limits": "This author has not built or run these cases; Root owns later compilation/device proof. Public isInside center call is geometry, not InputDispatcher/system touch or full IME visual acceptance."
+  },
+  "evidence_bindings": [
+    {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch5-20261029/key-width-inputs/4ef9d817.patch.txt",
+      "bytes": 32329,
+      "sha256": "ed295a5a40f67b7dc4c629ada318b813c1b31f2c4fd1a44e4759a86ef784d1b6"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch5-20261029/key-width-inputs/96db7f56.patch.txt",
+      "bytes": 1428,
+      "sha256": "709f20c67a01b759de46857f87baffd65fbaf7d7631456e166204a1e46aafb45"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch5-20261029/key-width-inputs/GeneralStyle-origin-develop.kt.txt",
+      "bytes": 5466,
+      "sha256": "6a7712390dec5ac3251ce458def74f537b95f8f27e558381c768667d0ae96681"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch5-20261029/key-width-inputs/Key-origin-develop.kt.txt",
+      "bytes": 14473,
+      "sha256": "400f39329ced634460f22e2866728b00f0577ffeafcbb3a471498305bda8d94b"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch5-20261029/key-width-inputs/Keyboard-origin-develop.kt.txt",
+      "bytes": 18693,
+      "sha256": "cdc21ccb9539f1ba167bc3fa14eba326ee69fc539976a6bc137684aca1069b6a"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch5-20261029/key-width-inputs/Keyboard-reported-e46046ab.kt.txt",
+      "bytes": 31066,
+      "sha256": "7552e4201c7746513e58c835ea6d55964cbc2db4659afbf6a3d2b9e1b13711bd"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch5-20261029/key-width-inputs/Keyboard-v3.2.16.java.txt",
+      "bytes": 29972,
+      "sha256": "5298502a5bf61aca3dd9e8c1c9231266a88527fca3320a0dcc8c4977635fbf57"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch5-20261029/key-width-inputs/TextKeyboard-origin-develop.kt.txt",
+      "bytes": 3322,
+      "sha256": "79391bd4af59b63f77eb7cbf0843c473a9c5a5482bacee7b687f001bf8fc6692"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch5-20261029/key-width-inputs/ThemeDslExpander-origin-develop.kt.txt",
+      "bytes": 10230,
+      "sha256": "6ed53fef5802bced7d78e0833211d11647a1d3d98c7de7ed19e4b2cc20e944b5"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch5-20261029/key-width-inputs/e254bd30.patch.txt",
+      "bytes": 951,
+      "sha256": "f7eb822a8b473eef0d2354a49cfb7f6cc9dc88ea2f99c8b3725518b531ace479"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch5-20261029/key-width-inputs/issue-1443.command.json",
+      "bytes": 301,
+      "sha256": "b9b720c7efa3e37fd5954e6b47a826180c2d42a834fe3fd2ace229a06fb3982e"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch5-20261029/key-width-inputs/issue-1443.json",
+      "bytes": 1372,
+      "sha256": "d1a725241f22787d893b857d8492c688e85a7e4902959886d2217c5930fcb5e3"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch5-20261029/key-width-inputs/issue-1443.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch5-20261029/key-width-inputs/issue-1443.stdout",
+      "bytes": 1339,
+      "sha256": "930c83c4ec00e39056e4935d37e2dfc70f4c65e511cfdfcc49adc8082a6aebe3"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch5-20261029/key-width-inputs/prs-key-width.command.json",
+      "bytes": 313,
+      "sha256": "1ce557c743cadf3afb11f3d28edc44db2ee269f16a6dd12c439c2a92de000d6b"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch5-20261029/key-width-inputs/prs-key-width.json",
+      "bytes": 3,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch5-20261029/key-width-inputs/prs-key-width.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch5-20261029/key-width-inputs/prs-key-width.stdout",
+      "bytes": 3,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch5-20261029/key-width-inputs/prs-open-keyboard-width.command.json",
+      "bytes": 345,
+      "sha256": "ca082616471267e68db68373c83fcfce1ffdbad9603de9cfea40d58834826097"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch5-20261029/key-width-inputs/prs-open-keyboard-width.json",
+      "bytes": 3,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch5-20261029/key-width-inputs/prs-open-keyboard-width.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch5-20261029/key-width-inputs/prs-open-keyboard-width.stdout",
+      "bytes": 3,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch5-20261029/key-width-inputs/prs-reference-1443.command.json",
+      "bytes": 308,
+      "sha256": "178d124b095e455abfc2f3b432abd8ee0258846b31d77f5be0d453c634ee2419"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch5-20261029/key-width-inputs/prs-reference-1443.json",
+      "bytes": 3,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch5-20261029/key-width-inputs/prs-reference-1443.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch5-20261029/key-width-inputs/prs-reference-1443.stdout",
+      "bytes": 3,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch5-20261029/popup-inputs/open-prs.json",
+      "bytes": 25671,
+      "sha256": "18cd7fe1d7c780c355cc67a4ae8716c7b5a6fcdbfa874fc430ec5cd37e40ddb5"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch5-20261029/popup-inputs/pr-2195-files.json",
+      "bytes": 20470,
+      "sha256": "406deeabf9c1c41ae761d40cd281cdc961ecba09f4e497724413eff7df83582d"
+    }
+  ],
+  "actions": "Only read-only GitHub/git/source investigation and ignored evidence writes; no production edit, build, ADB, new PR, commit or GitHub mutation."
+}

@@ -1,0 +1,99 @@
+{
+  "utc": "2026-10-28T21:22:53.153273+00:00",
+  "status": "PASS_SCOPED_ANDROID_KEYBOARD_GEOMETRY_AB",
+  "repository": "osfans/trime",
+  "pr": 2205,
+  "issue_relation": "Fixes #1443",
+  "head": "cf5dc640ae0d9305cebdbd0c765fd27ba1179d7f",
+  "base": "7fedca06ba5d2ef761a2ae3d44d8a0917db36994",
+  "baseline_source_equivalence": {
+    "path": "/home/xumin/Public/Trime/build/issue-fixes-batch5-20261029/baseline-source-equivalence.json",
+    "bytes": 2971,
+    "sha256": "4e6312d0d96bfdd8646581b166af8e7107d91522f1e5c4de3c141711411308d3"
+  },
+  "fixed_original_apk_identity": {
+    "path": "/home/xumin/Public/Trime/build/issue-fixes-batch5-20261029/device-apks/width-identity.json",
+    "bytes": 98390,
+    "sha256": "ce6030eb623cee9cb6b8dd034d30dcb53c82b356cf4410e52e05c25e71476f07"
+  },
+  "fixed_source_tree_proof": {
+    "path": "/home/xumin/Public/Trime/build/issue-fixes-batch5-20261029/cloud/run-40769057800/pr-2205/ubuntu-original/source-tree-proof.json",
+    "bytes": 605,
+    "sha256": "5e32cba2a3adfb260c827d7d9d36e39b4fe59de3de4a3b98ca68e40065952889"
+  },
+  "helper_source": {
+    "path": "/home/xumin/Public/Trime/build/issue-fixes-batch5-20261029/key-width-probe/KeyWidthInstrumentation.kt",
+    "bytes": 17343,
+    "sha256": "56caf723268e779b24b817b20cf673f8ae94c7a7e06409d3061ee64bad0dd0c9"
+  },
+  "helper_build": {
+    "path": "/home/xumin/Public/Trime/build/issue-fixes-batch5-20261029/voice-build1/result.json",
+    "bytes": 10259,
+    "sha256": "94417986a95f52636e1ec1892b989b3f86eb94b4f22553c03c231aa0f6f95df4"
+  },
+  "helper_static_review": {
+    "path": "/home/xumin/Public/Trime/build/issue-fixes-batch5-20261029/key-width-helper-review.json",
+    "bytes": 6794,
+    "sha256": "b882a2d02f1ce1d96f5e270b756e484a9d116dcb5313eee02ea8490fa1e407bc"
+  },
+  "baseline": {
+    "report": {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch5-20261029/runtime/run1/baseline-probe-report.json",
+      "bytes": 35853,
+      "sha256": "12fb8838b6ff2f2eb8395aa4d59bd10e9b8929ea6e68c47f2f4a0caa5c4a9f51"
+    },
+    "outcome": "TWO_EXPECTED_GEOMETRY_ASSERTIONS_CAUGHT_WITHOUT_PRODUCT_FATAL",
+    "scenarios": 7,
+    "keys": 39,
+    "zero_width_keys": 21,
+    "violations": 2
+  },
+  "fixed": {
+    "report": {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch5-20261029/runtime/run1/fixed-probe-report.json",
+      "bytes": 35778,
+      "sha256": "0baacf3943c707f75ad05eae3223746daf3959700c046eb8d6f78d2031b06299"
+    },
+    "scenarios": 7,
+    "keys": 39,
+    "violations": 0,
+    "positive_keys_and_unique_isInside_center_matches": 39
+  },
+  "cleanup": {
+    "path": "/home/xumin/Public/Trime/build/issue-fixes-batch5-20261029/runtime/run1/cleanup.json",
+    "bytes": 906,
+    "sha256": "bbbf3387aa2347fe2ee7309c0bc0ea59e84b5a4728cf09effc8c81b3114e7bef"
+  },
+  "runtime_exit": {
+    "path": "/home/xumin/Public/Trime/build/issue-fixes-batch5-20261029/runtime/run1/completion.json",
+    "bytes": 1004,
+    "sha256": "b27fc67d5794255b867d6b2c1349e18b610444e0c110efc722cf56151f12c3ad"
+  },
+  "logs": {
+    "path": "/home/xumin/Public/Trime/build/issue-fixes-batch5-20261029/runtime/run1/log-review.json",
+    "bytes": 8354,
+    "sha256": "aa37cfb314071601b2413e43532c408f2cd1df61bdda72063b25ba0f7bb98773"
+  },
+  "captured_warnings": 2553,
+  "memory": {
+    "samples": 191,
+    "minimum_available_kib": 1682656
+  },
+  "source_assets": {
+    "path": "/home/xumin/Public/Trime/build/issue-fixes-batch5-20261029/runtime/source-assets-final-check.json",
+    "bytes": 15283,
+    "sha256": "50b1c5cafde2fdd76efd9aad5703c3b4ac7a4ff0b4ddd1449d7f3133a7485a31"
+  },
+  "final_process_check": {
+    "path": "/home/xumin/Public/Trime/build/issue-fixes-batch5-20261029/runtime/final-process-check.json",
+    "bytes": 152,
+    "sha256": "8b72b544f780eb19d2fc9e4029a2693cfc646bc5c54223ed3766472e8b330a0d"
+  },
+  "scope_limits": [
+    "Parsed YAML fixtures invoke real public production Keyboard constructor and Key.isInside geometry; no stubs/reflection or synthetic production defaults. No full IME window/View rendering/InputDispatcher/Chinese input or physical-device acceptance.",
+    "Helper requests no RimeDaemon/JNI/label/action/nearest-key work. This does not prove the application has no native startup behavior in other flows.",
+    "Original CI APK preserved; diagnostic copies use common test certificate with all non-signature ZIP payload hashes identical to original. Not Release signing or upgrade acceptance.",
+    "Exact logical preference tree delta restricted to general__pid; default IME and existing private sentinel compared. No claim of complete dictionary/cache byte preservation.",
+    "All captured warnings/system events retained. Local Lint/tool/CI dependency warnings remain separately reported; no zero-warning claim."
+  ]
+}
