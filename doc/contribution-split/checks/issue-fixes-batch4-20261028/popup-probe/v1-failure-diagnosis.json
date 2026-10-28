@@ -1,0 +1,54 @@
+{
+  "classification": "PRECONDITION_HARNESS_LIFECYCLE_RACE_ACTUAL_PROCESS_FATAL_NOT_POPUP_REGRESSION",
+  "runtime_observed_by": "Root device execution; this author read original evidence only, no build/ADB",
+  "target_pid": 1731,
+  "native_session_or_popup_checks_reached": false,
+  "instrumentation_stdout": "INSTRUMENTATION_RESULT: shortMsg=Process crashed.\nINSTRUMENTATION_CODE: 0\n",
+  "evidence_bindings": [
+    {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch4-20261028/runtime/run1/commands/baseline-instrument.stdout",
+      "bytes": 74,
+      "sha256": "cc376fcd260b55a01f82c04af5e0a9ead88516f600131a38bdea1a3e05b10a8d"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch4-20261028/runtime/run1/device-logcat.txt",
+      "bytes": 3551716,
+      "sha256": "5b1d3d7cb9f3ce15d150bd569677a86c3a5a0d05c0471c431a5e70e9ff9c8d2a"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch4-20261028/popup-probe/v1-failure-log-excerpt.txt",
+      "bytes": 4309,
+      "sha256": "11f8de29fed8d6a50aafd016c7f215b37acb65f581b1576e11418a7b263b46c0"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch4-20261028/popup-probe/previous-v1.kt",
+      "bytes": 28547,
+      "sha256": "d5263b0c08bcff561f59f1e6bfe415e14ac1697962494e0f74bfd132107baa03"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch4-20261028/popup-probe/previous-v1-contract.json",
+      "bytes": 3406,
+      "sha256": "bac8035a9c36dfa10c7bd4e0c13c6696b8dcaba0b39a054a4011650cbdcdb8a7"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch4-20261028/popup-probe/PopupLabelInstrumentation.kt",
+      "bytes": 29190,
+      "sha256": "060a073bd5066f47c08ba6ea9e5ce773882d87792f60b82028af632eb74291ee"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch4-20261028/popup-probe/v1-to-v2.diff",
+      "bytes": 4736,
+      "sha256": "8facbdb94f92ee355771815fe7468585a444bbd088175d7e90284b73d876d924"
+    }
+  ],
+  "causal_chain": [
+    "v1 Instrumentation.onStart at helper line123 reads ThemeManager on instrumentation thread while main Application.onCreate has not initialized AppPrefs.defaultInstance yet",
+    "ThemeManager.<clinit> line78 calls AppPrefs.defaultInstance line76; UninitializedPropertyAccessException causes ExceptionInInitializerError, poisoning that class",
+    "Main TrimeApplication.onCreate line187 later references the poisoned ThemeManager class; target PID1731 produces FATAL EXCEPTION main NoClassDefFoundError with the earlier initializer error as cause",
+    "Instrumentation framework returns shortMsg=Process crashed; no bounded popup scenario observations or real-session readiness had occurred"
+  ],
+  "v2_scope": "One startup ordering barrier plus failure cleanup guard. No manual AppPrefs.initDefault, production code edit, delay, fixture/oracle expansion, reflection, or API substitution.",
+  "v2_verification": "Static review only until Root compiles/runs it; a future successful bounded product comparison must retain this actual failed run and not call it the expected baseline label assertion.",
+  "barrier_failure_handling": "If 20s bound fails, theme cleanup does not call prefs() or any theme initializer because original preferences were never captured. Native destroy is skipped because sessionCreated remains false.",
+  "warnings_preserved": "Original full device-logcat.txt kept unchanged; excerpt highlights causal target stack but does not classify unrelated warnings or assert zero system/product warnings."
+}

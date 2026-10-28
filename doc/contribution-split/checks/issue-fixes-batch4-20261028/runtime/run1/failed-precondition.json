@@ -1,0 +1,14 @@
+{
+  "status": "FAILED_HELPER_APPLICATION_INITIALIZATION_RACE",
+  "baseline_pid": 1731,
+  "source": "Unchanged a047 baseline diagnostic APK",
+  "helper_sha256": "d5263b0c08bcff561f59f1e6bfe415e14ac1697962494e0f74bfd132107baa03",
+  "instrumentation_result": "Process crashed.",
+  "actual_product_process_fatal_retained": true,
+  "root_cause_evidence": "Helper onStart accessed ThemeManager before Application.onCreate initialized AppPrefs, causing ExceptionInInitializerError; subsequent Application.onCreate access to the failed static class crashed.",
+  "popup_scenarios_completed": 0,
+  "no_rime_session_checkpoint_received": true,
+  "no_fixture_artifact_directory_found": true,
+  "not_a_product_popup_pass_or_label_regression_claim": true,
+  "proposed_helper_only_correction": "Wait via bounded main-queue barrier before any ThemeManager/ColorManager read; no manual preference initialization or production edit."
+}

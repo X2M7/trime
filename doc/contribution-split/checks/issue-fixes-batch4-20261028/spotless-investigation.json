@@ -1,0 +1,253 @@
+{
+  "schema_version": 1,
+  "created_at_utc": "2026-10-28T14:18:04.290852+00:00",
+  "status": "SOURCE_REVIEW_ONLY_NOT_IMPLEMENTED_NOT_BUILD_VERIFIED",
+  "scope": "Investigate existing Spotless included-build implicit dependency warnings; no source edits, Gradle execution, ADB, GitHub writes, or PR activity.",
+  "repository": {
+    "path": "/home/xumin/Public/Trime-pr-standard-theme-colors-20261028",
+    "head": "f27e8425d57dc0774e8a576e686e8985499f4fbc",
+    "status_porcelain": "",
+    "gradle_version": "9.8.1",
+    "spotless_version": "8.10.2",
+    "ktlint_version": "1.8.0"
+  },
+  "inputs": [
+    {
+      "path": "/home/xumin/Public/Trime-pr-standard-theme-colors-20261028/build.gradle.kts",
+      "sha256": "89eed903ec9c6cc7820bc3d9fcab6c9c89bd21151134f059fd83286f89e05065"
+    },
+    {
+      "path": "/home/xumin/Public/Trime-pr-standard-theme-colors-20261028/settings.gradle.kts",
+      "sha256": "838b3e835668d37c40ae5ceee661a8fbd5d169c32933a790ed61771451183349"
+    },
+    {
+      "path": "/home/xumin/Public/Trime-pr-standard-theme-colors-20261028/build-logic/settings.gradle.kts",
+      "sha256": "fa11e8828c576f6a396b0e9d8b14b0b1679e3f0c9aac3ce51457ae5362c98c93"
+    },
+    {
+      "path": "/home/xumin/Public/Trime-pr-standard-theme-colors-20261028/gradle/libs.versions.toml",
+      "sha256": "525db33e479d7c248b5c4030bbf3c525cf5e6171219d4f1324d934035414c135"
+    },
+    {
+      "path": "/home/xumin/Public/Trime-pr-standard-theme-colors-20261028/gradle/wrapper/gradle-wrapper.properties",
+      "sha256": "3cbe35d0020d8393c73f4cc2572838d1db338dd27885dd4d88c46b4d28f762e0"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch3-20261028/theme-build2/gradle.log",
+      "sha256": "5a9a42514b6ac34972a13f89b85aa653186a0f40e94323879d78f3cc53fca99d"
+    }
+  ],
+  "observed_warning": {
+    "consumer_task": ":spotlessKotlin",
+    "location": "/home/xumin/Public/Trime-pr-standard-theme-colors-20261028",
+    "records": [
+      {
+        "line": 15,
+        "text": "Producing a file in one build and consuming it in another build without declaring an explicit dependency has been deprecated. This will fail with an error in Gradle 10. Gradle detected a problem with the following location: '/home/xumin/Public/Trime-pr-standard-theme-colors-20261028'. Task ':spotlessKotlin' uses this output of task ':build-logic:convention:compileKotlin' without declaring an explicit or implicit dependency. This can lead to incorrect results being produced, depending on what order the tasks are executed. For more information, please refer to https://docs.gradle.org/9.8.1/userguide/validation_problems.html#implicit_dependency in the Gradle documentation."
+      },
+      {
+        "line": 16,
+        "text": "Producing a file in one build and consuming it in another build without declaring an explicit dependency has been deprecated. This will fail with an error in Gradle 10. Gradle detected a problem with the following location: '/home/xumin/Public/Trime-pr-standard-theme-colors-20261028'. Task ':spotlessKotlin' uses this output of task ':build-logic:convention:pluginDescriptors' without declaring an explicit or implicit dependency. This can lead to incorrect results being produced, depending on what order the tasks are executed. For more information, please refer to https://docs.gradle.org/9.8.1/userguide/validation_problems.html#implicit_dependency in the Gradle documentation."
+      },
+      {
+        "line": 17,
+        "text": "Producing a file in one build and consuming it in another build without declaring an explicit dependency has been deprecated. This will fail with an error in Gradle 10. Gradle detected a problem with the following location: '/home/xumin/Public/Trime-pr-standard-theme-colors-20261028'. Task ':spotlessKotlin' uses this output of task ':build-logic:convention:processResources' without declaring an explicit or implicit dependency. This can lead to incorrect results being produced, depending on what order the tasks are executed. For more information, please refer to https://docs.gradle.org/9.8.1/userguide/validation_problems.html#implicit_dependency in the Gradle documentation."
+      }
+    ],
+    "existing_build_result": {
+      "line": 76,
+      "text": "BUILD SUCCESSFUL in 4m 36s"
+    },
+    "upgrade_effect": "Existing Gradle 9.8.1 log says this cross-build undeclared consumption becomes an error in Gradle 10.",
+    "separate_warning_out_of_scope": {
+      "line": 12,
+      "description": "Configuration.setVisible(boolean) deprecation, scheduled for Gradle 11; output-target exclusions do not claim to resolve this."
+    },
+    "limits": "Diagnostics identify producer tasks and the repository-root location, not a concrete formatted Kotlin file. Current producer output directories contain no .kt/.kts. Do not describe class/property outputs as having been formatted."
+  },
+  "official_documentation": [
+    {
+      "url": "https://github.com/diffplug/spotless/blob/main/plugin-gradle/README.md",
+      "version": "main at investigation time",
+      "use": "Documents target and targetExclude configuration. Exact installed-version defaults were checked against gradle/8.10.2 source, not inferred from current README alone."
+    },
+    {
+      "url": "https://docs.gradle.org/current/userguide/validation_problems.html#implicit_dependency",
+      "version": "current documentation displayed 9.8.2; local wrapper is 9.8.1",
+      "use": "Explains accidental producer/consumer dependency and execution-order sensitivity; real consumers need provider/task dependencies. This formatter should instead exclude unintended outputs. Exact 9.8.1 web page could not be opened by browsing tool; observed warning text is preserved from the actual 9.8.1 build."
+    },
+    {
+      "url": "https://docs.gradle.org/current/userguide/working_with_files.html",
+      "version": "current documentation displayed 9.8.2",
+      "use": "File trees use a base directory and Ant-style include/exclude patterns; explicit exclusions constrain source scope."
+    }
+  ],
+  "official_source_snapshots": [
+    {
+      "utc": "2026-10-28T14:10:48.578455+00:00",
+      "endpoint": "repos/diffplug/spotless/contents/plugin-gradle/src/main/java/com/diffplug/gradle/spotless/FormatExtension.java?ref=gradle%2F8.10.2",
+      "exit": 0,
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch4-20261028/spotless-evidence/FormatExtension.java",
+      "sha256": "8cbacb6f8e170dc5c42a0349a5fd0cfdc1dad2354821339d5c51dd15050a9ad9",
+      "html_url": "https://github.com/diffplug/spotless/blob/gradle/8.10.2/plugin-gradle/src/main/java/com/diffplug/gradle/spotless/FormatExtension.java",
+      "git_blob": "e1cc19806726adf092620d1281f74e083304c124"
+    },
+    {
+      "utc": "2026-10-28T14:10:48.245810+00:00",
+      "endpoint": "repos/diffplug/spotless/contents/plugin-gradle/src/main/java/com/diffplug/gradle/spotless/SpotlessTaskImpl.java?ref=gradle%2F8.10.2",
+      "exit": 0,
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch4-20261028/spotless-evidence/SpotlessTaskImpl.java",
+      "sha256": "ba907cf3bff381a9962cc03719ddbb811ed5bc65e8d10b156e0cc027165e6bd3",
+      "html_url": "https://github.com/diffplug/spotless/blob/gradle/8.10.2/plugin-gradle/src/main/java/com/diffplug/gradle/spotless/SpotlessTaskImpl.java",
+      "git_blob": "88bc15e628f6e885f68f4f01d66b6b4a2051b7e1"
+    },
+    {
+      "endpoint": "repos/gradle/gradle/contents/platforms/core-configuration/file-collections/src/main/java/org/gradle/api/internal/file/SubtractingFileCollection.java?ref=v9.8.1",
+      "exit": 0,
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch4-20261028/spotless-evidence/SubtractingFileCollection.java",
+      "sha256": "627afffc9a62004332608ea690bf5c623718f887e51df481a0710de1ed7740aa",
+      "git_blob": "a07d53ab64d47cbe6637ca72a85afbad7a6e55ed",
+      "html_url": "https://github.com/gradle/gradle/blob/v9.8.1/platforms/core-configuration/file-collections/src/main/java/org/gradle/api/internal/file/SubtractingFileCollection.java"
+    }
+  ],
+  "source_findings": {
+    "root_configuration": {
+      "path": "build.gradle.kts",
+      "lines": [
+        16,
+        17,
+        18,
+        19,
+        20,
+        21
+      ],
+      "target": "target(\"**/*.kt\", \"**/*.kts\")",
+      "target_exclude_present": false
+    },
+    "build_structure": {
+      "included_build": {
+        "settings_path": "settings.gradle.kts",
+        "line": 6,
+        "statement": "includeBuild(\"build-logic\")"
+      },
+      "normal_subprojects": [
+        "app",
+        "codegen"
+      ],
+      "included_build_projects": [
+        "convention"
+      ],
+      "custom_build_directory_relocation_found": false
+    },
+    "spotless_defaults": {
+      "source": "FormatExtension.java:314-347",
+      "condition": "String target begins **/ or **\\",
+      "excluded": "Root .git/.gradle, root buildDirectory, and normal getSubprojects() buildDirectory values are excluded automatically. Included builds are not visited by getSubprojects().",
+      "consequence": "The eight observed app/build KSP/backups .kt files match the raw glob but are already excluded by Spotless defaults. The included build convention/build subtree is not automatically excluded."
+    },
+    "target_exclude_implementation": {
+      "source": "FormatExtension.java:1096-1097",
+      "behavior": "target.minus(targetExclude) is the task target. Gradle 9.8.1 SubtractingFileCollection.java:56-59 enumerates left files and removes right files. This supports the documented targetExclude API as the least invasive candidate; its actual warning-removal effect still needs a Gradle check."
+    },
+    "classification": "Generated included-build directories are in the broad source tree scope structurally. No currently existing generated .kt/.kts under build-logic/convention/build was observed; the warning alone proves cross-build output overlap, not generated Kotlin formatting."
+  },
+  "static_inventory": {
+    "method": "Read-only rg --files -uu for *.kt/*.kts plus git ls-files; model automatic exclusions from exact Spotless version source. Not an executed Gradle input-file listing.",
+    "raw_kotlin_count": 302,
+    "tracked_kotlin_count": 294,
+    "modeled_current_spotless_kotlin_count": 294,
+    "modeled_targets_equal_tracked_files": true,
+    "raw_files_removed_by_existing_defaults": [
+      "app/build/generated/ksp/debug/kotlin/com/osfans/trime/core/RimeKeyMapping.kt",
+      "app/build/generated/ksp/debug/kotlin/com/osfans/trime/data/db/DatabaseDao_Impl.kt",
+      "app/build/generated/ksp/debug/kotlin/com/osfans/trime/data/db/Database_Impl.kt",
+      "app/build/generated/ksp/debugUnitTest/kotlin/com/osfans/trime/core/RimeKeyMapping.kt",
+      "app/build/kspCaches/debug/backups/kotlin/com/osfans/trime/core/RimeKeyMapping.kt",
+      "app/build/kspCaches/debug/backups/kotlin/com/osfans/trime/data/db/DatabaseDao_Impl.kt",
+      "app/build/kspCaches/debug/backups/kotlin/com/osfans/trime/data/db/Database_Impl.kt",
+      "app/build/kspCaches/debugUnitTest/backups/kotlin/com/osfans/trime/core/RimeKeyMapping.kt"
+    ],
+    "included_build_observed_outputs": [
+      {
+        "producer_task": ":build-logic:convention:compileKotlin",
+        "observed_output_directory": "build-logic/convention/build/classes/kotlin/main",
+        "current_file_count": 37,
+        "current_kotlin_files": [],
+        "extension_counts": {
+          ".class": 36,
+          ".kotlin_module": 1
+        }
+      },
+      {
+        "producer_task": ":build-logic:convention:pluginDescriptors",
+        "observed_output_directory": "build-logic/convention/build/pluginDescriptors",
+        "current_file_count": 5,
+        "current_kotlin_files": [],
+        "extension_counts": {
+          ".properties": 5
+        }
+      },
+      {
+        "producer_task": ":build-logic:convention:processResources",
+        "observed_output_directory": "build-logic/convention/build/resources/main",
+        "current_file_count": 5,
+        "current_kotlin_files": [],
+        "extension_counts": {
+          ".properties": 5
+        }
+      }
+    ],
+    "tracked_kotlin_counts_by_top_level": {
+      "app": 278,
+      "build-logic": 12,
+      "build.gradle.kts": 1,
+      "codegen": 2,
+      "settings.gradle.kts": 1
+    },
+    "minimum_candidate_tracked_source_files_removed": [],
+    "preserved_build_logic_source_files": [
+      "build-logic/convention/build.gradle.kts",
+      "build-logic/convention/src/main/kotlin/AndroidAppConventionPlugin.kt",
+      "build-logic/convention/src/main/kotlin/AndroidBaseConventionPlugin.kt",
+      "build-logic/convention/src/main/kotlin/DataChecksumsPlugin.kt",
+      "build-logic/convention/src/main/kotlin/NativeAppConventionPlugin.kt",
+      "build-logic/convention/src/main/kotlin/NativeBaseConventionPlugin.kt",
+      "build-logic/convention/src/main/kotlin/NativeCacheHashPlugin.kt",
+      "build-logic/convention/src/main/kotlin/OpenCCDataPlugin.kt",
+      "build-logic/convention/src/main/kotlin/ProjectExtensions.kt",
+      "build-logic/convention/src/main/kotlin/Utils.kt",
+      "build-logic/convention/src/main/kotlin/Versions.kt",
+      "build-logic/settings.gradle.kts"
+    ],
+    "recursive_build_exclude_current_tracked_source_files_removed": []
+  },
+  "recommendation": {
+    "classification": "H build tooling / formatting scope; independent of theme behavior patch.",
+    "minimum_candidate": {
+      "file": "build.gradle.kts",
+      "placement": "Inside existing spotless.kotlin block, after target(...)",
+      "code": "targetExclude(\"build-logic/convention/build/**\")",
+      "why": "Excludes only the actual included-build output subtree shared by all three reported producers, preserving existing target strings and their automatic normal-subproject exclusions. Retains root scripts, all app/codegen Kotlin, and all 12 authored build-logic Kotlin/scripts."
+    },
+    "optional_broader_policy": {
+      "code": "targetExclude(\"**/build/**\", \"**/.gradle/**\")",
+      "tradeoff": "Covers future nested included-build outputs and cache directories without enumerating projects; no current tracked Kotlin is removed. Broader than the observed issue and may omit future authored paths with a literal build directory segment. Not required for the minimum observed fix."
+    },
+    "if_actual_warning_persists": "Inspect executed task input structure before expanding the patch. A direct fileTree(projectDir) target with PatternSet exclusions is a possible fallback, but passing a FileCollection bypasses Spotless string-target automatic exclusions; explicitly preserve root/app/codegen output and .git/.gradle exclusions. Do not switch prematurely.",
+    "avoid": [
+      "Do not exclude the whole build-logic directory or narrow formatting to root src/**: these omit authored convention plugin and build script coverage.",
+      "Do not add dependsOn/mustRunAfter to compiler/resource tasks merely to silence a formatter consuming unintended output.",
+      "Do not claim generated Kotlin was formatted, all Gradle warnings were fixed, or the candidate is verified without running it."
+    ]
+  },
+  "suggested_followup_validation_not_executed": [
+    "Use a clean isolated source worktree with existing/warm included-build output directories. Apply only the candidate exclude and run the existing Spotless check with --warning-mode all, ensuring :spotlessKotlin actually executes. A check after deleting all generated directories alone is insufficient to prove the warning is fixed.",
+    "Verify the three included-build implicit-dependency warnings disappear while recording unrelated remaining warnings separately. Keep the same wrapper/Spotless versions for the comparison.",
+    "Confirm root build.gradle.kts/settings.gradle.kts, normal app/codegen source, and all 12 authored build-logic .kt/.kts remain in scope. Static inventory already proves no current tracked Kotlin path is excluded by the precise candidate.",
+    "If extra scope evidence is needed, use disposable sentinels only in that isolated worktree: a generated .kt inside convention/build must be ignored, while a malformed authored convention/src/main/kotlin file must still be detected. Restore sentinels before committing. No new production abstraction or mirror test is needed for this configuration change."
+  ],
+  "mutations_performed": [
+    "Created this report and bounded official source snapshots under the authorized batch4 artifact directory only."
+  ],
+  "source_and_runtime_mutations_performed": false
+}

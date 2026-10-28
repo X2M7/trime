@@ -1,0 +1,439 @@
+/* SPDX-License-Identifier: GPL-3.0-or-later */
+package com.osfans.trime
+
+import android.app.Activity
+import android.app.Instrumentation
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Rect
+import android.os.Build
+import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.os.Process
+import android.os.SystemClock
+import android.view.View
+import android.view.ViewGroup
+import android.widget.ImageView
+import com.osfans.trime.daemon.RimeDaemon
+import com.osfans.trime.data.theme.ColorManager
+import com.osfans.trime.data.theme.Theme
+import com.osfans.trime.data.theme.ThemeDslExpander
+import com.osfans.trime.data.theme.ThemeManager
+import com.osfans.trime.data.theme.ThemeScope
+import com.osfans.trime.data.theme.ThemeYaml
+import com.osfans.trime.data.theme.model.PresetKey
+import com.osfans.trime.ime.core.AutoScaleTextView
+import com.osfans.trime.ime.keyboard.Keyboard
+import com.osfans.trime.ime.keyboard.KeyboardWindow
+import com.osfans.trime.ime.popup.PopupKeyboardUi
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withTimeout
+import org.json.JSONArray
+import org.json.JSONObject
+import java.io.File
+import java.security.MessageDigest
+import java.util.UUID
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
+import java.util.concurrent.atomic.AtomicBoolean
+import java.util.concurrent.atomic.AtomicReference
+import kotlin.math.roundToInt
+
+/**
+ * Disposable-emulator renderer probe. Arguments: expect=baseline|fixed;
+ * retain_artifacts=true|false (default true, Root pulls then removes the named directory).
+ * Uses public production ThemeYaml/DSL, ColorManager, Keyboard and PopupKeyboardUi APIs,
+ * including a real dedicated RimeDaemon session: KeyAction.getLabel reads cached Rime status.
+ * No reflection, stub, Activity, UiAutomation, InputDispatcher or external action execution.
+ * Synthetic unattached Popup UI drawing is not a long-press/full IME/visual accessibility test.
+ * Baseline assertion failure is reported normally; no uncaught product crash is expected.
+ */
+class PopupLabelInstrumentation : Instrumentation() {
+    companion object {
+        private const val TOTAL_MS = 150_000L
+        private const val MAIN_MS = 20_000L
+        private const val READY_MS = 90_000L
+        private const val MAX_BITMAP_SIDE = 2048
+        private const val MAX_BITMAP_PIXELS = 2_000_000
+        private const val MAX_PNG_BYTES = 2_000_000L
+    }
+
+    private data class Cell(val root: ViewGroup, val text: AutoScaleTextView, val image: ImageView)
+
+    private var args = Bundle()
+    private val report = JSONObject()
+    private val lock = Any()
+    private val rows = JSONArray()
+    private val scenarios = JSONArray()
+    private val violations = JSONArray()
+    private val finished = AtomicBoolean(false)
+    private val mainHandler = Handler(Looper.getMainLooper())
+    private val watchdog = Executors.newSingleThreadScheduledExecutor { task ->
+        Thread(task, "PopupProbeDeadline").apply { isDaemon = true }
+    }
+    @Volatile private var currentStage = "created"
+    private var deadline = 0L
+    private var artifactDirectory: File? = null
+    private var retainArtifacts = true
+
+    override fun onCreate(arguments: Bundle?) {
+        super.onCreate(arguments)
+        args = arguments?.let(::Bundle) ?: Bundle()
+        start()
+    }
+
+    override fun onStart() {
+        deadline = SystemClock.uptimeMillis() + TOTAL_MS
+        watchdog.schedule({ complete(false, IllegalStateException("150 s overall deadline exceeded at $currentStage; inspect restoration/session completion flags")) }, TOTAL_MS, TimeUnit.MILLISECONDS)
+        var passed = false
+        var failure: Throwable? = null
+        var oldColor: String? = null
+        var oldFollow: Boolean? = null
+        var oldScope: ThemeScope? = null
+        var oldKeyboard: Keyboard? = null
+        var sessionCreated = false
+        val sessionName = "popup-label-probe-${Process.myPid()}-${UUID.randomUUID()}"
+        try {
+            val expected = args.getString("expect", "fixed")!!
+            check(expected == "baseline" || expected == "fixed") { "expect must be baseline or fixed" }
+            val retainArgument = args.getString("retain_artifacts", "true")!!
+            check(retainArgument == "true" || retainArgument == "false") { "retain_artifacts must be true or false" }
+            retainArtifacts = retainArgument == "true"
+            put("expected_target", expected)
+            put("pid", Process.myPid())
+            put("api", Build.VERSION.SDK_INT)
+            put("target_package", targetContext.packageName)
+            put("installed_target_apk", targetContext.applicationInfo.sourceDir)
+            put("installed_target_apk_sha256", sha(File(targetContext.applicationInfo.sourceDir)))
+            put("scope", "Real public production popup resolution, unattached View measure/layout/draw, dedicated real native Rime session; local onChangeFocus/onTrigger calls return tokens without executing them. No Activity, system touch/InputDispatcher, full IME lifecycle, TalkBack or user-perceived readability validation.")
+            put("direct_jni_calls_or_stubs", false)
+            put("native_session_used", true)
+            put("native_deploy_may_clear_logcat", true)
+            put("native_side_effect_limit", "RimeDaemon Deploy.Start calls logcat --clear; native startup/deployment may write its ordinary app/user-data maintenance files and notifications. This is not a no-native/no-file-write probe or an assertion that all warning logs are absent. Capture continuous raw device logs externally.")
+            put("capacity_or_preview_window_tested", false)
+            put("overall_deadline_ms", TOTAL_MS)
+            put("main_task_bound_ms", MAIN_MS)
+            put("native_destroy_completed", false)
+            put("preferences_restored", false)
+            put("all_scenarios_completed", false)
+
+            stage("capture_preferences_and_process_local_state")
+            oldColor = ThemeManager.prefs.normalModeColor.getValue()
+            oldFollow = ThemeManager.prefs.followSystemDayNight.getValue()
+            oldScope = ColorManager.currentScope()
+            oldKeyboard = runCatching { KeyboardWindow.currentKeyboard }.getOrNull()
+            put("preferences_before_fixture", prefs())
+            put("current_keyboard_previously_initialized", oldKeyboard != null)
+            onMain("disable_day_night_fixture") {
+                ThemeManager.prefs.followSystemDayNight.setValue(false)
+            }
+            put("preferences_after_fixture", prefs())
+
+            stage("parse_bundled_standard_theme")
+            val bytes = targetContext.assets.open("shared/tongwenfeng.trime.yaml").use { it.readBytes() }
+            check(bytes.size < 1024 * 1024) { "Unexpectedly large asset" }
+            val parser = ThemeYaml.parser
+            val expanded = ThemeDslExpander.expand("tongwenfeng.trime", parser.parseToYamlNode(bytes.toString(Charsets.UTF_8))) { resource ->
+                runCatching { targetContext.assets.open("shared/$resource.yaml").bufferedReader().use { parser.parseToYamlNode(it.readText()) } }.getOrNull()
+            }
+            val theme = parser.decodeFromYamlNode<Theme>(expanded)
+            val originalTokens = theme.presetKeyboards.getValue("default").keys.single { it.popup == listOf("TrimeWiki", "Settings") }.popup
+            check(theme.presetKeys.getValue("TrimeWiki").label == "Wiki")
+            check(theme.presetKeys.getValue("Settings").label == "设置")
+            check(theme.style.popupWidth == 38 && theme.style.popupTextSize == 23f) { "Built-in fixture changed" }
+            put("asset", JSONObject().put("path", "shared/tongwenfeng.trime.yaml").put("bytes", bytes.size).put("sha256", sha(bytes)).put("theme", theme.name))
+            put("bundled_original_tokens", JSONArray(originalTokens))
+            put("bundled_original_labels", JSONObject().put("TrimeWiki", "Wiki").put("Settings", "设置"))
+
+            stage("establish_dedicated_real_rime_session")
+            val hadSession = RimeDaemon.getFirstSessionOrNull() != null
+            put("preexisting_rime_session", hadSession)
+            check(!hadSession) { "Probe requires a fresh target process without an existing IME/other Rime session; do not destroy other sessions" }
+            val session = RimeDaemon.createSession(sessionName)
+            sessionCreated = true
+            put("session_name", sessionName)
+            val ready = runBlocking {
+                withTimeout(minOf(READY_MS, remainingMs())) {
+                    session.runOnReady {
+                        check(isReady) { "runOnReady returned before native readiness" }
+                        JSONObject().put("is_ready", isReady).put("schema_id_cached", statusCached.schemaId).put("ascii_mode_cached", statusCached.isAsciiMode)
+                    }
+                }
+            }
+            put("actual_rime_ready", ready)
+            checkpoint()
+
+            val directory = File(targetContext.filesDir, "popup-probe-${Process.myPid()}-${UUID.randomUUID()}")
+            check(directory.mkdir()) { "Could not create exclusively named artifact directory" }
+            artifactDirectory = directory
+            put("artifact_directory", directory.absolutePath)
+            put("retain_for_root_pull_then_cleanup", retainArtifacts)
+
+            runScenario("bundled_default_38dp", theme, originalTokens)
+            runScenario("bundled_narrow_24dp", theme.copy(style = theme.style.copy(popupWidth = 24)), originalTokens)
+            runScenario("bundled_large_text_46sp", theme.copy(style = theme.style.copy(popupTextSize = 46f)), originalTokens)
+
+            val fixturePresets = linkedMapOf(
+                "PopupProbeAscii" to PresetKey(label = "A", send = "F1"),
+                "PopupProbeCjk" to PresetKey(label = "设置选项", send = "F2"),
+                "PopupProbeEmoji" to PresetKey(label = "👩‍💻", send = "F3"),
+                "PopupProbeCombining" to PresetKey(label = "e\u0301", send = "F4"),
+                "PopupProbeIcon" to PresetKey(label = "ic@home", send = "F5"),
+            )
+            put("extra_fixture_definition", "Five explicit test-only preset actions added to a Theme.copy: ASCII, multi-CJK, ZWJ emoji, combining mark and material icon. Each long token passes through the same production resolveAction/getLabel path; not bundled layout entries. No action is executed.")
+            runScenario("explicit_preset_controls_38dp", theme.copy(presetKeys = theme.presetKeys + fixturePresets), fixturePresets.keys.toList())
+
+            put("all_scenarios_completed", true)
+            check(scenarios.length() == 4 && rows.length() == 11) { "Incomplete bounded matrix" }
+            val observations = (0 until rows.length()).map { rows.getJSONObject(it) }
+            val baselineMatches = observations.all { it.getBoolean("baseline_display_matches") } && violations.length() == 9
+            val fullMatches = violations.length() == 0
+            put("baseline_expected_assertion_failure_observed", expected == "baseline" && baselineMatches)
+            put("expected_observation_matches", if (expected == "baseline") baselineMatches else fullMatches)
+            put("observation_count", rows.length())
+            put("violation_count", violations.length())
+            stage("assert_full_labels")
+            if (!fullMatches) {
+                put("failure_kind", if (expected == "baseline" && baselineMatches) "expected_baseline_assertion" else "unexpected_label_assertion")
+                throw AssertionError("${violations.length()} complete-label invariants failed; captured assertion, not an uncaught product FATAL")
+            }
+            check(expected == "fixed") { "Baseline unexpectedly retains all complete labels; check installed identity" }
+            check(observations.any { !it.getBoolean("is_icon") && it.getDouble("text_scale_x") < 0.99 }) { "No text exercised proportional downscaling" }
+            put("proportional_downscaling_observed", true)
+            passed = true
+            stage("complete")
+        } catch (error: Throwable) {
+            failure = error
+            put("expected_observation_matches", synchronized(lock) { report.optBoolean("expected_observation_matches", false) })
+        } finally {
+            val outcomeStage = currentStage
+            put("observations", rows)
+            put("scenarios", scenarios)
+            put("violations", violations)
+            runCatching {
+                onMain("restore_theme_preferences_and_current_keyboard") {
+                    oldColor?.let { ThemeManager.prefs.normalModeColor.setValue(it) }
+                    oldFollow?.let { ThemeManager.prefs.followSystemDayNight.setValue(it) }
+                    oldScope?.let { ColorManager.attachTheme(it.theme); ColorManager.init(targetContext.resources.configuration) }
+                    oldKeyboard?.let { KeyboardWindow.currentKeyboard = it }
+                }
+                put("preferences_after_restore", prefs())
+                val restored = (oldColor == null || ThemeManager.prefs.normalModeColor.getValue() == oldColor) && (oldFollow == null || ThemeManager.prefs.followSystemDayNight.getValue() == oldFollow)
+                put("preferences_restored", restored)
+                put("prior_scope_restore", if (oldScope == null) "No prior scope; fixture scope remains only in this process until normal Instrumentation.finish." else "Prior theme reattached using public API; previous scope object identity is not restored.")
+                put("current_keyboard_restore", if (oldKeyboard == null) "Previously uninitialized public lateinit cannot be unset through public API; fixture remains only until normal Instrumentation.finish terminates this process." else "Original public currentKeyboard object restored.")
+                check(restored) { "Preference restoration readback differs" }
+            }.onFailure { error -> passed = false; failure = appendFailure(failure, error); put("restore_error", error.toString()) }
+            if (sessionCreated) {
+                runCatching {
+                    stage("destroy_dedicated_real_rime_session")
+                    put("native_destroy_started", true)
+                    checkpoint()
+                    // Native dispatcher shutdown is synchronous, so the overall watchdog also covers this call.
+                    RimeDaemon.destroySession(sessionName)
+                    put("native_destroy_completed", true)
+                    put("rime_session_remaining_after_destroy", RimeDaemon.getFirstSessionOrNull() != null)
+                }.onFailure { error -> passed = false; failure = appendFailure(failure, error); put("native_destroy_error", error.toString()) }
+            } else {
+                put("native_destroy_not_needed", true)
+            }
+            stage(if (passed) "complete" else outcomeStage)
+            artifactDirectory?.let { directory ->
+                runCatching {
+                    if (retainArtifacts) {
+                        val manifest = File(directory, "manifest.json")
+                        check(!manifest.exists())
+                        manifest.writeText(synchronized(lock) { JSONObject(report.toString()).put("passed_before_finish", passed).toString(2) })
+                        put("artifact_manifest", manifest.absolutePath)
+                        put("artifact_manifest_sha256", sha(manifest))
+                    } else {
+                        val removed = directory.deleteRecursively()
+                        put("owned_artifacts_removed", removed)
+                        check(removed) { "Could not remove own artifact directory" }
+                    }
+                }.onFailure { error -> passed = false; failure = appendFailure(failure, error); put("artifact_cleanup_or_manifest_error", error.toString()) }
+            }
+            complete(passed, failure)
+        }
+    }
+
+    private fun runScenario(name: String, theme: Theme, tokens: List<String>) {
+        onMain("scenario_$name") {
+            check(tokens.size in 1..5 && tokens.toSet().size == tokens.size) { "Keep this probe to one non-empty row and distinct tokens; capacity is a separate issue" }
+            ColorManager.attachTheme(theme)
+            ColorManager.init(targetContext.resources.configuration)
+            ColorManager.setColorScheme("default")
+            val scope = checkNotNull(ColorManager.currentScope())
+            val keyboard = Keyboard(targetContext, theme, 1080, selfConfig = null)
+            KeyboardWindow.currentKeyboard = keyboard
+            val resolved = tokens.associateWith { token ->
+                val expected = theme.presetKeys.getValue(token).label
+                val label = theme.resolveAction(token).getLabel(keyboard)
+                check(label == expected) { "Fixture resolution changed for $token: $label != $expected" }
+                label
+            }
+            val keyWidth = dp(theme.style.popupWidth.toFloat())
+            val keyHeight = dp(theme.style.popupKeyHeight.toFloat())
+            val popup = PopupKeyboardUi(
+                ctx = targetContext,
+                scope = scope,
+                outerBounds = Rect(0, 0, 1080, 1920),
+                triggerBounds = Rect(490, 1200, 590, 1280),
+                radius = dp(theme.style.roundCorner).toFloat(),
+                keyWidth = keyWidth,
+                keyHeight = keyHeight,
+                popupHeight = dp(theme.style.popupHeight.toFloat()),
+                keys = tokens,
+                labels = tokens,
+            )
+            val root: ViewGroup = popup.root
+            val width = keyWidth * tokens.size
+            boundedDimensions(width, keyHeight)
+            root.measure(View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY), View.MeasureSpec.makeMeasureSpec(keyHeight, View.MeasureSpec.EXACTLY))
+            root.layout(0, 0, root.measuredWidth, root.measuredHeight)
+            check(root.width == width && root.height == keyHeight && !root.isAttachedToWindow)
+            val cells = collectCells(root)
+            check(cells.size == tokens.size) { "Public view traversal found ${cells.size} cells for ${tokens.size} tokens" }
+            val returnedTokens = mutableSetOf<String>()
+            for ((visualIndex, cell) in cells.withIndex()) {
+                val cellBounds = Rect(0, 0, cell.root.width, cell.root.height)
+                root.offsetDescendantRectToMyCoords(cell.root, cellBounds)
+                check(!cellBounds.isEmpty && Rect(0, 0, root.width, root.height).contains(cellBounds)) { "Cell outside rendered root" }
+                val dismissed = popup.onChangeFocus(cellBounds.exactCenterX(), cellBounds.exactCenterY())
+                check(!dismissed) { "Cell center unexpectedly dismissed popup" }
+                val token = checkNotNull(popup.onTrigger()) { "Cell center returned null token" }
+                check(token in tokens && returnedTokens.add(token)) { "Missing/duplicate/unexpected action token: $token" }
+                val expectedLabel = resolved.getValue(token)
+                val icon = expectedLabel.startsWith("ic@")
+                val observedText = cell.text.text.toString()
+                val expectedBaseline = if (icon || expectedLabel.isEmpty()) expectedLabel else String(Character.toChars(expectedLabel.codePointAt(0)))
+                val labelMatches = if (icon) cell.image.visibility == View.VISIBLE && cell.image.drawable != null && cell.text.visibility == View.GONE else cell.text.visibility == View.VISIBLE && cell.image.visibility == View.GONE && observedText == expectedLabel
+                check(if (icon) cell.image.visibility == View.VISIBLE && cell.image.drawable != null && cell.text.visibility == View.GONE else cell.text.visibility == View.VISIBLE && cell.image.visibility == View.GONE) { "Text/image control visibility changed" }
+                val ink = ink(if (icon) cell.image else cell.text)
+                val scale = if (icon) 1f else cell.text.getTextScaleX()
+                check(scale.isFinite() && scale > 0f && scale <= 1.001f) { "Invalid proportional text scale: $scale" }
+                val row = JSONObject()
+                    .put("scenario", name).put("visual_index", visualIndex)
+                    .put("original_token", token).put("preset_label", theme.presetKeys.getValue(token).label)
+                    .put("resolved_complete_label", expectedLabel).put("observed_text", observedText)
+                    .put("is_icon", icon).put("image_visible", cell.image.visibility == View.VISIBLE)
+                    .put("image_drawable_present", cell.image.drawable != null)
+                    .put("on_trigger_token", token).put("token_preserved", true)
+                    .put("focus_coordinate_space", "Direct public onChangeFocus container-local center of actual cell bounds; no system touch event")
+                    .put("focus_x", cellBounds.exactCenterX()).put("focus_y", cellBounds.exactCenterY())
+                    .put("cell_bounds", rect(cellBounds)).put("child_ink", ink)
+                    .put("text_scale_x", scale.toDouble()).put("scale_mode", cell.text.scaleMode.name)
+                    .put("matches_complete_label", labelMatches)
+                    .put("expected_baseline_display", expectedBaseline)
+                    .put("baseline_display_matches", if (icon) labelMatches else observedText == expectedBaseline)
+                rows.put(row)
+                if (!labelMatches) violations.put(JSONObject(row.toString()))
+            }
+            check(returnedTokens == tokens.toSet()) { "Public focus/trigger path did not preserve the exact token set" }
+            val bitmap = Bitmap.createBitmap(root.width, root.height, Bitmap.Config.ARGB_8888)
+            val png = File(checkNotNull(artifactDirectory), "$name.png")
+            check(!png.exists())
+            try {
+                root.draw(Canvas(bitmap))
+                png.outputStream().use { check(bitmap.compress(Bitmap.CompressFormat.PNG, 100, it)) }
+            } finally { bitmap.recycle() }
+            check(png.length() in 1..MAX_PNG_BYTES) { "PNG exceeds artifact bound" }
+            val scenario = JSONObject().put("name", name).put("tokens", JSONArray(tokens))
+                .put("popup_width_dp", theme.style.popupWidth).put("popup_key_height_dp", theme.style.popupKeyHeight)
+                .put("popup_text_size_sp", theme.style.popupTextSize.toDouble()).put("density", targetContext.resources.displayMetrics.density.toDouble())
+                .put("render_width_px", root.width).put("render_height_px", root.height)
+                .put("unattached_production_views", !root.isAttachedToWindow).put("returned_token_set_matches", true)
+                .put("png", png.absolutePath).put("png_bytes", png.length()).put("png_sha256", sha(png))
+                .put("render_scope", "Synthetic actual PopupKeyboardUi draw; independent child-only transparent Canvas ink checks exclude popup backgrounds. Does not establish all-glyph visual recognition or full IME/window behavior.")
+            scenarios.put(scenario)
+            put("observations", rows)
+            put("scenarios", scenarios)
+            put("violations", violations)
+        }
+        checkpoint()
+    }
+
+    private fun collectCells(root: ViewGroup): List<Cell> {
+        val found = mutableListOf<Cell>()
+        fun visit(parent: ViewGroup) {
+            val children = (0 until parent.childCount).map { parent.getChildAt(it) }
+            val text = children.filterIsInstance<AutoScaleTextView>().singleOrNull()
+            val image = children.filterIsInstance<ImageView>().singleOrNull()
+            if (text != null && image != null) found.add(Cell(parent, text, image))
+            else children.filterIsInstance<ViewGroup>().forEach(::visit)
+        }
+        visit(root)
+        return found
+    }
+
+    private fun ink(view: View): JSONObject {
+        boundedDimensions(view.width, view.height)
+        check(view.background == null) { "Child ink check must exclude background" }
+        val bitmap = Bitmap.createBitmap(view.width, view.height, Bitmap.Config.ARGB_8888)
+        try {
+            view.draw(Canvas(bitmap))
+            val pixels = IntArray(view.width * view.height)
+            bitmap.getPixels(pixels, 0, view.width, 0, 0, view.width, view.height)
+            var count = 0
+            var left = view.width
+            var top = view.height
+            var right = -1
+            var bottom = -1
+            for (y in 0 until view.height) for (x in 0 until view.width) {
+                if (pixels[y * view.width + x] ushr 24 != 0) {
+                    count++
+                    left = minOf(left, x); top = minOf(top, y)
+                    right = maxOf(right, x); bottom = maxOf(bottom, y)
+                }
+            }
+            check(count > 0 && right >= left && bottom >= top) { "No rendered text/icon ink in positive child bounds" }
+            return JSONObject().put("width_px", view.width).put("height_px", view.height).put("nontransparent_pixels", count).put("ink_bounds", rect(Rect(left, top, right + 1, bottom + 1))).put("child_only_transparent_canvas", true)
+        } finally { bitmap.recycle() }
+    }
+
+    private fun boundedDimensions(width: Int, height: Int) {
+        check(width in 1..MAX_BITMAP_SIDE && height in 1..MAX_BITMAP_SIDE && width.toLong() * height <= MAX_BITMAP_PIXELS) { "Invalid/unbounded render dimensions ${width}x$height" }
+    }
+
+    private fun prefs() = JSONObject().put("normal_mode_color", ThemeManager.prefs.normalModeColor.getValue()).put("follow_system_day_night", ThemeManager.prefs.followSystemDayNight.getValue())
+    private fun dp(value: Float) = (value * targetContext.resources.displayMetrics.density).roundToInt().coerceAtLeast(1)
+    private fun rect(value: Rect) = JSONArray(listOf(value.left, value.top, value.right, value.bottom))
+    private fun sha(file: File): String = file.inputStream().use { input -> val digest = MessageDigest.getInstance("SHA-256"); val buffer = ByteArray(65536); while (true) { val n = input.read(buffer); if (n < 0) break; digest.update(buffer, 0, n) }; digest.digest().joinToString("") { "%02x".format(it.toInt() and 255) } }
+    private fun sha(bytes: ByteArray) = MessageDigest.getInstance("SHA-256").digest(bytes).joinToString("") { "%02x".format(it.toInt() and 255) }
+    private fun appendFailure(prior: Throwable?, next: Throwable): Throwable = prior?.apply { addSuppressed(next) } ?: next
+    private fun remainingMs() = (deadline - SystemClock.uptimeMillis()).coerceAtLeast(1)
+    private fun stage(value: String) { currentStage = value; put("stage", value) }
+    private fun put(key: String, value: Any?) = synchronized(lock) { report.put(key, when (value) { is JSONObject -> JSONObject(value.toString()); is JSONArray -> JSONArray(value.toString()); else -> value }); Unit }
+    private fun checkpoint() { sendStatus(0, Bundle().apply { putString("popup_checkpoint", synchronized(lock) { JSONObject(report.toString()).toString() }) }) }
+
+    private fun <T> onMain(label: String, block: () -> T): T {
+        stage(label)
+        val result = AtomicReference<Result<T>?>(null)
+        val latch = CountDownLatch(1)
+        // Catch inside the main Runnable: do not let a harness assertion become a main-thread FATAL.
+        val task = Runnable { try { result.set(runCatching(block)) } finally { latch.countDown() } }
+        check(mainHandler.post(task)) { "Could not post main task $label" }
+        if (!latch.await(minOf(MAIN_MS, remainingMs()), TimeUnit.MILLISECONDS)) {
+            mainHandler.removeCallbacks(task)
+            error("20 s main-task bound exceeded at $label; a task already running cannot be interrupted")
+        }
+        return checkNotNull(result.get()).getOrThrow()
+    }
+
+    private fun complete(passed: Boolean, error: Throwable?) {
+        if (!finished.compareAndSet(false, true)) return
+        watchdog.shutdownNow()
+        val final = synchronized(lock) {
+            JSONObject(report.toString()).put("passed", passed).put("stage", currentStage).apply {
+                error?.let { put("error", android.util.Log.getStackTraceString(it)) }
+            }
+        }
+        finish(if (passed) Activity.RESULT_OK else 1, Bundle().apply {
+            putBoolean("passed", passed)
+            putString("popup_label_report", final.toString())
+            putString("stream", "Popup label probe passed=$passed stage=$currentStage\n")
+        })
+    }
+}

@@ -1,0 +1,365 @@
+{
+  "reviewed_at_utc": "2026-10-28T14:41:17.976802+00:00",
+  "reviewer": "Independent popup_review agent; read-only host artifacts and actual PNG inspection",
+  "result": "BOUNDED_POPUP_LABEL_AB_ACCEPTANCE_CONFIRMED; NO_BLOCKER_FOUND; FULL_IME_OR_WARNING_FREE_ACCEPTANCE_NOT_CLAIMED",
+  "production_source": {
+    "head": "492d8d60084026cbc80e045301b638e4b0f76a31",
+    "base": "7fedca06ba5d2ef761a2ae3d44d8a0917db36994",
+    "CI_producer_merge": "53097d71430d2f289b554fd45ee3fe2bf4883d3e",
+    "same_full_git_tree": "6aaaec81b2bb326b525e2e8a83cc83acdc0f65b9",
+    "tree_identity_verified_against_saved_raw_GitHub_commit_responses_and_local_git": true,
+    "CI": {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch4-20261028/cloud/run-40704522250/pr-2204/ci-summary.json",
+      "bytes": 4676,
+      "sha256": "361a7c3656609239b50df63562056fee99cc5997e0838c5d65824eb54020a921"
+    },
+    "CI_passed_jobs": 5,
+    "original_ubuntu_APK": {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch4-20261028/cloud/run-40704522250/pr-2204/ubuntu-original/extracted/com.osfans.trime-v3.3.12-109-g53097d71-x86_64-debug.apk",
+      "bytes": 20158564,
+      "sha256": "ea0ee3bde83affeeaf60a0224d8db5f40c0b648c023bbb4abf98c63f24a37cb7"
+    },
+    "artifact_archive": {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch4-20261028/cloud/run-40704522250/pr-2204/ubuntu-original/artifact-12822928812-trime-ubuntu-26.04.zip",
+      "bytes": 76039842,
+      "sha256": "0980074aef8b503f6ea8d7947e2dedbfd33b41ee1caf5de0fcd8bc2f2b98807e"
+    },
+    "archive_digest_verified_against_GitHub_record": true,
+    "producer_checkout_confirmed_in_raw_job_log": {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch4-20261028/cloud/run-40704522250/pr-2204/run-40704522250-job-122874742973.log",
+      "bytes": 313538,
+      "sha256": "650d3bab0110d4cc84c8c1da02df55eb26fbc99f18053fb190f29b6bf7c208a0"
+    },
+    "note": "Actual producer is PR synthetic merge53097, not head492d commit. Their complete source trees match; generated commit/version metadata can differ."
+  },
+  "diagnostic_APK": {
+    "identity_record": {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch4-20261028/device-apks/popup-identity.json",
+      "bytes": 98390,
+      "sha256": "a9d9530e1f1bfb7deca1a3141c09495b821ee8dbbca05cd42431fac1d00e2def"
+    },
+    "file": {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch4-20261028/device-apks/popup-diagnostic.apk",
+      "bytes": 20158126,
+      "sha256": "b95270aea8e2f260f556ca691569d00265f477ac30d3317a3272bf7892dad317"
+    },
+    "all_non_signature_zip_entries_independently_rehashed_and_identical": true,
+    "entry_count": 784,
+    "original_APK_preserved": true,
+    "purpose": "Local common debug signing certificate enables same-package controlled comparison; not release or production upgrade/signature acceptance. Two META-INF/service v1 signing warnings remain in recorded apksigner output."
+  },
+  "helper": {
+    "source": {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch4-20261028/popup-probe/PopupLabelInstrumentation.kt",
+      "bytes": 29190,
+      "sha256": "060a073bd5066f47c08ba6ea9e5ce773882d87792f60b82028af632eb74291ee"
+    },
+    "build_result": {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch4-20261028/voice-build2/result.json",
+      "bytes": 10257,
+      "sha256": "8968922b69985f23d3318053ec6d3d52e95321a39db4304a8ea6d3ce3bc6bb2b"
+    },
+    "APK": {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch4-20261028/voice-build2/com.osfans.trime-v3.3.12-106-gc7501279-debug-androidTest.apk",
+      "bytes": 265822,
+      "sha256": "b81eea147bc6f8a96f220cbdc1e27a32c40e257dda1dc923a08a81eab8766b89"
+    },
+    "installed_helper_command": {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch4-20261028/runtime/run2/commands/helper-v2-install.json",
+      "bytes": 379,
+      "sha256": "ae173351227ffd9d4c572e6c626282987a9af6667cc0cd0f469a574738547df3"
+    },
+    "temporary_source_hash_and_compiled_APK_hash_match_build_record": true
+  },
+  "baseline_scope": {
+    "original_application_commit": "a047f74757fae0d7b5ef64e54f0b957dee2bf8f3",
+    "latest_base_commit": "7fedca06ba5d2ef761a2ae3d44d8a0917db36994",
+    "different_whole_app_files": [
+      "app/src/main/AndroidManifest.xml",
+      "app/src/main/java/com/osfans/trime/ime/bar/InputBarDelegate.kt"
+    ],
+    "six_popup_action_renderer_asset_inputs_unchanged": [
+      "app/src/main/java/com/osfans/trime/ime/popup/PopupKeyboardUi.kt",
+      "app/src/main/java/com/osfans/trime/ime/popup/PopupDelegate.kt",
+      "app/src/main/java/com/osfans/trime/ime/popup/PopupContainerUi.kt",
+      "app/src/main/java/com/osfans/trime/ime/keyboard/KeyAction.kt",
+      "app/src/main/java/com/osfans/trime/ime/core/AutoScaleTextView.kt",
+      "app/src/main/assets/shared/tongwenfeng.trime.yaml"
+    ],
+    "note": "Old whole-app APK is not latest base APK. These two intervening commits affect manifest visibility and candidate bar, while popup/KeyAction/renderer/theme inputs are identical. Use as scoped label regression negative control only."
+  },
+  "observed_AB": [
+    {
+      "kind": "baseline",
+      "report": {
+        "path": "/home/xumin/Public/Trime/build/issue-fixes-batch4-20261028/runtime/run2/baseline-probe-report.json",
+        "bytes": 29110,
+        "sha256": "18408088ab5dcad4abdf17750259b2b414801e6ac44bffe177aa529fa2b09e91"
+      },
+      "raw_final_result": {
+        "path": "/home/xumin/Public/Trime/build/issue-fixes-batch4-20261028/runtime/run2/commands/baseline-instrument.stdout",
+        "bytes": 94374,
+        "sha256": "30e89bb2d6741439802006b9155e17bfdf66135996e976b37eb01c617266fd84"
+      },
+      "instrument_command": {
+        "path": "/home/xumin/Public/Trime/build/issue-fixes-batch4-20261028/runtime/run2/commands/baseline-instrument.json",
+        "bytes": 426,
+        "sha256": "507de810fb10657eefed5b0c6c4d776456851dc18b28500c1a831aad0e4492c6"
+      },
+      "duration_seconds": 41.8289954662323,
+      "pid": 1690,
+      "installed_target_sha256": "7e47545d6c7a2255546389b38cb4365229fd43b53202465f1243b4bd9fa3eb55",
+      "observations": 11,
+      "scenarios": 4,
+      "violation_count": 9,
+      "passed": false,
+      "expected_observation_matches": true,
+      "native_ready_destroy_completed": true,
+      "rime_session_remaining_after_destroy": false,
+      "preferences_selected_keys_before_after": [
+        {
+          "normal_mode_color": "default",
+          "follow_system_day_night": "false",
+          "selected_theme": null
+        },
+        {
+          "normal_mode_color": "default",
+          "follow_system_day_night": "false",
+          "selected_theme": null
+        }
+      ],
+      "default_IME_unchanged": true,
+      "artifact_manifest": {
+        "path": "/home/xumin/Public/Trime/build/issue-fixes-batch4-20261028/runtime/run2/baseline-images/manifest.json",
+        "bytes": 28635,
+        "sha256": "077a37a1c633bacdb38fb79dab53016d03ed36a11e5a4c22ad72900080ea45cf"
+      },
+      "PNGs_verified_and_actually_viewed_by_reviewer": [
+        {
+          "path": "/home/xumin/Public/Trime/build/issue-fixes-batch4-20261028/runtime/run2/baseline-images/bundled_default_38dp.png",
+          "bytes": 4422,
+          "sha256": "2e1ec2e1c8ef1fcc9f8b122a9c7373fae609a3cd4e34efaca7e6ae7de63cf81e"
+        },
+        {
+          "path": "/home/xumin/Public/Trime/build/issue-fixes-batch4-20261028/runtime/run2/baseline-images/bundled_narrow_24dp.png",
+          "bytes": 4310,
+          "sha256": "b10bda3bdc7ccad62c781fae0c40e4b04f2d21ff825803caadb97884adb8b70a"
+        },
+        {
+          "path": "/home/xumin/Public/Trime/build/issue-fixes-batch4-20261028/runtime/run2/baseline-images/bundled_large_text_46sp.png",
+          "bytes": 6597,
+          "sha256": "0dbba148dc4ddd04f86affa34b4a2938e98bf84503bc3ca1e0a37c2324f69f59"
+        },
+        {
+          "path": "/home/xumin/Public/Trime/build/issue-fixes-batch4-20261028/runtime/run2/baseline-images/explicit_preset_controls_38dp.png",
+          "bytes": 8727,
+          "sha256": "0b9f5691a896430bdac640f486d1da91217aba6fb9e16050a32968330c9dcb37"
+        }
+      ],
+      "owned_artifacts_removed_and_absence_checked": true
+    },
+    {
+      "kind": "fixed",
+      "report": {
+        "path": "/home/xumin/Public/Trime/build/issue-fixes-batch4-20261028/runtime/run2/fixed-probe-report.json",
+        "bytes": 19194,
+        "sha256": "f5a87bcd7369c68a409f853c914d897360e224e964fa8b34fb9eee853daeb898"
+      },
+      "raw_final_result": {
+        "path": "/home/xumin/Public/Trime/build/issue-fixes-batch4-20261028/runtime/run2/commands/fixed-instrument.stdout",
+        "bytes": 65577,
+        "sha256": "13f78f8cd5ac0d95f19d9af9f6987d2a8aa8e7e266da6451c19791e69c1fd147"
+      },
+      "instrument_command": {
+        "path": "/home/xumin/Public/Trime/build/issue-fixes-batch4-20261028/runtime/run2/commands/fixed-instrument.json",
+        "bytes": 426,
+        "sha256": "302c641ee583b168d69d877470b4b47825580c11bfa290fb213962a30c0926d0"
+      },
+      "duration_seconds": 12.816845417022705,
+      "pid": 2158,
+      "installed_target_sha256": "b95270aea8e2f260f556ca691569d00265f477ac30d3317a3272bf7892dad317",
+      "observations": 11,
+      "scenarios": 4,
+      "violation_count": 0,
+      "passed": true,
+      "expected_observation_matches": true,
+      "native_ready_destroy_completed": true,
+      "rime_session_remaining_after_destroy": false,
+      "preferences_selected_keys_before_after": [
+        {
+          "normal_mode_color": "default",
+          "follow_system_day_night": "false",
+          "selected_theme": null
+        },
+        {
+          "normal_mode_color": "default",
+          "follow_system_day_night": "false",
+          "selected_theme": null
+        }
+      ],
+      "default_IME_unchanged": true,
+      "artifact_manifest": {
+        "path": "/home/xumin/Public/Trime/build/issue-fixes-batch4-20261028/runtime/run2/fixed-images/manifest.json",
+        "bytes": 19025,
+        "sha256": "4cd1215dcf75fb33ed6788fa2b55d75a279c8199aa09e02b9836a05ad448f398"
+      },
+      "PNGs_verified_and_actually_viewed_by_reviewer": [
+        {
+          "path": "/home/xumin/Public/Trime/build/issue-fixes-batch4-20261028/runtime/run2/fixed-images/bundled_default_38dp.png",
+          "bytes": 5400,
+          "sha256": "a92b7ae645f5684147de2d4fb7afa67d07b570cf2fa81f43527d448a4605e5f9"
+        },
+        {
+          "path": "/home/xumin/Public/Trime/build/issue-fixes-batch4-20261028/runtime/run2/fixed-images/bundled_narrow_24dp.png",
+          "bytes": 3836,
+          "sha256": "02e2f993d1d6219bf81a77809c3f6f3983f4e5723134c2e1846b31061393c7d5"
+        },
+        {
+          "path": "/home/xumin/Public/Trime/build/issue-fixes-batch4-20261028/runtime/run2/fixed-images/bundled_large_text_46sp.png",
+          "bytes": 5361,
+          "sha256": "d07bac819cc80565baabee953c7b667430ef996d66475ae3f104dba4a4769f30"
+        },
+        {
+          "path": "/home/xumin/Public/Trime/build/issue-fixes-batch4-20261028/runtime/run2/fixed-images/explicit_preset_controls_38dp.png",
+          "bytes": 9614,
+          "sha256": "0f30a0617d0d547e33961f53b94f63561de4629b332e8413d787d1a2cfbe0a7d"
+        }
+      ],
+      "owned_artifacts_removed_and_absence_checked": true
+    }
+  ],
+  "visual_findings": "Reviewer opened all8 original PNGs via view_image. All3 baseline bundled draws show W/设; corresponding fixed images show Wiki/设置 including narrow24dp and text46sp. Preset draw changes woman-only to full technologist sequence, 设 to 设置选项 and e to accented e; icon and A remain. Complete labels fit existing proportional renderer but small/adjacent glyphs are not a universal readability certification.",
+  "native_log_cross_check": {
+    "path": "/home/xumin/Public/Trime/build/issue-fixes-batch4-20261028/runtime/run2/device-logcat.txt",
+    "scope": "Final frozen complete original log checked for the two already-completed helper PIDs and both unique marker case intervals. Prior3 system ANRs preserved and separately constrained in final_scope_review.",
+    "pids": [
+      1690,
+      2158
+    ],
+    "each_native_start_stop_finalize_present": true,
+    "PID_Fatal_exception_count": 0,
+    "matched_lines": [
+      "10-28 22:36:18.155  1690  1985 D [Instr: com.osfans.trime.PopupLabelInstrumentation] RimeDaemon: RimeDaemon.kt:91] RimeDaemon start rime",
+      "10-28 22:36:19.136  1690  1985 D [Instr: com.osfans.trime.PopupLabelInstrumentation] RimeDaemon: RimeDaemon.kt:105] RimeDaemon stop rime",
+      "10-28 22:36:19.137  1690  1985 I [Instr: com.osfans.trime.PopupLabelInstrumentation] Rime: Rime.kt:463] Rime finalize()",
+      "10-28 22:36:58.493  2158  2173 D [Instr: com.osfans.trime.PopupLabelInstrumentation] RimeDaemon: RimeDaemon.kt:91] RimeDaemon start rime",
+      "10-28 22:36:59.219  2158  2173 D [Instr: com.osfans.trime.PopupLabelInstrumentation] RimeDaemon: RimeDaemon.kt:105] RimeDaemon stop rime",
+      "10-28 22:36:59.220  2158  2173 I [Instr: com.osfans.trime.PopupLabelInstrumentation] Rime: Rime.kt:463] Rime finalize()"
+    ]
+  },
+  "history_and_limits": [
+    "Run1 v1 actually crashed before any popup/session check because off-main ThemeManager initialization raced Application.onCreate; original FATAL and independent lifecycle review remain. Run1 is invalid helper evidence and not erased by v2 pass.",
+    "V2 main-queue initialization barrier completed on both observed launches; this verifies these runs, not proof of all possible application lifecycles. Both native ready snapshots have schema_id_cached empty and ascii_mode_cached true; no Chinese schema/input behavior is claimed.",
+    "This uses real native Rime session/status plus unattached production popup objects and direct public focus/trigger method calls. It does not test physical long press, actual system touch, external Settings/browser actions, IME window positioning, TalkBack, real-device OEM behavior or all-glyph readability.",
+    "Literal one-character ASCII shortcut and empty-label paths are source-unchanged but outside dynamic matrix. Popup capacity rounding remains separate pre-existing issue.",
+    "Two theme preference values and selected-theme absence/default IME checked; ordinary app PID/crash/runtime/native maintenance data changes are not claimed byte-identical. No user dictionary learning/migration/upgrade acceptance.",
+    "CI133 warning candidates, local Gradle/native/tools/runtime warnings, diagnostic signing warnings and3 actual system boot ANRs remain recorded. V1 real helper FATAL remains historical. Final VM shutdown and helper cleanup verified; no zero-warning or complete-IME acceptance claim."
+  ],
+  "actions": "No source edits, builds, ADB or VM operations. Independently rehashed source/helper/artifact/APKs/784 payloads/PNG/manifest files, compared raw stdout JSON and XML values, read producer/source records/logs, used local git read-only and actually viewed8 PNGs. Wrote this review only.",
+  "final_scope_review": {
+    "reviewed_at_utc": "2026-10-28T14:43:17.098778+00:00",
+    "previous_independent_review_preserved": {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch4-20261028/runtime/popup-independent-review-before-final-log.json",
+      "bytes": 14959,
+      "sha256": "c48d6c060c4b3de9f18f7c8385e9b59cdb35569e82fce548a9f616d8e044978d"
+    },
+    "final_continuous_original_log": {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch4-20261028/runtime/run2/device-logcat.txt",
+      "bytes": 3922217,
+      "sha256": "90e7f0361e12949739ae02c25ce760aaa31fcf331622201d07ba6462cb8edc0e"
+    },
+    "real_system_boot_ANRs_retained": [
+      {
+        "line": 16289,
+        "event": "10-28 22:35:33.428   541  1286 I am_anr  : [0,911,com.android.phone,952647245,Broadcast of Intent { act=android.safetycenter.action.REFRESH_SAFETY_SOURCES flg=0x10000010 pkg=com.android.phone cmp=com.android.phone/.security.SafetySourceReceiver (has extras) }]",
+        "PID": 911,
+        "package": "com.android.phone",
+        "reason": "Broadcast of Intent { act=android.safetycenter.action.REFRESH_SAFETY_SOURCES flg=0x10000010 pkg=com.android.phone cmp=com.android.phone/.security.SafetySourceReceiver (has extras) }",
+        "before_first_case_marker": true
+      },
+      {
+        "line": 16721,
+        "event": "10-28 22:35:38.177   541  1286 I am_anr  : [0,787,com.android.systemui,818462221,executing service com.android.systemui/.keyguard.KeyguardService, waited 20635ms]",
+        "PID": 787,
+        "package": "com.android.systemui",
+        "reason": "executing service com.android.systemui/.keyguard.KeyguardService, waited 20635ms",
+        "before_first_case_marker": true
+      },
+      {
+        "line": 18171,
+        "event": "10-28 22:35:41.855   541  1504 I am_anr  : [0,1392,com.android.phone,952647245,Process ProcessRecord{47fddd4 1392:com.android.phone/1001} failed to complete startup]",
+        "PID": 1392,
+        "package": "com.android.phone",
+        "reason": "Process ProcessRecord{47fddd4 1392:com.android.phone/1001} failed to complete startup",
+        "before_first_case_marker": true
+      }
+    ],
+    "ANR_interpretation": "Three actual system process ANRs, not ignored or rewritten: safety-source broadcast in phone911, KeyguardService execution in SystemUI787, then phone1392 startup. All recorded before first baseline case marker. This limits environment reliability and prevents whole-device/complete-IME acceptance or a zero-warning claim; it does not invalidate the separately bounded unattached popup-label object observations.",
+    "actual_case_interval_reviews": [
+      {
+        "case": "baseline",
+        "PID": 1690,
+        "start": {
+          "line": 19220,
+          "text": "10-28 22:35:46.128  1632  1632 I TRIME_POPUP_PROBE: baseline-start"
+        },
+        "end": {
+          "line": 25977,
+          "text": "10-28 22:36:28.119  2071  2071 I TRIME_POPUP_PROBE: baseline-end"
+        },
+        "all_PID_fatal_or_ANR_markers_in_case_interval": [],
+        "helper_PID_fatal_exception_or_signal_in_final_log": 0,
+        "scope": "Strict actual unique-marker case interval and helper PID checks; prior system boot ANRs remain in complete original log."
+      },
+      {
+        "case": "fixed",
+        "PID": 2158,
+        "start": {
+          "line": 26620,
+          "text": "10-28 22:36:52.225  2145  2145 I TRIME_POPUP_PROBE: fixed-start"
+        },
+        "end": {
+          "line": 27415,
+          "text": "10-28 22:37:05.205  2207  2207 I TRIME_POPUP_PROBE: fixed-end"
+        },
+        "all_PID_fatal_or_ANR_markers_in_case_interval": [],
+        "helper_PID_fatal_exception_or_signal_in_final_log": 0,
+        "scope": "Strict actual unique-marker case interval and helper PID checks; prior system boot ANRs remain in complete original log."
+      }
+    ],
+    "cleanup": {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch4-20261028/runtime/run2/cleanup.json",
+      "bytes": 763,
+      "sha256": "4a3eeda7d3873858f6c29dbcbf55ef082d56551d7dbd9f8e611ee674948fa55d"
+    },
+    "controller_completion": {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch4-20261028/runtime/run2/completion.json",
+      "bytes": 1004,
+      "sha256": "57fdecd1542a696156011bc70daadebb6261dda7f127f5ebebd6dedcbe90cb35"
+    },
+    "VM_exit": 0,
+    "normal_emulator_kill_exit": 0,
+    "collector_SIGTERM_exit": -15,
+    "controller_cleanup_errors": [],
+    "helper_uninstall_success_and_package_absence": true,
+    "owned_directory_absence": true,
+    "private_test_sentinel_sha256": "fc23655d05c9d26dcf7a828f670dfc811c65aa54cc8a98283ad4ffa03da4c988",
+    "default_Latin_IME_preserved": true,
+    "full_preference_delta_independently_parsed": {
+      "general__pid": {
+        "before": {
+          "tag": "int",
+          "value": "1731",
+          "text": null
+        },
+        "after": {
+          "tag": "int",
+          "value": "2158",
+          "text": null
+        }
+      }
+    },
+    "full_preferences_bytes_identical": false,
+    "scope": "Normal PID update explains the one preference change in this captured test interval. This is not a dictionary/user-data/upgrade preservation test; no whole-device success or absent-system-warning claim."
+  }
+}

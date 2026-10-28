@@ -1,0 +1,234 @@
+{
+  "created_at_utc": "2026-10-28T14:13:37.124815+00:00",
+  "status": "CURRENT_SOURCE_CONFIRMED_LABEL_TRUNCATION; RUNTIME_NOT_YET_TESTED",
+  "issue": {
+    "number": 2033,
+    "url": "https://github.com/osfans/trime/issues/2033",
+    "state": "open",
+    "title": "popup的label显示不正常",
+    "reported_version": "3.3.10/11440ff",
+    "comments": 0,
+    "body": "### 摘要 / Summary\n\n目前的popup的label只能显示一个字或字母,无法完整显示定义的label\n\n### 重现步骤 / Steps to Reproduce\n\n1. 默认主题\n2. 长按回车键盘, 应该显示  \"设置\", \"wiki\" ,但实际只显示 \"设\", \"w\"\n```\n- {click: Return, label_symbol: \"wiki\", popup: [\"TrimeWiki\", \"Settings\"], composing: Return1, swipe_up: Escape, width: 15, key_back_color: benter, key_text_color: tenter}\n```\n\n3. 尝试过修改popup的宽度,和字的大小,还是无法完整显示\n```\n  popup_width: 58 #按键提示宽度\n  popup_text_size: 12 #按键提示字号\n```\n\n\n\n### 预期行为 / Expected Behavior\n\n希望能完整显示popup中的label\n\n### 日志 / Log\n\n_No response_\n\n### 截图 / Screenshot\n\n_No response_\n\n### 附加信息 / Additional Context\n\n_No response_\n\n### 系统版本 / OS Version\n\nandroid\n\n### 应用版本 / App Version\n\n3.3.10-g11440ff-release\n\n### 构建信息 / Build Information\n\nBuilder: Release CI\nBuild Git Hash: 11440ffceb618b68deeddf4bdf7497b082cb87ae\nBuild Time: May 1, 2026 09:29:22",
+    "snapshot": {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch4-20261028/popup-inputs/issue-2033.json",
+      "bytes": 3977,
+      "sha256": "ee0073fb6053b5b652fd9985840e0bc5f8ce25e85c48726f430cc58c4e5bceb2"
+    },
+    "comments_snapshot": {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch4-20261028/popup-inputs/comments-2033.json",
+      "bytes": 3,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    }
+  },
+  "upstream": {
+    "head": "7fedca06ba5d2ef761a2ae3d44d8a0917db36994",
+    "source": "Fresh gh api commits/develop agrees with local origin/develop and root fetch",
+    "metadata": {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch4-20261028/popup-inputs/develop.json",
+      "bytes": 4736,
+      "sha256": "8f0005b153df82f06c345df7c4623bf63471d716c5261d2b654829ae42eb460d"
+    }
+  },
+  "correction": "Issue2033 concerns long-press key popup action labels. PopupCandidates/PagedCandidatesUi are a different feature and not the root-cause path.",
+  "duplicate_check": {
+    "direct_issue_reference_PR_search_count": 0,
+    "popup_search_count": 32,
+    "popup_label_combined_search_count": 0,
+    "current_open_PR_count": 11,
+    "result": "No current duplicate found in fresh bounded title/body searches and open PR inspection. Adjacent2195/2192/2183 changed-file lists contain neither ime/popup files nor AutoScaleTextView. Not an exhaustive guarantee against unpublished work or search indexing lag.",
+    "adjacent_PR_files": [
+      {
+        "path": "/home/xumin/Public/Trime/build/issue-fixes-batch4-20261028/popup-inputs/pr-2195-files.json",
+        "bytes": 20470,
+        "sha256": "406deeabf9c1c41ae761d40cd281cdc961ecba09f4e497724413eff7df83582d"
+      },
+      {
+        "path": "/home/xumin/Public/Trime/build/issue-fixes-batch4-20261028/popup-inputs/pr-2192-files.json",
+        "bytes": 4757,
+        "sha256": "72e9f5c07de299a5ec73c0316188d3625a8ad98e96d3bb6cbb73720fcd16ccba"
+      },
+      {
+        "path": "/home/xumin/Public/Trime/build/issue-fixes-batch4-20261028/popup-inputs/pr-2183-files.json",
+        "bytes": 271400,
+        "sha256": "49b0597f7b7da529ef673264978f8f04e73644d580395ecfb6077fca172fc893"
+      }
+    ],
+    "search_records": [
+      {
+        "path": "/home/xumin/Public/Trime/build/issue-fixes-batch4-20261028/popup-inputs/prs-reference-2033.json",
+        "bytes": 3,
+        "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+      },
+      {
+        "path": "/home/xumin/Public/Trime/build/issue-fixes-batch4-20261028/popup-inputs/prs-popup.json",
+        "bytes": 50156,
+        "sha256": "7b9bc40702073b5e75fc925ab0b1f1aeb67245ec7b51c500c707f9db33b42a1e"
+      },
+      {
+        "path": "/home/xumin/Public/Trime/build/issue-fixes-batch4-20261028/popup-inputs/prs-label.json",
+        "bytes": 3,
+        "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+      },
+      {
+        "path": "/home/xumin/Public/Trime/build/issue-fixes-batch4-20261028/popup-inputs/open-prs.json",
+        "bytes": 23173,
+        "sha256": "14211c444c2854d84bb533bcf708c66e457a33fe953ba6a8f694c062b59bdd2b"
+      }
+    ]
+  },
+  "confirmed_root_cause": {
+    "path": "PopupDelegate.reallyShowKeyboard -> PopupKeyboardUi.labels.map -> theme.resolveAction(label).getLabel(KeyboardWindow.currentKeyboard) -> first code point -> PopupKeyUi -> AutoScaleTextView",
+    "location": "ime/popup/PopupKeyboardUi.kt:194-208",
+    "behavior": "Except a one-character ASCII shortcut and full icon tokens, every resolved action label is deliberately replaced by String(Character.toChars(label.codePointAt(0))). This occurs before text measurement; width/font settings cannot recover deleted characters.",
+    "actual_asset": "tongwenfeng default Return has popup TrimeWiki/Settings. Presets label them Wiki and 设置. Upstream code necessarily yields W and 设 given the resolved labels.",
+    "historical_vs_current": "The issue report is historical, but the exact destructive truncation remains in latest7fed source and the referenced labels remain shipped. No current Android visual reproduction is claimed by this read-only investigation.",
+    "existing_renderer": "PopupKeyUi uses AutoScaleTextView.Mode.Proportional and draws text, so preserve full resolved label and let existing measurement/scale logic fit it. Icon branch already routes ic@ tokens to ImageView."
+  },
+  "single_behavior_recommendation": {
+    "scope": "Only preserve the complete resolved action label in PopupKeyboardUi. Keep ASCII shortcut, action resolution, original trigger token, icon routing, popup dimensions, row/column layout and ordinary key preview behavior unchanged.",
+    "minimal_change": "Remove first-code-point truncation around getLabel; no new text fitter, callback layer or helper-only production abstraction is required.",
+    "capacity_issue_is_separate": true,
+    "do_not_bundle": [
+      "Capacity rounding or overflow placement",
+      "Keyboard key-preview first-character policy in KeyView.showPopupPreview",
+      "PopupCandidates pagination/candidate rendering",
+      "KeyAction Rime status/casing architecture"
+    ]
+  },
+  "separate_capacity_finding": {
+    "status": "SOURCE_ARITHMETIC_CONFIRMED_SEPARATE_BUG_NOT_FOR_THIS_PR",
+    "formula": "rowCount=ceil(n/5); columnCount=round(n/rowCount); rowCount*columnCount can be less than n. keyOrders can never reference the remaining final indices.",
+    "examples": [
+      {
+        "items": 13,
+        "rows": 3,
+        "columns": 4,
+        "capacity": 12,
+        "unreachable_zero_based_indices": [
+          12
+        ]
+      },
+      {
+        "items": 17,
+        "rows": 4,
+        "columns": 4,
+        "capacity": 16,
+        "unreachable_zero_based_indices": [
+          16
+        ]
+      },
+      {
+        "items": 21,
+        "rows": 5,
+        "columns": 4,
+        "capacity": 20,
+        "unreachable_zero_based_indices": [
+          20
+        ]
+      },
+      {
+        "items": 22,
+        "rows": 5,
+        "columns": 4,
+        "capacity": 20,
+        "unreachable_zero_based_indices": [
+          20,
+          21
+        ]
+      },
+      {
+        "items": 26,
+        "rows": 6,
+        "columns": 4,
+        "capacity": 24,
+        "unreachable_zero_based_indices": [
+          24,
+          25
+        ]
+      }
+    ],
+    "proof_limit": "Read-only evaluation of source formula, not Android gesture or rendered-capacity acceptance. Record for a separate behavior fix."
+  },
+  "Android_public_API_feasibility": {
+    "no_JNI_complete_action_path": false,
+    "why": "KeyboardWindow.currentKeyboard is public lateinit and can be assigned a public Keyboard(selfConfig=null), but KeyAction.getLabel always enters adjustCase, which reads RimeDaemon.getFirstSessionOrNull()!! and session.run{statusCached}, even for multi-character explicit preset labels. RimeDaemon object initialization also begins realRime message collection; createSession starts the real backend.",
+    "narrow_real_Rime_path": "Use a dedicated public RimeDaemon.createSession name, wait runOnReady withTimeout, assign public currentKeyboard, parse bundled theme with real ThemeYaml/ThemeDslExpander and activate ColorManager scope, then construct real PopupKeyboardUi with original action tokens. This uses real JNI/Rime but need not launch full IME Activity/service.",
+    "cleanup_limit": "destroySession can synchronously finalize native engine; coroutine timeout alone cannot guarantee that blocking native call returns. Overall instrumentation watchdog and root VM cleanup must cover total deadline, and all native maintenance/config/encoding warnings remain evidence.",
+    "insufficient_alternative": "An ASCII-only outer PopupKeyboardUi allows direct inner PopupKeyUi(\"设置\") rendering without Rime, but bypasses action-label resolution/truncation and cannot alone demonstrate issue2033 regression."
+  },
+  "meaningful_validation": {
+    "source_and_fixture": [
+      "Match baseline and fixed source/asset/APK hashes; use exactly original TrimeWiki/Settings tokens and actual resolved labels.",
+      "Use actual PopupKeyboardUi construction, recursively inspect public TextView.text/ImageView state, measure/layout/draw real AutoScale children, save synthetic UI bitmap evidence.",
+      "Default38dp, narrow24dp and larger popupTextSize should retain complete label text and nonempty bounded rendering. Do not equate this object render with full IME/system touch acceptance."
+    ],
+    "selection": [
+      "Move focus via public onChangeFocus using container-local coordinates and call onTrigger; check original TrimeWiki/Settings token unchanged. Do not execute Settings/browser activities.",
+      "Add explicitly declared preset fixtures for single ASCII, multi-CJK, supplementary/combining/ZWJ labels and ic@ icon; preserve empty/icon semantics. All go through actual full action resolution, not a surrogate string mapper."
+    ],
+    "baseline_and_fixed": [
+      "Baseline must produce a captured expected label assertion failure with no uncaught product FATAL; fixed must satisfy all label/render/token controls.",
+      "Inspect runtime stage and target APK identity; an early session/parser/fixture failure is a harness/precondition failure, not reproduction.",
+      "RimeReady/native startup/teardown, preference restoration, selected default IME and artifact cleanup must be explicitly reported. No no-JNI/full-keyboard/TalkBack claim."
+    ]
+  },
+  "reviewed_sources": [
+    {
+      "path": "/home/xumin/Public/Trime-pr-standard-theme-colors-20261028/app/src/main/java/com/osfans/trime/ime/popup/PopupKeyboardUi.kt",
+      "bytes": 10591,
+      "sha256": "053481ac0be3ed3231e9463f55d1956020520acbb92402c7e067f4bf88cae365",
+      "equals_current_upstream_blob": true
+    },
+    {
+      "path": "/home/xumin/Public/Trime-pr-standard-theme-colors-20261028/app/src/main/java/com/osfans/trime/ime/popup/PopupContainerUi.kt",
+      "bytes": 3037,
+      "sha256": "96a94af763b852552478c1d00667fa38a50f1b9cd63a1efc64a6d550e2d4b2bd",
+      "equals_current_upstream_blob": true
+    },
+    {
+      "path": "/home/xumin/Public/Trime-pr-standard-theme-colors-20261028/app/src/main/java/com/osfans/trime/ime/popup/PopupDelegate.kt",
+      "bytes": 7654,
+      "sha256": "99389c9b06bd0d3435aa2cfee0d11c2629f92ae4ed9c55db6843495235370312",
+      "equals_current_upstream_blob": true
+    },
+    {
+      "path": "/home/xumin/Public/Trime-pr-standard-theme-colors-20261028/app/src/main/java/com/osfans/trime/ime/keyboard/KeyView.kt",
+      "bytes": 14417,
+      "sha256": "288fdb6b8aa4d2788996fa1480b1b98072dfba3117ef9ec36c7151c06e086f61",
+      "equals_current_upstream_blob": true
+    },
+    {
+      "path": "/home/xumin/Public/Trime-pr-standard-theme-colors-20261028/app/src/main/java/com/osfans/trime/ime/keyboard/KeyboardWindow.kt",
+      "bytes": 15419,
+      "sha256": "d10e4b1cfc78195f141fa5e14f0aebc629c7e66f6383cff5ccd09dc47e3ccc0f",
+      "equals_current_upstream_blob": true
+    },
+    {
+      "path": "/home/xumin/Public/Trime-pr-standard-theme-colors-20261028/app/src/main/java/com/osfans/trime/ime/keyboard/KeyAction.kt",
+      "bytes": 9744,
+      "sha256": "3500c212a6caad6f4298d3dcff41b422d7676323b8795837dde0bdf679ae52c1",
+      "equals_current_upstream_blob": true
+    },
+    {
+      "path": "/home/xumin/Public/Trime-pr-standard-theme-colors-20261028/app/src/main/java/com/osfans/trime/ime/core/AutoScaleTextView.kt",
+      "bytes": 8358,
+      "sha256": "c92ded471c62aa2a773510784237d60ac822d831bda9298929a6f99b5d3db8c1",
+      "equals_current_upstream_blob": true
+    },
+    {
+      "path": "/home/xumin/Public/Trime-pr-standard-theme-colors-20261028/app/src/main/java/com/osfans/trime/daemon/RimeDaemon.kt",
+      "bytes": 7070,
+      "sha256": "8783c75c9ff574ecc89b900e437cf856e7c0963f81e5e102fe92aeecd9c4c681",
+      "equals_current_upstream_blob": true
+    },
+    {
+      "path": "/home/xumin/Public/Trime-pr-standard-theme-colors-20261028/app/src/main/java/com/osfans/trime/daemon/RimeSession.kt",
+      "bytes": 1232,
+      "sha256": "c32125b9d6ed3088e5e7f2c24ab2cc21f804f9253024700836aa23f517575c89",
+      "equals_current_upstream_blob": true
+    }
+  ],
+  "actions": "Fresh read-only GH CLI requests, git/source inspection and arithmetic model only; no production edit, build, ADB, emulator or PR creation. Wrote investigation artifacts only.",
+  "applicable_AGENTS": "No applicable AGENTS in public/worktree Kotlin source ancestors; only unrelated native/vendor AGENTS exist.",
+  "next_work": "Root selected full action labels only. Independent ignored Android helper requested separately, with real public Rime session and explicit object/render scope."
+}

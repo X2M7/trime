@@ -1,0 +1,144 @@
+{
+  "reviewed_at_utc": "2026-10-28T14:15:21.974179+00:00",
+  "reviewer": "Independent popup_review agent; read-only production review",
+  "issue": 2033,
+  "base": "7fedca06ba5d2ef761a2ae3d44d8a0917db36994",
+  "head": "492d8d60084026cbc80e045301b638e4b0f76a31",
+  "result": "NO_BLOCKER_FOUND_IN_PRODUCTION_PATCH_OR_FROZEN_HELPER_SOURCE; COMPILE_AND_RUNTIME_NOT_PERFORMED_BY_REVIEWER",
+  "scope": "Remove first-code-point truncation from resolved popup action labels only. No production changes, build, ADB or push performed by reviewer.",
+  "actual_diff": "PopupKeyboardUi.kt: one expression returns the existing getLabel result directly instead of branching on icon/empty/first code point. 1 insertion, 7 deletions; no imports removed because isIconFont remains used by PopupKeyUi.",
+  "contracts": [
+    {
+      "case": "one-character ASCII shortcut",
+      "finding": "Predicate label.length == 1 && label[0].code < 128 and returned original label are unchanged; no new Rime/action resolution is introduced for this path."
+    },
+    {
+      "case": "empty resolved label",
+      "finding": "Previously getLabel(...).let selected else \"\"; now getLabel directly returns the same empty string. PopupKeyUi continues to show its empty TextView. No char access occurs."
+    },
+    {
+      "case": "ic@ icon token",
+      "finding": "Previously the complete icon string bypassed truncation; direct getLabel preserves the identical token. PopupKeyUi still recognizes isIconFont, creates IconicsDrawable, shows ImageView and hides TextView."
+    },
+    {
+      "case": "multi-character action names",
+      "finding": "All resolved code units survive, including Settings=设置 and TrimeWiki=Wiki. Action resolution and KeyboardWindow.currentKeyboard argument are unchanged."
+    },
+    {
+      "case": "supplementary emoji, combining and ZWJ strings",
+      "finding": "No code-point/grapheme splitting is left on this path. getLabel output passes intact to TextView; font glyph coverage and shaping remain existing renderer behavior and require bounded Android object evidence."
+    },
+    {
+      "case": "display measurement and shrink",
+      "finding": "PopupKeyUi still uses AutoScaleTextView.Mode.Proportional inside fixed keyWidth/keyHeight FrameLayouts; AutoScale measures whole text and scales X/Y together when content exceeds available bounds. No new scaling code or text truncation is introduced. Arbitrarily long labels may shrink; this patch does not promise a minimum readable font size."
+    },
+    {
+      "case": "action token, gesture focus and dispatch",
+      "finding": "keys, labels, keyOrders, onChangeFocus and onTrigger are unchanged. onTrigger continues returning keys.getOrNull(focusedIndex), never the display label. PopupDelegate uses labels=keys as before; Settings/browser action execution itself is not changed."
+    },
+    {
+      "case": "Rime status and action label resolution",
+      "finding": "getLabel already reads RimeDaemon session/status through adjustCase. Direct return does not introduce or remove such reads; any fixture must create a real ready session to exercise full path."
+    }
+  ],
+  "separate_preexisting_findings": [
+    {
+      "finding": "Grid capacity can undercount for 13,17,21,22 and more entries due to roundToInt(n/ceil(n/5)).",
+      "disposition": "Independent pre-existing behavior; not caused by full-label preservation. Should remain a separate focused fix and not block two-item issue2033 fix."
+    },
+    {
+      "finding": "No universal readability/RTL/physical OEM/TalkBack acceptance has been performed by this source review.",
+      "disposition": "Do not claim these from bounded object render checks."
+    }
+  ],
+  "working_tree_note": "app/build.gradle.kts was modified temporarily by the root-controlled build during inspection; review is bound to git objects base/head rather than that temporary build change.",
+  "sources": [
+    {
+      "path": "app/src/main/java/com/osfans/trime/ime/popup/PopupKeyboardUi.kt",
+      "bytes": 10351,
+      "sha256": "c785b0167b0385b9256d71f2a5a789790d66df6ed470d78393499214bfa00521",
+      "unchanged_from_base": false
+    },
+    {
+      "path": "app/src/main/java/com/osfans/trime/ime/popup/PopupContainerUi.kt",
+      "bytes": 3037,
+      "sha256": "96a94af763b852552478c1d00667fa38a50f1b9cd63a1efc64a6d550e2d4b2bd",
+      "unchanged_from_base": true
+    },
+    {
+      "path": "app/src/main/java/com/osfans/trime/ime/popup/PopupDelegate.kt",
+      "bytes": 7654,
+      "sha256": "99389c9b06bd0d3435aa2cfee0d11c2629f92ae4ed9c55db6843495235370312",
+      "unchanged_from_base": true
+    },
+    {
+      "path": "app/src/main/java/com/osfans/trime/ime/keyboard/KeyAction.kt",
+      "bytes": 9744,
+      "sha256": "3500c212a6caad6f4298d3dcff41b422d7676323b8795837dde0bdf679ae52c1",
+      "unchanged_from_base": true
+    },
+    {
+      "path": "app/src/main/java/com/osfans/trime/ime/keyboard/Key.kt",
+      "bytes": 14473,
+      "sha256": "400f39329ced634460f22e2866728b00f0577ffeafcbb3a471498305bda8d94b",
+      "unchanged_from_base": true
+    },
+    {
+      "path": "app/src/main/java/com/osfans/trime/ime/core/AutoScaleTextView.kt",
+      "bytes": 8358,
+      "sha256": "c92ded471c62aa2a773510784237d60ac822d831bda9298929a6f99b5d3db8c1",
+      "unchanged_from_base": true
+    },
+    {
+      "path": "app/src/main/java/com/osfans/trime/daemon/RimeDaemon.kt",
+      "bytes": 7070,
+      "sha256": "8783c75c9ff574ecc89b900e437cf856e7c0963f81e5e102fe92aeecd9c4c681",
+      "unchanged_from_base": true
+    },
+    {
+      "path": "app/src/main/java/com/osfans/trime/daemon/RimeSession.kt",
+      "bytes": 1232,
+      "sha256": "c32125b9d6ed3088e5e7f2c24ab2cc21f804f9253024700836aa23f517575c89",
+      "unchanged_from_base": true
+    }
+  ],
+  "android_helper_review": {
+    "reviewed_at_utc": "2026-10-28T14:24:17.511789+00:00",
+    "path": "/home/xumin/Public/Trime/build/issue-fixes-batch4-20261028/popup-probe/PopupLabelInstrumentation.kt",
+    "bytes": 28547,
+    "sha256": "d5263b0c08bcff561f59f1e6bfe415e14ac1697962494e0f74bfd132107baa03",
+    "result": "NO_SOURCE_BLOCKER_FOUND; ACTUAL_COMPILE_AND_ANDROID_OUTCOMES_PENDING_ROOT",
+    "public_API_checks": [
+      "ThemeYaml/ThemeDslExpander, Theme.copy/PresetKey, ColorManager.attachTheme/init/setColorScheme/currentScope are public production APIs; no internal constructor invocation or reflection.",
+      "Keyboard constructor with selfConfig=null is public; KeyboardWindow.currentKeyboard is public lateinit. Helper restores original object if initialized; otherwise explicitly describes fixture state surviving only until instrumentation process finish.",
+      "RimeDaemon getFirstSessionOrNull/createSession/destroySession and RimeSession.runOnReady are public. Helper refuses any pre-existing session before creating a uniquely named own session; readiness block uses real RimeApi isReady/statusCached.",
+      "PopupKeyboardUi.root is inferred LinearLayout/ViewGroup in production, so ViewGroup assignment and direct public child traversal compile at source-contract level. TextView.text and public ImageView visibility/drawable queried, no private keyOrders/keyUis access.",
+      "Final version uses explicit public getTextScaleX() rather than Kotlin synthetic-looking textScaleX read, avoiding ambiguity with private source backing field.",
+      "onChangeFocus receives actual descendant cell rectangle center in container-local coordinates; onTrigger returns original tokens. No Activity/browser/settings launch or action dispatch is performed."
+    ],
+    "oracle_checks": [
+      "Bundled default exact popup [TrimeWiki,Settings] is read from real shipped theme; resolved labels asserted Wiki/设置, expected width38/text23 match current asset.",
+      "Four scenarios: bundled38dp, narrow24dp, text46sp, five explicit preset controls. Eleven total observations, nine expected baseline complete-label violations: six bundled observations plus multi-CJK, ZWJ and combining; ASCII-A and icon remain controls.",
+      "Fixture long token PopupProbeAscii passes through real action resolution with label A, but is not a one-character ASCII shortcut input. No standalone shortcut/empty dynamic acceptance claim.",
+      "Baseline expected display uses full icon token or first code point, catches final assertion as ordinary instrumentation result. A premature readiness/parser/ink/cleanup failure cannot satisfy all_scenarios_completed + exact nine violations + expected_observation_matches.",
+      "Fixed requires eleven observations, zero label violations, original token-set equality, positive finite proportional scales <=1.001, and at least one downscaling case.",
+      "Child-only bitmap ink explicitly requires no background and positive measured dimensions, excluding a trivial popup background pass. Pixel nonemptiness and text property equality do not establish glyph-by-glyph recognition or universal readability.",
+      "PNG bitmap dimensions/pixel count, compressed output and matrix sizes bounded; unique owned directory avoids overwriting existing files. Normal retained artifacts require Root pull/hash/cleanup afterward."
+    ],
+    "lifecycle_and_failure_checks": [
+      "Normal overall watchdog150s covers readiness90s/main20s and synchronous native destroy; native call cannot be cancelled by coroutine timeout, so watchdog finish and Root VM/controller cleanup remain actual hard-stop fallback.",
+      "Main Runnable captures Throwable internally and communicates by latch/Result; expected assertion does not escape main as a FATAL. Timed out already-running main task cannot be interrupted and is explicitly disclosed.",
+      "Both color preference values captured and finally restored/read back. Prior scope reattached through public APIs, with object-identity limitation explicit. No claim of full preferences-byte or native-data preservation.",
+      "Only its own Rime session is destroyed; before/after flags make early startup/teardown incomplete distinguishable. Native maintenance/user-data writes, notifications and logcat clear are disclosed.",
+      "RimeDaemon Deploy.Start calls logcat --clear. Root must preserve continuous raw external logs; a terminal ring-buffer dump cannot prove full-run warning coverage.",
+      "Atomic finished guard prevents duplicate final results; watchdog reports failed state if cleanup stalls. Expected baseline result passed=false remains distinct from unexpected harness failure."
+    ],
+    "limitations": [
+      "No compile, APK inspection, ADB, real rendering or native runtime performed by this reviewer. Successful actual compilation and observed baseline/fixed JSON are still required.",
+      "Synthetic unattached production popup rendering and direct method calls do not verify physical long-press gestures, window placement, TalkBack, full IME lifecycle, user-perceived readability, or all glyph shapes.",
+      "Dynamic fixture matrix does not include an empty resolved label or literal one-character ASCII shortcut token; production source verifies those paths unchanged. No requirement to enlarge this focused patch.",
+      "Native real-session startup/deployment may change normal maintenance/config files and emits ordinary warnings; not a no-JNI or zero-runtime-warning proof.",
+      "Root must bind installed_target_apk_sha256 to baseline/fixed source identities, inspect all four PNGs per target, verify restoration/destroy flags, pull then remove own UUID directory and uninstall helper if appropriate."
+    ]
+  }
+}

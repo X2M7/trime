@@ -1,0 +1,81 @@
+{
+  "status": "V2_READY_FOR_ROOT_COMPILATION_NOT_COMPILED_OR_RUN_BY_AUTHOR",
+  "source_path": "/home/xumin/Public/Trime/build/issue-fixes-batch4-20261028/popup-probe/PopupLabelInstrumentation.kt",
+  "source_sha256": "060a073bd5066f47c08ba6ea9e5ce773882d87792f60b82028af632eb74291ee",
+  "package": "com.osfans.trime",
+  "class": "PopupLabelInstrumentation",
+  "public_api_only": true,
+  "reflection_or_stub_or_direct_jni": false,
+  "requires_existing_app_dependencies": [
+    "kotlinx-coroutines",
+    "production ThemeYaml/ThemeDslExpander/ColorManager",
+    "production Keyboard/KeyboardWindow",
+    "production PopupKeyboardUi"
+  ],
+  "arguments": {
+    "expect": "baseline|fixed, default fixed",
+    "retain_artifacts": "true|false, default true"
+  },
+  "instrumentation_report_key": "popup_label_report",
+  "checkpoint_key": "popup_checkpoint",
+  "result_contract": {
+    "baseline": {
+      "passed": false,
+      "result_code": 1,
+      "expected_observation_matches": true,
+      "observations": 11,
+      "label_violations": 9
+    },
+    "fixed": {
+      "passed": true,
+      "result_code": -1,
+      "expected_observation_matches": true,
+      "observations": 11,
+      "label_violations": 0
+    }
+  },
+  "bounds_ms": {
+    "overall_including_destroy": 150000,
+    "native_ready_wait": 90000,
+    "individual_main_task": 20000
+  },
+  "fixtures": [
+    "bundled actual default theme TrimeWiki/Settings at 38dp and23sp",
+    "same actual labels at24dp",
+    "same actual labels at46sp",
+    "five explicit presets through same resolveAction/getLabel: ASCII A, CJK 设置选项, ZWJ emoji, combining accent, ic@home"
+  ],
+  "artifacts": "Four PNG files plus manifest.json only in exclusively named target.filesDir/popup-probe-PID-UUID directory. Default retained for Root pull and Root removal; report exact paths and SHA. retain_artifacts=false deletes own directory in finally.",
+  "cleanup": "Restore logical normalModeColor/followSystemDayNight preferences and prior currentKeyboard object if previously initialized, reattach prior theme if scope existed, then destroy only dedicated named Rime session. Previously uninitialized public lateinit/scope cannot be unset via public API and remain process-local until normal instrumentation finish. An overall timeout reports partial flags and can require Root cleanup.",
+  "limitations": [
+    "Synthetic unattached production popup views, no full IME/window attachment, Activity, UiAutomation, system long press or InputDispatcher",
+    "Direct public container-local onChangeFocus/onTrigger checks only returned tokens; no action execution",
+    "Child-only transparent Canvas ink check proves nonempty pixels and bounded views, not recognition of every glyph or visual/accessibility readability",
+    "Actual native Rime startup/teardown required because getLabel reads cached status; normal native deployment/maintenance writes and notifications may occur",
+    "Production RimeDaemon Deploy.Start can run logcat --clear; retain externally continuous raw logs and disclose capture limitation",
+    "No capacity rounding, popup preview, empty-label or truly one-character literal shortcut coverage; those are outside this one-behavior production change",
+    "No build, device execution or observed pass claimed in this contract"
+  ],
+  "source_checks": {
+    "line_count": 447,
+    "read_only_product": true,
+    "no_reflection_tokens": true
+  },
+  "helper_version": 2,
+  "application_initialization_barrier": {
+    "stage": "await_application_on_create",
+    "implementation": "Existing onMain Handler.post + latch with internal Runnable catch; empty task at first statement of try, before ThemeManager/ColorManager access",
+    "maximum_wait_ms": 20000,
+    "purpose": "Instrumentation.onStart may race main-thread Application.onCreate. The queued main task runs after the current bind/application callback returns; no manual preference initialization or product changes.",
+    "failure_cleanup_guard": "Theme restore and prefs() readback run only if both oldColor and oldFollow were captured. If barrier times out or first preference capture fails, cleanup records skip reason and never initializes theme APIs.",
+    "reported_completion_key": "application_on_create_barrier_completed"
+  },
+  "previous_failed_helper": {
+    "source_path": "/home/xumin/Public/Trime/build/issue-fixes-batch4-20261028/popup-probe/previous-v1.kt",
+    "source_sha256": "d5263b0c08bcff561f59f1e6bfe415e14ac1697962494e0f74bfd132107baa03",
+    "contract_path": "/home/xumin/Public/Trime/build/issue-fixes-batch4-20261028/popup-probe/previous-v1-contract.json",
+    "failure_classification": "Harness lifecycle precondition failure with actual target main-thread FATAL; before any Rime session or popup observation; not evidence for or against popup-label product fix",
+    "evidence": "runtime/run1/commands/baseline-instrument.stdout and runtime/run1/device-logcat.txt",
+    "diagnosis": "popup-probe/v1-failure-diagnosis.json"
+  }
+}

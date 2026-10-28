@@ -86,6 +86,24 @@ Android 15 模拟器完成真实生产 `ThemeYaml`／`ColorManager`／`ThemeScop
 
 本批没有改写 `develop`、发布稳定版或改动其他 PR 源码。索引仅同步所选文字、XML 与 helper；APK、原图、完整日志及磁盘保留于本地，见本批 [SHA-256 清单](checks/issue-fixes-batch3-20261028/SHA256SUMS)。
 
+### 第四批：长按弹出菜单完整标签（2026-10-28）
+
+新增 [#2204](https://github.com/osfans/trime/pull/2204)，**Fixes [#2033](https://github.com/osfans/trime/issues/2033)**。源码 `492d8d60`，基于上游 `7fedca06`，仅一个生产文件，1 行新增／7 行删除。将已解析的完整动作标签交给现有 `AutoScaleTextView` 比例缩放，移除首 Unicode code point 截断；`popup: [TrimeWiki, Settings]` 从“W／设”恢复“Wiki／设置”。PR 在本次证据提交时仍为 Draft，待同步实际正式待审回执。[进度](checks/issue-fixes-batch4-20261028/progress.json)、[调查](checks/issue-fixes-batch4-20261028/popup-investigation.json)与[独立源码复核](checks/issue-fixes-batch4-20261028/production-review.json)保留。网格容量不足是独立问题，未混入本补丁。
+
+[CI 五项检查](https://github.com/osfans/trime/actions/runs/40704522250)全部成功；原始 Ubuntu APK 的 producer `53097d71` 与 head 的[完整 Git tree 相同](checks/issue-fixes-batch4-20261028/cloud/pr-2204/ubuntu-original/source-tree-proof.json)。Ubuntu 本次 JNI 缓存未命中，实际编译四 ABI；其他三系统命中 JNI 缓存。[CI 汇总](checks/issue-fixes-batch4-20261028/cloud/pr-2204/ci-summary.json)记录实际执行范围。本地一次完整构建通过：**331 项应用 JVM 测试**实际执行、格式检查通过；Lint 为 **0 Error／65 Warning**，36 个警告位置文件与本轮上游基线逐字相同。native／OpenCC 的本地复用和仅本机构建使用、已恢复的 SDK DSL 兼容调整均单列于[本地记录](checks/issue-fixes-batch4-20261028/local-validation.json)，不混称全新原生构建或零警告。
+
+Android 15 离屏生产 Popup 对象对照通过：真实独立 Rime 会话 ready 后，分别按默认 38 dp、窄格 24 dp、46 sp 大字号和显式控制组绘制，**4 个场景／11 项观察**。原版有 9 项预期标签截断失败，修复版 0 失败；实际单元格中心传入公开 `onChangeFocus`／`onTrigger` 后，原动作 token 集合完整保持。中文长标签、ZWJ emoji、组合字符保留完整字符串，ASCII preset 和图标控制保持。Root 实际查看全部 **8 张原始 PNG**，见[限定验收](checks/issue-fixes-batch4-20261028/runtime/popup-validation.json)、[独立终审](checks/issue-fixes-batch4-20261028/runtime/popup-independent-review.json)和[原 helper](checks/issue-fixes-batch4-20261028/runtime/PopupLabelInstrumentation.kt.txt)。负对照 APK 为 `a047f747`，到新基线的差异仅在 Manifest／InputBarDelegate，Popup 直接输入已逐字核对；不冒充最新整应用基线。这是未挂载窗口的真实 View 测量／绘制，不是系统真实长按、完整 IME、TalkBack、普遍字形可读性或真机验收；未执行 Settings／浏览器动作。会话 cached schema ID 为空，不据此声称中文输入或学习通过。
+
+首轮真实失败保留：helper 在 `Application.onCreate` 完成前读取 ThemeManager，引发初始化错误及 PID 1731 的真实 FATAL，尚未进入 Rime／Popup 检查。v2 只增加主线程初始化屏障，以及屏障失败时避免触碰主题的清理守卫；没有手动初始化偏好、stub 或生产改动。原 v1、[失败诊断](checks/issue-fixes-batch4-20261028/popup-probe/v1-failure-diagnosis.json)与[v2 独立复核](checks/issue-fixes-batch4-20261028/helper-lifecycle-review-v2.json)保留，不能把首轮崩溃写成标签问题已复现或全轮无崩溃。
+
+v2 两次 native 会话正常销毁，逻辑主题偏好、默认 Latin 输入法和既有私有哨兵保持；整个偏好映射仅 `general__pid` 改变，不称 XML 字节不变。native 启动／部署可以写普通维护文件，未核对整个词库／缓存字节。共同测试证书诊断副本的 784 个非签名 ZIP 条目与各原 APK 一致，不代表正式签名升级或 Release 验收。PNG／manifest 拉取校验后，独占目录与 helper 包已清理；两轮 VM 正常退出 0、采集器预定 SIGTERM 返回 −15，最低宿主可用内存约 1.33／1.45 GiB。49 个原 AVD／system-image 文件未变，无本轮模拟器／构建 JVM 残留，文件索引保持运行。
+
+**警告仍在**：[CI 复核](checks/issue-fixes-batch4-20261028/cloud/pr-2204/warning-context-review.json)保留 133 条机械诊断行，含 54 条原生警告及 6 条编译汇总；不是 133 个独立缺陷。两轮完整采集原件分别有 2,384／2,711 条 W。第二轮有三次真实 phone／SystemUI 启动 ANR，均早于唯一 baseline 起始标记；两个实际用例区间没有匹配 fatal／ANR 标记，不宣称整机通过。两个对象测试进程各保留 16 W／11 E，其中 ThemeUtils 报 AppCompatImageView 与有效上下文主题不匹配；未靠修改 helper 主题隐藏，也未归作 Android 系统噪声。[主题控件契约调查](checks/issue-fixes-batch4-20261028/warning-followup.json)保留后续方向及尚待验证项；本次只修标签截断。
+
+并行完成 [Spotless 警告调查](checks/issue-fixes-batch4-20261028/spotless-investigation.json)：官方实现已默认排除普通子项目 buildDir，缺口在 included build。`build-logic/convention/build/**` 是待实际验证的最小排除候选，未声称已消除警告，也未把正常源码或全部零频词排除来消警。
+
+本批只推独立源码分支与 fork 分类索引；未发布稳定版或改写 `develop`。索引仅同步所选文字／XML／helper，APK、原 PNG、完整日志与磁盘保留在本地，见 [SHA-256 清单](checks/issue-fixes-batch4-20261028/SHA256SUMS)。
+
 ### 先跟进已有 PR，避免重复
 
 09:34 快照中 [7 项 PR 的源码身份、覆盖与排除范围](checks/issue-triage-20261028/existing-pr-overlap.json)已核对正文；待审不等于已合并。

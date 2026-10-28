@@ -1,0 +1,144 @@
+{
+  "reviewed_at_utc": "2026-10-28T14:34:02.294075+00:00",
+  "reviewer": "Independent popup_review agent; source and retained host evidence only",
+  "result": "READY_TO_COMPILE_AND_RERUN_V2; NO_SOURCE_BLOCKER_FOUND; NOT_ACTUAL_RUNTIME_PASS",
+  "production_patch_unchanged": {
+    "head": "492d8d60084026cbc80e045301b638e4b0f76a31",
+    "path": "app/src/main/java/com/osfans/trime/ime/popup/PopupKeyboardUi.kt"
+  },
+  "history_preserved": {
+    "v1": {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch4-20261028/popup-probe/previous-v1.kt",
+      "bytes": 28547,
+      "sha256": "d5263b0c08bcff561f59f1e6bfe415e14ac1697962494e0f74bfd132107baa03"
+    },
+    "previous_review": {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch4-20261028/production-review.json",
+      "bytes": 11493,
+      "sha256": "7796b53c9a710afba0764127b9e4376e4297323fcf5c26cf8f1200ecd68815ab"
+    },
+    "note": "Initial source review did not establish correct Application lifecycle ordering. Actual first runtime exposed this helper race. Keep original failure and previous source/review unchanged; neither source review nor run1 is acceptance."
+  },
+  "run1_observed_failure": {
+    "instrument_result": {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch4-20261028/runtime/run1/commands/baseline-instrument.stdout",
+      "bytes": 74,
+      "sha256": "cc376fcd260b55a01f82c04af5e0a9ead88516f600131a38bdea1a3e05b10a8d"
+    },
+    "device_log_path": "/home/xumin/Public/Trime/build/issue-fixes-batch4-20261028/runtime/run1/device-logcat.txt",
+    "observed_original_lines": [
+      {
+        "line": 24614,
+        "text": "10-28 22:29:24.071  1731  1731 I ans.trime.debug: Caused by: kotlin.UninitializedPropertyAccessException: Default preferences not initialized! Make sure to call initDefault()"
+      },
+      {
+        "line": 24622,
+        "text": "10-28 22:29:24.075  1731  1731 E AndroidRuntime: FATAL EXCEPTION: main"
+      },
+      {
+        "line": 24623,
+        "text": "10-28 22:29:24.075  1731  1731 E AndroidRuntime: Process: com.osfans.trime.debug, PID: 1731"
+      },
+      {
+        "line": 24624,
+        "text": "10-28 22:29:24.075  1731  1731 E AndroidRuntime: java.lang.NoClassDefFoundError: com.osfans.trime.data.theme.ThemeManager"
+      },
+      {
+        "line": 24625,
+        "text": "10-28 22:29:24.075  1731  1731 E AndroidRuntime: \tat com.osfans.trime.TrimeApplication.onCreate(TrimeApplication.kt:187)"
+      },
+      {
+        "line": 24638,
+        "text": "10-28 22:29:24.075  1731  1731 E AndroidRuntime: \tat com.osfans.trime.PopupLabelInstrumentation.onStart(PopupLabelInstrumentation.kt:123)"
+      },
+      {
+        "line": 24640,
+        "text": "10-28 22:29:24.075  1731  1731 E AndroidRuntime: Caused by: kotlin.UninitializedPropertyAccessException: Default preferences not initialized! Make sure to call initDefault()"
+      },
+      {
+        "line": 24643,
+        "text": "10-28 22:29:24.075  1731  1731 E AndroidRuntime: \tat com.osfans.trime.data.theme.ThemeManager.<clinit>(ThemeManager.kt:78)"
+      }
+    ],
+    "interpretation": "Instrumentation starts a worker before Application.onCreate finishes. V1 worker first touched ThemeManager at line123 before AppPrefs.initDefault; failed static initialization contaminated ThemeManager. Application main thread later referenced the failed class at TrimeApplication187, producing actual NoClassDefFoundError/FATAL. No real session/popup assertions completed. This is an invalid helper run, not reproduction or product-regression acceptance. Raw logs and genuine FATAL must remain in records."
+  },
+  "v2": {
+    "path": "/home/xumin/Public/Trime/build/issue-fixes-batch4-20261028/popup-probe/PopupLabelInstrumentation.kt",
+    "bytes": 29190,
+    "sha256": "060a073bd5066f47c08ba6ea9e5ce773882d87792f60b82028af632eb74291ee"
+  },
+  "changes_reviewed": [
+    {
+      "change": "Main-handler empty-task barrier at try entry",
+      "finding": "onMain(await_application_on_create) posts its empty Runnable before any ThemeManager, ColorManager, KeyboardWindow or RimeDaemon actual access. Handler callback cannot execute until current main handleBindApplication returns after synchronous callApplicationOnCreate; latch then signals the worker. Readiness is observed through ordinary lifecycle ordering, not manual AppPrefs initialization."
+    },
+    {
+      "change": "20-second barrier error path",
+      "finding": "Same main-task latch/error capture and150-second outer watchdog retained. If post/latch times out, no fixture preferences or own session were mutated/created. Already-running main tasks remain non-interruptible and are not treated as successful initialization."
+    },
+    {
+      "change": "Finally guarded by both originals captured",
+      "finding": "When oldColor or oldFollow is null, no theme restore/main post/prefs() read occurs. Only skipped-cleanup report fields are written. This closes the independent review finding that a barrier timeout could otherwise touch ThemeManager again from failure cleanup."
+    },
+    {
+      "change": "Normal cleanup preserved",
+      "finding": "Once both original preferences are captured, original restore/readback/scope/currentKeyboard logic runs. Their successful capture precedes every fixture mutation. Native destroy still requires sessionCreated, so an initial barrier failure does not touch RimeDaemon."
+    },
+    {
+      "change": "No fixture or oracle change",
+      "finding": "Three bundled scenarios plus five preset controls remain11 observations/9 baseline truncation failures. No production edit, manual initDefault, reflection, stub, excluded observation, loosened assertion or session fake added."
+    }
+  ],
+  "primary_source_ordering": {
+    "source_version": "AOSP android-15.0.0_r1; API35 source ordering used to explain observed API35 stack, not assertion that every installed system binary byte equals this tag",
+    "sources": [
+      {
+        "url": "https://android.googlesource.com/platform/frameworks/base/+/refs/tags/android-15.0.0_r1/core/java/android/app/ActivityThread.java?format=TEXT",
+        "path": "/home/xumin/Public/Trime/build/issue-fixes-batch4-20261028/popup-probe/lifecycle-primary/ActivityThread.java",
+        "bytes": 394503,
+        "sha256": "3a6995ab5f30c7507fbdc25e45c852224f400838538b64422a585c4661286ca2",
+        "matches": [
+          {
+            "line": 7495,
+            "snippet": "            // Do this after providers, since instrumentation tests generally start their\n            // test thread at this point, and we don't want that racing.\n            try {\n                mInstrumentation.onCreate(data.instrumentationArgs);\n            }\n            catch (Exception e) {\n                throw new RuntimeException("
+          },
+          {
+            "line": 7504,
+            "snippet": "            }\n            try {\n                timestampApplicationOnCreateNs = SystemClock.uptimeNanos();\n                mInstrumentation.callApplicationOnCreate(app);\n            } catch (Exception e) {\n                timestampApplicationOnCreateNs = 0;\n                if (!mInstrumentation.onException(app, e)) {"
+          },
+          {
+            "line": 7665,
+            "snippet": "            initInstrumentation(ii, data, appContext);\n\n            try {\n                mInstrumentation.onCreate(data.instrumentationArgs);\n            } catch (Exception e) {\n                throw new RuntimeException(\n                        \"Exception thrown in onCreate() of \""
+          }
+        ]
+      },
+      {
+        "url": "https://android.googlesource.com/platform/frameworks/base/+/refs/tags/android-15.0.0_r1/core/java/android/app/Instrumentation.java?format=TEXT",
+        "path": "/home/xumin/Public/Trime/build/issue-fixes-batch4-20261028/popup-probe/lifecycle-primary/Instrumentation.java",
+        "bytes": 109500,
+        "sha256": "38fd2c02a469510935bcc43155c9ace600368ecbabed33dc120b11126ca5e8fd",
+        "matches": [
+          {
+            "line": 201,
+            "snippet": "            throw new RuntimeException(\"Instrumentation already started\");\n        }\n        mRunner = new InstrumentationThread(\"Instr: \" + getClass().getName());\n        mRunner.start();\n    }\n\n    /**"
+          },
+          {
+            "line": 213,
+            "snippet": "     * <p>You will typically want to call finish() when this function is done,\n     * to end your instrumentation.\n     */\n    public void onStart() {\n    }\n\n    /**"
+          }
+        ]
+      }
+    ],
+    "findings": [
+      "ActivityThread.handleBindApplication calls mInstrumentation.onCreate at7495, then callApplicationOnCreate at7504 in same main callback.",
+      "Instrumentation.start launches InstrumentationThread at201; its run calls onStart at2594. Thus onStart work can race Application initialization unless it waits for the main queue boundary."
+    ]
+  },
+  "remaining_requirements": [
+    "Actually compile final helper and inspect all emitted warnings before reuse.",
+    "Rerun baseline and fixed from fresh target processes; bind installed APK SHA and helper SHA, require full11 observations and exact expected old/fixed outcomes.",
+    "Preserve run1 real FATAL as helper failure; do not report zero overall fatal history or replace it with later pass.",
+    "Retain runtime logs across native logcat clear, original PNGs and preference/session cleanup state; source review alone cannot prove race eliminated on device."
+  ],
+  "actions": "Read-only production/helper/diff/raw evidence review and two primary AOSP HTTP reads; wrote lifecycle primary-source cache and this supplement only. No build, ADB, VM, production edit or push."
+}

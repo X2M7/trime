@@ -1,0 +1,105 @@
+{
+  "scope": "Mechanical review of captured continuous log, not a blanket warning attribution or proof of whole-device acceptance. Production native deployment may clear buffers; captured raw original is retained.",
+  "full_log": {
+    "path": "/home/xumin/Public/Trime/build/issue-fixes-batch4-20261028/runtime/run1/device-logcat.txt",
+    "bytes": 3551716,
+    "sha256": "5b1d3d7cb9f3ce15d150bd569677a86c3a5a0d05c0471c431a5e70e9ff9c8d2a"
+  },
+  "captured_levels": {
+    "W": 2384,
+    "I": 7253,
+    "D": 8972,
+    "E": 1361,
+    "V": 5524
+  },
+  "warning_tags": [
+    [
+      "ActivityManager",
+      288
+    ],
+    [
+      "PackageSettings",
+      151
+    ],
+    [
+      "Looper  ",
+      149
+    ],
+    [
+      "PackageManager",
+      136
+    ],
+    [
+      "system_server",
+      131
+    ],
+    [
+      "resolv  ",
+      80
+    ],
+    [
+      "BestClock",
+      75
+    ],
+    [
+      "android.hardware.media.c2@1.0-service-goldfish",
+      62
+    ],
+    [
+      "CarrierConfigManager",
+      62
+    ],
+    [
+      "mediaswcodec",
+      60
+    ],
+    [
+      "mediaextractor",
+      57
+    ],
+    [
+      "TelephonyRegistry",
+      57
+    ],
+    [
+      "UserSystemPackageInstaller",
+      55
+    ],
+    [
+      "AppOpService",
+      42
+    ],
+    [
+      "ContextImpl",
+      40
+    ]
+  ],
+  "fatal_anr_oom_lmk_kill_pattern_matches": [
+    {
+      "line": 16315,
+      "text": "10-28 22:28:47.784   544  1283 I am_anr  : [0,922,com.android.phone,952647245,Broadcast of Intent { act=android.safetycenter.action.REFRESH_SAFETY_SOURCES flg=0x10000010 pkg=com.android.phone cmp=com.android.phone/.security.SafetySourceReceiver (has extras) }]"
+    },
+    {
+      "line": 16903,
+      "text": "10-28 22:28:51.117   544  1283 E ActivityManager: ANR in com.android.phone"
+    },
+    {
+      "line": 17055,
+      "text": "10-28 22:28:51.640   544  1283 I am_anr  : [0,789,com.android.systemui,818462221,executing service com.android.systemui/.SystemUIService, waited 21113ms]"
+    },
+    {
+      "line": 18260,
+      "text": "10-28 22:28:56.850   544  1283 E ActivityManager: ANR in com.android.systemui"
+    },
+    {
+      "line": 23942,
+      "text": "10-28 22:29:22.225   142   142 I lowmemorykiller: Kill 'com.android.music' (1301), uid 10105, oom_score_adj 965 to free 100592kB rss, 2816kB swap; reason: low watermark is breached"
+    },
+    {
+      "line": 24622,
+      "text": "10-28 22:29:24.075  1731  1731 E AndroidRuntime: FATAL EXCEPTION: main"
+    }
+  ],
+  "zero_warning_claim": false,
+  "classification": "FAILED_HELPER_APPLICATION_INIT_RACE_WITH_ACTUAL_BASELINE_PROCESS_FATAL_RETAINED"
+}

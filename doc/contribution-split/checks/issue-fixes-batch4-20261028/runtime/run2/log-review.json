@@ -1,0 +1,466 @@
+{
+  "scope": "Mechanical review of captured continuous log, not a blanket warning attribution or proof of whole-device acceptance. Production native deployment may clear buffers; captured raw original is retained.",
+  "full_log": {
+    "path": "/home/xumin/Public/Trime/build/issue-fixes-batch4-20261028/runtime/run2/device-logcat.txt",
+    "bytes": 3922217,
+    "sha256": "90e7f0361e12949739ae02c25ce760aaa31fcf331622201d07ba6462cb8edc0e"
+  },
+  "captured_levels": {
+    "W": 2711,
+    "I": 8496,
+    "D": 9706,
+    "E": 1652,
+    "V": 5606
+  },
+  "warning_tags": [
+    [
+      "ActivityManager",
+      304
+    ],
+    [
+      "PackageSettings",
+      152
+    ],
+    [
+      "Looper  ",
+      148
+    ],
+    [
+      "PackageManager",
+      135
+    ],
+    [
+      "system_server",
+      128
+    ],
+    [
+      "IPCThreadState",
+      118
+    ],
+    [
+      "resolv  ",
+      86
+    ],
+    [
+      "BestClock",
+      79
+    ],
+    [
+      "HealthConnectPackageInfoUtils",
+      78
+    ],
+    [
+      "CarrierConfigManager",
+      63
+    ],
+    [
+      "android.hardware.media.c2@1.0-service-goldfish",
+      62
+    ],
+    [
+      "mediaswcodec",
+      60
+    ],
+    [
+      "mediaextractor",
+      57
+    ],
+    [
+      "UserSystemPackageInstaller",
+      55
+    ],
+    [
+      "TelephonyRegistry",
+      52
+    ]
+  ],
+  "fatal_anr_oom_lmk_kill_pattern_matches": [
+    {
+      "line": 16289,
+      "text": "10-28 22:35:33.428   541  1286 I am_anr  : [0,911,com.android.phone,952647245,Broadcast of Intent { act=android.safetycenter.action.REFRESH_SAFETY_SOURCES flg=0x10000010 pkg=com.android.phone cmp=com.android.phone/.security.SafetySourceReceiver (has extras) }]"
+    },
+    {
+      "line": 16543,
+      "text": "10-28 22:35:36.592   541  1286 E ActivityManager: ANR in com.android.phone"
+    },
+    {
+      "line": 16721,
+      "text": "10-28 22:35:38.177   541  1286 I am_anr  : [0,787,com.android.systemui,818462221,executing service com.android.systemui/.keyguard.KeyguardService, waited 20635ms]"
+    },
+    {
+      "line": 17484,
+      "text": "10-28 22:35:39.616   541  1286 E ActivityManager: ANR in com.android.systemui"
+    },
+    {
+      "line": 18171,
+      "text": "10-28 22:35:41.855   541  1504 I am_anr  : [0,1392,com.android.phone,952647245,Process ProcessRecord{47fddd4 1392:com.android.phone/1001} failed to complete startup]"
+    },
+    {
+      "line": 18484,
+      "text": "10-28 22:35:43.480   541  1504 E ActivityManager: ANR in com.android.phone"
+    }
+  ],
+  "zero_warning_claim": false,
+  "cases": {
+    "baseline": {
+      "pid": 1690,
+      "marker_lines": {
+        "start": 19220,
+        "end": 25977
+      },
+      "pid_levels": {
+        "I": 235,
+        "W": 16,
+        "D": 58,
+        "V": 5,
+        "E": 11
+      },
+      "warning_error_lines": [
+        {
+          "line": 19621,
+          "level": "W",
+          "tag": "ans.trime.debug",
+          "text": "Unexpected CPU variant for x86: x86_64."
+        },
+        {
+          "line": 19622,
+          "level": "W",
+          "tag": "ans.trime.debug",
+          "text": "Known variants: atom, sandybridge, silvermont, goldmont, goldmont-plus, goldmont-without-sha-xsaves, tremont, kabylake, default"
+        },
+        {
+          "line": 19874,
+          "level": "W",
+          "tag": "ActivityThread",
+          "text": "Package uses different ABI(s) than its instrumentation: package[com.osfans.trime.debug]: x86_64, null instrumentation[com.osfans.trime.debug.test]: null, null"
+        },
+        {
+          "line": 19886,
+          "level": "W",
+          "tag": "ziparchive",
+          "text": "Unable to open '/data/app/~~xYtYr607Sst-4vlZXf6zsw==/com.osfans.trime.debug.test-i4cERNSticrQlNnFqRJImA==/base.dm': No such file or directory"
+        },
+        {
+          "line": 19887,
+          "level": "W",
+          "tag": "ziparchive",
+          "text": "Unable to open '/data/app/~~xYtYr607Sst-4vlZXf6zsw==/com.osfans.trime.debug.test-i4cERNSticrQlNnFqRJImA==/base.dm': No such file or directory"
+        },
+        {
+          "line": 19972,
+          "level": "W",
+          "tag": "ziparchive",
+          "text": "Unable to open '/data/app/~~cAt9tugiI4K6kz9gweObiQ==/com.osfans.trime.debug-8TB7hfM855_RlBoTvuBfsw==/base.dm': No such file or directory"
+        },
+        {
+          "line": 19973,
+          "level": "W",
+          "tag": "ziparchive",
+          "text": "Unable to open '/data/app/~~cAt9tugiI4K6kz9gweObiQ==/com.osfans.trime.debug-8TB7hfM855_RlBoTvuBfsw==/base.dm': No such file or directory"
+        },
+        {
+          "line": 21699,
+          "level": "W",
+          "tag": "ziparchive",
+          "text": "Unable to open '/data/app/~~xYtYr607Sst-4vlZXf6zsw==/com.osfans.trime.debug.test-i4cERNSticrQlNnFqRJImA==/base.dm': No such file or directory"
+        },
+        {
+          "line": 21700,
+          "level": "W",
+          "tag": "ziparchive",
+          "text": "Unable to open '/data/app/~~xYtYr607Sst-4vlZXf6zsw==/com.osfans.trime.debug.test-i4cERNSticrQlNnFqRJImA==/base.dm': No such file or directory"
+        },
+        {
+          "line": 21826,
+          "level": "W",
+          "tag": "ziparchive",
+          "text": "Unable to open '/data/app/~~cAt9tugiI4K6kz9gweObiQ==/com.osfans.trime.debug-8TB7hfM855_RlBoTvuBfsw==/base.dm': No such file or directory"
+        },
+        {
+          "line": 21827,
+          "level": "W",
+          "tag": "ziparchive",
+          "text": "Unable to open '/data/app/~~cAt9tugiI4K6kz9gweObiQ==/com.osfans.trime.debug-8TB7hfM855_RlBoTvuBfsw==/base.dm': No such file or directory"
+        },
+        {
+          "line": 25176,
+          "level": "W",
+          "tag": "ans.trime.debug",
+          "text": "Suspending all threads took: 5.404ms"
+        },
+        {
+          "line": 25478,
+          "level": "W",
+          "tag": "[main] ThemeScope",
+          "text": "ThemeScope.kt:52] Unknown color key: candidate_border_color"
+        },
+        {
+          "line": 25489,
+          "level": "E",
+          "tag": "ThemeUtils",
+          "text": "View class androidx.appcompat.widget.AppCompatImageView is an AppCompat widget that can only be used with a Theme.AppCompat theme (or descendant)."
+        },
+        {
+          "line": 25492,
+          "level": "E",
+          "tag": "ThemeUtils",
+          "text": "View class androidx.appcompat.widget.AppCompatImageView is an AppCompat widget that can only be used with a Theme.AppCompat theme (or descendant)."
+        },
+        {
+          "line": 25499,
+          "level": "W",
+          "tag": "[main] ThemeScope",
+          "text": "ThemeScope.kt:52] Unknown color key: candidate_border_color"
+        },
+        {
+          "line": 25503,
+          "level": "E",
+          "tag": "ThemeUtils",
+          "text": "View class androidx.appcompat.widget.AppCompatImageView is an AppCompat widget that can only be used with a Theme.AppCompat theme (or descendant)."
+        },
+        {
+          "line": 25504,
+          "level": "E",
+          "tag": "ThemeUtils",
+          "text": "View class androidx.appcompat.widget.AppCompatImageView is an AppCompat widget that can only be used with a Theme.AppCompat theme (or descendant)."
+        },
+        {
+          "line": 25522,
+          "level": "W",
+          "tag": "[main] ThemeScope",
+          "text": "ThemeScope.kt:52] Unknown color key: candidate_border_color"
+        },
+        {
+          "line": 25526,
+          "level": "E",
+          "tag": "ThemeUtils",
+          "text": "View class androidx.appcompat.widget.AppCompatImageView is an AppCompat widget that can only be used with a Theme.AppCompat theme (or descendant)."
+        },
+        {
+          "line": 25527,
+          "level": "E",
+          "tag": "ThemeUtils",
+          "text": "View class androidx.appcompat.widget.AppCompatImageView is an AppCompat widget that can only be used with a Theme.AppCompat theme (or descendant)."
+        },
+        {
+          "line": 25531,
+          "level": "W",
+          "tag": "[main] ThemeScope",
+          "text": "ThemeScope.kt:52] Unknown color key: candidate_border_color"
+        },
+        {
+          "line": 25538,
+          "level": "E",
+          "tag": "ThemeUtils",
+          "text": "View class androidx.appcompat.widget.AppCompatImageView is an AppCompat widget that can only be used with a Theme.AppCompat theme (or descendant)."
+        },
+        {
+          "line": 25539,
+          "level": "E",
+          "tag": "ThemeUtils",
+          "text": "View class androidx.appcompat.widget.AppCompatImageView is an AppCompat widget that can only be used with a Theme.AppCompat theme (or descendant)."
+        },
+        {
+          "line": 25540,
+          "level": "E",
+          "tag": "ThemeUtils",
+          "text": "View class androidx.appcompat.widget.AppCompatImageView is an AppCompat widget that can only be used with a Theme.AppCompat theme (or descendant)."
+        },
+        {
+          "line": 25541,
+          "level": "E",
+          "tag": "ThemeUtils",
+          "text": "View class androidx.appcompat.widget.AppCompatImageView is an AppCompat widget that can only be used with a Theme.AppCompat theme (or descendant)."
+        },
+        {
+          "line": 25542,
+          "level": "E",
+          "tag": "ThemeUtils",
+          "text": "View class androidx.appcompat.widget.AppCompatImageView is an AppCompat widget that can only be used with a Theme.AppCompat theme (or descendant)."
+        }
+      ],
+      "native_lifecycle_lines": []
+    },
+    "fixed": {
+      "pid": 2158,
+      "marker_lines": {
+        "start": 26620,
+        "end": 27415
+      },
+      "pid_levels": {
+        "I": 229,
+        "W": 16,
+        "D": 58,
+        "V": 5,
+        "E": 11
+      },
+      "warning_error_lines": [
+        {
+          "line": 26655,
+          "level": "W",
+          "tag": "ans.trime.debug",
+          "text": "Unexpected CPU variant for x86: x86_64."
+        },
+        {
+          "line": 26656,
+          "level": "W",
+          "tag": "ans.trime.debug",
+          "text": "Known variants: atom, sandybridge, silvermont, goldmont, goldmont-plus, goldmont-without-sha-xsaves, tremont, kabylake, default"
+        },
+        {
+          "line": 26660,
+          "level": "W",
+          "tag": "ActivityThread",
+          "text": "Package uses different ABI(s) than its instrumentation: package[com.osfans.trime.debug]: x86_64, null instrumentation[com.osfans.trime.debug.test]: null, null"
+        },
+        {
+          "line": 26663,
+          "level": "W",
+          "tag": "ziparchive",
+          "text": "Unable to open '/data/app/~~xYtYr607Sst-4vlZXf6zsw==/com.osfans.trime.debug.test-i4cERNSticrQlNnFqRJImA==/base.dm': No such file or directory"
+        },
+        {
+          "line": 26664,
+          "level": "W",
+          "tag": "ziparchive",
+          "text": "Unable to open '/data/app/~~xYtYr607Sst-4vlZXf6zsw==/com.osfans.trime.debug.test-i4cERNSticrQlNnFqRJImA==/base.dm': No such file or directory"
+        },
+        {
+          "line": 26665,
+          "level": "W",
+          "tag": "ziparchive",
+          "text": "Unable to open '/data/app/~~9bfb5Rzm4-Y8zS4etrvfOA==/com.osfans.trime.debug-W8IQIf1eN922Khe2j0NP8g==/base.dm': No such file or directory"
+        },
+        {
+          "line": 26666,
+          "level": "W",
+          "tag": "ziparchive",
+          "text": "Unable to open '/data/app/~~9bfb5Rzm4-Y8zS4etrvfOA==/com.osfans.trime.debug-W8IQIf1eN922Khe2j0NP8g==/base.dm': No such file or directory"
+        },
+        {
+          "line": 26777,
+          "level": "W",
+          "tag": "ziparchive",
+          "text": "Unable to open '/data/app/~~xYtYr607Sst-4vlZXf6zsw==/com.osfans.trime.debug.test-i4cERNSticrQlNnFqRJImA==/base.dm': No such file or directory"
+        },
+        {
+          "line": 26778,
+          "level": "W",
+          "tag": "ziparchive",
+          "text": "Unable to open '/data/app/~~xYtYr607Sst-4vlZXf6zsw==/com.osfans.trime.debug.test-i4cERNSticrQlNnFqRJImA==/base.dm': No such file or directory"
+        },
+        {
+          "line": 26779,
+          "level": "W",
+          "tag": "ziparchive",
+          "text": "Unable to open '/data/app/~~9bfb5Rzm4-Y8zS4etrvfOA==/com.osfans.trime.debug-W8IQIf1eN922Khe2j0NP8g==/base.dm': No such file or directory"
+        },
+        {
+          "line": 26780,
+          "level": "W",
+          "tag": "ziparchive",
+          "text": "Unable to open '/data/app/~~9bfb5Rzm4-Y8zS4etrvfOA==/com.osfans.trime.debug-W8IQIf1eN922Khe2j0NP8g==/base.dm': No such file or directory"
+        },
+        {
+          "line": 27044,
+          "level": "W",
+          "tag": "[main] ThemeScope",
+          "text": "ThemeScope.kt:52] Unknown color key: candidate_border_color"
+        },
+        {
+          "line": 27053,
+          "level": "E",
+          "tag": "ThemeUtils",
+          "text": "View class androidx.appcompat.widget.AppCompatImageView is an AppCompat widget that can only be used with a Theme.AppCompat theme (or descendant)."
+        },
+        {
+          "line": 27055,
+          "level": "E",
+          "tag": "ThemeUtils",
+          "text": "View class androidx.appcompat.widget.AppCompatImageView is an AppCompat widget that can only be used with a Theme.AppCompat theme (or descendant)."
+        },
+        {
+          "line": 27060,
+          "level": "W",
+          "tag": "[main] ThemeScope",
+          "text": "ThemeScope.kt:52] Unknown color key: candidate_border_color"
+        },
+        {
+          "line": 27064,
+          "level": "E",
+          "tag": "ThemeUtils",
+          "text": "View class androidx.appcompat.widget.AppCompatImageView is an AppCompat widget that can only be used with a Theme.AppCompat theme (or descendant)."
+        },
+        {
+          "line": 27065,
+          "level": "E",
+          "tag": "ThemeUtils",
+          "text": "View class androidx.appcompat.widget.AppCompatImageView is an AppCompat widget that can only be used with a Theme.AppCompat theme (or descendant)."
+        },
+        {
+          "line": 27067,
+          "level": "W",
+          "tag": "[main] ThemeScope",
+          "text": "ThemeScope.kt:52] Unknown color key: candidate_border_color"
+        },
+        {
+          "line": 27071,
+          "level": "E",
+          "tag": "ThemeUtils",
+          "text": "View class androidx.appcompat.widget.AppCompatImageView is an AppCompat widget that can only be used with a Theme.AppCompat theme (or descendant)."
+        },
+        {
+          "line": 27072,
+          "level": "E",
+          "tag": "ThemeUtils",
+          "text": "View class androidx.appcompat.widget.AppCompatImageView is an AppCompat widget that can only be used with a Theme.AppCompat theme (or descendant)."
+        },
+        {
+          "line": 27073,
+          "level": "W",
+          "tag": "[main] ThemeScope",
+          "text": "ThemeScope.kt:52] Unknown color key: candidate_border_color"
+        },
+        {
+          "line": 27080,
+          "level": "E",
+          "tag": "ThemeUtils",
+          "text": "View class androidx.appcompat.widget.AppCompatImageView is an AppCompat widget that can only be used with a Theme.AppCompat theme (or descendant)."
+        },
+        {
+          "line": 27081,
+          "level": "E",
+          "tag": "ThemeUtils",
+          "text": "View class androidx.appcompat.widget.AppCompatImageView is an AppCompat widget that can only be used with a Theme.AppCompat theme (or descendant)."
+        },
+        {
+          "line": 27082,
+          "level": "E",
+          "tag": "ThemeUtils",
+          "text": "View class androidx.appcompat.widget.AppCompatImageView is an AppCompat widget that can only be used with a Theme.AppCompat theme (or descendant)."
+        },
+        {
+          "line": 27083,
+          "level": "E",
+          "tag": "ThemeUtils",
+          "text": "View class androidx.appcompat.widget.AppCompatImageView is an AppCompat widget that can only be used with a Theme.AppCompat theme (or descendant)."
+        },
+        {
+          "line": 27084,
+          "level": "E",
+          "tag": "ThemeUtils",
+          "text": "View class androidx.appcompat.widget.AppCompatImageView is an AppCompat widget that can only be used with a Theme.AppCompat theme (or descendant)."
+        },
+        {
+          "line": 27085,
+          "level": "W",
+          "tag": "ans.trime.debug",
+          "text": "Suspending all threads took: 10.367ms"
+        }
+      ],
+      "native_lifecycle_lines": []
+    }
+  },
+  "system_boot_anr_limit": "Three recorded am_anr events for Android phone/SystemUI precede the baseline marker; retained, not a whole-device pass.",
+  "classification": "PASS_BOUNDED_POPUP_OBJECT_AB_WITH_RETAINED_WARNINGS"
+}
