@@ -106,7 +106,7 @@ v2 两次 native 会话正常销毁，逻辑主题偏好、默认 Latin 输入�
 
 ### 第五批：恢复主题默认键宽（2026-10-29）
 
-新增 [#2205](https://github.com/osfans/trime/pull/2205)，**Fixes [#1443](https://github.com/osfans/trime/issues/1443)**。分支 `contrib/fix-default-key-width`、源码 `cf5dc640`、基线 `7fedca06`，仅一个生产文件的一行表达式：布局省略正 `width` 时回退到 `style.key_width`，同一默认值用于行预估和实际按键布局；正布局宽度、每键宽度、空白占位及小数权重沿用原行为。历史实现和现行配置契约已[独立核对](checks/issue-fixes-batch5-20261029/key-width-investigation.json)，未夹带其他布局重构。证据冻结时 PR 仍为 Draft，完成发布校验后更新正式回执。
+新增 [#2205](https://github.com/osfans/trime/pull/2205)，**Fixes [#1443](https://github.com/osfans/trime/issues/1443)**。分支 `contrib/fix-default-key-width`、源码 `cf5dc640`、基线 `7fedca06`，仅一个生产文件的一行表达式：布局省略正 `width` 时回退到 `style.key_width`，同一默认值用于行预估和实际按键布局；正布局宽度、每键宽度、空白占位及小数权重沿用原行为。历史实现和现行配置契约已[独立核对](checks/issue-fixes-batch5-20261029/key-width-investigation.json)，未夹带其他布局重构。PR 已为 **Open／Ready for review**，[实际回执](checks/issue-fixes-batch5-20261029/publication/ready-receipt.json)核对源码头、标题和说明全文未漂移；未合并或发布稳定版。
 
 [本地构建](checks/issue-fixes-batch5-20261029/local-validation.json)通过，331 项应用 JVM 测试新执行成功，Debug Lint 0 错误、65 条既有警告，格式检查通过；警告集合与同基线上一轮一致，36 个涉及文件与基线字节相同。临时 SDK 兼容参数已恢复，本地使用固定原 APK 的 x86_64 库／OpenCC 资源。新 [5/5 上游 CI](https://github.com/osfans/trime/actions/runs/40769057800)全部通过，五作业实际 checkout 均为 `29cc5d72`，完整 Git tree 等于 `cf5dc640`；Ubuntu JNI 缓存未命中并实际编译四 ABI，其他三平台缓存命中。[CI 汇总](checks/issue-fixes-batch5-20261029/cloud/pr-2205/ci-summary.json)不代验设备，也未从不导出 XML 的工作流编造测试用例数。
 
