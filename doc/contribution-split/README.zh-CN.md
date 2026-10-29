@@ -136,7 +136,7 @@ v2 两次 native 会话正常销毁，逻辑主题偏好、默认 Latin 输入�
 
 ### 第七批：移除 Spotless 在 Gradle 9 的弃用调用（2026-10-29）
 
-新增 [#2207](https://github.com/osfans/trime/pull/2207)，源码 `3a820aac`、分支 `contrib/fix-spotless-gradle9-deprecation`、基线 `7fedca06`，仅 `gradle/libs.versions.toml` 将 Spotless 8.10.2 升至包含官方修复的 8.10.3。现代插件 ID、原格式目标和显式 `ktlint 1.8.0` 不变，未夹带 #2206 的构建输出排除。依据为 [Spotless #3053](https://github.com/diffplug/spotless/pull/3053) 与 [#3099](https://github.com/diffplug/spotless/issues/3099)，没有将外部依赖问题误写成 Trime 的同号 issue。证据冻结时 PR 仍为 Draft，发布校验后更新正式待审回执。
+新增 [#2207](https://github.com/osfans/trime/pull/2207)，源码 `3a820aac`、分支 `contrib/fix-spotless-gradle9-deprecation`、基线 `7fedca06`，仅 `gradle/libs.versions.toml` 将 Spotless 8.10.2 升至包含官方修复的 8.10.3。现代插件 ID、原格式目标和显式 `ktlint 1.8.0` 不变，未夹带 #2206 的构建输出排除。依据为 [Spotless #3053](https://github.com/diffplug/spotless/pull/3053) 与 [#3099](https://github.com/diffplug/spotless/issues/3099)，没有将外部依赖问题误写成 Trime 的同号 issue。PR 已为 **Open／Ready for review**，[实际回执](checks/issue-fixes-batch7-20261029/publication/ready-receipt.json)确认源码头、标题和正文精确读回；未合并或发布稳定版。
 
 [本轮实际 A/B](checks/issue-fixes-batch7-20261029/local-validation.json)使用 Gradle 9.8.1，强制执行 Formatter 和 Check 两项任务，并记录四个边界事件，并开启 `deprecation.trace`。两阶段实际解析插件分别为 8.10.2／8.10.3，全部 **293 个 Kotlin 目标的路径、大小和 SHA 相同**，47 个 producer 输出也保留原字节；catalog 本身不属于 Kotlin 格式目标。[独立原日志复核](checks/issue-fixes-batch7-20261029/independent-raw-ab-review.json)和[提交绑定](checks/issue-fixes-batch7-20261029/independent-committed-review.json)重新验证了 293 个 Kotlin 文件及 catalog，共 294 个真实 Git blob。没有临时修改 SDK 源码；真实 prebuilt JNI 库仅用于允许格式任务配置，不算本地 native 验收。
 
