@@ -1,0 +1,129 @@
+{
+  "schema": 1,
+  "utc": "2026-10-29T08:51:09.866771+00:00",
+  "status": "SCOPED_POPUP_CAPACITY_FIXED_SLOT_SOURCE_ACCEPTED_PENDING_RUNTIME_AND_CI",
+  "scope": "Independent read-only source/API review. No Gradle, compiler, ADB, VM or production edit. Pure bounded formula analysis is not compiled Kotlin/UI acceptance.",
+  "worktree": "/home/xumin/Public/Trime-pr-popup-grid-20261029",
+  "base": "7fedca06ba5d2ef761a2ae3d44d8a0917db36994",
+  "file": {
+    "path": "app/src/main/java/com/osfans/trime/ime/popup/PopupKeyboardUi.kt",
+    "sha256": "3cd062bf10660b78091514c035c2b41e80018e7c8c036c493dba19e415bb0c19",
+    "bytes": 10156
+  },
+  "exact_patch_review": "Entire frozen file equals baseline with only Space import/two gravity import removals, roundToInt->ceil column capacity and real-key-or-Space fixed-LP replacement.",
+  "capacity": {
+    "proof": "For n>0, r=ceil(n/5), c=ceil(n/r): r*c>=n and1<=c<=5. Existing column order is a permutation, hence each row covers its c indices once and all0..n-1 have a slot.",
+    "bounded_Float32_formula_analysis": "n1..10000, no UI/index matrix allocation; all capacities sufficient.15possible column/focus permutations verified.",
+    "old_under_capacity_counts_in_range": [
+      13,
+      17,
+      21,
+      22,
+      26,
+      31
+    ],
+    "empty_scope": "KeyView.showPopupKeyboard returns for empty popup before dispatch; empty constructor input remains unsupported.",
+    "labels_scope": "Actual PopupDelegate uses labels=keys; no new mismatched-cardinality promise."
+  },
+  "fixed_slots": [
+    "Every logical column receives a child with fixed keyWidth/keyHeight, including blank edge/interior slots. Physical positions align with keyOrders and floor(x/keyWidth).",
+    "Missing cells no longer collapse row width or depend on whole-row gravity.",
+    "Blank indices still cannot become focused actions because existing newFocus<keyUis.size guard is unchanged."
+  ],
+  "Y_preservation": {
+    "onChangeFocus_through_file_end_byte_unchanged": true,
+    "rowCount_formula_unchanged": true,
+    "offsetY_formula_unchanged": true,
+    "meaning": "No Y threshold/rounding/tolerance/dismiss/focus/trigger code tuning. Capacity repair naturally changes action indices in previously deficient grids; this is not a proof that the pre-existing Y coordinate model is correct."
+  },
+  "Space_API21_35": {
+    "source_bytes_identical": true,
+    "constructor": "Space(Context) uses null attrs/default style0 and sets VISIBLE to INVISIBLE.",
+    "fixed_measure": "Space.onMeasure preserves EXACTLY supplied size; fixed LP contributes keyWidth/keyHeight.",
+    "parent_layout": "LinearLayout measureHorizontal/layoutHorizontal skip GONE, not INVISIBLE.",
+    "draw": "Native Space draws nothing and adds no AppCompat widget contract.",
+    "default_interaction": "API21 View defaults lack click/focus bits. API35 FOCUSABLE_AUTO is derived from clickability, and Space does not enable click/focus. Actual context-specific visibility/click/focus will be read in the real39-case object probe; no OEM/runtime claim is inferred here.",
+    "official_sources": [
+      {
+        "api": 21,
+        "tag": "android-5.0.0_r1",
+        "url": "https://android.googlesource.com/platform/frameworks/base/+/refs/tags/android-5.0.0_r1/core/java/android/widget/Space.java?format=TEXT",
+        "path": "/home/xumin/Public/Trime/build/issue-fixes-batch10-20261029/space-api-evidence-spotless/api21-Space.java",
+        "bytes": 2867,
+        "sha256": "74af269ff3834bfafc97517383bc90781d00ad78e891f269445e5dd9491b0d1e",
+        "utc": "2026-10-29T08:42:48.654573+00:00"
+      },
+      {
+        "api": 21,
+        "tag": "android-5.0.0_r1",
+        "url": "https://android.googlesource.com/platform/frameworks/base/+/refs/tags/android-5.0.0_r1/core/java/android/widget/LinearLayout.java?format=TEXT",
+        "path": "/home/xumin/Public/Trime/build/issue-fixes-batch10-20261029/space-api-evidence-spotless/api21-LinearLayout.java",
+        "bytes": 76778,
+        "sha256": "3e7bfbd270948026276d6d957dc4bb21b5fac3125e30423055387490557e19d9",
+        "utc": "2026-10-29T08:42:49.417156+00:00"
+      },
+      {
+        "api": 35,
+        "tag": "android-15.0.0_r1",
+        "url": "https://android.googlesource.com/platform/frameworks/base/+/refs/tags/android-15.0.0_r1/core/java/android/widget/Space.java?format=TEXT",
+        "path": "/home/xumin/Public/Trime/build/issue-fixes-batch10-20261029/space-api-evidence-spotless/api35-Space.java",
+        "bytes": 2867,
+        "sha256": "74af269ff3834bfafc97517383bc90781d00ad78e891f269445e5dd9491b0d1e",
+        "utc": "2026-10-29T08:42:49.979346+00:00"
+      },
+      {
+        "api": 35,
+        "tag": "android-15.0.0_r1",
+        "url": "https://android.googlesource.com/platform/frameworks/base/+/refs/tags/android-15.0.0_r1/core/java/android/widget/LinearLayout.java?format=TEXT",
+        "path": "/home/xumin/Public/Trime/build/issue-fixes-batch10-20261029/space-api-evidence-spotless/api35-LinearLayout.java",
+        "bytes": 86468,
+        "sha256": "2b298872073243509d8beb5f5a9366040858773fefe8efcc7be7432cfb4d60e4",
+        "utc": "2026-10-29T08:42:50.793214+00:00"
+      },
+      {
+        "api": 21,
+        "tag": "android-5.0.0_r1",
+        "url": "https://android.googlesource.com/platform/frameworks/base/+/refs/tags/android-5.0.0_r1/core/java/android/view/View.java?format=TEXT",
+        "path": "/home/xumin/Public/Trime/build/issue-fixes-batch10-20261029/space-api-evidence-spotless/api21-View.java",
+        "bytes": 814127,
+        "sha256": "a5981c7a5832d1c3c851bbcd93fd202a1012012c73595759776cd539f32748c5",
+        "utc": "2026-10-29T08:44:46.691039+00:00"
+      },
+      {
+        "api": 35,
+        "tag": "android-15.0.0_r1",
+        "url": "https://android.googlesource.com/platform/frameworks/base/+/refs/tags/android-15.0.0_r1/core/java/android/view/View.java?format=TEXT",
+        "path": "/home/xumin/Public/Trime/build/issue-fixes-batch10-20261029/space-api-evidence-spotless/api35-View.java",
+        "bytes": 1398620,
+        "sha256": "66c6b9875036a782bf07508cbca5cfc69df794f8b38f1d996874f79ebff995e7",
+        "utc": "2026-10-29T08:44:59.060798+00:00"
+      }
+    ]
+  },
+  "supporting_source": [
+    {
+      "path": "app/src/main/java/com/osfans/trime/ime/popup/PopupContainerUi.kt",
+      "sha256": "96a94af763b852552478c1d00667fa38a50f1b9cd63a1efc64a6d550e2d4b2bd",
+      "unchanged_from_base": true
+    },
+    {
+      "path": "app/src/main/java/com/osfans/trime/ime/popup/PopupDelegate.kt",
+      "sha256": "99389c9b06bd0d3435aa2cfee0d11c2629f92ae4ed9c55db6843495235370312",
+      "unchanged_from_base": true
+    },
+    {
+      "path": "app/src/main/java/com/osfans/trime/ime/keyboard/KeyView.kt",
+      "sha256": "288fdb6b8aa4d2788996fa1480b1b98072dfba3117ef9ec36c7151c06e086f61",
+      "unchanged_from_base": true
+    }
+  ],
+  "required_execution": [
+    "Final committed source must compile/check and original CI APK must be bound to actual producer.",
+    "Actual object matrix must cover all deficient counts, edge/center focus, every action, placeholders fixed LP/bounds and invisible/nonclickable/nonfocusable behavior.",
+    "Preserve existing Y logic and report exact oracle/coordinate scope; do not turn the legacy Y mismatch into an unnoticed behavior fix.",
+    "Retain ThemeUtils/candidate-border warnings independently; no silent context/theme changes or all-warning-zero claim."
+  ],
+  "local_build_limit": "Root owns temporary SDK/build-tools compatibility edits while local runner executes; these are not part of this frozen Popup patch and must restore before commit/publication.",
+  "reviewer_analysis_control": "An unnecessarily broad preliminary Python index enumeration was stopped only in reviewer-owned process (exit143); no production or Root build was stopped. Final analysis uses formula proof, O(n) Float32 capacity scan and15constant-size permutation checks.",
+  "theme_followup": "theme-warning-proposal.json saved separate optional-border/AppCompat evidence and pending work; not included in this patch."
+}

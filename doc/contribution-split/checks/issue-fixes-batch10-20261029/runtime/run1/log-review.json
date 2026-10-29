@@ -1,0 +1,283 @@
+{
+  "created_at_utc": "2026-10-29T09:16:14.831236+00:00",
+  "scope": "Full original continuous log retained; target-PID intervals bounded by unique real markers. No blanket system-only or zero-warning claim.",
+  "full_log": {
+    "path": "/home/xumin/Public/Trime/build/issue-fixes-batch10-20261029/runtime/run1/device-logcat.txt",
+    "bytes": 3470553,
+    "sha256": "c76681287480af8acc3d9acaa4ba256831841b0e202e62de3a34d7db88d60039"
+  },
+  "full_session_levels": {
+    "I": 7221,
+    "W": 2569,
+    "D": 8704,
+    "E": 1366,
+    "V": 5526
+  },
+  "top_warning_tags": [
+    [
+      "BestClock",
+      366
+    ],
+    [
+      "ActivityManager",
+      199
+    ],
+    [
+      "PackageManager",
+      153
+    ],
+    [
+      "PackageSettings",
+      151
+    ],
+    [
+      "IPCThreadState",
+      129
+    ],
+    [
+      "HealthConnectPackageInfoUtils",
+      78
+    ],
+    [
+      "AppOpService",
+      77
+    ],
+    [
+      "Looper",
+      70
+    ],
+    [
+      "system_server",
+      69
+    ],
+    [
+      "android.hardware.media.c2@1.0-service-goldfish",
+      62
+    ],
+    [
+      "mediaswcodec",
+      60
+    ],
+    [
+      "mediaextractor",
+      57
+    ],
+    [
+      "UserSystemPackageInstaller",
+      55
+    ],
+    [
+      "resolv",
+      48
+    ],
+    [
+      "TelephonyRegistry",
+      41
+    ],
+    [
+      "MediaControlGattService",
+      35
+    ],
+    [
+      "CarrierConfigManager",
+      31
+    ],
+    [
+      "ContextImpl",
+      31
+    ],
+    [
+      "Codec2Client",
+      28
+    ],
+    [
+      "ziparchive",
+      22
+    ]
+  ],
+  "fatal_anr_oom_lmk_pattern_matches": [],
+  "cases": {
+    "baseline": {
+      "pid": 1943,
+      "real_log_markers": {
+        "start_line": 23789,
+        "end_line": 24083
+      },
+      "target_pid_levels_within_markers": {
+        "I": 5,
+        "W": 12,
+        "D": 10,
+        "V": 5
+      },
+      "target_pid_warning_error_lines": [
+        {
+          "line": 23822,
+          "level": "W",
+          "tag": "ans.trime.debug",
+          "message": "Unexpected CPU variant for x86: x86_64."
+        },
+        {
+          "line": 23823,
+          "level": "W",
+          "tag": "ans.trime.debug",
+          "message": "Known variants: atom, sandybridge, silvermont, goldmont, goldmont-plus, goldmont-without-sha-xsaves, tremont, kabylake, default"
+        },
+        {
+          "line": 23827,
+          "level": "W",
+          "tag": "ActivityThread",
+          "message": "Package uses different ABI(s) than its instrumentation: package[com.osfans.trime.debug]: x86_64, null instrumentation[com.osfans.trime.debug.test]: null, null"
+        },
+        {
+          "line": 23830,
+          "level": "W",
+          "tag": "ziparchive",
+          "message": "Unable to open '/data/app/~~x6BXfyUsSQK8jKhm437Uqg==/com.osfans.trime.debug.test-HZBGx6Di4Ig_M6kX-rDPfg==/base.dm': No such file or directory"
+        },
+        {
+          "line": 23831,
+          "level": "W",
+          "tag": "ziparchive",
+          "message": "Unable to open '/data/app/~~x6BXfyUsSQK8jKhm437Uqg==/com.osfans.trime.debug.test-HZBGx6Di4Ig_M6kX-rDPfg==/base.dm': No such file or directory"
+        },
+        {
+          "line": 23833,
+          "level": "W",
+          "tag": "ziparchive",
+          "message": "Unable to open '/data/app/~~ZTjvm0gLF5mhr0yvHdizLw==/com.osfans.trime.debug-T0uMPNkhniJfVZL3LCyA7A==/base.dm': No such file or directory"
+        },
+        {
+          "line": 23834,
+          "level": "W",
+          "tag": "ziparchive",
+          "message": "Unable to open '/data/app/~~ZTjvm0gLF5mhr0yvHdizLw==/com.osfans.trime.debug-T0uMPNkhniJfVZL3LCyA7A==/base.dm': No such file or directory"
+        },
+        {
+          "line": 23945,
+          "level": "W",
+          "tag": "ziparchive",
+          "message": "Unable to open '/data/app/~~x6BXfyUsSQK8jKhm437Uqg==/com.osfans.trime.debug.test-HZBGx6Di4Ig_M6kX-rDPfg==/base.dm': No such file or directory"
+        },
+        {
+          "line": 23946,
+          "level": "W",
+          "tag": "ziparchive",
+          "message": "Unable to open '/data/app/~~x6BXfyUsSQK8jKhm437Uqg==/com.osfans.trime.debug.test-HZBGx6Di4Ig_M6kX-rDPfg==/base.dm': No such file or directory"
+        },
+        {
+          "line": 23947,
+          "level": "W",
+          "tag": "ziparchive",
+          "message": "Unable to open '/data/app/~~ZTjvm0gLF5mhr0yvHdizLw==/com.osfans.trime.debug-T0uMPNkhniJfVZL3LCyA7A==/base.dm': No such file or directory"
+        },
+        {
+          "line": 23948,
+          "level": "W",
+          "tag": "ziparchive",
+          "message": "Unable to open '/data/app/~~ZTjvm0gLF5mhr0yvHdizLw==/com.osfans.trime.debug-T0uMPNkhniJfVZL3LCyA7A==/base.dm': No such file or directory"
+        },
+        {
+          "line": 24062,
+          "level": "W",
+          "tag": "[main] ThemeScope",
+          "message": "ThemeScope.kt:52] Unknown color key: candidate_border_color"
+        }
+      ],
+      "fatal_markers_within_markers": []
+    },
+    "fixed": {
+      "pid": 2062,
+      "real_log_markers": {
+        "start_line": 24592,
+        "end_line": 24884
+      },
+      "target_pid_levels_within_markers": {
+        "I": 6,
+        "W": 12,
+        "D": 10,
+        "V": 5
+      },
+      "target_pid_warning_error_lines": [
+        {
+          "line": 24620,
+          "level": "W",
+          "tag": "ans.trime.debug",
+          "message": "Unexpected CPU variant for x86: x86_64."
+        },
+        {
+          "line": 24621,
+          "level": "W",
+          "tag": "ans.trime.debug",
+          "message": "Known variants: atom, sandybridge, silvermont, goldmont, goldmont-plus, goldmont-without-sha-xsaves, tremont, kabylake, default"
+        },
+        {
+          "line": 24625,
+          "level": "W",
+          "tag": "ActivityThread",
+          "message": "Package uses different ABI(s) than its instrumentation: package[com.osfans.trime.debug]: x86_64, null instrumentation[com.osfans.trime.debug.test]: null, null"
+        },
+        {
+          "line": 24628,
+          "level": "W",
+          "tag": "ziparchive",
+          "message": "Unable to open '/data/app/~~x6BXfyUsSQK8jKhm437Uqg==/com.osfans.trime.debug.test-HZBGx6Di4Ig_M6kX-rDPfg==/base.dm': No such file or directory"
+        },
+        {
+          "line": 24629,
+          "level": "W",
+          "tag": "ziparchive",
+          "message": "Unable to open '/data/app/~~x6BXfyUsSQK8jKhm437Uqg==/com.osfans.trime.debug.test-HZBGx6Di4Ig_M6kX-rDPfg==/base.dm': No such file or directory"
+        },
+        {
+          "line": 24630,
+          "level": "W",
+          "tag": "ziparchive",
+          "message": "Unable to open '/data/app/~~q-Am4SwH3j47K4-2AG0hDA==/com.osfans.trime.debug-iOfhbByOm7Wws9-cCpmPOQ==/base.dm': No such file or directory"
+        },
+        {
+          "line": 24631,
+          "level": "W",
+          "tag": "ziparchive",
+          "message": "Unable to open '/data/app/~~q-Am4SwH3j47K4-2AG0hDA==/com.osfans.trime.debug-iOfhbByOm7Wws9-cCpmPOQ==/base.dm': No such file or directory"
+        },
+        {
+          "line": 24742,
+          "level": "W",
+          "tag": "ziparchive",
+          "message": "Unable to open '/data/app/~~x6BXfyUsSQK8jKhm437Uqg==/com.osfans.trime.debug.test-HZBGx6Di4Ig_M6kX-rDPfg==/base.dm': No such file or directory"
+        },
+        {
+          "line": 24743,
+          "level": "W",
+          "tag": "ziparchive",
+          "message": "Unable to open '/data/app/~~x6BXfyUsSQK8jKhm437Uqg==/com.osfans.trime.debug.test-HZBGx6Di4Ig_M6kX-rDPfg==/base.dm': No such file or directory"
+        },
+        {
+          "line": 24744,
+          "level": "W",
+          "tag": "ziparchive",
+          "message": "Unable to open '/data/app/~~q-Am4SwH3j47K4-2AG0hDA==/com.osfans.trime.debug-iOfhbByOm7Wws9-cCpmPOQ==/base.dm': No such file or directory"
+        },
+        {
+          "line": 24745,
+          "level": "W",
+          "tag": "ziparchive",
+          "message": "Unable to open '/data/app/~~q-Am4SwH3j47K4-2AG0hDA==/com.osfans.trime.debug-iOfhbByOm7Wws9-cCpmPOQ==/base.dm': No such file or directory"
+        },
+        {
+          "line": 24860,
+          "level": "W",
+          "tag": "[main] ThemeScope",
+          "message": "ThemeScope.kt:52] Unknown color key: candidate_border_color"
+        }
+      ],
+      "fatal_markers_within_markers": []
+    }
+  },
+  "retained_warning_interpretation": [
+    "Both target PIDs emit the real Trime ThemeScope candidate_border_color warning. It remains unresolved by this geometry patch and is recorded separately in theme-warning-proposal.json; it is not relabeled as system noise.",
+    "Both target PIDs also retain ART CPU-variant, bytecode-only instrumentation ABI, and missing optional dex-metadata warnings. Their complete raw messages remain in this report.",
+    "Global Android W/E lines are retained and counted without a claim every unrelated system service warning has been resolved or classified."
+  ],
+  "not_zero_warning": true
+}

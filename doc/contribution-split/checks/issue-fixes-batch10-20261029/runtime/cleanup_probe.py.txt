@@ -1,0 +1,45 @@
+from pathlib import Path
+import hashlib, importlib.util, json, time, xml.etree.ElementTree as ET
+
+ROOT = Path(__file__).resolve().parent
+RUN = ROOT / 'run1'
+spec = importlib.util.spec_from_file_location('cleanup_adb', ROOT / 'adb_helper.py')
+h = importlib.util.module_from_spec(spec); spec.loader.exec_module(h)
+PKG = 'com.osfans.trime.debug'
+def prefs(data):
+    def node(n):
+        children = [node(c) for c in n]
+        if n.tag == 'set': children.sort(key=lambda v: json.dumps(v, sort_keys=True))
+        return {'tag': n.tag, 'attributes': dict(n.attrib), 'text': (n.text or '') if n.tag == 'string' else (n.text or '').strip(), 'children': children}
+    root = ET.fromstring(data); assert root.tag == 'map'
+    assert len({n.attrib['name'] for n in root}) == len(root)
+    return {n.attrib['name']: node(n) for n in root}
+
+record = {'started': time.time(), 'passed': False}
+try:
+    for mode in ('baseline', 'fixed'):
+        c = json.loads((RUN / f'{mode}-probe-completion.json').read_text())
+        assert c['required_checks_passed'] and c['owned_artifact_directory_removed'] and c['isolated_target_stopped_and_pidof_empty']
+    h.run('cleanup-target-stop', 'shell', 'am', 'force-stop', PKG)
+    remaining = h.run('cleanup-target-pidof', 'shell', 'pidof', PKG, check=False)
+    assert not remaining.strip() and json.loads((h.COMMANDS / 'cleanup-target-pidof.json').read_text())['exit'] == 1
+    uninstall = h.run('cleanup-helper-uninstall', 'uninstall', PKG + '.test'); assert uninstall.strip() == b'Success'
+    packages = h.run('cleanup-helper-absence', 'shell', 'pm', 'list', 'packages', PKG + '.test').decode().splitlines()
+    assert 'package:' + PKG + '.test' not in packages
+    original = (h.COMMANDS / 'bootstrap-preferences.stdout').read_bytes()
+    final = h.run('cleanup-preferences', 'exec-out', 'run-as', PKG, 'cat', 'shared_prefs/' + PKG + '_preferences.xml')
+    a, b = prefs(original), prefs(final)
+    changes = [{'key': k, 'before': a.get(k), 'after': b.get(k)} for k in sorted(a.keys() | b.keys()) if a.get(k) != b.get(k)]
+    assert all(x['key'] == 'general__pid' for x in changes)
+    sentinel = h.run('cleanup-sentinel', 'exec-out', 'run-as', PKG, 'cat', 'files/triage-sentinel.txt')
+    sentinel_sha = hashlib.sha256(sentinel).hexdigest()
+    assert sentinel_sha == 'fc23655d05c9d26dcf7a828f670dfc811c65aa54cc8a98283ad4ffa03da4c988'
+    boot = json.loads((RUN / 'bootstrap.json').read_text())
+    selected = h.run('cleanup-default-ime', 'shell', 'settings', 'get', 'secure', 'default_input_method').decode().strip()
+    enabled = h.run('cleanup-enabled-ime', 'shell', 'settings', 'get', 'secure', 'enabled_input_methods').decode().strip()
+    assert selected == boot['default_ime'] == 'com.android.inputmethod.latin/.LatinIME' and enabled == boot['enabled_imes']
+    record.update({'passed': True, 'preference_changes': changes, 'logical_preferences_preserved_except_process_pid': True, 'original_prefs_sha256': hashlib.sha256(original).hexdigest(), 'final_prefs_sha256': hashlib.sha256(final).hexdigest(), 'private_sentinel_sha256': sentinel_sha, 'default_ime': selected, 'enabled_imes': enabled, 'helper_uninstalled': True, 'target_force_stopped': True, 'owned_artifact_directories_removed_by_each_driver': True, 'test_target_apk_retained_in_disposable_working_copy': True})
+finally:
+    record['finished'] = time.time()
+    (RUN / 'cleanup.json').write_text(json.dumps(record, indent=2) + '\n')
+print(json.dumps(record, indent=2))

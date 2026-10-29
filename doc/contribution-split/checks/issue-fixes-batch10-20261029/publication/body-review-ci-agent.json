@@ -1,0 +1,160 @@
+{
+  "created_utc": "2026-10-29T09:21:27.063973+00:00",
+  "status": "PASS_CURRENT_BODY_MATCHES_SCOPED_EVIDENCE",
+  "body": {
+    "path": "publication/final-body.txt",
+    "sha256": "13080f7332fbf70101c7a3693a4d13009d903b0bad429f85410d995433153f13"
+  },
+  "pr": 2209,
+  "head": "220391c97cf88aba35b6d0a1c2307f2a3781d224",
+  "base": "7fedca06ba5d2ef761a2ae3d44d8a0917db36994",
+  "corrected_initial_finding": {
+    "original_wording": "same 65 warnings as the upstream base",
+    "reason": "Actual multiset comparison is against the prior R5 width-only same-base build, not a fresh untouched-base run.",
+    "current_wording": "65 warnings, identical to the earlier build on the same upstream base; all warning locations are in files unchanged from upstream.",
+    "resolved": true
+  },
+  "claims": [
+    {
+      "claim": "5 CI jobs pass; Ubuntu native four ABIs vs other-host JNI reuse",
+      "result": "SUPPORTED",
+      "evidence": [
+        {
+          "path": "cloud/run-40845970483/pr-2209/ci-summary.json",
+          "sha256": "a5f75cbb348a1284e1858ae077a5b4186f1f7c6bacd631076800a22ef9630076"
+        },
+        {
+          "path": "final-ci-diagnostic-review-ci-agent.json",
+          "sha256": "8c43d8f4d437a0913814fa93f948700cbe99cfc3dfb55a63f7a5d81ff5a546da"
+        }
+      ],
+      "note": "Ubuntu has cache MISS and eight configure/build task markers for four ABIs. Other three host logs contain cache hit+restore and no native build task markers."
+    },
+    {
+      "claim": "331 local JVM tests, format and local Debug build; 0 Lint errors/65 warnings with same-base comparison",
+      "result": "SUPPORTED_AFTER_WORDING_CORRECTION",
+      "evidence": [
+        {
+          "path": "local-build-review-ci-agent.json",
+          "sha256": "dba43bc236639e0b89e93b72a03940e3f3b867781712747594a4498e758863ab"
+        }
+      ],
+      "note": "23 current XML suites contain 331 actual testcase nodes, timestamps inside build, zero failure/error/skipped. Exact warning multiset equals earlier R5 width-only build on the same 7fed base, not an independently rerun untouched-base Lint build. All warning location files are unchanged from upstream. Current text accurately says earlier same-base build."
+    },
+    {
+      "claim": "13 action counts by three anchors; 39 fixed scenarios and 528/66/51 observation counts",
+      "result": "SUPPORTED",
+      "evidence": [
+        {
+          "path": "runtime/run1/baseline-probe-report.json",
+          "sha256": "70fd42b5d341827bd652024c6bdc9a146751daaaf62186ecd479ad1d69377d9f"
+        },
+        {
+          "path": "runtime/run1/fixed-probe-report.json",
+          "sha256": "607199b30a3d1c8e756779a97917948bf34ec7079b7040ec42dbe364ece62e6b"
+        },
+        {
+          "path": "runtime/grid-validation.json",
+          "sha256": "25fac745bb51c27fc6efe92e607971ac26ce5da383e27c8388de499e68acbc61"
+        }
+      ],
+      "note": "Counts recomputed directly from raw scenario/observation/violation arrays; old missing-token failures and six horizontal wrong selections retained. This is unattached production View/public API validation, not InputDispatcher/real long press or full IME acceptance."
+    },
+    {
+      "claim": "Eight rendered originals were reviewed",
+      "result": "SUPPORTED_AS_ROOT_RECORDED_VISUAL_REVIEW",
+      "evidence": [
+        {
+          "path": "runtime/run1/visual-review.json",
+          "sha256": "705f0cde47acc4b524f92f4ceb76b54766d3a41af13a635b57eb433f3996ec2a"
+        }
+      ],
+      "note": "Eight recorded PNG hashes rechecked. This reviewer reviewed text and file hashes; it does not claim a second independent visual inspection."
+    },
+    {
+      "claim": "Diagnostic copies preserve non-signature contents and original APKs remain unchanged",
+      "result": "SUPPORTED_BY_RECOMPUTED_ZIP_AND_APK_HASHES",
+      "evidence": [
+        {
+          "path": "device-apks/baseline-identity.json",
+          "sha256": "2468798dd0f73b5ca31860e5d89e457b0c73d14b9f3997687ac9c6b2c41d3afc"
+        },
+        {
+          "path": "device-apks/fixed-identity.json",
+          "sha256": "930d91ef38fa2f32d209488db1fd88beee9a4aae7e3955310e09abdebc7cd6c4"
+        }
+      ],
+      "note": "All 784 non-signature ZIP entry names and uncompressed byte hashes per APK recomputed equal; original and diagnostic full SHA also recomputed. Signature files are excluded; META-INF/services remain included. No original-signature upgrade acceptance."
+    },
+    {
+      "claim": "Related #2033/#2204; no direct matching capacity issue closed",
+      "result": "SUPPORTED_IN_BOUNDED_SEARCH_SCOPE",
+      "evidence": [
+        {
+          "path": "upstream-status.json",
+          "sha256": "e19a9d7eaa117503e57c805a5887a6d2009abf74a4e4d1ad42ef00bb2c60dbf8"
+        }
+      ],
+      "note": "#2033 describes label truncation and #2204 already addresses that behavior. Body explicitly keeps this geometry fix separate and does not use a false Fixes/Closes claim."
+    },
+    {
+      "claim": "Warnings remain, including candidate_border_color; no physical device/full IME/Release acceptance",
+      "result": "SUPPORTED_AND_APPROPRIATELY_LIMITED",
+      "evidence": [
+        {
+          "path": "runtime/run1/log-review.json",
+          "sha256": "044131ed02865abf803245190425e8dff60c7de1022572b65d88f148642c87e4"
+        },
+        {
+          "path": "final-ci-diagnostic-review-ci-agent.json",
+          "sha256": "8c43d8f4d437a0913814fa93f948700cbe99cfc3dfb55a63f7a5d81ff5a546da"
+        }
+      ],
+      "note": "Both target PID intervals retain the ThemeScope warning. All 133 CI mechanical candidate lines and raw runtime warnings remain recorded. Body does not claim zero warnings."
+    }
+  ],
+  "payload_rechecks": [
+    {
+      "mode": "baseline",
+      "identity_report": {
+        "path": "device-apks/baseline-identity.json",
+        "sha256": "2468798dd0f73b5ca31860e5d89e457b0c73d14b9f3997687ac9c6b2c41d3afc"
+      },
+      "original_apk_sha256_recomputed": "c989e9e26cfd80b31e769b8b3ba90f48e0873e71acb0d5fe83681f635dd3fcd3",
+      "diagnostic_apk_sha256_recomputed": "179fe541733d85cd302fbdf2e9442700a17e80a68b985107c821130fa1d87d6f",
+      "all_non_signature_entry_names_and_uncompressed_bytes_rehashed_equal": true,
+      "actual_payload_entries": 784,
+      "META_INF_services_retained_in_payload_comparison": true
+    },
+    {
+      "mode": "fixed",
+      "identity_report": {
+        "path": "device-apks/fixed-identity.json",
+        "sha256": "930d91ef38fa2f32d209488db1fd88beee9a4aae7e3955310e09abdebc7cd6c4"
+      },
+      "original_apk_sha256_recomputed": "1ffd30ea3da153dffb88c656803ef962e1b6971c39bd9f555b62f81db9bd0914",
+      "diagnostic_apk_sha256_recomputed": "4f105c224205cc686e6dd0b588e606d2e3591969d0e556cf5b9a5bed0e4663de",
+      "all_non_signature_entry_names_and_uncompressed_bytes_rehashed_equal": true,
+      "actual_payload_entries": 784,
+      "META_INF_services_retained_in_payload_comparison": true
+    }
+  ],
+  "additional_cleanup_evidence": {
+    "vm_report": {
+      "path": "runtime/run1/completion.json",
+      "sha256": "e1f6057ecc617eb35821e59633596ec5e29a8bf23a0c8d5fca283c727a5cf33b"
+    },
+    "emulator_exit": 0,
+    "normal_kill_exit": 0,
+    "collector_exit": -15,
+    "collector_minus15_is_planned_stop_not_instrumentation_pass": true
+  },
+  "blocking_findings": [],
+  "not_claimed": [
+    "Full IME long-press/InputDispatcher behavior, geometric row-center activation, physical-device, TalkBack, Release/signature-upgrade acceptance",
+    "An independently rerun untouched-upstream-base Lint build",
+    "All warnings resolved or all remaining warnings harmless",
+    "Maintainer review/approval or merge readiness beyond accurate Ready-for-review body semantics"
+  ],
+  "scope": "Read-only final PR body/evidence consistency review, with actual original/diagnostic APK payload and full-file rehashing and raw JSON count recomputation. No source, GitHub, CI, Gradle, VM or publication mutation. Current body SHA must match this record before publication."
+}

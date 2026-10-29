@@ -1,0 +1,55 @@
+{
+  "captured_at_epoch": 1793265069.7562976,
+  "reviewer": "root",
+  "actual_pngs_viewed": [
+    {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch10-20261029/runtime/run1/baseline-images/n13_center.png",
+      "sha256": "247f49e9e51b7edb3d235e52062a3e4f0a5657d1cbd4fb3f129fa0db659d2459"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch10-20261029/runtime/run1/baseline-images/n18_left.png",
+      "sha256": "cc29cce4e282a125a0adf125b4fa667443c8afdaf12d49079adc85aebd609fad"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch10-20261029/runtime/run1/baseline-images/n18_center.png",
+      "sha256": "43b3dc269fb0f3d569d57f883951debc3901791cbb1ef6e93acba1ea093c3923"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch10-20261029/runtime/run1/baseline-images/n18_right.png",
+      "sha256": "53e4600d93dbe01dfd9316129295ac5c04c92878ac60f02f62f767071fd3d1b2"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch10-20261029/runtime/run1/fixed-images/n13_center.png",
+      "sha256": "2d0ef1d3ed1a64b9a7aa3cd1984065321d2a5a3f492c1a3fbaa41459e7988c9e"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch10-20261029/runtime/run1/fixed-images/n18_left.png",
+      "sha256": "cc29cce4e282a125a0adf125b4fa667443c8afdaf12d49079adc85aebd609fad"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch10-20261029/runtime/run1/fixed-images/n18_center.png",
+      "sha256": "e590ab528f50e15b24731efa1ff94056789a3697f46dd409072b937e8ddbdba9"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch10-20261029/runtime/run1/fixed-images/n18_right.png",
+      "sha256": "7a0130bf54cd0b9e42aa29c00eb8728cdf37bb72884fdfb424f4f9923c9bdba8"
+    }
+  ],
+  "scope": "Synthetic unattached production PopupKeyboardUi images; not InputDispatcher or real IME window screenshots.",
+  "observed": {
+    "n13_center": "Only A-L drawn; M is absent. 4 columns x3 rows vs13 configured tokens.",
+    "n18_left": "P Q R occupy left 3 of5 columns.",
+    "n18_center": "R P Q occupy left 3 of5 columns although fixed logical center order requires slots1,2,3.",
+    "n18_right": "R Q P occupy right3 of5 columns."
+  },
+  "baseline_driver_executed_sha256": "0494270478fdcb294bad6ecd72e031778ad88f40e733f92f88935f6789135da7",
+  "fixed_pending": false,
+  "passed": true,
+  "fixed_driver_executed_sha256": "e6295bb93f435c3df9cf1f12ff5702be938f7961a46754526b1f835024d8789f",
+  "fixed_observed": {
+    "n13_center": "M is drawn; 5 columns x3 rows and two visible empty slot widths preserve order.",
+    "n18_center": "R P Q occupy centered slots1,2,3; outer blank slots remain.",
+    "n18_left_right": "Occupied left/right slots match intended anchor positions."
+  },
+  "finished_at_epoch": 1793265326.3731737
+}

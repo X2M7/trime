@@ -1,0 +1,75 @@
+from pathlib import Path
+from collections import Counter
+import datetime, hashlib, json, re, subprocess
+
+ROOT = Path(__file__).resolve().parent
+RUN = ROOT / 'run1'
+BATCH = ROOT.parent
+now = lambda: datetime.datetime.now(datetime.timezone.utc).isoformat()
+def sha(p):
+    with p.open('rb') as f: return hashlib.file_digest(f, 'sha256').hexdigest()
+def read(p): return json.loads(p.read_text())
+def ref(p): return {'path': str(p.resolve()), 'bytes': p.stat().st_size, 'sha256': sha(p)}
+def save(p, v): p.write_text(json.dumps(v, ensure_ascii=False, indent=2) + '\n')
+
+completion = read(RUN / 'completion.json')
+assert completion['reason'] == 'normal-stop-request' and completion['emulator_exit'] == completion['normal_kill_exit'] == 0
+assert not completion['cleanup_errors'] and completion['collector_exit'] == -15 and len(completion['collector_segments']) == 1
+cleanup = read(RUN / 'cleanup.json'); assert cleanup['passed'] is True
+baseline_binding = read(BATCH / 'baseline-source-equivalence.json')
+assert baseline_binding['status'] == 'PASS_BASELINE_APP_SOURCE_TREE_EQUALS_CURRENT_UPSTREAM_BASE'
+assert baseline_binding['upstream_base'] == '7fedca06ba5d2ef761a2ae3d44d8a0917db36994'
+assert baseline_binding['all_app_sources_assets_and_gitlinks_identical'] and baseline_binding['baseline_app_git_tree'] == baseline_binding['base_app_git_tree']
+helper = read(BATCH / 'helper-build-qualification.json')
+assert helper['status'] == 'PASS_HELPER_COMPILATION_ONLY' and helper['actual_exit'] == 0
+assert helper['head'] == '220391c97cf88aba35b6d0a1c2307f2a3781d224'
+assert helper['helper_source_sha256'] == sha(BATCH / 'popup-probe/PopupGridInstrumentation.kt')
+assert helper['helper_apk_sha256'] == sha(Path(helper['helper_apk']))
+visual = read(RUN / 'visual-review.json')
+assert visual['fixed_pending'] is False and visual['passed'] is True and len(visual['actual_pngs_viewed']) == 8
+assert all(sha(Path(x['path'])) == x['sha256'] for x in visual['actual_pngs_viewed'])
+assets = read(ROOT / 'source-assets-final-check.json'); assert assets['status'] == 'PASS' and assets['checked_files'] == 49 and not assets['differences']
+memory = [json.loads(x) for x in (RUN / 'memory.jsonl').read_text().splitlines()]
+minimum = min(x['available_kib'] for x in memory); assert minimum >= 1048576
+reports = {k: read(RUN / f'{k}-probe-report.json') for k in ('baseline', 'fixed')}
+log = RUN / 'device-logcat.txt'; lines = log.read_text(errors='replace').splitlines()
+pattern = re.compile(r'^\d{2}-\d{2}\s+\S+\s+(\d+)\s+(\d+)\s+([VDIWEF])\s+([^:]+):\s?(.*)$')
+parsed = [(i, m) for i, line in enumerate(lines, 1) if (m := pattern.match(line))]
+fatal = re.compile(r'FATAL EXCEPTION|Fatal signal|am_anr\s*:|\bANR in\b|OutOfMemoryError|lmkd.*Kill|lowmemorykiller.*Kill')
+markers = [{'line': i, 'text': line} for i, line in enumerate(lines, 1) if fatal.search(line)]
+reviews = {}
+for mode, report in reports.items():
+    def locate(marker):
+        found = [i for i, m in parsed if m[4].strip() == 'TRIME_GRID_PROBE' and m[5] == marker]
+        assert len(found) == 1, (marker, found)
+        return found[0]
+    start, end = locate(mode + '-start'), locate(mode + '-end'); assert start < end
+    app = [(i, m) for i, m in parsed if start < i < end and int(m[1]) == report['pid']]
+    warnings = [{'line': i, 'level': m[3], 'tag': m[4], 'message': m[5]} for i, m in app if m[3] in 'WEF']
+    reviews[mode] = {'pid': report['pid'], 'real_log_markers': {'start_line': start, 'end_line': end}, 'target_pid_levels_within_markers': dict(Counter(m[3] for i, m in app)), 'target_pid_warning_error_lines': warnings, 'fatal_markers_within_markers': [x for x in markers if start < x['line'] < end]}
+    assert app and not reviews[mode]['fatal_markers_within_markers']
+    c = read(RUN / f'{mode}-probe-completion.json')
+    assert c['required_checks_passed'] and c['owned_artifact_directory_removed'] and c['isolated_target_stopped_and_pidof_empty']
+    identity = read(BATCH / 'device-apks' / f'{mode}-identity.json')
+    assert report['installed_apk_sha256'] == identity['diagnostic_sha256'] == sha(Path(identity['diagnostic_apk']))
+    assert sha(Path(identity['source_original_apk'])) == identity['source_sha256'] and identity['all_non_signature_zip_entries_identical']
+    assert len(report['scenarios']) == report['completed_scenarios'] == 39 and report['all_scenarios_completed']
+log_review = {'created_at_utc': now(), 'scope': 'Full original continuous log retained; target-PID intervals bounded by unique real markers. No blanket system-only or zero-warning claim.', 'full_log': ref(log), 'full_session_levels': dict(Counter(m[3] for i, m in parsed)), 'top_warning_tags': Counter(m[4].strip() for i, m in parsed if m[3] == 'W').most_common(20), 'fatal_anr_oom_lmk_pattern_matches': markers, 'cases': reviews, 'retained_warning_interpretation': ['Both target PIDs emit the real Trime ThemeScope candidate_border_color warning. It remains unresolved by this geometry patch and is recorded separately in theme-warning-proposal.json; it is not relabeled as system noise.', 'Both target PIDs also retain ART CPU-variant, bytecode-only instrumentation ABI, and missing optional dex-metadata warnings. Their complete raw messages remain in this report.', 'Global Android W/E lines are retained and counted without a claim every unrelated system service warning has been resolved or classified.'], 'not_zero_warning': True}
+save(RUN / 'log-review.json', log_review)
+residual = []
+for p in Path('/proc').iterdir():
+    if not p.name.isdigit(): continue
+    try: argv = [x.decode(errors='replace') for x in (p / 'cmdline').read_bytes().split(b'\0') if x]
+    except OSError: continue
+    if argv and (Path(argv[0]).name.startswith('qemu-system-') or 'org.gradle.launcher.daemon.bootstrap.GradleDaemon' in argv):
+        residual.append({'pid': int(p.name), 'argv': argv})
+processes = {'created_at_utc': now(), 'scope': 'All readable process argv, QEMU executable basename or exact GradleDaemon Java class argument; not limited to one JDK prefix.', 'residual_qemu_or_gradle_daemons': residual, 'file_indexer_kept_running': any('baloo_file' in x for x in subprocess.check_output(['ps', '-eo', 'comm'], text=True).splitlines()), 'status': 'PASS' if not residual else 'FAIL'}
+assert not residual; save(ROOT / 'final-process-check.json', processes)
+b, f = reports['baseline'], reports['fixed']
+assert not b['passed'] and b['failure_kind'] == 'expected_baseline_assertion' and b['expected_baseline_assertions_observed']
+assert f['passed'] and not f['violations']
+summary = {'created_at_utc': now(), 'status': 'PASS_SCOPED_POPUP_GRID_BASELINE_FIXED', 'repository': 'osfans/trime', 'pr': 2209, 'related_issues': [2033], 'related_prs': [2204], 'fixed_head': '220391c97cf88aba35b6d0a1c2307f2a3781d224', 'base': '7fedca06ba5d2ef761a2ae3d44d8a0917db36994', 'device': {'api': 35, 'abi': 'x86_64', 'physical': False, 'fixture': 'Reused isolated working-copy disks, not a pristine installation'}, 'baseline_source_equivalence': ref(BATCH / 'baseline-source-equivalence.json'), 'helper_source': ref(BATCH / 'popup-probe/PopupGridInstrumentation.kt'), 'helper_build_qualification': ref(BATCH / 'helper-build-qualification.json'), 'cases': {}, 'cleanup': ref(RUN / 'cleanup.json'), 'visual_review': ref(RUN / 'visual-review.json'), 'log_review': ref(RUN / 'log-review.json'), 'vm_completion': ref(RUN / 'completion.json'), 'source_assets': ref(ROOT / 'source-assets-final-check.json'), 'process_check': ref(ROOT / 'final-process-check.json'), 'memory_samples': len(memory), 'minimum_available_host_memory_kib': minimum, 'scope_limits': ['Actual production PopupKeyboardUi measured, laid out and drawn unattached. Public changeFocus/onTrigger only; no InputDispatcher, actual long-press, parent/window dismissal, Rime session, Chinese input, TalkBack or full IME acceptance.', 'X-center and measured cell top + 85% height exercise existing row activation area. Existing Y-center drag bias intentionally retained, with separate literal Y goldens.', 'Each original CI Debug APK preserved. Device installs used common-test-certificate diagnostic copies with every non-signature ZIP entry identical; no Release/signature upgrade acceptance.', 'Complete logical preference XML preserved except process PID metadata; private sentinel, enabled IMEs and selected Latin IME preserved. Originally null test theme scope was cleared by actually stopping the isolated target process.', 'API21 Space source/bytecode static compatibility review only; no API21 or physical device validation. Existing compiler, dependency and runtime warnings remain.']}
+for mode, report in reports.items():
+    summary['cases'][mode] = {'report': ref(RUN / f'{mode}-probe-report.json'), 'completion': ref(RUN / f'{mode}-probe-completion.json'), 'scenarios': len(report['scenarios']), 'observations': len(report['observations']), 'violations': len(report['violations']), 'violation_kinds': dict(Counter(x['kind'] for x in report['violations'])), 'occupied_hits': sum(x['kind'] == 'occupied_hit' for x in report['observations']), 'blank_hits': sum(x['kind'] == 'blank_hit' for x in report['observations']), 'legacy_y_observations': sum(x['kind'] == 'legacy_y' for x in report['observations']), 'expected_outcome': 'CAPTURED_EXPECTED_BASELINE_ASSERTION_NOT_PRODUCT_FATAL' if mode == 'baseline' else 'PASS'}
+save(ROOT / 'grid-validation.json', summary)
+print(json.dumps({'status': summary['status'], 'cases': {k: {x: v[x] for x in ('scenarios', 'violations', 'occupied_hits', 'blank_hits', 'legacy_y_observations')} for k, v in summary['cases'].items()}, 'memory_minimum_kib': minimum, 'full_W': log_review['full_session_levels'].get('W'), 'global_fatal_pattern_matches': len(markers)}, indent=2))

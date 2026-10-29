@@ -1,0 +1,65 @@
+{
+  "status": "STATIC_HELPER_REVIEW_ACCEPTED_PENDING_COMPILATION_AND_REAL_EXECUTION",
+  "reviewer": "spotless_review",
+  "recorded_at_utc": "2026-10-29T09:00:03.298658+00:00",
+  "helper": {
+    "path": "/home/xumin/Public/Trime/build/issue-fixes-batch10-20261029/popup-probe/PopupGridInstrumentation.kt",
+    "sha256": "4ab2246268ce1155e2d5f46befc261e404d95521016d9c910aad473420661e87",
+    "bytes": 20755,
+    "lines": 208
+  },
+  "production_source": {
+    "path": "/home/xumin/Public/Trime-pr-popup-grid-20261029/app/src/main/java/com/osfans/trime/ime/popup/PopupKeyboardUi.kt",
+    "frozen_sha256": "3cd062bf10660b78091514c035c2b41e80018e7c8c036c493dba19e415bb0c19",
+    "source_review_report": "/home/xumin/Public/Trime/build/issue-fixes-batch10-20261029/source-review-spotless.json"
+  },
+  "execution_by_this_reviewer": {
+    "gradle": false,
+    "compiler": false,
+    "adb": false,
+    "vm": false,
+    "production_edits": false
+  },
+  "accepted_static_contracts": [
+    "Explicit linked 13 count cases times 3 anchors yields exactly 39 scenarios; fixed shapes are literal, not computed by production planner.",
+    "Literal left/center/right orders for column counts 1 through 5 match baseline reorder policy; bottom-first logical row mapped to physical row traversal.",
+    "Actual production PopupKeyboardUi roots measured under bounded AT_MOST constraints and laid out; child rectangles use parent-relative coordinates and actual dimensions, not requested LayoutParams alone.",
+    "Every occupied actual child is traced to exactly one AutoScaleTextView; token membership/uniqueness/complete coverage, literal cell position, direct trigger identity and reachability are asserted.",
+    "Space detection does not require visibility: physical slots are checked with parent-relative rectangles, INVISIBLE state and actual non-clickable/non-focusable flags.",
+    "Direct focus activation uses actual cell top plus 85 percent height, correctly preserving the existing row bias; it makes no claim about geometric center behavior.",
+    "n5 and n10 legacy Y goldens independently match rowCount - roundToInt(y / keyHeight - 0.2), clamp and dismissal bounds, including unchanged full-grid mismatch at center.",
+    "Only ASCII single-letter tokens are used; helper does not invoke Rime, execute actions, write preferences, create native session or claim a real input-device path.",
+    "Actual installed sourceDir and SHA-256 are captured; parsed theme comes from installed APK assets, with theme bytes hash recorded.",
+    "Private UUID output directory, bounded image dimensions, bitmap recycle finally, bounded report size and manifest-write error affecting instrumentation exit are present.",
+    "Soft 140 second interrupt, 150 second hard finish and main task await bounds are explicit; cleanup failures force passed=false.",
+    "Prior logical theme/scheme are restored through public API when a prior scope existed, without writing the two observed theme preferences; null-prior limitations are explicitly recorded."
+  ],
+  "required_root_adjudication": [
+    {
+      "gate": "baseline_control_invariants",
+      "detail": "The baseline expected flag requires two known regression signatures but is not a whitelist of all failures. Before accepting baseline, independently inspect all violations and require unchanged controls (especially initial_focus, legacy_y_policy_changed, outside_did_not_dismiss and dismiss_callback_count) to have no unexpected failures. The flag alone is insufficient."
+    },
+    {
+      "gate": "installed_apk_binding",
+      "detail": "Helper records actual installed APK hash but does not accept or verify an expected hash. Root must compare it with the frozen baseline/candidate APK and source binding and enforce expect identity."
+    },
+    {
+      "gate": "process_reset",
+      "detail": "When old scope was null, logical_scope_cleanup_completed remains false and process_scope_reset_required true. The helper may pass the fixed grid nevertheless. Root must actually stop the isolated target process after collection and verify stopped identity before any other acceptance stage."
+    },
+    {
+      "gate": "deadline_failure",
+      "detail": "An already-running main Runnable cannot be interrupted. A hard-deadline result is failure and does not establish cleanup completion. Root must stop any process left after failure and never count partial matrices as passed."
+    },
+    {
+      "gate": "preference_scope",
+      "detail": "preferences_unchanged compares normal_mode_color and follow_system_day_night only. No claim about every application preference byte is justified by this field alone."
+    },
+    {
+      "gate": "scope_limits",
+      "detail": "Unattached production View measurement/draw and direct method invocation do not establish InputDispatcher/IME long press, physical device, TalkBack, native input or Chinese text acceptance."
+    }
+  ],
+  "blocking_source_defects_found": [],
+  "actual_compilation_or_runtime_pass_claimed": false
+}

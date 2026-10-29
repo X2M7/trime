@@ -1,0 +1,112 @@
+from pathlib import Path
+import hashlib,importlib.util,json,re,sys,time,traceback,xml.etree.ElementTree as ET
+R=Path(__file__).resolve().parent
+assert len(sys.argv)==3 and sys.argv[1] in ('baseline','fixed'), 'usage: run_grid_probe.py baseline|fixed SIGNED_DIAGNOSTIC_APK'
+mode=sys.argv[1];apk=Path(sys.argv[2]).resolve();assert apk.is_file()
+spec=importlib.util.spec_from_file_location('grid_adb',R/'runtime/adb_helper.py');h=importlib.util.module_from_spec(spec);spec.loader.exec_module(h)
+assert h.OUT==R/'runtime/run1'
+PKG='com.osfans.trime.debug';LATIN='com.android.inputmethod.latin/.LatinIME';SENTINEL='fc23655d05c9d26dcf7a828f670dfc811c65aa54cc8a98283ad4ffa03da4c988'
+SHAPES={1:(1,1),2:(1,2),4:(1,4),5:(1,5),6:(2,3),10:(2,5),13:(3,5),17:(4,5),18:(4,5),21:(5,5),22:(5,5),26:(6,5),31:(7,5)}
+CAPACITY={13:12,17:16,18:18,21:20,22:20,26:24,31:28};CONTROLS={1,2,4,5,6,10}
+ALLOWED={'grid_dimensions','fixed_slot_count','slot_bounds','golden_slot_token','missing_tokens','unreachable_tokens','cell_hit_wrong'}
+FORBIDDEN={'initial_focus','legacy_y_policy_changed','outside_did_not_dismiss','dismiss_callback_count','duplicate_or_unknown_token','blank_focus_changed','inert_space','row_count'}
+sha=lambda p:hashlib.sha256(p.read_bytes()).hexdigest()
+def save(p,v):p.write_text(json.dumps(v,ensure_ascii=False,indent=2)+'\n')
+def prefs(data):
+ def node(n):
+  children=[node(c) for c in n]
+  if n.tag=='set':children.sort(key=lambda v:json.dumps(v,sort_keys=True))
+  return {'tag':n.tag,'attributes':dict(n.attrib),'text':(n.text or '') if n.tag=='string' else (n.text or '').strip(),'children':children}
+ root=ET.fromstring(data);assert root.tag=='map';assert len({n.attrib['name'] for n in root})==len(root)
+ return {n.attrib['name']:node(n) for n in root}
+def read_prefs(label):return h.run(mode+'-'+label,'exec-out','run-as',PKG,'cat','shared_prefs/'+PKG+'_preferences.xml')
+def sentinel(label):return h.run(mode+'-'+label,'exec-out','run-as',PKG,'cat','files/triage-sentinel.txt')
+receipt=h.OUT/f'{mode}-probe-completion.json';start=h.OUT/f'{mode}-probe-start.json';assert not receipt.exists() and not start.exists()
+record={'mode':mode,'apk':str(apk),'apk_sha256':sha(apk),'started':time.time(),'required_checks_passed':False,'scope':'Disposable API35 production-view geometry probe; no system long-press/full IME/native/physical-device acceptance.'};save(start,record)
+directory=None;identity=False;before=None;report=None;error=None;validated=False
+try:
+ h.run(mode+'-install','install','-r','-d','-t',apk,timeout=100)
+ package=h.run(mode+'-package-before','shell','dumpsys','package',PKG).decode(errors='replace');assert 'Package ['+PKG+']' in package
+ paths=h.run(mode+'-pm-path','shell','pm','path',PKG).decode().strip().splitlines();assert len(paths)==1 and paths[0].startswith('package:/data/app/')
+ source=paths[0].removeprefix('package:');assert re.fullmatch(r'/data/app/[A-Za-z0-9_+=./~-]+\.apk',source)
+ device_sha=h.run(mode+'-installed-apk-sha','exec-out','run-as',PKG,'sha256sum',source).decode().split();assert device_sha==[record['apk_sha256'],source]
+ identity=True;record['installed_apk_path']=source;record['external_api']=h.run(mode+'-api','shell','getprop','ro.build.version.sdk').decode().strip();assert record['external_api']=='35'
+ before=read_prefs('prefs-before');sentinel_before=sentinel('sentinel-before');assert hashlib.sha256(sentinel_before).hexdigest()==SENTINEL
+ record['default_ime_before']=h.run(mode+'-ime-before','shell','settings','get','secure','default_input_method').decode().strip();assert record['default_ime_before']==LATIN
+ h.run(mode+'-log-marker-start','shell','log','-t','TRIME_GRID_PROBE',mode+'-start')
+ raw=h.run(mode+'-instrument','shell','am','instrument','-w','-r','-e','expect',mode,PKG+'.test/com.osfans.trime.PopupGridInstrumentation',timeout=175)
+ text=raw.decode(errors='replace').replace('\r','');rows=[x for x in text.splitlines() if x.startswith('INSTRUMENTATION_RESULT: popup_grid_summary=')];assert len(rows)==1,text[-4000:]
+ summary=json.loads(rows[0].split('=',1)[1]);codes=re.findall(r'^INSTRUMENTATION_CODE: (-?\d+)\s*$',text,re.M);record['summary']=summary;record['instrumentation_codes']=codes
+ candidate=summary['artifact_directory'];match=re.fullmatch(r'/data/(?:user/0|data)/'+re.escape(PKG)+r'/files/popup-grid-([0-9]+)-([0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12})',candidate);assert match,candidate;directory=candidate
+ manifest=h.run(mode+'-manifest','exec-out','run-as',PKG,'cat',directory+'/manifest.json');assert 1<=len(manifest)<=768000
+ report=json.loads(manifest);rp=h.OUT/f'{mode}-probe-report.json';save(rp,report);record.update({'report_sha256':sha(rp),'raw_manifest_sha256':hashlib.sha256(manifest).hexdigest(),'reported_pid':report['pid']})
+ assert report['expect']==mode and report['installed_apk_sha256']==record['apk_sha256'] and report['installed_apk']==source and report['pid']==int(match.group(1))>0
+ assert report['artifact_directory']==directory and summary['violation_count']==len(report['violations']) and summary['passed']==report['passed']
+ # Preserve the four rendered originals before behavioral gates can reject this run.
+ pictures=[x for x in report.get('scenarios',[]) if 'png' in x]
+ assert {x['scenario'] for x in pictures}=={'n13_center','n18_left','n18_center','n18_right'} and len(pictures)==4
+ image_dir=h.OUT/f'{mode}-images';image_dir.mkdir(exist_ok=False);record['artifacts']=[]
+ for i,x in enumerate(pictures):
+  path=x['png'];assert path==directory+'/'+x['scenario']+'.png'
+  data=h.run(mode+f'-png-{i}','exec-out','run-as',PKG,'cat',path);assert data.startswith(b'\x89PNG\r\n\x1a\n') and 1<=len(data)<=2000000
+  dst=image_dir/Path(path).name;dst.write_bytes(data);assert sha(dst)==x['png_sha256'] and len(data)==x['png_bytes'];record['artifacts'].append({'device_path':path,'host_path':str(dst),'sha256':sha(dst),'bytes':len(data)})
+ assert codes==(['1'] if mode=='baseline' else ['-1']) and report['application_on_create_barrier_completed'] is True and report['all_scenarios_completed'] is True
+ assert report['preferences_unchanged'] is True and report['preferences_before']==report['preferences_after'] and report['violation_count']==len(report['violations'])
+ assert report['old_scope']['present'] is not None
+ if report['old_scope']['present']:
+  assert report['logical_scope_restore_applicable'] is True and report['logical_scope_cleanup_completed'] is True and report['process_scope_reset_required'] is False
+ else:
+  assert report['logical_scope_restore_applicable'] is False and report['logical_scope_cleanup_completed'] is False and report['process_scope_reset_required'] is True
+ cases=report['scenarios'];obs=report['observations'];v=report['violations'];names=[f'n{n}_{a}' for n in SHAPES for a in ('left','center','right')]
+ assert len(cases)==39 and [x['scenario'] for x in cases]==names and report['completed_scenarios']==39
+ assert all(x['kind'] not in FORBIDDEN for x in v)
+ assert all(x['kind'] in ALLOWED and x['count'] in CAPACITY for x in v),v
+ assert all(x['kind'] in ('occupied_hit','blank_hit','legacy_y') and x['scenario'] in names for x in obs)
+ pngs=[]
+ for case in cases:
+  name=case['scenario'];n=case['count'];tokens=list('ABCDEFGHIJKLMNOPQRSTUVWXYZabcde'[:n]);shape=SHAPES[n];capacity=n if mode=='fixed' else CAPACITY.get(n,n)
+  assert (case['golden_rows'],case['golden_columns'])==shape and case['anchor'] in ('left','center','right') and case['unattached'] is True
+  assert len(case['seen_tokens'])==len(set(case['seen_tokens']))==capacity and set(case['seen_tokens'])==set(tokens[:capacity])
+  local=[x for x in obs if x['scenario']==name];hits=[x for x in local if x['kind']=='occupied_hit'];blanks=[x for x in local if x['kind']=='blank_hit'];ys=[x for x in local if x['kind']=='legacy_y']
+  assert len(hits)==capacity and len({x['token'] for x in hits})==capacity and {x['token'] for x in hits}==set(case['seen_tokens'])
+  assert all(x['actual'] in tokens and not x['dismissed'] and x['y_fraction']==0.85 for x in hits) and set(case['reachable_tokens'])=={x['actual'] for x in hits}
+  assert case['dismissal_callbacks']==(4 if n in (5,10) else 2)
+  if n in CONTROLS:assert not [x for x in v if x['scenario']==name] and all(x['actual']==x['token'] for x in hits)
+  golden_y={-1.31:'dismiss',-1.29:'A',0.5:'A',0.69:'A',0.71:'A',1.5:'A',3.69:'A',3.71:'dismiss'} if n==5 else {-1.31:'dismiss',-1.29:'F',0.5:'F',1.5:'F',1.69:'F',1.71:'A',2.5:'A',4.69:'A',4.71:'dismiss'} if n==10 else {}
+  assert len(ys)==len(golden_y) and {x['y_over_height'] for x in ys}==set(golden_y)
+  for x in ys:assert x['expected']==golden_y[x['y_over_height']] and (x['dismissed'] if x['expected']=='dismiss' else not x['dismissed'] and x['actual']==x['expected'])
+  if mode=='fixed':
+   assert all(x['actual']==x['token'] for x in hits) and set(case['reachable_tokens'])==set(tokens)
+   assert case['actual_space_count']==len(blanks)==shape[0]*shape[1]-n and all(not x['dismissed'] and x['previous']=='A' and x['actual']==x['previous'] for x in blanks)
+   assert case['root_bounds']==[0,0,shape[1]*case['key_width'],shape[0]*case['key_height']]
+  else:assert case['actual_space_count']==len(blanks)==0
+  if n==13 and mode=='baseline':assert [x['detail'] for x in v if x['scenario']==name and x['kind']=='missing_tokens']==[['M']]
+  if 'png' in case:pngs.append(case)
+ if mode=='baseline':
+  assert report['passed'] is False and report['failure_kind']=='expected_baseline_assertion' and report['expected_baseline_assertions_observed'] is True and summary['expected_baseline_assertions_observed'] is True
+  assert report['baseline_missing13_observed'] is True and report['baseline_misaligned18_observed'] is True and any(x['scenario']=='n18_center' and x['kind']=='cell_hit_wrong' for x in v)
+ else:assert report['passed'] is True and not v
+ assert {x['scenario'] for x in pngs}=={'n13_center','n18_left','n18_center','n18_right'} and len(pngs)==4
+ h.run(mode+'-log-marker-end','shell','log','-t','TRIME_GRID_PROBE',mode+'-end');validated=True
+except BaseException as e:error=e;record['error']=traceback.format_exc()
+finally:
+ try:
+  if before is not None:
+   after=read_prefs('prefs-after');sentinel_after=sentinel('sentinel-after');a,b=prefs(before),prefs(after);changes=[{'key':k,'before':a.get(k),'after':b.get(k)} for k in sorted(a.keys()|b.keys()) if a.get(k)!=b.get(k)]
+   record.update({'preference_changes':changes,'sentinel_before_sha256':hashlib.sha256(sentinel_before).hexdigest(),'sentinel_after_sha256':hashlib.sha256(sentinel_after).hexdigest(),'default_ime_after':h.run(mode+'-ime-after','shell','settings','get','secure','default_input_method').decode().strip()})
+   assert all(x['key']=='general__pid' for x in changes) and sentinel_before==sentinel_after and record['sentinel_after_sha256']==SENTINEL and record['default_ime_before']==record['default_ime_after']==LATIN
+   if report is not None:assert int(b['general__pid']['attributes']['value'])==report['pid']
+ except BaseException as e:validated=False;error=error or e;record['external_state_error']=traceback.format_exc()
+ try:
+  if directory:
+   h.run(mode+'-artifact-remove','shell','run-as',PKG,'rm','-r',directory);h.run(mode+'-artifact-absence','shell','run-as',PKG,'test','!','-e',directory);record['owned_artifact_directory_removed']=True
+ except BaseException as e:validated=False;error=error or e;record['artifact_cleanup_error']=traceback.format_exc()
+ try:
+  if identity:
+   h.run(mode+'-force-stop','shell','am','force-stop',PKG);remaining=h.run(mode+'-pidof-after-stop','shell','pidof',PKG,check=False);raw=(h.COMMANDS/(mode+'-pidof-after-stop')).with_suffix('.json');exitcode=json.loads(raw.read_text())['exit']
+   assert remaining.strip()==b'' and exitcode==1 and (h.COMMANDS/(mode+'-pidof-after-stop')).with_suffix('.stderr').read_bytes()==b'';record['isolated_target_stopped_and_pidof_empty']=True
+ except BaseException as e:validated=False;error=error or e;record['process_cleanup_error']=traceback.format_exc()
+ record.update({'finished':time.time(),'required_checks_passed':validated and error is None,'scope_null_not_claimed_restored':bool(report and not report['old_scope']['present'])});save(receipt,record)
+if error is not None:raise error
+assert record['required_checks_passed'] and record.get('owned_artifact_directory_removed') and record.get('isolated_target_stopped_and_pidof_empty')
+print(json.dumps({'mode':mode,'required_checks_passed':True,'receipt':str(receipt),'report_sha256':record['report_sha256']},indent=2))

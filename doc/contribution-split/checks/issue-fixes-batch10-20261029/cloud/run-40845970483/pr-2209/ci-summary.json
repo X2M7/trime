@@ -1,0 +1,125 @@
+{
+  "captured_at_utc": "2026-10-29T09:14:39.509281+00:00",
+  "repository": "osfans/trime",
+  "pr": 2209,
+  "pr_url": "https://github.com/osfans/trime/pull/2209",
+  "head_sha": "220391c97cf88aba35b6d0a1c2307f2a3781d224",
+  "base_sha": "7fedca06ba5d2ef761a2ae3d44d8a0917db36994",
+  "ci": {
+    "run_id": 40845970483,
+    "run_url": "https://github.com/osfans/trime/actions/runs/40845970483",
+    "run_attempt": 1,
+    "status": "completed",
+    "conclusion": "success",
+    "passed": 5,
+    "total": 5,
+    "jobs": [
+      {
+        "id": 123353419072,
+        "name": "check / lint-and-test",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 123355003224,
+        "name": "build (ubuntu-26.04)",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 123355003290,
+        "name": "build (macos-26)",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 123355003327,
+        "name": "build (windows-2025)",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 123355003614,
+        "name": "build (macos-26-intel)",
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ],
+    "original_logs_saved_and_sha_verified": true,
+    "all_jobs_actual_checkout_merge_sha": "98f7bdcac286f51db801f9126c78f3752784cc81",
+    "app_test_tasks": [
+      {
+        "line": 1590,
+        "text": "2026-10-29T09:00:54.8054043Z > Task :app:testDebugUnitTest",
+        "executed_without_cache_suffix": true
+      }
+    ],
+    "app_lint_tasks": [
+      {
+        "line": 1600,
+        "text": "2026-10-29T09:01:51.1242017Z > Task :app:lint",
+        "executed_without_cache_suffix": true
+      }
+    ],
+    "exact_testcase_count": null,
+    "junit_xml_exported_by_workflow": false
+  },
+  "ubuntu_original": {
+    "artifact_id": 12886165406,
+    "artifact_name": "trime-ubuntu-26.04",
+    "archive_file": "ubuntu-original/artifact-12886165406-trime-ubuntu-26.04.zip",
+    "archive_sha256": "6c4b7d4bc10e09f10cbc7f48fefb0e778d94de42d3ef7c76f86277ac2dcf9f67",
+    "archive_digest_matches_github": true,
+    "original_files": [
+      {
+        "producer_zip_entry": "com.osfans.trime-v3.3.12-109-g98f7bdca-x86_64-debug.apk",
+        "producer_filename": "com.osfans.trime-v3.3.12-109-g98f7bdca-x86_64-debug.apk",
+        "path": "ubuntu-original/extracted/com.osfans.trime-v3.3.12-109-g98f7bdca-x86_64-debug.apk",
+        "sha256": "1ffd30ea3da153dffb88c656803ef962e1b6971c39bd9f555b62f81db9bd0914",
+        "size": 20158578
+      },
+      {
+        "producer_zip_entry": "output-metadata.json",
+        "producer_filename": "output-metadata.json",
+        "path": "ubuntu-original/extracted/output-metadata.json",
+        "sha256": "e250a1ef9e49024e48b043d982960a5b9cbc0e96a6144f34ddb8c6d450f319ec",
+        "size": 1496
+      }
+    ],
+    "original_apk_modified_or_resigned": false,
+    "actual_producer_merge_sha": "98f7bdcac286f51db801f9126c78f3752784cc81",
+    "source_git_tree": "89439bd5c52d3864d964e1d6aeee6891f34dedd2",
+    "producer_git_tree": "89439bd5c52d3864d964e1d6aeee6891f34dedd2",
+    "full_source_trees_identical": true,
+    "not_a_direct_head_producer_apk": true,
+    "build_time_git_metadata_may_differ_from_direct_head_build": true,
+    "provenance_file": "ubuntu-original/provenance.json",
+    "source_tree_proof_file": "ubuntu-original/source-tree-proof.json"
+  },
+  "diagnostics": {
+    "report": "warning-context-review.json",
+    "report_sha256": "4a1cf5036709e1f0f980d22d487d57f3b9608fbaad8669508c4767d8024647c1",
+    "mechanical_candidate_lines": 133,
+    "reviewed_categories": {
+      "git_initialization_hint": 4,
+      "android_sdk_tool": 14,
+      "gradle_deprecation_unexpanded": 20,
+      "gradle_documentation_reference": 10,
+      "pinned_native_dependency": 54,
+      "pinned_native_dependency_compiler_summary": 6,
+      "jdk_jna_tool": 24,
+      "ci_cache_tool": 1
+    },
+    "application_source_candidate_count": 0,
+    "unresolved_candidate_count": 0,
+    "unexpanded_gradle_deprecation_origin_unknown": true,
+    "not_a_zero_warning_claim": true,
+    "not_baseline_equivalence": true
+  },
+  "runtime": {
+    "status": "NOT_CLAIMED_BY_CI_COLLECTOR",
+    "owner": "Root",
+    "scope": "CI evidence only; device validation must be reported separately."
+  },
+  "scope": "Read-only collection of an existing run. No build, workflow rerun/dispatch/cancel, source edit, ADB, APK rewriting or signing. Signed redirect headers/URLs are not requested or saved. Warning candidates and unknown Gradle origins remain explicit; local test counts are not substituted for CI results."
+}

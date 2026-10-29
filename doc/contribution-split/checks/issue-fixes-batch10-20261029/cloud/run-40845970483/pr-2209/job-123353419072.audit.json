@@ -1,0 +1,104 @@
+{
+  "job": {
+    "id": 123353419072,
+    "name": "check / lint-and-test",
+    "status": "completed",
+    "conclusion": "success",
+    "started_at": "2026-10-29T08:58:07Z",
+    "completed_at": "2026-10-29T09:01:53Z"
+  },
+  "raw_file": "job-123353419072.log",
+  "bytes": 262853,
+  "sha256": "f5f3de01f378e189ddf454212fe70921281f21b29093acbc41d6599a1b81877d",
+  "checkout_records": [
+    {
+      "command_line": 429,
+      "result_line": 430,
+      "sha": "98f7bdcac286f51db801f9126c78f3752784cc81"
+    }
+  ],
+  "app_task_lines": [
+    {
+      "line": 1590,
+      "text": "2026-10-29T09:00:54.8054043Z > Task :app:testDebugUnitTest",
+      "executed_without_cache_suffix": true
+    },
+    {
+      "line": 1600,
+      "text": "2026-10-29T09:01:51.1242017Z > Task :app:lint",
+      "executed_without_cache_suffix": true
+    },
+    {
+      "line": 1601,
+      "text": "2026-10-29T09:01:51.1265102Z > Task :app:check",
+      "executed_without_cache_suffix": true
+    }
+  ],
+  "warning_candidates": [
+    {
+      "line": 88,
+      "category": "unclassified_diagnostic_candidate",
+      "text": "2026-10-29T08:58:09.6148759Z hint: to use in all of your new repositories, which will suppress this warning,"
+    },
+    {
+      "line": 504,
+      "category": "android_sdk_tool",
+      "text": "2026-10-29T08:58:41.6178979Z WARNING: The SDK Manager CLI tool (sdkmanager) is deprecated. Use Android CLI instead."
+    },
+    {
+      "line": 1444,
+      "category": "android_sdk_tool",
+      "text": "2026-10-29T08:58:47.4443762Z WARNING: The SDK Manager CLI tool (sdkmanager) is deprecated. Use Android CLI instead."
+    },
+    {
+      "line": 1499,
+      "category": "gradle_deprecation_unexpanded",
+      "text": "2026-10-29T08:59:21.6647962Z Deprecated Gradle features were used in this build, making it incompatible with Gradle 10."
+    },
+    {
+      "line": 1501,
+      "category": "gradle_deprecation_unexpanded",
+      "text": "2026-10-29T08:59:21.6649683Z You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins."
+    },
+    {
+      "line": 1503,
+      "category": "unclassified_diagnostic_candidate",
+      "text": "2026-10-29T08:59:21.6651854Z For more on this, please refer to https://docs.gradle.org/9.8.1/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation."
+    },
+    {
+      "line": 1605,
+      "category": "gradle_deprecation_unexpanded",
+      "text": "2026-10-29T09:01:51.1964174Z Deprecated Gradle features were used in this build, making it incompatible with Gradle 10."
+    },
+    {
+      "line": 1607,
+      "category": "gradle_deprecation_unexpanded",
+      "text": "2026-10-29T09:01:51.2056258Z You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins."
+    },
+    {
+      "line": 1609,
+      "category": "unclassified_diagnostic_candidate",
+      "text": "2026-10-29T09:01:51.2096192Z For more on this, please refer to https://docs.gradle.org/9.8.1/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation."
+    }
+  ],
+  "toolchain_lines": [],
+  "native_build_and_cache_lines": [
+    {
+      "line": 467,
+      "text": "2026-10-29T08:58:31.2177300Z Cache hit for: setup-java-Linux-x64-gradle-e2376c216de50d08cef4ad85c12aeeca4fcdc0f0636645e74c113d1e208eae02"
+    },
+    {
+      "line": 468,
+      "text": "2026-10-29T08:58:31.2417451Z Cache hit for: setup-java-Linux-x64-gradle-wrapper-3d8134e7f4e4eda12747fb360d8e234e703f0e3e4967579ea3580699fc603c5c"
+    },
+    {
+      "line": 1615,
+      "text": "2026-10-29T09:01:51.3786025Z Cache hit occurred on the gradle-wrapper primary key setup-java-Linux-x64-gradle-wrapper-3d8134e7f4e4eda12747fb360d8e234e703f0e3e4967579ea3580699fc603c5c, not saving cache."
+    },
+    {
+      "line": 1616,
+      "text": "2026-10-29T09:01:51.3793259Z Cache hit occurred on the primary key setup-java-Linux-x64-gradle-e2376c216de50d08cef4ad85c12aeeca4fcdc0f0636645e74c113d1e208eae02, not saving cache."
+    }
+  ],
+  "limits": "Mechanical diagnostics include repeated summaries and Git hints. Categories are source/tool candidates, not proof of distinct bugs or a zero-warning build. No exact JUnit count inferred."
+}

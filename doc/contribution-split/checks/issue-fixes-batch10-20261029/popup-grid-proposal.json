@@ -1,0 +1,278 @@
+{
+  "schema": 1,
+  "recorded_at_utc": "2026-10-29T08:54:23.627580+00:00",
+  "status": "SCOPED_CAPACITY_HORIZONTAL_FIX_IMPLEMENTED_AND_FROZEN_NOT_COMPILED; EXTERNAL_PROBE_DRAFT_NOT_RUN",
+  "base": "7fedca06ba5d2ef761a2ae3d44d8a0917db36994",
+  "source_policy": "Only origin/develop Git blobs are baseline source. Historical aggregate df12d0f4 source is not used.",
+  "previous_reviews": [
+    {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch5-20261029/popup-grid-investigation.json",
+      "sha256": "5ca0eee39048426b93f570f67cf74b70b283e7e86743bbffb8ae3bc79675f173"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch6-20261029/popup-grid-next-review.json",
+      "sha256": "4a78486149a5914f7d81ae3951e50a9df5e25fe9c05f1a6da8d5cb930d1d5ca4"
+    }
+  ],
+  "fresh_github_readonly_snapshot": {
+    "develop": {
+      "sha": "7fedca06ba5d2ef761a2ae3d44d8a0917db36994",
+      "url": "https://api.github.com/repos/osfans/trime/commits/develop",
+      "response_sha256": "1b080dc857f6b231b70602e4ff20ba9c7af6b0dbd7874382e418460b8d093ae2"
+    },
+    "open_items": {
+      "issues": 116,
+      "prs": 16,
+      "read_scope": "Fresh complete open issue/PR title/body listing (100 +32 entries), plus bounded all-state popup/longpress searches. No exhaustive unrelated comment or attachment review claimed.",
+      "pages": [
+        {
+          "url": "https://api.github.com/repos/osfans/trime/issues?state=open&per_page=100&page=1",
+          "response_sha256": "d7719aee6a3e310750d182ef998bc461ae8c556d0c9e7b21ffc18b0b5e90a676"
+        },
+        {
+          "url": "https://api.github.com/repos/osfans/trime/issues?state=open&per_page=100&page=2",
+          "response_sha256": "95df66afd04680af9eca42e6e40593397c7ba7e15bbd32e3615e94de3bf29d87"
+        }
+      ]
+    },
+    "active_popup_pr": {
+      "number": 2204,
+      "url": "https://github.com/osfans/trime/pull/2204",
+      "state": "open",
+      "draft": false,
+      "head": "492d8d60084026cbc80e045301b638e4b0f76a31",
+      "files": [
+        "app/src/main/java/com/osfans/trime/ime/popup/PopupKeyboardUi.kt"
+      ],
+      "scope": "Full labels only, changes keyUis resolution block, not capacity/row slots/selection. No overlapping fix identified.",
+      "files_response_sha256": "6e52692f1d22e9089834464578512b0eea353d7e3ccb5e91c4f3e4863e905a20"
+    },
+    "issue_2033": {
+      "url": "https://github.com/osfans/trime/issues/2033",
+      "scope": "Label truncation; owned by #2204. Zero current issue comments. Not a capacity/hit-map report.",
+      "comments_response_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "direct_matching_issue_found": false,
+    "direct_matching_active_grid_fix_found": false,
+    "pr_reference_guidance": "Do not use Fixes #2033 or invent another issue closure. Describe the independent 13-item capacity and18-item slot reproduction. Optional discovery context can mention #2033/#2204 without claiming that issue is fixed by this PR."
+  },
+  "source_evidence": [
+    {
+      "path": "app/src/main/java/com/osfans/trime/ime/popup/PopupKeyboardUi.kt",
+      "sha256": "053481ac0be3ed3231e9463f55d1956020520acbb92402c7e067f4bf88cae365",
+      "bytes": 10591,
+      "source": "git show origin/develop:app/src/main/java/com/osfans/trime/ime/popup/PopupKeyboardUi.kt"
+    },
+    {
+      "path": "app/src/main/java/com/osfans/trime/ime/popup/PopupContainerUi.kt",
+      "sha256": "96a94af763b852552478c1d00667fa38a50f1b9cd63a1efc64a6d550e2d4b2bd",
+      "bytes": 3037,
+      "source": "git show origin/develop:app/src/main/java/com/osfans/trime/ime/popup/PopupContainerUi.kt"
+    },
+    {
+      "path": "app/src/main/java/com/osfans/trime/ime/popup/PopupDelegate.kt",
+      "sha256": "99389c9b06bd0d3435aa2cfee0d11c2629f92ae4ed9c55db6843495235370312",
+      "bytes": 7654,
+      "source": "git show origin/develop:app/src/main/java/com/osfans/trime/ime/popup/PopupDelegate.kt"
+    },
+    {
+      "path": "app/src/main/java/com/osfans/trime/ime/keyboard/KeyView.kt",
+      "sha256": "288fdb6b8aa4d2788996fa1480b1b98072dfba3117ef9ec36c7151c06e086f61",
+      "bytes": 14417,
+      "source": "git show origin/develop:app/src/main/java/com/osfans/trime/ime/keyboard/KeyView.kt"
+    },
+    {
+      "path": "app/src/main/java/com/osfans/trime/ime/keyboard/GestureFrame.kt",
+      "sha256": "db81f52b6e9a65b471e92eda7febbf415576ca37acfddf90c5ace4de8aa6048c",
+      "bytes": 11247,
+      "source": "git show origin/develop:app/src/main/java/com/osfans/trime/ime/keyboard/GestureFrame.kt"
+    },
+    {
+      "path": "app/src/main/res/values/themes.xml",
+      "sha256": "7402e0c4b2857e70b42251e33398d1d84ff1edd1b82d0d877d2715a7f443bf4d",
+      "bytes": 618,
+      "source": "git show origin/develop:app/src/main/res/values/themes.xml"
+    }
+  ],
+  "confirmed_source_reproduction": {
+    "capacity": "13 input keys:3 rows * rounded4 columns=12 addresses; token index12 has a keyUi but no rendered slot or address. Counts17/21/22/26/31 similarly lose tail entries.",
+    "horizontal_existing_case": {
+      "count": 18,
+      "rows": 4,
+      "columns": 5,
+      "center_column_order": [
+        4,
+        2,
+        0,
+        1,
+        3
+      ],
+      "top_row_indices": [
+        19,
+        17,
+        15,
+        16,
+        18
+      ],
+      "valid_logical_columns": [
+        1,
+        2,
+        3
+      ],
+      "old_visible_columns": [
+        0,
+        1,
+        2
+      ],
+      "cause": "Both edge slots are absent; last missing slot resets row gravity to START after first set END. Visible children shift away from the hit grid.",
+      "old_hit_at_85_percent_row_height": [
+        "index17 visible column0 hits missing19 -> prior focus retained",
+        "index15 visible column1 selects17",
+        "index16 visible column2 selects15"
+      ]
+    },
+    "ceil_only_counterexample": {
+      "count": 13,
+      "new_grid": "3x5",
+      "top_row_indices": [
+        14,
+        12,
+        10,
+        11,
+        13
+      ],
+      "without_placeholder_visible_columns": [
+        0,
+        1,
+        2
+      ],
+      "required_columns": [
+        1,
+        2,
+        3
+      ],
+      "finding": "Ceiling alone exposes index12 but leaves wrong visible-to-hit placement. Both changes are required."
+    },
+    "scope_note": "These are source/layout deductions, not a new Android execution result."
+  },
+  "chosen_minimal_complete_unit": {
+    "decision": "Capacity and horizontal-slot consistency form an independently complete focused fix while preserving the existing vertical drag policy.",
+    "production_file": "app/src/main/java/com/osfans/trime/ime/popup/PopupKeyboardUi.kt",
+    "worktree": "/home/xumin/Public/Trime-pr-popup-grid-20261029",
+    "branch": "contrib/fix-popup-grid-slots",
+    "frozen_sha256_before_root_formatter": "3cd062bf10660b78091514c035c2b41e80018e7c8c036c493dba19e415bb0c19",
+    "diff": "one file +3/-11",
+    "changes": [
+      "ceil(keyCount/rowCount) columns so all input tokens have addresses",
+      "A fixed width/height Space for every null logical slot instead of dropping children and changing row gravity",
+      "Import android.widget.Space and remove only obsolete gravityEnd/gravityStart imports"
+    ],
+    "protected_byte_checks": {
+      "label_resolution_block_byte_identical": true,
+      "focus_y_blank_and_dismiss_methods_byte_identical": true,
+      "offset_y_expression_byte_identical": true,
+      "row_count_expression_byte_identical": true
+    },
+    "normal_call_invariant": "KeyView.showPopupKeyboard returns before ShowKeyboardAction for an empty popup list. PopupDelegate passes keys as labels. This patch does not add unrelated empty-popup semantics.",
+    "known_unchanged_vertical_policy": "The old 30%-from-bottom drag bias maps a multi-row cell geometric center to the row above in some positions. It is preserved byte-for-byte, including offsetY, blank-focus behavior and out-of-range logic. Do not claim every two-dimensional geometric center selects its drawn token.",
+    "no_mix": [
+      "#2204 label truncation",
+      "ThemeUtils production-context warnings",
+      "GestureFrame lifecycle",
+      "Native/Rime changes",
+      "Fork release configuration"
+    ]
+  },
+  "validation_plan": {
+    "fixed_golden_shapes": {
+      "1": [
+        1,
+        1
+      ],
+      "2": [
+        1,
+        2
+      ],
+      "4": [
+        1,
+        4
+      ],
+      "5": [
+        1,
+        5
+      ],
+      "6": [
+        2,
+        3
+      ],
+      "10": [
+        2,
+        5
+      ],
+      "13": [
+        3,
+        5
+      ],
+      "17": [
+        4,
+        5
+      ],
+      "18": [
+        4,
+        5
+      ],
+      "21": [
+        5,
+        5
+      ],
+      "22": [
+        5,
+        5
+      ],
+      "26": [
+        6,
+        5
+      ],
+      "31": [
+        7,
+        5
+      ]
+    },
+    "matrix": "13 counts * left/center/right=39 actual PopupKeyboardUi scenarios; unique one-character ASCII tokens A-Z/a-e avoid resolveAction/Keyboard/Rime-session setup.",
+    "layout": "AT_MOST within real outerBounds then layout at measured dimensions. Read every actual slot Rect via offsetDescendantRectToMyCoords. Do not force old13-key popup into an expected5-column EXACTLY width.",
+    "acceptance": [
+      "All input tokens visible once; correct literal rows/columns/order and fixed slot widths/heights",
+      "Each occupied actual cell x-center at actual cell.top+0.85*height in the existing row activation band, converted to trigger-local coordinates by adding public offsetX/offsetY, returns the original token through public changeFocus/onTrigger",
+      "All provided original tokens reachable, no duplicate/missing action selection",
+      "Every Space is fixed size, INVISIBLE, nonclickable and nonfocusable; selecting its band retains previous valid token",
+      "Existing out-of-range dismissal return and callback occur",
+      "Literal old Y boundary goldens on5/10 full grids pass unchanged; bottom-row geometric center behavior is explicitly diagnostic, not a claimed fix"
+    ],
+    "baseline_gate": "Collect all39 scenarios without throwing at the first business assertion. Require13-item missing-token and18-center wrong-horizontal-selection observations; final caught assertion/exit1 is the expected baseline test failure, not a product crash. Fixed build requires zero violations.",
+    "pngs": [
+      "n13_center",
+      "n18_left",
+      "n18_center",
+      "n18_right"
+    ],
+    "jvm_scope": "No copied ceil/round formula test is claimed as production coverage. This one-file Android geometry repair can use direct production-view instrumentation instead of adding a new planner abstraction solely for tests.",
+    "emulator_feasibility": "Yes, bounded actual Android measurement/layout and public selection API checks can establish the scoped capacity/horizontal behavior with no physical device or Rime session. They do not validate real system long-press dispatch, full IME lifecycle, Chinese input, TalkBack or OEM touch feel.",
+    "build_owner": "Root alone schedules formatter, compilation, A/B and one owned VM; this agent has not run them."
+  },
+  "external_helper": {
+    "path": "/home/xumin/Public/Trime/build/issue-fixes-batch10-20261029/popup-probe/PopupGridInstrumentation.kt",
+    "sha256": "4ab2246268ce1155e2d5f46befc261e404d95521016d9c910aad473420661e87",
+    "lines": 208,
+    "status": "Draft source only; uncompiled and unrun, not in PR",
+    "theme": "Real ThemeYaml + ThemeDslExpander standard theme and public ColorManager scope. Test-only ContextThemeWrapper uses verified R.style.Theme_TrimeAppTheme, not a claim about production IME context.",
+    "no_native_or_preferences_writes": "No RimeDaemon/RimeSession/Keyboard construction, no action execution and no preference setters. Original normal-mode/follow-system prefs are read and checked unchanged. Root verifies full logical prefs/private sentinel/default IME externally.",
+    "scope_cleanup_limit": "Old theme and active scheme restored through public ColorManager APIs when prior scope exists. Exact scope identity cannot be restored; an originally null scope requires Root to stop this isolated instrumentation target process after collection. No reflection/reset used.",
+    "bounds": "150s hard watchdog,140s soft interruption reserving10s cleanup,10s per-main-task wait; already-running main tasks cannot be interrupted and failure/cleanup flags remain explicit. Only4 bounded PNGs and a bounded manifest in a uniquely owned target filesdir; Root pulls/removes it."
+  },
+  "not_done": [
+    "Compilation/formatting by this agent",
+    "JVM or Android execution of the new patch/helper",
+    "Actual long-press/system touch, physical-device or native input acceptance",
+    "Push/commit/PR or GitHub writes"
+  ]
+}

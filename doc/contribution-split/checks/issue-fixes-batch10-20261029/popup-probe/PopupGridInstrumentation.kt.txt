@@ -1,0 +1,208 @@
+/* SPDX-License-Identifier: GPL-3.0-or-later */
+package com.osfans.trime
+
+import android.app.Activity
+import android.app.Instrumentation
+import android.content.res.Configuration
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Rect
+import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.os.Process
+import android.os.SystemClock
+import android.view.ContextThemeWrapper
+import android.view.View
+import android.view.ViewGroup
+import android.widget.Space
+import com.osfans.trime.data.theme.ColorManager
+import com.osfans.trime.data.theme.Theme
+import com.osfans.trime.data.theme.ThemeDslExpander
+import com.osfans.trime.data.theme.ThemeManager
+import com.osfans.trime.data.theme.ThemeScope
+import com.osfans.trime.data.theme.ThemeYaml
+import com.osfans.trime.ime.core.AutoScaleTextView
+import com.osfans.trime.ime.popup.PopupKeyboardUi
+import org.json.JSONArray
+import org.json.JSONObject
+import java.io.File
+import java.security.MessageDigest
+import java.util.UUID
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
+import java.util.concurrent.atomic.AtomicBoolean
+import java.util.concurrent.atomic.AtomicReference
+import kotlin.math.roundToInt
+
+/** Disposable unattached production-View probe; expect=baseline|fixed. No Rime session or action execution. */
+class PopupGridInstrumentation : Instrumentation() {
+    private val dimensions = linkedMapOf(1 to (1 to 1), 2 to (1 to 2), 4 to (1 to 4), 5 to (1 to 5), 6 to (2 to 3), 10 to (2 to 5), 13 to (3 to 5), 17 to (4 to 5), 18 to (4 to 5), 21 to (5 to 5), 22 to (5 to 5), 26 to (6 to 5), 31 to (7 to 5))
+    // Literal left/center/right order goldens, independent of the production planner.
+    private val orders = mapOf(1 to arrayOf(intArrayOf(0), intArrayOf(0), intArrayOf(0)), 2 to arrayOf(intArrayOf(0,1), intArrayOf(0,1), intArrayOf(1,0)), 3 to arrayOf(intArrayOf(0,1,2), intArrayOf(2,0,1), intArrayOf(2,1,0)), 4 to arrayOf(intArrayOf(0,1,2,3), intArrayOf(2,0,1,3), intArrayOf(3,2,1,0)), 5 to arrayOf(intArrayOf(0,1,2,3,4), intArrayOf(4,2,0,1,3), intArrayOf(4,3,2,1,0)))
+    private val report = JSONObject()
+    private val scenarios = JSONArray()
+    private val violations = JSONArray()
+    private val observations = JSONArray()
+    private val lock = Any()
+    private val finished = AtomicBoolean(false)
+    private val handler = Handler(Looper.getMainLooper())
+    private val watchdog = Executors.newSingleThreadScheduledExecutor { r -> Thread(r, "PopupGridDeadline").apply { isDaemon = true } }
+    private var args = Bundle()
+    @Volatile private var stage = "created"
+    @Volatile private var directory: File? = null
+    private var deadline = 0L
+
+    override fun onCreate(arguments: Bundle?) { super.onCreate(arguments); args = arguments?.let(::Bundle) ?: Bundle(); start() }
+    override fun onStart() {
+        deadline = SystemClock.uptimeMillis() + 150_000L
+        put("preferences_unchanged", false); put("logical_scope_cleanup_completed", false); put("all_scenarios_completed", false)
+        val worker = Thread.currentThread()
+        watchdog.schedule({ put("cleanup_reserve_entered", true); worker.interrupt() }, 140_000L, TimeUnit.MILLISECONDS)
+        watchdog.schedule({ complete(false, IllegalStateException("150 s hard deadline at $stage; cleanup flags are authoritative")) }, 150_000L, TimeUnit.MILLISECONDS)
+        var oldScope: ThemeScope? = null
+        var oldScheme: Map<String,String>? = null
+        var originalPrefs: String? = null
+        var configuration: Configuration? = null
+        var fixtureStarted = false
+        var passed = false
+        var failure: Throwable? = null
+        try {
+            onMain("application_on_create_barrier") {}
+            put("application_on_create_barrier_completed", true)
+            val expect = args.getString("expect", "fixed")!!
+            check(expect == "baseline" || expect == "fixed")
+            directory = File(targetContext.filesDir, "popup-grid-${Process.myPid()}-${UUID.randomUUID()}").also { check(it.mkdir()) }
+            put("artifact_directory", directory!!.absolutePath)
+            put("expect", expect); put("pid", Process.myPid()); put("installed_apk", targetContext.applicationInfo.sourceDir)
+            put("installed_apk_sha256", sha(File(targetContext.applicationInfo.sourceDir)))
+            put("scope", "Actual PopupKeyboardUi, unattached measure/layout/draw; direct public changeFocus with trigger-local coordinates and onTrigger only. No InputDispatcher, long-press/IME, TalkBack, native session, Chinese input or physical-device acceptance.")
+            put("test_context", "ContextThemeWrapper(targetContext, R.style.Theme_TrimeAppTheme); harness AppCompat theme, not a claimed production IME context or theme-warning fix")
+            put("vertical_policy", "Existing drag bias is intentionally preserved. X-center at measured cell.top + 0.85*height is an existing row-activation area, NOT geometric center. Y-center mismatch is not fixed or counted as this repair.")
+            put("overall_deadline_ms", 150000); put("main_task_bound_ms", 10000); put("preferences_unchanged", false); put("logical_scope_cleanup_completed", false)
+            onMain("capture_state") { originalPrefs = prefs().toString(); oldScope = ColorManager.currentScope(); oldScheme = oldScope?.activeColorScheme; configuration = Configuration(targetContext.resources.configuration); put("old_scope", scopeInfo(oldScope)); put("preferences_before", prefs()) }
+            val bytes = targetContext.assets.open("shared/tongwenfeng.trime.yaml").use { it.readBytes() }; check(bytes.size < 1_048_576)
+            val parser = ThemeYaml.parser
+            val expanded = ThemeDslExpander.expand("tongwenfeng.trime", parser.parseToYamlNode(bytes.toString(Charsets.UTF_8))) { name -> runCatching { targetContext.assets.open("shared/$name.yaml").bufferedReader().use { parser.parseToYamlNode(it.readText()) } }.getOrNull() }
+            val theme = parser.decodeFromYamlNode<Theme>(expanded)
+            put("theme_asset", JSONObject().put("path", "shared/tongwenfeng.trime.yaml").put("sha256", sha(bytes)).put("name", theme.name))
+            lateinit var scope: ThemeScope
+            onMain("attach_test_theme") { fixtureStarted = true; ColorManager.attachTheme(theme); ColorManager.init(configuration!!); scope = checkNotNull(ColorManager.currentScope()); put("test_scope", scopeInfo(scope)) }
+            for ((count, shape) in dimensions) for (anchor in 0..2) {
+                check(SystemClock.uptimeMillis() < deadline - 10000) { "Matrix exceeded cleanup reserve" }
+                onMain("matrix_${count}_$anchor") { scenario(count, shape.first, shape.second, anchor, scope, theme) }
+                put("completed_scenarios", scenarios.length()); put("scenarios", scenarios); put("observations", observations); put("violations", violations)
+            }
+            check(scenarios.length() == 39); put("all_scenarios_completed", true)
+            val missing13 = (0 until violations.length()).map { violations.getJSONObject(it) }.any { it.optInt("count") == 13 && it.optString("kind") == "missing_tokens" }
+            val wrong18 = (0 until violations.length()).map { violations.getJSONObject(it) }.any { it.optInt("count") == 18 && it.optString("anchor") == "center" && it.optString("kind") == "cell_hit_wrong" }
+            put("baseline_missing13_observed", missing13); put("baseline_misaligned18_observed", wrong18)
+            put("expected_baseline_assertions_observed", expect == "baseline" && missing13 && wrong18)
+            if (violations.length() != 0) { put("failure_kind", if (expect == "baseline" && missing13 && wrong18) "expected_baseline_assertion" else "unexpected_grid_assertion"); throw AssertionError("Captured ${violations.length()} grid violations after complete matrix; not a product FATAL") }
+            check(expect == "fixed") { "Baseline unexpectedly passes; verify installed APK identity" }; passed = true
+        } catch (e: Throwable) { failure = e }
+        finally {
+            Thread.interrupted() // Allow the bounded restoration task after a soft-deadline interrupt.
+            if (originalPrefs != null) runCatching {
+                onMain("restore_logical_scope_without_writing_preferences") {
+                    if (fixtureStarted) oldScope?.let { ColorManager.attachTheme(it.theme); ColorManager.init(configuration!!) }
+                    val unchanged = prefs().toString() == originalPrefs
+                    val prior = oldScope
+                    val logical = prior == null || ColorManager.currentScope()?.let { it.theme == prior.theme && it.activeColorScheme == oldScheme } == true
+                    put("preferences_after", prefs()); put("preferences_unchanged", unchanged); put("logical_scope_restore_applicable", prior != null); put("logical_scope_cleanup_completed", prior != null && logical); put("process_scope_reset_required", prior == null && fixtureStarted)
+                    put("scope_restore_limit", if (oldScope == null) "Original scope null cannot be restored through public API; test scope remains only in this isolated target process. Root must stop the process after collecting evidence." else "Original theme and active scheme restored through public API; old scope object identity is not restored.")
+                    check(unchanged && logical) { "Logical state readback differs" }
+                }
+            }.onFailure { passed = false; failure = failure?.apply { addSuppressed(it) } ?: it; put("cleanup_error", it.toString()) }
+            put("scenarios", scenarios); put("observations", observations); put("violations", violations); put("violation_count", violations.length())
+            complete(passed, failure)
+        }
+    }
+
+    private fun scenario(count: Int, rows: Int, columns: Int, anchor: Int, scope: ThemeScope, theme: Theme) {
+        val name = listOf("left", "center", "right")[anchor]; val id = "n${count}_$name"
+        val tokens = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcde".take(count).map { it.toString() }
+        val order = orders.getValue(columns)[anchor]
+        val width = dp(theme.style.popupWidth.toFloat()); val height = dp(theme.style.popupKeyHeight.toFloat())
+        val outer = Rect(0,0,width*9,height*12); val left = listOf(0,width*4,width*8)[anchor]
+        var dismissals = 0
+        val context = ContextThemeWrapper(targetContext, R.style.Theme_TrimeAppTheme)
+        val popup = PopupKeyboardUi(context, scope, outer, Rect(left,height*9,left+width,height*10), { dismissals++ }, dp(theme.style.roundCorner).toFloat(), width, height, dp(theme.style.popupHeight.toFloat()), tokens, tokens)
+        val root: ViewGroup = popup.root
+        root.measure(View.MeasureSpec.makeMeasureSpec(outer.width(), View.MeasureSpec.AT_MOST), View.MeasureSpec.makeMeasureSpec(outer.height(), View.MeasureSpec.AT_MOST))
+        root.layout(0,0,root.measuredWidth,root.measuredHeight)
+        check(root.width in 1..2048 && root.height in 1..2048 && root.width.toLong()*root.height <= 2_000_000 && !root.isAttachedToWindow)
+        fun verify(ok: Boolean, kind: String, detail: Any?) { if (!ok) violations.put(JSONObject().put("scenario",id).put("count",count).put("anchor",name).put("kind",kind).put("detail",detail)) }
+        verify(root.width == columns*width && root.height == rows*height, "grid_dimensions", "${root.width}x${root.height}, expected ${columns*width}x${rows*height}")
+        verify(root.childCount == rows, "row_count", root.childCount)
+        verify(popup.onTrigger() == "A", "initial_focus", popup.onTrigger())
+        val seen = mutableSetOf<String>(); val cells = mutableListOf<Pair<String,Rect>>(); val blanks = mutableListOf<Rect>()
+        for (visualRow in 0 until root.childCount) {
+            val row = root.getChildAt(visualRow) as? ViewGroup ?: error("Unexpected row type")
+            val logicalRow = rows-1-visualRow
+            verify(row.childCount == columns, "fixed_slot_count", "row=$visualRow actual=${row.childCount} expected=$columns")
+            for (column in 0 until row.childCount) {
+                val child = row.getChildAt(column); val bounds = Rect(0,0,child.width,child.height); root.offsetDescendantRectToMyCoords(child,bounds)
+                val wanted = if (column < order.size) tokens.getOrNull(logicalRow*columns+order[column]) else null
+                verify(bounds.left == column*width && bounds.top == visualRow*height && bounds.width() == width && bounds.height() == height, "slot_bounds", rect(bounds))
+                if (child is Space) {
+                    verify(wanted == null && !child.isClickable && !child.isFocusable && child.visibility == View.INVISIBLE, "inert_space", "wanted=$wanted visibility=${child.visibility}"); blanks.add(bounds)
+                } else {
+                    val text = texts(child).singleOrNull()?.text?.toString()
+                    verify(text != null && text in tokens && seen.add(text), "duplicate_or_unknown_token", text)
+                    verify(text == wanted, "golden_slot_token", "row=$visualRow col=$column expected=$wanted actual=$text")
+                    if (text != null) cells.add(text to bounds)
+                }
+            }
+        }
+        verify(seen == tokens.toSet(), "missing_tokens", JSONArray(tokens.filterNot { it in seen }))
+        fun select(bounds: Rect): Pair<Boolean,String?> = popup.changeFocus(bounds.exactCenterX()+popup.offsetX, bounds.top+bounds.height()*0.85f+popup.offsetY) to popup.onTrigger()
+        val reached = mutableSetOf<String>()
+        for ((token,bounds) in cells) { val (dismissed,actual) = select(bounds); actual?.let { reached.add(it) }; verify(!dismissed && actual == token, "cell_hit_wrong", "wanted=$token actual=$actual bounds=${rect(bounds)}"); observations.put(JSONObject().put("scenario",id).put("kind","occupied_hit").put("token",token).put("actual",actual).put("dismissed",dismissed).put("bounds",rect(bounds)).put("y_fraction",0.85)) }
+        verify(reached == tokens.toSet(), "unreachable_tokens", JSONArray(tokens.filterNot { it in reached }))
+        val initial = cells.singleOrNull { it.first == "A" }?.second ?: error("Initial token missing")
+        for (blank in blanks) { select(initial); val previous = popup.onTrigger(); val (dismissed,actual) = select(blank); verify(!dismissed && actual == previous, "blank_focus_changed", "previous=$previous actual=$actual"); observations.put(JSONObject().put("scenario",id).put("kind","blank_hit").put("bounds",rect(blank)).put("previous",previous).put("actual",actual).put("dismissed",dismissed)) }
+        select(initial)
+        verify(popup.changeFocus(-3f*width+popup.offsetX, initial.top+height*0.85f+popup.offsetY), "outside_did_not_dismiss", "left")
+        select(initial)
+        verify(popup.changeFocus((columns+3f)*width+popup.offsetX, initial.top+height*0.85f+popup.offsetY), "outside_did_not_dismiss", "right")
+        if (count == 5 || count == 10) {
+            // Literal old-policy goldens. In n10, y=1.5 is the bottom cell center but selects row above.
+            val ys = if (count == 5) listOf(-1.31 to "dismiss", -1.29 to "A", 0.5 to "A", 0.69 to "A", 0.71 to "A", 1.5 to "A", 3.69 to "A", 3.71 to "dismiss") else listOf(-1.31 to "dismiss", -1.29 to "F", 0.5 to "F", 1.5 to "F", 1.69 to "F", 1.71 to "A", 2.5 to "A", 4.69 to "A", 4.71 to "dismiss")
+            for ((y,wanted) in ys) { select(initial); val dismissed = popup.changeFocus(initial.exactCenterX()+popup.offsetX,(y*height).toFloat()+popup.offsetY); val actual = popup.onTrigger(); verify(if (wanted == "dismiss") dismissed else !dismissed && actual == wanted, "legacy_y_policy_changed", "y/H=$y expected=$wanted dismissed=$dismissed actual=$actual"); observations.put(JSONObject().put("scenario",id).put("kind","legacy_y").put("y_over_height",y).put("expected",wanted).put("actual",actual).put("dismissed",dismissed)) }
+        }
+        verify(dismissals == if (count == 5 || count == 10) 4 else 2, "dismiss_callback_count", dismissals)
+        select(initial)
+        val result = JSONObject().put("scenario",id).put("count",count).put("anchor",name).put("golden_rows",rows).put("golden_columns",columns).put("golden_order",JSONArray(order.toList())).put("key_width",width).put("key_height",height).put("offset_x",popup.offsetX).put("offset_y",popup.offsetY).put("root_bounds",rect(Rect(0,0,root.width,root.height))).put("seen_tokens",JSONArray(seen.toList())).put("reachable_tokens",JSONArray(reached.toList())).put("actual_space_count",blanks.size).put("dismissal_callbacks",dismissals).put("unattached",!root.isAttachedToWindow)
+        if ((count == 13 && anchor == 1) || count == 18) {
+            val bitmap = Bitmap.createBitmap(root.width,root.height,Bitmap.Config.ARGB_8888); val file = File(checkNotNull(directory),"$id.png")
+            try { root.draw(Canvas(bitmap)); file.outputStream().use { check(bitmap.compress(Bitmap.CompressFormat.PNG,100,it)) } } finally { bitmap.recycle() }
+            check(file.length() in 1..2_000_000L); result.put("png",file.absolutePath).put("png_sha256",sha(file)).put("png_bytes",file.length())
+        }
+        scenarios.put(result)
+    }
+
+    private fun texts(view: View): List<AutoScaleTextView> = if (view is AutoScaleTextView) listOf(view) else if (view is ViewGroup) (0 until view.childCount).flatMap { texts(view.getChildAt(it)) } else emptyList()
+    private fun prefs() = JSONObject().put("normal_mode_color",ThemeManager.prefs.normalModeColor.getValue()).put("follow_system_day_night",ThemeManager.prefs.followSystemDayNight.getValue())
+    private fun scopeInfo(scope: ThemeScope?) = if (scope == null) JSONObject().put("present",false) else JSONObject().put("present",true).put("theme",scope.theme.name).put("active_scheme",JSONObject(scope.activeColorScheme ?: emptyMap<String,String>())).put("matching_scheme_ids",JSONArray(scope.theme.presetColorSchemes.filterValues { it == scope.activeColorScheme }.keys.toList()))
+    private fun dp(value: Float) = (value*targetContext.resources.displayMetrics.density).roundToInt().coerceAtLeast(1)
+    private fun rect(value: Rect) = JSONArray(listOf(value.left,value.top,value.right,value.bottom))
+    private fun sha(bytes: ByteArray) = MessageDigest.getInstance("SHA-256").digest(bytes).joinToString("") { "%02x".format(it.toInt() and 255) }
+    private fun sha(file: File): String = file.inputStream().use { input -> val d=MessageDigest.getInstance("SHA-256"); val buffer=ByteArray(65536); while(true) { val n=input.read(buffer); if(n<0) break; d.update(buffer,0,n) }; d.digest().joinToString("") { "%02x".format(it.toInt() and 255) } }
+    private fun put(key: String,value: Any?) = synchronized(lock) { report.put(key,when(value) { is JSONObject -> JSONObject(value.toString()); is JSONArray -> JSONArray(value.toString()); else -> value }); Unit }
+    private fun <T> onMain(name: String, block: () -> T): T {
+        stage=name; val result=AtomicReference<Result<T>?>(null); val latch=CountDownLatch(1)
+        val task=Runnable { try { result.set(runCatching(block)) } finally { latch.countDown() } }
+        check(handler.post(task)); if(!latch.await(minOf(10000L,(deadline-SystemClock.uptimeMillis()).coerceAtLeast(1)),TimeUnit.MILLISECONDS)) { handler.removeCallbacks(task); error("10 s main bound at $name; already-running main tasks cannot be interrupted") }
+        return checkNotNull(result.get()).getOrThrow()
+    }
+    private fun complete(passed: Boolean,error: Throwable?) {
+        if(!finished.compareAndSet(false,true)) return
+        watchdog.shutdownNow()
+        val snapshot=synchronized(lock) { JSONObject(report.toString()).put("passed",passed).put("stage",stage).apply { error?.let { put("error",android.util.Log.getStackTraceString(it)) } } }
+        var writeError: String?=null
+        runCatching { directory?.let { val text=snapshot.toString(2); check(text.toByteArray(Charsets.UTF_8).size<=768000); File(it,"manifest.json").writeText(text) } }.onFailure { writeError=it.toString() }
+        finish(if(passed && writeError==null) Activity.RESULT_OK else 1,Bundle().apply { putBoolean("passed",passed && writeError==null); putString("popup_grid_directory",directory?.absolutePath); putString("popup_grid_summary",JSONObject().put("passed",passed && writeError==null).put("stage",stage).put("artifact_directory",directory?.absolutePath).put("violation_count",snapshot.optInt("violation_count",-1)).put("expected_baseline_assertions_observed",snapshot.optBoolean("expected_baseline_assertions_observed",false)).put("report_write_error",writeError).put("error",error?.toString()).toString()); putString("stream","Popup grid passed=$passed stage=$stage directory=${directory?.absolutePath}\n") })
+    }
+}

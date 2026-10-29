@@ -1,0 +1,280 @@
+{
+  "status": "PASS_SCOPED_POPUP_GRID_RUNTIME_INDEPENDENT_REVIEW",
+  "reviewer": "spotless_review",
+  "recorded_at_utc": "2026-10-29T09:19:43.307321+00:00",
+  "repository": "osfans/trime",
+  "pr": 2209,
+  "head": "220391c97cf88aba35b6d0a1c2307f2a3781d224",
+  "base": "7fedca06ba5d2ef761a2ae3d44d8a0917db36994",
+  "source": {
+    "one_changed_file": [
+      "app/src/main/java/com/osfans/trime/ime/popup/PopupKeyboardUi.kt"
+    ],
+    "clean_worktree_at_review": true,
+    "production_source_sha256": "3cd062bf10660b78091514c035c2b41e80018e7c8c036c493dba19e415bb0c19",
+    "conventional_commit": "fix(keyboard): preserve popup keyboard grid slots",
+    "Y_policy_unchanged": "Prior frozen source review and current exact file SHA remain bound; no additional Y behavior fix claimed."
+  },
+  "ci": {
+    "run_id": 40845970483,
+    "passed": 5,
+    "total": 5,
+    "collector_exit": 0,
+    "all_raw_checkout_records_reverified": true,
+    "actual_checkout_merge_sha": "98f7bdcac286f51db801f9126c78f3752784cc81",
+    "producer_tree": "89439bd5c52d3864d964e1d6aeee6891f34dedd2",
+    "head_tree": "89439bd5c52d3864d964e1d6aeee6891f34dedd2",
+    "manifest_entries_rehashed": 174,
+    "actual_test_and_lint_task_lines_rechecked": true,
+    "exact_CI_test_case_count": "Not exported; no borrowed count claimed.",
+    "diagnostics": "133 mechanical diagnostic candidates remain in CI; no zero-warning or comprehensive warning-origin claim."
+  },
+  "runtime": {
+    "api": 35,
+    "abi": "x86_64",
+    "fixture": "Reused isolated working-copy disks, not pristine install",
+    "cases": {
+      "baseline": {
+        "completed": 39,
+        "violations": 485,
+        "violation_kinds": {
+          "grid_dimensions": 18,
+          "fixed_slot_count": 93,
+          "golden_slot_token": 330,
+          "missing_tokens": 18,
+          "unreachable_tokens": 20,
+          "cell_hit_wrong": 6
+        },
+        "observations": {
+          "occupied_hit": 498,
+          "legacy_y": 51
+        },
+        "raw_command_count": 23,
+        "pid": 1943,
+        "non_signature_payload_entries_rehashed": 784
+      },
+      "fixed": {
+        "completed": 39,
+        "violations": 0,
+        "violation_kinds": {},
+        "observations": {
+          "occupied_hit": 528,
+          "legacy_y": 51,
+          "blank_hit": 66
+        },
+        "raw_command_count": 23,
+        "pid": 2062,
+        "non_signature_payload_entries_rehashed": 784
+      }
+    },
+    "fixed_literal_slot_bounds_and_orders_independently_reconstructed": true,
+    "actual_non_signature_APK_payload_entry_counts_rehashed": {
+      "baseline": 784,
+      "fixed": 784
+    },
+    "original_and_diagnostic_payloads_byte_hash_equal": true,
+    "common_certificate_diagnostic_copies_only": "Original CI Debug APKs preserved. Not release signing/upgrade acceptance.",
+    "images_actually_inspected_by_this_reviewer": 8,
+    "visual_findings": "n13 M restored in 5x3 grid; n18 center top R/P/Q is centered in slots 1/2/3 with outer blank slots, and left/right anchor placement is preserved. All eight original image hashes/raw exports verified."
+  },
+  "cleanup": {
+    "both_driver_raw_commands_rechecked": {
+      "baseline": 23,
+      "fixed": 23
+    },
+    "complete_preference_XML_semantics_preserved_except_general__pid": true,
+    "private_sentinel_preserved": true,
+    "selected_LatinIME_and_enabled_IMEs_preserved": "Actual cleanup record/raw commands retained and checked against bootstrap.",
+    "owned_helper_directories_removed_and_absence_exit0": true,
+    "real_force_stop_then_empty_pidof_exit1": true,
+    "helper_uninstalled_and_package_absent": true,
+    "original_null_scope_not_claimed_restored": true,
+    "VM_emulator_and_normal_kill_actual_exit": 0,
+    "collector_exit": -15,
+    "collector_exit_scope": "Expected SIGTERM after normal VM stop; not evidence collector ran to natural completion.",
+    "final_process_scan_record": "PASS all readable argv scan, no QEMU executable or exact GradleDaemon class argument. No promise about unreadable or future processes.",
+    "source_assets": "49 baseline source asset file hash/metadata records equal before/after, final check PASS. This independent review compared records; it did not reread the 5.16 GB original disk contents. Reused writable VM disks intentionally excluded.",
+    "memory_samples": 312,
+    "minimum_available_host_memory_kib": 3132720,
+    "file_indexer_retained": true
+  },
+  "logs": {
+    "full_original_sha256": "c76681287480af8acc3d9acaa4ba256831841b0e202e62de3a34d7db88d60039",
+    "full_levels": {
+      "I": 7221,
+      "W": 2569,
+      "D": 8704,
+      "E": 1366,
+      "V": 5526
+    },
+    "fatal_anr_oom_lmk_regex_matches": 0,
+    "fatal_scope": "Specific regex in retained complete log, not an assertion that every possible failure marker is covered.",
+    "app_marker_intervals": {
+      "baseline": {
+        "pid": 1943,
+        "start_line": 23789,
+        "end_line": 24083,
+        "levels": {
+          "I": 5,
+          "W": 12,
+          "D": 10,
+          "V": 5
+        },
+        "real_Trime_candidate_border_warning": [
+          {
+            "line": 24062,
+            "message": "ThemeScope.kt:52] Unknown color key: candidate_border_color"
+          }
+        ]
+      },
+      "fixed": {
+        "pid": 2062,
+        "start_line": 24592,
+        "end_line": 24884,
+        "levels": {
+          "I": 6,
+          "W": 12,
+          "D": 10,
+          "V": 5
+        },
+        "real_Trime_candidate_border_warning": [
+          {
+            "line": 24860,
+            "message": "ThemeScope.kt:52] Unknown color key: candidate_border_color"
+          }
+        ]
+      }
+    },
+    "warnings_not_eliminated": "Each target PID has 12 W lines including one real Trime ThemeScope candidate_border_color warning. CPU-variant, instrumentation ABI and optional dex-metadata warnings retained. Global 2569 W and 1366 E retained. No warning suppression or relabeling as all system noise.",
+    "theme_warning_next_work": "/home/xumin/Public/Trime/build/issue-fixes-batch10-20261029/theme-warning-proposal.json"
+  },
+  "tool_history_and_limits": [
+    "Baseline executed driver049427; fixed driver e629 moved image collection before behavioral rejection. Author handoff-time edit is recorded in driver-review-spotless.json and Root visual record. Do not present them as same executed driver bytes.",
+    "Initial finalizer process-prefix defect and ref-only qualification checks were corrected before final records; original finding and correction reports retained. Current finalizer also records retained warning interpretation without changing those gates.",
+    "Unattached production View measurement/layout/draw, direct changeFocus/onTrigger only. No InputDispatcher, actual long-press/parent-window dismissal, Rime/native input, Chinese typing, TalkBack or full IME validation.",
+    "API21 Space source/static compatibility only. No API21 emulator, physical device, OEM, 16 KiB, long-term or release-update acceptance.",
+    "No builds, ADB, VM, production or external mutations performed by this reviewer."
+  ],
+  "evidence_bindings": [
+    {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch10-20261029/runtime/run1/baseline-probe-report.json",
+      "sha256": "70fd42b5d341827bd652024c6bdc9a146751daaaf62186ecd479ad1d69377d9f",
+      "bytes": 251667
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch10-20261029/runtime/run1/baseline-probe-completion.json",
+      "sha256": "ebdbe448b10fc1b673ee51fffe11eefde2f6f9333ab1cbe710bb7ea02e435086",
+      "bytes": 3691
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch10-20261029/device-apks/baseline-identity.json",
+      "sha256": "2468798dd0f73b5ca31860e5d89e457b0c73d14b9f3997687ac9c6b2c41d3afc",
+      "bytes": 98409
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch10-20261029/runtime/run1/fixed-probe-report.json",
+      "sha256": "607199b30a3d1c8e756779a97917948bf34ec7079b7040ec42dbe364ece62e6b",
+      "bytes": 190608
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch10-20261029/runtime/run1/fixed-probe-completion.json",
+      "sha256": "281684fb03e87da00636acfb67f7e1df9726ce94cb5aeba750c3030077dd7d82",
+      "bytes": 3559
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch10-20261029/device-apks/fixed-identity.json",
+      "sha256": "930d91ef38fa2f32d209488db1fd88beee9a4aae7e3955310e09abdebc7cd6c4",
+      "bytes": 98396
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch10-20261029/cloud/run-40845970483/pr-2209/ci-summary.json",
+      "sha256": "a5f75cbb348a1284e1858ae077a5b4186f1f7c6bacd631076800a22ef9630076",
+      "bytes": 4676
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch10-20261029/cloud/run-40845970483/pr-2209/collector-exit.json",
+      "sha256": "c9f9e3b7fbd8fe05caa997dfe83821a43117fe1e01bf541d8b7fd889100828eb",
+      "bytes": 120
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch10-20261029/cloud/run-40845970483/pr-2209/SHA256-MANIFEST.json",
+      "sha256": "944cdab587cbc8526b4a4cb22b4752e74ff6d95c5cfb9eef9f2cdcc4b786cb75",
+      "bytes": 26046
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch10-20261029/cloud/run-40845970483/pr-2209/checkout-bindings-final.json",
+      "sha256": "adc277fb9ace12a187348f702333f2d153f48dc03a4b0339ddce7a7bf68d7418",
+      "bytes": 3212
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch10-20261029/cloud/run-40845970483/pr-2209/ubuntu-original/source-tree-proof.json",
+      "sha256": "262b9814293e0ab24b933b1c2b605423d5bac38d0bea0934e46974a4414ee7a2",
+      "bytes": 606
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch10-20261029/runtime/run1/cleanup.json",
+      "sha256": "f5c14aea474c25bcc5204fa70d10e94f7f528310800385411ee16f1a3f66e176",
+      "bytes": 1256
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch10-20261029/runtime/run1/completion.json",
+      "sha256": "e1f6057ecc617eb35821e59633596ec5e29a8bf23a0c8d5fca283c727a5cf33b",
+      "bytes": 1004
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch10-20261029/runtime/run1/visual-review.json",
+      "sha256": "705f0cde47acc4b524f92f4ceb76b54766d3a41af13a635b57eb433f3996ec2a",
+      "bytes": 2851
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch10-20261029/runtime/run1/log-review.json",
+      "sha256": "044131ed02865abf803245190425e8dff60c7de1022572b65d88f148642c87e4",
+      "bytes": 8942
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch10-20261029/runtime/grid-validation.json",
+      "sha256": "25fac745bb51c27fc6efe92e607971ac26ce5da383e27c8388de499e68acbc61",
+      "bytes": 5522
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch10-20261029/runtime/finalize_grid_runtime.py",
+      "sha256": "a606d55f4f44973f07c2dd86b11d85fd508477f388ce90e506c92d8b9386c23a",
+      "bytes": 9705
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch10-20261029/runtime/final-process-check.json",
+      "sha256": "f9a7c2b4a790253bb94c315dbf436f065dc71184f7d9a339a418d35605acb346",
+      "bytes": 297
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch10-20261029/runtime/source-assets-before.json",
+      "sha256": "b962572c65e105b62515bdf3135fbf123c0970f182b826806130d2304e15bb88",
+      "bytes": 15216
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch10-20261029/runtime/source-assets-final-check.json",
+      "sha256": "f16f9ff640bd1541bc5a3b545745312b7ebb5a8ee2a40614c275307a94a5d8b5",
+      "bytes": 15212
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch10-20261029/helper-build-qualification.json",
+      "sha256": "dbe6accf397b64faaedd2cb56e1c51b0a17e0321b7e5fadbc0130efd8ca1e06f",
+      "bytes": 1116
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch10-20261029/popup-probe/PopupGridInstrumentation.kt",
+      "sha256": "4ab2246268ce1155e2d5f46befc261e404d95521016d9c910aad473420661e87",
+      "bytes": 20755
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch10-20261029/baseline-source-equivalence.json",
+      "sha256": "caec5c02b5da47996e4121cec1033f282beaa7d0a43d0f225bceab6383e2c5dd",
+      "bytes": 1404
+    },
+    {
+      "path": "/home/xumin/Public/Trime-pr-popup-grid-20261029/app/src/main/java/com/osfans/trime/ime/popup/PopupKeyboardUi.kt",
+      "sha256": "3cd062bf10660b78091514c035c2b41e80018e7c8c036c493dba19e415bb0c19",
+      "bytes": 10156
+    }
+  ]
+}

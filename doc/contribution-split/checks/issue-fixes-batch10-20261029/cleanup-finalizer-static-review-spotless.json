@@ -1,0 +1,32 @@
+{
+  "status": "STATIC_REVIEW_REQUIRES_PROCESS_SCAN_SCOPE_CORRECTION_BEFORE_FINAL_CLAIM",
+  "reviewer": "spotless_review",
+  "recorded_at_utc": "2026-10-29T09:14:39.219961+00:00",
+  "files": [
+    {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch10-20261029/runtime/cleanup_probe.py",
+      "sha256": "225e7e410ab8006bb49acb8a85be194b564cd1ff333586f738ac9583b6135de1"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch10-20261029/runtime/finalize_grid_runtime.py",
+      "sha256": "e290a39a089b6b3ee623dc988f4d19254f4c0e5dca5e6d76ce67430857107ba2"
+    }
+  ],
+  "not_executed_by_reviewer": true,
+  "cleanup_assessment": "No blocking source defect found. Requires both driver completion gates; actual target force-stop and empty pidof/exit1, helper uninstall and exact package absence, normalized complete preferences with only process PID exception, expected private sentinel, unchanged selected and enabled IMEs. Target APK explicitly remains in disposable fixture. It does not claim original XML bytes preserved.",
+  "log_boundary_assessment": "Regex groups correctly map PID/TID/level/tag/message. Each mode requires exactly one real start and end marker in order; app selection uses exact PID strictly within those markers, not copied report warning totals. App records must exist. Full-session raw log and regex fatal-pattern matches are retained; marker-window no-fatal is not a statement of zero global warnings or universal fatal coverage.",
+  "required_correction": {
+    "problem": "Residual scanner requires both qemu/GradleDaemon match and command prefix /home/xumin/Public/android-toolchain. Gradle JVM may have /usr/lib/jvm or other Java prefix and is then silently omitted.",
+    "recommendation": "Separate QEMU SDK/owned-copy identity from Java GradleDaemon identity with cwd/task ownership evidence, or narrow field and claim to owned QEMU only. Do not claim all Gradle processes checked by the current prefix predicate."
+  },
+  "recommended_qualification_assertions": [
+    "baseline-source-equivalence.json status/base/tree-equality should be explicitly checked, not merely ref() hashed.",
+    "helper-build-qualification.json PASS_HELPER_COMPILATION_ONLY/head/source-SHA/exit0 should be explicitly checked against current helper and fixed head.",
+    "visual-review.json actual review pass should be explicitly asserted before summary PASS; a present reference alone is not a gate."
+  ],
+  "runtime_acceptance": "Pending actual fixed, cleanup and VM completion records. This static review is not execution or final acceptance.",
+  "source_evidence_already_read": [
+    "baseline-source-equivalence.json has the expected base and app tree equality, with prior Spotless APK/tooling difference scoped explicitly.",
+    "helper-build-qualification.json has final production head, frozen helper 4ab224 hash, actual task exit0, and clear no-app/JVM/Lint rerun scope."
+  ]
+}

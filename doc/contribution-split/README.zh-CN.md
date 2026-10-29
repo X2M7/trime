@@ -160,6 +160,18 @@ AGP 后续升级已另外进行了真实诊断，结果[不予验收并暂缓 PR
 
 本次代码引起的 Windows `CMAKE_BUILD_TYPE` 未使用警告已从最终实际配置日志消除。**不宣称所有警告清零**：固定 OpenCC／marisa 的 MSVC、GCC16 诊断及 Gradle／SDK 等诊断保留，来源与限制见报告；本机 GCC16 仍有 10 条数组边界警告。旧 `b24114ec` CI／APK、准备失败与报告重名记录作为历史保留，不替代最终提交验收。本批没有模拟器／真机、Android 安装迁移或 Release 验收，没有发布稳定版，没有修改 fork `develop`。只复制选定文字与 helper，[SHA 清单](checks/issue-fixes-batch9-20261029/SHA256SUMS)不包含 APK 或全量日志。
 
+### 第九批：修复弹出键盘容量与横向位置（2026-10-29）
+
+[#2209](https://github.com/osfans/trime/pull/2209) 已完成本批限定范围验收并转为 **Ready for review**。分支 `contrib/fix-popup-grid-slots`，源码 `220391c9`、基线 `7fedca06`；生产改动只有 `PopupKeyboardUi.kt` 一文件（+3／−11）。13 项等弹窗原先列数向下取整，末尾选项无法显示／选择；不完整行省略空节点，也会让可见按键偏离横向命中列。现在向上取整容量，并以固定尺寸、不可交互的 `Space` 保留每个空槽。Related #2033／#2204 说明发现背景；完整标签由 #2204 处理，本补丁不宣称关闭该 issue，也未找到可直接关闭的容量／对齐 issue。
+
+[原始 CI 与源码树绑定](checks/issue-fixes-batch10-20261029/cloud/run-40845970483/pr-2209/ci-summary.json)的 [run 40845970483](https://github.com/osfans/trime/actions/runs/40845970483) 实际 **5/5 通过**；Ubuntu 四 ABI 原生 configure／build 实际执行，其余三宿主复用 JNI 缓存。[本地检查](checks/issue-fixes-batch10-20261029/local-build-review-ci-agent.json)的 Debug 编译、**331 项**新执行 JVM 用例与格式检查通过；Debug Lint **0 错误／65 警告**，完整警告多重集合与同基线的上一轮 R5 构建相等，所有警告位置文件均与上游原字节一致；未另跑一份 untouched-base Lint。云端未导出 JUnit XML，不将本地用例数写作云端数量。本地 SDK 兼容参数均恢复，既有 JNI／OpenCC 资源复用与 helper-only 构建复制历史输出的限制[单列](checks/issue-fixes-batch10-20261029/helper-build-qualification.json)；固定版运行候选来自最终 CI 原件，完整 producer／head 源码树一致。
+
+[API35 实际生产组件对照](checks/issue-fixes-batch10-20261029/runtime/grid-validation.json)各运行 **13 种数量 × 左／中／右锚点 = 39 场景**。旧版保留 485 项预期几何断言失败，其中 6 次错误横向选择；18 个控制场景和 51 条 Y 金样正确。修复版 **528 次有值槽选择、66 次空槽保持及 51 次原有 Y 规则检查全部通过，0 项失败**。Root 实际复核八张原始渲染 PNG；[独立最终复核](checks/issue-fixes-batch10-20261029/final-runtime-review-spotless.json)另核原件与身份、全部非签名 ZIP 条目、39 场景、真实 ADB 退出及状态。旧版和新版分别使用两个冻结 driver，仅将固定版图片取回提前以保留意外失败证据，未改变行为门槛。
+
+这里只测量／布局／绘制未挂窗的真实 `PopupKeyboardUi`，通过公开 `changeFocus`／`onTrigger` 在 `Y = top + 0.85 × height` 的既有行激活区验证；未声称几何中心、真实系统长按、完整 IME／中文输入、TalkBack、API21、真机或 Release／安装升级验收。纵向拖动偏置、空槽保持与原有排序不另改。两个安装副本仅重签诊断证书，原始 CI APK 未动，每份 784 个非签名 ZIP 条目均逐项一致。
+
+[清理记录](checks/issue-fixes-batch10-20261029/runtime/run1/cleanup.json)核对完整偏好语义（仅进程 PID 元数据变化）、私有哨兵、默认与启用输入法保持；专属产物删除、helper 卸载、目标进程停止均实际验证。模拟器／控制器正常退出，49 个原始 AVD／系统镜像文件前后哈希及元数据不变，无 QEMU／GradleDaemon 残留；文件索引保持运行，最低可用内存约 **2.99 GiB**。[连续日志](checks/issue-fixes-batch10-20261029/runtime/run1/log-review.json)保留 **2,569 条 W／1,366 条 E**，未检出致命异常／ANR／OOM／LMK 模式；两个目标 PID 各有 12 条 W，包括真实的 `candidate_border_color` 应用警告。[CI 工具／固定依赖诊断](checks/issue-fixes-batch10-20261029/final-ci-diagnostic-review-ci-agent.json)同样保留，**不是零警告**。该主题警告后续单独处理，未过滤日志或混入此几何补丁。本批未改 fork `develop`，未发布稳定版；选定文字／helper 及 [SHA 清单](checks/issue-fixes-batch10-20261029/SHA256SUMS)不包含 APK、PNG、磁盘或全量日志。
+
 ### 先跟进已有 PR，避免重复
 
 09:34 快照中 [7 项 PR 的源码身份、覆盖与排除范围](checks/issue-triage-20261028/existing-pr-overlap.json)已核对正文；待审不等于已合并。

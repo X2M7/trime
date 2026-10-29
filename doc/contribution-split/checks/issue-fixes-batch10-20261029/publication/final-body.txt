@@ -1,0 +1,15 @@
+Related #2033 and #2204: a separate grid geometry bug found while checking popup labels.
+
+With 13 popup actions, rounding the column count down allocates only 12 slots, so the last action cannot be displayed or selected. In incomplete rows, skipping empty children can also move visible keys away from their horizontal focus columns: an 18-item centered popup displays `R P Q` one column too far left.
+
+Round the column count up and retain a fixed-size, inert `Space` for each empty slot. The existing center-out order, vertical drag policy and blank-slot focus retention remain unchanged. Only `PopupKeyboardUi.kt` changes.
+
+Validation:
+
+- [Upstream CI](https://github.com/osfans/trime/actions/runs/40845970483): all 5 jobs passed. Ubuntu built all four native ABIs; the other build hosts restored JNI caches.
+- Local Debug build, 331 JVM tests and formatting passed. Debug Lint has 0 errors and 65 warnings, identical to the earlier build on the same upstream base; all warning locations are in files unchanged from upstream. Temporary local SDK compatibility settings were restored and are not in this patch.
+- Android 15/x86_64 component comparison: 13 action counts × 3 anchor positions. The old APK reproduces missing actions and 6 incorrect horizontal selections. The fixed APK passes all 39 scenarios, 528 occupied-slot selections, 66 blank-slot checks and 51 existing Y-policy checks. Eight rendered originals were reviewed.
+
+These are actual production views measured/layout/drawn unattached, using public `changeFocus`/`onTrigger` APIs at the existing row activation position (`top + 0.85 × height`). This does not claim full IME long-press, physical-device or Release acceptance. Diagnostic copies preserve all non-signature APK contents; original CI artifacts remain unchanged.
+
+No directly matching capacity/alignment issue was found, so the label issue is Related rather than closed by this patch. Existing tool/dependency warnings and the separate `candidate_border_color` runtime warning remain recorded.

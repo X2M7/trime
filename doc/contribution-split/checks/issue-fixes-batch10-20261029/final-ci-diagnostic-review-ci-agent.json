@@ -1,0 +1,196 @@
+{
+  "created_utc": "2026-10-29T09:14:56.442756+00:00",
+  "status": "REVIEW_COMPLETE_REMAINING_DIAGNOSTICS_RETAINED",
+  "pr": 2209,
+  "run_id": 40845970483,
+  "head": "220391c97cf88aba35b6d0a1c2307f2a3781d224",
+  "base": "7fedca06ba5d2ef761a2ae3d44d8a0917db36994",
+  "ci_summary_sha256": "a5f75cbb348a1284e1858ae077a5b4186f1f7c6bacd631076800a22ef9630076",
+  "mechanical_review_sha256": "4a1cf5036709e1f0f980d22d487d57f3b9608fbaad8669508c4767d8024647c1",
+  "mechanical_candidate_lines": 133,
+  "reviewed_categories": {
+    "git_initialization_hint": 4,
+    "android_sdk_tool": 14,
+    "gradle_deprecation_unexpanded": 20,
+    "gradle_documentation_reference": 10,
+    "pinned_native_dependency": 54,
+    "pinned_native_dependency_compiler_summary": 6,
+    "jdk_jna_tool": 24,
+    "ci_cache_tool": 1
+  },
+  "application_source_candidate_count": 0,
+  "unresolved_candidate_count": 0,
+  "unresolved_candidates": [],
+  "all_five_raw_logs_sha256_verified": true,
+  "jobs": [
+    {
+      "job": {
+        "id": 123353419072,
+        "name": "check / lint-and-test",
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-10-29T08:58:07Z",
+        "completed_at": "2026-10-29T09:01:53Z"
+      },
+      "raw_path": "cloud/run-40845970483/pr-2209/job-123353419072.log",
+      "raw_sha256": "f5f3de01f378e189ddf454212fe70921281f21b29093acbc41d6599a1b81877d"
+    },
+    {
+      "job": {
+        "id": 123355003224,
+        "name": "build (ubuntu-26.04)",
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-10-29T09:01:56Z",
+        "completed_at": "2026-10-29T09:12:44Z"
+      },
+      "raw_path": "cloud/run-40845970483/pr-2209/job-123355003224.log",
+      "raw_sha256": "5283d8ddef370e0788092e0835c3c1329e30265c3baa67e2d2a1c86bc4f89260",
+      "jni_cache_evidence": [
+        {
+          "line": 1649,
+          "text": "2026-10-29T09:03:17.9709600Z Cache not found for input keys: ubuntu-26.04-trime-jni-debug-e73edb9eadd8f2236d6850e56a97e1fc6c72f9643736ed6c6797a942d63d7fe3"
+        }
+      ],
+      "jni_cache_hit_and_restore_seen": false,
+      "android_native_task_markers": [
+        {
+          "line": 1712,
+          "text": "2026-10-29T09:04:36.8892634Z > Task :app:configureCMakeDebug[arm64-v8a]"
+        },
+        {
+          "line": 1722,
+          "text": "2026-10-29T09:05:06.0076471Z > Task :app:buildCMakeDebug[arm64-v8a]"
+        },
+        {
+          "line": 1782,
+          "text": "2026-10-29T09:07:18.2892957Z > Task :app:configureCMakeDebug[armeabi-v7a]"
+        },
+        {
+          "line": 1790,
+          "text": "2026-10-29T09:07:28.2956265Z > Task :app:buildCMakeDebug[armeabi-v7a]"
+        },
+        {
+          "line": 1847,
+          "text": "2026-10-29T09:09:04.7906123Z > Task :app:configureCMakeDebug[x86]"
+        },
+        {
+          "line": 1855,
+          "text": "2026-10-29T09:09:15.2926134Z > Task :app:buildCMakeDebug[x86]"
+        },
+        {
+          "line": 1912,
+          "text": "2026-10-29T09:10:49.2891439Z > Task :app:configureCMakeDebug[x86_64]"
+        },
+        {
+          "line": 1920,
+          "text": "2026-10-29T09:10:59.2916036Z > Task :app:buildCMakeDebug[x86_64]"
+        }
+      ],
+      "android_native_task_marker_count": 8,
+      "native_compiler_build_output_sample": [],
+      "new_opencc_regional_task_markers": [],
+      "scope": "Cache hit/restore and native task execution are reported separately; a cached JNI artifact is not a new native compile."
+    },
+    {
+      "job": {
+        "id": 123355003290,
+        "name": "build (macos-26)",
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-10-29T09:01:57Z",
+        "completed_at": "2026-10-29T09:06:56Z"
+      },
+      "raw_path": "cloud/run-40845970483/pr-2209/job-123355003290.log",
+      "raw_sha256": "75245d5d15ac292557a1df42d9e9c43a099a4ce15db8c59d76b86ba9d16fd493",
+      "jni_cache_evidence": [
+        {
+          "line": 1669,
+          "text": "2026-10-29T09:04:19.6012430Z Cache hit for: macos-26-trime-jni-debug-4efcdd26db9c09f057c44036e7fbefcab87dd61c14fe3ada6e3b512a912bc9e1"
+        },
+        {
+          "line": 1676,
+          "text": "2026-10-29T09:04:23.1581470Z Cache restored from key: macos-26-trime-jni-debug-4efcdd26db9c09f057c44036e7fbefcab87dd61c14fe3ada6e3b512a912bc9e1"
+        }
+      ],
+      "jni_cache_hit_and_restore_seen": true,
+      "android_native_task_markers": [],
+      "android_native_task_marker_count": 0,
+      "native_compiler_build_output_sample": [],
+      "new_opencc_regional_task_markers": [],
+      "scope": "Cache hit/restore and native task execution are reported separately; a cached JNI artifact is not a new native compile."
+    },
+    {
+      "job": {
+        "id": 123355003327,
+        "name": "build (windows-2025)",
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-10-29T09:01:57Z",
+        "completed_at": "2026-10-29T09:07:16Z"
+      },
+      "raw_path": "cloud/run-40845970483/pr-2209/job-123355003327.log",
+      "raw_sha256": "eaa41c3f667ca07f95c9666a00bf5da0c558bd6e715838a7f202f1c5d3900abb",
+      "jni_cache_evidence": [
+        {
+          "line": 1036,
+          "text": "2026-10-29T09:04:37.2878086Z Cache hit for: windows-2025-trime-jni-debug-5e376acd73aa6cb131775bc13279905ae995ba16998a29bb31b5012ac77e3f7f"
+        },
+        {
+          "line": 1042,
+          "text": "2026-10-29T09:04:39.2342214Z Cache restored from key: windows-2025-trime-jni-debug-5e376acd73aa6cb131775bc13279905ae995ba16998a29bb31b5012ac77e3f7f"
+        }
+      ],
+      "jni_cache_hit_and_restore_seen": true,
+      "android_native_task_markers": [],
+      "android_native_task_marker_count": 0,
+      "native_compiler_build_output_sample": [],
+      "new_opencc_regional_task_markers": [],
+      "scope": "Cache hit/restore and native task execution are reported separately; a cached JNI artifact is not a new native compile."
+    },
+    {
+      "job": {
+        "id": 123355003614,
+        "name": "build (macos-26-intel)",
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-10-29T09:02:00Z",
+        "completed_at": "2026-10-29T09:10:37Z"
+      },
+      "raw_path": "cloud/run-40845970483/pr-2209/job-123355003614.log",
+      "raw_sha256": "8d0ad0bba05f919b8f52c8dd729fcd8e76c66f52e34b13198d29bcccf29ba891",
+      "jni_cache_evidence": [
+        {
+          "line": 1678,
+          "text": "2026-10-29T09:06:40.5663290Z Cache hit for: macos-26-intel-trime-jni-debug-4efcdd26db9c09f057c44036e7fbefcab87dd61c14fe3ada6e3b512a912bc9e1"
+        },
+        {
+          "line": 1684,
+          "text": "2026-10-29T09:06:42.9907650Z Cache restored from key: macos-26-intel-trime-jni-debug-4efcdd26db9c09f057c44036e7fbefcab87dd61c14fe3ada6e3b512a912bc9e1"
+        }
+      ],
+      "jni_cache_hit_and_restore_seen": true,
+      "android_native_task_markers": [],
+      "android_native_task_marker_count": 0,
+      "native_compiler_build_output_sample": [],
+      "new_opencc_regional_task_markers": [],
+      "scope": "Cache hit/restore and native task execution are reported separately; a cached JNI artifact is not a new native compile."
+    }
+  ],
+  "all_four_jni_cache_hit_and_restore_seen": false,
+  "android_native_task_marker_count": 8,
+  "source_binding": {
+    "popup_source_sha256_at_ci_head": "3cd062bf10660b78091514c035c2b41e80018e7c8c036c493dba19e415bb0c19",
+    "local_build_source_sha256": "3cd062bf10660b78091514c035c2b41e80018e7c8c036c493dba19e415bb0c19",
+    "same_bytes": true,
+    "local_review_sha256": "dba43bc236639e0b89e93b72a03940e3f3b867781712747594a4498e758863ab"
+  },
+  "limits": [
+    "Any vendor/compiler diagnostics absent because of a JNI cache hit are not considered fixed.",
+    "The PR only repairs popup grid capacity and fixed blank-slot layout; it does not bundle pending build-warning patches #2206/#2207/#2208.",
+    "Mechanical candidate line counts are not counts of unique defects. SDK/JDK/Gradle/cache-tool diagnostics, unknown origins and unresolved candidates remain explicit in the original report.",
+    "No exact CI testcase count, device, runtime, Release or upgrade acceptance is inferred from CI.",
+    "No zero-warning or maintainer-approval claim."
+  ],
+  "scope": "Read-only offline original-log SHA/cache/native-execution/source-byte review. No source edits, build, VM, GitHub mutation or prior-report rewrite."
+}
