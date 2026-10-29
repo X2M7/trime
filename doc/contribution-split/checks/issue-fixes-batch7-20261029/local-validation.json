@@ -1,0 +1,106 @@
+{
+  "utc": "2026-10-29T05:31:13.258573+00:00",
+  "status": "PASS_SCOPED_SPOTLESS_DEPENDENCY_FIX",
+  "head": "3a820aacb929a5030d1581d42f99fe9834731bfc",
+  "base": "7fedca06ba5d2ef761a2ae3d44d8a0917db36994",
+  "production_change": "Only gradle/libs.versions.toml Spotless8.10.2->8.10.3, one insertion/one deletion; ktlint1.8.0 and target rules unchanged",
+  "actual_local_tasks": [
+    ":spotlessKotlin",
+    ":spotlessKotlinCheck"
+  ],
+  "forced_actions_each_phase": 4,
+  "gradle_version": "9.8.1",
+  "cache_reuse_for_selected_tasks": false,
+  "offline": true,
+  "deprecation_trace": true,
+  "same_source_target_count": 293,
+  "source_paths_sizes_sha_identical": true,
+  "spotless_origin_warning_counts": [
+    1,
+    0
+  ],
+  "setvisible_total_message_counts": [
+    56,
+    55
+  ],
+  "remaining_direct_callers": {
+    "AGP": 52,
+    "KSP": 3
+  },
+  "remaining_caller_multiset_identical": true,
+  "cross_build_warnings_each_phase": 3,
+  "cross_build_separate_pr": 2206,
+  "producer_output_files_each_phase": 47,
+  "producer_output_paths_sizes_sha_identical": true,
+  "memory": {
+    "heap_mib": 768,
+    "metaspace_mib": 768,
+    "workers": 1,
+    "floor_kib": 1048576,
+    "baseline_minimum_available_kib": 4305100,
+    "candidate_minimum_available_kib": 4602888,
+    "guard_triggered": false
+  },
+  "evidence": [
+    {
+      "path": "root-ab-attribution.json",
+      "bytes": 37958,
+      "sha256": "9f3fe56d8a68b30c34b6e4295eb26eba4944b7625fdc6224f7bccdd980b4380d"
+    },
+    {
+      "path": "independent-baseline1-attribution.json",
+      "bytes": 69977,
+      "sha256": "e502f07b8a99aa6bb162de697d5a4859896cb88c17c55b9a269fd9df70225409"
+    },
+    {
+      "path": "independent-raw-ab-review.json",
+      "bytes": 44336,
+      "sha256": "cd5f7f50f39bcfc3d8adde1342dfe44046c8ed7573106302addfa681b7684e4e"
+    },
+    {
+      "path": "committed-source-binding.json",
+      "bytes": 74102,
+      "sha256": "d48fce3b559b22eb0e42ddfc7ad8a9ebb0815d7419d94bf8b2179ea2bc1d16be"
+    },
+    {
+      "path": "independent-committed-review.json",
+      "bytes": 60456,
+      "sha256": "91f57192d145f9a04a77c9528a6d79e9f9c6552619080ea90094da9a43170133"
+    },
+    {
+      "path": "independent-upgrade-plan-review.json",
+      "bytes": 7280,
+      "sha256": "47d8bc90e8966eb8f26324d8bfd984582086ee2fd17ae974bee981470b1c19f9"
+    },
+    {
+      "path": "native-config-preparation.json",
+      "bytes": 911,
+      "sha256": "d7730f5fc235680d38d93d3759fa4693e92a651691849fb1885e0c58faf6c643"
+    }
+  ],
+  "retained_rejected_initial_checker": {
+    "path": "spotless-baseline1/phase-review.json",
+    "bytes": 33922,
+    "sha256": "efb855822c9eec64b890bae4798dacb42322fac2c662a3ca3eadf33fa54cc7db"
+  },
+  "checker_failure_reason": "Original checker assumed a single setVisible message. Tracing exposed56 direct calls from three dependencies. Original failed result and raw logs retained; scoped acceptance uses independently attributed direct caller stacks and exact task/source evidence.",
+  "original_logs": [
+    {
+      "path": "spotless-baseline1/gradle.log",
+      "bytes": 1387999,
+      "sha256": "44b0d187d14dc99be305b1a076d521258cddd17743a795e0815b591e92409efb"
+    },
+    {
+      "path": "spotless-candidate1/gradle.log",
+      "bytes": 1485383,
+      "sha256": "73287c4b7ec7fb5fb9e9db5c0576f524a47f4966cae08c22053fcf4433a69d7b"
+    }
+  ],
+  "ci": "Separate current-head run40823791223 pending; no prior CI reused",
+  "limits": [
+    "Only Spotless-origin call removed;55 same-deprecation calls and3 cross-build warnings remain.",
+    "No local app JVM/native/lint/device/release acceptance claimed.",
+    "A real prebuilt JNI library was reused solely for formatter configuration, with no production SDK-source changes.",
+    "No simulated device was started for this formatter dependency update."
+  ]
+}

@@ -134,6 +134,20 @@ v2 两次 native 会话正常销毁，逻辑主题偏好、默认 Latin 输入�
 
 [OpenCC 后续调查](checks/issue-fixes-batch6-20261029/opencc-packaging-next-review.json)确认固定原始 CI APK 中有五个配置引用缺失词典，需单独修正固定版本的 host 生成与打包闭包；本轮没有运行转换或提交修复，也不把历史 Rime `Encode failure` 归因为这一缺件。
 
+### 第七批：移除 Spotless 在 Gradle 9 的弃用调用（2026-10-29）
+
+新增 [#2207](https://github.com/osfans/trime/pull/2207)，源码 `3a820aac`、分支 `contrib/fix-spotless-gradle9-deprecation`、基线 `7fedca06`，仅 `gradle/libs.versions.toml` 将 Spotless 8.10.2 升至包含官方修复的 8.10.3。现代插件 ID、原格式目标和显式 `ktlint 1.8.0` 不变，未夹带 #2206 的构建输出排除。依据为 [Spotless #3053](https://github.com/diffplug/spotless/pull/3053) 与 [#3099](https://github.com/diffplug/spotless/issues/3099)，没有将外部依赖问题误写成 Trime 的同号 issue。证据冻结时 PR 仍为 Draft，发布校验后更新正式待审回执。
+
+[本轮实际 A/B](checks/issue-fixes-batch7-20261029/local-validation.json)使用 Gradle 9.8.1，强制执行 Formatter 和 Check 两项任务，并记录四个边界事件，并开启 `deprecation.trace`。两阶段实际解析插件分别为 8.10.2／8.10.3，全部 **293 个 Kotlin 目标的路径、大小和 SHA 相同**，47 个 producer 输出也保留原字节；catalog 本身不属于 Kotlin 格式目标。[独立原日志复核](checks/issue-fixes-batch7-20261029/independent-raw-ab-review.json)和[提交绑定](checks/issue-fixes-batch7-20261029/independent-committed-review.json)重新验证了 293 个 Kotlin 文件及 catalog，共 294 个真实 Git blob。没有临时修改 SDK 源码；真实 prebuilt JNI 库仅用于允许格式任务配置，不算本地 native 验收。
+
+**只消除了 Spotless 这一来源**：直接调用 `GradleProvisioner` 的诊断从 **1 降为 0**；AGP 的 **52** 条、KSP 的 **3** 条直接调用多重集合逐项不变，因此同名 `setVisible` 总消息为 **56 → 55**，不能称全部消失。另三条 included-build 跨构建警告仍为 3，由 #2206 单独处理。[原始调用方及行号](checks/issue-fixes-batch7-20261029/root-ab-attribution.json)和全部原日志保留，未靠过滤／关闭警告取得结果。
+
+首次 checker 错把去重日志的一条消息当成启用 trace 后仍应只有一条，实际退出 1；[失败原件](checks/issue-fixes-batch7-20261029/spotless-baseline1/phase-review.json)不改写。两次 Gradle 本身均实际退出 0，[独立基线归因](checks/issue-fixes-batch7-20261029/independent-baseline1-attribution.json)查明 56 个直接调用后，再按真实调用方核对 A/B。没有把旧 checker 拒收改写成旧轮已通过，也没有重新生成或修改原日志。修正后的只读解析器另写 [A 阶段](checks/issue-fixes-batch7-20261029/spotless-baseline1/phase-review-v2.json)和 [B 阶段](checks/issue-fixes-batch7-20261029/spotless-candidate1/phase-review-v2.json)通过结果，逐一核对调用方及原执行门槛，未再次运行 Gradle。单 worker、768 MiB 堆／768 MiB Metaspace、1 GiB 保护下，最低可用内存分别约 **4.11／4.39 GiB**，保护未触发。
+
+新 [5/5 上游 CI](https://github.com/osfans/trime/actions/runs/40823791223)全部通过；[汇总及实际源码树绑定](checks/issue-fixes-batch7-20261029/cloud/pr-2207/ci-summary.json)和[实际原生编译／缓存记录](checks/issue-fixes-batch7-20261029/cloud/final-ci-observations.json)均绑定本轮提交，没有复用 #2206 的成功。工作流未导出 JUnit XML，不编造用例数。原工具／依赖诊断继续保留，不是全项目零警告；[最终独立资格复核](checks/issue-fixes-batch7-20261029/final-independent-review.json)明确区分本地格式检查、云端应用构建与未执行的设备／Release 验收。本轮没有启动模拟器或发布稳定版。
+
+AGP 后续升级已另外进行了真实诊断，结果[不予验收并暂缓 PR](checks/issue-fixes-batch7-20261029/agp-followup-rejected/independent-agp-ksp-regression-review.json)：9.5.0 的 AGP 直接调用虽从 52 降为 0，KSP 却从 3 增为 11，并在候选阶段发出 `multiDexEnabled` 源码弃用警告。该检查只有格式任务，既不能据警告断定功能故障，也不足以证明 KSP／Room 生成链兼容；旧失败门槛没有放宽。候选字节和全部失败原件保留后，该独立工作树已[恢复干净基线](checks/issue-fixes-batch7-20261029/agp-followup-rejected/source-restoration.json)，未提交、推送或创建 AGP PR。官方 KSP 修复已合入 main，但当前正式包未包含，不能盲升 2.3.12 宣称修好。这些未通过的结果不计入 #2207 验收。
+
 ### 先跟进已有 PR，避免重复
 
 09:34 快照中 [7 项 PR 的源码身份、覆盖与排除范围](checks/issue-triage-20261028/existing-pr-overlap.json)已核对正文；待审不等于已合并。

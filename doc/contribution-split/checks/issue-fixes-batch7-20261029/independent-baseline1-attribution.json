@@ -1,0 +1,927 @@
+{
+  "status": "BASELINE1_REAL_DIAGNOSTICS_ATTRIBUTED_CHECKER_REJECTED_NOT_ACCEPTED",
+  "utc": "2026-10-29T05:27:08.741079+00:00",
+  "actual_Gradle_exit": 0,
+  "old_checker_status": "FAIL_OR_INCONCLUSIVE",
+  "old_checker_failures": [
+    "Baseline must reproduce exactly one setVisible deprecation message",
+    "Baseline setVisible diagnostic must include its GradleProvisioner stack frame"
+  ],
+  "exact_total_setVisible_opening_diagnostics": 56,
+  "attribution_counts_by_direct_caller": {
+    "AGP": 52,
+    "KSP": 3,
+    "Spotless": 1
+  },
+  "all_293_actual_targets_match_exact_7fed_Git_blobs": true,
+  "declared_plugin": {
+    "path": "gradle/libs.versions.toml",
+    "bytes": 4952,
+    "sha256": "525db33e479d7c248b5c4030bbf3c525cf5e6171219d4f1324d934035414c135",
+    "declared_version": "8.10.2"
+  },
+  "resolved_plugin_info_lines": [
+    "Resolved plugin [id: 'com.diffplug.spotless', version: '8.10.2']"
+  ],
+  "records": [
+    {
+      "message_index": 1,
+      "first_line_1based": 142,
+      "last_line_1based": 436,
+      "message": "The Configuration.setVisible(boolean) method has been deprecated. This is scheduled to be removed in Gradle 11. Consult the upgrading guide for further information: https://docs.gradle.org/9.8.1/userguide/upgrading_version_9.html#deprecate-visible-property",
+      "direct_nonframework_caller": "at com.android.build.gradle.internal.plugins.BasePlugin$Companion$createAndroidJdkImageConfiguration$1.execute(BasePlugin.kt:362)",
+      "category": "AGP",
+      "first_four_stack_frames": [
+        "at org.gradle.api.internal.artifacts.configurations.DefaultConfiguration.setVisible(DefaultConfiguration.java:376)",
+        "at org.gradle.api.internal.artifacts.configurations.DefaultLegacyConfiguration_Decorated.setVisible(Unknown Source)",
+        "at com.android.build.gradle.internal.plugins.BasePlugin$Companion$createAndroidJdkImageConfiguration$1.execute(BasePlugin.kt:362)",
+        "at com.android.build.gradle.internal.plugins.BasePlugin$Companion$createAndroidJdkImageConfiguration$1.execute(BasePlugin.kt:361)"
+      ],
+      "diagnostic_block_sha256": "5ab2588de8620255c51bca851f5486e4d3e818e9dc64f0fe4d7d65295e42b00f",
+      "block_lines": 295
+    },
+    {
+      "message_index": 2,
+      "first_line_1based": 437,
+      "last_line_1based": 718,
+      "message": "The Configuration.setVisible(boolean) method has been deprecated. This is scheduled to be removed in Gradle 11. Consult the upgrading guide for further information: https://docs.gradle.org/9.8.1/userguide/upgrading_version_9.html#deprecate-visible-property",
+      "direct_nonframework_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+      "category": "AGP",
+      "first_four_stack_frames": [
+        "at org.gradle.api.internal.artifacts.configurations.DefaultConfiguration.setVisible(DefaultConfiguration.java:376)",
+        "at org.gradle.api.internal.artifacts.configurations.DefaultLegacyConfiguration_Decorated.setVisible(Unknown Source)",
+        "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+        "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration$default(SourceSetManager.kt:119)"
+      ],
+      "diagnostic_block_sha256": "aa1d7e696d509091ce00abae2a3dd9e4aa9fcfcd8c21996ec78d8412fe2a432d",
+      "block_lines": 282
+    },
+    {
+      "message_index": 3,
+      "first_line_1based": 719,
+      "last_line_1based": 1000,
+      "message": "The Configuration.setVisible(boolean) method has been deprecated. This is scheduled to be removed in Gradle 11. Consult the upgrading guide for further information: https://docs.gradle.org/9.8.1/userguide/upgrading_version_9.html#deprecate-visible-property",
+      "direct_nonframework_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+      "category": "AGP",
+      "first_four_stack_frames": [
+        "at org.gradle.api.internal.artifacts.configurations.DefaultConfiguration.setVisible(DefaultConfiguration.java:376)",
+        "at org.gradle.api.internal.artifacts.configurations.DefaultLegacyConfiguration_Decorated.setVisible(Unknown Source)",
+        "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+        "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration$default(SourceSetManager.kt:119)"
+      ],
+      "diagnostic_block_sha256": "6593f83ef07fd927fd1326e26243f5a99a02b5f79cd4d5ba2770f0b9c08d4fd3",
+      "block_lines": 282
+    },
+    {
+      "message_index": 4,
+      "first_line_1based": 1001,
+      "last_line_1based": 1282,
+      "message": "The Configuration.setVisible(boolean) method has been deprecated. This is scheduled to be removed in Gradle 11. Consult the upgrading guide for further information: https://docs.gradle.org/9.8.1/userguide/upgrading_version_9.html#deprecate-visible-property",
+      "direct_nonframework_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+      "category": "AGP",
+      "first_four_stack_frames": [
+        "at org.gradle.api.internal.artifacts.configurations.DefaultConfiguration.setVisible(DefaultConfiguration.java:376)",
+        "at org.gradle.api.internal.artifacts.configurations.DefaultLegacyConfiguration_Decorated.setVisible(Unknown Source)",
+        "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+        "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration$default(SourceSetManager.kt:119)"
+      ],
+      "diagnostic_block_sha256": "5b54ebcfd032383846473507391bca81474706c61886d3cecf1ac880bd406469",
+      "block_lines": 282
+    },
+    {
+      "message_index": 5,
+      "first_line_1based": 1283,
+      "last_line_1based": 1564,
+      "message": "The Configuration.setVisible(boolean) method has been deprecated. This is scheduled to be removed in Gradle 11. Consult the upgrading guide for further information: https://docs.gradle.org/9.8.1/userguide/upgrading_version_9.html#deprecate-visible-property",
+      "direct_nonframework_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+      "category": "AGP",
+      "first_four_stack_frames": [
+        "at org.gradle.api.internal.artifacts.configurations.DefaultConfiguration.setVisible(DefaultConfiguration.java:376)",
+        "at org.gradle.api.internal.artifacts.configurations.DefaultLegacyConfiguration_Decorated.setVisible(Unknown Source)",
+        "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+        "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration$default(SourceSetManager.kt:119)"
+      ],
+      "diagnostic_block_sha256": "073fa6ab236ee0789ccb2afbf138faf9ce18bcd710e44b7fd20b711e144d6795",
+      "block_lines": 282
+    },
+    {
+      "message_index": 6,
+      "first_line_1based": 1565,
+      "last_line_1based": 1846,
+      "message": "The Configuration.setVisible(boolean) method has been deprecated. This is scheduled to be removed in Gradle 11. Consult the upgrading guide for further information: https://docs.gradle.org/9.8.1/userguide/upgrading_version_9.html#deprecate-visible-property",
+      "direct_nonframework_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+      "category": "AGP",
+      "first_four_stack_frames": [
+        "at org.gradle.api.internal.artifacts.configurations.DefaultConfiguration.setVisible(DefaultConfiguration.java:376)",
+        "at org.gradle.api.internal.artifacts.configurations.DefaultLegacyConfiguration_Decorated.setVisible(Unknown Source)",
+        "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+        "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration$default(SourceSetManager.kt:119)"
+      ],
+      "diagnostic_block_sha256": "b846a2c9d3b0cfdb7693c547db9af938f3c274f2f3ff8b0b915f07f33fb70c56",
+      "block_lines": 282
+    },
+    {
+      "message_index": 7,
+      "first_line_1based": 1847,
+      "last_line_1based": 2128,
+      "message": "The Configuration.setVisible(boolean) method has been deprecated. This is scheduled to be removed in Gradle 11. Consult the upgrading guide for further information: https://docs.gradle.org/9.8.1/userguide/upgrading_version_9.html#deprecate-visible-property",
+      "direct_nonframework_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+      "category": "AGP",
+      "first_four_stack_frames": [
+        "at org.gradle.api.internal.artifacts.configurations.DefaultConfiguration.setVisible(DefaultConfiguration.java:376)",
+        "at org.gradle.api.internal.artifacts.configurations.DefaultLegacyConfiguration_Decorated.setVisible(Unknown Source)",
+        "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+        "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration$default(SourceSetManager.kt:119)"
+      ],
+      "diagnostic_block_sha256": "7daaec97cf2c918e11eb0b745643d267c0672ec43dc43f01e4f93baa10daf0fe",
+      "block_lines": 282
+    },
+    {
+      "message_index": 8,
+      "first_line_1based": 2129,
+      "last_line_1based": 2410,
+      "message": "The Configuration.setVisible(boolean) method has been deprecated. This is scheduled to be removed in Gradle 11. Consult the upgrading guide for further information: https://docs.gradle.org/9.8.1/userguide/upgrading_version_9.html#deprecate-visible-property",
+      "direct_nonframework_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+      "category": "AGP",
+      "first_four_stack_frames": [
+        "at org.gradle.api.internal.artifacts.configurations.DefaultConfiguration.setVisible(DefaultConfiguration.java:376)",
+        "at org.gradle.api.internal.artifacts.configurations.DefaultLegacyConfiguration_Decorated.setVisible(Unknown Source)",
+        "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+        "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration$default(SourceSetManager.kt:119)"
+      ],
+      "diagnostic_block_sha256": "b8f71a1ce2376ad7049557efbfdf2520e3133dd28dda35c2e522552f2987c152",
+      "block_lines": 282
+    },
+    {
+      "message_index": 9,
+      "first_line_1based": 2411,
+      "last_line_1based": 2692,
+      "message": "The Configuration.setVisible(boolean) method has been deprecated. This is scheduled to be removed in Gradle 11. Consult the upgrading guide for further information: https://docs.gradle.org/9.8.1/userguide/upgrading_version_9.html#deprecate-visible-property",
+      "direct_nonframework_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+      "category": "AGP",
+      "first_four_stack_frames": [
+        "at org.gradle.api.internal.artifacts.configurations.DefaultConfiguration.setVisible(DefaultConfiguration.java:376)",
+        "at org.gradle.api.internal.artifacts.configurations.DefaultLegacyConfiguration_Decorated.setVisible(Unknown Source)",
+        "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+        "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration$default(SourceSetManager.kt:119)"
+      ],
+      "diagnostic_block_sha256": "9e4246d3e914cfa6f32519f859ed8f83b131629623c41d9271bdb14be15842dc",
+      "block_lines": 282
+    },
+    {
+      "message_index": 10,
+      "first_line_1based": 2693,
+      "last_line_1based": 2974,
+      "message": "The Configuration.setVisible(boolean) method has been deprecated. This is scheduled to be removed in Gradle 11. Consult the upgrading guide for further information: https://docs.gradle.org/9.8.1/userguide/upgrading_version_9.html#deprecate-visible-property",
+      "direct_nonframework_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+      "category": "AGP",
+      "first_four_stack_frames": [
+        "at org.gradle.api.internal.artifacts.configurations.DefaultConfiguration.setVisible(DefaultConfiguration.java:376)",
+        "at org.gradle.api.internal.artifacts.configurations.DefaultLegacyConfiguration_Decorated.setVisible(Unknown Source)",
+        "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+        "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration$default(SourceSetManager.kt:119)"
+      ],
+      "diagnostic_block_sha256": "f7fda6ef51213521ffe5184f1aa2aa91263b9991e34859e999f87ab40eb68be8",
+      "block_lines": 282
+    },
+    {
+      "message_index": 11,
+      "first_line_1based": 2975,
+      "last_line_1based": 3256,
+      "message": "The Configuration.setVisible(boolean) method has been deprecated. This is scheduled to be removed in Gradle 11. Consult the upgrading guide for further information: https://docs.gradle.org/9.8.1/userguide/upgrading_version_9.html#deprecate-visible-property",
+      "direct_nonframework_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+      "category": "AGP",
+      "first_four_stack_frames": [
+        "at org.gradle.api.internal.artifacts.configurations.DefaultConfiguration.setVisible(DefaultConfiguration.java:376)",
+        "at org.gradle.api.internal.artifacts.configurations.DefaultLegacyConfiguration_Decorated.setVisible(Unknown Source)",
+        "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+        "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration$default(SourceSetManager.kt:119)"
+      ],
+      "diagnostic_block_sha256": "a0a33fbefd91741214abae2543041f9ae8cd8c7872af83c998643105eb149ba4",
+      "block_lines": 282
+    },
+    {
+      "message_index": 12,
+      "first_line_1based": 3257,
+      "last_line_1based": 3538,
+      "message": "The Configuration.setVisible(boolean) method has been deprecated. This is scheduled to be removed in Gradle 11. Consult the upgrading guide for further information: https://docs.gradle.org/9.8.1/userguide/upgrading_version_9.html#deprecate-visible-property",
+      "direct_nonframework_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+      "category": "AGP",
+      "first_four_stack_frames": [
+        "at org.gradle.api.internal.artifacts.configurations.DefaultConfiguration.setVisible(DefaultConfiguration.java:376)",
+        "at org.gradle.api.internal.artifacts.configurations.DefaultLegacyConfiguration_Decorated.setVisible(Unknown Source)",
+        "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+        "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration$default(SourceSetManager.kt:119)"
+      ],
+      "diagnostic_block_sha256": "98a71d5aacb05a51b306757ce0020394bc1272e34e0a15e74309a82b9b462bac",
+      "block_lines": 282
+    },
+    {
+      "message_index": 13,
+      "first_line_1based": 3539,
+      "last_line_1based": 3820,
+      "message": "The Configuration.setVisible(boolean) method has been deprecated. This is scheduled to be removed in Gradle 11. Consult the upgrading guide for further information: https://docs.gradle.org/9.8.1/userguide/upgrading_version_9.html#deprecate-visible-property",
+      "direct_nonframework_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+      "category": "AGP",
+      "first_four_stack_frames": [
+        "at org.gradle.api.internal.artifacts.configurations.DefaultConfiguration.setVisible(DefaultConfiguration.java:376)",
+        "at org.gradle.api.internal.artifacts.configurations.DefaultLegacyConfiguration_Decorated.setVisible(Unknown Source)",
+        "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+        "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration$default(SourceSetManager.kt:119)"
+      ],
+      "diagnostic_block_sha256": "a4c447369ef1654db508687e495734b218bbb5f8688d23e7b999c7ef535efa1f",
+      "block_lines": 282
+    },
+    {
+      "message_index": 14,
+      "first_line_1based": 3821,
+      "last_line_1based": 4102,
+      "message": "The Configuration.setVisible(boolean) method has been deprecated. This is scheduled to be removed in Gradle 11. Consult the upgrading guide for further information: https://docs.gradle.org/9.8.1/userguide/upgrading_version_9.html#deprecate-visible-property",
+      "direct_nonframework_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+      "category": "AGP",
+      "first_four_stack_frames": [
+        "at org.gradle.api.internal.artifacts.configurations.DefaultConfiguration.setVisible(DefaultConfiguration.java:376)",
+        "at org.gradle.api.internal.artifacts.configurations.DefaultLegacyConfiguration_Decorated.setVisible(Unknown Source)",
+        "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+        "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration$default(SourceSetManager.kt:119)"
+      ],
+      "diagnostic_block_sha256": "301cdbab409cefa5c2b657155f7ae81f41636bb31f7cf0f4d8abee65e822f1bc",
+      "block_lines": 282
+    },
+    {
+      "message_index": 15,
+      "first_line_1based": 4103,
+      "last_line_1based": 4384,
+      "message": "The Configuration.setVisible(boolean) method has been deprecated. This is scheduled to be removed in Gradle 11. Consult the upgrading guide for further information: https://docs.gradle.org/9.8.1/userguide/upgrading_version_9.html#deprecate-visible-property",
+      "direct_nonframework_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+      "category": "AGP",
+      "first_four_stack_frames": [
+        "at org.gradle.api.internal.artifacts.configurations.DefaultConfiguration.setVisible(DefaultConfiguration.java:376)",
+        "at org.gradle.api.internal.artifacts.configurations.DefaultLegacyConfiguration_Decorated.setVisible(Unknown Source)",
+        "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+        "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration$default(SourceSetManager.kt:119)"
+      ],
+      "diagnostic_block_sha256": "6d61373d0b84881839381bb6a9e00deaa2e7f1184df65f31c17e3259b5aa7e5e",
+      "block_lines": 282
+    },
+    {
+      "message_index": 16,
+      "first_line_1based": 4385,
+      "last_line_1based": 4666,
+      "message": "The Configuration.setVisible(boolean) method has been deprecated. This is scheduled to be removed in Gradle 11. Consult the upgrading guide for further information: https://docs.gradle.org/9.8.1/userguide/upgrading_version_9.html#deprecate-visible-property",
+      "direct_nonframework_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+      "category": "AGP",
+      "first_four_stack_frames": [
+        "at org.gradle.api.internal.artifacts.configurations.DefaultConfiguration.setVisible(DefaultConfiguration.java:376)",
+        "at org.gradle.api.internal.artifacts.configurations.DefaultLegacyConfiguration_Decorated.setVisible(Unknown Source)",
+        "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+        "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration$default(SourceSetManager.kt:119)"
+      ],
+      "diagnostic_block_sha256": "ce5679bb68c7dd4036fdc0ad36a90d88038424b4be7071ff4c356f302f8d676d",
+      "block_lines": 282
+    },
+    {
+      "message_index": 17,
+      "first_line_1based": 4667,
+      "last_line_1based": 4948,
+      "message": "The Configuration.setVisible(boolean) method has been deprecated. This is scheduled to be removed in Gradle 11. Consult the upgrading guide for further information: https://docs.gradle.org/9.8.1/userguide/upgrading_version_9.html#deprecate-visible-property",
+      "direct_nonframework_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+      "category": "AGP",
+      "first_four_stack_frames": [
+        "at org.gradle.api.internal.artifacts.configurations.DefaultConfiguration.setVisible(DefaultConfiguration.java:376)",
+        "at org.gradle.api.internal.artifacts.configurations.DefaultLegacyConfiguration_Decorated.setVisible(Unknown Source)",
+        "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+        "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration$default(SourceSetManager.kt:119)"
+      ],
+      "diagnostic_block_sha256": "e5a3c38019bd10871c97111a97b87f5befc0eeeb6dcbeac4b2314225f61c5cf0",
+      "block_lines": 282
+    },
+    {
+      "message_index": 18,
+      "first_line_1based": 4949,
+      "last_line_1based": 5230,
+      "message": "The Configuration.setVisible(boolean) method has been deprecated. This is scheduled to be removed in Gradle 11. Consult the upgrading guide for further information: https://docs.gradle.org/9.8.1/userguide/upgrading_version_9.html#deprecate-visible-property",
+      "direct_nonframework_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+      "category": "AGP",
+      "first_four_stack_frames": [
+        "at org.gradle.api.internal.artifacts.configurations.DefaultConfiguration.setVisible(DefaultConfiguration.java:376)",
+        "at org.gradle.api.internal.artifacts.configurations.DefaultLegacyConfiguration_Decorated.setVisible(Unknown Source)",
+        "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+        "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration$default(SourceSetManager.kt:119)"
+      ],
+      "diagnostic_block_sha256": "ce986c74fe04969bc108b6bc209f9a0e8de78867e085f61ce6beb2d5d070a375",
+      "block_lines": 282
+    },
+    {
+      "message_index": 19,
+      "first_line_1based": 5231,
+      "last_line_1based": 5512,
+      "message": "The Configuration.setVisible(boolean) method has been deprecated. This is scheduled to be removed in Gradle 11. Consult the upgrading guide for further information: https://docs.gradle.org/9.8.1/userguide/upgrading_version_9.html#deprecate-visible-property",
+      "direct_nonframework_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+      "category": "AGP",
+      "first_four_stack_frames": [
+        "at org.gradle.api.internal.artifacts.configurations.DefaultConfiguration.setVisible(DefaultConfiguration.java:376)",
+        "at org.gradle.api.internal.artifacts.configurations.DefaultLegacyConfiguration_Decorated.setVisible(Unknown Source)",
+        "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+        "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration$default(SourceSetManager.kt:119)"
+      ],
+      "diagnostic_block_sha256": "c6a67133cecd444a0d44af7b8165ef246d103a9f29c0d96479da0374fac62ad7",
+      "block_lines": 282
+    },
+    {
+      "message_index": 20,
+      "first_line_1based": 5513,
+      "last_line_1based": 5794,
+      "message": "The Configuration.setVisible(boolean) method has been deprecated. This is scheduled to be removed in Gradle 11. Consult the upgrading guide for further information: https://docs.gradle.org/9.8.1/userguide/upgrading_version_9.html#deprecate-visible-property",
+      "direct_nonframework_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+      "category": "AGP",
+      "first_four_stack_frames": [
+        "at org.gradle.api.internal.artifacts.configurations.DefaultConfiguration.setVisible(DefaultConfiguration.java:376)",
+        "at org.gradle.api.internal.artifacts.configurations.DefaultLegacyConfiguration_Decorated.setVisible(Unknown Source)",
+        "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+        "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration$default(SourceSetManager.kt:119)"
+      ],
+      "diagnostic_block_sha256": "67993046d30084257a8f907a09bfddd389b0dcf7e861720f2e23e46dbda32480",
+      "block_lines": 282
+    },
+    {
+      "message_index": 21,
+      "first_line_1based": 5795,
+      "last_line_1based": 6076,
+      "message": "The Configuration.setVisible(boolean) method has been deprecated. This is scheduled to be removed in Gradle 11. Consult the upgrading guide for further information: https://docs.gradle.org/9.8.1/userguide/upgrading_version_9.html#deprecate-visible-property",
+      "direct_nonframework_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+      "category": "AGP",
+      "first_four_stack_frames": [
+        "at org.gradle.api.internal.artifacts.configurations.DefaultConfiguration.setVisible(DefaultConfiguration.java:376)",
+        "at org.gradle.api.internal.artifacts.configurations.DefaultLegacyConfiguration_Decorated.setVisible(Unknown Source)",
+        "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+        "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration$default(SourceSetManager.kt:119)"
+      ],
+      "diagnostic_block_sha256": "dcf55b69c07e16438e8a7e6fa0c4503ec84e9623540eb720d0260b036006ca3e",
+      "block_lines": 282
+    },
+    {
+      "message_index": 22,
+      "first_line_1based": 6077,
+      "last_line_1based": 6349,
+      "message": "The Configuration.setVisible(boolean) method has been deprecated. This is scheduled to be removed in Gradle 11. Consult the upgrading guide for further information: https://docs.gradle.org/9.8.1/userguide/upgrading_version_9.html#deprecate-visible-property",
+      "direct_nonframework_caller": "at com.android.build.gradle.internal.plugins.BasePlugin$Companion.createCustomLintPublishConfig(BasePlugin.kt:383)",
+      "category": "AGP",
+      "first_four_stack_frames": [
+        "at org.gradle.api.internal.artifacts.configurations.DefaultConfiguration.setVisible(DefaultConfiguration.java:376)",
+        "at org.gradle.api.internal.artifacts.configurations.DefaultLegacyConfiguration_Decorated.setVisible(Unknown Source)",
+        "at com.android.build.gradle.internal.plugins.BasePlugin$Companion.createCustomLintPublishConfig(BasePlugin.kt:383)",
+        "at com.android.build.gradle.internal.plugins.BasePlugin$Companion.access$createCustomLintPublishConfig(BasePlugin.kt:359)"
+      ],
+      "diagnostic_block_sha256": "ec3503967a117a630063b13936733e44ced3e06faadea9ea22b60e6d48b8f215",
+      "block_lines": 273
+    },
+    {
+      "message_index": 23,
+      "first_line_1based": 6350,
+      "last_line_1based": 6622,
+      "message": "The Configuration.setVisible(boolean) method has been deprecated. This is scheduled to be removed in Gradle 11. Consult the upgrading guide for further information: https://docs.gradle.org/9.8.1/userguide/upgrading_version_9.html#deprecate-visible-property",
+      "direct_nonframework_caller": "at com.android.build.gradle.internal.plugins.BasePlugin$Companion.createCustomLintChecksConfig(BasePlugin.kt:375)",
+      "category": "AGP",
+      "first_four_stack_frames": [
+        "at org.gradle.api.internal.artifacts.configurations.DefaultConfiguration.setVisible(DefaultConfiguration.java:376)",
+        "at org.gradle.api.internal.artifacts.configurations.DefaultLegacyConfiguration_Decorated.setVisible(Unknown Source)",
+        "at com.android.build.gradle.internal.plugins.BasePlugin$Companion.createCustomLintChecksConfig(BasePlugin.kt:375)",
+        "at com.android.build.gradle.internal.plugins.BasePlugin.globalConfig_delegate$lambda$10$lambda$9(BasePlugin.kt:197)"
+      ],
+      "diagnostic_block_sha256": "9f49127d8e2cfa829b26f46a1cf62ac15fc612c583d97703af8e8f57aa752396",
+      "block_lines": 273
+    },
+    {
+      "message_index": 24,
+      "first_line_1based": 6623,
+      "last_line_1based": 6910,
+      "message": "The Configuration.setVisible(boolean) method has been deprecated. This is scheduled to be removed in Gradle 11. Consult the upgrading guide for further information: https://docs.gradle.org/9.8.1/userguide/upgrading_version_9.html#deprecate-visible-property",
+      "direct_nonframework_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+      "category": "AGP",
+      "first_four_stack_frames": [
+        "at org.gradle.api.internal.artifacts.configurations.DefaultConfiguration.setVisible(DefaultConfiguration.java:376)",
+        "at org.gradle.api.internal.artifacts.configurations.DefaultLegacyConfiguration_Decorated.setVisible(Unknown Source)",
+        "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+        "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration$default(SourceSetManager.kt:119)"
+      ],
+      "diagnostic_block_sha256": "330606fa70531b1fd36c96eae36682839ac33b83b8f9d253ab17f9129ed946ca",
+      "block_lines": 288
+    },
+    {
+      "message_index": 25,
+      "first_line_1based": 6911,
+      "last_line_1based": 7198,
+      "message": "The Configuration.setVisible(boolean) method has been deprecated. This is scheduled to be removed in Gradle 11. Consult the upgrading guide for further information: https://docs.gradle.org/9.8.1/userguide/upgrading_version_9.html#deprecate-visible-property",
+      "direct_nonframework_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+      "category": "AGP",
+      "first_four_stack_frames": [
+        "at org.gradle.api.internal.artifacts.configurations.DefaultConfiguration.setVisible(DefaultConfiguration.java:376)",
+        "at org.gradle.api.internal.artifacts.configurations.DefaultLegacyConfiguration_Decorated.setVisible(Unknown Source)",
+        "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+        "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration$default(SourceSetManager.kt:119)"
+      ],
+      "diagnostic_block_sha256": "9192aec0092fb3304b01f4d3a4bd4d5ac36163f2afd200b293e142128eac4368",
+      "block_lines": 288
+    },
+    {
+      "message_index": 26,
+      "first_line_1based": 7199,
+      "last_line_1based": 7486,
+      "message": "The Configuration.setVisible(boolean) method has been deprecated. This is scheduled to be removed in Gradle 11. Consult the upgrading guide for further information: https://docs.gradle.org/9.8.1/userguide/upgrading_version_9.html#deprecate-visible-property",
+      "direct_nonframework_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+      "category": "AGP",
+      "first_four_stack_frames": [
+        "at org.gradle.api.internal.artifacts.configurations.DefaultConfiguration.setVisible(DefaultConfiguration.java:376)",
+        "at org.gradle.api.internal.artifacts.configurations.DefaultLegacyConfiguration_Decorated.setVisible(Unknown Source)",
+        "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+        "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration$default(SourceSetManager.kt:119)"
+      ],
+      "diagnostic_block_sha256": "780a340d57f9e3088c7b07a0ed7aca67ed5a02de4e134a5178fa6fd77415f62b",
+      "block_lines": 288
+    },
+    {
+      "message_index": 27,
+      "first_line_1based": 7487,
+      "last_line_1based": 7774,
+      "message": "The Configuration.setVisible(boolean) method has been deprecated. This is scheduled to be removed in Gradle 11. Consult the upgrading guide for further information: https://docs.gradle.org/9.8.1/userguide/upgrading_version_9.html#deprecate-visible-property",
+      "direct_nonframework_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+      "category": "AGP",
+      "first_four_stack_frames": [
+        "at org.gradle.api.internal.artifacts.configurations.DefaultConfiguration.setVisible(DefaultConfiguration.java:376)",
+        "at org.gradle.api.internal.artifacts.configurations.DefaultLegacyConfiguration_Decorated.setVisible(Unknown Source)",
+        "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+        "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration$default(SourceSetManager.kt:119)"
+      ],
+      "diagnostic_block_sha256": "9bd20edfe09527bf6db4c834f26fbbfb22e6e6a1900aa952f64c7a4dbbcf152c",
+      "block_lines": 288
+    },
+    {
+      "message_index": 28,
+      "first_line_1based": 7775,
+      "last_line_1based": 8062,
+      "message": "The Configuration.setVisible(boolean) method has been deprecated. This is scheduled to be removed in Gradle 11. Consult the upgrading guide for further information: https://docs.gradle.org/9.8.1/userguide/upgrading_version_9.html#deprecate-visible-property",
+      "direct_nonframework_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+      "category": "AGP",
+      "first_four_stack_frames": [
+        "at org.gradle.api.internal.artifacts.configurations.DefaultConfiguration.setVisible(DefaultConfiguration.java:376)",
+        "at org.gradle.api.internal.artifacts.configurations.DefaultLegacyConfiguration_Decorated.setVisible(Unknown Source)",
+        "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+        "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration$default(SourceSetManager.kt:119)"
+      ],
+      "diagnostic_block_sha256": "20cce66c5527c7f218de86fe45cbc0ca3a40cf945bf1040dbe2ee8f83430e1ca",
+      "block_lines": 288
+    },
+    {
+      "message_index": 29,
+      "first_line_1based": 8063,
+      "last_line_1based": 8350,
+      "message": "The Configuration.setVisible(boolean) method has been deprecated. This is scheduled to be removed in Gradle 11. Consult the upgrading guide for further information: https://docs.gradle.org/9.8.1/userguide/upgrading_version_9.html#deprecate-visible-property",
+      "direct_nonframework_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+      "category": "AGP",
+      "first_four_stack_frames": [
+        "at org.gradle.api.internal.artifacts.configurations.DefaultConfiguration.setVisible(DefaultConfiguration.java:376)",
+        "at org.gradle.api.internal.artifacts.configurations.DefaultLegacyConfiguration_Decorated.setVisible(Unknown Source)",
+        "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+        "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration$default(SourceSetManager.kt:119)"
+      ],
+      "diagnostic_block_sha256": "547c6618e9223f34b945d76116c8d15101290705ea2812d025584d94686efb73",
+      "block_lines": 288
+    },
+    {
+      "message_index": 30,
+      "first_line_1based": 8351,
+      "last_line_1based": 8638,
+      "message": "The Configuration.setVisible(boolean) method has been deprecated. This is scheduled to be removed in Gradle 11. Consult the upgrading guide for further information: https://docs.gradle.org/9.8.1/userguide/upgrading_version_9.html#deprecate-visible-property",
+      "direct_nonframework_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+      "category": "AGP",
+      "first_four_stack_frames": [
+        "at org.gradle.api.internal.artifacts.configurations.DefaultConfiguration.setVisible(DefaultConfiguration.java:376)",
+        "at org.gradle.api.internal.artifacts.configurations.DefaultLegacyConfiguration_Decorated.setVisible(Unknown Source)",
+        "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+        "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration$default(SourceSetManager.kt:119)"
+      ],
+      "diagnostic_block_sha256": "9217e573741d15e467ea55005a0616b28b4ee0b154864f63fb8db637a071771a",
+      "block_lines": 288
+    },
+    {
+      "message_index": 31,
+      "first_line_1based": 8639,
+      "last_line_1based": 8926,
+      "message": "The Configuration.setVisible(boolean) method has been deprecated. This is scheduled to be removed in Gradle 11. Consult the upgrading guide for further information: https://docs.gradle.org/9.8.1/userguide/upgrading_version_9.html#deprecate-visible-property",
+      "direct_nonframework_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+      "category": "AGP",
+      "first_four_stack_frames": [
+        "at org.gradle.api.internal.artifacts.configurations.DefaultConfiguration.setVisible(DefaultConfiguration.java:376)",
+        "at org.gradle.api.internal.artifacts.configurations.DefaultLegacyConfiguration_Decorated.setVisible(Unknown Source)",
+        "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+        "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration$default(SourceSetManager.kt:119)"
+      ],
+      "diagnostic_block_sha256": "252a603776249bf0656aab936f9343b7795150b3a6ae159e9616f6635213d6fd",
+      "block_lines": 288
+    },
+    {
+      "message_index": 32,
+      "first_line_1based": 8927,
+      "last_line_1based": 9214,
+      "message": "The Configuration.setVisible(boolean) method has been deprecated. This is scheduled to be removed in Gradle 11. Consult the upgrading guide for further information: https://docs.gradle.org/9.8.1/userguide/upgrading_version_9.html#deprecate-visible-property",
+      "direct_nonframework_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+      "category": "AGP",
+      "first_four_stack_frames": [
+        "at org.gradle.api.internal.artifacts.configurations.DefaultConfiguration.setVisible(DefaultConfiguration.java:376)",
+        "at org.gradle.api.internal.artifacts.configurations.DefaultLegacyConfiguration_Decorated.setVisible(Unknown Source)",
+        "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+        "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration$default(SourceSetManager.kt:119)"
+      ],
+      "diagnostic_block_sha256": "0d465586cacb4f2c20b7254276f0bfe0d6a6fa614c33503356be15d677c5c67b",
+      "block_lines": 288
+    },
+    {
+      "message_index": 33,
+      "first_line_1based": 9215,
+      "last_line_1based": 9502,
+      "message": "The Configuration.setVisible(boolean) method has been deprecated. This is scheduled to be removed in Gradle 11. Consult the upgrading guide for further information: https://docs.gradle.org/9.8.1/userguide/upgrading_version_9.html#deprecate-visible-property",
+      "direct_nonframework_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+      "category": "AGP",
+      "first_four_stack_frames": [
+        "at org.gradle.api.internal.artifacts.configurations.DefaultConfiguration.setVisible(DefaultConfiguration.java:376)",
+        "at org.gradle.api.internal.artifacts.configurations.DefaultLegacyConfiguration_Decorated.setVisible(Unknown Source)",
+        "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+        "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration$default(SourceSetManager.kt:119)"
+      ],
+      "diagnostic_block_sha256": "48c2ba23f990c0451931586069fe705af12b8dccdb558958065450abebc3fa36",
+      "block_lines": 288
+    },
+    {
+      "message_index": 34,
+      "first_line_1based": 9503,
+      "last_line_1based": 9790,
+      "message": "The Configuration.setVisible(boolean) method has been deprecated. This is scheduled to be removed in Gradle 11. Consult the upgrading guide for further information: https://docs.gradle.org/9.8.1/userguide/upgrading_version_9.html#deprecate-visible-property",
+      "direct_nonframework_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+      "category": "AGP",
+      "first_four_stack_frames": [
+        "at org.gradle.api.internal.artifacts.configurations.DefaultConfiguration.setVisible(DefaultConfiguration.java:376)",
+        "at org.gradle.api.internal.artifacts.configurations.DefaultLegacyConfiguration_Decorated.setVisible(Unknown Source)",
+        "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+        "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration$default(SourceSetManager.kt:119)"
+      ],
+      "diagnostic_block_sha256": "2499c0baee3970dda4288ff3e6d9c85ec5294a5030740c6df4f233f904935c92",
+      "block_lines": 288
+    },
+    {
+      "message_index": 35,
+      "first_line_1based": 9791,
+      "last_line_1based": 10078,
+      "message": "The Configuration.setVisible(boolean) method has been deprecated. This is scheduled to be removed in Gradle 11. Consult the upgrading guide for further information: https://docs.gradle.org/9.8.1/userguide/upgrading_version_9.html#deprecate-visible-property",
+      "direct_nonframework_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+      "category": "AGP",
+      "first_four_stack_frames": [
+        "at org.gradle.api.internal.artifacts.configurations.DefaultConfiguration.setVisible(DefaultConfiguration.java:376)",
+        "at org.gradle.api.internal.artifacts.configurations.DefaultLegacyConfiguration_Decorated.setVisible(Unknown Source)",
+        "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+        "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration$default(SourceSetManager.kt:119)"
+      ],
+      "diagnostic_block_sha256": "1990516c80e54af6f9902fc4b66ce5d5c528f8287b94104b70ecadb68409ec7b",
+      "block_lines": 288
+    },
+    {
+      "message_index": 36,
+      "first_line_1based": 10079,
+      "last_line_1based": 10366,
+      "message": "The Configuration.setVisible(boolean) method has been deprecated. This is scheduled to be removed in Gradle 11. Consult the upgrading guide for further information: https://docs.gradle.org/9.8.1/userguide/upgrading_version_9.html#deprecate-visible-property",
+      "direct_nonframework_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+      "category": "AGP",
+      "first_four_stack_frames": [
+        "at org.gradle.api.internal.artifacts.configurations.DefaultConfiguration.setVisible(DefaultConfiguration.java:376)",
+        "at org.gradle.api.internal.artifacts.configurations.DefaultLegacyConfiguration_Decorated.setVisible(Unknown Source)",
+        "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+        "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration$default(SourceSetManager.kt:119)"
+      ],
+      "diagnostic_block_sha256": "6ce80d177b10ff87fea1ef6ed44d2a365c32bb67e96217157d9c77b8edb47dbf",
+      "block_lines": 288
+    },
+    {
+      "message_index": 37,
+      "first_line_1based": 10367,
+      "last_line_1based": 10654,
+      "message": "The Configuration.setVisible(boolean) method has been deprecated. This is scheduled to be removed in Gradle 11. Consult the upgrading guide for further information: https://docs.gradle.org/9.8.1/userguide/upgrading_version_9.html#deprecate-visible-property",
+      "direct_nonframework_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+      "category": "AGP",
+      "first_four_stack_frames": [
+        "at org.gradle.api.internal.artifacts.configurations.DefaultConfiguration.setVisible(DefaultConfiguration.java:376)",
+        "at org.gradle.api.internal.artifacts.configurations.DefaultLegacyConfiguration_Decorated.setVisible(Unknown Source)",
+        "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+        "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration$default(SourceSetManager.kt:119)"
+      ],
+      "diagnostic_block_sha256": "9b13ecb7a533a8c1557cf51684252c29322ccfc4aa8d562c0744f7aafdfc8bbd",
+      "block_lines": 288
+    },
+    {
+      "message_index": 38,
+      "first_line_1based": 10655,
+      "last_line_1based": 10942,
+      "message": "The Configuration.setVisible(boolean) method has been deprecated. This is scheduled to be removed in Gradle 11. Consult the upgrading guide for further information: https://docs.gradle.org/9.8.1/userguide/upgrading_version_9.html#deprecate-visible-property",
+      "direct_nonframework_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+      "category": "AGP",
+      "first_four_stack_frames": [
+        "at org.gradle.api.internal.artifacts.configurations.DefaultConfiguration.setVisible(DefaultConfiguration.java:376)",
+        "at org.gradle.api.internal.artifacts.configurations.DefaultLegacyConfiguration_Decorated.setVisible(Unknown Source)",
+        "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+        "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration$default(SourceSetManager.kt:119)"
+      ],
+      "diagnostic_block_sha256": "5ab1181b0cd7b82c30fbcdaca216c7f772487b80fef88059d3fb642662f328b1",
+      "block_lines": 288
+    },
+    {
+      "message_index": 39,
+      "first_line_1based": 10943,
+      "last_line_1based": 11230,
+      "message": "The Configuration.setVisible(boolean) method has been deprecated. This is scheduled to be removed in Gradle 11. Consult the upgrading guide for further information: https://docs.gradle.org/9.8.1/userguide/upgrading_version_9.html#deprecate-visible-property",
+      "direct_nonframework_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+      "category": "AGP",
+      "first_four_stack_frames": [
+        "at org.gradle.api.internal.artifacts.configurations.DefaultConfiguration.setVisible(DefaultConfiguration.java:376)",
+        "at org.gradle.api.internal.artifacts.configurations.DefaultLegacyConfiguration_Decorated.setVisible(Unknown Source)",
+        "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+        "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration$default(SourceSetManager.kt:119)"
+      ],
+      "diagnostic_block_sha256": "5a3f8e3804f8af16383475f22298742a3b7b42ab00849a9e8073f35ed65cbe0d",
+      "block_lines": 288
+    },
+    {
+      "message_index": 40,
+      "first_line_1based": 11231,
+      "last_line_1based": 11518,
+      "message": "The Configuration.setVisible(boolean) method has been deprecated. This is scheduled to be removed in Gradle 11. Consult the upgrading guide for further information: https://docs.gradle.org/9.8.1/userguide/upgrading_version_9.html#deprecate-visible-property",
+      "direct_nonframework_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+      "category": "AGP",
+      "first_four_stack_frames": [
+        "at org.gradle.api.internal.artifacts.configurations.DefaultConfiguration.setVisible(DefaultConfiguration.java:376)",
+        "at org.gradle.api.internal.artifacts.configurations.DefaultLegacyConfiguration_Decorated.setVisible(Unknown Source)",
+        "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+        "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration$default(SourceSetManager.kt:119)"
+      ],
+      "diagnostic_block_sha256": "b77782baea241a7ab9812e197894c4e773ae521b3d5ec09cf3c114689d5a6140",
+      "block_lines": 288
+    },
+    {
+      "message_index": 41,
+      "first_line_1based": 11519,
+      "last_line_1based": 11806,
+      "message": "The Configuration.setVisible(boolean) method has been deprecated. This is scheduled to be removed in Gradle 11. Consult the upgrading guide for further information: https://docs.gradle.org/9.8.1/userguide/upgrading_version_9.html#deprecate-visible-property",
+      "direct_nonframework_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+      "category": "AGP",
+      "first_four_stack_frames": [
+        "at org.gradle.api.internal.artifacts.configurations.DefaultConfiguration.setVisible(DefaultConfiguration.java:376)",
+        "at org.gradle.api.internal.artifacts.configurations.DefaultLegacyConfiguration_Decorated.setVisible(Unknown Source)",
+        "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+        "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration$default(SourceSetManager.kt:119)"
+      ],
+      "diagnostic_block_sha256": "c5289693660d1926b78fbc288648c13b7fa7c60bb88da3cda0535c9187428b3a",
+      "block_lines": 288
+    },
+    {
+      "message_index": 42,
+      "first_line_1based": 11807,
+      "last_line_1based": 12094,
+      "message": "The Configuration.setVisible(boolean) method has been deprecated. This is scheduled to be removed in Gradle 11. Consult the upgrading guide for further information: https://docs.gradle.org/9.8.1/userguide/upgrading_version_9.html#deprecate-visible-property",
+      "direct_nonframework_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+      "category": "AGP",
+      "first_four_stack_frames": [
+        "at org.gradle.api.internal.artifacts.configurations.DefaultConfiguration.setVisible(DefaultConfiguration.java:376)",
+        "at org.gradle.api.internal.artifacts.configurations.DefaultLegacyConfiguration_Decorated.setVisible(Unknown Source)",
+        "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+        "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration$default(SourceSetManager.kt:119)"
+      ],
+      "diagnostic_block_sha256": "c7c24eeaf57e2b28d8001322917f8f32f0201abd594b3fd57ae5f2ba5b6ab90a",
+      "block_lines": 288
+    },
+    {
+      "message_index": 43,
+      "first_line_1based": 12095,
+      "last_line_1based": 12382,
+      "message": "The Configuration.setVisible(boolean) method has been deprecated. This is scheduled to be removed in Gradle 11. Consult the upgrading guide for further information: https://docs.gradle.org/9.8.1/userguide/upgrading_version_9.html#deprecate-visible-property",
+      "direct_nonframework_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+      "category": "AGP",
+      "first_four_stack_frames": [
+        "at org.gradle.api.internal.artifacts.configurations.DefaultConfiguration.setVisible(DefaultConfiguration.java:376)",
+        "at org.gradle.api.internal.artifacts.configurations.DefaultLegacyConfiguration_Decorated.setVisible(Unknown Source)",
+        "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+        "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration$default(SourceSetManager.kt:119)"
+      ],
+      "diagnostic_block_sha256": "2c18c4886e34c74c7c18970393bdd7bf36019e4347bd4aac8ef480788a472c3d",
+      "block_lines": 288
+    },
+    {
+      "message_index": 44,
+      "first_line_1based": 12383,
+      "last_line_1based": 12386,
+      "message": "The Configuration.setVisible(boolean) method has been deprecated. This is scheduled to be removed in Gradle 11. Consult the upgrading guide for further information: https://docs.gradle.org/9.8.1/userguide/upgrading_version_9.html#deprecate-visible-property",
+      "direct_nonframework_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+      "category": "AGP",
+      "first_four_stack_frames": [
+        "at org.gradle.api.internal.artifacts.configurations.DefaultConfiguration.setVisible(DefaultConfiguration.java:376)",
+        "at org.gradle.api.internal.artifacts.configurations.DefaultLegacyConfiguration_Decorated.setVisible(Unknown Source)",
+        "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)"
+      ],
+      "diagnostic_block_sha256": "a80852cb96fdcb5e018883e37e88de8b497923f8461aeac180f2c52cfac0b09f",
+      "block_lines": 4
+    },
+    {
+      "message_index": 45,
+      "first_line_1based": 12387,
+      "last_line_1based": 12394,
+      "message": "The Configuration.setVisible(boolean) method has been deprecated. This is scheduled to be removed in Gradle 11. Consult the upgrading guide for further information: https://docs.gradle.org/9.8.1/userguide/upgrading_version_9.html#deprecate-visible-property",
+      "direct_nonframework_caller": "at com.android.build.gradle.internal.plugins.BasePlugin$Companion.createAndroidTestUtilConfiguration$gradle_core(BasePlugin.kt:404)",
+      "category": "AGP",
+      "first_four_stack_frames": [
+        "at org.gradle.api.internal.artifacts.configurations.DefaultConfiguration.setVisible(DefaultConfiguration.java:376)",
+        "at org.gradle.api.internal.artifacts.configurations.DefaultLegacyConfiguration_Decorated.setVisible(Unknown Source)",
+        "at com.android.build.gradle.internal.plugins.BasePlugin$Companion.createAndroidTestUtilConfiguration$gradle_core(BasePlugin.kt:404)"
+      ],
+      "diagnostic_block_sha256": "defd40e170af10cd572d647dd3094f0872671b6830020572b4eefc5310252f7b",
+      "block_lines": 8
+    },
+    {
+      "message_index": 46,
+      "first_line_1based": 12395,
+      "last_line_1based": 12398,
+      "message": "The Configuration.setVisible(boolean) method has been deprecated. This is scheduled to be removed in Gradle 11. Consult the upgrading guide for further information: https://docs.gradle.org/9.8.1/userguide/upgrading_version_9.html#deprecate-visible-property",
+      "direct_nonframework_caller": "at com.google.devtools.ksp.gradle.KspConfigurations.<init>(KspConfigurations.kt:34)",
+      "category": "KSP",
+      "first_four_stack_frames": [
+        "at org.gradle.api.internal.artifacts.configurations.DefaultConfiguration.setVisible(DefaultConfiguration.java:376)",
+        "at org.gradle.api.internal.artifacts.configurations.DefaultLegacyConfiguration_Decorated.setVisible(Unknown Source)",
+        "at com.google.devtools.ksp.gradle.KspConfigurations.<init>(KspConfigurations.kt:34)"
+      ],
+      "diagnostic_block_sha256": "aef781a889dd0a96576814a2c9adf7a5ce61f162ef73a7a57ec98352078a4018",
+      "block_lines": 4
+    },
+    {
+      "message_index": 47,
+      "first_line_1based": 12399,
+      "last_line_1based": 12402,
+      "message": "The Configuration.setVisible(boolean) method has been deprecated. This is scheduled to be removed in Gradle 11. Consult the upgrading guide for further information: https://docs.gradle.org/9.8.1/userguide/upgrading_version_9.html#deprecate-visible-property",
+      "direct_nonframework_caller": "at com.google.devtools.ksp.gradle.KspConfigurations.createConfiguration(KspConfigurations.kt:54)",
+      "category": "KSP",
+      "first_four_stack_frames": [
+        "at org.gradle.api.internal.artifacts.configurations.DefaultConfiguration.setVisible(DefaultConfiguration.java:376)",
+        "at org.gradle.api.internal.artifacts.configurations.DefaultLegacyConfiguration_Decorated.setVisible(Unknown Source)",
+        "at com.google.devtools.ksp.gradle.KspConfigurations.createConfiguration(KspConfigurations.kt:54)"
+      ],
+      "diagnostic_block_sha256": "290f01b317cab71b8c0aff0618f98388cc3c5bc41421ba0ef171a055f98827cb",
+      "block_lines": 4
+    },
+    {
+      "message_index": 48,
+      "first_line_1based": 12403,
+      "last_line_1based": 12416,
+      "message": "The Configuration.setVisible(boolean) method has been deprecated. This is scheduled to be removed in Gradle 11. Consult the upgrading guide for further information: https://docs.gradle.org/9.8.1/userguide/upgrading_version_9.html#deprecate-visible-property",
+      "direct_nonframework_caller": "at com.android.build.gradle.internal.TaskManager$Companion$createCoreLibraryDesugaringConfig$1.execute(TaskManager.kt:2121)",
+      "category": "AGP",
+      "first_four_stack_frames": [
+        "at org.gradle.api.internal.artifacts.configurations.DefaultConfiguration.setVisible(DefaultConfiguration.java:376)",
+        "at org.gradle.api.internal.artifacts.configurations.DefaultLegacyConfiguration_Decorated.setVisible(Unknown Source)",
+        "at com.android.build.gradle.internal.TaskManager$Companion$createCoreLibraryDesugaringConfig$1.execute(TaskManager.kt:2121)"
+      ],
+      "diagnostic_block_sha256": "6be2ba1c06580050ab5bae12b39ac7fcee46db154ae4c6439d16b8a4f992003b",
+      "block_lines": 14
+    },
+    {
+      "message_index": 49,
+      "first_line_1based": 12417,
+      "last_line_1based": 12420,
+      "message": "The Configuration.setVisible(boolean) method has been deprecated. This is scheduled to be removed in Gradle 11. Consult the upgrading guide for further information: https://docs.gradle.org/9.8.1/userguide/upgrading_version_9.html#deprecate-visible-property",
+      "direct_nonframework_caller": "at com.android.build.gradle.internal.dependency.VariantDependenciesBuilder.build(VariantDependenciesBuilder.java:263)",
+      "category": "AGP",
+      "first_four_stack_frames": [
+        "at org.gradle.api.internal.artifacts.configurations.DefaultConfiguration.setVisible(DefaultConfiguration.java:376)",
+        "at org.gradle.api.internal.artifacts.configurations.DefaultLegacyConfiguration_Decorated.setVisible(Unknown Source)",
+        "at com.android.build.gradle.internal.dependency.VariantDependenciesBuilder.build(VariantDependenciesBuilder.java:263)"
+      ],
+      "diagnostic_block_sha256": "4c133038454d9adcee4fd4992464ba9131eb0f9c2a2968f656ecd4d7ae9894ef",
+      "block_lines": 4
+    },
+    {
+      "message_index": 50,
+      "first_line_1based": 12421,
+      "last_line_1based": 12424,
+      "message": "The Configuration.setVisible(boolean) method has been deprecated. This is scheduled to be removed in Gradle 11. Consult the upgrading guide for further information: https://docs.gradle.org/9.8.1/userguide/upgrading_version_9.html#deprecate-visible-property",
+      "direct_nonframework_caller": "at com.android.build.gradle.internal.dependency.VariantDependenciesBuilder.build(VariantDependenciesBuilder.java:310)",
+      "category": "AGP",
+      "first_four_stack_frames": [
+        "at org.gradle.api.internal.artifacts.configurations.DefaultConfiguration.setVisible(DefaultConfiguration.java:376)",
+        "at org.gradle.api.internal.artifacts.configurations.DefaultLegacyConfiguration_Decorated.setVisible(Unknown Source)",
+        "at com.android.build.gradle.internal.dependency.VariantDependenciesBuilder.build(VariantDependenciesBuilder.java:310)"
+      ],
+      "diagnostic_block_sha256": "fc084ede6d9881a838bf5170bad35da8d8b7ea6f4a8c89ea86b2d02aeaf9a1bb",
+      "block_lines": 4
+    },
+    {
+      "message_index": 51,
+      "first_line_1based": 12425,
+      "last_line_1based": 12428,
+      "message": "The Configuration.setVisible(boolean) method has been deprecated. This is scheduled to be removed in Gradle 11. Consult the upgrading guide for further information: https://docs.gradle.org/9.8.1/userguide/upgrading_version_9.html#deprecate-visible-property",
+      "direct_nonframework_caller": "at com.android.build.gradle.internal.dependency.VariantDependenciesBuilder.build(VariantDependenciesBuilder.java:324)",
+      "category": "AGP",
+      "first_four_stack_frames": [
+        "at org.gradle.api.internal.artifacts.configurations.DefaultConfiguration.setVisible(DefaultConfiguration.java:376)",
+        "at org.gradle.api.internal.artifacts.configurations.DefaultLegacyConfiguration_Decorated.setVisible(Unknown Source)",
+        "at com.android.build.gradle.internal.dependency.VariantDependenciesBuilder.build(VariantDependenciesBuilder.java:324)"
+      ],
+      "diagnostic_block_sha256": "05f589ef6e4706e677306a7a8399bfc88099dfbf049a4c9bf7fdfaf280006fcb",
+      "block_lines": 4
+    },
+    {
+      "message_index": 52,
+      "first_line_1based": 12429,
+      "last_line_1based": 12432,
+      "message": "The Configuration.setVisible(boolean) method has been deprecated. This is scheduled to be removed in Gradle 11. Consult the upgrading guide for further information: https://docs.gradle.org/9.8.1/userguide/upgrading_version_9.html#deprecate-visible-property",
+      "direct_nonframework_caller": "at com.android.build.gradle.internal.dependency.VariantDependenciesBuilder.build(VariantDependenciesBuilder.java:353)",
+      "category": "AGP",
+      "first_four_stack_frames": [
+        "at org.gradle.api.internal.artifacts.configurations.DefaultConfiguration.setVisible(DefaultConfiguration.java:376)",
+        "at org.gradle.api.internal.artifacts.configurations.DefaultLegacyConfiguration_Decorated.setVisible(Unknown Source)",
+        "at com.android.build.gradle.internal.dependency.VariantDependenciesBuilder.build(VariantDependenciesBuilder.java:353)"
+      ],
+      "diagnostic_block_sha256": "d3113f5ea89ea695404706c6e4d7bfcde4421f3e62126a745b730ddae9b47496",
+      "block_lines": 4
+    },
+    {
+      "message_index": 53,
+      "first_line_1based": 12433,
+      "last_line_1based": 12436,
+      "message": "The Configuration.setVisible(boolean) method has been deprecated. This is scheduled to be removed in Gradle 11. Consult the upgrading guide for further information: https://docs.gradle.org/9.8.1/userguide/upgrading_version_9.html#deprecate-visible-property",
+      "direct_nonframework_caller": "at com.android.build.gradle.internal.tasks.creationconfig.BaseJavaPreCompileTaskCreationConfig.createKaptOrKspClassPath(JavaPreCompileTaskCreationConfig.kt:117)",
+      "category": "AGP",
+      "first_four_stack_frames": [
+        "at org.gradle.api.internal.artifacts.configurations.DefaultConfiguration.setVisible(DefaultConfiguration.java:376)",
+        "at org.gradle.api.internal.artifacts.configurations.DefaultLegacyConfiguration_Decorated.setVisible(Unknown Source)",
+        "at com.android.build.gradle.internal.tasks.creationconfig.BaseJavaPreCompileTaskCreationConfig.createKaptOrKspClassPath(JavaPreCompileTaskCreationConfig.kt:117)"
+      ],
+      "diagnostic_block_sha256": "cb58f09ccc4c4838a07802dc84eb4ac00344d08559a6ddce8aacb12065bd3691",
+      "block_lines": 4
+    },
+    {
+      "message_index": 54,
+      "first_line_1based": 12437,
+      "last_line_1based": 12440,
+      "message": "The Configuration.setVisible(boolean) method has been deprecated. This is scheduled to be removed in Gradle 11. Consult the upgrading guide for further information: https://docs.gradle.org/9.8.1/userguide/upgrading_version_9.html#deprecate-visible-property",
+      "direct_nonframework_caller": "at com.google.devtools.ksp.gradle.KspSubpluginKt.markResolvable(KspSubplugin.kt:463)",
+      "category": "KSP",
+      "first_four_stack_frames": [
+        "at org.gradle.api.internal.artifacts.configurations.DefaultConfiguration.setVisible(DefaultConfiguration.java:376)",
+        "at org.gradle.api.internal.artifacts.configurations.DefaultLegacyConfiguration_Decorated.setVisible(Unknown Source)",
+        "at com.google.devtools.ksp.gradle.KspSubpluginKt.markResolvable(KspSubplugin.kt:463)"
+      ],
+      "diagnostic_block_sha256": "a53cf6fa27916d2458580c891af44d18b18a097fc231da5f3dd79ae14232e3e7",
+      "block_lines": 4
+    },
+    {
+      "message_index": 55,
+      "first_line_1based": 12441,
+      "last_line_1based": 12465,
+      "message": "The Configuration.setVisible(boolean) method has been deprecated. This is scheduled to be removed in Gradle 11. Consult the upgrading guide for further information: https://docs.gradle.org/9.8.1/userguide/upgrading_version_9.html#deprecate-visible-property",
+      "direct_nonframework_caller": "at com.android.build.gradle.internal.testing.utp.UtpTestUtilsKt$maybeCreateUtpConfigurations$1$1.execute(UtpTestUtils.kt:263)",
+      "category": "AGP",
+      "first_four_stack_frames": [
+        "at org.gradle.api.internal.artifacts.configurations.DefaultConfiguration.setVisible(DefaultConfiguration.java:376)",
+        "at org.gradle.api.internal.artifacts.configurations.DefaultLegacyConfiguration_Decorated.setVisible(Unknown Source)",
+        "at com.android.build.gradle.internal.testing.utp.UtpTestUtilsKt$maybeCreateUtpConfigurations$1$1.execute(UtpTestUtils.kt:263)"
+      ],
+      "diagnostic_block_sha256": "30dd8ae57fa3cb719cc78bd069a58c6029d9e1f95ffeb5ee05fbc2558c427809",
+      "block_lines": 25
+    },
+    {
+      "message_index": 56,
+      "first_line_1based": 12467,
+      "last_line_1based": 12470,
+      "message": "The Configuration.setVisible(boolean) method has been deprecated. This is scheduled to be removed in Gradle 11. Consult the upgrading guide for further information: https://docs.gradle.org/9.8.1/userguide/upgrading_version_9.html#deprecate-visible-property",
+      "direct_nonframework_caller": "at com.diffplug.gradle.spotless.GradleProvisioner.lambda$forConfigurationContainer$2(GradleProvisioner.java:136)",
+      "category": "Spotless",
+      "first_four_stack_frames": [
+        "at org.gradle.api.internal.artifacts.configurations.DefaultConfiguration.setVisible(DefaultConfiguration.java:376)",
+        "at org.gradle.api.internal.artifacts.configurations.DefaultLegacyConfiguration_Decorated.setVisible(Unknown Source)",
+        "at com.diffplug.gradle.spotless.GradleProvisioner.lambda$forConfigurationContainer$2(GradleProvisioner.java:136)"
+      ],
+      "diagnostic_block_sha256": "f64ea3e325aa4d6ff2d349dfa414716044eb15b656f59f3402ea40cc30478635",
+      "block_lines": 4
+    }
+  ],
+  "input_hashes": {
+    "gradle.log": "44b0d187d14dc99be305b1a076d521258cddd17743a795e0815b591e92409efb",
+    "invocation.json": "57e802826fc91cc82ce79224ce835599d5580e43b4061d039a5da4c7fd16bba0",
+    "completion.json": "19595a6375c613d7528d6ca7210c191eb566fe01378851da51a4e842a85cc8a6",
+    "target-before.json": "5d476e0b8b20097885e2de8118ffdc146b68b8abe9c24ae9cc7ff5d2314267b2",
+    "target-after.json": "64d190b3c6dc73cf27781d7356ab4891c059f39d112ed9b9419a7716f5015e74",
+    "phase-review.json": "efb855822c9eec64b890bae4798dacb42322fac2c662a3ca3eadf33fa54cc7db",
+    "outer-result.json": "9fb5921c643a4e8d2534cf496352c03e40e4f3623c1afe05a999f2206755dcd8"
+  },
+  "conclusion": "56 messages have 52 direct AGP callers, 3 direct KSP callers and 1 direct Spotless GradleProvisioner caller. The old checker total==1 and first-block-is-Spotless assumptions are invalid under deprecation trace. This does not establish all setVisible warnings are caused by Spotless or will be removed by upgrading it.",
+  "next_acceptance_scope": "Separate all exact warning messages by their actual bounded direct-caller stacks. Require the Spotless-specific warning count to go 1->0 under upgrade; preserve and report the other AGP/KSP warnings and three independent cross-build warnings. No candidate execution or final source acceptance is claimed here.",
+  "scope_limits": [
+    "This is independent read-only diagnosis of the retained failed-checker baseline attempt; it does not rewrite its failure to success.",
+    "The baseline1 Gradle actions completed and the checker failure is real. Original tool/report/log hashes are retained.",
+    "No production edit, Gradle, ADB, VM or GitHub mutation performed by this review."
+  ]
+}

@@ -1,0 +1,256 @@
+{
+  "created_at_utc": "2026-10-29T05:35:32.780094+00:00",
+  "status": "OFFICIAL_FIX_CANDIDATES_RESEARCH_ONLY; NO_AGP_KSP_UPGRADE_OR_BUILD_OR_PR",
+  "scope": "Remaining setVisible warnings after source-bound Spotless8.10.2->8.10.3 formatter A/B. Official metadata, source artifacts and issue history read only; not a claim that AGP/KSP warnings were fixed locally.",
+  "actual_AB_and_tool_correction": {
+    "baseline": {
+      "setvisible_total": 56,
+      "direct_caller_components": {
+        "AGP": 52,
+        "KSP": 3,
+        "SPOTLESS": 1
+      },
+      "cross_build_warning_count": 3
+    },
+    "candidate": {
+      "setvisible_total": 55,
+      "direct_caller_components": {
+        "AGP": 52,
+        "KSP": 3
+      },
+      "cross_build_warning_count": 3
+    },
+    "nonspotless_callers_identical": true,
+    "direct_caller_multiset": {
+      "com.android.build.gradle.internal.TaskManager$Companion$createCoreLibraryDesugaringConfig$1.execute(TaskManager.kt:2121)": 1,
+      "com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)": 41,
+      "com.android.build.gradle.internal.dependency.VariantDependenciesBuilder.build(VariantDependenciesBuilder.java:263)": 1,
+      "com.android.build.gradle.internal.dependency.VariantDependenciesBuilder.build(VariantDependenciesBuilder.java:310)": 1,
+      "com.android.build.gradle.internal.dependency.VariantDependenciesBuilder.build(VariantDependenciesBuilder.java:324)": 1,
+      "com.android.build.gradle.internal.dependency.VariantDependenciesBuilder.build(VariantDependenciesBuilder.java:353)": 1,
+      "com.android.build.gradle.internal.plugins.BasePlugin$Companion$createAndroidJdkImageConfiguration$1.execute(BasePlugin.kt:362)": 1,
+      "com.android.build.gradle.internal.plugins.BasePlugin$Companion.createAndroidTestUtilConfiguration$gradle_core(BasePlugin.kt:404)": 1,
+      "com.android.build.gradle.internal.plugins.BasePlugin$Companion.createCustomLintChecksConfig(BasePlugin.kt:375)": 1,
+      "com.android.build.gradle.internal.plugins.BasePlugin$Companion.createCustomLintPublishConfig(BasePlugin.kt:383)": 1,
+      "com.android.build.gradle.internal.tasks.creationconfig.BaseJavaPreCompileTaskCreationConfig.createKaptOrKspClassPath(JavaPreCompileTaskCreationConfig.kt:117)": 1,
+      "com.android.build.gradle.internal.testing.utp.UtpTestUtilsKt$maybeCreateUtpConfigurations$1$1.execute(UtpTestUtils.kt:263)": 1,
+      "com.google.devtools.ksp.gradle.KspConfigurations.<init>(KspConfigurations.kt:34)": 1,
+      "com.google.devtools.ksp.gradle.KspConfigurations.createConfiguration(KspConfigurations.kt:54)": 1,
+      "com.google.devtools.ksp.gradle.KspSubpluginKt.markResolvable(KspSubplugin.kt:463)": 1
+    },
+    "v1_failure_preserved": {
+      "file": {
+        "path": "spotless-baseline1/phase-review.json",
+        "bytes": 33922,
+        "sha256": "efb855822c9eec64b890bae4798dacb42322fac2c662a3ca3eadf33fa54cc7db"
+      },
+      "status": "FAIL_OR_INCONCLUSIVE",
+      "failures": [
+        "Baseline must reproduce exactly one setVisible deprecation message",
+        "Baseline setVisible diagnostic must include its GradleProvisioner stack frame"
+      ],
+      "explanation": "The initial checker incorrectly assumed enabling deprecation.trace would still produce one total setVisible message. Actual trace expands56 calls:52 AGP,3 KSP,1 Spotless. Its broad block matcher and total-count requirement could not express this ownership separation. Raw build was successful; old failed checker result is retained."
+    },
+    "v2": {
+      "file": {
+        "path": "check-spotless-phase-v2.py",
+        "bytes": 16932,
+        "sha256": "114c3563c0d3e870681fef1684817ce5ab0488199687ee4a8625bd393fca6221"
+      },
+      "attribution": "For each message use only immediately following contiguous tab-at Java frames, then first non-Gradle/Java-framework caller. Unknown/missing caller stacks fail; all messages are counted. Baseline must reproduce52/3/1, candidate52/3/0, with exactly identical non-Spotless direct-caller multiset. Original four actions/nonce/same JVM/293 exact tracked and target inputs/producer warm-output gates remain.",
+      "results": [
+        {
+          "path": "spotless-baseline1/phase-review-v2.json",
+          "bytes": 45607,
+          "sha256": "1d940302a5942ee1fff2d72908b550009707fe2354a7f893b0865a70f49f5492"
+        },
+        {
+          "path": "spotless-candidate1/phase-review-v2.json",
+          "bytes": 45384,
+          "sha256": "2ec96ee7c4780192655db7573f976658de221b99e44d6090c74d0f72f6f32cf1"
+        }
+      ],
+      "actual_checker_exit_codes": [
+        0,
+        0
+      ]
+    },
+    "warning_note": "Neither56->55 nor the Spotless-specific1->0 means all deprecations disappeared. Both phases still retain three separate cross-build producer warnings on the base without #2206."
+  },
+  "AGP": {
+    "currently_used": "9.4.1",
+    "actual_setvisible_occurrences": 52,
+    "actual_unique_direct_caller_sites": 12,
+    "official_fix_history": [
+      {
+        "issue": "https://issuetracker.google.com/issues/560282299",
+        "initial_fixed_version": "9.5.0-alpha06",
+        "note": "Initial lint/base configuration cleanup was incomplete for every caller; issue history includes later reports, so alpha06 alone must not be treated as proof of full removal."
+      },
+      {
+        "issue": "https://issuetracker.google.com/issues/565740572",
+        "fixed_version_listed": "9.5.0-alpha09",
+        "note": "Official9.5 notes specifically list Gradle9.8 setVisible reports with AGP9.4.1 under this later fix."
+      }
+    ],
+    "official_release_notes": "https://developer.android.com/build/releases/agp-9-5-0-release-notes?hl=en",
+    "published_stable_candidate": "9.5.0",
+    "Google_Maven_publication_verified": true,
+    "official_compatibility": {
+      "maximum_API": 37,
+      "minimum_Gradle": "9.6.0",
+      "JDK": 17,
+      "default_build_tools": "36.0.0",
+      "default_NDK": "28.2.13676358",
+      "project_Gradle9_8_1_meets_declared_minimum": true
+    },
+    "official_source_jar_comparison": [
+      {
+        "version": "9.4.1",
+        "url": "https://dl.google.com/dl/android/maven2/com/android/tools/build/gradle/9.4.1/gradle-9.4.1-sources.jar",
+        "bytes": 4032753,
+        "sha256": "08a69084ca47b2681671a611113ed919b986facb79dc24404fb7348d2c62a386",
+        "setVisible_or_isVisible_assignment_text_matches": 28
+      },
+      {
+        "version": "9.5.0",
+        "url": "https://dl.google.com/dl/android/maven2/com/android/tools/build/gradle/9.5.0/gradle-9.5.0-sources.jar",
+        "bytes": 4133980,
+        "sha256": "6cefffe0ebce5c0b2b0a2f312e1502e2631e210adcbd7876ba01d36b471b3d65",
+        "setVisible_or_isVisible_assignment_text_matches": 0
+      }
+    ],
+    "source_inspection_method": "Downloaded official sources jars to memory only, scanned every .kt/.java entry for direct setVisible(...) or isVisible= assignments; original9.4.1 includes exact observed files/lines,9.5.0 has zero such text matches.28 source sites and52 runtime occurrences are different measures. No artifact was installed or executable code run.",
+    "decision": "9.5.0 is a defensible separately tested candidate for the52 AGP-owned calls. Source absence plus official compatibility is not runtime acceptance: fresh local configuration/formatter trace, codegen, JVM tests, Debug/Release build+lint and four-platform CI are required. Do not jump to9.6 previews merely because Maven latest/release fields point to them."
+  },
+  "KSP": {
+    "currently_used": "2.3.6",
+    "actual_setvisible_occurrences": 3,
+    "issue": "https://github.com/google/ksp/issues/3234",
+    "fix_PR": "https://github.com/google/ksp/pull/3237",
+    "fix_merged_at": "2026-10-02T14:09:46Z",
+    "fix_merge_sha": "7697329239c660ff20cf2479f9b48f89e1e7e022",
+    "latest_official_GitHub_release": {
+      "tag": "2.3.12",
+      "published_at": "2026-09-09T18:27:29Z",
+      "url": "https://github.com/google/ksp/releases/tag/2.3.12",
+      "prerelease": false
+    },
+    "latest_Maven_release_verified": "2.3.12",
+    "published_release_with_this_fix_found": false,
+    "precise_source_control": [
+      {
+        "ref": "2.3.6",
+        "file": "KspConfigurations.kt",
+        "bytes": 11075,
+        "sha256": "6156f1d468c6327e0c116763f6355148cbd8de8d107b1028d58f0968b0703662",
+        "isVisible_assignment_lines": [
+          34,
+          54
+        ],
+        "url": "https://github.com/google/ksp/blob/2.3.6/gradle-plugin/src/main/kotlin/com/google/devtools/ksp/gradle/KspConfigurations.kt"
+      },
+      {
+        "ref": "2.3.6",
+        "file": "KspSubplugin.kt",
+        "bytes": 22047,
+        "sha256": "8f62863da0dcc8ead2742f42372f2d161f794a888b90a4abefa412a0a026f9fa",
+        "isVisible_assignment_lines": [
+          463
+        ],
+        "url": "https://github.com/google/ksp/blob/2.3.6/gradle-plugin/src/main/kotlin/com/google/devtools/ksp/gradle/KspSubplugin.kt"
+      },
+      {
+        "ref": "2.3.12",
+        "file": "KspConfigurations.kt",
+        "bytes": 10888,
+        "sha256": "880b96d159d139d3b10910828b007721dde26e03bd1e7268d180379d5dcf0b2c",
+        "isVisible_assignment_lines": [
+          33,
+          53
+        ],
+        "url": "https://github.com/google/ksp/blob/2.3.12/gradle-plugin/src/main/kotlin/com/google/devtools/ksp/gradle/KspConfigurations.kt"
+      },
+      {
+        "ref": "2.3.12",
+        "file": "KspSubplugin.kt",
+        "bytes": 22280,
+        "sha256": "8604b9512adce1a2bf7caa2d5d0cf73b18ade49aa45aae17f6fb7b65f6fcd1d5",
+        "isVisible_assignment_lines": [
+          469
+        ],
+        "url": "https://github.com/google/ksp/blob/2.3.12/gradle-plugin/src/main/kotlin/com/google/devtools/ksp/gradle/KspSubplugin.kt"
+      },
+      {
+        "ref": "7697329239c660ff20cf2479f9b48f89e1e7e022",
+        "file": "KspConfigurations.kt",
+        "bytes": 11365,
+        "sha256": "6f904f4bdac087554ae96fdf1f16862ea6eb85462b59609318f6007cd37b5aef",
+        "isVisible_assignment_lines": [],
+        "url": "https://github.com/google/ksp/blob/7697329239c660ff20cf2479f9b48f89e1e7e022/gradle-plugin/src/main/kotlin/com/google/devtools/ksp/gradle/KspConfigurations.kt"
+      },
+      {
+        "ref": "7697329239c660ff20cf2479f9b48f89e1e7e022",
+        "file": "KspSubplugin.kt",
+        "bytes": 22258,
+        "sha256": "003a09c8a6d7e6693658d49e4fd39daa2e6c763134eaa0738580f2dba765fd4a",
+        "isVisible_assignment_lines": [],
+        "url": "https://github.com/google/ksp/blob/7697329239c660ff20cf2479f9b48f89e1e7e022/gradle-plugin/src/main/kotlin/com/google/devtools/ksp/gradle/KspSubplugin.kt"
+      }
+    ],
+    "decision": "The fix is on official main, but current Maven/GitHub stable2.3.12 still directly contains all three isVisible assignments. Upgrading2.3.6->2.3.12 cannot be sold as this warning fix. Wait for an official containing release or coordinate a narrow upstream-supported release/backport; do not vendor a patched plugin, disable deprecations or use unverified snapshots to declare zero warnings.",
+    "compatibility_limit": "Later KSP release notes also raise minimum supported AGP; choose future version only after verifying its own compatibility and actual project code generation. No future version number or date is promised."
+  },
+  "live_official_metadata": [
+    {
+      "component": "AGP",
+      "url": "https://dl.google.com/dl/android/maven2/com/android/tools/build/gradle/maven-metadata.xml",
+      "bytes": 25267,
+      "sha256": "6d619fa4cc875c12e78e1b9d7a5f1c0ce93f57914143165211488b99abd60663",
+      "latest_field": "9.6.0-alpha02",
+      "release_field": "9.6.0-alpha02",
+      "last_updated": "20261028141942",
+      "latest_stable_listed": "9.5.0",
+      "last12_versions": [
+        "9.5.0-alpha04",
+        "9.5.0-alpha05",
+        "9.5.0-alpha06",
+        "9.5.0-alpha07",
+        "9.5.0-alpha08",
+        "9.5.0-alpha09",
+        "9.5.0-alpha10",
+        "9.5.0-rc01",
+        "9.5.0-rc02",
+        "9.5.0",
+        "9.6.0-alpha01",
+        "9.6.0-alpha02"
+      ]
+    },
+    {
+      "component": "KSP",
+      "url": "https://repo.maven.apache.org/maven2/com/google/devtools/ksp/symbol-processing-gradle-plugin/maven-metadata.xml",
+      "bytes": 6696,
+      "sha256": "1c10eb930a68957dd52952557667db6266ba7e32121e6b980fbb54ad83e0324f",
+      "latest_field": "2.3.12",
+      "release_field": "2.3.12",
+      "last_updated": "20260909175426",
+      "latest_stable_listed": "2.3.12",
+      "last12_versions": [
+        "2.3.1",
+        "2.3.2",
+        "2.3.3",
+        "2.3.4",
+        "2.3.5",
+        "2.3.6",
+        "2.3.7",
+        "2.3.8",
+        "2.3.9",
+        "2.3.10",
+        "2.3.11",
+        "2.3.12"
+      ]
+    }
+  ],
+  "next_work_unit": "Keep #2207 limited to Spotless8.10.3. If Root chooses further work, validate AGP9.5.0 as an independent dependency change against the exact current wrapper/toolchain; retain KSP3 calls until an actually released compatible fix is available. Preserve known caller distributions and do not suppress other diagnostics.",
+  "actions": "Only new v2 read-only checker was executed on already-finished logs; original v1/failure/raw invocations were not modified. Official metadata/source bytes were downloaded in memory and inspected, not installed. No Gradle/native build, production edit, dependency upgrade, emulator, PR or push."
+}

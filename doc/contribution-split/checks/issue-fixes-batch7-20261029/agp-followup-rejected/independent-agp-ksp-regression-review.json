@@ -1,0 +1,328 @@
+{
+  "status": "R8_AGP_ONLY_PATCH_NOT_ACCEPTED_KSP_WARNING_REGRESSION_AND_NEW_BUILD_SCRIPT_DEPRECATION",
+  "utc": "2026-10-29T05:45:48.379212+00:00",
+  "phases": {
+    "spotless-baseline1": {
+      "counts": {
+        "AGP": 52,
+        "KSP": 3,
+        "SPOTLESS": 1
+      },
+      "nonAGP_direct_caller_multiset": {
+        "com.google.devtools.ksp.gradle.KspConfigurations.<init>(KspConfigurations.kt:34)": 1,
+        "com.google.devtools.ksp.gradle.KspConfigurations.createConfiguration(KspConfigurations.kt:54)": 1,
+        "com.google.devtools.ksp.gradle.KspSubpluginKt.markResolvable(KspSubplugin.kt:463)": 1,
+        "com.diffplug.gradle.spotless.GradleProvisioner.lambda$forConfigurationContainer$2(GradleProvisioner.java:136)": 1
+      },
+      "KSP_records": [
+        {
+          "line_1based": 12387,
+          "direct_caller": "com.google.devtools.ksp.gradle.KspConfigurations.<init>(KspConfigurations.kt:34)",
+          "relevant_frames": [
+            "com.google.devtools.ksp.gradle.KspConfigurations.<init>(KspConfigurations.kt:34)"
+          ],
+          "contiguous_stack_sha256": "fd7a23620753fcd97d0d017bf3df035bb8eecbb37048665f6c3ed6b5bcbe68db"
+        },
+        {
+          "line_1based": 12391,
+          "direct_caller": "com.google.devtools.ksp.gradle.KspConfigurations.createConfiguration(KspConfigurations.kt:54)",
+          "relevant_frames": [
+            "com.google.devtools.ksp.gradle.KspConfigurations.createConfiguration(KspConfigurations.kt:54)"
+          ],
+          "contiguous_stack_sha256": "cdecfd15302b506c399f2cc6a86516525beddc5c428073a39983a696ee106406"
+        },
+        {
+          "line_1based": 12429,
+          "direct_caller": "com.google.devtools.ksp.gradle.KspSubpluginKt.markResolvable(KspSubplugin.kt:463)",
+          "relevant_frames": [
+            "com.google.devtools.ksp.gradle.KspSubpluginKt.markResolvable(KspSubplugin.kt:463)"
+          ],
+          "contiguous_stack_sha256": "4998fe3c1f7fa88bec27fc53e36f542578b1aebf6ad0f59f229b9c8627ef04c7"
+        }
+      ],
+      "actual_gradle_exit": 0,
+      "target293": true,
+      "source_stable": true,
+      "source_warnings": [],
+      "cross_build_warning_count": 3,
+      "resolved_plugins": [
+        "Resolved plugin [id: 'com.android.application', version: '9.4.1', apply: false]",
+        "Resolved plugin [id: 'com.android.library', version: '9.4.1', apply: false]",
+        "Resolved plugin [id: 'com.google.devtools.ksp', version: '2.3.6', apply: false]",
+        "Resolved plugin [id: 'com.diffplug.spotless', version: '8.10.2']",
+        "Resolved plugin [id: 'com.google.devtools.ksp', version: '2.3.6']"
+      ],
+      "input_hashes": {
+        "gradle.log": "620528228eed3d363778e73b3efc860465c5b698741d6ac97be6a81e1feeb36c",
+        "invocation.json": "0fd372c5daab3226db7f72b07cbbafd692c68df513047ed4db98f6f1e7baa425",
+        "completion.json": "c426bd6bc7137e14ed298cd3dc13ca07bd0db62e64ec8e6ec57659e826be7f7b",
+        "target-before.json": "b275086b71b27943ffa58f8ef727e2027c3eb4541c35ddfbdaed401bcac0ffb3",
+        "target-after.json": "8908e03e7ed547185ff55b131a4731cada46e908801e47508744536c1bbf615b",
+        "phase-review.json": "d60daa0a4ca6d90529f8503c68c2edb1f489e0fcb0fe2e597aa00559869ea770",
+        "source-before.diff": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "outer-result.json": "689a5d9c91d48827229bd28eabec732861bdda397eef3d570890fb83cb2e48c7"
+      }
+    },
+    "spotless-candidate2": {
+      "counts": {
+        "KSP": 11,
+        "SPOTLESS": 1
+      },
+      "nonAGP_direct_caller_multiset": {
+        "com.google.devtools.ksp.gradle.KspConfigurations.<init>(KspConfigurations.kt:34)": 1,
+        "com.google.devtools.ksp.gradle.KspConfigurations.createConfiguration(KspConfigurations.kt:54)": 1,
+        "com.google.devtools.ksp.gradle.KspSubpluginKt.markResolvable(KspSubplugin.kt:463)": 9,
+        "com.diffplug.gradle.spotless.GradleProvisioner.lambda$forConfigurationContainer$2(GradleProvisioner.java:136)": 1
+      },
+      "KSP_records": [
+        {
+          "line_1based": 1763,
+          "direct_caller": "com.google.devtools.ksp.gradle.KspConfigurations.<init>(KspConfigurations.kt:34)",
+          "relevant_frames": [
+            "com.google.devtools.ksp.gradle.KspConfigurations.<init>(KspConfigurations.kt:34)",
+            "com.google.devtools.ksp.gradle.KspGradleSubplugin.apply(KspSubplugin.kt:122)",
+            "com.google.devtools.ksp.gradle.KspGradleSubplugin.apply(KspSubplugin.kt:71)"
+          ],
+          "contiguous_stack_sha256": "20d62d976b4741b3aa0f368a55da58bb4e59134b47e11e20fdf964b8d750c636"
+        },
+        {
+          "line_1based": 1982,
+          "direct_caller": "com.google.devtools.ksp.gradle.KspConfigurations.createConfiguration(KspConfigurations.kt:54)",
+          "relevant_frames": [
+            "com.google.devtools.ksp.gradle.KspConfigurations.createConfiguration(KspConfigurations.kt:54)",
+            "com.google.devtools.ksp.gradle.KspConfigurations.access$createConfiguration(KspConfigurations.kt:19)",
+            "com.google.devtools.ksp.gradle.KspConfigurations$createAndroidSourceSetConfigurations$1.invoke(KspConfigurations.kt:234)",
+            "com.google.devtools.ksp.gradle.KspConfigurations$createAndroidSourceSetConfigurations$1.invoke(KspConfigurations.kt:233)",
+            "com.google.devtools.ksp.gradle.AndroidPluginIntegration$decorateAndroidExtension$1.invoke(AndroidPluginIntegration.kt:64)",
+            "com.google.devtools.ksp.gradle.AndroidPluginIntegration$decorateAndroidExtension$1.invoke(AndroidPluginIntegration.kt:63)",
+            "com.google.devtools.ksp.gradle.AndroidPluginIntegration.decorateAndroidExtension$lambda$0(AndroidPluginIntegration.kt:63)",
+            "com.google.devtools.ksp.gradle.AndroidPluginIntegration.decorateAndroidExtension(AndroidPluginIntegration.kt:63)",
+            "com.google.devtools.ksp.gradle.AndroidPluginIntegration.access$decorateAndroidExtension(AndroidPluginIntegration.kt:48)",
+            "com.google.devtools.ksp.gradle.AndroidPluginIntegration$forEachAndroidSourceSet$1.invoke(AndroidPluginIntegration.kt:53)",
+            "com.google.devtools.ksp.gradle.AndroidPluginIntegration$forEachAndroidSourceSet$1.invoke(AndroidPluginIntegration.kt:51)",
+            "com.google.devtools.ksp.gradle.AndroidPluginIntegration.forEachAndroidSourceSet$lambda$0(AndroidPluginIntegration.kt:51)",
+            "com.google.devtools.ksp.gradle.AndroidPluginIntegration.forEachAndroidSourceSet(AndroidPluginIntegration.kt:51)",
+            "com.google.devtools.ksp.gradle.KspConfigurations.createAndroidSourceSetConfigurations(KspConfigurations.kt:233)",
+            "com.google.devtools.ksp.gradle.KspConfigurations.access$createAndroidSourceSetConfigurations(KspConfigurations.kt:19)",
+            "com.google.devtools.ksp.gradle.KspConfigurations$2.invoke(KspConfigurations.kt:106)",
+            "com.google.devtools.ksp.gradle.KspConfigurations$2.invoke(KspConfigurations.kt:103)",
+            "com.google.devtools.ksp.gradle.KspConfigurations._init_$lambda$1(KspConfigurations.kt:103)",
+            "com.google.devtools.ksp.gradle.KspConfigurations.<init>(KspConfigurations.kt:103)",
+            "com.google.devtools.ksp.gradle.KspGradleSubplugin.apply(KspSubplugin.kt:122)",
+            "com.google.devtools.ksp.gradle.KspGradleSubplugin.apply(KspSubplugin.kt:71)"
+          ],
+          "contiguous_stack_sha256": "571a160047fe2d22567dec44890fbc67fb56f04be0e70d52815eff88946fd9ea"
+        },
+        {
+          "line_1based": 2275,
+          "direct_caller": "com.google.devtools.ksp.gradle.KspSubpluginKt.markResolvable(KspSubplugin.kt:463)",
+          "relevant_frames": [
+            "com.google.devtools.ksp.gradle.KspSubpluginKt.markResolvable(KspSubplugin.kt:463)",
+            "com.google.devtools.ksp.gradle.KspGradleSubplugin.applyToCompilation(KspSubplugin.kt:171)",
+            "com.android.build.gradle.internal.TaskManager.addSubpluginOptionsForBuiltInKotlin(TaskManager.kt:1007)"
+          ],
+          "contiguous_stack_sha256": "50b344724633a559fb971761af9cd2385afbc329b6751583bf089aaf60733efc"
+        },
+        {
+          "line_1based": 2489,
+          "direct_caller": "com.google.devtools.ksp.gradle.KspSubpluginKt.markResolvable(KspSubplugin.kt:463)",
+          "relevant_frames": [
+            "com.google.devtools.ksp.gradle.KspSubpluginKt.markResolvable(KspSubplugin.kt:463)",
+            "com.google.devtools.ksp.gradle.KspGradleSubplugin.applyToCompilation(KspSubplugin.kt:191)",
+            "com.android.build.gradle.internal.TaskManager.addSubpluginOptionsForBuiltInKotlin(TaskManager.kt:1007)"
+          ],
+          "contiguous_stack_sha256": "086b2bc00c56cec2850e4d1b819226171324d5bee84a2df5aac70660673b9974"
+        },
+        {
+          "line_1based": 2703,
+          "direct_caller": "com.google.devtools.ksp.gradle.KspSubpluginKt.markResolvable(KspSubplugin.kt:463)",
+          "relevant_frames": [
+            "com.google.devtools.ksp.gradle.KspSubpluginKt.markResolvable(KspSubplugin.kt:463)",
+            "com.google.devtools.ksp.gradle.KspGradleSubplugin.applyToCompilation(KspSubplugin.kt:199)",
+            "com.android.build.gradle.internal.TaskManager.addSubpluginOptionsForBuiltInKotlin(TaskManager.kt:1007)"
+          ],
+          "contiguous_stack_sha256": "be4b6d6d680dd47aaada1ecb48c0552e75ef133dbb3b2601e78afa6675748713"
+        },
+        {
+          "line_1based": 2917,
+          "direct_caller": "com.google.devtools.ksp.gradle.KspSubpluginKt.markResolvable(KspSubplugin.kt:463)",
+          "relevant_frames": [
+            "com.google.devtools.ksp.gradle.KspSubpluginKt.markResolvable(KspSubplugin.kt:463)",
+            "com.google.devtools.ksp.gradle.KspGradleSubplugin.applyToCompilation(KspSubplugin.kt:171)",
+            "com.android.build.gradle.internal.TaskManager.addSubpluginOptionsForBuiltInKotlin(TaskManager.kt:1007)"
+          ],
+          "contiguous_stack_sha256": "07146c6f43c1a3fc210fd353e0545ab93845963934d3b8822db00a04f5ae3f27"
+        },
+        {
+          "line_1based": 3129,
+          "direct_caller": "com.google.devtools.ksp.gradle.KspSubpluginKt.markResolvable(KspSubplugin.kt:463)",
+          "relevant_frames": [
+            "com.google.devtools.ksp.gradle.KspSubpluginKt.markResolvable(KspSubplugin.kt:463)",
+            "com.google.devtools.ksp.gradle.KspGradleSubplugin.applyToCompilation(KspSubplugin.kt:191)",
+            "com.android.build.gradle.internal.TaskManager.addSubpluginOptionsForBuiltInKotlin(TaskManager.kt:1007)"
+          ],
+          "contiguous_stack_sha256": "1eb7effaeed9a8c48b8c6214504b2b97cfbcfae9d538452daa1eb98f9325315d"
+        },
+        {
+          "line_1based": 3341,
+          "direct_caller": "com.google.devtools.ksp.gradle.KspSubpluginKt.markResolvable(KspSubplugin.kt:463)",
+          "relevant_frames": [
+            "com.google.devtools.ksp.gradle.KspSubpluginKt.markResolvable(KspSubplugin.kt:463)",
+            "com.google.devtools.ksp.gradle.KspGradleSubplugin.applyToCompilation(KspSubplugin.kt:199)",
+            "com.android.build.gradle.internal.TaskManager.addSubpluginOptionsForBuiltInKotlin(TaskManager.kt:1007)"
+          ],
+          "contiguous_stack_sha256": "3bf2f27793c641721646817d60f9d659e390a71969aed860cbff3cfb2be73d47"
+        },
+        {
+          "line_1based": 3553,
+          "direct_caller": "com.google.devtools.ksp.gradle.KspSubpluginKt.markResolvable(KspSubplugin.kt:463)",
+          "relevant_frames": [
+            "com.google.devtools.ksp.gradle.KspSubpluginKt.markResolvable(KspSubplugin.kt:463)",
+            "com.google.devtools.ksp.gradle.KspGradleSubplugin.applyToCompilation(KspSubplugin.kt:171)",
+            "com.android.build.gradle.internal.TaskManager.addSubpluginOptionsForBuiltInKotlin(TaskManager.kt:1007)"
+          ],
+          "contiguous_stack_sha256": "6014f03ad088e1598dbd7516699b2906b5b91b4aa748ce9452a013b9082e7ec5"
+        },
+        {
+          "line_1based": 3766,
+          "direct_caller": "com.google.devtools.ksp.gradle.KspSubpluginKt.markResolvable(KspSubplugin.kt:463)",
+          "relevant_frames": [
+            "com.google.devtools.ksp.gradle.KspSubpluginKt.markResolvable(KspSubplugin.kt:463)",
+            "com.google.devtools.ksp.gradle.KspGradleSubplugin.applyToCompilation(KspSubplugin.kt:191)",
+            "com.android.build.gradle.internal.TaskManager.addSubpluginOptionsForBuiltInKotlin(TaskManager.kt:1007)"
+          ],
+          "contiguous_stack_sha256": "211d76a1eebd8a0bdae01bdaac8373cb242f726bad8eac4b2047ca3355493c60"
+        },
+        {
+          "line_1based": 3979,
+          "direct_caller": "com.google.devtools.ksp.gradle.KspSubpluginKt.markResolvable(KspSubplugin.kt:463)",
+          "relevant_frames": [
+            "com.google.devtools.ksp.gradle.KspSubpluginKt.markResolvable(KspSubplugin.kt:463)",
+            "com.google.devtools.ksp.gradle.KspGradleSubplugin.applyToCompilation(KspSubplugin.kt:199)",
+            "com.android.build.gradle.internal.TaskManager.addSubpluginOptionsForBuiltInKotlin(TaskManager.kt:1007)"
+          ],
+          "contiguous_stack_sha256": "def65cb98572de3b0c7edef86f8dc0ebbc9adc4209f1d58205d989d983af62dc"
+        }
+      ],
+      "actual_gradle_exit": 0,
+      "target293": true,
+      "source_stable": true,
+      "source_warnings": [
+        "w: file:///home/xumin/Public/Trime-pr-agp-gradle9-20261029/app/build.gradle.kts:31:9: 'var multiDexEnabled: Boolean?' is deprecated. Legacy multidex (minSdk <= 19) is deprecated in AGP 9.4 and will be unsupported in AGP 11. Native multidex is always supported for minSdk 21+."
+      ],
+      "cross_build_warning_count": 3,
+      "resolved_plugins": [
+        "Resolved plugin [id: 'com.android.application', version: '9.5.0', apply: false]",
+        "Resolved plugin [id: 'com.android.library', version: '9.5.0', apply: false]",
+        "Resolved plugin [id: 'com.google.devtools.ksp', version: '2.3.6', apply: false]",
+        "Resolved plugin [id: 'com.diffplug.spotless', version: '8.10.2']",
+        "Resolved plugin [id: 'com.google.devtools.ksp', version: '2.3.6']"
+      ],
+      "input_hashes": {
+        "gradle.log": "f958e8d726bddf630334625db4c5db81412a9b17d6afc3b517dc2bb9ecab6f50",
+        "invocation.json": "a1cf2eee957350afc2cecf2516014217127a6b11601d28d95250e5c865113dfb",
+        "completion.json": "92402f5ec5c80cb80164d236cb8b991639cc567befb44926744909cbb40f6565",
+        "target-before.json": "adce66beaa8f12fcdb4bd3aee4ced932e1f6a40da189be2ced1b1cfd588d6bd5",
+        "target-after.json": "815b939e258c163b0fdec4931b9bd6610660e35a16a12988a70b0f80eaebd5c5",
+        "phase-review.json": "731122b29f625ffe03e52f2217e887994d73b4e1ff69d5dc701c1e7953d75443",
+        "source-before.diff": "d5cd132631e364af3ce991a31387905d1f2939001db4b9b35d244ce33f876d3b",
+        "outer-result.json": "377b2bb98db1bed0c15b89805cfe859c379b87ad9c31679f8cf39bb5851ecfdf"
+      }
+    }
+  },
+  "all293actual_AB_Kotlin_inputs_identical": true,
+  "candidate_checker_failures": [
+    "Candidate must retain all4 non-AGP setVisible messages",
+    "Candidate direct-caller distribution must be AGP0/KSP3/Spotless1 with no unknown or new AGP source",
+    "Candidate non-AGP direct-caller multiset differs from the complete baseline"
+  ],
+  "conclusions": {
+    "AGP_calls_removed": 52,
+    "KSP_calls_before_after": [
+      3,
+      11
+    ],
+    "Spotless_calls_before_after": [
+      1,
+      1
+    ],
+    "cross_build_warnings_before_after": [
+      3,
+      3
+    ],
+    "setVisible_total_before_after": [
+      56,
+      12
+    ],
+    "changed_KSP_call": "markResolvable(KspSubplugin.kt:463) grows from1 to9; two KspConfigurations callers stay1 each.",
+    "actual_new_path": "KspGradleSubplugin.applyToCompilation171/191/199 called by AGP TaskManager.addSubpluginOptionsForBuiltInKotlin1007 for multiple compilations.",
+    "interpretation": "This reproduces more executions of known deprecated KSP calls under the new AGP integration. Warning count alone does not establish an application or processor correctness failure. Formatter-only configuration also cannot establish KSP/Room generation compatibility.",
+    "new_build_script_diagnostic": "Candidate log additionally reports deprecated multiDexEnabled at app/build.gradle.kts31; the message states native multidex is always supported for minSdk21+. No claim that the semantic deprecation first arose in9.5."
+  },
+  "upstream_KSP_fix": {
+    "issue": "https://github.com/google/ksp/issues/3234",
+    "issue_reported_version": "2.3.12",
+    "merged_fix": "https://github.com/google/ksp/pull/3237",
+    "merge_sha": "7697329239c660ff20cf2479f9b48f89e1e7e022",
+    "merged_at": "2026-10-02T14:09:46Z",
+    "fix_scope": "Remove all3 isVisible writes, including markResolvable.",
+    "stable_distribution_observation": [
+      {
+        "utc": "2026-10-29T05:45:18.106933+00:00",
+        "url": "https://repo.maven.apache.org/maven2/com/google/devtools/ksp/symbol-processing-gradle-plugin/maven-metadata.xml",
+        "status": 200,
+        "latest": "2.3.12",
+        "release": "2.3.12",
+        "updated": "20260909175426",
+        "tail_versions": [
+          "2.3.1",
+          "2.3.2",
+          "2.3.3",
+          "2.3.4",
+          "2.3.5",
+          "2.3.6",
+          "2.3.7",
+          "2.3.8",
+          "2.3.9",
+          "2.3.10",
+          "2.3.11",
+          "2.3.12"
+        ]
+      },
+      {
+        "utc": "2026-10-29T05:45:18.467286+00:00",
+        "url": "https://dl.google.com/dl/android/maven2/com/google/devtools/ksp/symbol-processing-gradle-plugin/maven-metadata.xml",
+        "status": 200,
+        "latest": "1.5.30-1.0.0",
+        "release": "1.5.30-1.0.0",
+        "updated": "20210907192629",
+        "tail_versions": [
+          "1.5.0-1.0.0-alpha09",
+          "1.5.0-1.0.0-alpha10",
+          "1.5.10-1.0.0-beta01",
+          "1.5.10-1.0.0-beta02",
+          "1.5.20-1.0.0-beta03",
+          "1.5.20-1.0.0-beta04",
+          "1.5.21-1.0.0-beta05",
+          "1.5.21-1.0.0-beta06",
+          "1.5.21-1.0.0-beta07",
+          "1.5.30-1.0.0-beta08",
+          "1.5.30-1.0.0-beta09",
+          "1.5.30-1.0.0"
+        ]
+      }
+    ],
+    "release_note_observation": "Current official GitHub release list and MavenCentral both list stable2.3.12 (published2026-09-09), before the fix; no tested stable package containing3237 was found.",
+    "do_not_claim": "Updating to2.3.12 fixes the warnings, or applying an unpublished snapshot is equivalent to an official stable fix."
+  },
+  "decision": "Keep the strict checker failure and hold the AGP-only branch without commit/PR. Preserve all attempts. Revisit after an official stable KSP release containing3237, and separately handle obsolete multidex configuration; only actual source-bound KSP/Room generation, compile/test/Lint and CI can establish compatibility. Do not loosen original non-AGP caller invariance or suppress warnings to publish.",
+  "R7_impact": "None. R7 Spotless-only branch and its pending final CI qualification remain separate and unchanged.",
+  "production_or_external_mutations_by_this_reviewer": false,
+  "evidence_files_sha256": {
+    "ksp-primary-summary.json": "8e3faa67d9b46154cfe5672057a3fb1099a1b0d5ce7324a0b344b51f076471dc",
+    "ksp-package-metadata-summary.json": "6a24ff2e9a4a1d22cb2d2af011088a64e3b6e02649dcfc6ebb2cf2491bb08a67",
+    "ksp-recent-releases.json": "1bdde1208ef8e36b845d40b1ad9638c7ff6e5077c75e063db88b4a0204734b3a",
+    "ksp-pr3237-files.json": "b9efc20b8fa0b8b18c3d0cadaae08f65aecf701c5a9200c45141e02da8b6cd2d",
+    "ksp-maven-central-metadata.xml": "1c10eb930a68957dd52952557667db6266ba7e32121e6b980fbb54ad83e0324f"
+  }
+}

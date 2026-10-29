@@ -1,0 +1,110 @@
+{
+  "schema_version": 1,
+  "utc": "2026-10-29T05:23:00.126796+00:00",
+  "status": "SCOPED_UPGRADE_PLAN_INDEPENDENTLY_APPROVED_PENDING_REAL_AB_AND_CI",
+  "base": "7fedca06ba5d2ef761a2ae3d44d8a0917db36994",
+  "worktree": "/home/xumin/Public/Trime-pr-spotless-gradle9-20261029",
+  "production_scope": "Only change gradle/libs.versions.toml Spotless version 8.10.2 -> 8.10.3; do not include PR #2206 targetExclude, Kotlin formatter rule changes or application edits.",
+  "official_evidence": {
+    "old_release": {
+      "tag": "gradle/8.10.2",
+      "published": "2026-09-04T18:58:18Z",
+      "prerelease": false
+    },
+    "candidate_release": {
+      "tag": "gradle/8.10.3",
+      "published": "2026-09-25T20:13:34Z",
+      "prerelease": false,
+      "url": "https://github.com/diffplug/spotless/releases/tag/gradle/8.10.3",
+      "fix_in_release_notes": "Stop calling deprecated Configuration.setVisible from Gradle 9.0.0; #3053"
+    },
+    "candidate_tag_object": {
+      "sha": "baa14f51ec4da98980395a6c082e38c17223b95a",
+      "target_commit": "eae36d86664fb5b186eb4e082fd319709e528178",
+      "git_tag_signature_status": "unsigned",
+      "no_signed_tag_claim": true
+    },
+    "fix_PR": {
+      "url": "https://github.com/diffplug/spotless/pull/3053",
+      "merged": true,
+      "merged_at": "2026-09-14T23:26:16Z",
+      "merge_commit": "8c5de1bfb7157c2f4585afd02f570cfc7b591093"
+    },
+    "exact_tag_source_guard": "if (GradleVersion.current().compareTo(GradleVersion.version(\"9.0.0\")) < 0) config.setVisible(false);",
+    "minimum_version_claim_limit": "8.10.3 is the next official patch release after pinned 8.10.2 and its release notes explicitly include #3053; this report does not call it the latest available version."
+  },
+  "upgrade_risks": [
+    {
+      "risk": "Legacy plugin marker removed in 8.10.3",
+      "assessment": "Not applicable to exact base: catalog already uses modern com.diffplug.spotless. Do not change plugin id unnecessarily."
+    },
+    {
+      "risk": "8.10.3 changes defaults for multiple formatter backends and versionCatalog behavior",
+      "assessment": "Current root config only uses Kotlin with explicit ktlint(\"1.8.0\"); no default formatter/backend/versionCatalog() is configured. Those release-note changes are not a reason to reformat application code, but actual check must still pass unchanged sources."
+    },
+    {
+      "risk": "Java/runtime dependency compatibility",
+      "assessment": "Cached GradleProvisioner.class major 61 in both 8.10.2 and 8.10.3, compatible with Java17; this one-class check is static evidence only, not full transitive or Gradle execution acceptance."
+    },
+    {
+      "risk": "One dependency warning fix could be conflated with unmerged formatter output-scope change",
+      "assessment": "Build directly on fresh upstream 7fed. Retain and expect the same three cross-build output warnings in both A and B. #2206 must remain a separate independent PR."
+    },
+    {
+      "risk": "Trace count inflation and mistaken suppression",
+      "assessment": "Preserve deprecation trace and original log bytes. Count exact warning-opening diagnostics, not every stack-frame or the word warning; candidate must avoid the call naturally, without warning-mode suppression or JAR patching."
+    }
+  ],
+  "required_AB_gates": [
+    "Use one warm isolated worktree and identical SDK/prebuilt configuration on both phases; production source delta only catalog version line.",
+    "Actually execute :spotlessKotlin and :spotlessKotlinCheck, forced nonincremental/no cache, with invocation nonce/main-action before-after evidence.",
+    "Require all same 293 Git tracked Kotlin paths and SHA bytes on both phases. Catalog TOML is outside the configured Kotlin target, so all formatter input bytes should be identical A/B.",
+    "Pin ktlint 1.8.0 and unchanged root target() configuration; retain all 12 authored build-logic files in formatter scope.",
+    "Enable org.gradle.deprecation.trace and warning-mode all. Baseline should show the actual setVisible warning and a runtime frame into GradleProvisioner; candidate should show zero exact setVisible warnings without suppressing logs.",
+    "Retain the same exact three known Spotless cross-build output warnings on A and B because #2206 is not in this branch. Any change needs explanation, not forced acceptance.",
+    "Keep producer output directories warm; ideally retain the 47 output-file inventories/SHA unchanged, or independently explain any actual generated difference from dependency resolution.",
+    "Do not borrow #2206 A/B results as current execution; preserve current phase errors and attempts.",
+    "Before Ready, bind final committed catalog delta and all relevant tested files to Git blobs, then obtain current head/base-bound 5/5 upstream CI and inspect raw check/build diagnostics.",
+    "No local full app/JVM/native/device acceptance is required or should be invented for this build-plugin-only change. CI actual tasks can be reported separately without old test counts."
+  ],
+  "Trime_duplicate_and_review_search": {
+    "search_time_utc": "2026-10-29T05:21:50.959759+00:00",
+    "spotless_result_count": 25,
+    "setVisible_result_count": 4,
+    "version_8103_result_count": 0,
+    "same_upgrade_PR_found": false,
+    "remaining_related_PR": {
+      "number": 2206,
+      "scope": "Different root input-scope exclusion, explicitly retains this setVisible warning; no human comments/reviews currently found."
+    },
+    "historical_reviews": [
+      {
+        "PR": 2139,
+        "finding": "Only Copilot bot review observed; previous combined ktlint+Spotless upgrade reformatted 58 files. Do not present bot nits as current maintainer demands."
+      },
+      {
+        "PR": 1580,
+        "finding": "Historical Spotless7.0.2 upgrade approved by WhiredPlanck with empty review text; this is not approval of current upgrade."
+      }
+    ],
+    "reference_recommendation": "Reference diffplug/spotless#3099 and merged diffplug/spotless#3053 as the dependency cause/fix, with release8.10.3. Do not invent an osfans/trime issue number or use Fixes #2206."
+  },
+  "input_files_sha256": {
+    "official-8102-release.json": "ce2bd67a0efa086e8346c72499b81e183af70b8632eea31811a1945db4e6bc9a",
+    "official-8103-annotated-tag.json": "1dccad15ef0501223bb91f9d6233edc4a7157cb922f7093125789face5af6aac",
+    "official-8103-provisioner.json": "d719128099d09e0a70e17d1fa478cb8c2553b6be0ecccae4659d03e8bba9c0c6",
+    "official-8103-release.json": "7a2db27f90164f857d64570df318cc8d630420080d8a2b2e069f32d4fcdae33b",
+    "official-8103-tag.json": "78e5c073273fdb32c721c9ef872421826fdf198ec1b756df47269fd2be77a0d8",
+    "official-fix-pr3053-files.json": "3c1596658cbdb8f0f40e30f5a82aab65a2bd4547e7d585978ef3534d84252769",
+    "official-fix-pr3053.json": "6b9d4b796333291358f87ca19b55bc40f1e961bffbb0c6f786c223cbf928955e"
+  },
+  "additional_evidence_sha256": "db6f2d7ed3fbec6bf5105593ceb241ba0c729b4bfe7d6fcb9a61d3fed8200760",
+  "performed": {
+    "Gradle": 0,
+    "ADB": 0,
+    "VM": 0,
+    "production_edits": 0,
+    "GitHub_mutations": 0
+  },
+  "limits": "This approves the bounded test plan, not runtime causality, actual warning removal, current PR readiness or a stable release. Those depend on the forthcoming source-bound A/B and CI."
+}

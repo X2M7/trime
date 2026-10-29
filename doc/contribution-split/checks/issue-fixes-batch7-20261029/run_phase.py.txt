@@ -1,0 +1,31 @@
+from pathlib import Path
+import datetime,json,os,signal,subprocess,sys,time
+R=Path(__file__).resolve().parent;T=Path('/home/xumin/Public/Trime-pr-spotless-gradle9-20261029');mode=sys.argv[1];attempt=sys.argv[2];assert mode in ['baseline','candidate'] and attempt.isdigit()
+O=R/f'spotless-{mode}{attempt}';assert not O.exists()
+J=Path('/home/xumin/Public/android-toolchain/jdk-17.0.19+10');S=Path('/home/xumin/Public/android-toolchain/android-sdk')
+for p in Path('/proc').iterdir():
+ if not p.name.isdigit():continue
+ try:c=(p/'cmdline').read_bytes().replace(b'\0',b' ')
+ except OSError:continue
+ assert not(c.startswith(b'/home/xumin/Public/android-toolchain') and (b'qemu-system-' in c or b'org.gradle.launcher.daemon.bootstrap.GradleDaemon' in c)),str(p)
+args=['python3','-B',str(R/'capture-spotless-phase.py'),'--worktree',str(T),'--phase-dir',str(O),'--mode',mode,'--jvmargs','-Xmx768M -XX:MaxMetaspaceSize=768M -XX:+UseSerialGC -XX:ActiveProcessorCount=2 -XX:+ExitOnOutOfMemoryError']
+env=dict(os.environ,JAVA_HOME=str(J),ANDROID_HOME=str(S),ANDROID_SDK_ROOT=str(S),PATH=str(J/'bin')+':'+os.environ['PATH'])
+report={'started':datetime.datetime.now(datetime.timezone.utc).isoformat(),'argv':args,'memory_floor_kib':1048576,'SDK_environment':{'ANDROID_HOME':str(S),'ANDROID_SDK_ROOT':str(S)},'source_SDK_compatibility_changes':False};memory=[];proc=None
+try:
+ proc=subprocess.Popen(args,cwd=T,env=env,start_new_session=True);report['capture_pid']=proc.pid
+ while proc.poll() is None:
+  available=int(next(x for x in Path('/proc/meminfo').read_text().splitlines() if x.startswith('MemAvailable:')).split()[1]);memory.append({'time':time.time(),'available_kib':available})
+  if available<report['memory_floor_kib']:
+   report['guard_triggered']=True;os.killpg(proc.pid,signal.SIGTERM);break
+  time.sleep(2)
+ report['exit']=proc.wait(timeout=30)
+finally:
+ if proc is not None and proc.poll() is None:
+  os.killpg(proc.pid,signal.SIGTERM)
+  try:proc.wait(timeout=15)
+  except subprocess.TimeoutExpired:os.killpg(proc.pid,signal.SIGKILL);proc.wait(timeout=10)
+ report['finished']=datetime.datetime.now(datetime.timezone.utc).isoformat();report['minimum_available_kib']=min(x['available_kib'] for x in memory) if memory else None
+ if O.exists():
+  (O/'memory.jsonl').write_text(''.join(json.dumps(x)+'\n' for x in memory));(O/'outer-result.json').write_text(json.dumps(report,indent=2)+'\n')
+print(json.dumps(report,indent=2),flush=True)
+raise SystemExit(0 if report.get('exit')==0 and not report.get('guard_triggered') else 1)

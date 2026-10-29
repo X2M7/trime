@@ -1,0 +1,80 @@
+{
+  "scope": "Offline derived parsing of original raw log bytes. Original audit files and failed collector attempts remain unchanged. Handles the quoted Windows Git executable path as well as Unix git.",
+  "bindings": [
+    {
+      "job_id": 123282068351,
+      "job_name": "check / lint-and-test",
+      "raw_file": "job-123282068351.log",
+      "raw_sha256": "9de4bdd6ca52c3499768e01cd264a9740280673315220f2b121099ae5ae07565",
+      "checkout_records": [
+        {
+          "command_line": 429,
+          "command_text": "2026-10-29T05:30:55.3384359Z [command]/usr/bin/git log -1 --format=%H",
+          "result_line": 430,
+          "result_text": "2026-10-29T05:30:55.3412370Z 57e4798de3b9c692823c592df39be792a16efa99",
+          "sha": "57e4798de3b9c692823c592df39be792a16efa99"
+        }
+      ]
+    },
+    {
+      "job_id": 123283814255,
+      "job_name": "build (ubuntu-26.04)",
+      "raw_file": "job-123283814255.log",
+      "raw_sha256": "6b87df3758499ef61844f00f6b612a3e6fcdae770c5576c02569ec86bdb36436",
+      "checkout_records": [
+        {
+          "command_line": 433,
+          "command_text": "2026-10-29T05:36:40.5482104Z [command]/usr/bin/git log -1 --format=%H",
+          "result_line": 434,
+          "result_text": "2026-10-29T05:36:40.5508912Z 57e4798de3b9c692823c592df39be792a16efa99",
+          "sha": "57e4798de3b9c692823c592df39be792a16efa99"
+        }
+      ]
+    },
+    {
+      "job_id": 123283814301,
+      "job_name": "build (macos-26)",
+      "raw_file": "job-123283814301.log",
+      "raw_sha256": "341886d883122ba2613acc227f2de7c83cf3af43cdbea00810a89f54c5664b65",
+      "checkout_records": [
+        {
+          "command_line": 417,
+          "command_text": "2026-10-29T05:37:02.9277640Z [command]/opt/homebrew/bin/git log -1 --format=%H",
+          "result_line": 418,
+          "result_text": "2026-10-29T05:37:02.9346190Z 57e4798de3b9c692823c592df39be792a16efa99",
+          "sha": "57e4798de3b9c692823c592df39be792a16efa99"
+        }
+      ]
+    },
+    {
+      "job_id": 123283814311,
+      "job_name": "build (windows-2025)",
+      "raw_file": "job-123283814311.log",
+      "raw_sha256": "87f83be764d2b53b9b7dcf03c5b684f541c28de3a10e9cb169087f1023a1ae0d",
+      "checkout_records": [
+        {
+          "command_line": 420,
+          "command_text": "2026-10-29T05:37:10.5898705Z [command]\"C:\\Program Files\\Git\\bin\\git.exe\" log -1 --format=%H",
+          "result_line": 421,
+          "result_text": "2026-10-29T05:37:10.6265355Z 57e4798de3b9c692823c592df39be792a16efa99",
+          "sha": "57e4798de3b9c692823c592df39be792a16efa99"
+        }
+      ]
+    },
+    {
+      "job_id": 123283814342,
+      "job_name": "build (macos-26-intel)",
+      "raw_file": "job-123283814342.log",
+      "raw_sha256": "76a08c0612f1972aa9485b35993eceece9b5861f8b26ea6026033a54f1474b98",
+      "checkout_records": [
+        {
+          "command_line": 416,
+          "command_text": "2026-10-29T05:37:02.5045980Z [command]/usr/local/bin/git log -1 --format=%H",
+          "result_line": 417,
+          "result_text": "2026-10-29T05:37:02.5167790Z 57e4798de3b9c692823c592df39be792a16efa99",
+          "sha": "57e4798de3b9c692823c592df39be792a16efa99"
+        }
+      ]
+    }
+  ]
+}

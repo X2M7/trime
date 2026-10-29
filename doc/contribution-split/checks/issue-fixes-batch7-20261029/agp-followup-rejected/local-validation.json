@@ -1,0 +1,427 @@
+{
+  "utc": "2026-10-29T05:44:17.722908+00:00",
+  "status": "AGP_CALLS_ELIMINATED_BUT_CURRENT_ACCEPTANCE_FAILED; NO_COMMIT_OR_PUSH_OR_PR",
+  "base": "7fedca06ba5d2ef761a2ae3d44d8a0917db36994",
+  "worktree": "/home/xumin/Public/Trime-pr-agp-gradle9-20261029",
+  "branch": "contrib/fix-agp-gradle9-deprecation",
+  "only_production_change": "Uncommitted AGP9.4.1->9.5.0 catalog line; no #2206/#2207,SDK or other dependency changes.",
+  "baseline": {
+    "actual_Gradle_exit": 0,
+    "checker_exit": 0,
+    "checker_status": "PASS_SCOPED_PHASE",
+    "formatter_targets": 293,
+    "producer_output_files": 47,
+    "setvisible_direct_components": {
+      "AGP": 52,
+      "KSP": 3,
+      "SPOTLESS": 1
+    },
+    "cross_build_warning_count": 3,
+    "minimum_available_kib": 4418568,
+    "compiler_warning_lines": []
+  },
+  "retained_offline_attempt": {
+    "status": "FAILED_OFFLINE_DEPENDENCY_PRECONDITION; NO_FORMATTER_OR_CHECK_ACTION_EXECUTED",
+    "actual_gradle_exit": 1,
+    "actual_outer_exit": 1,
+    "source_before_after_identical": true,
+    "actual_action_events": 0,
+    "actual_trace_flag": true,
+    "minimum_available_kib": 5354376,
+    "log_sha256": "d74b07d29e8311d7d3bc5613ffd9df14a70d235a84bc2ba9510be97d946e30f4",
+    "reason": "Official AGP9.5.0 plugin marker/artifacts absent from local offline cache. Artifact existence was already verified against official Maven.",
+    "source_SDK_modified": false,
+    "next_action": "Retain all originals; controlled online dependency resolution in a distinct candidate2 phase with identical production source."
+  },
+  "candidate_online": {
+    "actual_Gradle_exit": 0,
+    "checker_exit": 1,
+    "checker_status": "FAIL_OR_INCONCLUSIVE",
+    "formatter_targets": 293,
+    "producer_output_files": 47,
+    "actual_task_action_events": [
+      {
+        "nonce": "208a2a00cd0d48d39d0b349c6e798c2f",
+        "sequence": 1,
+        "event": "before",
+        "task_path": ":spotlessKotlin",
+        "task_type": "com.diffplug.gradle.spotless.SpotlessTaskImpl_Decorated",
+        "project_dir": "/home/xumin/Public/Trime-pr-agp-gradle9-20261029",
+        "gradle_version": "9.8.1",
+        "pid": 424325,
+        "jvm_started_ms": 1793252420564,
+        "utc": "2026-10-29T05:42:35.533205239Z",
+        "monotonic_ns": 123048614997891
+      },
+      {
+        "nonce": "208a2a00cd0d48d39d0b349c6e798c2f",
+        "sequence": 2,
+        "event": "after",
+        "task_path": ":spotlessKotlin",
+        "task_type": "com.diffplug.gradle.spotless.SpotlessTaskImpl_Decorated",
+        "project_dir": "/home/xumin/Public/Trime-pr-agp-gradle9-20261029",
+        "gradle_version": "9.8.1",
+        "pid": 424325,
+        "jvm_started_ms": 1793252420564,
+        "utc": "2026-10-29T05:42:56.305797224Z",
+        "monotonic_ns": 123069382289597
+      },
+      {
+        "nonce": "208a2a00cd0d48d39d0b349c6e798c2f",
+        "sequence": 3,
+        "event": "before",
+        "task_path": ":spotlessKotlinCheck",
+        "task_type": "com.diffplug.gradle.spotless.SpotlessCheck_Decorated",
+        "project_dir": "/home/xumin/Public/Trime-pr-agp-gradle9-20261029",
+        "gradle_version": "9.8.1",
+        "pid": 424325,
+        "jvm_started_ms": 1793252420564,
+        "utc": "2026-10-29T05:42:56.495353439Z",
+        "monotonic_ns": 123069571562962
+      },
+      {
+        "nonce": "208a2a00cd0d48d39d0b349c6e798c2f",
+        "sequence": 4,
+        "event": "after",
+        "task_path": ":spotlessKotlinCheck",
+        "task_type": "com.diffplug.gradle.spotless.SpotlessCheck_Decorated",
+        "project_dir": "/home/xumin/Public/Trime-pr-agp-gradle9-20261029",
+        "gradle_version": "9.8.1",
+        "pid": 424325,
+        "jvm_started_ms": 1793252420564,
+        "utc": "2026-10-29T05:42:56.510899412Z",
+        "monotonic_ns": 123069587346572
+      }
+    ],
+    "setvisible_direct_components": {
+      "KSP": 11,
+      "SPOTLESS": 1
+    },
+    "setvisible_total": 12,
+    "AGP_calls_eliminated": true,
+    "cross_build_warning_count": 3,
+    "minimum_available_kib": 4051032,
+    "checker_failures_retained": [
+      "Candidate must retain all4 non-AGP setVisible messages",
+      "Candidate direct-caller distribution must be AGP0/KSP3/Spotless1 with no unknown or new AGP source",
+      "Candidate non-AGP direct-caller multiset differs from the complete baseline"
+    ],
+    "compiler_warning_lines": [
+      {
+        "line_number_1based": 2264,
+        "text": "w: file:///home/xumin/Public/Trime-pr-agp-gradle9-20261029/app/build.gradle.kts:31:9: 'var multiDexEnabled: Boolean?' is deprecated. Legacy multidex (minSdk <= 19) is deprecated in AGP 9.4 and will be unsupported in AGP 11. Native multidex is always supported for minSdk 21+."
+      }
+    ]
+  },
+  "what_passed": "Both Gradle phases completed original actual formatter/check four actions with bound nonce/same JVM.293 tracked and runtime Kotlin input files match exactly across A/B and remain unchanged;47 warm producer files remain identical within each phase. No OOM/guard trigger or forced stop; only official dependency fetching was enabled in candidate2.",
+  "why_not_accepted": "Original gate required the exact non-AGP caller multiset to remain unchanged. Actual KSP markResolvable expands from1 to9 occurrences (KSP total3->11), while Spotless remains1; plus candidate emitted a Kotlin DSL multiDexEnabled deprecation. Do not relabel the failed checker as a pass or hide the additional diagnostics.",
+  "KSP_callsite_expansion": {
+    "baseline_nonAGP": {
+      "com.diffplug.gradle.spotless.GradleProvisioner.lambda$forConfigurationContainer$2(GradleProvisioner.java:136)": 1,
+      "com.google.devtools.ksp.gradle.KspConfigurations.<init>(KspConfigurations.kt:34)": 1,
+      "com.google.devtools.ksp.gradle.KspConfigurations.createConfiguration(KspConfigurations.kt:54)": 1,
+      "com.google.devtools.ksp.gradle.KspSubpluginKt.markResolvable(KspSubplugin.kt:463)": 1
+    },
+    "candidate_nonAGP": {
+      "com.diffplug.gradle.spotless.GradleProvisioner.lambda$forConfigurationContainer$2(GradleProvisioner.java:136)": 1,
+      "com.google.devtools.ksp.gradle.KspConfigurations.<init>(KspConfigurations.kt:34)": 1,
+      "com.google.devtools.ksp.gradle.KspConfigurations.createConfiguration(KspConfigurations.kt:54)": 1,
+      "com.google.devtools.ksp.gradle.KspSubpluginKt.markResolvable(KspSubplugin.kt:463)": 9
+    },
+    "actual_markResolvable_chains": [
+      {
+        "line_number_1based": 2275,
+        "direct_caller": "com.google.devtools.ksp.gradle.KspSubpluginKt.markResolvable(KspSubplugin.kt:463)",
+        "subsequent_nonframework_frames": [
+          "com.google.devtools.ksp.gradle.KspSubpluginKt.markResolvable(KspSubplugin.kt:463)",
+          "com.google.devtools.ksp.gradle.KspGradleSubplugin.applyToCompilation(KspSubplugin.kt:171)",
+          "com.android.build.gradle.internal.TaskManager.addSubpluginOptionsForBuiltInKotlin(TaskManager.kt:1007)",
+          "com.android.build.gradle.internal.TaskManager.maybeCreateKotlinTasks$gradle_core(TaskManager.kt:934)",
+          "com.android.build.gradle.internal.TaskManager.createJavacTask(TaskManager.kt:900)",
+          "com.android.build.gradle.internal.AbstractAppTaskManager.createCompileTask(AbstractAppTaskManager.java:182)",
+          "com.android.build.gradle.internal.AbstractAppTaskManager.createCommonTasks(AbstractAppTaskManager.java:165)",
+          "com.android.build.gradle.internal.tasks.ApplicationTaskManager.doCreateTasksForVariant(ApplicationTaskManager.kt:72)"
+        ],
+        "stack_frame_count": 213
+      },
+      {
+        "line_number_1based": 2489,
+        "direct_caller": "com.google.devtools.ksp.gradle.KspSubpluginKt.markResolvable(KspSubplugin.kt:463)",
+        "subsequent_nonframework_frames": [
+          "com.google.devtools.ksp.gradle.KspSubpluginKt.markResolvable(KspSubplugin.kt:463)",
+          "com.google.devtools.ksp.gradle.KspGradleSubplugin.applyToCompilation(KspSubplugin.kt:191)",
+          "com.android.build.gradle.internal.TaskManager.addSubpluginOptionsForBuiltInKotlin(TaskManager.kt:1007)",
+          "com.android.build.gradle.internal.TaskManager.maybeCreateKotlinTasks$gradle_core(TaskManager.kt:934)",
+          "com.android.build.gradle.internal.TaskManager.createJavacTask(TaskManager.kt:900)",
+          "com.android.build.gradle.internal.AbstractAppTaskManager.createCompileTask(AbstractAppTaskManager.java:182)",
+          "com.android.build.gradle.internal.AbstractAppTaskManager.createCommonTasks(AbstractAppTaskManager.java:165)",
+          "com.android.build.gradle.internal.tasks.ApplicationTaskManager.doCreateTasksForVariant(ApplicationTaskManager.kt:72)"
+        ],
+        "stack_frame_count": 213
+      },
+      {
+        "line_number_1based": 2703,
+        "direct_caller": "com.google.devtools.ksp.gradle.KspSubpluginKt.markResolvable(KspSubplugin.kt:463)",
+        "subsequent_nonframework_frames": [
+          "com.google.devtools.ksp.gradle.KspSubpluginKt.markResolvable(KspSubplugin.kt:463)",
+          "com.google.devtools.ksp.gradle.KspGradleSubplugin.applyToCompilation(KspSubplugin.kt:199)",
+          "com.android.build.gradle.internal.TaskManager.addSubpluginOptionsForBuiltInKotlin(TaskManager.kt:1007)",
+          "com.android.build.gradle.internal.TaskManager.maybeCreateKotlinTasks$gradle_core(TaskManager.kt:934)",
+          "com.android.build.gradle.internal.TaskManager.createJavacTask(TaskManager.kt:900)",
+          "com.android.build.gradle.internal.AbstractAppTaskManager.createCompileTask(AbstractAppTaskManager.java:182)",
+          "com.android.build.gradle.internal.AbstractAppTaskManager.createCommonTasks(AbstractAppTaskManager.java:165)",
+          "com.android.build.gradle.internal.tasks.ApplicationTaskManager.doCreateTasksForVariant(ApplicationTaskManager.kt:72)"
+        ],
+        "stack_frame_count": 213
+      },
+      {
+        "line_number_1based": 2917,
+        "direct_caller": "com.google.devtools.ksp.gradle.KspSubpluginKt.markResolvable(KspSubplugin.kt:463)",
+        "subsequent_nonframework_frames": [
+          "com.google.devtools.ksp.gradle.KspSubpluginKt.markResolvable(KspSubplugin.kt:463)",
+          "com.google.devtools.ksp.gradle.KspGradleSubplugin.applyToCompilation(KspSubplugin.kt:171)",
+          "com.android.build.gradle.internal.TaskManager.addSubpluginOptionsForBuiltInKotlin(TaskManager.kt:1007)",
+          "com.android.build.gradle.internal.TaskManager.maybeCreateKotlinTasks$gradle_core(TaskManager.kt:934)",
+          "com.android.build.gradle.internal.TaskManager.createJavacTask(TaskManager.kt:900)",
+          "com.android.build.gradle.internal.AndroidTestTaskManager.createTasks(AndroidTestTaskManager.kt:181)",
+          "com.android.build.gradle.internal.VariantTaskManager.createTasksForTest(VariantTaskManager.kt:274)",
+          "com.android.build.gradle.internal.VariantTaskManager.createTasks(VariantTaskManager.kt:144)"
+        ],
+        "stack_frame_count": 211
+      },
+      {
+        "line_number_1based": 3129,
+        "direct_caller": "com.google.devtools.ksp.gradle.KspSubpluginKt.markResolvable(KspSubplugin.kt:463)",
+        "subsequent_nonframework_frames": [
+          "com.google.devtools.ksp.gradle.KspSubpluginKt.markResolvable(KspSubplugin.kt:463)",
+          "com.google.devtools.ksp.gradle.KspGradleSubplugin.applyToCompilation(KspSubplugin.kt:191)",
+          "com.android.build.gradle.internal.TaskManager.addSubpluginOptionsForBuiltInKotlin(TaskManager.kt:1007)",
+          "com.android.build.gradle.internal.TaskManager.maybeCreateKotlinTasks$gradle_core(TaskManager.kt:934)",
+          "com.android.build.gradle.internal.TaskManager.createJavacTask(TaskManager.kt:900)",
+          "com.android.build.gradle.internal.AndroidTestTaskManager.createTasks(AndroidTestTaskManager.kt:181)",
+          "com.android.build.gradle.internal.VariantTaskManager.createTasksForTest(VariantTaskManager.kt:274)",
+          "com.android.build.gradle.internal.VariantTaskManager.createTasks(VariantTaskManager.kt:144)"
+        ],
+        "stack_frame_count": 211
+      },
+      {
+        "line_number_1based": 3341,
+        "direct_caller": "com.google.devtools.ksp.gradle.KspSubpluginKt.markResolvable(KspSubplugin.kt:463)",
+        "subsequent_nonframework_frames": [
+          "com.google.devtools.ksp.gradle.KspSubpluginKt.markResolvable(KspSubplugin.kt:463)",
+          "com.google.devtools.ksp.gradle.KspGradleSubplugin.applyToCompilation(KspSubplugin.kt:199)",
+          "com.android.build.gradle.internal.TaskManager.addSubpluginOptionsForBuiltInKotlin(TaskManager.kt:1007)",
+          "com.android.build.gradle.internal.TaskManager.maybeCreateKotlinTasks$gradle_core(TaskManager.kt:934)",
+          "com.android.build.gradle.internal.TaskManager.createJavacTask(TaskManager.kt:900)",
+          "com.android.build.gradle.internal.AndroidTestTaskManager.createTasks(AndroidTestTaskManager.kt:181)",
+          "com.android.build.gradle.internal.VariantTaskManager.createTasksForTest(VariantTaskManager.kt:274)",
+          "com.android.build.gradle.internal.VariantTaskManager.createTasks(VariantTaskManager.kt:144)"
+        ],
+        "stack_frame_count": 211
+      },
+      {
+        "line_number_1based": 3553,
+        "direct_caller": "com.google.devtools.ksp.gradle.KspSubpluginKt.markResolvable(KspSubplugin.kt:463)",
+        "subsequent_nonframework_frames": [
+          "com.google.devtools.ksp.gradle.KspSubpluginKt.markResolvable(KspSubplugin.kt:463)",
+          "com.google.devtools.ksp.gradle.KspGradleSubplugin.applyToCompilation(KspSubplugin.kt:171)",
+          "com.android.build.gradle.internal.TaskManager.addSubpluginOptionsForBuiltInKotlin(TaskManager.kt:1007)",
+          "com.android.build.gradle.internal.TaskManager.maybeCreateKotlinTasks$gradle_core(TaskManager.kt:934)",
+          "com.android.build.gradle.internal.TaskManager.createJavacTask(TaskManager.kt:900)",
+          "com.android.build.gradle.internal.HostTestTaskManager.setupJavaCompilationTasks(HostTestTaskManager.kt:170)",
+          "com.android.build.gradle.internal.UnitTestTaskManager.createTasks(UnitTestTaskManager.kt:60)",
+          "com.android.build.gradle.internal.VariantTaskManager.createTasksForTest(VariantTaskManager.kt:280)"
+        ],
+        "stack_frame_count": 212
+      },
+      {
+        "line_number_1based": 3766,
+        "direct_caller": "com.google.devtools.ksp.gradle.KspSubpluginKt.markResolvable(KspSubplugin.kt:463)",
+        "subsequent_nonframework_frames": [
+          "com.google.devtools.ksp.gradle.KspSubpluginKt.markResolvable(KspSubplugin.kt:463)",
+          "com.google.devtools.ksp.gradle.KspGradleSubplugin.applyToCompilation(KspSubplugin.kt:191)",
+          "com.android.build.gradle.internal.TaskManager.addSubpluginOptionsForBuiltInKotlin(TaskManager.kt:1007)",
+          "com.android.build.gradle.internal.TaskManager.maybeCreateKotlinTasks$gradle_core(TaskManager.kt:934)",
+          "com.android.build.gradle.internal.TaskManager.createJavacTask(TaskManager.kt:900)",
+          "com.android.build.gradle.internal.HostTestTaskManager.setupJavaCompilationTasks(HostTestTaskManager.kt:170)",
+          "com.android.build.gradle.internal.UnitTestTaskManager.createTasks(UnitTestTaskManager.kt:60)",
+          "com.android.build.gradle.internal.VariantTaskManager.createTasksForTest(VariantTaskManager.kt:280)"
+        ],
+        "stack_frame_count": 212
+      },
+      {
+        "line_number_1based": 3979,
+        "direct_caller": "com.google.devtools.ksp.gradle.KspSubpluginKt.markResolvable(KspSubplugin.kt:463)",
+        "subsequent_nonframework_frames": [
+          "com.google.devtools.ksp.gradle.KspSubpluginKt.markResolvable(KspSubplugin.kt:463)",
+          "com.google.devtools.ksp.gradle.KspGradleSubplugin.applyToCompilation(KspSubplugin.kt:199)",
+          "com.android.build.gradle.internal.TaskManager.addSubpluginOptionsForBuiltInKotlin(TaskManager.kt:1007)",
+          "com.android.build.gradle.internal.TaskManager.maybeCreateKotlinTasks$gradle_core(TaskManager.kt:934)",
+          "com.android.build.gradle.internal.TaskManager.createJavacTask(TaskManager.kt:900)",
+          "com.android.build.gradle.internal.HostTestTaskManager.setupJavaCompilationTasks(HostTestTaskManager.kt:170)",
+          "com.android.build.gradle.internal.UnitTestTaskManager.createTasks(UnitTestTaskManager.kt:60)",
+          "com.android.build.gradle.internal.VariantTaskManager.createTasksForTest(VariantTaskManager.kt:280)"
+        ],
+        "stack_frame_count": 212
+      }
+    ],
+    "source_based_observation": "Expanded traces explicitly go through KspGradleSubplugin.applyToCompilation to AGP9.5 TaskManager.addSubpluginOptionsForBuiltInKotlin/maybeCreateKotlinTasks. This identifies the actual invocation path; it does not establish runtime input correctness, a codegen failure or a product regression without codegen/application tests."
+  },
+  "DSL_warning_caution": "Candidate newly emitted app/build.gradle.kts:31 multiDexEnabled deprecation during Kotlin DSL compilation. Its text says deprecation began in AGP9.4; baseline emits no such line, but absence may reflect different script compilation caching. This investigation does not establish that the semantic deprecation first appeared in9.5. No extra source fix is applied without Root scope decision.",
+  "needed_Root_decision": "Determine whether to include the necessary obsolete multiDexEnabled DSL cleanup in this focused AGP update and independently adjudicate the source-proven additional KSP invocation path. If acceptance contract changes after reviewing actual evidence, use a new versioned checker/report and retain this original failure. Current candidate is not qualified for push/PR.",
+  "scope_limits": "Local formatter/configuration checks only, not application/JVM tests, lint, fullAPK/native, device, real input, Release or zero-warning acceptance.",
+  "source_binding": "source-inventory-binding.json",
+  "process_cleanup": "final-process-check.json",
+  "raw_evidence_files": [
+    {
+      "path": "spotless-baseline1/invocation.json",
+      "bytes": 63349,
+      "sha256": "0fd372c5daab3226db7f72b07cbbafd692c68df513047ed4db98f6f1e7baa425"
+    },
+    {
+      "path": "spotless-baseline1/completion.json",
+      "bytes": 61963,
+      "sha256": "c426bd6bc7137e14ed298cd3dc13ca07bd0db62e64ec8e6ec57659e826be7f7b"
+    },
+    {
+      "path": "spotless-baseline1/gradle.log",
+      "bytes": 1387231,
+      "sha256": "620528228eed3d363778e73b3efc860465c5b698741d6ac97be6a81e1feeb36c"
+    },
+    {
+      "path": "spotless-baseline1/exit-code.txt",
+      "bytes": 2,
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "path": "spotless-baseline1/outer-result.json",
+      "bytes": 899,
+      "sha256": "689a5d9c91d48827229bd28eabec732861bdda397eef3d570890fb83cb2e48c7"
+    },
+    {
+      "path": "spotless-baseline1/memory.jsonl",
+      "bytes": 2192,
+      "sha256": "262c4c9d61304a28f1e91582b09d364ffd4a07ec41bd7f81736888a49e58bf24"
+    },
+    {
+      "path": "spotless-baseline1/target-before.json",
+      "bytes": 80866,
+      "sha256": "b275086b71b27943ffa58f8ef727e2027c3eb4541c35ddfbdaed401bcac0ffb3"
+    },
+    {
+      "path": "spotless-baseline1/target-after.json",
+      "bytes": 80865,
+      "sha256": "8908e03e7ed547185ff55b131a4731cada46e908801e47508744536c1bbf615b"
+    },
+    {
+      "path": "spotless-baseline1/events.jsonl",
+      "bytes": 1518,
+      "sha256": "566f0dff11d627851f989fd1fe6508b37111c18ae357001119b8bebf2b70bf12"
+    },
+    {
+      "path": "spotless-baseline1/phase-review.json",
+      "bytes": 44451,
+      "sha256": "d60daa0a4ca6d90529f8503c68c2edb1f489e0fcb0fe2e597aa00559869ea770"
+    },
+    {
+      "path": "spotless-baseline1/source-before.diff",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "spotless-candidate1/invocation.json",
+      "bytes": 63383,
+      "sha256": "5e724c4ec94a24f2acb293ee0a8661b701d1a8c05beaaef9ff1a1f023111f146"
+    },
+    {
+      "path": "spotless-candidate1/completion.json",
+      "bytes": 61993,
+      "sha256": "fb1d58a77cbe1177cd94a32110f2b9d2592865c7557f766bbfda239db82c3b1b"
+    },
+    {
+      "path": "spotless-candidate1/gradle.log",
+      "bytes": 5807,
+      "sha256": "d74b07d29e8311d7d3bc5613ffd9df14a70d235a84bc2ba9510be97d946e30f4"
+    },
+    {
+      "path": "spotless-candidate1/exit-code.txt",
+      "bytes": 2,
+      "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+    },
+    {
+      "path": "spotless-candidate1/outer-result.json",
+      "bytes": 901,
+      "sha256": "3aaf936742f5d9234a07bb4bcfdf7c0218ce9f21170fda377a03b5e1041626c5"
+    },
+    {
+      "path": "spotless-candidate1/memory.jsonl",
+      "bytes": 493,
+      "sha256": "c70e1367c9b5669096cfd230fb01d50fffb884dc61d27058a396faa7dcbaa51a"
+    },
+    {
+      "path": "spotless-candidate1/failed-precondition.json",
+      "bytes": 701,
+      "sha256": "9f60731d17e9f32b57cdd1314ea905731afb9c821a9efc756db205d354241d58"
+    },
+    {
+      "path": "spotless-candidate1/source-before.diff",
+      "bytes": 309,
+      "sha256": "d5cd132631e364af3ce991a31387905d1f2939001db4b9b35d244ce33f876d3b"
+    },
+    {
+      "path": "spotless-candidate2/invocation.json",
+      "bytes": 63365,
+      "sha256": "a1cf2eee957350afc2cecf2516014217127a6b11601d28d95250e5c865113dfb"
+    },
+    {
+      "path": "spotless-candidate2/completion.json",
+      "bytes": 61993,
+      "sha256": "92402f5ec5c80cb80164d236cb8b991639cc567befb44926744909cbb40f6565"
+    },
+    {
+      "path": "spotless-candidate2/gradle.log",
+      "bytes": 510425,
+      "sha256": "f958e8d726bddf630334625db4c5db81412a9b17d6afc3b517dc2bb9ecab6f50"
+    },
+    {
+      "path": "spotless-candidate2/exit-code.txt",
+      "bytes": 2,
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "path": "spotless-candidate2/outer-result.json",
+      "bytes": 917,
+      "sha256": "377b2bb98db1bed0c15b89805cfe859c379b87ad9c31679f8cf39bb5851ecfdf"
+    },
+    {
+      "path": "spotless-candidate2/memory.jsonl",
+      "bytes": 4378,
+      "sha256": "7a76b6183fe68f3c0fc2f3697247f5754ecd273a38d6b535dab67165ab9da166"
+    },
+    {
+      "path": "spotless-candidate2/target-before.json",
+      "bytes": 80866,
+      "sha256": "adce66beaa8f12fcdb4bd3aee4ced932e1f6a40da189be2ced1b1cfd588d6bd5"
+    },
+    {
+      "path": "spotless-candidate2/target-after.json",
+      "bytes": 80865,
+      "sha256": "815b939e258c163b0fdec4931b9bd6610660e35a16a12988a70b0f80eaebd5c5"
+    },
+    {
+      "path": "spotless-candidate2/events.jsonl",
+      "bytes": 1518,
+      "sha256": "317009212783d35db928dda35fd54b82efb9f9229bf01523924558bd71cea98a"
+    },
+    {
+      "path": "spotless-candidate2/phase-review.json",
+      "bytes": 15618,
+      "sha256": "731122b29f625ffe03e52f2217e887994d73b4e1ff69d5dc701c1e7953d75443"
+    },
+    {
+      "path": "spotless-candidate2/source-before.diff",
+      "bytes": 309,
+      "sha256": "d5cd132631e364af3ce991a31387905d1f2939001db4b9b35d244ce33f876d3b"
+    }
+  ]
+}

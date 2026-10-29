@@ -1,0 +1,195 @@
+{
+  "utc": "2026-10-29T05:46:46.817446+00:00",
+  "status": "FINAL_CI_5_OF_5_VERIFIED",
+  "pr": 2207,
+  "head_sha": "3a820aacb929a5030d1581d42f99fe9834731bfc",
+  "run_id": 40823791223,
+  "run_attempt": 1,
+  "ci_summary": "/home/xumin/Public/Trime/build/issue-fixes-batch7-20261029/cloud/run-40823791223/pr-2207/ci-summary.json",
+  "ci_summary_sha256": "9b80976a9d027e21c5097275b65f30bb169381d9c8aa218ac32912d8e73ef857",
+  "frozen_ci_manifest_sha256": "f7c94e412e7504a1242b0476c8103493573b25f95fd9ce2f625da1215d151f68",
+  "all_manifest_entries_rechecked": true,
+  "native_observations": [
+    {
+      "job": {
+        "id": 123282068351,
+        "name": "check / lint-and-test",
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-10-29T05:30:33Z",
+        "completed_at": "2026-10-29T05:36:11Z"
+      },
+      "raw_log": "job-123282068351.log",
+      "raw_sha256": "9de4bdd6ca52c3499768e01cd264a9740280673315220f2b121099ae5ae07565",
+      "jni_cache": "NOT_A_BUILD_JOB",
+      "configure_task_count": 0,
+      "build_task_count": 0,
+      "evidence": []
+    },
+    {
+      "job": {
+        "id": 123283814255,
+        "name": "build (ubuntu-26.04)",
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-10-29T05:36:14Z",
+        "completed_at": "2026-10-29T05:44:21Z"
+      },
+      "raw_log": "job-123283814255.log",
+      "raw_sha256": "6b87df3758499ef61844f00f6b612a3e6fcdae770c5576c02569ec86bdb36436",
+      "jni_cache": "MISS",
+      "configure_task_count": 4,
+      "build_task_count": 4,
+      "evidence": [
+        {
+          "line": 1650,
+          "text": "2026-10-29T05:37:12.6645239Z Cache not found for input keys: ubuntu-26.04-trime-jni-debug-e73edb9eadd8f2236d6850e56a97e1fc6c72f9643736ed6c6797a942d63d7fe3"
+        },
+        {
+          "line": 1713,
+          "text": "2026-10-29T05:38:17.2782933Z > Task :app:configureCMakeDebug[arm64-v8a]"
+        },
+        {
+          "line": 1724,
+          "text": "2026-10-29T05:38:49.4953222Z > Task :app:buildCMakeDebug[arm64-v8a]"
+        },
+        {
+          "line": 1781,
+          "text": "2026-10-29T05:40:11.3784542Z > Task :app:configureCMakeDebug[armeabi-v7a]"
+        },
+        {
+          "line": 1789,
+          "text": "2026-10-29T05:40:18.8823219Z > Task :app:buildCMakeDebug[armeabi-v7a]"
+        },
+        {
+          "line": 1846,
+          "text": "2026-10-29T05:41:33.0779446Z > Task :app:configureCMakeDebug[x86]"
+        },
+        {
+          "line": 1854,
+          "text": "2026-10-29T05:41:40.8856563Z > Task :app:buildCMakeDebug[x86]"
+        },
+        {
+          "line": 1911,
+          "text": "2026-10-29T05:42:52.4780438Z > Task :app:configureCMakeDebug[x86_64]"
+        },
+        {
+          "line": 1919,
+          "text": "2026-10-29T05:42:59.9873129Z > Task :app:buildCMakeDebug[x86_64]"
+        }
+      ]
+    },
+    {
+      "job": {
+        "id": 123283814301,
+        "name": "build (macos-26)",
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-10-29T05:36:15Z",
+        "completed_at": "2026-10-29T05:44:36Z"
+      },
+      "raw_log": "job-123283814301.log",
+      "raw_sha256": "341886d883122ba2613acc227f2de7c83cf3af43cdbea00810a89f54c5664b65",
+      "jni_cache": "HIT",
+      "configure_task_count": 0,
+      "build_task_count": 0,
+      "evidence": [
+        {
+          "line": 1642,
+          "text": "2026-10-29T05:40:03.5784390Z Cache hit for: macos-26-trime-jni-debug-4efcdd26db9c09f057c44036e7fbefcab87dd61c14fe3ada6e3b512a912bc9e1"
+        },
+        {
+          "line": 1647,
+          "text": "2026-10-29T05:40:05.6354420Z Cache restored from key: macos-26-trime-jni-debug-4efcdd26db9c09f057c44036e7fbefcab87dd61c14fe3ada6e3b512a912bc9e1"
+        }
+      ]
+    },
+    {
+      "job": {
+        "id": 123283814311,
+        "name": "build (windows-2025)",
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-10-29T05:36:15Z",
+        "completed_at": "2026-10-29T05:43:32Z"
+      },
+      "raw_log": "job-123283814311.log",
+      "raw_sha256": "87f83be764d2b53b9b7dcf03c5b684f541c28de3a10e9cb169087f1023a1ae0d",
+      "jni_cache": "HIT",
+      "configure_task_count": 0,
+      "build_task_count": 0,
+      "evidence": [
+        {
+          "line": 1035,
+          "text": "2026-10-29T05:39:41.1692398Z Cache hit for: windows-2025-trime-jni-debug-5e376acd73aa6cb131775bc13279905ae995ba16998a29bb31b5012ac77e3f7f"
+        },
+        {
+          "line": 1041,
+          "text": "2026-10-29T05:39:43.2136414Z Cache restored from key: windows-2025-trime-jni-debug-5e376acd73aa6cb131775bc13279905ae995ba16998a29bb31b5012ac77e3f7f"
+        }
+      ]
+    },
+    {
+      "job": {
+        "id": 123283814342,
+        "name": "build (macos-26-intel)",
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-10-29T05:36:16Z",
+        "completed_at": "2026-10-29T05:44:20Z"
+      },
+      "raw_log": "job-123283814342.log",
+      "raw_sha256": "76a08c0612f1972aa9485b35993eceece9b5861f8b26ea6026033a54f1474b98",
+      "jni_cache": "HIT",
+      "configure_task_count": 0,
+      "build_task_count": 0,
+      "evidence": [
+        {
+          "line": 1656,
+          "text": "2026-10-29T05:40:16.7888120Z Cache hit for: macos-26-intel-trime-jni-debug-4efcdd26db9c09f057c44036e7fbefcab87dd61c14fe3ada6e3b512a912bc9e1"
+        },
+        {
+          "line": 1663,
+          "text": "2026-10-29T05:40:21.4891430Z Cache restored from key: macos-26-intel-trime-jni-debug-4efcdd26db9c09f057c44036e7fbefcab87dd61c14fe3ada6e3b512a912bc9e1"
+        }
+      ]
+    }
+  ],
+  "diagnostics": {
+    "report": "warning-context-review.json",
+    "report_sha256": "ee1db728d786aec9729eeace2b60db6e2ba7d99f2dd8dc03f7be0b6fb18504ca",
+    "mechanical_candidate_lines": 133,
+    "reviewed_categories": {
+      "git_initialization_hint": 4,
+      "android_sdk_tool": 14,
+      "gradle_deprecation_unexpanded": 20,
+      "gradle_documentation_reference": 10,
+      "pinned_native_dependency": 54,
+      "pinned_native_dependency_compiler_summary": 6,
+      "jdk_jna_tool": 24,
+      "ci_cache_tool": 1
+    },
+    "application_source_candidate_count": 0,
+    "unresolved_candidate_count": 0,
+    "unexpanded_gradle_deprecation_origin_unknown": true,
+    "not_a_zero_warning_claim": true,
+    "not_baseline_equivalence": true
+  },
+  "feedback_final_summary": "/home/xumin/Public/Trime/build/issue-fixes-batch7-20261029/cloud/feedback-final/feedback-summary.json",
+  "feedback_counts": {
+    "reviews": 0,
+    "issue_comments": 0,
+    "review_comments": 0
+  },
+  "feedback_pr_draft": true,
+  "feedback_pr_state": "open",
+  "feedback_mergeable": true,
+  "runtime": "NOT_CLAIMED; precise build plugin patch update only; no local Gradle/VM/ADB execution by collector",
+  "limits": [
+    "Mechanical warning categories do not assert warning-free status or all underlying Gradle deprecation origins.",
+    "Native cache miss is backed by configure/buildCMake task records without cache suffix; cache hits do not establish fresh native recompilation.",
+    "CI workflow exports no JUnit XML; no exact test count claimed.",
+    "Original CI APK left unmodified; artifact is synthetic-merge producer with full source tree equal to PR head.",
+    "One retained API connectivity error during artifact collection was retried by existing collector; no CI rerun or cancellation occurred."
+  ]
+}

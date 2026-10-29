@@ -1,0 +1,82 @@
+{
+  "status": "R8_SOURCE_COMPATIBILITY_AND_BASELINE_DIAGNOSTICS_REVIEWED_CANDIDATE_PENDING",
+  "utc": "2026-10-29T05:41:10.646152+00:00",
+  "scope": "Read-only optional R8 review while R7 CI is pending. Does not alter R7 records or approve R8 candidate/PR.",
+  "base": "7fedca06ba5d2ef761a2ae3d44d8a0917db36994",
+  "official_compatibility": {
+    "primary_source": "https://developer.android.com/build/releases/agp-9-5-0-release-notes",
+    "minimum_Gradle": "9.6.0",
+    "JDK": 17,
+    "maximum_API": 37,
+    "minimum_build_tools": "36.0.0",
+    "default_NDK": "28.2.13676358",
+    "configured_Gradle9_8_1_meets_minimum": true,
+    "configured_custom_tools_not_changed": true,
+    "does_not_prove_full_application_build": true
+  },
+  "official_repair_evidence": [
+    {
+      "issue": "565740572",
+      "description": "Release notes list AGP9.4.1 Configuration.setVisible diagnostics under9.5-alpha09 fixes.",
+      "url": "https://issuetracker.google.com/issues/565740572"
+    },
+    {
+      "issue": "560282299",
+      "description": "Release notes also list setVisible deprecation fix under9.5-alpha06.",
+      "url": "https://issuetracker.google.com/issues/560282299"
+    }
+  ],
+  "tool_source_review": {
+    "sha256": {
+      "check-agp-phase.py": "7b5e89f909938c5932fc5a1bbca5a12e6c5ad6fb5c1ae5a346505466b26d2470",
+      "capture-spotless-phase.py": "527aa28c7562ffaed8407bafd134f1b2f9e116d08962a7b67d9233ec3b8ba4b6",
+      "spotless-observe.init.gradle": "01d6e9fa9717de40cacb19a6841059f2f8ca7f9238620fd4a8dae20a90180b14",
+      "run_phase.py": "1217f0d4f81ebf0b7a1becbe263e4ace153564b256ea1bec0da38d1b88efce9b"
+    },
+    "assessment": [
+      "ActualAGP and unchangedSpotless catalog versions are bound separately; source snapshots/293targets/four actions/nonce/Gradle9.8.1/fullnonincremental/exit guards preserved.",
+      "Caller ownership is derived only from immediately contiguous original stack frames, not an arbitrary later log window. Unknown/missing stacks fail.",
+      "Candidate must retain exactly4 non-AGP setVisible calls and compare their precise caller multiset to baseline, not just totals.",
+      "Three separate cross-build warnings are required on both sides because neither2206 nor2207 is inherited.",
+      "Do not edit frozen tools for cosmetic help-text naming; checker SHA equality binds baseline and candidate."
+    ]
+  },
+  "baseline_actual": {
+    "checker_status": "PASS_SCOPED_PHASE",
+    "checker_log_sha_matches": true,
+    "independently_parsed_direct_caller_counts": {
+      "AGP": 52,
+      "KSP": 3,
+      "SPOTLESS": 1
+    },
+    "expected_distribution_matches": true,
+    "cross_build_warning_count": 3,
+    "actual_resolved_plugins": [
+      "Resolved plugin [id: 'com.android.application', version: '9.4.1', apply: false]",
+      "Resolved plugin [id: 'com.android.library', version: '9.4.1', apply: false]",
+      "Resolved plugin [id: 'com.diffplug.spotless', version: '8.10.2']"
+    ],
+    "source_target_count": 293,
+    "source_head": "7fedca06ba5d2ef761a2ae3d44d8a0917db36994",
+    "minimum_source_SHA_binding_not_borrowed_from_R7": true
+  },
+  "failed_candidate1_precondition": {
+    "status": "FAILED_OFFLINE_DEPENDENCY_PRECONDITION; NO_FORMATTER_OR_CHECK_ACTION_EXECUTED",
+    "Gradle_exit": 1,
+    "actions": 0,
+    "meaning": "Pinned9.5.0 artifacts unavailable in offline cache; no formatter action reached, not an AGP behavior acceptance or rejection. Original failure must remain.",
+    "sha256": "9f60731d17e9f32b57cdd1314ea905731afb9c821a9efc756db205d354241d58"
+  },
+  "candidate_acceptance_remaining": [
+    "A separately retained controlled online dependency fill may use pinned official repositories; preserve actual argv/outputs/checksums and source bytes.",
+    "Then actually execute formatter/check with9.5.0, all293identical Kotlin input bytes, exactnonAGP caller multiset, AGP52->0, cross3->3.",
+    "Bind actual source commit to294Git blobs and obtain current-head CI before upstream Ready. Formatting configuration alone does not establish full application/native, JVM/Lint or device acceptance."
+  ],
+  "local_execution_performed_by_this_reviewer": {
+    "Gradle": 0,
+    "ADB": 0,
+    "VM": 0,
+    "production_edits": 0,
+    "GitHub_mutations": 0
+  }
+}

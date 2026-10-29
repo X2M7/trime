@@ -1,0 +1,51 @@
+{
+  "status": "SOURCE_ADAPTED_AND_PYTHON_AST_CHECKED_ONLY; NOT_EXECUTED_NOT_COMPILED_NOT_VALIDATED_ON_GRADLE",
+  "worktree": "/home/xumin/Public/Trime-pr-spotless-gradle9-20261029",
+  "base": "7fedca06ba5d2ef761a2ae3d44d8a0917db36994",
+  "files": [
+    {
+      "file": "spotless-observe.init.gradle",
+      "sha256": "01d6e9fa9717de40cacb19a6841059f2f8ca7f9238620fd4a8dae20a90180b14",
+      "bytes": 4490,
+      "copied_from": "/home/xumin/Public/Trime/build/issue-fixes-batch6-20261029/spotless-observe.init.gradle",
+      "original_sha256": "4c9ac7ae71317ede9ca75a483809c9c676169902c2ee4c2b0b1ba31dc8cc735d",
+      "syntax_ast_parsed_only": false
+    },
+    {
+      "file": "capture-spotless-phase.py",
+      "sha256": "2130f0b8fc450c24f8362979fd3dc42a6b782e826abed245b12cf53a22d5853b",
+      "bytes": 3704,
+      "copied_from": "/home/xumin/Public/Trime/build/issue-fixes-batch6-20261029/capture-spotless-phase.py",
+      "original_sha256": "f1f13d701acef7ca5693cebb2ce8cc567393961de1fc01efc7cd25eb3cc6c654",
+      "syntax_ast_parsed_only": true
+    },
+    {
+      "file": "check-spotless-phase.py",
+      "sha256": "c58f0bb808b7fda62fe412f5e283f117ba19d0ad758bd86a0a0f8765e12a5a01",
+      "bytes": 13887,
+      "copied_from": "/home/xumin/Public/Trime/build/issue-fixes-batch6-20261029/check-spotless-phase.py",
+      "original_sha256": "472ae55b99ae056824205763eb5144215eea6bc3d54c38f401f37444ae0f79e2",
+      "syntax_ast_parsed_only": true
+    },
+    {
+      "file": "run_phase.py",
+      "sha256": "bb48560d9dede7f7f3d168f5dc19b224f8a3b37b877b327477e19b6c423e31bf",
+      "bytes": 2525,
+      "copied_from": "/home/xumin/Public/Trime/build/issue-fixes-batch6-20261029/run_phase.py",
+      "original_sha256": "c257602c047b1ce060fb2b800711320869264c2c87ba7d6e98d5ecd973155fbb",
+      "syntax_ast_parsed_only": true
+    }
+  ],
+  "required_checker_commands": [
+    "python3 -B check-spotless-phase.py --phase-dir <R7/spotless-baselineN> --expected-count 293 --expected-spotless 8.10.2",
+    "python3 -B check-spotless-phase.py --phase-dir <R7/spotless-candidateN> --expected-count 293 --expected-spotless <chosen-upgrade> --baseline-dir <R7/spotless-baselineN>"
+  ],
+  "plan_review": [
+    "Actual Gradle argv enables org.gradle.deprecation.trace=true; original R6 files untouched.",
+    "Each phase must execute formatter/check four original bound actions in same nonce/JVM, without cache reuse, using all293 exact tracked Kotlin inputs; all source snapshots must remain stable during that phase.",
+    "Baseline must reproduce one setVisible message with associated GradleProvisioner stack and the three known cross-build producer warnings. Candidate must eliminate setVisible and compare its exact293 runtime targets and source paths/content to the passed baseline.",
+    "This base lacks #2206 exclusion. Candidate records actual subset0..3 of the three known cross-build producer warnings; duplicates/unknown producers still fail. It does not assume these separate warnings are fixed.",
+    "Both before/after actual producer snapshots must match within each phase and all three directories must be nonempty; actual file counts are recorded rather than fixed47. Fresh compilation between phases can legitimately change producer count/bytes and is recorded separately from exact Kotlin source equivalence.",
+    "Root exclusively schedules and runs serial phases, prepares real native prebuilt configuration inputs and reviews actual results. No app/native compilation, unit tests, lint, emulator, device or CI success is implied by these external formatter tools."
+  ]
+}

@@ -1,0 +1,880 @@
+{
+  "status": "INDEPENDENT_RAW_AB_CONFIRMS_SCOPED_SPOTLESS_WARNING_REMOVAL",
+  "utc": "2026-10-29T05:29:30.832027+00:00",
+  "base": "7fedca06ba5d2ef761a2ae3d44d8a0917db36994",
+  "checks": {
+    "all_293_actual_targets_equal_Git_blobs_and_each_other": true,
+    "both_phases_same_selected_base": true,
+    "source_stable_through_each_invocation": true,
+    "different_nonces_same_frozen_observer_and_launcher": true,
+    "only_catalog_line_diff": true,
+    "expected_catalog_versions": true,
+    "producer_outputs_all_three_warm_and_stable_across_AB": true,
+    "baseline_actual_actions": true,
+    "baseline_nonce_binding": true,
+    "baseline_three_cross_build_warnings_retained": true,
+    "baseline_actual_plugin_resolution": true,
+    "baseline_actual_nonincremental_and_success": true,
+    "baseline_executed_:spotlessKotlin": true,
+    "baseline_executed_:spotlessKotlinCheck": true,
+    "baseline_unique_marker_1": true,
+    "baseline_unique_marker_2": true,
+    "baseline_unique_marker_3": true,
+    "baseline_unique_marker_4": true,
+    "candidate_actual_actions": true,
+    "candidate_nonce_binding": true,
+    "candidate_three_cross_build_warnings_retained": true,
+    "candidate_actual_plugin_resolution": true,
+    "candidate_actual_nonincremental_and_success": true,
+    "candidate_executed_:spotlessKotlin": true,
+    "candidate_executed_:spotlessKotlinCheck": true,
+    "candidate_unique_marker_1": true,
+    "candidate_unique_marker_2": true,
+    "candidate_unique_marker_3": true,
+    "candidate_unique_marker_4": true,
+    "Spotless1_to_0_only_AGP52_KSP3_stay": true,
+    "all_55_nonSpotless_direct_callers_exact_multiset_unchanged": true,
+    "all_three_cross_build_opening_lines_exact_unchanged": true
+  },
+  "failures": [],
+  "phases": {
+    "baseline": {
+      "setVisible_total_count": 56,
+      "setVisible_by_direct_caller": {
+        "AGP": 52,
+        "KSP": 3,
+        "Spotless": 1
+      },
+      "records": [
+        {
+          "message_index": 1,
+          "line_1based": 142,
+          "direct_caller": "at com.android.build.gradle.internal.plugins.BasePlugin$Companion$createAndroidJdkImageConfiguration$1.execute(BasePlugin.kt:362)",
+          "category": "AGP",
+          "block_sha256": "5ab2588de8620255c51bca851f5486e4d3e818e9dc64f0fe4d7d65295e42b00f"
+        },
+        {
+          "message_index": 2,
+          "line_1based": 437,
+          "direct_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP",
+          "block_sha256": "aa1d7e696d509091ce00abae2a3dd9e4aa9fcfcd8c21996ec78d8412fe2a432d"
+        },
+        {
+          "message_index": 3,
+          "line_1based": 719,
+          "direct_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP",
+          "block_sha256": "6593f83ef07fd927fd1326e26243f5a99a02b5f79cd4d5ba2770f0b9c08d4fd3"
+        },
+        {
+          "message_index": 4,
+          "line_1based": 1001,
+          "direct_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP",
+          "block_sha256": "5b54ebcfd032383846473507391bca81474706c61886d3cecf1ac880bd406469"
+        },
+        {
+          "message_index": 5,
+          "line_1based": 1283,
+          "direct_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP",
+          "block_sha256": "073fa6ab236ee0789ccb2afbf138faf9ce18bcd710e44b7fd20b711e144d6795"
+        },
+        {
+          "message_index": 6,
+          "line_1based": 1565,
+          "direct_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP",
+          "block_sha256": "b846a2c9d3b0cfdb7693c547db9af938f3c274f2f3ff8b0b915f07f33fb70c56"
+        },
+        {
+          "message_index": 7,
+          "line_1based": 1847,
+          "direct_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP",
+          "block_sha256": "7daaec97cf2c918e11eb0b745643d267c0672ec43dc43f01e4f93baa10daf0fe"
+        },
+        {
+          "message_index": 8,
+          "line_1based": 2129,
+          "direct_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP",
+          "block_sha256": "b8f71a1ce2376ad7049557efbfdf2520e3133dd28dda35c2e522552f2987c152"
+        },
+        {
+          "message_index": 9,
+          "line_1based": 2411,
+          "direct_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP",
+          "block_sha256": "9e4246d3e914cfa6f32519f859ed8f83b131629623c41d9271bdb14be15842dc"
+        },
+        {
+          "message_index": 10,
+          "line_1based": 2693,
+          "direct_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP",
+          "block_sha256": "f7fda6ef51213521ffe5184f1aa2aa91263b9991e34859e999f87ab40eb68be8"
+        },
+        {
+          "message_index": 11,
+          "line_1based": 2975,
+          "direct_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP",
+          "block_sha256": "a0a33fbefd91741214abae2543041f9ae8cd8c7872af83c998643105eb149ba4"
+        },
+        {
+          "message_index": 12,
+          "line_1based": 3257,
+          "direct_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP",
+          "block_sha256": "98a71d5aacb05a51b306757ce0020394bc1272e34e0a15e74309a82b9b462bac"
+        },
+        {
+          "message_index": 13,
+          "line_1based": 3539,
+          "direct_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP",
+          "block_sha256": "a4c447369ef1654db508687e495734b218bbb5f8688d23e7b999c7ef535efa1f"
+        },
+        {
+          "message_index": 14,
+          "line_1based": 3821,
+          "direct_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP",
+          "block_sha256": "301cdbab409cefa5c2b657155f7ae81f41636bb31f7cf0f4d8abee65e822f1bc"
+        },
+        {
+          "message_index": 15,
+          "line_1based": 4103,
+          "direct_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP",
+          "block_sha256": "6d61373d0b84881839381bb6a9e00deaa2e7f1184df65f31c17e3259b5aa7e5e"
+        },
+        {
+          "message_index": 16,
+          "line_1based": 4385,
+          "direct_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP",
+          "block_sha256": "ce5679bb68c7dd4036fdc0ad36a90d88038424b4be7071ff4c356f302f8d676d"
+        },
+        {
+          "message_index": 17,
+          "line_1based": 4667,
+          "direct_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP",
+          "block_sha256": "e5a3c38019bd10871c97111a97b87f5befc0eeeb6dcbeac4b2314225f61c5cf0"
+        },
+        {
+          "message_index": 18,
+          "line_1based": 4949,
+          "direct_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP",
+          "block_sha256": "ce986c74fe04969bc108b6bc209f9a0e8de78867e085f61ce6beb2d5d070a375"
+        },
+        {
+          "message_index": 19,
+          "line_1based": 5231,
+          "direct_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP",
+          "block_sha256": "c6a67133cecd444a0d44af7b8165ef246d103a9f29c0d96479da0374fac62ad7"
+        },
+        {
+          "message_index": 20,
+          "line_1based": 5513,
+          "direct_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP",
+          "block_sha256": "67993046d30084257a8f907a09bfddd389b0dcf7e861720f2e23e46dbda32480"
+        },
+        {
+          "message_index": 21,
+          "line_1based": 5795,
+          "direct_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP",
+          "block_sha256": "dcf55b69c07e16438e8a7e6fa0c4503ec84e9623540eb720d0260b036006ca3e"
+        },
+        {
+          "message_index": 22,
+          "line_1based": 6077,
+          "direct_caller": "at com.android.build.gradle.internal.plugins.BasePlugin$Companion.createCustomLintPublishConfig(BasePlugin.kt:383)",
+          "category": "AGP",
+          "block_sha256": "ec3503967a117a630063b13936733e44ced3e06faadea9ea22b60e6d48b8f215"
+        },
+        {
+          "message_index": 23,
+          "line_1based": 6350,
+          "direct_caller": "at com.android.build.gradle.internal.plugins.BasePlugin$Companion.createCustomLintChecksConfig(BasePlugin.kt:375)",
+          "category": "AGP",
+          "block_sha256": "9f49127d8e2cfa829b26f46a1cf62ac15fc612c583d97703af8e8f57aa752396"
+        },
+        {
+          "message_index": 24,
+          "line_1based": 6623,
+          "direct_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP",
+          "block_sha256": "330606fa70531b1fd36c96eae36682839ac33b83b8f9d253ab17f9129ed946ca"
+        },
+        {
+          "message_index": 25,
+          "line_1based": 6911,
+          "direct_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP",
+          "block_sha256": "9192aec0092fb3304b01f4d3a4bd4d5ac36163f2afd200b293e142128eac4368"
+        },
+        {
+          "message_index": 26,
+          "line_1based": 7199,
+          "direct_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP",
+          "block_sha256": "780a340d57f9e3088c7b07a0ed7aca67ed5a02de4e134a5178fa6fd77415f62b"
+        },
+        {
+          "message_index": 27,
+          "line_1based": 7487,
+          "direct_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP",
+          "block_sha256": "9bd20edfe09527bf6db4c834f26fbbfb22e6e6a1900aa952f64c7a4dbbcf152c"
+        },
+        {
+          "message_index": 28,
+          "line_1based": 7775,
+          "direct_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP",
+          "block_sha256": "20cce66c5527c7f218de86fe45cbc0ca3a40cf945bf1040dbe2ee8f83430e1ca"
+        },
+        {
+          "message_index": 29,
+          "line_1based": 8063,
+          "direct_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP",
+          "block_sha256": "547c6618e9223f34b945d76116c8d15101290705ea2812d025584d94686efb73"
+        },
+        {
+          "message_index": 30,
+          "line_1based": 8351,
+          "direct_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP",
+          "block_sha256": "9217e573741d15e467ea55005a0616b28b4ee0b154864f63fb8db637a071771a"
+        },
+        {
+          "message_index": 31,
+          "line_1based": 8639,
+          "direct_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP",
+          "block_sha256": "252a603776249bf0656aab936f9343b7795150b3a6ae159e9616f6635213d6fd"
+        },
+        {
+          "message_index": 32,
+          "line_1based": 8927,
+          "direct_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP",
+          "block_sha256": "0d465586cacb4f2c20b7254276f0bfe0d6a6fa614c33503356be15d677c5c67b"
+        },
+        {
+          "message_index": 33,
+          "line_1based": 9215,
+          "direct_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP",
+          "block_sha256": "48c2ba23f990c0451931586069fe705af12b8dccdb558958065450abebc3fa36"
+        },
+        {
+          "message_index": 34,
+          "line_1based": 9503,
+          "direct_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP",
+          "block_sha256": "2499c0baee3970dda4288ff3e6d9c85ec5294a5030740c6df4f233f904935c92"
+        },
+        {
+          "message_index": 35,
+          "line_1based": 9791,
+          "direct_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP",
+          "block_sha256": "1990516c80e54af6f9902fc4b66ce5d5c528f8287b94104b70ecadb68409ec7b"
+        },
+        {
+          "message_index": 36,
+          "line_1based": 10079,
+          "direct_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP",
+          "block_sha256": "6ce80d177b10ff87fea1ef6ed44d2a365c32bb67e96217157d9c77b8edb47dbf"
+        },
+        {
+          "message_index": 37,
+          "line_1based": 10367,
+          "direct_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP",
+          "block_sha256": "9b13ecb7a533a8c1557cf51684252c29322ccfc4aa8d562c0744f7aafdfc8bbd"
+        },
+        {
+          "message_index": 38,
+          "line_1based": 10655,
+          "direct_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP",
+          "block_sha256": "5ab1181b0cd7b82c30fbcdaca216c7f772487b80fef88059d3fb642662f328b1"
+        },
+        {
+          "message_index": 39,
+          "line_1based": 10943,
+          "direct_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP",
+          "block_sha256": "5a3f8e3804f8af16383475f22298742a3b7b42ab00849a9e8073f35ed65cbe0d"
+        },
+        {
+          "message_index": 40,
+          "line_1based": 11231,
+          "direct_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP",
+          "block_sha256": "b77782baea241a7ab9812e197894c4e773ae521b3d5ec09cf3c114689d5a6140"
+        },
+        {
+          "message_index": 41,
+          "line_1based": 11519,
+          "direct_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP",
+          "block_sha256": "c5289693660d1926b78fbc288648c13b7fa7c60bb88da3cda0535c9187428b3a"
+        },
+        {
+          "message_index": 42,
+          "line_1based": 11807,
+          "direct_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP",
+          "block_sha256": "c7c24eeaf57e2b28d8001322917f8f32f0201abd594b3fd57ae5f2ba5b6ab90a"
+        },
+        {
+          "message_index": 43,
+          "line_1based": 12095,
+          "direct_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP",
+          "block_sha256": "2c18c4886e34c74c7c18970393bdd7bf36019e4347bd4aac8ef480788a472c3d"
+        },
+        {
+          "message_index": 44,
+          "line_1based": 12383,
+          "direct_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP",
+          "block_sha256": "a80852cb96fdcb5e018883e37e88de8b497923f8461aeac180f2c52cfac0b09f"
+        },
+        {
+          "message_index": 45,
+          "line_1based": 12387,
+          "direct_caller": "at com.android.build.gradle.internal.plugins.BasePlugin$Companion.createAndroidTestUtilConfiguration$gradle_core(BasePlugin.kt:404)",
+          "category": "AGP",
+          "block_sha256": "defd40e170af10cd572d647dd3094f0872671b6830020572b4eefc5310252f7b"
+        },
+        {
+          "message_index": 46,
+          "line_1based": 12395,
+          "direct_caller": "at com.google.devtools.ksp.gradle.KspConfigurations.<init>(KspConfigurations.kt:34)",
+          "category": "KSP",
+          "block_sha256": "aef781a889dd0a96576814a2c9adf7a5ce61f162ef73a7a57ec98352078a4018"
+        },
+        {
+          "message_index": 47,
+          "line_1based": 12399,
+          "direct_caller": "at com.google.devtools.ksp.gradle.KspConfigurations.createConfiguration(KspConfigurations.kt:54)",
+          "category": "KSP",
+          "block_sha256": "290f01b317cab71b8c0aff0618f98388cc3c5bc41421ba0ef171a055f98827cb"
+        },
+        {
+          "message_index": 48,
+          "line_1based": 12403,
+          "direct_caller": "at com.android.build.gradle.internal.TaskManager$Companion$createCoreLibraryDesugaringConfig$1.execute(TaskManager.kt:2121)",
+          "category": "AGP",
+          "block_sha256": "6be2ba1c06580050ab5bae12b39ac7fcee46db154ae4c6439d16b8a4f992003b"
+        },
+        {
+          "message_index": 49,
+          "line_1based": 12417,
+          "direct_caller": "at com.android.build.gradle.internal.dependency.VariantDependenciesBuilder.build(VariantDependenciesBuilder.java:263)",
+          "category": "AGP",
+          "block_sha256": "4c133038454d9adcee4fd4992464ba9131eb0f9c2a2968f656ecd4d7ae9894ef"
+        },
+        {
+          "message_index": 50,
+          "line_1based": 12421,
+          "direct_caller": "at com.android.build.gradle.internal.dependency.VariantDependenciesBuilder.build(VariantDependenciesBuilder.java:310)",
+          "category": "AGP",
+          "block_sha256": "fc084ede6d9881a838bf5170bad35da8d8b7ea6f4a8c89ea86b2d02aeaf9a1bb"
+        },
+        {
+          "message_index": 51,
+          "line_1based": 12425,
+          "direct_caller": "at com.android.build.gradle.internal.dependency.VariantDependenciesBuilder.build(VariantDependenciesBuilder.java:324)",
+          "category": "AGP",
+          "block_sha256": "05f589ef6e4706e677306a7a8399bfc88099dfbf049a4c9bf7fdfaf280006fcb"
+        },
+        {
+          "message_index": 52,
+          "line_1based": 12429,
+          "direct_caller": "at com.android.build.gradle.internal.dependency.VariantDependenciesBuilder.build(VariantDependenciesBuilder.java:353)",
+          "category": "AGP",
+          "block_sha256": "d3113f5ea89ea695404706c6e4d7bfcde4421f3e62126a745b730ddae9b47496"
+        },
+        {
+          "message_index": 53,
+          "line_1based": 12433,
+          "direct_caller": "at com.android.build.gradle.internal.tasks.creationconfig.BaseJavaPreCompileTaskCreationConfig.createKaptOrKspClassPath(JavaPreCompileTaskCreationConfig.kt:117)",
+          "category": "AGP",
+          "block_sha256": "cb58f09ccc4c4838a07802dc84eb4ac00344d08559a6ddce8aacb12065bd3691"
+        },
+        {
+          "message_index": 54,
+          "line_1based": 12437,
+          "direct_caller": "at com.google.devtools.ksp.gradle.KspSubpluginKt.markResolvable(KspSubplugin.kt:463)",
+          "category": "KSP",
+          "block_sha256": "a53cf6fa27916d2458580c891af44d18b18a097fc231da5f3dd79ae14232e3e7"
+        },
+        {
+          "message_index": 55,
+          "line_1based": 12441,
+          "direct_caller": "at com.android.build.gradle.internal.testing.utp.UtpTestUtilsKt$maybeCreateUtpConfigurations$1$1.execute(UtpTestUtils.kt:263)",
+          "category": "AGP",
+          "block_sha256": "30dd8ae57fa3cb719cc78bd069a58c6029d9e1f95ffeb5ee05fbc2558c427809"
+        },
+        {
+          "message_index": 56,
+          "line_1based": 12467,
+          "direct_caller": "at com.diffplug.gradle.spotless.GradleProvisioner.lambda$forConfigurationContainer$2(GradleProvisioner.java:136)",
+          "category": "Spotless",
+          "block_sha256": "f64ea3e325aa4d6ff2d349dfa414716044eb15b656f59f3402ea40cc30478635"
+        }
+      ],
+      "actual_Resolved_plugin_version": "8.10.2",
+      "cross_build_warning_count": 3,
+      "nonce": "97a430bb604543daa5272e594424edc5",
+      "minimum_available_kib": 4305100,
+      "input_sha256": {
+        "gradle.log": "44b0d187d14dc99be305b1a076d521258cddd17743a795e0815b591e92409efb",
+        "invocation.json": "57e802826fc91cc82ce79224ce835599d5580e43b4061d039a5da4c7fd16bba0",
+        "completion.json": "19595a6375c613d7528d6ca7210c191eb566fe01378851da51a4e842a85cc8a6",
+        "events.jsonl": "fae0fa336b6f1240bf1a8cb9194dee34c9098fa7c4aea98bfb9b770867f40983",
+        "target-before.json": "5d476e0b8b20097885e2de8118ffdc146b68b8abe9c24ae9cc7ff5d2314267b2",
+        "target-after.json": "64d190b3c6dc73cf27781d7356ab4891c059f39d112ed9b9419a7716f5015e74",
+        "source-before.diff": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "outer-result.json": "9fb5921c643a4e8d2534cf496352c03e40e4f3623c1afe05a999f2206755dcd8"
+      }
+    },
+    "candidate": {
+      "setVisible_total_count": 55,
+      "setVisible_by_direct_caller": {
+        "AGP": 52,
+        "KSP": 3
+      },
+      "records": [
+        {
+          "message_index": 1,
+          "line_1based": 1360,
+          "direct_caller": "at com.android.build.gradle.internal.plugins.BasePlugin$Companion$createAndroidJdkImageConfiguration$1.execute(BasePlugin.kt:362)",
+          "category": "AGP",
+          "block_sha256": "7b4dd533529fb6e403ebe5a2e82d424bef963f033f5404c072970e89bc3fc0e4"
+        },
+        {
+          "message_index": 2,
+          "line_1based": 1655,
+          "direct_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP",
+          "block_sha256": "aa1d7e696d509091ce00abae2a3dd9e4aa9fcfcd8c21996ec78d8412fe2a432d"
+        },
+        {
+          "message_index": 3,
+          "line_1based": 1937,
+          "direct_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP",
+          "block_sha256": "6593f83ef07fd927fd1326e26243f5a99a02b5f79cd4d5ba2770f0b9c08d4fd3"
+        },
+        {
+          "message_index": 4,
+          "line_1based": 2219,
+          "direct_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP",
+          "block_sha256": "5b54ebcfd032383846473507391bca81474706c61886d3cecf1ac880bd406469"
+        },
+        {
+          "message_index": 5,
+          "line_1based": 2501,
+          "direct_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP",
+          "block_sha256": "073fa6ab236ee0789ccb2afbf138faf9ce18bcd710e44b7fd20b711e144d6795"
+        },
+        {
+          "message_index": 6,
+          "line_1based": 2783,
+          "direct_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP",
+          "block_sha256": "b846a2c9d3b0cfdb7693c547db9af938f3c274f2f3ff8b0b915f07f33fb70c56"
+        },
+        {
+          "message_index": 7,
+          "line_1based": 3065,
+          "direct_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP",
+          "block_sha256": "7daaec97cf2c918e11eb0b745643d267c0672ec43dc43f01e4f93baa10daf0fe"
+        },
+        {
+          "message_index": 8,
+          "line_1based": 3347,
+          "direct_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP",
+          "block_sha256": "b8f71a1ce2376ad7049557efbfdf2520e3133dd28dda35c2e522552f2987c152"
+        },
+        {
+          "message_index": 9,
+          "line_1based": 3629,
+          "direct_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP",
+          "block_sha256": "9e4246d3e914cfa6f32519f859ed8f83b131629623c41d9271bdb14be15842dc"
+        },
+        {
+          "message_index": 10,
+          "line_1based": 3911,
+          "direct_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP",
+          "block_sha256": "f7fda6ef51213521ffe5184f1aa2aa91263b9991e34859e999f87ab40eb68be8"
+        },
+        {
+          "message_index": 11,
+          "line_1based": 4193,
+          "direct_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP",
+          "block_sha256": "a0a33fbefd91741214abae2543041f9ae8cd8c7872af83c998643105eb149ba4"
+        },
+        {
+          "message_index": 12,
+          "line_1based": 4475,
+          "direct_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP",
+          "block_sha256": "98a71d5aacb05a51b306757ce0020394bc1272e34e0a15e74309a82b9b462bac"
+        },
+        {
+          "message_index": 13,
+          "line_1based": 4757,
+          "direct_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP",
+          "block_sha256": "a4c447369ef1654db508687e495734b218bbb5f8688d23e7b999c7ef535efa1f"
+        },
+        {
+          "message_index": 14,
+          "line_1based": 5039,
+          "direct_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP",
+          "block_sha256": "301cdbab409cefa5c2b657155f7ae81f41636bb31f7cf0f4d8abee65e822f1bc"
+        },
+        {
+          "message_index": 15,
+          "line_1based": 5321,
+          "direct_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP",
+          "block_sha256": "6d61373d0b84881839381bb6a9e00deaa2e7f1184df65f31c17e3259b5aa7e5e"
+        },
+        {
+          "message_index": 16,
+          "line_1based": 5603,
+          "direct_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP",
+          "block_sha256": "ce5679bb68c7dd4036fdc0ad36a90d88038424b4be7071ff4c356f302f8d676d"
+        },
+        {
+          "message_index": 17,
+          "line_1based": 5885,
+          "direct_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP",
+          "block_sha256": "e5a3c38019bd10871c97111a97b87f5befc0eeeb6dcbeac4b2314225f61c5cf0"
+        },
+        {
+          "message_index": 18,
+          "line_1based": 6167,
+          "direct_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP",
+          "block_sha256": "ce986c74fe04969bc108b6bc209f9a0e8de78867e085f61ce6beb2d5d070a375"
+        },
+        {
+          "message_index": 19,
+          "line_1based": 6449,
+          "direct_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP",
+          "block_sha256": "c6a67133cecd444a0d44af7b8165ef246d103a9f29c0d96479da0374fac62ad7"
+        },
+        {
+          "message_index": 20,
+          "line_1based": 6731,
+          "direct_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP",
+          "block_sha256": "67993046d30084257a8f907a09bfddd389b0dcf7e861720f2e23e46dbda32480"
+        },
+        {
+          "message_index": 21,
+          "line_1based": 7013,
+          "direct_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP",
+          "block_sha256": "dcf55b69c07e16438e8a7e6fa0c4503ec84e9623540eb720d0260b036006ca3e"
+        },
+        {
+          "message_index": 22,
+          "line_1based": 7295,
+          "direct_caller": "at com.android.build.gradle.internal.plugins.BasePlugin$Companion.createCustomLintPublishConfig(BasePlugin.kt:383)",
+          "category": "AGP",
+          "block_sha256": "ec3503967a117a630063b13936733e44ced3e06faadea9ea22b60e6d48b8f215"
+        },
+        {
+          "message_index": 23,
+          "line_1based": 7568,
+          "direct_caller": "at com.android.build.gradle.internal.plugins.BasePlugin$Companion.createCustomLintChecksConfig(BasePlugin.kt:375)",
+          "category": "AGP",
+          "block_sha256": "9f49127d8e2cfa829b26f46a1cf62ac15fc612c583d97703af8e8f57aa752396"
+        },
+        {
+          "message_index": 24,
+          "line_1based": 7841,
+          "direct_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP",
+          "block_sha256": "330606fa70531b1fd36c96eae36682839ac33b83b8f9d253ab17f9129ed946ca"
+        },
+        {
+          "message_index": 25,
+          "line_1based": 8129,
+          "direct_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP",
+          "block_sha256": "9192aec0092fb3304b01f4d3a4bd4d5ac36163f2afd200b293e142128eac4368"
+        },
+        {
+          "message_index": 26,
+          "line_1based": 8417,
+          "direct_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP",
+          "block_sha256": "780a340d57f9e3088c7b07a0ed7aca67ed5a02de4e134a5178fa6fd77415f62b"
+        },
+        {
+          "message_index": 27,
+          "line_1based": 8705,
+          "direct_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP",
+          "block_sha256": "9bd20edfe09527bf6db4c834f26fbbfb22e6e6a1900aa952f64c7a4dbbcf152c"
+        },
+        {
+          "message_index": 28,
+          "line_1based": 8993,
+          "direct_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP",
+          "block_sha256": "20cce66c5527c7f218de86fe45cbc0ca3a40cf945bf1040dbe2ee8f83430e1ca"
+        },
+        {
+          "message_index": 29,
+          "line_1based": 9281,
+          "direct_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP",
+          "block_sha256": "547c6618e9223f34b945d76116c8d15101290705ea2812d025584d94686efb73"
+        },
+        {
+          "message_index": 30,
+          "line_1based": 9569,
+          "direct_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP",
+          "block_sha256": "9217e573741d15e467ea55005a0616b28b4ee0b154864f63fb8db637a071771a"
+        },
+        {
+          "message_index": 31,
+          "line_1based": 9857,
+          "direct_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP",
+          "block_sha256": "252a603776249bf0656aab936f9343b7795150b3a6ae159e9616f6635213d6fd"
+        },
+        {
+          "message_index": 32,
+          "line_1based": 10145,
+          "direct_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP",
+          "block_sha256": "0d465586cacb4f2c20b7254276f0bfe0d6a6fa614c33503356be15d677c5c67b"
+        },
+        {
+          "message_index": 33,
+          "line_1based": 10433,
+          "direct_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP",
+          "block_sha256": "48c2ba23f990c0451931586069fe705af12b8dccdb558958065450abebc3fa36"
+        },
+        {
+          "message_index": 34,
+          "line_1based": 10721,
+          "direct_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP",
+          "block_sha256": "2499c0baee3970dda4288ff3e6d9c85ec5294a5030740c6df4f233f904935c92"
+        },
+        {
+          "message_index": 35,
+          "line_1based": 11009,
+          "direct_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP",
+          "block_sha256": "1990516c80e54af6f9902fc4b66ce5d5c528f8287b94104b70ecadb68409ec7b"
+        },
+        {
+          "message_index": 36,
+          "line_1based": 11297,
+          "direct_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP",
+          "block_sha256": "6ce80d177b10ff87fea1ef6ed44d2a365c32bb67e96217157d9c77b8edb47dbf"
+        },
+        {
+          "message_index": 37,
+          "line_1based": 11585,
+          "direct_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP",
+          "block_sha256": "9b13ecb7a533a8c1557cf51684252c29322ccfc4aa8d562c0744f7aafdfc8bbd"
+        },
+        {
+          "message_index": 38,
+          "line_1based": 11873,
+          "direct_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP",
+          "block_sha256": "5ab1181b0cd7b82c30fbcdaca216c7f772487b80fef88059d3fb642662f328b1"
+        },
+        {
+          "message_index": 39,
+          "line_1based": 12161,
+          "direct_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP",
+          "block_sha256": "5a3f8e3804f8af16383475f22298742a3b7b42ab00849a9e8073f35ed65cbe0d"
+        },
+        {
+          "message_index": 40,
+          "line_1based": 12449,
+          "direct_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP",
+          "block_sha256": "b77782baea241a7ab9812e197894c4e773ae521b3d5ec09cf3c114689d5a6140"
+        },
+        {
+          "message_index": 41,
+          "line_1based": 12737,
+          "direct_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP",
+          "block_sha256": "c5289693660d1926b78fbc288648c13b7fa7c60bb88da3cda0535c9187428b3a"
+        },
+        {
+          "message_index": 42,
+          "line_1based": 13025,
+          "direct_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP",
+          "block_sha256": "c7c24eeaf57e2b28d8001322917f8f32f0201abd594b3fd57ae5f2ba5b6ab90a"
+        },
+        {
+          "message_index": 43,
+          "line_1based": 13313,
+          "direct_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP",
+          "block_sha256": "2c18c4886e34c74c7c18970393bdd7bf36019e4347bd4aac8ef480788a472c3d"
+        },
+        {
+          "message_index": 44,
+          "line_1based": 13601,
+          "direct_caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP",
+          "block_sha256": "a80852cb96fdcb5e018883e37e88de8b497923f8461aeac180f2c52cfac0b09f"
+        },
+        {
+          "message_index": 45,
+          "line_1based": 13605,
+          "direct_caller": "at com.android.build.gradle.internal.plugins.BasePlugin$Companion.createAndroidTestUtilConfiguration$gradle_core(BasePlugin.kt:404)",
+          "category": "AGP",
+          "block_sha256": "defd40e170af10cd572d647dd3094f0872671b6830020572b4eefc5310252f7b"
+        },
+        {
+          "message_index": 46,
+          "line_1based": 13613,
+          "direct_caller": "at com.google.devtools.ksp.gradle.KspConfigurations.<init>(KspConfigurations.kt:34)",
+          "category": "KSP",
+          "block_sha256": "aef781a889dd0a96576814a2c9adf7a5ce61f162ef73a7a57ec98352078a4018"
+        },
+        {
+          "message_index": 47,
+          "line_1based": 13617,
+          "direct_caller": "at com.google.devtools.ksp.gradle.KspConfigurations.createConfiguration(KspConfigurations.kt:54)",
+          "category": "KSP",
+          "block_sha256": "290f01b317cab71b8c0aff0618f98388cc3c5bc41421ba0ef171a055f98827cb"
+        },
+        {
+          "message_index": 48,
+          "line_1based": 13621,
+          "direct_caller": "at com.android.build.gradle.internal.TaskManager$Companion$createCoreLibraryDesugaringConfig$1.execute(TaskManager.kt:2121)",
+          "category": "AGP",
+          "block_sha256": "5633e4eefc7f49ba149d4c6619c7af3c05eb976380adccd7f56cfa9e954826f5"
+        },
+        {
+          "message_index": 49,
+          "line_1based": 13640,
+          "direct_caller": "at com.android.build.gradle.internal.dependency.VariantDependenciesBuilder.build(VariantDependenciesBuilder.java:263)",
+          "category": "AGP",
+          "block_sha256": "4c133038454d9adcee4fd4992464ba9131eb0f9c2a2968f656ecd4d7ae9894ef"
+        },
+        {
+          "message_index": 50,
+          "line_1based": 13644,
+          "direct_caller": "at com.android.build.gradle.internal.dependency.VariantDependenciesBuilder.build(VariantDependenciesBuilder.java:310)",
+          "category": "AGP",
+          "block_sha256": "fc084ede6d9881a838bf5170bad35da8d8b7ea6f4a8c89ea86b2d02aeaf9a1bb"
+        },
+        {
+          "message_index": 51,
+          "line_1based": 13648,
+          "direct_caller": "at com.android.build.gradle.internal.dependency.VariantDependenciesBuilder.build(VariantDependenciesBuilder.java:324)",
+          "category": "AGP",
+          "block_sha256": "05f589ef6e4706e677306a7a8399bfc88099dfbf049a4c9bf7fdfaf280006fcb"
+        },
+        {
+          "message_index": 52,
+          "line_1based": 13652,
+          "direct_caller": "at com.android.build.gradle.internal.dependency.VariantDependenciesBuilder.build(VariantDependenciesBuilder.java:353)",
+          "category": "AGP",
+          "block_sha256": "d3113f5ea89ea695404706c6e4d7bfcde4421f3e62126a745b730ddae9b47496"
+        },
+        {
+          "message_index": 53,
+          "line_1based": 13656,
+          "direct_caller": "at com.android.build.gradle.internal.tasks.creationconfig.BaseJavaPreCompileTaskCreationConfig.createKaptOrKspClassPath(JavaPreCompileTaskCreationConfig.kt:117)",
+          "category": "AGP",
+          "block_sha256": "cb58f09ccc4c4838a07802dc84eb4ac00344d08559a6ddce8aacb12065bd3691"
+        },
+        {
+          "message_index": 54,
+          "line_1based": 13660,
+          "direct_caller": "at com.google.devtools.ksp.gradle.KspSubpluginKt.markResolvable(KspSubplugin.kt:463)",
+          "category": "KSP",
+          "block_sha256": "a53cf6fa27916d2458580c891af44d18b18a097fc231da5f3dd79ae14232e3e7"
+        },
+        {
+          "message_index": 55,
+          "line_1based": 13664,
+          "direct_caller": "at com.android.build.gradle.internal.testing.utp.UtpTestUtilsKt$maybeCreateUtpConfigurations$1$1.execute(UtpTestUtils.kt:263)",
+          "category": "AGP",
+          "block_sha256": "2c2b1d7b31c4868d3b329e72e39d8ba9857efea65562a64255f1d71743052a5b"
+        }
+      ],
+      "actual_Resolved_plugin_version": "8.10.3",
+      "cross_build_warning_count": 3,
+      "nonce": "f159c1600ec24d8184d260a5f21c1f3a",
+      "minimum_available_kib": 4602888,
+      "input_sha256": {
+        "gradle.log": "73287c4b7ec7fb5fb9e9db5c0576f524a47f4966cae08c22053fcf4433a69d7b",
+        "invocation.json": "93b960d59fbcd217923b241b69f87dfceb191e252ec5adf0a4c2c81636baae84",
+        "completion.json": "42d7e11e1dd1df5ec98dfb20d47066cd53e05da060721bd7c93edf21f839dc2b",
+        "events.jsonl": "bd0cd3b7890c74640cfcfebf7339fc0c9cc0bee66d3f3b16633614622b6a998d",
+        "target-before.json": "ea4d0770b2b352aed0076c32788be0ff12148b6c6a3ce37634faa59a92eb2382",
+        "target-after.json": "2ad39c4726b1add0330ebb299254a71a2e5b5be3599c6affaf7280bb88a489c8",
+        "source-before.diff": "995efb42fbe390bd477fdc534b99824b8b49a2da35104283e41d52ad9a24f5bd",
+        "outer-result.json": "3a698b5bc9614e1997c6c59cbc4c7a198f91730286b2d4961de7fdc41f142ee1"
+      }
+    }
+  },
+  "catalog_source_diff": "diff --git a/gradle/libs.versions.toml b/gradle/libs.versions.toml\nindex add720bc..1af1010f 100644\n--- a/gradle/libs.versions.toml\n+++ b/gradle/libs.versions.toml\n@@ -61,4 +61,4 @@ kotlin-serialization = { id = \"org.jetbrains.kotlin.plugin.serialization\", versi\n ksp = { id = \"com.google.devtools.ksp\", version.ref = \"ksp\" }\n aboutlibraries = { id = \"com.mikepenz.aboutlibraries.plugin.android\", version.ref = \"aboutlibraries\" }\n kotlin-parcelize = { id = \"org.jetbrains.kotlin.plugin.parcelize\", version.ref = \"kotlin\" }\n-spotless = { id = \"com.diffplug.spotless\", version = \"8.10.2\" }\n+spotless = { id = \"com.diffplug.spotless\", version = \"8.10.3\" }\n",
+  "producer_output_files_unchanged": 47,
+  "old_baseline1_checker_failure_preserved": {
+    "path": "/home/xumin/Public/Trime/build/issue-fixes-batch7-20261029/spotless-baseline1/phase-review.json",
+    "sha256": "efb855822c9eec64b890bae4798dacb42322fac2c662a3ca3eadf33fa54cc7db",
+    "status": "FAIL_OR_INCONCLUSIVE"
+  },
+  "scope_limits": [
+    "Direct independent examination of retained raw A/B; does not rewrite old checker failure and does not depend on revised checker self-report.",
+    "Only Spotless-attributed setVisible warning is proven removed, 1->0; total setVisible remains55, with identical52AGP+3KSP direct-caller signatures.",
+    "All3 separate cross-build warnings remain on both sides because #2206 is not included.",
+    "Actual formatter/check only; no app/JVM/native/device/CI success or final committed source acceptance is claimed.",
+    "All293 actual Kotlin input bytes match exact7fed Git blobs; production change is only dependency catalog version, outside Kotlin formatter target."
+  ]
+}

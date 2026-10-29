@@ -1,0 +1,787 @@
+{
+  "utc": "2026-10-29T05:29:20.252351+00:00",
+  "status": "PASS_ACTUAL_AB_SOURCE_AND_CALLER_ATTRIBUTION",
+  "phases": [
+    {
+      "mode": "baseline",
+      "version": "8.10.2",
+      "resolved_plugin_evidence": [
+        [
+          56,
+          "Resolved plugin [id: 'com.diffplug.spotless', version: '8.10.2']"
+        ]
+      ],
+      "total_setvisible_messages": 56,
+      "categories": {
+        "AGP": 52,
+        "KSP": 3,
+        "Spotless": 1
+      },
+      "direct_callers": {
+        "at com.android.build.gradle.internal.plugins.BasePlugin$Companion$createAndroidJdkImageConfiguration$1.execute(BasePlugin.kt:362)": 1,
+        "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)": 41,
+        "at com.android.build.gradle.internal.plugins.BasePlugin$Companion.createCustomLintPublishConfig(BasePlugin.kt:383)": 1,
+        "at com.android.build.gradle.internal.plugins.BasePlugin$Companion.createCustomLintChecksConfig(BasePlugin.kt:375)": 1,
+        "at com.android.build.gradle.internal.plugins.BasePlugin$Companion.createAndroidTestUtilConfiguration$gradle_core(BasePlugin.kt:404)": 1,
+        "at com.google.devtools.ksp.gradle.KspConfigurations.<init>(KspConfigurations.kt:34)": 1,
+        "at com.google.devtools.ksp.gradle.KspConfigurations.createConfiguration(KspConfigurations.kt:54)": 1,
+        "at com.android.build.gradle.internal.TaskManager$Companion$createCoreLibraryDesugaringConfig$1.execute(TaskManager.kt:2121)": 1,
+        "at com.android.build.gradle.internal.dependency.VariantDependenciesBuilder.build(VariantDependenciesBuilder.java:263)": 1,
+        "at com.android.build.gradle.internal.dependency.VariantDependenciesBuilder.build(VariantDependenciesBuilder.java:310)": 1,
+        "at com.android.build.gradle.internal.dependency.VariantDependenciesBuilder.build(VariantDependenciesBuilder.java:324)": 1,
+        "at com.android.build.gradle.internal.dependency.VariantDependenciesBuilder.build(VariantDependenciesBuilder.java:353)": 1,
+        "at com.android.build.gradle.internal.tasks.creationconfig.BaseJavaPreCompileTaskCreationConfig.createKaptOrKspClassPath(JavaPreCompileTaskCreationConfig.kt:117)": 1,
+        "at com.google.devtools.ksp.gradle.KspSubpluginKt.markResolvable(KspSubplugin.kt:463)": 1,
+        "at com.android.build.gradle.internal.testing.utp.UtpTestUtilsKt$maybeCreateUtpConfigurations$1$1.execute(UtpTestUtils.kt:263)": 1,
+        "at com.diffplug.gradle.spotless.GradleProvisioner.lambda$forConfigurationContainer$2(GradleProvisioner.java:136)": 1
+      },
+      "diagnostic_callers": [
+        {
+          "line": 142,
+          "caller": "at com.android.build.gradle.internal.plugins.BasePlugin$Companion$createAndroidJdkImageConfiguration$1.execute(BasePlugin.kt:362)",
+          "category": "AGP"
+        },
+        {
+          "line": 437,
+          "caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP"
+        },
+        {
+          "line": 719,
+          "caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP"
+        },
+        {
+          "line": 1001,
+          "caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP"
+        },
+        {
+          "line": 1283,
+          "caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP"
+        },
+        {
+          "line": 1565,
+          "caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP"
+        },
+        {
+          "line": 1847,
+          "caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP"
+        },
+        {
+          "line": 2129,
+          "caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP"
+        },
+        {
+          "line": 2411,
+          "caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP"
+        },
+        {
+          "line": 2693,
+          "caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP"
+        },
+        {
+          "line": 2975,
+          "caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP"
+        },
+        {
+          "line": 3257,
+          "caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP"
+        },
+        {
+          "line": 3539,
+          "caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP"
+        },
+        {
+          "line": 3821,
+          "caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP"
+        },
+        {
+          "line": 4103,
+          "caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP"
+        },
+        {
+          "line": 4385,
+          "caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP"
+        },
+        {
+          "line": 4667,
+          "caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP"
+        },
+        {
+          "line": 4949,
+          "caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP"
+        },
+        {
+          "line": 5231,
+          "caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP"
+        },
+        {
+          "line": 5513,
+          "caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP"
+        },
+        {
+          "line": 5795,
+          "caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP"
+        },
+        {
+          "line": 6077,
+          "caller": "at com.android.build.gradle.internal.plugins.BasePlugin$Companion.createCustomLintPublishConfig(BasePlugin.kt:383)",
+          "category": "AGP"
+        },
+        {
+          "line": 6350,
+          "caller": "at com.android.build.gradle.internal.plugins.BasePlugin$Companion.createCustomLintChecksConfig(BasePlugin.kt:375)",
+          "category": "AGP"
+        },
+        {
+          "line": 6623,
+          "caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP"
+        },
+        {
+          "line": 6911,
+          "caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP"
+        },
+        {
+          "line": 7199,
+          "caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP"
+        },
+        {
+          "line": 7487,
+          "caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP"
+        },
+        {
+          "line": 7775,
+          "caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP"
+        },
+        {
+          "line": 8063,
+          "caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP"
+        },
+        {
+          "line": 8351,
+          "caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP"
+        },
+        {
+          "line": 8639,
+          "caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP"
+        },
+        {
+          "line": 8927,
+          "caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP"
+        },
+        {
+          "line": 9215,
+          "caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP"
+        },
+        {
+          "line": 9503,
+          "caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP"
+        },
+        {
+          "line": 9791,
+          "caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP"
+        },
+        {
+          "line": 10079,
+          "caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP"
+        },
+        {
+          "line": 10367,
+          "caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP"
+        },
+        {
+          "line": 10655,
+          "caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP"
+        },
+        {
+          "line": 10943,
+          "caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP"
+        },
+        {
+          "line": 11231,
+          "caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP"
+        },
+        {
+          "line": 11519,
+          "caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP"
+        },
+        {
+          "line": 11807,
+          "caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP"
+        },
+        {
+          "line": 12095,
+          "caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP"
+        },
+        {
+          "line": 12383,
+          "caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP"
+        },
+        {
+          "line": 12387,
+          "caller": "at com.android.build.gradle.internal.plugins.BasePlugin$Companion.createAndroidTestUtilConfiguration$gradle_core(BasePlugin.kt:404)",
+          "category": "AGP"
+        },
+        {
+          "line": 12395,
+          "caller": "at com.google.devtools.ksp.gradle.KspConfigurations.<init>(KspConfigurations.kt:34)",
+          "category": "KSP"
+        },
+        {
+          "line": 12399,
+          "caller": "at com.google.devtools.ksp.gradle.KspConfigurations.createConfiguration(KspConfigurations.kt:54)",
+          "category": "KSP"
+        },
+        {
+          "line": 12403,
+          "caller": "at com.android.build.gradle.internal.TaskManager$Companion$createCoreLibraryDesugaringConfig$1.execute(TaskManager.kt:2121)",
+          "category": "AGP"
+        },
+        {
+          "line": 12417,
+          "caller": "at com.android.build.gradle.internal.dependency.VariantDependenciesBuilder.build(VariantDependenciesBuilder.java:263)",
+          "category": "AGP"
+        },
+        {
+          "line": 12421,
+          "caller": "at com.android.build.gradle.internal.dependency.VariantDependenciesBuilder.build(VariantDependenciesBuilder.java:310)",
+          "category": "AGP"
+        },
+        {
+          "line": 12425,
+          "caller": "at com.android.build.gradle.internal.dependency.VariantDependenciesBuilder.build(VariantDependenciesBuilder.java:324)",
+          "category": "AGP"
+        },
+        {
+          "line": 12429,
+          "caller": "at com.android.build.gradle.internal.dependency.VariantDependenciesBuilder.build(VariantDependenciesBuilder.java:353)",
+          "category": "AGP"
+        },
+        {
+          "line": 12433,
+          "caller": "at com.android.build.gradle.internal.tasks.creationconfig.BaseJavaPreCompileTaskCreationConfig.createKaptOrKspClassPath(JavaPreCompileTaskCreationConfig.kt:117)",
+          "category": "AGP"
+        },
+        {
+          "line": 12437,
+          "caller": "at com.google.devtools.ksp.gradle.KspSubpluginKt.markResolvable(KspSubplugin.kt:463)",
+          "category": "KSP"
+        },
+        {
+          "line": 12441,
+          "caller": "at com.android.build.gradle.internal.testing.utp.UtpTestUtilsKt$maybeCreateUtpConfigurations$1$1.execute(UtpTestUtils.kt:263)",
+          "category": "AGP"
+        },
+        {
+          "line": 12467,
+          "caller": "at com.diffplug.gradle.spotless.GradleProvisioner.lambda$forConfigurationContainer$2(GradleProvisioner.java:136)",
+          "category": "Spotless"
+        }
+      ],
+      "cross_build_warnings": [
+        {
+          "line": 12471,
+          "text": "Producing a file in one build and consuming it in another build without declaring an explicit dependency has been deprecated. This will fail with an error in Gradle 10. Gradle detected a problem with the following location: '/home/xumin/Public/Trime-pr-spotless-gradle9-20261029'. Task ':spotlessKotlin' uses this output of task ':build-logic:convention:compileKotlin' without declaring an explicit or implicit dependency. This can lead to incorrect results being produced, depending on what order the tasks are executed. For more information, please refer to https://docs.gradle.org/9.8.1/userguide/validation_problems.html#implicit_dependency in the Gradle documentation."
+        },
+        {
+          "line": 12472,
+          "text": "Producing a file in one build and consuming it in another build without declaring an explicit dependency has been deprecated. This will fail with an error in Gradle 10. Gradle detected a problem with the following location: '/home/xumin/Public/Trime-pr-spotless-gradle9-20261029'. Task ':spotlessKotlin' uses this output of task ':build-logic:convention:pluginDescriptors' without declaring an explicit or implicit dependency. This can lead to incorrect results being produced, depending on what order the tasks are executed. For more information, please refer to https://docs.gradle.org/9.8.1/userguide/validation_problems.html#implicit_dependency in the Gradle documentation."
+        },
+        {
+          "line": 12473,
+          "text": "Producing a file in one build and consuming it in another build without declaring an explicit dependency has been deprecated. This will fail with an error in Gradle 10. Gradle detected a problem with the following location: '/home/xumin/Public/Trime-pr-spotless-gradle9-20261029'. Task ':spotlessKotlin' uses this output of task ':build-logic:convention:processResources' without declaring an explicit or implicit dependency. This can lead to incorrect results being produced, depending on what order the tasks are executed. For more information, please refer to https://docs.gradle.org/9.8.1/userguide/validation_problems.html#implicit_dependency in the Gradle documentation."
+        }
+      ],
+      "target_count": 293,
+      "producer_file_count": 47,
+      "raw_log_sha256": "44b0d187d14dc99be305b1a076d521258cddd17743a795e0815b591e92409efb",
+      "minimum_available_kib": 4305100,
+      "actual_four_action_events": [
+        {
+          "nonce": "97a430bb604543daa5272e594424edc5",
+          "sequence": 1,
+          "event": "before",
+          "task_path": ":spotlessKotlin",
+          "task_type": "com.diffplug.gradle.spotless.SpotlessTaskImpl_Decorated",
+          "project_dir": "/home/xumin/Public/Trime-pr-spotless-gradle9-20261029",
+          "gradle_version": "9.8.1",
+          "pid": 418473,
+          "jvm_started_ms": 1793251464812,
+          "utc": "2026-10-29T05:25:29.218507677Z",
+          "monotonic_ns": 122022299349443
+        },
+        {
+          "nonce": "97a430bb604543daa5272e594424edc5",
+          "sequence": 2,
+          "event": "after",
+          "task_path": ":spotlessKotlin",
+          "task_type": "com.diffplug.gradle.spotless.SpotlessTaskImpl_Decorated",
+          "project_dir": "/home/xumin/Public/Trime-pr-spotless-gradle9-20261029",
+          "gradle_version": "9.8.1",
+          "pid": 418473,
+          "jvm_started_ms": 1793251464812,
+          "utc": "2026-10-29T05:25:54.345402434Z",
+          "monotonic_ns": 122047421841922
+        },
+        {
+          "nonce": "97a430bb604543daa5272e594424edc5",
+          "sequence": 3,
+          "event": "before",
+          "task_path": ":spotlessKotlinCheck",
+          "task_type": "com.diffplug.gradle.spotless.SpotlessCheck_Decorated",
+          "project_dir": "/home/xumin/Public/Trime-pr-spotless-gradle9-20261029",
+          "gradle_version": "9.8.1",
+          "pid": 418473,
+          "jvm_started_ms": 1793251464812,
+          "utc": "2026-10-29T05:25:54.553135542Z",
+          "monotonic_ns": 122047629231357
+        },
+        {
+          "nonce": "97a430bb604543daa5272e594424edc5",
+          "sequence": 4,
+          "event": "after",
+          "task_path": ":spotlessKotlinCheck",
+          "task_type": "com.diffplug.gradle.spotless.SpotlessCheck_Decorated",
+          "project_dir": "/home/xumin/Public/Trime-pr-spotless-gradle9-20261029",
+          "gradle_version": "9.8.1",
+          "pid": 418473,
+          "jvm_started_ms": 1793251464812,
+          "utc": "2026-10-29T05:25:54.568422393Z",
+          "monotonic_ns": 122047644789215
+        }
+      ]
+    },
+    {
+      "mode": "candidate",
+      "version": "8.10.3",
+      "resolved_plugin_evidence": [
+        [
+          48,
+          "Resolved plugin [id: 'com.diffplug.spotless', version: '8.10.3']"
+        ]
+      ],
+      "total_setvisible_messages": 55,
+      "categories": {
+        "AGP": 52,
+        "KSP": 3
+      },
+      "direct_callers": {
+        "at com.android.build.gradle.internal.plugins.BasePlugin$Companion$createAndroidJdkImageConfiguration$1.execute(BasePlugin.kt:362)": 1,
+        "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)": 41,
+        "at com.android.build.gradle.internal.plugins.BasePlugin$Companion.createCustomLintPublishConfig(BasePlugin.kt:383)": 1,
+        "at com.android.build.gradle.internal.plugins.BasePlugin$Companion.createCustomLintChecksConfig(BasePlugin.kt:375)": 1,
+        "at com.android.build.gradle.internal.plugins.BasePlugin$Companion.createAndroidTestUtilConfiguration$gradle_core(BasePlugin.kt:404)": 1,
+        "at com.google.devtools.ksp.gradle.KspConfigurations.<init>(KspConfigurations.kt:34)": 1,
+        "at com.google.devtools.ksp.gradle.KspConfigurations.createConfiguration(KspConfigurations.kt:54)": 1,
+        "at com.android.build.gradle.internal.TaskManager$Companion$createCoreLibraryDesugaringConfig$1.execute(TaskManager.kt:2121)": 1,
+        "at com.android.build.gradle.internal.dependency.VariantDependenciesBuilder.build(VariantDependenciesBuilder.java:263)": 1,
+        "at com.android.build.gradle.internal.dependency.VariantDependenciesBuilder.build(VariantDependenciesBuilder.java:310)": 1,
+        "at com.android.build.gradle.internal.dependency.VariantDependenciesBuilder.build(VariantDependenciesBuilder.java:324)": 1,
+        "at com.android.build.gradle.internal.dependency.VariantDependenciesBuilder.build(VariantDependenciesBuilder.java:353)": 1,
+        "at com.android.build.gradle.internal.tasks.creationconfig.BaseJavaPreCompileTaskCreationConfig.createKaptOrKspClassPath(JavaPreCompileTaskCreationConfig.kt:117)": 1,
+        "at com.google.devtools.ksp.gradle.KspSubpluginKt.markResolvable(KspSubplugin.kt:463)": 1,
+        "at com.android.build.gradle.internal.testing.utp.UtpTestUtilsKt$maybeCreateUtpConfigurations$1$1.execute(UtpTestUtils.kt:263)": 1
+      },
+      "diagnostic_callers": [
+        {
+          "line": 1360,
+          "caller": "at com.android.build.gradle.internal.plugins.BasePlugin$Companion$createAndroidJdkImageConfiguration$1.execute(BasePlugin.kt:362)",
+          "category": "AGP"
+        },
+        {
+          "line": 1655,
+          "caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP"
+        },
+        {
+          "line": 1937,
+          "caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP"
+        },
+        {
+          "line": 2219,
+          "caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP"
+        },
+        {
+          "line": 2501,
+          "caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP"
+        },
+        {
+          "line": 2783,
+          "caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP"
+        },
+        {
+          "line": 3065,
+          "caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP"
+        },
+        {
+          "line": 3347,
+          "caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP"
+        },
+        {
+          "line": 3629,
+          "caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP"
+        },
+        {
+          "line": 3911,
+          "caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP"
+        },
+        {
+          "line": 4193,
+          "caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP"
+        },
+        {
+          "line": 4475,
+          "caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP"
+        },
+        {
+          "line": 4757,
+          "caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP"
+        },
+        {
+          "line": 5039,
+          "caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP"
+        },
+        {
+          "line": 5321,
+          "caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP"
+        },
+        {
+          "line": 5603,
+          "caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP"
+        },
+        {
+          "line": 5885,
+          "caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP"
+        },
+        {
+          "line": 6167,
+          "caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP"
+        },
+        {
+          "line": 6449,
+          "caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP"
+        },
+        {
+          "line": 6731,
+          "caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP"
+        },
+        {
+          "line": 7013,
+          "caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP"
+        },
+        {
+          "line": 7295,
+          "caller": "at com.android.build.gradle.internal.plugins.BasePlugin$Companion.createCustomLintPublishConfig(BasePlugin.kt:383)",
+          "category": "AGP"
+        },
+        {
+          "line": 7568,
+          "caller": "at com.android.build.gradle.internal.plugins.BasePlugin$Companion.createCustomLintChecksConfig(BasePlugin.kt:375)",
+          "category": "AGP"
+        },
+        {
+          "line": 7841,
+          "caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP"
+        },
+        {
+          "line": 8129,
+          "caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP"
+        },
+        {
+          "line": 8417,
+          "caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP"
+        },
+        {
+          "line": 8705,
+          "caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP"
+        },
+        {
+          "line": 8993,
+          "caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP"
+        },
+        {
+          "line": 9281,
+          "caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP"
+        },
+        {
+          "line": 9569,
+          "caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP"
+        },
+        {
+          "line": 9857,
+          "caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP"
+        },
+        {
+          "line": 10145,
+          "caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP"
+        },
+        {
+          "line": 10433,
+          "caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP"
+        },
+        {
+          "line": 10721,
+          "caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP"
+        },
+        {
+          "line": 11009,
+          "caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP"
+        },
+        {
+          "line": 11297,
+          "caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP"
+        },
+        {
+          "line": 11585,
+          "caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP"
+        },
+        {
+          "line": 11873,
+          "caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP"
+        },
+        {
+          "line": 12161,
+          "caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP"
+        },
+        {
+          "line": 12449,
+          "caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP"
+        },
+        {
+          "line": 12737,
+          "caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP"
+        },
+        {
+          "line": 13025,
+          "caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP"
+        },
+        {
+          "line": 13313,
+          "caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP"
+        },
+        {
+          "line": 13601,
+          "caller": "at com.android.build.gradle.internal.dependency.SourceSetManager.createConfiguration(SourceSetManager.kt:124)",
+          "category": "AGP"
+        },
+        {
+          "line": 13605,
+          "caller": "at com.android.build.gradle.internal.plugins.BasePlugin$Companion.createAndroidTestUtilConfiguration$gradle_core(BasePlugin.kt:404)",
+          "category": "AGP"
+        },
+        {
+          "line": 13613,
+          "caller": "at com.google.devtools.ksp.gradle.KspConfigurations.<init>(KspConfigurations.kt:34)",
+          "category": "KSP"
+        },
+        {
+          "line": 13617,
+          "caller": "at com.google.devtools.ksp.gradle.KspConfigurations.createConfiguration(KspConfigurations.kt:54)",
+          "category": "KSP"
+        },
+        {
+          "line": 13621,
+          "caller": "at com.android.build.gradle.internal.TaskManager$Companion$createCoreLibraryDesugaringConfig$1.execute(TaskManager.kt:2121)",
+          "category": "AGP"
+        },
+        {
+          "line": 13640,
+          "caller": "at com.android.build.gradle.internal.dependency.VariantDependenciesBuilder.build(VariantDependenciesBuilder.java:263)",
+          "category": "AGP"
+        },
+        {
+          "line": 13644,
+          "caller": "at com.android.build.gradle.internal.dependency.VariantDependenciesBuilder.build(VariantDependenciesBuilder.java:310)",
+          "category": "AGP"
+        },
+        {
+          "line": 13648,
+          "caller": "at com.android.build.gradle.internal.dependency.VariantDependenciesBuilder.build(VariantDependenciesBuilder.java:324)",
+          "category": "AGP"
+        },
+        {
+          "line": 13652,
+          "caller": "at com.android.build.gradle.internal.dependency.VariantDependenciesBuilder.build(VariantDependenciesBuilder.java:353)",
+          "category": "AGP"
+        },
+        {
+          "line": 13656,
+          "caller": "at com.android.build.gradle.internal.tasks.creationconfig.BaseJavaPreCompileTaskCreationConfig.createKaptOrKspClassPath(JavaPreCompileTaskCreationConfig.kt:117)",
+          "category": "AGP"
+        },
+        {
+          "line": 13660,
+          "caller": "at com.google.devtools.ksp.gradle.KspSubpluginKt.markResolvable(KspSubplugin.kt:463)",
+          "category": "KSP"
+        },
+        {
+          "line": 13664,
+          "caller": "at com.android.build.gradle.internal.testing.utp.UtpTestUtilsKt$maybeCreateUtpConfigurations$1$1.execute(UtpTestUtils.kt:263)",
+          "category": "AGP"
+        }
+      ],
+      "cross_build_warnings": [
+        {
+          "line": 13697,
+          "text": "Producing a file in one build and consuming it in another build without declaring an explicit dependency has been deprecated. This will fail with an error in Gradle 10. Gradle detected a problem with the following location: '/home/xumin/Public/Trime-pr-spotless-gradle9-20261029'. Task ':spotlessKotlin' uses this output of task ':build-logic:convention:compileKotlin' without declaring an explicit or implicit dependency. This can lead to incorrect results being produced, depending on what order the tasks are executed. For more information, please refer to https://docs.gradle.org/9.8.1/userguide/validation_problems.html#implicit_dependency in the Gradle documentation."
+        },
+        {
+          "line": 13698,
+          "text": "Producing a file in one build and consuming it in another build without declaring an explicit dependency has been deprecated. This will fail with an error in Gradle 10. Gradle detected a problem with the following location: '/home/xumin/Public/Trime-pr-spotless-gradle9-20261029'. Task ':spotlessKotlin' uses this output of task ':build-logic:convention:pluginDescriptors' without declaring an explicit or implicit dependency. This can lead to incorrect results being produced, depending on what order the tasks are executed. For more information, please refer to https://docs.gradle.org/9.8.1/userguide/validation_problems.html#implicit_dependency in the Gradle documentation."
+        },
+        {
+          "line": 13699,
+          "text": "Producing a file in one build and consuming it in another build without declaring an explicit dependency has been deprecated. This will fail with an error in Gradle 10. Gradle detected a problem with the following location: '/home/xumin/Public/Trime-pr-spotless-gradle9-20261029'. Task ':spotlessKotlin' uses this output of task ':build-logic:convention:processResources' without declaring an explicit or implicit dependency. This can lead to incorrect results being produced, depending on what order the tasks are executed. For more information, please refer to https://docs.gradle.org/9.8.1/userguide/validation_problems.html#implicit_dependency in the Gradle documentation."
+        }
+      ],
+      "target_count": 293,
+      "producer_file_count": 47,
+      "raw_log_sha256": "73287c4b7ec7fb5fb9e9db5c0576f524a47f4966cae08c22053fcf4433a69d7b",
+      "minimum_available_kib": 4602888,
+      "actual_four_action_events": [
+        {
+          "nonce": "f159c1600ec24d8184d260a5f21c1f3a",
+          "sequence": 1,
+          "event": "before",
+          "task_path": ":spotlessKotlin",
+          "task_type": "com.diffplug.gradle.spotless.SpotlessTaskImpl_Decorated",
+          "project_dir": "/home/xumin/Public/Trime-pr-spotless-gradle9-20261029",
+          "gradle_version": "9.8.1",
+          "pid": 419589,
+          "jvm_started_ms": 1793251648122,
+          "utc": "2026-10-29T05:28:28.479931957Z",
+          "monotonic_ns": 122201563102344
+        },
+        {
+          "nonce": "f159c1600ec24d8184d260a5f21c1f3a",
+          "sequence": 2,
+          "event": "after",
+          "task_path": ":spotlessKotlin",
+          "task_type": "com.diffplug.gradle.spotless.SpotlessTaskImpl_Decorated",
+          "project_dir": "/home/xumin/Public/Trime-pr-spotless-gradle9-20261029",
+          "gradle_version": "9.8.1",
+          "pid": 419589,
+          "jvm_started_ms": 1793251648122,
+          "utc": "2026-10-29T05:28:51.249028894Z",
+          "monotonic_ns": 122224325681440
+        },
+        {
+          "nonce": "f159c1600ec24d8184d260a5f21c1f3a",
+          "sequence": 3,
+          "event": "before",
+          "task_path": ":spotlessKotlinCheck",
+          "task_type": "com.diffplug.gradle.spotless.SpotlessCheck_Decorated",
+          "project_dir": "/home/xumin/Public/Trime-pr-spotless-gradle9-20261029",
+          "gradle_version": "9.8.1",
+          "pid": 419589,
+          "jvm_started_ms": 1793251648122,
+          "utc": "2026-10-29T05:28:51.456374685Z",
+          "monotonic_ns": 122224532460078
+        },
+        {
+          "nonce": "f159c1600ec24d8184d260a5f21c1f3a",
+          "sequence": 4,
+          "event": "after",
+          "task_path": ":spotlessKotlinCheck",
+          "task_type": "com.diffplug.gradle.spotless.SpotlessCheck_Decorated",
+          "project_dir": "/home/xumin/Public/Trime-pr-spotless-gradle9-20261029",
+          "gradle_version": "9.8.1",
+          "pid": 419589,
+          "jvm_started_ms": 1793251648122,
+          "utc": "2026-10-29T05:28:51.471934614Z",
+          "monotonic_ns": 122224548300581
+        }
+      ]
+    }
+  ],
+  "all_293_kotlin_targets_paths_bytes_sha_identical": true,
+  "non_spotless_direct_callers_and_counts_identical": true,
+  "spotless_warning_counts": [
+    1,
+    0
+  ],
+  "total_setvisible_warning_counts": [
+    56,
+    55
+  ],
+  "initial_checker_failure": "spotless-baseline1/phase-review.json retained; assumed total count 1 incorrectly. No Gradle task rerun or raw log alteration for attribution correction.",
+  "scope": "Local actual formatter/check A/B only; AGP52, KSP3 and three cross-build warnings remain. No application/native/device/CI acceptance."
+}
