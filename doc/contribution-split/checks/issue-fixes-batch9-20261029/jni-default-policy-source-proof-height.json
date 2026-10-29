@@ -1,0 +1,448 @@
+{
+  "status": "PINNED_SOURCE_PROOF_NATIVE_DEFAULT_TRUE_CLI_DEFAULT_OVERRIDES_FALSE",
+  "utc": "2026-10-29T07:12:13.319056+00:00",
+  "reviewer": "/root/height_investigate",
+  "scope": "Read-only pinned Git object/line/byte-hash proof; no OpenCC CLI/compiler/Gradle/ADB/VM execution. New default-mode test preparation stopped before any script file was created. Existing frozen v1 and cases unchanged.",
+  "native_policy_chain": [
+    "Trime openCCLineConv constructs SimpleConverter(config path) with no ConfigLoadOptions override.",
+    "Pinned SimpleConverter(one-argument) delegates using ConfigLoadOptions(); pinned ConfigLoadOptions constructor initializes includeTofuRiskDictionaries=true.",
+    "Pinned librime Opencc::Initialize calls Config.NewFromFile(path) without explicit options; overload delegates to default ConfigLoadOptions(), likewise true."
+  ],
+  "cli_policy_chain": [
+    "Pinned CommandLineMain declares TCLAP::SwitchArg include-tofu-risk-dictionaries with explicit default false.",
+    "CLI allocates ConfigLoadOptions (initially true), then explicitly overwrites includeTofuRiskDictionaries with includeTofuRiskDictionariesArg.getValue().",
+    "Thus no flag produces false, while existing fixture --include-tofu-risk-dictionaries produces true and matches default JNI/native policy. No-flags CLI behavior must not be mislabeled native SimpleConverter default."
+  ],
+  "conclusion": "Existing flagged host fixture matches the pinned default JNI/native dictionary inclusion policy. This source proof resolves the default-policy distinction; it does not claim the host fixture executed JNI or Android. No additional unflagged repetition is necessary to establish this contract.",
+  "candidate_head": "58598b0fe9f9a8991147908041c6a06097d7af10",
+  "JNI_file_byte_identical_between_base_and_candidate": true,
+  "frozen_helper_sha256": "a4d21a7b608576f5a253c202bcd81f20cb7b6eeb4a90f94cf9cd9d2f357e6291",
+  "default_mode_new_script_created": false,
+  "new_default_mode_test_executed": false,
+  "files": [
+    {
+      "repository": "BYVoid/OpenCC",
+      "commit": "025f371dc76b598d77384fbdab90c937471844d8",
+      "path": "src/Config.hpp",
+      "bytes": 2593,
+      "sha256": "e0adb28c426e711d790c8f4227930cc4e946c5c10eccc325c69a0bf0ac5c121b",
+      "url": "https://github.com/BYVoid/OpenCC/blob/025f371dc76b598d77384fbdab90c937471844d8/src/Config.hpp",
+      "excerpts": [
+        {
+          "needle": "ConfigLoadOptions() : includeTofuRiskDictionaries(true)",
+          "match_line": 27,
+          "start_line": 26,
+          "end_line": 30,
+          "source_lines": [
+            {
+              "line": 26,
+              "text": "struct OPENCC_EXPORT ConfigLoadOptions {"
+            },
+            {
+              "line": 27,
+              "text": "  ConfigLoadOptions() : includeTofuRiskDictionaries(true) {}"
+            },
+            {
+              "line": 28,
+              "text": ""
+            },
+            {
+              "line": 29,
+              "text": "  bool includeTofuRiskDictionaries;"
+            },
+            {
+              "line": 30,
+              "text": "};"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "repository": "BYVoid/OpenCC",
+      "commit": "025f371dc76b598d77384fbdab90c937471844d8",
+      "path": "src/SimpleConverter.cpp",
+      "bytes": 8993,
+      "sha256": "01c9218fd76b8e6aaa22ec7d30125d7e0705549f7282bec5cde7ffca3d6ff735",
+      "url": "https://github.com/BYVoid/OpenCC/blob/025f371dc76b598d77384fbdab90c937471844d8/src/SimpleConverter.cpp",
+      "excerpts": [
+        {
+          "needle": "SimpleConverter::SimpleConverter(const std::string& configFileName)",
+          "match_line": 88,
+          "start_line": 87,
+          "end_line": 91,
+          "source_lines": [
+            {
+              "line": 87,
+              "text": ""
+            },
+            {
+              "line": 88,
+              "text": "SimpleConverter::SimpleConverter(const std::string& configFileName)"
+            },
+            {
+              "line": 89,
+              "text": "    : SimpleConverter(configFileName, ConfigLoadOptions()) {}"
+            },
+            {
+              "line": 90,
+              "text": ""
+            },
+            {
+              "line": 91,
+              "text": "SimpleConverter::SimpleConverter(const std::string& configFileName,"
+            }
+          ]
+        },
+        {
+          "needle": "config.NewFromFile(configFileName, paths, argv0, options)",
+          "match_line": 66,
+          "start_line": 65,
+          "end_line": 67,
+          "source_lines": [
+            {
+              "line": 65,
+              "text": "      return new InternalData("
+            },
+            {
+              "line": 66,
+              "text": "          config.NewFromFile(configFileName, paths, argv0, options));"
+            },
+            {
+              "line": 67,
+              "text": "    } catch (Exception& ex) {"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "repository": "BYVoid/OpenCC",
+      "commit": "025f371dc76b598d77384fbdab90c937471844d8",
+      "path": "src/Config.cpp",
+      "bytes": 30520,
+      "sha256": "1ab0477be21ae03fb885eaea4cb0d3c0c3de53f7db529c76865e915d0eb0694d",
+      "url": "https://github.com/BYVoid/OpenCC/blob/025f371dc76b598d77384fbdab90c937471844d8/src/Config.cpp",
+      "excerpts": [
+        {
+          "needle": "Config::NewFromFile(const std::string& fileName)",
+          "match_line": 738,
+          "start_line": 737,
+          "end_line": 741,
+          "source_lines": [
+            {
+              "line": 737,
+              "text": ""
+            },
+            {
+              "line": 738,
+              "text": "ConverterPtr Config::NewFromFile(const std::string& fileName) {"
+            },
+            {
+              "line": 739,
+              "text": "  return NewFromFile(fileName, std::vector<std::string>{}, nullptr);"
+            },
+            {
+              "line": 740,
+              "text": "}"
+            },
+            {
+              "line": 741,
+              "text": ""
+            }
+          ]
+        },
+        {
+          "needle": "return NewFromFile(fileName, paths, argv0, ConfigLoadOptions());",
+          "match_line": 796,
+          "start_line": 793,
+          "end_line": 797,
+          "source_lines": [
+            {
+              "line": 793,
+              "text": "ConverterPtr Config::NewFromFile(const std::string& fileName,"
+            },
+            {
+              "line": 794,
+              "text": "                                 const std::vector<std::string>& paths,"
+            },
+            {
+              "line": 795,
+              "text": "                                 const char* argv0) {"
+            },
+            {
+              "line": 796,
+              "text": "  return NewFromFile(fileName, paths, argv0, ConfigLoadOptions());"
+            },
+            {
+              "line": 797,
+              "text": "}"
+            }
+          ]
+        },
+        {
+          "needle": "mayOutputTofu && !includeTofuRiskDictionaries",
+          "match_line": 550,
+          "start_line": 547,
+          "end_line": 553,
+          "source_lines": [
+            {
+              "line": 547,
+              "text": ""
+            },
+            {
+              "line": 548,
+              "text": "    const bool mayOutputTofu ="
+            },
+            {
+              "line": 549,
+              "text": "        GetOptionalBoolProperty(doc, \"may_output_tofu\", false);"
+            },
+            {
+              "line": 550,
+              "text": "    if (mayOutputTofu && !includeTofuRiskDictionaries) {"
+            },
+            {
+              "line": 551,
+              "text": "      return DictPtr();"
+            },
+            {
+              "line": 552,
+              "text": "    }"
+            },
+            {
+              "line": 553,
+              "text": ""
+            }
+          ]
+        },
+        {
+          "needle": "options.includeTofuRiskDictionaries",
+          "match_line": 629,
+          "start_line": 627,
+          "end_line": 631,
+          "source_lines": [
+            {
+              "line": 627,
+              "text": "    // Required: dict"
+            },
+            {
+              "line": 628,
+              "text": "    DictPtr dict = ParseDict(GetObjectProperty(doc, \"dict\"),"
+            },
+            {
+              "line": 629,
+              "text": "                             options.includeTofuRiskDictionaries);"
+            },
+            {
+              "line": 630,
+              "text": "    if (dict == nullptr) {"
+            },
+            {
+              "line": 631,
+              "text": "      return ConversionPtr();"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "repository": "BYVoid/OpenCC",
+      "commit": "025f371dc76b598d77384fbdab90c937471844d8",
+      "path": "src/tools/CommandLineMain.cpp",
+      "bytes": 32084,
+      "sha256": "503d497613f559951489d809cf9cf7573c4c4c8809563defdb9af752adaa8cdb",
+      "url": "https://github.com/BYVoid/OpenCC/blob/025f371dc76b598d77384fbdab90c937471844d8/src/tools/CommandLineMain.cpp",
+      "excerpts": [
+        {
+          "needle": "TCLAP::SwitchArg includeTofuRiskDictionariesArg",
+          "match_line": 807,
+          "start_line": 807,
+          "end_line": 814,
+          "source_lines": [
+            {
+              "line": 807,
+              "text": "    TCLAP::SwitchArg includeTofuRiskDictionariesArg("
+            },
+            {
+              "line": 808,
+              "text": "        \"\", \"include-tofu-risk-dictionaries\","
+            },
+            {
+              "line": 809,
+              "text": "        \"Include dictionaries marked as possibly outputting tofu, i.e. \""
+            },
+            {
+              "line": 810,
+              "text": "        \"Chinese characters that may render as missing-glyph boxes. By \""
+            },
+            {
+              "line": 811,
+              "text": "        \"default, the command line tool skips these dictionaries.\","
+            },
+            {
+              "line": 812,
+              "text": "        cmd, false);"
+            },
+            {
+              "line": 813,
+              "text": "    const std::string argv0String = args.empty() ? std::string() : args[0];"
+            },
+            {
+              "line": 814,
+              "text": "    Optional<std::string> resourceZipFileName ="
+            }
+          ]
+        },
+        {
+          "needle": "configOptions.includeTofuRiskDictionaries =",
+          "match_line": 886,
+          "start_line": 884,
+          "end_line": 889,
+          "source_lines": [
+            {
+              "line": 884,
+              "text": "    const char* argv0 = argv0String.empty() ? nullptr : argv0String.c_str();"
+            },
+            {
+              "line": 885,
+              "text": "    ConfigLoadOptions configOptions;"
+            },
+            {
+              "line": 886,
+              "text": "    configOptions.includeTofuRiskDictionaries ="
+            },
+            {
+              "line": 887,
+              "text": "        includeTofuRiskDictionariesArg.getValue();"
+            },
+            {
+              "line": 888,
+              "text": "    if (!resourceZipFileName.IsNull()) {"
+            },
+            {
+              "line": 889,
+              "text": "      std::shared_ptr<ResourceProvider> provider("
+            }
+          ]
+        },
+        {
+          "needle": "config.NewFromFile(configFileName, pathArg.getValue(), argv0,",
+          "match_line": 894,
+          "start_line": 893,
+          "end_line": 896,
+          "source_lines": [
+            {
+              "line": 893,
+              "text": "      converter ="
+            },
+            {
+              "line": 894,
+              "text": "          config.NewFromFile(configFileName, pathArg.getValue(), argv0,"
+            },
+            {
+              "line": 895,
+              "text": "                             configOptions);"
+            },
+            {
+              "line": 896,
+              "text": "    }"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "repository": "rime/librime",
+      "commit": "7bc3fb0005a03aff1c086611e4d52bb7f6444fdd",
+      "path": "src/rime/gear/opencc.cc",
+      "bytes": 4782,
+      "sha256": "0f03b1a48f6f64e93a408664caa9539ba16b884def48fd705c90be7c011cda65",
+      "url": "https://github.com/rime/librime/blob/7bc3fb0005a03aff1c086611e4d52bb7f6444fdd/src/rime/gear/opencc.cc",
+      "excerpts": [
+        {
+          "needle": "converter_ = config.NewFromFile(config_path_.to_utf8_string());",
+          "match_line": 27,
+          "start_line": 23,
+          "end_line": 29,
+          "source_lines": [
+            {
+              "line": 23,
+              "text": "  initialized_ = true;"
+            },
+            {
+              "line": 24,
+              "text": "  opencc::Config config;"
+            },
+            {
+              "line": 25,
+              "text": "  try {"
+            },
+            {
+              "line": 26,
+              "text": "    // opencc accepts file path encoded in UTF-8."
+            },
+            {
+              "line": 27,
+              "text": "    converter_ = config.NewFromFile(config_path_.to_utf8_string());"
+            },
+            {
+              "line": 28,
+              "text": ""
+            },
+            {
+              "line": 29,
+              "text": "    const list<opencc::ConversionPtr> conversions ="
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "repository": "osfans/trime",
+      "commit": "7fedca06ba5d2ef761a2ae3d44d8a0917db36994",
+      "path": "app/src/main/jni/librime_jni/opencc.cc",
+      "bytes": 1271,
+      "sha256": "24d101ab1f7e786baabced4a6603ebf85f54bf670f15d42ca0eb74ac308ad975",
+      "url": "https://github.com/osfans/trime/blob/7fedca06ba5d2ef761a2ae3d44d8a0917db36994/app/src/main/jni/librime_jni/opencc.cc",
+      "excerpts": [
+        {
+          "needle": "opencc::SimpleConverter converter(CString(env, config_file_name));",
+          "match_line": 19,
+          "start_line": 16,
+          "end_line": 22,
+          "source_lines": [
+            {
+              "line": 16,
+              "text": "Java_com_osfans_trime_data_opencc_OpenCCDictManager_openCCLineConv("
+            },
+            {
+              "line": 17,
+              "text": "    JNIEnv* env, jclass clazz, jstring input, jstring config_file_name) {"
+            },
+            {
+              "line": 18,
+              "text": "  try {"
+            },
+            {
+              "line": 19,
+              "text": "    opencc::SimpleConverter converter(CString(env, config_file_name));"
+            },
+            {
+              "line": 20,
+              "text": "    return env->NewStringUTF(converter.Convert(*CString(env, input)).data());"
+            },
+            {
+              "line": 21,
+              "text": "  } catch (const opencc::Exception& e) {"
+            },
+            {
+              "line": 22,
+              "text": "    throwJavaException(env, e.what());"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

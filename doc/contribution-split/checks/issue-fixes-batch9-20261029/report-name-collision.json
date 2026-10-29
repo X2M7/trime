@@ -1,0 +1,19 @@
+{
+  "schema": 1,
+  "utc": "2026-10-29T07:07:07.946935+00:00",
+  "type": "REVIEW_REPORT_FILENAME_COLLISION_NOT_EXECUTION_DATA_CHANGE",
+  "shared_path": "/home/xumin/Public/Trime/build/issue-fixes-batch9-20261029/independent-host-fixture-review.json",
+  "earlier_height_agent_reported_sha256": "b910ee91a2771bfa242823482cb964f2f54570c473e26b0770eacba48b1ca854",
+  "earlier_height_report_bytes_recovered": false,
+  "current_shared_report_sha256": "54561b4c6fa6644a4ebaa5d6acf6fa757dafc70d4d1e7eff72d6ef3f66c55a58",
+  "current_shared_report_status": "PASS_INDEPENDENT_ORIGINAL_APK_HOST_FIXTURE_REVIEW",
+  "current_shared_bytes_left_unchanged": true,
+  "new_unique_height_review_path": "/home/xumin/Public/Trime/build/issue-fixes-batch9-20261029/independent-host-fixture-review-height.json",
+  "new_unique_height_review_sha256": "f1bc607613f171dd2ed746dd9627d5a2194bb50e872bdb7533224fa46153cbcb",
+  "reissued_with_new_time_and_fresh_raw_checks": true,
+  "raw_fixture_report_sha256_unchanged": {
+    "baseline-fixture1/report.json": "b23440f87db3ca8885a11480aa8c24f43d11634a68b5863f66e1c9b314e4eed7",
+    "fixed-fixture1/report.json": "9da75e4b8253bf56974dd1a75672051a9fb83431a32ad87a2a158be5ed57e4f2"
+  },
+  "statement": "Two agents wrote the same review report basename. Shared file currently contains the other review; old b910 report SHA is historical and its bytes were not recovered. This report records the collision honestly and reissues height-agent review under a unique path. All original five-stage logs/results and fixture records remain unchanged and were rechecked; no build or converter rerun was performed."
+}

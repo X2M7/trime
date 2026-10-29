@@ -1,0 +1,44 @@
+{
+  "started": "2026-10-29T07:21:14.739764+00:00",
+  "head": "b24114ec111bcbd0b682ef5468e757fc66edec11",
+  "script_original_sha256": "205cc85048f04354002e5b565b028273c92a3d5eed5cc08549249dea36f2c927",
+  "expected_bridge_sha256": "9ab40618a9b162cca6dae9ec6767a8c4669017a20b2d6da5f94b7a7f99d09170",
+  "gates": [
+    {
+      "gate": "unchanged_inputs",
+      "passed": true,
+      "phase": "gradle-pycache-no-change1",
+      "all_three_tasks": "UP-TO-DATE"
+    },
+    {
+      "gate": "ignored_bytecode_does_not_invalidate_any_data_task",
+      "passed": true,
+      "phase": "gradle-pycache-cache-noise1",
+      "all_three_tasks": "UP-TO-DATE"
+    },
+    {
+      "gate": "generator_script_invalidates_and_fresh_builds",
+      "passed": true,
+      "phase": "gradle-pycache-script1",
+      "bridge_sha256": "9ab40618a9b162cca6dae9ec6767a8c4669017a20b2d6da5f94b7a7f99d09170"
+    },
+    {
+      "gate": "rejected_cross_toolchain_blocks_install_and_checksums",
+      "passed": true,
+      "phase": "gradle-pycache-reject1",
+      "actual_build_exit": 1,
+      "assets_before_after_identical": true
+    },
+    {
+      "gate": "restored_final_source_rebuild",
+      "passed": true,
+      "phase": "gradle-pycache-restored1",
+      "bridge_sha256": "9ab40618a9b162cca6dae9ec6767a8c4669017a20b2d6da5f94b7a7f99d09170"
+    }
+  ],
+  "bytecode_noise_sha256": "87fd978282ebca3bad4fa4ee690cfee1948bb0664e797aa484eb38270da6c918",
+  "script_mutated_sha256": "462644ab66525ca6345f6b8b20f0fcd1ed286933fe60b76ee5bf5220efa5e95c",
+  "status": "PASS_FIVE_CACHE_AND_FAILURE_GATES_AFTER_COLD_SOURCE_BUILD",
+  "script_restored_sha256": "205cc85048f04354002e5b565b028273c92a3d5eed5cc08549249dea36f2c927",
+  "finished": "2026-10-29T07:28:25.545436+00:00"
+}

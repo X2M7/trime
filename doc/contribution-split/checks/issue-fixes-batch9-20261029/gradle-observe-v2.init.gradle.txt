@@ -1,0 +1,20 @@
+import groovy.json.JsonOutput
+
+gradle.projectsEvaluated {
+    def app = gradle.rootProject.findProject(':app')
+    if (app == null) return
+    ['generateOpenCCRegionalPhrases', 'installOpenCCData', 'generateDataChecksums'].each { name ->
+        app.tasks.named(name).configure { task ->
+            doFirst {
+                def record = [event: 'action-start', task: task.path,
+                    inputFiles: task.inputs.files.files.collect { it.absolutePath }.sort(),
+                    outputFiles: task.outputs.files.files.collect { it.absolutePath }.sort(),
+                    directDependencies: task.taskDependencies.getDependencies(task).collect { it.path }.sort()]
+                println('TRIME_OPENCC_OBSERVER ' + JsonOutput.toJson(record))
+            }
+            doLast {
+                println('TRIME_OPENCC_OBSERVER ' + JsonOutput.toJson([event: 'action-complete', task: task.path]))
+            }
+        }
+    }
+}

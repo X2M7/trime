@@ -1,0 +1,32 @@
+{
+  "head": "b24114ec111bcbd0b682ef5468e757fc66edec11",
+  "log_sha256": "32a862f350fc73a49c0091408b226355a04c26a800408fe09a6ac05a8eba4886",
+  "actions": [
+    {
+      "task": ":app:generateOpenCCRegionalPhrases",
+      "input_count": 1330,
+      "direct_dependencies": [],
+      "no_git_or_python_bytecode_inputs": true
+    },
+    {
+      "task": ":app:installOpenCCData",
+      "input_count": 64,
+      "direct_dependencies": [],
+      "no_git_or_python_bytecode_inputs": true
+    },
+    {
+      "task": ":app:generateDataChecksums",
+      "input_count": 54,
+      "direct_dependencies": [
+        ":app:installOpenCCData"
+      ],
+      "no_git_or_python_bytecode_inputs": true
+    }
+  ],
+  "source": "Actual observer input resolution during task execution; cache-noise behavior separately tested.",
+  "dependency_observation_limit": "The task.taskDependencies API view shown here does not enumerate all implicit provider input dependencies. The command only requests generateDataChecksums and spotlessCheck; provider dependency inclusion is demonstrated by the actual task graph and fail-stop gate, not by this API view alone.",
+  "actual_requested_tasks": [
+    ":spotlessCheck",
+    ":app:generateDataChecksums"
+  ]
+}

@@ -1,0 +1,235 @@
+#!/usr/bin/env python3
+"""Pinned OpenCC host-tool plan and isolated original-APK resource checks.
+
+Root owns scheduling: plan never configures/builds/runs OpenCC; baseline/fixed
+only run already-built pinned tools and compile the fixture text dictionaries.
+No system OpenCC, apt package, Android, Gradle, emulator or network operation.
+"""
+
+import argparse
+import datetime
+import hashlib
+import json
+import os
+from pathlib import Path
+import re
+import subprocess
+import sys
+import zipfile
+
+OPENCC = "025f371dc76b598d77384fbdab90c937471844d8"
+LIBRIME = "7bc3fb0005a03aff1c086611e4d52bb7f6444fdd"
+TRIME_BASE = "7fedca06ba5d2ef761a2ae3d44d8a0917db36994"
+BRIDGE = "STPhrases_GeneratedFromRegionalPhrases"
+AFFECTED = {"s2hk", "s2hkp", "s2t", "s2tw", "s2twp"}
+CONFIGS = {"hk2s", "hk2sp", "hk2t", "jp2t", "s2hk", "s2hkp", "s2t", "s2tw", "s2twp", "t2hk", "t2jp", "t2s", "t2tw", "tw2s", "tw2sp", "tw2t"}
+DEFAULT_CI = Path("/home/xumin/Public/Trime/build/issue-fixes-batch7-20261029/cloud/run-40823791223/pr-2207/ci-summary.json")
+CASES = Path(__file__).with_name("conversion-cases.json")
+
+
+def sha(path):
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def save(path, obj):
+    path.write_text(json.dumps(obj, ensure_ascii=False, indent=2) + "\n")
+
+
+def git(source, *args):
+    return subprocess.check_output(["git", "-C", str(source), *args])
+
+
+def check_source(source):
+    assert git(source, "rev-parse", "HEAD").decode().strip() == OPENCC
+    assert not git(source, "status", "--porcelain", "--untracked-files=no").strip()
+    librime = source.parent.parent
+    assert git(librime, "rev-parse", "HEAD").decode().strip() == LIBRIME
+    assert OPENCC in git(librime, "ls-tree", "HEAD", "deps/opencc").decode()
+    files = []
+    for name in ["AGENTS.md", "CMakeLists.txt", "cmake/GitVersion.cmake", "src/CMakeLists.txt", "src/tools/CMakeLists.txt", "src/tools/CommandLineMain.cpp", "src/tools/DictConverter.cpp", "src/Config.cpp", "src/Config.hpp", "src/ResourceProvider.cpp", "data/CMakeLists.txt", "data/scripts/generate_st_phrases_from_regional_phrases.py", "data/config/t2s.json", "data/dictionary/HKPhrases.txt", "data/dictionary/TWPhrases.txt", "test/testcases/testcases.json"]:
+        body = git(source, "show", OPENCC + ":" + name)
+        assert (source / name).read_bytes() == body
+        files.append({"path": name, "bytes": len(body), "sha256": hashlib.sha256(body).hexdigest()})
+    return {"opencc": OPENCC, "librime": LIBRIME, "trime_base": TRIME_BASE, "source": str(source), "tracked_opencc_worktree_clean": True, "contract_files": files}
+
+
+def apk_binding(ci_path):
+    ci = json.loads(ci_path.read_text())
+    assert ci["head_sha"] == "3a820aacb929a5030d1581d42f99fe9834731bfc"
+    assert ci["ci"]["run_id"] == 40823791223 and ci["ci"]["conclusion"] == "success"
+    assert ci["ubuntu_original"]["full_source_trees_identical"]
+    assert not ci["ubuntu_original"]["original_apk_modified_or_resigned"]
+    items = [x for x in ci["ubuntu_original"]["original_files"] if x["path"].endswith(".apk")]
+    assert len(items) == 1
+    item = items[0]
+    apk = ci_path.parent / item["path"]
+    assert apk.stat().st_size == item["size"] and sha(apk) == item["sha256"]
+    return apk, {"ci_summary": str(ci_path), "ci_summary_sha256": sha(ci_path), "apk": str(apk), "apk_sha256": sha(apk), "bytes": apk.stat().st_size, "run": ci["ci"]["run_id"], "head": ci["head_sha"], "producer": ci["ubuntu_original"]["actual_producer_merge_sha"], "source_tree": ci["ubuntu_original"]["source_git_tree"]}
+
+
+def commands(args):
+    configure = [str(args.cmake), "-S", str(args.source), "-B", str(args.build), "-G", "Ninja", "-DCMAKE_BUILD_TYPE=Release", "-DCMAKE_CXX_COMPILER=" + str(args.cxx), "-DCMAKE_MAKE_PROGRAM=" + str(args.ninja), "-DCMAKE_INSTALL_PREFIX=" + str(args.build / "uninstalled-prefix"), "-DPython3_EXECUTABLE=" + sys.executable]
+    for key, value in {"BUILD_SHARED_LIBS": "OFF", "OPENCC_ENABLE_INSTALL": "OFF", "ENABLE_GTEST": "OFF", "BUILD_TESTING": "OFF", "ENABLE_BENCHMARK": "OFF", "BUILD_DOCUMENTATION": "OFF", "BUILD_PYTHON": "OFF", "BUILD_OPENCC_JIEBA_PLUGIN": "OFF", "OPENCC_DICT_FORMAT": "text", "USE_SYSTEM_MARISA": "OFF", "USE_SYSTEM_RAPIDJSON": "OFF", "USE_SYSTEM_TCLAP": "OFF"}.items():
+        configure.append(f"-D{key}={value}")
+    return {"configure": configure, "host_tools_only": [str(args.cmake), "--build", str(args.build), "--target", "opencc", "opencc_dict", "--parallel", "2"], "official_text_data_after_baseline": [str(args.cmake), "--build", str(args.build), "--target", "Dictionaries", "--parallel", "2"], "generated_bridge": str(args.build / "data" / (BRIDGE + ".txt")), "execution_order": ["plan", "Root configure", "Root build host_tools_only", "baseline", "Root build official_text_data_after_baseline", "fixed"], "not_executed_by_plan": True}
+
+
+class Runner:
+    def __init__(self, directory):
+        self.directory = directory
+        self.number = 0
+        self.records = []
+        self.env = dict(os.environ)
+        self.removed_env_names = [k for k in ["OPENCC_DATA_DIR", "OPENCC_PLUGIN_DIR", "LD_PRELOAD", "DYLD_INSERT_LIBRARIES"] if k in self.env]
+        for key in ["OPENCC_DATA_DIR", "OPENCC_PLUGIN_DIR", "LD_PRELOAD", "DYLD_INSERT_LIBRARIES"]:
+            self.env.pop(key, None)
+        self.env["LC_ALL"] = "C.UTF-8"
+
+    def run(self, label, argv, cwd, input_text=""):
+        self.number += 1
+        prefix = self.directory / f"{self.number:03d}-{label}"
+        started = datetime.datetime.now(datetime.timezone.utc).isoformat()
+        result = subprocess.run([str(x) for x in argv], cwd=cwd, env=self.env, input=input_text.encode(), stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=120)
+        prefix.with_suffix(".stdin").write_bytes(input_text.encode())
+        prefix.with_suffix(".stdout").write_bytes(result.stdout)
+        prefix.with_suffix(".stderr").write_bytes(result.stderr)
+        record = {"label": label, "argv": [str(x) for x in argv], "cwd": str(cwd), "started_utc": started, "returncode": result.returncode, "stdin_sha256": sha(prefix.with_suffix(".stdin")), "stdout_sha256": sha(prefix.with_suffix(".stdout")), "stderr_sha256": sha(prefix.with_suffix(".stderr")), "stdout": result.stdout.decode("utf-8", errors="replace"), "stderr": result.stderr.decode("utf-8", errors="replace")}
+        save(prefix.with_suffix(".command.json"), record)
+        self.records.append(record)
+        return record
+
+
+def tools(args):
+    cache = (args.build / "CMakeCache.txt").read_text()
+    for value in ["BUILD_SHARED_LIBS:BOOL=OFF", "OPENCC_ENABLE_INSTALL:BOOL=OFF", "BUILD_OPENCC_JIEBA_PLUGIN:BOOL=OFF", "OPENCC_DICT_FORMAT:STRING=text", "USE_SYSTEM_MARISA:BOOL=OFF", "USE_SYSTEM_RAPIDJSON:BOOL=OFF", "USE_SYSTEM_TCLAP:BOOL=OFF"]:
+        assert value in cache, value
+    assert "CMAKE_HOME_DIRECTORY:INTERNAL=" + str(args.source) in cache
+    assert "CMAKE_INSTALL_PREFIX:PATH=" + str(args.build / "uninstalled-prefix") in cache
+    assert not (args.build / "uninstalled-prefix").exists(), "Compiled data fallback prefix must not exist."
+    assert not re.search(r"^ANDROID[^\n]*=(?!OFF|FALSE|NOTFOUND).+", cache, re.M)
+    names = ["opencc", "opencc_dict"]
+    suffix = ".exe" if os.name == "nt" else ""
+    paths = {name: args.build / "src" / "tools" / (name + suffix) for name in names}
+    for path in paths.values():
+        assert path.is_file() and os.access(path, os.X_OK)
+    assert not list(paths["opencc"].parent.glob("*.ocd2"))
+    assert not list(paths["opencc"].parent.glob("*.txt"))
+    systems = list((args.build / "CMakeFiles").glob("*/CMakeSystem.cmake"))
+    assert len(systems) == 1 and "set(CMAKE_CROSSCOMPILING \"FALSE\")" in systems[0].read_text()
+    return paths, {"cmake_cache_sha256": sha(args.build / "CMakeCache.txt"), "cmake_system_sha256": sha(systems[0]), "executables": {name: {"path": str(path), "sha256": sha(path)} for name, path in paths.items()}, "fallback_prefix_absent": True, "executable_directory_has_no_dictionary_files": True}
+
+
+def fixture(args, apk, directory, runner, host_tools, generated=None):
+    directory.mkdir()
+    manifest = []
+    with zipfile.ZipFile(apk) as z:
+        entries = [n for n in z.namelist() if n.startswith("assets/shared/opencc/") and not n.endswith("/")]
+        assert len(entries) == 37
+        for name in sorted(entries):
+            leaf = Path(name).name
+            assert leaf not in {"", ".", ".."} and name == "assets/shared/opencc/" + leaf
+            target = directory / leaf
+            body = z.read(name)
+            target.write_bytes(body)
+            manifest.append({"apk_entry": name, "file": leaf, "bytes": len(body), "sha256": sha(target)})
+    assert {x.stem for x in directory.glob("*.json")} == CONFIGS
+    assert len(list(directory.glob("*.txt"))) == 21
+    assert not (directory / (BRIDGE + ".txt")).exists()
+    assert not (directory / (BRIDGE + ".ocd2")).exists()
+    for config in directory.glob("*.json"):
+        assert config.read_bytes() == git(args.source, "show", OPENCC + ":data/config/" + config.name)
+    if generated is not None:
+        assert generated.is_file() and generated.stat().st_size > 0
+        (directory / generated.name).write_bytes(generated.read_bytes())
+        assert generated.name == BRIDGE + ".txt"
+    compiled = []
+    for txt in sorted(directory.glob("*.txt")):
+        result = runner.run(directory.name + "-compile-" + txt.stem, [host_tools["opencc_dict"], "--input", txt, "--output", txt.with_suffix(".ocd2"), "--from", "text", "--to", "ocd2"], directory)
+        assert result["returncode"] == 0, result
+        compiled.append({"text": txt.name, "text_sha256": sha(txt), "ocd2": txt.with_suffix(".ocd2").name, "ocd2_sha256": sha(txt.with_suffix(".ocd2"))})
+    return {"directory": str(directory), "original_assets": manifest, "compiled": compiled, "generated_bridge": None if generated is None else {"source": str(generated), "sha256": sha(generated)}}
+
+
+def convert(runner, tool, directory, config, text, label):
+    return runner.run(label, [tool, "--config", directory / (config + ".json"), "--path", directory, "--include-tofu-risk-dictionaries"], directory, text + "\n")
+
+
+def loads(runner, tool, directory, affected_failures):
+    observations = []
+    for config in sorted(CONFIGS):
+        result = convert(runner, tool, directory, config, "Trime-OpenCC-resource-load-20261029", directory.name + "-load-" + config)
+        missing = config in AFFECTED and affected_failures
+        if missing:
+            assert result["returncode"] == 1 and BRIDGE + ".ocd2" in result["stderr"], result
+            assert result["stdout"] == "", result
+        else:
+            assert result["returncode"] == 0 and result["stdout"] == "Trime-OpenCC-resource-load-20261029\n", result
+        observations.append({"config": config, "expected_missing_bridge": missing, "returncode": result["returncode"], "passed": True})
+    return observations
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("phase", choices=["plan", "baseline", "fixed"])
+    parser.add_argument("--source", required=True, type=lambda x: Path(x).resolve())
+    parser.add_argument("--build", required=True, type=lambda x: Path(x).resolve())
+    parser.add_argument("--out", required=True, type=lambda x: Path(x).resolve(), help="New unique evidence directory; never overwritten.")
+    parser.add_argument("--ci-summary", default=DEFAULT_CI, type=lambda x: Path(x).resolve())
+    parser.add_argument("--cmake", default="/home/xumin/Public/android-toolchain/android-sdk/cmake/3.31.6/bin/cmake", type=lambda x: Path(x).resolve())
+    parser.add_argument("--cxx", default="/usr/bin/c++", type=lambda x: Path(x).resolve())
+    parser.add_argument("--ninja", default="/usr/bin/ninja", type=lambda x: Path(x).resolve())
+    args = parser.parse_args()
+    args.out.mkdir(parents=True, exist_ok=False)
+    report = {"phase": args.phase, "status": "INCOMPLETE", "started_utc": datetime.datetime.now(datetime.timezone.utc).isoformat(), "scope": "Pinned host resource fixture only; no Android/JNI deployment, input-method or production APK acceptance claimed.", "tool_script_sha256": sha(Path(__file__)), "cases_sha256": sha(CASES)}
+    runner = Runner(args.out)
+    try:
+        report["source_binding"] = check_source(args.source)
+        apk, report["original_apk_binding"] = apk_binding(args.ci_summary)
+        report["commands"] = commands(args)
+        if args.phase == "plan":
+            report["status"] = "PLAN_ONLY_NO_NATIVE_COMMAND_EXECUTED"
+        else:
+            host_tools, report["host_tools"] = tools(args)
+            baseline = args.out / "baseline-fixture"
+            report["baseline_fixture"] = fixture(args, apk, baseline, runner, host_tools)
+            report["baseline_loads"] = loads(runner, host_tools["opencc"], baseline, True)
+            cases = json.loads(CASES.read_text())
+            assert cases["opencc_commit"] == OPENCC
+            data = cases["cases"]
+            if args.phase == "baseline":
+                selected = [x for x in data if x["kind"] == "one_per_config_control" and x["config"] not in AFFECTED]
+                directory = baseline
+                assert len(selected) == 11
+            else:
+                fixed = args.out / "fixed-fixture"
+                bridge = args.build / "data" / (BRIDGE + ".txt")
+                report["fixed_fixture"] = fixture(args, apk, fixed, runner, host_tools, bridge)
+                assert report["baseline_fixture"]["original_assets"] == report["fixed_fixture"]["original_assets"]
+                report["fixed_loads"] = loads(runner, host_tools["opencc"], fixed, False)
+                selected = data
+                directory = fixed
+            conversions = []
+            for index, case in enumerate(selected):
+                result = convert(runner, host_tools["opencc"], directory, case["config"], case["input"], f"conversion-{index:03d}-" + case["config"])
+                assert result["returncode"] == 0 and result["stdout"] == case["expected"] + "\n", {"case": case, "actual": result}
+                conversions.append({**case, "actual": result["stdout"].removesuffix("\n"), "passed": True})
+            report["conversions"] = conversions
+            report["removed_environment_names"] = runner.removed_env_names
+            report["original_apk_unchanged_after"] = sha(apk) == report["original_apk_binding"]["apk_sha256"]
+            assert report["original_apk_unchanged_after"]
+            report["source_binding_after"] = check_source(args.source)
+            assert report["source_binding_after"] == report["source_binding"]
+            report["status"] = "PASS_EXPECTED_5_MISSING_BRIDGE_11_CONTROLS" if args.phase == "baseline" else "PASS_16_CONFIGS_AND_PINNED_CONVERSIONS_WITH_NEGATIVE_CONTROL"
+    except BaseException as error:
+        report["status"] = "FAILED"
+        report["error"] = {"type": type(error).__name__, "message": str(error)}
+        raise
+    finally:
+        report["commands_executed"] = runner.records
+        report["finished_utc"] = datetime.datetime.now(datetime.timezone.utc).isoformat()
+        save(args.out / "report.json", report)
+    print(json.dumps({"status": report["status"], "report": str(args.out / "report.json"), "sha256": sha(args.out / "report.json")}, ensure_ascii=False))
+
+
+if __name__ == "__main__":
+    main()

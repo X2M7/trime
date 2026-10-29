@@ -1,0 +1,26 @@
+{
+  "timestamp": "2026-10-29T07:20:07.409207+00:00",
+  "original_candidate_head": "58598b0fe9f9a8991147908041c6a06097d7af10",
+  "log": "gradle-data2/command.log",
+  "log_sha256": "2f779f0ac9283ab47d50991015f42943b4dbdabaa861d911e92ddf930480f65d",
+  "actual_old_task_inputs": [
+    {
+      "task": ":app:generateOpenCCRegionalPhrases",
+      "nonsemantic_bytecode_inputs": [
+        "/home/xumin/Public/Trime-pr-opencc-regional-data-20261029/app/src/main/jni/librime/deps/opencc/data/scripts/__pycache__/common.cpython-314.pyc"
+      ],
+      "input_count": 1331
+    },
+    {
+      "task": ":app:installOpenCCData",
+      "nonsemantic_bytecode_inputs": [
+        "/home/xumin/Public/Trime-pr-opencc-regional-data-20261029/app/src/main/jni/librime/deps/opencc/data/scripts/__pycache__/common.cpython-314.pyc"
+      ],
+      "input_count": 65
+    }
+  ],
+  "finding": "Both old task input declarations include Python bytecode generated into the source tree. Earlier standalone host compilation had warmed this directory before the first Gradle execution.",
+  "fix": "Exclude Python bytecode from both FileTrees; disable writing bytecode in CMake children and direct Python invocations.",
+  "limits": "This fixes semantic Gradle inputs and new bytecode writes, not sandboxing arbitrary pre-existing valid Python bytecode.",
+  "final_head": "b24114ec111bcbd0b682ef5468e757fc66edec11"
+}

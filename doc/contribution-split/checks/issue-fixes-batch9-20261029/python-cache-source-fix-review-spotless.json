@@ -1,0 +1,29 @@
+{
+  "utc": "2026-10-29T07:16:51.724806+00:00",
+  "status": "PYTHON_CACHE_MINIMAL_SOURCE_FIX_ACCEPTED_PENDING_COLD_EXECUTION",
+  "scope": "Read-only exact source diff review; no source edit, Gradle/native/generator execution, ADB, VM or external write. Not gate pass or PR qualification.",
+  "baseline_commit": "58598b0fe9f9a8991147908041c6a06097d7af10",
+  "changed_files": [
+    "build-logic/convention/src/main/kotlin/OpenCCDataPlugin.kt"
+  ],
+  "diff_numstat": "13\t3\tbuild-logic/convention/src/main/kotlin/OpenCCDataPlugin.kt",
+  "plugin_sha256": "d1a6cec35397ccc45df4f2d52f2dd8b0c8445fd0d72d3b5c281d774ba1104bc4",
+  "wrapper_sha256": "7039af66204d35de44f9d2fb6f3c411baecd7347696a38cc2e63345ca68f2529",
+  "wrapper_unchanged_from_baseline": true,
+  "findings": [
+    "Producer FileTree excludes both __pycache__ descendants and all .pyc while retaining actual .py/native/data/CMake inputs.",
+    "Install inputDir becomes Internal location; new RELATIVE InputFiles sourceFiles models the same data tree with identical exclusions. @InputFile regionalPhrasesFile remains and its producer dependency is unchanged.",
+    "Both host configure and build ExecOperations set PYTHONDONTWRITEBYTECODE=1; CMake-launched Python receives this variable without changing official generator command or source.",
+    "Direct install python3 adds -B before official script argument; actual dictionary scripts, data mappings, config references and output semantics are unchanged.",
+    "No dictionary text/config/native C++/algorithm/gitlink/ABI changes in diff. Only13 additions/3 deletions in plugin.",
+    "No InputDirectory validation is relied on for missing install sources: existing execute() requires nonempty configs, so absence still fails closed."
+  ],
+  "retained_limit": "No-write flags do not disable reading an existing valid pyc. This fix establishes no bytecode writeback and ignores bytecode for Gradle invalidation, not arbitrary-bytecode isolation; Python cache prefix was not added.",
+  "required_next": [
+    "Actual cold-source run without existing pyc; verify no new source-tree caches.",
+    "Repeat all3 UP-TO-DATE and no actions.",
+    "Add/remove ignored cache files and demonstrate all3 UP-TO-DATE, task input lists exclude cache.",
+    "Harmless actual .py source mutation still invalidates/fresh-builds; cross-toolchain rejection still blocks downstream; restoration exact and final success.",
+    "Fresh CI from new committed source; old prewarmed/old-head CI remains historical only."
+  ]
+}

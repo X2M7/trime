@@ -148,6 +148,18 @@ v2 两次 native 会话正常销毁，逻辑主题偏好、默认 Latin 输入�
 
 AGP 后续升级已另外进行了真实诊断，结果[不予验收并暂缓 PR](checks/issue-fixes-batch7-20261029/agp-followup-rejected/independent-agp-ksp-regression-review.json)：9.5.0 的 AGP 直接调用虽从 52 降为 0，KSP 却从 3 增为 11，并在候选阶段发出 `multiDexEnabled` 源码弃用警告。该检查只有格式任务，既不能据警告断定功能故障，也不足以证明 KSP／Room 生成链兼容；旧失败门槛没有放宽。候选字节和全部失败原件保留后，该独立工作树已[恢复干净基线](checks/issue-fixes-batch7-20261029/agp-followup-rejected/source-restoration.json)，未提交、推送或创建 AGP PR。官方 KSP 修复已合入 main，但当前正式包未包含，不能盲升 2.3.12 宣称修好。这些未通过的结果不计入 #2207 验收。
 
+### 第八批：补齐 OpenCC 区域转换词典（2026-10-29）
+
+新增 [#2208](https://github.com/osfans/trime/pull/2208)，关联已合并的 OpenCC 升级 **#2039**，不误写成关闭另一个 issue。分支 `contrib/fix-opencc-regional-data`、当前源码 `b24114ec`、基线 `7fedca06`，只涉及 OpenCC 构建插件与独立 host CMake wrapper。五个配置 `s2t／s2tw／s2twp／s2hk／s2hkp` 引用的区域短语词典原先被明确跳过；现在用固定 OpenCC 源码的官方 `Dictionaries` 目标生成，再接入安装及校验和依赖，并检查全部资源闭包。PR 当前仍为 **Draft**，等待最后 CI 与候选 APK 验证。
+
+[真实宿主负控](checks/issue-fixes-batch9-20261029/baseline-fixture1/report.json)复现旧原 APK 五配置缺件失败、11 配置及对应转换正常；[补入官方结果](checks/issue-fixes-batch9-20261029/fixed-fixture1/report.json)后，16 配置加载及 38 组固定上游转换用例通过，重新负控仍不能从其他路径补缺。原 37 个资源保留原字节，新词典为 15,717 字节。默认选项已按 [固定 JNI／CLI 源码](checks/issue-fixes-batch9-20261029/jni-default-policy-final-source-binding-height.json)核对，不把 CLI 不带 flag 的默认值误当 JNI 默认值。
+
+[最终源码本地验收](checks/issue-fixes-batch9-20261029/local-validation.json)及[独立原件复核](checks/issue-fixes-batch9-20261029/final-cache-execution-review-spotless.json)通过。补修了真实发现的 [Python 缓存输入问题](checks/issue-fixes-batch9-20261029/python-cache-discovery.json)：两个任务均排除字节码输入，脚本不新写 `.pyc`。冷源生成／安装／校验和成功；不改输入和扰动无关 `.pyc` 时三个任务均 `UP-TO-DATE`；改生成脚本确实清理并重编译独立 host 树；误设交叉工具链实际退出 1，安装及校验和不开始、资源字节保持；恢复后实际退出 0。[六阶段门禁](checks/issue-fixes-batch9-20261029/cache-gates-v2.json)保留所有原始退出状态，未把预期拒绝当成构建成功。最终七个本地阶段最低可用内存约 3.97 GiB，没有模拟器或构建 JVM 残留，文件索引及用户程序保持运行。
+
+[当前 CI 快照](checks/issue-fixes-batch9-20261029/cloud/partial-snapshot/status.json)绑定最终源码的新 [run 40834549715](https://github.com/osfans/trime/actions/runs/40834549715)；快照不是最终通过凭证。Ubuntu 原始 APK 已完成下载 SHA 与[完整源码树绑定](checks/issue-fixes-batch9-20261029/cloud/partial-snapshot/ubuntu-original/source-tree-proof.json)，APK 本身的 16 配置／38 用例及同步清单仍须后续验证。先前 `58598b0f` 的 CI 不能替代补修后的这一轮。
+
+**警告尚未全清零**：固定 OpenCC 在本机 GCC16 下仍有 10 条数组边界诊断，[后续调查](checks/issue-fixes-batch9-20261029/gcc16-warning-followup-popup.json)没有仅凭历史 GCC 报告判定无害；Gradle／SDK 等诊断也保留。不把本次缺件归因为历史 193 条 Rime `Encode failure`。两项本地准备／observer 失败及审查报告重名重出记录均保留，原始执行日志未改写。本批未执行真机、Android 升级或 Release 验收；源码分支与分类索引推送不等于发布稳定版。公开索引只复制所选文字和 helper，[SHA 清单](checks/issue-fixes-batch9-20261029/SHA256SUMS)不包含 APK 或完整日志。
+
 ### 先跟进已有 PR，避免重复
 
 09:34 快照中 [7 项 PR 的源码身份、覆盖与排除范围](checks/issue-triage-20261028/existing-pr-overlap.json)已核对正文；待审不等于已合并。

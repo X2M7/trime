@@ -1,0 +1,62 @@
+{
+  "utc": "2026-10-29T07:19:01.096915+00:00",
+  "status": "STATIC_CACHE_GATE_V2_ACCEPTED_FOR_ROOT_EXECUTION",
+  "scope": "Static-only review; reviewer did not run this harness, Gradle, generators, compilers or mutate production/cache files. Not actual gate pass.",
+  "expected_head_at_invocation": "b24114ec111bcbd0b682ef5468e757fc66edec11",
+  "tool": {
+    "path": "/home/xumin/Public/Trime/build/issue-fixes-batch9-20261029/run-cache-gates-v2.py",
+    "sha256": "4b54f7ef9d021930b5e1a0f5625ad3369aa7d8ccd89a95742eaede160a813c47",
+    "AST_valid": true
+  },
+  "command": {
+    "path": "/home/xumin/Public/Trime/build/issue-fixes-batch9-20261029/gradle-final-source-command.json",
+    "sha256": "cb6fe4f311b3efbc50efdd16cdc7df245320f2731d511e93aae4b92d67bcc071",
+    "derived_argv": [
+      "/home/xumin/Public/Trime-pr-opencc-regional-data-20261029/gradlew",
+      ":app:generateDataChecksums",
+      "--warning-mode=all",
+      "--info",
+      "--no-build-cache",
+      "--no-configuration-cache",
+      "--offline",
+      "--no-daemon",
+      "--max-workers=1",
+      "--no-parallel",
+      "--console=plain",
+      "-I",
+      "/home/xumin/Public/Trime/build/issue-fixes-batch9-20261029/gradle-observe-v2.init.gradle",
+      "-PopenccCmakeExecutable=/home/xumin/Public/android-toolchain/android-sdk/cmake/3.31.6/bin/cmake",
+      "-PbuildABI=x86_64",
+      "-Dorg.gradle.jvmargs=-Xmx768M -XX:MaxMetaspaceSize=768M -XX:+UseSerialGC -XX:ActiveProcessorCount=2 -XX:+ExitOnOutOfMemoryError"
+    ]
+  },
+  "supporting_inputs": [
+    {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch9-20261029/gradle-observe-v2.init.gradle",
+      "sha256": "2648613c6ca25f419976d6a23f9dc1b48a187d60670664fd6e16da484799a4a8"
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch9-20261029/run-command.py",
+      "sha256": "8901a55a03df0ecb557f9cc0e73f0aef521127a49c2969af9c48c9a7f35e86b6"
+    }
+  ],
+  "reviewed_improvements": [
+    "Fixed40hex expected head is required from invocation and compared with actual HEAD before gates; source and direct OpenCC tracked status must be clean.",
+    "Initial source script bytes must equal pinned025f Git blob and source tree must have no pyc after actual cold phase exits0. Parent toolchain variable must be absent.",
+    "Both no-change and ignored-cache-noise cases require all3 exact UP-TO-DATE task lines and no completion events. Noise uses an unimported name and is removed before semantic-source mutation.",
+    "Data mutation changes only isolated official generator source by appending a comment; same real --info line must name sourceFiles, exact script and has changed.",
+    "Owned host-build sentinel is created after successful cold run and must disappear; observed1%/2% compilation marker plus generator/install completion and exact bridge hash prove actual fresh work.",
+    "Cross-toolchain case requires launcher+actual Gradle exit1, explicit guard text, generator start but no completion, no install/checksum start or completion, and full asset snapshot unchanged.",
+    "Restored case uses original env and exact source bytes; producer/install must execute, bridge hash and16/22 resource counts must match. Final worktree clean and no source pyc required.",
+    "finally restores original script bytes and removes owned unused test noise on success/failure. Raw unique run folders and any failures retained.",
+    "argv slicing retains all options and changes only requested task targets; no production edit or dependency suppression in harness."
+  ],
+  "nonblocking_limits": [
+    "This tests ignored unimported cache-file invalidation, not arbitrary valid imported bytecode isolation; production no-write flags do not disable pyc reads.",
+    "Cold input/output and sentinel provenance remains Root cold phase records, which must be reviewed with these real results.",
+    "The sentinel parent is expected to exist after actual successful cold host build; absence safely fails the harness.",
+    "Compilation progress pattern is local Makefiles-specific and matches observed local output; this helper is not a portable CI test.",
+    "If preconditions fail, final cleanup may remove an old same-named Root-owned noise file; this path is isolated and explicitly test-owned, not a general user cache."
+  ],
+  "verdict": "No substantive argv, ordering, expected-exit or restoration bug found in reviewed snapshot; safe for Root to proceed after cold build completes."
+}

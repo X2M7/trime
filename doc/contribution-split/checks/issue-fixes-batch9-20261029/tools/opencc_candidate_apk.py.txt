@@ -1,0 +1,150 @@
+#!/usr/bin/env python3
+"""Validate an untouched new CI APK using only its OpenCC text resources.
+
+Requires Root's completed pinned host build and committed candidate source.
+This command never configures/builds host tools, invokes Gradle, installs an
+APK, accesses the network, or mutates the original APK/source files.
+"""
+
+import argparse
+import datetime
+import hashlib
+import importlib.util
+import json
+import os
+from pathlib import Path
+import re
+import zipfile
+
+HELPER = Path(__file__).with_name("opencc_host_fixture.py")
+EXPECTED_HELPER_SHA = "a4d21a7b608576f5a253c202bcd81f20cb7b6eeb4a90f94cf9cd9d2f357e6291"
+
+
+def bind_candidate(helper, ci_path, expected_head, expected_run):
+    ci = json.loads(ci_path.read_text())
+    assert ci["head_sha"] == expected_head
+    assert ci["ci"]["run_id"] == expected_run
+    assert ci["ci"]["status"] == "completed" and ci["ci"]["conclusion"] == "success"
+    assert ci["ci"]["passed"] == ci["ci"]["total"] == 5
+    assert all(x["conclusion"] == "success" for x in ci["ci"]["jobs"])
+    original = ci["ubuntu_original"]
+    assert original["full_source_trees_identical"]
+    assert original["producer_git_tree"] == original["source_git_tree"]
+    assert not original["original_apk_modified_or_resigned"]
+    assert original["actual_producer_merge_sha"] == ci["ci"]["all_jobs_actual_checkout_merge_sha"]
+    proof_path = ci_path.parent / original["source_tree_proof_file"]
+    proof = json.loads(proof_path.read_text())
+    assert proof["pr_head_sha_at_production"] == expected_head
+    assert proof["actual_producer_merge_sha"] == original["actual_producer_merge_sha"]
+    assert proof["full_source_trees_identical"]
+    assert proof["pr_head_tree_sha"] == proof["producer_merge_tree_sha"] == original["source_git_tree"]
+    items = [x for x in original["original_files"] if x["path"].endswith(".apk")]
+    assert len(items) == 1
+    item = items[0]
+    apk = ci_path.parent / item["path"]
+    assert apk.is_file() and apk.stat().st_size == item["size"]
+    assert helper.sha(apk) == item["sha256"]
+    return apk, {"ci_summary": str(ci_path), "ci_summary_sha256": helper.sha(ci_path), "run": expected_run, "head": expected_head, "producer": original["actual_producer_merge_sha"], "full_source_tree": original["source_git_tree"], "source_tree_proof": str(proof_path), "source_tree_proof_sha256": helper.sha(proof_path), "apk": str(apk), "bytes": apk.stat().st_size, "apk_sha256": helper.sha(apk), "original_apk_unmodified": True}
+
+
+def entries(apk):
+    with zipfile.ZipFile(apk) as archive:
+        names = [x for x in archive.namelist() if x.startswith("assets/shared/opencc/") and not x.endswith("/")]
+        assert len(names) == len(set(names))
+        result = {}
+        for name in names:
+            leaf = Path(name).name
+            assert name == "assets/shared/opencc/" + leaf
+            assert leaf not in {"", ".", ".."}
+            result[leaf] = archive.read(name)
+        return result
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--source", required=True, type=lambda x: Path(x).resolve())
+    parser.add_argument("--build", required=True, type=lambda x: Path(x).resolve())
+    parser.add_argument("--out", required=True, type=lambda x: Path(x).resolve())
+    parser.add_argument("--candidate-ci-summary", required=True, type=lambda x: Path(x).resolve())
+    parser.add_argument("--candidate-head", required=True)
+    parser.add_argument("--candidate-run", required=True, type=int)
+    parser.add_argument("--gradle-generated-bridge", required=True, type=lambda x: Path(x).resolve(), help="Actual local Gradle-generated bridge text, not a hand-written expected file.")
+    args = parser.parse_args()
+    assert re.fullmatch(r"[0-9a-f]{40}", args.candidate_head)
+    assert hashlib.sha256(HELPER.read_bytes()).hexdigest() == EXPECTED_HELPER_SHA
+    spec = importlib.util.spec_from_file_location("pinned_opencc_fixture_helper", HELPER)
+    helper = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(helper)
+    args.out.mkdir(parents=True, exist_ok=False)
+    runner = helper.Runner(args.out)
+    report = {"status": "INCOMPLETE", "started_utc": datetime.datetime.now(datetime.timezone.utc).isoformat(), "script_sha256": helper.sha(Path(__file__)), "helper_sha256": helper.sha(HELPER), "scope": "Actual original candidate CI APK resource extraction and pinned host conversion only; no Android deployment/JNI/input-method/upgrade acceptance claimed."}
+    try:
+        report["source_binding"] = helper.check_source(args.source)
+        trime = args.source.parents[6]
+        assert helper.git(trime, "rev-parse", "HEAD").decode().strip() == args.candidate_head
+        assert not helper.git(trime, "status", "--porcelain", "--untracked-files=no").strip()
+        report["candidate_source"] = {"trime_worktree": str(trime), "head": args.candidate_head, "tracked_worktree_clean": True}
+        old_apk, report["baseline_apk_binding"] = helper.apk_binding(helper.DEFAULT_CI)
+        apk, report["candidate_apk_binding"] = bind_candidate(helper, args.candidate_ci_summary, args.candidate_head, args.candidate_run)
+        old = entries(old_apk)
+        new = entries(apk)
+        assert len(old) == 37 and len(new) == 38
+        bridge_name = helper.BRIDGE + ".txt"
+        assert set(new) == set(old) | {bridge_name}
+        assert all(new[name] == old[name] for name in old)
+        assert len([name for name in new if name.endswith(".json")]) == 16
+        assert len([name for name in new if name.endswith(".txt")]) == 22
+        assert {Path(name).stem for name in new if name.endswith(".json")} == helper.CONFIGS
+        host_bridge = args.build / "data" / bridge_name
+        assert host_bridge.is_file() and args.gradle_generated_bridge.is_file()
+        assert host_bridge.stat().st_size > 0
+        assert new[bridge_name] == host_bridge.read_bytes() == args.gradle_generated_bridge.read_bytes()
+        report["bridge_chain"] = {"official_pinned_host_cmake_output": str(host_bridge), "actual_gradle_generated_output": str(args.gradle_generated_bridge), "candidate_apk_entry": "assets/shared/opencc/" + bridge_name, "bytes": len(new[bridge_name]), "sha256": hashlib.sha256(new[bridge_name]).hexdigest(), "all_three_byte_identical": True, "original_37_asset_entries_byte_identical_to_R7": True, "gradle_task_execution_provenance_must_be_reported_separately": True}
+        host_tools, report["host_tools"] = helper.tools(args)
+        baseline = args.out / "negative-baseline-fixture"
+        report["negative_baseline_fixture"] = helper.fixture(args, old_apk, baseline, runner, host_tools)
+        report["negative_baseline_loads"] = helper.loads(runner, host_tools["opencc"], baseline, True)
+        candidate = args.out / "candidate-apk-fixture"
+        candidate.mkdir()
+        for name, body in new.items():
+            (candidate / name).write_bytes(body)
+        configs = []
+        for config in sorted(candidate.glob("*.json")):
+            assert config.read_bytes() == helper.git(args.source, "show", helper.OPENCC + ":data/config/" + config.name)
+            configs.append({"file": config.name, "sha256": helper.sha(config)})
+        report["exact_pinned_configs"] = configs
+        compiled = []
+        for txt in sorted(candidate.glob("*.txt")):
+            command = [host_tools["opencc_dict"], "--input", txt, "--output", txt.with_suffix(".ocd2"), "--from", "text", "--to", "ocd2"]
+            result = runner.run("candidate-compile-" + txt.stem, command, candidate)
+            assert result["returncode"] == 0, result
+            compiled.append({"source_apk_entry": "assets/shared/opencc/" + txt.name, "text_sha256": helper.sha(txt), "ocd2_sha256": helper.sha(txt.with_suffix(".ocd2"))})
+        assert len(compiled) == 22
+        report["compiled_candidate_apk_resources"] = compiled
+        report["candidate_loads"] = helper.loads(runner, host_tools["opencc"], candidate, False)
+        cases = json.loads(helper.CASES.read_text())
+        assert cases["opencc_commit"] == helper.OPENCC
+        conversions = []
+        for index, case in enumerate(cases["cases"]):
+            result = helper.convert(runner, host_tools["opencc"], candidate, case["config"], case["input"], f"candidate-conversion-{index:03d}-" + case["config"])
+            assert result["returncode"] == 0 and result["stdout"] == case["expected"] + "\n", {"case": case, "actual": result}
+            conversions.append({**case, "actual": result["stdout"].removesuffix("\n"), "passed": True})
+        report["conversions"] = conversions
+        report["original_apks_unchanged_after"] = helper.sha(apk) == report["candidate_apk_binding"]["apk_sha256"] and helper.sha(old_apk) == report["baseline_apk_binding"]["apk_sha256"]
+        assert report["original_apks_unchanged_after"]
+        assert helper.check_source(args.source) == report["source_binding"]
+        assert not helper.git(trime, "status", "--porcelain", "--untracked-files=no").strip()
+        report["status"] = "PASS_ACTUAL_CANDIDATE_APK_16_CONFIGS_38_PAIRS_WITH_MISSING_BRIDGE_CONTROL"
+    except BaseException as error:
+        report["status"] = "FAILED"
+        report["error"] = {"type": type(error).__name__, "message": str(error)}
+        raise
+    finally:
+        report["commands_executed"] = runner.records
+        report["finished_utc"] = datetime.datetime.now(datetime.timezone.utc).isoformat()
+        helper.save(args.out / "report.json", report)
+    print(json.dumps({"status": report["status"], "report": str(args.out / "report.json"), "sha256": helper.sha(args.out / "report.json")}, ensure_ascii=False))
+
+
+if __name__ == "__main__":
+    main()

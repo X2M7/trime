@@ -1,0 +1,588 @@
+{
+  "schema": 1,
+  "utc": "2026-10-29T07:32:36.237342+00:00",
+  "status": "PASS_INDEPENDENT_COLD_CACHE_AND_FAIL_STOP_EXECUTION_REVIEW",
+  "head": "b24114ec111bcbd0b682ef5468e757fc66edec11",
+  "base": "7fedca06ba5d2ef761a2ae3d44d8a0917db36994",
+  "scope": "Read-only review of Root actual six local phases and frozen harness; no builds, converter executions, ADB, VM, source edits or external writes by reviewer. Not candidate CI/APK/JNI acceptance.",
+  "phase_results": [
+    {
+      "phase": "gradle-pycache-cold1",
+      "actual_exit": 0,
+      "start": "2026-10-29T07:18:20.584928+00:00",
+      "finish": "2026-10-29T07:21:14.622456+00:00",
+      "minimum_available_kib": 4824528,
+      "events": [
+        {
+          "event": "action-start",
+          "task": ":app:generateOpenCCRegionalPhrases"
+        },
+        {
+          "event": "action-complete",
+          "task": ":app:generateOpenCCRegionalPhrases"
+        },
+        {
+          "event": "action-start",
+          "task": ":app:installOpenCCData"
+        },
+        {
+          "event": "action-complete",
+          "task": ":app:installOpenCCData"
+        },
+        {
+          "event": "action-start",
+          "task": ":app:generateDataChecksums"
+        },
+        {
+          "event": "action-complete",
+          "task": ":app:generateDataChecksums"
+        }
+      ],
+      "task_lines": [
+        "> Task :app:generateOpenCCRegionalPhrases",
+        "> Task :app:installOpenCCData",
+        "> Task :app:generateDataChecksums"
+      ],
+      "compiler_warning_lines": 10
+    },
+    {
+      "phase": "gradle-pycache-no-change1",
+      "actual_exit": 0,
+      "start": "2026-10-29T07:21:14.843000+00:00",
+      "finish": "2026-10-29T07:21:44.851766+00:00",
+      "minimum_available_kib": 5122940,
+      "events": [],
+      "task_lines": [
+        "> Task :app:generateOpenCCRegionalPhrases UP-TO-DATE",
+        "> Task :app:installOpenCCData UP-TO-DATE",
+        "> Task :app:generateDataChecksums UP-TO-DATE"
+      ],
+      "compiler_warning_lines": 0
+    },
+    {
+      "phase": "gradle-pycache-cache-noise1",
+      "actual_exit": 0,
+      "start": "2026-10-29T07:21:44.936493+00:00",
+      "finish": "2026-10-29T07:22:14.944024+00:00",
+      "minimum_available_kib": 5154856,
+      "events": [],
+      "task_lines": [
+        "> Task :app:generateOpenCCRegionalPhrases UP-TO-DATE",
+        "> Task :app:installOpenCCData UP-TO-DATE",
+        "> Task :app:generateDataChecksums UP-TO-DATE"
+      ],
+      "compiler_warning_lines": 0
+    },
+    {
+      "phase": "gradle-pycache-script1",
+      "actual_exit": 0,
+      "start": "2026-10-29T07:22:15.062372+00:00",
+      "finish": "2026-10-29T07:25:11.099870+00:00",
+      "minimum_available_kib": 4651648,
+      "events": [
+        {
+          "event": "action-start",
+          "task": ":app:generateOpenCCRegionalPhrases"
+        },
+        {
+          "event": "action-complete",
+          "task": ":app:generateOpenCCRegionalPhrases"
+        },
+        {
+          "event": "action-start",
+          "task": ":app:installOpenCCData"
+        },
+        {
+          "event": "action-complete",
+          "task": ":app:installOpenCCData"
+        }
+      ],
+      "task_lines": [
+        "> Task :app:generateOpenCCRegionalPhrases",
+        "> Task :app:installOpenCCData",
+        "> Task :app:generateDataChecksums UP-TO-DATE"
+      ],
+      "compiler_warning_lines": 10
+    },
+    {
+      "phase": "gradle-pycache-reject1",
+      "actual_exit": 1,
+      "start": "2026-10-29T07:25:11.251849+00:00",
+      "finish": "2026-10-29T07:25:39.259569+00:00",
+      "minimum_available_kib": 4877952,
+      "events": [
+        {
+          "event": "action-start",
+          "task": ":app:generateOpenCCRegionalPhrases"
+        }
+      ],
+      "task_lines": [
+        "> Task :app:generateOpenCCRegionalPhrases FAILED"
+      ],
+      "compiler_warning_lines": 0
+    },
+    {
+      "phase": "gradle-pycache-restored1",
+      "actual_exit": 0,
+      "start": "2026-10-29T07:25:39.421965+00:00",
+      "finish": "2026-10-29T07:28:25.455435+00:00",
+      "minimum_available_kib": 4478232,
+      "events": [
+        {
+          "event": "action-start",
+          "task": ":app:generateOpenCCRegionalPhrases"
+        },
+        {
+          "event": "action-complete",
+          "task": ":app:generateOpenCCRegionalPhrases"
+        },
+        {
+          "event": "action-start",
+          "task": ":app:installOpenCCData"
+        },
+        {
+          "event": "action-complete",
+          "task": ":app:installOpenCCData"
+        }
+      ],
+      "task_lines": [
+        "> Task :app:generateOpenCCRegionalPhrases",
+        "> Task :app:installOpenCCData",
+        "> Task :app:generateDataChecksums UP-TO-DATE"
+      ],
+      "compiler_warning_lines": 10
+    }
+  ],
+  "actual_task_dependency_evidence": {
+    "requested_tasks": [
+      ":spotlessCheck",
+      ":app:generateDataChecksums"
+    ],
+    "cold_action_order": [
+      {
+        "event": "action-start",
+        "task": ":app:generateOpenCCRegionalPhrases"
+      },
+      {
+        "event": "action-complete",
+        "task": ":app:generateOpenCCRegionalPhrases"
+      },
+      {
+        "event": "action-start",
+        "task": ":app:installOpenCCData"
+      },
+      {
+        "event": "action-complete",
+        "task": ":app:installOpenCCData"
+      },
+      {
+        "event": "action-start",
+        "task": ":app:generateDataChecksums"
+      },
+      {
+        "event": "action-complete",
+        "task": ":app:generateDataChecksums"
+      }
+    ],
+    "producer_input_count": 1330,
+    "producer_semantic_source_input_set_matches_after_Git_metadata_default_exclusions": true,
+    "default_Git_metadata_exclusions": [
+      "/home/xumin/Public/Trime-pr-opencc-regional-data-20261029/app/src/main/jni/librime/deps/opencc/.gitattributes",
+      "/home/xumin/Public/Trime-pr-opencc-regional-data-20261029/app/src/main/jni/librime/deps/opencc/.gitignore",
+      "/home/xumin/Public/Trime-pr-opencc-regional-data-20261029/app/src/main/jni/librime/deps/opencc/deps/google-benchmark/.gitignore",
+      "/home/xumin/Public/Trime-pr-opencc-regional-data-20261029/app/src/main/jni/librime/deps/opencc/deps/googletest-1.15.0/.gitignore",
+      "/home/xumin/Public/Trime-pr-opencc-regional-data-20261029/app/src/main/jni/librime/deps/opencc/deps/marisa-0.3.1/.gitignore",
+      "/home/xumin/Public/Trime-pr-opencc-regional-data-20261029/app/src/main/jni/librime/deps/opencc/deps/marisa-0.3.1/bindings/.gitignore",
+      "/home/xumin/Public/Trime-pr-opencc-regional-data-20261029/app/src/main/jni/librime/deps/opencc/deps/pybind11-2.13.1/.gitattributes",
+      "/home/xumin/Public/Trime-pr-opencc-regional-data-20261029/app/src/main/jni/librime/deps/opencc/deps/pybind11-2.13.1/.gitignore",
+      "/home/xumin/Public/Trime-pr-opencc-regional-data-20261029/app/src/main/jni/librime/deps/opencc/plugins/jieba/deps/cppjieba/.gitignore",
+      "/home/xumin/Public/Trime-pr-opencc-regional-data-20261029/app/src/main/jni/librime/deps/opencc/plugins/jieba/node/.gitignore",
+      "/home/xumin/Public/Trime-pr-opencc-regional-data-20261029/app/src/main/jni/librime/deps/opencc/python/.gitignore",
+      "/home/xumin/Public/Trime-pr-opencc-regional-data-20261029/app/src/main/jni/librime/deps/opencc/python/opencc/.gitignore"
+    ],
+    "install_input_files_exact_set_matches_filtered_data_plus_bridge": true,
+    "install_input_count": 64,
+    "provider_dependency_API_limit": "Observer direct_dependencies for install is empty. Actual requested checksums task automatically executes generator then install then checksums; fail-stop case blocks both downstream tasks. The API view is not used as a complete implicit-dependency enumeration."
+  },
+  "source_change_diagnostics": [
+    {
+      "phase": "gradle-pycache-script1",
+      "lines": [
+        "  Input property 'sourceFiles' file /home/xumin/Public/Trime-pr-opencc-regional-data-20261029/app/src/main/jni/librime/deps/opencc/data/scripts/generate_st_phrases_from_regional_phrases.py has changed.",
+        "  Input property 'sourceFiles' file /home/xumin/Public/Trime-pr-opencc-regional-data-20261029/app/src/main/jni/librime/deps/opencc/data/scripts/generate_st_phrases_from_regional_phrases.py has changed."
+      ]
+    },
+    {
+      "phase": "gradle-pycache-restored1",
+      "lines": [
+        "  Input property 'sourceFiles' file /home/xumin/Public/Trime-pr-opencc-regional-data-20261029/app/src/main/jni/librime/deps/opencc/data/scripts/generate_st_phrases_from_regional_phrases.py has changed.",
+        "  Input property 'sourceFiles' file /home/xumin/Public/Trime-pr-opencc-regional-data-20261029/app/src/main/jni/librime/deps/opencc/data/scripts/generate_st_phrases_from_regional_phrases.py has changed."
+      ]
+    }
+  ],
+  "cold_source_and_sentinel_evidence": {
+    "preparation_reference": "python-cache-cold-preparation.json",
+    "cold_source_recorded_true": true,
+    "cold_task_input_sets_exclude_bytecode": true,
+    "post_generation_no_source_pyc_and_current_no_source_pyc": true,
+    "sentinel_absence_reported_by_frozen_executed_assert_and_current_absent": true
+  },
+  "failure_asset_snapshot_evidence": {
+    "actual_build_exit": 1,
+    "actual_events": [
+      {
+        "event": "action-start",
+        "task": ":app:generateOpenCCRegionalPhrases"
+      }
+    ],
+    "assets_identical_before_after": true,
+    "verification_method": "Frozen executed harness asserts full asset path->SHA256 snapshots immediately before/after rejection; both raw snapshots were not separately persisted, so reviewer independently confirms harness implementation, actual expected failure and no downstream task event, but cannot independently rehash the historical before snapshot."
+  },
+  "final_restoration": {
+    "plugin_sha256": "d1a6cec35397ccc45df4f2d52f2dd8b0c8445fd0d72d3b5c281d774ba1104bc4",
+    "opencc_script_sha256": "205cc85048f04354002e5b565b028273c92a3d5eed5cc08549249dea36f2c927",
+    "script_bytes_equal_pinned_git_blob": true,
+    "root_worktree_clean": true,
+    "opencc_tracked_clean": true,
+    "source_pyc_count": 0,
+    "bridge_sha256": "9ab40618a9b162cca6dae9ec6767a8c4669017a20b2d6da5f94b7a7f99d09170"
+  },
+  "local_assets_exact_official_bytes": {
+    "configs": 16,
+    "text_dictionaries": 22,
+    "total": 38,
+    "all_original_configs_equal_pinned_source": true,
+    "all_texts_equal_already_built_official_pinned_host_target": true,
+    "manifest": [
+      {
+        "file": "CJK_Compatibility_Ideographs.txt",
+        "sha256": "663cc10b7de7c7cee3ff9df1ee963977d6c26c00b23f8fe670fab481283ed4f9",
+        "bytes": 39074
+      },
+      {
+        "file": "HKPhrases.txt",
+        "sha256": "de3ed57532c9e57e73998f696ec8afe49307b44aa01a8342aa9ae6ed1f6dd9da",
+        "bytes": 2902
+      },
+      {
+        "file": "HKPhrasesRev.txt",
+        "sha256": "081b5b8908b4f7217d1f6b3c11be21e02210b6753c2b0d8d6379fe21c1a40a20",
+        "bytes": 2857
+      },
+      {
+        "file": "HKVariants.txt",
+        "sha256": "e5cd4345303224587102f2c9e4d2b67d2b7e349c6ce9152e4a118f4656cf7302",
+        "bytes": 1001
+      },
+      {
+        "file": "HKVariantsPhrases.txt",
+        "sha256": "e23019c35405065d7ea174fe7487e0bde064b1af56532b3986033c9bb98e555c",
+        "bytes": 7028
+      },
+      {
+        "file": "HKVariantsRev.txt",
+        "sha256": "e9392136bbd7b4c9ec55b04bfa1f33fc10b08f40a5236bfe8a227d642230b724",
+        "bytes": 604
+      },
+      {
+        "file": "HKVariantsRevPhrases.txt",
+        "sha256": "35352aef4833c2631b2144bc85623cc44d5a09221dda9c32178ea024300d34d3",
+        "bytes": 6768
+      },
+      {
+        "file": "JPShinjitaiCharacters.txt",
+        "sha256": "12cec7250b873ef52b36d8f92218d4f92c0aaf5d8cd7c58fe42d9785bdcdc43a",
+        "bytes": 12442
+      },
+      {
+        "file": "JPShinjitaiCharactersRev.txt",
+        "sha256": "4d257f9dfdea31a0062b2bdb0c6214062456ea1e57a601cc67c796e244f917ca",
+        "bytes": 3832
+      },
+      {
+        "file": "JPShinjitaiPhrases.txt",
+        "sha256": "799c9d69d78fcf96b35110693866bd34a070e4f50e6be55a4ecf8080cd2832d6",
+        "bytes": 3809
+      },
+      {
+        "file": "STCharacters.txt",
+        "sha256": "a0ca1601c70648cf48b33c3c6210ccbecc5c7eead4b4c3daf76587ba2c03582b",
+        "bytes": 36026
+      },
+      {
+        "file": "STPhrases.txt",
+        "sha256": "f6eab5e5c6dd7640597878d3dfc6599ee1279d2bc91561eadd8e114194e2925a",
+        "bytes": 1007834
+      },
+      {
+        "file": "STPhrases_GeneratedFromRegionalPhrases.txt",
+        "sha256": "9ab40618a9b162cca6dae9ec6767a8c4669017a20b2d6da5f94b7a7f99d09170",
+        "bytes": 15717
+      },
+      {
+        "file": "TSCharacters.txt",
+        "sha256": "737c21c66f55a419dd6956cb3089476cdefc5a36877452631617696df1e5d925",
+        "bytes": 104516
+      },
+      {
+        "file": "TSCharactersExt.txt",
+        "sha256": "239a67aae2bb6b4999f65e1df50ee67794ea5b63d269a8e6cb9a99efe0eb749e",
+        "bytes": 8345
+      },
+      {
+        "file": "TSPhrases.txt",
+        "sha256": "362fa1b9a7d6edd04b462a32e12c9fef3adae822ab1dee9c83561cc37c06cb1f",
+        "bytes": 8786
+      },
+      {
+        "file": "TWPhrases.txt",
+        "sha256": "bcb435b744ee3e522beb9b18fcc5486a36ed4763c6aa642ce18112fb5d604e31",
+        "bytes": 19429
+      },
+      {
+        "file": "TWPhrasesRev.txt",
+        "sha256": "2c13969308cf4b9216cfb0145cefb9da96c5d0329a393850c2a63b341caaf4bd",
+        "bytes": 19235
+      },
+      {
+        "file": "TWVariants.txt",
+        "sha256": "e187278e119c427ca561180ac5da5b20e9f8681190458f35c327ce499e95a6a5",
+        "bytes": 986
+      },
+      {
+        "file": "TWVariantsPhrases.txt",
+        "sha256": "36df033675a2e9152927fa8419f0732a061cb4909c5060f25a5cfc9b08ffff06",
+        "bytes": 1107
+      },
+      {
+        "file": "TWVariantsRev.txt",
+        "sha256": "ab059484c60f0983a8c841cd1edb622db883bf7627a872c92e29f70ec9ecd2de",
+        "bytes": 336
+      },
+      {
+        "file": "TWVariantsRevPhrases.txt",
+        "sha256": "5ebfb4bdc938c2b14e01ace378988d5d3dc12462b3496ef1d424951ccd371256",
+        "bytes": 24359
+      },
+      {
+        "file": "hk2s.json",
+        "sha256": "b5fb0d6447f1f111c02a99f405d678b40a97bf73de0a25000219878994a8da37",
+        "bytes": 952
+      },
+      {
+        "file": "hk2sp.json",
+        "sha256": "8a36e56922fa67aeaffb7d145520ed302276aaaf3ab05c092a10615eeda8a161",
+        "bytes": 1026
+      },
+      {
+        "file": "hk2t.json",
+        "sha256": "e773001c761c5540c38a66baa378f2a8c65378fa09446186b1c4dd78815bccf3",
+        "bytes": 489
+      },
+      {
+        "file": "jp2t.json",
+        "sha256": "bf056ab3be0c2d0898873662a12d39f8528419a36bc3ad128854a1faefe2c713",
+        "bytes": 479
+      },
+      {
+        "file": "s2hk.json",
+        "sha256": "b3a4b6c7f5fdd61c4f7e6eaa292d9a0e29eece584c35fe04fc124b1d9796051b",
+        "bytes": 1211
+      },
+      {
+        "file": "s2hkp.json",
+        "sha256": "d95e38c22f07d8bc1b6d2dd004c590f0881c781fff76b53bf5f9b639e7980619",
+        "bytes": 1281
+      },
+      {
+        "file": "s2t.json",
+        "sha256": "a188392af5ca23e1d602c5a93651f1d852fccdaa24c2b29abed7a0c8ac359048",
+        "bytes": 676
+      },
+      {
+        "file": "s2tw.json",
+        "sha256": "5830ee3440ba3dc6bf1e197205b4248e2d860b8a3680475db4419b0dbf96ac39",
+        "bytes": 1209
+      },
+      {
+        "file": "s2twp.json",
+        "sha256": "681dd1ff5f3a1efe93a6f56006ee7f58f767fa0366fd3a2ec6165c983e39415d",
+        "bytes": 1286
+      },
+      {
+        "file": "t2hk.json",
+        "sha256": "8e2336420ed33b6991841921e930414919d922bd287677f5973564c85b6a3c9b",
+        "bytes": 483
+      },
+      {
+        "file": "t2jp.json",
+        "sha256": "6ac813c83a0e57e9d4ff5fd968188ff9e8bc0564dbc833e77fca0c338d27d285",
+        "bytes": 292
+      },
+      {
+        "file": "t2s.json",
+        "sha256": "96fe5cc374a80ccc49e3370006cce3aefe4af955868ae0b14fb3079ec695be4f",
+        "bytes": 589
+      },
+      {
+        "file": "t2tw.json",
+        "sha256": "bdaa75b82ec25daecb3ce376277e90c7c3388eb9345628650c66a804a2772a19",
+        "bytes": 481
+      },
+      {
+        "file": "tw2s.json",
+        "sha256": "9bf1810eea822bcdedc0b24b303348d859ecf8307f379c9c2d210428e0620ff9",
+        "bytes": 950
+      },
+      {
+        "file": "tw2sp.json",
+        "sha256": "f8cf900c1b456a7d2e8477f5bf146814071d28ad64ef37fbc0ae757930c167d5",
+        "bytes": 1034
+      },
+      {
+        "file": "tw2t.json",
+        "sha256": "5bc1991e12b35100b2df4b6b534bbaeeb18fbbabe5cd5c15c611736011225530",
+        "bytes": 487
+      }
+    ]
+  },
+  "evidence_bindings": [
+    {
+      "path": "gradle-pycache-cold1/result.json",
+      "sha256": "e302b775ded3a698f4d5023274d7d80eaeee1a76680de76d7a4bdc01520fd2d9",
+      "bytes": 982
+    },
+    {
+      "path": "gradle-pycache-cold1/command.log",
+      "sha256": "32a862f350fc73a49c0091408b226355a04c26a800408fe09a6ac05a8eba4886",
+      "bytes": 253144
+    },
+    {
+      "path": "gradle-pycache-cold1/memory.jsonl",
+      "sha256": "ad368ebd8485105ea2326a61de5c0f2f09251939f4c719819f1c12568b2cb1a6",
+      "bytes": 4768
+    },
+    {
+      "path": "gradle-pycache-no-change1/result.json",
+      "sha256": "ab9b53e74b6198be21ed37639cf474e97a800376c3dd438cfa28afae9185d5a9",
+      "bytes": 982
+    },
+    {
+      "path": "gradle-pycache-no-change1/command.log",
+      "sha256": "c5b567f176e7ee77179803168ae08af48976bb85ecf0de702f87818a049e092a",
+      "bytes": 17345
+    },
+    {
+      "path": "gradle-pycache-no-change1/memory.jsonl",
+      "sha256": "2215f1b3c91cab88cce495db7f844059c8b477da9919ee2b1ec779bf7e7ba3dc",
+      "bytes": 822
+    },
+    {
+      "path": "gradle-pycache-cache-noise1/result.json",
+      "sha256": "ef8a03cb8d3d889e1ad17b28a4326bc05a6aa0849ef6dd737cdf82233ffe67a7",
+      "bytes": 982
+    },
+    {
+      "path": "gradle-pycache-cache-noise1/command.log",
+      "sha256": "89cdfec24c89217fce50c68ea9dc44e224e248fbca29d891edc3b3555db170b2",
+      "bytes": 17488
+    },
+    {
+      "path": "gradle-pycache-cache-noise1/memory.jsonl",
+      "sha256": "80034a7f00daac5855fc47d9db920165421b4a99c98d0ba0921a0682b7faab10",
+      "bytes": 822
+    },
+    {
+      "path": "gradle-pycache-script1/result.json",
+      "sha256": "d6a7eb4b9415a0204e4037df7b8cc7a8d0fe0f35a25cb5d38f105874010ddf46",
+      "bytes": 960
+    },
+    {
+      "path": "gradle-pycache-script1/command.log",
+      "sha256": "db53291b69b90c131e965a3ee1f42ca70de4ae39b19ba29d972daca3166bb96e",
+      "bytes": 243568
+    },
+    {
+      "path": "gradle-pycache-script1/memory.jsonl",
+      "sha256": "e5b8f42f9d9037b6eb811f719f2c07d81bfd7526a820b5248816b3d544b621fe",
+      "bytes": 4815
+    },
+    {
+      "path": "gradle-pycache-reject1/result.json",
+      "sha256": "279d332bade1f2e364f9d0f4961a922249f735d3c7718b603a5e28a43881e81b",
+      "bytes": 960
+    },
+    {
+      "path": "gradle-pycache-reject1/command.log",
+      "sha256": "7bf05a22cdcd052b2a63942a3f3ca0eb038bd23bb32b504985e72152def57c5e",
+      "bytes": 203428
+    },
+    {
+      "path": "gradle-pycache-reject1/memory.jsonl",
+      "sha256": "84cd3a41d6f5d69a065378594aecd6e6e683506d3b93cbf66898595a8370754d",
+      "bytes": 767
+    },
+    {
+      "path": "gradle-pycache-restored1/result.json",
+      "sha256": "2a043e6d6468c5eff778abc6412d8624c1d2a92341cac41ebc4e86b0b04b0030",
+      "bytes": 960
+    },
+    {
+      "path": "gradle-pycache-restored1/command.log",
+      "sha256": "7d15202ebf9f65e647d0d8eacd5bdfd0abd151387002b36cb4dfd52afb8ce67a",
+      "bytes": 243568
+    },
+    {
+      "path": "gradle-pycache-restored1/memory.jsonl",
+      "sha256": "14731d2146d683d3f6c5554649d2699ce6b741f98b3b9157ea11e0d98fd9bcf1",
+      "bytes": 4541
+    },
+    {
+      "path": "python-cache-cold-preparation.json",
+      "sha256": "45a1b10e307b2c1aedd072eee2978a64735bf20631783e511515cd9ac9c3265a",
+      "bytes": 731
+    },
+    {
+      "path": "cold-source-proof.json",
+      "sha256": "7714c92b747f023cb74bb77954993e0553cbaaa6cb884b4eab0d61df6a747a68",
+      "bytes": 462
+    },
+    {
+      "path": "cold-source-task-input-proof.json",
+      "sha256": "c4228cf7897d92de81a1daf8b96646f4a9d1b1a46f8e4a7a522f1ff84c2608b4",
+      "bytes": 1223
+    },
+    {
+      "path": "cache-gates-v2.json",
+      "sha256": "8fccdf4fd909457e55f61a125770bff3534b74bc46029849c351be1f6c32692e",
+      "bytes": 1727
+    },
+    {
+      "path": "run-cache-gates-v2.py",
+      "sha256": "4b54f7ef9d021930b5e1a0f5625ad3369aa7d8ccd89a95742eaede160a813c47",
+      "bytes": 6529
+    },
+    {
+      "path": "gradle-final-source-command.json",
+      "sha256": "cb6fe4f311b3efbc50efdd16cdc7df245320f2731d511e93aae4b92d67bcc071",
+      "bytes": 666
+    },
+    {
+      "path": "gradle-observe-v2.init.gradle",
+      "sha256": "2648613c6ca25f419976d6a23f9dc1b48a187d60670664fd6e16da484799a4a8",
+      "bytes": 938
+    },
+    {
+      "path": "run-command.py",
+      "sha256": "8901a55a03df0ecb557f9cc0e73f0aef521127a49c2969af9c48c9a7f35e86b6",
+      "bytes": 1744
+    }
+  ],
+  "reviewer_preliminary_assertion_correction": "First reviewer exact-source-set comparison expected .gitignore/.gitattributes to be present. Actual Gradle FileTree also applies Git metadata default exclusions; all12 omitted paths were inspected individually, no semantic source missing. Corrected only reviewer expectation; no Root evidence or production modified.",
+  "limitations": [
+    "Pyc noise is an unused test-owned file; this proves ignored-cache invalidation, not arbitrary preexisting valid imported bytecode isolation.",
+    "Historical cold pre-state and sentinel/asset equality checks rely on the frozen executed assertions plus retained preparation reports; current post-state and raw task/input events were independently checked.",
+    "Existing compiler/Gradle diagnostics remain in original logs; this verdict is scoped to cache/data/fail-stop behavior and does not mean all warnings removed.",
+    "Cloud CI and original new-head APK qualification are pending and not supplied by this report."
+  ]
+}

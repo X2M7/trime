@@ -1,0 +1,40 @@
+{
+  "schema": 1,
+  "status": "minimal_source_fix_frozen_not_compiled_or_run",
+  "recorded_at_utc": "2026-10-29T07:16:01.843156+00:00",
+  "worktree": "/home/xumin/Public/Trime-pr-opencc-regional-data-20261029",
+  "head_before_followup": "58598b0fe9f9a8991147908041c6a06097d7af10",
+  "file": "build-logic/convention/src/main/kotlin/OpenCCDataPlugin.kt",
+  "before_sha256": "a132b54e1898494ec3728f58e610f5635871e73a6c9ccdc71baccdd9ff325bdc",
+  "frozen_sha256": "d1a6cec35397ccc45df4f2d52f2dd8b0c8445fd0d72d3b5c281d774ba1104bc4",
+  "root_reported_trigger": "Cold pinned OpenCC sources gained data/scripts/__pycache__/common.cpython-314.pyc when Python imported common. A fixture warmed before Gradle masked this input mutation.",
+  "changes": [
+    "GenerateRegionalPhrasesTask sourceFiles excludes **/__pycache__/** and **/*.pyc in addition to Git metadata.",
+    "Both host CMake Exec calls set PYTHONDONTWRITEBYTECODE=1 for their subprocesses.",
+    "InstallOpenCCDataTask inputDir is Internal; sourceFiles is InputFiles/RELATIVE with the same metadata and bytecode exclusions.",
+    "InstallOpenCCDataTask Python generators receive python3 -B.",
+    "No generator algorithm, dictionary contents, CMake wrapper or submodule modifications."
+  ],
+  "static_checks": {
+    "git_diff_check_exit": 0,
+    "pycache_filter_occurrences": 2,
+    "pyc_filter_occurrences": 2,
+    "dontwritebytecode_exec_occurrences": 2,
+    "python_B_parameter_occurrences": 1
+  },
+  "required_parent_validation": [
+    "Format and compile the updated Kotlin build logic before commit.",
+    "Use genuinely cold source fixture to show no new __pycache__/pyc and unchanged task rerun UP-TO-DATE.",
+    "Introduce or change an ignored cache file and confirm it does not invalidate either task.",
+    "Change a genuine Python/config/dictionary input and confirm input tracking still invalidates the corresponding task.",
+    "Repeat failure-blocking/install/checksum and packaging closure gates as parent schedules."
+  ],
+  "not_done": [
+    "Formatting or compilation",
+    "Gradle/native execution",
+    "Cache behavior test",
+    "Push/commit/PR",
+    "Writing an index worktree"
+  ],
+  "remaining_scope": "The existing ten GCC16 array-bounds diagnostics remain a separate unresolved follow-up; this change does not suppress them."
+}

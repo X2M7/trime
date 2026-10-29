@@ -1,0 +1,59 @@
+{
+  "schema": 1,
+  "status": "implementation_frozen_for_parent_build_not_compiled_or_executed",
+  "worktree": "/home/xumin/Public/Trime-pr-opencc-regional-data-20261029",
+  "branch": "contrib/fix-opencc-regional-data",
+  "baseline": "7fedca06ba5d2ef761a2ae3d44d8a0917db36994",
+  "changed_files": [
+    {
+      "path": "build-logic/convention/src/main/kotlin/OpenCCDataPlugin.kt",
+      "sha256": "b56e1fca53ff593eb2cd1213f3f90a28e51e3e5137647f8867f5cee98bbc70d5",
+      "bytes": 13835
+    },
+    {
+      "path": "app/src/main/jni/cmake/opencc-host/CMakeLists.txt",
+      "sha256": "7039af66204d35de44f9d2fb6f3c411baecd7347696a38cc2e63345ca68f2529",
+      "bytes": 1396
+    }
+  ],
+  "pinned_source_chain": {
+    "librime": "7bc3fb0005a03aff1c086611e4d52bb7f6444fdd",
+    "opencc": "025f371dc76b598d77384fbdab90c937471844d8"
+  },
+  "implementation": {
+    "generator": "official pinned OpenCC Dictionaries target with OPENCC_DICT_FORMAT=text and bundled static host CLI",
+    "source_semantics": "No native source, dictionary data, configuration semantics, gitlinks or Android ABI library changes",
+    "dependency": "generateOpenCCRegionalPhrases OutputFile -> installOpenCCData InputFile -> existing generateDataChecksums dependency",
+    "input_tracking": "All OpenCC source tree files excluding Git metadata, wrapper directory, CMake executable selection, host OS/architecture, derived CMake args and compiler/generator environment",
+    "local_state": "Fresh independent app/build/opencc-host on any Gradle input invalidation; unchanged output can be UP-TO-DATE; no build cache enabled for this task",
+    "failure": "Any CMake/generator exit fails task. Generated source must contain a non-comment tab entry. All config-referenced packaged dictionaries must be nonempty.",
+    "host_boundaries": "Explicit CMAKE_TOOLCHAIN_FILE rejected. Wrapper rejects CMake cross/system mismatch and Android compiler target/name/flags. JVM-native architecture passed to VS and macOS independent of Android ABI.",
+    "platforms": {
+      "linux": "Native system C++ compiler; CMake default/environment generator",
+      "windows": "Native Visual Studio generator, JVM arch maps to x64/ARM64/Win32; explicit non-VS generator rejected",
+      "macos": "JVM arch maps to x86_64/arm64 and macosx sysroot explicitly; no iOS/Android target inheritance"
+    }
+  },
+  "not_executed": [
+    "Gradle compilation/Spotless",
+    "CMake configure or native compilation",
+    "Host conversion",
+    "APK build/runtime",
+    "Windows or macOS runners",
+    "Push/PR/commit"
+  ],
+  "required_parent_validation": [
+    "Actual local generator/packaging and 16 config/38 conversion-pair external fixture",
+    "No-change task UP-TO-DATE",
+    "Python script input invalidation regenerates despite upstream missing script CMake DEPENDS",
+    "Generation failure blocks install/checksums rather than publishing incomplete assets",
+    "Official CI matrix host generation on Linux, Intel/ARM macOS and Windows",
+    "Final source/gitlink and packaged config/dictionary closure binding"
+  ],
+  "regression_scope": "No new test framework. Parent already prepared external fixture; retain its real raw results. A later standalone closure test can be upstreamed only if maintainers request permanent harness.",
+  "limits": [
+    "Host tool binary upgrades in place are not content-hashed; task deliberately disallows remote build caching",
+    "Pre-existing compiler/Gradle/runtime warnings outside the focused build-data fix remain separate",
+    "CMake host compile compatibility has not yet been demonstrated"
+  ]
+}

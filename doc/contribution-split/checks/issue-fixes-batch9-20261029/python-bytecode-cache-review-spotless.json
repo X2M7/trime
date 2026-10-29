@@ -1,0 +1,49 @@
+{
+  "utc": "2026-10-29T07:15:37.266151+00:00",
+  "status": "CONFIRMED_COLD_SOURCE_PYTHON_CACHE_INPUT_RISK_MINIMAL_FIX_RECOMMENDED",
+  "scope": "Read-only source/API/official documentation review. No production edits, Python generator execution, Gradle, compiler, ADB, VM or external writes by this reviewer.",
+  "reviewed_plugin_sha256": "a132b54e1898494ec3728f58e610f5635871e73a6c9ccdc71baccdd9ff325bdc",
+  "finding": {
+    "source_module": "OpenCC data/scripts/common.py imported by the bridge generator and reverse.py",
+    "current_generate_inputs": "All source files excluding Git metadata include generated __pycache__/common.*.pyc.",
+    "current_install_inputs": "@InputDirectory data includes all generated Python caches.",
+    "risk": "Cold first generation can add a task input during execution, so next no-change build reruns; fixture prewarming may hide it. Different Python cache tags or added/removed local caches can cause unnecessary deployment/resource checksum task work."
+  },
+  "minimum_complete_fix": [
+    "Filter **/__pycache__/** and **/*.pyc from both producer and install semantic source file inputs, not producer only. Keep actual .py scripts/data/CMake/native source covered.",
+    "For install: keep inputDir as @Internal directory location and expose a RELATIVE @InputFiles FileTree with matching cache exclusions; this mirrors the producer pattern without execution-time Project access.",
+    "Set PYTHONDONTWRITEBYTECODE=1 on both host configure and host build ExecOperations, so Python launched under official CMake inherits it.",
+    "Add -B before the script path in direct install python3 argv. Do not edit pinned OpenCC sources or implement a replacement conversion algorithm."
+  ],
+  "stronger_semantic_input_boundary": {
+    "important_distinction": "-B/PYTHONDONTWRITEBYTECODE prevents writing caches; it does not disable reading existing valid source-tree pyc. Excluding pyc from Gradle inputs alone therefore does not prove arbitrary pre-existing bytecode can never affect execution.",
+    "optional_if_claiming_source_tree_caches_completely_ignored": "Set PYTHONPYCACHEPREFIX (Python>=3.8) to an owned fresh build/temporary directory for both host and direct Python execution, together with no-write behavior. Python documents that source-tree __pycache__ is then ignored. Keep the prefix outside source and clear its owned tree when execution starts.",
+    "claim_limit_without_prefix": "Say caches are ignored for Gradle invalidation and no new cache is written, not that arbitrary existing valid bytecode can never be loaded."
+  },
+  "necessary_execution_gates": [
+    "Record exact original cache files/bytes before test, preserving any original evidence.",
+    "Start from a genuinely cold isolated source without __pycache__/pyc (or relocate original caches to an evidence directory and restore afterward). Run actual generate/install/checksums; verify bridge bytes and no new source-tree cache artifacts.",
+    "Repeat unchanged task request and require all3 UP-TO-DATE with no task action events.",
+    "Add/change/remove an ignored source-tree cache file and require UP-TO-DATE; inspect task action-start inputFiles to prove cache paths excluded from both task inputs.",
+    "Continue harmless .py script mutation/fresh host build, failure-blocking, exact source restoration and final clean-source successful build gates. Real .py source must still invalidate.",
+    "Do not reuse old prewarmed cache test/old CI as proof of corrected cold behavior; retain them as historical scoped results."
+  ],
+  "official_sources": [
+    {
+      "title": "Python command line -B and PYTHONDONTWRITEBYTECODE",
+      "url": "https://docs.python.org/3/using/cmdline.html#cmdoption-B",
+      "support": "Both options specify no bytecode writes."
+    },
+    {
+      "title": "Python sys.pycache_prefix",
+      "url": "https://docs.python.org/3/library/sys.html#sys.pycache_prefix",
+      "support": "Prefix relocates cache reads and writes; source-tree __pycache__ directories are ignored; introduced3.8."
+    },
+    {
+      "title": "Gradle incremental build",
+      "url": "https://docs.gradle.org/current/userguide/incremental_build.html",
+      "support": "Declared input/output snapshots determine up-to-date state; filtered file-tree inputs model semantic files."
+    }
+  ],
+  "not_a_pass_report": true
+}

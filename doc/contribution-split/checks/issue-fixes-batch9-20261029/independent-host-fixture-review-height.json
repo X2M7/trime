@@ -1,0 +1,293 @@
+{
+  "schema": 1,
+  "reviewer": "/root/height_investigate",
+  "status": "REISSUED_READ_ONLY_HOST_FIXTURE_REVIEW_PASS_WITH_WARNINGS_RETAINED",
+  "reviewed_utc": "2026-10-29T07:07:07.945248+00:00",
+  "reissue_reason": "Previous two agents used independent-host-fixture-review.json. The earlier height-agent bytes with reported SHA b910ee91a2771bfa242823482cb964f2f54570c473e26b0770eacba48b1ca854 are no longer present at that shared path and were not recovered. This is a fresh read-only recheck under a unique name, not a claim that the old SHA still exists.",
+  "scope": "Read-only recheck of original Root logs/results/fixture streams/source expected pairs; no compiler/CLI/Gradle/ADB/VM/network run. Helper/case author reviews independent Root execution, not independent authorship of test design.",
+  "stages": [
+    {
+      "name": "host-configure1",
+      "argv": [
+        "/home/xumin/Public/android-toolchain/android-sdk/cmake/3.31.6/bin/cmake",
+        "-S",
+        "/home/xumin/Public/Trime-pr-opencc-regional-data-20261029/app/src/main/jni/librime/deps/opencc",
+        "-B",
+        "/home/xumin/Public/Trime/build/issue-fixes-batch9-20261029/host-build",
+        "-G",
+        "Ninja",
+        "-DCMAKE_BUILD_TYPE=Release",
+        "-DCMAKE_CXX_COMPILER=/usr/bin/c++",
+        "-DCMAKE_MAKE_PROGRAM=/usr/bin/ninja",
+        "-DCMAKE_INSTALL_PREFIX=/home/xumin/Public/Trime/build/issue-fixes-batch9-20261029/host-build/uninstalled-prefix",
+        "-DPython3_EXECUTABLE=/usr/bin/python3",
+        "-DBUILD_SHARED_LIBS=OFF",
+        "-DOPENCC_ENABLE_INSTALL=OFF",
+        "-DENABLE_GTEST=OFF",
+        "-DBUILD_TESTING=OFF",
+        "-DENABLE_BENCHMARK=OFF",
+        "-DBUILD_DOCUMENTATION=OFF",
+        "-DBUILD_PYTHON=OFF",
+        "-DBUILD_OPENCC_JIEBA_PLUGIN=OFF",
+        "-DOPENCC_DICT_FORMAT=text",
+        "-DUSE_SYSTEM_MARISA=OFF",
+        "-DUSE_SYSTEM_RAPIDJSON=OFF",
+        "-DUSE_SYSTEM_TCLAP=OFF"
+      ],
+      "exit": 0,
+      "started_utc": "2026-10-29T06:58:49.548845+00:00",
+      "finished_utc": "2026-10-29T06:58:51.550457+00:00",
+      "minimum_available_kib": 5648020,
+      "memory_samples": 1,
+      "result_sha256": "c6c91af2c4aefa04b3fc7904d6c5f5b660af85362368ee48e7405c4f9cf24315",
+      "log_sha256": "df85ce6f510a70d26b5c79d709b3f5de91ff5d1096d22761da60e160d7af903e",
+      "memory_sha256": "47f9f817edef91c83a7f17fac994911ecde15aeed729ea6cd2f91ad563b8a5d7",
+      "actual_warning_lines": []
+    },
+    {
+      "name": "host-tools1",
+      "argv": [
+        "/home/xumin/Public/android-toolchain/android-sdk/cmake/3.31.6/bin/cmake",
+        "--build",
+        "/home/xumin/Public/Trime/build/issue-fixes-batch9-20261029/host-build",
+        "--target",
+        "opencc",
+        "opencc_dict",
+        "--parallel",
+        "1"
+      ],
+      "exit": 0,
+      "started_utc": "2026-10-29T06:58:51.630904+00:00",
+      "finished_utc": "2026-10-29T07:01:13.665471+00:00",
+      "minimum_available_kib": 5276596,
+      "memory_samples": 71,
+      "result_sha256": "01a3142b7e1c046a5a97efab5eb545afc2f9ca07c90547b7d1f2820f7617eac9",
+      "log_sha256": "253bf9a46fb27406598ae896aee64e37879963f2fec365c7a0b0da4e32e2b4d8",
+      "memory_sha256": "079a5e770d6e29d229947a344f3425507d1620242e45cf5c415535b912b30960",
+      "actual_warning_lines": [
+        {
+          "line": 45,
+          "text": "/usr/include/c++/16/bits/stl_vector.h:792:61: warning: array subscript 1 is outside array bounds of ‘void [40]’ [-Warray-bounds=]"
+        },
+        {
+          "line": 58,
+          "text": "/usr/include/c++/16/bits/stl_vector.h:792:37: warning: array subscript 1 is outside array bounds of ‘void [40]’ [-Warray-bounds=]"
+        },
+        {
+          "line": 72,
+          "text": "/usr/include/c++/16/bits/stl_vector.h:375:33: warning: array subscript 1 is outside array bounds of ‘void [40]’ [-Warray-bounds=]"
+        },
+        {
+          "line": 86,
+          "text": "/usr/include/c++/16/bits/stl_vector.h:375:61: warning: array subscript 1 is outside array bounds of ‘void [40]’ [-Warray-bounds=]"
+        },
+        {
+          "line": 99,
+          "text": "/usr/include/c++/16/bits/stl_vector.h:795:7: warning: array subscript 1 is outside array bounds of ‘void [40]’ [-Warray-bounds=]"
+        },
+        {
+          "line": 112,
+          "text": "/home/xumin/Public/Trime-pr-opencc-regional-data-20261029/app/src/main/jni/librime/deps/opencc/src/DictEntry.hpp:134:38: warning: array subscript ‘opencc::StrMultiValueDictEntry[0]’ is partly outside array bounds of ‘unsigned char [40]’ [-Warray-bounds=]"
+        },
+        {
+          "line": 130,
+          "text": "/usr/include/c++/16/bits/basic_string.h:238:28: warning: array subscript 1 is outside array bounds of ‘void [40]’ [-Warray-bounds=]"
+        },
+        {
+          "line": 144,
+          "text": "/usr/include/c++/16/bits/basic_string.h:298:21: warning: array subscript 1 is outside array bounds of ‘void [40]’ [-Warray-bounds=]"
+        },
+        {
+          "line": 157,
+          "text": "/usr/include/c++/16/bits/basic_string.h:920:23: warning: array subscript 1 is outside array bounds of ‘void [40]’ [-Warray-bounds=]"
+        },
+        {
+          "line": 169,
+          "text": "/home/xumin/Public/Trime-pr-opencc-regional-data-20261029/app/src/main/jni/librime/deps/opencc/src/DictEntry.hpp:109:39: warning: array subscript ‘opencc::StrSingleValueDictEntry[0]’ is partly outside array bounds of ‘unsigned char [40]’ [-Warray-bounds=]"
+        }
+      ]
+    },
+    {
+      "name": "baseline1",
+      "argv": [
+        "python3",
+        "-B",
+        "/home/xumin/Public/Trime/build/issue-fixes-batch9-20261029/tools/opencc_host_fixture.py",
+        "baseline",
+        "--source",
+        "/home/xumin/Public/Trime-pr-opencc-regional-data-20261029/app/src/main/jni/librime/deps/opencc",
+        "--build",
+        "/home/xumin/Public/Trime/build/issue-fixes-batch9-20261029/host-build",
+        "--out",
+        "/home/xumin/Public/Trime/build/issue-fixes-batch9-20261029/baseline-fixture1"
+      ],
+      "exit": 0,
+      "started_utc": "2026-10-29T07:01:18.652234+00:00",
+      "finished_utc": "2026-10-29T07:01:20.654207+00:00",
+      "minimum_available_kib": 5640084,
+      "memory_samples": 1,
+      "result_sha256": "6f21221c7b59bd7dfc273d846a42d0fda8fb0fb592310c53cd6e5c1408ebc235",
+      "log_sha256": "27e57f872010fa75c2189a029f5f7f8ad7429a201e254a55e3145e2451cd777f",
+      "memory_sha256": "1f9f72f6b3a92c6c56b56324469cfca476986627a7ce3b31aa33bd3acb1dd6fb",
+      "actual_warning_lines": []
+    },
+    {
+      "name": "official-data1",
+      "argv": [
+        "/home/xumin/Public/android-toolchain/android-sdk/cmake/3.31.6/bin/cmake",
+        "--build",
+        "/home/xumin/Public/Trime/build/issue-fixes-batch9-20261029/host-build",
+        "--target",
+        "Dictionaries",
+        "--parallel",
+        "1"
+      ],
+      "exit": 0,
+      "started_utc": "2026-10-29T07:01:20.751598+00:00",
+      "finished_utc": "2026-10-29T07:01:22.753340+00:00",
+      "minimum_available_kib": 5626536,
+      "memory_samples": 1,
+      "result_sha256": "7acf0c8c3313571ae70532cb0da8b2989adf97d52c9d0c6db04cc826cf33fee7",
+      "log_sha256": "7a2b41916b1c50209dee3a9cf7557a3afb7ae3527277279a5830aa187f298ff9",
+      "memory_sha256": "a5b6a488dc3dc0895d41f38faaec64ccef79c7330c8be9f2eef5e6de17a6f9b2",
+      "actual_warning_lines": []
+    },
+    {
+      "name": "fixed1",
+      "argv": [
+        "python3",
+        "-B",
+        "/home/xumin/Public/Trime/build/issue-fixes-batch9-20261029/tools/opencc_host_fixture.py",
+        "fixed",
+        "--source",
+        "/home/xumin/Public/Trime-pr-opencc-regional-data-20261029/app/src/main/jni/librime/deps/opencc",
+        "--build",
+        "/home/xumin/Public/Trime/build/issue-fixes-batch9-20261029/host-build",
+        "--out",
+        "/home/xumin/Public/Trime/build/issue-fixes-batch9-20261029/fixed-fixture1"
+      ],
+      "exit": 0,
+      "started_utc": "2026-10-29T07:01:22.842997+00:00",
+      "finished_utc": "2026-10-29T07:01:30.846774+00:00",
+      "minimum_available_kib": 5375984,
+      "memory_samples": 4,
+      "result_sha256": "52f25eb7f8d4a97c8935715b0a19a92093b35a9c42e67075ebe4d5ea7d686d5a",
+      "log_sha256": "766ea19e111d6b8b1d0743addeac9c41da9f3c9512c514d47607a7f5b7e5efde",
+      "memory_sha256": "6ff5651e5dcced9e90c6321db5d729b7c908f12c02c94ed2c4bb1b32463faf3f",
+      "actual_warning_lines": []
+    }
+  ],
+  "runner_sha256": "8901a55a03df0ecb557f9cc0e73f0aef521127a49c2969af9c48c9a7f35e86b6",
+  "fixture_reviews": [
+    {
+      "name": "baseline-fixture1",
+      "report_sha256": "b23440f87db3ca8885a11480aa8c24f43d11634a68b5863f66e1c9b314e4eed7",
+      "command_records": 48,
+      "negative_control": [
+        {
+          "config": "s2hk",
+          "returncode": 1,
+          "stderr": "STPhrases_GeneratedFromRegionalPhrases.ocd2 (searched: /home/xumin/Public/Trime/build/issue-fixes-batch9-20261029/baseline-fixture1/baseline-fixture/, ., /home/xumin/Public/Trime/build/issue-fixes-batch9-20261029/baseline-fixture1/baseline-fixture, /home/xumin/Public/Trime/build/issue-fixes-batch9-20261029/host-build/src/tools/, /home/xumin/Public/Trime/build/issue-fixes-batch9-20261029/host-build/uninstalled-prefix/share/opencc/, /home/xumin/Public/Trime/build/issue-fixes-batch9-20261029/baseline-fixture1/baseline-fixture/) not found or not accessible.\n"
+        },
+        {
+          "config": "s2hkp",
+          "returncode": 1,
+          "stderr": "STPhrases_GeneratedFromRegionalPhrases.ocd2 (searched: /home/xumin/Public/Trime/build/issue-fixes-batch9-20261029/baseline-fixture1/baseline-fixture/, ., /home/xumin/Public/Trime/build/issue-fixes-batch9-20261029/baseline-fixture1/baseline-fixture, /home/xumin/Public/Trime/build/issue-fixes-batch9-20261029/host-build/src/tools/, /home/xumin/Public/Trime/build/issue-fixes-batch9-20261029/host-build/uninstalled-prefix/share/opencc/, /home/xumin/Public/Trime/build/issue-fixes-batch9-20261029/baseline-fixture1/baseline-fixture/) not found or not accessible.\n"
+        },
+        {
+          "config": "s2t",
+          "returncode": 1,
+          "stderr": "STPhrases_GeneratedFromRegionalPhrases.ocd2 (searched: /home/xumin/Public/Trime/build/issue-fixes-batch9-20261029/baseline-fixture1/baseline-fixture/, ., /home/xumin/Public/Trime/build/issue-fixes-batch9-20261029/baseline-fixture1/baseline-fixture, /home/xumin/Public/Trime/build/issue-fixes-batch9-20261029/host-build/src/tools/, /home/xumin/Public/Trime/build/issue-fixes-batch9-20261029/host-build/uninstalled-prefix/share/opencc/, /home/xumin/Public/Trime/build/issue-fixes-batch9-20261029/baseline-fixture1/baseline-fixture/) not found or not accessible.\n"
+        },
+        {
+          "config": "s2tw",
+          "returncode": 1,
+          "stderr": "STPhrases_GeneratedFromRegionalPhrases.ocd2 (searched: /home/xumin/Public/Trime/build/issue-fixes-batch9-20261029/baseline-fixture1/baseline-fixture/, ., /home/xumin/Public/Trime/build/issue-fixes-batch9-20261029/baseline-fixture1/baseline-fixture, /home/xumin/Public/Trime/build/issue-fixes-batch9-20261029/host-build/src/tools/, /home/xumin/Public/Trime/build/issue-fixes-batch9-20261029/host-build/uninstalled-prefix/share/opencc/, /home/xumin/Public/Trime/build/issue-fixes-batch9-20261029/baseline-fixture1/baseline-fixture/) not found or not accessible.\n"
+        },
+        {
+          "config": "s2twp",
+          "returncode": 1,
+          "stderr": "STPhrases_GeneratedFromRegionalPhrases.ocd2 (searched: /home/xumin/Public/Trime/build/issue-fixes-batch9-20261029/baseline-fixture1/baseline-fixture/, ., /home/xumin/Public/Trime/build/issue-fixes-batch9-20261029/baseline-fixture1/baseline-fixture, /home/xumin/Public/Trime/build/issue-fixes-batch9-20261029/host-build/src/tools/, /home/xumin/Public/Trime/build/issue-fixes-batch9-20261029/host-build/uninstalled-prefix/share/opencc/, /home/xumin/Public/Trime/build/issue-fixes-batch9-20261029/baseline-fixture1/baseline-fixture/) not found or not accessible.\n"
+        }
+      ],
+      "baseline_successful_loads": 11,
+      "fixed_successful_loads": null,
+      "conversion_pair_count": 11,
+      "all_raw_stream_hashes_checked": true,
+      "original_apk_unchanged": true,
+      "pinned_configs_and_source_files_checked": true
+    },
+    {
+      "name": "fixed-fixture1",
+      "report_sha256": "9da75e4b8253bf56974dd1a75672051a9fb83431a32ad87a2a158be5ed57e4f2",
+      "command_records": 113,
+      "negative_control": [
+        {
+          "config": "s2hk",
+          "returncode": 1,
+          "stderr": "STPhrases_GeneratedFromRegionalPhrases.ocd2 (searched: /home/xumin/Public/Trime/build/issue-fixes-batch9-20261029/fixed-fixture1/baseline-fixture/, ., /home/xumin/Public/Trime/build/issue-fixes-batch9-20261029/fixed-fixture1/baseline-fixture, /home/xumin/Public/Trime/build/issue-fixes-batch9-20261029/host-build/src/tools/, /home/xumin/Public/Trime/build/issue-fixes-batch9-20261029/host-build/uninstalled-prefix/share/opencc/, /home/xumin/Public/Trime/build/issue-fixes-batch9-20261029/fixed-fixture1/baseline-fixture/) not found or not accessible.\n"
+        },
+        {
+          "config": "s2hkp",
+          "returncode": 1,
+          "stderr": "STPhrases_GeneratedFromRegionalPhrases.ocd2 (searched: /home/xumin/Public/Trime/build/issue-fixes-batch9-20261029/fixed-fixture1/baseline-fixture/, ., /home/xumin/Public/Trime/build/issue-fixes-batch9-20261029/fixed-fixture1/baseline-fixture, /home/xumin/Public/Trime/build/issue-fixes-batch9-20261029/host-build/src/tools/, /home/xumin/Public/Trime/build/issue-fixes-batch9-20261029/host-build/uninstalled-prefix/share/opencc/, /home/xumin/Public/Trime/build/issue-fixes-batch9-20261029/fixed-fixture1/baseline-fixture/) not found or not accessible.\n"
+        },
+        {
+          "config": "s2t",
+          "returncode": 1,
+          "stderr": "STPhrases_GeneratedFromRegionalPhrases.ocd2 (searched: /home/xumin/Public/Trime/build/issue-fixes-batch9-20261029/fixed-fixture1/baseline-fixture/, ., /home/xumin/Public/Trime/build/issue-fixes-batch9-20261029/fixed-fixture1/baseline-fixture, /home/xumin/Public/Trime/build/issue-fixes-batch9-20261029/host-build/src/tools/, /home/xumin/Public/Trime/build/issue-fixes-batch9-20261029/host-build/uninstalled-prefix/share/opencc/, /home/xumin/Public/Trime/build/issue-fixes-batch9-20261029/fixed-fixture1/baseline-fixture/) not found or not accessible.\n"
+        },
+        {
+          "config": "s2tw",
+          "returncode": 1,
+          "stderr": "STPhrases_GeneratedFromRegionalPhrases.ocd2 (searched: /home/xumin/Public/Trime/build/issue-fixes-batch9-20261029/fixed-fixture1/baseline-fixture/, ., /home/xumin/Public/Trime/build/issue-fixes-batch9-20261029/fixed-fixture1/baseline-fixture, /home/xumin/Public/Trime/build/issue-fixes-batch9-20261029/host-build/src/tools/, /home/xumin/Public/Trime/build/issue-fixes-batch9-20261029/host-build/uninstalled-prefix/share/opencc/, /home/xumin/Public/Trime/build/issue-fixes-batch9-20261029/fixed-fixture1/baseline-fixture/) not found or not accessible.\n"
+        },
+        {
+          "config": "s2twp",
+          "returncode": 1,
+          "stderr": "STPhrases_GeneratedFromRegionalPhrases.ocd2 (searched: /home/xumin/Public/Trime/build/issue-fixes-batch9-20261029/fixed-fixture1/baseline-fixture/, ., /home/xumin/Public/Trime/build/issue-fixes-batch9-20261029/fixed-fixture1/baseline-fixture, /home/xumin/Public/Trime/build/issue-fixes-batch9-20261029/host-build/src/tools/, /home/xumin/Public/Trime/build/issue-fixes-batch9-20261029/host-build/uninstalled-prefix/share/opencc/, /home/xumin/Public/Trime/build/issue-fixes-batch9-20261029/fixed-fixture1/baseline-fixture/) not found or not accessible.\n"
+        }
+      ],
+      "baseline_successful_loads": 11,
+      "fixed_successful_loads": 16,
+      "conversion_pair_count": 38,
+      "all_raw_stream_hashes_checked": true,
+      "original_apk_unchanged": true,
+      "pinned_configs_and_source_files_checked": true
+    }
+  ],
+  "raw_stream_sha_checks": 483,
+  "expected_cases": {
+    "file_sha256": "d3fd9409e9ee0b0cf6e29dc8026aa328cf6a50754309541d306e1e6ca9d34f4b",
+    "pinned_source_commit": "025f371dc76b598d77384fbdab90c937471844d8",
+    "source_sha256": "3f8273c5f432090ec1a8a01bd4d545046ad5a28e69eb41a081c5e3e54d3e402b",
+    "all_38_expected_strings_match_pinned_original": true,
+    "case_SHA_pre_frozen_in_plan1": true,
+    "actual_conversion_stdin_and_stdout_checked": true,
+    "fitted_to_observed_outputs": false
+  },
+  "fallback_isolation": {
+    "5_missing_bridge_failures_verified_before_and_after_official_data_generation": true,
+    "eleven_positive_load_controls_verified": true,
+    "negative_error_search_paths_exclude_host_build_data": true,
+    "configured_install_prefix_absent": true,
+    "host_tool_directory_has_no_dictionary_files": true,
+    "original_APK_SHA_rechecked": true,
+    "fixed_only_adds_official_bridge": true,
+    "syscall_trace_performed": false
+  },
+  "compiler_warnings": {
+    "host_tools1_actual_warning_lines": 10,
+    "family": "GCC16 -Warray-bounds at pinned OpenCC DictEntry.hpp/libstdc++ inlining; retained, not declared benign or fixed",
+    "not_zero_warning_claim": true
+  },
+  "unchanged_original_fixture_report_hashes": {
+    "baseline-fixture1/report.json": "b23440f87db3ca8885a11480aa8c24f43d11634a68b5863f66e1c9b314e4eed7",
+    "fixed-fixture1/report.json": "9da75e4b8253bf56974dd1a75672051a9fb83431a32ad87a2a158be5ed57e4f2"
+  },
+  "limits": [
+    "Host resource fixture verification only; fixed production build/new CI APK/cache/Android acceptance remain separate.",
+    "No syscall trace; isolation established by source contract, explicit cwd/argv, absent fallbacks and repeated5negative controls.",
+    "Shared review report name collision did not alter original execution data; no original output/claim was rewritten to hide it."
+  ]
+}

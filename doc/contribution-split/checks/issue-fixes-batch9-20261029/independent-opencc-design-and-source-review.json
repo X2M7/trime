@@ -1,0 +1,226 @@
+{
+  "schema": 1,
+  "created_utc": "2026-10-29T07:04:11.395752+00:00",
+  "status": "DESIGN_AND_SOURCE_REVIEW_ACCEPTED_PENDING_EXECUTION_GATES",
+  "scope": "Read-only source and official contract review; no Gradle, CMake, native compilation, converter execution, ADB, VM, push, or GitHub writes by this reviewer. This is not runtime or publication acceptance.",
+  "worktree": "/home/xumin/Public/Trime-pr-opencc-regional-data-20261029",
+  "base": "7fedca06ba5d2ef761a2ae3d44d8a0917db36994",
+  "expected_base": "7fedca06ba5d2ef761a2ae3d44d8a0917db36994",
+  "production_snapshot": [
+    {
+      "path": "build-logic/convention/src/main/kotlin/OpenCCDataPlugin.kt",
+      "sha256": "b56e1fca53ff593eb2cd1213f3f90a28e51e3e5137647f8867f5cee98bbc70d5",
+      "bytes": 13835,
+      "snapshot": "/home/xumin/Public/Trime/build/issue-fixes-batch9-20261029/independent-source-snapshot1/OpenCCDataPlugin.kt"
+    },
+    {
+      "path": "app/src/main/jni/cmake/opencc-host/CMakeLists.txt",
+      "sha256": "7039af66204d35de44f9d2fb6f3c411baecd7347696a38cc2e63345ca68f2529",
+      "bytes": 1396,
+      "snapshot": "/home/xumin/Public/Trime/build/issue-fixes-batch9-20261029/independent-source-snapshot1/CMakeLists.txt"
+    }
+  ],
+  "gitlinks": {
+    "librime": "7bc3fb0005a03aff1c086611e4d52bb7f6444fdd",
+    "opencc": "025f371dc76b598d77384fbdab90c937471844d8"
+  },
+  "official_contract": {
+    "reference": "/home/xumin/Public/Trime/build/issue-fixes-batch9-20261029/independent-official-contract-binding.json",
+    "all_three_official_files_match_pinned_local_source": true,
+    "strategy": "Run the pinned source official Dictionaries target with OPENCC_DICT_FORMAT=text using its built host converter. Preserve original ocd2 JSON files; do not package ConvertedConfigs text-mode JSON.",
+    "raw_dictionary_count": 17,
+    "generated_dictionary_count": 5,
+    "generated_dictionary_names": [
+      "HKVariantsRev",
+      "JPShinjitaiCharactersRev",
+      "STPhrases_GeneratedFromRegionalPhrases",
+      "TSCharactersExt",
+      "TWVariantsRev"
+    ],
+    "config_count": 16,
+    "referenced_dictionary_count": 22,
+    "expected_asset_count": 38,
+    "config_closure": {
+      "hk2s.json": [
+        "CJK_Compatibility_Ideographs",
+        "HKVariantsRev",
+        "HKVariantsRevPhrases",
+        "TSCharacters",
+        "TSCharactersExt",
+        "TSPhrases"
+      ],
+      "hk2sp.json": [
+        "CJK_Compatibility_Ideographs",
+        "HKPhrasesRev",
+        "HKVariantsRev",
+        "HKVariantsRevPhrases",
+        "TSCharacters",
+        "TSCharactersExt",
+        "TSPhrases"
+      ],
+      "hk2t.json": [
+        "CJK_Compatibility_Ideographs",
+        "HKVariantsRev",
+        "HKVariantsRevPhrases"
+      ],
+      "jp2t.json": [
+        "CJK_Compatibility_Ideographs",
+        "JPShinjitaiCharacters",
+        "JPShinjitaiPhrases"
+      ],
+      "s2hk.json": [
+        "CJK_Compatibility_Ideographs",
+        "HKVariants",
+        "HKVariantsPhrases",
+        "STCharacters",
+        "STPhrases",
+        "STPhrases_GeneratedFromRegionalPhrases"
+      ],
+      "s2hkp.json": [
+        "CJK_Compatibility_Ideographs",
+        "HKPhrases",
+        "HKVariants",
+        "HKVariantsPhrases",
+        "STCharacters",
+        "STPhrases",
+        "STPhrases_GeneratedFromRegionalPhrases"
+      ],
+      "s2t.json": [
+        "CJK_Compatibility_Ideographs",
+        "STCharacters",
+        "STPhrases",
+        "STPhrases_GeneratedFromRegionalPhrases"
+      ],
+      "s2tw.json": [
+        "CJK_Compatibility_Ideographs",
+        "STCharacters",
+        "STPhrases",
+        "STPhrases_GeneratedFromRegionalPhrases",
+        "TWVariants",
+        "TWVariantsPhrases"
+      ],
+      "s2twp.json": [
+        "CJK_Compatibility_Ideographs",
+        "STCharacters",
+        "STPhrases",
+        "STPhrases_GeneratedFromRegionalPhrases",
+        "TWPhrases",
+        "TWVariants",
+        "TWVariantsPhrases"
+      ],
+      "t2hk.json": [
+        "CJK_Compatibility_Ideographs",
+        "HKVariants",
+        "HKVariantsPhrases"
+      ],
+      "t2jp.json": [
+        "CJK_Compatibility_Ideographs",
+        "JPShinjitaiCharactersRev"
+      ],
+      "t2s.json": [
+        "CJK_Compatibility_Ideographs",
+        "TSCharacters",
+        "TSCharactersExt",
+        "TSPhrases"
+      ],
+      "t2tw.json": [
+        "CJK_Compatibility_Ideographs",
+        "TWVariants",
+        "TWVariantsPhrases"
+      ],
+      "tw2s.json": [
+        "CJK_Compatibility_Ideographs",
+        "TSCharacters",
+        "TSCharactersExt",
+        "TSPhrases",
+        "TWVariantsRev",
+        "TWVariantsRevPhrases"
+      ],
+      "tw2sp.json": [
+        "CJK_Compatibility_Ideographs",
+        "TSCharacters",
+        "TSCharactersExt",
+        "TSPhrases",
+        "TWPhrasesRev",
+        "TWVariantsRev",
+        "TWVariantsRevPhrases"
+      ],
+      "tw2t.json": [
+        "CJK_Compatibility_Ideographs",
+        "TWVariantsRev",
+        "TWVariantsRevPhrases"
+      ]
+    },
+    "bridge_consumers": [
+      "s2hk.json",
+      "s2hkp.json",
+      "s2t.json",
+      "s2tw.json",
+      "s2twp.json"
+    ]
+  },
+  "accepted_properties": [
+    "Host wrapper builds only pinned OpenCC, statically, with Jieba/Python/tests/benchmark/docs/install disabled; it does not change Android JNI source or ABI configuration.",
+    "ExecOperations receives argument lists and asserts normal exit; no arbitrary installed opencc or handwritten conversion is used.",
+    "Producer OutputFile -> Install InputFile uses TaskProvider.flatMap and carries the implicit task dependency; existing install -> checksums -> assets/Lint dependencies remain in place.",
+    "All source files including scripts, C++/headers, CMake, config and dictionary data are Gradle inputs with relative sensitivity; Git metadata is excluded. Wrapper directory is separately input.",
+    "Clearing the owned host build directory on actual task execution avoids stale generated text when upstream CMake omits Python scripts in generated-output DEPENDS.",
+    "Host build directory is LocalState, exported bridge is OutputFile, remote caching is disabled; an unchanged bridge may remain UP-TO-DATE without retaining all host tools.",
+    "Stale bridge output is removed before execution; configure/build error fails task before install; generated bridge requires an actual non-comment tab-delimited entry. Install no longer skips the bridge and requires every referenced text file to exist and be nonempty.",
+    "Windows native Visual Studio architecture is selected using JVM os.arch; official TARGET_FILE supplies actual .exe and multi-config paths. --config Release works for multi/single configuration generators. macOS architecture/sysroot are explicitly host-native.",
+    "Explicit inherited CMAKE_TOOLCHAIN_FILE is rejected; wrapper rejects CMAKE_CROSSCOMPILING, system/host mismatch and Android target compiler/flags. If another incompatible compiler slips detection its inability to execute built host tools still fails the task.",
+    "Git version discovery is disabled for this host-only wrapper, so .git metadata exclusion cannot silently alter generated resources via local tags."
+  ],
+  "residual_design_limits": [
+    {
+      "severity": "document_and_validate",
+      "finding": "Windows intentionally supports Visual Studio generators only, rejecting explicit Ninja even when a caller might have a native MSVC shell. No repository-documented global Windows Ninja requirement was found. This support boundary should be clear; current Windows runner must actually configure and build."
+    },
+    {
+      "severity": "scoped_limit",
+      "finding": "CMake executable selection and compiler/generator env are inputs, but tool binary bytes/versions and PATH/Python interpreter upgrades in place are not fingerprinted. Remote cache is disabled; retain this local-up-to-date limitation rather than claim complete toolchain reproducibility."
+    },
+    {
+      "severity": "scoped_limit",
+      "finding": "CMake checks rule out common Android/cross toolchains but are not a universal proof that arbitrary custom compiler wrappers target this host. Successful execution of actual host tools/conversion is the decisive acceptance."
+    },
+    {
+      "severity": "scope",
+      "finding": "Existing four simple generated dictionaries remain the original ExecOperations scripts; this is a focused missing-bridge fix, not a rewrite of OpenCC packaging or config parsing."
+    }
+  ],
+  "execution_gates": [
+    "Actual Gradle task execution with frozen production hashes and pinned submodule inputs; install output exactly 16 original JSON + 22 text dictionaries, all referenced resources present, original 37 bytes unchanged and bridge identical to official host target.",
+    "No-change repeat is UP-TO-DATE; modifying a Python generation script in an isolated controlled case invalidates the full source input, cleans host tree, and actually executes generation; restoring source returns exact bytes.",
+    "Intentional generator/configure failure in an isolated case exits nonzero and prevents install/checksums/mergeAssets downstream execution; preserve stale-input/output observations and restore clean production.",
+    "Baseline original APK fixture reproduces exactly five missing-bridge config failures with other11 controls; candidate APK fixture loads all16 and matches 38 fixed pinned-source conversion pairs without source/system data fallback.",
+    "Fresh Linux/Intel macOS/ARM macOS/Windows CI runs actual host generation and app compile/check tasks from bound candidate tree; cache statuses and existing diagnostics remain explicit.",
+    "For any Android runtime claim, compile packaged text via real JNI and load/convert original configs in actual app environment. Host conversion success alone is not Android deployment, physical-device or IME acceptance."
+  ],
+  "history_and_duplicate_check": {
+    "PR2039": {
+      "url": "https://github.com/osfans/trime/pull/2039",
+      "merged_at": "2026-10-16T22:15:35Z",
+      "wording": "Related #2039; never Fixes an already merged PR. Historical APK count37 did not establish closure."
+    },
+    "PR2119": "Merged ExecOperations service fix; preserve real eager execution and avoid task Project access.",
+    "issue1961": "Closed historical lazy ExecOutput generation bug; do not claim closing it with this distinct bridge fix.",
+    "query_evidence": "/home/xumin/Public/Trime/build/issue-fixes-batch9-20261029/independent-related-history-summary.json",
+    "open_pr_query": "repo:osfans/trime is:pr is:open OpenCC",
+    "matching_open_prs": [
+      2186
+    ],
+    "matching_open_pr_2186_scope": "JNI UTF encoding, distinct from resource generation",
+    "bridge_query": "repo:osfans/trime STPhrases_GeneratedFromRegionalPhrases",
+    "bridge_query_count": 0,
+    "broad_query_limit": "OpenCC broad search returned108; first100 captured, not claimed all108 reviewed.",
+    "first_network_failure_retained": "/home/xumin/Public/Trime/build/issue-fixes-batch9-20261029/independent-search-opencc.stderr"
+  },
+  "agents": {
+    "path": "/home/xumin/Public/Trime-pr-opencc-regional-data-20261029/app/src/main/jni/librime/deps/opencc/AGENTS.md",
+    "sha256": "5ae6ea30b1716ab1dedb4d9de19f40ac3bda8b1b52aa97f1dfef3b2186837222",
+    "read": true,
+    "interpretation": "Official dictionary transformations and region semantics preserved; no OpenCC submodule edits. OpenCC-specific commit-title convention applies inside that repository, while this Trime build plugin follows Trime Conventional Commit."
+  },
+  "no_actual_results_inferred": true
+}

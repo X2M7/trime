@@ -1,0 +1,413 @@
+{
+  "schema": 1,
+  "recorded_at_utc": "2026-10-29T07:11:25.826215+00:00",
+  "scope": "Read-only follow-up; no compilation, source edits, dependency updates, push, PR, or external messages performed for this investigation.",
+  "conclusion": {
+    "status": "Unresolved compiler/source interaction; diagnostic origin and likely mechanism identified, not certified harmless",
+    "packaging_independence": "The same ten diagnostics occur when the unchanged pinned OpenCC source is built directly by the official host-tools1 configuration, before the Gradle wrapper task. They are independent of the missing regional-dictionary packaging defect. This PR exposes that host compilation path and must disclose the warnings; it does not fix them.",
+    "proved": "All ten diagnostics in each log attach to the local TextDict::Match lookup-key allocation (NoValueDictEntry, 40 bytes according to GCC), but inline destructors of the distinct larger StrMultiValueDictEntry (six) or StrSingleValueDictEntry (four). The complete warning-message multisets match between the two builds.",
+    "not_proved": "No actual out-of-bounds access or object-type mutation was found in the inspected source path. No compiler IR, assembly reachability, minimal reproducer, sanitizer run, or cross-compiler comparison was produced here; therefore neither real memory corruption nor exact equivalence to the known GCC regression is proven or ruled out.",
+    "working_hypothesis": "GCC 16 speculative devirtualization has introduced sibling-destructor branches into deletion through unique_ptr<DictEntry>, and its bounds analysis combines a sibling member layout with the known smaller allocation. This is a supported hypothesis, not a final defect diagnosis."
+  },
+  "compiler_context": {
+    "compiler": "GNU 16.2.1",
+    "compiler_path": "/usr/bin/c++",
+    "cmake": "3.31.6",
+    "libstdcxx_headers": "/usr/include/c++/16",
+    "flags": "-O3 -DNDEBUG -std=gnu++17 -fPIC -Wall",
+    "flags_file": "/home/xumin/Public/Trime-pr-opencc-regional-data-20261029/app/build/opencc-host/opencc/src/CMakeFiles/libopencc.dir/flags.make",
+    "flags_sha256": "536c97f0203cb65fc5073c81f160715f1b5ba33fc73f53b5dcc1eef0e91e1a0f",
+    "warning_suppression_added": false
+  },
+  "raw_logs": [
+    {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch9-20261029/host-tools1/command.log",
+      "sha256": "253bf9a46fb27406598ae896aee64e37879963f2fec365c7a0b0da4e32e2b4d8",
+      "warnings": [
+        {
+          "line": 45,
+          "diagnostic": "/usr/include/c++/16/bits/stl_vector.h:792:61: warning: array subscript 1 is outside array bounds of ‘void [40]’ [-Warray-bounds=]"
+        },
+        {
+          "line": 58,
+          "diagnostic": "/usr/include/c++/16/bits/stl_vector.h:792:37: warning: array subscript 1 is outside array bounds of ‘void [40]’ [-Warray-bounds=]"
+        },
+        {
+          "line": 72,
+          "diagnostic": "/usr/include/c++/16/bits/stl_vector.h:375:33: warning: array subscript 1 is outside array bounds of ‘void [40]’ [-Warray-bounds=]"
+        },
+        {
+          "line": 86,
+          "diagnostic": "/usr/include/c++/16/bits/stl_vector.h:375:61: warning: array subscript 1 is outside array bounds of ‘void [40]’ [-Warray-bounds=]"
+        },
+        {
+          "line": 99,
+          "diagnostic": "/usr/include/c++/16/bits/stl_vector.h:795:7: warning: array subscript 1 is outside array bounds of ‘void [40]’ [-Warray-bounds=]"
+        },
+        {
+          "line": 112,
+          "diagnostic": "/home/xumin/Public/Trime-pr-opencc-regional-data-20261029/app/src/main/jni/librime/deps/opencc/src/DictEntry.hpp:134:38: warning: array subscript ‘opencc::StrMultiValueDictEntry[0]’ is partly outside array bounds of ‘unsigned char [40]’ [-Warray-bounds=]"
+        },
+        {
+          "line": 130,
+          "diagnostic": "/usr/include/c++/16/bits/basic_string.h:238:28: warning: array subscript 1 is outside array bounds of ‘void [40]’ [-Warray-bounds=]"
+        },
+        {
+          "line": 144,
+          "diagnostic": "/usr/include/c++/16/bits/basic_string.h:298:21: warning: array subscript 1 is outside array bounds of ‘void [40]’ [-Warray-bounds=]"
+        },
+        {
+          "line": 157,
+          "diagnostic": "/usr/include/c++/16/bits/basic_string.h:920:23: warning: array subscript 1 is outside array bounds of ‘void [40]’ [-Warray-bounds=]"
+        },
+        {
+          "line": 169,
+          "diagnostic": "/home/xumin/Public/Trime-pr-opencc-regional-data-20261029/app/src/main/jni/librime/deps/opencc/src/DictEntry.hpp:109:39: warning: array subscript ‘opencc::StrSingleValueDictEntry[0]’ is partly outside array bounds of ‘unsigned char [40]’ [-Warray-bounds=]"
+        }
+      ],
+      "count": 10
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch9-20261029/gradle-data2/command.log",
+      "sha256": "2f779f0ac9283ab47d50991015f42943b4dbdabaa861d911e92ddf930480f65d",
+      "warnings": [
+        {
+          "line": 340,
+          "diagnostic": "/usr/include/c++/16/bits/stl_vector.h:792:61: warning: array subscript 1 is outside array bounds of ‘void [40]’ [-Warray-bounds=]"
+        },
+        {
+          "line": 353,
+          "diagnostic": "/usr/include/c++/16/bits/stl_vector.h:792:37: warning: array subscript 1 is outside array bounds of ‘void [40]’ [-Warray-bounds=]"
+        },
+        {
+          "line": 367,
+          "diagnostic": "/usr/include/c++/16/bits/stl_vector.h:375:33: warning: array subscript 1 is outside array bounds of ‘void [40]’ [-Warray-bounds=]"
+        },
+        {
+          "line": 381,
+          "diagnostic": "/usr/include/c++/16/bits/stl_vector.h:375:61: warning: array subscript 1 is outside array bounds of ‘void [40]’ [-Warray-bounds=]"
+        },
+        {
+          "line": 394,
+          "diagnostic": "/usr/include/c++/16/bits/stl_vector.h:795:7: warning: array subscript 1 is outside array bounds of ‘void [40]’ [-Warray-bounds=]"
+        },
+        {
+          "line": 407,
+          "diagnostic": "/home/xumin/Public/Trime-pr-opencc-regional-data-20261029/app/src/main/jni/librime/deps/opencc/src/DictEntry.hpp:134:38: warning: array subscript ‘opencc::StrMultiValueDictEntry[0]’ is partly outside array bounds of ‘unsigned char [40]’ [-Warray-bounds=]"
+        },
+        {
+          "line": 425,
+          "diagnostic": "/usr/include/c++/16/bits/basic_string.h:238:28: warning: array subscript 1 is outside array bounds of ‘void [40]’ [-Warray-bounds=]"
+        },
+        {
+          "line": 439,
+          "diagnostic": "/usr/include/c++/16/bits/basic_string.h:298:21: warning: array subscript 1 is outside array bounds of ‘void [40]’ [-Warray-bounds=]"
+        },
+        {
+          "line": 452,
+          "diagnostic": "/usr/include/c++/16/bits/basic_string.h:920:23: warning: array subscript 1 is outside array bounds of ‘void [40]’ [-Warray-bounds=]"
+        },
+        {
+          "line": 464,
+          "diagnostic": "/home/xumin/Public/Trime-pr-opencc-regional-data-20261029/app/src/main/jni/librime/deps/opencc/src/DictEntry.hpp:109:39: warning: array subscript ‘opencc::StrSingleValueDictEntry[0]’ is partly outside array bounds of ‘unsigned char [40]’ [-Warray-bounds=]"
+        }
+      ],
+      "count": 10
+    }
+  ],
+  "warning_messages_identical": true,
+  "source_binding": {
+    "opencc": "025f371dc76b598d77384fbdab90c937471844d8",
+    "files": [
+      {
+        "path": "AGENTS.md",
+        "sha256": "5ae6ea30b1716ab1dedb4d9de19f40ac3bda8b1b52aa97f1dfef3b2186837222",
+        "equals_pinned_blob": true,
+        "url": "https://github.com/BYVoid/OpenCC/blob/025f371dc76b598d77384fbdab90c937471844d8/AGENTS.md"
+      },
+      {
+        "path": "src/DictEntry.hpp",
+        "sha256": "d06184a04af3df53f35d94239b3032901601d7fd3db80f24e73c75f271e93561",
+        "equals_pinned_blob": true,
+        "url": "https://github.com/BYVoid/OpenCC/blob/025f371dc76b598d77384fbdab90c937471844d8/src/DictEntry.hpp"
+      },
+      {
+        "path": "src/TextDict.cpp",
+        "sha256": "be37bc5297d2da1458c464351787b8311934c5e932facf6c849b4a36490e99c5",
+        "equals_pinned_blob": true,
+        "url": "https://github.com/BYVoid/OpenCC/blob/025f371dc76b598d77384fbdab90c937471844d8/src/TextDict.cpp"
+      },
+      {
+        "path": "src/Lexicon.hpp",
+        "sha256": "5c9dc21b81c6abe093196f431c34fc2d9aa8e984c4a99788eb4bb6183ecff5da",
+        "equals_pinned_blob": true,
+        "url": "https://github.com/BYVoid/OpenCC/blob/025f371dc76b598d77384fbdab90c937471844d8/src/Lexicon.hpp"
+      },
+      {
+        "path": "src/TextDictTest.cpp",
+        "sha256": "57dea26269f161bdf8fcb270692e2dad1680edf14e9632ab26f7bb2dc00bbe72",
+        "equals_pinned_blob": true,
+        "url": "https://github.com/BYVoid/OpenCC/blob/025f371dc76b598d77384fbdab90c937471844d8/src/TextDictTest.cpp"
+      }
+    ]
+  },
+  "source_reasoning": [
+    {
+      "location": "src/TextDict.cpp:82-92",
+      "finding": "The only local entry allocation is new NoValueDictEntry(std::string(word, len)) owned by unique_ptr<DictEntry>. It is not reset, released, moved, or overwritten in this function."
+    },
+    {
+      "location": "src/DictEntry.hpp:32-59,62-83",
+      "finding": "DictEntry has a virtual destructor. NoValueDictEntry owns only its key string; no vector or second value string belongs to this dynamic type. Base-pointer deletion is not intrinsically invalid."
+    },
+    {
+      "location": "src/DictEntry.hpp:55-58 and src/Lexicon.hpp:66-72",
+      "finding": "lower_bound uses const lexicon iterators and a comparator accepting const unique_ptr references, comparing key views only. The inspected comparison path does not change local ownership or dynamic type."
+    },
+    {
+      "location": "src/DictEntry.hpp:103-146",
+      "finding": "The diagnostics name sibling concrete destructors with a second string or vector. These would exceed the known 40-byte NoValue allocation if they executed on it; the warning trace alone does not prove such a branch is reachable."
+    },
+    {
+      "location": "/usr/include/c++/16/bits/unique_ptr.h:92",
+      "finding": "default_delete performs delete on the base pointer, invoking virtual destruction; no reinterpret_cast/downcast is involved in the inspected source path."
+    }
+  ],
+  "upstream_opencc": {
+    "searches": [
+      {
+        "query": "repo:BYVoid/OpenCC \"array-bounds\"",
+        "url": "https://api.github.com/search/issues?q=repo%3ABYVoid%2FOpenCC+%22array-bounds%22&per_page=30",
+        "response_sha256": "0bc9bf4a52482f51a71a3b89545d1593e3469c45dd004640217b4467c0938494",
+        "response_bytes": 43920,
+        "total_count": 2,
+        "items": [
+          {
+            "number": 1311,
+            "html_url": "https://github.com/BYVoid/OpenCC/issues/1311",
+            "title": "Cannot build from source on Fedora 45",
+            "state": "closed",
+            "updated_at": "2026-07-15T00:32:32Z"
+          },
+          {
+            "number": 1372,
+            "html_url": "https://github.com/BYVoid/OpenCC/pull/1372",
+            "title": "Upgrade vendored darts-clone to v0.32h and harden OCD dictionary loading",
+            "state": "closed",
+            "updated_at": "2026-07-01T00:52:24Z"
+          }
+        ]
+      },
+      {
+        "query": "repo:BYVoid/OpenCC \"GCC 16\"",
+        "url": "https://api.github.com/search/issues?q=repo%3ABYVoid%2FOpenCC+%22GCC+16%22&per_page=30",
+        "response_sha256": "4ee0ae4d60a0eba813914efc97284c0f8e03c00ae3c5254d08b288e79bce6cf3",
+        "response_bytes": 35505,
+        "total_count": 5,
+        "items": [
+          {
+            "number": 16,
+            "html_url": "https://github.com/BYVoid/OpenCC/pull/16",
+            "title": "Replace the fseek() call with a true lookahead buffer in tools/opencc.c",
+            "state": "closed",
+            "updated_at": "2014-07-23T13:59:31Z"
+          },
+          {
+            "number": 1516,
+            "html_url": "https://github.com/BYVoid/OpenCC/issues/1516",
+            "title": "Fails to compile with tclap 1.6.0",
+            "state": "open",
+            "updated_at": "2026-10-28T22:07:48Z"
+          },
+          {
+            "number": 1204,
+            "html_url": "https://github.com/BYVoid/OpenCC/pull/1204",
+            "title": "Replace add_definitions with add_compile_options for non -D flags",
+            "state": "closed",
+            "updated_at": "2026-05-11T23:53:09Z"
+          },
+          {
+            "number": 406,
+            "html_url": "https://github.com/BYVoid/OpenCC/issues/406",
+            "title": "Using customized configuration file in Python",
+            "state": "closed",
+            "updated_at": "2020-05-28T08:09:54Z"
+          },
+          {
+            "number": 419,
+            "html_url": "https://github.com/BYVoid/OpenCC/issues/419",
+            "title": "OpenCC Python 1.1.1 is broken on Ubuntu",
+            "state": "closed",
+            "updated_at": "2020-06-01T15:13:23Z"
+          }
+        ]
+      },
+      {
+        "query": "repo:BYVoid/OpenCC \"NoValueDictEntry\"",
+        "url": "https://api.github.com/search/issues?q=repo%3ABYVoid%2FOpenCC+%22NoValueDictEntry%22&per_page=30",
+        "response_sha256": "2043fa33076fb0e5821b16ba67dcc51f6039a28fe69d7e7e857aa3a9a7b26c03",
+        "response_bytes": 39988,
+        "total_count": 1,
+        "items": [
+          {
+            "number": 1311,
+            "html_url": "https://github.com/BYVoid/OpenCC/issues/1311",
+            "title": "Cannot build from source on Fedora 45",
+            "state": "closed",
+            "updated_at": "2026-07-15T00:32:32Z"
+          }
+        ]
+      },
+      {
+        "query": "repo:BYVoid/OpenCC \"StrMultiValueDictEntry\"",
+        "url": "https://api.github.com/search/issues?q=repo%3ABYVoid%2FOpenCC+%22StrMultiValueDictEntry%22&per_page=30",
+        "response_sha256": "7c509f0643afc6d8bb080e790006384befc1012c53075e8b6e4881ca7ec82a1f",
+        "response_bytes": 123482,
+        "total_count": 7,
+        "items": [
+          {
+            "number": 1311,
+            "html_url": "https://github.com/BYVoid/OpenCC/issues/1311",
+            "title": "Cannot build from source on Fedora 45",
+            "state": "closed",
+            "updated_at": "2026-07-15T00:32:32Z"
+          },
+          {
+            "number": 295,
+            "html_url": "https://github.com/BYVoid/OpenCC/issues/295",
+            "title": "安装失败 CenOS",
+            "state": "closed",
+            "updated_at": "2020-04-25T06:12:38Z"
+          },
+          {
+            "number": 72,
+            "html_url": "https://github.com/BYVoid/OpenCC/issues/72",
+            "title": "make: *** [all] Error 2",
+            "state": "closed",
+            "updated_at": "2016-12-12T06:21:33Z"
+          },
+          {
+            "number": 154,
+            "html_url": "https://github.com/BYVoid/OpenCC/issues/154",
+            "title": "无法使用Visual Studio 2015编译",
+            "state": "closed",
+            "updated_at": "2016-03-21T12:30:28Z"
+          },
+          {
+            "number": 148,
+            "html_url": "https://github.com/BYVoid/OpenCC/issues/148",
+            "title": "centOS 64bit安装失败",
+            "state": "closed",
+            "updated_at": "2015-11-26T12:52:14Z"
+          },
+          {
+            "number": 120,
+            "html_url": "https://github.com/BYVoid/OpenCC/issues/120",
+            "title": "Buid failed on CentOS 6",
+            "state": "closed",
+            "updated_at": "2015-07-24T12:56:33Z"
+          },
+          {
+            "number": 94,
+            "html_url": "https://github.com/BYVoid/OpenCC/issues/94",
+            "title": "can not make on centos 6",
+            "state": "closed",
+            "updated_at": "2015-02-13T06:26:33Z"
+          }
+        ]
+      }
+    ],
+    "matching_existing_issue": {
+      "url": "https://api.github.com/repos/BYVoid/OpenCC/issues/1311",
+      "response_sha256": "6e49bec38752b139573986835b284ecc9256971cbc4b739e6e6122f02010ff9e",
+      "response_bytes": 40851,
+      "number": 1311,
+      "html_url": "https://github.com/BYVoid/OpenCC/issues/1311",
+      "title": "Cannot build from source on Fedora 45",
+      "state": "closed",
+      "state_reason": "completed",
+      "updated_at": "2026-07-15T00:32:32Z",
+      "relevance": "The issue body contains the same NoValueDictEntry allocation / TextDict::Match / sibling-destructor bounds diagnostics while building OpenCC 1.3.1 with GNU 17.0.0. It is a prior occurrence, not an upstream fix for this diagnostic.",
+      "comments_binding": {
+        "url": "https://api.github.com/repos/BYVoid/OpenCC/issues/1311/comments",
+        "response_sha256": "c5853fe45c5e55181124e27ef0634cfea5334cdecf9e178c91fc0bc9f1d30f11",
+        "response_bytes": 1738
+      },
+      "comments": [
+        {
+          "url": "https://github.com/BYVoid/OpenCC/issues/1311#issuecomment-4699069917",
+          "author": "frankslin",
+          "created_at": "2026-06-13T16:14:54Z",
+          "summary": "Comment attributes the reported runtime failure to a mismatch between the build and runtime libstdc++ and suggests a standard compiler; it does not establish that the array-bounds diagnostics were fixed."
+        }
+      ]
+    },
+    "separate_search_hit": {
+      "url": "https://api.github.com/repos/BYVoid/OpenCC/pulls/1372",
+      "response_sha256": "764237caa38fd8fe3587113a56241e49eef67f4ff7cf246908c8c73a29003c59",
+      "response_bytes": 17925,
+      "number": 1372,
+      "html_url": "https://github.com/BYVoid/OpenCC/pull/1372",
+      "title": "Upgrade vendored darts-clone to v0.32h and harden OCD dictionary loading",
+      "merged_at": "2026-07-01T00:29:14Z",
+      "merge_commit_sha": "eab7ef6d378f46810fa6121752035d74626e4e1a",
+      "files_binding": {
+        "url": "https://api.github.com/repos/BYVoid/OpenCC/pulls/1372/files?per_page=100",
+        "response_sha256": "3bab51173584d120c5dd692dd32bc30a006cc9955e00ca0c66f22fc47115aa47",
+        "response_bytes": 21321
+      },
+      "files": [
+        "MODULE.bazel",
+        "MODULE.bazel.lock",
+        "deps/darts-clone-0.32h/BUILD.bazel",
+        "deps/darts-clone-0.32h/COPYING.md",
+        "deps/darts-clone-0.32h/MODULE.bazel",
+        "deps/darts-clone-0.32h/include/darts.h",
+        "package.json",
+        "scripts/build-cli-windows-zig.sh",
+        "src/CMakeLists.txt",
+        "src/DartsDict.cpp",
+        "src/DartsDictTest.cpp"
+      ],
+      "relevance": "This PR hardens legacy Darts dictionary loading and updates darts-clone; it is not a demonstrated fix for the TextDict lookup-key virtual-destructor diagnostics."
+    }
+  },
+  "gcc_primary_evidence": [
+    {
+      "url": "https://gcc.gnu.org/pipermail/gcc-bugs/2026-July/967907.html",
+      "date": "2026-07-26",
+      "role": "Reporter-provided reproducer of GCC16 warnings caused by speculative calls into a different, larger dynamic type; analogous mechanism, not the same OpenCC reproducer."
+    },
+    {
+      "url": "https://gcc.gnu.org/pipermail/gcc-bugs/2026-July/967908.html",
+      "date": "2026-07-26",
+      "role": "GCC maintainer marks report 126408 as duplicate of tree-optimization/122197."
+    },
+    {
+      "url": "https://gcc.gnu.org/bugzilla/show_bug.cgi?id=122197",
+      "role": "Live tracker blocked by Anubis for this read; current final resolution and any fixed release were not verified. Do not claim a particular compiler upgrade fixes this case."
+    }
+  ],
+  "existing_installed_library_note": "Installed GCC16 shared_ptr_base.h contains a PR122197-scoped diagnostic pragma in shared_ptr internals. It does not cover the observed unique_ptr and OpenCC concrete-destructor path. This is corroborating context, not a recommendation to copy the suppression.",
+  "smallest_next_unit": {
+    "first": "Keep this follow-up separate from the two-file Trime packaging PR. Preserve these exact pinned source, toolchain and raw warning bindings.",
+    "diagnose": "In a separately authorized serial build, reproduce the pinned TextDict translation unit with unchanged -O3/-Wall flags and capture GCC IPA-devirtualization and optimized-tree dumps. Reduce the source while retaining NoValue allocation and the two sibling destructor candidates; inspect vtable guards and actual reachable destruction.",
+    "runtime": "Exercise exact hits, misses, empty dictionary/query, lexicographic boundaries, UTF-8 keys, explicit byte lengths and embedded NUL keys using the existing TextDictTest/MatchPrefix tests plus focused cases, under ASan/UBSan. Sanitizer success is scoped evidence, not a general proof of safety.",
+    "comparison": "Compare that same source and warning policy on GCC16.2.1, another supported GCC and Clang, retaining all diagnostics and actual compiler versions; a warning disappearing alone does not establish correctness.",
+    "possible_source_improvement_not_implemented": "An upstream OpenCC-only candidate can use a heterogeneous lower_bound over a std::string_view query and entry->KeyView(), avoiding the dummy polymorphic heap allocation/deletion entirely. Preserve bytewise ordering, length semantics, returned entry identity and public ABI. This needs official maintainer review and before/after tests; it is not a verified fix today.",
+    "avoid": [
+      "No -Wno-array-bounds or diagnostic pragmas",
+      "No blanket compiler optimization removal",
+      "No marking public DictEntry subclasses final solely to affect compiler output",
+      "No submodule bump or native source patch hidden in this packaging PR",
+      "No claim that 16 config loads / 38 conversion pairs prove absence of all memory errors"
+    ]
+  },
+  "not_done": [
+    "Native build or compiler execution by this investigation",
+    "Sanitizer/IR/assembly or reduced test execution",
+    "Production or submodule edits",
+    "Upstream issue/PR/comment creation",
+    "Final declaration that diagnostics are harmless"
+  ]
+}

@@ -1,0 +1,29 @@
+from pathlib import Path
+import datetime,json,os,signal,subprocess,sys,time
+r=Path(__file__).resolve().parent
+name=sys.argv[1]; args=json.loads(sys.argv[2]); cwd=sys.argv[3]
+out=r/name;out.mkdir(exist_ok=False)
+log=(out/'command.log').open('wb')
+env=dict(os.environ)
+jdk='/home/xumin/Public/android-toolchain/jdk-17.0.19+10'
+sdk='/home/xumin/Public/android-toolchain/android-sdk'
+env.update(JAVA_HOME=jdk,ANDROID_HOME=sdk,ANDROID_SDK_ROOT=sdk,PATH=jdk+'/bin:'+env['PATH'])
+report={'started':datetime.datetime.now(datetime.timezone.utc).isoformat(),'argv':args,'cwd':cwd,'memory_floor_kib':1048576}
+samples=[];p=None
+try:
+ p=subprocess.Popen(args,cwd=cwd,env=env,stdout=log,stderr=subprocess.STDOUT,start_new_session=True);report['pid']=p.pid
+ while p.poll() is None:
+  available=int(next(x for x in Path('/proc/meminfo').read_text().splitlines() if x.startswith('MemAvailable:')).split()[1]);samples.append({'time':time.time(),'available_kib':available})
+  if available<1048576:
+   report['guard_triggered']=True;os.killpg(p.pid,signal.SIGTERM);break
+  time.sleep(2)
+ report['exit']=p.wait(timeout=30)
+finally:
+ if p is not None and p.poll() is None:
+  os.killpg(p.pid,signal.SIGTERM)
+  try:p.wait(timeout=15)
+  except subprocess.TimeoutExpired:os.killpg(p.pid,signal.SIGKILL);p.wait(timeout=10)
+ log.close();report['finished']=datetime.datetime.now(datetime.timezone.utc).isoformat();report['minimum_available_kib']=min((x['available_kib'] for x in samples),default=None)
+ (out/'memory.jsonl').write_text(''.join(json.dumps(x)+'\n' for x in samples));(out/'result.json').write_text(json.dumps(report,indent=2)+'\n')
+print(json.dumps(report),flush=True)
+raise SystemExit(0 if report.get('exit')==0 and not report.get('guard_triggered') else 1)

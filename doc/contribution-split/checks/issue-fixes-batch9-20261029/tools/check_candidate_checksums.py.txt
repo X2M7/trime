@@ -1,0 +1,22 @@
+from pathlib import Path
+import datetime,hashlib,json,sys,zipfile
+ci_path=Path(sys.argv[1]).resolve();out=Path(sys.argv[2]).resolve();assert not out.exists()
+ci=json.loads(ci_path.read_text());assert ci['head_sha']=='b24114ec111bcbd0b682ef5468e757fc66edec11'
+assert ci['ci']['run_id']==40834549715 and ci['ci']['conclusion']=='success'
+item=next(x for x in ci['ubuntu_original']['original_files'] if x['path'].endswith('.apk'));apk=ci_path.parent/item['path']
+assert hashlib.sha256(apk.read_bytes()).hexdigest()==item['sha256']
+old_ci_path=Path('/home/xumin/Public/Trime/build/issue-fixes-batch7-20261029/cloud/run-40823791223/pr-2207/ci-summary.json');old_ci=json.loads(old_ci_path.read_text());old_item=next(x for x in old_ci['ubuntu_original']['original_files'] if x['path'].endswith('.apk'));old_apk=old_ci_path.parent/old_item['path'];assert hashlib.sha256(old_apk.read_bytes()).hexdigest()==old_item['sha256']
+with zipfile.ZipFile(apk) as z,zipfile.ZipFile(old_apk) as old:
+ metadata=json.loads(z.read('assets/checksums.json'));old_metadata=json.loads(old.read('assets/checksums.json'));files=metadata['files'];old_files=old_metadata['files']
+ names=sorted(n for n in z.namelist() if n.startswith('assets/shared/opencc/') and not n.endswith('/'));assert len(names)==38
+ observations=[]
+ for name in names:
+  key=name.removeprefix('assets/');sha=hashlib.sha256(z.read(name)).hexdigest();assert files[key]==sha
+  observations.append({'apk_entry':name,'checksums_key':key,'sha256':sha,'actual_entry_hash_matches_metadata':True})
+ bridge='shared/opencc/STPhrases_GeneratedFromRegionalPhrases.txt'
+ assert bridge not in old_files and bridge in files
+ assert all(old_files[key]==files[key] for key in files if key.startswith('shared/opencc/') and key!=bridge and key in old_files)
+ global_sha=hashlib.sha256(', '.join(key+files[key] for key in sorted(files)).encode('utf8')).hexdigest();assert metadata['sha256']==global_sha
+ assert metadata['sha256']!=old_metadata['sha256']
+report={'timestamp':datetime.datetime.now(datetime.timezone.utc).isoformat(),'status':'PASS_CANDIDATE_OPENCC_RESOURCE_CHECKSUM_CLOSURE','head':ci['head_sha'],'run':ci['ci']['run_id'],'apk_sha256':item['sha256'],'baseline_apk_sha256':old_item['sha256'],'candidate_checksums_sha256_field':metadata['sha256'],'baseline_checksums_sha256_field':old_metadata['sha256'],'global_sorted_map_digest_verified':True,'new_bridge_present_in_checksum_map_and_absent_from_baseline':True,'resources':observations,'scope':'Original APK packaged resources and sync metadata only. No actual Android upgrade, sync, deployment or JNI acceptance inferred.'}
+out.write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n');print(json.dumps({'status':report['status'],'out':str(out)}))
