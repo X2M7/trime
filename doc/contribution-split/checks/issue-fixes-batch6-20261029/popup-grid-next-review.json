@@ -1,0 +1,277 @@
+{
+  "captured_at_utc": "2026-10-29T04:50:08.559927+00:00",
+  "status": "READ_ONLY_SOURCE_REPRODUCTION_DESIGN_COMPLETE; ANDROID_VALIDATION_AND_INTERACTION_POLICY_NOT_CLAIMED",
+  "repository": "osfans/trime",
+  "observed_origin_develop": "7fedca06ba5d2ef761a2ae3d44d8a0917db36994",
+  "live_develop_sha": "7fedca06ba5d2ef761a2ae3d44d8a0917db36994",
+  "parent_scope": "Root may prioritize actual Spotless warning repair. This report is a separate future popup grid work unit, without production edit, Gradle, ADB or GitHub writes.",
+  "live_issue_and_pr_relation": {
+    "open_issues_read": 116,
+    "open_prs_read": 13,
+    "all_state_popup_search_items": 39,
+    "direct_matching_open_issue_found": false,
+    "issue_2033": {
+      "state": "open",
+      "title": "popup的label显示不正常",
+      "scope": "Complete action labels, not popup capacity or cell geometry; no comments on this issue in current snapshot."
+    },
+    "pr_2204": {
+      "state": "open",
+      "draft": false,
+      "head": "492d8d60084026cbc80e045301b638e4b0f76a31",
+      "scope": "Existing one-file complete action labels fix; do not conflate grid fix with its Fixes #2033."
+    },
+    "closed_related_prs_read": [
+      {
+        "number": 1801,
+        "scope": "Initial popup keyboard feature. Comments discuss long-press preview mismatch and splitting large patch, not grid capacity or Y threshold."
+      },
+      {
+        "number": 1964,
+        "scope": "Clear pressed state on out-of-bounds dismissal; no issue/review comments."
+      }
+    ],
+    "duplicate_check_limits": "Read current open issue/PR title and body snapshot, all-state popup search results, #2033 and two nearest historical PR discussions. Not an exhaustive read of every unrelated issue comment.",
+    "future_reference_guidance": "Do not write Fixes #2033 for a grid-only PR. If a public bug report is created later, reproduce it independently and reference that report; otherwise explain the source-confirmed regression without an invented issue closure."
+  },
+  "source_findings": {
+    "capacity": {
+      "formula": "rows = ceil(count / 5), columns = round(count / rows)",
+      "counts_1_to_100_with_omitted_tail": [
+        13,
+        17,
+        21,
+        22,
+        26,
+        31
+      ],
+      "example": {
+        "count": 13,
+        "rows": 3,
+        "columns": 4,
+        "capacity": 12,
+        "unreachable_index": 12
+      },
+      "failure_mode": "keyUis contains every input label but keyOrders addresses only rows*columns. Omitted tail indices have no View and cannot become focused."
+    },
+    "existing_partial_row_x_mismatch": {
+      "example": {
+        "count": 18,
+        "rows": 4,
+        "columns": 5,
+        "focus_column": 2,
+        "top_row_logical_indices": [
+          19,
+          17,
+          15,
+          16,
+          18
+        ],
+        "empty_indices": [
+          19,
+          18
+        ],
+        "occupied_logical_columns": [
+          1,
+          2,
+          3
+        ],
+        "occupied_visible_columns": [
+          0,
+          1,
+          2
+        ]
+      },
+      "reason": "Rendering omits missing children; every missing slot overwrites row gravity. The trailing blank resets END to START, leaving physical child columns different from the fixed logical column hit grid. More than one leading blank similarly overwrites END to START. This exists before a capacity fix.",
+      "source_model_scenarios_1_to_100": 163,
+      "scope": "Static formula/LinearLayout layout deduction only; not an Android rendering result."
+    },
+    "ceil_only_is_incomplete": {
+      "count": 13,
+      "rows": 3,
+      "proposed_columns": 5,
+      "focus_column": 2,
+      "top_row_indices": [
+        14,
+        12,
+        10,
+        11,
+        13
+      ],
+      "occupied_logical_columns": [
+        1,
+        2,
+        3
+      ],
+      "physical_columns_if_current_omit_rule_kept": [
+        0,
+        1,
+        2
+      ],
+      "x_hit_indices_at_physical_centers": [
+        14,
+        12,
+        10
+      ]
+    },
+    "row_center_contract_conflict": {
+      "formula": "newRow = rowCount - round(y / keyHeight - 0.2), then clamp",
+      "documented_policy": "move to next row when gesture moves above 30% from bottom of current row",
+      "two_row_example": {
+        "visible_bottom_cell_center_y_over_key_height": 1.5,
+        "rendered_bottom_logical_row": 0,
+        "actual_formula_hit_row": 1
+      },
+      "finding": "The existing intentional-looking row threshold maps every visible row center except the top row to the logical row above it. With 1..5 rows the model has 10 center-row differences out of 15 centers. This is not introduced by ceil/placeholder repair.",
+      "not_adjudicated": "A visual cell center must trigger its token is a strong proposed acceptance contract, but conflicts with current comment and drag-biased behavior. Do not quietly change the bias or count a test near a row bottom as a cell-center check."
+    },
+    "production_gesture_route": "KeyView.onMove -> PopupAction.ChangeFocusAction -> PopupDelegate.changeFocus -> PopupContainerUi.changeFocus subtracts offsetX/offsetY -> PopupKeyboardUi.onChangeFocus. Coordinates are documented relative to the popup container. KeyView.onRelease LONG_CLICK uses onTrigger token. GestureFrame itself does not choose popup row/column.",
+    "normal_input_invariants": "KeyView.showPopupKeyboard returns for empty popup list; PopupDelegate passes the same keys as labels. Preserve this caller invariant. Do not add unrelated empty-list behavior to make a test harness pass."
+  },
+  "minimal_complete_repair_assessment": {
+    "definite_grid_repair": "Use ceil(count / rowCount) to ensure full capacity. Add exactly one fixed-size child for every logical slot, including a non-clickable, non-focusable Space for missing entries, rather than skipping children and changing row gravity. Keep center-out order, actual key token list, focus state and existing blank-slot retention behavior.",
+    "production_delta_candidate": "PopupKeyboardUi.kt alone can switch column rounding to ceiling, replace the null/row-gravity branch with add(keyUi?.root ?: Space(ctx), lParams(keyWidth, keyHeight)), import android.widget.Space, and remove obsolete gravityEnd/gravityStart imports. This is a design sketch, not an applied or compiled patch.",
+    "center_requirement_gate": "That definite grid repair does not satisfy every physical cell center -> same token until the existing vertical threshold policy is decided. A future cohesive cell/hit geometry PR can include an explicitly explained row mapping correction, but must test actual long-press drag behavior to ensure desired feel and release action, not merely replace the constant to satisfy a probe.",
+    "do_not_mix": [
+      "Complete action label truncation (#2204)",
+      "AppCompat theme-context logging",
+      "Main keyboard default widths (#2205)",
+      "GestureFrame lifecycle/cancellation redesign",
+      "Fork releases/configurations"
+    ]
+  },
+  "validation_plan": {
+    "jvm": "Do not write a copied-formula unit test and call it production coverage. If a permanent JVM regression is desirable, extract only the authoritative Android-free grid planner (slot count/order and chosen focus index mapping) used by PopupKeyboardUi for BOTH rendering and selection. Test original-index exact set, uniqueness, occupied slot -> same index, fixed goldens for center/edge order, and intended row-center/boundary behavior. If that extraction adds more abstraction than the two geometry edits warrant, keep the regression as actual Android instrumentation rather than a mirror helper.",
+    "android_diagnostic_first": [
+      "Use the exact current source/CI APK before editing, ASCII labels and unique original tokens to bypass label resolution and Rime. Wait on the main Application initialization barrier before ThemeManager or AppPrefs static access.",
+      "Construct actual PopupKeyboardUi at left, center and right trigger positions; measure/layout using the real root. Traverse real row/child bounds and distinguish occupied cells from explicit empty slots.",
+      "For each visible nonempty cell, call public onChangeFocus at the actual physical center and onTrigger; require exact original token. Record both desired center-contract failures and existing Y threshold separately. No hand-derived hit coordinate substitution.",
+      "Also invoke changeFocus with trigger-space center = popup-space center + offsetX/Y; this checks existing offset adaptation without pretending to dispatch InputDispatcher events.",
+      "Counts 1,5,6,10,11,13,17,18,21,22,25 cover one-row controls, rounding-loss cases, and an already broken partial row before ceiling. Every valid left/center/right focus arrangement must retain index0 as initial focus, reach every supplied original token once, and avoid duplicates.",
+      "Probe blank cells from a known focused occupied cell: retain prior token and never expose a nonexistent token. Probe dismissal guard inside/outside existing ±2 bounds, preserving existing cancellation behavior.",
+      "A separate attached actual IME long-press -> drag -> release test is needed before changing the intentional-looking Y threshold. Check held finger at trigger (initial item0), dragging into each drawn row center, blank areas and ACTION_CANCEL; commit exactly selected original token and never default action after cancel."
+    ],
+    "android_regression_cases": "Require every occupied cell center to return its original token in the accepted policy. A ceil-only patch must fail 13-item partial-row checks; ceil+placeholders with unchanged y formula must still expose the row-center mismatch. This prevents falsely passing an incomplete patch.",
+    "runtime_scope_limits": "Direct production PopupKeyboardUi object tests can establish layout and public API mapping, not real long press/full IME/TalkBack/Chinese input/native behavior. ASCII labels can avoid JNI, so do not claim a dedicated Rime session is required or was run.",
+    "repro_and_cleanup": "Parent controls serialized builds and one owned VM; preserve failed original reports, hash-bind source/APK/helper and CI producer tree, restore only touched preferences, preserve sentinel/config, uninstall helper, normal VM stop and check no owned residues. Existing system/dependency warnings remain recorded."
+  },
+  "local_model_execution": {
+    "file": "popup-grid-inputs/model_grid.py",
+    "exit_code": 0,
+    "stderr_bytes": 0,
+    "warning_note": "One preliminary ad-hoc command emitted Python SyntaxWarning from missing whitespace in `0and`; canonical saved model adds whitespace and was rerun with exit0 and empty stderr. Static outputs were regenerated from this canonical command. No Gradle or production warning result is inferred."
+  },
+  "actions": "Read-only source/GitHub investigations plus ignored JSON/text/model evidence writes only. No production edit, build, emulator, ADB, PR or push.",
+  "evidence_files": [
+    {
+      "path": "popup-grid-inputs/GestureFrame-7fedca06.kt.txt",
+      "bytes": 11247,
+      "sha256": "db81f52b6e9a65b471e92eda7febbf415576ca37acfddf90c5ace4de8aa6048c"
+    },
+    {
+      "path": "popup-grid-inputs/KeyView-7fedca06.kt.txt",
+      "bytes": 14417,
+      "sha256": "288fdb6b8aa4d2788996fa1480b1b98072dfba3117ef9ec36c7151c06e086f61"
+    },
+    {
+      "path": "popup-grid-inputs/PopupContainerUi-7fedca06.kt.txt",
+      "bytes": 3037,
+      "sha256": "96a94af763b852552478c1d00667fa38a50f1b9cd63a1efc64a6d550e2d4b2bd"
+    },
+    {
+      "path": "popup-grid-inputs/PopupDelegate-7fedca06.kt.txt",
+      "bytes": 7654,
+      "sha256": "99389c9b06bd0d3435aa2cfee0d11c2629f92ae4ed9c55db6843495235370312"
+    },
+    {
+      "path": "popup-grid-inputs/PopupKeyboardUi-7fedca06.kt.txt",
+      "bytes": 10591,
+      "sha256": "053481ac0be3ed3231e9463f55d1956020520acbb92402c7e067f4bf88cae365"
+    },
+    {
+      "path": "popup-grid-inputs/all-open-items.json",
+      "bytes": 494131,
+      "sha256": "516d1571e24c16a2c788ff89f11ac97f8f1eb0e318ffeda8381eaad45b3fae25"
+    },
+    {
+      "path": "popup-grid-inputs/issue-2033-comments.json",
+      "bytes": 2,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "path": "popup-grid-inputs/issue-2033.json",
+      "bytes": 3534,
+      "sha256": "7bd4c1601f2d3586b4b8c21f2d980095a3a9de987679afc8934bc2780658b3b0"
+    },
+    {
+      "path": "popup-grid-inputs/live-duplicate-summary.json",
+      "bytes": 5249,
+      "sha256": "45d0242dd35f6e6c7edc0e19da7083db67f771559d4dc361a74cbb137b77b01e"
+    },
+    {
+      "path": "popup-grid-inputs/model_grid.py",
+      "bytes": 3766,
+      "sha256": "c3fe8f45c007b008cd44cd65c7fa18bb58b29eb090564e8a9d0927fd51229dfa"
+    },
+    {
+      "path": "popup-grid-inputs/pr-1801-comments.json",
+      "bytes": 5458,
+      "sha256": "f3a933d9a8946d8678859501b67b5f3abea233fb4051b9244f7d26fe631e915f"
+    },
+    {
+      "path": "popup-grid-inputs/pr-1801-review-comments.json",
+      "bytes": 2,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "path": "popup-grid-inputs/pr-1801.json",
+      "bytes": 17772,
+      "sha256": "4161ccf284db879f28e5238ff057a4afdd78e0de5ce634b50d54ec66f37ed163"
+    },
+    {
+      "path": "popup-grid-inputs/pr-1964-comments.json",
+      "bytes": 2,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "path": "popup-grid-inputs/pr-1964-review-comments.json",
+      "bytes": 2,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "path": "popup-grid-inputs/pr-1964.json",
+      "bytes": 17770,
+      "sha256": "43216f003c7c15630e6bf40faa9c8b65a454a8fb51c739b5cc70913be9e4df9f"
+    },
+    {
+      "path": "popup-grid-inputs/pr-2204.json",
+      "bytes": 16808,
+      "sha256": "99ec6a6cf777e6189c844bfc3fbcbf9fb32288374a9fdd50ce4f4c2147a5424e"
+    },
+    {
+      "path": "popup-grid-inputs/search-popup-all.json",
+      "bytes": 154601,
+      "sha256": "9b0e2b3fea40dcf5bba6cdae119e5fab078a79ff4444d16813c7d2812c3fae66"
+    },
+    {
+      "path": "popup-grid-inputs/source-math-model.json",
+      "bytes": 75640,
+      "sha256": "83bd70fcd0d3766ab1d3fe8b8e43840fe6d1d2200de3527348382aaedba1245a"
+    },
+    {
+      "path": "popup-grid-inputs/source-math-model.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "popup-grid-inputs/source-math-model.stdout.txt",
+      "bytes": 192,
+      "sha256": "08fe5eb7ee39fea2cfbd90c1ce901baea5fda0643f463e1b6626fa7c5d22da7f"
+    },
+    {
+      "path": "popup-grid-inputs/upstream-develop.json",
+      "bytes": 3559,
+      "sha256": "06d10089decb4dd6edc0b4876ba7ec9fa421f428e39da69003c21d980e741656"
+    }
+  ]
+}

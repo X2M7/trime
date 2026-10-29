@@ -1,0 +1,21 @@
+{
+  "status": "COMMITTED_PATCH_AND_TESTED_BYTES_INDEPENDENTLY_CONFIRMED",
+  "utc": "2026-10-29T04:55:57.747037+00:00",
+  "head": "a2fe7e79c3ff02aaccdd4c23823c47a0b6a49c61",
+  "base": "7fedca06ba5d2ef761a2ae3d44d8a0917db36994",
+  "checks": {
+    "committed_head_exact": true,
+    "clean_worktree": true,
+    "one_commit_on_base": true,
+    "one_changed_file_one_added_line": true,
+    "only_added_line_expected": true,
+    "all_293_committed_blobs_match_tested_B1": true,
+    "root_binding_manifest_agrees": true,
+    "conventional_subject": true
+  },
+  "source_binding_sha256": "adf7cf22c774a7162ae15daf0a8bb950726c2ff9a39a2c34ffa81cc952c986a7",
+  "tested_B1_manifest_sha256": "47be22f999403b9195870d6aa9ea77fe4bf80492cd0c1681c383f42c663c23db",
+  "production_patch": "diff --git a/build.gradle.kts b/build.gradle.kts\nindex 5d54a397..ea6dfaa5 100644\n--- a/build.gradle.kts\n+++ b/build.gradle.kts\n@@ -16,6 +16,7 @@ plugins {\n spotless {\n     kotlin {\n         target(\"**/*.kt\", \"**/*.kts\")\n+        targetExclude(\"build-logic/convention/build/**\")\n         ktlint(\"1.8.0\")\n     }\n }\n",
+  "ci_status": "PENDING_NOT_CLAIMED",
+  "scope": "Committed one-line production source and tested B1 byte binding only. Original A/B review files unchanged. No all-warning, app/device or final CI claim."
+}

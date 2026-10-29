@@ -1,0 +1,55 @@
+{
+  "status": "SCOPED_AB_WARNING_REMOVAL_INDEPENDENTLY_CONFIRMED",
+  "utc": "2026-10-29T04:54:33.254121+00:00",
+  "checks": {
+    "candidate_source_inventory_same_293_paths": true,
+    "one_intentional_authored_file_changed": true,
+    "only_one_added_production_line": true,
+    "same_base_7fed": true,
+    "same_argv_except_nonce_and_evidence_paths": true,
+    "same_observer_and_launcher_hashes": true,
+    "different_bound_nonces": true,
+    "candidate_source_before_after_and_task_targets_equal": true,
+    "producer_outputs_exact_paths_content_unchanged": true,
+    "candidate_has_four_actual_actions": true,
+    "candidate_bounded_nonincremental_main_action": true,
+    "baseline_three_candidate_zero_warnings": true,
+    "candidate_successful_exit": true
+  },
+  "baseline_phase": "spotless-baseline2",
+  "candidate_phase": "spotless-candidate1",
+  "candidate_nonce": "3ddac31944744967a5e7fc77edb73f77",
+  "candidate_changed_sources": [
+    "build.gradle.kts"
+  ],
+  "candidate_source_diff": "diff --git a/build.gradle.kts b/build.gradle.kts\nindex 5d54a397..ea6dfaa5 100644\n--- a/build.gradle.kts\n+++ b/build.gradle.kts\n@@ -16,6 +16,7 @@ plugins {\n spotless {\n     kotlin {\n         target(\"**/*.kt\", \"**/*.kts\")\n+        targetExclude(\"build-logic/convention/build/**\")\n         ktlint(\"1.8.0\")\n     }\n }\n",
+  "producer_outputs": [
+    {
+      "path": "build-logic/convention/build/classes/kotlin/main",
+      "file_count": 37
+    },
+    {
+      "path": "build-logic/convention/build/pluginDescriptors",
+      "file_count": 5
+    },
+    {
+      "path": "build-logic/convention/build/resources/main",
+      "file_count": 5
+    }
+  ],
+  "candidate_raw_other_warning_lines": [
+    "The Configuration.setVisible(boolean) method has been deprecated. This is scheduled to be removed in Gradle 11. Consult the upgrading guide for further information: https://docs.gradle.org/9.8.1/userguide/upgrading_version_9.html#deprecate-visible-property"
+  ],
+  "files": {
+    "spotless-baseline2/gradle.log": "1d7c7326b63a1064bc2aa35efbd10e46bb79f874f94a7340083a744a77a15c69",
+    "spotless-baseline2/target-before.json": "5ee281df4c4aea58d017bd8a19c96995d378f77754c72edcec40370a96427fde",
+    "spotless-candidate1/gradle.log": "3b01eead1928ecbccce3b5c8c42fb26da3666ce4cb1e19260e441fc836cb48f0",
+    "spotless-candidate1/target-before.json": "47be22f999403b9195870d6aa9ea77fe4bf80492cd0c1681c383f42c663c23db",
+    "spotless-candidate1/target-after.json": "2417ce91022095e2729cad6b36430d6ea8206eea1461f6d3670469e1b3b2974a",
+    "spotless-candidate1/events.jsonl": "fac6cda005bee919f660b8cac19cbf2d6a236381e4270466d7c44b6c6afb5bfd",
+    "spotless-candidate1/invocation.json": "47c55811886205fff08cbe6177bef45570b26c5b4e86013a1dd264af4af078ad",
+    "spotless-candidate1/completion.json": "7308ba8a34726a54e8355b45fc586386357f96468f6634d7d1fa7311f1968cfb",
+    "spotless-candidate1/source-before.diff": "06fcf1f03751b4994ab3b5636828b69a33df30d4e173362f1951437cd8e33920"
+  },
+  "scope": "Real Gradle 9.8.1 Spotless 8.10.2 formatter/check A/B only; no app/native/device tests or all-warning claim. The three producer output file inventories and bytes remained identical; all 293 tracked authored Kotlin paths preserved."
+}

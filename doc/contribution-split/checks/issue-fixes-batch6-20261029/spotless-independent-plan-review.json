@@ -1,0 +1,141 @@
+{
+  "schema_version": 1,
+  "created_at_utc": "2026-10-29T04:49:56.894770+00:00",
+  "status": "PLAN_APPROVED_WITH_EXPLICIT_EXECUTION_GATES_NOT_EXECUTED",
+  "scope": "Independent read-only review of scoped Spotless output exclusion; test-only external observation helpers added at Root request. No production edits, Gradle, ADB, VM, push or GitHub mutation.",
+  "reviewed_prior_plan": {
+    "path": "/home/xumin/Public/Trime/build/issue-fixes-batch5-20261029/spotless-plan.json",
+    "sha256": "565f27ef29fcc77d18662a197ab60202ab82bfe1f0fc4502a320ce0adbd58c20"
+  },
+  "production_candidate": {
+    "file": "build.gradle.kts",
+    "inside": "spotless.kotlin",
+    "add": "targetExclude(\"build-logic/convention/build/**\")",
+    "retain": "target(\"**/*.kt\", \"**/*.kts\")",
+    "review": "Small intended formatter-input scope correction. It must pass actual A/B before being described as a verified warning fix."
+  },
+  "source_baseline": {
+    "upstream": "7fedca06ba5d2ef761a2ae3d44d8a0917db36994",
+    "tracked_kotlin_count": 293,
+    "by_top_level": {
+      "app": 277,
+      "build-logic": 12,
+      "codegen": 2,
+      "build.gradle.kts": 1,
+      "settings.gradle.kts": 1
+    },
+    "historical_theme_file_count": 294,
+    "historical_count_not_applicable_to_upstream": true
+  },
+  "original_helper_findings": [
+    {
+      "severity": "evidence_gap",
+      "finding": "Original formatter doFirst/doLast and nonincremental message are useful actual-action evidence, and getTarget is the correct public @InputFiles property."
+    },
+    {
+      "severity": "evidence_gap",
+      "finding": "Original checker accepted any all-nonempty producer list, including an empty list, because all([]) is true. It did not require the exact three output directories."
+    },
+    {
+      "severity": "evidence_gap",
+      "finding": "Original helpers lacked an invocation nonce, so independently retained stale before/after files could be accepted with a newer successful log unless Root manually bound every artifact."
+    },
+    {
+      "severity": "evidence_gap",
+      "finding": "Original checker only looked for a spotlessKotlinCheck task header. It did not observe the actual check task action boundaries."
+    },
+    {
+      "severity": "scope_limit",
+      "finding": "An unbound global nonincremental log marker could come from a different formatter invocation/task. The revised checker restricts it to the observed formatter action interval."
+    },
+    {
+      "severity": "scope_limit",
+      "finding": "Original path-set equality establishes source scope but does not bind input bytes. Revised target snapshots hash all target sources and compare exact sorted paths/bytes/SHA with launcher before/after tracked inventory."
+    }
+  ],
+  "improved_test_only_helpers": [
+    {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch6-20261029/spotless-observe.init.gradle",
+      "sha256": "4c9ac7ae71317ede9ca75a483809c9c676169902c2ee4c2b0b1ba31dc8cc735d",
+      "production_pr_inclusion": false
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch6-20261029/capture-spotless-phase.py",
+      "sha256": "f1f13d701acef7ca5693cebb2ce8cc567393961de1fc01efc7cd25eb3cc6c654",
+      "production_pr_inclusion": false
+    },
+    {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch6-20261029/check-spotless-phase.py",
+      "sha256": "472ae55b99ae056824205763eb5144215eea6bc3d54c38f401f37444ae0f79e2",
+      "production_pr_inclusion": false
+    }
+  ],
+  "new_observer_contract": [
+    "A fresh externally created evidence directory is mandatory; refuse to reuse an events file or overwrite target-before.",
+    "A fresh 32-character UUID nonce is bound in actual argv, invocation/completion JSON, target snapshots, events, and log markers.",
+    "Observe exact :spotlessKotlin public getTarget() at doFirst and doLast, without replacing the target or changing dependencies.",
+    "Observe doFirst/doLast for both :spotlessKotlin and :spotlessKotlinCheck; require the exact four events, same daemon PID/start identity, ordered monotonic timestamps and unique log markers.",
+    "Capture and require exact output paths classes/kotlin/main, pluginDescriptors, resources/main. All three must have regular files at formatter action time; retain each output file size/SHA.",
+    "Freeze observer and launcher copies into each phase. Actual -I uses that frozen observer, whose SHA is independently checked.",
+    "Require source inventory/HEAD/status/diff before and after invocation unchanged; target content equals all tracked Kotlin bytes exactly.",
+    "Require a nonincremental formatter action message inside its own nonce-bounded interval and executed task headers without skip/cache suffix.",
+    "Require actual Gradle exit zero and BUILD SUCCESSFUL. Baseline exactly three producer warnings, candidate zero root Spotless cross-build warnings."
+  ],
+  "required_root_execution_gates": [
+    "Keep all Gradle and VM phases serial. The capture launcher intentionally supplies no process-memory guard; Root must use its already reviewed ownership-aware monitor/resource scheduling.",
+    "Warm all three included-build output directories before phase A if needed, without clean/deleting outputs; otherwise a zero-warning candidate is inconclusive.",
+    "Use the same warm isolated worktree/JDK/wrapper/Spotless/ktlint and identical temporary SDK compatibility delta for A/B. Root script must restore compatibility bytes after all phases.",
+    "Baseline must execute both task actions, select the exact 293 tracked Kotlin sources, exit zero and reproduce exactly the three named producer warnings.",
+    "Candidate must execute both task actions, select the same exact source paths and content except the intentional root Gradle change, keep three producer outputs warm, exit zero and have zero matching root Spotless cross-build warnings.",
+    "Independently compare phase-A and phase-B source-before inventories and full diffs. Only build.gradle.kts should differ between them and only by the one production targetExclude line, beyond identical SDK setup.",
+    "Compare output file inventories/hashes across A/B; do not claim the warning disappears merely because producer outputs were deleted or unavailable.",
+    "Preserve every raw warning, failed attempt and original log. Configuration.setVisible or other plugin/toolchain warnings remain outside this single fix.",
+    "Before PR Ready, validate the final committed head with cloud CI and inspect the actual patch. A local observation helper alone does not validate app/native/device behavior."
+  ],
+  "interpretation_limits": [
+    "The historical diagnostics identify structural overlap with repository root, not that class/property outputs were literally formatted. Current warm outputs need not contain .kt/.kts; do not claim they did.",
+    "Subtracting the explicit generated-output subtree uses official Spotless targetExclude API and retains authored build-logic source. Do not replace it with excluding all build-logic or adding artificial compiler task dependencies.",
+    "A successful 293-file lane cannot be described as executing 294 files. The latter belongs only to a separate historical theme revision.",
+    "This is a build formatter scope fix, not a runtime application or all-warning fix. No ADB/emulator testing is required to establish this configuration behavior."
+  ],
+  "live_upstream_search": {
+    "summary": "/home/xumin/Public/Trime/build/issue-fixes-batch6-20261029/spotless-github-search-summary.json",
+    "queries": [
+      "repo:osfans/trime spotless",
+      "repo:osfans/trime \"implicit dependency\"",
+      "repo:osfans/trime \"build-logic\" \"format\"",
+      "repo:osfans/trime \"cross-build\""
+    ],
+    "exact_duplicate_found": false,
+    "search_scope_limitation": "GitHub current search results only; not a proof no undiscoverable report exists. No unrelated issue number should be invented.",
+    "related_but_distinct": [
+      {
+        "number": 2121,
+        "url": "https://github.com/osfans/trime/issues/2121",
+        "finding": "Closed issue concerns generateDebugLintReportModel consuming generateDataChecksums/installOpenCCData assets, not root Spotless included-build outputs."
+      },
+      {
+        "number": 2122,
+        "url": "https://github.com/osfans/trime/pull/2122",
+        "finding": "Closed lint dependency PR; distinct."
+      },
+      {
+        "number": 2124,
+        "url": "https://github.com/osfans/trime/pull/2124",
+        "finding": "Closed per-variant lint task dependencies; distinct."
+      }
+    ],
+    "recommendation": "Do not put Fixes #2121 or an unrelated historical formatting issue in this prospective PR. State the exact reproduced three task warnings; references are optional because no matching open issue was found."
+  },
+  "syntax_validation": {
+    "python_helpers": "Both parsed with ast.parse; no pycache written.",
+    "groovy_observer": "Source reviewed against pinned Spotless 8.10.2 public API; not yet compiled/executed by Gradle."
+  },
+  "executed_in_this_subtask": {
+    "gradle_invocations": 0,
+    "adb_invocations": 0,
+    "vm_starts": 0,
+    "production_edits": 0,
+    "github_writes": 0
+  }
+}

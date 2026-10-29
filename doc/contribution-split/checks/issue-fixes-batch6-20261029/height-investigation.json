@@ -1,0 +1,173 @@
+{
+  "status": "CONFIRMED_ZERO_HEIGHT_LIMITATION_BUT_NOT_A_CONTRACT_PRESERVING_SMALL_FIX",
+  "scope": "Read-only current-source, live issue/PR and historical contract investigation; no build, emulator, device acceptance, source mutation or push.",
+  "observed_at_utc": "2026-10-29T04:48:33.451776+00:00",
+  "upstream_base": "7fedca06ba5d2ef761a2ae3d44d8a0917db36994",
+  "issue": {
+    "number": 1316,
+    "title": "不写 `keyboard_height` 参数时液态键盘不显示",
+    "state": "open",
+    "url": "https://github.com/osfans/trime/issues/1316",
+    "comments_observed": 18,
+    "updated_at": "2024-11-26T15:17:43Z"
+  },
+  "related_pr_2205": {
+    "overlap": "Same Keyboard class only; independent semantics. #2205 fixes width fallback and leaves all height calculation unchanged.",
+    "not_a_duplicate": true
+  },
+  "live_pr_searches": {
+    "direct": {
+      "query": "repo:osfans/trime 1316 is:pr",
+      "total_count": 0,
+      "items": []
+    },
+    "height-open": {
+      "query": "repo:osfans/trime height is:pr is:open",
+      "total_count": 1,
+      "items": [
+        {
+          "number": 2192,
+          "title": "feat(keyboard): add pressed scale animation for keys",
+          "state": "open",
+          "url": "https://github.com/osfans/trime/pull/2192"
+        }
+      ]
+    },
+    "keyboard-height": {
+      "query": "repo:osfans/trime \"keyboard_height\" is:pr",
+      "total_count": 2,
+      "items": [
+        {
+          "number": 733,
+          "title": "在主题的preset_keyboards中设置keyboard_height",
+          "state": "closed",
+          "url": "https://github.com/osfans/trime/pull/733"
+        },
+        {
+          "number": 709,
+          "title": "优化皮肤和音效包",
+          "state": "closed",
+          "url": "https://github.com/osfans/trime/pull/709"
+        }
+      ]
+    }
+  },
+  "sources": [
+    {
+      "path": "app/src/main/java/com/osfans/trime/ime/keyboard/Keyboard.kt",
+      "git_blob": "0db3fa52695d0a6eabaff1a69e27b6f59b2028e4",
+      "sha256": "cdc21ccb9539f1ba167bc3fa14eba326ee69fc539976a6bc137684aca1069b6a",
+      "url": "https://github.com/osfans/trime/blob/7fedca06ba5d2ef761a2ae3d44d8a0917db36994/app/src/main/java/com/osfans/trime/ime/keyboard/Keyboard.kt"
+    },
+    {
+      "path": "app/src/main/java/com/osfans/trime/ime/keyboard/KeyboardWindow.kt",
+      "git_blob": "69cc596f96fcbcc7b5cc9be689d071858b00a32c",
+      "sha256": "d10e4b1cfc78195f141fa5e14f0aebc629c7e66f6383cff5ccd09dc47e3ccc0f",
+      "url": "https://github.com/osfans/trime/blob/7fedca06ba5d2ef761a2ae3d44d8a0917db36994/app/src/main/java/com/osfans/trime/ime/keyboard/KeyboardWindow.kt"
+    },
+    {
+      "path": "app/src/main/java/com/osfans/trime/ime/keyboard/KeyboardResolve.kt",
+      "git_blob": "d4c4f9f26f182fb319b4ec8c01751f60717b7079",
+      "sha256": "e75bd105cafb781a10def5c1d8f0ecbe767e87011f6c3d9c25b87feeea0bb575",
+      "url": "https://github.com/osfans/trime/blob/7fedca06ba5d2ef761a2ae3d44d8a0917db36994/app/src/main/java/com/osfans/trime/ime/keyboard/KeyboardResolve.kt"
+    },
+    {
+      "path": "app/src/main/java/com/osfans/trime/ime/core/InputView.kt",
+      "git_blob": "92ea752158d8db1dd03cc370a9544fbb21d2926d",
+      "sha256": "b43212ae42192f486be5a95e2f5d78a5974e0b85f863510be9468fc8ca236ada",
+      "url": "https://github.com/osfans/trime/blob/7fedca06ba5d2ef761a2ae3d44d8a0917db36994/app/src/main/java/com/osfans/trime/ime/core/InputView.kt"
+    },
+    {
+      "path": "app/src/main/java/com/osfans/trime/data/theme/model/GeneralStyle.kt",
+      "git_blob": "6e15db6b7820c53689a0f8669935c06746d88a7d",
+      "sha256": "6a7712390dec5ac3251ce458def74f537b95f8f27e558381c768667d0ae96681",
+      "url": "https://github.com/osfans/trime/blob/7fedca06ba5d2ef761a2ae3d44d8a0917db36994/app/src/main/java/com/osfans/trime/data/theme/model/GeneralStyle.kt"
+    },
+    {
+      "path": "app/src/main/java/com/osfans/trime/data/theme/model/TextKeyboard.kt",
+      "git_blob": "1ca462597538330a4a679c0dd44c8c7099c687f0",
+      "sha256": "79391bd4af59b63f77eb7cbf0843c473a9c5a5482bacee7b687f001bf8fc6692",
+      "url": "https://github.com/osfans/trime/blob/7fedca06ba5d2ef761a2ae3d44d8a0917db36994/app/src/main/java/com/osfans/trime/data/theme/model/TextKeyboard.kt"
+    },
+    {
+      "path": "doc/trime-schema.json",
+      "git_blob": "b77f016c1f96bbd1343f896daf1900b18bee34c8",
+      "sha256": "50d19b9542707149558cbc2ddbdf48b03f9d46a3a32eda4c4976a43d17709bd1",
+      "url": "https://github.com/osfans/trime/blob/7fedca06ba5d2ef761a2ae3d44d8a0917db36994/doc/trime-schema.json"
+    }
+  ],
+  "maintainer_and_reporter_contract_evidence": [
+    {
+      "id": 2058173457,
+      "url": "https://github.com/osfans/trime/issues/1316#issuecomment-2058173457",
+      "author": "Wenti-D",
+      "association": "NONE",
+      "updated_at": "2024-04-16T03:42:44Z",
+      "body": "> 你為了令每個鍵高一致，而放棄了鍵盤高度的一致？\r\n\r\n差不多，以前用 Gboard 就是键盘高度固定而键高会有变化，个人感觉难受。\r\n\r\n> 那麼你希望 liquid keyboard 的高度是什麼？\r\n\r\n一些想法：\r\n- 有一个参数指定默认高度；\r\n- 设定为切换前键盘的高度。"
+    },
+    {
+      "id": 2071786116,
+      "url": "https://github.com/osfans/trime/issues/1316#issuecomment-2071786116",
+      "author": "goofyz",
+      "association": "COLLABORATOR",
+      "updated_at": "2024-04-23T09:02:10Z",
+      "body": "> 当前liquid keyboard的高度是由height（按键高度）控制的，与普通的keyboard一样。 个人认为这个设计已经出现了一些问题：\r\n> \r\n>     1. 按键高度（`liquid_keyboard/height` `keyboard/height`）不能直观反映整个键盘的高度。\r\n> \r\n>     2. 键盘高度（`style/keyboard_height`）在正常工作的情况下，是锁定全局键盘高度的，可以很直观反映整个键盘的高度，但部分键盘有自定义高度的需求，比如中文键盘4排按键、英文键盘5排按键（多一排数字键），这时候就希望英文键盘高一点。\r\n> \r\n> \r\n> 我认为可以：\r\n> \r\n>     1. 在键盘高度（`style/keyboard_height`）的同级增加一个配置项，来决定是否锁定全局键盘高度，而键盘高度（`style/keyboard_height`）只用来指定键盘的缺省高度。\r\n> \r\n>     2. 在所有键盘中添加一个参数（如`liquid_keyboard/keyboard_height` `keyboard/keyboard_height`）用来设定该键盘的高度。\r\n> \r\n>     3. 对按键高度（`liquid_keyboard/height` `keyboard/height`）参数的作用进行重新定义，向按键宽度看齐，数值也就是占整个键盘高度的百分比。如：`height: 10` 表示占键盘高度的10%，这与 `width: 10` 表示占整个键盘宽度10%类似。\r\n\r\n\r\n參考你的建議，我覺得可以：\r\n\r\n- 保留 `style/keyboard_height`，鎖定全局鍵盤高度，必須填寫 (或內置)。\r\n- 新增 `liquid_keyboard/keyboard_height`: 定義 Liquid keyboard 高度，沒有的話使用 `keyboard_height`。\r\n- 新增 `preset_keyboards/[KEYBOARD_ID]/keyboard_height`: 若為正數的話，會使用此作為高度。為 `0` 或沒有填寫的話，使用 `keyboard_height`。負數的話，程式需使用 `key_height` 來計算高度。沒有任何 key 的話，高度為 `0` 。\r\n- 若想要百分比計算高度的話，建議新增 `key_height_pc` (key height in percent) 去表示，以兼容舊版本。\r\n\r\n"
+    },
+    {
+      "id": 2085388016,
+      "url": "https://github.com/osfans/trime/issues/1316#issuecomment-2085388016",
+      "author": "WhiredPlanck",
+      "association": "COLLABORATOR",
+      "updated_at": "2024-04-30T13:47:45Z",
+      "body": "@Wenti-D 这其实符合预期。因为液态键盘一直是和主键盘同样高度的，以前没有显式地表现出来。技术上来说，液态键盘曾经和主键盘同住一个“屋檐下”，主键盘多高，液态键盘就有多高。而现在分离开了，为了保持它们大部分时候能够同高，液态键盘直接取回了 `keyboard_height` 作为自己的高度，所以如果你没有这个参数，当然是显示不出来的。"
+    },
+    {
+      "id": 2496915734,
+      "url": "https://github.com/osfans/trime/issues/1316#issuecomment-2496915734",
+      "author": "WhiredPlanck",
+      "association": "COLLABORATOR",
+      "updated_at": "2024-11-25T05:45:45Z",
+      "body": "@Wenti-D 之前解释得不是很清楚，最近修了一些问题后想把现状再说一下：\r\n\r\n1. 主题里的任一键盘高度参数是直接设定给主键盘（窗口）的，其他的窗口视图（比如液态键盘、卷轴候选）都会自动跟随这个高度设置\r\n2. 输入法在获取键盘高度设定时，先取键盘定义里设定的，如果没有设定或者等于 0，则取主题中的 `style/keyboard_height`（不管是不是没设或者等于 0）\r\n3. 基于上述两点，主题里必须保证键盘定义中或者主题中至少有一个地方有高度设置。如果都没有，就会什么都显示不出来。\r\n4. 整体的视图高度是栏高 + 键盘高（`candidate_view_height` + `comment_height` + `keyboard_height`）"
+    },
+    {
+      "id": 2499981206,
+      "url": "https://github.com/osfans/trime/issues/1316#issuecomment-2499981206",
+      "author": "WhiredPlanck",
+      "association": "COLLABORATOR",
+      "updated_at": "2024-11-26T08:30:49Z",
+      "body": "> 那问题来了，主题有一个设置项是默认键高（`key_height`），键盘定义中也可以写参数 `height` 来覆盖默认键高，如果现状如你所说，那这个参数不是完全没用了吗……\r\n\r\n当然不是这样。这只是让键盘定义中的参数优先生效，如果没写或者为 0，才用主题样式设定里的。"
+    },
+    {
+      "id": 2501108283,
+      "url": "https://github.com/osfans/trime/issues/1316#issuecomment-2501108283",
+      "author": "Wenti-D",
+      "association": "NONE",
+      "updated_at": "2024-11-26T15:17:42Z",
+      "body": "呃，可能我表述不清了。我是想说，`style/keyboard_height` 决定了键盘高度，那么，现在的情况下 `key_height` 和 `height` 参数是不是就不起效了？\r\n\r\n在有键盘高度这个参数的情况下，键高应该会由键盘高度和行数计算而来。而现在你说「至少有一个地方有高度设置」，也就是必须存在键盘高度这一参数，所以 `key_height` 参数没法起效。\r\n\r\n另外我试了，在键盘中设定了 `height` 参数，的确无效，仍然是「整体键盘高度不变，键高由整体键盘高度和行数计算而来」。但在键中设定高度 `height` 则对那一行有效。"
+    }
+  ],
+  "findings": [
+    "Current Keyboard.keyboardHeight resolves positive layout orientation-specific total height, falling back to style orientation-specific total height and converts selected value to dp once. Both absent/zero produces zero.",
+    "Current constructor computes row raw heights using first-key height > layout height > style.key_height, but always scales row raw heights to keyboardHeight. Positive raw rows and zero total height therefore become zero height.",
+    "KeyboardWindow emits Keyboard.keyboardHeight into currentKeyboardHeight; InputView applies that stream as the shared board window height. Skipping row scaling alone would still leave liquid/candidate board window at height zero.",
+    "Maintainer comment 2496915734 (2024-11-25) explicitly documents total height in at least layout or style as current requirement. Uniform raw key heights are relative weights with fixed total height, so equal changes to all rows intentionally do not change board total height.",
+    "Earlier implementation before 8825177b had an explicit keyboardHeight<=0 branch selecting raw row height; the current window separation and total-height stream cannot be repaired by restoring only that branch.",
+    "Maintainer suggestion 2071786116 proposed negative layout.keyboard_height for natural/raw sizing, zero for style inheritance, plus separate liquid height; this is a design suggestion in issue discussion, not evidence that current positive-wins resolver promises negative semantics.",
+    "Current schema describes keyboard_height as locking total height; no reviewed current spec gives a fallback numeric height when all total heights are absent. Adding arbitrary 250 or another hardcoded default is a behavior choice, not a proven minimal regression fix."
+  ],
+  "recommendation": {
+    "next_action": "Defer #1316 from current small-fix batch; keep it in layout configuration/design category. Seek maintainer agreement on natural-height opt-in or absent-total-height behavior before writing a Fixes PR.",
+    "why": "A genuine limitation remains, but the requested display behavior changes an explicitly documented configuration contract. It needs coherent computed board height, raw-height dp/px semantics, empty/zero-row policy, and window propagation; do not mislabel a one-line guard as a complete fix.",
+    "candidate_design_if_approved": "Preserve positive explicit layout/style total height behavior and introduce a documented natural-height path. Derive nonzero rendered board height from configured row heights and propagate actual board height to all shared windows; define zero/empty theme handling without arbitrary defaults.",
+    "required_acceptance": [
+      "Fixed positive layout total height precedence vs style total height",
+      "Portrait and landscape total height inheritance",
+      "Natural sizing with layout.height, style.key_height, and per-first-key height",
+      "Mixed explicit/implicit row weights and fractional dimensions",
+      "No total height or raw heights, empty key list, spacer-only rows",
+      "Keyboard switch -> liquid keyboard and expanded candidates retain expected nonzero shared board height",
+      "Multiple densities/font scales and real input-method window behavior"
+    ],
+    "do_not_claim": "No runtime reproduction or actual liquid-keyboard behavior was tested in this read-only investigation; issue not closed or commented on."
+  }
+}

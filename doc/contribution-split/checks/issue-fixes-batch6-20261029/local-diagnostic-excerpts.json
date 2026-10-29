@@ -1,0 +1,102 @@
+{
+  "baseline": {
+    "source_log": "/home/xumin/Public/Trime/build/issue-fixes-batch6-20261029/spotless-baseline2/gradle.log",
+    "source_log_sha256": "1d7c7326b63a1064bc2aa35efbd10e46bb79f874f94a7340083a744a77a15c69",
+    "source_log_total_lines": 178,
+    "selection_rule": "All exact task/action/full-run markers, specified cross-build diagnostics, Configuration.setVisible diagnostic, and successful build result. Full original is retained locally; this excerpt is not a full warning/error attribution.",
+    "selected": [
+      {
+        "line": 109,
+        "text": "The Configuration.setVisible(boolean) method has been deprecated. This is scheduled to be removed in Gradle 11. Consult the upgrading guide for further information: https://docs.gradle.org/9.8.1/userguide/upgrading_version_9.html#deprecate-visible-property"
+      },
+      {
+        "line": 147,
+        "text": "> Task :spotlessKotlin"
+      },
+      {
+        "line": 148,
+        "text": "Producing a file in one build and consuming it in another build without declaring an explicit dependency has been deprecated. This will fail with an error in Gradle 10. Gradle detected a problem with the following location: '/home/xumin/Public/Trime-pr-spotless-build-output-20261029'. Task ':spotlessKotlin' uses this output of task ':build-logic:convention:compileKotlin' without declaring an explicit or implicit dependency. This can lead to incorrect results being produced, depending on what order the tasks are executed. For more information, please refer to https://docs.gradle.org/9.8.1/userguide/validation_problems.html#implicit_dependency in the Gradle documentation."
+      },
+      {
+        "line": 149,
+        "text": "Producing a file in one build and consuming it in another build without declaring an explicit dependency has been deprecated. This will fail with an error in Gradle 10. Gradle detected a problem with the following location: '/home/xumin/Public/Trime-pr-spotless-build-output-20261029'. Task ':spotlessKotlin' uses this output of task ':build-logic:convention:pluginDescriptors' without declaring an explicit or implicit dependency. This can lead to incorrect results being produced, depending on what order the tasks are executed. For more information, please refer to https://docs.gradle.org/9.8.1/userguide/validation_problems.html#implicit_dependency in the Gradle documentation."
+      },
+      {
+        "line": 150,
+        "text": "Producing a file in one build and consuming it in another build without declaring an explicit dependency has been deprecated. This will fail with an error in Gradle 10. Gradle detected a problem with the following location: '/home/xumin/Public/Trime-pr-spotless-build-output-20261029'. Task ':spotlessKotlin' uses this output of task ':build-logic:convention:processResources' without declaring an explicit or implicit dependency. This can lead to incorrect results being produced, depending on what order the tasks are executed. For more information, please refer to https://docs.gradle.org/9.8.1/userguide/validation_problems.html#implicit_dependency in the Gradle documentation."
+      },
+      {
+        "line": 157,
+        "text": "TRIME_SPOTLESS_EVENT nonce=43a4c8950e18466e954c383c42b0d132 seq=1 task=:spotlessKotlin event=before"
+      },
+      {
+        "line": 158,
+        "text": "Not incremental: removing prior outputs"
+      },
+      {
+        "line": 159,
+        "text": "TRIME_SPOTLESS_EVENT nonce=43a4c8950e18466e954c383c42b0d132 seq=2 task=:spotlessKotlin event=after"
+      },
+      {
+        "line": 163,
+        "text": "> Task :spotlessKotlinCheck"
+      },
+      {
+        "line": 170,
+        "text": "TRIME_SPOTLESS_EVENT nonce=43a4c8950e18466e954c383c42b0d132 seq=3 task=:spotlessKotlinCheck event=before"
+      },
+      {
+        "line": 171,
+        "text": "TRIME_SPOTLESS_EVENT nonce=43a4c8950e18466e954c383c42b0d132 seq=4 task=:spotlessKotlinCheck event=after"
+      },
+      {
+        "line": 177,
+        "text": "BUILD SUCCESSFUL in 39s"
+      }
+    ]
+  },
+  "candidate": {
+    "source_log": "/home/xumin/Public/Trime/build/issue-fixes-batch6-20261029/spotless-candidate1/gradle.log",
+    "source_log_sha256": "3b01eead1928ecbccce3b5c8c42fb26da3666ce4cb1e19260e441fc836cb48f0",
+    "source_log_total_lines": 179,
+    "selection_rule": "All exact task/action/full-run markers, specified cross-build diagnostics, Configuration.setVisible diagnostic, and successful build result. Full original is retained locally; this excerpt is not a full warning/error attribution.",
+    "selected": [
+      {
+        "line": 113,
+        "text": "The Configuration.setVisible(boolean) method has been deprecated. This is scheduled to be removed in Gradle 11. Consult the upgrading guide for further information: https://docs.gradle.org/9.8.1/userguide/upgrading_version_9.html#deprecate-visible-property"
+      },
+      {
+        "line": 151,
+        "text": "> Task :spotlessKotlin"
+      },
+      {
+        "line": 158,
+        "text": "TRIME_SPOTLESS_EVENT nonce=3ddac31944744967a5e7fc77edb73f77 seq=1 task=:spotlessKotlin event=before"
+      },
+      {
+        "line": 159,
+        "text": "Not incremental: removing prior outputs"
+      },
+      {
+        "line": 160,
+        "text": "TRIME_SPOTLESS_EVENT nonce=3ddac31944744967a5e7fc77edb73f77 seq=2 task=:spotlessKotlin event=after"
+      },
+      {
+        "line": 164,
+        "text": "> Task :spotlessKotlinCheck"
+      },
+      {
+        "line": 171,
+        "text": "TRIME_SPOTLESS_EVENT nonce=3ddac31944744967a5e7fc77edb73f77 seq=3 task=:spotlessKotlinCheck event=before"
+      },
+      {
+        "line": 172,
+        "text": "TRIME_SPOTLESS_EVENT nonce=3ddac31944744967a5e7fc77edb73f77 seq=4 task=:spotlessKotlinCheck event=after"
+      },
+      {
+        "line": 178,
+        "text": "BUILD SUCCESSFUL in 48s"
+      }
+    ]
+  }
+}

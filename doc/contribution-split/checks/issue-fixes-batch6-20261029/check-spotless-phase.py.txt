@@ -1,0 +1,105 @@
+#!/usr/bin/env python3
+"""Read an existing fresh invocation; never runs Gradle or changes production source."""
+import argparse
+import collections
+import hashlib
+import json
+from pathlib import Path
+import re
+
+p = argparse.ArgumentParser(description=__doc__)
+p.add_argument('--phase-dir', required=True, type=Path)
+p.add_argument('--expected-count', type=int, required=True)
+a = p.parse_args()
+out = a.phase_dir.resolve()
+invocation = json.loads((out / 'invocation.json').read_text())
+completion = json.loads((out / 'completion.json').read_text())
+before = json.loads((out / 'target-before.json').read_text())
+after = json.loads((out / 'target-after.json').read_text())
+events = [json.loads(line) for line in (out / 'events.jsonl').read_text().splitlines()]
+log = (out / 'gradle.log').read_text()
+nonce, mode = invocation['nonce'], invocation['mode']
+source_before, source_after = invocation['source_before'], completion['source_after']
+tracked = source_before['tracked_files']
+tracked_paths = [x['path'] for x in tracked]
+target_paths = [x['path'] for x in before['target_files']]
+producer_paths = {
+    'build-logic/convention/build/classes/kotlin/main',
+    'build-logic/convention/build/pluginDescriptors',
+    'build-logic/convention/build/resources/main',
+}
+expected_producers = {':build-logic:convention:' + x for x in ['compileKotlin', 'pluginDescriptors', 'processResources']}
+warning_lines = [line for line in log.splitlines()
+                 if 'Producing a file in one build and consuming it in another build' in line
+                 and "Task ':spotlessKotlin'" in line]
+producers = {m.group(1) for line in warning_lines
+             if (m := re.search(r"output of task '([^']+)'", line))}
+failures = []
+
+def require(condition, message):
+    if not condition:
+        failures.append(message)
+
+require(nonce == completion['nonce'] == before['nonce'] == after['nonce'], 'Invocation nonce binding mismatch')
+require(str(out) == invocation['phase_dir'], 'Invocation belongs to another evidence directory')
+require('-Dtrime.spotless.probe.nonce=' + nonce in invocation['argv'], 'Actual argv lacks matching observer nonce')
+require('-Dtrime.spotless.probe.out=' + str(out) in invocation['argv'], 'Actual argv lacks matching evidence directory')
+require(str(out / 'observer.init.gradle') in invocation['argv'], 'Actual argv did not use frozen observer')
+require(hashlib.sha256((out / 'observer.init.gradle').read_bytes()).hexdigest() == invocation['observer_sha256'], 'Frozen observer hash mismatch')
+require(hashlib.sha256((out / 'capture-spotless-phase.py').read_bytes()).hexdigest() == invocation['launcher_sha256'], 'Frozen launcher hash mismatch')
+require(int((out / 'exit-code.txt').read_text().strip()) == completion['exit_code'] == 0, 'Gradle did not exit zero')
+require(source_before == source_after, 'Tracked source, HEAD, status or diff changed during invocation')
+require(len(tracked) == a.expected_count, 'Tracked count differs from selected revision')
+require(len(tracked_paths) == len(set(tracked_paths)), 'Duplicate tracked paths')
+require(len(target_paths) == len(set(target_paths)), 'Duplicate runtime target paths')
+require(before['target_files'] == tracked, 'Actual formatter target paths/content differs from exact tracked Kotlin inventory')
+require(before['target_files'] == after['target_files'], 'Target source content changed during formatter actions')
+require(before['target_count'] == after['target_count'] == len(tracked), 'Actual target count differs')
+require(before['project_dir'] == after['project_dir'] == invocation['worktree'], 'Observed another project')
+require(before['task_path'] == after['task_path'] == ':spotlessKotlin', 'Observed wrong formatter task')
+require('SpotlessTaskImpl' in before['task_type'], 'Wrong formatter implementation')
+require({x['path'] for x in before['producer_outputs']} == producer_paths and len(before['producer_outputs']) == 3,
+        'Producer output set does not equal all three observed producer directories')
+require(all(x['file_count'] == len(x['files']) and x['file_count'] > 0 for x in before['producer_outputs']),
+        'All three producer output directories must be warm at formatter action time')
+expected_events = [(':spotlessKotlin', 'before'), (':spotlessKotlin', 'after'),
+                   (':spotlessKotlinCheck', 'before'), (':spotlessKotlinCheck', 'after')]
+require([(x['task_path'], x['event']) for x in events] == expected_events,
+        'Missing, duplicate or unordered actual formatter/check task actions')
+require([x['sequence'] for x in events] == [1, 2, 3, 4], 'Action sequence mismatch')
+require(all(x['nonce'] == nonce and x['project_dir'] == invocation['worktree'] for x in events), 'Event invocation binding mismatch')
+require(len({(x['pid'], x['jvm_started_ms']) for x in events}) == 1, 'Actions did not run in same bound JVM')
+require(all(x['monotonic_ns'] < y['monotonic_ns'] for x, y in zip(events, events[1:])), 'Action timestamps not monotonic')
+for event in events:
+    marker = f"TRIME_SPOTLESS_EVENT nonce={nonce} seq={event['sequence']} task={event['task_path']} event={event['event']}"
+    require(log.count(marker) == 1, 'Missing/duplicate actual log marker: ' + marker)
+start_marker = f'TRIME_SPOTLESS_EVENT nonce={nonce} seq=1 task=:spotlessKotlin event=before'
+end_marker = f'TRIME_SPOTLESS_EVENT nonce={nonce} seq=2 task=:spotlessKotlin event=after'
+if log.count(start_marker) == log.count(end_marker) == 1:
+    action_log = log.split(start_marker, 1)[1].split(end_marker, 1)[0]
+else:
+    action_log = ''
+require('Not incremental: removing prior outputs' in action_log, 'No bound full/nonincremental formatter action evidence')
+require(re.search(r'^> Task :spotlessKotlin\s*$', log, re.M) is not None, 'Formatter task skipped/cache-restored')
+require(re.search(r'^> Task :spotlessKotlinCheck\s*$', log, re.M) is not None, 'Check task skipped/cache-restored')
+require('BUILD SUCCESSFUL' in log, 'No successful build result')
+if mode == 'baseline':
+    require(producers == expected_producers and len(warning_lines) == 3, 'Baseline must reproduce exactly the three known producer warnings')
+else:
+    require(not warning_lines, 'Candidate retains a root Spotless cross-build warning')
+result = {
+    'status': 'PASS_SCOPED_PHASE' if not failures else 'FAIL_OR_INCONCLUSIVE',
+    'nonce': nonce, 'mode': mode, 'head': source_before['head'],
+    'tracked_count': len(tracked), 'target_count': before['target_count'],
+    'tracked_counts_by_top_level': dict(collections.Counter(x.split('/')[0] for x in tracked_paths)),
+    'tracked_paths_sha256': hashlib.sha256(('\n'.join(tracked_paths) + '\n').encode()).hexdigest(),
+    'source_inventory_sha256': hashlib.sha256(json.dumps(tracked, sort_keys=True).encode()).hexdigest(),
+    'warning_line_count': len(warning_lines), 'producer_tasks': sorted(producers), 'warning_lines': warning_lines,
+    'actual_task_action_events': events, 'all_other_warnings_retained_in_original_log': True,
+    'log_sha256': hashlib.sha256((out / 'gradle.log').read_bytes()).hexdigest(),
+    'failures': failures,
+    'scope': 'Bounded local formatter/check phase only; no all-warning, app-build, tests, lint, native, device or CI acceptance claim.',
+}
+(out / 'phase-review.json').write_text(json.dumps(result, indent=2) + '\n')
+print(json.dumps({k: result[k] for k in ['status', 'mode', 'tracked_count', 'target_count', 'warning_line_count', 'failures']}))
+raise SystemExit(0 if not failures else 1)

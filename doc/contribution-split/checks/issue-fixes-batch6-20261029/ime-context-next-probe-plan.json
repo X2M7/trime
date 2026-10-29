@@ -1,0 +1,118 @@
+{
+  "created_at_utc": "2026-10-29T04:59:15.043689+00:00",
+  "status": "NEXT_WORK_UNIT_DESIGN_ONLY; NOT_IMPLEMENTED_NOT_COMPILED_NOT_RUN; NO_PRODUCTION_THEME_BUG_PROVEN",
+  "parent_decision": "Do not write helper sources, build or start emulator in batch6. The actual Spotless fix and #2206 CI are the current work unit; this plan is deferred.",
+  "prior_report": {
+    "path": "/home/xumin/Public/Trime/build/issue-fixes-batch5-20261029/production-context-investigation.json",
+    "sha256": "70ef2c31a0634545ceee4b01a3808c11ab295cdf5f07144b9259129ca37f374d",
+    "reuse": "The exact AppCompat1.7.1 hasValue(windowActionBar) predicate, AOSP theme-copy semantics, public WindowInspector approach, real popup path and adjudication table remain as documented there. This file records only an implementation-size refinement and public API checks."
+  },
+  "implementation_delta": {
+    "files_if_authorized_for_future_unit": [
+      "ime-context-probe/ImeContextInstrumentation.kt (temporary androidTest source, not production)",
+      "ime-context-probe/ContextProbeEditorActivity.kt (temporary test-APK editor)",
+      "ime-context-probe/AndroidManifest.xml (instrumentation target com.osfans.trime.debug; exported dedicated editor Activity with android:process=\":editor\")"
+    ],
+    "editor": "Independent helper APK Activity/remote :editor process provides a single EditText with a fictitious fixed draft, requests focus and showSoftInput. It must not share the target IME process or supply its Activity Context to any target widget. Use explicit helper-package component and a nonce. Root starts it with adb after READY; close uses explicit helper-only close Intent handled by onNewIntent/finish. Do not attempt to launch non-exported production Activities.",
+    "instrumentation": "Run in the target IME process. First execute and await a main Handler barrier before any AppPrefs/ThemeManager/static reference. Emit READY through sendStatus, then poll main WindowInspector for exactly one attached/shown positive-size InputView with non-null token. Enforce bounded traversal (max1600 nodes/depth24) and require service.currentInputStarted, isInputViewShown, non-null currentInputConnection, and currentInputEditorInfo.packageName == helper editor package.",
+    "actual_context_capture": "Use public InputView.service and themedContext; find actual attached/shown KeyboardView descendant and its public popup.root. Record identities/ownership, actual Context class and bounded ContextWrapper base chains (max12, identity loop guard), density/uiMode/display, exact AppCompat hasValue(windowActionBar), separately boolean and peekValue/resourceName, always recycle TypedArray. Never setTheme/applyStyle, create a Service, manually call onCreateInputView, reflect private service/window state, or create a RimeSession.",
+    "optional_real_popup": "Only after the real window/context preconditions pass: match KeyboardWindow.currentKeyboard.keys popup list exactly [TrimeWiki,Settings], with matching attached KeyView child ID/index/count. Derive screen coordinates from getLocationOnScreen, require global visible rect contains center and display0. Mark phase, inject touchscreen ACTION_DOWN through Instrumentation.sendPointerSync on worker, then poll actual PopupDelegate.root for newly attached PopupKeyboardUi key subtree/expected labels and AppCompatImageView instances. Capture exact effective ImageView contexts even if hidden. No direct construction/callback substitutes count as this path.",
+    "no_up_safety": "Never inject ACTION_UP: default selected action is Wiki. Keep original downTime and pointer center for mandatory ACTION_CANCEL in finally whenever DOWN may have been accepted; recycle every MotionEvent. If no matching key/window/new subtree is reached, record PRECONDITION_NOT_REACHED or WINDOW_CONTEXT_ONLY, not a popup pass. Verify no editor draft change, no external Activity launch, and popup dismissal. A second CANCEL or public popup.dismissAll fallback must be explicitly recorded as fallback, not normal-path acceptance.",
+    "preference_policy": "Helper writes no theme, layout, storage or feedback preference and does not manually initialize Application/AppPrefs. Root captures complete logical preferences before and after; only explicitly adjudicated general__pid change may differ. Actual IME lifecycle can legitimately write preferences, so do not assert full-byte preservation without readback.",
+    "limits": "No physical device/API21/Chinese input/TalkBack/Release acceptance follows from this API35 diagnostic. Raw targetContext object warnings remain a separate synthetic negative-control classification. Actual window context alone does not prove popup construction or absence of ThemeUtils logs."
+  },
+  "budget_and_restore_gate": {
+    "estimated_source_work": "15–20 minutes after Root chooses this as a work unit; helper compilation approximately1–2 minutes in prepared cached worktree, not yet performed.",
+    "helper_total_hard_limit_ms": 150000,
+    "main_request_limit_ms": 10000,
+    "body_deadline_ms": 130000,
+    "cleanup_reserve_ms": 20000,
+    "real_window_wait_max_ms": 60000,
+    "popup_wait_cap_ms": 15000,
+    "timeout_contract": "All waits remain worker-side polling; never block main waiting for editor or coroutine long-press. Every main operation has a bounded latch and failures are returned as diagnostics. Overall deadline is not permission to claim CANCEL succeeded: if main/injection blocks and finally cannot finish, mark cleanup incomplete and fail.",
+    "root_before_gate": [
+      "No Gradle/other owned emulator; one isolated API35 working-copy VM only; existing host memory floor retained.",
+      "Hash-bind original CI APK, any payload-identical signing copy, helper APK and source producer tree before start. Keep continuous raw logcat before instrumentation starts.",
+      "Save exact default and enabled IME lists, private sentinel and full logical prefs from the disposable fixture. Root owns adb ime enable/set, starts editor only after helper READY. Do not change user desktop/indexer processes."
+    ],
+    "root_finally_gate": [
+      "Wait for explicit helper CANCEL/dismissal and editor-close receipts before considering diagnostic success.",
+      "Restore exact prior default IME (normally Latin) and enabled IME list, close only helper editor, verify logical prefs/sentinel and no external action. Capture failures; never silently overwrite target app state with an old entire preference file.",
+      "If helper hard deadline or main injection blocks, do not call it clean success; Root may terminate the owned target/helper process and stop owned VM normally, preserving raw failure evidence.",
+      "Stop/await owned VM and collector; verify no residual build/VM processes. A failed cleanup/runtime precondition is not a production ThemeUtils bug."
+    ]
+  },
+  "public_api_source_checks": {
+    "source_commit": "7fedca06ba5d2ef761a2ae3d44d8a0917db36994",
+    "production_sources": [
+      {
+        "repository_path": "app/src/main/java/com/osfans/trime/ime/core/BaseInputView.kt",
+        "commit": "7fedca06ba5d2ef761a2ae3d44d8a0917db36994",
+        "evidence": "ime-context-plan-inputs/BaseInputView.kt.txt",
+        "sha256": "3f9c0208ee00e5278931fd914022b66640a2b44afd6913757a4a017ab93d50a6",
+        "bytes": 5501
+      },
+      {
+        "repository_path": "app/src/main/java/com/osfans/trime/ime/core/InputView.kt",
+        "commit": "7fedca06ba5d2ef761a2ae3d44d8a0917db36994",
+        "evidence": "ime-context-plan-inputs/InputView.kt.txt",
+        "sha256": "b43212ae42192f486be5a95e2f5d78a5974e0b85f863510be9468fc8ca236ada",
+        "bytes": 13579
+      },
+      {
+        "repository_path": "app/src/main/java/com/osfans/trime/ime/keyboard/KeyboardView.kt",
+        "commit": "7fedca06ba5d2ef761a2ae3d44d8a0917db36994",
+        "evidence": "ime-context-plan-inputs/KeyboardView.kt.txt",
+        "sha256": "926c6b1839f550974b7afa6ed25b7361cb1d42fee50e1848535b73e6d0460085",
+        "bytes": 3522
+      },
+      {
+        "repository_path": "app/src/main/java/com/osfans/trime/ime/keyboard/KeyboardWindow.kt",
+        "commit": "7fedca06ba5d2ef761a2ae3d44d8a0917db36994",
+        "evidence": "ime-context-plan-inputs/KeyboardWindow.kt.txt",
+        "sha256": "d10e4b1cfc78195f141fa5e14f0aebc629c7e66f6383cff5ccd09dc47e3ccc0f",
+        "bytes": 15419
+      },
+      {
+        "repository_path": "app/src/main/java/com/osfans/trime/ime/core/TrimeInputMethodService.kt",
+        "commit": "7fedca06ba5d2ef761a2ae3d44d8a0917db36994",
+        "evidence": "ime-context-plan-inputs/TrimeInputMethodService.kt.txt",
+        "sha256": "113f1db8725e5cba8491a505533ea1a145fd4e9f85c73c18f284ddca00199cc4",
+        "bytes": 39204
+      }
+    ],
+    "facts": [
+      "BaseInputView constructor exposes val service/rime/scope and val themedContext; no private service lookup is needed.",
+      "InputView DI binds ContextThemeWrapper to themedContext and adds popup.root below actual InputView.",
+      "KeyboardView exposes val popup and val service, and creates KeyView children in keys order assigning id=index.",
+      "KeyboardWindow companion exposes lateinit currentKeyboard; read it only after actual attached KeyboardView/session discovery, never during helper startup.",
+      "TrimeInputMethodService.onCreateInputView can defer; on success it internally replaces/sets input views and returns null, so helper must not call it manually."
+    ],
+    "public_sdk_command": [
+      "/home/xumin/Public/android-toolchain/jdk-17.0.19+10/bin/javap",
+      "-classpath",
+      "/home/xumin/Public/android-toolchain/android-sdk/platforms/android-35/android.jar",
+      "android.view.inspector.WindowInspector",
+      "android.inputmethodservice.InputMethodService",
+      "android.app.Instrumentation",
+      "android.view.MotionEvent",
+      "android.app.Activity"
+    ],
+    "public_sdk_exit": 0,
+    "public_sdk_stdout_file": "ime-context-plan-inputs/sdk35-public-api-javap.txt",
+    "public_sdk_stdout_sha256": "08d621e1305e4bfae2a5183fafa342865b5ef9010289fac2b5d4029c6ab3531a",
+    "public_sdk_stderr_bytes": 0,
+    "verified_sdk_methods": [
+      "WindowInspector.getGlobalWindowViews()",
+      "InputMethodService.getCurrentInputStarted()",
+      "InputMethodService.getCurrentInputConnection()",
+      "InputMethodService.getCurrentInputEditorInfo()",
+      "InputMethodService.isInputViewShown()",
+      "Instrumentation.sendStatus(int, Bundle)",
+      "Instrumentation.sendPointerSync(MotionEvent)",
+      "MotionEvent.setSource(int)",
+      "Activity.onNewIntent(Intent)"
+    ]
+  },
+  "actions": "Read-only git source and public SDK javap plus ignored plan/source-evidence writes only. No helper .kt/manifest written, production modified, build/ADB/emulator/PR/push action performed."
+}

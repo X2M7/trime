@@ -1,0 +1,92 @@
+import groovy.json.JsonOutput
+import java.lang.management.ManagementFactory
+import java.nio.file.Files
+import java.nio.file.StandardOpenOption
+import java.security.MessageDigest
+import java.time.Instant
+
+// Test-only, external observer. Does not set target, dependencies, or task outputs.
+gradle.projectsEvaluated {
+    def projectPath = System.getProperty('trime.spotless.probe.project')
+    def outputPath = System.getProperty('trime.spotless.probe.out')
+    def nonce = System.getProperty('trime.spotless.probe.nonce')
+    if (!projectPath || !outputPath || !(nonce ==~ /[a-zA-Z0-9_-]{16,100}/)) {
+        throw new GradleException('Set probe.project, probe.out and a fresh probe.nonce')
+    }
+    def p = gradle.rootProject
+    if (p.projectDir.canonicalFile != new File(projectPath).canonicalFile) {
+        return // An init script is also evaluated for included builds.
+    }
+    def out = new File(outputPath).canonicalFile
+    if (out.toPath().startsWith(p.projectDir.canonicalFile.toPath())) {
+        throw new GradleException('Evidence must be outside the observed worktree')
+    }
+    if (!out.isDirectory() || new File(out, 'events.jsonl').exists()) {
+        throw new GradleException('Launcher must create a fresh external phase directory')
+    }
+    def sha256 = { File f ->
+        def digest = MessageDigest.getInstance('SHA-256')
+        f.withInputStream { stream ->
+            byte[] buffer = new byte[65536]
+            int n
+            while ((n = stream.read(buffer)) != -1) { digest.update(buffer, 0, n) }
+        }
+        digest.digest().encodeHex().toString()
+    }
+    def filesSnapshot = { Collection<File> files ->
+        files.collect { File f ->
+            if (!f.isFile()) { throw new GradleException('Expected regular source/output file: ' + f) }
+            [path: p.relativePath(f).replace('\\', '/'), bytes: f.length(), sha256: sha256(f)]
+        }.sort { a, b -> a.path <=> b.path }
+    }
+    def sequence = 0
+    def emit = { task, String event ->
+        sequence++
+        def record = [
+            nonce: nonce, sequence: sequence, event: event,
+            task_path: task.path, task_type: task.class.name,
+            project_dir: p.projectDir.canonicalPath,
+            pid: ProcessHandle.current().pid(),
+            jvm_started_ms: ManagementFactory.runtimeMXBean.startTime,
+            utc: Instant.now().toString(), monotonic_ns: System.nanoTime()
+        ]
+        Files.write(new File(out, 'events.jsonl').toPath(),
+            (JsonOutput.toJson(record) + '\n').getBytes('UTF-8'),
+            StandardOpenOption.CREATE, StandardOpenOption.APPEND)
+        task.logger.lifecycle('TRIME_SPOTLESS_EVENT nonce={} seq={} task={} event={}',
+            nonce, sequence, task.path, event)
+        record
+    }
+    p.tasks.named('spotlessKotlin').configure { task ->
+        task.doFirst {
+            def begin = new File(out, 'target-before.json')
+            if (begin.exists()) { throw new GradleException('Refuse to replace previous evidence') }
+            def record = emit(task, 'before')
+            record.target_files = filesSnapshot(task.getTarget().files)
+            record.target_count = record.target_files.size()
+            record.producer_outputs = [
+                'build-logic/convention/build/classes/kotlin/main',
+                'build-logic/convention/build/pluginDescriptors',
+                'build-logic/convention/build/resources/main'
+            ].collect { relative ->
+                def directory = p.file(relative)
+                def files = []
+                if (directory.isDirectory()) {
+                    directory.eachFileRecurse { f -> if (f.isFile()) { files.add(f) } }
+                }
+                [path: relative, file_count: files.size(), files: filesSnapshot(files)]
+            }
+            begin.text = JsonOutput.prettyPrint(JsonOutput.toJson(record)) + '\n'
+        }
+        task.doLast {
+            def record = emit(task, 'after')
+            record.target_files = filesSnapshot(task.getTarget().files)
+            record.target_count = record.target_files.size()
+            new File(out, 'target-after.json').text = JsonOutput.prettyPrint(JsonOutput.toJson(record)) + '\n'
+        }
+    }
+    p.tasks.named('spotlessKotlinCheck').configure { task ->
+        task.doFirst { emit(task, 'before') }
+        task.doLast { emit(task, 'after') }
+    }
+}

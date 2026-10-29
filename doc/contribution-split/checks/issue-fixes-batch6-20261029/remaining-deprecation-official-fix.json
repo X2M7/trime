@@ -1,0 +1,28 @@
+{
+  "utc": "2026-10-29T05:12:41.091885+00:00",
+  "status": "OFFICIAL_FIX_IDENTIFIED_NOT_UPGRADED_OR_EXECUTED",
+  "original_api_snapshot_local_path": "/home/xumin/Public/Trime/build/issue-fixes-batch6-20261029/remaining-deprecation-primary-evidence-summary.json",
+  "original_api_snapshot_sha256": "6311a5cf27bc35c263771a7c46f7e0979f79b922b9e0b84c8b0612f80adc187f",
+  "sources": [
+    {
+      "url": "https://github.com/diffplug/spotless/issues/3099",
+      "finding": "Closed dependency report for Spotless 8.10.2 and Gradle 9.8 setVisible deprecation."
+    },
+    {
+      "url": "https://github.com/diffplug/spotless/pull/3053",
+      "merged_at": "2026-09-14T23:26:16Z",
+      "merge_sha": "8c5de1bfb7157c2f4585afd02f570cfc7b591093",
+      "finding": "Merged fix skips the deprecated visibility call from Gradle 9 onward."
+    },
+    {
+      "url": "https://github.com/diffplug/spotless/releases/tag/gradle/8.10.3",
+      "published_at": "2026-09-25T20:13:34Z",
+      "finding": "Official 8.10.3 release lists the fix."
+    }
+  ],
+  "limits": [
+    "No dependency upgrade or upgraded Gradle task has run in this work unit.",
+    "This is a separate candidate after PR #2206, not a claim that its remaining warnings disappeared.",
+    "No claim that 8.10.3 is latest; only that this published version contains the relevant fix."
+  ]
+}

@@ -1,0 +1,187 @@
+Compiled from "GradleProvisioner.java"
+final class com.diffplug.gradle.spotless.GradleProvisioner {
+  private static final org.slf4j.Logger LOGGER;
+
+  private com.diffplug.gradle.spotless.GradleProvisioner();
+    Code:
+       0: aload_0
+       1: invokespecial #1                  // Method java/lang/Object."<init>":()V
+       4: return
+
+  static com.diffplug.spotless.Provisioner forProject(org.gradle.api.Project);
+    Code:
+       0: aload_0
+       1: aload_0
+       2: invokeinterface #7,  1            // InterfaceMethod org/gradle/api/Project.getConfigurations:()Lorg/gradle/api/artifacts/ConfigurationContainer;
+       7: aload_0
+       8: invokeinterface #13,  1           // InterfaceMethod org/gradle/api/Project.getDependencies:()Lorg/gradle/api/artifacts/dsl/DependencyHandler;
+      13: invokestatic  #17                 // Method forConfigurationContainer:(Lorg/gradle/api/Project;Lorg/gradle/api/artifacts/ConfigurationContainer;Lorg/gradle/api/artifacts/dsl/DependencyHandler;)Lcom/diffplug/spotless/Provisioner;
+      16: areturn
+
+  static com.diffplug.spotless.Provisioner forRootProjectBuildscript(org.gradle.api.Project);
+    Code:
+       0: aload_0
+       1: invokeinterface #23,  1           // InterfaceMethod org/gradle/api/Project.getRootProject:()Lorg/gradle/api/Project;
+       6: astore_1
+       7: aload_1
+       8: invokeinterface #27,  1           // InterfaceMethod org/gradle/api/Project.getBuildscript:()Lorg/gradle/api/initialization/dsl/ScriptHandler;
+      13: astore_2
+      14: aload_1
+      15: aload_2
+      16: invokeinterface #31,  1           // InterfaceMethod org/gradle/api/initialization/dsl/ScriptHandler.getConfigurations:()Lorg/gradle/api/artifacts/ConfigurationContainer;
+      21: aload_2
+      22: invokeinterface #34,  1           // InterfaceMethod org/gradle/api/initialization/dsl/ScriptHandler.getDependencies:()Lorg/gradle/api/artifacts/dsl/DependencyHandler;
+      27: invokestatic  #17                 // Method forConfigurationContainer:(Lorg/gradle/api/Project;Lorg/gradle/api/artifacts/ConfigurationContainer;Lorg/gradle/api/artifacts/dsl/DependencyHandler;)Lcom/diffplug/spotless/Provisioner;
+      30: areturn
+
+  private static com.diffplug.spotless.Provisioner forConfigurationContainer(org.gradle.api.Project, org.gradle.api.artifacts.ConfigurationContainer, org.gradle.api.artifacts.dsl.DependencyHandler);
+    Code:
+       0: aload_2
+       1: aload_1
+       2: aload_0
+       3: invokedynamic #35,  0             // InvokeDynamic #0:provisionWithTransitives:(Lorg/gradle/api/artifacts/dsl/DependencyHandler;Lorg/gradle/api/artifacts/ConfigurationContainer;Lorg/gradle/api/Project;)Lcom/diffplug/spotless/Provisioner;
+       8: areturn
+
+  static java.io.File defaultP2CacheDirectory(org.gradle.api.Project);
+    Code:
+       0: new           #39                 // class java/io/File
+       3: dup
+       4: aload_0
+       5: invokeinterface #41,  1           // InterfaceMethod org/gradle/api/Project.getGradle:()Lorg/gradle/api/invocation/Gradle;
+      10: invokeinterface #45,  1           // InterfaceMethod org/gradle/api/invocation/Gradle.getGradleUserHomeDir:()Ljava/io/File;
+      15: ldc           #51                 // String caches/p2-data
+      17: invokespecial #53                 // Method java/io/File."<init>":(Ljava/io/File;Ljava/lang/String;)V
+      20: areturn
+
+  private static java.util.Set lambda$forConfigurationContainer$2(org.gradle.api.artifacts.dsl.DependencyHandler, org.gradle.api.artifacts.ConfigurationContainer, org.gradle.api.Project, boolean, java.util.Collection);
+    Code:
+       0: new           #56                 // class com/diffplug/gradle/spotless/GradleProvisioner$Request
+       3: dup
+       4: iload_3
+       5: aload         4
+       7: invokespecial #58                 // Method com/diffplug/gradle/spotless/GradleProvisioner$Request."<init>":(ZLjava/util/Collection;)V
+      10: astore        5
+      12: aload         4
+      14: invokeinterface #61,  1           // InterfaceMethod java/util/Collection.stream:()Ljava/util/stream/Stream;
+      19: aload_0
+      20: dup
+      21: invokestatic  #67                 // Method java/util/Objects.requireNonNull:(Ljava/lang/Object;)Ljava/lang/Object;
+      24: pop
+      25: invokedynamic #73,  0             // InvokeDynamic #1:apply:(Lorg/gradle/api/artifacts/dsl/DependencyHandler;)Ljava/util/function/Function;
+      30: invokeinterface #77,  2           // InterfaceMethod java/util/stream/Stream.map:(Ljava/util/function/Function;)Ljava/util/stream/Stream;
+      35: invokedynamic #83,  0             // InvokeDynamic #2:apply:()Ljava/util/function/IntFunction;
+      40: invokeinterface #86,  2           // InterfaceMethod java/util/stream/Stream.toArray:(Ljava/util/function/IntFunction;)[Ljava/lang/Object;
+      45: checkcast     #90                 // class "[Lorg/gradle/api/artifacts/Dependency;"
+      48: astore        6
+      50: aload_1
+      51: aload         6
+      53: invokeinterface #92,  2           // InterfaceMethod org/gradle/api/artifacts/ConfigurationContainer.detachedConfiguration:([Lorg/gradle/api/artifacts/Dependency;)Lorg/gradle/api/artifacts/Configuration;
+      58: astore        7
+      60: aload         7
+      62: aload         5
+      64: invokestatic  #98                 // Method java/lang/String.valueOf:(Ljava/lang/Object;)Ljava/lang/String;
+      67: invokedynamic #104,  0            // InvokeDynamic #3:makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;
+      72: invokeinterface #108,  2          // InterfaceMethod org/gradle/api/artifacts/Configuration.setDescription:(Ljava/lang/String;)Lorg/gradle/api/artifacts/Configuration;
+      77: pop
+      78: aload         7
+      80: iload_3
+      81: invokeinterface #114,  2          // InterfaceMethod org/gradle/api/artifacts/Configuration.setTransitive:(Z)Lorg/gradle/api/artifacts/Configuration;
+      86: pop
+      87: aload         7
+      89: iconst_0
+      90: invokeinterface #118,  2          // InterfaceMethod org/gradle/api/artifacts/Configuration.setCanBeConsumed:(Z)V
+      95: aload         7
+      97: iconst_0
+      98: invokeinterface #122,  2          // InterfaceMethod org/gradle/api/artifacts/Configuration.setVisible:(Z)Lorg/gradle/api/artifacts/Configuration;
+     103: pop
+     104: aload         7
+     106: aload_2
+     107: invokedynamic #125,  0            // InvokeDynamic #4:execute:(Lorg/gradle/api/Project;)Lorg/gradle/api/Action;
+     112: invokeinterface #129,  2          // InterfaceMethod org/gradle/api/artifacts/Configuration.attributes:(Lorg/gradle/api/Action;)Ljava/lang/Object;
+     117: pop
+     118: aload         7
+     120: invokeinterface #133,  1          // InterfaceMethod org/gradle/api/artifacts/Configuration.resolve:()Ljava/util/Set;
+     125: areturn
+     126: astore        5
+     128: aload_2
+     129: invokeinterface #139,  1          // InterfaceMethod org/gradle/api/Project.getPath:()Ljava/lang/String;
+     134: iconst_1
+     135: invokevirtual #143                // Method java/lang/String.substring:(I)Ljava/lang/String;
+     138: bipush        58
+     140: bipush        47
+     142: invokevirtual #147                // Method java/lang/String.replace:(CC)Ljava/lang/String;
+     145: astore        6
+     147: aload         6
+     149: invokevirtual #151                // Method java/lang/String.isEmpty:()Z
+     152: ifne          164
+     155: aload         6
+     157: invokedynamic #155,  0            // InvokeDynamic #5:makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;
+     162: astore        6
+     164: new           #156                // class org/gradle/api/GradleException
+     167: dup
+     168: ldc           #158                // String You need to add a repository containing the \'%s\' artifact in \'%sbuild.gradle\'.%nE.g.: \'repositories { mavenCentral() }\'
+     170: iconst_2
+     171: anewarray     #2                  // class java/lang/Object
+     174: dup
+     175: iconst_0
+     176: aload         4
+     178: aastore
+     179: dup
+     180: iconst_1
+     181: aload         6
+     183: aastore
+     184: invokestatic  #160                // Method java/lang/String.format:(Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;
+     187: aload         5
+     189: invokespecial #164                // Method org/gradle/api/GradleException."<init>":(Ljava/lang/String;Ljava/lang/Throwable;)V
+     192: athrow
+    Exception table:
+       from    to  target type
+           0   125   126   Class java/lang/Exception
+
+  private static void lambda$forConfigurationContainer$1(org.gradle.api.Project, org.gradle.api.attributes.AttributeContainer);
+    Code:
+       0: aload_1
+       1: getstatic     #167                // Field org/gradle/api/attributes/Category.CATEGORY_ATTRIBUTE:Lorg/gradle/api/attributes/Attribute;
+       4: aload_0
+       5: invokeinterface #173,  1          // InterfaceMethod org/gradle/api/Project.getObjects:()Lorg/gradle/api/model/ObjectFactory;
+      10: ldc           #168                // class org/gradle/api/attributes/Category
+      12: ldc           #177                // String library
+      14: invokeinterface #179,  3          // InterfaceMethod org/gradle/api/model/ObjectFactory.named:(Ljava/lang/Class;Ljava/lang/String;)Lorg/gradle/api/Named;
+      19: checkcast     #168                // class org/gradle/api/attributes/Category
+      22: invokeinterface #185,  3          // InterfaceMethod org/gradle/api/attributes/AttributeContainer.attribute:(Lorg/gradle/api/attributes/Attribute;Ljava/lang/Object;)Lorg/gradle/api/attributes/AttributeContainer;
+      27: pop
+      28: aload_1
+      29: getstatic     #191                // Field org/gradle/api/attributes/Bundling.BUNDLING_ATTRIBUTE:Lorg/gradle/api/attributes/Attribute;
+      32: aload_0
+      33: invokeinterface #173,  1          // InterfaceMethod org/gradle/api/Project.getObjects:()Lorg/gradle/api/model/ObjectFactory;
+      38: ldc           #192                // class org/gradle/api/attributes/Bundling
+      40: ldc           #196                // String external
+      42: invokeinterface #179,  3          // InterfaceMethod org/gradle/api/model/ObjectFactory.named:(Ljava/lang/Class;Ljava/lang/String;)Lorg/gradle/api/Named;
+      47: checkcast     #192                // class org/gradle/api/attributes/Bundling
+      50: invokeinterface #185,  3          // InterfaceMethod org/gradle/api/attributes/AttributeContainer.attribute:(Lorg/gradle/api/attributes/Attribute;Ljava/lang/Object;)Lorg/gradle/api/attributes/AttributeContainer;
+      55: pop
+      56: aload_1
+      57: getstatic     #198                // Field org/gradle/api/attributes/java/TargetJvmEnvironment.TARGET_JVM_ENVIRONMENT_ATTRIBUTE:Lorg/gradle/api/attributes/Attribute;
+      60: aload_0
+      61: invokeinterface #173,  1          // InterfaceMethod org/gradle/api/Project.getObjects:()Lorg/gradle/api/model/ObjectFactory;
+      66: ldc           #199                // class org/gradle/api/attributes/java/TargetJvmEnvironment
+      68: ldc           #203                // String standard-jvm
+      70: invokeinterface #179,  3          // InterfaceMethod org/gradle/api/model/ObjectFactory.named:(Ljava/lang/Class;Ljava/lang/String;)Lorg/gradle/api/Named;
+      75: checkcast     #199                // class org/gradle/api/attributes/java/TargetJvmEnvironment
+      78: invokeinterface #185,  3          // InterfaceMethod org/gradle/api/attributes/AttributeContainer.attribute:(Lorg/gradle/api/attributes/Attribute;Ljava/lang/Object;)Lorg/gradle/api/attributes/AttributeContainer;
+      83: pop
+      84: return
+
+  private static org.gradle.api.artifacts.Dependency[] lambda$forConfigurationContainer$0(int);
+    Code:
+       0: iload_0
+       1: anewarray     #205                // class org/gradle/api/artifacts/Dependency
+       4: areturn
+
+  static {};
+    Code:
+       0: ldc           #18                 // class com/diffplug/gradle/spotless/GradleProvisioner
+       2: invokestatic  #207                // Method org/slf4j/LoggerFactory.getLogger:(Ljava/lang/Class;)Lorg/slf4j/Logger;
+       5: putstatic     #213                // Field LOGGER:Lorg/slf4j/Logger;
+       8: return
+}

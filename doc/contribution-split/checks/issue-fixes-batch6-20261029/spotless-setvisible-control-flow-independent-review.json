@@ -1,0 +1,46 @@
+{
+  "status": "STATIC_CONTROL_FLOW_REVIEW_CORRECTS_CALL_SITE_ONLY_INFERENCE",
+  "utc": "2026-10-29T05:09:13.162823+00:00",
+  "pinned_current_gradle": "9.8.1",
+  "findings": [
+    {
+      "version": "8.10.2",
+      "jar_sha256_verified": true,
+      "disassembly_sha256_verified": true,
+      "javap_sha256": "54566526fa70592d1c913db8c650ef8d5efb7e22d586ad4d945b8858cff676f8",
+      "control_flow_excerpt": "      77: pop\n      78: aload         7\n      80: iload_3\n      81: invokeinterface #114,  2          // InterfaceMethod org/gradle/api/artifacts/Configuration.setTransitive:(Z)Lorg/gradle/api/artifacts/Configuration;\n      86: pop\n      87: aload         7\n      89: iconst_0\n      90: invokeinterface #118,  2          // InterfaceMethod org/gradle/api/artifacts/Configuration.setCanBeConsumed:(Z)V\n      95: aload         7\n      97: iconst_0\n      98: invokeinterface #122,  2          // InterfaceMethod org/gradle/api/artifacts/Configuration.setVisible:(Z)Lorg/gradle/api/artifacts/Configuration;\n     103: pop\n     104: aload         7",
+      "setVisible_instruction_still_present": true,
+      "conditional_skip_for_current_gradle_ge_9_0_0": false,
+      "relevant_instructions": "95 aload7;97 iconst0;98 invokeinterface setVisible (no Gradle version guard)"
+    },
+    {
+      "version": "8.10.3",
+      "jar_sha256_verified": true,
+      "disassembly_sha256_verified": true,
+      "javap_sha256": "ddc46ead52060e3e844653a7957fdb789025dd637799e0a143bd4f2af837549f",
+      "control_flow_excerpt": "      87: aload         7\n      89: iconst_0\n      90: invokeinterface #118,  2          // InterfaceMethod org/gradle/api/artifacts/Configuration.setCanBeConsumed:(Z)V\n      95: invokestatic  #122                // Method org/gradle/util/GradleVersion.current:()Lorg/gradle/util/GradleVersion;\n      98: ldc           #128                // String 9.0.0\n     100: invokestatic  #130                // Method org/gradle/util/GradleVersion.version:(Ljava/lang/String;)Lorg/gradle/util/GradleVersion;\n     103: invokevirtual #134                // Method org/gradle/util/GradleVersion.compareTo:(Lorg/gradle/util/GradleVersion;)I\n     106: ifge          118\n     109: aload         7\n     111: iconst_0\n     112: invokeinterface #138,  2          // InterfaceMethod org/gradle/api/artifacts/Configuration.setVisible:(Z)Lorg/gradle/api/artifacts/Configuration;\n     117: pop\n     118: aload         7",
+      "setVisible_instruction_still_present": true,
+      "conditional_skip_for_current_gradle_ge_9_0_0": true,
+      "relevant_instructions": "95 current();98 ldc9.0.0;100 version();103 compareTo();106 ifge118;112 setVisible;118 continuation"
+    },
+    {
+      "version": "8.10.4",
+      "jar_sha256_verified": true,
+      "disassembly_sha256_verified": true,
+      "javap_sha256": "ddc46ead52060e3e844653a7957fdb789025dd637799e0a143bd4f2af837549f",
+      "control_flow_excerpt": "      87: aload         7\n      89: iconst_0\n      90: invokeinterface #118,  2          // InterfaceMethod org/gradle/api/artifacts/Configuration.setCanBeConsumed:(Z)V\n      95: invokestatic  #122                // Method org/gradle/util/GradleVersion.current:()Lorg/gradle/util/GradleVersion;\n      98: ldc           #128                // String 9.0.0\n     100: invokestatic  #130                // Method org/gradle/util/GradleVersion.version:(Ljava/lang/String;)Lorg/gradle/util/GradleVersion;\n     103: invokevirtual #134                // Method org/gradle/util/GradleVersion.compareTo:(Lorg/gradle/util/GradleVersion;)I\n     106: ifge          118\n     109: aload         7\n     111: iconst_0\n     112: invokeinterface #138,  2          // InterfaceMethod org/gradle/api/artifacts/Configuration.setVisible:(Z)Lorg/gradle/api/artifacts/Configuration;\n     117: pop\n     118: aload         7",
+      "setVisible_instruction_still_present": true,
+      "conditional_skip_for_current_gradle_ge_9_0_0": true,
+      "relevant_instructions": "95 current();98 ldc9.0.0;100 version();103 compareTo();106 ifge118;112 setVisible;118 continuation"
+    }
+  ],
+  "conclusion": "8.10.2 calls setVisible(false) without a Gradle-version guard in this method. 8.10.3 and 8.10.4 retain the instruction, but skip it when GradleVersion.current().compareTo(GradleVersion.version(\"9.0.0\")) >= 0. On the pinned Gradle 9.8.1 that branch skips the setVisible call. Instruction presence alone cannot establish the call executes or that upgrading cannot remove this warning.",
+  "next_step": "A separate source-bound dependency upgrade A/B may be worth verifying after #2206, preserving all formatter coverage and raw warnings. No remote-latest or actual upgrade-success claim.",
+  "limits": [
+    "No Gradle execution or dependency upgrade performed by this independent review.",
+    "Bytecode control flow is static evidence; it does not prove every retained warning originates in this class.",
+    "This optional finding is separate from #2206 formatter-output scope acceptance and must not be used to block its valid three-warning fix."
+  ],
+  "production_changes": 0,
+  "gradle_invocations": 0
+}

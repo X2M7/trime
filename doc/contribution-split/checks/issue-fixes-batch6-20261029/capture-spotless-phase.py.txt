@@ -1,0 +1,67 @@
+#!/usr/bin/env python3
+"""Run one external, source-bound Spotless phase; Root controls serial scheduling."""
+import argparse
+import datetime
+import hashlib
+import json
+import os
+from pathlib import Path
+import subprocess
+import uuid
+
+p = argparse.ArgumentParser(description=__doc__)
+p.add_argument('--worktree', required=True, type=Path)
+p.add_argument('--phase-dir', required=True, type=Path)
+p.add_argument('--mode', choices=['baseline', 'candidate'], required=True)
+p.add_argument('--jvmargs', required=True)
+a = p.parse_args()
+w, out = a.worktree.resolve(), a.phase_dir.resolve()
+here = Path(__file__).resolve().parent
+observer = here / 'spotless-observe.init.gradle'
+assert not out.exists(), 'Keep prior attempts; choose a fresh phase directory'
+assert not out.is_relative_to(w), 'Evidence must be outside the worktree'
+assert w.is_dir() and observer.is_file()
+out.mkdir(parents=True)
+(out / 'observer.init.gradle').write_bytes(observer.read_bytes())
+(out / 'capture-spotless-phase.py').write_bytes(Path(__file__).read_bytes())
+frozen_observer = out / 'observer.init.gradle'
+
+def git(*args):
+    return subprocess.check_output(['git', *args], cwd=w)
+
+def digest(path):
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+def snapshot():
+    tracked = sorted(x for x in git('ls-files', '-z').decode().split('\0') if x.endswith(('.kt', '.kts')))
+    return {
+        'head': git('rev-parse', 'HEAD').decode().strip(),
+        'status_porcelain': git('status', '--short').decode(),
+        'diff_sha256': hashlib.sha256(git('diff', '--binary', 'HEAD')).hexdigest(),
+        'tracked_files': [{'path': x, 'bytes': (w / x).stat().st_size, 'sha256': digest(w / x)} for x in tracked],
+    }
+
+nonce = uuid.uuid4().hex
+cmd = [str(w / 'gradlew'), ':spotlessKotlin', '--rerun', ':spotlessKotlinCheck', '--rerun',
+       '--warning-mode=all', '--info', '--no-build-cache', '--no-configuration-cache',
+       '--offline', '--no-daemon', '--max-workers=1', '--no-parallel', '--console=plain',
+       '-I', str(frozen_observer), '-Dtrime.spotless.probe.project=' + str(w),
+       '-Dtrime.spotless.probe.out=' + str(out), '-Dtrime.spotless.probe.nonce=' + nonce,
+       '-Dorg.gradle.jvmargs=' + a.jvmargs]
+invocation = {
+    'nonce': nonce, 'mode': a.mode, 'worktree': str(w), 'phase_dir': str(out),
+    'started_utc': datetime.datetime.now(datetime.timezone.utc).isoformat(),
+    'argv': cmd, 'observer_sha256': digest(observer), 'launcher_sha256': digest(Path(__file__)),
+    'java_home': os.environ.get('JAVA_HOME'), 'source_before': snapshot(),
+}
+(out / 'invocation.json').write_text(json.dumps(invocation, indent=2) + '\n')
+(out / 'source-before.diff').write_bytes(git('diff', '--binary', 'HEAD'))
+with (out / 'gradle.log').open('wb') as log:
+    result = subprocess.run(cmd, cwd=w, stdout=log, stderr=subprocess.STDOUT)
+(out / 'exit-code.txt').write_text(str(result.returncode) + '\n')
+(out / 'completion.json').write_text(json.dumps({
+    'nonce': nonce, 'exit_code': result.returncode,
+    'finished_utc': datetime.datetime.now(datetime.timezone.utc).isoformat(),
+    'source_after': snapshot(),
+}, indent=2) + '\n')
+raise SystemExit(result.returncode)

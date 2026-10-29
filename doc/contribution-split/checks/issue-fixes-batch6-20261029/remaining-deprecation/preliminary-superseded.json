@@ -1,0 +1,86 @@
+{
+  "utc": "2026-10-29T05:08:43.720438+00:00",
+  "status": "STATIC_DEPENDENCY_CALL_SITE_CONFIRMED_NOT_RUNTIME_STACK_TRACE",
+  "base_sha": "7fedca06ba5d2ef761a2ae3d44d8a0917db36994",
+  "pinned_spotless_version": "8.10.2",
+  "catalog_git_blob_sha256": "525db33e479d7c248b5c4030bbf3c525cf5e6171219d4f1324d934035414c135",
+  "call_site": "GradleProvisioner.lambda$forConfigurationContainer$2 creates a detached configuration, calls setCanBeConsumed(false), then setVisible(false), then resolves it.",
+  "versions": [
+    {
+      "cached_version": "8.10.2",
+      "jar_path": "/home/xumin/.gradle/caches/modules-2/files-2.1/com.diffplug.spotless/spotless-plugin-gradle/8.10.2/c40b3890783ef5eac4e6389094134b4733ffb597/spotless-plugin-gradle-8.10.2.jar",
+      "jar_sha256": "bd1d47e81838ff94251b382133141a062343790164a6589d1f1b90d6c420c2c9",
+      "javap_argv": [
+        "/home/xumin/Public/android-toolchain/jdk-17.0.19+10/bin/javap",
+        "-c",
+        "-p",
+        "-classpath",
+        "/home/xumin/.gradle/caches/modules-2/files-2.1/com.diffplug.spotless/spotless-plugin-gradle/8.10.2/c40b3890783ef5eac4e6389094134b4733ffb597/spotless-plugin-gradle-8.10.2.jar",
+        "com.diffplug.gradle.spotless.GradleProvisioner"
+      ],
+      "javap_exit_code": 0,
+      "javap_file": "remaining-deprecation/8.10.2.javap.txt",
+      "javap_sha256": "54566526fa70592d1c913db8c650ef8d5efb7e22d586ad4d945b8858cff676f8",
+      "invokeinterface_calls": [
+        {
+          "line": 95,
+          "text": "98: invokeinterface #122,  2          // InterfaceMethod org/gradle/api/artifacts/Configuration.setVisible:(Z)Lorg/gradle/api/artifacts/Configuration;"
+        }
+      ],
+      "gradle_execution_for_this_investigation": false
+    },
+    {
+      "cached_version": "8.10.3",
+      "jar_path": "/home/xumin/.gradle/caches/modules-2/files-2.1/com.diffplug.spotless/spotless-plugin-gradle/8.10.3/7bc46e6c4549a120907bdeaca438839ab110f2db/spotless-plugin-gradle-8.10.3.jar",
+      "jar_sha256": "00f8ee5853c6d12f89ece6203ec2b08bf0e1c98854625d4cc8d39b87b2330228",
+      "javap_argv": [
+        "/home/xumin/Public/android-toolchain/jdk-17.0.19+10/bin/javap",
+        "-c",
+        "-p",
+        "-classpath",
+        "/home/xumin/.gradle/caches/modules-2/files-2.1/com.diffplug.spotless/spotless-plugin-gradle/8.10.3/7bc46e6c4549a120907bdeaca438839ab110f2db/spotless-plugin-gradle-8.10.3.jar",
+        "com.diffplug.gradle.spotless.GradleProvisioner"
+      ],
+      "javap_exit_code": 0,
+      "javap_file": "remaining-deprecation/8.10.3.javap.txt",
+      "javap_sha256": "ddc46ead52060e3e844653a7957fdb789025dd637799e0a143bd4f2af837549f",
+      "invokeinterface_calls": [
+        {
+          "line": 100,
+          "text": "112: invokeinterface #138,  2          // InterfaceMethod org/gradle/api/artifacts/Configuration.setVisible:(Z)Lorg/gradle/api/artifacts/Configuration;"
+        }
+      ],
+      "gradle_execution_for_this_investigation": false
+    },
+    {
+      "cached_version": "8.10.4",
+      "jar_path": "/home/xumin/.gradle/caches/modules-2/files-2.1/com.diffplug.spotless/spotless-plugin-gradle/8.10.4/ca2351456f09d6c7105c8d5dda5fee03d8a1066e/spotless-plugin-gradle-8.10.4.jar",
+      "jar_sha256": "fab4152714c6087e36fd676c58ad15a5beaf71daea557b3e021950723284ccd7",
+      "javap_argv": [
+        "/home/xumin/Public/android-toolchain/jdk-17.0.19+10/bin/javap",
+        "-c",
+        "-p",
+        "-classpath",
+        "/home/xumin/.gradle/caches/modules-2/files-2.1/com.diffplug.spotless/spotless-plugin-gradle/8.10.4/ca2351456f09d6c7105c8d5dda5fee03d8a1066e/spotless-plugin-gradle-8.10.4.jar",
+        "com.diffplug.gradle.spotless.GradleProvisioner"
+      ],
+      "javap_exit_code": 0,
+      "javap_file": "remaining-deprecation/8.10.4.javap.txt",
+      "javap_sha256": "ddc46ead52060e3e844653a7957fdb789025dd637799e0a143bd4f2af837549f",
+      "invokeinterface_calls": [
+        {
+          "line": 100,
+          "text": "112: invokeinterface #138,  2          // InterfaceMethod org/gradle/api/artifacts/Configuration.setVisible:(Z)Lorg/gradle/api/artifacts/Configuration;"
+        }
+      ],
+      "gradle_execution_for_this_investigation": false
+    }
+  ],
+  "actual_warning_evidence": "spotless-baseline2/gradle.log and spotless-candidate1/gradle.log each retain one Configuration.setVisible(boolean) deprecation.",
+  "limits": [
+    "Class disassembly establishes actual calls in these cached plugin JARs, not a runtime stack trace linking every deprecation to this one class.",
+    "No dependency upgrade or Gradle execution for 8.10.3/8.10.4 was performed; no claim about latest remote version.",
+    "Blindly upgrading to either inspected cached JAR would not remove this call site; do not suppress warnings or patch dependency JARs.",
+    "No application source change, device test, or separate PR is claimed. This is not part of PR #2206."
+  ]
+}

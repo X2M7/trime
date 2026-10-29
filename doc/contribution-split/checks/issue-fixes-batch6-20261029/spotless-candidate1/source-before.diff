@@ -1,0 +1,12 @@
+diff --git a/build.gradle.kts b/build.gradle.kts
+index 5d54a397..ea6dfaa5 100644
+--- a/build.gradle.kts
++++ b/build.gradle.kts
+@@ -16,6 +16,7 @@ plugins {
+ spotless {
+     kotlin {
+         target("**/*.kt", "**/*.kts")
++        targetExclude("build-logic/convention/build/**")
+         ktlint("1.8.0")
+     }
+ }

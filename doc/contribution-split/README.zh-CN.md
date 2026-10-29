@@ -118,6 +118,22 @@ v2 两次 native 会话正常销毁，逻辑主题偏好、默认 Latin 输入�
 
 另外冻结三项后续调查：[真实 IME 主题上下文](checks/issue-fixes-batch5-20261029/production-context-investigation.json)仍待实际窗口取证，裸测试 Context 的 AppCompat 日志不足以证明生产缺陷；[Spotless 排除 included-build 输出](checks/issue-fixes-batch5-20261029/spotless-plan.json)仅为待执行的 A/B 方案，明确当前基线 293 个 Kotlin 文件与历史分支 294 个文件的差别；[不完整弹出网格](checks/issue-fixes-batch5-20261029/popup-grid-investigation.json)需同时处理可见排列与命中映射，尚未提交推测性的取整修复。这些调查不混入 #2205。
 
+### 第六批：消除格式检查的三条跨构建警告（2026-10-29）
+
+新增 [#2206](https://github.com/osfans/trime/pull/2206)，源码 `a2fe7e79`、分支 `contrib/fix-spotless-build-output`、基线 `7fedca06`，仅根 `build.gradle.kts` 新增一行 `targetExclude("build-logic/convention/build/**")`。Spotless 对字符串目标的默认排除覆盖根项目及普通子项目的构建目录，却未覆盖独立的 convention build；现仅排除它的默认输出目录，原目标模式、格式规则和源码范围保持。未找到这三条警告的直接 issue，PR 明确为 #2205 验证告警的后续，不把不同的 #2121 Lint 依赖问题挂成 Fixes。证据冻结时 PR 仍为 Draft，发布校验后更新正式待审回执。
+
+[本地实际 A/B](checks/issue-fixes-batch6-20261029/local-validation.json)使用 Gradle 9.8.1／Spotless 8.10.2、单 worker，Formatter 与 Check 两项任务的四个动作、同次 nonce／JVM 及全量非增量执行均留证。A2／B1 的目标均为 **293 个真实 Git Kotlin 文件**，路径全部相同，只有待修的根脚本增加一行；提交后的 293 个 Git blob 与已测试字节逐一相同。三个 producer 目录的 **47 个输出文件**保留原路径、尺寸和 SHA；未靠清空输出获得结果。[三条警告从 3 降为 0](checks/issue-fixes-batch6-20261029/local-diagnostic-excerpts.json)，另一条 `Configuration.setVisible(boolean)` 弃用诊断及全部原日志保留。[独立 A/B 复核](checks/issue-fixes-batch6-20261029/spotless-ab-independent-review.json)、[提交绑定](checks/issue-fixes-batch6-20261029/spotless-committed-independent-review.json)和[最终资格审核](checks/issue-fixes-batch6-20261029/final-independent-review.json)分列。
+
+首次 A1 在任何 Formatter／Check 动作之前因缺少配置偏好的 NDK 28.2 失败，原日志、退出 1 和源码快照保留，不算通过。后续通过上游支持的 `app/prebuilt` 路径复用已核验原 CI APK 的真实 x86_64 库，使纯格式任务可以配置；A2／B1 均成功，**没有临时修改 SDK 源码**，也不声称本地新编译或验收 native。768 MiB 堆／768 MiB Metaspace、1 GiB 可用内存保护下，两次通过阶段的最低宿主可用内存约 5.03／4.54 GiB；保护未触发，无本轮模拟器或构建残留，文件索引保持运行。
+
+新 [5/5 云端 CI](https://github.com/osfans/trime/actions/runs/40820471270)全部通过，[汇总与实际源码树绑定](checks/issue-fixes-batch6-20261029/cloud/pr-2206/ci-summary.json)列明真实执行任务和原产物；[原生构建记录](checks/issue-fixes-batch6-20261029/cloud/final-ci-observations.json)确认 Ubuntu 缓存未命中且四 ABI 实际配置／编译，其他三平台命中 JNI 缓存，告警按原日志保留。工作流未导出 JUnit XML，不编造本轮精确用例数，也不复用上轮 331 条当作新本地执行。本次只改格式输入配置，没有启动模拟器或宣称应用窗口／真机／Release 验收。**不是全项目零警告**：本地保留上述另一项弃用，[云端工具／固定依赖诊断](checks/issue-fixes-batch6-20261029/cloud/pr-2206/warning-context-review.json)另按实际日志复核，没有屏蔽或隐藏。
+
+本轮同时冻结三个后续事项：[高度 #1316](checks/issue-fixes-batch6-20261029/height-investigation.json)需要明确自然高度、单位及窗口传播契约，不能用任意默认值宣称修好；[弹出网格容量／空槽／命中](checks/issue-fixes-batch6-20261029/popup-grid-next-review.json)需先实测并区分既有拖动阈值，不关联只处理标签的 #2033；[真实 IME 主题上下文诊断](checks/issue-fixes-batch6-20261029/ime-context-next-probe-plan.json)为下一单元的执行设计，尚未实现、编译或运行，生产主题缺陷仍未证实。这些未验收内容不混入 #2206。
+
+[剩余 Spotless 弃用调查](checks/issue-fixes-batch6-20261029/spotless-remaining-deprecation-review.json)已核对本地三版 JAR 的真实字节码：8.10.2 无条件调用 `setVisible(false)`，8.10.3／8.10.4 在 Gradle >= 9 时跳过该调用，属于后续可单独验证的升级候选；本轮未实施升级，不能声称其告警已消除。[独立控制流复核](checks/issue-fixes-batch6-20261029/spotless-setvisible-control-flow-independent-review.json)及纠正前的静态扫描原件均保留。
+
+[OpenCC 后续调查](checks/issue-fixes-batch6-20261029/opencc-packaging-next-review.json)确认固定原始 CI APK 中有五个配置引用缺失词典，需单独修正固定版本的 host 生成与打包闭包；本轮没有运行转换或提交修复，也不把历史 Rime `Encode failure` 归因为这一缺件。
+
 ### 先跟进已有 PR，避免重复
 
 09:34 快照中 [7 项 PR 的源码身份、覆盖与排除范围](checks/issue-triage-20261028/existing-pr-overlap.json)已核对正文；待审不等于已合并。

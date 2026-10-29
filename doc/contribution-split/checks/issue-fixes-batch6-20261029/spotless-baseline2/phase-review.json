@@ -1,0 +1,82 @@
+{
+  "status": "PASS_SCOPED_PHASE",
+  "nonce": "43a4c8950e18466e954c383c42b0d132",
+  "mode": "baseline",
+  "head": "7fedca06ba5d2ef761a2ae3d44d8a0917db36994",
+  "tracked_count": 293,
+  "target_count": 293,
+  "tracked_counts_by_top_level": {
+    "app": 277,
+    "build-logic": 12,
+    "build.gradle.kts": 1,
+    "codegen": 2,
+    "settings.gradle.kts": 1
+  },
+  "tracked_paths_sha256": "5eb2800dd4283d2f6de003432e80b2e41018789cc27df36ebbb61ba66648feb8",
+  "source_inventory_sha256": "bd73edb30018cabc7cfc0688590780d42666950753067f1a5be6edc655801528",
+  "warning_line_count": 3,
+  "producer_tasks": [
+    ":build-logic:convention:compileKotlin",
+    ":build-logic:convention:pluginDescriptors",
+    ":build-logic:convention:processResources"
+  ],
+  "warning_lines": [
+    "Producing a file in one build and consuming it in another build without declaring an explicit dependency has been deprecated. This will fail with an error in Gradle 10. Gradle detected a problem with the following location: '/home/xumin/Public/Trime-pr-spotless-build-output-20261029'. Task ':spotlessKotlin' uses this output of task ':build-logic:convention:compileKotlin' without declaring an explicit or implicit dependency. This can lead to incorrect results being produced, depending on what order the tasks are executed. For more information, please refer to https://docs.gradle.org/9.8.1/userguide/validation_problems.html#implicit_dependency in the Gradle documentation.",
+    "Producing a file in one build and consuming it in another build without declaring an explicit dependency has been deprecated. This will fail with an error in Gradle 10. Gradle detected a problem with the following location: '/home/xumin/Public/Trime-pr-spotless-build-output-20261029'. Task ':spotlessKotlin' uses this output of task ':build-logic:convention:pluginDescriptors' without declaring an explicit or implicit dependency. This can lead to incorrect results being produced, depending on what order the tasks are executed. For more information, please refer to https://docs.gradle.org/9.8.1/userguide/validation_problems.html#implicit_dependency in the Gradle documentation.",
+    "Producing a file in one build and consuming it in another build without declaring an explicit dependency has been deprecated. This will fail with an error in Gradle 10. Gradle detected a problem with the following location: '/home/xumin/Public/Trime-pr-spotless-build-output-20261029'. Task ':spotlessKotlin' uses this output of task ':build-logic:convention:processResources' without declaring an explicit or implicit dependency. This can lead to incorrect results being produced, depending on what order the tasks are executed. For more information, please refer to https://docs.gradle.org/9.8.1/userguide/validation_problems.html#implicit_dependency in the Gradle documentation."
+  ],
+  "actual_task_action_events": [
+    {
+      "nonce": "43a4c8950e18466e954c383c42b0d132",
+      "sequence": 1,
+      "event": "before",
+      "task_path": ":spotlessKotlin",
+      "task_type": "com.diffplug.gradle.spotless.SpotlessTaskImpl_Decorated",
+      "project_dir": "/home/xumin/Public/Trime-pr-spotless-build-output-20261029",
+      "pid": 409121,
+      "jvm_started_ms": 1793249535985,
+      "utc": "2026-10-29T04:52:37.058355339Z",
+      "monotonic_ns": 120050558612791
+    },
+    {
+      "nonce": "43a4c8950e18466e954c383c42b0d132",
+      "sequence": 2,
+      "event": "after",
+      "task_path": ":spotlessKotlin",
+      "task_type": "com.diffplug.gradle.spotless.SpotlessTaskImpl_Decorated",
+      "project_dir": "/home/xumin/Public/Trime-pr-spotless-build-output-20261029",
+      "pid": 409121,
+      "jvm_started_ms": 1793249535985,
+      "utc": "2026-10-29T04:52:54.499556782Z",
+      "monotonic_ns": 120067996379203
+    },
+    {
+      "nonce": "43a4c8950e18466e954c383c42b0d132",
+      "sequence": 3,
+      "event": "before",
+      "task_path": ":spotlessKotlinCheck",
+      "task_type": "com.diffplug.gradle.spotless.SpotlessCheck_Decorated",
+      "project_dir": "/home/xumin/Public/Trime-pr-spotless-build-output-20261029",
+      "pid": 409121,
+      "jvm_started_ms": 1793249535985,
+      "utc": "2026-10-29T04:52:54.655600988Z",
+      "monotonic_ns": 120068151904940
+    },
+    {
+      "nonce": "43a4c8950e18466e954c383c42b0d132",
+      "sequence": 4,
+      "event": "after",
+      "task_path": ":spotlessKotlinCheck",
+      "task_type": "com.diffplug.gradle.spotless.SpotlessCheck_Decorated",
+      "project_dir": "/home/xumin/Public/Trime-pr-spotless-build-output-20261029",
+      "pid": 409121,
+      "jvm_started_ms": 1793249535985,
+      "utc": "2026-10-29T04:52:54.663841715Z",
+      "monotonic_ns": 120068160345169
+    }
+  ],
+  "all_other_warnings_retained_in_original_log": true,
+  "log_sha256": "1d7c7326b63a1064bc2aa35efbd10e46bb79f874f94a7340083a744a77a15c69",
+  "failures": [],
+  "scope": "Bounded local formatter/check phase only; no all-warning, app-build, tests, lint, native, device or CI acceptance claim."
+}
