@@ -120,7 +120,7 @@ v2 两次 native 会话正常销毁，逻辑主题偏好、默认 Latin 输入�
 
 ### 第六批：消除格式检查的三条跨构建警告（2026-10-29）
 
-新增 [#2206](https://github.com/osfans/trime/pull/2206)，源码 `a2fe7e79`、分支 `contrib/fix-spotless-build-output`、基线 `7fedca06`，仅根 `build.gradle.kts` 新增一行 `targetExclude("build-logic/convention/build/**")`。Spotless 对字符串目标的默认排除覆盖根项目及普通子项目的构建目录，却未覆盖独立的 convention build；现仅排除它的默认输出目录，原目标模式、格式规则和源码范围保持。未找到这三条警告的直接 issue，PR 明确为 #2205 验证告警的后续，不把不同的 #2121 Lint 依赖问题挂成 Fixes。证据冻结时 PR 仍为 Draft，发布校验后更新正式待审回执。
+新增 [#2206](https://github.com/osfans/trime/pull/2206)，源码 `a2fe7e79`、分支 `contrib/fix-spotless-build-output`、基线 `7fedca06`，仅根 `build.gradle.kts` 新增一行 `targetExclude("build-logic/convention/build/**")`。Spotless 对字符串目标的默认排除覆盖根项目及普通子项目的构建目录，却未覆盖独立的 convention build；现仅排除它的默认输出目录，原目标模式、格式规则和源码范围保持。未找到这三条警告的直接 issue，PR 明确为 #2205 验证告警的后续，不把不同的 #2121 Lint 依赖问题挂成 Fixes。PR 已为 **Open／Ready for review**，[实际回执](checks/issue-fixes-batch6-20261029/publication/ready-receipt.json)确认源码头、标题及说明全文读回一致；未合并或发布稳定版。
 
 [本地实际 A/B](checks/issue-fixes-batch6-20261029/local-validation.json)使用 Gradle 9.8.1／Spotless 8.10.2、单 worker，Formatter 与 Check 两项任务的四个动作、同次 nonce／JVM 及全量非增量执行均留证。A2／B1 的目标均为 **293 个真实 Git Kotlin 文件**，路径全部相同，只有待修的根脚本增加一行；提交后的 293 个 Git blob 与已测试字节逐一相同。三个 producer 目录的 **47 个输出文件**保留原路径、尺寸和 SHA；未靠清空输出获得结果。[三条警告从 3 降为 0](checks/issue-fixes-batch6-20261029/local-diagnostic-excerpts.json)，另一条 `Configuration.setVisible(boolean)` 弃用诊断及全部原日志保留。[独立 A/B 复核](checks/issue-fixes-batch6-20261029/spotless-ab-independent-review.json)、[提交绑定](checks/issue-fixes-batch6-20261029/spotless-committed-independent-review.json)和[最终资格审核](checks/issue-fixes-batch6-20261029/final-independent-review.json)分列。
 
