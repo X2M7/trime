@@ -1,0 +1,65 @@
+{
+  "schema": 1,
+  "status": "PREPARED_NOT_EXECUTED",
+  "prepared_at_utc": "2026-10-29T08:13:48.966392+00:00",
+  "v1": {
+    "path": "/home/xumin/Public/Trime/build/issue-fixes-batch9-20261029/tools/check_candidate_checksums.py",
+    "sha256": "9f28e14d0cdc391dd698f3228e721acf87858bc56b439d777b351eaa26b18e2b",
+    "unchanged": true
+  },
+  "v2": {
+    "path": "/home/xumin/Public/Trime/build/issue-fixes-batch9-20261029/tools/check_candidate_checksums_v2.py",
+    "sha256": "a6040d94ce31ed08578458fef04189723565967d0cc1bdfac2a0a66cad0273dc",
+    "bytes": 3810,
+    "executed": false,
+    "static_ast_parse_passed": true
+  },
+  "interface": {
+    "positionals": [
+      "ci_summary",
+      "out"
+    ],
+    "required_flags": [
+      "--expected-head FULL_40_HEX_SHA",
+      "--expected-run POSITIVE_INTEGER"
+    ],
+    "example_template": "python3 tools/check_candidate_checksums_v2.py NEW_CI_SUMMARY NEW_NONEXISTENT_OUTPUT_JSON --expected-head NEW_HEAD --expected-run NEW_RUN_ID"
+  },
+  "changes": [
+    "Replace only target-candidate b241/run40834549715 literals with explicit required arguments.",
+    "Validate full 40-hex expected Git SHA and normalize hex case; validate expected run as a positive integer.",
+    "Require actual summary run_id to be a JSON integer equal to the expected run.",
+    "Require CI completed/success, passed==total==number of jobs==5, and all five jobs completed/success.",
+    "Retain the original fixed R7 baseline, original APK SHA checks, 38 resource checksums, bridge absence/presence, old metadata preservation and full sorted-map global digest assertions unchanged."
+  ],
+  "assertion_tail": {
+    "starts_at": "item=next(x for x in ci[ubuntu_original][original_files] ...",
+    "v1_suffix_preserved_exactly": true,
+    "sha256": "9229fa489b8f6864157803f305a65282fbf36dd3249e3854abe1858ee7f148c7"
+  },
+  "scope": "Preparation only. No execution of v1/v2, CI workflow, native CLI, build, APK rewrite/sign, source changes or external publication.",
+  "reusable_independent_review_next_run": {
+    "required_inputs_from_root": [
+      "New CI summary path",
+      "Expected full candidate head SHA",
+      "Expected CI run ID",
+      "Completed new candidate APK fixture report path",
+      "Completed v2 checksum report path",
+      "Original artifact ZIP and saved GitHub provenance under that CI directory"
+    ],
+    "steps": [
+      "Verify expected head/run in all reports and saved terminal GitHub API; require 5/5 actual completed successful jobs. Bind raw log SHA and each root checkout command to the actual merge producer; support the real quoted git.exe command on Windows.",
+      "Verify saved Git API producer/head source-tree equality and merge parents; distinguish tested PR head from CI merge commit metadata.",
+      "Hash original ZIP against saved GitHub artifact digest, compare selected x86_64 debug APK bytes directly to its ZIP member, and hash original APK before and after the read-only review.",
+      "Re-read old/new APK ZIP entries: exactly original37 unchanged bytes plus one bridge; 16 exact pinned configs and 22 text dictionaries. Check every config dictionary reference resolves to a nonempty packaged text file.",
+      "Independently compare official host output, actual Gradle output and APK bridge bytes/SHA; bind current output bytes without inventing task execution provenance.",
+      "Audit all113 preserved execution records and raw stdin/stdout/stderr hashes: 21 old compiles,16 old loads,22 candidate compiles,16 candidate loads,38 candidate conversions. Do not rerun these CLIs as part of the independent audit.",
+      "Verify old fixture lacks both bridge text and binary, fails exactly the five affected configs and passes the other11; candidate fixture loads all16. Bind all22 compiled outputs to APK text bytes.",
+      "Validate38 input/output records against the locked official testcase strings, removing only JSON trailing commas outside string literals when reading that upstream fixture.",
+      "Recompute every one of the38 sync-map resource hashes and the complete sorted-map global digest; verify new bridge absent in baseline map.",
+      "Review the new run warnings and helper correction separately. Preserve historical b241 audit; write a new uniquely named independent report bound to the new head. Do not infer zero warnings, real-device/JNI/deployment/upgrade acceptance from resource host tests."
+    ],
+    "historical_reference": "candidate-apk-independent-popup.json is b241-only. Its25 checks provide the reusable review gates but do not prequalify the next head.",
+    "not_yet_executed": true
+  }
+}

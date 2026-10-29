@@ -1,0 +1,72 @@
+{
+  "schema": 1,
+  "utc": "2026-10-29T08:09:11.712314+00:00",
+  "status": "STATIC_MINIMAL_GENERATOR_ARGUMENT_FIX_ACCEPTED_PENDING_NEW_CI",
+  "baseline_commit": "b24114ec111bcbd0b682ef5468e757fc66edec11",
+  "plugin_sha256": "27ca93994aa311f3d292092542a13e3a356de087b1b95844573952f78b49b3dd",
+  "scope": "Read-only exact source diff and official CMake contract review. No compile/Gradle/generator execution; not final CI acceptance.",
+  "exact_change": "Unconditional single-config CMAKE_BUILD_TYPE=Release becomes conditional: omit it on Windows or named Xcode/Ninja Multi-Config generators.",
+  "source_diff_is_exact_reviewed_replacement_only": true,
+  "release_build_flag_preserved": "cmake --build ... --config Release --target Dictionaries --parallel1",
+  "derived_condition_cases_not_runtime_tests": [
+    {
+      "host": "Windows 11",
+      "generator": "",
+      "pass_CMAKE_BUILD_TYPE_Release": false
+    },
+    {
+      "host": "Windows 11",
+      "generator": "Visual Studio 18 2026",
+      "pass_CMAKE_BUILD_TYPE_Release": false
+    },
+    {
+      "host": "Mac OS X",
+      "generator": "",
+      "pass_CMAKE_BUILD_TYPE_Release": true
+    },
+    {
+      "host": "Mac OS X",
+      "generator": "Xcode",
+      "pass_CMAKE_BUILD_TYPE_Release": false
+    },
+    {
+      "host": "Linux",
+      "generator": "",
+      "pass_CMAKE_BUILD_TYPE_Release": true
+    },
+    {
+      "host": "Linux",
+      "generator": "Ninja",
+      "pass_CMAKE_BUILD_TYPE_Release": true
+    },
+    {
+      "host": "Linux",
+      "generator": "Ninja Multi-Config",
+      "pass_CMAKE_BUILD_TYPE_Release": false
+    }
+  ],
+  "findings": [
+    "Windows helper continues to reject non-VS generators; permitted Windows VS builds are multi-config and still explicitly select Release during build.",
+    "Default non-Windows Makefiles/Ninja still receive CMAKE_BUILD_TYPE=Release. Named Xcode and Ninja Multi-Config instead use existing --config Release.",
+    "No source dictionary, original JSON, transformation algorithm, submodule pin, native C++ source or Android ABI behavior change in this replacement.",
+    "No CMake diagnostic suppression option is added; caller stops passing an irrelevant parameter."
+  ],
+  "official_contract_sources": [
+    {
+      "title": "CMAKE_BUILD_TYPE",
+      "url": "https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html",
+      "support": "Specifies single-configuration generator build type; multi-config uses CMAKE_CONFIGURATION_TYPES."
+    },
+    {
+      "title": "cmake --build",
+      "url": "https://cmake.org/cmake/help/latest/manual/cmake.1.html#build-a-project",
+      "support": "--config selects configuration for multi-config tools."
+    }
+  ],
+  "required_next": [
+    "Format/compile/check new committed source.",
+    "Fresh Windows native host configure must have no unused-cli CMAKE_BUILD_TYPE warning while still building Release and correct official dictionary resources.",
+    "Fresh other host CI must succeed with same expected source/config/resource closure.",
+    "Do not reuse b2415/5 or b241 candidate APK as final-head execution evidence."
+  ]
+}

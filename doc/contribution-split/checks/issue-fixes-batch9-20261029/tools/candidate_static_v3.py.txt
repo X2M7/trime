@@ -1,0 +1,11 @@
+from pathlib import Path
+import datetime,hashlib,json,struct,zipfile
+r=Path(__file__).resolve().parents[1];ci_path=r/'cloud/run-40840504983/pr-2208/ci-summary.json';ci=json.loads(ci_path.read_text());out=r/'candidate-abi-static-v3.json';assert not out.exists()
+head='78a4312fdc4ee94db6328f6f80842e95b9b2353d';assert ci['head_sha']==head and ci['ci']['passed']==ci['ci']['total']==5 and ci['ci']['conclusion']=='success'
+item=next(x for x in ci['ubuntu_original']['original_files'] if x['path'].endswith('.apk'));apk=ci_path.parent/item['path'];assert hashlib.sha256(apk.read_bytes()).hexdigest()==item['sha256']
+old_ci_path=r.parent/'issue-fixes-batch7-20261029/cloud/run-40823791223/pr-2207/ci-summary.json';old_ci=json.loads(old_ci_path.read_text());old_item=next(x for x in old_ci['ubuntu_original']['original_files'] if x['path'].endswith('.apk'));old_apk=old_ci_path.parent/old_item['path'];assert hashlib.sha256(old_apk.read_bytes()).hexdigest()==old_item['sha256']
+with zipfile.ZipFile(apk) as z,zipfile.ZipFile(old_apk) as old:
+ names=z.namelist();libs=[n for n in names if n.startswith('lib/') and not n.endswith('/')];assert libs==['lib/x86_64/librime_jni.so'];data=z.read(libs[0]);assert data[:6]==b'\x7fELF\x02\x01';machine=struct.unpack('<H',data[18:20])[0];assert machine==62
+ assert data==old.read(libs[0]);opencc=[n for n in names if n.startswith('assets/shared/opencc/') and not n.endswith('/')];assert len(opencc)==38 and all(Path(n).suffix in ('.json','.txt') for n in opencc)
+report={'timestamp':datetime.datetime.now(datetime.timezone.utc).isoformat(),'status':'PASS_ORIGINAL_UBUNTU_ARTIFACT_X86_64_ELF_IDENTITY','head':head,'run':ci['ci']['run_id'],'original_apk_sha256':item['sha256'],'native_libraries':[{'entry':libs[0],'bytes':len(data),'elf_class_bits':64,'machine':machine,'sha256':hashlib.sha256(data).hexdigest()}],'baseline_original_apk_sha256':old_item['sha256'],'native_bytes_identical_to_original_R7_x86_64_library':True,'no_host_executable_or_archive_in_opencc_assets':True,'scope':'Static original Ubuntu APK inspection only. No signature verification, other ABI identity, cache hit, Android execution or device acceptance is inferred.'}
+out.write_text(json.dumps(report,indent=2)+'\n');print(json.dumps({'status':report['status'],'out':str(out)}))

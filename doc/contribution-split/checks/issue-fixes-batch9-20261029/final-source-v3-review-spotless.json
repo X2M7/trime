@@ -1,0 +1,724 @@
+{
+  "schema": 1,
+  "utc": "2026-10-29T08:26:33.117132+00:00",
+  "status": "PASS_FINAL_COMMITTED_SOURCE_LOCAL_AND_COMPILED_HELPER_CONTRACT_REVIEW",
+  "head": "78a4312fdc4ee94db6328f6f80842e95b9b2353d",
+  "base": "7fedca06ba5d2ef761a2ae3d44d8a0917db36994",
+  "source_tree": "00fdebca49f89ab48ba528edbf88aedfa1a76467",
+  "scope": "Read-only independent review of actual7local phases on final committed source, raw logs/results/memory, frozen drivers, compiled private helper11case contract, semantic inputs and final resource/source state. Reviewer executed no build/generator/ADB/VM. Not final cloud CI/APK/JNI or actual Windows/macOS toolchain acceptance.",
+  "driver_static_continuity": {
+    "v2_to_v3_only_phase_command_and_report_renames": true,
+    "frozen_tool_hashes": {
+      "run-final-local-v3.py": "42375aa60a807f1d9adcf274c7b0e31154f66a9b28eae27eb47b73e804c0571f",
+      "run-cache-gates-v3.py": "1c41a69e1622acd1640235c39a3f7d4c837ff5d2858d3744b7991e37eaf3bab2",
+      "host-arguments-probe.init.gradle": "ad3ed329eba0933660a08251a368ed27d6f63d665b0055f9828a05e624308fa1",
+      "gradle-observe-v2.init.gradle": "2648613c6ca25f419976d6a23f9dc1b48a187d60670664fd6e16da484799a4a8",
+      "run-command.py": "8901a55a03df0ecb557f9cc0e73f0aef521127a49c2969af9c48c9a7f35e86b6"
+    }
+  },
+  "production_binding": [
+    {
+      "path": "build-logic/convention/src/main/kotlin/OpenCCDataPlugin.kt",
+      "sha256": "27ca93994aa311f3d292092542a13e3a356de087b1b95844573952f78b49b3dd",
+      "bytes": 14484
+    },
+    {
+      "path": "app/src/main/jni/cmake/opencc-host/CMakeLists.txt",
+      "sha256": "7039af66204d35de44f9d2fb6f3c411baecd7347696a38cc2e63345ca68f2529",
+      "bytes": 1396
+    }
+  ],
+  "phase_results": [
+    {
+      "phase": "gradle-multiconfig-format1",
+      "actual_exit": 0,
+      "started": "2026-10-29T08:09:05.943976+00:00",
+      "finished": "2026-10-29T08:10:03.972150+00:00",
+      "requested_argv": [
+        "/home/xumin/Public/Trime-pr-opencc-regional-data-20261029/gradlew",
+        ":spotlessApply",
+        "--warning-mode=all",
+        "--info",
+        "--no-build-cache",
+        "--no-configuration-cache",
+        "--offline",
+        "--no-daemon",
+        "--max-workers=1",
+        "--no-parallel",
+        "--console=plain",
+        "-I",
+        "/home/xumin/Public/Trime/build/issue-fixes-batch9-20261029/gradle-observe-v2.init.gradle",
+        "-PopenccCmakeExecutable=/home/xumin/Public/android-toolchain/android-sdk/cmake/3.31.6/bin/cmake",
+        "-PbuildABI=x86_64",
+        "-Dorg.gradle.jvmargs=-Xmx768M -XX:MaxMetaspaceSize=768M -XX:+UseSerialGC -XX:ActiveProcessorCount=2 -XX:+ExitOnOutOfMemoryError"
+      ],
+      "minimum_available_kib": 4092072,
+      "events": [],
+      "warning_lines": [],
+      "task_lines": []
+    },
+    {
+      "phase": "gradle-multiconfig-cold1",
+      "actual_exit": 0,
+      "started": "2026-10-29T08:14:59.625621+00:00",
+      "finished": "2026-10-29T08:17:49.659193+00:00",
+      "requested_argv": [
+        "/home/xumin/Public/Trime-pr-opencc-regional-data-20261029/gradlew",
+        ":probeOpenCCHostArguments",
+        ":spotlessCheck",
+        ":app:generateDataChecksums",
+        "--warning-mode=all",
+        "--info",
+        "--no-build-cache",
+        "--no-configuration-cache",
+        "--offline",
+        "--no-daemon",
+        "--max-workers=1",
+        "--no-parallel",
+        "--console=plain",
+        "-I",
+        "/home/xumin/Public/Trime/build/issue-fixes-batch9-20261029/gradle-observe-v2.init.gradle",
+        "-I",
+        "/home/xumin/Public/Trime/build/issue-fixes-batch9-20261029/host-arguments-probe.init.gradle",
+        "-PopenccCmakeExecutable=/home/xumin/Public/android-toolchain/android-sdk/cmake/3.31.6/bin/cmake",
+        "-PbuildABI=x86_64",
+        "-Dorg.gradle.jvmargs=-Xmx768M -XX:MaxMetaspaceSize=768M -XX:+UseSerialGC -XX:ActiveProcessorCount=2 -XX:+ExitOnOutOfMemoryError"
+      ],
+      "minimum_available_kib": 4730384,
+      "events": [
+        {
+          "event": "action-start",
+          "task": ":app:generateOpenCCRegionalPhrases"
+        },
+        {
+          "event": "action-complete",
+          "task": ":app:generateOpenCCRegionalPhrases"
+        },
+        {
+          "event": "action-start",
+          "task": ":app:installOpenCCData"
+        },
+        {
+          "event": "action-complete",
+          "task": ":app:installOpenCCData"
+        },
+        {
+          "event": "action-start",
+          "task": ":app:generateDataChecksums"
+        },
+        {
+          "event": "action-complete",
+          "task": ":app:generateDataChecksums"
+        }
+      ],
+      "warning_lines": [
+        {
+          "line": 274,
+          "text": "/usr/include/c++/16/bits/stl_vector.h:792:61: warning: array subscript 1 is outside array bounds of ‘void [40]’ [-Warray-bounds=]"
+        },
+        {
+          "line": 287,
+          "text": "/usr/include/c++/16/bits/stl_vector.h:792:37: warning: array subscript 1 is outside array bounds of ‘void [40]’ [-Warray-bounds=]"
+        },
+        {
+          "line": 301,
+          "text": "/usr/include/c++/16/bits/stl_vector.h:375:33: warning: array subscript 1 is outside array bounds of ‘void [40]’ [-Warray-bounds=]"
+        },
+        {
+          "line": 315,
+          "text": "/usr/include/c++/16/bits/stl_vector.h:375:61: warning: array subscript 1 is outside array bounds of ‘void [40]’ [-Warray-bounds=]"
+        },
+        {
+          "line": 328,
+          "text": "/usr/include/c++/16/bits/stl_vector.h:795:7: warning: array subscript 1 is outside array bounds of ‘void [40]’ [-Warray-bounds=]"
+        },
+        {
+          "line": 341,
+          "text": "/home/xumin/Public/Trime-pr-opencc-regional-data-20261029/app/src/main/jni/librime/deps/opencc/src/DictEntry.hpp:134:38: warning: array subscript ‘opencc::StrMultiValueDictEntry[0]’ is partly outside array bounds of ‘unsigned char [40]’ [-Warray-bounds=]"
+        },
+        {
+          "line": 359,
+          "text": "/usr/include/c++/16/bits/basic_string.h:238:28: warning: array subscript 1 is outside array bounds of ‘void [40]’ [-Warray-bounds=]"
+        },
+        {
+          "line": 373,
+          "text": "/usr/include/c++/16/bits/basic_string.h:298:21: warning: array subscript 1 is outside array bounds of ‘void [40]’ [-Warray-bounds=]"
+        },
+        {
+          "line": 386,
+          "text": "/usr/include/c++/16/bits/basic_string.h:920:23: warning: array subscript 1 is outside array bounds of ‘void [40]’ [-Warray-bounds=]"
+        },
+        {
+          "line": 398,
+          "text": "/home/xumin/Public/Trime-pr-opencc-regional-data-20261029/app/src/main/jni/librime/deps/opencc/src/DictEntry.hpp:109:39: warning: array subscript ‘opencc::StrSingleValueDictEntry[0]’ is partly outside array bounds of ‘unsigned char [40]’ [-Warray-bounds=]"
+        }
+      ],
+      "task_lines": [
+        "> Task :app:generateOpenCCRegionalPhrases",
+        "> Task :app:installOpenCCData",
+        "> Task :app:generateDataChecksums"
+      ]
+    },
+    {
+      "phase": "gradle-multiconfig-no-change1",
+      "actual_exit": 0,
+      "started": "2026-10-29T08:17:49.867952+00:00",
+      "finished": "2026-10-29T08:18:19.876534+00:00",
+      "requested_argv": [
+        "/home/xumin/Public/Trime-pr-opencc-regional-data-20261029/gradlew",
+        ":spotlessCheck",
+        ":app:generateDataChecksums",
+        "--warning-mode=all",
+        "--info",
+        "--no-build-cache",
+        "--no-configuration-cache",
+        "--offline",
+        "--no-daemon",
+        "--max-workers=1",
+        "--no-parallel",
+        "--console=plain",
+        "-I",
+        "/home/xumin/Public/Trime/build/issue-fixes-batch9-20261029/gradle-observe-v2.init.gradle",
+        "-I",
+        "/home/xumin/Public/Trime/build/issue-fixes-batch9-20261029/host-arguments-probe.init.gradle",
+        "-PopenccCmakeExecutable=/home/xumin/Public/android-toolchain/android-sdk/cmake/3.31.6/bin/cmake",
+        "-PbuildABI=x86_64",
+        "-Dorg.gradle.jvmargs=-Xmx768M -XX:MaxMetaspaceSize=768M -XX:+UseSerialGC -XX:ActiveProcessorCount=2 -XX:+ExitOnOutOfMemoryError"
+      ],
+      "minimum_available_kib": 5048672,
+      "events": [],
+      "warning_lines": [],
+      "task_lines": [
+        "> Task :app:generateOpenCCRegionalPhrases UP-TO-DATE",
+        "> Task :app:installOpenCCData UP-TO-DATE",
+        "> Task :app:generateDataChecksums UP-TO-DATE"
+      ]
+    },
+    {
+      "phase": "gradle-multiconfig-cache-noise1",
+      "actual_exit": 0,
+      "started": "2026-10-29T08:18:19.947371+00:00",
+      "finished": "2026-10-29T08:18:49.954369+00:00",
+      "requested_argv": [
+        "/home/xumin/Public/Trime-pr-opencc-regional-data-20261029/gradlew",
+        ":spotlessCheck",
+        ":app:generateDataChecksums",
+        "--warning-mode=all",
+        "--info",
+        "--no-build-cache",
+        "--no-configuration-cache",
+        "--offline",
+        "--no-daemon",
+        "--max-workers=1",
+        "--no-parallel",
+        "--console=plain",
+        "-I",
+        "/home/xumin/Public/Trime/build/issue-fixes-batch9-20261029/gradle-observe-v2.init.gradle",
+        "-I",
+        "/home/xumin/Public/Trime/build/issue-fixes-batch9-20261029/host-arguments-probe.init.gradle",
+        "-PopenccCmakeExecutable=/home/xumin/Public/android-toolchain/android-sdk/cmake/3.31.6/bin/cmake",
+        "-PbuildABI=x86_64",
+        "-Dorg.gradle.jvmargs=-Xmx768M -XX:MaxMetaspaceSize=768M -XX:+UseSerialGC -XX:ActiveProcessorCount=2 -XX:+ExitOnOutOfMemoryError"
+      ],
+      "minimum_available_kib": 5050676,
+      "events": [],
+      "warning_lines": [],
+      "task_lines": [
+        "> Task :app:generateOpenCCRegionalPhrases UP-TO-DATE",
+        "> Task :app:installOpenCCData UP-TO-DATE",
+        "> Task :app:generateDataChecksums UP-TO-DATE"
+      ]
+    },
+    {
+      "phase": "gradle-multiconfig-script1",
+      "actual_exit": 0,
+      "started": "2026-10-29T08:18:50.069337+00:00",
+      "finished": "2026-10-29T08:21:28.103202+00:00",
+      "requested_argv": [
+        "/home/xumin/Public/Trime-pr-opencc-regional-data-20261029/gradlew",
+        ":app:generateDataChecksums",
+        "--warning-mode=all",
+        "--info",
+        "--no-build-cache",
+        "--no-configuration-cache",
+        "--offline",
+        "--no-daemon",
+        "--max-workers=1",
+        "--no-parallel",
+        "--console=plain",
+        "-I",
+        "/home/xumin/Public/Trime/build/issue-fixes-batch9-20261029/gradle-observe-v2.init.gradle",
+        "-I",
+        "/home/xumin/Public/Trime/build/issue-fixes-batch9-20261029/host-arguments-probe.init.gradle",
+        "-PopenccCmakeExecutable=/home/xumin/Public/android-toolchain/android-sdk/cmake/3.31.6/bin/cmake",
+        "-PbuildABI=x86_64",
+        "-Dorg.gradle.jvmargs=-Xmx768M -XX:MaxMetaspaceSize=768M -XX:+UseSerialGC -XX:ActiveProcessorCount=2 -XX:+ExitOnOutOfMemoryError"
+      ],
+      "minimum_available_kib": 4753396,
+      "events": [
+        {
+          "event": "action-start",
+          "task": ":app:generateOpenCCRegionalPhrases"
+        },
+        {
+          "event": "action-complete",
+          "task": ":app:generateOpenCCRegionalPhrases"
+        },
+        {
+          "event": "action-start",
+          "task": ":app:installOpenCCData"
+        },
+        {
+          "event": "action-complete",
+          "task": ":app:installOpenCCData"
+        }
+      ],
+      "warning_lines": [
+        {
+          "line": 226,
+          "text": "/usr/include/c++/16/bits/stl_vector.h:792:61: warning: array subscript 1 is outside array bounds of ‘void [40]’ [-Warray-bounds=]"
+        },
+        {
+          "line": 239,
+          "text": "/usr/include/c++/16/bits/stl_vector.h:792:37: warning: array subscript 1 is outside array bounds of ‘void [40]’ [-Warray-bounds=]"
+        },
+        {
+          "line": 253,
+          "text": "/usr/include/c++/16/bits/stl_vector.h:375:33: warning: array subscript 1 is outside array bounds of ‘void [40]’ [-Warray-bounds=]"
+        },
+        {
+          "line": 267,
+          "text": "/usr/include/c++/16/bits/stl_vector.h:375:61: warning: array subscript 1 is outside array bounds of ‘void [40]’ [-Warray-bounds=]"
+        },
+        {
+          "line": 280,
+          "text": "/usr/include/c++/16/bits/stl_vector.h:795:7: warning: array subscript 1 is outside array bounds of ‘void [40]’ [-Warray-bounds=]"
+        },
+        {
+          "line": 293,
+          "text": "/home/xumin/Public/Trime-pr-opencc-regional-data-20261029/app/src/main/jni/librime/deps/opencc/src/DictEntry.hpp:134:38: warning: array subscript ‘opencc::StrMultiValueDictEntry[0]’ is partly outside array bounds of ‘unsigned char [40]’ [-Warray-bounds=]"
+        },
+        {
+          "line": 311,
+          "text": "/usr/include/c++/16/bits/basic_string.h:238:28: warning: array subscript 1 is outside array bounds of ‘void [40]’ [-Warray-bounds=]"
+        },
+        {
+          "line": 325,
+          "text": "/usr/include/c++/16/bits/basic_string.h:298:21: warning: array subscript 1 is outside array bounds of ‘void [40]’ [-Warray-bounds=]"
+        },
+        {
+          "line": 338,
+          "text": "/usr/include/c++/16/bits/basic_string.h:920:23: warning: array subscript 1 is outside array bounds of ‘void [40]’ [-Warray-bounds=]"
+        },
+        {
+          "line": 350,
+          "text": "/home/xumin/Public/Trime-pr-opencc-regional-data-20261029/app/src/main/jni/librime/deps/opencc/src/DictEntry.hpp:109:39: warning: array subscript ‘opencc::StrSingleValueDictEntry[0]’ is partly outside array bounds of ‘unsigned char [40]’ [-Warray-bounds=]"
+        }
+      ],
+      "task_lines": [
+        "> Task :app:generateOpenCCRegionalPhrases",
+        "> Task :app:installOpenCCData",
+        "> Task :app:generateDataChecksums UP-TO-DATE"
+      ]
+    },
+    {
+      "phase": "gradle-multiconfig-reject1",
+      "actual_exit": 1,
+      "started": "2026-10-29T08:21:28.232360+00:00",
+      "finished": "2026-10-29T08:21:56.239916+00:00",
+      "requested_argv": [
+        "/home/xumin/Public/Trime-pr-opencc-regional-data-20261029/gradlew",
+        ":app:generateDataChecksums",
+        "--warning-mode=all",
+        "--info",
+        "--no-build-cache",
+        "--no-configuration-cache",
+        "--offline",
+        "--no-daemon",
+        "--max-workers=1",
+        "--no-parallel",
+        "--console=plain",
+        "-I",
+        "/home/xumin/Public/Trime/build/issue-fixes-batch9-20261029/gradle-observe-v2.init.gradle",
+        "-I",
+        "/home/xumin/Public/Trime/build/issue-fixes-batch9-20261029/host-arguments-probe.init.gradle",
+        "-PopenccCmakeExecutable=/home/xumin/Public/android-toolchain/android-sdk/cmake/3.31.6/bin/cmake",
+        "-PbuildABI=x86_64",
+        "-Dorg.gradle.jvmargs=-Xmx768M -XX:MaxMetaspaceSize=768M -XX:+UseSerialGC -XX:ActiveProcessorCount=2 -XX:+ExitOnOutOfMemoryError"
+      ],
+      "minimum_available_kib": 5011652,
+      "events": [
+        {
+          "event": "action-start",
+          "task": ":app:generateOpenCCRegionalPhrases"
+        }
+      ],
+      "warning_lines": [],
+      "task_lines": [
+        "> Task :app:generateOpenCCRegionalPhrases FAILED"
+      ]
+    },
+    {
+      "phase": "gradle-multiconfig-restored1",
+      "actual_exit": 0,
+      "started": "2026-10-29T08:21:56.399859+00:00",
+      "finished": "2026-10-29T08:24:42.434550+00:00",
+      "requested_argv": [
+        "/home/xumin/Public/Trime-pr-opencc-regional-data-20261029/gradlew",
+        ":app:generateDataChecksums",
+        "--warning-mode=all",
+        "--info",
+        "--no-build-cache",
+        "--no-configuration-cache",
+        "--offline",
+        "--no-daemon",
+        "--max-workers=1",
+        "--no-parallel",
+        "--console=plain",
+        "-I",
+        "/home/xumin/Public/Trime/build/issue-fixes-batch9-20261029/gradle-observe-v2.init.gradle",
+        "-I",
+        "/home/xumin/Public/Trime/build/issue-fixes-batch9-20261029/host-arguments-probe.init.gradle",
+        "-PopenccCmakeExecutable=/home/xumin/Public/android-toolchain/android-sdk/cmake/3.31.6/bin/cmake",
+        "-PbuildABI=x86_64",
+        "-Dorg.gradle.jvmargs=-Xmx768M -XX:MaxMetaspaceSize=768M -XX:+UseSerialGC -XX:ActiveProcessorCount=2 -XX:+ExitOnOutOfMemoryError"
+      ],
+      "minimum_available_kib": 4693404,
+      "events": [
+        {
+          "event": "action-start",
+          "task": ":app:generateOpenCCRegionalPhrases"
+        },
+        {
+          "event": "action-complete",
+          "task": ":app:generateOpenCCRegionalPhrases"
+        },
+        {
+          "event": "action-start",
+          "task": ":app:installOpenCCData"
+        },
+        {
+          "event": "action-complete",
+          "task": ":app:installOpenCCData"
+        }
+      ],
+      "warning_lines": [
+        {
+          "line": 226,
+          "text": "/usr/include/c++/16/bits/stl_vector.h:792:61: warning: array subscript 1 is outside array bounds of ‘void [40]’ [-Warray-bounds=]"
+        },
+        {
+          "line": 239,
+          "text": "/usr/include/c++/16/bits/stl_vector.h:792:37: warning: array subscript 1 is outside array bounds of ‘void [40]’ [-Warray-bounds=]"
+        },
+        {
+          "line": 253,
+          "text": "/usr/include/c++/16/bits/stl_vector.h:375:33: warning: array subscript 1 is outside array bounds of ‘void [40]’ [-Warray-bounds=]"
+        },
+        {
+          "line": 267,
+          "text": "/usr/include/c++/16/bits/stl_vector.h:375:61: warning: array subscript 1 is outside array bounds of ‘void [40]’ [-Warray-bounds=]"
+        },
+        {
+          "line": 280,
+          "text": "/usr/include/c++/16/bits/stl_vector.h:795:7: warning: array subscript 1 is outside array bounds of ‘void [40]’ [-Warray-bounds=]"
+        },
+        {
+          "line": 293,
+          "text": "/home/xumin/Public/Trime-pr-opencc-regional-data-20261029/app/src/main/jni/librime/deps/opencc/src/DictEntry.hpp:134:38: warning: array subscript ‘opencc::StrMultiValueDictEntry[0]’ is partly outside array bounds of ‘unsigned char [40]’ [-Warray-bounds=]"
+        },
+        {
+          "line": 311,
+          "text": "/usr/include/c++/16/bits/basic_string.h:238:28: warning: array subscript 1 is outside array bounds of ‘void [40]’ [-Warray-bounds=]"
+        },
+        {
+          "line": 325,
+          "text": "/usr/include/c++/16/bits/basic_string.h:298:21: warning: array subscript 1 is outside array bounds of ‘void [40]’ [-Warray-bounds=]"
+        },
+        {
+          "line": 338,
+          "text": "/usr/include/c++/16/bits/basic_string.h:920:23: warning: array subscript 1 is outside array bounds of ‘void [40]’ [-Warray-bounds=]"
+        },
+        {
+          "line": 350,
+          "text": "/home/xumin/Public/Trime-pr-opencc-regional-data-20261029/app/src/main/jni/librime/deps/opencc/src/DictEntry.hpp:109:39: warning: array subscript ‘opencc::StrSingleValueDictEntry[0]’ is partly outside array bounds of ‘unsigned char [40]’ [-Warray-bounds=]"
+        }
+      ],
+      "task_lines": [
+        "> Task :app:generateOpenCCRegionalPhrases",
+        "> Task :app:installOpenCCData",
+        "> Task :app:generateDataChecksums UP-TO-DATE"
+      ]
+    }
+  ],
+  "helper_probe": {
+    "method": "OpenCCDataPluginKt#openccHostCmakeArguments",
+    "passed": 11,
+    "total": 11,
+    "all_cases_equal_exact_expected_arguments_or_exception": true,
+    "compiled_class_resource": "jar:file:/home/xumin/.gradle/caches/9.8.1/transforms/031170c033c32823bb81857ef757869b/transformed/original/convention.jar!/OpenCCDataPluginKt.class",
+    "compiled_class_sha256": "1f559cc19b5ed6b816699415ae8325d2cc1f1597c06f75ff0652c2c549085756",
+    "class_resource_rehashed_independently": true,
+    "real_probe_JSON_matches_raw_cold_log": true,
+    "host_cases_are_argument_simulations_not_host_toolchain_runs": true
+  },
+  "actual_input_and_dependency_evidence": {
+    "producer_input_count": 1330,
+    "install_input_count": 64,
+    "producer_omissions_only12default_Git_metadata_files": [
+      "/home/xumin/Public/Trime-pr-opencc-regional-data-20261029/app/src/main/jni/librime/deps/opencc/.gitattributes",
+      "/home/xumin/Public/Trime-pr-opencc-regional-data-20261029/app/src/main/jni/librime/deps/opencc/.gitignore",
+      "/home/xumin/Public/Trime-pr-opencc-regional-data-20261029/app/src/main/jni/librime/deps/opencc/deps/google-benchmark/.gitignore",
+      "/home/xumin/Public/Trime-pr-opencc-regional-data-20261029/app/src/main/jni/librime/deps/opencc/deps/googletest-1.15.0/.gitignore",
+      "/home/xumin/Public/Trime-pr-opencc-regional-data-20261029/app/src/main/jni/librime/deps/opencc/deps/marisa-0.3.1/.gitignore",
+      "/home/xumin/Public/Trime-pr-opencc-regional-data-20261029/app/src/main/jni/librime/deps/opencc/deps/marisa-0.3.1/bindings/.gitignore",
+      "/home/xumin/Public/Trime-pr-opencc-regional-data-20261029/app/src/main/jni/librime/deps/opencc/deps/pybind11-2.13.1/.gitattributes",
+      "/home/xumin/Public/Trime-pr-opencc-regional-data-20261029/app/src/main/jni/librime/deps/opencc/deps/pybind11-2.13.1/.gitignore",
+      "/home/xumin/Public/Trime-pr-opencc-regional-data-20261029/app/src/main/jni/librime/deps/opencc/plugins/jieba/deps/cppjieba/.gitignore",
+      "/home/xumin/Public/Trime-pr-opencc-regional-data-20261029/app/src/main/jni/librime/deps/opencc/plugins/jieba/node/.gitignore",
+      "/home/xumin/Public/Trime-pr-opencc-regional-data-20261029/app/src/main/jni/librime/deps/opencc/python/.gitignore",
+      "/home/xumin/Public/Trime-pr-opencc-regional-data-20261029/app/src/main/jni/librime/deps/opencc/python/opencc/.gitignore"
+    ],
+    "all_actual_semantic_source_and_wrapper_paths_covered": true,
+    "install_exact_filtered_data_plus_bridge": true,
+    "no_Git_or_python_cache_inputs": true,
+    "actual_cold_requested_tasks": [
+      ":probeOpenCCHostArguments",
+      ":spotlessCheck",
+      ":app:generateDataChecksums"
+    ],
+    "cold_events_prove_implicit_provider_inclusion": [
+      {
+        "event": "action-start",
+        "task": ":app:generateOpenCCRegionalPhrases"
+      },
+      {
+        "event": "action-complete",
+        "task": ":app:generateOpenCCRegionalPhrases"
+      },
+      {
+        "event": "action-start",
+        "task": ":app:installOpenCCData"
+      },
+      {
+        "event": "action-complete",
+        "task": ":app:installOpenCCData"
+      },
+      {
+        "event": "action-start",
+        "task": ":app:generateDataChecksums"
+      },
+      {
+        "event": "action-complete",
+        "task": ":app:generateDataChecksums"
+      }
+    ],
+    "direct_dependency_API_not_complete_for_provider_inputs": true
+  },
+  "script_change_diagnostics": [
+    {
+      "phase": "gradle-multiconfig-script1",
+      "actual_lines": [
+        "  Input property 'sourceFiles' file /home/xumin/Public/Trime-pr-opencc-regional-data-20261029/app/src/main/jni/librime/deps/opencc/data/scripts/generate_st_phrases_from_regional_phrases.py has changed.",
+        "  Input property 'sourceFiles' file /home/xumin/Public/Trime-pr-opencc-regional-data-20261029/app/src/main/jni/librime/deps/opencc/data/scripts/generate_st_phrases_from_regional_phrases.py has changed."
+      ]
+    },
+    {
+      "phase": "gradle-multiconfig-restored1",
+      "actual_lines": [
+        "  Input property 'sourceFiles' file /home/xumin/Public/Trime-pr-opencc-regional-data-20261029/app/src/main/jni/librime/deps/opencc/data/scripts/generate_st_phrases_from_regional_phrases.py has changed.",
+        "  Input property 'sourceFiles' file /home/xumin/Public/Trime-pr-opencc-regional-data-20261029/app/src/main/jni/librime/deps/opencc/data/scripts/generate_st_phrases_from_regional_phrases.py has changed."
+      ]
+    }
+  ],
+  "controlled_rejection": {
+    "actual_exit": 1,
+    "generator_started_but_not_completed": true,
+    "install_and_checksums_never_started": true,
+    "assets_unchanged_asserted_by_frozen_executed_harness": true
+  },
+  "current_restoration": {
+    "root_worktree_clean": true,
+    "script_exactly_pinned025f_git_blob": true,
+    "source_pyc_count": 0,
+    "both_owned_sentinels_absent": true,
+    "bridge_sha256": "9ab40618a9b162cca6dae9ec6767a8c4669017a20b2d6da5f94b7a7f99d09170",
+    "resources": {
+      "configs": 16,
+      "texts": 22,
+      "total": 38,
+      "original_config_bytes_equal_pinned_source": true,
+      "all_texts_equal_official_pinned_host_target": true
+    }
+  },
+  "minimum_available_kib_all7phases": 4092072,
+  "diagnostic_scope": {
+    "fresh_host_builds": 3,
+    "GCC16_warning_lines_per_fresh_build": 10,
+    "total_GCC16_diagnostic_lines_retained_in_those3logs": 30,
+    "not_a_zero_warning_or_harmlessness_claim": true
+  },
+  "snapshot_limits": [
+    "Pre-execution cold/sentinel state and historical full-asset snapshot equality are checked by the frozen actually executed Python drivers; those two historical snapshot maps were not separately persisted, so reviewer cannot independently rehash the past before map.",
+    "Current clean source, no pyc, absent sentinels, raw action sequence and source input sets were independently rechecked.",
+    "Unused pyc noise test proves Gradle invalidation behavior, not isolation from arbitrary valid imported bytecode.",
+    "Local Android JNI uses prior unchanged R7 prebuilt; no new local Android JNI/device acceptance is claimed. Fresh final-head cloud CI and original APK require separate qualification."
+  ],
+  "evidence_bindings": [
+    {
+      "path": "gradle-multiconfig-format1/result.json",
+      "sha256": "ca51fc17e564f57d7a6873381257f0cfa08eb28f9109ccb8b7220d56e2f01318",
+      "bytes": 948
+    },
+    {
+      "path": "gradle-multiconfig-format1/command.log",
+      "sha256": "5b0c41728f3de9e245197e57c63d06eb874b5728c1e28871703c9c987fe158da",
+      "bytes": 26202
+    },
+    {
+      "path": "gradle-multiconfig-format1/memory.jsonl",
+      "sha256": "6064138d1235dfaf54eb6b98b3fed81ad7824b81be7cb64be98de800fb694e49",
+      "bytes": 1587
+    },
+    {
+      "path": "gradle-multiconfig-cold1/result.json",
+      "sha256": "3e3ea752275cc674d003ff2ec8a6a0b1676800b6dcb096c0393825509c24a443",
+      "bytes": 1124
+    },
+    {
+      "path": "gradle-multiconfig-cold1/command.log",
+      "sha256": "b294cc3b6a01b3510f72fcecbe8bd2468d9779820313a0a6bc0829bc9e914196",
+      "bytes": 256948
+    },
+    {
+      "path": "gradle-multiconfig-cold1/memory.jsonl",
+      "sha256": "a65047017d1bdc6b0791dfd46e8156d33c90d4bf2113a9c95cf71bf11e4106c6",
+      "bytes": 4660
+    },
+    {
+      "path": "gradle-multiconfig-no-change1/result.json",
+      "sha256": "de798650c37c5e5bceab55d4950119e5c716e62859639fdd19d64a7b634bfe1a",
+      "bytes": 1091
+    },
+    {
+      "path": "gradle-multiconfig-no-change1/command.log",
+      "sha256": "e6071afe10bc42ba19c9c4f90aaed287e10524e62460278489ab07d915c5907f",
+      "bytes": 17344
+    },
+    {
+      "path": "gradle-multiconfig-no-change1/memory.jsonl",
+      "sha256": "81205c6e2c92c8961b8626d86c1b12ae7d4f7370baae0f5f628a8f39b8640ffc",
+      "bytes": 823
+    },
+    {
+      "path": "gradle-multiconfig-cache-noise1/result.json",
+      "sha256": "2699002db0a0086a7b4d9e690b33ea494f59bf13ae6e911531eda47e3dfbfeb4",
+      "bytes": 1091
+    },
+    {
+      "path": "gradle-multiconfig-cache-noise1/command.log",
+      "sha256": "ca7955e6cbf1f4c89e55c579b2206d39297dd70b6d9e687a47d3e2d9aa0873a2",
+      "bytes": 17488
+    },
+    {
+      "path": "gradle-multiconfig-cache-noise1/memory.jsonl",
+      "sha256": "3304c8b43ca83d0291d552da577c5771f87d928064534ea71aaa5a7d6a0ab880",
+      "bytes": 823
+    },
+    {
+      "path": "gradle-multiconfig-script1/result.json",
+      "sha256": "b3178c0438bba2022a5e9e5c050335e7ec5f091aaf527fafd0857147f73dc393",
+      "bytes": 1069
+    },
+    {
+      "path": "gradle-multiconfig-script1/command.log",
+      "sha256": "2e0e30bb41b14ee7bff5789b52549062fc68f981bc98521441df752325269145",
+      "bytes": 243568
+    },
+    {
+      "path": "gradle-multiconfig-script1/memory.jsonl",
+      "sha256": "621c8a26b58113269ca0f4a23ee752cda02bebd067ff2b801fdfaf0fdf9bec60",
+      "bytes": 4326
+    },
+    {
+      "path": "gradle-multiconfig-reject1/result.json",
+      "sha256": "5b0f600d9bc5b8d6a8f124636ce934a7e324cb84309c1aa5e7247d272430af4d",
+      "bytes": 1069
+    },
+    {
+      "path": "gradle-multiconfig-reject1/command.log",
+      "sha256": "8fcaf399086425413634e3936268faa1b71547e3b6015624868e23c0fdae040c",
+      "bytes": 203428
+    },
+    {
+      "path": "gradle-multiconfig-reject1/memory.jsonl",
+      "sha256": "3f12dfbcb452ee6e3bbe46442c4f6bacf39df197cdff48415e75a26393321169",
+      "bytes": 767
+    },
+    {
+      "path": "gradle-multiconfig-restored1/result.json",
+      "sha256": "f1d50cdabb3a644c47433f5c815743fdc5f47e0d830a496a8aa937a6f087645f",
+      "bytes": 1069
+    },
+    {
+      "path": "gradle-multiconfig-restored1/command.log",
+      "sha256": "46f9ea727d9bb0ac5008975efc64a95e80ab7bdc760098b5835ab48dba01d9c4",
+      "bytes": 243568
+    },
+    {
+      "path": "gradle-multiconfig-restored1/memory.jsonl",
+      "sha256": "4a9224d0d75b454eee08d892e180fc264c07f373a34f7286708a5860dff24f78",
+      "bytes": 4549
+    },
+    {
+      "path": "final-local-v3.json",
+      "sha256": "8adde27dc88678225672226bace0bb4ad17dfe691f8102bfd79d4886d561dbd9",
+      "bytes": 784
+    },
+    {
+      "path": "cache-gates-v3.json",
+      "sha256": "da8715675f8013a3a09f375c1249cf27412a6a0310c3a60ef7571fcbfb47441c",
+      "bytes": 1747
+    },
+    {
+      "path": "local-validation-v3.json",
+      "sha256": "19263df53df5ec545da44e5fd418cf4d5da7df6fdc95bc60834cd144bdee8bff",
+      "bytes": 4364
+    },
+    {
+      "path": "host-arguments-probe-execution.json",
+      "sha256": "de2155ab7bd20981c00ccab13db8fa06e5b5501fa715a58fff5b5dfb897d24ea",
+      "bytes": 3808
+    },
+    {
+      "path": "gradle-multiconfig-command.json",
+      "sha256": "4f1fb11d8c2feb31ff1d3fc7bd29a26d18af1798b5151136f88687a49bd96829",
+      "bytes": 771
+    },
+    {
+      "path": "run-final-local-v3.py",
+      "sha256": "42375aa60a807f1d9adcf274c7b0e31154f66a9b28eae27eb47b73e804c0571f",
+      "bytes": 3296
+    },
+    {
+      "path": "run-cache-gates-v3.py",
+      "sha256": "1c41a69e1622acd1640235c39a3f7d4c837ff5d2858d3744b7991e37eaf3bab2",
+      "bytes": 6572
+    },
+    {
+      "path": "host-arguments-probe.init.gradle",
+      "sha256": "ad3ed329eba0933660a08251a368ed27d6f63d665b0055f9828a05e624308fa1",
+      "bytes": 5408
+    },
+    {
+      "path": "gradle-observe-v2.init.gradle",
+      "sha256": "2648613c6ca25f419976d6a23f9dc1b48a187d60670664fd6e16da484799a4a8",
+      "bytes": 938
+    },
+    {
+      "path": "run-command.py",
+      "sha256": "8901a55a03df0ecb557f9cc0e73f0aef521127a49c2969af9c48c9a7f35e86b6",
+      "bytes": 1744
+    }
+  ]
+}

@@ -1,0 +1,46 @@
+from pathlib import Path
+import argparse,datetime,hashlib,json,re,sys,zipfile
+
+def expected_head(value):
+ if not re.fullmatch(r"[0-9a-fA-F]{40}",value):
+  raise argparse.ArgumentTypeError("expected-head must be a full 40-hex Git SHA")
+ return value.lower()
+
+def expected_run(value):
+ try:
+  result=int(value)
+ except ValueError:
+  raise argparse.ArgumentTypeError("expected-run must be a positive integer")
+ if result<=0:
+  raise argparse.ArgumentTypeError("expected-run must be a positive integer")
+ return result
+
+parser=argparse.ArgumentParser(description="Check original candidate APK OpenCC resources and sync checksums for an explicitly bound successful CI run.")
+parser.add_argument('ci_summary',type=Path)
+parser.add_argument('out',type=Path)
+parser.add_argument('--expected-head',required=True,type=expected_head)
+parser.add_argument('--expected-run',required=True,type=expected_run)
+args=parser.parse_args()
+ci_path=args.ci_summary.resolve();out=args.out.resolve();assert not out.exists()
+ci=json.loads(ci_path.read_text());assert ci['head_sha']==args.expected_head
+assert type(ci['ci']['run_id']) is int and ci['ci']['run_id']==args.expected_run
+assert ci['ci']['status']=='completed' and ci['ci']['conclusion']=='success'
+assert ci['ci']['passed']==ci['ci']['total']==len(ci['ci']['jobs'])==5
+assert all(job['status']=='completed' and job['conclusion']=='success' for job in ci['ci']['jobs'])
+item=next(x for x in ci['ubuntu_original']['original_files'] if x['path'].endswith('.apk'));apk=ci_path.parent/item['path']
+assert hashlib.sha256(apk.read_bytes()).hexdigest()==item['sha256']
+old_ci_path=Path('/home/xumin/Public/Trime/build/issue-fixes-batch7-20261029/cloud/run-40823791223/pr-2207/ci-summary.json');old_ci=json.loads(old_ci_path.read_text());old_item=next(x for x in old_ci['ubuntu_original']['original_files'] if x['path'].endswith('.apk'));old_apk=old_ci_path.parent/old_item['path'];assert hashlib.sha256(old_apk.read_bytes()).hexdigest()==old_item['sha256']
+with zipfile.ZipFile(apk) as z,zipfile.ZipFile(old_apk) as old:
+ metadata=json.loads(z.read('assets/checksums.json'));old_metadata=json.loads(old.read('assets/checksums.json'));files=metadata['files'];old_files=old_metadata['files']
+ names=sorted(n for n in z.namelist() if n.startswith('assets/shared/opencc/') and not n.endswith('/'));assert len(names)==38
+ observations=[]
+ for name in names:
+  key=name.removeprefix('assets/');sha=hashlib.sha256(z.read(name)).hexdigest();assert files[key]==sha
+  observations.append({'apk_entry':name,'checksums_key':key,'sha256':sha,'actual_entry_hash_matches_metadata':True})
+ bridge='shared/opencc/STPhrases_GeneratedFromRegionalPhrases.txt'
+ assert bridge not in old_files and bridge in files
+ assert all(old_files[key]==files[key] for key in files if key.startswith('shared/opencc/') and key!=bridge and key in old_files)
+ global_sha=hashlib.sha256(', '.join(key+files[key] for key in sorted(files)).encode('utf8')).hexdigest();assert metadata['sha256']==global_sha
+ assert metadata['sha256']!=old_metadata['sha256']
+report={'timestamp':datetime.datetime.now(datetime.timezone.utc).isoformat(),'status':'PASS_CANDIDATE_OPENCC_RESOURCE_CHECKSUM_CLOSURE','head':ci['head_sha'],'run':ci['ci']['run_id'],'apk_sha256':item['sha256'],'baseline_apk_sha256':old_item['sha256'],'candidate_checksums_sha256_field':metadata['sha256'],'baseline_checksums_sha256_field':old_metadata['sha256'],'global_sorted_map_digest_verified':True,'new_bridge_present_in_checksum_map_and_absent_from_baseline':True,'resources':observations,'scope':'Original APK packaged resources and sync metadata only. No actual Android upgrade, sync, deployment or JNI acceptance inferred.'}
+out.write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n');print(json.dumps({'status':report['status'],'out':str(out)}))

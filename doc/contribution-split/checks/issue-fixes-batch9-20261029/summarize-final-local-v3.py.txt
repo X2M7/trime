@@ -1,0 +1,22 @@
+from pathlib import Path
+import datetime,hashlib,json,re,subprocess
+r=Path(__file__).resolve().parent;w=Path('/home/xumin/Public/Trime-pr-opencc-regional-data-20261029');head='78a4312fdc4ee94db6328f6f80842e95b9b2353d'
+def sha(p):return hashlib.sha256(p.read_bytes()).hexdigest()
+def read(p):return json.loads(p.read_text())
+assert subprocess.check_output(['git','rev-parse','HEAD'],cwd=w,text=True).strip()==head
+assert subprocess.check_output(['git','status','--porcelain'],cwd=w)==b''
+a=read(r/'final-local-v3.json');b=read(r/'cache-gates-v3.json');probe=read(r/'host-arguments-probe-execution.json')
+assert a['status']=='PASS_FINAL_SOURCE_COLD_AND_CACHE_FAILURE_GATES' and a['head']==head
+assert b['status']=='PASS_FIVE_CACHE_AND_FAILURE_GATES_AFTER_COLD_SOURCE_BUILD' and b['head']==head
+assert probe['passed']==probe['total']==11 and probe['head']==head
+phases=[]
+for suffix in ['format1','cold1','no-change1','cache-noise1','script1','reject1','restored1']:
+ name='gradle-multiconfig-'+suffix;d=r/name;s=read(d/'result.json');expected=1 if suffix=='reject1' else 0
+ assert s['exit']==expected and not s.get('guard_triggered')
+ log=(d/'command.log').read_text(errors='replace');phases.append({'phase':name,'actual_exit':s['exit'],'expected_exit':expected,'minimum_available_kib':s['minimum_available_kib'],'result_sha256':sha(d/'result.json'),'raw_log_sha256':sha(d/'command.log'),'raw_log_bytes':(d/'command.log').stat().st_size,'warning_candidate_count':sum(bool(re.search(r'\bwarning:',line,re.I)) for line in log.splitlines()),'raw_diagnostics_retained':True})
+files=[]
+for rel,expected in [('build-logic/convention/src/main/kotlin/OpenCCDataPlugin.kt','27ca93994aa311f3d292092542a13e3a356de087b1b95844573952f78b49b3dd'),('app/src/main/jni/cmake/opencc-host/CMakeLists.txt','7039af66204d35de44f9d2fb6f3c411baecd7347696a38cc2e63345ca68f2529')]:
+ p=w/rel;assert sha(p)==expected;files.append({'path':rel,'sha256':sha(p),'bytes':p.stat().st_size})
+assert not list((w/'app/src/main/jni/librime/deps/opencc').rglob('*.pyc'))
+report={'timestamp':datetime.datetime.now(datetime.timezone.utc).isoformat(),'status':'PASS_FINAL_COMMITTED_SOURCE_LOCAL_AND_ARGUMENT_GATES','head':head,'base':'7fedca06ba5d2ef761a2ae3d44d8a0917db36994','source_tree':subprocess.check_output(['git','rev-parse','HEAD^{tree}'],cwd=w,text=True).strip(),'files':files,'phases':phases,'compiled_helper_probe':{'passed':11,'total':11,'report_sha256':sha(r/'host-arguments-probe-execution.json')},'minimum_final_phase_available_kib':min(p['minimum_available_kib'] for p in phases),'controlled_rejection_is_not_a_successful_build':True,'native_scope':'Pinned OpenCC host tools actually compiled; local Android JNI uses unchanged R7 prebuilt only. CI native cache/compile records are reported separately.','not_zero_warning_claim':True,'no_device_or_release_validation_claimed':True,'source_restored_and_clean':True,'no_python_bytecode_left':True}
+(r/'local-validation-v3.json').write_text(json.dumps(report,indent=2)+'\n');print(json.dumps(report,indent=2))

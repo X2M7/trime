@@ -1,0 +1,824 @@
+{
+  "schema": 1,
+  "utc": "2026-10-29T08:09:11.709163+00:00",
+  "status": "ALL_57_PREVIOUSLY_UNCLASSIFIED_LINES_ATTRIBUTED_ONE_NEW_CALLER_WARNING_REQUIRES_NEW_CI",
+  "run_id": 40834549715,
+  "source_head": "b24114ec111bcbd0b682ef5468e757fc66edec11",
+  "scope": "Independent read-only supplemental classification of the57 unresolved entries in the original370 mechanical matches. Original collector/audit/candidate/context files remain untouched. Not zero-warning, dependency harmlessness or final-head CI acceptance.",
+  "original_370_candidate_report": {
+    "path": "/home/xumin/Public/Trime/build/issue-fixes-batch9-20261029/cloud/run-40834549715/pr-2208/warning-candidates.json",
+    "sha256": "362cae0aba9dc04e4044a01526064f08901d71fb4b4710292550d9ffb3417be7",
+    "mechanical_matches": 370
+  },
+  "original_context_report": {
+    "path": "/home/xumin/Public/Trime/build/issue-fixes-batch9-20261029/cloud/run-40834549715/pr-2208/warning-context-review.json",
+    "sha256": "bbea1533ca3b144eb51491e4a124cec41f87082e6a66e1a7535b86d662ec5d4a",
+    "previously_unclassified": 57
+  },
+  "supplemental_counts": {
+    "cmake_compiler_feature_probe_status_not_warning": 12,
+    "new_host_wrapper_unused_multiconfig_argument_warning": 1,
+    "pinned_opencc_or_vendored_marisa_msvc_diagnostic": 44
+  },
+  "msvc_warning_code_counts": {
+    "C4267": 13,
+    "C4100": 30,
+    "C4702": 1
+  },
+  "pinned_source_binding": [
+    {
+      "path": "deps/marisa-0.3.1/lib/marisa/grimoire/io/reader.cc",
+      "sha256": "6416633a5ee6df06871b6ac6c8d0fc1d85d62c77aedc850a868e39a161c62c77",
+      "opencc_git_revision": "025f371dc76b598d77384fbdab90c937471844d8"
+    },
+    {
+      "path": "deps/marisa-0.3.1/lib/marisa/grimoire/io/writer.cc",
+      "sha256": "925180e32050fec79a3a45dc9e553d4df728f5ad2f56295033c77cf904cd3ae8",
+      "opencc_git_revision": "025f371dc76b598d77384fbdab90c937471844d8"
+    },
+    {
+      "path": "deps/marisa-0.3.1/lib/marisa/grimoire/vector/bit-vector.cc",
+      "sha256": "0645c6848aa325a2558d04dec14ea35a5ea06dcc06cbe13a411af1887cc0ce97",
+      "opencc_git_revision": "025f371dc76b598d77384fbdab90c937471844d8"
+    },
+    {
+      "path": "src/Dict.hpp",
+      "sha256": "985669ee0d8269a5c102f398d8e2420934bce8a281bb8cbee0b3e19f51533b13",
+      "opencc_git_revision": "025f371dc76b598d77384fbdab90c937471844d8"
+    },
+    {
+      "path": "src/PrefixMatch.cpp",
+      "sha256": "1805525a77e0648c4a2bdaecf063e06b02e358fcfdd49cbdacce8db014bbce74",
+      "opencc_git_revision": "025f371dc76b598d77384fbdab90c937471844d8"
+    },
+    {
+      "path": "src/tools/CommandLineMain.cpp",
+      "sha256": "503d497613f559951489d809cf9cf7573c4c4c8809563defdb9af752adaa8cdb",
+      "opencc_git_revision": "025f371dc76b598d77384fbdab90c937471844d8"
+    }
+  ],
+  "classified_lines": [
+    {
+      "job_id": 123316163699,
+      "job_name": "check / lint-and-test",
+      "raw_file": "job-123316163699.log",
+      "line": 1584,
+      "text": "2026-10-29T07:19:44.2231248Z -- Performing Test COMPILER_HAS_DEPRECATED_ATTR",
+      "category": "cmake_compiler_feature_probe_status_not_warning",
+      "reason": "CMake configure-time compiler capability detection status. The Windows attribute probe fails and the fallback deprecated probe succeeds; no compiler warning is asserted by this status line."
+    },
+    {
+      "job_id": 123316163699,
+      "job_name": "check / lint-and-test",
+      "raw_file": "job-123316163699.log",
+      "line": 1585,
+      "text": "2026-10-29T07:19:44.2232010Z -- Performing Test COMPILER_HAS_DEPRECATED_ATTR - Success",
+      "category": "cmake_compiler_feature_probe_status_not_warning",
+      "reason": "CMake configure-time compiler capability detection status. The Windows attribute probe fails and the fallback deprecated probe succeeds; no compiler warning is asserted by this status line."
+    },
+    {
+      "job_id": 123317770509,
+      "job_name": "build (ubuntu-26.04)",
+      "raw_file": "job-123317770509.log",
+      "line": 1708,
+      "text": "2026-10-29T07:24:44.0010545Z -- Performing Test COMPILER_HAS_DEPRECATED_ATTR",
+      "category": "cmake_compiler_feature_probe_status_not_warning",
+      "reason": "CMake configure-time compiler capability detection status. The Windows attribute probe fails and the fallback deprecated probe succeeds; no compiler warning is asserted by this status line."
+    },
+    {
+      "job_id": 123317770509,
+      "job_name": "build (ubuntu-26.04)",
+      "raw_file": "job-123317770509.log",
+      "line": 1709,
+      "text": "2026-10-29T07:24:44.1046590Z -- Performing Test COMPILER_HAS_DEPRECATED_ATTR - Success",
+      "category": "cmake_compiler_feature_probe_status_not_warning",
+      "reason": "CMake configure-time compiler capability detection status. The Windows attribute probe fails and the fallback deprecated probe succeeds; no compiler warning is asserted by this status line."
+    },
+    {
+      "job_id": 123317770532,
+      "job_name": "build (macos-26)",
+      "raw_file": "job-123317770532.log",
+      "line": 1722,
+      "text": "2026-10-29T07:26:05.4084000Z -- Performing Test COMPILER_HAS_DEPRECATED_ATTR",
+      "category": "cmake_compiler_feature_probe_status_not_warning",
+      "reason": "CMake configure-time compiler capability detection status. The Windows attribute probe fails and the fallback deprecated probe succeeds; no compiler warning is asserted by this status line."
+    },
+    {
+      "job_id": 123317770532,
+      "job_name": "build (macos-26)",
+      "raw_file": "job-123317770532.log",
+      "line": 1723,
+      "text": "2026-10-29T07:26:05.9848610Z -- Performing Test COMPILER_HAS_DEPRECATED_ATTR - Success",
+      "category": "cmake_compiler_feature_probe_status_not_warning",
+      "reason": "CMake configure-time compiler capability detection status. The Windows attribute probe fails and the fallback deprecated probe succeeds; no compiler warning is asserted by this status line."
+    },
+    {
+      "job_id": 123317770546,
+      "job_name": "build (windows-2025)",
+      "raw_file": "job-123317770546.log",
+      "line": 1088,
+      "text": "2026-10-29T07:26:29.5285251Z -- Performing Test COMPILER_HAS_DEPRECATED_ATTR",
+      "category": "cmake_compiler_feature_probe_status_not_warning",
+      "reason": "CMake configure-time compiler capability detection status. The Windows attribute probe fails and the fallback deprecated probe succeeds; no compiler warning is asserted by this status line."
+    },
+    {
+      "job_id": 123317770546,
+      "job_name": "build (windows-2025)",
+      "raw_file": "job-123317770546.log",
+      "line": 1089,
+      "text": "2026-10-29T07:26:30.0292326Z -- Performing Test COMPILER_HAS_DEPRECATED_ATTR - Failed",
+      "category": "cmake_compiler_feature_probe_status_not_warning",
+      "reason": "CMake configure-time compiler capability detection status. The Windows attribute probe fails and the fallback deprecated probe succeeds; no compiler warning is asserted by this status line."
+    },
+    {
+      "job_id": 123317770546,
+      "job_name": "build (windows-2025)",
+      "raw_file": "job-123317770546.log",
+      "line": 1090,
+      "text": "2026-10-29T07:26:30.0292819Z -- Performing Test COMPILER_HAS_DEPRECATED",
+      "category": "cmake_compiler_feature_probe_status_not_warning",
+      "reason": "CMake configure-time compiler capability detection status. The Windows attribute probe fails and the fallback deprecated probe succeeds; no compiler warning is asserted by this status line."
+    },
+    {
+      "job_id": 123317770546,
+      "job_name": "build (windows-2025)",
+      "raw_file": "job-123317770546.log",
+      "line": 1091,
+      "text": "2026-10-29T07:26:30.6285750Z -- Performing Test COMPILER_HAS_DEPRECATED - Success",
+      "category": "cmake_compiler_feature_probe_status_not_warning",
+      "reason": "CMake configure-time compiler capability detection status. The Windows attribute probe fails and the fallback deprecated probe succeeds; no compiler warning is asserted by this status line."
+    },
+    {
+      "job_id": 123317770546,
+      "job_name": "build (windows-2025)",
+      "raw_file": "job-123317770546.log",
+      "line": 1094,
+      "text": "2026-10-29T07:26:31.9298166Z CMake Warning (unused-cli):",
+      "category": "new_host_wrapper_unused_multiconfig_argument_warning",
+      "reason": "This PR passed CMAKE_BUILD_TYPE=Release to Windows Visual Studio multi-config configure. This is a real new warning owned by the new caller and needs the reviewed source correction plus a new CI run.",
+      "context": [
+        {
+          "line": 1094,
+          "text": "2026-10-29T07:26:31.9298166Z CMake Warning (unused-cli):"
+        },
+        {
+          "line": 1095,
+          "text": "2026-10-29T07:26:31.9300961Z -- Generating done (0.1s)"
+        },
+        {
+          "line": 1096,
+          "text": "2026-10-29T07:26:31.9301467Z   Manually-specified variables were not used by the project:"
+        },
+        {
+          "line": 1097,
+          "text": "2026-10-29T07:26:31.9302009Z -- Build files have been written to: D:/a/trime/trime/app/build/opencc-host"
+        },
+        {
+          "line": 1098,
+          "text": "2026-10-29T07:26:31.9302788Z "
+        },
+        {
+          "line": 1099,
+          "text": "2026-10-29T07:26:31.9303134Z     CMAKE_BUILD_TYPE"
+        },
+        {
+          "line": 1100,
+          "text": "2026-10-29T07:26:31.9303996Z "
+        },
+        {
+          "line": 1101,
+          "text": "2026-10-29T07:26:31.9304203Z "
+        },
+        {
+          "line": 1102,
+          "text": "2026-10-29T07:26:32.0285275Z MSBuild version 18.11.1-1.26513.3+940033be3 for .NET Framework"
+        }
+      ],
+      "status": "SOURCE_FIX_REVIEWED_NEW_CI_PENDING"
+    },
+    {
+      "job_id": 123317770546,
+      "job_name": "build (windows-2025)",
+      "raw_file": "job-123317770546.log",
+      "line": 1109,
+      "text": "2026-10-29T07:26:35.0294609Z D:\\a\\trime\\trime\\app\\src\\main\\jni\\librime\\deps\\opencc\\deps\\marisa-0.3.1\\lib\\marisa\\grimoire\\io\\reader.cc(122,32): warning C4267: 'initializing': conversion from 'size_t' to 'unsigned int', possible loss of data [D:\\a\\trime\\trime\\app\\build\\opencc-host\\opencc\\deps\\marisa-0.3.1\\marisa.vcxproj]",
+      "category": "pinned_opencc_or_vendored_marisa_msvc_diagnostic",
+      "source": "deps/marisa-0.3.1/lib/marisa/grimoire/io/reader.cc",
+      "source_line": 122,
+      "source_column": 32,
+      "warning_code": "C4267",
+      "reason": "Compiler explicitly attributes the diagnostic to the pinned OpenCC tree or its bundled marisa source during the new native host-tools build. Attribution is not a harmlessness, false-positive, baseline-equivalence or no-risk verdict."
+    },
+    {
+      "job_id": 123317770546,
+      "job_name": "build (windows-2025)",
+      "raw_file": "job-123317770546.log",
+      "line": 1110,
+      "text": "2026-10-29T07:26:35.0296299Z D:\\a\\trime\\trime\\app\\src\\main\\jni\\librime\\deps\\opencc\\deps\\marisa-0.3.1\\lib\\marisa\\grimoire\\io\\reader.cc(122,32): warning C4267: 'initializing': conversion from 'size_t' to 'const unsigned int', possible loss of data [D:\\a\\trime\\trime\\app\\build\\opencc-host\\opencc\\deps\\marisa-0.3.1\\marisa.vcxproj]",
+      "category": "pinned_opencc_or_vendored_marisa_msvc_diagnostic",
+      "source": "deps/marisa-0.3.1/lib/marisa/grimoire/io/reader.cc",
+      "source_line": 122,
+      "source_column": 32,
+      "warning_code": "C4267",
+      "reason": "Compiler explicitly attributes the diagnostic to the pinned OpenCC tree or its bundled marisa source during the new native host-tools build. Attribution is not a harmlessness, false-positive, baseline-equivalence or no-risk verdict."
+    },
+    {
+      "job_id": 123317770546,
+      "job_name": "build (windows-2025)",
+      "raw_file": "job-123317770546.log",
+      "line": 1112,
+      "text": "2026-10-29T07:26:35.3294040Z D:\\a\\trime\\trime\\app\\src\\main\\jni\\librime\\deps\\opencc\\deps\\marisa-0.3.1\\lib\\marisa\\grimoire\\io\\writer.cc(122,32): warning C4267: 'initializing': conversion from 'size_t' to 'unsigned int', possible loss of data [D:\\a\\trime\\trime\\app\\build\\opencc-host\\opencc\\deps\\marisa-0.3.1\\marisa.vcxproj]",
+      "category": "pinned_opencc_or_vendored_marisa_msvc_diagnostic",
+      "source": "deps/marisa-0.3.1/lib/marisa/grimoire/io/writer.cc",
+      "source_line": 122,
+      "source_column": 32,
+      "warning_code": "C4267",
+      "reason": "Compiler explicitly attributes the diagnostic to the pinned OpenCC tree or its bundled marisa source during the new native host-tools build. Attribution is not a harmlessness, false-positive, baseline-equivalence or no-risk verdict."
+    },
+    {
+      "job_id": 123317770546,
+      "job_name": "build (windows-2025)",
+      "raw_file": "job-123317770546.log",
+      "line": 1113,
+      "text": "2026-10-29T07:26:35.3295428Z D:\\a\\trime\\trime\\app\\src\\main\\jni\\librime\\deps\\opencc\\deps\\marisa-0.3.1\\lib\\marisa\\grimoire\\io\\writer.cc(122,32): warning C4267: 'initializing': conversion from 'size_t' to 'const unsigned int', possible loss of data [D:\\a\\trime\\trime\\app\\build\\opencc-host\\opencc\\deps\\marisa-0.3.1\\marisa.vcxproj]",
+      "category": "pinned_opencc_or_vendored_marisa_msvc_diagnostic",
+      "source": "deps/marisa-0.3.1/lib/marisa/grimoire/io/writer.cc",
+      "source_line": 122,
+      "source_column": 32,
+      "warning_code": "C4267",
+      "reason": "Compiler explicitly attributes the diagnostic to the pinned OpenCC tree or its bundled marisa source during the new native host-tools build. Attribution is not a harmlessness, false-positive, baseline-equivalence or no-risk verdict."
+    },
+    {
+      "job_id": 123317770546,
+      "job_name": "build (windows-2025)",
+      "raw_file": "job-123317770546.log",
+      "line": 1118,
+      "text": "2026-10-29T07:26:38.7292503Z D:\\a\\trime\\trime\\app\\src\\main\\jni\\librime\\deps\\opencc\\deps\\marisa-0.3.1\\lib\\marisa\\grimoire\\vector\\bit-vector.cc(280,18): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data [D:\\a\\trime\\trime\\app\\build\\opencc-host\\opencc\\deps\\marisa-0.3.1\\marisa.vcxproj]",
+      "category": "pinned_opencc_or_vendored_marisa_msvc_diagnostic",
+      "source": "deps/marisa-0.3.1/lib/marisa/grimoire/vector/bit-vector.cc",
+      "source_line": 280,
+      "source_column": 18,
+      "warning_code": "C4267",
+      "reason": "Compiler explicitly attributes the diagnostic to the pinned OpenCC tree or its bundled marisa source during the new native host-tools build. Attribution is not a harmlessness, false-positive, baseline-equivalence or no-risk verdict."
+    },
+    {
+      "job_id": 123317770546,
+      "job_name": "build (windows-2025)",
+      "raw_file": "job-123317770546.log",
+      "line": 1119,
+      "text": "2026-10-29T07:26:38.7294112Z D:\\a\\trime\\trime\\app\\src\\main\\jni\\librime\\deps\\opencc\\deps\\marisa-0.3.1\\lib\\marisa\\grimoire\\vector\\bit-vector.cc(280,18): warning C4267: 'initializing': conversion from 'size_t' to 'const int', possible loss of data [D:\\a\\trime\\trime\\app\\build\\opencc-host\\opencc\\deps\\marisa-0.3.1\\marisa.vcxproj]",
+      "category": "pinned_opencc_or_vendored_marisa_msvc_diagnostic",
+      "source": "deps/marisa-0.3.1/lib/marisa/grimoire/vector/bit-vector.cc",
+      "source_line": 280,
+      "source_column": 18,
+      "warning_code": "C4267",
+      "reason": "Compiler explicitly attributes the diagnostic to the pinned OpenCC tree or its bundled marisa source during the new native host-tools build. Attribution is not a harmlessness, false-positive, baseline-equivalence or no-risk verdict."
+    },
+    {
+      "job_id": 123317770546,
+      "job_name": "build (windows-2025)",
+      "raw_file": "job-123317770546.log",
+      "line": 1125,
+      "text": "2026-10-29T07:26:41.5286608Z D:\\a\\trime\\trime\\app\\src\\main\\jni\\librime\\deps\\opencc\\src\\Dict.hpp(155,51): warning C4100: 'len': unreferenced parameter [D:\\a\\trime\\trime\\app\\build\\opencc-host\\opencc\\src\\libopencc.vcxproj]",
+      "category": "pinned_opencc_or_vendored_marisa_msvc_diagnostic",
+      "source": "src/Dict.hpp",
+      "source_line": 155,
+      "source_column": 51,
+      "warning_code": "C4100",
+      "reason": "Compiler explicitly attributes the diagnostic to the pinned OpenCC tree or its bundled marisa source during the new native host-tools build. Attribution is not a harmlessness, false-positive, baseline-equivalence or no-risk verdict."
+    },
+    {
+      "job_id": 123317770546,
+      "job_name": "build (windows-2025)",
+      "raw_file": "job-123317770546.log",
+      "line": 1128,
+      "text": "2026-10-29T07:26:41.5291215Z D:\\a\\trime\\trime\\app\\src\\main\\jni\\librime\\deps\\opencc\\src\\Dict.hpp(154,56): warning C4100: 'word': unreferenced parameter [D:\\a\\trime\\trime\\app\\build\\opencc-host\\opencc\\src\\libopencc.vcxproj]",
+      "category": "pinned_opencc_or_vendored_marisa_msvc_diagnostic",
+      "source": "src/Dict.hpp",
+      "source_line": 154,
+      "source_column": 56,
+      "warning_code": "C4100",
+      "reason": "Compiler explicitly attributes the diagnostic to the pinned OpenCC tree or its bundled marisa source during the new native host-tools build. Attribution is not a harmlessness, false-positive, baseline-equivalence or no-risk verdict."
+    },
+    {
+      "job_id": 123317770546,
+      "job_name": "build (windows-2025)",
+      "raw_file": "job-123317770546.log",
+      "line": 1132,
+      "text": "2026-10-29T07:26:42.5288491Z D:\\a\\trime\\trime\\app\\src\\main\\jni\\librime\\deps\\opencc\\src\\Dict.hpp(155,51): warning C4100: 'len': unreferenced parameter [D:\\a\\trime\\trime\\app\\build\\opencc-host\\opencc\\src\\libopencc.vcxproj]",
+      "category": "pinned_opencc_or_vendored_marisa_msvc_diagnostic",
+      "source": "src/Dict.hpp",
+      "source_line": 155,
+      "source_column": 51,
+      "warning_code": "C4100",
+      "reason": "Compiler explicitly attributes the diagnostic to the pinned OpenCC tree or its bundled marisa source during the new native host-tools build. Attribution is not a harmlessness, false-positive, baseline-equivalence or no-risk verdict."
+    },
+    {
+      "job_id": 123317770546,
+      "job_name": "build (windows-2025)",
+      "raw_file": "job-123317770546.log",
+      "line": 1135,
+      "text": "2026-10-29T07:26:42.5290426Z D:\\a\\trime\\trime\\app\\src\\main\\jni\\librime\\deps\\opencc\\src\\Dict.hpp(154,56): warning C4100: 'word': unreferenced parameter [D:\\a\\trime\\trime\\app\\build\\opencc-host\\opencc\\src\\libopencc.vcxproj]",
+      "category": "pinned_opencc_or_vendored_marisa_msvc_diagnostic",
+      "source": "src/Dict.hpp",
+      "source_line": 154,
+      "source_column": 56,
+      "warning_code": "C4100",
+      "reason": "Compiler explicitly attributes the diagnostic to the pinned OpenCC tree or its bundled marisa source during the new native host-tools build. Attribution is not a harmlessness, false-positive, baseline-equivalence or no-risk verdict."
+    },
+    {
+      "job_id": 123317770546,
+      "job_name": "build (windows-2025)",
+      "raw_file": "job-123317770546.log",
+      "line": 1139,
+      "text": "2026-10-29T07:26:43.3301176Z D:\\a\\trime\\trime\\app\\src\\main\\jni\\librime\\deps\\opencc\\src\\Dict.hpp(155,51): warning C4100: 'len': unreferenced parameter [D:\\a\\trime\\trime\\app\\build\\opencc-host\\opencc\\src\\libopencc.vcxproj]",
+      "category": "pinned_opencc_or_vendored_marisa_msvc_diagnostic",
+      "source": "src/Dict.hpp",
+      "source_line": 155,
+      "source_column": 51,
+      "warning_code": "C4100",
+      "reason": "Compiler explicitly attributes the diagnostic to the pinned OpenCC tree or its bundled marisa source during the new native host-tools build. Attribution is not a harmlessness, false-positive, baseline-equivalence or no-risk verdict."
+    },
+    {
+      "job_id": 123317770546,
+      "job_name": "build (windows-2025)",
+      "raw_file": "job-123317770546.log",
+      "line": 1142,
+      "text": "2026-10-29T07:26:43.3304233Z D:\\a\\trime\\trime\\app\\src\\main\\jni\\librime\\deps\\opencc\\src\\Dict.hpp(154,56): warning C4100: 'word': unreferenced parameter [D:\\a\\trime\\trime\\app\\build\\opencc-host\\opencc\\src\\libopencc.vcxproj]",
+      "category": "pinned_opencc_or_vendored_marisa_msvc_diagnostic",
+      "source": "src/Dict.hpp",
+      "source_line": 154,
+      "source_column": 56,
+      "warning_code": "C4100",
+      "reason": "Compiler explicitly attributes the diagnostic to the pinned OpenCC tree or its bundled marisa source during the new native host-tools build. Attribution is not a harmlessness, false-positive, baseline-equivalence or no-risk verdict."
+    },
+    {
+      "job_id": 123317770546,
+      "job_name": "build (windows-2025)",
+      "raw_file": "job-123317770546.log",
+      "line": 1146,
+      "text": "2026-10-29T07:26:44.1289168Z D:\\a\\trime\\trime\\app\\src\\main\\jni\\librime\\deps\\opencc\\src\\Dict.hpp(155,51): warning C4100: 'len': unreferenced parameter [D:\\a\\trime\\trime\\app\\build\\opencc-host\\opencc\\src\\libopencc.vcxproj]",
+      "category": "pinned_opencc_or_vendored_marisa_msvc_diagnostic",
+      "source": "src/Dict.hpp",
+      "source_line": 155,
+      "source_column": 51,
+      "warning_code": "C4100",
+      "reason": "Compiler explicitly attributes the diagnostic to the pinned OpenCC tree or its bundled marisa source during the new native host-tools build. Attribution is not a harmlessness, false-positive, baseline-equivalence or no-risk verdict."
+    },
+    {
+      "job_id": 123317770546,
+      "job_name": "build (windows-2025)",
+      "raw_file": "job-123317770546.log",
+      "line": 1149,
+      "text": "2026-10-29T07:26:44.1292298Z D:\\a\\trime\\trime\\app\\src\\main\\jni\\librime\\deps\\opencc\\src\\Dict.hpp(154,56): warning C4100: 'word': unreferenced parameter [D:\\a\\trime\\trime\\app\\build\\opencc-host\\opencc\\src\\libopencc.vcxproj]",
+      "category": "pinned_opencc_or_vendored_marisa_msvc_diagnostic",
+      "source": "src/Dict.hpp",
+      "source_line": 154,
+      "source_column": 56,
+      "warning_code": "C4100",
+      "reason": "Compiler explicitly attributes the diagnostic to the pinned OpenCC tree or its bundled marisa source during the new native host-tools build. Attribution is not a harmlessness, false-positive, baseline-equivalence or no-risk verdict."
+    },
+    {
+      "job_id": 123317770546,
+      "job_name": "build (windows-2025)",
+      "raw_file": "job-123317770546.log",
+      "line": 1155,
+      "text": "2026-10-29T07:26:45.9292307Z D:\\a\\trime\\trime\\app\\src\\main\\jni\\librime\\deps\\opencc\\src\\Dict.hpp(155,51): warning C4100: 'len': unreferenced parameter [D:\\a\\trime\\trime\\app\\build\\opencc-host\\opencc\\src\\libopencc.vcxproj]",
+      "category": "pinned_opencc_or_vendored_marisa_msvc_diagnostic",
+      "source": "src/Dict.hpp",
+      "source_line": 155,
+      "source_column": 51,
+      "warning_code": "C4100",
+      "reason": "Compiler explicitly attributes the diagnostic to the pinned OpenCC tree or its bundled marisa source during the new native host-tools build. Attribution is not a harmlessness, false-positive, baseline-equivalence or no-risk verdict."
+    },
+    {
+      "job_id": 123317770546,
+      "job_name": "build (windows-2025)",
+      "raw_file": "job-123317770546.log",
+      "line": 1158,
+      "text": "2026-10-29T07:26:45.9294344Z D:\\a\\trime\\trime\\app\\src\\main\\jni\\librime\\deps\\opencc\\src\\Dict.hpp(154,56): warning C4100: 'word': unreferenced parameter [D:\\a\\trime\\trime\\app\\build\\opencc-host\\opencc\\src\\libopencc.vcxproj]",
+      "category": "pinned_opencc_or_vendored_marisa_msvc_diagnostic",
+      "source": "src/Dict.hpp",
+      "source_line": 154,
+      "source_column": 56,
+      "warning_code": "C4100",
+      "reason": "Compiler explicitly attributes the diagnostic to the pinned OpenCC tree or its bundled marisa source during the new native host-tools build. Attribution is not a harmlessness, false-positive, baseline-equivalence or no-risk verdict."
+    },
+    {
+      "job_id": 123317770546,
+      "job_name": "build (windows-2025)",
+      "raw_file": "job-123317770546.log",
+      "line": 1162,
+      "text": "2026-10-29T07:26:46.7313782Z D:\\a\\trime\\trime\\app\\src\\main\\jni\\librime\\deps\\opencc\\src\\Dict.hpp(155,51): warning C4100: 'len': unreferenced parameter [D:\\a\\trime\\trime\\app\\build\\opencc-host\\opencc\\src\\libopencc.vcxproj]",
+      "category": "pinned_opencc_or_vendored_marisa_msvc_diagnostic",
+      "source": "src/Dict.hpp",
+      "source_line": 155,
+      "source_column": 51,
+      "warning_code": "C4100",
+      "reason": "Compiler explicitly attributes the diagnostic to the pinned OpenCC tree or its bundled marisa source during the new native host-tools build. Attribution is not a harmlessness, false-positive, baseline-equivalence or no-risk verdict."
+    },
+    {
+      "job_id": 123317770546,
+      "job_name": "build (windows-2025)",
+      "raw_file": "job-123317770546.log",
+      "line": 1165,
+      "text": "2026-10-29T07:26:46.7318105Z D:\\a\\trime\\trime\\app\\src\\main\\jni\\librime\\deps\\opencc\\src\\Dict.hpp(154,56): warning C4100: 'word': unreferenced parameter [D:\\a\\trime\\trime\\app\\build\\opencc-host\\opencc\\src\\libopencc.vcxproj]",
+      "category": "pinned_opencc_or_vendored_marisa_msvc_diagnostic",
+      "source": "src/Dict.hpp",
+      "source_line": 154,
+      "source_column": 56,
+      "warning_code": "C4100",
+      "reason": "Compiler explicitly attributes the diagnostic to the pinned OpenCC tree or its bundled marisa source during the new native host-tools build. Attribution is not a harmlessness, false-positive, baseline-equivalence or no-risk verdict."
+    },
+    {
+      "job_id": 123317770546,
+      "job_name": "build (windows-2025)",
+      "raw_file": "job-123317770546.log",
+      "line": 1170,
+      "text": "2026-10-29T07:26:48.2290545Z D:\\a\\trime\\trime\\app\\src\\main\\jni\\librime\\deps\\opencc\\src\\Dict.hpp(155,51): warning C4100: 'len': unreferenced parameter [D:\\a\\trime\\trime\\app\\build\\opencc-host\\opencc\\src\\libopencc.vcxproj]",
+      "category": "pinned_opencc_or_vendored_marisa_msvc_diagnostic",
+      "source": "src/Dict.hpp",
+      "source_line": 155,
+      "source_column": 51,
+      "warning_code": "C4100",
+      "reason": "Compiler explicitly attributes the diagnostic to the pinned OpenCC tree or its bundled marisa source during the new native host-tools build. Attribution is not a harmlessness, false-positive, baseline-equivalence or no-risk verdict."
+    },
+    {
+      "job_id": 123317770546,
+      "job_name": "build (windows-2025)",
+      "raw_file": "job-123317770546.log",
+      "line": 1173,
+      "text": "2026-10-29T07:26:48.2292972Z D:\\a\\trime\\trime\\app\\src\\main\\jni\\librime\\deps\\opencc\\src\\Dict.hpp(154,56): warning C4100: 'word': unreferenced parameter [D:\\a\\trime\\trime\\app\\build\\opencc-host\\opencc\\src\\libopencc.vcxproj]",
+      "category": "pinned_opencc_or_vendored_marisa_msvc_diagnostic",
+      "source": "src/Dict.hpp",
+      "source_line": 154,
+      "source_column": 56,
+      "warning_code": "C4100",
+      "reason": "Compiler explicitly attributes the diagnostic to the pinned OpenCC tree or its bundled marisa source during the new native host-tools build. Attribution is not a harmlessness, false-positive, baseline-equivalence or no-risk verdict."
+    },
+    {
+      "job_id": 123317770546,
+      "job_name": "build (windows-2025)",
+      "raw_file": "job-123317770546.log",
+      "line": 1178,
+      "text": "2026-10-29T07:26:49.8290383Z D:\\a\\trime\\trime\\app\\src\\main\\jni\\librime\\deps\\opencc\\src\\Dict.hpp(155,51): warning C4100: 'len': unreferenced parameter [D:\\a\\trime\\trime\\app\\build\\opencc-host\\opencc\\src\\libopencc.vcxproj]",
+      "category": "pinned_opencc_or_vendored_marisa_msvc_diagnostic",
+      "source": "src/Dict.hpp",
+      "source_line": 155,
+      "source_column": 51,
+      "warning_code": "C4100",
+      "reason": "Compiler explicitly attributes the diagnostic to the pinned OpenCC tree or its bundled marisa source during the new native host-tools build. Attribution is not a harmlessness, false-positive, baseline-equivalence or no-risk verdict."
+    },
+    {
+      "job_id": 123317770546,
+      "job_name": "build (windows-2025)",
+      "raw_file": "job-123317770546.log",
+      "line": 1181,
+      "text": "2026-10-29T07:26:49.8292616Z D:\\a\\trime\\trime\\app\\src\\main\\jni\\librime\\deps\\opencc\\src\\Dict.hpp(154,56): warning C4100: 'word': unreferenced parameter [D:\\a\\trime\\trime\\app\\build\\opencc-host\\opencc\\src\\libopencc.vcxproj]",
+      "category": "pinned_opencc_or_vendored_marisa_msvc_diagnostic",
+      "source": "src/Dict.hpp",
+      "source_line": 154,
+      "source_column": 56,
+      "warning_code": "C4100",
+      "reason": "Compiler explicitly attributes the diagnostic to the pinned OpenCC tree or its bundled marisa source during the new native host-tools build. Attribution is not a harmlessness, false-positive, baseline-equivalence or no-risk verdict."
+    },
+    {
+      "job_id": 123317770546,
+      "job_name": "build (windows-2025)",
+      "raw_file": "job-123317770546.log",
+      "line": 1185,
+      "text": "2026-10-29T07:26:50.6290068Z D:\\a\\trime\\trime\\app\\src\\main\\jni\\librime\\deps\\opencc\\src\\Dict.hpp(155,51): warning C4100: 'len': unreferenced parameter [D:\\a\\trime\\trime\\app\\build\\opencc-host\\opencc\\src\\libopencc.vcxproj]",
+      "category": "pinned_opencc_or_vendored_marisa_msvc_diagnostic",
+      "source": "src/Dict.hpp",
+      "source_line": 155,
+      "source_column": 51,
+      "warning_code": "C4100",
+      "reason": "Compiler explicitly attributes the diagnostic to the pinned OpenCC tree or its bundled marisa source during the new native host-tools build. Attribution is not a harmlessness, false-positive, baseline-equivalence or no-risk verdict."
+    },
+    {
+      "job_id": 123317770546,
+      "job_name": "build (windows-2025)",
+      "raw_file": "job-123317770546.log",
+      "line": 1188,
+      "text": "2026-10-29T07:26:50.6292156Z D:\\a\\trime\\trime\\app\\src\\main\\jni\\librime\\deps\\opencc\\src\\Dict.hpp(154,56): warning C4100: 'word': unreferenced parameter [D:\\a\\trime\\trime\\app\\build\\opencc-host\\opencc\\src\\libopencc.vcxproj]",
+      "category": "pinned_opencc_or_vendored_marisa_msvc_diagnostic",
+      "source": "src/Dict.hpp",
+      "source_line": 154,
+      "source_column": 56,
+      "warning_code": "C4100",
+      "reason": "Compiler explicitly attributes the diagnostic to the pinned OpenCC tree or its bundled marisa source during the new native host-tools build. Attribution is not a harmlessness, false-positive, baseline-equivalence or no-risk verdict."
+    },
+    {
+      "job_id": 123317770546,
+      "job_name": "build (windows-2025)",
+      "raw_file": "job-123317770546.log",
+      "line": 1195,
+      "text": "2026-10-29T07:26:53.2285197Z D:\\a\\trime\\trime\\app\\src\\main\\jni\\librime\\deps\\opencc\\src\\Dict.hpp(155,51): warning C4100: 'len': unreferenced parameter [D:\\a\\trime\\trime\\app\\build\\opencc-host\\opencc\\src\\libopencc.vcxproj]",
+      "category": "pinned_opencc_or_vendored_marisa_msvc_diagnostic",
+      "source": "src/Dict.hpp",
+      "source_line": 155,
+      "source_column": 51,
+      "warning_code": "C4100",
+      "reason": "Compiler explicitly attributes the diagnostic to the pinned OpenCC tree or its bundled marisa source during the new native host-tools build. Attribution is not a harmlessness, false-positive, baseline-equivalence or no-risk verdict."
+    },
+    {
+      "job_id": 123317770546,
+      "job_name": "build (windows-2025)",
+      "raw_file": "job-123317770546.log",
+      "line": 1198,
+      "text": "2026-10-29T07:26:53.2287865Z D:\\a\\trime\\trime\\app\\src\\main\\jni\\librime\\deps\\opencc\\src\\Dict.hpp(154,56): warning C4100: 'word': unreferenced parameter [D:\\a\\trime\\trime\\app\\build\\opencc-host\\opencc\\src\\libopencc.vcxproj]",
+      "category": "pinned_opencc_or_vendored_marisa_msvc_diagnostic",
+      "source": "src/Dict.hpp",
+      "source_line": 154,
+      "source_column": 56,
+      "warning_code": "C4100",
+      "reason": "Compiler explicitly attributes the diagnostic to the pinned OpenCC tree or its bundled marisa source during the new native host-tools build. Attribution is not a harmlessness, false-positive, baseline-equivalence or no-risk verdict."
+    },
+    {
+      "job_id": 123317770546,
+      "job_name": "build (windows-2025)",
+      "raw_file": "job-123317770546.log",
+      "line": 1204,
+      "text": "2026-10-29T07:26:55.2305098Z D:\\a\\trime\\trime\\app\\src\\main\\jni\\librime\\deps\\opencc\\src\\Dict.hpp(155,51): warning C4100: 'len': unreferenced parameter [D:\\a\\trime\\trime\\app\\build\\opencc-host\\opencc\\src\\libopencc.vcxproj]",
+      "category": "pinned_opencc_or_vendored_marisa_msvc_diagnostic",
+      "source": "src/Dict.hpp",
+      "source_line": 155,
+      "source_column": 51,
+      "warning_code": "C4100",
+      "reason": "Compiler explicitly attributes the diagnostic to the pinned OpenCC tree or its bundled marisa source during the new native host-tools build. Attribution is not a harmlessness, false-positive, baseline-equivalence or no-risk verdict."
+    },
+    {
+      "job_id": 123317770546,
+      "job_name": "build (windows-2025)",
+      "raw_file": "job-123317770546.log",
+      "line": 1207,
+      "text": "2026-10-29T07:26:55.2307795Z D:\\a\\trime\\trime\\app\\src\\main\\jni\\librime\\deps\\opencc\\src\\Dict.hpp(154,56): warning C4100: 'word': unreferenced parameter [D:\\a\\trime\\trime\\app\\build\\opencc-host\\opencc\\src\\libopencc.vcxproj]",
+      "category": "pinned_opencc_or_vendored_marisa_msvc_diagnostic",
+      "source": "src/Dict.hpp",
+      "source_line": 154,
+      "source_column": 56,
+      "warning_code": "C4100",
+      "reason": "Compiler explicitly attributes the diagnostic to the pinned OpenCC tree or its bundled marisa source during the new native host-tools build. Attribution is not a harmlessness, false-positive, baseline-equivalence or no-risk verdict."
+    },
+    {
+      "job_id": 123317770546,
+      "job_name": "build (windows-2025)",
+      "raw_file": "job-123317770546.log",
+      "line": 1211,
+      "text": "2026-10-29T07:26:56.3288591Z D:\\a\\trime\\trime\\app\\src\\main\\jni\\librime\\deps\\opencc\\src\\PrefixMatch.cpp(342,1): warning C4702: unreachable code [D:\\a\\trime\\trime\\app\\build\\opencc-host\\opencc\\src\\libopencc.vcxproj]",
+      "category": "pinned_opencc_or_vendored_marisa_msvc_diagnostic",
+      "source": "src/PrefixMatch.cpp",
+      "source_line": 342,
+      "source_column": 1,
+      "warning_code": "C4702",
+      "reason": "Compiler explicitly attributes the diagnostic to the pinned OpenCC tree or its bundled marisa source during the new native host-tools build. Attribution is not a harmlessness, false-positive, baseline-equivalence or no-risk verdict."
+    },
+    {
+      "job_id": 123317770546,
+      "job_name": "build (windows-2025)",
+      "raw_file": "job-123317770546.log",
+      "line": 1214,
+      "text": "2026-10-29T07:27:03.1289349Z D:\\a\\trime\\trime\\app\\src\\main\\jni\\librime\\deps\\opencc\\src\\Dict.hpp(155,51): warning C4100: 'len': unreferenced parameter [D:\\a\\trime\\trime\\app\\build\\opencc-host\\opencc\\src\\libopencc.vcxproj]",
+      "category": "pinned_opencc_or_vendored_marisa_msvc_diagnostic",
+      "source": "src/Dict.hpp",
+      "source_line": 155,
+      "source_column": 51,
+      "warning_code": "C4100",
+      "reason": "Compiler explicitly attributes the diagnostic to the pinned OpenCC tree or its bundled marisa source during the new native host-tools build. Attribution is not a harmlessness, false-positive, baseline-equivalence or no-risk verdict."
+    },
+    {
+      "job_id": 123317770546,
+      "job_name": "build (windows-2025)",
+      "raw_file": "job-123317770546.log",
+      "line": 1217,
+      "text": "2026-10-29T07:27:03.1291623Z D:\\a\\trime\\trime\\app\\src\\main\\jni\\librime\\deps\\opencc\\src\\Dict.hpp(154,56): warning C4100: 'word': unreferenced parameter [D:\\a\\trime\\trime\\app\\build\\opencc-host\\opencc\\src\\libopencc.vcxproj]",
+      "category": "pinned_opencc_or_vendored_marisa_msvc_diagnostic",
+      "source": "src/Dict.hpp",
+      "source_line": 154,
+      "source_column": 56,
+      "warning_code": "C4100",
+      "reason": "Compiler explicitly attributes the diagnostic to the pinned OpenCC tree or its bundled marisa source during the new native host-tools build. Attribution is not a harmlessness, false-positive, baseline-equivalence or no-risk verdict."
+    },
+    {
+      "job_id": 123317770546,
+      "job_name": "build (windows-2025)",
+      "raw_file": "job-123317770546.log",
+      "line": 1223,
+      "text": "2026-10-29T07:27:04.8299980Z D:\\a\\trime\\trime\\app\\src\\main\\jni\\librime\\deps\\opencc\\src\\Dict.hpp(155,51): warning C4100: 'len': unreferenced parameter [D:\\a\\trime\\trime\\app\\build\\opencc-host\\opencc\\src\\libopencc.vcxproj]",
+      "category": "pinned_opencc_or_vendored_marisa_msvc_diagnostic",
+      "source": "src/Dict.hpp",
+      "source_line": 155,
+      "source_column": 51,
+      "warning_code": "C4100",
+      "reason": "Compiler explicitly attributes the diagnostic to the pinned OpenCC tree or its bundled marisa source during the new native host-tools build. Attribution is not a harmlessness, false-positive, baseline-equivalence or no-risk verdict."
+    },
+    {
+      "job_id": 123317770546,
+      "job_name": "build (windows-2025)",
+      "raw_file": "job-123317770546.log",
+      "line": 1226,
+      "text": "2026-10-29T07:27:04.8302680Z D:\\a\\trime\\trime\\app\\src\\main\\jni\\librime\\deps\\opencc\\src\\Dict.hpp(154,56): warning C4100: 'word': unreferenced parameter [D:\\a\\trime\\trime\\app\\build\\opencc-host\\opencc\\src\\libopencc.vcxproj]",
+      "category": "pinned_opencc_or_vendored_marisa_msvc_diagnostic",
+      "source": "src/Dict.hpp",
+      "source_line": 154,
+      "source_column": 56,
+      "warning_code": "C4100",
+      "reason": "Compiler explicitly attributes the diagnostic to the pinned OpenCC tree or its bundled marisa source during the new native host-tools build. Attribution is not a harmlessness, false-positive, baseline-equivalence or no-risk verdict."
+    },
+    {
+      "job_id": 123317770546,
+      "job_name": "build (windows-2025)",
+      "raw_file": "job-123317770546.log",
+      "line": 1232,
+      "text": "2026-10-29T07:27:06.9301185Z D:\\a\\trime\\trime\\app\\src\\main\\jni\\librime\\deps\\opencc\\src\\Dict.hpp(155,51): warning C4100: 'len': unreferenced parameter [D:\\a\\trime\\trime\\app\\build\\opencc-host\\opencc\\src\\libopencc.vcxproj]",
+      "category": "pinned_opencc_or_vendored_marisa_msvc_diagnostic",
+      "source": "src/Dict.hpp",
+      "source_line": 155,
+      "source_column": 51,
+      "warning_code": "C4100",
+      "reason": "Compiler explicitly attributes the diagnostic to the pinned OpenCC tree or its bundled marisa source during the new native host-tools build. Attribution is not a harmlessness, false-positive, baseline-equivalence or no-risk verdict."
+    },
+    {
+      "job_id": 123317770546,
+      "job_name": "build (windows-2025)",
+      "raw_file": "job-123317770546.log",
+      "line": 1235,
+      "text": "2026-10-29T07:27:06.9302651Z D:\\a\\trime\\trime\\app\\src\\main\\jni\\librime\\deps\\opencc\\src\\Dict.hpp(154,56): warning C4100: 'word': unreferenced parameter [D:\\a\\trime\\trime\\app\\build\\opencc-host\\opencc\\src\\libopencc.vcxproj]",
+      "category": "pinned_opencc_or_vendored_marisa_msvc_diagnostic",
+      "source": "src/Dict.hpp",
+      "source_line": 154,
+      "source_column": 56,
+      "warning_code": "C4100",
+      "reason": "Compiler explicitly attributes the diagnostic to the pinned OpenCC tree or its bundled marisa source during the new native host-tools build. Attribution is not a harmlessness, false-positive, baseline-equivalence or no-risk verdict."
+    },
+    {
+      "job_id": 123317770546,
+      "job_name": "build (windows-2025)",
+      "raw_file": "job-123317770546.log",
+      "line": 1239,
+      "text": "2026-10-29T07:27:07.6289107Z D:\\a\\trime\\trime\\app\\src\\main\\jni\\librime\\deps\\opencc\\src\\Dict.hpp(155,51): warning C4100: 'len': unreferenced parameter [D:\\a\\trime\\trime\\app\\build\\opencc-host\\opencc\\src\\libopencc.vcxproj]",
+      "category": "pinned_opencc_or_vendored_marisa_msvc_diagnostic",
+      "source": "src/Dict.hpp",
+      "source_line": 155,
+      "source_column": 51,
+      "warning_code": "C4100",
+      "reason": "Compiler explicitly attributes the diagnostic to the pinned OpenCC tree or its bundled marisa source during the new native host-tools build. Attribution is not a harmlessness, false-positive, baseline-equivalence or no-risk verdict."
+    },
+    {
+      "job_id": 123317770546,
+      "job_name": "build (windows-2025)",
+      "raw_file": "job-123317770546.log",
+      "line": 1242,
+      "text": "2026-10-29T07:27:07.6293039Z D:\\a\\trime\\trime\\app\\src\\main\\jni\\librime\\deps\\opencc\\src\\Dict.hpp(154,56): warning C4100: 'word': unreferenced parameter [D:\\a\\trime\\trime\\app\\build\\opencc-host\\opencc\\src\\libopencc.vcxproj]",
+      "category": "pinned_opencc_or_vendored_marisa_msvc_diagnostic",
+      "source": "src/Dict.hpp",
+      "source_line": 154,
+      "source_column": 56,
+      "warning_code": "C4100",
+      "reason": "Compiler explicitly attributes the diagnostic to the pinned OpenCC tree or its bundled marisa source during the new native host-tools build. Attribution is not a harmlessness, false-positive, baseline-equivalence or no-risk verdict."
+    },
+    {
+      "job_id": 123317770546,
+      "job_name": "build (windows-2025)",
+      "raw_file": "job-123317770546.log",
+      "line": 1255,
+      "text": "2026-10-29T07:27:12.9305482Z D:\\a\\trime\\trime\\app\\src\\main\\jni\\librime\\deps\\opencc\\src\\tools\\CommandLineMain.cpp(312,56): warning C4267: 'argument': conversion from 'size_t' to 'rapidjson::SizeType', possible loss of data [D:\\a\\trime\\trime\\app\\build\\opencc-host\\opencc\\src\\tools\\opencc.vcxproj]",
+      "category": "pinned_opencc_or_vendored_marisa_msvc_diagnostic",
+      "source": "src/tools/CommandLineMain.cpp",
+      "source_line": 312,
+      "source_column": 56,
+      "warning_code": "C4267",
+      "reason": "Compiler explicitly attributes the diagnostic to the pinned OpenCC tree or its bundled marisa source during the new native host-tools build. Attribution is not a harmlessness, false-positive, baseline-equivalence or no-risk verdict."
+    },
+    {
+      "job_id": 123317770546,
+      "job_name": "build (windows-2025)",
+      "raw_file": "job-123317770546.log",
+      "line": 1256,
+      "text": "2026-10-29T07:27:12.9309271Z D:\\a\\trime\\trime\\app\\src\\main\\jni\\librime\\deps\\opencc\\src\\tools\\CommandLineMain.cpp(316,40): warning C4267: 'argument': conversion from 'size_t' to 'rapidjson::SizeType', possible loss of data [D:\\a\\trime\\trime\\app\\build\\opencc-host\\opencc\\src\\tools\\opencc.vcxproj]",
+      "category": "pinned_opencc_or_vendored_marisa_msvc_diagnostic",
+      "source": "src/tools/CommandLineMain.cpp",
+      "source_line": 316,
+      "source_column": 40,
+      "warning_code": "C4267",
+      "reason": "Compiler explicitly attributes the diagnostic to the pinned OpenCC tree or its bundled marisa source during the new native host-tools build. Attribution is not a harmlessness, false-positive, baseline-equivalence or no-risk verdict."
+    },
+    {
+      "job_id": 123317770546,
+      "job_name": "build (windows-2025)",
+      "raw_file": "job-123317770546.log",
+      "line": 1257,
+      "text": "2026-10-29T07:27:13.0287088Z D:\\a\\trime\\trime\\app\\src\\main\\jni\\librime\\deps\\opencc\\src\\tools\\CommandLineMain.cpp(437,30): warning C4267: 'argument': conversion from 'size_t' to 'rapidjson::SizeType', possible loss of data [D:\\a\\trime\\trime\\app\\build\\opencc-host\\opencc\\src\\tools\\opencc.vcxproj]",
+      "category": "pinned_opencc_or_vendored_marisa_msvc_diagnostic",
+      "source": "src/tools/CommandLineMain.cpp",
+      "source_line": 437,
+      "source_column": 30,
+      "warning_code": "C4267",
+      "reason": "Compiler explicitly attributes the diagnostic to the pinned OpenCC tree or its bundled marisa source during the new native host-tools build. Attribution is not a harmlessness, false-positive, baseline-equivalence or no-risk verdict."
+    },
+    {
+      "job_id": 123317770546,
+      "job_name": "build (windows-2025)",
+      "raw_file": "job-123317770546.log",
+      "line": 1258,
+      "text": "2026-10-29T07:27:13.0288984Z D:\\a\\trime\\trime\\app\\src\\main\\jni\\librime\\deps\\opencc\\src\\tools\\CommandLineMain.cpp(332,56): warning C4267: 'argument': conversion from 'size_t' to 'rapidjson::SizeType', possible loss of data [D:\\a\\trime\\trime\\app\\build\\opencc-host\\opencc\\src\\tools\\opencc.vcxproj]",
+      "category": "pinned_opencc_or_vendored_marisa_msvc_diagnostic",
+      "source": "src/tools/CommandLineMain.cpp",
+      "source_line": 332,
+      "source_column": 56,
+      "warning_code": "C4267",
+      "reason": "Compiler explicitly attributes the diagnostic to the pinned OpenCC tree or its bundled marisa source during the new native host-tools build. Attribution is not a harmlessness, false-positive, baseline-equivalence or no-risk verdict."
+    },
+    {
+      "job_id": 123317770546,
+      "job_name": "build (windows-2025)",
+      "raw_file": "job-123317770546.log",
+      "line": 1268,
+      "text": "2026-10-29T07:27:13.0294858Z D:\\a\\trime\\trime\\app\\src\\main\\jni\\librime\\deps\\opencc\\src\\tools\\CommandLineMain.cpp(336,40): warning C4267: 'argument': conversion from 'size_t' to 'rapidjson::SizeType', possible loss of data [D:\\a\\trime\\trime\\app\\build\\opencc-host\\opencc\\src\\tools\\opencc.vcxproj]",
+      "category": "pinned_opencc_or_vendored_marisa_msvc_diagnostic",
+      "source": "src/tools/CommandLineMain.cpp",
+      "source_line": 336,
+      "source_column": 40,
+      "warning_code": "C4267",
+      "reason": "Compiler explicitly attributes the diagnostic to the pinned OpenCC tree or its bundled marisa source during the new native host-tools build. Attribution is not a harmlessness, false-positive, baseline-equivalence or no-risk verdict."
+    },
+    {
+      "job_id": 123317770546,
+      "job_name": "build (windows-2025)",
+      "raw_file": "job-123317770546.log",
+      "line": 1269,
+      "text": "2026-10-29T07:27:13.0295946Z D:\\a\\trime\\trime\\app\\src\\main\\jni\\librime\\deps\\opencc\\src\\tools\\CommandLineMain.cpp(348,42): warning C4267: 'argument': conversion from 'size_t' to 'rapidjson::SizeType', possible loss of data [D:\\a\\trime\\trime\\app\\build\\opencc-host\\opencc\\src\\tools\\opencc.vcxproj]",
+      "category": "pinned_opencc_or_vendored_marisa_msvc_diagnostic",
+      "source": "src/tools/CommandLineMain.cpp",
+      "source_line": 348,
+      "source_column": 42,
+      "warning_code": "C4267",
+      "reason": "Compiler explicitly attributes the diagnostic to the pinned OpenCC tree or its bundled marisa source during the new native host-tools build. Attribution is not a harmlessness, false-positive, baseline-equivalence or no-risk verdict."
+    },
+    {
+      "job_id": 123317770546,
+      "job_name": "build (windows-2025)",
+      "raw_file": "job-123317770546.log",
+      "line": 1270,
+      "text": "2026-10-29T07:27:13.0297204Z D:\\a\\trime\\trime\\app\\src\\main\\jni\\librime\\deps\\opencc\\src\\tools\\CommandLineMain.cpp(361,58): warning C4267: 'argument': conversion from 'size_t' to 'rapidjson::SizeType', possible loss of data [D:\\a\\trime\\trime\\app\\build\\opencc-host\\opencc\\src\\tools\\opencc.vcxproj]",
+      "category": "pinned_opencc_or_vendored_marisa_msvc_diagnostic",
+      "source": "src/tools/CommandLineMain.cpp",
+      "source_line": 361,
+      "source_column": 58,
+      "warning_code": "C4267",
+      "reason": "Compiler explicitly attributes the diagnostic to the pinned OpenCC tree or its bundled marisa source during the new native host-tools build. Attribution is not a harmlessness, false-positive, baseline-equivalence or no-risk verdict."
+    },
+    {
+      "job_id": 123317770676,
+      "job_name": "build (macos-26-intel)",
+      "raw_file": "job-123317770676.log",
+      "line": 1737,
+      "text": "2026-10-29T07:28:49.9340500Z -- Performing Test COMPILER_HAS_DEPRECATED_ATTR",
+      "category": "cmake_compiler_feature_probe_status_not_warning",
+      "reason": "CMake configure-time compiler capability detection status. The Windows attribute probe fails and the fallback deprecated probe succeeds; no compiler warning is asserted by this status line."
+    },
+    {
+      "job_id": 123317770676,
+      "job_name": "build (macos-26-intel)",
+      "raw_file": "job-123317770676.log",
+      "line": 1738,
+      "text": "2026-10-29T07:28:50.5222000Z -- Performing Test COMPILER_HAS_DEPRECATED_ATTR - Success",
+      "category": "cmake_compiler_feature_probe_status_not_warning",
+      "reason": "CMake configure-time compiler capability detection status. The Windows attribute probe fails and the fallback deprecated probe succeeds; no compiler warning is asserted by this status line."
+    }
+  ],
+  "raw_job_log_bindings": [
+    {
+      "path": "cloud/run-40834549715/pr-2208/job-123316163699.log",
+      "sha256": "4978c2cbb9016d322c631e752912695234164ba6620362f2bad6e4b2cf42e047",
+      "bytes": 272269
+    },
+    {
+      "path": "cloud/run-40834549715/pr-2208/job-123317770509.log",
+      "sha256": "b204298e559e0b2bda89396ea15584c43a8a2fbcf7db9fde1edaa611fc838027",
+      "bytes": 322625
+    },
+    {
+      "path": "cloud/run-40834549715/pr-2208/job-123317770532.log",
+      "sha256": "a61311e3209b293630f42c4f2e4935774cbf3fbfd97bd21a0097a6fca485aabc",
+      "bytes": 328482
+    },
+    {
+      "path": "cloud/run-40834549715/pr-2208/job-123317770546.log",
+      "sha256": "94df4b46fd2aa0ee2e76d6d5f424b50af1ba9195182182b3168718ce3a0309d3",
+      "bytes": 240341
+    },
+    {
+      "path": "cloud/run-40834549715/pr-2208/job-123317770676.log",
+      "sha256": "abfe1eecca446f9dfa2fbc3076eae8c06610186efcb34db7a9316bcd0d153b0d",
+      "bytes": 328322
+    }
+  ],
+  "findings": [
+    "12 CMake feature probe lines are status text containing deprecated in the test name, including an expected fallback probe. They are not12 emitted warnings.",
+    "44 real MSVC compiler diagnostics are attributed to fixed OpenCC/marisa files. Their new appearance reflects the newly executed Windows host build; do not label them baseline-equivalent or harmless without separate analysis.",
+    "1 real CMake unused-cli warning is caused by this PR caller passing a single-config parameter to Windows multi-config CMake. The source fix is necessary and must be proven by new actual Windows CI.",
+    "The remaining313 original mechanically matched lines were not reclassified by this supplemental pass; original context audit, existing unresolved Gradle origins and original warning statements remain intact."
+  ],
+  "original_evidence_unchanged": true
+}

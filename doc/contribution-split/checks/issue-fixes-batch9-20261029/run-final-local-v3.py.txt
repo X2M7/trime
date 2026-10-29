@@ -1,0 +1,30 @@
+from pathlib import Path
+import datetime,hashlib,json,os,subprocess,sys
+r=Path(__file__).resolve().parent;w=Path('/home/xumin/Public/Trime-pr-opencc-regional-data-20261029');head='78a4312fdc4ee94db6328f6f80842e95b9b2353d'
+def sha(p):return hashlib.sha256(p.read_bytes()).hexdigest()
+args=json.loads((r/'gradle-final-source-command.json').read_text());i=args.index('-PopenccCmakeExecutable=/home/xumin/Public/android-toolchain/android-sdk/cmake/3.31.6/bin/cmake');args[i:i]=['-I',str(r/'host-arguments-probe.init.gradle')]
+assert (r/'host-arguments-probe.init.gradle').is_file()
+(r/'gradle-multiconfig-command.json').write_text(json.dumps(args,indent=2)+'\n')
+assert subprocess.check_output(['git','rev-parse','HEAD'],cwd=w,text=True).strip()==head
+assert subprocess.check_output(['git','status','--porcelain'],cwd=w)==b''
+o=w/'app/src/main/jni/librime/deps/opencc';assert not list(o.rglob('*.pyc'))
+sentinel=w/'app/build/opencc-host/root-cold-multiconfig-sentinel.txt';sentinel.write_text('Root-owned cold tree marker; must be removed by fresh generation.\n')
+report={'started':datetime.datetime.now(datetime.timezone.utc).isoformat(),'head':head,'driver_sha256':sha(Path(__file__)),'probe_sha256':sha(r/'host-arguments-probe.init.gradle'),'source_clean_before':True,'cold_python_source_before':True,'sentinel_created':True}
+try:
+ p=subprocess.run(['python3','-B',str(r/'run-command.py'),'gradle-multiconfig-cold1',json.dumps([args[0],':probeOpenCCHostArguments',*args[1:]]),str(w)])
+ result=json.loads((r/'gradle-multiconfig-cold1/result.json').read_text());assert p.returncode==result['exit']==0
+ log=(r/'gradle-multiconfig-cold1/command.log').read_text();assert '[  1%] Building CXX object' in log or '[  2%] Building CXX object' in log
+ for task in ['generateOpenCCRegionalPhrases','installOpenCCData','generateDataChecksums']:
+  assert 'TRIME_OPENCC_OBSERVER '+json.dumps({'event':'action-complete','task':':app:'+task},separators=(',',':')) in log
+ assert not sentinel.exists() and not list(o.rglob('*.pyc'))
+ bridge=w/'app/build/generated/opencc/STPhrases_GeneratedFromRegionalPhrases.txt'
+ assert sha(bridge)==sha(r/'host-build/data/STPhrases_GeneratedFromRegionalPhrases.txt')
+ probe_line=next(line for line in log.splitlines() if line.startswith('TRIME_OPENCC_HOST_ARGUMENTS_PROBE '));probe=json.loads(probe_line.split(' ',1)[1]);assert probe['passed']==probe['total']==11 and probe['status']=='PASS_COMPILED_PRIVATE_HELPER_ARGUMENT_CONTRACT';(r/'host-arguments-probe-execution.json').write_text(json.dumps(dict(head=head,log_sha256=sha(r/'gradle-multiconfig-cold1/command.log'),**probe),indent=2)+'\n')
+ report.update(cold_exit=result['exit'],cold_source_stays_without_pyc=True,sentinel_removed=True,actual_cpp_compilation=True,bridge_sha256=sha(bridge),cold_log_sha256=sha(r/'gradle-multiconfig-cold1/command.log'))
+ p=subprocess.run(['python3','-B',str(r/'run-cache-gates-v3.py'),head]);assert p.returncode==0
+ report['status']='PASS_FINAL_SOURCE_COLD_AND_CACHE_FAILURE_GATES'
+except BaseException as e:
+ report.update(status='FAILED',error={'type':type(e).__name__,'message':str(e)});raise
+finally:
+ report['finished']=datetime.datetime.now(datetime.timezone.utc).isoformat();(r/'final-local-v3.json').write_text(json.dumps(report,indent=2)+'\n')
+print(json.dumps(report,indent=2))

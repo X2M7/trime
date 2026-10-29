@@ -1,0 +1,150 @@
+{
+  "head": "78a4312fdc4ee94db6328f6f80842e95b9b2353d",
+  "log_sha256": "b294cc3b6a01b3510f72fcecbe8bd2468d9779820313a0a6bc0829bc9e914196",
+  "status": "PASS_COMPILED_PRIVATE_HELPER_ARGUMENT_CONTRACT",
+  "method": "OpenCCDataPluginKt#openccHostCmakeArguments",
+  "compiledClassSha256": "1f559cc19b5ed6b816699415ae8325d2cc1f1597c06f75ff0652c2c549085756",
+  "compiledClassResource": "jar:file:/home/xumin/.gradle/caches/9.8.1/transforms/031170c033c32823bb81857ef757869b/transformed/original/convention.jar!/OpenCCDataPluginKt.class",
+  "cases": [
+    {
+      "case": "windows-default-x64",
+      "input": {
+        "os": "Windows 11",
+        "arch": "amd64",
+        "generator": ""
+      },
+      "outcome": "EXPECTED_ARGUMENTS",
+      "actual": [
+        "-A",
+        "x64"
+      ]
+    },
+    {
+      "case": "windows-vs-x64",
+      "input": {
+        "os": "Windows 11",
+        "arch": "x86_64",
+        "generator": "Visual Studio 18 2026"
+      },
+      "outcome": "EXPECTED_ARGUMENTS",
+      "actual": [
+        "-A",
+        "x64"
+      ]
+    },
+    {
+      "case": "windows-vs-arm64",
+      "input": {
+        "os": "Windows 11",
+        "arch": "aarch64",
+        "generator": "Visual Studio 18 2026"
+      },
+      "outcome": "EXPECTED_ARGUMENTS",
+      "actual": [
+        "-A",
+        "ARM64"
+      ]
+    },
+    {
+      "case": "linux-default",
+      "input": {
+        "os": "Linux",
+        "arch": "amd64",
+        "generator": ""
+      },
+      "outcome": "EXPECTED_ARGUMENTS",
+      "actual": [
+        "-DCMAKE_BUILD_TYPE=Release"
+      ]
+    },
+    {
+      "case": "linux-makefiles",
+      "input": {
+        "os": "Linux",
+        "arch": "amd64",
+        "generator": "Unix Makefiles"
+      },
+      "outcome": "EXPECTED_ARGUMENTS",
+      "actual": [
+        "-DCMAKE_BUILD_TYPE=Release"
+      ]
+    },
+    {
+      "case": "linux-ninja",
+      "input": {
+        "os": "Linux",
+        "arch": "amd64",
+        "generator": "Ninja"
+      },
+      "outcome": "EXPECTED_ARGUMENTS",
+      "actual": [
+        "-DCMAKE_BUILD_TYPE=Release"
+      ]
+    },
+    {
+      "case": "linux-ninja-multiconfig",
+      "input": {
+        "os": "Linux",
+        "arch": "amd64",
+        "generator": "Ninja Multi-Config"
+      },
+      "outcome": "EXPECTED_ARGUMENTS",
+      "actual": []
+    },
+    {
+      "case": "mac-default-arm64",
+      "input": {
+        "os": "Mac OS X",
+        "arch": "aarch64",
+        "generator": ""
+      },
+      "outcome": "EXPECTED_ARGUMENTS",
+      "actual": [
+        "-DCMAKE_BUILD_TYPE=Release",
+        "-DCMAKE_OSX_ARCHITECTURES=arm64",
+        "-DCMAKE_OSX_SYSROOT=macosx"
+      ]
+    },
+    {
+      "case": "mac-default-x64",
+      "input": {
+        "os": "Mac OS X",
+        "arch": "x86_64",
+        "generator": ""
+      },
+      "outcome": "EXPECTED_ARGUMENTS",
+      "actual": [
+        "-DCMAKE_BUILD_TYPE=Release",
+        "-DCMAKE_OSX_ARCHITECTURES=x86_64",
+        "-DCMAKE_OSX_SYSROOT=macosx"
+      ]
+    },
+    {
+      "case": "mac-xcode",
+      "input": {
+        "os": "Mac OS X",
+        "arch": "arm64",
+        "generator": "Xcode"
+      },
+      "outcome": "EXPECTED_ARGUMENTS",
+      "actual": [
+        "-DCMAKE_OSX_ARCHITECTURES=arm64",
+        "-DCMAKE_OSX_SYSROOT=macosx"
+      ]
+    },
+    {
+      "case": "windows-ninja-rejected",
+      "input": {
+        "os": "Windows 11",
+        "arch": "amd64",
+        "generator": "Ninja"
+      },
+      "outcome": "EXPECTED_REJECTION",
+      "exception": "java.lang.IllegalStateException",
+      "message": "OpenCC host data generation requires a native Visual Studio CMake generator on Windows"
+    }
+  ],
+  "passed": 11,
+  "total": 11,
+  "scope": "Argument contract of actual compiled helper only. Simulated host strings do not execute Windows/macOS toolchains or replace native host CI."
+}

@@ -1,0 +1,86 @@
+from pathlib import Path
+import datetime,hashlib,json,os,subprocess,sys,re
+expected_head=sys.argv[1];assert re.fullmatch(r'[0-9a-f]{40}',expected_head)
+r=Path(__file__).resolve().parent;w=Path('/home/xumin/Public/Trime-pr-opencc-regional-data-20261029')
+args=json.loads((r/'gradle-multiconfig-command.json').read_text())
+script=w/'app/src/main/jni/librime/deps/opencc/data/scripts/generate_st_phrases_from_regional_phrases.py'
+original=script.read_bytes();bridge=w/'app/build/generated/opencc/STPhrases_GeneratedFromRegionalPhrases.txt'
+assets=w/'app/src/main/assets/shared/opencc'
+opencc=script.parent.parent.parent
+noise=opencc/'data/scripts/__pycache__/root-regression-unused.pyc'
+expected=hashlib.sha256((r/'host-build/data/STPhrases_GeneratedFromRegionalPhrases.txt').read_bytes()).hexdigest()
+report={'started':datetime.datetime.now(datetime.timezone.utc).isoformat(),'head':subprocess.check_output(['git','rev-parse','HEAD'],cwd=w,text=True).strip(),'script_original_sha256':hashlib.sha256(original).hexdigest(),'expected_bridge_sha256':expected,'gates':[]}
+def digest(p):return hashlib.sha256(p.read_bytes()).hexdigest()
+def snapshot():
+ return {str(p.relative_to(w)):digest(p) for p in sorted((w/'app/src/main/assets').rglob('*')) if p.is_file()}
+def invoke(name,cmd,env=None,expected_exit=0):
+ p=subprocess.run(['python3','-B',str(r/'run-command.py'),name,json.dumps(cmd),str(w)],env=env)
+ data=json.loads((r/name/'result.json').read_text());assert p.returncode==expected_exit and data['exit']==expected_exit,(name,data)
+ assert not data.get('guard_triggered');return (r/name/'command.log').read_text(errors='replace')
+def completed(log,task):return 'TRIME_OPENCC_OBSERVER '+json.dumps({'event':'action-complete','task':task},separators=(',',':')) in log
+try:
+ assert json.loads((r/'gradle-multiconfig-cold1/result.json').read_text())['exit']==0
+ assert report['head']==expected_head
+ assert not os.environ.get('CMAKE_TOOLCHAIN_FILE')
+ assert not list(opencc.rglob('*.pyc'))
+ assert subprocess.check_output(['git','status','--porcelain','--untracked-files=no'],cwd=opencc)==b''
+ assert subprocess.check_output(['git','status','--porcelain'],cwd=w)==b''
+ assert original==subprocess.check_output(['git','show','025f371dc76b598d77384fbdab90c937471844d8:data/scripts/generate_st_phrases_from_regional_phrases.py'],cwd=script.parent.parent.parent)
+ log=invoke('gradle-multiconfig-no-change1',args)
+ for task in ['generateOpenCCRegionalPhrases','installOpenCCData','generateDataChecksums']:
+  assert '> Task :app:'+task+' UP-TO-DATE' in log,task
+  assert not completed(log,':app:'+task),task
+ report['gates'].append({'gate':'unchanged_inputs','passed':True,'phase':'gradle-multiconfig-no-change1','all_three_tasks':'UP-TO-DATE'})
+ # Perturb only an unused ignored bytecode cache; semantic inputs stay fixed.
+ noise.parent.mkdir(exist_ok=True)
+ noise.write_bytes(b'Root test-only ignored Python bytecode marker. Not an imported module.\n')
+ report['bytecode_noise_sha256']=digest(noise)
+ log=invoke('gradle-multiconfig-cache-noise1',args)
+ for task in ['generateOpenCCRegionalPhrases','installOpenCCData','generateDataChecksums']:
+  assert '> Task :app:'+task+' UP-TO-DATE' in log,task
+  assert not completed(log,':app:'+task),task
+ noise.unlink();noise.parent.rmdir()
+ assert not list(opencc.rglob('*.pyc'))
+ report['gates'].append({'gate':'ignored_bytecode_does_not_invalidate_any_data_task','passed':True,'phase':'gradle-multiconfig-cache-noise1','all_three_tasks':'UP-TO-DATE'})
+ task_args=[args[0],':app:generateDataChecksums',*args[3:]]
+ # Mutate only this isolated OpenCC working copy; restore exact bytes in finally.
+ sentinel=w/'app/build/opencc-host/root-cache-invalidation-sentinel.txt'
+ sentinel.write_text('Root owned sentinel: a changed generator must remove this host tree.\n')
+ script.write_bytes(original+b'\n# Trime regression: a generator-script edit must invalidate host data.\n')
+ report['script_mutated_sha256']=digest(script)
+ log=invoke('gradle-multiconfig-script1',task_args)
+ assert any("Input property 'sourceFiles'" in line and str(script) in line and 'has changed' in line for line in log.splitlines())
+ assert not sentinel.exists()
+ assert completed(log,':app:generateOpenCCRegionalPhrases')
+ assert completed(log,':app:installOpenCCData')
+ assert digest(bridge)==expected
+ assert '[  1%] Building CXX object' in log or '[  2%] Building CXX object' in log
+ report['gates'].append({'gate':'generator_script_invalidates_and_fresh_builds','passed':True,'phase':'gradle-multiconfig-script1','bridge_sha256':digest(bridge)})
+ script.write_bytes(original)
+ before=snapshot();env=dict(os.environ,CMAKE_TOOLCHAIN_FILE=str(r/'forbidden-android-toolchain.cmake'))
+ log=invoke('gradle-multiconfig-reject1',task_args,env=env,expected_exit=1)
+ assert 'Unset CMAKE_TOOLCHAIN_FILE: OpenCC dictionaries need a native host converter' in log
+ assert not completed(log,':app:generateOpenCCRegionalPhrases')
+ assert '"event":"action-start","task":":app:generateOpenCCRegionalPhrases"' in log
+ for task in ['installOpenCCData','generateDataChecksums']:
+  assert '"event":"action-start","task":":app:'+task+'"' not in log,task
+  assert not completed(log,':app:'+task),task
+ assert snapshot()==before
+ report['gates'].append({'gate':'rejected_cross_toolchain_blocks_install_and_checksums','passed':True,'phase':'gradle-multiconfig-reject1','actual_build_exit':1,'assets_before_after_identical':True})
+ log=invoke('gradle-multiconfig-restored1',task_args)
+ assert completed(log,':app:generateOpenCCRegionalPhrases') and completed(log,':app:installOpenCCData')
+ assert digest(bridge)==expected and script.read_bytes()==original
+ assert len(list(assets.glob('*.json')))==16 and len(list(assets.glob('*.txt')))==22
+ report['gates'].append({'gate':'restored_final_source_rebuild','passed':True,'phase':'gradle-multiconfig-restored1','bridge_sha256':digest(bridge)})
+ assert subprocess.check_output(['git','status','--porcelain'],cwd=w)==b''
+ assert not list(opencc.rglob('*.pyc'))
+ report['status']='PASS_FIVE_CACHE_AND_FAILURE_GATES_AFTER_COLD_SOURCE_BUILD'
+except BaseException as e:
+ report['status']='FAILED';report['error']={'type':type(e).__name__,'message':str(e)};raise
+finally:
+ script.write_bytes(original)
+ if noise.exists():noise.unlink()
+ if noise.parent.exists() and not any(noise.parent.iterdir()):noise.parent.rmdir()
+ report['script_restored_sha256']=digest(script);report['finished']=datetime.datetime.now(datetime.timezone.utc).isoformat()
+ (r/'cache-gates-v3.json').write_text(json.dumps(report,indent=2)+'\n')
+print(json.dumps(report,indent=2))

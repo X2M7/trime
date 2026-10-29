@@ -1,0 +1,73 @@
+// External verification only: never packaged or committed to the production patch.
+import groovy.json.JsonOutput
+import java.lang.reflect.InvocationTargetException
+import java.security.MessageDigest
+import org.gradle.api.GradleException
+
+gradle.projectsEvaluated {
+    def root = gradle.rootProject
+    def app = root.findProject(':app')
+    if (app == null) return
+
+    def plugin = app.plugins.findPlugin('com.osfans.trime.opencc-data')
+    if (plugin == null) throw new GradleException('OpenCC data plugin is not applied to :app')
+    def holder = Class.forName('OpenCCDataPluginKt', true, plugin.getClass().getClassLoader())
+    def method = holder.getDeclaredMethod('openccHostCmakeArguments', String.class, String.class, String.class)
+    method.setAccessible(true)
+    def classResource = holder.getResource('/OpenCCDataPluginKt.class')
+    if (classResource == null) throw new GradleException('Compiled OpenCCDataPluginKt class resource is unavailable')
+    byte[] classBytes
+    classResource.openStream().withCloseable { stream -> classBytes = stream.readAllBytes() }
+    def classSha256 = MessageDigest.getInstance('SHA-256').digest(classBytes).encodeHex().toString()
+    def cases = [
+        [name: 'windows-default-x64', os: 'Windows 11', arch: 'amd64', generator: '', expected: ['-A', 'x64']],
+        [name: 'windows-vs-x64', os: 'Windows 11', arch: 'x86_64', generator: 'Visual Studio 18 2026', expected: ['-A', 'x64']],
+        [name: 'windows-vs-arm64', os: 'Windows 11', arch: 'aarch64', generator: 'Visual Studio 18 2026', expected: ['-A', 'ARM64']],
+        [name: 'linux-default', os: 'Linux', arch: 'amd64', generator: '', expected: ['-DCMAKE_BUILD_TYPE=Release']],
+        [name: 'linux-makefiles', os: 'Linux', arch: 'amd64', generator: 'Unix Makefiles', expected: ['-DCMAKE_BUILD_TYPE=Release']],
+        [name: 'linux-ninja', os: 'Linux', arch: 'amd64', generator: 'Ninja', expected: ['-DCMAKE_BUILD_TYPE=Release']],
+        [name: 'linux-ninja-multiconfig', os: 'Linux', arch: 'amd64', generator: 'Ninja Multi-Config', expected: []],
+        [name: 'mac-default-arm64', os: 'Mac OS X', arch: 'aarch64', generator: '', expected: ['-DCMAKE_BUILD_TYPE=Release', '-DCMAKE_OSX_ARCHITECTURES=arm64', '-DCMAKE_OSX_SYSROOT=macosx']],
+        [name: 'mac-default-x64', os: 'Mac OS X', arch: 'x86_64', generator: '', expected: ['-DCMAKE_BUILD_TYPE=Release', '-DCMAKE_OSX_ARCHITECTURES=x86_64', '-DCMAKE_OSX_SYSROOT=macosx']],
+        [name: 'mac-xcode', os: 'Mac OS X', arch: 'arm64', generator: 'Xcode', expected: ['-DCMAKE_OSX_ARCHITECTURES=arm64', '-DCMAKE_OSX_SYSROOT=macosx']],
+        [name: 'windows-ninja-rejected', os: 'Windows 11', arch: 'amd64', generator: 'Ninja', expectedException: 'java.lang.IllegalStateException', expectedMessage: 'OpenCC host data generation requires a native Visual Studio CMake generator on Windows']
+    ]
+    root.tasks.register('probeOpenCCHostArguments') { task ->
+        task.group = 'verification'
+        task.description = 'Externally probe the compiled private OpenCC host CMake argument contract'
+        task.doLast {
+            def records = []
+            cases.each { testCase ->
+                Object actual = null
+                Throwable failure = null
+                try {
+                    actual = method.invoke(null, [testCase.os, testCase.arch, testCase.generator] as Object[])
+                } catch (InvocationTargetException wrapped) {
+                    failure = wrapped.getTargetException()
+                }
+                if (testCase.containsKey('expectedException')) {
+                    if (failure == null || failure.getClass().getName() != testCase.expectedException || failure.getMessage() != testCase.expectedMessage) {
+                        throw new GradleException('Unexpected rejection outcome for ' + testCase.name + ': ' + (failure == null ? actual : failure.toString()))
+                    }
+                    records.add([case: testCase.name, input: [os: testCase.os, arch: testCase.arch, generator: testCase.generator], outcome: 'EXPECTED_REJECTION', exception: failure.getClass().getName(), message: failure.getMessage()])
+                } else {
+                    if (failure != null) throw new GradleException('Unexpected helper exception for ' + testCase.name, failure)
+                    if (!(actual instanceof List) || actual != testCase.expected) {
+                        throw new GradleException('Argument mismatch for ' + testCase.name + ': expected ' + testCase.expected + ', actual ' + actual)
+                    }
+                    records.add([case: testCase.name, input: [os: testCase.os, arch: testCase.arch, generator: testCase.generator], outcome: 'EXPECTED_ARGUMENTS', actual: actual])
+                }
+            }
+            println('TRIME_OPENCC_HOST_ARGUMENTS_PROBE ' + JsonOutput.toJson([
+                status: 'PASS_COMPILED_PRIVATE_HELPER_ARGUMENT_CONTRACT',
+                method: holder.getName() + '#' + method.getName(),
+                compiledClassSha256: classSha256,
+                compiledClassResource: classResource.toString(),
+                cases: records,
+                passed: records.size(),
+                total: cases.size(),
+                scope: 'Argument contract of actual compiled helper only. Simulated host strings do not execute Windows/macOS toolchains or replace native host CI.'
+            ]))
+        }
+    }
+}

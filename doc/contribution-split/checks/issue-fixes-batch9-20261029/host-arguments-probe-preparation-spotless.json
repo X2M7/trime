@@ -1,0 +1,39 @@
+{
+  "utc": "2026-10-29T08:13:43.720260+00:00",
+  "status": "EXTERNAL_COMPILED_HELPER_PROBE_PREPARED_NOT_EXECUTED",
+  "path": "/home/xumin/Public/Trime/build/issue-fixes-batch9-20261029/host-arguments-probe.init.gradle",
+  "sha256": "ad3ed329eba0933660a08251a368ed27d6f63d665b0055f9828a05e624308fa1",
+  "cases": 11,
+  "passing_argument_cases": 10,
+  "expected_rejection_cases": 1,
+  "invocation_argv": [
+    "/home/xumin/Public/Trime-pr-opencc-regional-data-20261029/gradlew",
+    ":probeOpenCCHostArguments",
+    "--warning-mode=all",
+    "--offline",
+    "--no-daemon",
+    "--max-workers=1",
+    "--no-parallel",
+    "--no-build-cache",
+    "--no-configuration-cache",
+    "--console=plain",
+    "-I",
+    "/home/xumin/Public/Trime/build/issue-fixes-batch9-20261029/host-arguments-probe.init.gradle",
+    "-PbuildABI=x86_64",
+    "-Dorg.gradle.jvmargs=-Xmx768M -XX:MaxMetaspaceSize=768M -XX:+UseSerialGC -XX:ActiveProcessorCount=2 -XX:+ExitOnOutOfMemoryError"
+  ],
+  "cwd": "/home/xumin/Public/Trime-pr-opencc-regional-data-20261029",
+  "scope": "Test-only ignored R9 init script; no production patch edits or Gradle execution by reviewer. Root owns serial execution.",
+  "implementation": [
+    "Uses actual applied OpenCC plugin classloader to reflect private static OpenCCDataPluginKt.openccHostCmakeArguments(String,String,String).",
+    "Captures compiled class resource and SHA256; records exact returned lists rather than checking substring presence.",
+    "Registers root verification task only for the real :app build; included build without :app is skipped.",
+    "Task action invokes the compiled helper11times, including10exact argument lists and1specific expected IllegalStateException. No CMake, native compiler, Python generator or Android task is requested.",
+    "Task action does not access Task.project; project/plugin lookup occurs during configuration."
+  ],
+  "limits": [
+    "Compilation of updated build-logic may occur as a normal configuration prerequisite when Root invokes Gradle.",
+    "Reflection/compiler/class resource existence and Groovy syntax have not been runtime validated; retain any actual probe failure as evidence.",
+    "This is cross-host argument simulation only, not actual Windows/macOS host execution or final CI qualification."
+  ]
+}

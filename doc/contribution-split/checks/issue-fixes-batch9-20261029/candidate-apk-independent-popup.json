@@ -1,0 +1,1811 @@
+{
+  "schema": 1,
+  "status": "PASS_READONLY_HISTORICAL_B241_APK_RESOURCE_AUDIT",
+  "recorded_at_utc": "2026-10-29T08:11:24.234074+00:00",
+  "scope": "Independent static audit of already executed candidate-apk1 evidence, saved GitHub API/CI logs and original artifact ZIP. No OpenCC CLI invocation, build, Gradle, ADB, extraction writes, resigning or source edits performed.",
+  "validated_head": "b24114ec111bcbd0b682ef5468e757fc66edec11",
+  "validated_merge_producer": "a88994ee78ded8560faacb78494f31215a30db38",
+  "validated_source_tree": "5067a61cb3fe9ae2914f428b18e6646cfe3cc25e",
+  "run": 40834549715,
+  "pr": 2208,
+  "critical_limit": "This is historical b241 evidence only. It does not validate a later source head or the pending four-line CMAKE_BUILD_TYPE/platform helper correction. Five successful CI jobs did not eliminate all warnings and did not make that old head ready.",
+  "checks": [
+    {
+      "check": "all review records bind historical b241 head and run40834549715",
+      "pass": true
+    },
+    {
+      "check": "original reports and tool script bindings",
+      "pass": true
+    },
+    {
+      "check": "saved terminal API result proves five completed successful jobs",
+      "pass": true
+    },
+    {
+      "check": "all five preserved raw logs match captured hashes and actual merge checkout",
+      "pass": true
+    },
+    {
+      "check": "saved Git API full source trees bind merge APK to historical head",
+      "pass": true
+    },
+    {
+      "check": "original artifact archive SHA matches saved GitHub digest",
+      "pass": true
+    },
+    {
+      "check": "extracted original candidate APK is byte-identical to outer ZIP member",
+      "pass": true
+    },
+    {
+      "check": "original output-metadata equals ZIP member",
+      "pass": true
+    },
+    {
+      "check": "baseline original APK hash matches bound record",
+      "pass": true
+    },
+    {
+      "check": "candidate has precisely 16 original configs and 22 txt files",
+      "pass": true
+    },
+    {
+      "check": "all 37 original assets unchanged; only the bridge added",
+      "pass": true
+    },
+    {
+      "check": "three-way bridge exact bytes and expected SHA",
+      "pass": true
+    },
+    {
+      "check": "all 16 APK configs exactly equal locked OpenCC025f blobs",
+      "pass": true
+    },
+    {
+      "check": "actual APK config references have complete nonempty text closure",
+      "pass": true,
+      "detail": {
+        "required_txt_count": 22
+      }
+    },
+    {
+      "check": "all 113 recorded commands match command JSON and raw stdin/stdout/stderr hashes",
+      "pass": true
+    },
+    {
+      "check": "command groups exactly cover 21 old compiles,16 old loads,22 new compiles,16 new loads,38 conversions",
+      "pass": true,
+      "detail": {
+        "negative-baseline-fixture-compile-": 21,
+        "negative-baseline-fixture-load-": 16,
+        "candidate-compile-": 22,
+        "candidate-apk-fixture-load-": 16,
+        "candidate-conversion-": 38
+      }
+    },
+    {
+      "check": "all22 actual CLI-compiled dictionaries bind back to APK text",
+      "pass": true
+    },
+    {
+      "check": "negative fixture has exact original 37 asset bytes and no bridge text/binary",
+      "pass": true
+    },
+    {
+      "check": "old control fails exactly five missing-bridge configs, new APK loads all16",
+      "pass": true
+    },
+    {
+      "check": "38 real conversion stdout records equal pinned official cases and exact input bytes",
+      "pass": true
+    },
+    {
+      "check": "global checksum digests recompute from complete sorted maps",
+      "pass": true
+    },
+    {
+      "check": "all38 packaged resources agree with APK sync checksum metadata and report",
+      "pass": true
+    },
+    {
+      "check": "new checksum bridge absent from old map and present in candidate",
+      "pass": true
+    },
+    {
+      "check": "original archive and APK hashes unchanged throughout read-only review",
+      "pass": true
+    },
+    {
+      "check": "b241 Windows unused CMAKE_BUILD_TYPE warning remains explicitly visible",
+      "pass": true
+    }
+  ],
+  "evidence": {
+    "original_report": {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch9-20261029/candidate-apk1/report.json",
+      "sha256": "0b8ea62c96270cf7156f339226cba258b263240f12c511270a5d4e39af4d5a46"
+    },
+    "checksum_report": {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch9-20261029/candidate-checksums1.json",
+      "sha256": "4110c43f0a88c62c200acf3095d469ddc8e87b59cd46893f62cce5534198f740"
+    },
+    "ci_summary": {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch9-20261029/cloud/run-40834549715/pr-2208/ci-summary.json",
+      "sha256": "739af0ae82c8ddcc95c1fde33e8c3096d76cfbca606416d1192c1db002d280f7"
+    },
+    "archive": {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch9-20261029/cloud/run-40834549715/pr-2208/ubuntu-original/artifact-12881295427-trime-ubuntu-26.04.zip",
+      "sha256": "162e0df4497c871af32025626d095ddf54f5f935df28310a026c50bed12ed04a",
+      "entries": [
+        "com.osfans.trime-v3.3.12-110-ga88994ee-arm64-v8a-debug.apk",
+        "com.osfans.trime-v3.3.12-110-ga88994ee-armeabi-v7a-debug.apk",
+        "com.osfans.trime-v3.3.12-110-ga88994ee-x86-debug.apk",
+        "com.osfans.trime-v3.3.12-110-ga88994ee-x86_64-debug.apk",
+        "output-metadata.json"
+      ]
+    },
+    "apk": {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch9-20261029/cloud/run-40834549715/pr-2208/ubuntu-original/extracted/com.osfans.trime-v3.3.12-110-ga88994ee-x86_64-debug.apk",
+      "sha256": "fa1edca408700c5782a0a54be746358f253580cb42ad668bd32cf3da91b88a0a",
+      "bytes": 20166488,
+      "variant": "x86_64 debug original CI APK"
+    },
+    "baseline_apk": {
+      "path": "/home/xumin/Public/Trime/build/issue-fixes-batch7-20261029/cloud/run-40823791223/pr-2207/ubuntu-original/extracted/com.osfans.trime-v3.3.12-109-g57e4798d-x86_64-debug.apk",
+      "sha256": "c989e9e26cfd80b31e769b8b3ba90f48e0873e71acb0d5fe83681f635dd3fcd3"
+    },
+    "bridge": {
+      "bytes": 15717,
+      "sha256": "9ab40618a9b162cca6dae9ec6767a8c4669017a20b2d6da5f94b7a7f99d09170",
+      "three_way_equal": true
+    },
+    "raw_ci_logs": [
+      {
+        "job": "check / lint-and-test",
+        "log": "/home/xumin/Public/Trime/build/issue-fixes-batch9-20261029/cloud/run-40834549715/pr-2208/job-123316163699.log",
+        "sha256": "4978c2cbb9016d322c631e752912695234164ba6620362f2bad6e4b2cf42e047",
+        "pass": true,
+        "merge_checkout_after_git_log": true,
+        "checkout_evidence": [
+          {
+            "command_line": 429,
+            "command": "2026-10-29T07:18:33.9828774Z [command]/usr/bin/git log -1 --format=%H",
+            "next_lines": [
+              "2026-10-29T07:18:33.9854545Z a88994ee78ded8560faacb78494f31215a30db38",
+              "2026-10-29T07:18:34.0241337Z ##[group]Run actions/setup-java@v6",
+              "2026-10-29T07:18:34.0241646Z with:"
+            ]
+          }
+        ]
+      },
+      {
+        "job": "build (ubuntu-26.04)",
+        "log": "/home/xumin/Public/Trime/build/issue-fixes-batch9-20261029/cloud/run-40834549715/pr-2208/job-123317770509.log",
+        "sha256": "b204298e559e0b2bda89396ea15584c43a8a2fbcf7db9fde1edaa611fc838027",
+        "pass": true,
+        "merge_checkout_after_git_log": true,
+        "checkout_evidence": [
+          {
+            "command_line": 433,
+            "command": "2026-10-29T07:23:25.2461950Z [command]/usr/bin/git log -1 --format=%H",
+            "next_lines": [
+              "2026-10-29T07:23:25.2488546Z a88994ee78ded8560faacb78494f31215a30db38",
+              "2026-10-29T07:23:25.2780890Z ##[group]Run echo ${GITHUB_REF#refs/*/}",
+              "2026-10-29T07:23:25.2781283Z \u001b[36;1mecho ${GITHUB_REF#refs/*/}\u001b[0m"
+            ]
+          }
+        ]
+      },
+      {
+        "job": "build (macos-26)",
+        "log": "/home/xumin/Public/Trime/build/issue-fixes-batch9-20261029/cloud/run-40834549715/pr-2208/job-123317770532.log",
+        "sha256": "a61311e3209b293630f42c4f2e4935774cbf3fbfd97bd21a0097a6fca485aabc",
+        "pass": true,
+        "merge_checkout_after_git_log": true,
+        "checkout_evidence": [
+          {
+            "command_line": 417,
+            "command": "2026-10-29T07:23:34.1510820Z [command]/opt/homebrew/bin/git log -1 --format=%H",
+            "next_lines": [
+              "2026-10-29T07:23:34.1618680Z a88994ee78ded8560faacb78494f31215a30db38",
+              "2026-10-29T07:23:34.2121480Z ##[group]Run echo ${GITHUB_REF#refs/*/}",
+              "2026-10-29T07:23:34.2122390Z \u001b[36;1mecho ${GITHUB_REF#refs/*/}\u001b[0m"
+            ]
+          }
+        ]
+      },
+      {
+        "job": "build (windows-2025)",
+        "log": "/home/xumin/Public/Trime/build/issue-fixes-batch9-20261029/cloud/run-40834549715/pr-2208/job-123317770546.log",
+        "sha256": "94df4b46fd2aa0ee2e76d6d5f424b50af1ba9195182182b3168718ce3a0309d3",
+        "pass": true,
+        "merge_checkout_after_git_log": true,
+        "checkout_evidence": [
+          {
+            "command_line": 420,
+            "command": "2026-10-29T07:23:42.5732935Z [command]\"C:\\Program Files\\Git\\bin\\git.exe\" log -1 --format=%H",
+            "next_lines": [
+              "2026-10-29T07:23:42.6073432Z a88994ee78ded8560faacb78494f31215a30db38",
+              "2026-10-29T07:23:42.6512520Z ##[group]Run echo ${GITHUB_REF#refs/*/}",
+              "2026-10-29T07:23:42.6512810Z \u001b[36;1mecho ${GITHUB_REF#refs/*/}\u001b[0m"
+            ]
+          }
+        ]
+      },
+      {
+        "job": "build (macos-26-intel)",
+        "log": "/home/xumin/Public/Trime/build/issue-fixes-batch9-20261029/cloud/run-40834549715/pr-2208/job-123317770676.log",
+        "sha256": "abfe1eecca446f9dfa2fbc3076eae8c06610186efcb34db7a9316bcd0d153b0d",
+        "pass": true,
+        "merge_checkout_after_git_log": true,
+        "checkout_evidence": [
+          {
+            "command_line": 416,
+            "command": "2026-10-29T07:23:59.4596790Z [command]/usr/local/bin/git log -1 --format=%H",
+            "next_lines": [
+              "2026-10-29T07:23:59.6983130Z a88994ee78ded8560faacb78494f31215a30db38",
+              "2026-10-29T07:24:00.2653280Z ##[group]Run echo ${GITHUB_REF#refs/*/}",
+              "2026-10-29T07:24:00.2655000Z \u001b[36;1mecho ${GITHUB_REF#refs/*/}\u001b[0m"
+            ]
+          }
+        ]
+      }
+    ],
+    "configs": [
+      {
+        "config": "hk2s.json",
+        "pinned_bytes_equal": true,
+        "sha256": "b5fb0d6447f1f111c02a99f405d678b40a97bf73de0a25000219878994a8da37"
+      },
+      {
+        "config": "hk2sp.json",
+        "pinned_bytes_equal": true,
+        "sha256": "8a36e56922fa67aeaffb7d145520ed302276aaaf3ab05c092a10615eeda8a161"
+      },
+      {
+        "config": "hk2t.json",
+        "pinned_bytes_equal": true,
+        "sha256": "e773001c761c5540c38a66baa378f2a8c65378fa09446186b1c4dd78815bccf3"
+      },
+      {
+        "config": "jp2t.json",
+        "pinned_bytes_equal": true,
+        "sha256": "bf056ab3be0c2d0898873662a12d39f8528419a36bc3ad128854a1faefe2c713"
+      },
+      {
+        "config": "s2hk.json",
+        "pinned_bytes_equal": true,
+        "sha256": "b3a4b6c7f5fdd61c4f7e6eaa292d9a0e29eece584c35fe04fc124b1d9796051b"
+      },
+      {
+        "config": "s2hkp.json",
+        "pinned_bytes_equal": true,
+        "sha256": "d95e38c22f07d8bc1b6d2dd004c590f0881c781fff76b53bf5f9b639e7980619"
+      },
+      {
+        "config": "s2t.json",
+        "pinned_bytes_equal": true,
+        "sha256": "a188392af5ca23e1d602c5a93651f1d852fccdaa24c2b29abed7a0c8ac359048"
+      },
+      {
+        "config": "s2tw.json",
+        "pinned_bytes_equal": true,
+        "sha256": "5830ee3440ba3dc6bf1e197205b4248e2d860b8a3680475db4419b0dbf96ac39"
+      },
+      {
+        "config": "s2twp.json",
+        "pinned_bytes_equal": true,
+        "sha256": "681dd1ff5f3a1efe93a6f56006ee7f58f767fa0366fd3a2ec6165c983e39415d"
+      },
+      {
+        "config": "t2hk.json",
+        "pinned_bytes_equal": true,
+        "sha256": "8e2336420ed33b6991841921e930414919d922bd287677f5973564c85b6a3c9b"
+      },
+      {
+        "config": "t2jp.json",
+        "pinned_bytes_equal": true,
+        "sha256": "6ac813c83a0e57e9d4ff5fd968188ff9e8bc0564dbc833e77fca0c338d27d285"
+      },
+      {
+        "config": "t2s.json",
+        "pinned_bytes_equal": true,
+        "sha256": "96fe5cc374a80ccc49e3370006cce3aefe4af955868ae0b14fb3079ec695be4f"
+      },
+      {
+        "config": "t2tw.json",
+        "pinned_bytes_equal": true,
+        "sha256": "bdaa75b82ec25daecb3ce376277e90c7c3388eb9345628650c66a804a2772a19"
+      },
+      {
+        "config": "tw2s.json",
+        "pinned_bytes_equal": true,
+        "sha256": "9bf1810eea822bcdedc0b24b303348d859ecf8307f379c9c2d210428e0620ff9"
+      },
+      {
+        "config": "tw2sp.json",
+        "pinned_bytes_equal": true,
+        "sha256": "f8cf900c1b456a7d2e8477f5bf146814071d28ad64ef37fbc0ae757930c167d5"
+      },
+      {
+        "config": "tw2t.json",
+        "pinned_bytes_equal": true,
+        "sha256": "5bc1991e12b35100b2df4b6b534bbaeeb18fbbabe5cd5c15c611736011225530"
+      }
+    ],
+    "compiled_dicts": [
+      {
+        "txt": "CJK_Compatibility_Ideographs.txt",
+        "ocd2_sha256": "4b1faa6649012f524068ec18c0fb520ead343c11cbe0a8e4c8853ca61369d666",
+        "pass": true
+      },
+      {
+        "txt": "HKPhrases.txt",
+        "ocd2_sha256": "2216e55024b7f2674245fe860452c7c378ecc0e145ca51dcd944de76a6c62687",
+        "pass": true
+      },
+      {
+        "txt": "HKPhrasesRev.txt",
+        "ocd2_sha256": "f4642fa9e73454ab91e13197ebabcca8343fc042f1997796c5a2cce3ff2bbddd",
+        "pass": true
+      },
+      {
+        "txt": "HKVariants.txt",
+        "ocd2_sha256": "b4be56685bddda964977bbd271f976df939d1f46a75332b8f9e793d0f06e6c7c",
+        "pass": true
+      },
+      {
+        "txt": "HKVariantsPhrases.txt",
+        "ocd2_sha256": "80c215b6bef0f324a71340bc21164d063c5540af6f50c07fd1c703af9c1207da",
+        "pass": true
+      },
+      {
+        "txt": "HKVariantsRev.txt",
+        "ocd2_sha256": "a7b4a063fb5246722762364b0e675247c91fb3a8f195aa741f1459a776d10118",
+        "pass": true
+      },
+      {
+        "txt": "HKVariantsRevPhrases.txt",
+        "ocd2_sha256": "93a5a86d77bfa7bfa5fe8aae3ddc1e5d33d9ac5eac3866849c98974fca0938ee",
+        "pass": true
+      },
+      {
+        "txt": "JPShinjitaiCharacters.txt",
+        "ocd2_sha256": "2a5b7494d064967d482ac110772c03d2a5cdd53760eaeb07646d1f5a197cac15",
+        "pass": true
+      },
+      {
+        "txt": "JPShinjitaiCharactersRev.txt",
+        "ocd2_sha256": "773f3817dcb9a520ac4437b9502585886497282a65d768183057f4d61de572dd",
+        "pass": true
+      },
+      {
+        "txt": "JPShinjitaiPhrases.txt",
+        "ocd2_sha256": "66ddb233c180f5f622d16cf9d1b28448e8935ce8d8396b7716d79db0ffb5fcad",
+        "pass": true
+      },
+      {
+        "txt": "STCharacters.txt",
+        "ocd2_sha256": "94639fe1d2bbeb3dcb4f29a297cda70ecfd26425b8a935f4b6bac0746c3987f2",
+        "pass": true
+      },
+      {
+        "txt": "STPhrases.txt",
+        "ocd2_sha256": "c472f936ab624e8887ed48c2572d0af68b904f0be72d98e237a6b8c1f5de024d",
+        "pass": true
+      },
+      {
+        "txt": "STPhrases_GeneratedFromRegionalPhrases.txt",
+        "ocd2_sha256": "815bbb98c644095fb0bfd76dbf259b9da4350a19d4927b2342e7928fb26b20e2",
+        "pass": true
+      },
+      {
+        "txt": "TSCharacters.txt",
+        "ocd2_sha256": "7a994de7900707925fac9c68728a6bb9cf3059870426f661cf31b601efbf5f2f",
+        "pass": true
+      },
+      {
+        "txt": "TSCharactersExt.txt",
+        "ocd2_sha256": "e2b0286801dcd1d26119d19ba8b8a35cde021ec173468255d117c4c0951b2906",
+        "pass": true
+      },
+      {
+        "txt": "TSPhrases.txt",
+        "ocd2_sha256": "2b722237cc00a4ac985790deb6a68c99f34de10e980a0029ac82c72b0f7ae22b",
+        "pass": true
+      },
+      {
+        "txt": "TWPhrases.txt",
+        "ocd2_sha256": "4298bc78f8ff472eed0afd31996cb35f6e56cd4ace5ef8a6d27a35a5374b9476",
+        "pass": true
+      },
+      {
+        "txt": "TWPhrasesRev.txt",
+        "ocd2_sha256": "839f5a71c1f02f594f23a54815d9bca4656ca661a7e32805504c67420496da47",
+        "pass": true
+      },
+      {
+        "txt": "TWVariants.txt",
+        "ocd2_sha256": "ed89fe928857500a77cbb601be4a1769da34ce863875eaae18d1d50bd036db5e",
+        "pass": true
+      },
+      {
+        "txt": "TWVariantsPhrases.txt",
+        "ocd2_sha256": "a9c356943779f1d9af8b38751fe9222a02dc211a56c83f83871cfc8558afe178",
+        "pass": true
+      },
+      {
+        "txt": "TWVariantsRev.txt",
+        "ocd2_sha256": "fc043bdf0224666921983f2badcac8faa5e59d8a681a5525c527c9926f66775d",
+        "pass": true
+      },
+      {
+        "txt": "TWVariantsRevPhrases.txt",
+        "ocd2_sha256": "ae91cb45c12f737bde2b9e340c38efaa7e1868cf55e59a62cc8199de020113e2",
+        "pass": true
+      }
+    ],
+    "recorded_commands": [
+      {
+        "index": 1,
+        "label": "negative-baseline-fixture-compile-CJK_Compatibility_Ideographs",
+        "returncode": 0,
+        "pass": true
+      },
+      {
+        "index": 2,
+        "label": "negative-baseline-fixture-compile-HKPhrases",
+        "returncode": 0,
+        "pass": true
+      },
+      {
+        "index": 3,
+        "label": "negative-baseline-fixture-compile-HKPhrasesRev",
+        "returncode": 0,
+        "pass": true
+      },
+      {
+        "index": 4,
+        "label": "negative-baseline-fixture-compile-HKVariants",
+        "returncode": 0,
+        "pass": true
+      },
+      {
+        "index": 5,
+        "label": "negative-baseline-fixture-compile-HKVariantsPhrases",
+        "returncode": 0,
+        "pass": true
+      },
+      {
+        "index": 6,
+        "label": "negative-baseline-fixture-compile-HKVariantsRev",
+        "returncode": 0,
+        "pass": true
+      },
+      {
+        "index": 7,
+        "label": "negative-baseline-fixture-compile-HKVariantsRevPhrases",
+        "returncode": 0,
+        "pass": true
+      },
+      {
+        "index": 8,
+        "label": "negative-baseline-fixture-compile-JPShinjitaiCharacters",
+        "returncode": 0,
+        "pass": true
+      },
+      {
+        "index": 9,
+        "label": "negative-baseline-fixture-compile-JPShinjitaiCharactersRev",
+        "returncode": 0,
+        "pass": true
+      },
+      {
+        "index": 10,
+        "label": "negative-baseline-fixture-compile-JPShinjitaiPhrases",
+        "returncode": 0,
+        "pass": true
+      },
+      {
+        "index": 11,
+        "label": "negative-baseline-fixture-compile-STCharacters",
+        "returncode": 0,
+        "pass": true
+      },
+      {
+        "index": 12,
+        "label": "negative-baseline-fixture-compile-STPhrases",
+        "returncode": 0,
+        "pass": true
+      },
+      {
+        "index": 13,
+        "label": "negative-baseline-fixture-compile-TSCharacters",
+        "returncode": 0,
+        "pass": true
+      },
+      {
+        "index": 14,
+        "label": "negative-baseline-fixture-compile-TSCharactersExt",
+        "returncode": 0,
+        "pass": true
+      },
+      {
+        "index": 15,
+        "label": "negative-baseline-fixture-compile-TSPhrases",
+        "returncode": 0,
+        "pass": true
+      },
+      {
+        "index": 16,
+        "label": "negative-baseline-fixture-compile-TWPhrases",
+        "returncode": 0,
+        "pass": true
+      },
+      {
+        "index": 17,
+        "label": "negative-baseline-fixture-compile-TWPhrasesRev",
+        "returncode": 0,
+        "pass": true
+      },
+      {
+        "index": 18,
+        "label": "negative-baseline-fixture-compile-TWVariants",
+        "returncode": 0,
+        "pass": true
+      },
+      {
+        "index": 19,
+        "label": "negative-baseline-fixture-compile-TWVariantsPhrases",
+        "returncode": 0,
+        "pass": true
+      },
+      {
+        "index": 20,
+        "label": "negative-baseline-fixture-compile-TWVariantsRev",
+        "returncode": 0,
+        "pass": true
+      },
+      {
+        "index": 21,
+        "label": "negative-baseline-fixture-compile-TWVariantsRevPhrases",
+        "returncode": 0,
+        "pass": true
+      },
+      {
+        "index": 22,
+        "label": "negative-baseline-fixture-load-hk2s",
+        "returncode": 0,
+        "pass": true
+      },
+      {
+        "index": 23,
+        "label": "negative-baseline-fixture-load-hk2sp",
+        "returncode": 0,
+        "pass": true
+      },
+      {
+        "index": 24,
+        "label": "negative-baseline-fixture-load-hk2t",
+        "returncode": 0,
+        "pass": true
+      },
+      {
+        "index": 25,
+        "label": "negative-baseline-fixture-load-jp2t",
+        "returncode": 0,
+        "pass": true
+      },
+      {
+        "index": 26,
+        "label": "negative-baseline-fixture-load-s2hk",
+        "returncode": 1,
+        "pass": true
+      },
+      {
+        "index": 27,
+        "label": "negative-baseline-fixture-load-s2hkp",
+        "returncode": 1,
+        "pass": true
+      },
+      {
+        "index": 28,
+        "label": "negative-baseline-fixture-load-s2t",
+        "returncode": 1,
+        "pass": true
+      },
+      {
+        "index": 29,
+        "label": "negative-baseline-fixture-load-s2tw",
+        "returncode": 1,
+        "pass": true
+      },
+      {
+        "index": 30,
+        "label": "negative-baseline-fixture-load-s2twp",
+        "returncode": 1,
+        "pass": true
+      },
+      {
+        "index": 31,
+        "label": "negative-baseline-fixture-load-t2hk",
+        "returncode": 0,
+        "pass": true
+      },
+      {
+        "index": 32,
+        "label": "negative-baseline-fixture-load-t2jp",
+        "returncode": 0,
+        "pass": true
+      },
+      {
+        "index": 33,
+        "label": "negative-baseline-fixture-load-t2s",
+        "returncode": 0,
+        "pass": true
+      },
+      {
+        "index": 34,
+        "label": "negative-baseline-fixture-load-t2tw",
+        "returncode": 0,
+        "pass": true
+      },
+      {
+        "index": 35,
+        "label": "negative-baseline-fixture-load-tw2s",
+        "returncode": 0,
+        "pass": true
+      },
+      {
+        "index": 36,
+        "label": "negative-baseline-fixture-load-tw2sp",
+        "returncode": 0,
+        "pass": true
+      },
+      {
+        "index": 37,
+        "label": "negative-baseline-fixture-load-tw2t",
+        "returncode": 0,
+        "pass": true
+      },
+      {
+        "index": 38,
+        "label": "candidate-compile-CJK_Compatibility_Ideographs",
+        "returncode": 0,
+        "pass": true
+      },
+      {
+        "index": 39,
+        "label": "candidate-compile-HKPhrases",
+        "returncode": 0,
+        "pass": true
+      },
+      {
+        "index": 40,
+        "label": "candidate-compile-HKPhrasesRev",
+        "returncode": 0,
+        "pass": true
+      },
+      {
+        "index": 41,
+        "label": "candidate-compile-HKVariants",
+        "returncode": 0,
+        "pass": true
+      },
+      {
+        "index": 42,
+        "label": "candidate-compile-HKVariantsPhrases",
+        "returncode": 0,
+        "pass": true
+      },
+      {
+        "index": 43,
+        "label": "candidate-compile-HKVariantsRev",
+        "returncode": 0,
+        "pass": true
+      },
+      {
+        "index": 44,
+        "label": "candidate-compile-HKVariantsRevPhrases",
+        "returncode": 0,
+        "pass": true
+      },
+      {
+        "index": 45,
+        "label": "candidate-compile-JPShinjitaiCharacters",
+        "returncode": 0,
+        "pass": true
+      },
+      {
+        "index": 46,
+        "label": "candidate-compile-JPShinjitaiCharactersRev",
+        "returncode": 0,
+        "pass": true
+      },
+      {
+        "index": 47,
+        "label": "candidate-compile-JPShinjitaiPhrases",
+        "returncode": 0,
+        "pass": true
+      },
+      {
+        "index": 48,
+        "label": "candidate-compile-STCharacters",
+        "returncode": 0,
+        "pass": true
+      },
+      {
+        "index": 49,
+        "label": "candidate-compile-STPhrases",
+        "returncode": 0,
+        "pass": true
+      },
+      {
+        "index": 50,
+        "label": "candidate-compile-STPhrases_GeneratedFromRegionalPhrases",
+        "returncode": 0,
+        "pass": true
+      },
+      {
+        "index": 51,
+        "label": "candidate-compile-TSCharacters",
+        "returncode": 0,
+        "pass": true
+      },
+      {
+        "index": 52,
+        "label": "candidate-compile-TSCharactersExt",
+        "returncode": 0,
+        "pass": true
+      },
+      {
+        "index": 53,
+        "label": "candidate-compile-TSPhrases",
+        "returncode": 0,
+        "pass": true
+      },
+      {
+        "index": 54,
+        "label": "candidate-compile-TWPhrases",
+        "returncode": 0,
+        "pass": true
+      },
+      {
+        "index": 55,
+        "label": "candidate-compile-TWPhrasesRev",
+        "returncode": 0,
+        "pass": true
+      },
+      {
+        "index": 56,
+        "label": "candidate-compile-TWVariants",
+        "returncode": 0,
+        "pass": true
+      },
+      {
+        "index": 57,
+        "label": "candidate-compile-TWVariantsPhrases",
+        "returncode": 0,
+        "pass": true
+      },
+      {
+        "index": 58,
+        "label": "candidate-compile-TWVariantsRev",
+        "returncode": 0,
+        "pass": true
+      },
+      {
+        "index": 59,
+        "label": "candidate-compile-TWVariantsRevPhrases",
+        "returncode": 0,
+        "pass": true
+      },
+      {
+        "index": 60,
+        "label": "candidate-apk-fixture-load-hk2s",
+        "returncode": 0,
+        "pass": true
+      },
+      {
+        "index": 61,
+        "label": "candidate-apk-fixture-load-hk2sp",
+        "returncode": 0,
+        "pass": true
+      },
+      {
+        "index": 62,
+        "label": "candidate-apk-fixture-load-hk2t",
+        "returncode": 0,
+        "pass": true
+      },
+      {
+        "index": 63,
+        "label": "candidate-apk-fixture-load-jp2t",
+        "returncode": 0,
+        "pass": true
+      },
+      {
+        "index": 64,
+        "label": "candidate-apk-fixture-load-s2hk",
+        "returncode": 0,
+        "pass": true
+      },
+      {
+        "index": 65,
+        "label": "candidate-apk-fixture-load-s2hkp",
+        "returncode": 0,
+        "pass": true
+      },
+      {
+        "index": 66,
+        "label": "candidate-apk-fixture-load-s2t",
+        "returncode": 0,
+        "pass": true
+      },
+      {
+        "index": 67,
+        "label": "candidate-apk-fixture-load-s2tw",
+        "returncode": 0,
+        "pass": true
+      },
+      {
+        "index": 68,
+        "label": "candidate-apk-fixture-load-s2twp",
+        "returncode": 0,
+        "pass": true
+      },
+      {
+        "index": 69,
+        "label": "candidate-apk-fixture-load-t2hk",
+        "returncode": 0,
+        "pass": true
+      },
+      {
+        "index": 70,
+        "label": "candidate-apk-fixture-load-t2jp",
+        "returncode": 0,
+        "pass": true
+      },
+      {
+        "index": 71,
+        "label": "candidate-apk-fixture-load-t2s",
+        "returncode": 0,
+        "pass": true
+      },
+      {
+        "index": 72,
+        "label": "candidate-apk-fixture-load-t2tw",
+        "returncode": 0,
+        "pass": true
+      },
+      {
+        "index": 73,
+        "label": "candidate-apk-fixture-load-tw2s",
+        "returncode": 0,
+        "pass": true
+      },
+      {
+        "index": 74,
+        "label": "candidate-apk-fixture-load-tw2sp",
+        "returncode": 0,
+        "pass": true
+      },
+      {
+        "index": 75,
+        "label": "candidate-apk-fixture-load-tw2t",
+        "returncode": 0,
+        "pass": true
+      },
+      {
+        "index": 76,
+        "label": "candidate-conversion-000-hk2s",
+        "returncode": 0,
+        "pass": true
+      },
+      {
+        "index": 77,
+        "label": "candidate-conversion-001-hk2sp",
+        "returncode": 0,
+        "pass": true
+      },
+      {
+        "index": 78,
+        "label": "candidate-conversion-002-hk2t",
+        "returncode": 0,
+        "pass": true
+      },
+      {
+        "index": 79,
+        "label": "candidate-conversion-003-jp2t",
+        "returncode": 0,
+        "pass": true
+      },
+      {
+        "index": 80,
+        "label": "candidate-conversion-004-s2hk",
+        "returncode": 0,
+        "pass": true
+      },
+      {
+        "index": 81,
+        "label": "candidate-conversion-005-s2hkp",
+        "returncode": 0,
+        "pass": true
+      },
+      {
+        "index": 82,
+        "label": "candidate-conversion-006-s2t",
+        "returncode": 0,
+        "pass": true
+      },
+      {
+        "index": 83,
+        "label": "candidate-conversion-007-s2tw",
+        "returncode": 0,
+        "pass": true
+      },
+      {
+        "index": 84,
+        "label": "candidate-conversion-008-s2twp",
+        "returncode": 0,
+        "pass": true
+      },
+      {
+        "index": 85,
+        "label": "candidate-conversion-009-t2hk",
+        "returncode": 0,
+        "pass": true
+      },
+      {
+        "index": 86,
+        "label": "candidate-conversion-010-t2jp",
+        "returncode": 0,
+        "pass": true
+      },
+      {
+        "index": 87,
+        "label": "candidate-conversion-011-t2s",
+        "returncode": 0,
+        "pass": true
+      },
+      {
+        "index": 88,
+        "label": "candidate-conversion-012-t2tw",
+        "returncode": 0,
+        "pass": true
+      },
+      {
+        "index": 89,
+        "label": "candidate-conversion-013-tw2s",
+        "returncode": 0,
+        "pass": true
+      },
+      {
+        "index": 90,
+        "label": "candidate-conversion-014-tw2sp",
+        "returncode": 0,
+        "pass": true
+      },
+      {
+        "index": 91,
+        "label": "candidate-conversion-015-tw2t",
+        "returncode": 0,
+        "pass": true
+      },
+      {
+        "index": 92,
+        "label": "candidate-conversion-016-s2twp",
+        "returncode": 0,
+        "pass": true
+      },
+      {
+        "index": 93,
+        "label": "candidate-conversion-017-s2t",
+        "returncode": 0,
+        "pass": true
+      },
+      {
+        "index": 94,
+        "label": "candidate-conversion-018-s2tw",
+        "returncode": 0,
+        "pass": true
+      },
+      {
+        "index": 95,
+        "label": "candidate-conversion-019-s2twp",
+        "returncode": 0,
+        "pass": true
+      },
+      {
+        "index": 96,
+        "label": "candidate-conversion-020-s2hk",
+        "returncode": 0,
+        "pass": true
+      },
+      {
+        "index": 97,
+        "label": "candidate-conversion-021-s2hkp",
+        "returncode": 0,
+        "pass": true
+      },
+      {
+        "index": 98,
+        "label": "candidate-conversion-022-t2s",
+        "returncode": 0,
+        "pass": true
+      },
+      {
+        "index": 99,
+        "label": "candidate-conversion-023-t2tw",
+        "returncode": 0,
+        "pass": true
+      },
+      {
+        "index": 100,
+        "label": "candidate-conversion-024-t2hk",
+        "returncode": 0,
+        "pass": true
+      },
+      {
+        "index": 101,
+        "label": "candidate-conversion-025-tw2s",
+        "returncode": 0,
+        "pass": true
+      },
+      {
+        "index": 102,
+        "label": "candidate-conversion-026-tw2sp",
+        "returncode": 0,
+        "pass": true
+      },
+      {
+        "index": 103,
+        "label": "candidate-conversion-027-tw2t",
+        "returncode": 0,
+        "pass": true
+      },
+      {
+        "index": 104,
+        "label": "candidate-conversion-028-hk2s",
+        "returncode": 0,
+        "pass": true
+      },
+      {
+        "index": 105,
+        "label": "candidate-conversion-029-hk2sp",
+        "returncode": 0,
+        "pass": true
+      },
+      {
+        "index": 106,
+        "label": "candidate-conversion-030-hk2t",
+        "returncode": 0,
+        "pass": true
+      },
+      {
+        "index": 107,
+        "label": "candidate-conversion-031-s2t",
+        "returncode": 0,
+        "pass": true
+      },
+      {
+        "index": 108,
+        "label": "candidate-conversion-032-s2tw",
+        "returncode": 0,
+        "pass": true
+      },
+      {
+        "index": 109,
+        "label": "candidate-conversion-033-s2hk",
+        "returncode": 0,
+        "pass": true
+      },
+      {
+        "index": 110,
+        "label": "candidate-conversion-034-s2twp",
+        "returncode": 0,
+        "pass": true
+      },
+      {
+        "index": 111,
+        "label": "candidate-conversion-035-s2hkp",
+        "returncode": 0,
+        "pass": true
+      },
+      {
+        "index": 112,
+        "label": "candidate-conversion-036-s2hkp",
+        "returncode": 0,
+        "pass": true
+      },
+      {
+        "index": 113,
+        "label": "candidate-conversion-037-hk2sp",
+        "returncode": 0,
+        "pass": true
+      }
+    ],
+    "load_results": [
+      {
+        "negative_baseline": true,
+        "config": "hk2s",
+        "exit": 0,
+        "pass": true
+      },
+      {
+        "negative_baseline": true,
+        "config": "hk2sp",
+        "exit": 0,
+        "pass": true
+      },
+      {
+        "negative_baseline": true,
+        "config": "hk2t",
+        "exit": 0,
+        "pass": true
+      },
+      {
+        "negative_baseline": true,
+        "config": "jp2t",
+        "exit": 0,
+        "pass": true
+      },
+      {
+        "negative_baseline": true,
+        "config": "s2hk",
+        "exit": 1,
+        "pass": true
+      },
+      {
+        "negative_baseline": true,
+        "config": "s2hkp",
+        "exit": 1,
+        "pass": true
+      },
+      {
+        "negative_baseline": true,
+        "config": "s2t",
+        "exit": 1,
+        "pass": true
+      },
+      {
+        "negative_baseline": true,
+        "config": "s2tw",
+        "exit": 1,
+        "pass": true
+      },
+      {
+        "negative_baseline": true,
+        "config": "s2twp",
+        "exit": 1,
+        "pass": true
+      },
+      {
+        "negative_baseline": true,
+        "config": "t2hk",
+        "exit": 0,
+        "pass": true
+      },
+      {
+        "negative_baseline": true,
+        "config": "t2jp",
+        "exit": 0,
+        "pass": true
+      },
+      {
+        "negative_baseline": true,
+        "config": "t2s",
+        "exit": 0,
+        "pass": true
+      },
+      {
+        "negative_baseline": true,
+        "config": "t2tw",
+        "exit": 0,
+        "pass": true
+      },
+      {
+        "negative_baseline": true,
+        "config": "tw2s",
+        "exit": 0,
+        "pass": true
+      },
+      {
+        "negative_baseline": true,
+        "config": "tw2sp",
+        "exit": 0,
+        "pass": true
+      },
+      {
+        "negative_baseline": true,
+        "config": "tw2t",
+        "exit": 0,
+        "pass": true
+      },
+      {
+        "negative_baseline": false,
+        "config": "hk2s",
+        "exit": 0,
+        "pass": true
+      },
+      {
+        "negative_baseline": false,
+        "config": "hk2sp",
+        "exit": 0,
+        "pass": true
+      },
+      {
+        "negative_baseline": false,
+        "config": "hk2t",
+        "exit": 0,
+        "pass": true
+      },
+      {
+        "negative_baseline": false,
+        "config": "jp2t",
+        "exit": 0,
+        "pass": true
+      },
+      {
+        "negative_baseline": false,
+        "config": "s2hk",
+        "exit": 0,
+        "pass": true
+      },
+      {
+        "negative_baseline": false,
+        "config": "s2hkp",
+        "exit": 0,
+        "pass": true
+      },
+      {
+        "negative_baseline": false,
+        "config": "s2t",
+        "exit": 0,
+        "pass": true
+      },
+      {
+        "negative_baseline": false,
+        "config": "s2tw",
+        "exit": 0,
+        "pass": true
+      },
+      {
+        "negative_baseline": false,
+        "config": "s2twp",
+        "exit": 0,
+        "pass": true
+      },
+      {
+        "negative_baseline": false,
+        "config": "t2hk",
+        "exit": 0,
+        "pass": true
+      },
+      {
+        "negative_baseline": false,
+        "config": "t2jp",
+        "exit": 0,
+        "pass": true
+      },
+      {
+        "negative_baseline": false,
+        "config": "t2s",
+        "exit": 0,
+        "pass": true
+      },
+      {
+        "negative_baseline": false,
+        "config": "t2tw",
+        "exit": 0,
+        "pass": true
+      },
+      {
+        "negative_baseline": false,
+        "config": "tw2s",
+        "exit": 0,
+        "pass": true
+      },
+      {
+        "negative_baseline": false,
+        "config": "tw2sp",
+        "exit": 0,
+        "pass": true
+      },
+      {
+        "negative_baseline": false,
+        "config": "tw2t",
+        "exit": 0,
+        "pass": true
+      }
+    ],
+    "conversion_results": [
+      {
+        "index": 0,
+        "config": "hk2s",
+        "source_case_id": "case_001",
+        "pass": true
+      },
+      {
+        "index": 1,
+        "config": "hk2sp",
+        "source_case_id": "BYVoid_OpenCC_PR_1369_t2x",
+        "pass": true
+      },
+      {
+        "index": 2,
+        "config": "hk2t",
+        "source_case_id": "case_004",
+        "pass": true
+      },
+      {
+        "index": 3,
+        "config": "jp2t",
+        "source_case_id": "case_006",
+        "pass": true
+      },
+      {
+        "index": 4,
+        "config": "s2hk",
+        "source_case_id": "case_010",
+        "pass": true
+      },
+      {
+        "index": 5,
+        "config": "s2hkp",
+        "source_case_id": "case_056_x2x",
+        "pass": true
+      },
+      {
+        "index": 6,
+        "config": "s2t",
+        "source_case_id": "case_014",
+        "pass": true
+      },
+      {
+        "index": 7,
+        "config": "s2tw",
+        "source_case_id": "case_014",
+        "pass": true
+      },
+      {
+        "index": 8,
+        "config": "s2twp",
+        "source_case_id": "case_014",
+        "pass": true
+      },
+      {
+        "index": 9,
+        "config": "t2hk",
+        "source_case_id": "case_035",
+        "pass": true
+      },
+      {
+        "index": 10,
+        "config": "t2jp",
+        "source_case_id": "case_038",
+        "pass": true
+      },
+      {
+        "index": 11,
+        "config": "t2s",
+        "source_case_id": "case_042",
+        "pass": true
+      },
+      {
+        "index": 12,
+        "config": "t2tw",
+        "source_case_id": "case_056_x2x",
+        "pass": true
+      },
+      {
+        "index": 13,
+        "config": "tw2s",
+        "source_case_id": "case_044",
+        "pass": true
+      },
+      {
+        "index": 14,
+        "config": "tw2sp",
+        "source_case_id": "case_045",
+        "pass": true
+      },
+      {
+        "index": 15,
+        "config": "tw2t",
+        "source_case_id": "case_005",
+        "pass": true
+      },
+      {
+        "index": 16,
+        "config": "s2twp",
+        "source_case_id": "BYVoid_OpenCC_Issue_475_s2twp",
+        "pass": true
+      },
+      {
+        "index": 17,
+        "config": "s2t",
+        "source_case_id": "BYVoid_OpenCC_Issue_506",
+        "pass": true
+      },
+      {
+        "index": 18,
+        "config": "s2tw",
+        "source_case_id": "BYVoid_OpenCC_Issue_506",
+        "pass": true
+      },
+      {
+        "index": 19,
+        "config": "s2twp",
+        "source_case_id": "BYVoid_OpenCC_Issue_506",
+        "pass": true
+      },
+      {
+        "index": 20,
+        "config": "s2hk",
+        "source_case_id": "BYVoid_OpenCC_Issue_506",
+        "pass": true
+      },
+      {
+        "index": 21,
+        "config": "s2hkp",
+        "source_case_id": "BYVoid_OpenCC_Issue_506",
+        "pass": true
+      },
+      {
+        "index": 22,
+        "config": "t2s",
+        "source_case_id": "BYVoid_OpenCC_Issue_506",
+        "pass": true
+      },
+      {
+        "index": 23,
+        "config": "t2tw",
+        "source_case_id": "BYVoid_OpenCC_Issue_506",
+        "pass": true
+      },
+      {
+        "index": 24,
+        "config": "t2hk",
+        "source_case_id": "BYVoid_OpenCC_Issue_506",
+        "pass": true
+      },
+      {
+        "index": 25,
+        "config": "tw2s",
+        "source_case_id": "BYVoid_OpenCC_Issue_506",
+        "pass": true
+      },
+      {
+        "index": 26,
+        "config": "tw2sp",
+        "source_case_id": "BYVoid_OpenCC_Issue_506",
+        "pass": true
+      },
+      {
+        "index": 27,
+        "config": "tw2t",
+        "source_case_id": "BYVoid_OpenCC_Issue_506",
+        "pass": true
+      },
+      {
+        "index": 28,
+        "config": "hk2s",
+        "source_case_id": "BYVoid_OpenCC_Issue_506",
+        "pass": true
+      },
+      {
+        "index": 29,
+        "config": "hk2sp",
+        "source_case_id": "BYVoid_OpenCC_Issue_506",
+        "pass": true
+      },
+      {
+        "index": 30,
+        "config": "hk2t",
+        "source_case_id": "BYVoid_OpenCC_Issue_506",
+        "pass": true
+      },
+      {
+        "index": 31,
+        "config": "s2t",
+        "source_case_id": "director_names_all_modes",
+        "pass": true
+      },
+      {
+        "index": 32,
+        "config": "s2tw",
+        "source_case_id": "director_names_all_modes",
+        "pass": true
+      },
+      {
+        "index": 33,
+        "config": "s2hk",
+        "source_case_id": "director_names_all_modes",
+        "pass": true
+      },
+      {
+        "index": 34,
+        "config": "s2twp",
+        "source_case_id": "director_names_all_modes",
+        "pass": true
+      },
+      {
+        "index": 35,
+        "config": "s2hkp",
+        "source_case_id": "director_names_all_modes",
+        "pass": true
+      },
+      {
+        "index": 36,
+        "config": "s2hkp",
+        "source_case_id": "hk_computer_phrases_s2hkp",
+        "pass": true
+      },
+      {
+        "index": 37,
+        "config": "hk2sp",
+        "source_case_id": "hk_computer_phrases_hk2sp",
+        "pass": true
+      }
+    ],
+    "sync_resources": [
+      {
+        "asset": "CJK_Compatibility_Ideographs.txt",
+        "sha256": "663cc10b7de7c7cee3ff9df1ee963977d6c26c00b23f8fe670fab481283ed4f9",
+        "pass": true
+      },
+      {
+        "asset": "HKPhrases.txt",
+        "sha256": "de3ed57532c9e57e73998f696ec8afe49307b44aa01a8342aa9ae6ed1f6dd9da",
+        "pass": true
+      },
+      {
+        "asset": "HKPhrasesRev.txt",
+        "sha256": "081b5b8908b4f7217d1f6b3c11be21e02210b6753c2b0d8d6379fe21c1a40a20",
+        "pass": true
+      },
+      {
+        "asset": "HKVariants.txt",
+        "sha256": "e5cd4345303224587102f2c9e4d2b67d2b7e349c6ce9152e4a118f4656cf7302",
+        "pass": true
+      },
+      {
+        "asset": "HKVariantsPhrases.txt",
+        "sha256": "e23019c35405065d7ea174fe7487e0bde064b1af56532b3986033c9bb98e555c",
+        "pass": true
+      },
+      {
+        "asset": "HKVariantsRev.txt",
+        "sha256": "e9392136bbd7b4c9ec55b04bfa1f33fc10b08f40a5236bfe8a227d642230b724",
+        "pass": true
+      },
+      {
+        "asset": "HKVariantsRevPhrases.txt",
+        "sha256": "35352aef4833c2631b2144bc85623cc44d5a09221dda9c32178ea024300d34d3",
+        "pass": true
+      },
+      {
+        "asset": "JPShinjitaiCharacters.txt",
+        "sha256": "12cec7250b873ef52b36d8f92218d4f92c0aaf5d8cd7c58fe42d9785bdcdc43a",
+        "pass": true
+      },
+      {
+        "asset": "JPShinjitaiCharactersRev.txt",
+        "sha256": "4d257f9dfdea31a0062b2bdb0c6214062456ea1e57a601cc67c796e244f917ca",
+        "pass": true
+      },
+      {
+        "asset": "JPShinjitaiPhrases.txt",
+        "sha256": "799c9d69d78fcf96b35110693866bd34a070e4f50e6be55a4ecf8080cd2832d6",
+        "pass": true
+      },
+      {
+        "asset": "STCharacters.txt",
+        "sha256": "a0ca1601c70648cf48b33c3c6210ccbecc5c7eead4b4c3daf76587ba2c03582b",
+        "pass": true
+      },
+      {
+        "asset": "STPhrases.txt",
+        "sha256": "f6eab5e5c6dd7640597878d3dfc6599ee1279d2bc91561eadd8e114194e2925a",
+        "pass": true
+      },
+      {
+        "asset": "STPhrases_GeneratedFromRegionalPhrases.txt",
+        "sha256": "9ab40618a9b162cca6dae9ec6767a8c4669017a20b2d6da5f94b7a7f99d09170",
+        "pass": true
+      },
+      {
+        "asset": "TSCharacters.txt",
+        "sha256": "737c21c66f55a419dd6956cb3089476cdefc5a36877452631617696df1e5d925",
+        "pass": true
+      },
+      {
+        "asset": "TSCharactersExt.txt",
+        "sha256": "239a67aae2bb6b4999f65e1df50ee67794ea5b63d269a8e6cb9a99efe0eb749e",
+        "pass": true
+      },
+      {
+        "asset": "TSPhrases.txt",
+        "sha256": "362fa1b9a7d6edd04b462a32e12c9fef3adae822ab1dee9c83561cc37c06cb1f",
+        "pass": true
+      },
+      {
+        "asset": "TWPhrases.txt",
+        "sha256": "bcb435b744ee3e522beb9b18fcc5486a36ed4763c6aa642ce18112fb5d604e31",
+        "pass": true
+      },
+      {
+        "asset": "TWPhrasesRev.txt",
+        "sha256": "2c13969308cf4b9216cfb0145cefb9da96c5d0329a393850c2a63b341caaf4bd",
+        "pass": true
+      },
+      {
+        "asset": "TWVariants.txt",
+        "sha256": "e187278e119c427ca561180ac5da5b20e9f8681190458f35c327ce499e95a6a5",
+        "pass": true
+      },
+      {
+        "asset": "TWVariantsPhrases.txt",
+        "sha256": "36df033675a2e9152927fa8419f0732a061cb4909c5060f25a5cfc9b08ffff06",
+        "pass": true
+      },
+      {
+        "asset": "TWVariantsRev.txt",
+        "sha256": "ab059484c60f0983a8c841cd1edb622db883bf7627a872c92e29f70ec9ecd2de",
+        "pass": true
+      },
+      {
+        "asset": "TWVariantsRevPhrases.txt",
+        "sha256": "5ebfb4bdc938c2b14e01ace378988d5d3dc12462b3496ef1d424951ccd371256",
+        "pass": true
+      },
+      {
+        "asset": "hk2s.json",
+        "sha256": "b5fb0d6447f1f111c02a99f405d678b40a97bf73de0a25000219878994a8da37",
+        "pass": true
+      },
+      {
+        "asset": "hk2sp.json",
+        "sha256": "8a36e56922fa67aeaffb7d145520ed302276aaaf3ab05c092a10615eeda8a161",
+        "pass": true
+      },
+      {
+        "asset": "hk2t.json",
+        "sha256": "e773001c761c5540c38a66baa378f2a8c65378fa09446186b1c4dd78815bccf3",
+        "pass": true
+      },
+      {
+        "asset": "jp2t.json",
+        "sha256": "bf056ab3be0c2d0898873662a12d39f8528419a36bc3ad128854a1faefe2c713",
+        "pass": true
+      },
+      {
+        "asset": "s2hk.json",
+        "sha256": "b3a4b6c7f5fdd61c4f7e6eaa292d9a0e29eece584c35fe04fc124b1d9796051b",
+        "pass": true
+      },
+      {
+        "asset": "s2hkp.json",
+        "sha256": "d95e38c22f07d8bc1b6d2dd004c590f0881c781fff76b53bf5f9b639e7980619",
+        "pass": true
+      },
+      {
+        "asset": "s2t.json",
+        "sha256": "a188392af5ca23e1d602c5a93651f1d852fccdaa24c2b29abed7a0c8ac359048",
+        "pass": true
+      },
+      {
+        "asset": "s2tw.json",
+        "sha256": "5830ee3440ba3dc6bf1e197205b4248e2d860b8a3680475db4419b0dbf96ac39",
+        "pass": true
+      },
+      {
+        "asset": "s2twp.json",
+        "sha256": "681dd1ff5f3a1efe93a6f56006ee7f58f767fa0366fd3a2ec6165c983e39415d",
+        "pass": true
+      },
+      {
+        "asset": "t2hk.json",
+        "sha256": "8e2336420ed33b6991841921e930414919d922bd287677f5973564c85b6a3c9b",
+        "pass": true
+      },
+      {
+        "asset": "t2jp.json",
+        "sha256": "6ac813c83a0e57e9d4ff5fd968188ff9e8bc0564dbc833e77fca0c338d27d285",
+        "pass": true
+      },
+      {
+        "asset": "t2s.json",
+        "sha256": "96fe5cc374a80ccc49e3370006cce3aefe4af955868ae0b14fb3079ec695be4f",
+        "pass": true
+      },
+      {
+        "asset": "t2tw.json",
+        "sha256": "bdaa75b82ec25daecb3ce376277e90c7c3388eb9345628650c66a804a2772a19",
+        "pass": true
+      },
+      {
+        "asset": "tw2s.json",
+        "sha256": "9bf1810eea822bcdedc0b24b303348d859ecf8307f379c9c2d210428e0620ff9",
+        "pass": true
+      },
+      {
+        "asset": "tw2sp.json",
+        "sha256": "f8cf900c1b456a7d2e8477f5bf146814071d28ad64ef37fbc0ae757930c167d5",
+        "pass": true
+      },
+      {
+        "asset": "tw2t.json",
+        "sha256": "5bc1991e12b35100b2df4b6b534bbaeeb18fbbabe5cd5c15c611736011225530",
+        "pass": true
+      }
+    ],
+    "global_digest_checks": [
+      {
+        "label": "candidate",
+        "calculated_global_digest": "5ddb0b587fa4f7263cefb15ff31c5629496e5ed86c995040768ce2fbcfd19ae9",
+        "stored_global_digest": "5ddb0b587fa4f7263cefb15ff31c5629496e5ed86c995040768ce2fbcfd19ae9",
+        "pass": true
+      },
+      {
+        "label": "baseline",
+        "calculated_global_digest": "38b31d08dd719c41ced4e95c5742f2fd3f16bf3335603a9641860bdd65a49454",
+        "stored_global_digest": "38b31d08dd719c41ced4e95c5742f2fd3f16bf3335603a9641860bdd65a49454",
+        "pass": true
+      }
+    ],
+    "windows_warning": [
+      {
+        "line": 1096,
+        "text": "2026-10-29T07:26:31.9301467Z   Manually-specified variables were not used by the project:"
+      },
+      {
+        "line": 1099,
+        "text": "2026-10-29T07:26:31.9303134Z     CMAKE_BUILD_TYPE"
+      }
+    ],
+    "remaining_ci_warning_scope": {
+      "report": "warning-context-review.json",
+      "report_sha256": "bbea1533ca3b144eb51491e4a124cec41f87082e6a66e1a7535b86d662ec5d4a",
+      "mechanical_candidate_lines": 370,
+      "reviewed_categories": {
+        "git_initialization_hint": 4,
+        "android_sdk_tool": 14,
+        "gradle_deprecation_unexpanded": 20,
+        "gradle_documentation_reference": 10,
+        "unresolved_candidate": 57,
+        "pinned_native_dependency": 216,
+        "pinned_native_dependency_compiler_summary": 24,
+        "jdk_jna_tool": 24,
+        "ci_cache_tool": 1
+      },
+      "application_source_candidate_count": 0,
+      "unresolved_candidate_count": 57,
+      "unexpanded_gradle_deprecation_origin_unknown": true,
+      "not_a_zero_warning_claim": true,
+      "not_baseline_equivalence": true
+    }
+  },
+  "not_established": [
+    "Actual Android deployment/JNI conversion/input-method use or upgrade behavior",
+    "Physical device acceptance",
+    "Original APK signing-certificate verification by this static reviewer",
+    "Windows/macOS runtime conversion acceptance from the Ubuntu x86_64 APK fixture",
+    "Fresh CI/build/APK acceptance for any post-b241 commit",
+    "All build/runtime warnings eliminated"
+  ],
+  "findings": [],
+  "review_parser_correction": {
+    "initial_check_failure": [
+      {
+        "check": "all five preserved raw logs match captured hashes and actual merge checkout",
+        "pass": false
+      }
+    ],
+    "cause": "Initial reviewer string match assumed an unqualified git command. The real Windows log uses a quoted native git.exe path. Read-only review was corrected to match the actual [command] executable line and its adjacent SHA response; original CI logs were neither altered nor rerun.",
+    "windows_actual_checkout_command_line": 421,
+    "windows_actual_sha_output_line": 422
+  }
+}

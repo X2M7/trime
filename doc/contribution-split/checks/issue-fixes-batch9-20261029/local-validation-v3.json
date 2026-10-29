@@ -1,0 +1,110 @@
+{
+  "timestamp": "2026-10-29T08:24:46.677242+00:00",
+  "status": "PASS_FINAL_COMMITTED_SOURCE_LOCAL_AND_ARGUMENT_GATES",
+  "head": "78a4312fdc4ee94db6328f6f80842e95b9b2353d",
+  "base": "7fedca06ba5d2ef761a2ae3d44d8a0917db36994",
+  "source_tree": "00fdebca49f89ab48ba528edbf88aedfa1a76467",
+  "files": [
+    {
+      "path": "build-logic/convention/src/main/kotlin/OpenCCDataPlugin.kt",
+      "sha256": "27ca93994aa311f3d292092542a13e3a356de087b1b95844573952f78b49b3dd",
+      "bytes": 14484
+    },
+    {
+      "path": "app/src/main/jni/cmake/opencc-host/CMakeLists.txt",
+      "sha256": "7039af66204d35de44f9d2fb6f3c411baecd7347696a38cc2e63345ca68f2529",
+      "bytes": 1396
+    }
+  ],
+  "phases": [
+    {
+      "phase": "gradle-multiconfig-format1",
+      "actual_exit": 0,
+      "expected_exit": 0,
+      "minimum_available_kib": 4092072,
+      "result_sha256": "ca51fc17e564f57d7a6873381257f0cfa08eb28f9109ccb8b7220d56e2f01318",
+      "raw_log_sha256": "5b0c41728f3de9e245197e57c63d06eb874b5728c1e28871703c9c987fe158da",
+      "raw_log_bytes": 26202,
+      "warning_candidate_count": 0,
+      "raw_diagnostics_retained": true
+    },
+    {
+      "phase": "gradle-multiconfig-cold1",
+      "actual_exit": 0,
+      "expected_exit": 0,
+      "minimum_available_kib": 4730384,
+      "result_sha256": "3e3ea752275cc674d003ff2ec8a6a0b1676800b6dcb096c0393825509c24a443",
+      "raw_log_sha256": "b294cc3b6a01b3510f72fcecbe8bd2468d9779820313a0a6bc0829bc9e914196",
+      "raw_log_bytes": 256948,
+      "warning_candidate_count": 10,
+      "raw_diagnostics_retained": true
+    },
+    {
+      "phase": "gradle-multiconfig-no-change1",
+      "actual_exit": 0,
+      "expected_exit": 0,
+      "minimum_available_kib": 5048672,
+      "result_sha256": "de798650c37c5e5bceab55d4950119e5c716e62859639fdd19d64a7b634bfe1a",
+      "raw_log_sha256": "e6071afe10bc42ba19c9c4f90aaed287e10524e62460278489ab07d915c5907f",
+      "raw_log_bytes": 17344,
+      "warning_candidate_count": 0,
+      "raw_diagnostics_retained": true
+    },
+    {
+      "phase": "gradle-multiconfig-cache-noise1",
+      "actual_exit": 0,
+      "expected_exit": 0,
+      "minimum_available_kib": 5050676,
+      "result_sha256": "2699002db0a0086a7b4d9e690b33ea494f59bf13ae6e911531eda47e3dfbfeb4",
+      "raw_log_sha256": "ca7955e6cbf1f4c89e55c579b2206d39297dd70b6d9e687a47d3e2d9aa0873a2",
+      "raw_log_bytes": 17488,
+      "warning_candidate_count": 0,
+      "raw_diagnostics_retained": true
+    },
+    {
+      "phase": "gradle-multiconfig-script1",
+      "actual_exit": 0,
+      "expected_exit": 0,
+      "minimum_available_kib": 4753396,
+      "result_sha256": "b3178c0438bba2022a5e9e5c050335e7ec5f091aaf527fafd0857147f73dc393",
+      "raw_log_sha256": "2e0e30bb41b14ee7bff5789b52549062fc68f981bc98521441df752325269145",
+      "raw_log_bytes": 243568,
+      "warning_candidate_count": 10,
+      "raw_diagnostics_retained": true
+    },
+    {
+      "phase": "gradle-multiconfig-reject1",
+      "actual_exit": 1,
+      "expected_exit": 1,
+      "minimum_available_kib": 5011652,
+      "result_sha256": "5b0f600d9bc5b8d6a8f124636ce934a7e324cb84309c1aa5e7247d272430af4d",
+      "raw_log_sha256": "8fcaf399086425413634e3936268faa1b71547e3b6015624868e23c0fdae040c",
+      "raw_log_bytes": 203428,
+      "warning_candidate_count": 0,
+      "raw_diagnostics_retained": true
+    },
+    {
+      "phase": "gradle-multiconfig-restored1",
+      "actual_exit": 0,
+      "expected_exit": 0,
+      "minimum_available_kib": 4693404,
+      "result_sha256": "f1d50cdabb3a644c47433f5c815743fdc5f47e0d830a496a8aa937a6f087645f",
+      "raw_log_sha256": "46f9ea727d9bb0ac5008975efc64a95e80ab7bdc760098b5835ab48dba01d9c4",
+      "raw_log_bytes": 243568,
+      "warning_candidate_count": 10,
+      "raw_diagnostics_retained": true
+    }
+  ],
+  "compiled_helper_probe": {
+    "passed": 11,
+    "total": 11,
+    "report_sha256": "de2155ab7bd20981c00ccab13db8fa06e5b5501fa715a58fff5b5dfb897d24ea"
+  },
+  "minimum_final_phase_available_kib": 4092072,
+  "controlled_rejection_is_not_a_successful_build": true,
+  "native_scope": "Pinned OpenCC host tools actually compiled; local Android JNI uses unchanged R7 prebuilt only. CI native cache/compile records are reported separately.",
+  "not_zero_warning_claim": true,
+  "no_device_or_release_validation_claimed": true,
+  "source_restored_and_clean": true,
+  "no_python_bytecode_left": true
+}
